@@ -46,7 +46,27 @@ module.exports = {
             }
           }
         }
-    )
+    ).then(() => {
+      return queryInterface.addIndex('translation_cache', ['index','group_id']).then(() => {
+        return queryInterface.addIndex('translation_cache', ['index','community_id']).then(() => {
+          return queryInterface.addIndex('translation_cache', ['index','domain_id']).then(() => {
+            return queryInterface.addColumn('posts','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
+              return queryInterface.addColumn('points','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
+                return queryInterface.addColumn('domains','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
+                  return queryInterface.addColumn('communities','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
+                    return queryInterface.addColumn('groups','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
+                      return queryInterface.addColumn('categories','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
+                        return queryInterface.addColumn('post_status_changes','language', { type: Sequelize.TEXT, allowNull: true })
+                      })
+                    })
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
+    })
   },
 
   down: function (queryInterface, Sequelize) {

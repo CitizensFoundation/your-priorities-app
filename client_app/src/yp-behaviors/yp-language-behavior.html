@@ -30,8 +30,6 @@
 
     _languageEvent: function (event, detail) {
       if (detail.type == 'language-loaded') {
-        var oldLang= this.language;
-        var oldLoaded = this.loadedLanguage;
         this.set('loadedLanguage', detail.language);
         this.set('language', detail.language);
         window.locale = detail.language;

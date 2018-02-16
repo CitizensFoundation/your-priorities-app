@@ -114,7 +114,9 @@
             value: false
           },
 
-          originalQueryParameters: Object
+          originalQueryParameters: Object,
+
+          autoTranslateCache: Object
         },
 
         changeLocaleIfNeededAfterWait: function (locale, force) {
@@ -375,6 +377,7 @@
         ready: function () {
           window.appStartTime = new Date();
           window.appGlobals = this;
+          this.autoTranslateCache = {};
 
           this.fire('app-ready');
           this.$.boot.generateRequest();

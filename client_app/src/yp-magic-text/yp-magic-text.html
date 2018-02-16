@@ -11,28 +11,10 @@
   <template>
     <style>
       :host {
-        display: block;
-      }
-
-      #textContent {
-        margin: 0;
-        padding: 0;
-      }
-
-      [hidden] {
-        display: none !important;
+        display: inline;
       }
     </style>
-    <div class="layout vertical">
-      <div id="textContent" inner-h-t-m-l="[[finalContent]]"></div>
-      <template is="dom-if" if="haveTranslatedContent">
-        <div class="layout horizontal ">
-          <div>{{t('automaticTranslation')}}</div>
-          <paper-button class="originalButton" on-tap="_showOriginal" hidden$="[[!showingOriginal]]">{{t('showOriginal')}}</paper-button>
-          <paper-button class="originalButton" on-tap="_showTranslation" hidden$="[[showingOriginal]]">{{t('showTranslation')}}</paper-button>
-        </div>
-      </template>
-    </div>
+    <div inner-h-t-m-l="[[finalContent]]"></div>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
@@ -40,32 +22,15 @@
 
   <script>
 
-    class YpMagicTextBox extends Polymer.mixinBehaviors([Polymer.ypLanguageBehavior], Polymer.Element) {
+    class YpMagicTextBox extends Polymer.Element {
       static get is() { return 'yp-magic-text'; }
 
       static get properties() {
         return {
 
-          groupId: Number,
-          communityId: Number,
-          domainId: Number,
-
-          originalContent: {
-            type: String
-          },
-
-          contentId: {
+          content: {
             type: String,
-            value: null
-          },
-
-          contentType: {
-            type: String,
-            value: ""
-          },
-
-          originalLanguage: {
-            type: String
+            observer: '_contentChanged'
           },
 
           processedContent: {
@@ -78,58 +43,35 @@
             value: null
           },
 
+          contentId: {
+            type: String,
+            value: null
+          },
+
+          contentType: {
+            type: String,
+            value: ""
+          },
+
+          contentLanguage: {
+            type: String
+          },
+
           autoTranslate: {
             type: Boolean,
             value: false
           },
 
-          haveTranslatedContent: {
-            type: Boolean,
-            computed: '_haveTranslatedContent(language, originalLanguage, autoTranslate)'
+          language: {
+            type: String,
+            value: null
           }
         }
       }
 
-      _haveTranslatedContent(language, originalLanguage, autoTranslate) {
-        return autoTranslate && (originalLanguage!==language)
-      }
-
-      _autoTranslateEvent(event, detail) {
-        if (detail===true) {
-          this.set('autoTranslate', true);
-        } else {
-          this.set('autoTranslate', false);
-        }
-      }
-
-      _originalContentChanged(newValue) {
+      _contentChanged(newValue) {
         if (newValue) {
-          this.processedContent = this.originalContent;
-          if (this.autoTranslate===true) {
-            if (window.appGlobals.autoTranslateCache && this.contentId &&
-                window.appGlobals.autoTranslateCache[this.contentType+this.contentId]) {
-              this.set('processedContent', window.appGlobals.autoTranslateCache[this.contentType+this.contentId]);
-              this._finalize();
-            } else {
-              if (this.groupId) {
-                this.$.getTranslationAjax.url = "/api/groups/"+this.groupId+"/translatedContent";
-              } else if (this.communityId) {
-                this.$.getTranslationAjax.url = "/api/communities/"+this.groupId+"/translatedContent";
-              } else if (this.domainId) {
-                this.$.getTranslationAjax.url = "/api/domains/"+this.domainId+"/translatedContent";
-              } else {
-                console.error("No valid source for magic text-box");
-              }
-              this.$.getTranslationAjax.params = {
-                contentType: this.contentType,
-                contentId: this.contentId,
-                selectedLanguage: window.appGlobals.language
-              };
-              this.$.getTranslationAjax.generateRequest();
-            }
-          } else {
-            this._finalize();
-          }
+         this._update();
         } else {
           this.set('finalContent', null);
           this.set('processedContent', null);
@@ -138,10 +80,89 @@
         }
       }
 
+      _autoTranslateEvent(event, detail) {
+        if (detail===true) {
+          this.set('autoTranslate', true);
+        } else {
+          this.set('autoTranslate', false);
+        }
+        this._update();
+      }
+
+      _languageEvent (event, detail) {
+        if (detail.type === 'language-loaded') {
+          if (this.language!==detail.language) {
+            this.set('language', detail.language);
+            this._update();
+          } else {
+            this.set('language', detail.language);
+          }
+        }
+      }
+
+      _startTranslationAndFinalize () {
+        let indexKey = `${this.contentType}-${this.contentId}-${this.language}`;
+        if (window.appGlobals.autoTranslateCache[indexKey]) {
+          this.set('processedContent', window.appGlobals.autoTranslateCache[indexKey]);
+          this._finalize();
+        } else {
+          switch(this.contentType) {
+            case 'postTitle':
+              this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedTitle";
+              break;
+            case 'postContent':
+              this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedContent";
+              break;
+            case 'pointContent':
+              this.$.getTranslationAjax.url = "/api/points/"+this.contentId+"/translatedContent";
+              break;
+            case 'domainTitle':
+              this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedTitle";
+              break;
+            case 'domainContent':
+              this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedContent";
+              break;
+            case 'communityTitle':
+              this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedTitle";
+              break;
+            case 'communityContent':
+              this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedContent";
+              break;
+            case 'groupTitle':
+              this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedTitle";
+              break;
+            case 'groupContent':
+              this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedContent";
+              break;
+            case 'categoryName':
+              this.$.getTranslationAjax.url = "/api/categories/"+this.contentId+"/translatedContent";
+              break;
+            default:
+              console.error("No valid source for magic text-box");
+              return;
+          }
+          this.$.getTranslationAjax.params = {
+            contentType: this.contentType,
+            contentId: this.contentId,
+            targetLanguage: this.language
+          };
+          this.$.getTranslationAjax.generateRequest();
+        }
+      }
+
+      _update() {
+        this.processedContent = this.content;
+        if (this.autoTranslate && this.language!==this.contentLanguage) {
+          this._startTranslationAndFinalize();
+        } else {
+          this._finalize();
+        }
+      }
+
       _getTranslationResponse(event, detail) {
         if (detail.response.content) {
           this.processedContent = detail.response.content;
-          this.set('originalLanguage', detail.response.originalLanguage);
+          this.set('contentLanguage', detail.response.contentLanguage);
           this._finalize();
         } else {
           console.error("No content for magic text")
@@ -175,6 +196,12 @@
         this.set('this.processedContent', twemoji.parse(this.processedContent).
                  replace(/&amp\;quot\;/g,"\"").
                  replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" '));
+      }
+
+      ready () {
+        if (window.i18nTranslation) {
+          this.set('language', window.locale);
+        }
       }
 
       constructor() {
