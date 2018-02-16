@@ -1,5 +1,5 @@
 {
-  "entrypoint": "index_yp.html",
+  "entrypoint": "index.html",
   "shell": "src/yp-app/yp-app.html",
   "fragments": [
     "src/yp-community/yp-community.html",
@@ -28,8 +28,6 @@
     "images/**/*",
     "styles/**/*",
     "locales/**/*",
-    "index_br.html",
-    "index_bi.html",
     "bower.json"
   ],
 
