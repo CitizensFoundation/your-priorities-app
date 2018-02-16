@@ -20,6 +20,7 @@ auth.isAuthenticatedNoAnonymousCheck = function (req) {
 auth.authNeedsGroupForCreate = function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id },
+    attributes: ['id','access','user_id'],
     include: [
       {
         model: models.Community,
@@ -59,6 +60,7 @@ auth.hasCommunityAccess = function (community, req, done) {
 auth.authNeedsGroupAdminForCreate = function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id },
+    attributes: ['id','access','user_id'],
     include: [
       {
         model: models.Community,
@@ -93,7 +95,8 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
 
 auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
   models.Community.findOne({
-    where: { id: community.id }
+    where: { id: community.id },
+    attributes: ['id','access','user_id']
   }).then(function (community) {
     if (!auth.isAuthenticated(req)) {
       done(null, false);
@@ -113,7 +116,8 @@ auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
 
 auth.hasDomainAdmin = function (domainId, req, done) {
   models.Domain.findOne({
-    where: { id: domainId }
+    where: { id: domainId },
+    attributes: ['id','access','user_id']
   }).then(function (domain) {
     if (!auth.isAuthenticated(req)) {
       done(null, false);
@@ -223,7 +227,8 @@ auth.role('domain.admin', function (domain, req, done) {
     done();
   } else {
     models.Domain.findOne({
-      where: { id: domain.id }
+      where: { id: domain.id },
+      attributes: ['id','access','user_id']
     }).then(function (domain) {
       if (domain.user_id === req.user.id) {
         done(null, true);
@@ -242,7 +247,8 @@ auth.role('domain.admin', function (domain, req, done) {
 
 auth.role('domain.viewUser', function (domain, req, done) {
   models.Domain.findOne({
-    where: { id: domain.id }
+    where: { id: domain.id },
+    attributes: ['id','access','user_id']
   }).then(function (domain) {
     if (domain) {
       if (domain.access === models.Domain.ACCESS_PUBLIC) {
@@ -282,7 +288,8 @@ auth.role('organization.admin', function (organization, req, done) {
     done();
   } else {
     models.Organization.findOne({
-      where: { id: organization.id }
+      where: { id: organization.id },
+      attributes: ['id','access','user_id']
     }).then(function (organization) {
       if (organization.user_id === req.user.id) {
         done(null, true);
@@ -301,7 +308,8 @@ auth.role('organization.admin', function (organization, req, done) {
 
 auth.role('organization.viewUser', function (organization, req, done) {
   models.Organization.findOne({
-    where: { id: organization.id }
+    where: { id: organization.id },
+    attributes: ['id','access','user_id'],
   }).then(function (organization) {
     if (organization.access === models.Organization.ACCESS_PUBLIC) {
       done(null, true);
@@ -337,7 +345,8 @@ auth.role('bulkStatusUpdates.admin', function (community, req, done) {
     done();
   } else {
     models.Community.findOne({
-      where: { id: community.id }
+      where: { id: community.id },
+      attributes: ['id','access','user_id']
     }).then(function (community) {
       if (community.user_id === req.user.id) {
         done(null, true);
@@ -370,7 +379,8 @@ auth.role('community.admin', function (community, req, done) {
     done();
   } else {
     models.Community.findOne({
-      where: { id: community.id }
+      where: { id: community.id },
+      attributes: ['id','access','user_id'],
     }).then(function (community) {
       if (community.user_id === req.user.id) {
         done(null, true);
@@ -389,7 +399,8 @@ auth.role('community.admin', function (community, req, done) {
 
 auth.role('community.viewUser', function (community, req, done) {
   models.Community.findOne({
-    where: { id: community.id }
+    where: { id: community.id },
+    attributes: ['id','access','user_id'],
   }).then(function (community) {
     if (!community) {
       done(null, false);
@@ -421,7 +432,8 @@ auth.role('group.admin', function (group, req, done) {
     done();
   } else {
     models.Group.findOne({
-      where: { id: group.id }
+      where: { id: group.id },
+      attributes: ['id','access','user_id'],
     }).then(function (group) {
       if (group.user_id === req.user.id) {
         done(null, true);
@@ -441,6 +453,7 @@ auth.role('group.admin', function (group, req, done) {
 auth.role('group.viewUser', function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id },
+    attributes: ['id', 'access','user_id','configuration'],
     include: [
       {
         model: models.Community,
@@ -482,8 +495,12 @@ auth.role('post.admin', function (post, req, done) {
   } else {
     models.Post.findOne({
       where: { id: post.id },
+      attributes: ['id','user_id'],
       include: [
-        models.Group
+        {
+          model: models.Group,
+          attributes: ['id', 'access','user_id','configuration'],
+        }
       ]
     }).then(function (post) {
       if (post) {
@@ -514,8 +531,12 @@ auth.role('post.statusChange', function (post, req, done) {
   } else {
     models.Post.findOne({
       where: { id: post.id },
+      attributes: ['id','user_id'],
       include: [
-        models.Group
+        {
+          model: models.Group,
+          attributes: ['id', 'access','user_id','configuration'],
+        }
       ]
     }).then(function (post) {
       var group = post.Group;
@@ -538,11 +559,12 @@ auth.role('post.viewUser', function (post, req, done) {
   //TODO: Profile this function for that second level Community include
   models.Post.findOne({
     where: { id: post.id },
+    attributes: ['id','user_id'],
     include: [
       {
         model: models.Group,
         required: true,
-        attributes: ['id','access'],
+        attributes: ['id', 'access','user_id','configuration'],
         include: [
           {
             model: models.Community,
@@ -573,9 +595,11 @@ auth.role('post.viewUser', function (post, req, done) {
 auth.role('post.vote', function (post, req, done) {
   models.Post.findOne({
     where: { id: post.id },
+    attributes: ['id','user_id'],
     include: [
       {
         model: models.Group,
+        attributes: ['id', 'access','user_id','configuration'],
         include: [
           {
             model: models.Community,
@@ -621,12 +645,15 @@ auth.entity('post', function(req, done) {
 auth.role('point.admin', function (point, req, done) {
   models.Point.findOne({
     where: { id: point.id },
+    attributes: ['id','user_id'],
     include: [
       {
         model: models.Post,
+        attributes: ['id','user_id'],
         include: [
           {
             model: models.Group,
+            attributes: ['id', 'access','user_id','configuration'],
             required: false
           }
         ],
@@ -634,6 +661,7 @@ auth.role('point.admin', function (point, req, done) {
       },
       {
         model: models.Group,
+        attributes: ['id', 'access','user_id','configuration'],
         required: false
       }
     ]
@@ -673,12 +701,15 @@ auth.role('point.admin', function (point, req, done) {
 auth.role('point.viewUser', function (point, req, done) {
   models.Point.findOne({
     where: { id: point.id },
+    attributes: ['id','user_id'],
     include: [
       {
         model: models.Post,
+        attributes: ['id','user_id'],
         include: [
           {
             model: models.Group,
+            attributes: ['id', 'access','user_id','configuration'],
             required: false,
             include: [
               {
@@ -693,6 +724,7 @@ auth.role('point.viewUser', function (point, req, done) {
       },
       {
         model: models.Group,
+        attributes: ['id', 'access','user_id','configuration'],
         required: false
       }
     ]
@@ -736,7 +768,7 @@ auth.role('image.viewUser', function (image, req, done) {
         include: [
           {
             model: models.Group,
-            attributes: ['id', 'access'],
+            attributes: ['id', 'access','user_id','configuration'],
             include: [
               {
                 model: models.Community,
@@ -774,13 +806,14 @@ auth.role('image.viewUser', function (image, req, done) {
 auth.role('point.vote', function (point, req, done) {
   models.Point.findOne({
     where: { id: point.id },
+    attributes: ['id','user_id'],
     include: [
       {
         model: models.Post,
         include: [
           {
             model: models.Group,
-            attributes: ['id', 'access','configuration'],
+            attributes: ['id', 'access','user_id','configuration'],
             required: false,
             include: [
               {
@@ -795,6 +828,7 @@ auth.role('point.vote', function (point, req, done) {
       },
       {
         model: models.Group,
+        attributes: ['id', 'access','user_id','configuration'],
         required: false
       }
     ]

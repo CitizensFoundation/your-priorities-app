@@ -40,7 +40,7 @@
 
   <script>
 
-    class YpMagicTextBox extends Polymer.Element {
+    class YpMagicTextBox extends Polymer.mixinBehaviors([Polymer.ypLanguageBehavior], Polymer.Element) {
       static get is() { return 'yp-magic-text'; }
 
       static get properties() {
