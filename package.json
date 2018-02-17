@@ -2,6 +2,7 @@
   "name": "your-priorities-app",
   "version": "7.1.0",
   "dependencies": {
+    "@google-cloud/translate": "1.1.0",
     "airbrake": "^1.0.1",
     "async": "^1.4.2",
     "authorized": "^1.0.0",
@@ -26,6 +27,7 @@
     "express-generator": "^4.9.0",
     "express-session": "git+https://github.com/rbjarnason/session.git",
     "express-useragent": "^0.2.4",
+    "farmhash": "^2.0.5",
     "flickrapi": "~0.3.28",
     "heroku-node-settings": "^1.0.2",
     "i18next": "^3.0.0",
@@ -65,8 +67,7 @@
     "temp": "^0.8.3",
     "wordwrap": "^1.0.0",
     "xml2js": "^0.4.17",
-    "yamljs": "^0.2.7",
-    "@google-cloud/translate": "1.1.0"
+    "yamljs": "^0.2.7"
   },
   "devDependencies": {
     "css-slam": "^2.0.2",

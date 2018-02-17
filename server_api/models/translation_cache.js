@@ -1,4 +1,6 @@
 var async = require("async");
+const Translate = require('@google-cloud/translate');
+const farmhash = require('farmhash');
 
 "use strict";
 
@@ -6,23 +8,16 @@ var async = require("async");
 
 module.exports = function(sequelize, DataTypes) {
   let TranslationCache = sequelize.define("TranslationCache", {
-    index: { type: DataTypes.STRING, allowNull: false },
-    translation: { type: DataTypes.TEXT, allowNull: false }
+    index_key: { type: DataTypes.STRING, allowNull: false },
+    content: { type: DataTypes.TEXT, allowNull: false },
+    hash_value: { type: DataTypes.STRING, allowNull: false }
   }, {
 
     indexes: [
       {
-        name: 'index_group_id',
-        fields: ['index', 'group_id']
-      },
-      {
-        name: 'index_community_id',
-        fields: ['index', 'community_id']
-      },
-      {
-        name: 'index_domain_id',
-        fields: ['index', 'domain_id']
-      },
+        name: 'main_index',
+        fields: ['index_key']
+      }
     ],
 
     underscored: true,
@@ -33,39 +28,76 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
-      associate: function(models) {
-        TranslationCache.belongsTo(models.Group, {foreignKey: "group_id"});
-        TranslationCache.belongsTo(models.Community, {foreignKey: "community_id"});
-        TranslationCache.belongsTo(models.Domain, {foreignKey: "domain_id"});
+      getContentToTranslate: function (req, modelInstance) {
+        switch(this.contentType) {
+          case 'postTitle':
+          case 'domainTitle':
+          case 'communityTitle':
+          case 'groupTitle':
+            return modelInstance.title;
+          case 'postContent':
+          case 'domainContent':
+          case 'communityContent':
+            return modelInstance.description;
+          case 'pointContent':
+          case 'statusChangeContent':
+            return modelInstance.content;
+          case 'groupContent':
+            return modelInstance.objectives;
+          case 'categoryName':
+            return modelInstance.name;
+          default:
+            console.error("No valid contentType for translation");
+            return null;
+        }
       },
 
-      getTranslationFromGoogle: function (index, language, content, callback) {
+      getTranslationFromGoogle: function (indexKey, contentToTranslate, targetLanguage, modelInstance, callback) {
+        const translateAPI = new Translate({
+          credentials: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+        });
 
+        translateAPI.translate(contentToTranslate, targetLanguage)
+          .then( function (results) {
+            if (results[0]) {
+              TranslateCache.create({
+                index_key: indexKey,
+                content: results[0].translatedText
+              }).then(function () {
+                modelInstance.update({
+                  language: results[0].detectedSourceLanguage
+                }).then(function () {
+                  callback(null, { translation: results[0].translatedText });
+                });
+              }).catch(function (error) {
+                callback(error);
+              });
+            } else {
+              callback("No translations");
+            }
+          }).catch(function (error) {
+          callback(error);
+        });
       },
 
-
-      getTranslationForContent: function (index, modelType, modelId, language, content, callback) {
-        let where = {};
-        where["index"] = index;
-        where[modelType] = modelId;
+      getTranslationForContent: function (req, modelInstance, callback) {
+        const contentToTranslate = TranslationCache.getContentToTranslate(req, modelInstance);
+        const contentHash = farmhash.hash32(contentToTranslate).toString();
+        let indexKey = `${req.params.contentType}-${modelInstance.id}-${req.params.targetLanguage}-${contentHash}`;
 
         TranslationCache.findOne({
-          where: where
+          where: {
+            index_key: indexKey
+          }
         }).then(function (translationModel) {
           if (translationModel) {
-            callback(null, translationModel.translation);
+            callback(null, { translation: translationModel.content });
           } else {
-            TranslationCache.getTranslationFromGoogle(index, language, content, callback)
+            TranslationCache.getTranslationFromGoogle(indexKey, contentToTranslate, req.params.targetLanguage, modelInstance, callback);
           }
         }).catch(function (error) {
           callback(error);
         });
-      }
-    },
-
-    instanceMethods: {
-      simple: function() {
-        return { id: this.id, name: this.name };
       }
     }
   });

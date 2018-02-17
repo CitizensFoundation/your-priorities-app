@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
@@ -14,10 +16,12 @@
         display: inline;
       }
     </style>
-    <div inner-h-t-m-l="[[finalContent]]"></div>
+    <div inner-h-t-m-l="[[content]]"></div>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse"></iron-ajax>
   </template>
 
   <script>
@@ -34,16 +38,6 @@
           },
 
           processedContent: {
-            type: String,
-            value: null
-          },
-
-          finalContent: {
-            type: String,
-            value: null
-          },
-
-          contentId: {
             type: String,
             value: null
           },
@@ -73,7 +67,6 @@
         if (newValue) {
          this._update();
         } else {
-          this.set('finalContent', null);
           this.set('processedContent', null);
           this.set('contentId', null);
           this.set('contentType', "");
@@ -108,37 +101,32 @@
         } else {
           switch(this.contentType) {
             case 'postTitle':
-              this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedTitle";
-              break;
             case 'postContent':
-              this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedContent";
+              this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedText";
               break;
             case 'pointContent':
-              this.$.getTranslationAjax.url = "/api/points/"+this.contentId+"/translatedContent";
+              this.$.getTranslationAjax.url = "/api/points/"+this.contentId+"/translatedText";
               break;
             case 'domainTitle':
-              this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedTitle";
-              break;
             case 'domainContent':
-              this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedContent";
+              this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedText";
               break;
             case 'communityTitle':
-              this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedTitle";
-              break;
             case 'communityContent':
-              this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedContent";
+              this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedText";
               break;
             case 'groupTitle':
-              this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedTitle";
-              break;
             case 'groupContent':
-              this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedContent";
+              this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedText";
               break;
             case 'categoryName':
-              this.$.getTranslationAjax.url = "/api/categories/"+this.contentId+"/translatedContent";
+              this.$.getTranslationAjax.url = "/api/categories/"+this.contentId+"/translatedText";
+              break;
+            case 'statusChangeContent':
+              this.$.getTranslationAjax.url = "/api/post_status_changes/"+this.contentId+"/translatedText";
               break;
             default:
-              console.error("No valid source for magic text-box");
+              console.error("No valid contentType for magic text");
               return;
           }
           this.$.getTranslationAjax.params = {
@@ -163,22 +151,21 @@
         if (detail.response.content) {
           this.processedContent = detail.response.content;
           this.set('contentLanguage', detail.response.contentLanguage);
-          this._finalize();
         } else {
-          console.error("No content for magic text")
+          console.error("No content for magic text");
         }
+        this._finalize();
       }
 
       _finalize() {
         if (!this.textOnly) {
           this._linksAndEmojis()
         }
-        this.set('finalContent', this.processedContent);
+        this.set('content', this.processedContent);
       }
 
       _linksAndEmojis () {
-        this.processedContent = sanitizeHtml(this.processedContent, {
-          allowedTags: [ 'b', 'i', 'em', 'strong'] });
+        this.processedContent = sanitizeHtml(this.processedContent, { allowedTags: [ 'b', 'i', 'em', 'strong'] });
         this.processedContent = linkifyStr(this.processedContent, {
           format: function (value, type) {
             if (type === 'url' && value.length > 34) {
@@ -193,9 +180,9 @@
             'strong'
           ]
         });
-        this.set('this.processedContent', twemoji.parse(this.processedContent).
+        this.processedContent = twemoji.parse(this.processedContent).
                  replace(/&amp\;quot\;/g,"\"").
-                 replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" '));
+                 replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
       }
 
       ready () {
