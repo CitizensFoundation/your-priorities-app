@@ -4,8 +4,6 @@ const farmhash = require('farmhash');
 
 "use strict";
 
-// https://www.npmjs.org/package/enum for state of posts
-
 module.exports = function(sequelize, DataTypes) {
   let TranslationCache = sequelize.define("TranslationCache", {
     index_key: { type: DataTypes.STRING, allowNull: false },
@@ -29,7 +27,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       getContentToTranslate: function (req, modelInstance) {
-        switch(this.contentType) {
+        switch(req.params.textType) {
           case 'postTitle':
           case 'domainTitle':
           case 'communityTitle':
@@ -47,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
           case 'categoryName':
             return modelInstance.name;
           default:
-            console.error("No valid contentType for translation");
+            console.error("No valid textType for translation");
             return null;
         }
       },
@@ -67,7 +65,7 @@ module.exports = function(sequelize, DataTypes) {
                 modelInstance.update({
                   language: results[0].detectedSourceLanguage
                 }).then(function () {
-                  callback(null, { translation: results[0].translatedText });
+                  callback(null, { content: results[0].translatedText });
                 });
               }).catch(function (error) {
                 callback(error);
@@ -83,7 +81,7 @@ module.exports = function(sequelize, DataTypes) {
       getTranslationForContent: function (req, modelInstance, callback) {
         const contentToTranslate = TranslationCache.getContentToTranslate(req, modelInstance);
         const contentHash = farmhash.hash32(contentToTranslate).toString();
-        let indexKey = `${req.params.contentType}-${modelInstance.id}-${req.params.targetLanguage}-${contentHash}`;
+        let indexKey = `${req.params.textType}-${modelInstance.id}-${req.params.targetLanguage}-${contentHash}`;
 
         TranslationCache.findOne({
           where: {
@@ -91,7 +89,7 @@ module.exports = function(sequelize, DataTypes) {
           }
         }).then(function (translationModel) {
           if (translationModel) {
-            callback(null, { translation: translationModel.content });
+            callback(null, { content: translationModel.content });
           } else {
             TranslationCache.getTranslationFromGoogle(indexKey, contentToTranslate, req.params.targetLanguage, modelInstance, callback);
           }

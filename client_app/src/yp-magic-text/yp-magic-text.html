@@ -6,8 +6,6 @@
 
 <script src="../../bower_components/twemoji-min/2/twemoji.min.js"></script>
 <script type="text/javascript" src="sanitize-html.min.js"></script>
-<script src="../../bower_components/linkifyjs/linkify.js"></script>
-<script src="../../bower_components/linkifyjs/linkify-string.js"></script>
 
 <dom-module id="yp-magic-text">
   <template>
@@ -16,6 +14,7 @@
         display: inline;
       }
     </style>
+    <h1>HELLO</h1>
     <div inner-h-t-m-l="[[content]]"></div>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -32,7 +31,7 @@
       static get properties() {
         return {
 
-          content: {
+          textContent: {
             type: String,
             observer: '_contentChanged'
           },
@@ -42,9 +41,9 @@
             value: null
           },
 
-          contentType: {
+          textType: {
             type: String,
-            value: ""
+            observer: '_textTypeChanged'
           },
 
           contentLanguage: {
@@ -53,7 +52,7 @@
 
           autoTranslate: {
             type: Boolean,
-            value: false
+            value: true
           },
 
           language: {
@@ -63,13 +62,14 @@
         }
       }
 
+      _textTypeChanged(value) {
+        debugger;
+      }
+
       _contentChanged(newValue) {
-        if (newValue) {
+        debugger;
+        if (newValue && newValue!=="") {
          this._update();
-        } else {
-          this.set('processedContent', null);
-          this.set('contentId', null);
-          this.set('contentType', "");
         }
       }
 
@@ -94,12 +94,12 @@
       }
 
       _startTranslationAndFinalize () {
-        let indexKey = `${this.contentType}-${this.contentId}-${this.language}`;
+        let indexKey = `${this.textType}-${this.contentId}-${this.language}`;
         if (window.appGlobals.autoTranslateCache[indexKey]) {
           this.set('processedContent', window.appGlobals.autoTranslateCache[indexKey]);
           this._finalize();
         } else {
-          switch(this.contentType) {
+          switch(this.textType) {
             case 'postTitle':
             case 'postContent':
               this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedText";
@@ -126,11 +126,11 @@
               this.$.getTranslationAjax.url = "/api/post_status_changes/"+this.contentId+"/translatedText";
               break;
             default:
-              console.error("No valid contentType for magic text");
+              console.error("No valid textType for magic text: "+this.textType);
               return;
           }
           this.$.getTranslationAjax.params = {
-            contentType: this.contentType,
+            textType: this.textType,
             contentId: this.contentId,
             targetLanguage: this.language
           };
@@ -138,8 +138,17 @@
         }
       }
 
+      _getTranslationResponse(event, detail) {
+        if (detail.response.content) {
+          this.processedContent = detail.response.content;
+        } else {
+          console.error("No content for magic text");
+        }
+        this._finalize();
+      }
+
       _update() {
-        this.processedContent = this.content;
+        this.processedContent = this.textContent;
         if (this.autoTranslate && this.language!==this.contentLanguage) {
           this._startTranslationAndFinalize();
         } else {
@@ -147,21 +156,11 @@
         }
       }
 
-      _getTranslationResponse(event, detail) {
-        if (detail.response.content) {
-          this.processedContent = detail.response.content;
-          this.set('contentLanguage', detail.response.contentLanguage);
-        } else {
-          console.error("No content for magic text");
-        }
-        this._finalize();
-      }
-
       _finalize() {
         if (!this.textOnly) {
           this._linksAndEmojis()
         }
-        this.set('content', this.processedContent);
+        this.set('textContent', this.processedContent);
       }
 
       _linksAndEmojis () {
@@ -191,9 +190,6 @@
         }
       }
 
-      constructor() {
-        super();
-      }
     }
 
     customElements.define(YpMagicTextBox.is, YpMagicTextBox);

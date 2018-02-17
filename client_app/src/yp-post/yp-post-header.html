@@ -20,6 +20,7 @@
 <link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
 <link rel="import" href="../yp-user/yp-user-with-organization.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
@@ -236,7 +237,10 @@
             <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
             <div class="layout vertical">
               <div class="infoContainer">
-                <div id="description" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]" class="description"></div>
+                <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
+                               text-content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
+                               class="description">
+                </yp-magic-text>
               </div>
               <div class="card-actions">
                 <yp-post-actions floating header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -333,10 +337,9 @@
           this.async(function () {
             var description = this.$$("#description");
             if (description) {
-              description.innerHTML = this.addLinksAndEmjois(post.description);
               // Special case for law Issue from a parliement
               if (post.data && post.data.dataType=='lawIssue' && post.data.issueStatus) {
-                description.innerHTML += " - "+post.data.issueStatus;
+                description.content += " - "+post.data.issueStatus;
               }
             } else {
               console.error("Can't find description element");

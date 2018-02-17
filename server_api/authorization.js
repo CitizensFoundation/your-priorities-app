@@ -25,7 +25,7 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access']
+        attributes: ['id','access','user_id']
       }
     ]
   }).then(function (group) {
@@ -65,7 +65,7 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access']
+        attributes: ['id','access','user_id']
       }
     ]
   }).then(function (group) {
@@ -117,7 +117,7 @@ auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
 auth.hasDomainAdmin = function (domainId, req, done) {
   models.Domain.findOne({
     where: { id: domainId },
-    attributes: ['id','access','user_id']
+    attributes: ['id','access']
   }).then(function (domain) {
     if (!auth.isAuthenticated(req)) {
       done(null, false);
@@ -228,7 +228,7 @@ auth.role('domain.admin', function (domain, req, done) {
   } else {
     models.Domain.findOne({
       where: { id: domain.id },
-      attributes: ['id','access','user_id']
+      attributes: ['id','access']
     }).then(function (domain) {
       if (domain.user_id === req.user.id) {
         done(null, true);
@@ -248,7 +248,7 @@ auth.role('domain.admin', function (domain, req, done) {
 auth.role('domain.viewUser', function (domain, req, done) {
   models.Domain.findOne({
     where: { id: domain.id },
-    attributes: ['id','access','user_id']
+    attributes: ['id','access']
   }).then(function (domain) {
     if (domain) {
       if (domain.access === models.Domain.ACCESS_PUBLIC) {
@@ -458,7 +458,7 @@ auth.role('group.viewUser', function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access']
+        attributes: ['id','access','user_id']
       }
     ]
   }).then(function (group) {
@@ -569,7 +569,7 @@ auth.role('post.viewUser', function (post, req, done) {
           {
             model: models.Community,
             required: true,
-            attributes: ['id','access']
+            attributes: ['id','access','user_id']
           }
         ]
       }
@@ -604,7 +604,7 @@ auth.role('post.vote', function (post, req, done) {
           {
             model: models.Community,
             required: true,
-            attributes: ['id','access']
+            attributes: ['id','access','user_id']
           }
         ]
       }
@@ -715,7 +715,7 @@ auth.role('point.viewUser', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access']
+                attributes: ['id','access','user_id']
               }
             ]
           }
@@ -773,7 +773,7 @@ auth.role('image.viewUser', function (image, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access']
+                attributes: ['id','access','user_id']
               }
             ]
           }
@@ -819,7 +819,7 @@ auth.role('point.vote', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access']
+                attributes: ['id','access','user_id']
               }
             ]
           }
@@ -917,13 +917,13 @@ auth.role('category.viewUser', function (category, req, done) {
     include: [
       {
         model: models.Group,
-        attributes: ['id', 'access'],
+        attributes: ['id', 'access','user_id'],
         required: false,
         include: [
           {
             model: models.Community,
             required: false,
-            attributes: ['id','access']
+            attributes: ['id','access','user_id']
           }
         ]
       }

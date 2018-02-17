@@ -1,8 +1,9 @@
 'use strict';
 
 module.exports = {
-  up: function (queryInterface, Sequelize) {
-    queryInterface.createTable(
+  up: async (queryInterface, Sequelize) => {
+    return [
+      await queryInterface.createTable(
         'translation_cache',
         {
           id: {
@@ -25,23 +26,16 @@ module.exports = {
             allowNull: false
           }
         }
-    ).then(() => {
-      return queryInterface.addIndex('translation_cache', ['index_key']).then(() => {
-        return queryInterface.addColumn('posts','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
-          return queryInterface.addColumn('points','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
-            return queryInterface.addColumn('domains','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
-              return queryInterface.addColumn('communities','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
-                return queryInterface.addColumn('groups','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
-                  return queryInterface.addColumn('categories','language', { type: Sequelize.TEXT, allowNull: true }).then(() => {
-                    return queryInterface.addColumn('post_status_changes','language', { type: Sequelize.TEXT, allowNull: true })
-                  })
-                })
-              })
-            })
-          })
-        })
-      })
-    })
+      ),
+      await queryInterface.addIndex('translation_cache', ['index_key']),
+      await queryInterface.addColumn('posts','language', { type: Sequelize.STRING, allowNull: true }),
+      await queryInterface.addColumn('points','language', { type: Sequelize.STRING, allowNull: true }),
+      await queryInterface.addColumn('domains','language', { type: Sequelize.STRING, allowNull: true }),
+      await queryInterface.addColumn('communities','language', { type: Sequelize.STRING, allowNull: true }),
+      await queryInterface.addColumn('groups','language', { type: Sequelize.STRING, allowNull: true }),
+      await queryInterface.addColumn('categories','language', { type: Sequelize.STRING, allowNull: true }),
+      await queryInterface.addColumn('post_status_changes','language', { type: Sequelize.STRING, allowNull: true })
+    ]
   },
 
   down: function (queryInterface, Sequelize) {

@@ -226,7 +226,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
-  if (req.params.contentType.contain("post")) {
+  if (req.params.contentType.indexOf("post") > -1) {
     models.Post.find({
       where: {
         id: req.params.id

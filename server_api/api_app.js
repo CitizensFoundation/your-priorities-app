@@ -129,7 +129,7 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", {context: 'setYpDomain', domain: toJson(req.ypDomain.simple())});
+    log.info("Setup Domain Completed", {context: 'setYpDomain', domain: req.ypDomain ? toJson(req.ypDomain.simple()) : null});
     next();
   });
 });
