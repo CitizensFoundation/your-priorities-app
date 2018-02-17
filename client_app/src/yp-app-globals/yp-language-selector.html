@@ -57,11 +57,11 @@
         </paper-listbox>
       </paper-dropdown-menu>
       <div hidden$="[[!canUseAutoTranslate]]">
-        <paper-button hidden$="[[autoTranslate]]" raised class="layout horizontal translateButton" on-tap="_startTranslation">
+        <paper-button hidden$="[[autoTranslate]]" raised class="layout horizontal translateButton" on-tap="_startTranslation" title="{{t('autoTranslate')}}">
           <iron-icon icon="translate"></iron-icon>
           <div class="translateText">{{t('autoTranslate')}}</div>
         </paper-button>
-        <paper-button hidden$="[[!autoTranslate]]" raised class="layout horizontal stopTranslateButton" on-tap="_stopTranslation">
+        <paper-button hidden$="[[!autoTranslate]]" raised class="layout horizontal stopTranslateButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
           <iron-icon icon="translate"></iron-icon>
           <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
         </paper-button>

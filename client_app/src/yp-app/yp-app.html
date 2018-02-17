@@ -158,13 +158,27 @@
         min-width: 40px;
       }
 
-      #translationIcon {
+      #translationButton {
         color: #FFF;
         background-color: var(--accent-color);
         margin-left: 4px;
+        padding: 6px;
+        min-width: 0 !important;
+      }
+
+      .stopIcon {
+        margin-left: 6px;
       }
 
       @media (max-width: 480px) {
+        .stopIcon {
+          display: none;
+        }
+
+        #translationButton {
+          width: 40px !important;
+          max-width: 40px !important;
+        }
         div[title] {
           font-size: 17px;
           white-space: normal !important;
@@ -241,6 +255,10 @@
         display: none !important;
       }
 
+      #headerTitle {
+        padding-right: 0 !important;
+      }
+
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
@@ -277,9 +295,9 @@
             </template>
 
             <div hidden$="[[!autoTranslate]]" class="layout horizontal">
-              <paper-button raised id="translationIcon" on-tap="_stopTranslating">
+              <paper-button raised id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
                 <iron-icon icon="translate"></iron-icon>
-                <div>{{languageName}}</div>
+                <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
               </paper-button>
             </div>
             <span class="flex"></span>
@@ -489,6 +507,20 @@
         'yp-refresh-community': '_refreshCommunity',
         'yp-refresh-domain': '_refreshDomain',
         'yp-language-name': '_setLanguageName'
+      },
+
+      _stopTranslation: function () {
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-auto-translate', data: false }
+          })
+        );
+        window.autoTranslate = false;
+        var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
+        toast.text = this.t('autoTranslationStopped');
+        toast.show();
       },
 
       _setLanguageName: function (event, detail) {
@@ -809,13 +841,13 @@
               headerTitle.style.fontSize = "20px";
             } else {
               if (length < 20) {
-                headerTitle.style.fontSize = "20px";
+                headerTitle.style.fontSize = "17px";
               } else if (length < 25) {
-                headerTitle.style.fontSize = "16px";
+                headerTitle.style.fontSize = "14px";
               } else if (length < 30) {
-                headerTitle.style.fontSize = "15px";
-              } else {
                 headerTitle.style.fontSize = "13px";
+              } else {
+                headerTitle.style.fontSize = "12px";
               }
             }
           }

@@ -2,6 +2,7 @@
   "autoTranslationStarted": "Auto translation started",
   "autoTranslationStopped": "Auto translation stopped",
   "autoTranslate": "Auto translate",
+  "stopAutoTranslate": "Stop translate",
   "inputError": "Not valid",
   "postCreated": "Idea created",
   "postUpdated": "Idea updated",
