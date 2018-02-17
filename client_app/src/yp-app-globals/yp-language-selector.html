@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
@@ -22,8 +23,30 @@
       paper-dropdown-menu {
         max-width: 250px;
       }
+
+      .translateButton {
+        padding: 8px;
+        color: var(--accent-color);
+        margin-top: 8px;
+      }
+
+      .stopTranslateButton {
+        padding: 8px;
+        color: white;
+        background: var(--accent-color);
+        margin-top: 8px;
+      }
+
+      .translateText {
+        margin-left: 8px;
+      }
+
+      .stopIcon {
+        margin-left: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <div class="layout vertical">
       <paper-dropdown-menu label="Select language" selected="{{selectedLocale}}" attr-for-selected="name">
@@ -33,6 +56,17 @@
           </template>
         </paper-listbox>
       </paper-dropdown-menu>
+      <div hidden$="[[!canUseAutoTranslate]]">
+        <paper-button hidden$="[[autoTranslate]]" raised class="layout horizontal translateButton" on-tap="_startTranslation">
+          <iron-icon icon="translate"></iron-icon>
+          <div class="translateText">{{t('autoTranslate')}}</div>
+        </paper-button>
+        <paper-button hidden$="[[!autoTranslate]]" raised class="layout horizontal stopTranslateButton" on-tap="_stopTranslation">
+          <iron-icon icon="translate"></iron-icon>
+          <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
+        </paper-button>
+      </div>
+
   </template>
 
   <script>
@@ -68,6 +102,11 @@
           }
         },
 
+        noGoogleTranslateLanguages: {
+          type: Array,
+          value: ['kl']
+        },
+
         languages: {
           type: Array,
           computed: '_languages(supportedLanguages)'
@@ -86,6 +125,61 @@
         value: {
           type: String,
           value: ""
+        },
+
+        canUseAutoTranslate: {
+          type: Boolean,
+          computed: '_canUseAutoTranslate(language)'
+        },
+
+        autoTranslate: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _autoTranslateEvent: function (event, detail) {
+        this.set('autoTranslate', detail);
+      },
+
+      _stopTranslation: function () {
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-auto-translate', data: false }
+          })
+        );
+        window.autoTranslate = false;
+        this.fire('yp-language-name', this.supportedLanguages[this.language]);
+        var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
+        toast.text = this.t('autoTranslationStopped');
+        toast.show();
+      },
+
+      _startTranslation: function () {
+        if (this._canUseAutoTranslate(this.language)) {
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: { name: 'yp-auto-translate', data: true }
+            })
+          );
+          window.autoTranslate = true;
+          this.fire('yp-language-name', this.supportedLanguages[this.language]);
+          var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
+          toast.text = this.t('autoTranslationStarted');
+          toast.show();
+        }
+      },
+
+      _canUseAutoTranslate: function (language) {
+        if (language && !this.noUserEvents) {
+          var found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
+          return !found;
+        } else {
+          return false;
         }
       },
 
@@ -107,6 +201,7 @@
         if (locale) {
           this.set('value', locale);
           if (!this.noUserEvents) {
+            this.fire('yp-language-name', this.supportedLanguages[locale]);
             window.appGlobals.changeLocaleIfNeeded(locale, true);
             localStorage.setItem('yp-user-locale', locale);
             if (window.appUser && window.appUser.user) {

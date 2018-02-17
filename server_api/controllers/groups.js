@@ -704,7 +704,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       }
     },
     attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
-      'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
+      'counter_endorsements_down','language','counter_points','counter_flags','data','location','created_at'],
     order: [
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
@@ -778,7 +778,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   var PostsByStatus = models.Post.scope(req.params.status);
   PostsByStatus.findAll({
     where: where,
-    attributes: ['id','status','official_status','counter_endorsements_up',
+    attributes: ['id','status','official_status','language','counter_endorsements_up',
                  'counter_endorsements_down','created_at'],
     order: [
       models.sequelize.literal(postOrder)

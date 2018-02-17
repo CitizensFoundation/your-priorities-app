@@ -225,7 +225,9 @@
         <div class="layout vertical wrap">
           <div class="post-name layout vertical" on-tap="goToPostIfNotHeader">
             <div>
-              [[postName]]
+              <yp-magic-text text-type="postName" content-language="[[post.language]]"
+                             content="[[postName]]" content-id="[[post.id]]">
+              </yp-magic-text>
             </div>
             <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
               <div class="layout horizontal userInfo">

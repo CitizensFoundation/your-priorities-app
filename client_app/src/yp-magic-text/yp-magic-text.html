@@ -19,7 +19,7 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
-    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse" on-error="_getTranslationError"></iron-ajax>
+    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse"></iron-ajax>
   </template>
 
   <script>
@@ -55,47 +55,58 @@
 
           autoTranslate: {
             type: Boolean,
-            value: true
+            value: false
           },
 
           language: {
             type: String,
             value: null
+          },
+
+          truncate: {
+            type: Number,
+            value: null
           }
         }
       }
 
+      static get doubleWidthLanguages() {
+        return ['zh_TW']
+      }
+
       _contentChanged(newValue) {
-        console.error("Content changed: "+newValue);
+        console.warn("Content changed: "+newValue);
         if (newValue && newValue!=="") {
           this.set('finalContent', null);
+          if (window.autoTranslate) {
+            this.set('autoTranslate', window.autoTranslate);
+          }
           this._update();
+        } else {
+          this.set('truncate', null);
         }
       }
 
       _autoTranslateEvent(event, detail) {
-        if (detail===true) {
-          this.set('autoTranslate', true);
-        } else {
-          this.set('autoTranslate', false);
-        }
+        this.set('autoTranslate', detail);
         this._update();
       }
 
       _languageEvent (event, detail) {
         if (detail.type === 'language-loaded') {
-          if (this.language!==detail.language) {
-            this.set('language', detail.language);
-            this._update();
-          } else {
-            this.set('language', detail.language);
-          }
+          this.set('language', detail.language);
+          this._update();
         }
       }
 
+      _getIndexKey() {
+        return `${this.textType}-${this.contentId}-${this.language}`;
+      }
+
       _startTranslationAndFinalize () {
-        let indexKey = `${this.textType}-${this.contentId}-${this.language}`;
+        let indexKey = this._getIndexKey();
         if (window.appGlobals.autoTranslateCache[indexKey]) {
+          console.warn("Using cache: "+window.appGlobals.autoTranslateCache[indexKey]);
           this.set('processedContent', window.appGlobals.autoTranslateCache[indexKey]);
           this._finalize();
         } else {
@@ -139,9 +150,10 @@
       }
 
       _getTranslationResponse(event, detail) {
-        console.error("Get response: "+detail.response.content);
+        console.warn("Get response: "+detail.response.content);
         if (detail.response.content) {
           this.processedContent = detail.response.content;
+          window.appGlobals.autoTranslateCache[this._getIndexKey()] = this.processedContent;
         } else {
           console.error("No content for magic text");
         }
@@ -150,6 +162,9 @@
 
       _update() {
         this.processedContent = this.content;
+        console.warn("contentLanguage: "+this.contentLanguage);
+        console.warn("autoTranslate: "+this.autoTranslate);
+        console.warn("Language: "+this.language);
         if (this.autoTranslate && this.language!==this.contentLanguage) {
           this._startTranslationAndFinalize();
         } else {
@@ -160,6 +175,13 @@
       _finalize() {
         if (!this.textOnly) {
           this._linksAndEmojis()
+        }
+        if (this.truncate) {
+          let truncateBy = this.truncate;
+          if (YpMagicTextBox.doubleWidthLanguages.indexOf(this.language) > -1) {
+            truncateBy = truncateBy / 2;
+          }
+          this.processedContent = YpMagicTextBox.truncate(YpMagicTextBox.trim(this.processedContent), truncateBy, '...');
         }
         this.set('finalContent', this.processedContent);
       }
@@ -183,6 +205,31 @@
         this.processedContent = twemoji.parse(this.processedContent).
                  replace(/&amp\;quot\;/g,"\"").
                  replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
+      }
+
+      static truncate(input, length, killwords, end) {
+        length = length || 255;
+
+        if (input.length <= length)
+          return input;
+
+        if (killwords) {
+          input = input.substring(0, length);
+        } else {
+          let idx = input.lastIndexOf(' ', length);
+          if (idx === -1) {
+            idx = length;
+          }
+
+          input = input.substring(0, idx);
+        }
+
+        input += (end !== undefined && end !== null) ? end : '...';
+        return input;
+      }
+
+      static trim(input){
+        return input.replace(/^\s*|\s*$/g, '');
       }
 
       ready () {

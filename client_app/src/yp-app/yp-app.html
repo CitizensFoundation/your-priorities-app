@@ -158,6 +158,12 @@
         min-width: 40px;
       }
 
+      #translationIcon {
+        color: #FFF;
+        background-color: var(--accent-color);
+        margin-left: 4px;
+      }
+
       @media (max-width: 480px) {
         div[title] {
           font-size: 17px;
@@ -187,6 +193,12 @@
         paper-button {
           padding:0;
           margin: 0;
+        }
+
+        #translationIcon {
+          width: 30px;
+          height: 30px;
+          padding: 6px;
         }
       }
 
@@ -228,6 +240,7 @@
       [hidden] {
         display: none !important;
       }
+
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
@@ -263,6 +276,12 @@
               <paper-icon-button id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
 
+            <div hidden$="[[!autoTranslate]]" class="layout horizontal">
+              <paper-button raised id="translationIcon" on-tap="_stopTranslating">
+                <iron-icon icon="translate"></iron-icon>
+                <div>{{languageName}}</div>
+              </paper-button>
+            </div>
             <span class="flex"></span>
 
             <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
@@ -301,6 +320,7 @@
     </app-drawer-layout>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <app-location route="{{route}}"></app-location>
 
@@ -449,7 +469,14 @@
           value: function() {
             return {};
           }
-        }
+        },
+
+        autoTranslate: {
+          type: Boolean,
+          value: false
+        },
+
+        languageName: String
       },
 
       listeners: {
@@ -460,7 +487,16 @@
         'yp-close-right-drawer': '_closeRightDrawer',
         'yp-refresh-group': '_refreshGroup',
         'yp-refresh-community': '_refreshCommunity',
-        'yp-refresh-domain': '_refreshDomain'
+        'yp-refresh-domain': '_refreshDomain',
+        'yp-language-name': '_setLanguageName'
+      },
+
+      _setLanguageName: function (event, detail) {
+        this.set('languageName', detail);
+      },
+
+      _autoTranslateEvent(event, detail) {
+        this.set('autoTranslate', detail);
       },
 
       _refreshGroup: function () {
