@@ -163,7 +163,6 @@
       _update() {
         this.processedContent = this.content;
         console.warn("contentLanguage: "+this.contentLanguage);
-        console.warn("autoTranslate: "+this.autoTranslate);
         console.warn("Language: "+this.language);
         if (this.autoTranslate && this.language!==this.contentLanguage) {
           this._startTranslationAndFinalize();

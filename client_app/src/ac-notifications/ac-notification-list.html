@@ -295,11 +295,9 @@
       },
 
       cancelTimer: function () {
-        console.log("notifications: cancelTimer");
         if (this.timer) {
           clearTimeout(this.timer);
           this.set('timer', null);
-          console.log("notifications: clearTimeout");
         }
       },
 
@@ -345,7 +343,6 @@
       },
 
       _startTimer: function () {
-        console.log("notifications: startTimer");
         this.cancelTimer();
         if (this.user) {
           this.timer = this.async(function () {
