@@ -1,4 +1,7 @@
 {
+  "autoTranslationStarted": "Auto translation started",
+  "autoTranslationStopped": "Auto translation stopped",
+  "autoTranslate": "Auto translate",
   "inputError": "Not valid",
   "postCreated": "Idea created",
   "postUpdated": "Idea updated",

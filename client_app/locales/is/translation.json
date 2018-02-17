@@ -1,4 +1,7 @@
 {
+  "autoTranslationStarted": "Sjálfvirkar þýðingar virkar",
+  "autoTranslationStopped": "Sjálfvirkar þýðingar óvirkar",
+  "autoTranslate": "Sjálfvirk þýðing",
   "inputError": "Villa",
   "postCreated": "Hugmynd búin til",
   "postUpdated": "Hugmynd breytt",

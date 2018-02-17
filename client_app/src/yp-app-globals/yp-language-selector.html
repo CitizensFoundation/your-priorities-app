@@ -66,7 +66,6 @@
           <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
         </paper-button>
       </div>
-
   </template>
 
   <script>
@@ -136,6 +135,14 @@
           type: Boolean,
           value: false
         }
+      },
+
+      observers: [
+        '_langChangedLocally(language)',
+      ],
+
+      _langChangedLocally: function () {
+        this.set('selectedLocale', this.language);
       },
 
       _autoTranslateEvent: function (event, detail) {
