@@ -14,6 +14,7 @@
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <dom-module id="yp-group-card">
 
@@ -184,7 +185,10 @@
               [[groupName]]
               <span hidden$="[[!archived]]">- [[t('archived')]]</span>
             </h2>
-            <div class="objectives withPointer" on-tap="_goToGroup">[[groupObjectives]]</div>
+            <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
+                             text-type="groupContent" content-language="[[group.language]]"
+                             text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
+            </yp-magic-text>
           </div>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>

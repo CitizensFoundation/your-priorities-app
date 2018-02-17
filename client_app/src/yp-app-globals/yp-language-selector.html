@@ -87,6 +87,7 @@
             is: 'Íslenska',
             da: 'Danish',
             kl: 'Greenlandic',
+            pl: 'Polish',
             nl: 'Dutch',
             no: 'Norwegian',
             pt_BR: 'Portuguese (Brazil)',
@@ -96,14 +97,13 @@
             sr_latin: 'Serbian (latin)',
             hr: 'Croatian',
             sl: 'Slovenian',
-            pt: 'Portuguese',
-            pl: 'Polish'
+            pt: 'Portuguese'
           }
         },
 
         noGoogleTranslateLanguages: {
           type: Array,
-          value: ['kl']
+          value: ['kl','sr_latin']
         },
 
         languages: {
@@ -162,6 +162,7 @@
         var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
         toast.text = this.t('autoTranslationStopped');
         toast.show();
+        window.appGlobals.activity('click', 'stopTranslation', this.language);
       },
 
       _startTranslation: function () {
@@ -179,6 +180,7 @@
           toast.text = this.t('autoTranslationStarted');
           toast.show();
         }
+        window.appGlobals.activity('click', 'startTranslation', this.language);
       },
 
       _canUseAutoTranslate: function (language) {
@@ -217,6 +219,7 @@
             if (window.appUser && window.appUser.user) {
               window.appUser.setLocale(locale);
             }
+            window.appGlobals.activity('click', 'changeLanguage', locale);
           }
         }
       }

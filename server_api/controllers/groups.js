@@ -680,6 +680,34 @@ router.get('/:id', auth.can('view group'), function(req, res) {
   });
 });
 
+router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
+  if (req.query.textType.indexOf("group") > -1) {
+    models.Group.find({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','name','objectives']
+    }).then(function(group) {
+      if (group) {
+        models.TranslationCache.getTranslation(req, group, function (error, translation) {
+          if (error) {
+            sendGroupOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Group translatedTitle', {  context: 'translated' });
+      } else {
+        sendGroupOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendGroupOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendGroupOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     log.info('Group Search', { groupId: req.params.id, context: 'view', user: toJson(req.user) });
     models.Post.search(req.params.term, req.params.id, models.Category).then(function(posts) {

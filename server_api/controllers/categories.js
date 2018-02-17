@@ -50,6 +50,34 @@ router.get('/:id', auth.can('view category'), function(req, res) {
   });
 });
 
+router.get('/:id/translatedText', auth.can('view category'), function(req, res) {
+  if (req.query.textType.indexOf("category") > -1) {
+    models.Category.find({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','name']
+    }).then(function(category) {
+      if (category) {
+        models.TranslationCache.getTranslation(req, category, function (error, translation) {
+          if (error) {
+            sendCategoryOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Category translatedTitle', {  context: 'translated' });
+      } else {
+        sendCategoryOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendCategoryOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendCategoryOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.post('/:groupId', auth.can('create category'), function(req, res) {
   var category = models.Category.build({
     name: req.body.name,

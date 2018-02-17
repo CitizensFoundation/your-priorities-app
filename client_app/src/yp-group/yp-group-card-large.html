@@ -23,6 +23,7 @@
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <link rel="import" href="yp-group-stats.html">
 <link rel="import" href="yp-group-behaviors.html">
@@ -178,8 +179,11 @@
               <div class="description">
                 <h2 class="group-name" admin$="[[hasGroupAccess]]">[[groupName]]</h2>
                 <div hidden class="groupAccess">[[groupAccessText]]</div>
-                <div id="objectives" class="groupDescription"></div>
-              </div>
+                <yp-magic-text id="objectives" class="groupDescription"
+                               text-type="groupContent" content-language="[[group.language]]"
+                               content="[[group.objectives]]" content-id="[[group.id]]">
+
+                </yp-magic-text>
             </div>
           </div>
           <div hidden$="[[!hasGroupAccess]]">
@@ -250,21 +254,6 @@
       },
 
       _groupChanged: function (group) {
-        if (group && group.objectives) {
-          this.async(function () {
-            var objectives = this.$$("#objectives");
-            if (objectives) {
-              objectives.innerHTML = this.addLinksAndEmjois(group.objectives);
-            } else {
-              console.error("Can't find group objectives element");
-            }
-          });
-        } else {
-          var objectives = this.$$("#objectives");
-          if (objectives) {
-            objectives.innerHTML = "";
-          }
-        }
       },
 
       _groupAccessText: function(group, language) {
