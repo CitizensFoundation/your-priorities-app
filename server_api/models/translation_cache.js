@@ -8,7 +8,6 @@ module.exports = function(sequelize, DataTypes) {
   let TranslationCache = sequelize.define("TranslationCache", {
     index_key: { type: DataTypes.STRING, allowNull: false },
     content: { type: DataTypes.TEXT, allowNull: false },
-    hash_value: { type: DataTypes.STRING, allowNull: false }
   }, {
 
     indexes: [
@@ -27,12 +26,12 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       getContentToTranslate: function (req, modelInstance) {
-        switch(req.params.textType) {
-          case 'postTitle':
-          case 'domainTitle':
-          case 'communityTitle':
-          case 'groupTitle':
-            return modelInstance.title;
+        switch(req.query.textType) {
+          case 'postName':
+          case 'domainName':
+          case 'communityName':
+          case 'groupName':
+            return modelInstance.name;
           case 'postContent':
           case 'domainContent':
           case 'communityContent':
@@ -52,20 +51,24 @@ module.exports = function(sequelize, DataTypes) {
 
       getTranslationFromGoogle: function (indexKey, contentToTranslate, targetLanguage, modelInstance, callback) {
         const translateAPI = new Translate({
-          credentials: process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+          credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
         });
 
         translateAPI.translate(contentToTranslate, targetLanguage)
           .then( function (results) {
-            if (results[0]) {
-              TranslateCache.create({
+            const translationResults = results[1];
+            if (translationResults && translationResults.data
+                && translationResults.data.translations &&
+                translationResults.data.translations.length>0) {
+              const translation = translationResults.data.translations[0];
+              TranslationCache.create({
                 index_key: indexKey,
-                content: results[0].translatedText
+                content: translation.translatedText
               }).then(function () {
                 modelInstance.update({
-                  language: results[0].detectedSourceLanguage
+                  language: translation.detectedSourceLanguage
                 }).then(function () {
-                  callback(null, { content: results[0].translatedText });
+                  callback(null, { content: translation.translatedText });
                 });
               }).catch(function (error) {
                 callback(error);
@@ -78,10 +81,10 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
 
-      getTranslationForContent: function (req, modelInstance, callback) {
+      getTranslation: function (req, modelInstance, callback) {
         const contentToTranslate = TranslationCache.getContentToTranslate(req, modelInstance);
         const contentHash = farmhash.hash32(contentToTranslate).toString();
-        let indexKey = `${req.params.textType}-${modelInstance.id}-${req.params.targetLanguage}-${contentHash}`;
+        let indexKey = `${req.query.textType}-${modelInstance.id}-${req.query.targetLanguage}-${contentHash}`;
 
         TranslationCache.findOne({
           where: {
@@ -91,7 +94,7 @@ module.exports = function(sequelize, DataTypes) {
           if (translationModel) {
             callback(null, { content: translationModel.content });
           } else {
-            TranslationCache.getTranslationFromGoogle(indexKey, contentToTranslate, req.params.targetLanguage, modelInstance, callback);
+            TranslationCache.getTranslationFromGoogle(indexKey, contentToTranslate, req.query.targetLanguage, modelInstance, callback);
           }
         }).catch(function (error) {
           callback(error);

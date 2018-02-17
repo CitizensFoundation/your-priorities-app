@@ -14,13 +14,12 @@
         display: inline;
       }
     </style>
-    <h1>HELLO</h1>
-    <div inner-h-t-m-l="[[content]]"></div>
-
+    <div inner-h-t-m-l="[[finalContent]]"></div>
+    <div hidden$="[[finalContent]]">[[content]]</div>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
-    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse"></iron-ajax>
+    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse" on-error="_getTranslationError"></iron-ajax>
   </template>
 
   <script>
@@ -31,7 +30,7 @@
       static get properties() {
         return {
 
-          textContent: {
+          content: {
             type: String,
             observer: '_contentChanged'
           },
@@ -41,9 +40,13 @@
             value: null
           },
 
-          textType: {
+          finalContent: {
             type: String,
-            observer: '_textTypeChanged'
+            value: null
+          },
+
+          textType: {
+            type: String
           },
 
           contentLanguage: {
@@ -62,14 +65,11 @@
         }
       }
 
-      _textTypeChanged(value) {
-        debugger;
-      }
-
       _contentChanged(newValue) {
-        debugger;
+        console.error("Content changed: "+newValue);
         if (newValue && newValue!=="") {
-         this._update();
+          this.set('finalContent', null);
+          this._update();
         }
       }
 
@@ -99,23 +99,28 @@
           this.set('processedContent', window.appGlobals.autoTranslateCache[indexKey]);
           this._finalize();
         } else {
+          this.$.getTranslationAjax.params = {
+            textType: this.textType,
+            contentId: this.contentId,
+            targetLanguage: this.language
+          };
           switch(this.textType) {
-            case 'postTitle':
+            case 'postName':
             case 'postContent':
               this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedText";
               break;
             case 'pointContent':
               this.$.getTranslationAjax.url = "/api/points/"+this.contentId+"/translatedText";
               break;
-            case 'domainTitle':
+            case 'domainName':
             case 'domainContent':
               this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedText";
               break;
-            case 'communityTitle':
+            case 'communityName':
             case 'communityContent':
               this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedText";
               break;
-            case 'groupTitle':
+            case 'groupName':
             case 'groupContent':
               this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedText";
               break;
@@ -129,16 +134,12 @@
               console.error("No valid textType for magic text: "+this.textType);
               return;
           }
-          this.$.getTranslationAjax.params = {
-            textType: this.textType,
-            contentId: this.contentId,
-            targetLanguage: this.language
-          };
           this.$.getTranslationAjax.generateRequest();
         }
       }
 
       _getTranslationResponse(event, detail) {
+        console.error("Get response: "+detail.response.content);
         if (detail.response.content) {
           this.processedContent = detail.response.content;
         } else {
@@ -148,7 +149,7 @@
       }
 
       _update() {
-        this.processedContent = this.textContent;
+        this.processedContent = this.content;
         if (this.autoTranslate && this.language!==this.contentLanguage) {
           this._startTranslationAndFinalize();
         } else {
@@ -160,7 +161,7 @@
         if (!this.textOnly) {
           this._linksAndEmojis()
         }
-        this.set('textContent', this.processedContent);
+        this.set('finalContent', this.processedContent);
       }
 
       _linksAndEmojis () {
@@ -188,8 +189,8 @@
         if (window.i18nTranslation) {
           this.set('language', window.locale);
         }
+        super.ready();
       }
-
     }
 
     customElements.define(YpMagicTextBox.is, YpMagicTextBox);

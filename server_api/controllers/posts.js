@@ -226,12 +226,12 @@ router.get('/:id', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
-  if (req.params.contentType.indexOf("post") > -1) {
+  if (req.query.textType.indexOf("post") > -1) {
     models.Post.find({
       where: {
         id: req.params.id
       },
-      attributes: ['id','title','content']
+      attributes: ['id','name','description']
     }).then(function(post) {
       if (post) {
         models.TranslationCache.getTranslation(req, post, function (error, translation) {
@@ -249,7 +249,7 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
       sendPostOrError(res, null, 'translated', req.user, error);
     });
   } else {
-    sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong contentType', 401);
+    sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
   }
 });
 
