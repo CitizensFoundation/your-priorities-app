@@ -375,6 +375,7 @@
         },
 
         ready: function () {
+          Polymer.passiveTouchGestures = true;
           window.appStartTime = new Date();
           window.appGlobals = this;
           this.autoTranslateCache = {};
