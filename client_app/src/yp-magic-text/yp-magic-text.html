@@ -175,6 +175,7 @@
         if (!this.textOnly) {
           this._linksAndEmojis()
         }
+
         if (this.truncate) {
           let truncateBy = this.truncate;
           if (YpMagicTextBox.doubleWidthLanguages.indexOf(this.language) > -1) {
@@ -182,6 +183,16 @@
           }
           this.processedContent = YpMagicTextBox.truncate(YpMagicTextBox.trim(this.processedContent), truncateBy, '...');
         }
+
+        if (this.processedContent!==this.finalContent) {
+          if (!window.magicTextIronResizeDebouncer) {
+            window.magicTextIronResizeDebouncer = setTimeout(function () {
+              window.magicTextIronResizeDebouncer = null;
+              this.dispatchEvent(new CustomEvent('iron-resize', { bubbles: true, composed: true }));
+            }.bind(this), 50);
+          }
+        }
+
         this.set('finalContent', this.processedContent);
       }
 

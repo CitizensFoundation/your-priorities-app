@@ -37,6 +37,7 @@ module.exports = function(sequelize, DataTypes) {
           case 'communityContent':
             return modelInstance.description;
           case 'pointContent':
+            return modelInstance.PointRevisions[modelInstance.PointRevisions.length-1].content;
           case 'statusChangeContent':
             return modelInstance.content;
           case 'groupContent':
