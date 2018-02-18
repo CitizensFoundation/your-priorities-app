@@ -8,6 +8,8 @@ var _ = require('lodash');
 var async = require('async');
 var crypto = require("crypto");
 var seededShuffle = require("knuth-shuffle-seeded");
+var multer = require('multer');
+var s3multer = require('multer-s3');
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
@@ -156,14 +158,14 @@ var updateGroupConfigParamters = function (req, group) {
 
 
 var upload = multer({
-  storage: s3({
+  storage: s3multer({
     dirname: 'attachments',
     bucket: process.env.S3_BUCKET,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     endpoint: process.env.S3_ENDPOINT || null,
     acl: 'public-read',
-    contentType: s3.AUTO_CONTENT_TYPE,
+    contentType: s3multer.AUTO_CONTENT_TYPE,
     region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
     key: function (req, file, cb) {
       cb(null, Date.now()+"_"+file.originalname);

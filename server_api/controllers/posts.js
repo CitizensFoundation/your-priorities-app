@@ -6,8 +6,6 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
 var _ = require('lodash');
-var multer = require('multer');
-var s3 = require('multer-s3');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
