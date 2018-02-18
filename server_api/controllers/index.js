@@ -43,6 +43,7 @@ let sendIndex = function (req, res) {
       } else if (req.hostname.indexOf('betraisland.is') > -1) {
         res.send(replaceForBetterIceland(indexFileData));
       } else {
+        log.info('Index Debug: '+replaceForYrpri(indexFileData), { context: 'view', user: req.user ? toJson(req.user) : null });
         res.send(replaceForYrpri(indexFileData));
       }
     }
