@@ -240,7 +240,8 @@
               <div class="infoContainer">
                 <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
                                content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
-                               content-id="[[post.id]]" class="description">
+                               content-id="[[post.id]]" class="description" truncate="500"
+                               more-text="{{t('showAll')}}" close-dialog-text="[[t('close')]]">
                 </yp-magic-text>
               </div>
               <div class="card-actions">

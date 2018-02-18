@@ -126,6 +126,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
   group.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat!="") ? req.body.defaultLocationLongLat : null);
 
+  group.set('configuration.postDescriptionLimit', (req.body.postDescriptionLimit && req.body.postDescriptionLimit!="") ? req.body.postDescriptionLimit : "500");
+
   if (truthValueFromBody(req.body.status)) {
     group.status = req.body.status;
   }

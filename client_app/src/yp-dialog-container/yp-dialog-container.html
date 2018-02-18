@@ -9,9 +9,6 @@
 <link rel="import" href="../yp-user/yp-reset-password.html">
 <link rel="import" href="../yp-page/yp-page-dialog.html">
 <link rel="import" href="../yp-user/yp-accept-invite.html">
-<link rel="import" href="../yp-post/yp-post-edit.html">
-<link rel="import" href="../yp-community/yp-community-edit.html">
-<link rel="import" href="../yp-group/yp-group-edit.html">
 
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
@@ -46,11 +43,13 @@
       <yp-missing-email id="missingEmail"></yp-missing-email>
       <yp-page-dialog id="pageDialog"></yp-page-dialog>
 
-      <!-- Those are upgraded later from bundles -->
-      <yp-community-edit id="communityEdit"></yp-community-edit>
-      <yp-group-edit new id="groupEdit"></yp-group-edit>
-      <yp-post-edit id="postEdit"></yp-post-edit>
-      <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
+      <template is="dom-if" if="[[haveLoadedDelayed]]">
+        <yp-community-edit id="communityEdit"></yp-community-edit>
+        <yp-group-edit new id="groupEdit"></yp-group-edit>
+        <yp-post-edit id="postEdit"></yp-post-edit>
+        <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
+        <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
+      </template>
 
       <template is="dom-if" if="[[loggedInUser]]">
         <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
@@ -69,7 +68,6 @@
         <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
         <yp-post-move id="postMove"></yp-post-move>
       </template>
-
 
       <template is="dom-if" if="[[bulkStatusUpdates]]">
         <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
@@ -104,7 +102,18 @@
         hideDialogs: {
           type: Boolean,
           value: true
+        },
+
+        haveLoadedDelayed: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      ready: function () {
+        this.importHref(this.resolveUrl("yp-dialog-container-delayed.html"), function () {
+          this.set('haveLoadedDelayed', true)
+        }, null, true);
       },
 
       _loggedInUser: function (event, user) {

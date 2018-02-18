@@ -162,7 +162,7 @@
                               char-counter
                               rows="2"
                               max-rows="5"
-                              maxlength="500">
+                              maxlength="[[postDescriptionLimit]]">
               </paper-textarea>
               <div class="horizontal end-justified layout" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorDescription"></emoji-selector>
@@ -308,6 +308,11 @@
       mapActive: {
         type: Boolean,
         value: false
+      },
+
+      postDescriptionLimit: {
+        type: Number,
+        value: 500
       }
     },
 
@@ -513,14 +518,19 @@
     setup: function (post, group, newNotEdit, refreshFunction) {
       if (group) {
         this.set('group', group);
-        if (this.group.configuration && this.group.configuration.locationHidden) {
-          if (this.group.configuration.locationHidden == true) {
-            this.set('locationHidden', true);
+        if (this.group.configuration) {
+          if (this.group.configuration.locationHidden) {
+            if (this.group.configuration.locationHidden == true) {
+              this.set('locationHidden', true);
+            } else {
+              this.set('locationHidden', false);
+            }
           } else {
             this.set('locationHidden', false);
           }
-        } else {
-          this.set('locationHidden', false);
+          if (this.group.configuration.postDescriptionLimit) {
+            this.set('postDescriptionLimit', this.group.configuration.postDescriptionLimit);
+          }
         }
       } else {
         this.set('group', null);

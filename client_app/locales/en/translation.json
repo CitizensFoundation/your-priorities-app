@@ -1,4 +1,5 @@
 {
+  "postDescriptionLimit": "Post description limit",
   "autoTranslationStarted": "Auto translation started",
   "autoTranslationStopped": "Auto translation stopped",
   "autoTranslate": "Auto translate",

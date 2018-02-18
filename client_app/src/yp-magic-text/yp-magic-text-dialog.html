@@ -1,0 +1,70 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html" >
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
+
+<link rel="import" href="yp-magic-text.html">
+
+<dom-module id="yp-magic-text-dialog">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      #dialog {
+        background-color: #FFF;
+      }
+
+      @media (max-width: 600px) {
+        paper-dialog {
+          padding: 0;
+          margin: 0;
+        }
+      }
+
+      .buttons {
+        color: var(--accent-color);
+      }
+    </style>
+
+    <paper-dialog id="dialog">
+      <h2>[[pageTitle]]</h2>
+      <paper-dialog-scrollable>
+        <div inner-h-t-m-l="[[finalContent]]"></div>
+        <div hidden$="[[finalContent]]">[[content]]</div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button on-tap="_close" dialog-dismiss>[[closeDialogText]]</paper-button>
+      </div>
+    </paper-dialog>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse"></iron-ajax>
+  </template>
+
+  <script>
+
+    class YpMagicTextBoxDialog extends YpMagicTextBox {
+      static get is() {
+        return 'yp-magic-text-dialog';
+      }
+
+      subClassProcessing() {
+        this.processedContent = this.processedContent.replace(/\n/g, "<br />");
+      }
+
+      open(content, contentId, extraId, textType, contentLanguage, closeDialogText) {
+        this.contentId = contentId;
+        this.extraId = extraId;
+        this.textType = textType;
+        this.contentLanguage = contentLanguage;
+        this.set('content', content);
+        this.set('closeDialogText', closeDialogText);
+        this.$.dialog.open();
+      }
+    }
+
+    customElements.define(YpMagicTextBoxDialog.is, YpMagicTextBoxDialog);
+  </script>
+</dom-module>

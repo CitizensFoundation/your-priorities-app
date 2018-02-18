@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
@@ -14,10 +15,21 @@
     <style>
       :host {
         display: block;
+        width: 100%;
+      }
+
+      .moreText {
+        @apply --layout-center-center;
+        color: var(--accent-color);
+        cursor: pointer;
+        width: 100%;
       }
     </style>
     <div inner-h-t-m-l="[[finalContent]]"></div>
     <div hidden$="[[finalContent]]">[[content]]</div>
+    <div hidden$="[[!showMoreText]]" class="layout vertical center-center moreText" on-tap="_openFullScreen">
+      <div>[[moreText]]</div>
+    </div>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
@@ -38,7 +50,16 @@
           },
 
           contentId: String,
+
           extraId: String,
+
+          textType: {
+            type: String
+          },
+
+          contentLanguage: {
+            type: String
+          },
 
           processedContent: {
             type: String,
@@ -48,14 +69,6 @@
           finalContent: {
             type: String,
             value: null
-          },
-
-          textType: {
-            type: String
-          },
-
-          contentLanguage: {
-            type: String
           },
 
           autoTranslate: {
@@ -71,12 +84,36 @@
           truncate: {
             type: Number,
             value: null
+          },
+
+          moreText: String,
+
+          showMoreText: {
+            type: Boolean,
+            computed: '_showMoreText(moreText,content)'
+          },
+
+          closeDialogText: {
+            type: String
           }
         }
       }
 
       static get doubleWidthLanguages() {
         return ['zh_TW']
+      }
+
+      _showMoreText(moreText, content) {
+        return moreText && content && content.length>500;
+      }
+
+      _openFullScreen() {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("magicTextDialog", function (dialog) {
+          dialog.open(this.content, this.contentId, this.extraId, this.textType, this.contentLanguage, this.closeDialogText);
+        }.bind(this));
+      }
+
+      subClassProcessing() {
       }
 
       _contentChanged(newValue) {
@@ -193,6 +230,8 @@
           }
           this.processedContent = YpMagicTextBox.truncate(YpMagicTextBox.trim(this.processedContent), truncateBy, '...');
         }
+
+        this.subClassProcessing();
 
         if (this.processedContent!==this.finalContent) {
           if (!window.magicTextIronResizeDebouncer) {

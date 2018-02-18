@@ -253,6 +253,15 @@
                    char-counter>
       </paper-input>
 
+      <paper-input id="postDescriptionLimit"
+                   name="postDescriptionLimit"
+                   type="text"
+                   label="[[t('postDescriptionLimit')]]"
+                   value="{{group.configuration.postDescriptionLimit}}"
+                   maxlength="4"
+                   char-counter>
+      </paper-input>
+
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
