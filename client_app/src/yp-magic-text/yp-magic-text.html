@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
@@ -15,20 +16,35 @@
     <style>
       :host {
         display: block;
-        width: 100%;
+      }
+
+      .container[more-text] {
+        @apply --layout-vertical;
+        @apply --layout-center-center;
       }
 
       .moreText {
-        @apply --layout-center-center;
         color: var(--accent-color);
-        cursor: pointer;
-        width: 100%;
+        background-color: #FFF;
+        margin-top: 6px;
+        margin-bottom: 6px;
+        position: absolute;
+        bottom: 6px;
+        left: 466px;
+      }
+
+      @media (max-width: 600px) {
+        .moreText {
+          position: initial;
+        }
       }
     </style>
-    <div inner-h-t-m-l="[[finalContent]]"></div>
-    <div hidden$="[[finalContent]]">[[content]]</div>
-    <div hidden$="[[!showMoreText]]" class="layout vertical center-center moreText" on-tap="_openFullScreen">
-      <div>[[moreText]]</div>
+    <div class="container" more-text$="[[showMoreText]]">
+      <div inner-h-t-m-l="[[finalContent]]"></div>
+      <div hidden$="[[finalContent]]">[[content]]</div>
+      <template is="dom-if" if="[[showMoreText]]">
+        <paper-button raised class="moreText" on-tap="_openFullScreen">[[moreText]]</paper-button>
+      </template>
     </div>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
