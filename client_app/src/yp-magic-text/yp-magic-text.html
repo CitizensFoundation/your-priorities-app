@@ -78,7 +78,7 @@
       }
 
       _contentChanged(newValue) {
-        console.error("Content changed: "+newValue);
+        //console.info("Content changed: "+newValue);
         if (newValue && newValue!=="") {
           this.set('finalContent', null);
           if (window.autoTranslate) {
@@ -109,7 +109,7 @@
       _startTranslationAndFinalize () {
         let indexKey = this._getIndexKey();
         if (window.appGlobals.autoTranslateCache[indexKey]) {
-          console.warn("Using cache: "+window.appGlobals.autoTranslateCache[indexKey]);
+          //console.warn("Using cache: "+window.appGlobals.autoTranslateCache[indexKey]);
           this.set('processedContent', window.appGlobals.autoTranslateCache[indexKey]);
           this._finalize();
         } else {
@@ -153,7 +153,7 @@
       }
 
       _getTranslationResponse(event, detail) {
-        console.warn("Get response: "+detail.response.content);
+        //console.info("Get response: "+detail.response.content);
         if (detail.response.content) {
           this.processedContent = detail.response.content;
           window.appGlobals.autoTranslateCache[this._getIndexKey()] = this.processedContent;
@@ -165,8 +165,8 @@
 
       _update() {
         this.processedContent = this.content;
-        console.warn("contentLanguage: "+this.contentLanguage);
-        console.warn("Language: "+this.language);
+        //console.info("contentLanguage: "+this.contentLanguage);
+        //console.info("Language: "+this.language);
         if (this.autoTranslate && this.language!==this.contentLanguage) {
           this._startTranslationAndFinalize();
         } else {
@@ -192,7 +192,7 @@
             window.magicTextIronResizeDebouncer = setTimeout(function () {
               window.magicTextIronResizeDebouncer = null;
               this.dispatchEvent(new CustomEvent('iron-resize', { bubbles: true, composed: true }));
-            }.bind(this), 50);
+            }.bind(this), 100);
           }
         }
 

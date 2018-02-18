@@ -179,7 +179,10 @@
         <yp-post-cover-media post="[[activity.Post]]"></yp-post-cover-media>
       </div>
       <div class="layout vertical center-center">
-        <div class="post-name mainContainerItem" is-ie11$="[[isIE11]]">[[activity.Post.name]]</div>
+        <yp-magic-text class="post-name mainContainerItem" is-ie11$="[[isIE11]]"
+                       text-only text-type="postName" content-language="[[activity.Post.language]]"
+                       content="[[activity.Post.name]]" content-id="[[activity.Post.id]]">
+        </yp-magic-text>
       </div>
       <div class="layout vertical center-center descriptionOuter">
         <div id="description" class="description mainContainerItem" is-ie11$="[[isIE11]]">

@@ -150,7 +150,7 @@
       }
 
       .postItem {
-        background-color: #FFF;
+        background-color: #FFF !important;
       }
 
       .headerText {
@@ -173,7 +173,7 @@
     <template is="dom-repeat" items="[[recommendedPosts]]" as="post">
       <div class="postContainer">
         <paper-material elevation="1" class="postItem">
-          <div class="layout vertical" on-tap="goToPost">
+          <div class="layout vertical postItem" on-tap="goToPost">
             <div class="layout horizontal">
               <yp-post-cover-media tiny post="[[post]]"></yp-post-cover-media>
             </div>
