@@ -121,9 +121,9 @@ app.get('/*', function (req, res, next) {
 });
 
 if (!FORCE_PRODUCTION && app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_app')));
+  app.use(express.static(path.join(__dirname, '../client_app'), { index: false }));
 } else {
-  app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));
+  app.use(express.static(path.join(__dirname, '../client_app/build/bundled'), { index: false }));
 }
 
 // Setup the current domain from the host
