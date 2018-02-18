@@ -121,6 +121,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideGroupHeader', truthValueFromBody(req.body.hideGroupHeader));
   group.set('configuration.hidePointAuthor', truthValueFromBody(req.body.hidePointAuthor));
   group.set('configuration.hidePostAuthor', truthValueFromBody(req.body.hidePostAuthor));
+  group.set('configuration.attachmentsEnabled', truthValueFromBody(req.body.attachmentsEnabled));
+  group.set('configuration.moreContactInformation', truthValueFromBody(req.body.moreContactInformation));
 
   group.set('configuration.endorsementButtons', (req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts");
   group.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
@@ -151,6 +153,28 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
   group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
 };
+
+
+var upload = multer({
+  storage: s3({
+    dirname: 'attachments',
+    bucket: process.env.S3_BUCKET,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    endpoint: process.env.S3_ENDPOINT || null,
+    acl: 'public-read',
+    contentType: s3.AUTO_CONTENT_TYPE,
+    region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
+    key: function (req, file, cb) {
+      cb(null, Date.now()+"_"+file.originalname);
+    }
+  })
+});
+
+router.post('/:id/upload_document',  auth.can('view group'),  upload.array('upl'), function(req, res) {
+  var id;
+  res.send({id: id});
+});
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
   models.AcActivity.find({

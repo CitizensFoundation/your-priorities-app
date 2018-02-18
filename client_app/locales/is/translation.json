@@ -1,5 +1,10 @@
 {
-  "showAllText": "Sýna allan textan",
+  "downloadAttachment": "Hlaða niður viðhengi",
+  "uploadAttachment": "Viðhengi",
+  "contactTelephone": "Símanúmer",
+  "contactInformation": "Upplýsingar um tengilið",
+  "deleteAttachment": "Eyða viðhengi",
+  "readMore": "Lesa meira",
   "postDescriptionLimit": "Hámark stafalengd lýsingar",
   "autoTranslationStarted": "Sjálfvirkar þýðingar virkar",
   "autoTranslationStopped": "Sjálfvirkar þýðingar óvirkar",

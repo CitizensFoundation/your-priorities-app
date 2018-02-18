@@ -6,6 +6,8 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
 var _ = require('lodash');
+var multer = require('multer');
+var s3 = require('multer-s3');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -491,6 +493,28 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
   });
 });
 
+
+var truthValueFromBody = function(bodyParameter) {
+  if (bodyParameter && bodyParameter!="") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+var updatePostData = function (req, post) {
+  if (!post.data) {
+    post.set('data', {});
+  }
+  if (!post.data.contactInformation) {
+    this.set('data.contactInformation', {});
+  }
+  group.set('data.canVote', truthValueFromBody(req.body.canVote));
+  group.set('configuration.canAddNewPosts', truthValueFromBody(req.body.canAddNewPosts));
+  group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
+  group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
+};
+
 router.post('/:groupId', auth.can('create post'), function(req, res) {
   var post = models.Post.build({
     name: req.body.name,
@@ -506,6 +530,9 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
+
+  updatePostData(req, post);
+
   post.save().then(function() {
     log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
     post.setupAfterSave(req, res, function () {

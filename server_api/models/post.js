@@ -32,7 +32,6 @@ module.exports = function(sequelize, DataTypes) {
     user_interaction_profile: DataTypes.JSONB,
     language: { type: DataTypes.STRING, allowNull: true }
   }, {
-
     defaultScope: {
       where: {
         deleted: false

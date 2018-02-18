@@ -189,6 +189,8 @@
 
       <div class="layout vertical config">
         <h2>[[t('additionalGroupConfig')]]</h2>
+        <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">[[t('attachmentsEnabled')]]</paper-checkbox>
+        <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">[[t('moreContactInformation')]]</paper-checkbox>
         <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
         <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">[[t('hideNewPostOnPostPage')]]</paper-checkbox>
         <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
