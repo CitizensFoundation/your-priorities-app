@@ -10,6 +10,15 @@ var crypto = require("crypto");
 var seededShuffle = require("knuth-shuffle-seeded");
 var multer = require('multer');
 var s3multer = require('multer-s3');
+var aws = require('aws-sdk');
+
+var s3 = new aws.S3({
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  endpoint: process.env.S3_ENDPOINT || null,
+  acl: 'public-read',
+  region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
+})
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
@@ -160,6 +169,7 @@ var updateGroupConfigParamters = function (req, group) {
 var upload = multer({
   storage: s3multer({
     dirname: 'attachments',
+    s3: s3,
     bucket: process.env.S3_BUCKET,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,

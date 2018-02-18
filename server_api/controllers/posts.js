@@ -505,12 +505,9 @@ var updatePostData = function (req, post) {
     post.set('data', {});
   }
   if (!post.data.contactInformation) {
-    this.set('data.contactInformation', {});
+    post.set('data.contactInformation', {});
   }
-  group.set('data.canVote', truthValueFromBody(req.body.canVote));
-  group.set('configuration.canAddNewPosts', truthValueFromBody(req.body.canAddNewPosts));
-  group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
-  group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
+//  group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
 };
 
 router.post('/:groupId', auth.can('create post'), function(req, res) {
