@@ -105,12 +105,21 @@
         margin-left: 8px;
         margin-top: 4px;
       }
+
+      section {
+        width: 100%;
+      }
+
+      .contactInfo {
+        margin-top: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
                     use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
-                    title="[[editHeaderText]]" save-text="[[saveText]]" next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
+                    title="[[editHeaderText]]" save-text="[[saveText]]" class="container"
+                    next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <paper-tabs selected="{{selected}}" id="paperTabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp if="[[newPost]]">
@@ -131,10 +140,10 @@
         <paper-tab>[[t('post.photo')]]</paper-tab>
       </paper-tabs>
 
-      <div class="layout vertical wrap container">
-        <neon-animated-pages id="pages" class="layout horizontal flex" selected="[[selected]]">
+      <div class="layout vertical wrap">
+        <iron-pages id="pages" class="layout horizontal" selected="[[selected]]">
           <section>
-            <div class="layout vertical">
+            <div class="layout vertical flex">
 
               <paper-input id="name"
                            required
@@ -187,7 +196,7 @@
                 </template>
               </template>
               <template is="dom-if" if="[[group.configuration.moreContactInformation]]">
-                <h2>[[t('contactInformation')]]</h2>
+                <h2 class="contactInfo">[[t('contactInformation')]]</h2>
                 <paper-input id="contactName"
                              name="contactName"
                              type="text"
@@ -264,7 +273,7 @@
               </paper-radio-group>
             </div>
           </section>
-        </neon-animated-pages>
+        </iron-pages>
         <input type="hidden" name="location" value="[[encodedLocation]]">
         <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">

@@ -205,6 +205,10 @@
         max-height: 70px !important;
       }
 
+      .actionButtons {
+        margin: 8px;
+        font-weight: bold;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -258,10 +262,10 @@
             <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
             <template is="dom-if" if="[[!uploadingState]]">
               <template is="dom-if" if="[[!useNextTabAction]]">
-                <paper-button id="submit2" on-tap="_submit">[[saveText]]</paper-button>
+                <paper-button raised class="actionButtons" id="submit2" on-tap="_submit">[[saveText]]</paper-button>
               </template>
               <template is="dom-if" if="[[useNextTabAction]]">
-                <paper-button on-tap="_nextTab">[[nextActionText]]</paper-button>
+                <paper-button raised class="actionButtons" on-tap="_nextTab">[[nextActionText]]</paper-button>
               </template>
             </template>
             <template is="dom-if" if="[[uploadingState]]">
