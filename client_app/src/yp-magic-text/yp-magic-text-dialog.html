@@ -30,7 +30,7 @@
     <paper-dialog id="dialog">
       <h2>[[pageTitle]]</h2>
       <paper-dialog-scrollable>
-        <div inner-h-t-m-l="[[finalContent]]"></div>
+        <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]"></div>
         <div hidden$="[[finalContent]]">[[content]]</div>
       </paper-dialog-scrollable>
       <div class="buttons">
