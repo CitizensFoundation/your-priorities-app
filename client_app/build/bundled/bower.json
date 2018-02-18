@@ -39,13 +39,14 @@
     "google-streetview-pano": "https://github.com/rbjarnason/google-streetview-pano.git#timings-fix-maps-api-callback",
     "web-animations-js": "^2.3.1",
     "moment": "2.x",
-    "lodash": "4.x",
+    "lodash": "3.x",
     "i18next": "10.x",
     "linkifyjs": "2.x",
     "i18next-xhr-backend": "^1.5.0",
-    "twemoji-min": "^2.3.0"
+    "twemoji-min": "^2.3.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.5.0"
   },
   "devDependencies": {
-    "test-fixture": "PolymerElements/test-fixture#2.x"
+    "test-fixture": "PolymerElements/test-fixture#3.x"
   }
 }
