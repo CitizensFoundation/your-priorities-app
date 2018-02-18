@@ -5,11 +5,14 @@
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
@@ -39,12 +42,12 @@
 
       .postCard {
         background-color: #fff;
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
 
       :host {
         display: block;
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       .postCard {
@@ -152,10 +155,15 @@
     <paper-material mini$="[[mini]]" class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
         <yp-post-cover-media mini$="[[mini]]" post="[[post]]"></yp-post-cover-media>
-        <h1 class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">[[postName]]</h1>
-        <div class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[mini]]">
-          [[shortDescription]]
-        </div>
+        <h1 class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
+          <yp-magic-text text-type="postName" content-language="[[post.language]]"
+                         content="[[postName]]" content-id="[[post.id]]">
+          </yp-magic-text>
+        </h1>
+        <yp-magic-text class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[mini]]"
+                       text-type="postContent" content-language="[[post.language]]"
+                       text-only content="[[shortDescription]]" content-id="[[post.id]]" truncate="100">
+        </yp-magic-text>
         <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
       </div>
     </paper-material>
@@ -166,11 +174,13 @@
       is: 'yp-post-card',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.YpPostBehavior,
         Polymer.AccessHelpers,
-        Polymer.YpLinkifyAndEmjoi,
-        Polymer.ypLoggedInUserBehavior
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypImageFormatsBehavior,
+        Polymer.ypTruncateBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {
@@ -228,21 +238,6 @@
       },
 
       _postChanged: function (post) {
-        if (false && post && post.description) {
-          this.async(function () {
-            var description = this.$$("#description");
-            if (description) {
-              description.innerHTML = this.addLinksAndEmjois(post.description);
-              // Special case for law Issue from a parliement
-              if (post.data && post.data.dataType=='lawIssue' && post.data.issueStatus) {
-                description.innerHTML += " - "+post.data.issueStatus;
-              }
-            } else {
-              console.error("Can't find description element");
-            }
-          });
-        }
-
         if (post) {
           this.async(function () {
             var postName = this.$$("#postName");

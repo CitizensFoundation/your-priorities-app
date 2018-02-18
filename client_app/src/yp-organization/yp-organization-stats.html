@@ -2,7 +2,8 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
 
 <dom-module id="yp-community-stats">
 
@@ -11,12 +12,12 @@
     <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
 
       .stats {
-        @apply(--layout-horizontal);
-        @apply(--layout-flex);
+        @apply --layout-horizontal;
+        @apply --layout-flex;
         padding-top: 8px;
         padding-bottom: 8px;
       }
@@ -56,7 +57,8 @@
       is: 'yp-community-stats',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.ypLanguageBehavior,
+        Polymer.ypNumberFormatBehavior
       ],
 
       properties: {

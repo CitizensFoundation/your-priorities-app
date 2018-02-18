@@ -18,7 +18,7 @@
       }
 
       .grid {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       yp-group-card {
@@ -42,7 +42,7 @@
       is: 'test-groups',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.ypLanguageBehavior
       ],
 
       ready: function (e) {

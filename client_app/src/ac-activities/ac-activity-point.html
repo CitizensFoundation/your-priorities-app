@@ -2,8 +2,10 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-point/yp-point.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <dom-module id="ac-activity-point">
   <template>
@@ -13,7 +15,7 @@
       .point {
         padding: 8px;
         margin: 8px;
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       .pointText {
@@ -75,9 +77,10 @@
         [[t('point.againstAdded')]]...
       </div>
       <div class="layout vertical">
-        <div class="post-name withCursor" on-tap="_goToPoint">
-          [[activity.Post.name]]
-        </div>
+        <yp-magic-text class="post-name withCursor" on-tap="_goToPoint"
+                       text-only text-type="postName" content-language="[[activity.Post.language]]"
+                       content="[[activity.Post.name]]" content-id="[[activity.Post.id]]">
+        </yp-magic-text>
         <yp-point hide-user link-point$="[[!postId]]" class="card" point="[[activity.Point]]"></yp-point>
       </div>
     </div>
@@ -89,7 +92,8 @@
       is: 'ac-activity-point',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.ypLanguageBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {

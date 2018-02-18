@@ -13,9 +13,11 @@
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 <link rel="import" href="../yp-behaviors/yp-detect-old-ios.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
 
@@ -26,6 +28,7 @@
 <link rel="import" href="../yp-post/yp-post-list.html">
 <link rel="import" href="../yp-post/yp-post-map.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
 
 <link rel="import" href="yp-group-card-large.html">
 
@@ -98,6 +101,7 @@
 
       .largeAddButton {
         margin-bottom: 4px;
+        margin-top: 4px;
       }
 
       @media (max-width: 1024px) {
@@ -329,10 +333,13 @@
       is: 'yp-group',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.ypThemeBehavior,
         Polymer.YpNewsTabSelected,
-        Polymer.ypDetectOldiOs
+        Polymer.ypDetectOldiOs,
+        Polymer.ypGotoBehavior,
+        Polymer.ypImageFormatsBehavior,
+        Polymer.ypNumberFormatBehavior
       ],
 
       listeners: {
@@ -685,7 +692,7 @@
           });
 
           if (this.group.configuration.defaultLocale!=null) {
-            this.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
+            window.appGlobals.changeLocaleIfNeeded(this.group.configuration.defaultLocale);
           }
 
           window.appGlobals.setCommunityAnalyticsTracker(this.group.Community.google_analytics_code);

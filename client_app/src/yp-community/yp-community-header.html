@@ -10,12 +10,14 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
 <link rel="import" href="yp-community-behaviors.html">
 <link rel="import" href="yp-community-stats.html">
@@ -75,7 +77,7 @@
       }
 
       .contentContainer {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
 
       .textBox {
@@ -195,12 +197,14 @@
       is: 'yp-community-header',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.CommunityBehaviors,
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.ypGotoBehavior,
+        Polymer.ypTruncateBehavior,
+        Polymer.ypImageFormatsBehavior
       ],
 
       properties: {
@@ -217,16 +221,6 @@
       },
 
       _communityChanged: function (community) {
-        if (community && community.description) {
-          this.async(function () {
-            var description = this.$$("#description");
-            if (description) {
-              description.innerHTML = this.addLinksAndEmjois(community.description);
-            } else {
-              console.error("Can't find community description element");
-            }
-          });
-        }
       },
 
       _hasCommunityAccess: function(community, gotAdminRights) {

@@ -5,7 +5,7 @@
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
@@ -150,7 +150,7 @@
       is: 'ac-activity',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.ypLoggedInUserBehavior,
         Polymer.AccessHelpers
       ],
@@ -202,6 +202,14 @@
         } else {
           return false;
         }
+      },
+
+      fromTime: function (timeValue) {
+        return moment(timeValue).fromNow();
+      },
+
+      fromLongTime: function (timeValue) {
+        return moment(timeValue).format();
       },
 
       _isOldSafariOrIe: function (wide) {

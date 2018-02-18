@@ -10,7 +10,10 @@
 <link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-remove-class-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="yp-post-actions">
 
@@ -22,19 +25,19 @@
       }
 
       .action-bar {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
         position: absolute;
         background-color: #FFF;
       }
 
       .action-bar[floating] {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
         position: relative;
         background-color: #FFF;
       }
 
       .action-bar-small {
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
         margin-top: 8px;
         position: absolute;
         width: 100%;
@@ -54,14 +57,14 @@
       }
 
       .action-up {
-        @apply(--layout-horizontal);
-        @apply(--layout-start-justified);
+        @apply --layout-horizontal;
+        @apply --layout-start-justified;
         color: var(--primary-up-color-lighter, rgba(0,153,0,0.55));
       }
 
       .action-down {
-        @apply(--layout-horizontal);
-        @apply(--layout-end-justified);
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
         color: var(--primary-down-color-lighter, rgba(153,0,0,0.55));
       }
 
@@ -86,8 +89,8 @@
       }
 
       .action-debate {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center-justified;
         color: #656565;
       }
 
@@ -218,7 +221,10 @@
       is: 'yp-post-actions',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.ypLanguageBehavior,
+        Polymer.ypNumberFormatBehavior,
+        Polymer.ypRemoveClassBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {

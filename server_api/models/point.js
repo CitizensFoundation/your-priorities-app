@@ -180,7 +180,8 @@ module.exports = function(sequelize, DataTypes) {
     counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 },
-    embed_data: DataTypes.JSONB
+    embed_data: DataTypes.JSONB,
+    language: { type: DataTypes.STRING, allowNull: true }
   }, {
 
     defaultScope: {

@@ -6,7 +6,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="yp-post-user-image-card.html">
 
 <dom-module id="yp-post-user-images">
@@ -49,7 +49,7 @@
         is: 'yp-post-user-images',
 
         behaviors: [
-          Polymer.appHelpers
+          Polymer.ypLanguageBehavior
         ],
 
         properties: {
@@ -78,7 +78,7 @@
 
         _newImage: function () {
           window.appGlobals.activity('open', 'newUserImage');
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialogAsync("userImageEdit", function (dialog) {
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userImageEdit", function (dialog) {
             dialog.setup(this.post, null, true, this._refresh.bind(this));
             dialog.open('new', {postId: this.post.id, userImages: true});
           }.bind(this));

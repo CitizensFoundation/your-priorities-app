@@ -17,19 +17,20 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
 <link rel="import" href="../yp-file-upload/yp-file-upload.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="yp-post-location.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="yp-post-edit">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
       .access {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center-justified;
       }
 
       paper-button {
@@ -151,21 +152,61 @@
                 <input type="hidden" name="categoryId" value="[[selectedCategoryId]]">
               </template>
 
-              <paper-textarea id="description"
-                              required
-                              minlength="3"
-                              name="description"
-                              value="{{post.description}}"
-                              always-float-label="[[post.description]]"
-                              label="[[t('post.description')]]"
-                              char-counter
-                              rows="2"
-                              max-rows="5"
-                              maxlength="500">
-              </paper-textarea>
+              <template is="dom-if" if="[[postDescriptionLimit]]">
+                <paper-textarea id="description"
+                                required
+                                minlength="3"
+                                name="description"
+                                value="{{post.description}}"
+                                always-float-label="[[post.description]]"
+                                label="[[t('post.description')]]"
+                                char-counter
+                                rows="2"
+                                max-rows="5"
+                                maxlength="[[postDescriptionLimit]]">
+                </paper-textarea>
+              </template>
+
               <div class="horizontal end-justified layout" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorDescription"></emoji-selector>
               </div>
+
+              <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">
+                <yp-file-upload id="attachmentFileUpload" raised="true" multi="false" target="/api/groups/[[group.id]]/upload_attachment" method="POST" on-success="_attachmentUploaded">
+                  <iron-icon class="icon" icon="attach-file"></iron-icon>
+                  <span>[[t('uploadAttachment')]]</span>
+                </yp-file-upload>
+                <template is="dom-if" if="[[post.data.attachments]]">
+                  <paper-checkbox name="deleteAttachment">[[t('deleteAttachment')]]</paper-checkbox>
+                </template>
+              </template>
+              <template is="dom-if" if="[[group.configuration.moreContactInformation]]">
+                <h3>[[t('contactInformation')]]</h3>
+                <paper-input id="contactName"
+                             name="contactName"
+                             type="text"
+                             label="[[t('user.name')]]"
+                             value="{{post.data.contactInformation.name}}"
+                             char-counter>
+                </paper-input>
+                <paper-input id="contactEmail"
+                             name="contactEmail"
+                             type="text"
+                             pattern="[[emailValidationPattern]]"
+                             label="[[t('user.email')]]"
+                             value="{{post.data.contactInformation.email}}"
+                             char-counter>
+                </paper-input>
+                <paper-input id="contactTelephone"
+                             name="contacTelephone"
+                             type="text"
+                             pattern="[[emailValidationPattern]]"
+                             label="[[t('contactTelephone')]]"
+                             value="{{post.data.contactInformation.telephone}}"
+                             maxlength="20"
+                             char-counter>
+                </paper-input>
+              </template>
             </div>
           </section>
 
@@ -199,7 +240,7 @@
 
           <section>
             <div class="layout vertical center-center">
-              <yp-file-upload id="imageFileUpload" raised="true" multi="true" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
+              <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
                 <iron-icon class="icon" icon="photo-camera"></iron-icon>
                 <span>[[t('image.upload')]]</span>
               </yp-file-upload>
@@ -236,8 +277,9 @@
     is: 'yp-post-edit',
 
     behaviors: [
-      Polymer.appHelpers,
-      Polymer.ypEditDialogBehavior
+      Polymer.ypLanguageBehavior,
+      Polymer.ypEditDialogBehavior,
+      Polymer.ypGotoBehavior
     ],
 
     properties: {
@@ -286,6 +328,11 @@
         type: Number
       },
 
+      emailValidationPattern: {
+        type: String,
+        value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+      },
+
       selectedCoverMediaType: {
         type: String,
         value: 'none',
@@ -306,6 +353,11 @@
       mapActive: {
         type: Boolean,
         value: false
+      },
+
+      postDescriptionLimit: {
+        type: Number,
+        value: null
       }
     },
 
@@ -511,14 +563,21 @@
     setup: function (post, group, newNotEdit, refreshFunction) {
       if (group) {
         this.set('group', group);
-        if (this.group.configuration && this.group.configuration.locationHidden) {
-          if (this.group.configuration.locationHidden == true) {
-            this.set('locationHidden', true);
+        if (this.group.configuration) {
+          if (this.group.configuration.locationHidden) {
+            if (this.group.configuration.locationHidden == true) {
+              this.set('locationHidden', true);
+            } else {
+              this.set('locationHidden', false);
+            }
           } else {
             this.set('locationHidden', false);
           }
-        } else {
-          this.set('locationHidden', false);
+          if (this.group.configuration.postDescriptionLimit) {
+            this.set('postDescriptionLimit', this.group.configuration.postDescriptionLimit);
+          } else {
+            this.set('postDescriptionLimit', 500);
+          }
         }
       } else {
         this.set('group', null);

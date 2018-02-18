@@ -2,11 +2,13 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
 <link rel="import" href="../yp-post/yp-post-cover-media.html">
 <link rel="import" href="../yp-post/yp-post-behaviors.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="ac-activity-recommended-posts">
   <template>
@@ -23,7 +25,7 @@
       }
 
       .descriptionOuter {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         color: var(--primary-color-more-darker, #424242);
         margin: 0;
         padding-left: 16px;
@@ -79,7 +81,7 @@
       .postCard {
         width: 200px;
         background-color: #fff;
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
       }
 
       @media (max-width: 960px) {
@@ -90,7 +92,7 @@
         .postCard {
           height: 100%;
           width: 420px;
-          @apply(--layout-wrap);
+          @apply --layout-wrap;
         }
 
         yp-post-cover-media {
@@ -147,7 +149,7 @@
       }
 
       .postItem {
-        background-color: #FFF;
+        background-color: #FFF !important;
       }
 
       .headerText {
@@ -170,7 +172,7 @@
     <template is="dom-repeat" items="[[recommendedPosts]]" as="post">
       <div class="postContainer">
         <paper-material elevation="1" class="postItem">
-          <div class="layout vertical" on-tap="goToPost">
+          <div class="layout vertical postItem" on-tap="goToPost">
             <div class="layout horizontal">
               <yp-post-cover-media tiny post="[[post]]"></yp-post-cover-media>
             </div>
@@ -189,9 +191,11 @@
       is: 'ac-activity-recommended-posts',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.YpPostBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.ypTruncateBehavior,
+        Polymer.ypImageFormatsBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {

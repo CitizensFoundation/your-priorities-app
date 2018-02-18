@@ -2,7 +2,8 @@
 
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -26,7 +27,8 @@
         is: 'yp-app-globals',
 
         behaviors: [
-          Polymer.appHelpers
+          Polymer.ypLanguageBehavior,
+          Polymer.ypGotoBehavior
         ],
 
         properties: {
@@ -112,7 +114,43 @@
             value: false
           },
 
-          originalQueryParameters: Object
+          originalQueryParameters: Object,
+
+          autoTranslateCache: Object
+        },
+
+        changeLocaleIfNeededAfterWait: function (locale, force) {
+          console.log("changeLocaleIfNeeded "+locale);
+          if (locale && this.language!=locale) {
+            if (force || !localStorage.getItem('yp-user-locale')) {
+              i18next.changeLanguage(locale, function(loaded) {
+                if (!window.i18nTranslation) {
+                  window.i18nTranslation = i18next;
+                }
+                console.log("i18n init loaded "+loaded);
+                moment.locale(locale);
+                console.log("Changed language to "+locale);
+                document.dispatchEvent(
+                  new CustomEvent("lite-signal", {
+                    bubbles: true,
+                    compose: true,
+                    detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale}  }
+                  })
+                );
+
+              });
+            }
+          }
+        },
+
+        changeLocaleIfNeeded: function (locale, force) {
+          if (typeof i18next !== 'undefined') {
+            this.changeLocaleIfNeededAfterWait(locale, force)
+          } else {
+            this.async(function () {
+              this.changeLocaleIfNeededAfterWait(locale, force)
+            }, 1000);
+          }
         },
 
         parseQueryString: function () {
@@ -337,8 +375,10 @@
         },
 
         ready: function () {
+          Polymer.passiveTouchGestures = true;
           window.appStartTime = new Date();
           window.appGlobals = this;
+          this.autoTranslateCache = {};
 
           this.fire('app-ready');
           this.$.boot.generateRequest();

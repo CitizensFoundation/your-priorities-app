@@ -6,10 +6,11 @@
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/collection-helpers.html">
 
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
 
@@ -24,13 +25,13 @@
     <style include="iron-flex iron-flex-alignment">
 
       ac-activities {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply --layout-vertical;
+        @apply --layout-flex;
       }
 
       .card-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
       }
 
       @media (max-width: 330px) {
@@ -123,11 +124,12 @@
       is: 'yp-user',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.ypThemeBehavior,
         Polymer.CollectionHelpers,
         Polymer.CommunityCollectionBehaviors,
-        Polymer.GroupCollectionBehaviors
+        Polymer.GroupCollectionBehaviors,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {

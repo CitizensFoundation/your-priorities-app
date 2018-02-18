@@ -1,0 +1,15 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /** @polymerBehavior Polymer.ypNumberFormatBehavior */
+  Polymer.ypNumberFormatBehavior = {
+
+    formatNumber: function (value) {
+      if (value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        return "0";
+      }
+    }
+  };
+</script>

@@ -10,7 +10,7 @@
 
 <link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
@@ -18,14 +18,15 @@
 <link rel="import" href="../yp-app-globals/yp-language-selector.html">
 <link rel="import" href="../yp-theme/yp-theme-selector.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="yp-community-edit">
   <template>
 
     <style include="iron-flex iron-flex-alignment">
       .access {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center-justified;
       }
 
       .accessHeader {
@@ -221,9 +222,10 @@
     is: 'yp-community-edit',
 
     behaviors: [
-      Polymer.appHelpers,
+      Polymer.ypLanguageBehavior,
       Polymer.ypEditDialogBehavior,
-      Polymer.ypCollectionStatusOptions
+      Polymer.ypCollectionStatusOptions,
+      Polymer.ypGotoBehavior
     ],
 
     properties: {

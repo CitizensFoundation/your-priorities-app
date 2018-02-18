@@ -21,10 +21,13 @@
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
+<link rel="import" href="../yp-behaviors/yp-lodash-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-moment-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="../ac-notifications/ac-notification-list.html">
 <link rel="import" href="yp-app-nav-drawer.html">
@@ -155,7 +158,27 @@
         min-width: 40px;
       }
 
+      #translationButton {
+        color: #FFF;
+        background-color: var(--accent-color);
+        margin-left: 4px;
+        padding: 6px;
+        min-width: 0 !important;
+      }
+
+      .stopIcon {
+        margin-left: 6px;
+      }
+
       @media (max-width: 480px) {
+        .stopIcon {
+          display: none;
+        }
+
+        #translationButton {
+          width: 40px !important;
+          max-width: 40px !important;
+        }
         div[title] {
           font-size: 17px;
           white-space: normal !important;
@@ -184,6 +207,12 @@
         paper-button {
           padding:0;
           margin: 0;
+        }
+
+        #translationIcon {
+          width: 30px;
+          height: 30px;
+          padding: 6px;
         }
       }
 
@@ -225,6 +254,10 @@
       [hidden] {
         display: none !important;
       }
+
+      #headerTitle {
+        padding-right: 0 !important;
+      }
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
@@ -260,6 +293,12 @@
               <paper-icon-button id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
 
+            <div hidden$="[[!autoTranslate]]" class="layout horizontal">
+              <paper-button raised id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
+                <iron-icon icon="translate"></iron-icon>
+                <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
+              </paper-button>
+            </div>
             <span class="flex"></span>
 
             <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
@@ -298,6 +337,7 @@
     </app-drawer-layout>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <app-location route="{{route}}"></app-location>
 
@@ -317,8 +357,9 @@
       is: 'yp-app',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypLanguageBehavior,
+        Polymer.ypThemeBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {
@@ -445,7 +486,14 @@
           value: function() {
             return {};
           }
-        }
+        },
+
+        autoTranslate: {
+          type: Boolean,
+          value: false
+        },
+
+        languageName: String
       },
 
       listeners: {
@@ -456,7 +504,30 @@
         'yp-close-right-drawer': '_closeRightDrawer',
         'yp-refresh-group': '_refreshGroup',
         'yp-refresh-community': '_refreshCommunity',
-        'yp-refresh-domain': '_refreshDomain'
+        'yp-refresh-domain': '_refreshDomain',
+        'yp-language-name': '_setLanguageName'
+      },
+
+      _stopTranslation: function () {
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-auto-translate', data: false }
+          })
+        );
+        window.autoTranslate = false;
+        var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
+        toast.text = this.t('autoTranslationStopped');
+        toast.show();
+      },
+
+      _setLanguageName: function (event, detail) {
+        this.set('languageName', detail);
+      },
+
+      _autoTranslateEvent(event, detail) {
+        this.set('autoTranslate', detail);
       },
 
       _refreshGroup: function () {
@@ -724,7 +795,7 @@
 
       ready: function () {
         window.app = this;
-        this.setTheme(0);
+        this.setTheme(16);
       },
 
       getDialog: function (idName) {
@@ -769,13 +840,13 @@
               headerTitle.style.fontSize = "20px";
             } else {
               if (length < 20) {
-                headerTitle.style.fontSize = "20px";
+                headerTitle.style.fontSize = "17px";
               } else if (length < 25) {
-                headerTitle.style.fontSize = "16px";
+                headerTitle.style.fontSize = "14px";
               } else if (length < 30) {
-                headerTitle.style.fontSize = "15px";
-              } else {
                 headerTitle.style.fontSize = "13px";
+              } else {
+                headerTitle.style.fontSize = "12px";
               }
             }
           }

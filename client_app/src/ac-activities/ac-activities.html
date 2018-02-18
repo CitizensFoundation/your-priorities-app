@@ -7,11 +7,10 @@
 
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-iron-list-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-point/yp-point-news-story-edit.html">
@@ -152,7 +151,7 @@
       }
 
       .topLevelActivitiesContainer[wide] {
-        @apply(--layout-center-center);
+        @apply --layout-center-center;
       }
 
       [hidden] {
@@ -220,11 +219,10 @@
       is: 'ac-activities',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.ypLoggedInUserBehavior,
         Polymer.AccessHelpers,
-        Polymer.ypIronListBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.ypIronListBehavior
       ],
 
       properties: {
@@ -516,10 +514,7 @@
       _preProcessActivities: function (activities) {
         for (var i = 0; i < activities.length; i++) {
           if (activities[i].Point) {
-            activities[i].Point.latestContent = this.addLinksAndEmjois(activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content);
-          }
-          if (activities[i].Post) {
-            activities[i].Post.description = this.addLinksAndEmjois(activities[i].Post.description);
+            activities[i].Point.latestContent = activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content;
           }
         }
         return activities;

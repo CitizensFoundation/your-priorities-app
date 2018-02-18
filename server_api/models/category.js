@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    icon_file_name: DataTypes.STRING
+    icon_file_name: DataTypes.STRING,
+    language: { type: DataTypes.STRING, allowNull: true }
   }, {
     underscored: true,
     

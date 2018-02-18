@@ -2,8 +2,9 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <dom-module id="ac-activity-post-status-update">
   <template>
@@ -42,10 +43,14 @@
       <div class="groupName">
         [[activity.Group.name]]
       </div>
-      <div class="postName" on-tap="_goToPost">
-        [[activity.Post.name]]
-      </div>
-      <div id="statusChange" class="statusChange"></div>
+      <yp-magic-text on-tap="_goToPost" class="postName"
+                     text-only text-type="postName" content-language="[[activity.Post.language]]"
+                     content="[[activity.Post.name]]" content-id="[[activity.Post.id]]">
+      </yp-magic-text>
+      <yp-magic-text id="statusChange" class="statusChange" extra-id="[[activity.Post.id]]"
+                     text-type="statusChangeContent" content-language="[[activity.PostStatusChange.language]]"
+                     content="[[statusContent]]" content-id="[[activity.PostStatusChange.id]]">
+      </yp-magic-text>
     </div>
   </template>
 
@@ -55,15 +60,19 @@
       is: 'ac-activity-post-status-update',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.ypLanguageBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {
 
         activity: {
-          type: Object,
-          observer: '_activityChanged'
+          type: Object
+        },
+
+        statusContent: {
+          type: String,
+          computed: '_statusContent(activity)'
         }
       },
 
@@ -73,9 +82,9 @@
         }
       },
 
-      _activityChanged: function (newValue) {
+      _statusContent: function (newValue) {
         if (newValue && newValue.PostStatusChange && newValue.PostStatusChange.content) {
-          this.$.statusChange.innerHTML = this.formatContent(this.addLinksAndEmjois(newValue.PostStatusChange.content));
+          return this.formatContent(newValue.PostStatusChange.content);
         }
       },
 

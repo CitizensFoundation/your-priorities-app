@@ -29,9 +29,9 @@ module.exports = function(sequelize, DataTypes) {
     location: DataTypes.JSONB,
     cover_media_type: DataTypes.STRING,
     legacy_post_id: DataTypes.INTEGER,
-    user_interaction_profile: DataTypes.JSONB
+    user_interaction_profile: DataTypes.JSONB,
+    language: { type: DataTypes.STRING, allowNull: true }
   }, {
-
     defaultScope: {
       where: {
         deleted: false

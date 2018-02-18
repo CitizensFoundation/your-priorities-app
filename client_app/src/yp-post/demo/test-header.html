@@ -17,7 +17,7 @@
       }
 
       .grid {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       yp-post-header {
@@ -37,7 +37,7 @@
       is: 'test-header',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.ypLanguageBehavior
       ],
 
       ready: function (e) {

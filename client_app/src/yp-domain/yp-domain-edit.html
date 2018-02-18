@@ -14,8 +14,9 @@
 
 <link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
@@ -222,8 +223,9 @@
     is: 'yp-domain-edit',
 
     behaviors: [
-      Polymer.appHelpers,
-      Polymer.ypEditDialogBehavior
+      Polymer.ypLanguageBehavior,
+      Polymer.ypEditDialogBehavior,
+      Polymer.ypGotoBehavior
     ],
 
     properties: {

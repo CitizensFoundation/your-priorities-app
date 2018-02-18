@@ -329,6 +329,43 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
   });
 });
 
+router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
+  if (req.query.textType.indexOf("point") > -1) {
+    models.Point.find({
+      where: {
+        id: req.params.id
+      },
+      order: [
+        [ models.PointRevision, 'created_at', 'asc' ],
+      ],
+      attributes: ['id'],
+      include: [
+        {
+          model: models.PointRevision,
+          attributes: ['id','content']
+        }
+      ]
+    }).then(function(point) {
+      if (point) {
+        models.TranslationCache.getTranslation(req, point, function (error, translation) {
+          if (error) {
+            sendPointOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Point translatedTitle', { pointId: point.id, context: 'translatedText' });
+      } else {
+        sendPointOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendPointOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendPointOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.post('/:groupId', auth.can('create point'), function(req, res) {
   var point = models.Point.build({
     group_id: req.params.groupId,

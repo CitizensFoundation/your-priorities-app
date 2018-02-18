@@ -6,7 +6,8 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <link href="../yp-app-globals/yp-language-selector.html" rel="import">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="yp-app-nav-drawer">
 
@@ -121,7 +122,8 @@
       is: 'yp-app-nav-drawer',
 
       behaviors: [
-        Polymer.appHelpers
+        Polymer.ypLanguageBehavior,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {

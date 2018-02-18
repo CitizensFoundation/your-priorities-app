@@ -1,29 +1,53 @@
-var express = require('express');
-var router = express.Router();
-var log = require('../utils/logger');
-var toJson = require('../utils/to_json');
-var path = require('path');
+let express = require('express');
+let router = express.Router();
+let log = require('../utils/logger');
+let toJson = require('../utils/to_json');
+let path = require('path');
+let fs = require('fs');
 
-var sendIndex = function (req, res) {
-  log.info('Index Viewed', { context: 'view', user: toJson(req.user) });
+let replaceForBetterReykjavik = function (data) {
+  data = data.replace(/XappNameX/g, "Betri Reykjavík");
+  data = data.replace(/XdescriptionX/g, "Betri Reykjavík er samráðsverkefni Reykjavíkurborgar, Íbúa ses og Reykvíkinga.");
+  return data.replace(/XmanifestPathX/g, "manifest_br");
+};
+
+let replaceForBetterIceland = function (data) {
+  data = data.replace(/XappNameX/g, "Betra Ísland");
+  data = data.replace(/XdescriptionX/g, "Betra Ísland er samráðsvefur fyrir alla Íslendinga");
+  return data.replace(/XmanifestPathX/g, "manifest_bi");
+};
+
+let replaceForYrpri = function (data) {
+  data = data.replace(/XappNameX/g, "Your Priorities");
+  data = data.replace(/XdescriptionX/g, "Citizen participation application");
+  return data.replace(/XmanifestPathX/g, "manifest_yp");
+};
+
+let sendIndex = function (req, res) {
+  let indexFilePath;
+  log.info('Index Viewed', { context: 'view', user: req.user ? toJson(req.user) : null });
+
   if (FORCE_PRODUCTION || process.env.NODE_ENV == 'production') {
-    if (req.hostname.indexOf('betrireykjavik.is') > -1) {
-      res.sendFile(path.resolve(__dirname, '../../client_app/build/bundled/index_br.html'));
-    } else if (req.hostname.indexOf('betraisland.is') > -1) {
-      res.sendFile(path.resolve(__dirname, '../../client_app/build/bundled/index_bi.html'));
-    } else {
-      res.sendFile(path.resolve(__dirname, '../../client_app/build/bundled/index_yp.html'));
-    }
+    indexFilePath = path.resolve(__dirname, '../../client_app/build/bundled/index.html');
   } else {
-    if (req.path.indexOf('domain/1') > -1) {
-      res.sendFile(path.resolve(__dirname, '../../client_app/index_br.html'));
-    } else if (req.path.indexOf('domain/2') > -1) {
-      res.sendFile(path.resolve(__dirname, '../../client_app/index_bi.html'));
-    } else {
-      res.sendFile(path.resolve(__dirname, '../../client_app/index_yp.html'));
-    }
+    indexFilePath = path.resolve(__dirname, '../../client_app/index.html');
   }
-}
+
+  fs.readFile(indexFilePath, 'utf8', function(err, indexFileData) {
+    if (err) {
+      console.error("Cant read index file");
+      throw err;
+    } else {
+      if (req.hostname.indexOf('betrireykjavik.is') > -1) {
+        res.send(replaceForBetterReykjavik(indexFileData));
+      } else if (req.hostname.indexOf('betraisland.is') > -1) {
+        res.send(replaceForBetterIceland(indexFileData));
+      } else {
+        res.send(replaceForYrpri(indexFileData));
+      }
+    }
+  });
+};
 
 router.get('/', function(req, res) {
   sendIndex(req, res);

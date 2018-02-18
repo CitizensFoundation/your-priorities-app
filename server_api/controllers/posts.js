@@ -6,6 +6,8 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
 var _ = require('lodash');
+var multer = require('multer');
+var s3 = require('multer-s3');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -225,6 +227,63 @@ router.get('/:id', auth.can('view post'), function(req, res) {
   });
 });
 
+router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
+  if (req.query.textType.indexOf("post") > -1) {
+    models.Post.find({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','name','description']
+    }).then(function(post) {
+      if (post) {
+        models.TranslationCache.getTranslation(req, post, function (error, translation) {
+          if (error) {
+            sendPostOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Post translatedTitle', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
+      } else {
+        sendPostOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendPostOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
+router.get('/:id/:statusId/translatedStatusText', auth.can('view post'), function(req, res) {
+  if (req.query.textType.indexOf("statusChangeContent") > -1) {
+    models.PostStatusChange.find({
+      where: {
+        id: req.params.statusId,
+        post_id: req.params.id
+      },
+      attributes: ['id','content']
+    }).then(function(change) {
+      if (change) {
+        models.TranslationCache.getTranslation(req, change, function (error, translation) {
+          if (error) {
+            sendPostOrError(res, req.params.id, 'translatedStatusText', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Post Status Change translatedStatusText', { context: 'view' });
+      } else {
+        sendPostOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendPostOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.put('/:id/report', auth.can('vote on post'), function (req, res) {
   models.Post.find({
     where: {
@@ -361,7 +420,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     where: {
       post_id: req.params.id
     },
-    attributes: ['id','name','content','user_id','value','counter_quality_up','counter_quality_down','embed_data'],
+    attributes: ['id','name','content','user_id','value','counter_quality_up','counter_quality_down','embed_data','language'],
     order: [
       models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
       [ models.PointRevision, 'created_at', 'asc' ],
@@ -434,6 +493,28 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
   });
 });
 
+
+var truthValueFromBody = function(bodyParameter) {
+  if (bodyParameter && bodyParameter!="") {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+var updatePostData = function (req, post) {
+  if (!post.data) {
+    post.set('data', {});
+  }
+  if (!post.data.contactInformation) {
+    this.set('data.contactInformation', {});
+  }
+  group.set('data.canVote', truthValueFromBody(req.body.canVote));
+  group.set('configuration.canAddNewPosts', truthValueFromBody(req.body.canAddNewPosts));
+  group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
+  group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
+};
+
 router.post('/:groupId', auth.can('create post'), function(req, res) {
   var post = models.Post.build({
     name: req.body.name,
@@ -449,6 +530,9 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
     user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
+
+  updatePostData(req, post);
+
   post.save().then(function() {
     log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
     post.setupAfterSave(req, res, function () {

@@ -5,12 +5,14 @@
 
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/collection-helpers.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
 <link rel="import" href="../yp-behaviors/yp-detect-old-ios.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <link rel="import" href="../yp-community/yp-community-collection-behaviors.html">
@@ -27,13 +29,13 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       ac-activities {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply --layout-vertical;
+        @apply --layout-flex;
       }
 
       .card-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
       }
 
       .card {
@@ -68,8 +70,8 @@
       }
 
       .ypBottomContainer {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-center);
+        @apply --layout-horizontal;
+        @apply --layout-center-center;
       }
 
       :host {
@@ -145,14 +147,15 @@
       is: 'yp-domain',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.ypThemeBehavior,
         Polymer.CommunityCollectionBehaviors,
         Polymer.CollectionHelpers,
         Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
         Polymer.ypLoggedInUserBehavior,
-        Polymer.ypDetectOldiOs
+        Polymer.ypDetectOldiOs,
+        Polymer.ypGotoBehavior
       ],
 
       properties: {
@@ -304,7 +307,7 @@
       refresh: function () {
         if (this.domain) {
           if (this.domain.default_locale!=null) {
-            this.changeLocaleIfNeeded(this.domain.default_locale);
+            window.appGlobals.changeLocaleIfNeeded(this.domain.default_locale);
           }
 
           if (this.domain.theme_id!=null) {

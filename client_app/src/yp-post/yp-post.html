@@ -16,11 +16,15 @@
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
 <link rel="import" href="../ac-activities/ac-activities.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-news-tab-selected.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="yp-post-header.html">
 <link rel="import" href="yp-post-points.html">
@@ -39,12 +43,12 @@
       }
 
       .flex {
-        @apply(--layout-vertical);
-        @apply(--layout-flex);
+        @apply --layout-vertical;
+        @apply --layout-flex;
       }
 
       .centerContainer {
-        @apply(--layout-center-center);
+        @apply --layout-center-center;
       }
 
       .postHeader {
@@ -122,7 +126,7 @@
       @media (max-width: 360px) {
 
         .centerContainer {
-          @apply(--layout-vertical);
+          @apply --layout-vertical;
         }
 
         .postHeader {
@@ -391,9 +395,13 @@
         is: 'yp-post',
 
         behaviors: [
-          Polymer.appHelpers,
+          Polymer.ypLanguageBehavior,
           Polymer.ypThemeBehavior,
-          Polymer.YpNewsTabSelected
+          Polymer.YpNewsTabSelected,
+          Polymer.ypGotoBehavior,
+          Polymer.ypImageFormatsBehavior,
+          Polymer.ypNumberFormatBehavior,
+          Polymer.ypTruncateBehavior
         ],
 
         properties: {
@@ -640,7 +648,7 @@
             }
 
             if (this.post.Group.configuration && this.post.Group.configuration.defaultLocale!=null) {
-              this.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
+              window.appGlobals.changeLocaleIfNeeded(this.post.Group.configuration.defaultLocale);
             }
 
             if (this.post.Group.configuration && this.post.Group.configuration.locationHidden!=undefined) {

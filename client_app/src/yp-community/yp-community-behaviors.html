@@ -85,21 +85,6 @@
         this.set('featured', false);
         this.set('archived', false);
       }
-
-      if (community && community.description) {
-        this.async(function () {
-          var description = this.$$("#description");
-          if (description) {
-            if (community.description.length>150) {
-              description.innerHTML = this.truncate(this.trim(community.description), 150);
-            } else {
-              description.innerHTML = this.addLinksAndEmjois(community.description);
-            }
-          } else {
-            console.error("Can't find community description element");
-          }
-        });
-      }
     },
 
     _goToCommunity: function (e) {
@@ -139,6 +124,16 @@
     _communityDescription: function (community, showAll) {
       if (community && community.description) {
         return this.truncate(this.trim(community.description), showAll ? 300 : 120, '...');
+      } else {
+        return "";
+      }
+    },
+
+    getImageFormatNextUrl: function(images, formatId) {
+      if (images && images.length>1) {
+        var formats = JSON.parse(images[images.length-2].formats);
+        if (formats && formats.length>0)
+          return formats[formatId];
       } else {
         return "";
       }

@@ -6,7 +6,8 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="yp-accept-invite">
 
@@ -65,7 +66,8 @@
     is: 'yp-accept-invite',
 
     behaviors: [
-      Polymer.appHelpers
+      Polymer.ypLanguageBehavior,
+      Polymer.ypGotoBehavior
     ],
 
     properties: {

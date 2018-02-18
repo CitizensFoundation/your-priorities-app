@@ -8,13 +8,14 @@
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
-s
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
+
 <link rel="import" href="yp-point-actions.html">
 
 <dom-module id="yp-point">
@@ -24,11 +25,11 @@ s
     <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
       }
 
       .point-content {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         padding-right: 16px;
         padding-left: 16px;
       }
@@ -122,7 +123,9 @@ s
           <span>[[point.name]]</span>.
         </span>
         <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
-          <div inner-h-t-m-l="{{point.latestContent}}"></div>
+          <yp-magic-text text-type="pointContent" content-language="[[point.language]]"
+                         text-only content="[[point.latestContent]]" content-id="[[point.id]]">
+          </yp-magic-text>
         </div>
         <template is="dom-if" if="[[isEditing]]" restamp>
           <div class="layout vertical">
@@ -216,11 +219,11 @@ s
       },
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.AccessHelpers,
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi
+        Polymer.ypGotoBehavior
       ],
 
       _isEditingChanged: function (value) {
@@ -286,7 +289,7 @@ s
       _editResponse: function (event, detail) {
         if (detail.response) {
           var point = detail.response;
-          point.latestContent = this.addLinksAndEmjois(point.PointRevisions[point.PointRevisions.length-1].content);
+          point.latestContent = point.PointRevisions[point.PointRevisions.length-1].content;
           this.set('point', point);
         }
         this.set('isEditing', false);

@@ -1,5 +1,5 @@
 {
-  "entrypoint": "index_yp.html",
+  "entrypoint": "index.html",
   "shell": "src/yp-app/yp-app.html",
   "fragments": [
     "src/yp-community/yp-community.html",
@@ -8,10 +8,13 @@
     "src/yp-dialog-container/yp-dialog-container-logged-in.html",
     "src/yp-dialog-container/yp-dialog-container-admin.html",
     "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html",
+    "src/yp-dialog-container/yp-dialog-container-delayed.html",
     "src/yp-user/yp-user.html",
     "src/yp-app/yp-view-404.html"
   ],
-
+  "lint": {
+    "rules": ["polymer-2"]
+  },
   "builds": [{
     "name": "bundled",
     "bundle": true,
@@ -26,8 +29,6 @@
     "images/**/*",
     "styles/**/*",
     "locales/**/*",
-    "index_br.html",
-    "index_bi.html",
     "bower.json"
   ],
 

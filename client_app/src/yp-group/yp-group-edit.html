@@ -10,10 +10,11 @@
 
 <link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-collection-status-options.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
-
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="../yp-theme/yp-theme-selector.html">
@@ -24,8 +25,8 @@
 
     <style include="iron-flex iron-flex-alignment">
       .access {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
+        @apply --layout-horizontal;
+        @apply --layout-center-justified;
       }
 
       .accessHeader {
@@ -188,6 +189,8 @@
 
       <div class="layout vertical config">
         <h2>[[t('additionalGroupConfig')]]</h2>
+        <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">[[t('attachmentsEnabled')]]</paper-checkbox>
+        <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">[[t('moreContactInformation')]]</paper-checkbox>
         <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
         <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">[[t('hideNewPostOnPostPage')]]</paper-checkbox>
         <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
@@ -252,6 +255,15 @@
                    char-counter>
       </paper-input>
 
+      <paper-input id="postDescriptionLimit"
+                   name="postDescriptionLimit"
+                   type="text"
+                   label="[[t('postDescriptionLimit')]]"
+                   value="{{group.configuration.postDescriptionLimit}}"
+                   maxlength="4"
+                   char-counter>
+      </paper-input>
+
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
@@ -285,9 +297,11 @@
     is: 'yp-group-edit',
 
     behaviors: [
-      Polymer.appHelpers,
+      Polymer.ypLanguageBehavior,
       Polymer.ypEditDialogBehavior,
-      Polymer.ypCollectionStatusOptions
+      Polymer.ypCollectionStatusOptions,
+      Polymer.ypGotoBehavior,
+      Polymer.ypImageFormatsBehavior
     ],
 
     properties: {

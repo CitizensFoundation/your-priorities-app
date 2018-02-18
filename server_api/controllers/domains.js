@@ -354,6 +354,34 @@ router.get('/', function(req, res) {
   });
 });
 
+router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
+  if (req.query.textType.indexOf("domain") > -1) {
+    models.Domain.find({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','name','description']
+    }).then(function(domain) {
+      if (domain) {
+        models.TranslationCache.getTranslation(req, domain, function (error, translation) {
+          if (error) {
+            sendDomainOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Domain translatedTitle', {  context: 'translated' });
+      } else {
+        sendDomainOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendDomainOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendDomainOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.get('/:id', auth.can('view domain'), function(req, res) {
   getDomain(req, req.params.id, function (error, domain) {
     if (error) {

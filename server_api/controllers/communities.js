@@ -710,6 +710,34 @@ router.get('/:id', auth.can('view community'), function(req, res) {
   });
 });
 
+router.get('/:id/translatedText', auth.can('view community'), function(req, res) {
+  if (req.query.textType.indexOf("community") > -1) {
+    models.Community.find({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','name','description']
+    }).then(function(community) {
+      if (community) {
+        models.TranslationCache.getTranslation(req, community, function (error, translation) {
+          if (error) {
+            sendCommunityOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Community translatedTitle', {  context: 'translated' });
+      } else {
+        sendCommunityOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendCommunityOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendCommunityOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.post('/:domainId', auth.can('create community'), function(req, res) {
   models.Community.find({
     where: {

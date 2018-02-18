@@ -6,12 +6,15 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 
 <link rel="import" href="../yp-post/yp-post-map.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-page/yp-page.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="yp-organization-large-card.html">
 
@@ -19,8 +22,8 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       .card-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-wrap);
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
         width: 100%;
       }
 
@@ -67,8 +70,10 @@
       is: 'yp-organization',
 
       behaviors: [
-        Polymer.appHelpers,
-        Polymer.ypThemeBehavior
+        Polymer.ypLanguageBehavior,
+        Polymer.ypThemeBehavior,
+        Polymer.ypGotoBehavior,
+        Polymer.ypImageFormatsBehavior
       ],
 
       properties: {

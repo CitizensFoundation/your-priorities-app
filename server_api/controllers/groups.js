@@ -121,10 +121,14 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideGroupHeader', truthValueFromBody(req.body.hideGroupHeader));
   group.set('configuration.hidePointAuthor', truthValueFromBody(req.body.hidePointAuthor));
   group.set('configuration.hidePostAuthor', truthValueFromBody(req.body.hidePostAuthor));
+  group.set('configuration.attachmentsEnabled', truthValueFromBody(req.body.attachmentsEnabled));
+  group.set('configuration.moreContactInformation', truthValueFromBody(req.body.moreContactInformation));
 
   group.set('configuration.endorsementButtons', (req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts");
   group.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
   group.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat!="") ? req.body.defaultLocationLongLat : null);
+
+  group.set('configuration.postDescriptionLimit', (req.body.postDescriptionLimit && req.body.postDescriptionLimit!="") ? req.body.postDescriptionLimit : "500");
 
   if (truthValueFromBody(req.body.status)) {
     group.status = req.body.status;
@@ -149,6 +153,28 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
   group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
 };
+
+
+var upload = multer({
+  storage: s3({
+    dirname: 'attachments',
+    bucket: process.env.S3_BUCKET,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    endpoint: process.env.S3_ENDPOINT || null,
+    acl: 'public-read',
+    contentType: s3.AUTO_CONTENT_TYPE,
+    region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
+    key: function (req, file, cb) {
+      cb(null, Date.now()+"_"+file.originalname);
+    }
+  })
+});
+
+router.post('/:id/upload_document',  auth.can('view group'),  upload.array('upl'), function(req, res) {
+  var id;
+  res.send({id: id});
+});
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
   models.AcActivity.find({
@@ -680,6 +706,34 @@ router.get('/:id', auth.can('view group'), function(req, res) {
   });
 });
 
+router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
+  if (req.query.textType.indexOf("group") > -1) {
+    models.Group.find({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','name','objectives']
+    }).then(function(group) {
+      if (group) {
+        models.TranslationCache.getTranslation(req, group, function (error, translation) {
+          if (error) {
+            sendGroupOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Group translatedTitle', {  context: 'translated' });
+      } else {
+        sendGroupOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendGroupOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendGroupOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     log.info('Group Search', { groupId: req.params.id, context: 'view', user: toJson(req.user) });
     models.Post.search(req.params.term, req.params.id, models.Category).then(function(posts) {
@@ -704,7 +758,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       }
     },
     attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
-      'counter_endorsements_down','counter_points','counter_flags','data','location','created_at'],
+      'counter_endorsements_down','language','counter_points','counter_flags','data','location','created_at'],
     order: [
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
@@ -778,7 +832,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   var PostsByStatus = models.Post.scope(req.params.status);
   PostsByStatus.findAll({
     where: where,
-    attributes: ['id','status','official_status','counter_endorsements_up',
+    attributes: ['id','status','official_status','language','counter_endorsements_up',
                  'counter_endorsements_down','created_at'],
     order: [
       models.sequelize.literal(postOrder)

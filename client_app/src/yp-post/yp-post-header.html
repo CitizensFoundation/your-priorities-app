@@ -10,13 +10,16 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/app-helpers.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
 <link rel="import" href="../yp-user/yp-user-with-organization.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
@@ -32,7 +35,7 @@
       }
 
       .infoContainer {
-        @apply(--layout-vertical);
+        @apply --layout-vertical;
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
         width: 540px;
@@ -42,8 +45,8 @@
       }
 
       .voting {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
         text-align: center;
         padding-left: 16px;
         padding-right: 24px;
@@ -100,7 +103,7 @@
       .postCard {
         width: 960px;
         background-color: #fff;
-        @apply(--layout-horizontal);
+        @apply --layout-horizontal;
         position: relative;
       }
 
@@ -128,7 +131,7 @@
 
         .postCard {
           width: 600px;
-          @apply(--layout-wrap);
+          @apply --layout-wrap;
         }
 
         yp-post-cover-media {
@@ -165,7 +168,7 @@
         }
 
         .mediaAndInfoContainer {
-          @apply(--layout-center-center);
+          @apply --layout-center-center;
         }
       }
 
@@ -221,7 +224,9 @@
         <div class="layout vertical wrap">
           <div class="post-name layout vertical" on-tap="goToPostIfNotHeader">
             <div>
-              [[postName]]
+              <yp-magic-text text-type="postName" content-language="[[post.language]]"
+                             content="[[postName]]" content-id="[[post.id]]">
+              </yp-magic-text>
             </div>
             <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
               <div class="layout horizontal userInfo">
@@ -233,7 +238,11 @@
             <yp-post-cover-media header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
             <div class="layout vertical">
               <div class="infoContainer">
-                <div id="description" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]" class="description"></div>
+                <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
+                               content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
+                               content-id="[[post.id]]" class="description" truncate="500"
+                               more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
+                </yp-magic-text>
               </div>
               <div class="card-actions">
                 <yp-post-actions floating header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
@@ -267,12 +276,14 @@
       is: 'yp-post-header',
 
       behaviors: [
-        Polymer.appHelpers,
+        Polymer.ypLanguageBehavior,
         Polymer.YpPostBehavior,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi,
-        Polymer.ypLoggedInUserBehavior
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypGotoBehavior,
+        Polymer.ypTruncateBehavior,
+        Polymer.ypImageFormatsBehavior
       ],
 
       properties: {
@@ -327,10 +338,9 @@
           this.async(function () {
             var description = this.$$("#description");
             if (description) {
-              description.innerHTML = this.addLinksAndEmjois(post.description);
               // Special case for law Issue from a parliement
               if (post.data && post.data.dataType=='lawIssue' && post.data.issueStatus) {
-                description.innerHTML += " - "+post.data.issueStatus;
+                description.content += " - "+post.data.issueStatus;
               }
             } else {
               console.error("Can't find description element");
