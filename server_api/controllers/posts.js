@@ -505,9 +505,21 @@ var updatePostData = function (req, post) {
     post.set('data', {});
   }
   if (!post.data.contactInformation) {
-    post.set('data.contactInformation', {});
+    post.set('data.contact', {});
   }
-//  group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
+  if (!post.data.attachment) {
+    post.set('data.attachment', {});
+  }
+  post.set('data.contact.name', (req.body.contactName && req.body.contactName!="") ? req.body.contactName : null);
+  post.set('data.contact.email', (req.body.contactEmail && req.body.contactEmail!="") ? req.body.contactEmail : null);
+  post.set('data.contact.telephone', (req.body.contacTelephone && req.body.contacTelephone!="") ? req.body.contacTelephone : null);
+
+  post.set('data.attachment.url', (req.body.uploadedDocumentUrl && req.body.uploadedDocumentUrl!="") ? req.body.uploadedDocumentUrl : null);
+  post.set('data.attachment.filename', (req.body.uploadedDocumentFilename && req.body.uploadedDocumentFilename!="") ? req.body.uploadedDocumentFilename : null);
+
+  if (req.body.deleteAttachment && req.body.deleteAttachment!=="") {
+    post.set('data.attachment', {});
+  }
 };
 
 router.post('/:groupId', auth.can('create post'), function(req, res) {
@@ -580,6 +592,7 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
       post.category_id = req.body.categoryId != "" ? req.body.categoryId : null;
       post.location = req.body.location != "" ? JSON.parse(req.body.location) : null;
       post.cover_media_type = req.body.coverMediaType;
+      updatePostData(req, post);
       post.save().then(function () {
         log.info('Post Update', { post: toJson(post), context: 'create', user: toJson(req.user) });
         post.setupImages(req.body, function (error) {

@@ -183,9 +183,8 @@ var upload = multer({
   })
 });
 
-router.post('/:id/upload_document',  auth.can('view group'),  upload.array('upl'), function(req, res) {
-  var id;
-  res.send({id: id});
+router.post('/:id/upload_document',  auth.can('view group'),  upload.single('file'), function(req, res) {
+  res.send({filename: req.file.originalname, url: req.file.location });
 });
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {

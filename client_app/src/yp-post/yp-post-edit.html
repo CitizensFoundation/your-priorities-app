@@ -11,6 +11,7 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
@@ -99,6 +100,11 @@
       [hidden] {
         display: none !important;
       }
+
+      paper-checkbox {
+        margin-left: 8px;
+        margin-top: 4px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -172,37 +178,35 @@
               </div>
 
               <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">
-                <yp-file-upload id="attachmentFileUpload" raised="true" multi="false" target="/api/groups/[[group.id]]/upload_attachment" method="POST" on-success="_attachmentUploaded">
+                <yp-file-upload id="attachmentFileUpload" raised="true" multi="false" target="/api/groups/[[group.id]]/upload_document" method="POST" on-success="_documentUploaded">
                   <iron-icon class="icon" icon="attach-file"></iron-icon>
                   <span>[[t('uploadAttachment')]]</span>
                 </yp-file-upload>
-                <template is="dom-if" if="[[post.data.attachments]]">
-                  <paper-checkbox name="deleteAttachment">[[t('deleteAttachment')]]</paper-checkbox>
+                <template is="dom-if" if="[[post.data.attachment.url]]">
+                  <paper-checkbox name="deleteAttachment">[[t('deleteAttachment')]]: [[post.data.attachment.filename]]</paper-checkbox>
                 </template>
               </template>
               <template is="dom-if" if="[[group.configuration.moreContactInformation]]">
-                <h3>[[t('contactInformation')]]</h3>
+                <h2>[[t('contactInformation')]]</h2>
                 <paper-input id="contactName"
                              name="contactName"
                              type="text"
                              label="[[t('user.name')]]"
-                             value="{{post.data.contactInformation.name}}"
+                             value="{{post.data.contact.name}}"
                              char-counter>
                 </paper-input>
                 <paper-input id="contactEmail"
                              name="contactEmail"
                              type="text"
-                             pattern="[[emailValidationPattern]]"
                              label="[[t('user.email')]]"
-                             value="{{post.data.contactInformation.email}}"
+                             value="{{post.data.contact.email}}"
                              char-counter>
                 </paper-input>
                 <paper-input id="contactTelephone"
                              name="contacTelephone"
                              type="text"
-                             pattern="[[emailValidationPattern]]"
                              label="[[t('contactTelephone')]]"
-                             value="{{post.data.contactInformation.telephone}}"
+                             value="{{post.data.contact.telephone}}"
                              maxlength="20"
                              char-counter>
                 </paper-input>
@@ -264,6 +268,8 @@
         <input type="hidden" name="location" value="[[encodedLocation]]">
         <input type="hidden" name="coverMediaType" value="[[selectedCoverMediaType]]">
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
+        <input type="hidden" name="uploadedDocumentUrl" value="[[uploadedDocumentUrl]]">
+        <input type="hidden" name="uploadedDocumentFilename" value="[[uploadedDocumentFilename]]">
       </div>
     </yp-edit-dialog>
   </template>
@@ -358,7 +364,10 @@
       postDescriptionLimit: {
         type: Number,
         value: null
-      }
+      },
+
+      uploadedDocumentUrl: String,
+      uploadedDocumentFilename: String
     },
 
     listeners: {
@@ -368,6 +377,12 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _documentUploaded: function (event, detail) {
+      var document = JSON.parse(detail.xhr.response);
+      this.set('uploadedDocumentUrl', document.url);
+      this.set('uploadedDocumentFilename', document.filename);
+    },
 
     customFormResponse: function () {
       document.dispatchEvent(
