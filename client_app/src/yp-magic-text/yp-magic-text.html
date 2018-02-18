@@ -148,7 +148,12 @@
               console.error("No valid textType for magic text: "+this.textType);
               return;
           }
-          this.$.getTranslationAjax.generateRequest();
+          if (this.contentId) {
+            this.$.getTranslationAjax.generateRequest();
+          } else {
+            console.error("No content id for: "+this.textType);
+            this._finalize();
+          }
         }
       }
 
@@ -196,7 +201,11 @@
           }
         }
 
-        this.set('finalContent', this.processedContent);
+        if (this.processedContent) {
+          this.set('finalContent', this.processedContent);
+        } else {
+          this.set('finalContent', "");
+        }
       }
 
       _linksAndEmojis () {
