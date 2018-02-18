@@ -516,10 +516,7 @@
       _preProcessActivities: function (activities) {
         for (var i = 0; i < activities.length; i++) {
           if (activities[i].Point) {
-            activities[i].Point.latestContent = this.addLinksAndEmjois(activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content);
-          }
-          if (activities[i].Post) {
-            activities[i].Post.description = this.addLinksAndEmjois(activities[i].Post.description);
+            activities[i].Point.latestContent = activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content;
           }
         }
         return activities;

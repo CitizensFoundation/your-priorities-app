@@ -253,6 +253,35 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
   }
 });
 
+router.get('/:id/:statusId/translatedStatusText', auth.can('view post'), function(req, res) {
+  if (req.query.textType.indexOf("statusChangeContent") > -1) {
+    models.PostStatusChange.find({
+      where: {
+        id: req.params.statusId,
+        post_id: req.params.id
+      },
+      attributes: ['id','content']
+    }).then(function(change) {
+      if (change) {
+        models.TranslationCache.getTranslation(req, change, function (error, translation) {
+          if (error) {
+            sendPostOrError(res, req.params.id, 'translatedStatusText', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Post Status Change translatedStatusText', { context: 'view' });
+      } else {
+        sendPostOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendPostOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 router.put('/:id/report', auth.can('vote on post'), function (req, res) {
   models.Post.find({
     where: {

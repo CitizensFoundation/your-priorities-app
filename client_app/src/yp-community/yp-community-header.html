@@ -16,7 +16,6 @@
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
@@ -203,7 +202,6 @@
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi,
         Polymer.ypGotoBehavior,
         Polymer.ypTruncateBehavior,
         Polymer.ypImageFormatsBehavior
@@ -223,16 +221,6 @@
       },
 
       _communityChanged: function (community) {
-        if (community && community.description) {
-          this.async(function () {
-            var description = this.$$("#description");
-            if (description) {
-              description.innerHTML = this.addLinksAndEmjois(community.description);
-            } else {
-              console.error("Can't find community description element");
-            }
-          });
-        }
       },
 
       _hasCommunityAccess: function(community, gotAdminRights) {

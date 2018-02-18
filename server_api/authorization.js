@@ -246,30 +246,34 @@ auth.role('domain.admin', function (domain, req, done) {
 });
 
 auth.role('domain.viewUser', function (domain, req, done) {
-  models.Domain.findOne({
-    where: { id: domain.id },
-    attributes: ['id','access']
-  }).then(function (domain) {
-    if (domain) {
-      if (domain.access === models.Domain.ACCESS_PUBLIC) {
-        done(null, true);
-      }  else if (!auth.isAuthenticated(req)) {
-        done(null, false);
-      } else if (domain.user_id === req.user.id) {
-        done(null, true);
+  if (domain) {
+    models.Domain.findOne({
+      where: { id: domain.id },
+      attributes: ['id','access']
+    }).then(function (domain) {
+      if (domain) {
+        if (domain.access === models.Domain.ACCESS_PUBLIC) {
+          done(null, true);
+        }  else if (!auth.isAuthenticated(req)) {
+          done(null, false);
+        } else if (domain.user_id === req.user.id) {
+          done(null, true);
+        } else {
+          domain.hasUser(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
+        }
       } else {
-        domain.hasUser(req.user).then(function (result) {
-          if (result) {
-            done(null, true);
-          } else {
-            done(null, false);
-          }
-        });
+        done(null, false);
       }
-    } else {
-      done(null, false);
-    }
-  });
+    });
+  } else {
+    done(null, false);
+  }
 });
 
 auth.entity('domain', function(req, done) {

@@ -85,21 +85,6 @@
         this.set('featured', false);
         this.set('archived', false);
       }
-
-      if (community && community.description) {
-        this.async(function () {
-          var description = this.$$("#description");
-          if (description) {
-            if (community.description.length>150) {
-              description.innerHTML = this.truncate(this.trim(community.description), 150);
-            } else {
-              description.innerHTML = this.addLinksAndEmjois(community.description);
-            }
-          } else {
-            console.error("Can't find community description element");
-          }
-        });
-      }
     },
 
     _goToCommunity: function (e) {

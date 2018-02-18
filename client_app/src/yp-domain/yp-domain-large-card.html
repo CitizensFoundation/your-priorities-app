@@ -18,9 +18,9 @@
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <link rel="import" href="yp-domain-stats.html">
 
@@ -167,9 +167,12 @@
             <div class="layout vertical description-and-stats">
               <div class="description">
                 <h1 class="domain-name">[[_domainName(domain)]]</h1>
-                <div id="description" class="domainDescription">
-                  [[_domainDescription(domain)]]
-                </div>
+                <template is="dom-if" if="[[domain.id]]">
+                  <yp-magic-text id="description" class="domainDescription"
+                                 text-type="domainContent" content-language="[[domain.language]]"
+                                 content="[[domain.description]]" content-id="[[domain.id]]">
+                  </yp-magic-text>
+                </template>
               </div>
             </div>
           </div>
@@ -202,7 +205,6 @@
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi,
         Polymer.ypImageFormatsBehavior,
         Polymer.ypTruncateBehavior
       ],
@@ -212,7 +214,7 @@
         domain: {
           type: Object,
           notify: true,
-          observer: '_domainChanged'
+          value: null
         },
 
         elevation: {
@@ -228,19 +230,6 @@
           type: Boolean,
           value: false,
           computed: '_hasDomainAccess(domain, gotAdminRights)'
-        }
-      },
-
-      _domainChanged: function (domain) {
-        if (domain && domain.description) {
-          this.async(function () {
-            var description = this.$$("#description");
-            if (description) {
-              description.innerHTML = this.addLinksAndEmjois(domain.description);
-            } else {
-              console.error("Can't find domain description element");
-            }
-          });
         }
       },
 
@@ -308,27 +297,23 @@
       },
 
       _domainName: function (domain) {
-        if (domain.name) {
+        if (domain && domain.name) {
           return this.truncate(this.trim(domain.name), 200);
-        } else {
+        } else if (domain) {
           return domain.short_name;
         }
       },
 
-      _domainDescription: function (domain) {
-        if (domain.description) {
-          return this.truncate(this.trim(domain.description), 10000, '...');
-        } else {
-          return "";
+      _domainLogoImagePath: function (domain) {
+        if (domain) {
+          return this.getImageFormatUrl(domain.DomainLogoImages, 0);
         }
       },
 
-      _domainLogoImagePath: function (domain) {
-        return this.getImageFormatUrl(domain.DomainLogoImages, 0);
-      },
-
       _domainHeaderImagePath: function (domain) {
-        return this.getImageFormatUrl(domain.DomainHeaderImages, 0);
+        if (domain) {
+          return this.getImageFormatUrl(domain.DomainHeaderImages, 0);
+        }
       }
     });
   </script>

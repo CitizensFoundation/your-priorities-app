@@ -107,11 +107,6 @@ if (app.get('env') === 'production') {
   sessionConfig.cookie.secure = true; // serve secure cookies
 }
 
-app.use(session(sessionConfig));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.get('/*', function (req, res, next) {
   if (req.url.indexOf("service-worker.js") > -1) {
     res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0");
@@ -125,6 +120,11 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
 } else {
   app.use(express.static(path.join(__dirname, '../client_app/build/bundled')));
 }
+
+app.use(session(sessionConfig));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Setup the current domain from the host
 app.use(function (req, res, next) {

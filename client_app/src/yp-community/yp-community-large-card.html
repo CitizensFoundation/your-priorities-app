@@ -18,12 +18,12 @@
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
 
 <link rel="import" href="yp-community-behaviors.html">
 <link rel="import" href="yp-community-stats.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <dom-module id="yp-community-large-card">
 
@@ -249,7 +249,10 @@
               <div class="description">
                 <h2 class="community-name">[[communityNameFull]]</h2>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
-                <div id="description" class="communityDescription"></div>
+                <yp-magic-text id="description" class="communityDescription"
+                               text-type="communityContent" content-language="[[community.language]]"
+                               content="[[community.description]]" content-id="[[community.id]]">
+                </yp-magic-text>
               </div>
             </div>
           </div>
@@ -284,7 +287,6 @@
         Polymer.LargeCardBehaviors,
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.YpLinkifyAndEmjoi,
         Polymer.ypGotoBehavior,
         Polymer.ypTruncateBehavior,
         Polymer.ypImageFormatsBehavior
@@ -306,12 +308,6 @@
       _communityChanged: function (community) {
         if (community && community.description) {
           this.async(function () {
-            var description = this.$$("#description");
-            if (description) {
-              description.innerHTML = this.addLinksAndEmjois(community.description);
-            } else {
-              console.error("Can't find community description element");
-            }
             if (community.configuration && community.configuration.welcomeHTML &&
               community.configuration.welcomeHTML !== "" &&
               this.$$("#welcomeHTML")) {
@@ -323,11 +319,6 @@
              this.$$("#welcomeHTML").innerHTML = "";
             }
           });
-        } else {
-          var description = this.$$("#description");
-          if (description) {
-            description.innerHTML = "";
-          }
         }
       },
 

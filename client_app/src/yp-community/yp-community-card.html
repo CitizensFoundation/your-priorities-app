@@ -9,13 +9,13 @@
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="yp-community-stats.html">
 <link rel="import" href="yp-community-behaviors.html">
-<link rel="import" href="../yp-behaviors/yp-linkify-and-emoji.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <link rel="import" href="../yp-membership-button/yp-membership-button.html">
 <link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <dom-module id="yp-community-card">
 
@@ -204,7 +204,12 @@
             [[communityName]]
             <span hidden$="[[!archived]]">- [[t('archived')]]</span>
           </div>
-          <div id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunity"></div>
+
+          <yp-magic-text id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunit"
+                         text-type="communityContent" content-language="[[community.language]]"
+                         text-only content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
+          </yp-magic-text>
+
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
@@ -219,7 +224,6 @@
       behaviors: [
         Polymer.ypLanguageBehavior,
         Polymer.CommunityBehaviors,
-        Polymer.YpLinkifyAndEmjoi,
         Polymer.ypTruncateBehavior,
         Polymer.ypImageFormatsBehavior,
         Polymer.ypGotoBehavior
