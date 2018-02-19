@@ -529,11 +529,12 @@
           if (detail.response && detail.response!=0) {
             console.debug("_adminRightsResponse 2");
             this.set('adminRights', detail.response);
+            var randomChangeSignal = Math.floor(Math.random() * 10) + 1;
             document.dispatchEvent(
               new CustomEvent("lite-signal", {
                 bubbles: true,
                 compose: true,
-                detail: { name: 'got-admin-rights', data: true }
+                detail: { name: 'got-admin-rights', data: randomChangeSignal }
               })
             );
 
@@ -543,7 +544,7 @@
                 new CustomEvent("lite-signal", {
                   bubbles: true,
                   compose: true,
-                  detail: { name: 'got-admin-rights', data: true }
+                  detail: { name: 'got-admin-rights', data: randomChangeSignal }
                 })
               )}, 1000);
           } else {
