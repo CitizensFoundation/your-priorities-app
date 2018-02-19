@@ -107,6 +107,7 @@
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
 
     <app-route
       route="{{idRoute}}"
@@ -334,6 +335,14 @@
             communityCard.lowerCardLater();
           }
         },20);
+      },
+
+      _gotAdminRights: function (event, detail) {
+        if (detail && detail>0) {
+          if (this.checkCommunityAccess(this.community)) {
+            this.set('createFabIcon', 'add');
+          }
+        }
       },
 
       _setLocationHidden: function (groups) {
