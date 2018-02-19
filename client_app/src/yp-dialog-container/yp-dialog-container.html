@@ -128,7 +128,7 @@
 
       _gotAdminRights: function (event, detail) {
         console.info("_gotAdminRights");
-        if (detail===true) {
+        if (detail && detail>0) {
           this.set('gotAdminRights', true);
           this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
             console.info("Have loaded admin container");
