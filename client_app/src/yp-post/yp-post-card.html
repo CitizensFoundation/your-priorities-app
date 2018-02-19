@@ -254,6 +254,18 @@
                 } else {
                   postName.style.fontSize="20px";
                 }
+              } else if (!this.wide) {
+                if (post.name.length>200) {
+                  postName.style.fontSize = "14px";
+                } else if (post.name.length>100) {
+                  postName.style.fontSize = "16px";
+                } else if (post.name.length>40) {
+                  postName.style.fontSize="20px";
+                } else if (post.name.length>20) {
+                  postName.style.fontSize="23px";
+                } else {
+                  postName.style.fontSize="25px";
+                }
               } else {
                 if (post.name.length>200) {
                   postName.style.fontSize = "15px";

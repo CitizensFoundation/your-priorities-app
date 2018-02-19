@@ -55,8 +55,11 @@
 
       .container {
         width: 100%;
-        height: 100%;
-        min-height: 300px;
+        width: 100%;
+      }
+
+      yp-post-location {
+        min-height: 320px;
       }
 
       @media (max-width: 600px) {
@@ -112,6 +115,16 @@
 
       .contactInfo {
         margin-top: 16px;
+      }
+
+      #description {
+        --paper-input-container-input:{
+          max-height: 125px;
+        }
+      }
+
+      .postEmoji {
+        margin-left: 16px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -178,13 +191,14 @@
                                 char-counter
                                 rows="2"
                                 max-rows="5"
+                                maxrows="5"
                                 maxlength="[[postDescriptionLimit]]">
                 </paper-textarea>
-              </template>
 
-              <div class="horizontal end-justified layout" hidden$="[[group.configuration.hideEmoji]]">
-                <emoji-selector id="emojiSelectorDescription"></emoji-selector>
-              </div>
+                <div class="horizontal end-justified layout postEmoji" hidden$="[[group.configuration.hideEmoji]]">
+                  <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+                </div>
+              </template>
 
               <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">
                 <yp-file-upload id="attachmentFileUpload" raised="true" multi="false" target="/api/groups/[[group.id]]/upload_document" method="POST" on-success="_documentUploaded">
