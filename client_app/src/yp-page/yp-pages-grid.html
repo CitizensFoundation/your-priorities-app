@@ -272,7 +272,7 @@
         this._closePageLocale();
       },
 
-      _publishPage: function () {
+      _publishPage: function (event) {
         this.$.updatePageAjax.body = {};
         var pageId = event.target.getAttribute('data-args');
         this._dispatchAjax(this.$.updatePageAjax, pageId, "publish_page")
@@ -283,7 +283,7 @@
         this.$.ajax.generateRequest();
       },
 
-      _unPublishPage: function () {
+      _unPublishPage: function (event) {
         this.$.updatePageAjax.body = {};
         var pageId = event.target.getAttribute('data-args');
         this._dispatchAjax(this.$.updatePageAjax, pageId, "un_publish_page")
@@ -294,7 +294,7 @@
         this.$.ajax.generateRequest();
       },
 
-      _deletePage: function () {
+      _deletePage: function (event) {
         this.$.deletePageAjax.body = {};
         var pageId = event.target.getAttribute('data-args');
         this._dispatchAjax(this.$.deletePageAjax, pageId, "delete_page")
