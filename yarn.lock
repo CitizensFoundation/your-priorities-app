@@ -7439,7 +7439,7 @@ polymer-analyzer@^2.0.2, polymer-analyzer@^2.3.0:
     stable "^0.1.6"
     strip-indent "^2.0.0"
 
-polymer-build@2.1.1, polymer-build@^2.0.0, polymer-build@^2.1.0:
+polymer-build@^2.0.0, polymer-build@^2.1.0, polymer-build@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/polymer-build/-/polymer-build-2.1.1.tgz#4f6c7297acc23464c300f1dcd22592ede88b9971"
   dependencies:

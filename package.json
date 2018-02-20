@@ -86,7 +86,7 @@
     "jshint": "^2.9.5",
     "merge-stream": "^1.0.0",
     "plylog": "^0.4.0",
-    "polymer-build": "2.1.1",
+    "polymer-build": "^2.1.1",
     "run-sequence": "^2.2.1",
     "uglify": "^0.1.5"
   },
