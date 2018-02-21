@@ -97,7 +97,7 @@ function build() {
 
           .pipe(size({title: 'Uglify'}))
           .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
-          .pipe(gulpif(/\.html$/, htmlMinifier())) // Install gulp-html-minifier to use
+          .pipe(gulpif(/\.html$/, htmlMinifier({minifyCSS: true, collapseWhitespace: true, removeComments: true}))) // Install gulp-html-minifier to use
 
           // Remember, you need to rejoin any split inline code when you're done.
           .pipe(sourcesStreamSplitter.rejoin());
@@ -121,6 +121,8 @@ function build() {
           .pipe(gulpif(uglifyCondition, uglify().on('error', function(e){
             console.log(e);
           }))) // Install gulp-uglify to use
+          .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
+          .pipe(gulpif(/\.html$/, htmlMinifier({minifyCSS: true, collapseWhitespace: true, removeComments: true}))) // Install gulp-html-minifier to use
 
           // Add any dependency optimizations here.
           .pipe(dependenciesStreamSplitter.rejoin());
