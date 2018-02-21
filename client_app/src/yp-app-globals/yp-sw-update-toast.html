@@ -67,17 +67,14 @@
             navigator.serviceWorker.getRegistration().then((registration) => {
               if (registration) {
                 registration.addEventListener('updatefound', () => {
-                  let skipUpdateNotificationDueToStorage = false;
                   if ('storage' in navigator && 'estimate' in navigator.storage) {
                     navigator.storage.estimate().then(({usage, quota}) => {
                       if (usage>=quota) {
                         console.error(`Using ${usage} out of ${quota} bytes. Not showing toast.`);
-                        skipUpdateNotificationDueToStorage = true;
+                      } else {
+                        this.$.toast.open();
                       }
                     });
-                  }
-                  if (!skipUpdateNotificationDueToStorage) {
-                    this.$.toast.open();
                   }
                 });
               }
