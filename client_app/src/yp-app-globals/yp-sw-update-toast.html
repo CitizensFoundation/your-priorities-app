@@ -73,7 +73,22 @@
               }
             });
           });
+          this._triggerUpdatePolling()
         }
+      }
+
+      _triggerUpdatePolling() {
+        setTimeout(function () {
+          console.error("POLLING");
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistration().then((registration) => {
+              if (registration) {
+                registration.update();
+                this._triggerUpdatePolling();
+              }
+            });
+          }
+        }.bind(this), 30*1000);
       }
 
       _reload() {
