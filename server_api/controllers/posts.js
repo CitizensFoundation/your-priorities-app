@@ -711,16 +711,9 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
     log.info('Post Deleted Got Post', { context: 'delete', user: toJson(req.user) });
     models.AcActivity.findAll({
       attributes: ['id','deleted'],
-      include: [
-        {
-          model: models.Post,
-          attributes: ['id'],
-          required: true,
-          where: {
-            id: postId
-          }
-        }
-      ]
+      where: {
+        post_id: post.id
+      }
     }).then(function (activities) {
       log.info('Post Deleted Got Activities', { context: 'delete', user: toJson(req.user) });
       var activityIds = _.map(activities, function (activity) {
