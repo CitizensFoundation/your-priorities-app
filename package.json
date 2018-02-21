@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "7.1.7",
+  "version": "7.1.10",
   "dependencies": {
     "@google-cloud/translate": "1.1.0",
     "airbrake": "^1.0.1",

@@ -79,7 +79,6 @@
 
       _triggerUpdatePolling() {
         setTimeout(function () {
-          console.error("POLLING");
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistration().then((registration) => {
               if (registration) {
@@ -88,7 +87,7 @@
               }
             });
           }
-        }.bind(this), 30*1000);
+        }.bind(this), 60*60*1000); // Poll for new service worker every hour
       }
 
       _reload() {
