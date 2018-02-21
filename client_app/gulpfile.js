@@ -15,6 +15,12 @@ const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const mergeStream = require('merge-stream');
 const polymerBuild = require('polymer-build');
+const babel = require('gulp-babel');
+const size = require('gulp-size');
+const print = require('gulp-print').default;
+const strip = require('gulp-strip-comments');
+var versionAppend = require('gulp-version-append');
+const versionHtmlImports = require('gulp-version-html-imports');
 
 // Here we add tools that will be used to process our source files.
 const imagemin = require('gulp-imagemin');
@@ -28,7 +34,8 @@ const htmlMinifier = require('gulp-html-minifier');
 const swPrecacheConfig = require('./sw-precache-config.js');
 const polymerJson = require('./polymer.json');
 const polymerProject = new polymerBuild.PolymerProject(polymerJson);
-const buildDirectory = 'build';
+const buildDirectory = 'build/bundled';
+let buildStream;
 
 /**
  * Waits for the given ReadableStream
@@ -39,6 +46,11 @@ function waitFor(stream) {
     stream.on('error', reject);
   });
 }
+
+const uglifyCondition = function (file) {
+  var adapter = file.path.toString().indexOf("custom-elements-es5-adapter") > -1
+  return file.path.endsWith(".js") && !adapter;
+};
 
 function build() {
   return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
@@ -60,7 +72,7 @@ function build() {
           // If you want to optimize, minify, compile, or otherwise process
           // any of your source code for production, you can do so here before
           // merging your sources and dependencies together.
-          .pipe(gulpif(/\.(png|gif|jpg|svg)$/, imagemin()))
+         // .pipe(gulpif(/\.(png|gif|jpg|svg)$/, imagemin()))
 
           // The `sourcesStreamSplitter` created above can be added here to
           // pull any inline styles and scripts out of their HTML files and
@@ -68,12 +80,24 @@ function build() {
           // to rejoin those files with the `.rejoin()` method when you're done.
           .pipe(sourcesStreamSplitter.split())
 
+          //  .pipe(print())
+          .pipe(gulpif(/\.js$/, babel({
+            presets: [ [ 'es2015', { modules: false } ] ],
+            compact: true,
+            ignore: 'custom-elements-es5-adapter.js,webcomponents-*.js'
+          })))
+          .pipe(size({title: 'Babel ES6->ES5'}))
+
           // Uncomment these lines to add a few more example optimizations to your
           // source files, but these are not included by default. For installation, see
           // the require statements at the beginning.
-          .pipe(gulpif(/\.js$/, uglify())) // Install gulp-uglify to use
+          .pipe(gulpif(uglifyCondition, uglify().on('error', function(e){
+            console.log(e);
+          })))
+
+          .pipe(size({title: 'Uglify'}))
           .pipe(gulpif(/\.css$/, cssSlam())) // Install css-slam to use
-          .pipe(gulpif(/\.html$/, htmlMinifier({collapseWhitespace: true, removeComments: true}))) // Install gulp-html-minifier to use
+          .pipe(gulpif(/\.html$/, htmlMinifier())) // Install gulp-html-minifier to use
 
           // Remember, you need to rejoin any split inline code when you're done.
           .pipe(sourcesStreamSplitter.rejoin());
@@ -82,11 +106,26 @@ function build() {
         // any dependency-only optimizations here as well.
         let dependenciesStream = polymerProject.dependencies()
           .pipe(dependenciesStreamSplitter.split())
+
+          //   .pipe(print())
+          .pipe(gulpif(/\.js$/, babel({
+            presets: [ [ 'es2015', { modules: false } ] ],
+            compact: true,
+            ignore: 'custom-elements-es5-adapter.js,webcomponents-*.js'
+          })))
+          .pipe(size({title: 'Dependencies Babel ES6->ES5'}))
+          // .pipe(print())
+          // Uncomment these lines to add a few more example optimizations to your
+          // source files, but these are not included by default. For installation, see
+          // the require statements at the beginning.
+          .pipe(gulpif(uglifyCondition, uglify().on('error', function(e){
+            console.log(e);
+          }))) // Install gulp-uglify to use
+
           // Add any dependency optimizations here.
           .pipe(dependenciesStreamSplitter.rejoin());
-
         // Okay, now let's merge your sources & dependencies together into a single build stream.
-        let buildStream = mergeStream(sourcesStream, dependenciesStream)
+        buildStream = mergeStream(sourcesStream, dependenciesStream)
           .once('data', () => {
             console.log('Analyzing build dependencies...');
           });
@@ -96,14 +135,14 @@ function build() {
         // load them.
         buildStream = buildStream.pipe(polymerProject.bundler());
 
-        // Add es5 adapter
-        buildStream = buildStream.pipe(polymerProject.addBabelHelpersInEntrypoint()).
-                                  pipe(polymerProject.addCustomElementsEs5Adapter());
-        console.log("Have added Es5 Adapter");
+        buildStream = buildStream.pipe(polymerProject.addBabelHelpersInEntrypoint());
+        buildStream = buildStream.pipe(polymerProject.addCustomElementsEs5Adapter());
 
         // Now let's generate the HTTP/2 Push Manifest
         buildStream = buildStream.pipe(polymerProject.addPushManifest());
 
+        buildStream = buildStream.pipe(gulpif(/\.(js|html)$/,versionAppend(['html', 'js'])));
+        buildStream = buildStream.pipe(gulpif(/\.(js|html)$/, versionHtmlImports()));
         // Okay, time to pipe to the build directory
         buildStream = buildStream.pipe(gulp.dest(buildDirectory));
 
@@ -121,6 +160,9 @@ function build() {
         });
       })
       .then(() => {
+        gulp.src('build/bundled/service-worker.js', {base: './'})
+          .pipe(versionHtmlImports())
+          .pipe(gulp.dest('./',  {overwrite: true}));
         // You did it!
         console.log('Build complete!');
         resolve();
