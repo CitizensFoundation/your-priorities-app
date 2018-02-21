@@ -35,6 +35,7 @@
 <link rel="import" href="../yp-user/yp-user-image.html">
 
 <link rel="import" href="../yp-domain/yp-domain.html">
+<link rel="import" href="../yp-app-globals/yp-sw-update-toast.html">
 
 <dom-module id="yp-app">
 
@@ -349,6 +350,7 @@
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
+    <yp-sw-update-toast button-lable="[[t('reload')]]" message="[[t('newVersionAvilable')]]"></yp-sw-update-toast>
   </template>
 
   <script>
