@@ -96,7 +96,7 @@
 
       .debate-text {
         padding-top: 10px;
-        padding-right: 10px;
+        padding-right: 6px;
         color: #757575;
       }
 
@@ -139,6 +139,10 @@
 
       .shareIcon[endorsed] {
         --paper-share-button-icon-color: var(--accent-color-400);
+      }
+
+      .shareIcon[less-margin] {
+        margin-left: 0;
       }
 
       .up-vote-icon {
@@ -187,23 +191,27 @@
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
-        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]" icon="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]"
+                           icon="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text">[[formattedUpCount]]</div>
       </div>
 
       <div class="action-debate" hidden$="[[_hideDebate(small,forceSmall)]]">
-        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
+        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
+                           class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">[[formattedPointCount]]</div>
       </div>
 
       <div class="" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
 
-      <div id="actionDown" class="action-down">
-        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]" icon="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+      <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]"
+                           icon="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text">[[formattedDownCount]]</div>
       </div>
       <div class="share" >
-        <paper-share-button on-share-tap="_shareTap" class="shareIcon" endorsed$="[[isEndorsed]]" horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+        <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                            horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
       </div>
     </paper-material>
 
@@ -371,6 +379,7 @@
           this.removeClass(this.$.actionDown, 'hearts-down-selected');
           this.removeClass(this.$.actionUp,'default-buttons-up-selected');
           this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+          this.$.iconUpButton.icon = "favorite-border";
           this.set('endorseValue', 0);
 
           if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {

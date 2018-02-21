@@ -132,6 +132,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideGroupHeader', truthValueFromBody(req.body.hideGroupHeader));
   group.set('configuration.hidePointAuthor', truthValueFromBody(req.body.hidePointAuthor));
   group.set('configuration.hidePostAuthor', truthValueFromBody(req.body.hidePostAuthor));
+  group.set('configuration.hideDownVoteForPost', truthValueFromBody(req.body.hideDownVoteForPost));
+
   group.set('configuration.attachmentsEnabled', truthValueFromBody(req.body.attachmentsEnabled));
   group.set('configuration.moreContactInformation', truthValueFromBody(req.body.moreContactInformation));
 

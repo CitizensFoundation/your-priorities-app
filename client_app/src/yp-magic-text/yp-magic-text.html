@@ -84,7 +84,7 @@
 
           finalContent: {
             type: String,
-            value: ""
+            value: null
           },
 
           autoTranslate: {
@@ -225,10 +225,12 @@
         this.processedContent = this.content;
         //console.info("contentLanguage: "+this.contentLanguage);
         //console.info("Language: "+this.language);
-        if (this.autoTranslate && this.language!==this.contentLanguage) {
-          this._startTranslationAndFinalize();
-        } else {
-          this._finalize();
+        if (this.processedContent) {
+          if (this.autoTranslate && this.language!==this.contentLanguage) {
+            this._startTranslationAndFinalize();
+          } else {
+            this._finalize();
+          }
         }
       }
 
@@ -237,7 +239,7 @@
           this._linksAndEmojis()
         }
 
-        if (this.truncate && this.content && this.content.length>this.truncate) {
+        if (this.truncate && this.content && (this.content.length>this.truncate || this.autoTranslate)) {
           let truncateBy = this.truncate;
           if (this.autoTranslate && YpMagicTextBox.doubleWidthLanguages.indexOf(this.language) > -1) {
             truncateBy = truncateBy / 2;
@@ -256,7 +258,7 @@
           }
         }
 
-        if (this.processedContent && this.content!==this.processedContent) {
+        if (this.processedContent && this.processedContent!=="undefined" && this.content!==this.processedContent) {
           this.set('finalContent', this.processedContent);
         } else {
           this.set('finalContent', null);
@@ -280,8 +282,8 @@
           ]
         });
         this.processedContent = twemoji.parse(this.processedContent).
-                 replace(/&amp\;quot\;/g,"\"").
-                 replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
+        replace(/&amp\;quot\;/g,"\"").
+        replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
       }
 
       static truncate(input, length, killwords, end) {
