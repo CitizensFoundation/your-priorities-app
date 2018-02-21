@@ -237,7 +237,7 @@
           this._linksAndEmojis()
         }
 
-        if (this.truncate) {
+        if (this.truncate && this.content && this.content.length>this.truncate) {
           let truncateBy = this.truncate;
           if (this.autoTranslate && YpMagicTextBox.doubleWidthLanguages.indexOf(this.language) > -1) {
             truncateBy = truncateBy / 2;
