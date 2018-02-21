@@ -62,13 +62,23 @@
 
       ready() {
         super.ready();
-
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
             navigator.serviceWorker.getRegistration().then((registration) => {
               if (registration) {
                 registration.addEventListener('updatefound', () => {
-                  this.$.toast.open();
+                  let skipUpdateNotificationDueToStorage = false;
+                  if ('storage' in navigator && 'estimate' in navigator.storage) {
+                    navigator.storage.estimate().then(({usage, quota}) => {
+                      if (usage>=quota) {
+                        console.error(`Using ${usage} out of ${quota} bytes. Not showing toast.`);
+                        skipUpdateNotificationDueToStorage = true;
+                      }
+                    });
+                  }
+                  if (!skipUpdateNotificationDueToStorage) {
+                    this.$.toast.open();
+                  }
                 });
               }
             });
