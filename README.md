@@ -47,7 +47,7 @@ To build a client_dist production folder with vulcanized web components
 ```bash
 npm install polymer-cli
 cd client_app
-polymer build
+gulp build
 ```
 
 For production mode you need to supply the URL to the database as an ENV variable
