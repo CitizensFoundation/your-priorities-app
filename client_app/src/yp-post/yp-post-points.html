@@ -238,7 +238,7 @@
               <div hidden$="[[post.Group.configuration.hideEmoji]]">
 
               </div>
-              <div class="horizontal end-justified layout">
+              <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
                 <emoji-selector id="pointUpEmojiSelector"></emoji-selector>
               </div>
 
@@ -529,9 +529,13 @@
 
         _loadNewPointsIfNeeded: function (event, detail) {
           if (this.post && this.post.id == detail.postId) {
-            this.$.newPointsAjax.url = '/api/posts/' + this.post.id + '/newPoints';
-            this.$.newPointsAjax.params = { latestPointCreatedAt: this.latestPointCreatedAt };
-            this.$.newPointsAjax.generateRequest();
+            if (this.latestPointCreatedAt) {
+              this.$.newPointsAjax.url = '/api/posts/' + this.post.id + '/newPoints';
+              this.$.newPointsAjax.params = { latestPointCreatedAt: this.latestPointCreatedAt };
+              this.$.newPointsAjax.generateRequest();
+            } else {
+              console.error("Trying to send point without latestPointCreatedAt");
+            }
           }
         },
 
@@ -600,6 +604,7 @@
           this.set('points', null);
           this.set('upPoints', null);
           this.set('downPoints', null);
+          this.set('latestPointCreatedAt', null);
           if (newPost) {
             if (this.host) {
               this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
@@ -704,7 +709,7 @@
 
         _preProcessPoints: function (points) {
           for (var i = 0; i < points.length; i++) {
-            if (!this.latestPointCreatedAt || points[i].created_at > this.latestPointCreatedAt) {
+            if (!this.latestPointCreatedAt || (!this.latestPointCreatedAt || points[i].created_at > this.latestPointCreatedAt)) {
               this.set('latestPointCreatedAt', points[i].created_at);
             }
             points[i].latestContent = points[i].PointRevisions[points[i].PointRevisions.length-1].content;

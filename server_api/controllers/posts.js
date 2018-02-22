@@ -337,7 +337,7 @@ router.put('/:id/report', auth.can('vote on post'), function (req, res) {
 });
 
 router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
-  if (req.query.latestPointCreatedAt) {
+  if (req.query.latestPointCreatedAt && req.query.latestPointCreatedAt!=='' && req.query.latestPointCreatedAt!=='undefined') {
     models.Point.findAll({
       where: {
         post_id: req.params.id,
