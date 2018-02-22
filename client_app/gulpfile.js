@@ -172,4 +172,95 @@ function build() {
   });
 }
 
+
+function buildDebug() {
+  return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
+
+    // Lets create some inline code splitters in case you need them later in your build.
+    let sourcesStreamSplitter = new polymerBuild.HtmlSplitter();
+    let dependenciesStreamSplitter = new polymerBuild.HtmlSplitter();
+
+    // Okay, so first thing we do is clear the build directory
+    console.log(`Deleting ${buildDirectory} directory...`);
+    del([buildDirectory])
+      .then(() => {
+
+        let sourcesStream = polymerProject.sources()
+
+          .pipe(sourcesStreamSplitter.split())
+
+          //  .pipe(print())
+          .pipe(gulpif(/\.js$/, babel({
+            presets: [ [ 'es2015', { modules: false } ] ],
+            compact: true,
+            ignore: 'custom-elements-es5-adapter.js,webcomponents-*.js'
+          })))
+          .pipe(size({title: 'Babel ES6->ES5'}))
+
+          // Remember, you need to rejoin any split inline code when you're done.
+          .pipe(sourcesStreamSplitter.rejoin());
+
+        // Similarly, you can get your dependencies seperately and perform
+        // any dependency-only optimizations here as well.
+        let dependenciesStream = polymerProject.dependencies()
+          .pipe(dependenciesStreamSplitter.split())
+
+          //   .pipe(print())
+          .pipe(gulpif(/\.js$/, babel({
+            presets: [ [ 'es2015', { modules: false } ] ],
+            compact: true,
+            ignore: 'custom-elements-es5-adapter.js,webcomponents-*.js'
+          })))
+          .pipe(size({title: 'Dependencies Babel ES6->ES5'}))
+
+          // Add any dependency optimizations here.
+          .pipe(dependenciesStreamSplitter.rejoin());
+        // Okay, now let's merge your sources & dependencies together into a single build stream.
+        buildStream = mergeStream(sourcesStream, dependenciesStream)
+          .once('data', () => {
+            console.log('Analyzing build dependencies...');
+          });
+
+        // If you want bundling, pass the stream to polymerProject.bundler.
+        // This will bundle dependencies into your fragments so you can lazy
+        // load them.
+        buildStream = buildStream.pipe(polymerProject.bundler());
+
+        buildStream = buildStream.pipe(polymerProject.addBabelHelpersInEntrypoint());
+        buildStream = buildStream.pipe(polymerProject.addCustomElementsEs5Adapter());
+
+        // Now let's generate the HTTP/2 Push Manifest
+        buildStream = buildStream.pipe(polymerProject.addPushManifest());
+
+        buildStream = buildStream.pipe(gulpif(/\.(js|html)$/,versionAppend(['html', 'js'])));
+        buildStream = buildStream.pipe(gulpif(/\.(js|html)$/, versionHtmlImports()));
+        // Okay, time to pipe to the build directory
+        buildStream = buildStream.pipe(gulp.dest(buildDirectory));
+
+        // waitFor the buildStream to complete
+        return waitFor(buildStream);
+      })
+      .then(() => {
+        // Okay, now let's generate the Service Worker
+        console.log('Generating the Service Worker...');
+        return polymerBuild.addServiceWorker({
+          project: polymerProject,
+          buildRoot: buildDirectory,
+          bundled: true,
+          swPrecacheConfig: swPrecacheConfig
+        });
+      })
+      .then(() => {
+        gulp.src('build/bundled/service-worker.js', {base: './'})
+          .pipe(versionHtmlImports())
+          .pipe(gulp.dest('./',  {overwrite: true}));
+        // You did it!
+        console.log('Build complete!');
+        resolve();
+      });
+  });
+}
+
+
 gulp.task('build', build);
+gulp.task('build-debug', buildDebug);
