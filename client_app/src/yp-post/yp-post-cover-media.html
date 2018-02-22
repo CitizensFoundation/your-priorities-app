@@ -140,7 +140,7 @@
                       sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]"></iron-image>
 
           <template is="dom-if" if="[[mapActivated]]">
-            <google-map id="coverMediaMap" class="map"
+            <google-map additional-map-options='{"keyboardShortcuts":false}' id="coverMediaMap" class="map"
                         libraries="places"
                         fit-to-markers
                         zoom$="[[zoomLevel]]"
