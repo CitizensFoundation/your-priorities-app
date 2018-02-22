@@ -39,6 +39,7 @@
         padding-left: 24px;
         padding-right: 24px;
         @apply --layout-vertical;
+        width: 398px;
       }
 
       .pointInputMaterial {
@@ -46,7 +47,6 @@
         padding-bottom: 16px;
         padding-left: 16px;
         padding-right: 16px;
-        width: 398px;
         margin-bottom: 16px;
         background-color: #FFF;
       }
@@ -204,6 +204,10 @@
       :focus {
         outline: none;
       }
+
+      #ironListMobile[debate-disabled] {
+        margin-top: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -235,9 +239,6 @@
                               max-rows="3" maxlength="500">
               </paper-textarea>
 
-              <div hidden$="[[post.Group.configuration.hideEmoji]]">
-
-              </div>
               <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
                 <emoji-selector id="pointUpEmojiSelector"></emoji-selector>
               </div>
@@ -338,7 +339,7 @@
         </div>
       </paper-material>
       <div class="layout vertical center-center">
-        <iron-list id="ironListMobile" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+        <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
           <template>
             <div class="item" tabindex$="[[tabIndex]]">
               <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
