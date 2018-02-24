@@ -196,6 +196,7 @@ function buildDebug() {
             ignore: 'custom-elements-es5-adapter.js,webcomponents-*.js'
           })))
           .pipe(size({title: 'Babel ES6->ES5'}))
+          .pipe(gulpif(/\.html$/, htmlMinifier({minifyCSS: true, collapseWhitespace: true, removeComments: true}))) // Install gulp-html-minifier to use
 
           // Remember, you need to rejoin any split inline code when you're done.
           .pipe(sourcesStreamSplitter.rejoin());
@@ -212,6 +213,7 @@ function buildDebug() {
             ignore: 'custom-elements-es5-adapter.js,webcomponents-*.js'
           })))
           .pipe(size({title: 'Dependencies Babel ES6->ES5'}))
+          .pipe(gulpif(/\.html$/, htmlMinifier({minifyCSS: true, collapseWhitespace: true, removeComments: true}))) // Install gulp-html-minifier to use
 
           // Add any dependency optimizations here.
           .pipe(dependenciesStreamSplitter.rejoin());
