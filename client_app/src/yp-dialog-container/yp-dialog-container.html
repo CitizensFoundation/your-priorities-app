@@ -107,7 +107,17 @@
         haveLoadedDelayed: {
           type: Boolean,
           value: false
-        }
+        },
+
+        loadingStartedLoggedIn: {
+          type: Boolean,
+          value: false
+        },
+
+        loadingStartedAdmin: {
+          type: Boolean,
+          value: false
+        },
       },
 
       ready: function () {
@@ -120,9 +130,14 @@
         console.info("_loggedInUser");
         if (user) {
           this.set('loggedInUser', user);
-          this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
-            console.info("Have loaded logged-in container");
-          }, null, true);
+          if (!this.loadingStartedLoggedIn) {
+            this.this.loadingStartedLoggedIn = true;
+            this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
+              console.info("Have loaded logged-in container");
+            }, null, true);
+          } else {
+            console.error("Trying to load logged in twice");
+          }
         }
       },
 
@@ -130,9 +145,14 @@
         console.info("_gotAdminRights");
         if (detail && detail>0) {
           this.set('gotAdminRights', true);
-          this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
-            console.info("Have loaded admin container");
-          }, null, true);
+          if (!this.loadingStartedAdmin) {
+            this.this.loadingStartedAdmin = true;
+            this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
+              console.info("Have loaded admin container");
+            }, null, true);
+          } else {
+            console.error("Trying to load logged in twice");
+          }
         }
       },
 
