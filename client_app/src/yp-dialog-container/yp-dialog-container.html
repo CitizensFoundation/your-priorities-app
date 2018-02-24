@@ -131,7 +131,7 @@
         if (user) {
           this.set('loggedInUser', user);
           if (!this.loadingStartedLoggedIn) {
-            this.this.loadingStartedLoggedIn = true;
+            this.loadingStartedLoggedIn = true;
             this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
               console.info("Have loaded logged-in container");
             }, null, true);
@@ -146,7 +146,7 @@
         if (detail && detail>0) {
           this.set('gotAdminRights', true);
           if (!this.loadingStartedAdmin) {
-            this.this.loadingStartedAdmin = true;
+            this.loadingStartedAdmin = true;
             this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
               console.info("Have loaded admin container");
             }, null, true);
