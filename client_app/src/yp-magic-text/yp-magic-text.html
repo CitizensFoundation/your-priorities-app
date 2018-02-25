@@ -111,6 +111,16 @@
 
           closeDialogText: {
             type: String
+          },
+
+          textOnly: {
+            type: Boolean,
+            value: false
+          },
+
+          disableTranslation: {
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -226,7 +236,7 @@
         //console.info("contentLanguage: "+this.contentLanguage);
         //console.info("Language: "+this.language);
         if (this.processedContent) {
-          if (this.autoTranslate && this.language!==this.contentLanguage) {
+          if (this.autoTranslate && this.language!==this.contentLanguage  && !this.disableTranslation) {
             this._startTranslationAndFinalize();
           } else {
             this._finalize();
@@ -267,6 +277,7 @@
 
       _linksAndEmojis () {
         this.processedContent = sanitizeHtml(this.processedContent, { allowedTags: [ 'b', 'i', 'em', 'strong'] });
+        this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
         this.processedContent = linkifyStr(this.processedContent, {
           format: function (value, type) {
             if (type === 'url' && value.length > 34) {
@@ -281,6 +292,7 @@
             'strong'
           ]
         });
+        this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
         this.processedContent = twemoji.parse(this.processedContent).
         replace(/&amp\;quot\;/g,"\"").
         replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');

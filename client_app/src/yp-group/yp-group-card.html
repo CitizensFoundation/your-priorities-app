@@ -64,6 +64,7 @@
         padding: 0;
         padding-bottom: 4px;
         margin: 0;
+        font-weight: bold;
       }
 
       .group-name[archived] {
@@ -181,10 +182,13 @@
             <iron-image archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
           </template>
           <div class="description">
-            <h2 id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
-              [[groupName]]
+            <div id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
+              <yp-magic-text text-type="groupName" content-language="[[group.language]]"
+                             disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                             text-only content="[[groupName]]" content-id="[[group.id]]">
+              </yp-magic-text>
               <span hidden$="[[!archived]]">- [[t('archived')]]</span>
-            </h2>
+            </div>
             <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
                              text-type="groupContent" content-language="[[group.language]]"
                              text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">

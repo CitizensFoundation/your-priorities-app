@@ -201,7 +201,10 @@
         </div>
         <div class="informationText">
           <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">
-            [[communityName]]
+            <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+                           disable-translation="[[community.configuration.disableNameAutoTranslation]]"
+                           text-only content="[[communityName]]" content-id="[[community.id]]">
+            </yp-magic-text>
             <span hidden$="[[!archived]]">- [[t('archived')]]</span>
           </div>
 

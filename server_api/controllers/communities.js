@@ -266,6 +266,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.disableDomainUpLink', (req.body.disableDomainUpLink && req.body.disableDomainUpLink!="") ? true : false);
   community.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat!="") ? req.body.defaultLocationLongLat : null);
   community.set('configuration.facebookPixelId', (req.body.facebookPixelId && req.body.facebookPixelId!="") ? req.body.facebookPixelId : null);
+  community.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);
 
   community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
 
