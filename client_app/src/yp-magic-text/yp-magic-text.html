@@ -221,7 +221,6 @@
       }
 
       _getTranslationResponse(event, detail) {
-        //console.info("Get response: "+detail.response.content);
         if (detail.response.content) {
           this.processedContent = detail.response.content;
           window.appGlobals.autoTranslateCache[this._getIndexKey()] = this.processedContent;
@@ -233,8 +232,6 @@
 
       _update() {
         this.processedContent = this.content;
-        //console.info("contentLanguage: "+this.contentLanguage);
-        //console.info("Language: "+this.language);
         if (this.processedContent) {
           if (this.autoTranslate && this.language!==this.contentLanguage  && !this.disableTranslation) {
             this._startTranslationAndFinalize();
