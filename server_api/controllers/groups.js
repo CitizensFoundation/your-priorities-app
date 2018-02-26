@@ -11,6 +11,8 @@ var seededShuffle = require("knuth-shuffle-seeded");
 var multer = require('multer');
 var s3multer = require('multer-s3');
 var aws = require('aws-sdk');
+var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDataForGroup;
+const moment = require('moment');
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -399,6 +401,22 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
     } else {
       log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.send(pages);
+    }
+  });
+});
+
+router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) {
+  getExportFileDataForGroup(req.params.groupId, req.ypDomain.domain_name, function (error, fileData) {
+    if (error) {
+      log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      log.info('Got Export Admin', {context: 'export_group', user: toJson(req.user.simple()) });
+      var filename = 'ideas_and_points_group_export_for_id_'+req.params.groupId+'_'+moment(new Date().toString(), "dd_MM_HH_mm")+'.csv';
+      res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
+      res.charset = 'utf-8';
+      res.attachment(filename);
+      res.send(fileData);
     }
   });
 });
