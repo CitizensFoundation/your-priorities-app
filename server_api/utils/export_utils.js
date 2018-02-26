@@ -60,6 +60,14 @@ var getContactData = function (post) {
   }
 }
 
+var getAttachmentData = function (post) {
+  if (post.data && post.data.attachment && post.data.attachment.url) {
+    return `"${post.data.attachment.url}","${post.data.attachment.filename}"`;
+  } else {
+    return ",";
+  }
+}
+
 var getPointsUpOrDown = function (post, value) {
   var pointsText = '"';
   var points = _.filter(post.Points, function (point) {
@@ -165,7 +173,7 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
   }).then(function (posts) {
     var outFileContent = "";
     //console.log(posts.length);
-    outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone\n";
+    outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename\n";
     postCounter = 0;
     async.eachSeries(posts, function (post, seriesCallback) {
       postCounter += 1;
@@ -176,7 +184,8 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
           getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
           ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
           getImages(post)+','+
-          getContactData(post)+'\n';
+          getContactData(post)+','+
+          getAttachmentData(post)+'\n';
       } else {
         outFileContent += postCounter+','+post.id+',DELETED,,,,,,,,,,,\n';
       }
