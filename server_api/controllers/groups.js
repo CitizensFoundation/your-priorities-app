@@ -603,6 +603,8 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
     ip_address: req.clientIp
   });
 
+  group.theme_id = req.body.themeId ? parseInt(req.body.themeId) : null;
+
   updateGroupConfigParamters(req, group);
 
   group.save().then(function(group) {
