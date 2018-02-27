@@ -580,6 +580,7 @@
           window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
         }
         this.redirectTo("/post/"+post.id);
+        window.appGlobals.activity('completed', 'newPost');
       } else {
         console.warn('No post found on custom redirect');
       }

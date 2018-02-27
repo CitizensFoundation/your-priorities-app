@@ -759,6 +759,11 @@
           this.set('post.counter_points', this.post.counter_points + 1);
           this.$.newPointToast.show();
           this._updateCounterInfo();
+          if (point.value > 0) {
+            window.appGlobals.activity('completed', 'newPointFor');
+          } else {
+            window.appGlobals.activity('completed', 'newPointAgainst');
+          }
         },
 
         addPointUp: function () {
