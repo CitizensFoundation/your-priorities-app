@@ -38,6 +38,25 @@
   <meta name="msapplication-TileColor" content="#3f51b5">
   <meta name="msapplication-tap-highlight" content="no">
 
+  <script>
+    if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+      var window_document_createElement =
+        Object.getOwnPropertyDescriptor(window.document, 'createElement');
+      if (window_document_createElement &&
+        typeof window_document_createElement.value === "function") {
+        Document.prototype['createElement'] = window_document_createElement.value;
+        delete document.createElement;
+
+        console.warn("Custom Elements: " +
+          "An own property for `createElement` was found on `document`. This " +
+          "function was wrapped instead of `Document.prototype.createElement` " +
+          "and the own property was removed. See " +
+          "https://github.com/webcomponents/custom-elements/issues/137 for more " +
+          "information.");
+      }
+    }
+  </script>
+
   <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 
   <script>
@@ -58,9 +77,6 @@
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
     }
-
-    // Hack to make lastPass work
-    document.createElement = Document.prototype.createElement;
   </script>
 
   <link rel="import" href="/src/yp-app/yp-app.html?v=@version@">
