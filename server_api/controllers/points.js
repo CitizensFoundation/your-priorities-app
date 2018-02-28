@@ -443,16 +443,9 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
   }).then(function (point) {
     models.AcActivity.findAll({
       attributes: ['id','deleted'],
-      include: [
-        {
-          model: models.Point,
-          attributes: ['id'],
-          required: true,
-          where: {
-            id: point.id
-          }
-        }
-      ]
+      where: {
+        point_id: point.id
+      }
     }).then(function (activities) {
       var activityIds = _.map(activities, function (activity) {
         return activity.id;
