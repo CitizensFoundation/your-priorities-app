@@ -62,6 +62,7 @@
     "randomstring": "^1.1.4",
     "request-ip": "^1.2.2",
     "s3-uploader": "^1.0.0",
+    "sanitize-filename": "^1.6.1",
     "sequelize": "^3.31.1",
     "sequelize-cli": "^2.4.0",
     "serve-favicon": "~2.1.6",
@@ -72,6 +73,7 @@
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
     "css-slam": "^2.0.2",
     "del": "^2.2.1",
     "gulp": "gulpjs/gulp#3.9",

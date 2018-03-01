@@ -12,7 +12,8 @@ var multer = require('multer');
 var s3multer = require('multer-s3');
 var aws = require('aws-sdk');
 var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDataForGroup;
-const moment = require('moment');
+var moment = require('moment');
+var sanitizeFilename = require("sanitize-filename");
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -411,12 +412,30 @@ router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) 
       log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Got Export Admin', {context: 'export_group', user: toJson(req.user.simple()) });
-      var filename = 'ideas_and_points_group_export_for_id_'+req.params.groupId+'_'+moment(new Date().toString(), "dd_MM_HH_mm")+'.csv';
-      res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
-      res.charset = 'utf-8';
-      res.attachment(filename);
-      res.send(fileData);
+      models.Group.find({
+        where: {
+          id: req.params.groupId
+        },
+        attributes: ["id", "name","community_id"]
+      }).then(function (model) {
+        if (model) {
+          log.info('Got Export Admin', {context: 'export_group', user: toJson(req.user.simple()) });
+          var groupName = sanitizeFilename(model.name).replace(/ /g,'');
+          var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
+          var filename = 'ideas_and_points_group_export_'+model.community_id+'_'+req.params.groupId+'_'+
+                          groupName+'_'+dateString+'.csv';
+          res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
+          res.charset = 'utf-8';
+          res.attachment(filename);
+          res.send(fileData);
+        } else {
+          log.error('Cant find group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+          res.sendStatus(404);
+        }
+      }).catch(function (error) {
+        log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      });
     }
   });
 });
