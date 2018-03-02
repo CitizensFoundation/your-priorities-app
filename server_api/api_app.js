@@ -251,7 +251,7 @@ passport.deserializeUser(function (sessionUser, done) {
         if (airbrakeErr) {
           log.error("AirBrake Error", {
             context: 'airbrake',
-            user: toJson(req.user),
+            user: null,
             err: airbrakeErr,
             errorStatus: 500
           });
@@ -348,7 +348,7 @@ app.use(function (err, req, res, next) {
   } else {
     log.error("General Error", {
       context: 'generalError',
-      user: toJson(req.user),
+      user: req ? toJson(req.user) : null,
       err: err,
       errStack: err.stack,
       errorStatus: status
