@@ -292,7 +292,9 @@ router.get('/*', function(req, res, next) {
   var splitUrl = url.split('/');
 
   var id = splitUrl[splitPath+1];
-  id = id.split("?")[0];
+  if (id) {
+    id = id.split("?")[0];
+  }
 
   if (splitUrl[splitPath]=='domain') {
     sendDomain(id, req, res)
