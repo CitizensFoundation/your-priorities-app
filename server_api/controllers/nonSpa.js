@@ -291,16 +291,19 @@ router.get('/*', function(req, res, next) {
 
   var splitUrl = url.split('/');
 
+  var id = splitUrl[splitPath+1];
+  id = id.split("?")[0];
+
   if (splitUrl[splitPath]=='domain') {
-    sendDomain(splitUrl[splitPath+1], req, res)
+    sendDomain(id, req, res)
   } else if (splitUrl[splitPath]=='community') {
-    sendCommunity(splitUrl[splitPath+1], req, res)
+    sendCommunity(id, req, res)
   } else if (splitUrl[splitPath]=='group') {
-    sendGroup(splitUrl[splitPath+1], req, res)
+    sendGroup(id, req, res)
   } else if (splitUrl[splitPath]=='post') {
-    sendPost(splitUrl[splitPath+1], req, res)
+    sendPost(id, req, res)
   } else if (splitUrl[splitPath]=='user') {
-    sendUser(splitUrl[splitPath+1], req, res)
+    sendUser(id, req, res)
   } else if (req.ypCommunity && req.ypCommunity.id != null) {
     sendCommunity(req.ypCommunity.id, req, res);
   } else if (req.ypDomain && req.ypDomain.id != null) {
