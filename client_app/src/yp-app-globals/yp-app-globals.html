@@ -116,7 +116,19 @@
 
           originalQueryParameters: Object,
 
-          autoTranslateCache: Object
+          autoTranslateCache: Object,
+
+          externalGoalTriggerUrl: String,
+
+          externalGoalCounter: {
+            type: Number,
+            value: 0
+          },
+
+          goalEvents: {
+            type: Array,
+            value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
+          }
         },
 
         changeLocaleIfNeededAfterWait: function (locale, force) {
@@ -372,6 +384,27 @@
             user_agent: navigator.userAgent
           };
           activityAjax.generateRequest();
+
+          if (type==='completed' || type==='click') {
+            this.checkExternalGoalTrigger(object);
+          }
+        },
+
+        checkExternalGoalTrigger: function (object) {
+          if (this.externalGoalTriggerUrl &&
+              this.originalQueryParameters &&
+              this.originalQueryParameters.goalThreshold &&
+              this.goalEvents.indexOf(object) > -1) {
+            this.externalGoalCounter += 1;
+            if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
+              var goalTriggerAjax = document.createElement('iron-ajax');
+              goalTriggerAjax.handleAs = 'json';
+              goalTriggerAjax.url = this.externalGoalTriggerUrl;
+              goalTriggerAjax.params = this.originalQueryParameters;
+              goalTriggerAjax.method = 'GET';
+              goalTriggerAjax.generateRequest();
+            }
+          }
         },
 
         ready: function () {
@@ -471,6 +504,7 @@
           } else {
             console.warn("Google analytics message not sent for a:"+a+" b:"+b+" c:"+c+" d:"+d+" e:"+e+" f:"+f);
           }
+
           if (a!='sendOnlyCommunity') {
             this.facebookPixelTracking(b, c);
           }

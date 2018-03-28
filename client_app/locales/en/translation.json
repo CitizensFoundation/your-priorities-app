@@ -1,4 +1,5 @@
 {
+  "externalGoalTriggerUrl": "External goal trigger URL",
   "exportGroup": "Export CSV file",
   "disableNameAutoTranslation": "Disable auto translation for name",
   "hideDownVoteForPost": "Hide down vote for posts",

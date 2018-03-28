@@ -266,6 +266,13 @@
                    char-counter>
       </paper-input>
 
+      <paper-input id="externalGoalTriggerUrl"
+                   name="externalGoalTriggerUrl"
+                   type="text"
+                   label="[[t('externalGoalTriggerUrl')]]"
+                   value="{{group.configuration.externalGoalTriggerUrl}}">
+      </paper-input>
+
       <div class="layout horizontal">
         <div class="layout vertical additionalSettings">
           <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">

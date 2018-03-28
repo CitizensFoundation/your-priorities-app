@@ -752,6 +752,12 @@
           } else {
             window.appGlobals.disableFacebookLoginForGroup = false;
           }
+
+          if (this.group.configuration && this.group.configuration.externalGoalTriggerUrl) {
+            window.appGlobals.externalGoalTriggerUrl = this.group.configuration.externalGoalTriggerUrl;
+          } else {
+            window.appGlobals.externalGoalTriggerUrl = null;
+          }
         }
       },
 
