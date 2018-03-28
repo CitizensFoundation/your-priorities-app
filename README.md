@@ -50,6 +50,11 @@ cd client_app
 gulp build
 ```
 
+If you are moving from version 6 to version 7 make sure to clear out the bower_components folder before running bower install
+```bash
+rm -r client_app/bower_components
+```
+
 For production mode you need to supply the URL to the database as an ENV variable
 ```bash
 postgres://username:password@dbhost:dbport/dbname
