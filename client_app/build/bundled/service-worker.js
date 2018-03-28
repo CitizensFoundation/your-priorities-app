@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["index.html?v=7.1.23","0198eeaa6bac0985aca9988ba63903a6"],["src/yp-app/yp-app.html?v=7.1.23","46b02a144487d16827499cd89201a81c"],["src/yp-app/yp-view-404.html?v=7.1.23","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=7.1.23","81ac7fc9f05171ad256f52e639798e64"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=7.1.23","9e41ff08be93737f123b196270fc3cc7"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=7.1.23","7aee420e5c3cad14dc5ae471d150c216"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=7.1.23","f2505af3bd35264bd76ad3babfc85c98"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=7.1.23","378db3b7f52b86ee13d70d600c1bd6c6"],["src/yp-group/yp-group.html?v=7.1.23","1ba8b1148e2210de34ade72332286c8b"],["src/yp-post/yp-post.html?v=7.1.23","bf7d42820e36f3d5021adbfda1f0d8c1"],["src/yp-user/yp-user.html?v=7.1.23","4988fc1c09eb880cae64a2350f6bc414"]];
+var precacheConfig = [["index.html?v=7.1.23","0198eeaa6bac0985aca9988ba63903a6"],["src/yp-app/yp-app.html?v=7.1.23","36dd80bfcfc70619f8f2a5332ac841de"],["src/yp-app/yp-view-404.html?v=7.1.23","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=7.1.23","8f0021ff7adbc202467e756c291b4356"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=7.1.23","9e41ff08be93737f123b196270fc3cc7"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=7.1.23","7aee420e5c3cad14dc5ae471d150c216"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=7.1.23","8a8f61679730ae4a2876cc0b301cf673"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=7.1.23","378db3b7f52b86ee13d70d600c1bd6c6"],["src/yp-group/yp-group.html?v=7.1.23","7000715eeb576a4d98b7aa8bd771d2c4"],["src/yp-post/yp-post.html?v=7.1.23","c8124a196c0d71828f037931e7227190"],["src/yp-user/yp-user.html?v=7.1.23","4988fc1c09eb880cae64a2350f6bc414"]];
 var cacheName = 'sw-precache-v3--' + (self.registration ? self.registration.scope : '');
 
 
@@ -285,7 +285,7 @@ self.addEventListener('fetch', function(event) {
 
 // Runtime cache configuration, using the sw-toolbox library.
 
-toolbox.router.get(/\/(.*)/, toolbox.networkFirst, {});
+toolbox.router.get(/.html/, toolbox.networkFirst, {});
 
 
 
