@@ -1,4 +1,5 @@
 {
+  "toggleMembership": "Toggle membership",
   "externalGoalTriggerUrl": "External goal trigger URL",
   "exportGroup": "Export CSV file",
   "disableNameAutoTranslation": "Disable auto translation for name",

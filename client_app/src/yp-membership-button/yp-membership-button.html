@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
@@ -15,45 +16,13 @@
         background-color: transparent;
       }
 
-      .member {
-        background-color: var(--accent-color);
-      }
-
       .heartButton {
-        color: #FFF !important;
+        color: #999;
+        cursor: pointer;
       }
 
-      paper-fab {
-        background-color: #999;
-        color: #FFF;
-        --paper-fab-iron-icon {
-          color: #FFF;
-        }
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        paper-fab {
-          width: 55px;
-          height: 55px;
-        }
-
-        paper-fab[large] {
-          --paper-fab-iron-icon {
-            --iron-icon-height: 36px;
-            --iron-icon-width: 36px;
-          }
-        }
-      }
-
-      @media (max-width: 680px) {
-        paper-fab {
-          width: 40px;
-          height: 40px;
-          --paper-fab-iron-icon {
-            --iron-icon-height: 32px;
-            --iron-icon-width: 32px;
-          }
-        }
+      .member {
+        color: var(--accent-color);
       }
 
       [hidden] {
@@ -61,7 +30,7 @@
       }
     </style>
 
-    <paper-fab mini$="[[!large]]" id="button" on-tap="_toggleMembership"  disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
+    <iron-icon id="button" title$="[[t('toggleMembership')]]" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></iron-icon>
     <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
 
     <lite-signal on-lite-signal-got-memberships="_updateMembershipFromSignal"></lite-signal>
