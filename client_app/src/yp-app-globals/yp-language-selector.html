@@ -181,7 +181,7 @@
       },
 
       _startTranslation: function () {
-        if (this._canUseAutoTranslate(this.language)) {
+        if (this._canUseAutoTranslate(this.language, this.hasServerAutoTranslation)) {
           document.dispatchEvent(
             new CustomEvent("lite-signal", {
               bubbles: true,
@@ -229,11 +229,11 @@
         }
       },
 
-      _selectedLocaleChanged: function (locale) {
+      _selectedLocaleChanged: function (locale, oldLocale) {
         if (locale) {
           this.set('value', locale);
           if (!this.noUserEvents) {
-            if (!this._canUseAutoTranslate(locale) && this.autoTranslate) {
+            if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
               this._stopTranslation();
             }
             this.fire('yp-language-name', this.supportedLanguages[locale]);
