@@ -70,6 +70,9 @@
 
       .rounded-more img { opacity: 0; }
 
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <template restamp is="dom-if" if="[[user]]">
@@ -77,9 +80,9 @@
         <iron-image sizing="cover" title="[[userTitle]]" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
-      <template is="dom-if" if="[[!profileImageUrl]]">
+      <template is="dom-if" if="[[noProfileImage]]" restamp>
         <template is="dom-if" if="[[user.facebook_id]]">
-          <iron-image sizing="cover" title="[[userTitle]]" preload src$="[[computeFacebookSrc]]" class$="[[computeClass(small)]]"></iron-image>
+          <iron-image sizing="cover" hidden$="[[profileImageUrl]]" title="[[userTitle]]" preload src$="[[computeFacebookSrc]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[!noDefault]]">
@@ -145,6 +148,11 @@
         computeFacebookSrc: {
           type: String,
           computed: '_computeFacebookSrc(user)'
+        },
+
+        noProfileImage: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -163,10 +171,13 @@
       _profileImageUrl: function (user) {
         if (user && user.UserProfileImages && user.UserProfileImages.length > 0) {
           var formatUrl = this.getImageFormatUrl(user.UserProfileImages, 0);
-          if (formatUrl && formatUrl!="")
+          if (formatUrl && formatUrl!=="") {
+            this.set('noProfileImage', false);
             return formatUrl;
-          else
+          } else {
+            this.set('noProfileImage', true);
             return null;
+          }
         } else {
           return null;
         }
