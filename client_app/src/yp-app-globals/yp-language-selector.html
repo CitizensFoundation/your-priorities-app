@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
@@ -66,6 +67,9 @@
           <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
         </paper-button>
       </div>
+    </div>
+
+    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" on-response="_hasAutoTranslationResponse"></yp-ajax>
   </template>
 
   <script>
@@ -128,10 +132,15 @@
 
         canUseAutoTranslate: {
           type: Boolean,
-          computed: '_canUseAutoTranslate(language)'
+          computed: '_canUseAutoTranslate(language, hasServerAutoTranslation)'
         },
 
         autoTranslate: {
+          type: Boolean,
+          value: false
+        },
+
+        hasServerAutoTranslation: {
           type: Boolean,
           value: false
         }
@@ -140,6 +149,12 @@
       observers: [
         '_langChangedLocally(language)',
       ],
+
+      ready: function () {
+        if (!this.noUserEvents) {
+          this.$.hasAutoTranslationAjax.generateRequest();
+        }
+      },
 
       _langChangedLocally: function () {
         this.set('selectedLocale', this.language);
@@ -183,12 +198,20 @@
         window.appGlobals.activity('click', 'startTranslation', this.language);
       },
 
-      _canUseAutoTranslate: function (language) {
-        if (language && !this.noUserEvents) {
+      _canUseAutoTranslate: function (language, hasServerAutoTranslation) {
+        if (language && hasServerAutoTranslation && !this.noUserEvents) {
           var found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
           return !found;
         } else {
           return false;
+        }
+      },
+
+      _hasAutoTranslationResponse: function (event, detail) {
+        if (detail.response && detail.response.hasAutoTranslation===true) {
+          this.set('hasServerAutoTranslation', true);
+        } else {
+          this.set('hasServerAutoTranslation', false);
         }
       },
 

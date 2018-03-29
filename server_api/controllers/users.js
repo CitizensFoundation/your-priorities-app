@@ -1029,6 +1029,16 @@ router.get('/available/groups', function(req, res, next) {
   });
 });
 
+
+router.get('/has/AutoTranslation', function(req, res) {
+  const hasAutoTranslation = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON ? true : false;
+  if (typeof hasAutoTranslation==="boolean") {
+    res.send({ hasAutoTranslation: hasAutoTranslation });
+  } else {
+    res.sendStatus(500);
+  }
+});
+
 router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
   var statusUpdate;
   var allUserEndorsementsPostId = [];
