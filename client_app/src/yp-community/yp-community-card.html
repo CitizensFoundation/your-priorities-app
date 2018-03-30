@@ -93,12 +93,14 @@
 
       .community-name {
         font-size: 26px;
-        margin-top: -4px;
-        height: 56px;
-        padding: 16px;
+        height: 60px;
+        padding: 14px;
         background-color: var(--primary-color-800);
         color: #FFF;
         cursor: pointer;
+        vertical-align: middle;
+        display: table-cell;
+        width: 320px;
       }
 
       iron-image[archived] {
@@ -144,10 +146,6 @@
         }
 
         iron-image[featured] {
-        }
-
-        yp-membership-button {
-          top: 144px;
         }
 
         .description {
@@ -212,7 +210,6 @@
                          text-type="communityContent" content-language="[[community.language]]"
                          text-only content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
           </yp-magic-text>
-
         </div>
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
         <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
