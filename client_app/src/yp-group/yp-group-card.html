@@ -70,8 +70,8 @@
       iron-image {
         width: 416px;
         height: 234px;
+        display: block;
       }
-
 
       yp-group-stats {
         color: var(--primary-color-more-darker, #424242);
@@ -87,8 +87,9 @@
       }
 
       .group-name {
+        margin: 0;
         font-size: var(--large-heading-size, 26px);
-        height: 60px;
+        height: 45px;
         padding: 14px;
         background-color: var(--primary-color-800);
         color: #FFF;
@@ -160,6 +161,9 @@
         <template is="dom-if" if="[[noImage]]">
           <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
         </template>
+        <template is="dom-if" if="[[!noImage]]">
+          <iron-image archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
+        </template>
         <div id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
           <yp-magic-text text-type="groupName" content-language="[[group.language]]"
                          disable-translation="[[group.configuration.disableNameAutoTranslation]]"
@@ -167,9 +171,6 @@
           </yp-magic-text>
           <span hidden$="[[!archived]]">- [[t('archived')]]</span>
         </div>
-        <template is="dom-if" if="[[!noImage]]">
-          <iron-image archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
-        </template>
         <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
                        text-type="groupContent" content-language="[[group.language]]"
                        text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">

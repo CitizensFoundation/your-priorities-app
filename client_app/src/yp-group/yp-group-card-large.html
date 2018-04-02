@@ -111,6 +111,7 @@
         padding-left: 16px;
         padding-top: 16px;
         padding-bottom: 16px;
+        padding-right: 32px !important;
         min-height: 28px;
       }
 
@@ -186,7 +187,7 @@
             <div class="layout vertical description-and-stats">
               <div class="description">
                 <div class="group-name" admin$="[[hasGroupAccess]]">
-                  <yp-magic-text text-type="groupName" content-language="[[group.language]]"
+                  <yp-magic-text id="groupName" text-type="groupName" content-language="[[group.language]]"
                                  disable-translation="[[group.configuration.disableNameAutoTranslation]]"
                                  text-only content="[[groupName]]" content-id="[[group.id]]">
                   </yp-magic-text>
@@ -267,6 +268,11 @@
       },
 
       _groupChanged: function (group) {
+        if (group && group.objectives && group.objectives.length>220) {
+          this.$$("#objectives").style.fontSize = "15px";
+        } else {
+          this.$$("#objectives").style.fontSize = "16px";
+        }
       },
 
       _groupAccessText: function(group, language) {

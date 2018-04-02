@@ -28,12 +28,17 @@
       }
 
       .post-name {
-        margin: 0;
+        margin:0 ;
         font-size: var(--extra-large-heading-size, 28px);
         background-color: var(--primary-color-600);
         color: #FFF;
-        padding: 16px;
+        height: 50px;
+        padding: 14px;
         cursor: pointer;
+        vertical-align: middle !important;
+        display: table-cell !important;
+        width: 389px;
+        font-weight: bold;
       }
 
       .postCardCursor {
@@ -75,11 +80,9 @@
 
       .post-name {
         font-size: 23px;
-        height: 60px;
       }
 
       .post-name[mini] {
-        height: 100%;
         padding: 16px;
       }
 
@@ -155,11 +158,13 @@
     <paper-material mini$="[[mini]]" class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
         <yp-post-cover-media mini$="[[mini]]" post="[[post]]"></yp-post-cover-media>
-        <h1 class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
-          <yp-magic-text text-type="postName" content-language="[[post.language]]"
-                         content="[[postName]]" content-id="[[post.id]]">
-          </yp-magic-text>
-        </h1>
+        <div>
+          <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
+            <yp-magic-text text-type="postName" content-language="[[post.language]]"
+                           content="[[postName]]" content-id="[[post.id]]">
+            </yp-magic-text>
+          </div>
+        </div>
         <yp-magic-text class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[mini]]"
                        text-type="postContent" content-language="[[post.language]]"
                        text-only content="[[shortDescription]]" content-id="[[post.id]]" truncate="100">
