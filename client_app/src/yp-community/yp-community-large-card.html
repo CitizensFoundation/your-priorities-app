@@ -329,7 +329,14 @@
              this.$$("#welcomeHTML").innerHTML = "";
             }
           });
+          if (community.description.length>220 && community.name && community.name.length>30) {
+            this.$$("#description").style.fontSize = "15px";
+          } else {
+            this.$$("#description").style.fontSize = "16px";
+          }
         }
+
+
       },
 
       _hasCommunityAccess: function(community, gotAdminRights) {

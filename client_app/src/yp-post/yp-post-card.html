@@ -37,8 +37,12 @@
         cursor: pointer;
         vertical-align: middle !important;
         display: table-cell !important;
-        width: 389px;
+        width: 416px;
         font-weight: bold;
+      }
+
+      .postNameContainer {
+        width: 100%;
       }
 
       .postCardCursor {
@@ -158,9 +162,9 @@
     <paper-material mini$="[[mini]]" class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
         <yp-post-cover-media mini$="[[mini]]" post="[[post]]"></yp-post-cover-media>
-        <div>
+        <div class="postNameContainer">
           <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
-            <yp-magic-text text-type="postName" content-language="[[post.language]]"
+            <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
                            content="[[postName]]" content-id="[[post.id]]">
             </yp-magic-text>
           </div>
