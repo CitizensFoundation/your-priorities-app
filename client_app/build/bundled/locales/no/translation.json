@@ -1,4 +1,18 @@
 {
+  "inputError": "Ikke gyldig",
+  "postCreated": "Innlegg laget",
+  "postUpdated": "Innlegg oppdatert",
+  "closedForNewPosts": "Lukket for nye innlegg",
+  "appHomeScreenShortName": "Telefonens startskjermnavn",
+  "appHomeScreenIconImageUpload": "Last opp telefonens startskjermikon",
+  "allowAnonymousAutoLogin": "Tillat anonym automatisk pålogging",
+  "later": "Ikke nå",
+  "disableDebate": "Deaktiver debatt",
+  "welcomeHTML": "Velkomst-HTML (bruk med omhu)",
+  "disableFacebookLoginForGroup": "Deaktiver Facebook-pålogging (gruppe)",
+  "facebookPixelId": "Facebook piksel-ID",
+  "downloadFacebookImagesForUser": "Last ned Facebook bilder for brukere til vår db",
+  "customUserRegistrationText": "Egendefinert brukerregistreringstekst",
   "participateAnonymously": "Delta anonymt",
   "allowAnonymousUsers": "Tillat anonyme brukere",
   "deleteUser": "Slett brukerkonto",
@@ -134,6 +148,10 @@
   },
 
   "pages": {
+    "editPageLocale": "Rediger sides språksetting",
+    "title": "Sideoverskrift",
+    "content": "Sideinnhold",
+    "publish": "Publiser",
     "addLocale": "Legg til språksetting",
     "unPublish": "Avpubliser",
     "deletePage": "Slett",
@@ -186,6 +204,7 @@
   "name": "Navn",
 
   "domain": {
+    "pages": "Sider",
     "createOrganization": "Opprett organisasjon",
     "edit": "Rediger domene",
     "info": "Innstillinger",
@@ -252,10 +271,10 @@
     "status": "Status til innlegget",
     "new": "Nytt innlegg",
     "searchingFor": "Søk etter…",
-    "top": "Mest populære innlegg først",
-    "newest": "Siste innlegg først",
-    "random": "Tilfeldig rekkefølge",
-    "inProgress": "Innlegg under behandling",
+    "top": "Populær",
+    "newest": "Sist",
+    "random": "Tilfeldig",
+    "inProgress": "Pågående",
     "groups": "Innleggrupper",
     "search": "Søk etter innlegg",
     "add_new":"Legg inn din idé",
@@ -282,7 +301,7 @@
     },
     "cover": {
       "media": "Velg bruk av bilde",
-      "imageInfo": "Hvis du legger til et bilde, så er det mer sannsynlig at andre vil dele innlegget ditt. Forbrukerrådet kommer ikke til å bruke dine bilder til noe annet formål.\nNB! Bruk av andres bilder krever samtykke. Bilder av identifiserbare personer kan også kreve godkjenning.",
+      "imageInfo": "Hvis du legger til et bilde, så er det mer sannsynlig at andre vil dele innlegget ditt. Og del innlegget dit på sosiale medier!",
       "map": "Kart",
       "streetview": "Gatesyn",
       "image": "Bilde",
@@ -353,6 +372,7 @@
   },
 
   "group": {
+    "pages": "Hjelpesider (?)",
     "showWhoPostedPosts": "Vis hvem som har lagt ut innlegg",
     "locationHidden": "Deaktiver plassering",
     "group": "Gruppen",
@@ -389,6 +409,7 @@
   },
 
   "users": {
+    "userInvited": "Bruker invitert",
     "removeAdmin": "Fjern administrator",
     "addAdmin": "Legg til administrator",
     "removeUser": "Fjern bruker",
@@ -407,7 +428,7 @@
     "setEmail": "Legg til e-postadresse til kontoen",
     "linkAccount": "Koble til kontoen",
     "setEmailInfo": "Legg til e-postadresse til kontoen",
-    "existsLinkAccountInfo": "Skriv inn passordet ditt for å koble til denne tilgangen din e-postkonto.",
+    "existsLinkAccountInfo": "Denne e-posten er allerede registrert! Skriv inn passordet ditt for å koble din e-postkonto til denne tilgangsmetoden.",
     "logoutCompleteFor": "Avlogging for",
     "loggedInWithSaml": "Logget på med SAML",
     "loggedInWithFacebook": "Logget på med Facebook",
