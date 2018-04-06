@@ -228,6 +228,7 @@
   "cancel": "Hætta við",
 
   "community": {
+    "add": "Nýtt svæði",
     "alternativeHeader": "Öðruvísi haus",
     "edit": "Breyta svæði",
     "hostname": "Hostname",
