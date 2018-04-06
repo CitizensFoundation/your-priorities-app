@@ -16,13 +16,23 @@
         background-color: transparent;
       }
 
+      paper-fab {
+        background-color: #999;
+        color: #FFF;
+        --paper-fab-iron-icon: {
+          color: #fff;
+        };
+      }
+
       .heartButton {
         color: #999;
         cursor: pointer;
+        width: 36px;
+        height: 36px;
       }
 
       .member {
-        color: var(--accent-color);
+        background-color: var(--accent-color);
       }
 
       [hidden] {
@@ -30,7 +40,7 @@
       }
     </style>
 
-    <iron-icon id="button" title$="[[t('toggleMembership')]]" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></iron-icon>
+    <paper-fab mini elevation="5" id="button" title$="[[t('toggleMembership')]]" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
     <yp-ajax class="ajax" id="membershipAjax" hidden$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
 
     <lite-signal on-lite-signal-got-memberships="_updateMembershipFromSignal"></lite-signal>

@@ -212,6 +212,10 @@
         '_routeTabChanged(tabRouteData.tabName)'
       ],
 
+      listeners: {
+        'yp-new-community': '_newCommunity'
+      },
+
       _userLoggedIn: function (user) {
         if (user) {
           if (this.domain && window.location.href.indexOf("/domain/") > -1) {

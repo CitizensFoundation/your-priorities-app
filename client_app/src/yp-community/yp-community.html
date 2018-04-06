@@ -204,6 +204,10 @@
         '_routeTabChanged(tabRouteData.tabName)'
       ],
 
+      listeners: {
+        'yp-new-group': '_newGroup'
+      },
+
       _userLoggedIn: function (user) {
         if (user) {
           if (this.community && window.location.href.indexOf("/community/") > -1) {

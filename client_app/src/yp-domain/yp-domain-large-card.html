@@ -190,17 +190,18 @@
               </div>
             </div>
           </div>
-          <div hidden$="[[!hasDomainAccess]]">
-            <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit">
-              <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+          <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit">
+            <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+              <div hidden$="[[!hasDomainAccess]]">
                 <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
                 <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
                 <paper-item id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
-              </paper-listbox>
-            </paper-menu-button>
-          </div>
+              </div>
+              <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
+            </paper-listbox>
+          </paper-menu-button>
         </div>
         <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
       </paper-material>
@@ -268,7 +269,8 @@
           this._openPagesDialog();
         else if (detail.item.id=="organizationsGridMenuItem")
           this._openOrganizationsGrid();
-
+        else if (detail.item.id=="addCommunityMenuItem")
+          this.fire('yp-new-community');
         this.$$("paper-listbox").select(null);
       },
 
