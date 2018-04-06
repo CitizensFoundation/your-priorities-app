@@ -199,10 +199,10 @@
                 </yp-magic-text>
             </div>
           </div>
-          <div hidden$="[[!hasGroupAccess]]">
-            <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]">
-              <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+          <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]">
+            <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+              <div hidden$="[[!hasGroupAccess]]">
                 <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
                 <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
                 <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
@@ -210,9 +210,10 @@
                 <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
                 <a target="_blank" href="/api/groups/[[group.id]]/export_group"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
                 <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-              </paper-listbox>
-            </paper-menu-button>
-          </div>
+              </div>
+              <paper-item id="addPostMenuItem">[[t('post.new')]]</paper-item>
+            </paper-listbox>
+          </paper-menu-button>
         </div>
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
       </paper-material>
@@ -305,7 +306,8 @@
           this._openAdminsDialog();
         else if (detail.item.id=="pagesMenuItem")
           this._openPagesDialog();
-
+        else if (detail.item.id=="addPostMenuItem")
+          this.fire('yp-post-new');
         this.$$("paper-listbox").select(null);
       },
 
