@@ -266,17 +266,15 @@
               </div>
             </div>
           </div>
-          <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]">
+          <paper-menu-button class="edit" vertical-align="top" horizontal-align="[[editMenuAlign]]" hidden$="[[!showMenuItem]]">
             <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-              <div hidden$="[[!hasCommunityAccess]]">
-                <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
-                <paper-item id="usersMenuItem">[[t('community.users')]]</paper-item>
-                <paper-item id="adminsMenuItem">[[t('community.admins')]]</paper-item>
-                <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>
-                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-                <paper-item id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
-              </div>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="editMenuItem">[[t('community.edit')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="usersMenuItem">[[t('community.users')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="adminsMenuItem">[[t('community.admins')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
               <paper-item id="addGroupMenuItem">[[t('group.new')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
@@ -313,7 +311,17 @@
           type: Boolean,
           value: false,
           computed: '_hasCommunityAccess(community, gotAdminRights)'
+        },
+
+        showMenuItem: {
+          type: Boolean,
+          value: false,
+          computed: '_showMenuItem(hasCommunityAccess, community)'
         }
+      },
+
+      _showMenuItem: function (hasCommunityAccess, community) {
+        return hasCommunityAccess || (community && !community.only_admins_can_create_groups)
       },
 
       _communityChanged: function (community) {
@@ -336,8 +344,6 @@
             this.$$("#description").style.fontSize = "16px";
           }
         }
-
-
       },
 
       _hasCommunityAccess: function(community, gotAdminRights) {

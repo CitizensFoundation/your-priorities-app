@@ -190,15 +190,13 @@
               </div>
             </div>
           </div>
-          <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit">
+          <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden$="[[!showMenuItem]]">
             <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-              <div hidden$="[[!hasDomainAccess]]">
-                <paper-item id="editMenuItem">[[t('domain.edit')]]</paper-item>
-                <paper-item id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
-                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-                <paper-item id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
-              </div>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="editMenuItem">[[t('domain.edit')]]</paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
@@ -245,7 +243,17 @@
           type: Boolean,
           value: false,
           computed: '_hasDomainAccess(domain, gotAdminRights)'
+        },
+
+        showMenuItem: {
+          type: Boolean,
+          value: false,
+          computed: '_showMenuItem(hasDomainAccess, domain)'
         }
+      },
+
+      _showMenuItem: function (hasDomainAccess, domain) {
+        return hasDomainAccess || (domain && !domain.only_admins_can_create_communities)
       },
 
       _hasDomainAccess: function(domain, gotAdminRights) {
