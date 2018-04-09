@@ -199,18 +199,16 @@
                 </yp-magic-text>
             </div>
           </div>
-          <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]">
+          <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!showMenuItem]]">
             <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-              <div hidden$="[[!hasGroupAccess]]">
-                <paper-item id="editMenuItem">[[t('group.edit')]]</paper-item>
-                <paper-item id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
-                <paper-item id="usersMenuItem">[[t('group.users')]]</paper-item>
-                <paper-item id="adminsMenuItem">[[t('group.admins')]]</paper-item>
-                <paper-item id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-                <a target="_blank" href="/api/groups/[[group.id]]/export_group"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
-                <paper-item id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-              </div>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="newCategoryMenuItem">[[t('category.new')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="adminsMenuItem">[[t('group.admins')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <a hidden$="[[!hasGroupAccess]]" target="_blank" href="/api/groups/[[group.id]]/export_group"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item id="addPostMenuItem">[[t('post.new')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
@@ -252,7 +250,17 @@
         groupAccessText: {
           type: String,
           computed: '_groupAccessText(group, language)'
+        },
+
+        showMenuItem: {
+          type: Boolean,
+          value: false,
+          computed: '_showMenuItem(hasGroupAccess, group)'
         }
+      },
+
+      _showMenuItem: function (hasGroupAccess, group) {
+        return hasGroupAccess || (group && group.configuration && group.configuration.canAddNewPosts===true)
       },
 
       _hasGroupAccess: function(group, gotAdminRights) {
