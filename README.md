@@ -6,7 +6,7 @@
 * https://betraisland.is/
 * https://betrireykjavik.is/
 * https://mineideer.forbrukerradet.no/
-* https://consultation.parlement-ouvert.fr/group/4 (v6.7)
+* https://consultation.parlement-ouvert.fr/group/4
 * https://yrpr.e-dem.nl (v6.3)
 
 ## How to run

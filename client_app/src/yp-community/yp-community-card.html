@@ -32,11 +32,7 @@
         padding: 8px;
         margin-top: 4px;
       }
-
-      .description[featured] {
-        font-size: 18px;
-      }
-
+      
       .stats {
         color: var(--primary-color-more-darker, #424242);
         position: absolute;
@@ -159,14 +155,6 @@
       }
 
       @media (max-width: 680px) {
-        .community-name[featured] {
-          font-size: 26px;
-        }
-
-        .description[featured] {
-          font-size: 16px;
-        }
-
         .communityCard[featured] {
           width: 304px;
         }
@@ -203,7 +191,7 @@
                            disable-translation="[[community.configuration.disableNameAutoTranslation]]"
                            text-only content="[[communityName]]" content-id="[[community.id]]">
             </yp-magic-text>
-            <span hidden$="[[!archived]]">- [[t('archived')]]</span>
+            <span hidden old-hidden$="[[!archived]]">- [[t('archived')]]</span>
           </div>
 
           <yp-magic-text id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunit"
