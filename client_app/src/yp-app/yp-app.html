@@ -326,19 +326,19 @@
         </app-header>
 
         <iron-lazy-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed>
-          <template is="dom-if" name="domain" restamp>
+          <template is="dom-if" name="domain" restamp="[[restampPages]]">
             <yp-domain id="domainPage" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
           </template>
-          <template is="dom-if" name="community" restamp>
+          <template is="dom-if" name="community" restamp="[[restampPages]]">
             <yp-community id="communityPage" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
           </template>
-          <template is="dom-if" name="group" restamp>
+          <template is="dom-if" name="group" restamp="[[restampPages]]">
             <yp-group id="groupPage" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
           </template>
-          <template is="dom-if" name="post" restamp>
+          <template is="dom-if" name="post" restamp="[[restampPages]]">
             <yp-post id="postPage" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
           </template>
-          <template is="dom-if" name="user" restamp>
+          <template is="dom-if" name="user" restamp="[[restampPages]]">
             <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
           </template>
           <yp-view-404 name="view-404"></yp-view-404>
@@ -505,7 +505,12 @@
           value: false
         },
 
-        languageName: String
+        languageName: String,
+
+        restampPages: {
+          type: Boolean,
+          computed: '_restampPages'
+        }
       },
 
       listeners: {
@@ -518,6 +523,10 @@
         'yp-refresh-community': '_refreshCommunity',
         'yp-refresh-domain': '_refreshDomain',
         'yp-language-name': '_setLanguageName'
+      },
+
+      _restampPages: function () {
+        return (true || /rv:11.0/i.test(navigator.userAgent) || /Edge\/\d./i.test(navigator.userAgent))
       },
       
       _stopTranslation: function () {
