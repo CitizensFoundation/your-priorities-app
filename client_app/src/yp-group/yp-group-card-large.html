@@ -363,7 +363,7 @@
 
       _openCategoryEdit: function () {
         window.appGlobals.activity('open', 'category.new');
-        Polymer.dom(document).querySelector('yp-app').getDialog("categoryEdit", function (dialog) {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("categoryEdit", function (dialog) {
           dialog.setup(this.group, true, this._refreshCategory.bind(this));
           dialog.open("new", {groupId: this.group.id});
         });

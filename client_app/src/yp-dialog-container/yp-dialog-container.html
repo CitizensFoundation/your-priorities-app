@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/iron-lazy-pages/iron-lazy-pages.html">
 
-// Preloaded
 <link rel="import" href="../yp-ajax/yp-ajax-error-dialog.html">
 <link rel="import" href="../yp-user/yp-login.html">
 <link rel="import" href="../yp-user/yp-missing-email.html">
@@ -240,9 +240,9 @@
 
       getDialog: function (idName) {
         this.set('hideDialogs', false);
-        var element = this.$$("#"+idName);
         this.set('selectedDialog', idName);
         this.async(function () {
+          var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {
             this.set('waitForUpgradeCounter', 0);
             return this.$$("#"+idName);
@@ -254,12 +254,12 @@
 
       getDialogAsync: function (idName, callback) {
         this.set('hideDialogs', false);
-        var element = this.$$("#"+idName);
         this.set('selectedDialog', idName);
         this.async(function () {
+          var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {
             this.set('waitForUpgradeCounter', 0);
-            console.log("Found element async");
+            console.error("Found element async");
             callback(element);
           } else {
             console.warn("Element not upgraded: "+idName);

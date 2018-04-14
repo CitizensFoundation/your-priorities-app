@@ -167,25 +167,29 @@
         },
 
         openUserlogin: function (email) {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
-          dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
-          dialog.open(null, email);
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
+            dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
+            dialog.open(null, email);
+          }.bind(this));
         },
 
         autoAnonymousLogin: function () {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
-          dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
-          dialog.anonymousLogin();
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
+            dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
+            dialog.anonymousLogin();
+          }.bind(this));
         },
 
         _closeUserLogin: function () {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
-          dialog.close();
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
+            dialog.close();
+          });
         },
 
         _setUserLoginSpinner: function () {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("userLogin");
-          dialog.userSpinner = false;
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
+            dialog.userSpinner = false;
+          });
         },
 
         _handleLogin: function (user) {
@@ -243,13 +247,15 @@
         },
 
         _forgotPassword: function (event, detail) {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("forgotPassword");
-          dialog.open(detail);
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("forgotPassword", function (dialog) {
+            dialog.open(detail);
+          });
         },
 
         _resetPassword: function (event, detail) {
-          var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("resetPassword");
-          dialog.open(detail);
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("resetPassword", function (dialog) {
+            dialog.open(detail);
+          });
         },
 
         getUser: function () {
@@ -512,8 +518,9 @@
             this.setLoggedInUser(user);
           }
           if (user.missingEmail) {
-            var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("missingEmail");
-            dialog.open(user.loginProvider);
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
+              dialog.open(user.loginProvider);
+            }.bind(this));
           }
 
           if (this.completeExternalLoginText) {
