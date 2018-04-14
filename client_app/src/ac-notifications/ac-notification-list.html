@@ -460,7 +460,9 @@
         }
 
         this.async(function () {
-          this.$$("#list").fire('iron-resize');
+          if (this.$$("#list")) {
+            this.$$("#list").fire('iron-resize');
+          }
         }, 100);
       },
 
