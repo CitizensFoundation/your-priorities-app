@@ -4,7 +4,7 @@ module.exports = {
   ],
   navigateFallback: '',
   runtimeCaching: [{
-    urlPattern: /.html/,
+    urlPattern: /\/(.*)/,
     handler: 'networkFirst'
   }]
 };
