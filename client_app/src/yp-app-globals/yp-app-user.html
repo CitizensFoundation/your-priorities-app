@@ -249,7 +249,7 @@
         _forgotPassword: function (event, detail) {
           Polymer.dom(document).querySelector('yp-app').getDialogAsync("forgotPassword", function (dialog) {
             dialog.open(detail);
-          });
+          }.bind(this));
         },
 
         _resetPassword: function (event, detail) {

@@ -275,9 +275,10 @@
       },
 
       _forgotPassword: function () {
-        this.$.forgotPassword.open();
+        this.getDialogAsync("forgotPassword", function (dialog) {
+          dialog.open()
+        });
       }
-
     });
   </script>
 </dom-module>
