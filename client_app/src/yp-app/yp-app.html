@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-lazy-pages/iron-lazy-pages.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
@@ -325,14 +325,24 @@
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed>
-          <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
-          <yp-community id="communityPage" name="community"id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
-          <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
-          <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
-          <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
+        <iron-lazy-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed>
+          <template is="dom-if" name="domain" restamp>
+            <yp-domain id="domainPage" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
+          </template>
+          <template is="dom-if" name="community" restamp>
+            <yp-community id="communityPage" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
+          </template>
+          <template is="dom-if" name="group" restamp>
+            <yp-group id="groupPage" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          </template>
+          <template is="dom-if" name="post" restamp>
+            <yp-post id="postPage" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
+          </template>
+          <template is="dom-if" name="user" restamp>
+            <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
+          </template>
           <yp-view-404 name="view-404"></yp-view-404>
-        </iron-pages>
+        </iron-lazy-pages>
 
       </app-header-layout>
     </app-drawer-layout>
@@ -509,7 +519,7 @@
         'yp-refresh-domain': '_refreshDomain',
         'yp-language-name': '_setLanguageName'
       },
-
+      
       _stopTranslation: function () {
         document.dispatchEvent(
           new CustomEvent("lite-signal", {
@@ -589,32 +599,35 @@
           window.location = window.location.href.replace("/#!/", "/");
         }
 
-        if (route.path.indexOf('domain') > -1) {
-          this.set('domainSubRoute', this.subRoute);
-          if (typeof this.$.domainPage.refresh !== "undefined") {
-            this.$.domainPage.refresh();
+        this.async(function () {
+          if (route.path.indexOf('domain') > -1) {
+            this.set('domainSubRoute', this.subRoute);
+            if (this.$$("#domainPage") && typeof this.$$("#domainPage").refresh !== "undefined") {
+              this.$$("#domainPage").refresh();
+            }
+          } else if (route.path.indexOf('community') > -1) {
+            this.set('communitySubRoute', this.subRoute);
+            if (this.$$("#communityPage") && typeof this.$$("#communityPage").refresh !== "undefined") {
+              this.$$("#communityPage").refresh();
+            }
+          } else if (route.path.indexOf('group') > -1) {
+            this.set('groupSubRoute', this.subRoute);
+            if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
+              this.$$("#groupPage").refresh();
+            }
+          } else if (route.path.indexOf('post') > -1) {
+            this.set('postSubRoute', this.subRoute);
+            if (this.$$("#postPage") && typeof this.$$("#postPage").refresh !== "undefined") {
+              this.$$("#postPage").refresh();
+            }
+          } else if (route.path.indexOf('user') > -1) {
+            this.set('userSubRoute', this.subRoute);
+            if (this.$$("#userPage") && typeof this.$$("#userPage").refresh !== "undefined") {
+              this.$$("#userPage").refresh();
+            }
           }
-        } else if (route.path.indexOf('community') > -1) {
-          this.set('communitySubRoute', this.subRoute);
-          if (typeof this.$.communityPage.refresh !== "undefined") {
-            this.$.communityPage.refresh();
-          }
-        } else if (route.path.indexOf('group') > -1) {
-          this.set('groupSubRoute', this.subRoute);
-          if (typeof this.$.groupPage.refresh !== "undefined") {
-            this.$.groupPage.refresh();
-          }
-        } else if (route.path.indexOf('post') > -1) {
-          this.set('postSubRoute', this.subRoute);
-          if (typeof this.$.postPage.refresh !== "undefined") {
-            this.$.postPage.refresh();
-          }
-        } else if (route.path.indexOf('user') > -1) {
-          this.set('userSubRoute', this.subRoute);
-          if (typeof this.$.userPage.refresh !== "undefined") {
-            this.$.userPage.refresh();
-          }
-        }
+
+        });
       },
 
       _routePageChanged: function(pageData, oldPageData) {
