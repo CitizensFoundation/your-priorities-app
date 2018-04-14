@@ -527,7 +527,7 @@
       },
 
       _restampPages: function () {
-        return (true || /rv:11.0/i.test(navigator.userAgent) || /Edge\/\d./i.test(navigator.userAgent))
+        return (/rv:11.0/i.test(navigator.userAgent) || /Edge\/\d./i.test(navigator.userAgent))
       },
       
       _stopTranslation: function () {
