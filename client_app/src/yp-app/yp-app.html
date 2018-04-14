@@ -840,12 +840,6 @@
         this.$$("#drawer").toggle();
       },
 
-      openEdit: function () {
-        var dialog = Polymer.dom(document).querySelector('yp-dialog-container #userEdit');
-        dialog.setup(this.user, false, null);
-        dialog.open('edit', { userId: this.user.id});
-      },
-
       _login: function () {
         if (window.appUser) {
           window.appUser.openUserlogin();
