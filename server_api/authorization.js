@@ -20,7 +20,7 @@ auth.isAuthenticatedNoAnonymousCheck = function (req) {
 auth.authNeedsGroupForCreate = function (group, req, done) {
   models.Group.findOne({
     where: { id: group.id },
-    attributes: ['id','access','user_id'],
+    attributes: ['id','access','user_id','configuration'],
     include: [
       {
         model: models.Community,
