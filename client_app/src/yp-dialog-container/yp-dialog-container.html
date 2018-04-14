@@ -245,7 +245,7 @@
           var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {
             this.set('waitForUpgradeCounter', 0);
-            console.error("Found element async");
+            console.info("Found element async");
             callback(element);
           } else {
             console.warn("Element not upgraded: "+idName);
