@@ -21,7 +21,9 @@
       selectedTheme: {
         type: Number,
         value: false
-      }
+      },
+
+      selectedFont: String
     },
 
     ready: function () {
@@ -492,11 +494,17 @@
         Polymer.updateStyles(this.themes[number]);
       }
 
+      var defaultFontPath = "/styles/fonts/default-font.html";
+
+      if (!this.selectedFont) {
+        window.lastLoadedFont = this.selectedFont = defaultFontPath;
+      }
+
       if (this.fonts[number]) {
         var fontHtmlImport = this.fonts[number].htmlImport;
 
         if (!this.fonts[number].htmlImport) {
-          fontHtmlImport = "/styles/fonts/default-font.html";
+          fontHtmlImport = defaultFontPath;
         }
 
         if (window.lastLoadedFont!=fontHtmlImport) {
