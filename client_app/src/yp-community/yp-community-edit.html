@@ -315,7 +315,7 @@
       if (community && community.hostnameTaken) {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
           dialog.showErrorDialog(this.t('hostnameTaken'));
-        });
+        }.bind(this));
       } else {
         if (community) {
           window.appUser.recheckAdminRights();

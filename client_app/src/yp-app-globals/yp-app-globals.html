@@ -216,7 +216,7 @@
           Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
             toast.text = text;
             toast.show();
-          });
+          }.bind(this));
         },
 
         reBoot: function() {

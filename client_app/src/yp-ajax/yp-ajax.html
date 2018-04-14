@@ -206,7 +206,7 @@
         }
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
           dialog.showErrorDialog(this._transformErrorText(text));
-        });
+        }.bind(this));
       },
 
       _resetErrorText: function(event) {

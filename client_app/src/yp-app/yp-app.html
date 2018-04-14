@@ -273,7 +273,7 @@
         </div>
       </app-drawer>
 
-      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open>
+      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open opened="{{navDrawOpened}}">
         <div style="height: 100%; overflow: auto;">
           <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </div>
@@ -383,6 +383,7 @@
         userSubRoute: Object,
 
         userDrawerOpened: Boolean,
+        navDrawOpened: Boolean,
 
         homeLink: {
           type: Object
@@ -541,7 +542,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
           toast.text = this.t('autoTranslationStopped');
           toast.show();
-        });
+        }.bind(this));
       },
 
       _setLanguageName: function (event, detail) {

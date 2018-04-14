@@ -177,7 +177,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
           toast.text = this.t('autoTranslationStopped');
           toast.show();
-        });
+        }.bind(this));
         window.appGlobals.activity('click', 'stopTranslation', this.language);
       },
 
@@ -195,7 +195,7 @@
           Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
             toast.text = this.t('autoTranslationStarted');
             toast.show();
-          });
+          }.bind(this));
         }
         window.appGlobals.activity('click', 'startTranslation', this.language);
       },
