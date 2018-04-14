@@ -313,8 +313,9 @@
 
     _customRedirect: function (community) {
       if (community && community.hostnameTaken) {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
-        dialog.showErrorDialog(this.t('hostnameTaken'));
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
+          dialog.showErrorDialog(this.t('hostnameTaken'));
+        });
       } else {
         if (community) {
           window.appUser.recheckAdminRights();

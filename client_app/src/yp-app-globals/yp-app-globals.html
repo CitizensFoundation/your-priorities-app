@@ -213,9 +213,10 @@
         },
 
         notifyUserViaToast: function (text) {
-          var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
-          toast.text = text;
-          toast.show();
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+            toast.text = text;
+            toast.show();
+          });
         },
 
         reBoot: function() {

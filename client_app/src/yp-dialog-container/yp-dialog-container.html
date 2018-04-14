@@ -238,20 +238,6 @@
         this.set('bulkStatusUpdates', true);
       },
 
-      getDialog: function (idName) {
-        this.set('hideDialogs', false);
-        this.set('selectedDialog', idName);
-        this.async(function () {
-          var element = this.$$("#"+idName);
-          if (element && (typeof element.ready === "function")) {
-            this.set('waitForUpgradeCounter', 0);
-            return this.$$("#"+idName);
-          } else {
-            console.error("Element not upgraded: "+idName);
-          }
-        });
-      },
-
       getDialogAsync: function (idName, callback) {
         this.set('hideDialogs', false);
         this.set('selectedDialog', idName);

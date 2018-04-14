@@ -204,13 +204,15 @@
         } else {
           text = errorText;
         }
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
-        dialog.showErrorDialog(this._transformErrorText(text));
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
+          dialog.showErrorDialog(this._transformErrorText(text));
+        });
       },
 
       _resetErrorText: function(event) {
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialog("errorDialog");
-        dialog.resetErrorText();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
+          dialog.resetErrorText();
+        });
       }
     })
   })();

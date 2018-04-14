@@ -174,9 +174,10 @@
         );
         window.autoTranslate = false;
         this.fire('yp-language-name', this.supportedLanguages[this.language]);
-        var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
-        toast.text = this.t('autoTranslationStopped');
-        toast.show();
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+          toast.text = this.t('autoTranslationStopped');
+          toast.show();
+        });
         window.appGlobals.activity('click', 'stopTranslation', this.language);
       },
 
@@ -191,9 +192,10 @@
           );
           window.autoTranslate = true;
           this.fire('yp-language-name', this.supportedLanguages[this.language]);
-          var toast = Polymer.dom(document).querySelector('yp-app').getDialog("masterToast");
-          toast.text = this.t('autoTranslationStarted');
-          toast.show();
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+            toast.text = this.t('autoTranslationStarted');
+            toast.show();
+          });
         }
         window.appGlobals.activity('click', 'startTranslation', this.language);
       },
