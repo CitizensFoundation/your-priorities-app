@@ -196,9 +196,11 @@
       },
 
       ready: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-delayed.html", null, null, true), function () {
-          this.set('haveLoadedDelayed', true)
-        }, null, true);
+        this.async(function () {
+          this.importHref(this.resolveUrl("yp-dialog-container-delayed.html"), function () {
+            this.set('haveLoadedDelayed', true)
+          }, null, true);
+        });
       },
 
       _loggedInUser: function (event, user) {
@@ -207,7 +209,7 @@
           this.set('loggedInUser', user);
           if (!this.loadingStartedLoggedIn) {
             this.loadingStartedLoggedIn = true;
-            this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html", null, null, true), function () {
+            this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
               console.info("Have loaded logged-in container");
             }, null, true);
           } else {
@@ -222,7 +224,7 @@
           this.set('gotAdminRights', true);
           if (!this.loadingStartedAdmin) {
             this.loadingStartedAdmin = true;
-            this.importHref(this.resolveUrl("yp-dialog-container-admin.html", null, null, true), function () {
+            this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
               console.info("Have loaded admin container");
             }, null, true);
           } else {
@@ -232,7 +234,7 @@
       },
 
       _openBulkStatusUpdates: function () {
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html", null, null, true), function () {
+        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), function () {
           console.info("Have loaded bulk status container");
         }, null, true);
         this.set('bulkStatusUpdates', true);
