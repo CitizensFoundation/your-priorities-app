@@ -241,8 +241,8 @@
               </template>
             </div>
             <div id="scroller">
-              <iron-form id="form" content-type="application/json" method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-                <form name="ypForm" method="[[method]]" action="[[action]]">
+              <iron-form id="form" content-type="application/json" method="POST" action="[[action]]" iron-method="[[method]]" params="[[params]]">
+                <form name="ypForm" method="POST" action="[[action]]">
                   <slot></slot>
                 </form>
               </iron-form>
@@ -259,7 +259,7 @@
           </div>
           <paper-dialog-scrollable id="scrollable" small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]" large-height$="[[largeHeight]]">
             <iron-form id="form" iron-method="[[method]]" action="[[action]]" iron-method="[[method]]" params="[[params]]">
-              <form name="ypForm" method="[[method]]" action="[[action]]">
+              <form name="ypForm" method="POST" action="[[action]]">
                 <slot></slot>
               </form>
             </iron-form>
