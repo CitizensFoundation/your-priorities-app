@@ -34,7 +34,6 @@
 <link rel="import" href="../yp-dialog-container/yp-dialog-container.html">
 <link rel="import" href="../yp-user/yp-user-image.html">
 
-<link rel="import" href="../yp-domain/yp-domain.html">
 <link rel="import" href="../yp-app-globals/yp-sw-update-toast.html">
 
 <dom-module id="yp-app">
@@ -680,7 +679,7 @@
 
       _pageChanged: function(page, oldPage) {
         console.log("Page changed to "+page);
-        if (page && page!='domain') {
+        if (page) {
           var resolvedPageUrl;
           if (page=="view-404") {
             resolvedPageUrl = this.resolveUrl("yp-view-404.html");
