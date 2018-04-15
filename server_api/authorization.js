@@ -1058,7 +1058,7 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
   models.Domain.findOne({
     where: { id: domain.id }
   }).then(function (domain) {
-    if (!auth.isAuthenticated(req)) {
+    if (!domain || !auth.isAuthenticated(req)) {
       done(null, false);
     } else if (domain.access === models.Domain.ACCESS_PUBLIC) {
       done(null, true);
