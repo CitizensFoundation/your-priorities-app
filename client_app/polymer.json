@@ -4,6 +4,7 @@
   "fragments": [
     "src/yp-community/yp-community.html",
     "src/yp-group/yp-group.html",
+    "src/yp-domain/yp-domain.html",
     "src/yp-post/yp-post.html",
     "src/yp-dialog-container/yp-dialog-container-logged-in.html",
     "src/yp-dialog-container/yp-dialog-container-admin.html",
