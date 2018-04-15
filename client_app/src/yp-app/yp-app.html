@@ -1,7 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-lazy-pages/iron-lazy-pages.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 <link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
 
@@ -324,24 +324,14 @@
           </app-toolbar>
         </app-header>
 
-        <iron-lazy-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed>
-          <template is="dom-if" name="domain" restamp="[[restampPages]]">
-            <yp-domain id="domainPage" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
-          </template>
-          <template is="dom-if" name="community" restamp="[[restampPages]]">
-            <yp-community id="communityPage" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
-          </template>
-          <template is="dom-if" name="group" restamp="[[restampPages]]">
-            <yp-group id="groupPage" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
-          </template>
-          <template is="dom-if" name="post" restamp="[[restampPages]]">
-            <yp-post id="postPage" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
-          </template>
-          <template is="dom-if" name="user" restamp="[[restampPages]]">
-            <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
-          </template>
+        <iron-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed>
+          <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
+          <yp-community id="communityPage" name="community" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
+          <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
+          <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
           <yp-view-404 name="view-404"></yp-view-404>
-        </iron-lazy-pages>
+        </iron-pages>
 
       </app-header-layout>
     </app-drawer-layout>
@@ -505,12 +495,7 @@
           value: false
         },
 
-        languageName: String,
-
-        restampPages: {
-          type: Boolean,
-          computed: '_restampPages(narrow)'
-        }
+        languageName: String
       },
 
       listeners: {
@@ -525,10 +510,6 @@
         'yp-language-name': '_setLanguageName'
       },
 
-      _restampPages: function () {
-        return (/rv:11.0/i.test(navigator.userAgent) || /Edge\/\d./i.test(navigator.userAgent))
-      },
-      
       _stopTranslation: function () {
         document.dispatchEvent(
           new CustomEvent("lite-signal", {
