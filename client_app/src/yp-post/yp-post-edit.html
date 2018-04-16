@@ -555,12 +555,15 @@
         }
         if (newPost.cover_media_type)
           this.selectedCoverMediaType = newPost.cover_media_type;
-        if (newPost.category_id) {
-          this.selectedCategoryId = newPost.category_id;
-          this.selectedCategoryArrayId = this.getPositionInArrayFromId(this.group.Categories, newPost.category_id);
-        }
       }
       this._updateEmojiBindings();
+    },
+
+    _updateInitialCategory: function (group) {
+      if (group && this.post && this.post.category_id) {
+        this.selectedCategoryId = this.post.category_id;
+        this.selectedCategoryArrayId = this.getPositionInArrayFromId(group.Categories, this.post.category_id);
+      }
     },
 
     _imageUploaded: function (event, detail) {
@@ -599,25 +602,27 @@
       }
     },
 
-    setup: function (post, newNotEdit, refreshFunction) {
+    setup: function (post, newNotEdit, refreshFunction, group) {
+      this._setupGroup(group);
       if (post) {
         this.set('post', post);
       } else {
         this.set('post', null);
       }
+      this._updateInitialCategory(group);
       this.set('newPost', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
       this._clear();
     },
 
-    setupAfterOpen: function (params) {
-      var group = params.group;
+    _setupGroup: function (group) {
       if (group) {
+        debugger;
         this.set('group', group);
-        if (this.group.configuration) {
-          if (this.group.configuration.locationHidden) {
-            if (this.group.configuration.locationHidden == true) {
+        if (group.configuration) {
+          if (group.configuration.locationHidden) {
+            if (group.configuration.locationHidden == true) {
               this.set('locationHidden', true);
             } else {
               this.set('locationHidden', false);
@@ -625,13 +630,19 @@
           } else {
             this.set('locationHidden', false);
           }
-          if (this.group.configuration.postDescriptionLimit) {
-            this.set('postDescriptionLimit', this.group.configuration.postDescriptionLimit);
+          if (group.configuration.postDescriptionLimit) {
+            this.set('postDescriptionLimit', group.configuration.postDescriptionLimit);
           } else {
             this.set('postDescriptionLimit', 500);
           }
+        } else {
+          this.set('postDescriptionLimit', 500);
         }
       }
+    },
+
+    setupAfterOpen: function (params) {
+      this._setupGroup(params.group);
       this.async(function () {
         var nameElement = this.$$("#name");
         if (nameElement) {

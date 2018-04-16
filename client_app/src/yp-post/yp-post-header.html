@@ -393,10 +393,10 @@
       },
 
       _openEdit: function () {
-        window.appGlobals.activity('open', 'post.new');
+        window.appGlobals.activity('open', 'post.edit');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
-          dialog.setup(this.post, false, this._refresh.bind(this));
-          dialog.open('edit', {postId: this.post.id, group: this.post.Group});
+          dialog.setup(this.post, false, this._refresh.bind(this), this.post.Group);
+          dialog.open('edit', {postId: this.post.id });
         }.bind(this));
       },
 
