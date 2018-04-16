@@ -131,8 +131,9 @@
           this.openUserlogin(email);
         },
 
-        loginForEdit: function(editDialog,newOrUpdate,params) {
-          this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate, params: params };
+        loginForEdit: function(editDialog,newOrUpdate,params,refreshFunction) {
+          this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate,
+                                      params: params, refreshFunction: refreshFunction };
           this.openUserlogin();
         },
 
@@ -181,9 +182,7 @@
         },
 
         _closeUserLogin: function () {
-          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
-            dialog.close();
-          });
+          Polymer.dom(document).querySelector('yp-app').closeDialog("userLogin");
         },
 
         _setUserLoginSpinner: function () {
@@ -210,8 +209,11 @@
         _checkLoginForParameters: function () {
           if (this.loginForEditParams) {
             var loginParams = this.loginForEditParams;
-            loginParams.editDialog.open(loginParams.newOrUpdate,loginParams.params);
-            this.loginForEditParams = null;
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync(loginParams.editDialog, function (dialog) {
+              dialog.setup(null, true, loginParams.refreshFunction);
+              dialog.open('new', loginParams.params);
+              this.loginForEditParams = null;
+            }.bind(this));
           } else if (this.loginForNewPointParams) {
             var newPointParams = this.loginForNewPointParams;
             newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);

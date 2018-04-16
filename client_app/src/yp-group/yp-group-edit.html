@@ -508,7 +508,7 @@
           } else {
             this.set('publicCommunity', false);
           }
-        } else if (this.group.Community) {
+        } else if (this.group && this.group.Community) {
           if (this.group.Community.access==0) {
             this.set('publicCommunity', true);
           } else {
@@ -539,25 +539,34 @@
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        var defaultAccess = 0;
-        if (this.community) {
-          if (this.community.access!=0) {
-            this.set('groupAccess', 'open_to_community');
-            defaultAccess = 3;
-          }
-        } else if (this.group.Community) {
-          if (this.group.Community.access!=0) {
-            this.set('groupAccess', 'open_to_community');
-            defaultAccess = 3;
-          }
-        }
-        this.set('group', { name: '', objectives: '', access: defaultAccess, status: 'active' });
+        this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
       } else {
         this.set('group', group);
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
+    },
+
+    setupAfterOpen: function (params) {
+      if (params.community) {
+        this.community = params.community;
+      }
+
+      var defaultAccess = 0;
+      if (this.community) {
+        if (this.community.access!=0) {
+          this.set('groupAccess', 'open_to_community');
+          this.set('group.access', 3);
+          defaultAccess = 3;
+        }
+      } else if (this.group.Community) {
+        if (this.group.Community.access!=0) {
+          this.set('groupAccess', 'open_to_community');
+          defaultAccess = 3;
+        }
+      }
+      this.set('group.access', defaultAccess);
     },
 
     _setupTranslation: function (language, t) {

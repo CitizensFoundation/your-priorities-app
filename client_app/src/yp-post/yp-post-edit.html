@@ -599,7 +599,20 @@
       }
     },
 
-    setup: function (post, group, newNotEdit, refreshFunction) {
+    setup: function (post, newNotEdit, refreshFunction) {
+      if (post) {
+        this.set('post', post);
+      } else {
+        this.set('post', null);
+      }
+      this.set('newPost', newNotEdit);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this._clear();
+    },
+
+    setupAfterOpen: function (params) {
+      var group = params.group;
       if (group) {
         this.set('group', group);
         if (this.group.configuration) {
@@ -621,15 +634,6 @@
       } else {
         this.set('group', null);
       }
-      if (post) {
-        this.set('post', post);
-      } else {
-        this.set('post', null);
-      }
-      this.set('newPost', newNotEdit);
-      this.set('refreshFunction', refreshFunction);
-      this._setupTranslation();
-      this._clear();
       this.async(function () {
         var nameElement = this.$$("#name");
         if (nameElement) {

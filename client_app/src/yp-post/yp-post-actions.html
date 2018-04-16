@@ -401,7 +401,11 @@
       },
 
       _updateEndorsementsFromSignal: function () {
-        this._updateEndorsements(this.post);
+        if (this.post) {
+          this._updateEndorsements(this.post);
+        } else {
+          console.warn("Trying to update post null from signal");
+        }
       },
 
       _updateEndorsements: function (post) {

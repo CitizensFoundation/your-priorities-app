@@ -104,9 +104,12 @@
         }
         if (params)
           this.params = params;
+        if (typeof this.setupAfterOpen === 'function') {
+          this.setupAfterOpen(params);
+        }
         this.$$("#editDialog").open();
       } else {
-        window.appUser.loginForEdit(this, newOrUpdate,params);
+        window.appUser.loginForEdit(this.id, newOrUpdate, params, this.refreshFunction);
       }
     },
 

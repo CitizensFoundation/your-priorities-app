@@ -809,6 +809,10 @@
         this.$$("#dialogContainer").getDialogAsync(idName, callback);
       },
 
+      closeDialog: function (idName) {
+        this.$$("#dialogContainer").closeDialog(idName);
+      },
+
       scrollPageToTop: function() {
         var mainArea = document.getElementById('#mainArea');
         if (mainArea) {

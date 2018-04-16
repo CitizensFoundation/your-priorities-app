@@ -219,8 +219,8 @@
       _newPostForGroup: function (group) {
         window.appGlobals.activity('open', 'newPost');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
-          dialog.setup(null, group, true, null);
-          dialog.open('new', {groupId: group.id});
+          dialog.setup(null, true, null);
+          dialog.open('new', {groupId: group.id, group: group});
         }.bind(this));
       },
 
@@ -308,9 +308,8 @@
       _newGroup: function () {
         window.appGlobals.activity('open', 'newGroup');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
-          dialog.community = this.community;
           dialog.setup(null, true, this._refreshAjax.bind(this));
-          dialog.open('new', { communityId: this.communityId });
+          dialog.open('new', { communityId: this.communityId, community: this.community });
         }.bind(this));
       },
 

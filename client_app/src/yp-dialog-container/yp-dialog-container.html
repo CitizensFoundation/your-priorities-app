@@ -240,6 +240,16 @@
         this.set('bulkStatusUpdates', true);
       },
 
+      closeDialog: function (idName) {
+        var element = this.$$("#"+idName);
+        if (element) {
+          console.info("Closing dialog: "+idName);
+          element.close();
+        } else {
+          console.error("Did not find dialog to close: "+idName);
+        }
+      },
+
       getDialogAsync: function (idName, callback) {
         this.set('hideDialogs', false);
         this.set('selectedDialog', idName);
@@ -247,7 +257,7 @@
           var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {
             this.set('waitForUpgradeCounter', 0);
-            console.info("Found element async");
+            console.error("Found dialog: "+idName);
             callback(element);
           } else {
             console.warn("Element not upgraded: "+idName);

@@ -395,8 +395,8 @@
       _openEdit: function () {
         window.appGlobals.activity('open', 'post.new');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("postEdit", function (dialog) {
-          dialog.setup(this.post, this.post.Group, false, this._refresh.bind(this));
-          dialog.open('edit', {postId: this.post.id});
+          dialog.setup(this.post, false, this._refresh.bind(this));
+          dialog.open('edit', {postId: this.post.id, group: this.post.Group});
         }.bind(this));
       },
 
