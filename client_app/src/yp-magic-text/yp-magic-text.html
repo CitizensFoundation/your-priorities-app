@@ -121,6 +121,11 @@
           disableTranslation: {
             type: Boolean,
             value: false
+          },
+
+          simpleFormat: {
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -208,7 +213,7 @@
               this.$.getTranslationAjax.url = "/api/posts/"+this.extraId+"/"+this.contentId+"/translatedStatusText";
               break;
             default:
-              console.error("No valid textType for magic text: "+this.textType);
+              console.error("No valid textType for magic text to translate: "+this.textType);
               return;
           }
           if (this.contentId) {
@@ -244,6 +249,10 @@
       _finalize() {
         if (!this.textOnly) {
           this._linksAndEmojis()
+        }
+
+        if (this.simpleFormat) {
+          this.processedContent = this.processedContent.replace(/(\r\n)/g,"<br>");
         }
 
         if (this.truncate && this.content && (this.content.length>this.truncate || this.autoTranslate)) {

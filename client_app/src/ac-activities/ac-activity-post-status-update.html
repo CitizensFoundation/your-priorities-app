@@ -49,7 +49,7 @@
       </yp-magic-text>
       <yp-magic-text id="statusChange" class="statusChange" extra-id="[[activity.Post.id]]"
                      text-type="statusChangeContent" content-language="[[activity.PostStatusChange.language]]"
-                     content="[[statusContent]]" content-id="[[activity.PostStatusChange.id]]">
+                     simple-format content="[[statusContent]]" content-id="[[activity.PostStatusChange.id]]">
       </yp-magic-text>
     </div>
   </template>
@@ -84,7 +84,7 @@
 
       _statusContent: function (newValue) {
         if (newValue && newValue.PostStatusChange && newValue.PostStatusChange.content) {
-          return this.formatContent(newValue.PostStatusChange.content);
+          return newValue.PostStatusChange.content;
         }
       },
 
