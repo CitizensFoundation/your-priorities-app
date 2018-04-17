@@ -237,6 +237,7 @@
       .userImageNotificationContainer {
         cursor: pointer;
         margin-right: 8px;
+        display:inline-block;
       }
 
       .activeBadge {
@@ -313,8 +314,8 @@
 
             <template is="dom-if" if="[[user]]">
               <div class="userImageNotificationContainer layout horizontal" on-tap="_toggleUserDrawer">
-                <yp-user-image small user="[[user]]"></yp-user-image>
-                <paper-badge class="activeBadge" label="[[numberOfUnViewedNotifications]]" hidden$="[[!numberOfUnViewedNotifications]]"></paper-badge>
+                <yp-user-image id="userImage" small user="[[user]]"></yp-user-image>
+                <paper-badge class="activeBadge" for="userImage" label="[[numberOfUnViewedNotifications]]" hidden$="[[!numberOfUnViewedNotifications]]"></paper-badge>
               </div>
             </template>
 
