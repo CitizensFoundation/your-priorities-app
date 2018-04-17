@@ -232,8 +232,11 @@
             this.loginForMembershipParams = null;
           } else if (this.loginForAcceptInviteParams) {
             var acceptInviteParams = this.loginForAcceptInviteParams;
-            acceptInviteParams.editDialog.afterLogin(acceptInviteParams.token);
-            this.loginForAcceptInviteParams = null;
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("acceptInvite", function (dialog) {
+              dialog.open(acceptInviteParams.token);
+              dialog.afterLogin(acceptInviteParams.token);
+              this.loginForAcceptInviteParams = null;
+            }.bind(this));
           } else if (this.loginFor401refreshFunction) {
             this.loginFor401refreshFunction();
           } else if (this.loginForNotificationSettingsParams) {
