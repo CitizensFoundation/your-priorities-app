@@ -400,9 +400,11 @@
           })
         );
 
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateGrid", function (dialog) {
-          dialog.open(this.community.id);
-        }.bind(this));
+        this.async(function () {
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateGrid", function (dialog) {
+            dialog.open(this.community.id);
+          }.bind(this));
+        });
       },
 
       _openUsersDialog: function () {

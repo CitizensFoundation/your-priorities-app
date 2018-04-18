@@ -129,23 +129,14 @@
         <template is="dom-if" name="postMove" restamp>
           <yp-post-move id="postMove"></yp-post-move>
         </template>
-
-        <template is="dom-if" name="bulkStatusUpdateConfig" restamp>
-          <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
-        </template>
-
-        <template is="dom-if" name="bulkStatusUpdateGrid" restamp>
-          <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
-        </template>
-
-        <template is="dom-if" name="bulkStatusUpdateEdit" restamp>
-          <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
-        </template>
-
-        <template is="dom-if" name="bulkStatusUpdateEditTemplates" restamp>
-          <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
-        </template>
       </iron-lazy-pages>
+
+      <template is="dom-if" if="[[bulkStatusUpdates]]">
+        <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
+        <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
+        <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
+        <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
+      </template>
     </div>
   </template>
 
