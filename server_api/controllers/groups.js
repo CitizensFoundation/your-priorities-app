@@ -170,6 +170,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
   group.set('configuration.disableNameAutoTranslation', truthValueFromBody(req.body.disableNameAutoTranslation));
   group.set('configuration.externalGoalTriggerUrl', (req.body.externalGoalTriggerUrl && req.body.externalGoalTriggerUrl!="") ? req.body.externalGoalTriggerUrl : null);
+  group.set('configuration.hideNewPost', truthValueFromBody(req.body.hideNewPost));
 };
 
 var upload = multer({
