@@ -1,4 +1,5 @@
 {
+  "hideNewPost": "Hide new post button",
   "toggleMembership": "Toggle membership",
   "externalGoalTriggerUrl": "External goal trigger URL",
   "exportGroup": "Export CSV file",
