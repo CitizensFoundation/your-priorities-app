@@ -129,6 +129,9 @@
         <template is="dom-if" name="postMove" restamp>
           <yp-post-move id="postMove"></yp-post-move>
         </template>
+
+        <template is="dom-if" name="none" restamp>
+        </template>
       </iron-lazy-pages>
 
       <template is="dom-if" if="[[bulkStatusUpdates]]">
@@ -241,6 +244,13 @@
         }
       },
 
+      dialogClosed: function  (detail) {
+        if (detail.name===this.selectedDialog) {
+          this.set('selectedDialog', 'none');
+          console.log("Setting selectedDialog to none");
+        }
+      },
+
       getDialogAsync: function (idName, callback) {
         this.set('hideDialogs', false);
         this.set('selectedDialog', idName);
@@ -248,7 +258,7 @@
           var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {
             this.set('waitForUpgradeCounter', 0);
-            console.error("Found dialog: "+idName);
+            console.info("Found dialog: "+idName);
             callback(element);
           } else {
             console.warn("Element not upgraded: "+idName);

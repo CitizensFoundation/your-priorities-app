@@ -129,7 +129,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
+    <yp-edit-dialog name="postEdit" double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
                     use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
                     title="[[editHeaderText]]" save-text="[[saveText]]" class="container"
                     next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
@@ -618,7 +618,6 @@
 
     _setupGroup: function (group) {
       if (group) {
-        debugger;
         this.set('group', group);
         if (group.configuration) {
           if (group.configuration.locationHidden) {

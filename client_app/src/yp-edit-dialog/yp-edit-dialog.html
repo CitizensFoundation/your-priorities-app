@@ -219,7 +219,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog id="editDialog" class$="[[_computeClass(narrow)]]" with-backdrop$="[[!narrowPad]]" modal>
+    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrow}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="{{largeHeight}}"></iron-media-query>
@@ -400,7 +400,15 @@
           type: String
         },
 
-        title: String
+        title: String,
+
+        name: String
+      },
+
+      _dialogClosed: function (event) {
+        if(event.target.nodeName === "PAPER-DIALOG" && event.target.attributes.name && event.target.attributes.name.nodeValue) {
+          this.fire('yp-dialog-closed', { name: event.target.attributes.name.nodeValue });
+        }
       },
 
       _fileUploadStarting: function (event) {

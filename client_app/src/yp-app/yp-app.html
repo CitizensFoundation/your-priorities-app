@@ -508,7 +508,8 @@
         'yp-refresh-group': '_refreshGroup',
         'yp-refresh-community': '_refreshCommunity',
         'yp-refresh-domain': '_refreshDomain',
-        'yp-language-name': '_setLanguageName'
+        'yp-language-name': '_setLanguageName',
+        'yp-dialog-closed': '_dialogClosed'
       },
 
       _stopTranslation: function () {
@@ -812,6 +813,10 @@
 
       closeDialog: function (idName) {
         this.$$("#dialogContainer").closeDialog(idName);
+      },
+
+      _dialogClosed: function (event, detail) {
+        this.$$("#dialogContainer").dialogClosed(detail);
       },
 
       scrollPageToTop: function() {
