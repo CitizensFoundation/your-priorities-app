@@ -1,4 +1,10 @@
 {
+  "disablePostPageLink": "Disable post page link",
+  "hideDebateIcon": "Hide debate icon",
+  "hidePostDescriptions": "Hide post descriptions",
+  "hidePostCover": "Hide post images",
+  "hideVoteCountUntilVoteCompleted": "Hide vote count until vote completed",
+  "hideVoteCount": "Hide vote count",
   "hideNewPost": "Hide new post button",
   "toggleMembership": "Toggle membership",
   "externalGoalTriggerUrl": "External goal trigger URL",

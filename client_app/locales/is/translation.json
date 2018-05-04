@@ -1,4 +1,10 @@
 {
+  "disablePostPageLink": "Aftengja hlekk í hugmyndir",
+  "hideDebateIcon": "Fela rökræðu tákn",
+  "hidePostDescriptions": "Fela lýsingu á hugmyndum",
+  "hidePostCover": "Fela myndir á hugmyndum",
+  "hideVoteCountUntilVoteCompleted": "Fela atkvæði þangað til buið að kjósa",
+  "hideVoteCount": "Fela fjölda atkvæða",
   "hideNewPost": "Fela ný hugmynd takka",
   "toggleMembership": "Breyta meðlimastöðu",
   "externalGoalTriggerUrl": "External goal trigger URL",

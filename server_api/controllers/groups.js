@@ -171,6 +171,13 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.disableNameAutoTranslation', truthValueFromBody(req.body.disableNameAutoTranslation));
   group.set('configuration.externalGoalTriggerUrl', (req.body.externalGoalTriggerUrl && req.body.externalGoalTriggerUrl!="") ? req.body.externalGoalTriggerUrl : null);
   group.set('configuration.hideNewPost', truthValueFromBody(req.body.hideNewPost));
+
+  group.set('configuration.hideVoteCount', truthValueFromBody(req.body.hideVoteCount));
+  group.set('configuration.hideVoteCountUntilVoteCompleted', truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted));
+  group.set('configuration.hidePostCover', truthValueFromBody(req.body.hidePostCover));
+  group.set('configuration.hidePostDescriptions', truthValueFromBody(req.body.hidePostDescriptions));
+  group.set('configuration.hideDebateIcon', truthValueFromBody(req.body.hideDebateIcon));
+  group.set('configuration.disablePostPageLink', truthValueFromBody(req.body.disablePostPageLink));
 };
 
 var upload = multer({
