@@ -193,21 +193,21 @@
       <div id="actionUp" class="action-up">
         <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]"
                            icon="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
-        <div class="action-text up-text">[[formattedUpCount]]</div>
+        <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
       </div>
 
-      <div class="action-debate" hidden$="[[_hideDebate(small,forceSmall)]]">
+      <div class="action-debate" hidden$="[[hideDebate]]">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
                            class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">[[formattedPointCount]]</div>
       </div>
 
-      <div class="" hidden$="[[!_hideDebate(small,forceSmall)]]"></div>
+      <div class="" hidden$="[[!hideDebate]]"></div>
 
       <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
         <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]"
                            icon="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
-        <div class="action-text down-text">[[formattedDownCount]]</div>
+        <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
       </div>
       <div class="share" >
         <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
@@ -317,8 +317,12 @@
         postUrl: {
           type: String,
           computed: '_postUrl(post)'
-        }
+        },
 
+        hideDebate: {
+          type: Boolean,
+          computed: '_hideDebate(small,forceSmall,post)'
+        }
       },
 
       _formattedUpCount: function (number) {
@@ -369,7 +373,7 @@
       },
 
       _hideDebate: function (small, forceSmall) {
-        return (small || forceSmall)
+        return (small || forceSmall || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
       },
 
       _onPostChanged: function (post, oldValue) {
@@ -395,6 +399,10 @@
             this.set('endorsementButtons', "hearts");
           }
           this._updateEndorsements(post);
+          if (post.Group.configuration && post.Group.configuration.hideVoteCountUntilVoteCompleted) {
+            this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
+            this.set('post.Group.configuration.hideVoteCount', true);
+          }
         } else {
           console.warn("No post found for post actions");
         }
@@ -533,12 +541,22 @@
         window.appGlobals.activity('clicked', 'endorse_up', this.post.id);
         this.set('isEndorsed', true);
         this.updateStyles();
+        this._setVoteHidingStatus();
       },
 
       downVote: function (event) {
         this.set('allDisabled', true);
         this.generateEndorsement(-1);
         window.appGlobals.activity('clicked', 'endorse_down', this.post.id);
+        this._setVoteHidingStatus();
+      },
+
+      _setVoteHidingStatus: function () {
+        if (this.post.Group.configuration &&
+          this.post.Group.configuration.hideVoteCountUntilVoteCompleted &&
+          !this.post.Group.configuration.originalHideVoteCount) {
+          this.set('post.Group.configuration.hideVoteCount', false);
+        }
       },
 
       computeActionClass: function (small) {

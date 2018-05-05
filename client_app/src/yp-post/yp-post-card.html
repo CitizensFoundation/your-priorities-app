@@ -64,6 +64,18 @@
         width: 416px;
       }
 
+      .postCard[hide-post-cover] {
+        height: 190px;
+      }
+
+      .postCard[hide-description] {
+        height: 370px;
+      }
+
+      .postCard[hide-description][hide-post-cover] {
+        height: 134px;
+      }
+
       .postCard[mini] {
         width: 210px;
         height: 100%;
@@ -115,6 +127,18 @@
           width: 304px;
         }
 
+        .postCard[hide-post-cover] {
+          height: 230px;
+        }
+
+        .postCard[hide-description] {
+          height: 302px;
+        }
+
+        .postCard[hide-description][hide-post-cover] {
+          height: 134px;
+        }
+
         .postCard[mini] {
           width: 210px;
           height: 100%;
@@ -159,9 +183,11 @@
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <paper-material mini$="[[mini]]" class="card postCard layout vertical" elevation="[[elevation]]" animated>
+    <paper-material mini$="[[mini]]" hide-post-cover$="[[post.Group.configuration.hidePostCover]]"
+                    hide-description$="[[post.Group.configuration.hidePostDescription]]"
+                    class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <yp-post-cover-media mini$="[[mini]]" post="[[post]]" hidden$="[[post.configuration.hidePostCover]]"></yp-post-cover-media>
+        <yp-post-cover-media mini$="[[mini]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
         <div class="postNameContainer">
           <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
             <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
@@ -169,9 +195,9 @@
             </yp-magic-text>
           </div>
         </div>
-        <yp-magic-text class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[mini]]"
+        <yp-magic-text class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
                        text-type="postContent" content-language="[[post.language]]"
-                       text-only content="[[shortDescription]]" content-id="[[post.id]]" truncate="100">
+                       text-only content="[[post.description]]" content-id="[[post.id]]" truncate="100">
         </yp-magic-text>
         <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
       </div>
@@ -194,9 +220,9 @@
 
       properties: {
 
-        shortDescription: {
-          type: String,
-          computed: '_shortDescription(post)'
+        hideDescription: {
+          type: Boolean,
+          computed: '_hideDescription(mini, post)'
         },
 
         selectedMenuItem: {
@@ -226,8 +252,8 @@
         }
       },
 
-      _shortDescription: function (post) {
-        return this.truncate(this.trim(post.description), 100, '...');
+      _hideDescription: function (mini, post) {
+        return (mini || (post && post.Group.configuration && post.Group.configuration.hidePostDescription))
       },
 
       _hasPostAccess: function(post, gotAdminRights) {
@@ -243,7 +269,11 @@
       },
 
       goToPostIfNotHeader: function () {
-        this.goToPost();
+        if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
+          console.log("goToPostDisabled");
+        } else {
+          this.goToPost();
+        }
       },
 
       _postChanged: function (post) {

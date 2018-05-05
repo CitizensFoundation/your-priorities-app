@@ -175,7 +175,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideVoteCount', truthValueFromBody(req.body.hideVoteCount));
   group.set('configuration.hideVoteCountUntilVoteCompleted', truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted));
   group.set('configuration.hidePostCover', truthValueFromBody(req.body.hidePostCover));
-  group.set('configuration.hidePostDescriptions', truthValueFromBody(req.body.hidePostDescriptions));
+  group.set('configuration.hidePostDescription', truthValueFromBody(req.body.hidePostDescription));
   group.set('configuration.hideDebateIcon', truthValueFromBody(req.body.hideDebateIcon));
   group.set('configuration.disablePostPageLink', truthValueFromBody(req.body.disablePostPageLink));
 };

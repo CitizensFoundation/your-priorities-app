@@ -1,7 +1,7 @@
 {
   "disablePostPageLink": "Aftengja hlekk í hugmyndir",
   "hideDebateIcon": "Fela rökræðu tákn",
-  "hidePostDescriptions": "Fela lýsingu á hugmyndum",
+  "hidePostDescription": "Fela lýsingu á hugmyndum",
   "hidePostCover": "Fela myndir á hugmyndum",
   "hideVoteCountUntilVoteCompleted": "Fela atkvæði þangað til buið að kjósa",
   "hideVoteCount": "Fela fjölda atkvæða",
