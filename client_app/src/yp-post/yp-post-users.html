@@ -1,13 +1,13 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script type="module" src="../../../../@polymer/polymer/polymer.js"></script>
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
 
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<script type="module" src="../../../../@polymer/paper-icon-button/paper-icon-button.js"></script>
 
-<link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
-<link rel="import" href="../yp-user/yp-user-image.html">
-<link rel="import" href="../yp-ajax/yp-ajax.html">
+<script type="module" src="../yp-app-globals/yp-app-icons.js"></script>
+<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
+<script type="module" src="../yp-user/yp-user-image.js"></script>
+<script type="module" src="../yp-ajax/yp-ajax.js"></script>
 
 <dom-module id="yp-post-users">
   <template>
@@ -50,121 +50,129 @@
     <yp-ajax id="endorsementAjax" use-dialog="false" on-response="_response" handle-as="json"></yp-ajax>
   </template>
 
-  <script>
-    Polymer({
+  <script type="module">
+import '../../../../@polymer/polymer/polymer.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../../../../@polymer/paper-icon-button/paper-icon-button.js';
+import '../yp-app-globals/yp-app-icons.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import '../yp-user/yp-user-image.js';
+import '../yp-ajax/yp-ajax.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+Polymer({
 
-      is: 'yp-post-users',
+  is: 'yp-post-users',
 
-      behaviors: [
-        Polymer.ypLanguageBehavior
-      ],
+  behaviors: [
+    ypLanguageBehavior
+  ],
 
-      properties: {
+  properties: {
 
-        endorsements: {
-          type: Array,
-          notify: true
-        },
+    endorsements: {
+      type: Array,
+      notify: true
+    },
 
-        shownEndorsements: {
-          type: Array,
-          notify: true
-        },
+    shownEndorsements: {
+      type: Array,
+      notify: true
+    },
 
-        userImagesLimit: {
-          type: Number,
-          value: 10
-        },
+    userImagesLimit: {
+      type: Number,
+      value: 10
+    },
 
-        post: {
-          type: Object,
-          observer: "_postChanged"
-        }
-      },
+    post: {
+      type: Object,
+      observer: "_postChanged"
+    }
+  },
 
-      limitFrom: function (input, offset, limit) {
-        if (!(input instanceof Array) && !(input instanceof String)) return input;
+  limitFrom: function (input, offset, limit) {
+    if (!(input instanceof Array) && !(input instanceof String)) return input;
 
-        limit = parseInt(limit, 10);
+    limit = parseInt(limit, 10);
 
-        if (input instanceof String) {
-          if (limit) {
-            return limit >= 0 ? input.slice(offset, limit) : input.slice(limit, input.length);
-          } else {
-            return "";
-          }
-        }
-
-        var out = [],
-          i, n;
-
-        if (limit > input.length)
-          limit = input.length;
-        else if (limit < -input.length)
-          limit = -input.length;
-
-        if (limit > 0) {
-          i = offset;
-          n = limit;
-        } else {
-          i = input.length + limit;
-          n = input.length;
-        }
-
-        for (; i < n; i++) {
-          out.push(input[i]);
-        }
-
-        return out;
-      },
-
-      addEndorsement: function (endorsement) {
-        if (this.endorsements) {
-          this.endorsements.unshift(endorsement);
-        }
-      },
-
-      _postChanged: function  (newValue, oldValue) {
-        if (newValue) {
-          this.set("endorsements",null);
-          this.$.endorsementAjax.url = this._computeUrl(newValue);
-          this.$.endorsementAjax.generateRequest();
-        } else {
-          this.set("endorsements",null);
-        }
-      },
-
-      _response: function (event, detail, sender) {
-        this.set('endorsements', detail.response);
-        if (this.endorsements.length > this.userImagesLimit) {
-          this.async(function () {
-            this.$$("#moreImages").style.display = 'inline';
-          }, 100);
-        }
-      },
-
-      _moreUserImages: function () {
-        this.$$("#moreImagesButton").style.display = 'none';
-        this.$$("#numberOfMoreUserImages").style.display = 'none';
-        this.$$("#restOfUserImages").style.display = 'inline';
-      },
-
-      _computeUrl: function (post) {
-        return '/api/posts/' + post.id + '/endorsements';
-      },
-
-      allEndorsementsLength: function (post) {
-        return this.endorsements.length;
-      },
-
-      countUserImagesLeft: function (e) {
-        return this.allEndorsementsLength(this.post) - this.userImagesLimit;
-      },
-
-      _userImagesCount: function () {
-        return this.countUserImagesLeft(0);
+    if (input instanceof String) {
+      if (limit) {
+        return limit >= 0 ? input.slice(offset, limit) : input.slice(limit, input.length);
+      } else {
+        return "";
       }
+    }
 
-    });
-  </script>
+    var out = [],
+      i, n;
+
+    if (limit > input.length)
+      limit = input.length;
+    else if (limit < -input.length)
+      limit = -input.length;
+
+    if (limit > 0) {
+      i = offset;
+      n = limit;
+    } else {
+      i = input.length + limit;
+      n = input.length;
+    }
+
+    for (; i < n; i++) {
+      out.push(input[i]);
+    }
+
+    return out;
+  },
+
+  addEndorsement: function (endorsement) {
+    if (this.endorsements) {
+      this.endorsements.unshift(endorsement);
+    }
+  },
+
+  _postChanged: function  (newValue, oldValue) {
+    if (newValue) {
+      this.set("endorsements",null);
+      this.$.endorsementAjax.url = this._computeUrl(newValue);
+      this.$.endorsementAjax.generateRequest();
+    } else {
+      this.set("endorsements",null);
+    }
+  },
+
+  _response: function (event, detail, sender) {
+    this.set('endorsements', detail.response);
+    if (this.endorsements.length > this.userImagesLimit) {
+      this.async(function () {
+        this.$$("#moreImages").style.display = 'inline';
+      }, 100);
+    }
+  },
+
+  _moreUserImages: function () {
+    this.$$("#moreImagesButton").style.display = 'none';
+    this.$$("#numberOfMoreUserImages").style.display = 'none';
+    this.$$("#restOfUserImages").style.display = 'inline';
+  },
+
+  _computeUrl: function (post) {
+    return '/api/posts/' + post.id + '/endorsements';
+  },
+
+  allEndorsementsLength: function (post) {
+    return this.endorsements.length;
+  },
+
+  countUserImagesLeft: function (e) {
+    return this.allEndorsementsLength(this.post) - this.userImagesLimit;
+  },
+
+  _userImagesCount: function () {
+    return this.countUserImagesLeft(0);
+  }
+
+});
+</script>
 </dom-module>

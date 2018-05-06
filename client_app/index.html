@@ -38,48 +38,50 @@
   <meta name="msapplication-TileColor" content="#3f51b5">
   <meta name="msapplication-tap-highlight" content="no">
 
-  <script>
-    if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
-      var window_document_createElement =
-        Object.getOwnPropertyDescriptor(window.document, 'createElement');
-      if (window_document_createElement &&
-        typeof window_document_createElement.value === "function") {
-        Document.prototype['createElement'] = window_document_createElement.value;
-        delete document.createElement;
+  <script type="module">
+import '/src/yp-app/yp-app.js';
+if(navigator.userAgent.toLowerCase().indexOf('firefox') > -1){
+  var window_document_createElement =
+    Object.getOwnPropertyDescriptor(window.document, 'createElement');
+  if (window_document_createElement &&
+    typeof window_document_createElement.value === "function") {
+    Document.prototype['createElement'] = window_document_createElement.value;
+    delete document.createElement;
 
-        console.warn("Custom Elements: " +
-          "An own property for `createElement` was found on `document`. This " +
-          "function was wrapped instead of `Document.prototype.createElement` " +
-          "and the own property was removed. See " +
-          "https://github.com/webcomponents/custom-elements/issues/137 for more " +
-          "information.");
-      }
-    }
-  </script>
+    console.warn("Custom Elements: " +
+      "An own property for `createElement` was found on `document`. This " +
+      "function was wrapped instead of `Document.prototype.createElement` " +
+      "and the own property was removed. See " +
+      "https://github.com/webcomponents/custom-elements/issues/137 for more " +
+      "information.");
+  }
+}
+</script>
 
-  <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-  <script>
-    // Use Google Analytics
-    USE_GOOGLE_ANALYTICS = true;
+  <script type="module">
+import '/src/yp-app/yp-app.js';
+// Use Google Analytics
+USE_GOOGLE_ANALYTICS = true;
 
-    // Load pre-caching Service Worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js');
-      });
-    }
+// Load pre-caching Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js');
+  });
+}
 
-    if (USE_GOOGLE_ANALYTICS) {
-      // Setup Google Analytics;
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-       })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-    }
-  </script>
+if (USE_GOOGLE_ANALYTICS) {
+  // Setup Google Analytics;
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+}
+</script>
 
-  <link rel="import" href="/src/yp-app/yp-app.html?v=@version@">
+  <script type="module" src="/src/yp-app/yp-app.js"></script>
   <style is="custom-style">
     body {
       font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -167,9 +169,9 @@
 <body class="fullbleed" unresolved>
   <yp-app id="app" app-ready="{{appReady}}" fullbleed></yp-app>
 
-  <script src="/bower_components/i18next/i18next.min.js"></script>
-  <script src="/bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
-  <script src="/src/app.js?v=@version@"></script>
+  <script src="/node_modules/i18next/i18next.min.js"></script>
+  <script src="/node_modules/i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
+  <script src="/src/app.js"></script>
   <noscript>
     You need Javascript enabled in your browser to use this website.
   </noscript>

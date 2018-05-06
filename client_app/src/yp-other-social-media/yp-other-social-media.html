@@ -1,10 +1,10 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script type="module" src="../../../../@polymer/polymer/polymer.js"></script>
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
 
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<script type="module" src="../../../../@polymer/paper-item/paper-item.js"></script>
 
-<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
 
 <dom-module id="yp-other-social-media">
   <template>
@@ -39,59 +39,64 @@
 
   </template>
 
-  <script>
-    Polymer({
+  <script type="module">
+import '../../../../@polymer/polymer/polymer.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../../../../@polymer/paper-item/paper-item.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+Polymer({
 
-      is: 'yp-other-social-media',
+  is: 'yp-other-social-media',
 
-      behaviors: [
-        Polymer.ypLanguageBehavior
-      ],
+  behaviors: [
+    ypLanguageBehavior
+  ],
 
-      properties: {
-        domain: {
-          type: Object
-        },
+  properties: {
+    domain: {
+      type: Object
+    },
 
-        selected: {
-          type: Number,
-          value: 0
-        },
+    selected: {
+      type: Number,
+      value: 0
+    },
 
-        active: {
-          type: Boolean,
-          value: false,
-          observer: '_activeChanged'
-        }
-      },
+    active: {
+      type: Boolean,
+      value: false,
+      observer: '_activeChanged'
+    }
+  },
 
-      _selectTwitter: function () {
-        this.set('selected', 0);
-      },
+  _selectTwitter: function () {
+    this.set('selected', 0);
+  },
 
-      _selectInstagram: function () {
-        this.set('selected', 1);
-      },
+  _selectInstagram: function () {
+    this.set('selected', 1);
+  },
 
-      _activeChanged: function (newValue) {
-        if (newValue) {
-          this.async(function () {
-            this._setupTwitter();
-          }.bind(this));
-        }
-      },
+  _activeChanged: function (newValue) {
+    if (newValue) {
+      this.async(function () {
+        this._setupTwitter();
+      }.bind(this));
+    }
+  },
 
-      _setupTwitter: function () {
-        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-      },
+  _setupTwitter: function () {
+    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+  },
 
-      _instagramAccessToken: function () {
-        return window.instagramAccessToken;
-      },
+  _instagramAccessToken: function () {
+    return window.instagramAccessToken;
+  },
 
-      _instagramClientId: function () {
-        return window.instagramClientID;
-      }
-    });
-  </script>
+  _instagramClientId: function () {
+    return window.instagramClientID;
+  }
+});
+</script>
 </dom-module>

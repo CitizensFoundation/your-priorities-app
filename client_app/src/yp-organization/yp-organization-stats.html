@@ -1,9 +1,9 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script type="module" src="../../../../@polymer/polymer/polymer.js"></script>
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
+<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
+<script type="module" src="../yp-app-globals/yp-app-icons.js"></script>
+<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
+<script type="module" src="../yp-behaviors/yp-number-format-behavior.js"></script>
 
 <dom-module id="yp-community-stats">
 
@@ -52,21 +52,27 @@
 
   </template>
 
-  <script>
-    Polymer({
-      is: 'yp-community-stats',
+  <script type="module">
+import '../../../../@polymer/polymer/polymer.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../yp-app-globals/yp-app-icons.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+Polymer({
+  is: 'yp-community-stats',
 
-      behaviors: [
-        Polymer.ypLanguageBehavior,
-        Polymer.ypNumberFormatBehavior
-      ],
+  behaviors: [
+    ypLanguageBehavior,
+    ypNumberFormatBehavior
+  ],
 
-      properties: {
-        community: {
-          type: Object
-        }
-      }
+  properties: {
+    community: {
+      type: Object
+    }
+  }
 
-    });
-  </script>
+});
+</script>
 </dom-module>

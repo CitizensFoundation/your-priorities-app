@@ -1,0 +1,11 @@
+import '../../../../moment/min/moment.min.js';
+import '../../../../moment/locale/is.js';
+import '../../../../moment/locale/nb.js';
+import '../../../../moment/locale/nl.js';
+import '../../../../moment/locale/hu.js';
+import '../../../../moment/locale/zh-tw.js';
+import '../../../../moment/locale/sr.js';
+import '../../../../moment/locale/hr.js';
+import '../../../../moment/locale/sl.js';
+import '../../../../moment/locale/pt.js';
+import '../../../../moment/locale/pl.js';

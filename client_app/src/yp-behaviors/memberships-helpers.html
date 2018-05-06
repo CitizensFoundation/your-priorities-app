@@ -1,69 +1,68 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script type="module" src="../../../../@polymer/polymer/polymer.js"></script>
 
-<script>
-  /**
-   * @polymerBehavior Polymer.MembershipHelpers
-   */
-  Polymer.MembershipsHelpers = {
+<script type="module">
+import '../../../../@polymer/polymer/polymer.js';
 
-    _hasMemberships: function(objectId, memberships) {
-      return __.find(memberships, function(o) { return o.id == objectId; });
-    },
+export const MembershipsHelpers = {
 
-    _hasMembership: function (object, objectId, memberships) {
-      if (object) {
-        if (window.appUser && window.appUser.user) {
-          if (window.appUser.user.id == object.user_id) {
-            return true
-          } else {
-            if (window.appUser.memberships) {
-              return this._hasMemberships(objectId, memberships)
-            } else {
-              return false;
-            }
-          }
+  _hasMemberships: function(objectId, memberships) {
+    return __.find(memberships, function(o) { return o.id == objectId; });
+  },
+
+  _hasMembership: function (object, objectId, memberships) {
+    if (object) {
+      if (window.appUser && window.appUser.user) {
+        if (window.appUser.user.id == object.user_id) {
+          return true
         } else {
-          return false;
+          if (window.appUser.memberships) {
+            return this._hasMemberships(objectId, memberships)
+          } else {
+            return false;
+          }
         }
-      } else if (!window.appUser) {
-        return false;
       } else {
-        console.error("No object in hasMembership");
         return false;
       }
-    },
-
-    hasGroupMembership: function (group) {
-      if (group && window.appUser && window.appUser.memberships) {
-        return this._hasMembership(group, group.id, window.appUser.memberships.GroupUsers);
-      } else if (group) {
-        return false;
-      } else {
-        console.error("No group in hasMembership");
-        return false;
-      }
-    },
-
-    hasCommunityMembership: function (community) {
-      if (community && window.appUser && window.appUser.memberships) {
-        return this._hasMembership(community, community.id, window.appUser.memberships.CommunityUsers);
-      } else if (community) {
-        return false;
-      } else {
-        console.error("No community in hasMembership");
-        return false;
-      }
-    },
-
-    hasDomainMembership: function(domain) {
-      if (domain && window.appUser && window.appUser.memberships) {
-        return this._hasMembership(domain, domain.id, window.appUser.memberships.DomainUsers);
-      } else if (domain) {
-        return false;
-      } else {
-        console.error("No domain in hasMembership");
-        return false;
-      }
+    } else if (!window.appUser) {
+      return false;
+    } else {
+      console.error("No object in hasMembership");
+      return false;
     }
-  };
+  },
+
+  hasGroupMembership: function (group) {
+    if (group && window.appUser && window.appUser.memberships) {
+      return this._hasMembership(group, group.id, window.appUser.memberships.GroupUsers);
+    } else if (group) {
+      return false;
+    } else {
+      console.error("No group in hasMembership");
+      return false;
+    }
+  },
+
+  hasCommunityMembership: function (community) {
+    if (community && window.appUser && window.appUser.memberships) {
+      return this._hasMembership(community, community.id, window.appUser.memberships.CommunityUsers);
+    } else if (community) {
+      return false;
+    } else {
+      console.error("No community in hasMembership");
+      return false;
+    }
+  },
+
+  hasDomainMembership: function(domain) {
+    if (domain && window.appUser && window.appUser.memberships) {
+      return this._hasMembership(domain, domain.id, window.appUser.memberships.DomainUsers);
+    } else if (domain) {
+      return false;
+    } else {
+      console.error("No domain in hasMembership");
+      return false;
+    }
+  }
+};
 </script>

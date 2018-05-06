@@ -1,15 +1,15 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<script type="module" src="../../../../@polymer/polymer/polymer.js"></script>
 
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/iron-image/iron-image.html" >
+<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
+<script type="module" src="../../../../@polymer/iron-image/iron-image.js"></script>
 
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<script type="module" src="../../../../@polymer/paper-card/paper-card.js"></script>
 
-<link rel="import" href="../yp-app-globals/yp-app-icons.html">
-<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
-<link rel="import" href="yp-organization-behaviors.html">
-<link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<script type="module" src="../yp-app-globals/yp-app-icons.js"></script>
+<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
+<script type="module" src="./yp-organization-behaviors.js"></script>
+<script type="module" src="../yp-behaviors/yp-truncate-behavior.js"></script>
+<script type="module" src="../yp-behaviors/yp-image-formats-behavior.js"></script>
 
 <dom-module id="yp-community-card">
 
@@ -132,17 +132,28 @@
     </template>
   </template>
 
-  <script>
-    Polymer({
-      is: 'yp-community-card',
+  <script type="module">
+import '../../../../@polymer/polymer/polymer.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../../../../@polymer/iron-image/iron-image.js';
+import '../../../../@polymer/paper-card/paper-card.js';
+import '../yp-app-globals/yp-app-icons.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import './yp-organization-behaviors.js';
+import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
+import { ypImageFormatsBehavior } from '../yp-behaviors/yp-image-formats-behavior.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+import { CommunityBehaviors } from '../yp-community/yp-community-behaviors.js';
+Polymer({
+  is: 'yp-community-card',
 
-      behaviors: [
-        Polymer.ypLanguageBehavior,
-        Polymer.CommunityBehaviors,
-        Polymer.ypTruncateBehavior,
-        Polymer.ypImageFormatsBehavior
-      ]
+  behaviors: [
+    ypLanguageBehavior,
+    CommunityBehaviors,
+    ypTruncateBehavior,
+    ypImageFormatsBehavior
+  ]
 
-    });
-  </script>
+});
+</script>
 </dom-module>
