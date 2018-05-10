@@ -164,6 +164,8 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     where: {
       id: req.params.id
     },
+    attributes: ['id','name','description','status','content_type','official_status','counter_endorsements_up','cover_media_type',
+      'counter_endorsements_down','language','counter_points','counter_flags','location','created_at'],
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
     ],
