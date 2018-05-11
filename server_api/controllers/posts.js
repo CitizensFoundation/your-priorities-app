@@ -201,7 +201,28 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       {
         model: models.User,
         required: false,
-        attributes: models.User.defaultAttributesWithSocialMediaPublic
+        attributes: models.User.defaultAttributesWithSocialMediaPublic,
+        include: [
+          {
+            model: models.Image, as: 'UserProfileImages',
+            required: false
+          },
+          {
+            model: models.Organization,
+            as: 'OrganizationUsers',
+            required: false,
+            attributes: ['id', 'name'],
+            include: [
+              {
+                model: models.Image,
+                as: 'OrganizationLogoImages',
+                //TODO: Figure out why there are no formats attributes coming through here
+                attributes: ['id', 'formats'],
+                required: false
+              }
+            ]
+          }
+        ]
       },
       // Image
       {
