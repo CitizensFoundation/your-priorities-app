@@ -121,6 +121,8 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app/build/bundled'), { index: false }));
 }
 
+app.use(express.static(path.join(__dirname, '../client_app/.well-known'), { index: false }));
+
 app.use(session(sessionConfig));
 
 app.use(passport.initialize());
