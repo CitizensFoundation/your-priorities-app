@@ -118,10 +118,8 @@ app.get('/*', function (req, res, next) {
 if (!FORCE_PRODUCTION && app.get('env') === 'development') {
   app.use(express.static(path.join(__dirname, '../client_app'), { index: false }));
 } else {
-  app.use(express.static(path.join(__dirname, '../client_app/build/bundled'), { index: false }));
+  app.use(express.static(path.join(__dirname, '../client_app/build/bundled'), { index: false, dotfiles:'allow' }));
 }
-
-app.use(express.static(path.join(__dirname, '../client_app/.well-known'), { index: false }));
 
 app.use(session(sessionConfig));
 
