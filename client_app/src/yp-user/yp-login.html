@@ -564,7 +564,7 @@
     },
 
     _hasAdditionalAuthMethods: function (domain, hasAnonymousLogin) {
-      return (this._hasFacebookLogin(domain) || this._hasSamlLogin(domain) || hasAnonymousLogin);
+      return ((this._hasFacebookLogin(domain) && !this.disableFacebookLoginForGroup) || this._hasSamlLogin(domain) || hasAnonymousLogin);
     },
 
     _hasFacebookLogin: function (domain) {
