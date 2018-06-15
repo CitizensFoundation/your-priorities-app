@@ -488,7 +488,7 @@
 
       hasAdditionalAuthMethods: {
         type: Boolean,
-        computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin)'
+        computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, disableFacebookLoginForGroup)'
       },
 
       disableFacebookLoginForGroup: {
@@ -564,7 +564,7 @@
     },
 
     _hasAdditionalAuthMethods: function (domain, hasAnonymousLogin) {
-      return ((this._hasFacebookLogin(domain) && !this.disableFacebookLoginForGroup) || this._hasSamlLogin(domain) || hasAnonymousLogin);
+      return domain && ((this._hasFacebookLogin(domain) && !this.disableFacebookLoginForGroup) || this._hasSamlLogin(domain) || hasAnonymousLogin);
     },
 
     _hasFacebookLogin: function (domain) {
