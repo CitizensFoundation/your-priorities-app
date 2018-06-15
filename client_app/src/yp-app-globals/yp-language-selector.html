@@ -234,13 +234,14 @@
       _selectedLocaleChanged: function (locale, oldLocale) {
         if (locale) {
           this.set('value', locale);
-          if (!this.noUserEvents) {
+          if (!this.noUserEvents && oldLocale) {
             if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
               this._stopTranslation();
             }
             this.fire('yp-language-name', this.supportedLanguages[locale]);
             window.appGlobals.changeLocaleIfNeeded(locale, true);
             localStorage.setItem('yp-user-locale', locale);
+            console.info("Saving locale");
             if (window.appUser && window.appUser.user) {
               window.appUser.setLocale(locale);
             }
