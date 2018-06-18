@@ -164,10 +164,8 @@
       _langChanged: function () {
         if (this.language!=this.selectedLocale) {
           this.isOutsideChangeEvent = true;
-          console.error("Set outside event");
         }
         this.set('selectedLocale', this.language);
-        console.error("langChanged");
       },
 
       _autoTranslateEvent: function (event, detail) {
@@ -247,7 +245,6 @@
           if (!this.noUserEvents && oldLocale) {
             if (this.isOutsideChangeEvent) {
               this.isOutsideChangeEvent = false;
-              console.error("Is outside event")
             } else {
               if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
                 this._stopTranslation();
