@@ -243,16 +243,14 @@
         if (locale) {
           this.set('value', locale);
           if (!this.noUserEvents && oldLocale) {
-            if (this.isOutsideChangeEvent) {
-              this.isOutsideChangeEvent = false;
-            } else {
+            if (!this.isOutsideChangeEvent) {
               if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
                 this._stopTranslation();
               }
               this.fire('yp-language-name', this.supportedLanguages[locale]);
               window.appGlobals.changeLocaleIfNeeded(locale, true);
               localStorage.setItem('yp-user-locale', locale);
-              console.info("Saving locale");
+              console.error("Saving locale");
               if (window.appUser && window.appUser.user) {
                 window.appUser.setLocale(locale);
               }
@@ -260,6 +258,7 @@
             }
           }
         }
+        this.isOutsideChangeEvent = false;
       }
     });
   </script>
