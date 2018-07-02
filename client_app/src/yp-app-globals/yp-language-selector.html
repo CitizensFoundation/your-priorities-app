@@ -250,7 +250,7 @@
               this.fire('yp-language-name', this.supportedLanguages[locale]);
               window.appGlobals.changeLocaleIfNeeded(locale, true);
               localStorage.setItem('yp-user-locale', locale);
-              console.error("Saving locale");
+              console.info("Saving locale");
               if (window.appUser && window.appUser.user) {
                 window.appUser.setLocale(locale);
               }
