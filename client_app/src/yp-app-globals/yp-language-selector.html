@@ -151,21 +151,14 @@
         }
       },
 
-      observers: [
-        '_langChanged(language)',
-      ],
-
       ready: function () {
         if (!this.noUserEvents) {
           this.$.hasAutoTranslationAjax.generateRequest();
         }
-      },
-
-      _langChanged: function () {
-        if (this.language!=this.selectedLocale) {
-          this.isOutsideChangeEvent = true;
-        }
-        this.set('selectedLocale', this.language);
+        // Update dropdown language after it has been loaded from defaults
+        this.async(function () {
+          this.set('selectedLocale', this.language);
+        }, 1500);
       },
 
       _autoTranslateEvent: function (event, detail) {
@@ -243,19 +236,17 @@
         if (locale) {
           this.set('value', locale);
           if (!this.noUserEvents && oldLocale) {
-            if (!this.isOutsideChangeEvent) {
-              if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
-                this._stopTranslation();
-              }
-              this.fire('yp-language-name', this.supportedLanguages[locale]);
-              window.appGlobals.changeLocaleIfNeeded(locale, true);
-              localStorage.setItem('yp-user-locale', locale);
-              console.info("Saving locale");
-              if (window.appUser && window.appUser.user) {
-                window.appUser.setLocale(locale);
-              }
-              window.appGlobals.activity('click', 'changeLanguage', locale);
+            if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
+              this._stopTranslation();
             }
+            this.fire('yp-language-name', this.supportedLanguages[locale]);
+            window.appGlobals.changeLocaleIfNeeded(locale, true);
+            localStorage.setItem('yp-user-locale', locale);
+            console.info("Saving locale");
+            if (window.appUser && window.appUser.user) {
+              window.appUser.setLocale(locale);
+            }
+            window.appGlobals.activity('click', 'changeLanguage', locale);
           }
         }
         this.isOutsideChangeEvent = false;
