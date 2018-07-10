@@ -324,16 +324,22 @@
       },
 
       _isCategoryActive: function (post) {
-        if (this._withCoverMediaType(post, 'category') && post.id<=11000)
+        if (post && this._withCoverMediaType(post, 'category') && (post.id<=11000 && this._isDomainWithOldCategories()))
           return true;
         else
           return false
       },
 
+      _isDomainWithOldCategories: function () {
+        // Workaround to support old square category images on Citizens Foundation websites running since 2010
+        var hostname = window.location.hostname;
+        return (hostname.indexOf("betrireykjavik.is") >-1 ||
+                hostname.indexOf("betraisland.is") >-1 ||
+                hostname.indexOf("yrpri.org") >-1)
+      },
 
-      // We switch over to 100% category images
       _isCategoryLargeActive: function (post) {
-        if (post && this._withCoverMediaType(post, 'category') && post.id>11000)
+        if (post && this._withCoverMediaType(post, 'category') && (post.id>11000 || !this._isDomainWithOldCategories()))
           return true;
         else
           return false
