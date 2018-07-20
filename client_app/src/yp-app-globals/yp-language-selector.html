@@ -154,11 +154,11 @@
       ready: function () {
         if (!this.noUserEvents) {
           this.$.hasAutoTranslationAjax.generateRequest();
+          // Update dropdown language after it has been loaded from defaults
+          this.async(function () {
+            this.set('selectedLocale', this.language);
+          }, 1500);
         }
-        // Update dropdown language after it has been loaded from defaults
-        this.async(function () {
-          this.set('selectedLocale', this.language);
-        }, 1500);
       },
 
       _autoTranslateEvent: function (event, detail) {
