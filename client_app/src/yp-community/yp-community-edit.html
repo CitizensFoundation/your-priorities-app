@@ -289,7 +289,9 @@
     ],
 
     _pagesResponse: function (event, detail) {
-      this._setPages(event, detail);
+      var pages = detail.response;
+      pages.unshift({id: -1, title: { en: this.t('none') } });
+      this._setPages(event, pages);
     },
 
     _appHomeScreenIconImageUploaded: function (event, detail) {
@@ -311,7 +313,6 @@
 
     _getExampleHostname: function (hostname) {
       if (hostname) {
-        return hostname + '.' + window.appGlobals.domain.domain_name;
         return hostname + '.' + window.appGlobals.domain.domain_name;
       } else {
         return 'your-hostname.' + window.appGlobals.domain.domain_name;
