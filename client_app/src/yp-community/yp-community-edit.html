@@ -140,14 +140,14 @@
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
 
       <div class="layout horizontal config">
-        <paper-dropdown-menu label="[[t('status.select')]]">
-          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
-            <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
-              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+        <paper-dropdown-menu label="[[t('signupTermsSelectPage')]]">
+          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.signupTermsPageId}}">
+            <template is="dom-repeat" items="[[communityPages]]" as="page">
+              <paper-item name="[[page.title]]">[[page.title]]</paper-item>
             </template>
           </paper-listbox>
         </paper-dropdown-menu>
-        <input type="hidden" name="status" value="[[status]]">
+        <input type="hidden" name="signupTermsPageId" value="[[community.configuration.signupTermsPageId]]">
       </div>
 
       <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{community.default_locale}}"></yp-language-selector>

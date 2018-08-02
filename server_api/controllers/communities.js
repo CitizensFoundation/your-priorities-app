@@ -293,6 +293,7 @@ var updateCommunityConfigParameters = function (req, community) {
   }
 
   community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
+  community.set('configuration.signupTermsPageId', (req.body.signupTermsPageId && req.body.signupTermsPageId!="") ? req.body.signupTermsPageId : null);
 };
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {

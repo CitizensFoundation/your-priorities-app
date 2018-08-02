@@ -1,4 +1,7 @@
 {
+  "signupTermsInfo": "By clicking Create User, you agree to our terms.",
+  "signupTermsOpen": "Read terms.",
+  "signupTermsSelectPage": "Signup terms page",
   "disablePostPageLink": "Disable post page link",
   "hideDebateIcon": "Hide debate icon",
   "hidePostDescription": "Hide post descriptions",
