@@ -19,6 +19,7 @@
 <link rel="import" href="../yp-theme/yp-theme-selector.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-translated-pages-behavior.html">
 
 <dom-module id="yp-community-edit">
   <template>
@@ -139,11 +140,11 @@
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
 
-      <div class="layout horizontal config">
+      <div class="layout horizontal config" hidden$="[[!pages]]">
         <paper-dropdown-menu label="[[t('signupTermsSelectPage')]]">
           <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.signupTermsPageId}}">
-            <template is="dom-repeat" items="[[communityPages]]" as="page">
-              <paper-item name="[[page.title]]">[[page.title]]</paper-item>
+            <template is="dom-repeat" items="[[translatedPages]]" as="page">
+              <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
             </template>
           </paper-listbox>
         </paper-dropdown-menu>
@@ -210,6 +211,7 @@
           <span>[[t('appHomeScreenIconImageUpload')]] (512x512)</span>
         </yp-file-upload>
       </div>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
 
     </yp-edit-dialog>
   </template>
@@ -226,7 +228,8 @@
       Polymer.ypLanguageBehavior,
       Polymer.ypEditDialogBehavior,
       Polymer.ypCollectionStatusOptions,
-      Polymer.ypGotoBehavior
+      Polymer.ypGotoBehavior,
+      Polymer.ypTranslatedPagesBehavior
     ],
 
     properties: {
@@ -284,6 +287,10 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _pagesResponse: function (event, detail) {
+      this._setPages(event, detail);
+    },
 
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
@@ -358,6 +365,8 @@
         this.set('community', { name: '', description: '', access: 0, status: 'active' });
       } else {
         this.set('community', community);
+        this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
+        this.$.pagesAjax.generateRequest();
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
