@@ -502,7 +502,14 @@
         'yp-refresh-community': '_refreshCommunity',
         'yp-refresh-domain': '_refreshDomain',
         'yp-language-name': '_setLanguageName',
-        'yp-dialog-closed': '_dialogClosed'
+        'yp-dialog-closed': '_dialogClosed',
+        'yp-open-page': '_openPageFromEvent'
+      },
+
+      _openPageFromEvent: function (event, detail) {
+        if (detail.pageId) {
+          this.openPageFromId(detail.pageId);
+        }
       },
 
       _stopTranslation: function () {

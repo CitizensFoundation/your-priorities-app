@@ -759,6 +759,13 @@
           } else {
             window.appGlobals.externalGoalTriggerUrl = null;
           }
+
+          if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.signupTermsPageId &&
+            this.group.Community.configuration.signupTermsPageId!=-1) {
+            window.appGlobals.signupTermsPageId = this.group.Community.configuration.signupTermsPageId;
+          } else {
+            window.appGlobals.signupTermsPageId = null;
+          }
         }
       },
 

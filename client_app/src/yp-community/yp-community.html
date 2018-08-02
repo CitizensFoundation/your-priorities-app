@@ -409,6 +409,13 @@
           window.appGlobals.setAnonymousGroupStatus(null);
           window.appGlobals.disableFacebookLoginForGroup = false;
           window.appGlobals.externalGoalTriggerUrl = null;
+
+          if (this.community.configuration && this.community.configuration.signupTermsPageId &&
+              this.community.configuration.signupTermsPageId!=-1) {
+            window.appGlobals.signupTermsPageId = this.community.configuration.signupTermsPageId;
+          } else {
+            window.appGlobals.signupTermsPageId = null;
+          }
         }
       },
 

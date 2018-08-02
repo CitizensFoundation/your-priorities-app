@@ -682,6 +682,14 @@
               id: this.post.Group.id,
               name: this.post.Group.name
             });
+
+            if (this.post.Group && this.post.Group.Community && this.post.Group.Community.configuration &&
+              this.post.Group.Community.configuration.signupTermsPageId &&
+              this.post.Group.Community.configuration.signupTermsPageId!=-1) {
+              window.appGlobals.signupTermsPageId = this.post.Group.Community.configuration.signupTermsPageId;
+            } else {
+              window.appGlobals.signupTermsPageId = null;
+            }
           }
         },
 

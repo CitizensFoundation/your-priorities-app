@@ -23,6 +23,14 @@
       }
     },
 
+    openPageFromId: function (pageId) {
+      this.pages.forEach(function (page) {
+        if (page.id==pageId) {
+          this._openPage(page)
+        }
+      }.bind(this));
+    },
+
     openUserInfoPage: function (pageId) {
       if (this.pages && this.pages.length>0) {
         this._openPage(this.pages[pageId]);
