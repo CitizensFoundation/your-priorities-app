@@ -140,6 +140,19 @@
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
 
+      <div class="layout horizontal config">
+        <paper-dropdown-menu label="[[t('status.select')]]">
+          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
+            <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
+              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <input type="hidden" name="status" value="[[status]]">
+      </div>
+
+      <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{community.default_locale}}"></yp-language-selector>
+
       <div class="layout horizontal config" hidden$="[[!pages]]">
         <paper-dropdown-menu label="[[t('signupTermsSelectPage')]]">
           <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.signupTermsPageId}}">
@@ -150,8 +163,6 @@
         </paper-dropdown-menu>
         <input type="hidden" name="signupTermsPageId" value="[[community.configuration.signupTermsPageId]]">
       </div>
-
-      <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{community.default_locale}}"></yp-language-selector>
 
       <paper-input id="google_analytics_code"
                    name="google_analytics_code"
