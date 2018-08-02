@@ -278,11 +278,6 @@
         text-decoration: underline;
         cursor: pointer;
       }
-
-      .terms {
-        padding-top: 4px;
-        padding-bottom: 4px;
-      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-domain-changed="_domainEvent"></lite-signal>
@@ -356,9 +351,7 @@
           </div>
         </form>
       </iron-form>
-      <div class="terms layout horizontal" hidden$="[[!showSignupTerms]]">
-        <div>{{t('signupTermsInfo')}} - <span on-tap="_openTerms" class="openTerms">{{t('signupTermsOpen')}}</span></div>
-      </div>
+      <div hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms" class="openTerms">{{t('signupTermsOpen')}}</span></div>
       <div class="buttons">
         <paper-spinner active class="mainSpinner" hide$="[[!userSpinner]]"></paper-spinner>
         <yp-ajax id="loginAjax" dispatch-error on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>

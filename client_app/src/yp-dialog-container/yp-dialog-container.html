@@ -36,6 +36,9 @@
     <div id="dialogs" hide$="[[hideDialogs]]">
       <paper-toast id="masterToast"></paper-toast>
       <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
+      <template is="dom-if" if="[[pageDialogOpen]]" restamp>
+        <yp-page-dialog id="pageDialog"></yp-page-dialog>
+      </template>
 
       <iron-lazy-pages selected="{{selectedDialog}}" attr-for-selected="name">
         <template is="dom-if" name="userLogin" restamp>
@@ -56,10 +59,6 @@
 
         <template is="dom-if" name="missingEmail" restamp>
           <yp-missing-email id="missingEmail"></yp-missing-email>
-        </template>
-
-        <template is="dom-if" name="pageDialog" restamp>
-          <yp-page-dialog id="pageDialog"></yp-page-dialog>
         </template>
 
         <template is="dom-if" name="communityEdit" restamp>
@@ -186,6 +185,11 @@
         selectedDialog: {
           type: String,
           value: null
+        },
+
+        pageDialogOpen: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -253,7 +257,12 @@
 
       getDialogAsync: function (idName, callback) {
         this.set('hideDialogs', false);
-        this.set('selectedDialog', idName);
+        if (idName=="pageDialog") {
+          this.set('pageDialogOpen', true);
+        } else {
+          this.set('pageDialogOpen', false);
+          this.set('selectedDialog', idName);
+        }
         this.async(function () {
           var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {
