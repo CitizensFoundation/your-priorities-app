@@ -28,6 +28,7 @@
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
 <link rel="import" href="../yp-theme/yp-theme-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-translated-pages-behavior.html">
 
 <link rel="import" href="../ac-notifications/ac-notification-list.html">
 <link rel="import" href="yp-app-nav-drawer.html">
@@ -361,7 +362,8 @@
       behaviors: [
         Polymer.ypLanguageBehavior,
         Polymer.ypThemeBehavior,
-        Polymer.ypGotoBehavior
+        Polymer.ypGotoBehavior,
+        Polymer.ypTranslatedPagesBehavior
       ],
 
       properties: {
@@ -446,15 +448,6 @@
           type: Boolean
         },
 
-        pages: {
-          type: Array
-        },
-
-        translatedPages: {
-          type: Array,
-          computed: '_translatedPages(pages, language)'
-        },
-
         keepOpenForPost: {
           type: String,
           value: null
@@ -509,7 +502,14 @@
         'yp-refresh-community': '_refreshCommunity',
         'yp-refresh-domain': '_refreshDomain',
         'yp-language-name': '_setLanguageName',
-        'yp-dialog-closed': '_dialogClosed'
+        'yp-dialog-closed': '_dialogClosed',
+        'yp-open-page': '_openPageFromEvent'
+      },
+
+      _openPageFromEvent: function (event, detail) {
+        if (detail.pageId) {
+          this.openPageFromId(detail.pageId);
+        }
       },
 
       _stopTranslation: function () {
@@ -558,14 +558,6 @@
         this.async(function () {
           this.$$("#drawer").close();
         }, 100);
-      },
-
-      _translatedPages: function (pages, language) {
-        if (pages) {
-          return JSON.parse(JSON.stringify(pages));
-        } else {
-          return [];
-        }
       },
 
       _setNumberOfUnViewedNotifications: function (event, detail) {
@@ -692,16 +684,6 @@
         }
       },
 
-      openUserInfoPage: function (pageId) {
-        if (this.pages && this.pages.length>0) {
-          this._openPage(this.pages[pageId]);
-        } else {
-          this.async(function () {
-            this._openPage(this.pages[pageId]);
-          }, 1000);
-        }
-      },
-
       openAcceptInvitationDialog: function (inviteToken) {
         this.getDialogAsync("acceptInvite", function (dialog) {
           dialog.open(inviteToken);
@@ -769,36 +751,6 @@
 
       _toggleNavDrawer: function () {
         this.$$("#navDrawer").toggle();
-      },
-
-      _setPages: function (event, pages) {
-        this.set('pages', pages);
-      },
-
-      _openPageFromMenu: function (event) {
-        var index = JSON.parse(event.currentTarget.getAttribute('data-args'));
-        var page = this.pages[index];
-        this._openPage(page);
-        this.$$("paper-listbox").select(null);
-      },
-
-      _openPage: function (page) {
-        window.appGlobals.activity('open', 'pages', page.id);
-        this.getDialogAsync("pageDialog", function (dialog) {
-          var pageLocale = 'en';
-          if (page.title[window.locale]) {
-            pageLocale = window.locale;
-          }
-          dialog.open(page.title[pageLocale], page.content[pageLocale]);
-        }.bind(this));
-      },
-
-      _getLocalizePageTitle: function (page) {
-        var pageLocale = 'en';
-        if (page.title[window.locale]) {
-          pageLocale = window.locale;
-        }
-        return page.title[pageLocale];
       },
 
       ready: function () {

@@ -272,6 +272,11 @@
       [hidden] {
         display: none !important;
       }
+
+      .openTerms {
+        text-decoration: underline;
+        cursor: pointer;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-domain-changed="_domainEvent"></lite-signal>
@@ -345,10 +350,12 @@
           </div>
         </form>
       </iron-form>
+      <div hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms" class="openTerms">{{t('signupTermsOpen')}}</span></div>
       <div class="buttons">
         <paper-spinner active class="mainSpinner" hide$="[[!userSpinner]]"></paper-spinner>
         <yp-ajax id="loginAjax" dispatch-error on-error="_loginError" method="POST" url="/api/users/login" on-response="_loginResponse"></yp-ajax>
         <yp-ajax id="registerAjax" method="POST" dispatch-error on-error="_registerError" url="/api/users/register" on-response="_registerResponse"></yp-ajax>
+        <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
         <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
         <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
         <paper-button autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
@@ -499,11 +506,29 @@
       pollingStartedAt: {
         type: Date,
         value: null
+      },
+
+      signupTermsId: {
+        type: Number,
+        value: null
+      },
+
+      showSignupTerms: {
+        type: Boolean,
+        computed: "_showSignupTerms(signupTermsId, registerMode)"
       }
+    },
+
+    _showSignupTerms: function (signupTermsId, registerMode) {
+      return signupTermsId && registerMode==1;
     },
 
     _isiOsInApp: function () {
       return /iPad|iPhone|Android|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
+    },
+
+    _openTerms: function () {
+      this.fire('yp-open-page', { pageId: this.signupTermsId });
     },
 
     _facebookLogin: function () {
@@ -606,6 +631,12 @@
           this.$$("#a11y").target = this.$$("#form");
           this.$$("#email").focus();
         }.bind(this), 50);
+
+        if (window.appGlobals.signupTermsPageId) {
+          this.signupTermsId = window.appGlobals.signupTermsPageId;
+        } else {
+          this.signupTermsId = null;
+        }
       }
     },
 

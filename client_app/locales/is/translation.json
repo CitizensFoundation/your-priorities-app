@@ -1,4 +1,8 @@
 {
+  "none": "Engin",
+  "signupTermsInfo": "Með því að smella á nýskrá samþykkir þú reglur",
+  "signupTermsOpen": "Lesa reglur",
+  "signupTermsSelectPage": "Síða fyrir nýskrá reglur",
   "disablePostPageLink": "Aftengja hlekk í hugmyndir",
   "hideDebateIcon": "Fela rökræðu tákn",
   "hidePostDescription": "Fela lýsingu á hugmyndum",
