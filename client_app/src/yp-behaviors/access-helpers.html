@@ -15,6 +15,8 @@
         if (window.appUser && window.appUser.user) {
           if (window.appUser.user.id == object.user_id) {
             return true
+          } else if (object.User && window.appUser.user.id == object.User.id) {
+            return true
           } else {
             if (window.appUser.adminRights) {
               return this._hasAdminRights(objectId, adminRights)
