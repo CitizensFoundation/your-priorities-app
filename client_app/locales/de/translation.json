@@ -1,0 +1,514 @@
+{
+  "none": "Kein",
+  "signupTermsInfo": "Durch das Klicken auf 'Nutzer erstellen', erklären Sie sich mit den Nutzungsbedingungen einverstanden.",
+  "signupTermsOpen": "Nutzungsbedingungen lesen",
+  "signupTermsSelectPage": "Nutzungsbedingungen",
+  "disablePostPageLink": "Betragsseiten-Link deaktivieren",
+  "hideDebateIcon": "Debatte-Icon ausblenden",
+  "hidePostDescription": "Beitragsbeschreibungen ausblenden",
+  "hidePostCover": "Beitragsbilder ausblenden",
+  "hideVoteCountUntilVoteCompleted": "Anzahl der Stimmen ausblenden, bis die Abstimmung abgeschlossen ist",
+  "hideVoteCount": "Anzahl der Stimmen ausblenden",
+  "hideNewPost": "Schaltfläche 'Neuer Beitrag' ausblenden",
+  "toggleMembership": "Mitgliedschaft umschalten",
+  "externalGoalTriggerUrl": "Externe Ziel-Trigger-URL",
+  "exportGroup": "CSV-Datei exportieren",
+  "disableNameAutoTranslation": "Automatische Übersetzung für das Feld 'Name' deaktivieren",
+  "hideDownVoteForPost": "Down vote?",
+  "newVersionAvailable": "Neue Version der Website verfügbar",
+  "reload": "Webseite neu laden",
+  "moreContactInformation": "Nach weiteren Kontaktinformationen fragen",
+  "attachmentsEnabled": "Dateianhänge erlauben",
+  "downloadAttachment": "Anlage herunterladen",
+  "uploadAttachment": "Anlage hochladen",
+  "contactTelephone": "Telefon",
+  "contactInformation": "Kontaktinformationen",
+  "deleteAttachment": "Anlage löschen",
+  "readMore": "Weiterlesen",
+  "postDescriptionLimit": "Maximale Länge eines Beitrages",
+  "autoTranslationStarted": "Auto-Übersetzung gestartet",
+  "autoTranslationStopped": "Auto-Übersetzung gestartet",
+  "autoTranslate": "Auto übersetzen",
+  "stopAutoTranslate": "Übersetzung stoppen",
+  "inputError": "Ungültig",
+  "postCreated": "Idee erstellt",
+  "postUpdated": "Idee aktualisiert",
+  "closedForNewPosts": "Es können keine neuen Ideen erstellt werden",
+  "appHomeScreenShortName": "Name des Homescreens (Kurzversion für Mobile-Users)",
+  "appHomeScreenIconImageUpload": "Handy-Homescreen-Icon hochladen",
+  "allowAnonymousAutoLogin": "Anonyme automatische Anmeldung zulassen",
+  "later": "Nicht jetzt",
+  "disableDebate": "Debatte deaktivieren",
+  "welcomeHTML": "Willkommensnachricht mit HTML (mit Vorsicht verwenden)",
+  "disableFacebookLoginForGroup": "Facebook Login für Gruppe deaktivieren",
+  "facebookPixelId": "Facebook-Pixel-ID",
+  "downloadFacebookImagesForUser": "Facebook-Bilder der Nutzer auf Datenbank herunterladen",
+  "customUserRegistrationText": "Benutzerdefinierter Benutzerregistrierungstext",
+  "participateAnonymously": "Anonym teilnehmen",
+  "allowAnonymousUsers": "Anonyme Benutzer zulassen",
+  "deleteUser": "Benutzerkonto löschen",
+  "areYouSureYouWantToDeleteUser": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?",
+  "areYouReallySureYouWantToDeleteUser": "Sind Sie 100% sicher, dass Sie Ihr Konto löschen möchten? Alle Ihre Punkte, Kommentare und Empfehlungen werden gelöscht und alle Ihre Ideen werden anonymisiert!",
+  "alternativePointForLabel": "Alternativer Text Dafür-Label",
+  "alternativePointAgainstLabel": "Alternativer Text Dagegen-Label",
+  "sharePoint": "Teilen",
+  "alternativePointForHeader": "Alternativer Text für Dafür-Kopfzeile",
+  "alternativePointAgainstHeader": "Alternativer Text für Dagegen-Kopfzeile",
+  "or": "oder",
+  "hidePointAuthor": "Autor des Arguments ausblenden",
+  "hidePostAuthor": "Autor des Arguments ausblenden",
+  "defaultLocationLongLat": "Standardposition Längengrad, Breitengrad",
+  "disableCommunityDomainUpLink": "Domain-Up-Link deaktivieren",
+  "analyticsTrackerCode": "Google Analytics ID",
+  "filterIdeas": "Ideen filtern",
+  "edit": "Bearbeiten",
+  "delete": "Löschen",
+  "addEmoji": "Emoji hinzufügen",
+  "closeComments": "Kommentare schließen",
+  "openComments": "Kommentare öffnen",
+  "deleteActivity": "Aktivität aus Newsfeed löschen",
+  "pointsFor": "Argumente für",
+  "pointsAgainst": "Argumente dagegen",
+  "pointForShort": "Dafür",
+  "pointAgainstShort": "Dagegen",
+  "domainToastCreated": "Domain erstellt",
+  "domainToastUpdated": "Domain gespeichert",
+  "communityToastCreated": "Community erstellt",
+  "communityToastUpdated": "Community gespeichert",
+  "groupToastCreated": "Gruppe erstellt",
+  "groupToastUpdated": "Gruppe gespeichert",
+  "userToastCreated": "Benutzer erstellen",
+  "userToastUpdated": "Benutzer gespeichert",
+  "hideGroupHeader": "Gruppen-Header ausblenden",
+  "errorResetTokenNotFoundOrUsed": "Token zum Zurücksetzen des Passworts wurde nicht gefunden oder wurde schon verwendet",
+  "addedAnIdea": "Eine Idee hinzugefügt ...",
+  "recommendedPosts": "Empfohlen",
+  "noComments": "Keine Kommentare möglich",
+  "optional": "Wahlweise",
+  "additionalGroupConfig":"Zusätzliche Gruppenkonfiguration,",
+  "defaultDataImage":"Standardbild Daten",
+  "defaultPostImage":"Standardbild Beitrag",
+  "hideAllTabs":"Alle Tabs ausblenden,",
+  "hideNewPostOnPostPage":"Neuer Post' Button auf Post-Seite ausblenden,",
+  "newPointOptional":"Neues Argument optional",
+  "hideHelpIcon":"Hilfesymbol ausblenden,",
+  "hideEmoji":"Emojis ausblenden",
+  "endorsementButtonsHeart":"Herzen,",
+  "endorsementArrows":"Pfeile,",
+  "endorsementThumbs":"Daumen,",
+  "endorsementHats":"Hüte,",
+  "endorsementButtons": "Like-Buttons",
+  "bulkStatusUdateForInfo": "Klicken Sie auf die Ideen für weitere Informationen",
+  "urlLink": "Link",
+  "bulkStatusUdateFor": "Statusupdates für Ideen an",
+  "inviteNotFoundOrAlreadyUsed": "Einladung nicht gefunden oder bereits verwendet",
+  "reportConfirmation": "Sind Sie sicher, dass Sie diesen Inhalt melden möchten, weil er die Regeln dieser Website verletzt hat?",
+  "uniqueStatusMessage": "Eindeutige Statusmeldung",
+  "templateContent": "Inhalt der Vorlage",
+  "bulkStatusUpdate": "Bulk Status Updates",
+  "close": "Schließen",
+  "editTemplates": "Vorlagen bearbeiten",
+  "editTemplate": "Vorlage bearbeiten",
+  "deleteTemplate": "Vorlage löschen",
+  "addTemplate": "Vorlage hinzufügen",
+  "save": "Speichern",
+  "saved": "Gespeichert",
+  "config": "Config",
+  "newBulkStatusUpdate": "New Bulk Status Update",
+  "editBulkStatusUpdate": "Edit Bulk Status Update",
+  "bulkStatusUdateConfig": "Bulk Status Update Config",
+  "bulkStatusUpdatesTemplates": "Bulk Status Updates Templates",
+  "selectStatusTemplate": "Vorlage",
+  "moveToGroup": "Verschieben",
+  "noIdeasHere": "Keine Ideen vorhanden",
+  "organizationsAdmin": "Organisationsadministrator",
+  "unviewed": "nicht gesehen",
+  "notificationMarkAllViewed": "Alles markieren",
+  "notificationConfirmMarkAllViewed": "Bestätigen Sie, dass Sie alle Ihre Benachrichtigungen als angezeigt markieren möchten",
+  "upVotedPoint": "Stimmte für Deine Idee",
+  "downVotedPoint": "Stimmte gegen Deine Idee",
+  "endorsedYourPost": "Befürwortete deine Idee",
+  "opposedYourPost": "Kritisierte Deine Idee",
+  "notifications": "Benachrichtigungen",
+  "votingDisabled": "Abstimmung ist nicht aktiviert",
+  "pageNotFound": "Die angeforderte Seite wurde nicht gefunden",
+  "participate": "Beteilige Dich",
+  "emojiSearchResults": "Suchergebnisse",
+  "recentlyUsedEmoji": "Kürzlich benutzt",
+  "findAnEmoji": "Emoji finden",
+  "cancel": "Abbrechen",
+  "ok": "OK",
+  "next": "Nächster",
+  "create": "Erstellen",
+  "confirm": "Bestätigen",
+  "access": "Zugriff",
+  "searchFor": "Suchen nach...",
+  "title": "Titel",
+  "selectLanguage": "Sprache auswählen",
+  "update": "Aktualisieren",
+  "errorCantConnect": "Verbindung zum Server kann nicht hergestellt werden. Bitte versuchen Sie es später noch einmal. Dies kann an starkem Datenverkehr oder einem Software-Upgrade liegen.",
+  "errorNotFound": "Nicht gefunden...",
+  "errorNotAuthorized": "Sie haben keinen Zugang zu dieser Seite",
+  "generalError": "Es ist ein unerwarteter Fehler aufgetreten. Wir wurden benachrichtigt.",
+  "stats": {
+    "posts": "Anzahl der Ideen",
+    "discussions": "Anzahl der Diskussionen",
+    "communities": "Anzahl der Communities",
+    "groups": "Anzahl der Gruppen",
+    "users": "Anzahl der Nutzer"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Ihr Passwort wurde geändert und Sie sind jetzt eingeloggt.",
+    "method": "Methode",
+    "frequency": "Häufigkeit",
+    "myPosts": "Meine Ideen",
+    "muted": "Abschalten",
+    "browser": "Browser",
+    "email": "Email",
+    "asItHappens": "Immer sofort benachrichtigen",
+    "daily": "Täglich",
+    "hourly": "Stündlich",
+    "weekly": "Wöchentlich",
+    "monthly": "Monatlich",
+    "myPostsEndorsements": "Ideen, die ich unterstütze",
+    "myPoints": "Meine Argumente",
+    "myPointEndorsements": "Argumente die ich unterstütze",
+    "allCommunity": "Alle Benachrichtigungen von meinen Communities",
+    "allGroup": "Alle Benachrichtigungen von meinen Gruppen",
+    "invite_accepted_for": "Teilnehmen an"
+  },
+
+  "pages": {
+    "editPageLocale": "Gebietsschema/Locale der Seite bearbeiten",
+    "title": "Seitentitel",
+    "content": "Seiteninhalt",
+    "publish": "Veröffentlichen",
+    "addLocale": "Gebietsschema/Locale hinzufügen",
+    "unPublish": "Eintrag zurücknehmen",
+    "deletePage": "Löschen",
+    "addPage": "Neue Seite hinzufügen",
+    "managePages": "Seiten verwalten"
+  },
+
+  "archived": "Archiviert",
+
+  "status": {
+    "select": "Status auswählen",
+    "active": "Aktiv",
+    "featured": "Hervorgehoben",
+    "archived": "Archiviert",
+    "hidden": "Ausgeblendet",
+    "published": "Öffentlich",
+    "successful": "Erfolgreich",
+    "failed": "Gescheitert",
+    "inProgress": "In Bearbeitung"
+  },
+
+  "pluralStatus": {
+    "published": "Veröffentlichte Ideen",
+    "successful": "Erfolgreiche Ideen",
+    "failed": "Fehlgeschlagene Ideen",
+    "inProgress": "Ideen in Arbeit",
+    "inVoting": "Ideen beim Wählen"
+  },
+
+  "activity": {
+    "confirmDelete": "Bestätigen, dass Sie diese Aktivität löschen möchten?",
+    "post": {
+      "new": "Idee",
+      "status": {
+       "change": "Status-Update"
+      }
+    },
+    "point": {
+      "forAdded": "Argument dafür hinzugefügt",
+      "againstAdded": "Argument dagegen hinzugefügt",
+      "new": "Argument",
+      "newFor": "Argument dafür",
+      "newAgainst": "Argument dagegen",
+      "newComment": "Kommentar",
+      "newsStory": {
+        "new": "Neuigkeiten"
+      }
+    }
+  },
+  "name": "Name",
+
+  "domain": {
+    "pages": "Seiten",
+    "createOrganization": "Organisation erstellen",
+    "edit": "Domain bearbeiten",
+    "info": "Einstellungen",
+    "apis": "APIs",
+    "settings": "Zusätzliche Einstellungen",
+    "onlyAdminsCanCreateCommunities": "Nur Admins können Communities erstellen"
+  },
+
+  "domains": "Domains",
+  "communities": "Communities",
+  "groups": "Gruppen",
+
+  "myDomains": "Meine Domains",
+  "myCommunities": "Meine Communities",
+  "myGroups": "Meine Gruppen",
+  "myAdminCommunities": "Community Admin",
+  "myAdminGroups": "Gruppen Admin",
+
+  "community": {
+    "add": "Community hinzufügen",
+    "alternativeHeader": "Alternative Kopfzeile",
+    "edit": "Community bearbeiten",
+    "hostname": "Hostname",
+    "admins": "Community Admins",
+    "users": "Community-Nutzer",
+    "delete": "Community löschen",
+    "new": "Community erstellen",
+    "public": "Öffentliche Community",
+    "closed": "Private Community",
+    "secret": "Versteckte Community",
+    "pages":"Community-Seiten,",
+    "onlyAdminsCanCreateGroups": "Nur Administratoren können Gruppen erstellen"
+  },
+
+  "posts": {
+    "posts": "Ideen",
+    "open": "Öffnen",
+    "inProgress": "In Bearbeitung",
+    "successful": "Erfolgreich",
+    "failed": "Gescheitert",
+    "map": "Karte",
+    "noMapPosts": "Keine Ideen auf der Karte verortet",
+    "newUserImage": "Foto hinzufügen"
+  },
+
+  "form": {
+    "invalid": "Füllen Sie das komplette Formular aus"
+  },
+
+  "post": {
+    "most_debated": "Am meisten diskutiert",
+    "deleteConfirmation": "Sind Sie sicher, dass Sie diese Idee löschen wollen?",
+    "move": "Idee verschieben",
+    "confirmMove": "Bestätigen Sie, dass Sie die Idee verschieben wollen",
+    "statusChangeConfirmText": "Sind Sie sicher, dass Sie jedem, der diese Idee unterstützt oder ablehnt, eine E-Mail senden möchten?",
+    "statusChangeSelectNewStatus": "Neuer Status",
+    "statusChangeContent": "Statusänderung und Inhalt an alle Unterstützer und Gegner senden",
+    "statusChange": "Statusänderungs-E-Mails senden",
+    "statusChangeSent": "Statusänderungs-E-Mails gesendet",
+    "noLocation": "Keine Ort festgelegt",
+    "shareInfo": "Idee teilen",
+    "description": "Beschreibung",
+    "debate": "Diskussion",
+    "formInvalid": "Füllen Sie das komplette Formular aus",
+    "status": "Status dieser Idee",
+    "new": "Neue Idee",
+    "searchingFor": "Suche nach …",
+    "top": "Beliebt",
+    "newest": "Neueste",
+    "random": "Zufällig",
+    "inProgress": "In Bearbeitung",
+    "groups": "Gruppen",
+    "search": "Suche nach Ideen",
+    "add_new":"Neue Idee hinzufügen",
+    "up_vote":"Für diese Idee stimmen",
+    "down_vote":"Gegen diese Idee stimmen",
+    "report": "Idee melden",
+    "notify": "Benachrichtige mich über diese Idee",
+    "share": "Teilen Sie diese Idee",
+    "yourPost": "Idee",
+    "yourPoint": "Argument dafür",
+    "location": "Ort",
+    "photo": "Foto",
+    "photographerName": "Fotograf",
+    "newPhoto": "Neues Foto",
+    "photoUpdate": "Foto aktualisieren",
+    "photoDeleteConfirmation": "Sind Sie sicher, dass Sie dieses Foto löschen möchten?",
+    "tabs": {
+      "debate": "Diskussion",
+      "news": "Neuigkeiten",
+      "location": "Ort",
+      "photos": "Fotos",
+      "solutions": "Lösungen",
+      "not_implemented": "Noch nicht implementiert"
+    },
+    "cover": {
+      "media": "Coverbild auswählen",
+      "imageInfo": "Wenn Sie ein Bild hinzufügen, teilen die Leute Ihre Idee wahrscheinlicher. Und teilen Sie es in den sozialen Medien!",
+      "map": "Karte",
+      "streetview": "Street View",
+      "image": "Bild",
+      "none": "Keiner"
+    },
+    "edit": "Idee bearbeiten",
+    "delete": "Idee löschen",
+    "addNewIntroBoxText": "Verwenden Sie den Glühbirnen-Aktionsknopf, um neue Ideen hinzuzufügen"
+  },
+
+  "short_word": {
+    "in": "in"
+  },
+
+  "category": {
+    "new": "Neue Kategorie",
+    "select": "Kategorie wählen"
+  },
+
+  "categories": {
+    "all": "alle Kategorien",
+    "the_all": "Alle Kategorien"
+  },
+
+  "point": {
+    "report": "Melden",
+    "againstAdded": "Weiteres Argument dagegen",
+    "forAdded": "Weiteres Argument dafür",
+    "confirmDelete": "Bestätigen Sie, dass Sie dieses Argument löschen möchten",
+    "theseAreFor": "Argument dafür",
+    "theseAreAgainst": "Argument dagegen",
+    "point": "Argument",
+    "for": "Argument dafür beschreiben",
+    "against": "Argument dagegen beschreiben",
+    "add_up": "Argument dafür hinzufügen",
+    "add_down": "Argument dagegen hinzufügen",
+    "helpful": "Ich finde diese Idee hilfreich",
+    "not_helpful": "Ich finde diese Idee nicht hilfreich",
+    "addNewsStory": "Neugigkeiten hinzufügen",
+    "postNewsStory": "Nachricht veröffentlichen",
+    "addComment": "Ihr Kommentar...",
+    "postComment": "Post",
+    "comments": "Kommentare",
+    "howToWrite": "Lasst uns die besten Punkte für und wider brainstormen und lösungsorientiert denken ...",
+    "commentToShort": "Der Text ist zu kurz!"
+  },
+
+  "news": "Neuigkeiten",
+
+  "uploading": {
+    "inProgress": "Hochladen läuft…"
+  },
+
+  "notice": {
+    "ok": "OK",
+    "feature_not_implemented_a": "Diese Funktion wurde in dieser schreibgeschützten Vorschau-Version von Your Priorities 6.0 noch nicht implementiert.",
+    "feature_not_implemented_b": "Lassen Sie uns wissen was Sie denken",
+    "welcome_a": "Dies ist eine schreibgeschützte Vorschau-Version von Your Priorities 6.0, so dass Sie nur Inhalte sehen und nicht hinzufügen können. Feedback wird sehr geschätzt.",
+    "welcome_b": "Zur Zeit funktioniert es nur in Chrome, wird aber alle wichtigen Browser nach dem Veröffentlichungsdatum im ersten Quartal 2015 unterstützen.",
+    "welcome_heading": "Welcome to Your Priorities 6.0 technology preview",
+    "continue": "Weiter zur Vorschau",
+    "deleteConfirmation": "Möchten Sie diese Gruppe löschen?"
+  },
+
+  "maps": {
+    "searchInput": "Adresse",
+    "search": "Suche"
+  },
+
+  "group": {
+    "pages": "Hilfeseiten (?)",
+    "showWhoPostedPosts": "Zeige, wer Beiträge gepostet hat",
+    "locationHidden": "Karte deaktivieren",
+    "group": "Gruppe",
+    "admins": "Gruppen-Admins",
+    "users": "Gruppenbenutzer",
+    "new": "Neue Gruppe hinzufügen",
+    "edit": "Gruppe bearbeiten",
+    "invite": "Einen Freund einladen",
+    "invite_to_group": "Lade einen Freund zu dieser Gruppe ein",
+    "share_group": "Teile diese Gruppe",
+    "delete": "Gruppe löschen",
+    "objectives": "Ziele",
+    "public": "Öffentliche Gruppe",
+    "closed": "Geschlossene Gruppe",
+    "secret": "Geheime Gruppe",
+    "openToCommunity": "Offen für die Gemeinschaft",
+    "canVote": "Abstimmen möglich",
+    "canAddNewPosts": "Neue Ideen erlaubt",
+    "config": "Config",
+    "update": "Gruppe aktualisieren"
+  },
+
+  "membership": {
+    "joined": "Sie sind beigetreten",
+    "left": "Sie sind ausgetreten"
+  },
+
+  "menu": {
+    "my_pages": "Mein Profil",
+    "about": "About",
+    "help": "Hilfe",
+    "settings": "Einstellungen"
+
+  },
+
+  "users": {
+    "userInvited": "Benutzer eingeladen",
+    "removeAdmin": "Admin entfernen",
+    "addAdmin": "Admin hinzufügen",
+    "removeUser": "Benutzer entfernen",
+    "inviteUser": "Benutzer einladen",
+    "email": "Email",
+    "removeFromOrganization": "Löschen",
+    "addToOrganization": "Organisation",
+    "selectOrganization": "Wählen Sie die Organisation"
+  },
+
+  "user": {
+    "loginCompleteFor": "Login als",
+    "acceptInvite": "Einladung annehmen",
+    "hasSentYouAndInvitation": "hat dir eine Einladung zur Teilnahme geschickt",
+    "acceptInviteInstructions": "Klicken Sie auf den Button, um die Einladung anzunehmen",
+    "setEmail": "E-Mail zum Konto hinzufügen",
+    "linkAccount": "Mit Account verbinden",
+    "setEmailInfo": "E-Mail zum Konto hinzufügen",
+    "existsLinkAccountInfo": "Diese E-Mail-Adresse ist bereits registriert! Geben Sie Ihr Passwort ein, um sich anzumelden",
+    "logoutCompleteFor": "Abmelden von",
+    "loggedInWithSaml": "Mit SAML eingeloggt",
+    "loggedInWithFacebook": "Mit Facebook eingeloggt",
+    "facebookLogin": "Facebook Login",
+    "info":"Info,",
+    "notifications": "Benachrichtigungen",
+    "name": "Vollständiger Name",
+    "email": "Email",
+    "edit": "Benutzer bearbeiten",
+    "password": "Passwort",
+    "forgotPassword": "Neues Passwort erstellen",
+    "forgotPasswordInstructions": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen eine E-Mail mit einem Link, mit dem Sie ein neues Passwort erstellen können.",
+    "forgotPasswordEmailHasBeenSent": "E-Mail mit Anweisungen zum Zurücksetzen des Kennworts wurde gesendet.",
+    "resetPassword": "Setze dein Passwort zurück",
+    "resetPasswordInstructions": "Erstellen Sie ein neues Passwort, das nicht leicht zu erraten ist",
+    "login": "Anmeldung",
+    "create": "Benutzer erstellen",
+    "cancel": "Abbrechen",
+    "logout": "Ausloggen",
+    "newPassword": "Neues Passwort",
+    "register": "Neuer Benutzer",
+    "alreadyRegisterred": "Diese E-Mail-Adresse ist bereits registriert. Sie können bei Bedarf ein neues Passwort erstellen.",
+    "registrationError": "Fehler bei der Registrierung",
+    "loginError": "  Fehler beim Login",
+    "completeForm": "Füllen Sie das Formular korrekt aus",
+    "loginNotAuthorized": "Email oder Passwort falsch"
+  },
+
+  "other": "Weitere",
+
+  "socialMedia": "Social Media",
+
+  "location": {
+    "set": "Ort festlegen"
+  },
+  "image": {
+    "upload": "Bild hochladen",
+    "logo": {
+      "upload": "Logo hochladen"
+    },
+    "header": {
+      "upload": "Header hochladen"
+    },
+    "profile": {
+      "upload": "Header hochladen"
+    }
+  },
+  "theme": {
+    "choose": "Wähle ein Thema"
+  }
+}
