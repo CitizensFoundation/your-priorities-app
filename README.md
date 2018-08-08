@@ -1,6 +1,6 @@
 # Your Priorities Version 7
 
-![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture.png "Your Priorities screenshot")
+![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
 ## Examples of live servers running Your Priorities
 
