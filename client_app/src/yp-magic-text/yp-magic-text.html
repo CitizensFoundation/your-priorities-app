@@ -41,7 +41,7 @@
     </style>
     <div class="container" more-text$="[[showMoreText]]">
        <!-- add max-width for IE11 -->
-      <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]" style= "max-width:100%"></div>
+      <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]" style="max-width:100%"></div>
       <div hidden$="[[finalContent]]" style="max-width:100%">[[content]]</div>
       <template is="dom-if" if="[[showMoreText]]">
         <paper-button raised class="moreText" on-tap="_openFullScreen">[[moreText]]</paper-button>
