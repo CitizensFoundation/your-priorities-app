@@ -45,11 +45,11 @@
             init({ lng: language, fallbackLng: 'en', backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' } }, function(loaded) {
       window.i18nTranslation = i18next;
       if (typeof moment !== 'undefined' && moment ) {
-        moment.locale(language);
+        moment.locale([language, 'en']);
       } else {
         setTimeout(function(){
           if (typeof moment !== 'undefined' && moment ) {
-            moment.locale(language);
+            moment.locale([language, 'en']);
           }
         }, 500);
       }

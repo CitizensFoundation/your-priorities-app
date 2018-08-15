@@ -140,7 +140,7 @@
                   window.i18nTranslation = i18next;
                 }
                 console.log("i18n init loaded "+loaded);
-                moment.locale(locale);
+                moment.locale([locale, 'en']);
                 console.log("Changed language to "+locale);
                 document.dispatchEvent(
                   new CustomEvent("lite-signal", {
