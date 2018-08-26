@@ -39,6 +39,7 @@ var users = require('./controllers/users');
 var categories = require('./controllers/categories');
 var images = require('./controllers/images');
 var bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
+var videos = require('./controllers/videos');
 
 var legacyPosts = require('./controllers/legacyPosts');
 var legacyUsers = require('./controllers/legacyUsers');
@@ -285,6 +286,7 @@ app.use('/api/groups', groups);
 app.use('/api/posts', posts);
 app.use('/api/points', points);
 app.use('/api/images', images);
+app.use('/api/videos', videos);
 app.use('/api/categories', categories);
 app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);
@@ -386,8 +388,20 @@ app.use(function (err, req, res, next) {
   }
 });
 
-var server = app.listen(app.get('port'), function () {
+const https = require("https"),
+  fs = require("fs");
+
+const options = {
+  key: fs.readFileSync("/home/robert/.ssl/localhost.key"),
+  cert: fs.readFileSync("/home/robert/.ssl/localhost.crt")
+};
+
+app.listen(4242);
+
+https.createServer(options, app).listen(8282);
+
+/*var server = app.listen(app.get('port'), function () {
   debug('Your Priorities server listening on port ' + server.address().port);
-});
+});*/
 
 module.exports = app;
