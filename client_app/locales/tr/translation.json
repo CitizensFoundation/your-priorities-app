@@ -1,0 +1,514 @@
+{
+  "none": "Hiçbiri ",
+  "signupTermsInfo": "Kullanıcı oluştur butonuna tıklayarak kullanıcı kurallarımızı kabul etmiş olursunuz. ",
+  "signupTermsOpen": "Kuralları okuyunuz",
+  "signupTermsSelectPage": "Kural sayfasına giriş yapın",
+  "disablePostPageLink": "Paylaşım sayfası linkini devre dışı bırakın",
+  "hideDebateIcon": "Tartışma simgesini gizle ",
+  "hidePostDescription": "Paylaşım açıklamalarını gizle",
+  "hidePostCover": "Paylaşım resimlerini gizle",
+  "hideVoteCountUntilVoteCompleted": "Oylama tamamlanana kadar oy sayımını gizle",
+  "hideVoteCount": "Oy sayımını gizle",
+  "hideNewPost": "Yeni paylaşım butonunu gizle",
+  "toggleMembership": "Üyelik geçişi",
+  "externalGoalTriggerUrl": "Harici hedef başlatmak için URL",
+  "exportGroup": "CSV gönderim dosyası ",
+  "disableNameAutoTranslation": "İsim için otomatik tercümeyi devre dışı bırak",
+  "hideDownVoteForPost": "Paylaşımlar için olumsuz oylamayı gizle. ",
+  "newVersionAvailable": "İnternet sitesinin yeni versiyonu mevcuttur. ",
+  "reload": "İnternet sitesini tekrar yükle",
+  "moreContactInformation": "Daha detaylı iletişim bilgisi iste",
+  "attachmentsEnabled": "Doya ekleri erişimi",
+  "downloadAttachment": "Eki indir",
+  "uploadAttachment": "Ek yükle",
+  "contactTelephone": "Telefon",
+  "contactInformation": "İletişim bilgileri",
+  "deleteAttachment": "Eki sil",
+  "readMore": "Devamını oku",
+  "postDescriptionLimit": "Paylaşım sınırı",
+  "autoTranslationStarted": "Otomatik tercüme başlatıldı. ",
+  "autoTranslationStopped": "Otomatik tercüme durduruldu. ",
+  "autoTranslate": "Otomatik tercüme",
+  "stopAutoTranslate": "Tercümeyi durdur. ",
+  "inputError": "Geçersiz",
+  "postCreated": "Fikir üretildi. ",
+  "postUpdated": "Fikir yüklendi. ",
+  "closedForNewPosts": "Yeni fikirlere kapalı",
+  "appHomeScreenShortName": "Telefon ekran ismi ",
+  "appHomeScreenIconImageUpload": "Telefon ekran simgesini yükle",
+  "allowAnonymousAutoLogin": "Anonim girişe izin ver",
+  "later": "Şimdi değil",
+  "disableDebate": "Pasifleştirilmiş tartışma",
+  "welcomeHTML": "HTML hoş geldiniz (özenle kullanınız)",
+  "disableFacebookLoginForGroup": "Grup için Facebook girişini kapatın",
+  "facebookPixelId": "Facebook piksel kimliği",
+  "downloadFacebookImagesForUser": "Db için kullanıcıların Facebook resimlerini indir",
+  "customUserRegistrationText": "Özel kullanıcı kayıt metni",
+  "participateAnonymously": "Anonim olarak katılın",
+  "allowAnonymousUsers": "Anonim kullanıcılara izin ver",
+  "deleteUser": "Kullanıcı hesabını silin",
+  "areYouSureYouWantToDeleteUser": "Hesabınızı silmek istediğinizden emin misiniz? ",
+  "areYouReallySureYouWantToDeleteUser": "Hesabınızı silmek istediğinizden %100 emin misiniz? Tüm görüşleriniz, yorumlarınız ve katkılarınız silinecek ve fikirleriniz anonimleştirilecektir. ",
+  "alternativePointForLabel": "Etiketi destekleyen alternatif görüş ",
+  "alternativePointAgainstLabel": "Etikete karşı alternatif görüş ",
+  "sharePoint": "Görüş paylaşın",
+  "alternativePointForHeader": "Başlığı destekleyen alternatif görüş ",
+  "alternativePointAgainstHeader": "Balığa karşı alternatif görüş ",
+  "or": "veya",
+  "hidePointAuthor": "Yazar görüşünü gizle",
+  "hidePostAuthor": "Yazar paylaşımını gizle",
+  "defaultLocationLongLat": "Konum, boylam ve enlem görüntüsü",
+  "disableCommunityDomainUpLink": "Alan bağlantısını kapat",
+  "analyticsTrackerCode": "Google Analytics izleme kodu",
+  "filterIdeas": "Fikirleri filtrele",
+  "edit": "Düzenle",
+  "delete": "Sil",
+  "addEmoji": "Emoji ekle",
+  "closeComments": "Yorumları kapa",
+  "openComments": "Yorumları aç",
+  "deleteActivity": "Etkinlikleri akıştan sil",
+  "pointsFor": "Lehte puanlar",
+  "pointsAgainst": "Aleyhte puanlar",
+  "pointForShort": "Lehte",
+  "pointAgainstShort": "Aleyhte",
+  "domainToastCreated": "Konu yaratıldı",
+  "domainToastUpdated": "Konu kaydedildi",
+  "communityToastCreated": "Topluluk oluşturuldu",
+  "communityToastUpdated": "Topluluk kaydedildi",
+  "groupToastCreated": "Grup oluşturuldu",
+  "groupToastUpdated": "Grup kaydedildi",
+  "userToastCreated": "Kullanıcı oluştur",
+  "userToastUpdated": "Kayıtlı kullanıcı",
+  "hideGroupHeader": "Grup başlığını gizle",
+  "errorResetTokenNotFoundOrUsed": "Parola sıfırlama anahtarı kullanılmış veya geçersiz.",
+  "addedAnIdea": "Fikir eklendi...",
+  "recommendedPosts": "Önerilenler",
+  "noComments": "Yorum yok",
+  "optional": "İsteğe bağlı",
+  "additionalGroupConfig":"İlave Grup Ayarları",
+  "defaultDataImage":"Başlangıç Veri Görüntüsü",
+  "defaultPostImage":"Başlangıç Gönderi Görüntüsü",
+  "hideAllTabs":"Tüm Sekmeleri Gizle",
+  "hideNewPostOnPostPage":"Gönderi sayfasında yeni gönderiyi gizle",
+  "newPointOptional":"Yeni puanı isteğe bağlı yap",
+  "hideHelpIcon":"Yardım simgesini gizle",
+  "hideEmoji":"Emojileri gizle",
+  "endorsementButtonsHeart":"Kalpler",
+  "endorsementArrows":"Oklar",
+  "endorsementThumbs":"Başparmak hareketleri",
+  "endorsementHats":"Şapkalar",
+  "endorsementButtons": "Düğmeler",
+  "bulkStatusUdateForInfo": "Daha fazla bilgi için fikirlere tıklayın",
+  "urlLink": "Bağla",
+  "bulkStatusUdateFor": "fikriyle ilgili durum güncellemeleri",
+  "inviteNotFoundOrAlreadyUsed": "Kullanılmış veya geçersiz davet",
+  "reportConfirmation": "Bu içeriğin web sitesinin kurallarını ihlalini bildirmeyi gerçekten istiyor musun?",
+  "uniqueStatusMessage": "Özel durum bildirimi",
+  "templateContent": "Şablon içerik",
+  "bulkStatusUpdate": "Toplu durum güncellemeleri",
+  "close": "Kapat",
+  "editTemplates": "Şablonları düzenle",
+  "editTemplate": "Şablonu düzenle",
+  "deleteTemplate": "Şablonu sil",
+  "addTemplate": "Şablon ekle",
+  "save": "Kaydet",
+  "saved": "Kaydedildi",
+  "config": "Ayarlar",
+  "newBulkStatusUpdate": "Yeni toplu durum güncellemesi",
+  "editBulkStatusUpdate": "Toplu durum güncellemesini düzenle",
+  "bulkStatusUdateConfig": "Toplu durum güncellemesi ayarları",
+  "bulkStatusUpdatesTemplates": "Toplu durum güncelleme şablonları",
+  "selectStatusTemplate": "Şablon",
+  "moveToGroup": "Taşı",
+  "noIdeasHere": "Burada bir fikir öne sürülmemiş.",
+  "organizationsAdmin": "Örgüt yöneticisi",
+  "unviewed": "görüntülenmedi",
+  "notificationMarkAllViewed": "Hepsini görüntülenmiş say",
+  "notificationConfirmMarkAllViewed": "Hepsini görüntülenmiş saymak istediğinize emin misiniz?",
+  "upVotedPoint": "Fikrin beğenildi",
+  "downVotedPoint": "Fikrin beğenilmedi",
+  "endorsedYourPost": "Fikrine destek çıkıldı",
+  "opposedYourPost": "Fikrine karşı çıkıldı",
+  "notifications": "Bildirimler",
+  "votingDisabled": "Oylama yok",
+  "pageNotFound": "İstenen sayfa mevcut değil. Sizi YourPriorities kaynak koduna havale ediyorum.",
+  "participate": "Katıl",
+  "emojiSearchResults": "Arama sonuçları",
+  "recentlyUsedEmoji": "Yakınlarda kullanılan emojiler",
+  "findAnEmoji": "Emoji bul",
+  "cancel": "İptal",
+  "ok": "Tamam",
+  "next": "Sonraki",
+  "create": "Yarat",
+  "confirm": "Doğrula",
+  "access": "Eriş",
+  "searchFor": "Ara...",
+  "title": "Başlık",
+  "selectLanguage": "Dil seçin",
+  "update": "Güncelle",
+  "errorCantConnect": "Sunucuya yoğun trafikten ya da yazılım güncellemesinden dolayı bağlanamıyorum. Bir daha dene.",
+  "errorNotFound": "Bulunamadı",
+  "errorNotAuthorized": "Buna erişim yetkiniz yok.",
+  "generalError": "Beklenmedik bir durum. Hata bize bildirildi.",
+  "stats": {
+    "posts": "Fikirlerin sayısı",
+    "discussions": "Tartışmaların sayısı",
+    "communities": "Toplulukların sayısı",
+    "groups": "Grupların sayısı",
+    "users": "Kullanıcıların sayısı"
+  },
+  "notification": {
+    "passwordResetAndLoggedIn": "Parolanız değişti ve girmiş bulundunuz.",
+    "method": "Yöntem",
+    "frequency": "Sıklık",
+    "myPosts": "Fikirlerim",
+    "muted": "Sustur",
+    "browser": "Tarayıcı",
+    "email": "Emektup",
+    "asItHappens": "Olur olmaz",
+    "daily": "Günlük",
+    "hourly": "Saatlik",
+    "weekly": "Haftalık",
+    "monthly": "Aylık",
+    "myPostsEndorsements": "Sevdiğim fikirler",
+    "myPoints": "Açıklamalarım",
+    "myPointEndorsements": "Sevdiğim açıklamalarım",
+    "allCommunity": "Topluluklardan gelen tüm bildirimler",
+    "allGroup": "Gruplardan gelen tüm bildirimler",
+    "invite_accepted_for": "Katılım sağlayın"
+  },
+
+  "pages": {
+    "editPageLocale": "Düzenleme sayfası yeri",
+    "title": "Sayfa başlığı ",
+    "content": "Sayfa konusu",
+    "publish": "Yayınla",
+    "addLocale": "Yerel ekle",
+    "unPublish": "Yayınsızla",
+    "deletePage": "Sil",
+    "addPage": "Sayfa ekle",
+    "managePages": "Sayfaları yönet"
+  },
+
+  "archived": "Arşivlendi",
+
+  "status": {
+    "select": "Durum seç",
+    "active": "Etkin",
+    "featured": "Öne çıkan",
+    "archived": "Arşiv",
+    "hidden": "Gizli",
+    "published": "Açık",
+    "successful": "Başarılı",
+    "failed": "Başarısız",
+    "inProgress": "Süreci bitmemiş"
+  },
+
+  "pluralStatus": {
+    "published": "Açık fikirler",
+    "successful": "Başarılı fikirler",
+    "failed": "Başarısız fikirler",
+    "inProgress": "Süreç içindeki fikirler",
+    "inVoting": "Oylamadaki fikirler"
+  },
+
+  "activity": {
+    "confirmDelete": "Bu etkinliği silmek istediğinizi onaylıyor musunuz? ",
+    "post": {
+      "new": "Fikir",
+      "status": {
+       "change": "Durum güncellemesi"
+      }
+    },
+    "point": {
+      "forAdded": "Lehte eklenen açıklama",
+      "againstAdded": "Aleyhte eklenen açıklama",
+      "new": "Açıklama",
+      "newFor": "Lehte açıklama",
+      "newAgainst": "Aleyhte açıklama",
+      "newComment": "Yorum",
+      "newsStory": {
+        "new": "Kullanıcı haberleri"
+      }
+    }
+  },
+  "name": "Adı",
+
+  "domain": {
+    "pages": "Sayfalar",
+    "createOrganization": "Örgüt yarat",
+    "edit": "Alanı düzenle",
+    "info": "Ayarlar",
+    "apis": "UPAlar",
+    "settings": "İlave",
+    "onlyAdminsCanCreateCommunities": "Topluluk oluşturmak yöneticilerin yetkisindedir"
+  },
+
+  "domains": "Alanlar",
+  "communities": "Topluluklar",
+  "groups": "Gruplar",
+
+  "myDomains": "Alanlarım",
+  "myCommunities": "Topluluklarım",
+  "myGroups": "Gruplarım",
+  "myAdminCommunities": "Topluluk Yöneticisi",
+  "myAdminGroups": "Grup Yöneticisi",
+
+  "community": {
+    "add": "Topluluk ekle",
+    "alternativeHeader": "İkincil başlık",
+    "edit": "Topluluğu düzenle",
+    "hostname": "Sistem adı",
+    "admins": "Topluluk yöneticileri",
+    "users": "Topluluk kullanıcıları",
+    "delete": "Topluluğu sil",
+    "new": "Topluluk oluştur",
+    "public": "Herkese açık topluluk",
+    "closed": "Kapatılmış topluluk",
+    "secret": "Gizli topluluk",
+    "pages":"Topluluk sayfaları",
+    "onlyAdminsCanCreateGroups": "Grup oluşturmak yöneticilerin yetkisindedir"
+  },
+
+  "posts": {
+    "posts": "Fikirler",
+    "open": "Açık",
+    "inProgress": "İşlemde",
+    "successful": "Başarılı",
+    "failed": "Başarısız",
+    "map": "Harita",
+    "noMapPosts": "Konumu olan fikir yok",
+    "newUserImage": "Resim ekle"
+  },
+
+  "form": {
+    "invalid": "Formu doldurmayı tamamlayın"
+  },
+
+  "post": {
+    "most_debated": "En çok tartışılan",
+    "deleteConfirmation": "Bu fikri silmek istediğinizden emin misiniz? ",
+    "move": "Fikri taşı",
+    "confirmMove": "Taşımak istediğinizi onaylayınız",
+    "statusChangeConfirmText": "Bu fikri destekleyen ve fikre karşı gelen herkese e-posta göndermek istediğinizden emin misiniz? ",
+    "statusChangeSelectNewStatus": "Yeni durum",
+    "statusChangeContent": "Durum değişikliği tüm destekçilere ve muhaliflere gönderilecektir. ",
+    "statusChange": "Durum değişikliği e-postasını gönder",
+    "statusChangeSent": "Gönderilmiş durum değişikliği e-postaları",
+    "noLocation": "Konum yok",
+    "shareInfo": "Fikir paylaş",
+    "description": "Açıklama",
+    "debate": "Tartışma",
+    "formInvalid": "Formu tümüyle doldurup tekrar deneyin",
+    "status": "Bu fikrin durumu",
+    "new": "Yeni fikir",
+    "searchingFor": "Şunun için araştırma",
+    "top": "Popüler",
+    "newest": "En son",
+    "random": "Rastgele",
+    "inProgress": "Süreç içinde ",
+    "groups": "Posta grupları",
+    "search": "Fikirleri araştırın",
+    "add_new":"Yeni fikir ekle",
+    "up_vote":"Fikir için olumlu oy ver",
+    "down_vote":"Fikir için olumsuz oy ver",
+    "report": "Fikri raporla",
+    "notify": "Bu fikir hakkında beni haberdar et",
+    "share": "Fikri paylaş",
+    "yourPost": "Fikir",
+    "yourPoint": "Lehte açıklama",
+    "location": "Konum",
+    "photo": "Resim",
+    "photographerName": "Fotoğrafçı",
+    "newPhoto": "Yeni resim",
+    "photoUpdate": "Resim yükle",
+    "photoDeleteConfirmation": "Bu resmi silmek istediğinizden emin misiniz? ",
+    "tabs": {
+      "debate": "Tartışma",
+      "news": "Haberler",
+      "location": "Konum",
+      "photos": "Resimler",
+      "solutions": "Çözümler",
+      "not_implemented": "Henüz uygulama yok"
+    },
+    "cover": {
+      "media": "Kapak medyası seçin",
+      "imageInfo": "Resim paylaşırsanız insanlar fikirlerini daha fazla paylaşır. Ve sosyal medyada paylaşırlar!",
+      "map": "Harita",
+      "streetview": "Sokak görüşü",
+      "image": "Resim",
+      "none": "Hiçbiri"
+    },
+    "edit": "Fikri düzenle",
+    "delete": "Fikri sil",
+    "addNewIntroBoxText": "Yeni fikirler eklemek için ampul butonunu kullan"
+  },
+
+  "short_word": {
+    "in": "içinde"
+  },
+
+  "category": {
+    "new": "Yeni kategori",
+    "select": "Gizli kategori"
+  },
+
+  "categories": {
+    "all": "tüm kategoriler",
+    "the_all": "Tüm kategoriler"
+  },
+
+  "point": {
+    "report": "Rapor",
+    "againstAdded": "Aleyhte eklenmiş açıklama",
+    "forAdded": "Lehte eklenmiş açıklama",
+    "confirmDelete": "Bu açıklamayı silmek istediğinizi onaylayınız",
+    "theseAreFor": "Lehte açıklama",
+    "theseAreAgainst": "Aleyhte açıklama",
+    "point": "Açıklama",
+    "for": "Lehte açıklama yazın",
+    "against": "Aleyhte açıklama yazın",
+    "add_up": "Lehte açıklama ekle",
+    "add_down": "Aleyhte açıklama ekle",
+    "helpful": "Faydalı olduğuna dair oy ver",
+    "not_helpful": "Faydalı olmadığına dair oy ver",
+    "addNewsStory": "Yeni bir haber ekle",
+    "postNewsStory": "Yeni haber ekle",
+    "addComment": "Yorumunuz...",
+    "postComment": "Açıklama",
+    "comments": "Yorumlar",
+    "howToWrite": "Lehte ve aleyhte verilen en iyi açıklamalar hakkında beyin fırtınası yapalım ve çözümleri düşünelim...",
+    "commentToShort": "Metin çok kısa!"
+  },
+
+  "news": "Haberler",
+
+  "uploading": {
+    "inProgress": "Yükleniyor..."
+  },
+
+  "notice": {
+    "ok": "Tamam",
+    "feature_not_implemented_a": "Bu özellik Your Priorities 6.0.'ın önizlemesi salt-okunurda uygulanmamaktadır. ",
+    "feature_not_implemented_b": "Ne düşündüğünü bize anlat :)",
+    "welcome_a": "Bu Your Priorities 6.0. salt-okunur halidir. Bu nedenle yalnızca yorumları okuyabilir fakat ekleme yapamazsınız. Geribildirimleriniz değerlidir. ",
+    "welcome_b": "Şuan yalnızca Chrome ile çalışmaktadır. Yakında Q1 2015'in kullanımı ile pek çok tarayıcı ile çalışır hale gelecektir. ",
+    "welcome_heading": "Your Priority 6.0 teknolojisine hoşgeldiniz. ",
+    "continue": "Önizlemeye devam et",
+    "deleteConfirmation": "Bu grubu silmek istiyor musunuz?"
+  },
+
+  "maps": {
+    "searchInput": "Adres",
+    "search": "Ara"
+  },
+
+  "group": {
+    "pages": "Yardım sayfaları (?)",
+    "showWhoPostedPosts": "Kimin paylaştığını göster",
+    "locationHidden": "Konumu kaldır",
+    "group": "Grup",
+    "admins": "Grup yöneticileri",
+    "users": "Grup kullanıcıları",
+    "new": "Yeni grup ekle",
+    "edit": "Grubu düzenle",
+    "invite": "Arkadaş davet et",
+    "invite_to_group": "Bu gruba arkadaş davet et",
+    "share_group": "Grubu paylaş",
+    "delete": "Grubu sil",
+    "objectives": "Hedefler",
+    "public": "Herkese açık grup",
+    "closed": "Kapalı grup",
+    "secret": "Gizli grup",
+    "openToCommunity": "Açık topluluk",
+    "canVote": "Oy kullanımına izin verildi",
+    "canAddNewPosts": "Yeni fikirlere izin verildi. ",
+    "config": "Yapılandırma",
+    "update": "Grubu güncelle"
+  },
+
+  "membership": {
+    "joined": "Katıldınız",
+    "left": "Ayrıldınız"
+  },
+
+  "menu": {
+    "my_pages": "Profilim",
+    "about": "Hakkında",
+    "help": "Yardım",
+    "settings": "Ayarlar"
+
+  },
+
+  "users": {
+    "userInvited": "Katılımcı davet edildi.",
+    "removeAdmin": "Yöneticiyi kaldır",
+    "addAdmin": "Yönetici ekle",
+    "removeUser": "Kullanıcıyı kaldır",
+    "inviteUser": "Kullanıcı davet et",
+    "email": "e-posta",
+    "removeFromOrganization": "Kaldır",
+    "addToOrganization": "Organizasyon",
+    "selectOrganization": "Organizasyonu seç"
+  },
+
+  "user": {
+    "loginCompleteFor": "Giriş yapın",
+    "acceptInvite": "Kabul et davet et katıl ",
+    "hasSentYouAndInvitation": "sizi şuraya katılmaya davet ediyor",
+    "acceptInviteInstructions": "Daveti kabul etmek için aşağıdaki butona tıklayınız",
+    "setEmail": "Hesaba e-posta ekleyin",
+    "linkAccount": "Hesap ile iletişime geçin",
+    "setEmailInfo": "Hesabınıza e-posta ekleyin",
+    "existsLinkAccountInfo": "E-posta daha önce alınmıştır. Parolanızı girerek bu erişim yöntemini e-postanız ile bağlayınız. ",
+    "logoutCompleteFor": "Çıkış yapın",
+    "loggedInWithSaml": "SAML ile giriş yapın",
+    "loggedInWithFacebook": "Facebook ile giriş yapın",
+    "facebookLogin": "Facebook girişi",
+    "info":"Bilgi",
+    "notifications": "Bildirimler",
+    "name": "Ad",
+    "email": "E-posta",
+    "edit": "Kullanıcıyı düzenle",
+    "password": "Şifre",
+    "forgotPassword": "Yeni şifre oluştur",
+    "forgotPasswordInstructions": "E-postanızı girdiğinizde yeni şifre oluşturmak için bir link e-postanıza gönderilecektir. ",
+    "forgotPasswordEmailHasBeenSent": "Şifre sıfırlama adımları e-postanıza gönderilmiştir. ",
+    "resetPassword": "Şifrenizi sıfırlayın",
+    "resetPasswordInstructions": "Tahmin etmesi zor bir şifre oluşturun.",
+    "login": "Giriş ",
+    "create": "Kullanıcı oluştur",
+    "cancel": "İptal",
+    "logout": "Çıkış",
+    "newPassword": "Yeni şifre",
+    "register": "Yeni kullanıcı",
+    "alreadyRegisterred": "Bu e-posta alınmıştır. Gerekliyse yeni bir şifre oluşturabilirsiniz. ",
+    "registrationError": "Kayıt hatası",
+    "loginError": "Giriş hatası",
+    "completeForm": "Formumuzu doğru bir şekilde doldurunuz.",
+    "loginNotAuthorized": "E-postanız veya şifreniz hatalıdır. "
+  },
+
+  "other": "Diğer",
+
+  "socialMedia": "Sosyal medya",
+
+  "location": {
+    "set": "Konum ayarlayın"
+  },
+  "image": {
+    "upload": "Resim yükleyin",
+    "logo": {
+      "upload": "Logo yükleyin"
+    },
+    "header": {
+      "upload": "Başlık yükleyin"
+    },
+    "profile": {
+      "upload": "Profil resmi yükleyin"
+    }
+  },
+  "theme": {
+    "choose": "Konu seçin"
+  }
+}
