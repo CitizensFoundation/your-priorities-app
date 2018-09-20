@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
 var _ = require('lodash');
+var queue = require('../active-citizen/workers/queue');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -732,52 +733,21 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
     where: {id: postId }
   }).then(function (post) {
     log.info('Post Deleted Got Post', { context: 'delete', user: toJson(req.user) });
-    models.AcActivity.findAll({
-      attributes: ['id','deleted'],
-      where: {
-        post_id: post.id
-      }
-    }).then(function (activities) {
-      log.info('Post Deleted Got Activities', { context: 'delete', user: toJson(req.user) });
-      var activityIds = _.map(activities, function (activity) {
-        return activity.id;
-      });
-      models.AcActivity.update(
-        { deleted: true },
-        { where: {
-            id: {
-              $in: activityIds
-            }
-          }}
-      ).then(function (spread) {
-        post.deleted = true;
-        post.save().then(function () {
-          log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
-          post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
-            log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
-            models.Point.findAll({
-              attributes: ['id','deleted'],
-              where: {
-                post_id: postId
-              }
-            }).then(function (points) {
-              var pointIds = _.map(points, function (point) {
-                return point.id;
-              });
-              models.Point.update(
-                { deleted: true },
-                { where: {
-                    id: {
-                      $in: pointIds
-                    }
-                  }}
-              ).then(function () {
-                post.updateAllExternalCountersBy(req, 'down', 'counter_points', points.length, function () {
-                  log.info('Post Deleted Point Counters updates', { context: 'delete', user: toJson(req.user) });
-                  res.sendStatus(200);
-                });
-              });
-            });
+    post.deleted = true;
+    post.save().then(function () {
+      log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
+      post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
+        log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
+        models.Point.update(
+          { deleted: true },
+          { where: {
+              post_id: post.id
+            }}
+        ).then(function (points) {
+          post.updateAllExternalCountersBy(req, 'down', 'counter_points', points[0], function () {
+            log.info('Post Deleted Point Counters updates', { context: 'delete', user: toJson(req.user) });
+            queue.create('delete-post-activities', { postId: post.id, includePoints: true }).priority('high').removeOnComplete(true).save();
+            res.sendStatus(200);
           });
         });
       });
