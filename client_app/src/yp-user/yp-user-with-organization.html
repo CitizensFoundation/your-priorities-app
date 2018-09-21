@@ -77,7 +77,7 @@
           </div>
         </div>
         <template is="dom-if" if="[[organizationImageUrl]]">
-          <img width="48" height="48" sizing="cover" class="orgImage" src$="[[organizationImageUrl]]">
+          <img width="48" height="48" sizing="cover" hidden$="[[hideImage]]" class="orgImage" src$="[[organizationImageUrl]]">
         </template>
       </div>
     </template>
