@@ -738,15 +738,15 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
       log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
       post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
         log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
-        models.Point.update(
-          { deleted: true },
+        models.Point.count(
           { where: {
               post_id: post.id
             }}
-        ).then(function (points) {
-          post.updateAllExternalCountersBy(req, 'down', 'counter_points', points[0], function () {
-            log.info('Post Deleted Point Counters updates', { context: 'delete', user: toJson(req.user) });
-            queue.create('delete-post-activities', { postId: post.id, includePoints: true }).priority('high').removeOnComplete(true).save();
+        ).then(function (countInfo) {
+          post.updateAllExternalCountersBy(req, 'down', 'counter_points', countInfo, function () {
+            log.info('Post Deleted Point Counters updates', { numberDeleted: countInfo, context: 'delete', user: toJson(req.user) });
+            queue.create('process-deletion', { type: 'delete-post-activities', postTitle: post.title, postId: post.id, includePoints: true,
+                                               userId: req.user.id}).priority('high').removeOnComplete(true).save();
             res.sendStatus(200);
           });
         });

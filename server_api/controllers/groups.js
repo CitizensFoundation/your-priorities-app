@@ -14,6 +14,7 @@ var aws = require('aws-sdk');
 var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDataForGroup;
 var moment = require('moment');
 var sanitizeFilename = require("sanitize-filename");
+var queue = require('../active-citizen/workers/queue');
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -691,6 +692,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
       group.deleted = true;
       group.save().then(function () {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
+        queue.create('process-deletion', { type: 'delete-group-content', groupName: group.name, userId: req.user.id, groupId: group.id }).priority('high').removeOnComplete(true).save();
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {
           res.sendStatus(200);
         });

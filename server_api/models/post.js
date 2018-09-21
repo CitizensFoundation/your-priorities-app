@@ -283,21 +283,25 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       updateAllExternalCountersBy: function(req, direction, column, updateBy, done) {
-        async.parallel([
-          function(callback) {
-            sequelize.models.Group.find({
-              where: {id: this.group_id}
-            }).then(function (group) {
-              if (direction=='up')
-                group.increment(column, {by: updateBy});
-              else if (direction=='down')
-                group.decrement(column, {by: updateBy});
-              group.updateAllExternalCounters(req, direction, column, callback);
-            }.bind(this))
-          }.bind(this)
-        ], function(err) {
-          done(err);
-        });
+        if (updateBy && updateBy>0) {
+          async.parallel([
+            function(callback) {
+              sequelize.models.Group.find({
+                where: {id: this.group_id}
+              }).then(function (group) {
+                if (direction=='up')
+                  group.increment(column, {by: updateBy});
+                else if (direction=='down')
+                  group.decrement(column, {by: updateBy});
+                group.updateAllExternalCounters(req, direction, column, callback);
+              }.bind(this))
+            }.bind(this)
+          ], function(err) {
+            done(err);
+          });
+        } else {
+          done();
+        }
       },
 
       setupHeaderImage: function(body, done) {

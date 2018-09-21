@@ -7,6 +7,7 @@ var toJson = require('../utils/to_json');
 var async = require('async');
 var embedly = require('embedly');
 var _ = require('lodash');
+var queue = require('../active-citizen/workers/queue');
 
 var changePointCounter = function (pointId, column, upDown, next) {
   models.Point.find({
@@ -448,7 +449,7 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
     point.deleted = true;
     point.save().then(function () {
       log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
-      queue.create('delete-point-activities', { pointId: point.id }).priority('high').removeOnComplete(true).save();
+      queue.create('process-deletion', { type: 'delete-point-activities', pointId: point.id, userId: req.user.id }).priority('high').removeOnComplete(true).save();
       if (point.Post) {
         point.Post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
           point.Post.decrement('counter_points');
