@@ -6,6 +6,8 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
 var _ = require('lodash');
+var queue = require('../active-citizen/workers/queue');
+const getAnonymousUser = require('../active-citizen/utils/get_anonymous_system_user');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -732,58 +734,69 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
     where: {id: postId }
   }).then(function (post) {
     log.info('Post Deleted Got Post', { context: 'delete', user: toJson(req.user) });
-    models.AcActivity.findAll({
-      attributes: ['id','deleted'],
-      where: {
-        post_id: post.id
-      }
-    }).then(function (activities) {
-      log.info('Post Deleted Got Activities', { context: 'delete', user: toJson(req.user) });
-      var activityIds = _.map(activities, function (activity) {
-        return activity.id;
-      });
-      models.AcActivity.update(
-        { deleted: true },
-        { where: {
-            id: {
-              $in: activityIds
-            }
-          }}
-      ).then(function (spread) {
-        post.deleted = true;
-        post.save().then(function () {
-          log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
-          post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
-            log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
-            models.Point.findAll({
-              attributes: ['id','deleted'],
-              where: {
-                post_id: postId
-              }
-            }).then(function (points) {
-              var pointIds = _.map(points, function (point) {
-                return point.id;
-              });
-              models.Point.update(
-                { deleted: true },
-                { where: {
-                    id: {
-                      $in: pointIds
-                    }
-                  }}
-              ).then(function () {
-                post.updateAllExternalCountersBy(req, 'down', 'counter_points', points.length, function () {
-                  log.info('Post Deleted Point Counters updates', { context: 'delete', user: toJson(req.user) });
-                  res.sendStatus(200);
-                });
-              });
-            });
+    post.deleted = true;
+    post.save().then(function () {
+      log.info('Post Deleted Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
+      post.updateAllExternalCounters(req, 'down', 'counter_posts', function () {
+        log.info('Post Deleted Counters updates', { context: 'delete', user: toJson(req.user) });
+        models.Point.count(
+          { where: {
+              post_id: post.id
+            }}
+        ).then(function (countInfo) {
+          post.updateAllExternalCountersBy(req, 'down', 'counter_points', countInfo, function () {
+            log.info('Post Deleted Point Counters updates', { numberDeleted: countInfo, context: 'delete', user: toJson(req.user) });
+            queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
+                                               userId: req.user.id}).priority('high').removeOnComplete(true).save();
+            res.sendStatus(200);
           });
         });
       });
     });
   }).catch(function(error) {
     sendPostOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/delete_content', auth.can('edit post'), function(req, res) {
+  var postId = req.params.id;
+  log.info('Post Deleted Got Start', { context: 'delete', user: toJson(req.user) });
+  models.Post.find({
+    where: {id: postId }
+  }).then(function (post) {
+    log.info('Post Deleted Post Content', { context: 'delete', user: toJson(req.user) });
+    queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
+                                       userId: req.user.id, useNotification: true,
+                                       resetCounters: true}).priority('high').removeOnComplete(true).save();
+    res.sendStatus(200);
+  }).catch(function(error) {
+    sendPostOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res) {
+  var postId = req.params.id;
+  log.info('Post Anonymize Got Start', { context: 'delete', user: toJson(req.user) });
+  getAnonymousUser((error, anonUser) => {
+    if (anonUser && !error) {
+      models.Post.find({
+        where: {id: postId }
+      }).then(function (post) {
+        log.info('Post Anonymize Got Post', { context: 'delete', user: toJson(req.user) });
+        post.user_id = anonUser.id;
+        post.save().then(function () {
+          log.info('Post Anonymize Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
+          queue.create('process-anonymization', { type: 'anonymize-post-content', postName: post.name, postId: post.id, includePoints: true,
+                                                  userId: req.user.id, useNotification: true }).priority('high').removeOnComplete(true).save();
+          res.sendStatus(200);
+        });
+      }).catch(function(error) {
+        sendPostOrError(res, null, 'delete', req.user, error);
+      });
+    } else {
+      log.error("Can't find anonymous user", { error: error });
+      res.sendStatus(500);
+    }
   });
 });
 

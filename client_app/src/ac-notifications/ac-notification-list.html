@@ -69,7 +69,7 @@
         outline: none;
       }
     </style>
-      <iron-scroll-threshold lower-threshold="300" on-lower-threshold="_loadMoreData" id="threshold">
+      <iron-scroll-threshold lower-threshold="100" on-lower-threshold="_loadMoreData" id="threshold">
         <template is="dom-if" if="[[opened]]">
           <div elevation="2" id="material">
             <template is="dom-if" if="[[user]]">
@@ -102,6 +102,10 @@
                     <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
                       <ac-notification-list-general-item icon="chat-bubble-outline"
                                                          notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
+                    </template>
+                    <template is="dom-if" if="[[_notificationType(notification, 'notification.generalUserNotification')]]">
+                      <ac-notification-list-general-item icon="language"
+                                                         notification="[[notification]]" short-text="[[_getNotificationTypeAndName(notification.AcActivities.0.object.type, notification.AcActivities.0.object.name)]]"></ac-notification-list-general-item>
                     </template>
                   </div>
                 </template>
@@ -194,6 +198,10 @@
             this.markCurrentAsViewed();
           }.bind(this), 25);
         }
+      },
+
+      _getNotificationTypeAndName: function (theType, name) {
+        return theType ? this.t(theType)+' '+ (name ? name : '') : "";
       },
 
       _openEdit: function () {
@@ -410,43 +418,49 @@
       },
 
       _getNotificationText: function (notification) {
-        var ideaName;
+        var ideaName, object;
         if (notification.AcActivities[0].Post) {
           ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
         }
-        if (notification.type=='notification.post.new') {
+        if (notification.AcActivities[0].object) {
+          object = notification.AcActivities[0].object;
+        }
+        if (notification.type==='notification.post.new') {
           return ideaName+this.t('post.new');
-        } else if (notification.type=='notification.post.endorsement') {
-          if (notification.AcActivities[0].type=='activity.post.endorsement.new') {
+        } else if (notification.type==='notification.post.endorsement') {
+          if (notification.AcActivities[0].type==='activity.post.endorsement.new') {
             return ideaName+this.t('endorsedYourPost');
           } else {
             return ideaName+this.t('opposedYourPost');
           }
-        } else if (notification.type=='notification.point.new') {
+        } else if (notification.type==='notification.point.new') {
           if (notification.AcActivities[0].Point.value>0) {
             return ideaName+this.t('point.forAdded');
           } else {
             return ideaName+this.t('point.againstAdded');
           }
-        } else if (notification.type=='notification.point.quality') {
-          if (notification.AcActivities[0].type=='activity.point.helpful.new') {
+        } else if (notification.type==='notification.point.quality') {
+          if (notification.AcActivities[0].type==='activity.point.helpful.new') {
             return ideaName+this.t('upVotedPoint');
           } else {
             return ideaName+this.t('downVotedPoint');
           }
+        } else if (notification.type=='notification.generalUserNotification' && object) {
+          return this.t(object.type)+" "+object.name;
         }
       },
 
       _displayToast: function (notifications) {
         var notMyNotifications = __.reject(notifications, function (notification) {
           var activityUser = notification.AcActivities[0].User;
-          return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id);
+          return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) &&
+                 !notification.type==='notification.generalUserNotification';
         });
 
         if (notMyNotifications.length>0) {
           var activityUser = notMyNotifications[0].AcActivities[0].User;
           Polymer.dom(document).querySelector('yp-app').getDialogAsync("notificationToast", function (dialog) {
-            dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]));
+            dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]), notMyNotifications[0].type==='notification.generalUserNotification');
           }.bind(this));
         }
       },

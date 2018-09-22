@@ -272,8 +272,10 @@
               <paper-item hidden$="[[!hasCommunityAccess]]" id="editMenuItem">[[t('community.edit')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="usersMenuItem">[[t('community.users')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="adminsMenuItem">[[t('community.admins')]]</paper-item>
-              <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteContentMenuItem">[[t('deleteCommunityContent')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
               <paper-item id="addGroupMenuItem">[[t('group.new')]]</paper-item>
             </paper-listbox>
@@ -387,6 +389,10 @@
           this._openBulkStatusUpdates();
         else if (detail.item.id=="addGroupMenuItem")
           this.fire('yp-new-group');
+        else if (detail.item.id==="anonymizeMenuItem")
+          this._openAnonymizeContent();
+        else if (detail.item.id==="deleteContentMenuItem")
+          this._openDeleteContent();
         this.$$("paper-listbox").select(null);
       },
 
@@ -432,15 +438,35 @@
       },
 
       _openDelete: function () {
+        window.appGlobals.activity('open', 'community.delete');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/communities/' + this.community.id,
-            this.t('community.deleteConfirmation'),
+            this.t('communityDeleteConfirmation'),
             this._onDeleted.bind(this));
-          dialog.open();
+          dialog.open({finalDeleteWarning: true});
+        }.bind(this));
+      },
+
+      _openDeleteContent: function () {
+        window.appGlobals.activity('open', 'community.deleteContents');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/communities/' + this.community.id + '/delete_content',
+            this.t('communityDeleteContentConfirmation'));
+          dialog.open({finalDeleteWarning: true});
+        }.bind(this));
+      },
+
+      _openAnonymizeContent: function () {
+        window.appGlobals.activity('open', 'community.anonymize');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/communities/' + this.community.id + '/anonymize_content',
+            this.t('communityAnonymizeConfirmation'));
+          dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },
 
       _openEdit: function () {
+        window.appGlobals.activity('open', 'community.edit');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
           dialog.setup(this.community, false, this._refresh.bind(this));
           dialog.open('edit', {communityId: this.community.id});

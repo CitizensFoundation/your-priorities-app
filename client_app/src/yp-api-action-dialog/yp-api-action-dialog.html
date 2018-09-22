@@ -59,6 +59,11 @@
 
         confirmButtonText: {
           type: String
+        },
+
+        finalDeleteWarning: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -78,14 +83,26 @@
         }
       },
 
-      open: function () {
+      open: function (options) {
+        if (options && options.finalDeleteWarning) {
+          this.set('finalDeleteWarning', true);
+        }
         this.$$("#confirmationDialog").open();
       },
 
       _delete: function () {
-        this.$$("#apiAjax").url = this.action;
-        this.$$("#apiAjax").setBody({deleteConfirmed: true});
-        this.$$("#apiAjax").generateRequest();
+        if (!this.finalDeleteWarning) {
+          this.$$("#apiAjax").url = this.action;
+          this.$$("#apiAjax").setBody({deleteConfirmed: true});
+          this.$$("#apiAjax").generateRequest();
+        } else {
+          this.set('finalDeleteWarning', false);
+          this.set('confirmationText', this.t('finalDeleteWarning'));
+          this.$$("#confirmationDialog").close();
+          this.async(() => {
+            this.$$("#confirmationDialog").open();
+          },10);
+        }
       },
 
       _response: function () {

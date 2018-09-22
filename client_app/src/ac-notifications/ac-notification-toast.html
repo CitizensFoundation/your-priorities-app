@@ -42,9 +42,11 @@
         }
       },
 
-      open: function (user, notificationText) {
-        this.set('user', user);
+      open: function (user, notificationText, systemNotification) {
         this.set('notificationText', notificationText);
+        if (!systemNotification) {
+          this.set('user', user);
+        }
         this.$.toast.close();
         this.async(function () {
           this.$.toast.open();

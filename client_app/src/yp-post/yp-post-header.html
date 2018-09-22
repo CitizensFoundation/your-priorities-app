@@ -261,6 +261,8 @@
                       <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
                       <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                       <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                      <paper-item id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>
+                      <paper-item id="deleteContentMenuItem">[[t('deletePostContent')]]</paper-item>
                     </template>
                     <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
                   </paper-listbox>
@@ -374,8 +376,10 @@
           this._openPostStatusChange();
         else if (detail.item.id=="moveMenuItem")
           this._openMovePost();
-        else if (detail.item.id=="reportMenuItem")
-          this._openReport();
+        else if (detail.item.id=="anonymizeMenuItem")
+          this._openAnonymizeContent();
+        else if (detail.item.id=="deleteContentMenuItem")
+          this._openDeleteContent();
 
         this.$$("paper-listbox").select(null);
       },
@@ -419,6 +423,24 @@
           dialog.setup('/api/posts/' + this.post.id,
             this.t('post.deleteConfirmation'),
             this._onDeleted.bind(this));
+          dialog.open();
+        }.bind(this));
+      },
+
+      _openDeleteContent: function () {
+        window.appGlobals.activity('open', 'postDeleteContent');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/posts/' + this.post.id + '/delete_content',
+            this.t('postDeleteContentConfirmation'));
+          dialog.open();
+        }.bind(this));
+      },
+
+      _openAnonymizeContent: function () {
+        window.appGlobals.activity('open', 'postAnonymizeContent');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/posts/' + this.post.id + '/anonymize_content',
+            this.t('postAnonymizeContentConfirmation'));
           dialog.open();
         }.bind(this));
       },

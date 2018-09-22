@@ -7,6 +7,7 @@ var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
 var crypto = require("crypto");
+var queue = require('../active-citizen/workers/queue');
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -820,10 +821,47 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
       community.deleted = true;
       community.save().then(function () {
         log.info('Community Deleted', { community: toJson(community), user: toJson(req.user) });
+        queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name, communityId: community.id, userId: req.user.id }).priority('high').removeOnComplete(true).save();
         community.updateAllExternalCounters(req, 'down', 'counter_communities', function () {
           res.sendStatus(200);
         });
       });
+    } else {
+      sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendCommunityOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/delete_content', auth.can('edit community'), function(req, res) {
+  models.Community.find({
+    where: {id: req.params.id }
+  }).then(function (community) {
+    if (community) {
+      log.info('Community Delete Content', { community: toJson(community), user: toJson(req.user) });
+      queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name,
+                                         communityId: community.id, userId: req.user.id, useNotification: true,
+                                         resetCounters: true }).priority('high').removeOnComplete(true).save();
+      res.sendStatus(200);
+    } else {
+      sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendCommunityOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/anonymize_content', auth.can('edit community'), function(req, res) {
+  models.Community.find({
+    where: {id: req.params.id }
+  }).then(function (community) {
+    if (community) {
+      log.info('Community Anonymize Content', { community: toJson(community), user: toJson(req.user) });
+      queue.create('process-anonymization', { type: 'anonymize-community-content', communityName: community.name,
+                                              communityId: community.id, userId: req.user.id, useNotification: true,
+                                              resetCounters: true }).priority('high').removeOnComplete(true).save();
+      res.sendStatus(200);
     } else {
       sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
     }
