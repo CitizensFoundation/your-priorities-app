@@ -452,7 +452,7 @@
         if (notMyNotifications.length>0) {
           var activityUser = notMyNotifications[0].AcActivities[0].User;
           Polymer.dom(document).querySelector('yp-app').getDialogAsync("notificationToast", function (dialog) {
-            dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]));
+            dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]), notMyNotifications[0].type==='notification.generalUserNotification');
           }.bind(this));
         }
       },

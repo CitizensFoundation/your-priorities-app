@@ -25,7 +25,7 @@
   "deleteCommunityContent": "Delete all content",
   "communityDeleteConfirmation": "WARNING! If you delete the community all its groups, posts and debate points will be deleted. Are you sure you want to continue?",
   "groupDeleteConfirmation": "WARNING! If you delete the group all its posts and debate points will be deleted. Are you sure you want to continue?",
-  "finalDeleteWarning": "FINAL WARNING! Are you sure you want to proceed with this operation?",
+  "finalDeleteWarning": "FINAL WARNING! Are you sure you want to proceed with this destructive operation? Are you in the right place? If you proceed then this operation can NOT be undone!",
   "none": "None",
   "signupTermsInfo": "By clicking Create User, you agree to our terms",
   "signupTermsOpen": "read terms",
