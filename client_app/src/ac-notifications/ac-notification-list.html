@@ -69,7 +69,7 @@
         outline: none;
       }
     </style>
-      <iron-scroll-threshold lower-threshold="300" on-lower-threshold="_loadMoreData" id="threshold">
+      <iron-scroll-threshold lower-threshold="100" on-lower-threshold="_loadMoreData" id="threshold">
         <template is="dom-if" if="[[opened]]">
           <div elevation="2" id="material">
             <template is="dom-if" if="[[user]]">
@@ -102,6 +102,10 @@
                     <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
                       <ac-notification-list-general-item icon="chat-bubble-outline"
                                                          notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
+                    </template>
+                    <template is="dom-if" if="[[_notificationType(notification, 'notification.generalUserNotification')]]">
+                      <ac-notification-list-general-item icon="language"
+                                                         notification="[[notification]]" short-text="[[_getNotificationTypeAndName(notification.AcActivities.0.object.type, notification.AcActivities.0.object.name)]]"></ac-notification-list-general-item>
                     </template>
                   </div>
                 </template>
@@ -194,6 +198,10 @@
             this.markCurrentAsViewed();
           }.bind(this), 25);
         }
+      },
+
+      _getNotificationTypeAndName: function (theType, name) {
+        return theType ? this.t(theType)+' '+ (name ? name : '') : "";
       },
 
       _openEdit: function () {
@@ -437,7 +445,7 @@
           } else {
             return ideaName+this.t('downVotedPoint');
           }
-        } else if (notification.type==='notification.generalUserNotification' && object) {
+        } else if (notification.type=='notification.generalUserNotification' && object) {
           return this.t(object.type)+" "+object.name;
         }
       },
