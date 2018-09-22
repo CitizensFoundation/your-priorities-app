@@ -272,8 +272,12 @@ module.exports = function(sequelize, DataTypes) {
             }).then(function (group) {
               if (direction=='up')
                 group.increment(column);
-              else if (direction=='down')
-                group.decrement(column);
+              else if (direction=='down') {
+                var groupColumnValue = group[column];
+                if (groupColumnValue && groupColumnValue>0) {
+                  group.decrement(column);
+                }
+              }
               group.updateAllExternalCounters(req, direction, column, callback);
             }.bind(this))
           }.bind(this)
@@ -291,8 +295,14 @@ module.exports = function(sequelize, DataTypes) {
               }).then(function (group) {
                 if (direction=='up')
                   group.increment(column, {by: updateBy});
-                else if (direction=='down')
-                  group.decrement(column, {by: updateBy});
+                else if (direction=='down') {
+                  var groupColumnValue = group[column];
+                  if (groupColumnValue && (groupColumnValue-updateBy)>=0) {
+                    group.decrement(column, {by: updateBy});
+                  } else if (groupColumnValue) {
+                    group.decrement(column, {by: groupColumnValue});
+                  }
+                }
                 group.updateAllExternalCounters(req, direction, column, callback);
               }.bind(this))
             }.bind(this)

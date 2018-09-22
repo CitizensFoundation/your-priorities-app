@@ -1,4 +1,10 @@
 {
+  "anonymizePostContentDone": "Anonymization of post content completed for",
+  "anonymizePostContentError": "Error in anonymizing post content for",
+  "anonymizeGroupContentDone": "Anonymization of posts completed for",
+  "anonymizeGroupContentError": "Error in anonymizing posts for",
+  "anonymizeCommunityContentDone": "Anonymization of groups completed for",
+  "anonymizeCommunityContentError": "Error in anonymizing groups for",
   "deletePostContentDone": "Deletion of points completed for",
   "deletePostContentError": "Error deleting points & content for",
   "deleteGroupContentDone": "Deletion of posts completed for",
