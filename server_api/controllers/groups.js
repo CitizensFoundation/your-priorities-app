@@ -705,6 +705,42 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
   });
 });
 
+router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) {
+  models.Group.find({
+    where: {id: req.params.id }
+  }).then(function (group) {
+    if (group) {
+      log.info('Group Delete Content', { group: toJson(group), context: 'delete', user: toJson(req.user) });
+      queue.create('process-deletion', { type: 'delete-group-content', groupName: group.name,
+                                         userId: req.user.id, groupId: group.id, useNotification: true,
+                                         resetCounters: true }).priority('high').removeOnComplete(true).save();
+      res.sendStatus(200);
+    } else {
+      sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, res) {
+  models.Group.find({
+    where: {id: req.params.id }
+  }).then(function (group) {
+    if (group) {
+      log.info('Group Anonymize Content', { group: toJson(group), context: 'delete', user: toJson(req.user) });
+      queue.create('process-anonymization', { type: 'anonymize-group-content', groupName: group.name,
+                                              userId: req.user.id, groupId: group.id, useNotification: true,
+                                              resetCounters: true }).priority('high').removeOnComplete(true).save();
+      res.sendStatus(200);
+    } else {
+      sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendGroupOrError(res, null, 'delete', req.user, error);
+  });
+});
+
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.find({
     where: { id: req.params.id },

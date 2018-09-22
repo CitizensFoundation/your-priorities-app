@@ -834,6 +834,42 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
   });
 });
 
+router.delete('/:id/delete_content', auth.can('edit community'), function(req, res) {
+  models.Community.find({
+    where: {id: req.params.id }
+  }).then(function (community) {
+    if (community) {
+      log.info('Community Delete Content', { community: toJson(community), user: toJson(req.user) });
+      queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name,
+                                         communityId: community.id, userId: req.user.id, useNotification: true,
+                                         resetCounters: true }).priority('high').removeOnComplete(true).save();
+      res.sendStatus(200);
+    } else {
+      sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendCommunityOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/anonymize_content', auth.can('edit community'), function(req, res) {
+  models.Community.find({
+    where: {id: req.params.id }
+  }).then(function (community) {
+    if (community) {
+      log.info('Community Anonymize Content', { community: toJson(community), user: toJson(req.user) });
+      queue.create('process-anonymization', { type: 'anonymize-community-content', communityName: community.name,
+                                              communityId: community.id, userId: req.user.id, useNotification: true,
+                                              resetCounters: true }).priority('high').removeOnComplete(true).save();
+      res.sendStatus(200);
+    } else {
+      sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
+    }
+  }).catch(function(error) {
+    sendCommunityOrError(res, null, 'delete', req.user, error);
+  });
+});
+
 router.get('/:id/post_locations', auth.can('view community'), function(req, res) {
   models.Post.findAll({
     where: {

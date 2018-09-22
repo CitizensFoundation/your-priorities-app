@@ -7,6 +7,7 @@ var toJson = require('../utils/to_json');
 var async = require('async');
 var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
+const getAnonymousUser = require('../active-citizen/utils/get_anonymous_system_user');
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -745,7 +746,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
         ).then(function (countInfo) {
           post.updateAllExternalCountersBy(req, 'down', 'counter_points', countInfo, function () {
             log.info('Post Deleted Point Counters updates', { numberDeleted: countInfo, context: 'delete', user: toJson(req.user) });
-            queue.create('process-deletion', { type: 'delete-post-activities', postTitle: post.title, postId: post.id, includePoints: true,
+            queue.create('process-deletion', { type: 'delete-post-content', postTitle: post.title, postId: post.id, includePoints: true,
                                                userId: req.user.id}).priority('high').removeOnComplete(true).save();
             res.sendStatus(200);
           });
@@ -754,6 +755,48 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
     });
   }).catch(function(error) {
     sendPostOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/delete_content', auth.can('edit post'), function(req, res) {
+  var postId = req.params.id;
+  log.info('Post Deleted Got Start', { context: 'delete', user: toJson(req.user) });
+  models.Post.find({
+    where: {id: postId }
+  }).then(function (post) {
+    log.info('Post Deleted Post Content', { context: 'delete', user: toJson(req.user) });
+    queue.create('process-deletion', { type: 'delete-post-content', postTitle: post.title, postId: post.id, includePoints: true,
+                                       userId: req.user.id, useNotification: true,
+                                       resetCounters: true}).priority('high').removeOnComplete(true).save();
+    res.sendStatus(200);
+  }).catch(function(error) {
+    sendPostOrError(res, null, 'delete', req.user, error);
+  });
+});
+
+router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res) {
+  var postId = req.params.id;
+  log.info('Post Anonymize Got Start', { context: 'delete', user: toJson(req.user) });
+  getAnonymousUser((error, anonUser) => {
+    if (anonUser && !error) {
+      models.Post.find({
+        where: {id: postId }
+      }).then(function (post) {
+        log.info('Post Anonymize Got Post', { context: 'delete', user: toJson(req.user) });
+        post.user_id = anonUser.id;
+        post.save().then(function () {
+          log.info('Post Anonymize Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
+          queue.create('process-anonymization', { type: 'anonymize-post-content', postTitle: post.title, postId: post.id, includePoints: true,
+                                                  userId: req.user.id, useNotification: true }).priority('high').removeOnComplete(true).save();
+          res.sendStatus(200);
+        });
+      }).catch(function(error) {
+        sendPostOrError(res, null, 'delete', req.user, error);
+      });
+    } else {
+      log.error("Can't find anonymous user", { error: error });
+      res.sendStatus(500);
+    }
   });
 });
 

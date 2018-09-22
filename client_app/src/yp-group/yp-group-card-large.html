@@ -209,8 +209,8 @@
               <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               <a hidden$="[[!hasGroupAccess]]" target="_blank" href="/api/groups/[[group.id]]/export_group"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
-              <paper-item id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
-              <paper-item id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
               <paper-item id="addPostMenuItem">[[t('post.new')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
@@ -304,20 +304,24 @@
       },
 
       _menuSelection: function (event, detail) {
-        if (detail.item.id=="editMenuItem")
+        if (detail.item.id==="editMenuItem")
           this._openEdit();
-        else if (detail.item.id=="newCategoryMenuItem")
+        else if (detail.item.id==="newCategoryMenuItem")
           this._openCategoryEdit();
-        else if (detail.item.id=="deleteMenuItem")
+        else if (detail.item.id==="deleteMenuItem")
           this._openDelete();
-        else if (detail.item.id=="usersMenuItem")
+        else if (detail.item.id==="usersMenuItem")
           this._openUsersDialog();
-        else if (detail.item.id=="adminsMenuItem")
+        else if (detail.item.id==="adminsMenuItem")
           this._openAdminsDialog();
-        else if (detail.item.id=="pagesMenuItem")
+        else if (detail.item.id==="pagesMenuItem")
           this._openPagesDialog();
-        else if (detail.item.id=="addPostMenuItem")
+        else if (detail.item.id==="addPostMenuItem")
           this.fire('yp-post-new');
+        else if (detail.item.id==="deleteContentMenuItem")
+          this._openDeleteContent();
+        else if (detail.item.id==="anonymizeMenuItem")
+          this._openAnonymizeContent();
         this.$$("paper-listbox").select(null);
       },
 
@@ -355,11 +359,31 @@
 
       _openDelete: function () {
         window.appGlobals.activity('open', 'group.delete');
-        var dialog = Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/groups/' + this.group.id,
-            this.t('group.deleteConfirmation'),
+            this.t('groupDeleteConfirmation'),
             this._onDeleted.bind(this));
-          dialog.open();
+          dialog.open({finalDeleteWarning: true});
+        }.bind(this));
+      },
+
+      _openDeleteContent: function () {
+        window.appGlobals.activity('open', 'group.deleteContent');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/groups/' + this.group.id + '/delete_content',
+            this.t('groupDeleteContentConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open({finalDeleteWarning: true});
+        }.bind(this));
+      },
+
+      _openAnonymizeContent: function () {
+        window.appGlobals.activity('open', 'group.anonymize');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+          dialog.setup('/api/groups/' + this.group.id + '/anonymize_content',
+            this.t('groupAnonymizeConfirmation'),
+            this._onDeleted.bind(this));
+          dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },
 
