@@ -371,8 +371,7 @@
         window.appGlobals.activity('open', 'group.deleteContent');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/groups/' + this.group.id + '/delete_content',
-            this.t('groupDeleteContentConfirmation'),
-            this._onDeleted.bind(this));
+            this.t('groupDeleteContentConfirmation'));
           dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },
@@ -381,8 +380,7 @@
         window.appGlobals.activity('open', 'group.anonymize');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/groups/' + this.group.id + '/anonymize_content',
-            this.t('groupAnonymizeConfirmation'),
-            this._onDeleted.bind(this));
+            this.t('groupAnonymizeConfirmation'));
           dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },

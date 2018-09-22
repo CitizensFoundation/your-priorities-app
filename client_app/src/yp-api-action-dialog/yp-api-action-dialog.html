@@ -97,8 +97,11 @@
           this.$$("#apiAjax").generateRequest();
         } else {
           this.set('finalDeleteWarning', false);
-          this.set('confirmationText', this.t('finalDeleteWarning'))
-          this.$$("#confirmationDialog").open();
+          this.set('confirmationText', this.t('finalDeleteWarning'));
+          this.$$("#confirmationDialog").close();
+          this.async(() => {
+            this.$$("#confirmationDialog").open();
+          },10);
         }
       },
 

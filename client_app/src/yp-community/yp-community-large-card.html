@@ -391,7 +391,7 @@
           this.fire('yp-new-group');
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
-        else if (detail.item.id==="deleteContentItem")
+        else if (detail.item.id==="deleteContentMenuItem")
           this._openDeleteContent();
         this.$$("paper-listbox").select(null);
       },
@@ -451,8 +451,7 @@
         window.appGlobals.activity('open', 'community.deleteContents');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/communities/' + this.community.id + '/delete_content',
-            this.t('communityDeleteContentConfirmation'),
-            this._onDeleted.bind(this));
+            this.t('communityDeleteContentConfirmation'));
           dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },
@@ -461,8 +460,7 @@
         window.appGlobals.activity('open', 'community.anonymize');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/communities/' + this.community.id + '/anonymize_content',
-            this.t('communityAnonymizeConfirmation'),
-            this._onDeleted.bind(this));
+            this.t('communityAnonymizeConfirmation'));
           dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },

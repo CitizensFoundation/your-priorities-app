@@ -746,7 +746,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
         ).then(function (countInfo) {
           post.updateAllExternalCountersBy(req, 'down', 'counter_points', countInfo, function () {
             log.info('Post Deleted Point Counters updates', { numberDeleted: countInfo, context: 'delete', user: toJson(req.user) });
-            queue.create('process-deletion', { type: 'delete-post-content', postTitle: post.title, postId: post.id, includePoints: true,
+            queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
                                                userId: req.user.id}).priority('high').removeOnComplete(true).save();
             res.sendStatus(200);
           });
@@ -765,7 +765,7 @@ router.delete('/:id/delete_content', auth.can('edit post'), function(req, res) {
     where: {id: postId }
   }).then(function (post) {
     log.info('Post Deleted Post Content', { context: 'delete', user: toJson(req.user) });
-    queue.create('process-deletion', { type: 'delete-post-content', postTitle: post.title, postId: post.id, includePoints: true,
+    queue.create('process-deletion', { type: 'delete-post-content', postName: post.name, postId: post.id, includePoints: true,
                                        userId: req.user.id, useNotification: true,
                                        resetCounters: true}).priority('high').removeOnComplete(true).save();
     res.sendStatus(200);
@@ -786,7 +786,7 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
         post.user_id = anonUser.id;
         post.save().then(function () {
           log.info('Post Anonymize Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
-          queue.create('process-anonymization', { type: 'anonymize-post-content', postTitle: post.title, postId: post.id, includePoints: true,
+          queue.create('process-anonymization', { type: 'anonymize-post-content', postName: post.name, postId: post.id, includePoints: true,
                                                   userId: req.user.id, useNotification: true }).priority('high').removeOnComplete(true).save();
           res.sendStatus(200);
         });
