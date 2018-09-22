@@ -193,7 +193,7 @@
       }
 
       iron-list {
-        height: 100vh;
+        height: 80vh;
       }
 
       iron-list {
@@ -208,11 +208,18 @@
       #ironListMobile[debate-disabled] {
         margin-top: 16px;
       }
+
+      .mainSpinner {
+        margin: 32px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
-
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
+
+    <div class="layout horizontal center-center" hidden$="[[ajaxActive]]">
+      <yp-ajax id="ajax" large-spinner active$="{{ajaxActive}}" on-response="_response"></yp-ajax>
+    </div>
 
     <template is="dom-if" if="[[largeMode]]">
       <div class="layout vertical topContainer">
@@ -351,8 +358,7 @@
       </div>
     </template>
 
-    <div hidden class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+    <div class="layout vertical center-center">
       <yp-ajax id="newPointsAjax" on-response="_newPointsResponse"></yp-ajax>
       <yp-ajax id="newPointAjax" on-error="_newPointError" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
     </div>
@@ -480,6 +486,11 @@
           mobileScrollOffset: {
             type: Number,
             computed: '_mobileScrollOffset(largeMode,post)'
+          },
+
+          ajaxActive: {
+            type: Boolean,
+            value: false
           }
         },
 

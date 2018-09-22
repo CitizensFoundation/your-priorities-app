@@ -127,24 +127,35 @@
         retryMethodAfter401Login: {
           type: Function,
           value: null
+        },
+
+        active: {
+          type: Boolean,
+          reflectToAttribute: true,
+          notify: true
         }
       },
 
       _response: function (event) {
-        this.$.spinner.active = false;
+        this._setActive(false);
       },
 
       ready: function() {
         if (this.auto) {
-          this.$.spinner.active = true;
+          this._setActive(true);
         }
         if (this.largeSpinner) {
           this.$.spinner.toggleClass('large',true);
         }
       },
 
+      _setActive: function (active) {
+        this.set('active', active);
+        this.$.spinner.active = active;
+      },
+
       _error: function (event) {
-        this.$.spinner.active = false;
+        this._setActive(false);
         if (this.dispatchError) {
           event.stopPropagation();
           if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
@@ -170,7 +181,7 @@
       },
 
       generateRequest: function () {
-        this.$.spinner.active = true;
+        this._setActive(true);
         this.$.ajax.generateRequest();
       },
 
