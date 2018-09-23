@@ -780,7 +780,7 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
   getAnonymousUser((error, anonUser) => {
     if (anonUser && !error) {
       models.Post.find({
-        where: {id: postId }
+        where: { id: postId }
       }).then(function (post) {
         log.info('Post Anonymize Got Post', { context: 'delete', user: toJson(req.user) });
         post.user_id = anonUser.id;
