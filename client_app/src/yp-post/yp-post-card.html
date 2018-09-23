@@ -68,8 +68,16 @@
         height: 190px;
       }
 
+      .postCard[hide-post-cover][hide-actions] {
+        height: 165px;
+      }
+
+      .postCard[hide-post-cover][hide-description] {
+        height: 140px;
+      }
+
       .postCard[hide-description] {
-        height: 370px;
+        height: 372px;
       }
 
       .postCard[hide-description][hide-actions] {
@@ -78,6 +86,10 @@
 
       .postCard[hide-description][hide-post-cover][hide-actions] {
         height: 77px;
+      }
+
+      .postCard[hide-actions] {
+        height: 402px;
       }
 
       .postCard[mini] {
@@ -141,6 +153,22 @@
 
         .postCard[hide-description][hide-post-cover] {
           height: 134px;
+        }
+
+        .postCard[hide-post-cover][hide-actions] {
+          height: 180px;
+        }
+
+        .postCard[hide-description][hide-actions] {
+          height: 240px;
+        }
+
+        .postCard[hide-description][hide-post-cover][hide-actions] {
+          height: 77px;
+        }
+
+        .postCard[hide-actions] {
+          height: 402px;
         }
 
         .postCard[mini] {
@@ -292,37 +320,37 @@
                 if (post.name.length>200) {
                   postName.style.fontSize = "12px";
                 } else if (post.name.length>100) {
-                  postName.style.fontSize = "14px";
+                  postName.style.fontSize = "13px";
                 } else if (post.name.length>40) {
-                  postName.style.fontSize="17px";
+                  postName.style.fontSize="16px";
                 } else if (post.name.length>20) {
-                  postName.style.fontSize="19px";
+                  postName.style.fontSize="18px";
                 } else {
-                  postName.style.fontSize="20px";
+                  postName.style.fontSize="19px";
                 }
               } else if (!this.wide) {
                 if (post.name.length>200) {
-                  postName.style.fontSize = "14px";
+                  postName.style.fontSize = "13px";
                 } else if (post.name.length>100) {
-                  postName.style.fontSize = "16px";
+                  postName.style.fontSize = "15px";
                 } else if (post.name.length>40) {
-                  postName.style.fontSize="20px";
+                  postName.style.fontSize="16px";
                 } else if (post.name.length>20) {
-                  postName.style.fontSize="23px";
+                  postName.style.fontSize="21px";
                 } else {
-                  postName.style.fontSize="25px";
+                  postName.style.fontSize="22px";
                 }
               } else {
                 if (post.name.length>200) {
                   postName.style.fontSize = "15px";
                 } else if (post.name.length>100) {
-                  postName.style.fontSize = "19px";
+                  postName.style.fontSize = "18px";
                 } else if (post.name.length>40) {
-                  postName.style.fontSize="20px";
+                  postName.style.fontSize="19px";
                 } else if (post.name.length>20) {
-                  postName.style.fontSize="25px";
+                  postName.style.fontSize="22px";
                 } else {
-                  postName.style.fontSize="28px";
+                  postName.style.fontSize="24px";
                 }
               }
             }

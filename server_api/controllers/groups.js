@@ -179,6 +179,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hidePostDescription', truthValueFromBody(req.body.hidePostDescription));
   group.set('configuration.hideDebateIcon', truthValueFromBody(req.body.hideDebateIcon));
   group.set('configuration.disablePostPageLink', truthValueFromBody(req.body.disablePostPageLink));
+  group.set('configuration.hidePostActionsInGrid', truthValueFromBody(req.body.hidePostActionsInGrid));
 };
 
 var upload = multer({
