@@ -72,8 +72,12 @@
         height: 370px;
       }
 
-      .postCard[hide-description][hide-post-cover] {
-        height: 134px;
+      .postCard[hide-description][hide-actions] {
+        height: 311px;
+      }
+
+      .postCard[hide-description][hide-post-cover][hide-actions] {
+        height: 77px;
       }
 
       .postCard[mini] {
@@ -185,6 +189,7 @@
 
     <paper-material mini$="[[mini]]" hide-post-cover$="[[post.Group.configuration.hidePostCover]]"
                     hide-description$="[[post.Group.configuration.hidePostDescription]]"
+                    hide-actions$="[[post.Group.configuration.hidePostActionsInGrid]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
         <yp-post-cover-media mini$="[[mini]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
@@ -199,7 +204,9 @@
                        text-type="postContent" content-language="[[post.language]]"
                        text-only content="[[post.description]]" content-id="[[post.id]]" truncate="100">
         </yp-magic-text>
-        <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+        <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]">
+          <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+        </div>
       </div>
     </paper-material>
   </template>
