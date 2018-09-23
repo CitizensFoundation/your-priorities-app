@@ -1,4 +1,5 @@
 {
+  "hidePostActionsInGrid": "Hide post actions in list",
   "anonymizePostContentDone": "Anonymization of post content completed for",
   "anonymizePostContentError": "Error in anonymizing post content for",
   "anonymizeGroupContentDone": "Anonymization of posts completed for",
