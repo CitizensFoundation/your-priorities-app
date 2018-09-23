@@ -693,7 +693,8 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
       group.deleted = true;
       group.save().then(function () {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
-        queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name, userId: req.user.id, groupId: group.id }).priority('high').removeOnComplete(true).save();
+        queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
+                                           userId: req.user.id, groupId: group.id }).priority('high').removeOnComplete(true).save();
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {
           res.sendStatus(200);
         });

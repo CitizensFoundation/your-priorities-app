@@ -440,7 +440,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
 
 router.delete('/:id', auth.can('delete point'), function(req, res) {
   models.Point.find({
-    where: {id: req.params.id },
+    where: { id: req.params.id },
     include: [{
       model: models.Post,
       required: false
@@ -463,53 +463,6 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
     sendPointOrError(res, null, 'delete', req.user, error);
   });
 });
-
-/*
-router.delete('/:id', auth.can('delete point'), function(req, res) {
-  models.Point.find({
-    where: {id: req.params.id }
-  }).then(function (point) {
-    models.AcActivity.findAll({
-      attributes: ['id','deleted'],
-      where: {
-        point_id: point.id
-      }
-    }).then(function (activities) {
-      var activityIds = _.map(activities, function (activity) {
-        return activity.id;
-      });
-      models.AcActivity.update(
-        { deleted: true },
-        { where: {
-            id: {
-              $in: activityIds
-            }
-          }
-        }
-      ).then(function (spread) {
-        point.deleted = true;
-        point.save().then(function () {
-          log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
-          if (point.post_id) {
-            models.Post.find({
-              where: { id: point.post_id }
-            }).then(function(post) {
-              post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
-                post.decrement('counter_points');
-                res.sendStatus(200);
-              });
-            });
-          } else {
-            res.sendStatus(200);
-          }
-        });
-      });
-    });
-  }).catch(function(error) {
-    sendPointOrError(res, null, 'delete', req.user, error);
-  });
-});
- */
 
 router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
   var point, post;
