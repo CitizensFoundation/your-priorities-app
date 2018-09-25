@@ -140,14 +140,10 @@
     },
 
     open: function(token) {
-      if (this.$.dialog.opened && this.token) {
-        console.error("Dialog already open");
-      } else {
-        if (token)
-          this.set('token', token);
-        this._checkInviteSender();
-        this.$.dialog.open();
-      }
+      if (token)
+        this.set('token', token);
+      this._checkInviteSender();
+      this.$.dialog.open();
     },
 
     close: function() {

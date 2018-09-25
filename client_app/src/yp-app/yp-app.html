@@ -394,7 +394,8 @@
 
         routeData: {
           type: Object,
-          observer: '_routePageChanged'
+          observer: '_routePageChanged',
+          value: null
         },
 
         subRoute: Object,
@@ -625,7 +626,7 @@
 
           if (this.route.path.indexOf('/user/reset_password') > -1) {
             this.openResetPasswordDialog(params[params.length-1]);
-          } else if (this.route.path.indexOf('/user/accept/invite') > -1) {
+          } else if (pageData && this.route.path.indexOf('/user/accept/invite') > -1) {
             this.openAcceptInvitationDialog(params[params.length-1]);
           } else if (this.route.path.indexOf('/user/open_notification_settings') > -1) {
             this.openUserNotificationsDialog();
