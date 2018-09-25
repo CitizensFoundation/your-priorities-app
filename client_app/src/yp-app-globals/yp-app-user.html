@@ -233,7 +233,7 @@
           } else if (this.loginForAcceptInviteParams) {
             var acceptInviteParams = this.loginForAcceptInviteParams;
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("acceptInvite", function (dialog) {
-              dialog.open(acceptInviteParams.token);
+              dialog.reOpen(acceptInviteParams.token);
               dialog.afterLogin(acceptInviteParams.token);
               this.loginForAcceptInviteParams = null;
             }.bind(this));

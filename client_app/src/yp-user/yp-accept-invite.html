@@ -97,13 +97,15 @@
     },
 
     _checkInviteSender: function(e) {
-      debugger;
-      this.$.getInviteSenderAjax.url = '/api/users/get_invite_info/'+this.token;
-      this.$.getInviteSenderAjax.generateRequest();
+      if (this.token) {
+        this.$.getInviteSenderAjax.url = '/api/users/get_invite_info/'+this.token;
+        this.$.getInviteSenderAjax.generateRequest();
+      } else {
+        console.warn("Can't find token for _checkInviteSender");
+      }
     },
 
     _acceptInvite: function(e) {
-      debugger;
       if (window.appUser && window.appUser.loggedIn()===true) {
         this._reallyAcceptInvite();
       } else {
@@ -112,7 +114,6 @@
     },
 
     afterLogin: function (token) {
-      debugger;
       if (!this.token) {
         this.set('token', token);
       }
@@ -120,7 +121,6 @@
     },
 
     _reallyAcceptInvite: function(e) {
-      debugger;
       this.$.acceptInviteAjax.url = '/api/users/accept_invite/'+this.token;
       this.$.acceptInviteAjax.body = {};
       this.$.acceptInviteAjax.generateRequest();
@@ -133,9 +133,9 @@
     },
 
     _acceptInviteResponse: function(event, detail) {
-      debugger;
       window.appGlobals.notifyUserViaToast(this.t('notification.invite_accepted_for')+' '+detail.response.name);
       console.debug("_acceptInviteResponse: redirectTo: "+detail.response.redirectTo);
+      this.set('')
       this.close();
       this.redirectTo(detail.response.redirectTo);
     },
@@ -149,6 +149,13 @@
       if (token)
         this.set('token', token);
       this._checkInviteSender();
+      this.$.dialog.open();
+    },
+
+    reOpen: function(token) {
+      console.info("Repened user yp-accept-invite");
+      if (token)
+        this.set('token', token);
       this.$.dialog.open();
     },
 
