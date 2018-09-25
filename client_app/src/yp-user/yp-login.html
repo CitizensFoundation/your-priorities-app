@@ -148,6 +148,10 @@
         background-color: #fff;
       }
 
+      #scrollable {
+        height: 100%;
+      }
+
       re-captcha {
         padding-top: 28px;
         padding-bottom: 28px;
@@ -184,8 +188,18 @@
 
       .buttons {
         margin-bottom: 0;
-        padding-bottom: 8px;
+        padding-bottom: 10px;
         font-size: 15px;
+      }
+
+      .boldButton {
+        font-weight: bold;
+      }
+
+      @media (min-height:600px) {
+        iron-form {
+          min-height: 314px;
+        }
       }
 
       @media (max-width: 480px) {
@@ -374,7 +388,7 @@
         <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
         <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
         <paper-button on-tap="_forgotPassword">[[t('user.newPassword')]]</paper-button>
-        <paper-button autofocus on-tap="_validateAndSend">[[submitText]]</paper-button>
+        <paper-button autofocus raised class="boldButton" on-tap="_validateAndSend">[[submitText]]</paper-button>
       </div>
 
     </paper-dialog>
