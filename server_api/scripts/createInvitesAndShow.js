@@ -5,10 +5,10 @@ const _ = require('lodash');
 const toJson = require('../utils/to_json');
 var crypto = require("crypto");
 
-const communityId = 777; //process.argv[2];
-const senderUserId = 870; //process.argv[3];
-const numberOfInvites = 10; //process.argv[4];
-const masterCampaignName = "Aðalfundur Pírata 2018";//;process.argv[5];
+const communityId = process.argv[2];
+const senderUserId = process.argv[3];
+const numberOfInvites = process.argv[4];
+const masterCampaignName = process.argv[5];
 
 const createOneInvite = (campaignName, inviteEmail, callback) => {
   let community, invite, registeredUser, senderUser, token, inviteUrl;
@@ -72,7 +72,7 @@ const createOneInvite = (campaignName, inviteEmail, callback) => {
     (seriesCallback) => {
       models.Invite.create({
         token: token,
-        expires_at: Date.now() + (3600000*24*30*365*1000),
+        expires_at: Date.now() + (3600000*24*30),
         type: models.Invite.INVITE_TO_COMMUNITY,
         community_id: communityId,
         user_id: registeredUser ? registeredUser.id : null,
@@ -110,7 +110,7 @@ const createOneInvite = (campaignName, inviteEmail, callback) => {
       inviteUrl = 'https://'+community.hostname+'.'+community.Domain.domain_name+'/user/accept/invite/'+token;
       seriesCallback();
     }
-  ], function(error) {
+  ], (error) => {
     if (error) {
       callback(error);
     } else {
@@ -121,7 +121,7 @@ const createOneInvite = (campaignName, inviteEmail, callback) => {
 
 let counter = 0;
 let urls = [];
-async.whilst(() => { return (counter+=1)<numberOfInvites+1 }, (whilstCallback) => {
+async.whilst(() => { return (counter+=1)<=numberOfInvites }, (whilstCallback) => {
   createOneInvite(masterCampaignName, null, (error, inviteUrl) => {
     if (inviteUrl) {
       urls.push(inviteUrl);
