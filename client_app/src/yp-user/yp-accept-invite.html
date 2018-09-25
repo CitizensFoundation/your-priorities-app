@@ -135,7 +135,6 @@
     _acceptInviteResponse: function(event, detail) {
       window.appGlobals.notifyUserViaToast(this.t('notification.invite_accepted_for')+' '+detail.response.name);
       console.debug("_acceptInviteResponse: redirectTo: "+detail.response.redirectTo);
-      this.set('')
       this.close();
       this.redirectTo(detail.response.redirectTo);
     },
