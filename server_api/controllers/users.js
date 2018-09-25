@@ -577,7 +577,6 @@ router.delete('/delete_current_user', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('Deleting user', { user: toJson(req.user), context: 'delete_current_user'});
     var userId = req.user.id;
-    req.logOut();
     models.User.find({
       where: {
         id: userId
@@ -587,36 +586,13 @@ router.delete('/delete_current_user', function (req, res) {
         user.deleted = true;
         user.email = user.email+"_deleted_"+Math.floor(Math.random() * 9000);
         user.save().then(function () {
-          models.Endorsement.findAll({
-            where: {
-              user_id: user.id
-            },
-            include: [
-              {
-                model: models.Post
-              }
-            ]
-          }).then(function (endorsements) {
-            async.forEach(endorsements, function (endorsement, forEachCallback) {
-              if (endorsement.value===1) {
-                endorsement.Post.decrement('counter_endorsements_up');
-              } else {
-                endorsement.Post.decrement('counter_endorsements_down');
-              }
-              endorsement.deleted = true;
-              endorsement.save().then(function () {
-                forEachCallback();
-              });
-            }, function (error) {
-              if (error) {
-                log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
-                res.sendStatus(500);
-              } else {
-                log.info('User deleted', { user: toJson(req.user), context: 'delete_current_user'});
-                res.sendStatus(200);
-              }
-            });
-          });
+          log.info('User deleted', { context: 'delete', user: toJson(req.user) });
+          queue.create('process-deletion', { type: 'delete-user-content', userId: userId }).priority('high').removeOnComplete(true).save();
+          req.logOut();
+          res.sendStatus(200);
+        }).catch((error) => {
+          log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+          res.sendStatus(500);
         });
       } else {
         log.error('User delete user not found', { error: error, user: toJson(req.user), context: 'delete_current_user'});
@@ -628,6 +604,41 @@ router.delete('/delete_current_user', function (req, res) {
     });
   } else {
     log.error('Trying to delete user but not logged in', { user: toJson(req.user), context: 'delete_current_user'});
+    res.sendStatus(401);
+  }
+});
+
+router.delete('/anonymize_current_user', function (req, res) {
+  if (req.isAuthenticated()) {
+    log.info('Anonymizing user', { user: toJson(req.user), context: 'delete_current_user'});
+    var userId = req.user.id;
+    models.User.find({
+      where: {
+        id: userId
+      }
+    }).then(function (user) {
+      if (user) {
+        user.email = user.email+"_anonymized_"+Math.floor(Math.random() * 90000);
+        user.name = "Anonymous";
+        user.save().then(function () {
+          log.info('User anonymized', { context: 'delete', user: toJson(req.user) });
+          queue.create('process-deletion', { type: 'anonymize-user-content', userId: userId }).priority('high').removeOnComplete(true).save();
+          req.logOut();
+          res.sendStatus(200);
+        }).catch((error) => {
+          log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+          res.sendStatus(500);
+        });
+      } else {
+        log.error('User anonymize user not found', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+        res.sendStatus(404);
+      }
+    }).catch(function (error) {
+      log.error('User anonymization error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+      res.sendStatus(500);
+    });
+  } else {
+    log.error('Trying to anonymize user but not logged in', { user: toJson(req.user), context: 'delete_current_user'});
     res.sendStatus(401);
   }
 });
