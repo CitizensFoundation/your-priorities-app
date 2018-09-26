@@ -8,6 +8,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
+var queue = require('../active-citizen/workers/queue');
 
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
@@ -620,13 +621,40 @@ router.delete('/anonymize_current_user', function (req, res) {
       if (user) {
         user.email = user.email+"_anonymized_"+Math.floor(Math.random() * 90000);
         user.name = "Anonymous";
-        user.save().then(function () {
-          log.info('User anonymized', { context: 'delete', user: toJson(req.user) });
-          queue.create('process-deletion', { type: 'anonymize-user-content', userId: userId }).priority('high').removeOnComplete(true).save();
-          req.logOut();
-          res.sendStatus(200);
+        user.ssn = null;
+        user.age_group = null;
+        user.post_code = null;
+        user.my_gender = null;
+        user.description = null;
+        user.facebook_id = null;
+        user.facebook_profile = null;
+        user.twitter_id = null;
+        user.twitter_profile = null;
+        user.google_id = null;
+        user.google_profile = null;
+        user.github_id = null;
+        user.github_profile = null;
+        user.counter_login = 0;
+        user.buddy_icon_file_name = null;
+        user.twitter_profile_image_url = null;
+        user.interaction_profile = null;
+        user.social_points = null;
+        user.legacy_user_id = null;
+        user.ignore_list = null;
+        user.setUserProfileImages([]).then(() => {
+          user.save().then(function () {
+            log.info('User anonymized', { context: 'delete', user: toJson(req.user) });
+            queue.create('process-anonymization', { type: 'anonymize-user-content', userId: userId }).priority('high').removeOnComplete(true).save();
+            req.logOut();
+            res.sendStatus(200);
+          }).catch((error) => {
+            log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+            req.logOut();
+            res.sendStatus(500);
+          });
         }).catch((error) => {
           log.error('User delete error', { error: error, user: toJson(req.user), context: 'delete_current_user'});
+          req.logOut();
           res.sendStatus(500);
         });
       } else {

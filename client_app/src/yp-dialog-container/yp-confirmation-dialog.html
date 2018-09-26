@@ -54,9 +54,14 @@
         this.set('onConfirmedFunction', null);
       },
 
-      open: function (confirmationText, onConfirmedFunction) {
+      open: function (confirmationText, onConfirmedFunction, useModal) {
         this.set('confirmationText', confirmationText);
         this.set('onConfirmedFunction', onConfirmedFunction);
+        if (useModal) {
+          this.$$("#confirmationDialog").modal = true;
+        } else {
+          this.$$("#confirmationDialog").modal = false;
+        }
         this.$$("#confirmationDialog").open();
       },
 
