@@ -398,9 +398,11 @@
           } else {
             this.set('endorsementButtons', "hearts");
           }
-          this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
-          if (post.Group.configuration && post.Group.configuration.hideVoteCountUntilVoteCompleted) {
-            this.set('post.Group.configuration.hideVoteCount', true);
+          if (post.Group.configuration) {
+            this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
+            if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
+              this.set('post.Group.configuration.hideVoteCount', true);
+            }
           }
           this._updateEndorsements(post);
         } else {
