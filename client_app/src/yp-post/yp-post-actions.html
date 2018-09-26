@@ -398,11 +398,11 @@
           } else {
             this.set('endorsementButtons', "hearts");
           }
-          this._updateEndorsements(post);
+          this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
           if (post.Group.configuration && post.Group.configuration.hideVoteCountUntilVoteCompleted) {
-            this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
             this.set('post.Group.configuration.hideVoteCount', true);
           }
+          this._updateEndorsements(post);
         } else {
           console.warn("No post found for post actions");
         }
@@ -455,6 +455,11 @@
 
         if (value>0) {
           this.set('isEndorsed', true);
+        }
+
+        if (value !== 0 && this.post.Group.configuration &&
+          (this.post.Group.configuration.hideVoteCount && !this.post.Group.configuration.originalHideVoteCount)) {
+          this.set('post.Group.configuration.hideVoteCount', false);
         }
 
         if (this.endorsementButtons=='hearts') {
