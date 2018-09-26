@@ -134,7 +134,12 @@
 
         canUseAutoTranslate: {
           type: Boolean,
-          computed: '_canUseAutoTranslate(language, hasServerAutoTranslation)'
+          computed: '_canUseAutoTranslate(language, hasServerAutoTranslation, autoTranslateOptionDisabled)'
+        },
+
+        autoTranslateOptionDisabled: {
+          type: Boolean,
+          value: false
         },
 
         autoTranslate: {
@@ -203,8 +208,8 @@
         window.appGlobals.activity('click', 'startTranslation', this.language);
       },
 
-      _canUseAutoTranslate: function (language, hasServerAutoTranslation) {
-        if (language && hasServerAutoTranslation && !this.noUserEvents) {
+      _canUseAutoTranslate: function (language, hasServerAutoTranslation, autoTranslateOptionDisabled) {
+        if (!autoTranslateOptionDisabled && language && hasServerAutoTranslation && !this.noUserEvents) {
           var found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
           return !found;
         } else {

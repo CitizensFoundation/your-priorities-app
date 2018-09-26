@@ -46,6 +46,10 @@
       .hasPointer {
         cursor: pointer;
       }
+      paper-button {
+        margin-top: 12px;
+        margin-bottom: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -58,8 +62,8 @@
           <div class="name">[[user.name]]</div>
           <div class="email">[[user.email]]</div>
           <div class="layout vertical center-justified buttons">
-            <paper-button icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit">[[t('user.edit')]]</paper-button>
-            <paper-button icon="input" title$="[[t('user.logout')]]" on-tap="onLogout">[[t('user.logout')]]</paper-button>
+            <paper-button raised icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit">[[t('user.edit')]]</paper-button>
+            <paper-button raised icon="input" title$="[[t('user.logout')]]" on-tap="onLogout">[[t('user.logout')]]</paper-button>
           </div>
         </div>
       </div>

@@ -784,6 +784,7 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
       }).then(function (post) {
         log.info('Post Anonymize Got Post', { context: 'delete', user: toJson(req.user) });
         post.user_id = anonUser.id;
+        post.ip_address = '127.0.0.1';
         post.save().then(function () {
           log.info('Post Anonymize Completed', { post: toJson(post), context: 'delete', user: toJson(req.user) });
           queue.create('process-anonymization', { type: 'anonymize-post-content', postName: post.name, postId: post.id, includePoints: true,

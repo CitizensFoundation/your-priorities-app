@@ -43,6 +43,11 @@
       h2 {
         padding-top: 16px;
       }
+
+      #deleteUser {
+        max-width: 250px;
+        color: #F00;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -82,11 +87,9 @@
             </div>
           </div>
 
-          <yp-language-selector name="defaultLocale" selected-locale="{{user.default_locale}}"></yp-language-selector>
+          <yp-language-selector name="defaultLocale" auto-translate-option-disabled selected-locale="{{user.default_locale}}"></yp-language-selector>
 
-          <paper-button id="deleteUser" raised on-tap="_deleteUser">[[t('deleteUser')]]</paper-button>
-
-          <yp-ajax id="deleteUserAjax" on-response="_deleteCompleted" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
+          <paper-button id="deleteUser" raised on-tap="_deleteOrAnonymizeUser">[[t('deleteOrAnonymizeUser')]]</paper-button>
 
           <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
           <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
@@ -162,33 +165,6 @@
       'yp-notifications-changed': '_setNotificationSettings'
     },
 
-    _deleteUser: function () {
-      Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-        dialog.open(this.t('areYouSureYouWantToDeleteUser'), this._deleteUserFinalWarning.bind(this));
-      }.bind(this));
-    },
-
-    _deleteUserFinalWarning: function () {
-      this.async(function () {
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouReallySureYouWantToDeleteUser'), this._deleteUserForReals.bind(this));
-        }.bind(this));
-      });
-    },
-
-    _deleteUserForReals: function () {
-      this.$.deleteUserAjax.body = {};
-      this.$.deleteUserAjax.generateRequest();
-    },
-
-    _deleteCompleted: function () {
-      this._clear();
-      this.$$("#editDialog").close();
-      this.async(function () {
-        window.location.reload();
-      }, 100);
-    },
-
     _setNotificationSettings: function (event, detail) {
       this.set('notificationSettings', detail);
       this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
@@ -251,6 +227,12 @@
         this.editHeaderText = this.t('user.edit');
         this.toastText = this.t('userToastUpdated');
       }
+    },
+
+    _deleteOrAnonymizeUser: function () {
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("userDeleteOrAnonymize", function (dialog) {
+        dialog.open();
+      }.bind(this));
     }
   });
 </script>

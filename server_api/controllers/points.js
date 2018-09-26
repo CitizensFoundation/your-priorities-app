@@ -204,7 +204,6 @@ router.put('/:id/report', auth.can('vote on point'), function (req, res) {
   })
 });
 
-
 router.get('/:parentPointId/comments', auth.can('view point'), function(req, res) {
   models.Point.findAll({
     where: {
@@ -626,7 +625,5 @@ router.get('/url_preview', auth.isLoggedIn, function(req, res) {
     res.sendStatus(404);
   }
 });
-
-
 
 module.exports = router;
