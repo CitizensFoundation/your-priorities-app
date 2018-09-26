@@ -37,7 +37,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog id="dialog">
+    <paper-dialog id="dialog" modal>
       <h3>[[t('user.acceptInvite')]]</h3>
 
       <div class="layout vertical">
@@ -97,8 +97,12 @@
     },
 
     _checkInviteSender: function(e) {
-      this.$.getInviteSenderAjax.url = '/api/users/get_invite_info/'+this.token;
-      this.$.getInviteSenderAjax.generateRequest();
+      if (this.token) {
+        this.$.getInviteSenderAjax.url = '/api/users/get_invite_info/'+this.token;
+        this.$.getInviteSenderAjax.generateRequest();
+      } else {
+        console.warn("Can't find token for _checkInviteSender");
+      }
     },
 
     _acceptInvite: function(e) {
@@ -131,8 +135,8 @@
     _acceptInviteResponse: function(event, detail) {
       window.appGlobals.notifyUserViaToast(this.t('notification.invite_accepted_for')+' '+detail.response.name);
       console.debug("_acceptInviteResponse: redirectTo: "+detail.response.redirectTo);
-      this.redirectTo(detail.response.redirectTo);
       this.close();
+      this.redirectTo(detail.response.redirectTo);
     },
 
     _cancel: function () {
@@ -140,9 +144,17 @@
     },
 
     open: function(token) {
+      console.info("Opened user yp-accept-invite");
       if (token)
         this.set('token', token);
       this._checkInviteSender();
+      this.$.dialog.open();
+    },
+
+    reOpen: function(token) {
+      console.info("Repened user yp-accept-invite");
+      if (token)
+        this.set('token', token);
       this.$.dialog.open();
     },
 

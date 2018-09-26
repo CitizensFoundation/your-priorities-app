@@ -394,7 +394,8 @@
 
         routeData: {
           type: Object,
-          observer: '_routePageChanged'
+          observer: '_routePageChanged',
+          value: null
         },
 
         subRoute: Object,
@@ -616,38 +617,40 @@
       },
 
       _routePageChanged: function(pageData, oldPageData) {
-        var params = this.route.path.split('/');
+        if (pageData) {
+          var params = this.route.path.split('/');
 
-        if (this.route.path.indexOf('/user/reset_password') > -1 ||
-          this.route.path.indexOf('/user/open_notification_settings') > -1 ||
-          this.route.path.indexOf('/user/accept/invite') > -1 ||
-          this.route.path.indexOf('/user/info_page') > -1) {
+          if (this.route.path.indexOf('/user/reset_password') > -1 ||
+            this.route.path.indexOf('/user/open_notification_settings') > -1 ||
+            this.route.path.indexOf('/user/accept/invite') > -1 ||
+            this.route.path.indexOf('/user/info_page') > -1) {
 
-          if (this.route.path.indexOf('/user/reset_password') > -1) {
-            this.openResetPasswordDialog(params[params.length-1]);
-          } else if (this.route.path.indexOf('/user/accept/invite') > -1) {
-            this.openAcceptInvitationDialog(params[params.length-1]);
-          } else if (this.route.path.indexOf('/user/open_notification_settings') > -1) {
-            this.openUserNotificationsDialog();
-          } else if (this.route.path.indexOf('/user/info_page') > -1) {
-            this.openUserInfoPage(params[params.length-1]);
-            window.history.pushState({}, null, "/");
-            window.dispatchEvent(new CustomEvent('location-changed'));
-          }
-        } else {
+            if (this.route.path.indexOf('/user/reset_password') > -1) {
+              this.openResetPasswordDialog(params[params.length-1]);
+            } else if (pageData && pageData.page==="user" && this.route.path.indexOf('/user/accept/invite') > -1) {
+              this.openAcceptInvitationDialog(params[params.length-1]);
+            } else if (this.route.path.indexOf('/user/open_notification_settings') > -1) {
+              this.openUserNotificationsDialog();
+            } else if (this.route.path.indexOf('/user/info_page') > -1) {
+              this.openUserInfoPage(params[params.length-1]);
+              window.history.pushState({}, null, "/");
+              window.dispatchEvent(new CustomEvent('location-changed'));
+            }
+          } else {
 
-          var map = this._scrollPositionMap;
+            var map = this._scrollPositionMap;
 
-          if (oldPageData != null && oldPageData.page != null) {
-            map[oldPageData.page] = window.pageYOffset;
-          }
+            if (oldPageData != null && oldPageData.page != null) {
+              map[oldPageData.page] = window.pageYOffset;
+            }
 
-          this.page = pageData.page;
+            this.page = pageData.page;
 
-          if (map[pageData.page] != null) {
-            Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
-          } else if (this.isAttached) {
-            Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+            if (map[pageData.page] != null) {
+              Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
+            } else if (this.isAttached) {
+              Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+            }
           }
         }
       },
@@ -685,6 +688,7 @@
       },
 
       openAcceptInvitationDialog: function (inviteToken) {
+        debugger;
         this.getDialogAsync("acceptInvite", function (dialog) {
           dialog.open(inviteToken);
         }.bind(this));
