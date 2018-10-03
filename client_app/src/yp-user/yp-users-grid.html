@@ -21,6 +21,7 @@
     <style include="iron-flex iron-flex-alignment">
       #dialog {
         width: 90%;
+        max-width: 1024px;
         background-color: #FFF;
       }
 
@@ -251,7 +252,8 @@
         userIdForSelectingOrganization: Number,
 
         selectedUsers: {
-          type: Array
+          type: Array,
+          notify: true
         },
 
         selectedUsersCount: {
@@ -261,7 +263,8 @@
 
         selectedUsersEmpty: {
           type: Boolean,
-          value: true
+          value: true,
+          observer: '_sc'
         },
 
         totalUserCount: {
@@ -282,7 +285,12 @@
         }
       },
 
+      _sc: function (v) {
+        console.error(v);
+      },
+
       _selectedUsersChanged: function () {
+        console.error(this.selectedUsers);
         if (this.selectedUsers && this.selectedUsers.length>0) {
           this.set('selectedUsersEmpty', false);
           this.set('selectedUsersCount', this.selectedUsers.length);
@@ -461,8 +469,9 @@
 
       _usersResponse: function (event, detail) {
         this.set('users', detail.response);
-        this.set('selectedUsers', null);
+        this.$.grid.clearCache();
         this.set('selectedUsersCount', 0);
+        this.set('selectedUsersEmpty', true);
       },
 
       setup: function (groupId, communityId, domainId, adminUsers) {
