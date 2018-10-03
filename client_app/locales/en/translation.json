@@ -1,4 +1,11 @@
 {
+  "removeSelectedAdmins": "Remove admin rights from:",
+  "users": "users",
+  "deleteSelectedUsers": "Delete selected:",
+  "anonymizeSelectedUsers": "Anonymize selected:",
+  "anonymizeUser": "Anonymize user",
+  "email": "Email",
+  "organization": "Organization",
   "areYouSureYouWantToAnonymizeUser": "Are you sure you want to anonymize your account?",
   "areYouReallySureYouWantToAnonymizeUser": "Are you 100% sure you want to anonymize your account? All your posts, points, comments and endorsements will be anonymized",
   "deleteAccount": "Delete Account",
@@ -477,13 +484,13 @@
 
   "users": {
     "userInvited": "User Invited",
-    "removeAdmin": "Remove admin",
+    "removeAdmin": "Remove admin rights",
     "addAdmin": "Add admin",
     "removeUser": "Remove user",
     "inviteUser": "Invite user",
     "email": "email",
-    "removeFromOrganization": "Remove",
-    "addToOrganization": "Organization",
+    "removeFromOrganization": "Remove organization",
+    "addToOrganization": "Add organization",
     "selectOrganization": "Select organization"
   },
 

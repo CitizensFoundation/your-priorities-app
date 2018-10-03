@@ -9,6 +9,9 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html" >
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
 
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html" >
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid-selection-column.html" >
+
 <link rel="import" href="../yp-ajax/yp-ajax.html" >
 
 <link rel="import" href="yp-user-image.html" >
@@ -17,7 +20,7 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
-        width: 800px;
+        width: 90%;
         background-color: #FFF;
       }
 
@@ -60,6 +63,22 @@
       [hidden] {
         display: none !important;
       }
+
+      paper-listbox {
+        margin-right: 8px !important;
+      }
+
+      @media (max-width: 600px) {
+        paper-listbox {
+          margin-right: 8px;
+        }
+
+        #dialog {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -79,52 +98,76 @@
     </paper-dialog>
 
     <paper-dialog id="dialog">
-      <h2>[[headerText]]</h2>
-      <paper-dialog-scrollable>
-        <iron-list items="[[users]]" as="user">
+      <h2>[[headerText]]: <span hidden$="[[!totalUserCount]]">[[totalUserCount]]</span></h2>
+
+      <vaadin-grid id="grid" aria-label="[[headerText]]" items="[[users]]" selected-items="{{selectedUsers}}">
+        <vaadin-grid-selection-column auto-select>
+        </vaadin-grid-selection-column>
+
+        <vaadin-grid-column width="60px" flex-grow="0">
+          <template class="header">#</template>
+          <template>[[item.id]]</template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column>
+          <template class="header">[[t('name')]]</template>
+          <template>[[item.name]]</template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column>
+          <template class="header">[[t('email')]]</template>
+          <template>[[item.email]]</template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column>
+          <template class="header">[[t('organization')]]</template>
           <template>
-            <div class="layout horizontal">
-              <div class="userItem id">
-                [[user.id]]
-              </div>
-              <div class="userItem name">
-                [[user.name]]
-              </div>
-              <div class="userItem email">
-                [[user.email]]
-              </div>
-              <template is="dom-if" if="[[!_userOrganizationName(user)]]">
-                <div class="organization">
-                  <paper-button data-args$="[[user.id]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-button>
-                </div>
-              </template>
-              <div class="organization" hidden$="[[!_userOrganizationName(user)]]">
-                <div class="organizationName">
-                  [[_userOrganizationName(user)]]
-                </div>
-                <paper-button data-args$="[[user.id]]" data-args-org$="[[_userOrganizationId(user)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-button>
-              </div>
-              <div hidden$="[[!adminUsers]]" class="addRemoveButtons">
-                <paper-button data-args$="[[user.id]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-button>
-              </div>
-              <div hidden$="[[adminUsers]]">
-                <paper-button data-args$="[[user.id]]" on-tap="_removeUser">[[t('users.removeUser')]]</paper-button>
+            <div class="organization" hidden$="[[!_userOrganizationName(item)]]">
+              <div class="organizationName">
+                [[_userOrganizationName(item)]]
               </div>
             </div>
           </template>
-        </iron-list>
-      </paper-dialog-scrollable>
-      <div hidden$="[[!adminUsers]]" class="layout horizontal">
-        <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
-        <paper-button on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
-      </div>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="70px" flex-grow="0">
+          <template class="header">
+            <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedUsersEmpty]]">
+              <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
+              <paper-listbox slot="dropdown-content">
+                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_deleteSelectedUsers">[[t('deleteSelectedUsers')]] [[selectedUsersCount]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_anonymizeSelectedUsers">[[t('anonymizeSelectedUsers')]] [[selectedUsersCount]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeSelectedAdmins">[[t('removeSelectedAdmins')]] [[selectedUsersCount]]</paper-item>
+              </paper-listbox>
+            </paper-menu-button>
+          </template>
+          <template>
+            <paper-menu-button horizontal-align="right" class="helpButton">
+              <paper-icon-button icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content">
+                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_deleteUser">[[t('deleteUser')]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_anonymizeUser">[[t('anonymizeUser')]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[_userOrganizationName(item)]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[!_userOrganizationName(item)]]" data-args-org$="[[_userOrganizationId(item)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-item>
+              </paper-listbox>
+            </paper-menu-button>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
+
       <div hidden$="[[adminUsers]]" class="layout horizontal">
         <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
         <paper-button on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
       </div>
 
+      <div hidden$="[[!adminUsers]]" class="layout horizontal">
+        <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
+        <paper-button on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
+      </div>
+
       <div class="buttons">
-        <paper-button dialog-dismiss>[[t('close')]]</paper-button>
+        <paper-button raised dialog-dismiss>[[t('close')]]</paper-button>
       </div>
     </paper-dialog>
 
@@ -137,7 +180,6 @@
       <yp-ajax method="POST" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
       <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
     </div>
-
   </template>
 
   <script>
@@ -146,7 +188,8 @@
       is: 'yp-users-grid',
 
       behaviors: [
-        Polymer.ypLanguageBehavior
+        Polymer.ypLanguageBehavior,
+        Polymer.ypNumberFormatBehavior
       ],
 
       properties: {
@@ -205,7 +248,48 @@
           type: Array
         },
 
-        userIdForSelectingOrganization: Number
+        userIdForSelectingOrganization: Number,
+
+        selectedUsers: {
+          type: Array
+        },
+
+        selectedUsersCount: {
+          type: Number,
+          value: 0
+        },
+
+        selectedUsersEmpty: {
+          type: Boolean,
+          value: true
+        },
+
+        totalUserCount: {
+          type: String,
+          computed: '_totalUserCount(users)'
+        }
+      },
+
+      observers: [
+        '_selectedUsersChanged(selectedUsers.splices)'
+      ],
+
+      _totalUserCount: function (users) {
+        if (users) {
+          return this.formatNumber(users.length);
+        } else {
+          return null;
+        }
+      },
+
+      _selectedUsersChanged: function () {
+        if (this.selectedUsers && this.selectedUsers.length>0) {
+          this.set('selectedUsersEmpty', false);
+          this.set('selectedUsersCount', this.selectedUsers.length);
+        } else {
+          this.set('selectedUsersEmpty', true);
+          this.set('selectedUsersCount', 0);
+        }
       },
 
       _userOrganizationId: function (user) {
@@ -279,6 +363,15 @@
         } else {
           console.warn("Can't find model type or ids");
         }
+      },
+
+      _setSelected: function (event) {
+        var userId = event.target.getAttribute('data-args');
+        this.users.forEach(function (user) {
+          if (user.id==userId) {
+            this.$.grid.selectItem(user);
+          }
+        }.bind(this));
       },
 
       _addAdmin: function (event) {
@@ -368,6 +461,8 @@
 
       _usersResponse: function (event, detail) {
         this.set('users', detail.response);
+        this.set('selectedUsers', null);
+        this.set('selectedUsersCount', 0);
       },
 
       setup: function (groupId, communityId, domainId, adminUsers) {
@@ -413,55 +508,6 @@
           } else {
             this.set('headerText', this.t('domain.users'));
           }
-        }
-      },
-
-      ready2: function () {
-        /*
-        this.$.grid.columns[5].renderer = this._adminActionRenderer;
-
-        var filterElement = document.createElement('input');
-        filterElement.setAttribute('type', 'search');
-        filterElement.setAttribute('placeholder', 'Filter...');
-        filterElement.style.width = '100%';
-
-        var timer = 0;
-
-        function filter() {
-          clearTimeout(timer);
-          timer = setTimeout(grid.refreshItems.bind(grid), 500);
-        }
-
-        filterElement.addEventListener('keyup', filter);
-        filterElement.addEventListener('click', filter);
-
-        this.$.grid.items = function(params, callback) {
-          var filterValue = filterElement.value.toLowerCase();
-          var data = this.users.filter(function(val) {
-            return (val.toString().toLowerCase()).indexOf(filterValue) != -1;
-          });
-          var slice = data.slice(params.index, params.index + params.count);
-          callback(slice, data.length);
-        };
-
-        this.$.grid.then(function() {
-          this.$.grid.header.getCell(1, 0).content = filterElement;
-        }.bind(this));
-        */
-      },
-
-      _adminActionRenderer: function(cell) {
-        cell.element.innerHTML = '';
-        var child = document.createElement('progress');
-        child.setAttribute('value', cell.data);
-        cell.element.appendChild(child);
-      },
-
-      _onSelect: function() {
-        if (this.$.grid.selection.selected().length === 0) {
-          this.selected = null;
-        } else {
-          this.selected = this.users[this.$.grid.selection.selected()];
         }
       }
     });

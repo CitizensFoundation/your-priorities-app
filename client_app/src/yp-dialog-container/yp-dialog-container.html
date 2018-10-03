@@ -27,6 +27,10 @@
       #dialogs[hide] {
         display: none;
       }
+
+      paper-dialog {
+        background-color: #FFF;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -144,6 +148,10 @@
         <yp-users-grid id="usersGrid"></yp-users-grid>
       </template>
     </div>
+
+    <paper-dialog id="loadingDialog">
+      <paper-spinner active></paper-spinner>
+    </paper-dialog>
   </template>
 
   <script>
@@ -241,9 +249,11 @@
       },
 
       _openBulkStatusUpdates: function () {
+        this.$.loadingDialog.open();
         this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), function () {
+          this.$.loadingDialog.close();
           console.info("Have loaded bulk status container");
-        }, null, true);
+        }.bind(this), null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -265,7 +275,9 @@
       },
 
       getUsersGridAsync: function (callback) {
+        this.$.loadingDialog.open();
         this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
+          this.$.loadingDialog.close();
           console.info("Have loaded users grid container");
           this.set('gotUsersGrid', true);
           this.getDialogAsync("usersGrid", callback);

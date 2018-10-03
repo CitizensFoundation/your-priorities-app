@@ -312,13 +312,13 @@
 
   "users": {
     "userInvited": "Notanda boðið",
-    "removeAdmin": "Eyða vefstjóra",
+    "removeAdmin": "Taka burt vefstjóra",
     "addAdmin": "Bæta við vefstjóra",
     "removeUser": "Eyða notanda",
     "inviteUser": "Bjóða notanda",
     "email": "netfang",
-    "removeFromOrganization": "Eyða",
-    "addToOrganization": "Samtök",
+    "removeFromOrganization": "Aftengja við samtök",
+    "addToOrganization": "Tengja við samtök",
     "selectOrganization": "Veldu samtök"
   },
 
