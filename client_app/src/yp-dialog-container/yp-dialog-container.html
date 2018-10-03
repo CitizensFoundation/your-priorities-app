@@ -105,10 +105,6 @@
           <yp-category-edit new id="categoryEdit"></yp-category-edit>
         </template>
 
-        <template is="dom-if" name="usersGrid" restamp>
-          <yp-users-grid id="usersGrid"></yp-users-grid>
-        </template>
-
         <template is="dom-if" name="pagesGrid" restamp>
           <yp-pages-grid id="pagesGrid"></yp-pages-grid>
         </template>
@@ -142,6 +138,10 @@
         <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
         <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
         <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
+      </template>
+
+      <template is="dom-if" if="[[gotUsersGrid]]">
+        <yp-users-grid id="usersGrid"></yp-users-grid>
       </template>
     </div>
   </template>
@@ -192,6 +192,11 @@
         },
 
         pageDialogOpen: {
+          type: Boolean,
+          value: false
+        },
+
+        gotUsersGrid: {
           type: Boolean,
           value: false
         }
@@ -259,14 +264,24 @@
         }
       },
 
+      getUsersGridAsync: function (callback) {
+        this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
+          console.info("Have loaded users grid container");
+          this.set('gotUsersGrid', true);
+          this.getDialogAsync("usersGrid", callback);
+        }.bind(this), null, true);
+      },
+
       getDialogAsync: function (idName, callback) {
         this.set('hideDialogs', false);
-        if (idName=="pageDialog") {
+
+        if (idName==="pageDialog") {
           this.set('pageDialogOpen', true);
         } else {
           this.set('pageDialogOpen', false);
           this.set('selectedDialog', idName);
         }
+
         this.async(function () {
           var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {
