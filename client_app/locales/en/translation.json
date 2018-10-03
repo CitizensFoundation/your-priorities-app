@@ -1,6 +1,10 @@
 {
+
+  "removeSelectedFromCommunity": "Remove from community:",
+  "removeSelectedFromGroup": "Remove from group:",
+  "removeFromCommunity": "Remove from community",
+  "removeFromGroup": "Remove from group",
   "removeSelectedAdmins": "Remove admin rights from:",
-  "users": "users",
   "deleteSelectedUsers": "Delete selected:",
   "anonymizeSelectedUsers": "Anonymize selected:",
   "anonymizeUser": "Anonymize user",
