@@ -212,6 +212,7 @@
         <paper-checkbox name="hidePostActionsInGrid" checked$="{{group.configuration.hidePostActionsInGrid}}">[[t('hidePostActionsInGrid')]]</paper-checkbox>
         <paper-checkbox name="hideDebateIcon" checked$="{{group.configuration.hideDebateIcon}}">[[t('hideDebateIcon')]]</paper-checkbox>
         <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">[[t('disablePostPageLink')]]</paper-checkbox>
+        <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]" checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]</paper-checkbox>
       </div>
 
       <paper-input id="defaultLocationLongLat"
@@ -399,7 +400,12 @@
         computed: '_endorsementButtonsOptions(language)'
       },
 
-      endorsementButtons: String
+      endorsementButtons: String,
+
+      hasSamlLoginProvider: {
+        type: Boolean,
+        value: false
+      }
     },
 
     observers: [
@@ -525,6 +531,11 @@
         }
       }
       this._updateEmojiBindings();
+      if (window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided) {
+        this.set('hasSamlLoginProvider', true);
+      } else {
+        this.set('hasSamlLoginProvider', false);
+      }
     },
 
     _setFromConfiguration: function (propertyName) {

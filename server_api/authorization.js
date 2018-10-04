@@ -3,7 +3,13 @@ var models = require("./models");
 var log = require('./utils/logger');
 var toJson = require('./utils/to_json');
 
-// COMMON
+var isAuthenticatedAndCorrectLoginProvider = function (req, group) {
+  return group &&
+         auth.isAuthenticated(req, group) &&
+         (!group.configuration ||
+          !group.configuration.forceSecureSamlLogin ||
+          (group.configuration.forceSecureSamlLogin && req.user.loginProvider==="saml"))
+};
 
 auth.isAuthenticated = function (req, group) {
   if (req.user && req.user.profile_data && req.user.profile_data.isAnonymousUser===true) {
@@ -29,14 +35,16 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
       }
     ]
   }).then(function (group) {
-    if (!auth.isAuthenticated(req, group)) {
-      done(null, false);
-    } else if (group.access === models.Group.ACCESS_PUBLIC) {
-      done(null, true);
-    } else if (group.user_id === req.user.id) {
-      done(null, true);
+    if (isAuthenticatedAndCorrectLoginProvider(req, group)) {
+      if (group.access === models.Group.ACCESS_PUBLIC) {
+        done(null, true);
+      } else if (group.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      }
     } else {
-      auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      done(null, false);
     }
   });
 };
@@ -481,6 +489,35 @@ auth.role('group.viewUser', function (group, req, done) {
   });
 });
 
+auth.role('group.addTo', function (group, req, done) {
+  models.Group.findOne({
+    where: { id: group.id },
+    attributes: ['id', 'access','user_id','configuration'],
+    include: [
+      {
+        model: models.Community,
+        required: true,
+        attributes: ['id','access','user_id']
+      }
+    ]
+  }).then(function (group) {
+    if (isAuthenticatedAndCorrectLoginProvider(req, group)) {
+      if (group.access === models.Group.ACCESS_PUBLIC &&
+        group.Community.access === models.Community.ACCESS_PUBLIC) {
+        done(null, true);
+      }  else if (!auth.isAuthenticated(req)) {
+        done(null, false);
+      } else if (group.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      }
+    } else {
+      done(null, false);
+    }
+  });
+});
+
 auth.entity('group', function(req, done) {
   var match = req.originalUrl.match(/groups\/(\w+)/);
   if (!match) {
@@ -614,16 +651,13 @@ auth.role('post.vote', function (post, req, done) {
       }
     ]
   }).then(function (post) {
-    if (post) {
-      var group = post.Group;
-      if (!auth.isAuthenticated(req, group)) {
-        done(null, false);
-      } else if (group.access === models.Group.ACCESS_PUBLIC) {
+    if (post && isAuthenticatedAndCorrectLoginProvider(req, post.Group)) {
+      if (post.Group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
       } else if (post.user_id === req.user.id) {
         done(null, true);
       } else {
-        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+        auth.isGroupMemberOrOpenToCommunityMember(post.Group, req, done);
       }
     } else {
       done(null, false);
@@ -759,6 +793,63 @@ auth.role('point.viewUser', function (point, req, done) {
   });
 });
 
+auth.role('point.addTo', function (point, req, done) {
+  models.Point.findOne({
+    where: { id: point.id },
+    attributes: ['id','user_id'],
+    include: [
+      {
+        model: models.Post,
+        attributes: ['id','user_id'],
+        include: [
+          {
+            model: models.Group,
+            attributes: ['id', 'access','user_id','configuration'],
+            required: false,
+            include: [
+              {
+                model: models.Community,
+                required: false,
+                attributes: ['id','access','user_id']
+              }
+            ]
+          }
+        ],
+        required: false
+      },
+      {
+        model: models.Group,
+        attributes: ['id', 'access','user_id','configuration'],
+        required: false
+      }
+    ]
+  }).then(function (point) {
+    var group;
+
+    if (point && point.Post) {
+      group = point.Post.Group;
+    } else {
+      group = point.Group;
+    }
+
+    if (point && isAuthenticatedAndCorrectLoginProvider(req, group)) {
+      if (group.access === models.Group.ACCESS_PUBLIC) {
+        done(null, true);
+      } else if (!auth.isAuthenticated(req)) {
+        done(null, false);
+      } else if (point.user_id === req.user.id) {
+        done(null, true);
+      } else if (group.Community) {
+        auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
+      } else {
+        done(null, false);
+      }
+    } else {
+      done(null, false);
+    }
+  });
+});
+
 //TODO: Use this pattern of activities everywhere here for optimization
 auth.role('image.viewUser', function (image, req, done) {
   models.Image.findOne({
@@ -846,10 +937,8 @@ auth.role('point.vote', function (point, req, done) {
         group = point.Group;
       }
 
-      if (group) {
-        if (!auth.isAuthenticated(req, group)) {
-          done(null, false);
-        } else if (group.access === models.Group.ACCESS_PUBLIC) {
+      if (isAuthenticatedAndCorrectLoginProvider(req, group)) {
+        if (group.access === models.Group.ACCESS_PUBLIC) {
           done(null, true);
         } else if (point.user_id === req.user.id) {
           done(null, true);
@@ -1162,9 +1251,11 @@ auth.action('view organization', ['organization.viewUser']);
 auth.action('view domain', ['domain.viewUser']);
 auth.action('view community', ['community.viewUser']);
 auth.action('view group', ['group.viewUser']);
+auth.action('add to group', ['group.addTo']);
 auth.action('view post', ['post.viewUser']);
 auth.action('view category', ['category.viewUser']);
 auth.action('view point', ['point.viewUser']);
+auth.action('add to point', ['point.addTo']);
 
 auth.action('view image', ['image.viewUser']);
 

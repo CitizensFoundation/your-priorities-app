@@ -1,5 +1,4 @@
 {
-
   "removeSelectedFromCommunity": "Remove from community:",
   "removeSelectedFromGroup": "Remove from group:",
   "removeFromCommunity": "Remove from community",
@@ -10,6 +9,8 @@
   "anonymizeUser": "Anonymize user",
   "email": "Email",
   "organization": "Organization",
+  "forceSecureSamlLoginInfo": "To access this group you need to login with secure electronic identification to ensure one vote per person",
+  "forceSecureSamlLogin": "Force secure SAML eID login",
   "areYouSureYouWantToAnonymizeUser": "Are you sure you want to anonymize your account?",
   "areYouReallySureYouWantToAnonymizeUser": "Are you 100% sure you want to anonymize your account? All your posts, points, comments and endorsements will be anonymized",
   "deleteAccount": "Delete Account",

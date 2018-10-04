@@ -690,6 +690,12 @@
             } else {
               window.appGlobals.signupTermsPageId = null;
             }
+
+            if (this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) {
+              window.appGlobals.currentGroupForceSaml = true;
+            } else {
+              window.appGlobals.currentGroupForceSaml = false;
+            }
           }
         },
 

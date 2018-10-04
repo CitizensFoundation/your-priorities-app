@@ -267,7 +267,7 @@ router.get('/:parentPointId/commentsCount', auth.can('view point'), function(req
   });
 });
 
-router.post('/:parentPointId/comment', auth.isLoggedIn, auth.can('view point'), function(req, res) {
+router.post('/:parentPointId/comment', auth.isLoggedIn, auth.can('add to point'), function(req, res) {
   models.Point.createComment(req, { parent_point_id: req.params.parentPointId, comment: req.body.comment }, function (error) {
     if (error) {
       log.error('Could not save comment point on parent point', { err: error, context: 'comment', user: toJson(req.user.simple()) });

@@ -316,7 +316,9 @@
         },
 
         loggedIn: function () {
-          return this.user!=null;
+          return this.user!=null &&
+                 (!window.appGlobals.currentGroupForceSaml ||
+                 (window.appGlobals.currentGroupForceSaml && this.user.loginProvider === "saml"));
         },
 
         logout: function () {
