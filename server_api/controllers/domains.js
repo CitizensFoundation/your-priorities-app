@@ -282,6 +282,78 @@ router.post('/:domainId/add_page', auth.can('edit domain'), function(req, res) {
   });
 });
 
+router.get('/:domainId/users', auth.can('edit domain'), function (req, res) {
+  models.Domain.find({
+    where: {
+      id: req.params.domainId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
+        as: 'DomainUsers',
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function (domain) {
+    log.info('Got users for domain', { context: 'users', user: toJson(req.user.simple()) });
+    if (domain) {
+      res.send(domain.DomainUsers);
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get users for domain', { err: error, context: 'users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:domainId/admin_users', auth.can('edit domain'), function (req, res) {
+  models.Domain.find({
+    where: {
+      id: req.params.domainId
+    },
+    include: [
+      {
+        model: models.User,
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublicAndEmail, ['created_at', 'last_login_at']),
+        as: 'DomainAdmins',
+        required: true,
+        include: [
+          {
+            model: models.Organization,
+            attributes: ['id', 'name'],
+            as: 'OrganizationUsers',
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function (domain) {
+    log.info('Got admins for domain', { context: 'users', user: toJson(req.user.simple()) });
+    if (domain) {
+      res.send(domain.DomainAdmins);
+    } else {
+      res.send([]);
+    }
+  }).catch(function (error) {
+    log.error('Could not get admin users for domain', { err: error, context: 'users', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+
+
+
+
 router.put('/:domainId/:pageId/update_page_locale', auth.can('edit domain'), function(req, res) {
   models.Page.updatePageLocale(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
     if (error) {

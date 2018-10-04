@@ -1,4 +1,6 @@
 {
+  "domainAdmins": "Domain admins",
+  "domainUsers": "Domain users",
   "removeSelectedFromCommunity": "Remove from community:",
   "removeSelectedFromGroup": "Remove from group:",
   "removeFromCommunity": "Remove from community",
