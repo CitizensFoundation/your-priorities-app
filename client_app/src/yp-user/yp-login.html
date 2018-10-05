@@ -402,11 +402,11 @@
                   </paper-input>
                 </div>
               </div>
-              <div hidden$="[[showSignupTerms]]">
-                <div style="height: 90px"></div>
-              </div>
               <div class="signupTerms" hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms"
                                                                                                        class="openTerms">{{t('signupTermsOpen')}}</span>
+              </div>
+              <div hidden$="[[showSignupTerms]]">
+                <div style="height: 90px"></div>
               </div>
             </paper-dialog-scrollable>
           </form>
