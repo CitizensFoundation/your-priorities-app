@@ -164,7 +164,7 @@
                     on-keys-pressed="_search"></iron-a11y-keys>
 
     <div class="layout vertical center-center">
-      <div class="searchContainer layout horizontal wrap">
+      <div class="searchContainer layout horizontal wrap" hidden$="[[group.configuration.hidePostFilterAndSearch]]">
         <div class="layout horizontal center-center">
           <yp-posts-filter on-tap="_tapOnFilter"
                            sub-title="{{subTitle}}" class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"

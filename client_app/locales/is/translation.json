@@ -1,4 +1,5 @@
 {
+  "hidePostFilterAndSearch": "Fela hugmynda síu og leit",
   "forceSecureSamlLoginInfo": "Til að fá aðgang að þessum hóp þarftu að skrá þig inn með rafrænum skilríkjum eða Íslykli til þess að tryggja aðeins eitt atkvæði á hvern kjósanda.",
   "forceSecureSamlLogin": "Einungis leyfa innskráningu með rafrænum skilríkjum",
   "areYouSureYouWantToAnonymizeUser": "Ertu viss um að þú viljir afpersónugera þinn aðgang?",

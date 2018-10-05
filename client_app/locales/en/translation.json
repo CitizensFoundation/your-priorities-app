@@ -1,4 +1,5 @@
 {
+  "hidePostFilterAndSearch": "hidePostFilterAndSearch",
   "forceSecureSamlLoginInfo": "To access this group you need to login with secure electronic identification to ensure one vote per person",
   "forceSecureSamlLogin": "Force secure SAML eID login",
   "areYouSureYouWantToAnonymizeUser": "Are you sure you want to anonymize your account?",
