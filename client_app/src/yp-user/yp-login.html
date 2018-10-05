@@ -313,6 +313,11 @@
         font-weight: bold;
         font-size: 17px;
       }
+
+      .innerScroll {
+        min-height: 400px !important;
+        height: 400px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-domain-changed="_domainEvent"></lite-signal>
@@ -325,85 +330,89 @@
         <paper-tab>[[t('user.register')]]</paper-tab>
       </paper-tabs>
 
-      <paper-dialog-scrollable id="scrollable" small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]"
-                               large-height$="[[largeHeight]]">
         <iron-form id="form">
           <form name="loginForm">
-            <div class="layout vertical">
-              <span hidden$="[[!registerMode]]">
-                <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
-                  [[customUserRegistrationText]]
+            <paper-dialog-scrollable id="scrollable" small-height$="[[smallHeight]]" medium-height$="[[mediumHeight]]"
+                                     large-height$="[[largeHeight]]">
+              <div class="layout vertical innerScroll">
+                <span hidden$="[[!registerMode]]">
+                  <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
+                    [[customUserRegistrationText]]
+                  </div>
+                </span>
+
+                <div class="forceSecureSamlLoginInfo" hidden$="[[!forceSecureSamlLogin]]">
+                  [[t('forceSecureSamlLoginInfo')]]
                 </div>
-              </span>
 
-              <div class="forceSecureSamlLoginInfo" hidden$="[[!forceSecureSamlLogin]]">
-                [[t('forceSecureSamlLoginInfo')]]
-              </div>
+                <div class="layout vertical center-center socialMediaLogin" hidden$="[[!hasAdditionalAuthMethods]]">
+                  <div class="layout horizontal center-center">
 
-              <div class="layout vertical center-center socialMediaLogin" hidden$="[[!hasAdditionalAuthMethods]]">
-                <div class="layout horizontal center-center">
+                    <template is="dom-if" if="[[hasAnonymousLogin]]">
+                      <paper-button raised on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
+                    </template>
 
-                  <template is="dom-if" if="[[hasAnonymousLogin]]">
-                    <paper-button raised on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
-                  </template>
-
-                  <template is="dom-if" if="[[hasFacebookLogin]]">
-                    <span hidden$="[[forceSecureSamlLogin]]">
-                      <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin"
-                           hidden$="[[disableFacebookLoginForGroup]]">
-                        [[t('user.facebookLogin')]]
-                      </div>
-                    </span>
-                  </template>
-                  <template is="dom-if" if="[[hasSamlLogin]]">
-                    <div class="islandIs cursor" on-tap="_islandIsLogin">
-                      <img width="80" height="18"
-                           src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                    <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin"
+                         hidden$="[[disableFacebookLoginForGroup]]">
+                      [[t('user.facebookLogin')]]
                     </div>
-                  </template>
+                    <template is="dom-if" if="[[hasFacebookLogin]]">
+                      <span hidden$="[[forceSecureSamlLogin]]">
+                        <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin"
+                             hidden$="[[disableFacebookLoginForGroup]]">
+                          [[t('user.facebookLogin')]]
+                        </div>
+                      </span>
+                    </template>
+                    <template is="dom-if" if="[[hasSamlLogin]]">
+                      <div class="islandIs cursor" on-tap="_islandIsLogin">
+                        <img width="80" height="18"
+                             src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+                <div class="orContainer" hidden$="[[!hasAdditionalAuthMethods]]">
+                  <div class="strike" hidden$="[[forceSecureSamlLogin]]">
+                    <span>[[t('or')]]</span>
+                  </div>
+                </div>
+
+                <div hidden$="[[forceSecureSamlLogin]]">
+                  <paper-input id="name"
+                               type="text"
+                               label="[[t('user.name')]]"
+                               value="{{name}}"
+                               hidden$="[[!registerMode]]"
+                               maxlength="50"
+                               minlength="2"
+                               char-counter>
+                  </paper-input>
+
+                  <paper-input id="email"
+                               type="text"
+                               label="[[t('user.email')]]"
+                               value="{{email}}"
+                               pattern="[[emailValidationPattern]]"
+                               error-message="[[emailErrorMessage]]">
+                  </paper-input>
+
+                  <paper-input id="password"
+                               type="password"
+                               label="[[t('user.password')]]"
+                               value="{{password}}"
+                               error-message="[[passwordErrorMessage]]">
+                  </paper-input>
+                  <div style="height: 90px" hidden$="[[showSignupTerms]]"></div>
                 </div>
               </div>
-
-              <div class="orContainer" hidden$="[[!hasAdditionalAuthMethods]]">
-                <div class="strike" hidden$="[[forceSecureSamlLogin]]">
-                  <span>[[t('or')]]</span>
-                </div>
+              <div class="signupTerms" hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms"
+                                                                                                       class="openTerms">{{t('signupTermsOpen')}}</span>
               </div>
-
-              <div hidden$="[[forceSecureSamlLogin]]">
-                <paper-input id="name"
-                             type="text"
-                             label="[[t('user.name')]]"
-                             value="{{name}}"
-                             hidden$="[[!registerMode]]"
-                             maxlength="50"
-                             minlength="2"
-                             char-counter>
-                </paper-input>
-
-                <paper-input id="email"
-                             type="text"
-                             label="[[t('user.email')]]"
-                             value="{{email}}"
-                             pattern="[[emailValidationPattern]]"
-                             error-message="[[emailErrorMessage]]">
-                </paper-input>
-
-                <paper-input id="password"
-                             type="password"
-                             label="[[t('user.password')]]"
-                             value="{{password}}"
-                             error-message="[[passwordErrorMessage]]">
-                </paper-input>
-                <div hidden$="[[showSignupTerms]]"><br><br><br></div>
-              </div>
-            </div>
+            </paper-dialog-scrollable>
           </form>
-          <div class="signupTerms" hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms"
-                                                                                                   class="openTerms">{{t('signupTermsOpen')}}</span>
-          </div>
         </iron-form>
-      </paper-dialog-scrollable>
 
       <div class="buttons layout vertical center-center">
         <div class="layout horizontal ajaxElements">
