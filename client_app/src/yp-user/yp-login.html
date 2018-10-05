@@ -159,6 +159,10 @@
           height: 100%;
           width: 100%;
         }
+        .innerScroll {
+          min-height: 350px !important;
+          height: 350px;
+        }
       }
 
       .islandIs {
@@ -313,11 +317,6 @@
         font-weight: bold;
         font-size: 17px;
       }
-
-      .innerScroll {
-        min-height: 400px !important;
-        height: 400px;
-      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-domain-changed="_domainEvent"></lite-signal>
@@ -406,7 +405,7 @@
                                                                                                        class="openTerms">{{t('signupTermsOpen')}}</span>
               </div>
               <div hidden$="[[showSignupTerms]]">
-                <div style="height: 90px"></div>
+                <div style="height: 150px"></div>
               </div>
             </paper-dialog-scrollable>
           </form>
