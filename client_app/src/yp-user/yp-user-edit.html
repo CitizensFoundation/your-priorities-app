@@ -91,6 +91,10 @@
 
           <paper-button id="deleteUser" raised on-tap="_deleteOrAnonymizeUser">[[t('deleteOrAnonymizeUser')]]</paper-button>
 
+          <paper-button hidden$="[[!user.facebook_id]]" raised on-tap="_disconnectFromFacebookLogin">[[t('disconnectFromFacebookLogin')]]</paper-button>
+
+          <paper-button hidden$="[[!user.ssn]]" raised on-tap="_disconnectFromSamlLogin">[[t('disconnectFromSamlLogin')]]</paper-button>
+
           <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
           <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
 

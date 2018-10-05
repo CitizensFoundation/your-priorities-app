@@ -352,10 +352,6 @@
                       <paper-button raised on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
                     </template>
 
-                    <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin"
-                         hidden$="[[disableFacebookLoginForGroup]]">
-                      [[t('user.facebookLogin')]]
-                    </div>
                     <template is="dom-if" if="[[hasFacebookLogin]]">
                       <span hidden$="[[forceSecureSamlLogin]]">
                         <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin"
@@ -404,8 +400,10 @@
                                value="{{password}}"
                                error-message="[[passwordErrorMessage]]">
                   </paper-input>
-                  <div style="height: 90px" hidden$="[[showSignupTerms]]"></div>
                 </div>
+              </div>
+              <div hidden$="[[showSignupTerms]]">
+                <div style="height: 90px"></div>
               </div>
               <div class="signupTerms" hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms"
                                                                                                        class="openTerms">{{t('signupTermsOpen')}}</span>
