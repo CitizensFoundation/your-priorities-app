@@ -332,6 +332,10 @@
               <paper-tab>[[t('user.register')]]</paper-tab>
             </paper-tabs>
 
+            <div class="forceSecureSamlLoginInfo" hidden$="[[!forceSecureSamlLogin]]">
+              [[t('forceSecureSamlLoginInfo')]]
+            </div>
+
             <div class="layout vertical innerScroll">
               <span hidden$="[[!registerMode]]">
                 <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
@@ -401,7 +405,6 @@
             <div class="signupTerms" hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms"
                                                                                                      class="openTerms">{{t('signupTermsOpen')}}</span>
             </div>
-            <div style="height: 30px"></div>
             <div class="buttons layout vertical center-center">
               <div class="layout horizontal ajaxElements">
                 <paper-spinner active class="mainSpinner" hide$="[[!userSpinner]]"></paper-spinner>
