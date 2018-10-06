@@ -1,4 +1,6 @@
 {
+  "userHaveSetEmail": "Netfang sett fyrir",
+  "userHaveLinkedAccounts": "Reikningar tengdir saman fyrir",
   "cantDisconnectFromFacebookWithoutValidEmail": "Þú getur ekki aftengt Facebook Login án þess að vera með skráð netfang.",
   "cantDisconnectFromSamlWithoutValidEmail": "Þú getur ekki aftengt rafræn skilríki og Íslykil án þess að vera með skráð netfang.",
   "disconnectedSamlLoginFor": "Aftengdi rafræn skilríki og Íslykil fyrir:",
@@ -338,7 +340,7 @@
     "acceptInvite": "Samþykkja boð um þátttöku",
     "hasSentYouAndInvitation": "sendi þér boð um að taka þátt í",
     "acceptInviteInstructions": "Smelltu hérna að neðan til að taka þátt",
-    "setEmail": "Bættu við netfangi",
+    "setEmail": "Skráðu þitt netfang",
     "linkAccount": "Tengja reikning við netfang",
     "setEmailInfo": "Bættu við netfangi",
     "existsLinkAccountInfo": "Þetta netfang er þegar skráð. Sláðu inn lykilorð til að tengja þennan aðgang við þinn eldri reikning.",
