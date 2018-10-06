@@ -96,7 +96,7 @@
   "allowAnonymousUsers": "Allow anonymous users",
   "deleteUser": "Delete user account",
   "areYouSureYouWantToDeleteUser": "Are you sure you want to delete your account?",
-  "areYouReallySureYouWantToDeleteUser": "Are you 100% sure you want to delete your account? All your posts, points, comments and endorsements will be deleted",
+  "areYouReallySureYouWantToDeleteUser": "Are you 100% sure you want to delete your account? All your posts, points, comments and endorsements will be deleted!",
   "alternativePointForLabel": "Alternative point for label",
   "alternativePointAgainstLabel": "Alternative point against label",
   "sharePoint": "Share point",

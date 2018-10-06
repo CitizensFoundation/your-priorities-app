@@ -94,7 +94,7 @@
   "allowAnonymousUsers": "Leyfa þátttöku án innskráningar",
   "deleteUser": "Eyða mínum aðgangi",
   "areYouSureYouWantToDeleteUser": "Ertu viss um að þú viljir eyða þínum aðgangi?",
-  "areYouReallySureYouWantToDeleteUser": "Ertu alveg viss um að þú viljir eyða þínum aðgangi. Öll rök, athugasemdir og stuðningur sem þú hefur sett inn þurkast út og allar þínar hugmyndir hætta að tengjast þér!",
+  "areYouReallySureYouWantToDeleteUser": "Ertu alveg viss um að þú viljir eyða þínum aðgangi. Allar hugmyndir, rök, athugasemdir og stuðningur sem þú hefur sett inn þurkast út!",
   "alternativePointForLabel": "Önnur skýring fyrir rök með",
   "alternativePointAgainstLabel": "Önnur skýring fyrir rök á móti",
   "sharePoint": "Deila rökum",
