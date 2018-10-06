@@ -1,8 +1,10 @@
 {
+  "userHaveSetEmail": "Email set for",
+  "userHaveLinkedAccounts": "Accounts linked for",
   "cantDisconnectFromFacebookWithoutValidEmail": "You can't disconnect from Facebook Login without a valid email address",
   "cantDisconnectFromSamlWithoutValidEmail": "You can't disconnect from Electronic ID login without a valid email address",
-  "disconnectedSamlLoginFor": "Disconnected from Electronic ID for:",
-  "disconnectedFacebookLoginFor": "Disconnected Facebook Login for:",
+  "disconnectedSamlLoginFor": "Disconnected from Electronic ID for",
+  "disconnectedFacebookLoginFor": "Disconnected Facebook Login for",
   "areYouSureYouWantToDisconnectSamlLogin": "Are you sure you want to disconnect your account from Electronic ID Login? You will not be able to login with your electronic ID after this operation!",
   "areYouSureYouWantToDisconnectFacebookLogin": "Are you sure you want to disconnect your account from Facebook Login? You will not be able to login with Facebook after this operation!",
   "disconnectFromSamlLogin": "Disconnect Electronic ID Login",
