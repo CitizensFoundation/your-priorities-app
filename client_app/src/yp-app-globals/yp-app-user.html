@@ -365,7 +365,7 @@
           if (this.pollingStartedAt) {
             if (detail.response===0 && this.pollingStartedAt) {
               var timeSpent = (new Date() - this.pollingStartedAt);
-              if (timeSpent<1*60*1000) {
+              if (timeSpent<5*60*1000) {
                 this.async(function () {
                   this.$.pollForLoginAjax.generateRequest();
                 }.bind(this), 1500)
