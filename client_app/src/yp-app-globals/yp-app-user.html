@@ -368,7 +368,7 @@
               if (timeSpent<5*60*1000) {
                 this.async(function () {
                   this.$.pollForLoginAjax.generateRequest();
-                }.bind(this), 1500)
+                }.bind(this), 1200)
               } else {
                 this.pollingStartedAt = null;
                 console.error("Timeout in login polling");
