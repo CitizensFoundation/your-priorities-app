@@ -36,7 +36,7 @@ var getUserWithAll = function (userId, callback) {
     function (seriesCallback) {
       models.User.find({
         where: {id: userId},
-        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','default_locale']),
+        attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','ssn','default_locale']),
         order: [
           [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
           [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
@@ -523,7 +523,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
   }
 });
 
-router.put('/loggedInUser/setLocale', function (req, res) {
+router.put('/loggedInUser/setLocale', auth.isLoggedIn, function (req, res) {
   if (req.isAuthenticated() && req.user) {
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
@@ -936,17 +936,7 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
   });
 });
 
-// Facebook Authentication
-router.get('/auth/facebook', function(req, res) {
-  req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
-    if (error) {
-      log.error("Error from Facebook login init", { err: error });
-      throw error;
-    }
-  });
-});
-
-router.put('/missingEmail/setEmail', function(req, res, next) {
+router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
   models.User.find({
     where: {
       email: req.body.email
@@ -972,7 +962,47 @@ router.put('/missingEmail/setEmail', function(req, res, next) {
   });
 });
 
-router.put('/missingEmail/linkAccounts', function(req, res, next) {
+router.delete('/disconnectFacebookLogin', auth.isLoggedIn, function(req, res, next) {
+  models.User.find({
+    where: {
+      id: req.user.id
+    }}).then( function (user) {
+      if (user) {
+        user.facebook_id = null;
+        user.save().then(function (results) {
+          log.info("Disconnected from Facebook", { userId: user.id });
+          res.sendStatus(200);
+        });
+      } else {
+        res.sendStatus(404);
+      }
+  }).catch(function (error) {
+    log.error("Error in disconnect from Facebook", { err: error });
+    res.sendStatus(500);
+  });
+});
+
+router.delete('/disconnectSamlLogin', auth.isLoggedIn, function(req, res, next) {
+  models.User.find({
+    where: {
+      id: req.user.id
+    }}).then( function (user) {
+    if (user) {
+      user.ssn = null;
+      user.save().then(function (results) {
+        log.info("Disconnected from Saml", { userId: user.id });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error("Error in disconnect from Saml", { err: error });
+    res.sendStatus(500);
+  });
+});
+
+router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, next) {
   log.info("User Serialized Link 1", {loginProvider: req.user.loginProvider});
   models.User.find({
     where: {
@@ -1180,6 +1210,16 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
       res.sendStatus(500);
     } else {
      res.send({ config: config, templates: statusUpdate.templates, community: statusUpdate.Community });
+    }
+  });
+});
+
+// Facebook Authentication
+router.get('/auth/facebook', function(req, res) {
+  req.sso.authenticate('facebook-strategy-'+req.ypDomain.id, {}, req, res, function(error, user) {
+    if (error) {
+      log.error("Error from Facebook login init", { err: error });
+      throw error;
     }
   });
 });

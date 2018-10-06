@@ -1,4 +1,12 @@
 {
+  "cantDisconnectFromFacebookWithoutValidEmail": "Þú getur ekki aftengt Facebook Login án þess að vera með skráð netfang.",
+  "cantDisconnectFromSamlWithoutValidEmail": "Þú getur ekki aftengt rafræn skilríki og Íslykil án þess að vera með skráð netfang.",
+  "disconnectedSamlLoginFor": "Aftengdi rafræn skilríki og Íslykil fyrir:",
+  "disconnectedFacebookLoginFor": "Aftengdi Facebook Login fyrir:",
+  "areYouSureYouWantToDisconnectSamlLogin": "Ertu viss um að þú viljir aftengja rafræn skilríki og Íslykil? Eftir þessa aðgerð er ekki hægt að skrá sig inn á þennan aðgang með þessum leiðum!",
+  "areYouSureYouWantToDisconnectFacebookLogin": "Ertu viss um að þú viljir aftengja Facebook Login? Eftir þessa aðgerð er ekki hægt að skrá sig inn á þennan aðgang með Facebook Login!",
+  "disconnectFromSamlLogin": "Aftengja rafræn skilríki og Íslykil",
+  "disconnectFromFacebookLogin": "Aftengja Facebok Login",
   "hidePostFilterAndSearch": "Fela hugmynda síu og leit",
   "forceSecureSamlLoginInfo": "Til að fá aðgang að þessum hóp þarftu að skrá þig inn með rafrænum skilríkjum eða Íslykli til þess að tryggja aðeins eitt atkvæði á hvern kjósanda. Smelltu hér að neðan til að skrá þig inn.",
   "forceSecureSamlLogin": "Einungis leyfa innskráningu með rafrænum skilríkjum",

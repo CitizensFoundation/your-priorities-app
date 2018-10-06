@@ -11,6 +11,7 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
 <link rel="import" href="../yp-file-upload/yp-file-upload.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
@@ -36,17 +37,23 @@
         padding-right: 8px;
       }
 
-      #deleteUser {
-        margin-top: 16px;
-      }
-
       h2 {
         padding-top: 16px;
       }
 
       #deleteUser {
         max-width: 250px;
+        margin-top: 16px;
         color: #F00;
+      }
+
+      .disconnectButtons {
+        margin-top: 8px;
+        max-width: 250px;
+      }
+
+      yp-language-selector {
+        margin-bottom: 8px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -89,11 +96,12 @@
 
           <yp-language-selector name="defaultLocale" auto-translate-option-disabled selected-locale="{{user.default_locale}}"></yp-language-selector>
 
+          <paper-button hidden$="[[!user.facebook_id]]" class="disconnectButtons" raised on-tap="_disconnectFromFacebookLogin">[[t('disconnectFromFacebookLogin')]]</paper-button>
+
+          <paper-button hidden$="[[!user.ssn]]" raised class="disconnectButtons" on-tap="_disconnectFromSamlLogin">[[t('disconnectFromSamlLogin')]]</paper-button>
+
           <paper-button id="deleteUser" raised on-tap="_deleteOrAnonymizeUser">[[t('deleteOrAnonymizeUser')]]</paper-button>
 
-          <paper-button hidden$="[[!user.facebook_id]]" raised on-tap="_disconnectFromFacebookLogin">[[t('disconnectFromFacebookLogin')]]</paper-button>
-
-          <paper-button hidden$="[[!user.ssn]]" raised on-tap="_disconnectFromSamlLogin">[[t('disconnectFromSamlLogin')]]</paper-button>
 
           <input type="hidden" name="uploadedProfileImageId" value="[[uploadedProfileImageId]]">
           <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
@@ -102,6 +110,9 @@
 
           <ac-notification-settings notifications-settings="{{notificationSettings}}"></ac-notification-settings>
           <input type="hidden" name="notifications_settings" value="[[encodedUserNotificationSettings]]">
+
+          <yp-ajax id="disconnectFacebookLoginAjax" method="DELETE" url="/api/users/disconnectFacebookLogin" on-response="_disconnectFacebookLoginResponse"></yp-ajax>
+          <yp-ajax id="disconnectSamlLoginAjax" method="DELETE" url="/api/users/disconnectSamlLogin" on-response="_disconnectSamlLoginResponse"></yp-ajax>
         </div>
       </div>
     </yp-edit-dialog>
@@ -167,6 +178,54 @@
 
     listeners: {
       'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _checkIfValidEmail: function () {
+      return this.user && this.user.email && !(this.user.email.indexOf("@citizens.is")>-1 && this.user.email.indexOf("anonymous")>-1)
+    },
+
+    _disconnectFromFacebookLogin: function () {
+      if (this._checkIfValidEmail()) {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureYouWantToDisconnectFacebookLogin'), this._reallyDisconnectFromFacebookLogin.bind(this), true);
+        }.bind(this));
+      } else {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
+          dialog.showErrorDialog(this.t('cantDisconnectFromFacebookWithoutValidEmail'));
+        }.bind(this));
+      }
+    },
+
+    _reallyDisconnectFromFacebookLogin: function () {
+      this.$.disconnectFacebookLoginAjax.body = {};
+      this.$.disconnectFacebookLoginAjax.generateRequest();
+    },
+
+    _disconnectFromSamlLogin: function () {
+      if (this._checkIfValidEmail()) {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureYouWantToDisconnectSamlLogin'), this._reallyDisconnectFromSamlLogin.bind(this), true);
+        }.bind(this));
+      } else {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
+          dialog.showErrorDialog(this.t('cantDisconnectFromSamlWithoutValidEmail'));
+        }.bind(this));
+      }
+    },
+
+    _reallyDisconnectFromSamlLogin: function () {
+      this.$.disconnectSamlLoginAjax.body = {};
+      this.$.disconnectSamlLoginAjax.generateRequest();
+    },
+
+    _disconnectFacebookLoginResponse: function () {
+      this.set('user.facebook_id', null);
+      window.appGlobals.notifyUserViaToast(this.t('disconnectedFacebookLoginFor')+' '+ this.user.email);
+    },
+
+    _disconnectSamlLoginResponse: function () {
+      this.set('user.ssn', null);
+      window.appGlobals.notifyUserViaToast(this.t('disconnectedSamlLoginFor')+' '+ this.user.email);
     },
 
     _setNotificationSettings: function (event, detail) {
