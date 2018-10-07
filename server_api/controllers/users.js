@@ -677,13 +677,14 @@ router.post('/logout', function (req, res) {
   } else {
     log.warn('User Logging out but not logged in', { user: toJson(req.user), context: 'logout'});
   }
-  req.logOut();
   req.session.destroy(function(err) {
+    req.logOut();
     if (err) {
       log.error("Error on destroying session", { err: err });
       res.sendStatus(500);
     } else {
       req.user = null;
+      req.session = null;
       res.sendStatus(200);
     }
   })

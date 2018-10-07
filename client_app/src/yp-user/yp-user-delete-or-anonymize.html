@@ -124,9 +124,7 @@
 
     _completed: function () {
       this.$.dialog.close();
-      this.async(function () {
-        window.location.reload();
-      }, 100);
+      window.location = "/";
     }
   });
 </script>
