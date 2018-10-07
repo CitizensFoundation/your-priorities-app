@@ -160,14 +160,17 @@
     },
 
     _notNow: function (event) {
+      window.appGlobals.activity('cancel', 'setEmail');
       this.$$("#dialog").close();
     },
 
     _logout: function () {
+      window.appGlobals.activity('logout', 'setEmail');
       window.appUser.logout();
     },
 
     _forgotPassword: function () {
+      window.appGlobals.activity('open', 'forgotPasswordFromSetEmail');
       window.appUser.fire("yp-forgot-password", { email: this.email });
     },
 
@@ -188,9 +191,11 @@
     _validateAndSend: function(e) {
       if (this.$$("#form").checkValidity() && this.email){
         if (this.needPassword && this.password) {
+          window.appGlobals.activity('confirm', 'linkAccountsAjax');
           this.$$("#linkAccountsAjax").body = this.credentials;
           this.$$("#linkAccountsAjax").generateRequest();
         } else {
+          window.appGlobals.activity('confirm', 'setEmail');
           this.$$("#setEmailAjax").body = {email: this.email };
           this.$$("#setEmailAjax").generateRequest();
         }
