@@ -27,7 +27,6 @@
         paper-dialog {
           padding: 0;
           margin: 0;
-          height: 100%;
           width: 100%;
         }
       }
@@ -35,11 +34,17 @@
       [hidden] {
         display: none !important;
       }
+
+      .buttons {
+        margin-bottom: 8px;
+        margin-right: 4px;
+        text-align: center;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div id="outer">
-      <paper-dialog id="dialog" modal>
+      <paper-dialog id="dialog">
         <h2>[[heading]]</h2>
         <h2 class="setEmailInfo">
           [[t('user.setEmailInfo')]]
@@ -71,8 +76,8 @@
           <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
           <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
           <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
-          <paper-button on-tap="_notNow">[[t('later')]]</paper-button>
-          <paper-button id="sendButton" autofocus on-tap="_validateAndSend">
+          <paper-button raised on-tap="_notNow">[[t('later')]]</paper-button>
+          <paper-button raised id="sendButton" autofocus on-tap="_validateAndSend">
             <span hidden$="[[linkAccountText]]">
               [[t('user.setEmail')]]
             </span>
@@ -155,14 +160,17 @@
     },
 
     _notNow: function (event) {
+      window.appGlobals.activity('cancel', 'setEmail');
       this.$$("#dialog").close();
     },
 
     _logout: function () {
+      window.appGlobals.activity('logout', 'setEmail');
       window.appUser.logout();
     },
 
     _forgotPassword: function () {
+      window.appGlobals.activity('open', 'forgotPasswordFromSetEmail');
       window.appUser.fire("yp-forgot-password", { email: this.email });
     },
 
@@ -183,9 +191,11 @@
     _validateAndSend: function(e) {
       if (this.$$("#form").checkValidity() && this.email){
         if (this.needPassword && this.password) {
+          window.appGlobals.activity('confirm', 'linkAccountsAjax');
           this.$$("#linkAccountsAjax").body = this.credentials;
           this.$$("#linkAccountsAjax").generateRequest();
         } else {
+          window.appGlobals.activity('confirm', 'setEmail');
           this.$$("#setEmailAjax").body = {email: this.email };
           this.$$("#setEmailAjax").generateRequest();
         }
@@ -201,19 +211,21 @@
         this.set('header', this.t('user.linkAccount'));
         this.set('linkAccountText', true);
       } else {
-        window.appGlobals.notifyUserViaToast(this.t('user.haveSetEmail')+ " " + detail.response.email);
+        window.appGlobals.notifyUserViaToast(this.t('userHaveSetEmail')+ " " + detail.response.email);
         this.close();
       }
+      this.$.dialog.fire('iron-resize');
     },
 
     _linkAccountsResponse: function(event, detail) {
       if (detail.response.accountLinked) {
-        window.appGlobals.notifyUserViaToast(this.t('user.haveLinkedAccounts')+ " " + detail.response.email);
+        window.appGlobals.notifyUserViaToast(this.t('userHaveLinkedAccounts')+ " " + detail.response.email);
         window.appUser.checkLogin();
         this.close();
       } else {
         this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
       }
+      this.$.dialog.fire('iron-resize');
     },
 
     open: function(loginProvider) {

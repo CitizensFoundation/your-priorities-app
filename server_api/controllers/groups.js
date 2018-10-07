@@ -181,6 +181,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.disablePostPageLink', truthValueFromBody(req.body.disablePostPageLink));
   group.set('configuration.hidePostActionsInGrid', truthValueFromBody(req.body.hidePostActionsInGrid));
   group.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
+  group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
 };
 
 var upload = multer({

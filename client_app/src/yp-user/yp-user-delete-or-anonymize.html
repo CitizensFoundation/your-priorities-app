@@ -25,6 +25,7 @@
       .buttons {
         margin-top: 16px;
         margin-bottom: 4px;
+        text-align: center;
       }
 
       .boldButton {
@@ -123,10 +124,7 @@
 
     _completed: function () {
       this.$.dialog.close();
-      window.appUser.logout();
-      this.async(function () {
-        window.location.reload();
-      }, 100);
+      window.location = "/";
     }
   });
 </script>
