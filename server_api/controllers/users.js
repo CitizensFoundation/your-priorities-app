@@ -679,10 +679,12 @@ router.post('/logout', function (req, res) {
   }
   if (req.session) {
     req.session.destroy(function(err) {
+      req.logOut();
       if (err) {
         log.error("Error on destroying session", { err: err });
         res.sendStatus(500);
       } else {
+        log.info("Have destroy session")
         req.user = null;
         req.session = null;
         res.sendStatus(200);
@@ -1049,6 +1051,7 @@ router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, nex
           } else {
             foundLoginProvider = false;
           }
+          user.loginProvider = req.user.loginProvider;
           if (foundLoginProvider) {
             models.sequelize.transaction(function (t) {
               return user.save({transaction: t}).then(function (user) {
