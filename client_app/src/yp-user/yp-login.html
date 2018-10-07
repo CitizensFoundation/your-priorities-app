@@ -643,6 +643,9 @@
     _islandIsLogin: function () {
       if (this.forceSecureSamlLogin && window.appUser && window.appUser.user) {
         window.appUser.logout();
+        this.async(function () {
+          window.appUser.logout();
+        });
       }
       var url = '/api/users/auth/saml',
         width = 1200,

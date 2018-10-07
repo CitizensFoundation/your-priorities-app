@@ -677,17 +677,21 @@ router.post('/logout', function (req, res) {
   } else {
     log.warn('User Logging out but not logged in', { user: toJson(req.user), context: 'logout'});
   }
-  req.session.destroy(function(err) {
-    req.logOut();
-    if (err) {
-      log.error("Error on destroying session", { err: err });
-      res.sendStatus(500);
-    } else {
-      req.user = null;
-      req.session = null;
-      res.sendStatus(200);
-    }
-  })
+  req.logOut();
+  if (req.session) {
+    req.session.destroy(function(err) {
+      if (err) {
+        log.error("Error on destroying session", { err: err });
+        res.sendStatus(500);
+      } else {
+        req.user = null;
+        req.session = null;
+        res.sendStatus(200);
+      }
+    })
+  } else {
+    res.sendStatus(200);
+  }
 });
 
 // Reset password
