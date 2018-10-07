@@ -677,7 +677,6 @@ router.post('/logout', function (req, res) {
   } else {
     log.warn('User Logging out but not logged in', { user: toJson(req.user), context: 'logout'});
   }
-  req.logOut();
   if (req.session) {
     req.session.destroy(function(err) {
       if (err) {
@@ -690,6 +689,7 @@ router.post('/logout', function (req, res) {
       }
     })
   } else {
+    req.logOut();
     res.sendStatus(200);
   }
 });
