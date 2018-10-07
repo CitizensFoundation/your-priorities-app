@@ -124,7 +124,6 @@
 
     _completed: function () {
       this.$.dialog.close();
-      window.appUser.logout();
       this.async(function () {
         window.location.reload();
       }, 100);

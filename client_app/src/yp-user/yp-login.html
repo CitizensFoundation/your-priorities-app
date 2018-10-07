@@ -641,6 +641,9 @@
     },
 
     _islandIsLogin: function () {
+      if (this.forceSecureSamlLogin && window.appUser && window.appUser.user) {
+        window.appUser.logout();
+      }
       var url = '/api/users/auth/saml',
         width = 1200,
         height = 650,
