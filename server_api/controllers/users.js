@@ -1035,6 +1035,7 @@ router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, nex
           if (req.user.loginProvider=='facebook') {
             user.facebook_id = req.user.facebook_id;
             req.user.facebook_id = null;
+            user.provider = "facebook";
           } else if (req.user.loginProvider=='google') {
               user.google_id = req.user.google_id;
               req.user.google_id = null;
