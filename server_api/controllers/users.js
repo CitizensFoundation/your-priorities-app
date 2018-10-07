@@ -1062,6 +1062,7 @@ router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, nex
               });
             }).then(function (result) {
               log.info("User Serialized Linked Accounts", { toUserSsn: user.ssn, fromUserSsn: req.user.ssn, userFrom: req.user, toUser: user });
+              queue.create('process-deletion', { type: 'delete-user-endorsements', userId: req.user.id }).priority('high').removeOnComplete(true).save();
               req.logIn(user, function (error, detail) {
                 if (error) {
                   sendUserOrError(res, null, 'linkAccounts', error, 401);
