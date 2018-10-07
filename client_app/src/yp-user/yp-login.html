@@ -655,7 +655,13 @@
       } else {
         window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
       }
-      window.appUser.startPollingForLogin();
+      if (this.forceSecureSamlLogin) {
+        this.async(function () {
+          window.appUser.startPollingForLogin();
+        }, 500);
+      } else {
+        window.appUser.startPollingForLogin();
+      }
       this._startSpinner();
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Saml2');
     },
