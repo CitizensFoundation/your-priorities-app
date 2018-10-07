@@ -1,5 +1,5 @@
 {
-  "emailAlreadyRegisterred": "Þú getur ekki notað þetta netfang það sem það er þegar skráð.",
+  "emailAlreadyRegisterred": "Þú getur ekki notað þetta netfang. Það er þegar skráð í kerfinu.",
   "userHaveSetEmail": "Netfang sett fyrir",
   "userHaveLinkedAccounts": "Reikningar tengdir saman fyrir",
   "cantDisconnectFromFacebookWithoutValidEmail": "Þú getur ekki aftengt Facebook Login án þess að vera með skráð netfang.",
