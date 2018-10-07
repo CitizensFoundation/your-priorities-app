@@ -1046,6 +1046,8 @@ router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, nex
             req.user.github_id = null;
           } else if (req.user.loginProvider=='saml') {
             user.set('ssn', req.user.ssn);
+            user.UserSSN = user.ssn;
+            user.provider = "saml";
             req.user.set('ssn', null);
             log.info("User Serialized Linked Accounts SAML", { userFrom: req.user, toUser: user, toUserSsn: user.ssn, fromUserSsn: req.user.ssn });
           } else {
