@@ -63,6 +63,7 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog name="userEdit" id="editDialog" title="[[editHeaderText]]" double-width icon="face" action="[[action]]"
+                    on-iron-form-response="_editResponse"
                     method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <div class="container">
         <div class="layout vertical wrap container">
@@ -182,6 +183,14 @@
 
     listeners: {
       'yp-notifications-changed': '_setNotificationSettings'
+    },
+
+    _editResponse: function (event, detail) {
+      if (detail.response.duplicateEmail) {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
+          dialog.showErrorDialog(this.t('emailAlreadyRegisterred'));
+        }.bind(this))
+      }
     },
 
     _checkIfValidEmail: function () {

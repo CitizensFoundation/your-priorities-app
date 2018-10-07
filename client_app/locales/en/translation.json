@@ -1,4 +1,5 @@
 {
+  "emailAlreadyRegisterred": "You can't set your email to this address as its already in use.",
   "userHaveSetEmail": "Email set for",
   "userHaveLinkedAccounts": "Accounts linked for",
   "cantDisconnectFromFacebookWithoutValidEmail": "You can't disconnect from Facebook Login without a valid email address",

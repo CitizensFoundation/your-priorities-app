@@ -214,10 +214,20 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
         user.setupImages(req.body, function (error) {
           sendUserOrError(res, user, 'setupImages', error);
         });
+      }).catch((error) => {
+        log.error("User Error", { context: 'user_edit', err: error, errorStatus: 500 });
+        if (error.name==="SequelizeUniqueConstraintError") {
+          res.send({ duplicateEmail: true, isError: true });
+        } else {
+          res.sendStatus(500);
+        }
       });
     } else {
       sendUserOrError(res, req.params.id, 'update', 'Not found', 404);
     }
+  }).catch((error) => {
+    log.error("User Error", { context: 'user_edit', err: error, errorStatus: 500 });
+    res.sendStatus(500);
   });
 });
 
