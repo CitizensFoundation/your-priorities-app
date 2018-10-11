@@ -136,8 +136,7 @@
             <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedUsersEmpty]]">
               <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_deleteSelectedUsers">[[t('deleteSelectedUsers')]] [[selectedUsersCount]]</paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_anonymizeSelectedUsers">[[t('anonymizeSelectedUsers')]] [[selectedUsersCount]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[!domainId]]" on-tap="_deleteSelectedUsers">[[t('deleteSelectedUsers')]] [[selectedUsersCount]]</paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeSelectedUsersFromCollection">
                   <div hidden$="[[!groupId]]">
                     [[t('removeSelectedFromGroup')]] [[selectedUsersCount]]
@@ -162,8 +161,7 @@
                     [[t('removeFromCommunity')]]
                   </div>
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_deleteUser">[[t('deleteUser')]]</paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_anonymizeUser">[[t('anonymizeUser')]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[!domainId]]" on-tap="_deleteUser">[[t('deleteUser')]]</paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-item>
 
                 <paper-item data-args$="[[item.id]]" hidden$="[[_userOrganizationName(item)]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-item>
@@ -198,7 +196,6 @@
       <yp-ajax method="POST" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
       <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
       <yp-ajax id="deleteUserAjax" on-response="_deleteCompleted" method="DELETE"></yp-ajax>
-      <yp-ajax id="anonymizeAjax" on-response="_anonymizedCompleted" method="DELETE"></yp-ajax>
 
     </div>
   </template>
