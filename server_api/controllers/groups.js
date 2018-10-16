@@ -728,7 +728,7 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
 });
 
 router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, res) {
-  const anonymizationDelayMs = 1000*45; //*60*24*7;
+  const anonymizationDelayMs = 1000*60*5; //*60*24*7;
   models.Group.find({
     where: {id: req.params.id }
   }).then(function (group) {

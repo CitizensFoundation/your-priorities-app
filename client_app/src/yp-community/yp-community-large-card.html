@@ -460,7 +460,7 @@
         window.appGlobals.activity('open', 'community.anonymize');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/communities/' + this.community.id + '/anonymize_content',
-            this.t('communityAnonymizeConfirmation'));
+            this.t('communityAnonymizeConfirmation'), null, this.t('anonymize'));
           dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },

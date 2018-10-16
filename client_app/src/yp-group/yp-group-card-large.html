@@ -380,7 +380,7 @@
         window.appGlobals.activity('open', 'group.anonymize');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/groups/' + this.group.id + '/anonymize_content',
-            this.t('groupAnonymizeConfirmation'));
+            this.t('groupAnonymizeConfirmation'), null, this.t('anonymize'));
           dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },

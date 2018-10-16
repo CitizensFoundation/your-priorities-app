@@ -857,10 +857,15 @@ router.delete('/:id/anonymize_content', auth.can('edit community'), function(req
     where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
+      const anonymizationDelayMs = 1000*45; //*60*24*7;
       log.info('Community Anonymize Content', { community: toJson(community), user: toJson(req.user) });
+      queue.create('process-anonymization', { type: 'notify-community-users', communityName: community.name,
+        userId: req.user.id, communityId: community.id, delayMs: anonymizationDelayMs}).
+      priority('high').removeOnComplete(true).save();
       queue.create('process-anonymization', { type: 'anonymize-community-content', communityName: community.name,
                                               communityId: community.id, userId: req.user.id, useNotification: true,
-                                              resetCounters: true }).priority('high').removeOnComplete(true).save();
+                                              resetCounters: true }).
+                                            delay(anonymizationDelayMs).priority('high').removeOnComplete(true).save();
       res.sendStatus(200);
     } else {
       sendCommunityOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
