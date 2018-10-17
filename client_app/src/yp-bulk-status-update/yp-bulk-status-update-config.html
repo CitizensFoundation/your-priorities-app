@@ -292,6 +292,16 @@
         }
       },
 
+      _getGroupsResponse: function (event, detail) {
+        if (detail.response) {
+          var groups = [];
+          groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
+          groups = groups.concat(detail.response.groups);
+          groups = this._uniqueInDomain(groups, detail.response.domainId);
+          //this.set("availableGroups", groups);
+        }
+      },
+
       _templatesWithNone: function (templates) {
         if (templates) {
           return this.templates.concat(['None']);
