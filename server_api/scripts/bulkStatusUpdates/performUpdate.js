@@ -8,7 +8,7 @@ var id = process.argv[2];
 var userIdToPostNewsStory = process.argv[3];
 
 var getTemplateContent = function (templates, title) {
-  var returnContent = "Nil";
+  var returnContent;
   if (title) {
     _.forEach(templates, function (template) {
       //  console.log(template);
@@ -17,7 +17,6 @@ var getTemplateContent = function (templates, title) {
       }
     });
   }
-
   return returnContent;
 };
 
@@ -38,54 +37,61 @@ models.BulkStatusUpdate.find({
 //            console.log("New status: "+post.newOfficialStatus+" template: "+post.selectedTemplateName+ " content: "+getTemplateContent(update.templates,post.selectedTemplateName));
             if (post.newOfficialStatus) {
               var templateContent = getTemplateContent(update.templates,post.selectedTemplateName);
-              console.log(post.id+": "+getTemplateContent(update.templates,post.selectedTemplateName));
-              async.series([
-                function (doCallback) {
-                  models.User.find({
-                    where: {
-                      id: userIdToPostNewsStory
-                    }
-                  }).then(function (user) {
-                    if (user) {
-                      doCallback();
-                    } else {
-                      doCallback("User to post from not found!");
-                    }
-                  });
-                },
-                function (doCallback) {
-                  models.Post.find({
-                    where: {
-                      id: post.id
-                    }
-                  }).then(function (postToUpdate) {
-                    if (postToUpdate) {
-                      postToUpdate.official_status = post.newOfficialStatus;
-                      postToUpdate.save().then(function () {
+              if (!templateContent && post.uniqueStatusMessage) {
+                templateContent = post.uniqueStatusMessage;
+              }
+              if (templateContent) {
+                console.log(post.id+": "+templateContent);
+                async.series([
+                  function (doCallback) {
+                    models.User.find({
+                      where: {
+                        id: userIdToPostNewsStory
+                      }
+                    }).then(function (user) {
+                      if (user) {
                         doCallback();
-                      });
-                    } else {
-                      doCallback("Cant find post: "+post.id)
-                    }
-                  });
-                },
-                function (doCallback) {
-                  models.Point.createNewsStory({
-                    useragent: { source: 'performBulkUpdateScript' },
-                    clientIp: '127.0.0.1',
-                    user: { id: userIdToPostNewsStory }
-                  }, {
-                    subType: 'bulkOperation',
-                    post_id: post.id,
-                    user_id: userIdToPostNewsStory,
-                    point: { content: templateContent }
-                  }, function (error) {
-                    doCallback(error);
-                  })
-                }
-              ], function (error) {
-                postCallback(error);
-              });
+                      } else {
+                        doCallback("User to post from not found!");
+                      }
+                    });
+                  },
+                  function (doCallback) {
+                    models.Post.find({
+                      where: {
+                        id: post.id
+                      }
+                    }).then(function (postToUpdate) {
+                      if (postToUpdate) {
+                        postToUpdate.official_status = post.newOfficialStatus;
+                        postToUpdate.save().then(function () {
+                          doCallback();
+                        });
+                      } else {
+                        doCallback("Cant find post: "+post.id)
+                      }
+                    });
+                  },
+                  function (doCallback) {
+                    models.Point.createNewsStory({
+                      useragent: { source: 'performBulkUpdateScript' },
+                      clientIp: '127.0.0.1',
+                      user: { id: userIdToPostNewsStory }
+                    }, {
+                      subType: 'bulkOperation',
+                      post_id: post.id,
+                      user_id: userIdToPostNewsStory,
+                      point: { content: templateContent }
+                    }, function (error) {
+                      doCallback(error);
+                    })
+                  }
+                ], function (error) {
+                  postCallback(error);
+                });
+              } else {
+                postCallback("No template content for postId: "+post.id);
+              }
             } else {
               postCallback();
             }
@@ -99,6 +105,7 @@ models.BulkStatusUpdate.find({
       if (error) {
         console.error(error);
       }
+      console.log("Bulk status update has been applied.");
       process.exit();
     });
   }
