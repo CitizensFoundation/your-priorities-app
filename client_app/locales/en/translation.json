@@ -1,4 +1,7 @@
 {
+  "removeSelectedAndDeleteContent": "Remove users and delete all content:",
+  "communityContentToBeAnonymized": "Community content to be anonymized",
+  "groupContentToBeAnonymized": "Group content to be anonymized",
   "anonymize": "Anonymize",
   "domainAdmins": "Domain admins",
   "domainUsers": "Domain users",
@@ -6,6 +9,10 @@
   "removeSelectedFromGroup": "Remove from group:",
   "removeFromCommunity": "Remove from community",
   "removeFromGroup": "Remove from group",
+  "removeFromDomain": "Remove from group & delete content",
+  "removeFromCommunityDeleteContent": "Remove from community & delete content",
+  "removeFromGroupDeleteContent": "Remove from group & delete content",
+  "removeFromDomainDeleteContent": "Remove from group",
   "removeSelectedAdmins": "Remove admin rights from:",
   "deleteSelectedUsers": "Request deletion of selected:",
   "anonymizeSelectedUsers": "Anonymize selected:",

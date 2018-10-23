@@ -136,13 +136,18 @@
             <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedUsersEmpty]]">
               <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" hidden$="[[!domainId]]" on-tap="_deleteSelectedUsers">[[t('deleteSelectedUsers')]] [[selectedUsersCount]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeDeleteContentSelectedUsers">
+                    [[t('removeSelectedAndDeleteContent')]] [[selectedUsersCount]]
+                </paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeSelectedUsersFromCollection">
                   <div hidden$="[[!groupId]]">
                     [[t('removeSelectedFromGroup')]] [[selectedUsersCount]]
                   </div>
                   <div hidden$="[[!communityId]]">
                     [[t('removeSelectedFromCommunity')]] [[selectedUsersCount]]
+                  </div>
+                  <div hidden$="[[!domainId]]">
+                    [[t('removeSelectedFromDomain')]] [[selectedUsersCount]]
                   </div>
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeSelectedAdmins">[[t('removeSelectedAdmins')]] [[selectedUsersCount]]</paper-item>
@@ -160,8 +165,21 @@
                   <div hidden$="[[!communityId]]">
                     [[t('removeFromCommunity')]]
                   </div>
+                  <div hidden$="[[!domainId]]">
+                    [[t('removeFromDomain')]]
+                  </div>
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[!domainId]]" on-tap="_deleteUser">[[t('deleteUser')]]</paper-item>
+                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeAndDeleteUserContent">
+                  <div hidden$="[[!groupId]]">
+                    [[t('removeFromGroupDeleteContent')]]
+                  </div>
+                  <div hidden$="[[!communityId]]">
+                    [[t('removeFromCommunityDeleteContent')]]
+                  </div>
+                  <div hidden$="[[!domainId]]">
+                    [[t('removeFromDomainDeleteContent')]]
+                  </div>
+                </paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-item>
 
                 <paper-item data-args$="[[item.id]]" hidden$="[[_userOrganizationName(item)]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-item>
@@ -172,14 +190,14 @@
         </vaadin-grid-column>
       </vaadin-grid>
 
-      <div hidden$="[[adminUsers]]" class="layout horizontal">
+      <div hidden$="[[adminUsers]]" class="layout vertical center-center">
         <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
-        <paper-button on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
+        <paper-button raised on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
       </div>
 
-      <div hidden$="[[!adminUsers]]" class="layout horizontal">
+      <div hidden$="[[!adminUsers]]" class="layout vertical center-center">
         <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
-        <paper-button on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
+        <paper-button raised on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
       </div>
 
       <div class="buttons">
@@ -385,11 +403,14 @@
         if (!userId)
           userId = event.target.getAttribute('data-args');
         this.$.removeUserAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
+        if (this.modelType==="groups" && this.groupId) {
           this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_user";
           this.$.removeUserAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
+        } else if (this.modelType==="communities" && this.communityId) {
           this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_user";
+          this.$.removeUserAjax.generateRequest();
+        } else if (this.modelType==="domains" && this.domainId) {
+          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_user";
           this.$.removeUserAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
@@ -417,11 +438,14 @@
 
       _addAdmin: function (event) {
         this.$.addAdminAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
+        if (this.modelType==="groups" && this.groupId) {
           this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addAdminEmail + "/add_admin";
           this.$.addAdminAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
+        } else if (this.modelType==="communities" && this.communityId) {
           this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
+          this.$.addAdminAjax.generateRequest();
+        } else if (this.modelType==="domains" && this.domain) {
+          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + this.addAdminEmail + "/add_admin";
           this.$.addAdminAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
@@ -430,10 +454,10 @@
 
       _inviteUser: function (event) {
         this.$.inviteUserAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
+        if (this.modelType==="groups" && this.groupId) {
           this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
           this.$.inviteUserAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
+        } else if (this.modelType==="communities" && this.communityId) {
           this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
           this.$.inviteUserAjax.generateRequest();
         } else {
