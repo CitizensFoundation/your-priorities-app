@@ -137,7 +137,7 @@
               <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeDeleteContentSelectedUsers">
-                    [[t('removeSelectedAndDeleteContent')]] [[selectedUsersCount]]
+                  [[t('removeSelectedAndDeleteContent')]] [[selectedUsersCount]]
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeSelectedUsersFromCollection">
                   <div hidden$="[[!groupId]]">
@@ -393,24 +393,57 @@
         } else if (this.modelType=="communities" && this.communityId) {
           this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_admin";
           this.$.removeAdminAjax.generateRequest();
+        } else if (this.modelType=="domains" && this.domainId) {
+          this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_admin";
+          this.$.removeAdminAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
         }
       },
 
+      _removeSelectedAdmins: function (event) {
+        this._removeMaster(event, 'remove_many_admins', this.selectedUsers);
+      },
+
+      _removeDeleteContentSelectedUsers: function (event) {
+        this._removeMaster(event, 'remove_many_users_and_delete_content', this.selectedUsers);
+      },
+
+      _removeSelectedUsersFromCollection: function (event) {
+        this._removeMaster(event, 'remove_many_users', this.selectedUsers);
+      },
+
       _removeUserFromCollection: function (event) {
+        this._removeMaster(event, 'remove_user');
+      },
+
+      _removeAndDeleteUserContent: function (event) {
+        this._removeMaster(event, 'remove_and_delete_user_content');
+      },
+
+      _removeMaster: function (event, type, userIds) {
+        var url;
         var userId = event.target.parentElement.getAttribute('data-args');
         if (!userId)
           userId = event.target.getAttribute('data-args');
-        this.$.removeUserAjax.body = {};
+        if (userIds && userIds.length>0) {
+          url = "/api/" + this.modelType + "/" + this.groupId + "/" +type;
+          this.$.removeUserAjax.body = { userIds: userIds };
+        } else if (userId) {
+          url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/"+type;
+          this.$.removeUserAjax.body = {};
+        } else {
+          console.error("No user ids to remove");
+          return;
+        }
         if (this.modelType==="groups" && this.groupId) {
-          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_user";
+          this.$.removeUserAjax.url = url;
           this.$.removeUserAjax.generateRequest();
         } else if (this.modelType==="communities" && this.communityId) {
-          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_user";
+          this.$.removeUserAjax.url = url;
           this.$.removeUserAjax.generateRequest();
         } else if (this.modelType==="domains" && this.domainId) {
-          this.$.removeUserAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_user";
+          this.$.removeUserAjax.url = url;
           this.$.removeUserAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
