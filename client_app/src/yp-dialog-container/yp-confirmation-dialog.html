@@ -21,7 +21,7 @@
     <paper-dialog id="confirmationDialog">
       <div>[[confirmationText]]</div>
       <div class="buttons">
-        <paper-button on-tap="_reset" dialog-dismiss>[[t('cancel')]]</paper-button>
+        <paper-button hidden$="[[hideCancel]]" on-tap="_reset" dialog-dismiss>[[t('cancel')]]</paper-button>
         <paper-button dialog-confirm on-tap="_confirm">[[t('confirm')]]</paper-button>
       </div>
     </paper-dialog>
@@ -50,7 +50,12 @@
 
         useFinalWarning: Boolean,
 
-        haveIssuedFinalWarning: Boolean
+        haveIssuedFinalWarning: Boolean,
+
+        hideCancel: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _reset: function () {
@@ -58,9 +63,10 @@
         this.set('onConfirmedFunction', null);
         this.haveIssuedFinalWarning = false;
         this.useFinalWarning = false;
+        this.set('hideCancel', false);
       },
 
-      open: function (confirmationText, onConfirmedFunction, useModal, useFinalWarning) {
+      open: function (confirmationText, onConfirmedFunction, useModal, useFinalWarning, hideCancel) {
         this.set('confirmationText', confirmationText);
         this.set('onConfirmedFunction', onConfirmedFunction);
         if (useModal) {
@@ -75,6 +81,11 @@
           this.useFinalWarning = false;
         }
         this.haveIssuedFinalWarning = false;
+        if (hideCancel) {
+          this.set('hideCancel', true);
+        } else {
+          this.set('hideCancel', false);
+        }
       },
 
       _confirm: function () {

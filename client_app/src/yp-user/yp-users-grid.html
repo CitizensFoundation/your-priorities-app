@@ -69,18 +69,6 @@
         margin-right: 8px !important;
       }
 
-      @media (max-width: 600px) {
-        paper-listbox {
-          margin-right: 8px;
-        }
-
-        #dialog {
-          width: 100%;
-          height: 100%;
-          margin: 0;
-        }
-      }
-
       .headerBox {
         margin: 16px;
         margin-bottom: 0;
@@ -114,6 +102,25 @@
         align-self: flex-end;
         margin-bottom: 24px;
       }
+
+      @media (max-width: 600px) {
+        paper-listbox {
+          margin-right: 8px;
+        }
+
+        #dialog {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+        }
+
+        .headerText {
+          font-size: 20px;
+          line-height: 1.2em;
+          text-align: center;
+        }
+      }
+
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -132,7 +139,7 @@
       </div>
     </paper-dialog>
 
-    <paper-dialog id="dialog">
+    <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
         <div class="headerText"><div class="innerHeader">[[collectionName]] <span hidden$="[[!totalUserCount]]">([[totalUserCount]] [[usersCountText]])</span></div></div>
         <div class="flex"></div>
@@ -343,12 +350,14 @@
           type: Array
         },
 
+        selectedUserId: {
+          type: String
+        },
+
         totalUserCount: {
           type: String,
           computed: '_totalUserCount(users)'
         },
-
-        storedEvent: Object,
 
         collectionName: String,
 
@@ -448,72 +457,74 @@
       },
 
       _removeSelectedAdmins: function (event) {
-        this.storedEvent = event;
+        this._setupUserIdFromEvent(event);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureYouWantToRemoveAdmins'), this._reallyRemoveSelectedAdmins.bind(this), true, true);
+          dialog.open(this.t('areYouSureYouWantToRemoveAdmins'), this._reallyRemoveSelectedAdmins.bind(this), true, false);
         }.bind(this));
       },
 
       _removeAndDeleteContentSelectedUsers: function (event) {
-        this.storedEvent = event;
+        this._setupUserIdFromEvent(event);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('areYouSureRemoveAndDeleteSelectedUserContent'), this._reallyRemoveAndDeleteContentSelectedUsers.bind(this), true, true);
         }.bind(this));
       },
 
       _removeSelectedUsersFromCollection: function (event) {
-        this.storedEvent = event;
+        this._setupUserIdFromEvent(event);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('areYouSureRemoveSelectedUsers'), this._reallyRemoveSelectedUsersFromCollection.bind(this), true, true);
         }.bind(this));
       },
 
       _removeUserFromCollection: function (event) {
-        this.storedEvent = event;
-        debugger;
+        this._setupUserIdFromEvent(event);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureRemoveUser'), this._reallyRemoveUserFromCollection.bind(this), true, true);
+          dialog.open(this.t('areYouSureRemoveUser'), this._reallyRemoveUserFromCollection.bind(this), true, false);
         }.bind(this));
       },
 
       _removeAndDeleteUserContent: function (event) {
-        this.storedEvent = event;
+        this._setupUserIdFromEvent(event);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('areYouSureRemoveAndDeleteUser'), this._reallyRemoveAndDeleteUserContent.bind(this), true, true);
         }.bind(this));
       },
 
       _reallyRemoveSelectedAdmins: function () {
-        this._removeMaster(this.$.removeManyAdminAjax, this.storedEvent, 'remove_many_admins', this.selectedUserIds);
+        this._removeMaster(this.$.removeManyAdminAjax, 'remove_many_admins', this.selectedUserIds);
       },
 
       _reallyRemoveAndDeleteContentSelectedUsers: function () {
-        this._removeMaster(this.$.removeAndDeleteManyAjax, this.storedEvent, 'remove_many_users_and_delete_content', this.selectedUserIds);
+        this._removeMaster(this.$.removeAndDeleteManyAjax, 'remove_many_users_and_delete_content', this.selectedUserIds);
       },
 
       _reallyRemoveSelectedUsersFromCollection: function () {
-        this._removeMaster(this.$.removeManyUsersAjax, this.storedEvent, 'remove_many_users', this.selectedUserIds);
+        this._removeMaster(this.$.removeManyUsersAjax, 'remove_many_users', this.selectedUserIds);
       },
 
       _reallyRemoveUserFromCollection: function () {
-        debugger;
-        this._removeMaster(this.$.removeUserAjax, this.storedEvent, 'remove_user');
+        this._removeMaster(this.$.removeUserAjax, 'remove_user');
       },
 
       _reallyRemoveAndDeleteUserContent: function () {
-        this._removeMaster(this.$.removeAndDeleteAjax, this.storedEvent, 'remove_and_delete_user_content');
+        this._removeMaster(this.$.removeAndDeleteAjax, 'remove_and_delete_user_content');
       },
 
-      _removeMaster: function (ajax, event, type, userIds) {
-        var url;
+      _setupUserIdFromEvent(event) {
         var userId = event.target.parentElement.getAttribute('data-args');
         if (!userId)
           userId = event.target.getAttribute('data-args');
+        this.set('selectedUserId', userId);
+      },
+
+      _removeMaster: function (ajax, type, userIds) {
+        var url;
         if (userIds && userIds.length>0) {
           url = "/api/" + this.modelType + "/" + this.groupId + "/" +type;
           ajax.body = { userIds: userIds };
-        } else if (userId) {
-          url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/"+type;
+        } else if (this.selectedUserId) {
+          url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.selectedUserId + "/"+type;
           ajax.body = {};
         } else {
           console.error("No user ids to remove");
@@ -531,9 +542,11 @@
         } else {
           console.warn("Can't find model type or ids");
         }
-        var user = this._findUserFromId(userId);
-        if (user)
-          this.$.grid.deselectItem(user);
+        if (this.selectedUserId) {
+          var user = this._findUserFromId(this.selectedUserId);
+          if (user)
+            this.$.grid.deselectItem(user);
+        }
       },
 
       _setSelected: function (event) {
@@ -584,6 +597,34 @@
       _removeAdminResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('adminRemoved'));
         this.$.ajax.generateRequest();
+      },
+
+      _removeManyAdminResponse: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('removalsInProgress'), null, true, false, true);
+        }.bind(this));
+        this.$.dialog.close();
+      },
+
+      _removeManyUsersResponse: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('removalsInProgress'), null, true, false, true);
+        }.bind(this));
+        this.$.dialog.close();
+      },
+
+      _removeAndDeleteCompleted: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('removalAndDeletionInProgress'), null, true, false, true);
+        }.bind(this));
+        this.$.dialog.close();
+      },
+
+      _removeAndDeleteManyCompleted: function () {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('removalsAndDeletionsInProgress'), null, true, false, true);
+        }.bind(this));
+        this.$.dialog.close();
       },
 
       _removeUserResponse: function () {

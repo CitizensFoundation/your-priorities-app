@@ -1,4 +1,12 @@
 {
+  "removalAndDeletionInProgress": "Removal and deletion is in progress. Try to reload the page a bit",
+  "removalsAndDeletionsInProgress": "Removals and deletions are in progress but can take a while depending on the number of users affected. Try to reload the page a bit later.",
+  "removalsInProgress": "Removals are in progress but can take a while to complete, depending on the number of users affected. Try to reload the page a bit later.",
+  "areYouSureRemoveAndDeleteUser": "Are you sure you want to remove this user and delete all content?",
+  "areYouSureRemoveUser": "Are you sure you want to remove this user?",
+  "areYouSureRemoveSelectedUsers": "Are you sure you want to remove those users? This operation can not be undone.",
+  "areYouSureRemoveAndDeleteSelectedUserContent": "Are you sure you want to remove and delete all those users content? This operation can not be undone.",
+  "areYouSureYouWantToRemoveAdmins": "Are you sure you want to remove admins?",
   "adminsCount": "admins",
   "usersCount": "users",
   "organizationUserRemoved": "Organization user removed",
