@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "7.5.0.4",
+  "version": "7.6.0.1",
   "license": "AGPL-3.0",
   "dependencies": {
     "@google-cloud/translate": "1.1.0",

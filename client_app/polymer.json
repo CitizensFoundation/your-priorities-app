@@ -9,7 +9,7 @@
     "src/yp-dialog-container/yp-dialog-container-logged-in.html",
     "src/yp-dialog-container/yp-dialog-container-admin.html",
     "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html",
-    "src/yp-dialog-container/yp-dialog-container-user-grid.html",
+    "src/yp-dialog-container/yp-dialog-container-users-grid.html",
     "src/yp-dialog-container/yp-dialog-container-delayed.html",
     "src/yp-user/yp-user.html",
     "src/yp-app/yp-view-404.html"
