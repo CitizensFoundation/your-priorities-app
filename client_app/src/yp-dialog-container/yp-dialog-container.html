@@ -27,6 +27,10 @@
       #dialogs[hide] {
         display: none;
       }
+
+      paper-dialog {
+        background-color: #FFF;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -105,10 +109,6 @@
           <yp-category-edit new id="categoryEdit"></yp-category-edit>
         </template>
 
-        <template is="dom-if" name="usersGrid" restamp>
-          <yp-users-grid id="usersGrid"></yp-users-grid>
-        </template>
-
         <template is="dom-if" name="pagesGrid" restamp>
           <yp-pages-grid id="pagesGrid"></yp-pages-grid>
         </template>
@@ -143,7 +143,15 @@
         <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
         <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
       </template>
+
+      <template is="dom-if" if="[[gotUsersGrid]]">
+        <yp-users-grid id="usersGrid"></yp-users-grid>
+      </template>
     </div>
+
+    <paper-dialog id="loadingDialog">
+      <paper-spinner active></paper-spinner>
+    </paper-dialog>
   </template>
 
   <script>
@@ -194,6 +202,11 @@
         pageDialogOpen: {
           type: Boolean,
           value: false
+        },
+
+        gotUsersGrid: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -236,9 +249,11 @@
       },
 
       _openBulkStatusUpdates: function () {
+        this.$.loadingDialog.open();
         this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), function () {
+          this.$.loadingDialog.close();
           console.info("Have loaded bulk status container");
-        }, null, true);
+        }.bind(this), null, true);
         this.set('bulkStatusUpdates', true);
       },
 
@@ -259,14 +274,26 @@
         }
       },
 
+      getUsersGridAsync: function (callback) {
+        this.$.loadingDialog.open();
+        this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
+          this.$.loadingDialog.close();
+          console.info("Have loaded users grid container");
+          this.set('gotUsersGrid', true);
+          this.getDialogAsync("usersGrid", callback);
+        }.bind(this), null, true);
+      },
+
       getDialogAsync: function (idName, callback) {
         this.set('hideDialogs', false);
-        if (idName=="pageDialog") {
+
+        if (idName==="pageDialog") {
           this.set('pageDialogOpen', true);
         } else {
           this.set('pageDialogOpen', false);
           this.set('selectedDialog', idName);
         }
+
         this.async(function () {
           var element = this.$$("#"+idName);
           if (element && (typeof element.ready === "function")) {

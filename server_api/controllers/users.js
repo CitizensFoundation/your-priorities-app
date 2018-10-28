@@ -629,7 +629,7 @@ router.delete('/anonymize_current_user', function (req, res) {
       }
     }).then(function (user) {
       if (user) {
-        user.email = user.email+"_anonymized_"+Math.floor(Math.random() * 90000);
+        user.email = user.email+"_anonymous_anonymized_"+Math.floor(Math.random() * 90000);
         user.name = "Anonymous";
         user.ssn = null;
         user.age_group = null;
@@ -651,6 +651,9 @@ router.delete('/anonymize_current_user', function (req, res) {
         user.social_points = null;
         user.legacy_user_id = null;
         user.ignore_list = null;
+        if (!user.profile_data)
+          user.set('profile_data', {});
+        user.set('profile_data.isAnonymousUser', true);
         user.setUserProfileImages([]).then(() => {
           user.save().then(function () {
             log.info('User anonymized', { context: 'delete', user: toJson(req.user) });

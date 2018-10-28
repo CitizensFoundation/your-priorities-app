@@ -335,17 +335,17 @@
 
       _openUsersDialog: function () {
         window.appGlobals.activity('open', 'group.users');
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+        Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(this.group.id, null, null, false);
-          dialog.open();
+          dialog.open(this.group.name);
         }.bind(this));
       },
 
       _openAdminsDialog: function () {
         window.appGlobals.activity('open', 'group.admins');
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("usersGrid", function (dialog) {
+        Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(this.group.id, null, null, true);
-          dialog.open();
+          dialog.open(this.group.name);
         }.bind(this));
       },
 
@@ -380,7 +380,7 @@
         window.appGlobals.activity('open', 'group.anonymize');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
           dialog.setup('/api/groups/' + this.group.id + '/anonymize_content',
-            this.t('groupAnonymizeConfirmation'));
+            this.t('groupAnonymizeConfirmation'), null, this.t('anonymize'));
           dialog.open({finalDeleteWarning: true});
         }.bind(this));
       },
