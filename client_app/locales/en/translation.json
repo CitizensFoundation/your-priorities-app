@@ -1,4 +1,11 @@
 {
+  "adminsCount": "admins",
+  "usersCount": "users",
+  "organizationUserRemoved": "Organization user removed",
+  "adminRemoved": "Admin removed",
+  "adminAdded": "Admin added",
+  "userRemoved": "User removed",
+  "organizationUserAdded": "Organization user added",
   "removeSelectedAndDeleteContent": "Remove users and delete all content:",
   "communityContentToBeAnonymized": "Community content to be anonymized",
   "groupContentToBeAnonymized": "Group content to be anonymized",

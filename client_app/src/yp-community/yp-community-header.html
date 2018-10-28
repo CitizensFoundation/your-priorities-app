@@ -284,7 +284,7 @@
         window.appGlobals.activity('open', 'community.users');
         Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(null, this.community.id, null, false);
-          dialog.open();
+          dialog.open(this.community.name);
         }.bind(this));
       },
 
@@ -292,6 +292,7 @@
         window.appGlobals.activity('open', 'community.admins');
         Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(null, this.community.id, null, true);
+          dialog.open(this.community.name);
           dialog.open();
         }.bind(this));
       },

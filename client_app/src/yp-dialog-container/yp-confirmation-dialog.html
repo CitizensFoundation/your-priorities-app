@@ -46,15 +46,21 @@
         onConfirmedFunction: {
           type: Function,
           value: null
-        }
+        },
+
+        useFinalWarning: Boolean,
+
+        haveIssuedFinalWarning: Boolean
       },
 
       _reset: function () {
         this.set('confirmationText', null);
         this.set('onConfirmedFunction', null);
+        this.haveIssuedFinalWarning = false;
+        this.useFinalWarning = false;
       },
 
-      open: function (confirmationText, onConfirmedFunction, useModal) {
+      open: function (confirmationText, onConfirmedFunction, useModal, useFinalWarning) {
         this.set('confirmationText', confirmationText);
         this.set('onConfirmedFunction', onConfirmedFunction);
         if (useModal) {
@@ -63,12 +69,27 @@
           this.$$("#confirmationDialog").modal = false;
         }
         this.$$("#confirmationDialog").open();
+        if (useFinalWarning) {
+          this.useFinalWarning = true;
+        } else {
+          this.useFinalWarning = false;
+        }
+        this.haveIssuedFinalWarning = false;
       },
 
       _confirm: function () {
-        if (this.onConfirmedFunction) {
-          this.onConfirmedFunction();
-          this._reset();
+        if (this.useFinalWarning && !this.haveIssuedFinalWarning) {
+          this.haveIssuedFinalWarning = true;
+          this.$.confirmationDialog.close();
+          this.set('confirmationText', this.t("finalDeleteWarning"));
+          this.async(function () {
+            this.$.confirmationDialog.open();
+          });
+        } else {
+          if (this.onConfirmedFunction) {
+            this.onConfirmedFunction();
+            this._reset();
+          }
         }
       }
     });

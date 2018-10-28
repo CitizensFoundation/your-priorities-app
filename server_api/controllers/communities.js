@@ -416,6 +416,45 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
   });
 });
 
+router.delete('/:communityId/remove_many_admins', auth.can('edit community'), (req, res) => {
+  queue.create('process-deletion', { type: 'remove-many-community-admins', userIds: req.body.userIds, communityId: req.params.communityId }).
+        priority('high').removeOnComplete(true).save();
+  log.info('Remove many community admins started', { context: 'remove_many_admins', communityId: req.params.communityId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
+router.delete('/:communityId/remove_many_users_and_delete_content', auth.can('edit community'), function(req, res) {
+  queue.create('process-deletion', { type: 'remove-many-community-users-and-delete-content', userIds: req.body.userIds, communityId: req.params.communityId }).
+        priority('high').removeOnComplete(true).save();
+  log.info('Remove many and delete many community users content', { context: 'remove_many_users_and_delete_content', communityId: req.params.communityId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
+router.delete('/:communityId/remove_many_users', auth.can('edit community'), function(req, res) {
+  queue.create('process-deletion', { type: 'remove-many-community-users', userIds: req.body.userIds, communityId: req.params.communityId }).
+        priority('high').removeOnComplete(true).save();
+  log.info('Remove many community admins started', { context: 'remove_many_users', communityId: req.params.communityId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
+router.delete('/:communityId/:userId/remove_and_delete_user_content', auth.can('edit community'), function(req, res) {
+  getCommunityAndUser(req.params.communityId, req.params.userId, null, function (error, community, user) {
+    if (error) {
+      log.error('Could not remove_user', { err: error, communityId: req.params.communityId, userRemovedId: req.params.userId, context: 'remove_user', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && community) {
+      community.removeCommunityUsers(user).then(function (results) {
+        queue.create('process-deletion', { type: 'delete-community-user-content', userId: req.params.userId, communityId: req.params.communityId }).
+        priority('high').removeOnComplete(true).save();
+        log.info('User removed from community', {context: 'remove_and_delete_user_content', communityId: req.params.communityId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
 router.delete('/:communityId/:userId/remove_admin', auth.can('edit community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.params.userId, null, function (error, community, user) {
     if (error) {

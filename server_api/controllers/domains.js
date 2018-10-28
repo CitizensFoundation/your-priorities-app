@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
+var queue = require('../active-citizen/workers/queue');
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -222,6 +223,71 @@ var getDomain = function (req, domainId, done) {
     }
   ], function (error) {
     done(error, domain);
+  });
+};
+
+var getDomainAndUser = function (domainId, userId, userEmail, callback) {
+  var user, domain;
+
+  async.series([
+    function (seriesCallback) {
+      models.Domain.find({
+        where: {
+          id: domainId
+        }
+      }).then(function (domainIn) {
+        if (domainIn) {
+          domain = domainIn;
+        }
+        seriesCallback();
+      }).catch(function (error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
+      if (userId) {
+        models.User.find({
+          where: {
+            id: userId
+          },
+          attributes: ['id','email','name','created_at']
+        }).then(function (userIn) {
+          if (userIn) {
+            user = userIn;
+          }
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    },
+    function (seriesCallback) {
+      if (userEmail) {
+        models.User.find({
+          where: {
+            email: userEmail
+          },
+          attributes: ['id','email','name','created_at']
+        }).then(function (userIn) {
+          if (userIn) {
+            user = userIn;
+          }
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      } else {
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    if (error) {
+      callback(error)
+    } else {
+      callback(null, domain, user);
+    }
   });
 };
 
@@ -572,6 +638,77 @@ router.get(':id/news', auth.can('view domain'), function(req, res) {
     log.error("Domain News Error", { context: context, domain: toJson(domain), user: toJson(user), err: error,
       errorStatus: errorStatus ? errorStatus : 500 });
     res.sendStatus(500);
+  });
+});
+
+router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {
+  queue.create('process-deletion', { type: 'remove-many-domain-admins', userIds: req.body.userIds, domainId: req.params.domainId }).
+  priority('high').removeOnComplete(true).save();
+  log.info('Remove many domain admins started', { context: 'remove_many_admins', domainId: req.params.domainId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
+router.delete('/:domainId/remove_many_users_and_delete_content', auth.can('edit domain'), function(req, res) {
+  queue.create('process-deletion', { type: 'remove-many-domain-users-and-delete-content', userIds: req.body.userIds, domainId: req.params.domainId }).
+  priority('high').removeOnComplete(true).save();
+  log.info('Remove many and delete many domain users content', { context: 'remove_many_users_and_delete_content', domainId: req.params.domainId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
+router.delete('/:domainId/remove_many_users', auth.can('edit domain'), function(req, res) {
+  queue.create('process-deletion', { type: 'remove-many-domain-users', userIds: req.body.userIds, domainId: req.params.domainId }).
+  priority('high').removeOnComplete(true).save();
+  log.info('Remove many domain admins started', { context: 'remove_many_users', domainId: req.params.domainId, user: toJson(req.user.simple()) });
+  res.sendStatus(200);
+});
+
+router.delete('/:domainId/:userId/remove_and_delete_user_content', auth.can('edit domain'), function(req, res) {
+  getDomainAndUser(req.params.domainId, req.params.userId, null, function (error, domain, user) {
+    if (error) {
+      log.error('Could not remove_user', { err: error, domainId: req.params.domainId, userRemovedId: req.params.userId, context: 'remove_user', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else if (user && domain) {
+      domain.removeDomainUsers(user).then(function (results) {
+        queue.create('process-deletion', { type: 'delete-domain-user-content', userId: req.params.userId, domainId: req.params.domainId }).
+        priority('high').removeOnComplete(true).save();
+        log.info('User removed from domain', {context: 'remove_and_delete_user_content', domainId: req.params.domainId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.delete('/:domainId/:userId/remove_admin', auth.can('edit domain'), function(req, res) {
+  getDomainAndUser(req.params.domainId, req.params.userId, null, function (error, domain, user) {
+    if (error) {
+      log.error('Could not remove admin', { err: error, domainId: req.params.domainId, userRemovedId: req.params.userId, context: 'remove_admin', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (user && domain) {
+      domain.removeDomainAdmins(user).then(function (results) {
+        log.info('Admin removed', {context: 'remove_admin', domainId: req.params.domainId, userRemovedId: req.params.userId, user: req.user ? toJson(req.user.simple()) : null });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+router.delete('/:domainId/:userId/remove_user', auth.can('edit domain'), function(req, res) {
+  getDomainAndUser(req.params.domainId, req.params.userId, null, function (error, domain, user) {
+    if (error) {
+      log.error('Could not remove_user', { err: error, domainId: req.params.domainId, userRemovedId: req.params.userId, context: 'remove_user', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (user && domain) {
+      domain.removeDomainUsers(user).then(function (results) {
+        log.info('User removed', {context: 'remove_user', domainId: req.params.domainId, userRemovedId: req.params.userId, user: req.user ? toJson(req.user.simple()) : null });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
   });
 });
 

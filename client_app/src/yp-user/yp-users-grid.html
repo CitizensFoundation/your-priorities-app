@@ -80,6 +80,40 @@
           margin: 0;
         }
       }
+
+      .headerBox {
+        margin: 16px;
+        margin-bottom: 0;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      paper-button {
+        margin-left: 24px;
+      }
+
+      .inputBox {
+        margin-left: 16px;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-bottom: 4px;
+        margin-bottom: 4px;
+        align-self: flex-start;
+      }
+
+      #grid {
+        margin-top: 8px;
+      }
+
+      .headerText {
+        display: flex;
+        font-size: 22px;
+      }
+
+      .innerHeader {
+        align-self: flex-end;
+        margin-bottom: 24px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -99,7 +133,19 @@
     </paper-dialog>
 
     <paper-dialog id="dialog">
-      <h2>[[headerText]]: <span hidden$="[[!totalUserCount]]">[[totalUserCount]]</span></h2>
+      <div class="layout horizontal headerBox wrap">
+        <div class="headerText"><div class="innerHeader">[[collectionName]] <span hidden$="[[!totalUserCount]]">([[totalUserCount]] [[usersCountText]])</span></div></div>
+        <div class="flex"></div>
+        <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
+          <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
+          <paper-button on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
+        </paper-material>
+
+        <paper-material hidden$="[[!adminUsers]]" class="layout horizontal wrap inputBox">
+          <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
+          <paper-button on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
+        </paper-material>
+      </div>
 
       <vaadin-grid id="grid" aria-label="[[headerText]]" items="[[users]]" selected-items="{{selectedUsers}}">
         <vaadin-grid-selection-column auto-select>
@@ -136,7 +182,7 @@
             <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedUsersEmpty]]">
               <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeDeleteContentSelectedUsers">
+                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeAndDeleteContentSelectedUsers">
                   [[t('removeSelectedAndDeleteContent')]] [[selectedUsersCount]]
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeSelectedUsersFromCollection">
@@ -190,16 +236,6 @@
         </vaadin-grid-column>
       </vaadin-grid>
 
-      <div hidden$="[[adminUsers]]" class="layout vertical center-center">
-        <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
-        <paper-button raised on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
-      </div>
-
-      <div hidden$="[[!adminUsers]]" class="layout vertical center-center">
-        <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
-        <paper-button raised on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
-      </div>
-
       <div class="buttons">
         <paper-button raised dialog-dismiss>[[t('close')]]</paper-button>
       </div>
@@ -208,13 +244,15 @@
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
       <yp-ajax method="DELETE" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
       <yp-ajax method="DELETE" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
       <yp-ajax method="DELETE" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="removeAndDeleteAjax" on-response="_removeAndDeleteCompleted"></yp-ajax>
+      <yp-ajax method="DELETE" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
       <yp-ajax method="POST" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
       <yp-ajax method="POST" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
       <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
-      <yp-ajax id="deleteUserAjax" on-response="_deleteCompleted" method="DELETE"></yp-ajax>
-
     </div>
   </template>
 
@@ -301,10 +339,20 @@
           value: true
         },
 
+        selectedUserIds: {
+          type: Array
+        },
+
         totalUserCount: {
           type: String,
           computed: '_totalUserCount(users)'
-        }
+        },
+
+        storedEvent: Object,
+
+        collectionName: String,
+
+        usersCountText: String
       },
 
       observers: [
@@ -327,9 +375,6 @@
       },
 
       _selectedUsersChanged: function () {
-        console.error(this.selectedUsers);
-        if (this.selectedUsers)
-          console.warn(this.selectedUsers.length);
         if (this.selectedUsers && this.selectedUsers.length>0) {
           this.set('selectedUsersEmpty', false);
           this.set('selectedUsersCount', this.selectedUsers.length);
@@ -337,6 +382,7 @@
           this.set('selectedUsersEmpty', true);
           this.set('selectedUsersCount', 0);
         }
+        this.selectedUserIds = this.selectedUsers.map(function (user) { return user.id });
       },
 
       _userOrganizationId: function (user) {
@@ -402,49 +448,86 @@
       },
 
       _removeSelectedAdmins: function (event) {
-        this._removeMaster(event, 'remove_many_admins', this.selectedUsers);
+        this.storedEvent = event;
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureYouWantToRemoveAdmins'), this._reallyRemoveSelectedAdmins.bind(this), true, true);
+        }.bind(this));
       },
 
-      _removeDeleteContentSelectedUsers: function (event) {
-        this._removeMaster(event, 'remove_many_users_and_delete_content', this.selectedUsers);
+      _removeAndDeleteContentSelectedUsers: function (event) {
+        this.storedEvent = event;
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureRemoveAndDeleteSelectedUserContent'), this._reallyRemoveAndDeleteContentSelectedUsers.bind(this), true, true);
+        }.bind(this));
       },
 
       _removeSelectedUsersFromCollection: function (event) {
-        this._removeMaster(event, 'remove_many_users', this.selectedUsers);
+        this.storedEvent = event;
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureRemoveSelectedUsers'), this._reallyRemoveSelectedUsersFromCollection.bind(this), true, true);
+        }.bind(this));
       },
 
       _removeUserFromCollection: function (event) {
-        this._removeMaster(event, 'remove_user');
+        this.storedEvent = event;
+        debugger;
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureRemoveUser'), this._reallyRemoveUserFromCollection.bind(this), true, true);
+        }.bind(this));
       },
 
       _removeAndDeleteUserContent: function (event) {
-        this._removeMaster(event, 'remove_and_delete_user_content');
+        this.storedEvent = event;
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureRemoveAndDeleteUser'), this._reallyRemoveAndDeleteUserContent.bind(this), true, true);
+        }.bind(this));
       },
 
-      _removeMaster: function (event, type, userIds) {
+      _reallyRemoveSelectedAdmins: function () {
+        this._removeMaster(this.$.removeManyAdminAjax, this.storedEvent, 'remove_many_admins', this.selectedUserIds);
+      },
+
+      _reallyRemoveAndDeleteContentSelectedUsers: function () {
+        this._removeMaster(this.$.removeAndDeleteManyAjax, this.storedEvent, 'remove_many_users_and_delete_content', this.selectedUserIds);
+      },
+
+      _reallyRemoveSelectedUsersFromCollection: function () {
+        this._removeMaster(this.$.removeManyUsersAjax, this.storedEvent, 'remove_many_users', this.selectedUserIds);
+      },
+
+      _reallyRemoveUserFromCollection: function () {
+        debugger;
+        this._removeMaster(this.$.removeUserAjax, this.storedEvent, 'remove_user');
+      },
+
+      _reallyRemoveAndDeleteUserContent: function () {
+        this._removeMaster(this.$.removeAndDeleteAjax, this.storedEvent, 'remove_and_delete_user_content');
+      },
+
+      _removeMaster: function (ajax, event, type, userIds) {
         var url;
         var userId = event.target.parentElement.getAttribute('data-args');
         if (!userId)
           userId = event.target.getAttribute('data-args');
         if (userIds && userIds.length>0) {
           url = "/api/" + this.modelType + "/" + this.groupId + "/" +type;
-          this.$.removeUserAjax.body = { userIds: userIds };
+          ajax.body = { userIds: userIds };
         } else if (userId) {
           url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/"+type;
-          this.$.removeUserAjax.body = {};
+          ajax.body = {};
         } else {
           console.error("No user ids to remove");
           return;
         }
         if (this.modelType==="groups" && this.groupId) {
-          this.$.removeUserAjax.url = url;
-          this.$.removeUserAjax.generateRequest();
+          ajax.url = url;
+          ajax.generateRequest();
         } else if (this.modelType==="communities" && this.communityId) {
-          this.$.removeUserAjax.url = url;
-          this.$.removeUserAjax.generateRequest();
+          ajax.url = url;
+          ajax.generateRequest();
         } else if (this.modelType==="domains" && this.domainId) {
-          this.$.removeUserAjax.url = url;
-          this.$.removeUserAjax.generateRequest();
+          ajax.url = url;
+          ajax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
         }
@@ -499,28 +582,28 @@
       },
 
       _removeAdminResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('users.adminRemoved'));
+        window.appGlobals.notifyUserViaToast(this.t('adminRemoved'));
         this.$.ajax.generateRequest();
       },
 
       _removeUserResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('users.userRemoved'));
+        window.appGlobals.notifyUserViaToast(this.t('userRemoved'));
         this.$.ajax.generateRequest();
       },
 
       _addAdminResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('users.adminAdded')+' '+this.addAdminEmail);
+        window.appGlobals.notifyUserViaToast(this.t('adminAdded')+' '+this.addAdminEmail);
         this.set('addAdminEmail', null);
         this.$.ajax.generateRequest();
       },
 
       _addOrganizationResponse: function (event, detail) {
-        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserAdded')+' '+ detail.response.email);
+        window.appGlobals.notifyUserViaToast(this.t('organizationUserAdded')+' '+ detail.response.email);
         this.$.ajax.generateRequest();
       },
 
       _removeOrganizationResponse: function (event, detail) {
-        window.appGlobals.notifyUserViaToast(this.t('users.organizationUserRemoved')+' '+ detail.response.email);
+        window.appGlobals.notifyUserViaToast(this.t('organizationUserRemoved')+' '+ detail.response.email);
         this.$.ajax.generateRequest();
       },
 
@@ -583,12 +666,18 @@
         this._setupHeaderText();
       },
 
-      open: function () {
+      open: function (name) {
         this.set('opened', true);
+        this.set('collectionName', name);
         this.$.dialog.open();
       },
 
       _setupHeaderText: function () {
+        if (this.adminUsers) {
+          this.set('usersCountText', this.t('adminsCount'));
+        } else {
+          this.set('usersCountText', this.t('usersCount'));
+        }
         if (this.groupId) {
           if (this.adminUsers) {
             this.set('headerText', this.t('group.admins'));

@@ -292,7 +292,7 @@
         window.appGlobals.activity('open', 'domainUsers');
         Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(null, null, this.domain.id, false);
-          dialog.open();
+          dialog.open(this.domain.name);
         }.bind(this));
       },
 
@@ -300,7 +300,7 @@
         window.appGlobals.activity('open', 'domainAdmins');
         Polymer.dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
           dialog.setup(null, null, this.domain.id, true);
-          dialog.open();
+          dialog.open(this.domain.name);
         }.bind(this));
       },
 
