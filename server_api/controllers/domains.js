@@ -703,6 +703,9 @@ router.delete('/:domainId/:userId/remove_user', auth.can('edit domain'), functio
       res.sendStatus(500);
     } else if (user && domain) {
       domain.removeDomainUsers(user).then(function (results) {
+        if (domain.counter_users > 0) {
+          domain.decrement("counter_users")
+        }
         log.info('User removed', {context: 'remove_user', domainId: req.params.domainId, userRemovedId: req.params.userId, user: req.user ? toJson(req.user.simple()) : null });
         res.sendStatus(200);
       });

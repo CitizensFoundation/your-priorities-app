@@ -191,21 +191,23 @@
             <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedUsersEmpty]]">
               <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeAndDeleteContentSelectedUsers">
-                  [[t('removeSelectedAndDeleteContent')]] [[selectedUsersCount]]
-                </paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeSelectedUsersFromCollection">
-                  <div hidden$="[[!groupId]]">
-                    [[t('removeSelectedFromGroup')]] [[selectedUsersCount]]
-                  </div>
-                  <div hidden$="[[!communityId]]">
-                    [[t('removeSelectedFromCommunity')]] [[selectedUsersCount]]
-                  </div>
-                  <div hidden$="[[!domainId]]">
-                    [[t('removeSelectedFromDomain')]] [[selectedUsersCount]]
-                  </div>
-                </paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeSelectedAdmins">[[t('removeSelectedAdmins')]] [[selectedUsersCount]]</paper-item>
+                <template is="dom-if" if="[[!selectedUsersEmpty]]" restamp>
+                  <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeAndDeleteContentSelectedUsers">
+                    [[t('removeSelectedAndDeleteContent')]] [[selectedUsersCount]]
+                  </paper-item>
+                  <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeSelectedUsersFromCollection">
+                    <div hidden$="[[!groupId]]">
+                      [[t('removeSelectedFromGroup')]] [[selectedUsersCount]]
+                    </div>
+                    <div hidden$="[[!communityId]]">
+                      [[t('removeSelectedFromCommunity')]] [[selectedUsersCount]]
+                    </div>
+                    <div hidden$="[[!domainId]]">
+                      [[t('removeSelectedFromDomain')]] [[selectedUsersCount]]
+                    </div>
+                  </paper-item>
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!adminUsers]]" on-tap="_removeSelectedAdmins">[[t('removeSelectedAdmins')]] [[selectedUsersCount]]</paper-item>
+                </template>
               </paper-listbox>
             </paper-menu-button>
           </template>
@@ -521,12 +523,22 @@
       },
 
       _removeMaster: function (ajax, type, userIds) {
-        var url;
+        var url, collectionId;
+        if (this.modelType==="groups" && this.groupId) {
+          collectionId = this.groupId;
+        } else if (this.modelType==="communities" && this.communityId) {
+          collectionId = this.communityId;
+        } else if (this.modelType==="domains" && this.domainId) {
+          collectionId = this.domainId;
+        } else {
+          console.error("Can't find model type or ids");
+          return;
+        }
         if (userIds && userIds.length>0) {
-          url = "/api/" + this.modelType + "/" + this.groupId + "/" +type;
+          url = "/api/" + this.modelType + "/" + collectionId + "/" +type;
           ajax.body = { userIds: userIds };
         } else if (this.selectedUserId) {
-          url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.selectedUserId + "/"+type;
+          url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedUserId + "/"+type;
           ajax.body = {};
         } else {
           console.error("No user ids to remove");

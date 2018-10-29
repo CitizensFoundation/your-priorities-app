@@ -1,5 +1,5 @@
 {
-  "removalAndDeletionInProgress": "Removal and deletion is in progress. Try to reload the page a bit",
+  "removalAndDeletionInProgress": "Removal and deletion is in progress. Try to reload the page a bit later.",
   "removalsAndDeletionsInProgress": "Removals and deletions are in progress but can take a while depending on the number of users affected. Try to reload the page a bit later.",
   "removalsInProgress": "Removals are in progress but can take a while to complete, depending on the number of users affected. Try to reload the page a bit later.",
   "areYouSureRemoveAndDeleteUser": "Are you sure you want to remove this user and delete all content?",
@@ -45,7 +45,7 @@
   "areYouSureYouWantToDisconnectFacebookLogin": "Are you sure you want to disconnect your account from Facebook Login? You will not be able to login with Facebook after this operation!",
   "disconnectFromSamlLogin": "Disconnect Electronic ID Login",
   "disconnectFromFacebookLogin": "Disconnect Facebok Login",
-  "hidePostFilterAndSearch": "hidePostFilterAndSearch",
+  "hidePostFilterAndSearch": "Hide post filter and search",
   "forceSecureSamlLoginInfo": "To access this group you need to login with secure electronic identification to ensure one vote per person. Click below to login.",
   "forceSecureSamlLogin": "Force secure SAML eID login",
   "areYouSureYouWantToAnonymizeUser": "Are you sure you want to anonymize your account?",

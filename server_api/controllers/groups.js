@@ -387,6 +387,9 @@ router.delete('/:groupId/:userId/remove_user', auth.can('edit group'), function(
       res.sendStatus(500);
     } else if (user && group) {
       group.removeGroupUsers(user).then(function (results) {
+        if (group.counter_users > 0) {
+          group.decrement("counter_users")
+        }
         log.info('User removed', {context: 'remove_user', groupId: req.params.groupId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
         res.sendStatus(200);
       });
@@ -395,7 +398,6 @@ router.delete('/:groupId/:userId/remove_user', auth.can('edit group'), function(
     }
   });
 });
-
 
 router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, res) {
   getGroupAndUser(req.params.groupId, null, req.params.email, function (error, group, user) {

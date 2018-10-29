@@ -444,6 +444,9 @@ router.delete('/:communityId/:userId/remove_and_delete_user_content', auth.can('
       res.sendStatus(500);
     } else if (user && community) {
       community.removeCommunityUsers(user).then(function (results) {
+        if (community.counter_users>0) {
+          community.decrement("counter_users");
+        }
         queue.create('process-deletion', { type: 'delete-community-user-content', userId: req.params.userId, communityId: req.params.communityId }).
         priority('high').removeOnComplete(true).save();
         log.info('User removed from community', {context: 'remove_and_delete_user_content', communityId: req.params.communityId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
@@ -478,6 +481,9 @@ router.delete('/:communityId/:userId/remove_user', auth.can('edit community'), f
       res.sendStatus(500);
     } else if (user && community) {
       community.removeCommunityUsers(user).then(function (results) {
+        if (community.counter_users > 0) {
+          community.decrement("counter_users")
+        }
         log.info('User removed', {context: 'remove_user', communityId: req.params.communityId, userRemovedId: req.params.userId, user: req.user ? toJson(req.user.simple()) : null });
         res.sendStatus(200);
       });
