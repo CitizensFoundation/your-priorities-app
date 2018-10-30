@@ -696,6 +696,24 @@ router.delete('/:domainId/:userId/remove_admin', auth.can('edit domain'), functi
   });
 });
 
+router.post('/:domainId/:email/add_admin', auth.can('edit domain'), function(req, res) {
+  getDomainAndUser(req.params.domainId, null, req.params.email, function (error, domain, user) {
+    if (error) {
+      log.error('Could not add admin', { err: error, domainId: req.params.domainId, userAddEmail: req.params.email, context: 'remove_admin', user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (user && domain) {
+      domain.addDomainAdmins(user).then(function (results) {
+        log.info('Admin Added', {context: 'add_admin', domainId: req.params.domainId, userAddEmail: req.params.email, user: req.user ? toJson(req.user.simple()) : null });
+        res.sendStatus(200);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
+
+
+
 router.delete('/:domainId/:userId/remove_user', auth.can('edit domain'), function(req, res) {
   getDomainAndUser(req.params.domainId, req.params.userId, null, function (error, domain, user) {
     if (error) {

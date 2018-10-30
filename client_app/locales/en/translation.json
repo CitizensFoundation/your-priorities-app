@@ -22,6 +22,7 @@
   "domainUsers": "Domain users",
   "removeSelectedFromCommunity": "Remove from community:",
   "removeSelectedFromGroup": "Remove from group:",
+  "removeSelectedFromDomain": "Remove from domain:",
   "removeFromCommunity": "Remove from community",
   "removeFromGroup": "Remove from group",
   "removeFromDomain": "Remove from group & delete content",

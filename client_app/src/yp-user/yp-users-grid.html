@@ -145,10 +145,12 @@
       <div class="layout horizontal headerBox wrap">
         <div class="headerText"><div class="innerHeader">[[collectionName]] <span hidden$="[[!totalUserCount]]">([[totalUserCount]] [[usersCountText]])</span></div></div>
         <div class="flex"></div>
-        <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
-          <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
-          <paper-button on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
-        </paper-material>
+        <div hidden$="[[domainId]]">
+          <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
+            <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
+            <paper-button on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
+          </paper-material>
+        </div>
 
         <paper-material hidden$="[[!adminUsers]]" class="layout horizontal wrap inputBox">
           <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
@@ -587,7 +589,7 @@
         } else if (this.modelType==="communities" && this.communityId) {
           this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
           this.$.addAdminAjax.generateRequest();
-        } else if (this.modelType==="domains" && this.domain) {
+        } else if (this.modelType==="domains" && this.domainId) {
           this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + this.addAdminEmail + "/add_admin";
           this.$.addAdminAjax.generateRequest();
         } else {
@@ -670,6 +672,7 @@
 
       _domainIdChanged: function (newGroupId) {
         if (newGroupId) {
+          this._reset();
           this.set('modelType', 'domains');
           this._generateRequest(newGroupId);
         }
@@ -677,6 +680,7 @@
 
       _groupIdChanged: function (newGroupId) {
         if (newGroupId) {
+          this._reset();
           this.set('modelType', 'groups');
           this._generateRequest(newGroupId);
         }
@@ -684,6 +688,7 @@
 
       _communityIdChanged: function (newCommunityId) {
         if (newCommunityId) {
+          this._reset();
           this.set('modelType', 'communities');
           this._generateRequest(newCommunityId);
         }
@@ -725,6 +730,14 @@
         this.set('opened', true);
         this.set('collectionName', name);
         this.$.dialog.open();
+      },
+
+      _reset: function () {
+        this.set('users', []);
+        this.set('selectedUsers', []);
+        this.set('selectedUsersCount', 0);
+        this.set('selectedUsersEmpty', true);
+        this.$.grid.clearCache();
       },
 
       _setupHeaderText: function () {
