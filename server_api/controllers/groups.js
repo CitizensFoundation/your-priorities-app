@@ -369,6 +369,9 @@ router.delete('/:groupId/:userId/remove_and_delete_user_content', auth.can('edit
       res.sendStatus(500);
     } else if (user && group) {
       group.removeGroupUsers(user).then(function (results) {
+        if (group.counter_users > 0) {
+          group.decrement("counter_users")
+        }
         queue.create('process-deletion', { type: 'delete-group-user-content', userId: req.params.userId, groupId: req.params.groupId }).
               priority('high').removeOnComplete(true).save();
         log.info('User removed', {context: 'remove_and_delete_user_content', groupId: req.params.groupId, userRemovedId: req.params.userId, user: toJson(req.user.simple()) });
