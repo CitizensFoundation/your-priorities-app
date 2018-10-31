@@ -712,8 +712,6 @@ router.post('/:domainId/:email/add_admin', auth.can('edit domain'), function(req
   });
 });
 
-
-
 router.delete('/:domainId/:userId/remove_user', auth.can('edit domain'), function(req, res) {
   getDomainAndUser(req.params.domainId, req.params.userId, null, function (error, domain, user) {
     if (error) {
