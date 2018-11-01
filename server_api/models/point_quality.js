@@ -19,6 +19,12 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    indexes: [
+      {
+        fields: ['user_id', 'deleted']
+      }
+    ],
+
     classMethods: {
       associate: function(models) {
         PointQuality.belongsTo(models.Point);

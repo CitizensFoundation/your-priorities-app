@@ -76,6 +76,9 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['notifications_settings'],
         using: 'gin',
         operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['id','deleted']
       }
     ],
 

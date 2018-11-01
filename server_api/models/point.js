@@ -214,6 +214,9 @@ module.exports = function(sequelize, DataTypes) {
         where: {
           deleted: false
         }
+      },
+      {
+        fields: ['user_id','group_id','deleted']
       }
     ],
 

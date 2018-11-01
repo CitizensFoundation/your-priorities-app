@@ -81,6 +81,9 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['user_interaction_profile'],
         using: 'gin',
         operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['user_id','group_id','deleted']
       }
     ],
 
