@@ -197,7 +197,8 @@ router.get('/:postId/user_images', auth.can('view post'), function(req, res) {
       res.send([]);
     }
   }).catch(function(error) {
-    sendPostOrError(res, null, 'view user images', req.user, error);
+    log.error("Get images did not work", { error });
+    res.sendStatus(500);
   });
 });
 
@@ -296,7 +297,8 @@ router.put('/:postId/user_images', auth.can('add post user images'), function(re
 router.delete('/:postId/:imageId/user_images', auth.can('edit post'), function(req, res) {
   deleteImage(req.params.imageId, function (error) {
     if (error) {
-      sendPostOrError(res, null, 'delete post user image', req.user, error);
+      log.error("Delete did not work", { error });
+      res.sendStatus(500);
     } else {
       res.sendStatus(200);
     }
