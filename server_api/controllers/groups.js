@@ -773,7 +773,7 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
 });
 
 router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, res) {
-  const anonymizationDelayMs = 1000*60*5*60*24*7;
+  const anonymizationDelayMs = 1000*60*60*24*7;
   models.Group.find({
     where: {id: req.params.id }
   }).then(function (group) {
@@ -786,7 +786,7 @@ router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, re
       queue.create('process-anonymization', { type: 'anonymize-group-content', groupName: group.name,
                                               userId: req.user.id, groupId: group.id, useNotification: true,
                                               resetCounters: true }).
-                                            delay(anonymizationDelayMs).priority('high').removeOnComplete(true).save();
+                                              delay(anonymizationDelayMs).priority('high').removeOnComplete(true).save();
       res.sendStatus(200);
     } else {
       sendGroupOrError(res, req.params.id, 'delete', req.user, 'Not found', 404);
