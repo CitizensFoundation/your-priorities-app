@@ -12,11 +12,10 @@ var Upload = require('s3-uploader');
 module.exports = function(sequelize, DataTypes) {
   var Video = sequelize.define("Video", {
     name: DataTypes.STRING,
+    video_type: DataTypes.STRING,
     description: DataTypes.TEXT,
     meta: DataType.JSONB,
-    formats: DataTypes.TEXT,
-    original_filename: DataTypes.STRING,
-    s3_bucket_name: DataTypes.STRING,
+    formats: DataType.JSONB,
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
@@ -35,9 +34,37 @@ module.exports = function(sequelize, DataTypes) {
       ]
     },
 
+    indexes: [
+      {
+        fields: ['meta'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['formats'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['user_id', 'deleted']
+      },
+      {
+        fields: ['video_type', 'group_id','deleted']
+      },
+      {
+        fields: ['video_type', 'post_id','deleted']
+      },
+      {
+        fields: ['video_type', 'community_id','deleted']
+      },
+      {
+        fields: ['video_type', 'domain_id','deleted']
+      }
+    ],
+
     classMethods: {
 
-      defaultAttributesPublic: ["id","updated_at","formats"],
+      defaultAttributesPublic: ["id","updated_at","formats",'video_type'],
 
       createFormatsFromVersions: function (versions) {
         const endPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
@@ -249,7 +276,7 @@ module.exports = function(sequelize, DataTypes) {
               suffix: '-medium',
               quality: 99
             }
-          ]
+          ]""
         } else if (itemType && itemType.indexOf('-header') > -1) {
           versions = [
             {
@@ -326,70 +353,13 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Video.belongsTo(models.User);
-        Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideo' });
-        Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
-        Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
-        Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'UserProfileVideo' });
-        Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
-        Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideo' });
-      },
-
-      downloadFacebookVideosForUser: function (user, done) {
-        var facebookId = user.facebook_id;
-        //var facebookId = 746850516;
-        if (facebookId && !user.UserProfileVideos || user.UserProfileVideos.length===0) {
-          request.get('https://graph.facebook.com/' + facebookId + '/picture', function (err, downloadResponse, body) {
-            if (err) {
-              return done(err);
-            }
-            var filepath = "uploads/fb_video_download"+randomstring.generate(10) + '.png';
-            var originalFilename = "facebook_profile_"+facebookId+".png";
-            fs.writeFile(filepath, body, function(err) {
-              if (err) {
-                log.error("Error when trying to write video", {err: error});
-                return done(err);
-              }
-              var s3UploadClient = sequelize.models.Video.getUploadClient("user-profile");
-              s3UploadClient.upload(filepath, {}, function(error, versions, meta) {
-                if (error) {
-                  done(error);
-                } else {
-                  var video = sequelize.models.Video.build({
-                    user_id: user.id,
-                    s3_bucket_name: process.env.S3_BUCKET,
-                    original_filename: originalFilename,
-                    formats: JSON.stringify(sequelize.models.Video.createFormatsFromVersions(versions)),
-                    user_agent: "Downloaded from Facebook",
-                    ip_address: "127.0.0.1"
-                  });
-                  video.save().then(function() {
-                    log.info('Video Created', { video: toJson(video), context: 'create', user: toJson(user) });
-                    user.setupVideos({uploadedProfileVideoId: video.id}, function (error) {
-                      fs.unlink(filepath, function(error) {
-                        if (error) {
-                          log.error("Error in unlinking video file: "+filepath);
-                          return done(error);
-                        } else {
-                          setTimeout(function () {
-                            sequelize.models.User.getUserWithAll(user.id, function (error, newUser) {
-                              done(null, newUser);
-                            });
-                          },10);
-                        }
-                      });
-                    });
-                  }).catch(function(error) {
-                    done(error);
-                  });
-                }
-              });
-            });
-          });
-        } else {
-          log.info("User already has an video", {user: user, facebook_id: user ? user.facebook_id : null});
-          done()
-        }
+        Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'post_videos' });
+        Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'user_profile_videos' });
+        Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'community_logo_videos' });
+        Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'group_logo_videos' });
+        Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'domain_logo_videos' });
       }
+
     }
   });
 
