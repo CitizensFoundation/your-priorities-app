@@ -182,6 +182,10 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hidePostActionsInGrid', truthValueFromBody(req.body.hidePostActionsInGrid));
   group.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
+  group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
+  group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
+  group.set('configuration.videoPostUploadLimitSec', (req.body.videoPostUploadLimitSec && req.body.videoPostUploadLimitSec!="") ? req.body.videoPostUploadLimitSec : "60");
+
 };
 
 var upload = multer({

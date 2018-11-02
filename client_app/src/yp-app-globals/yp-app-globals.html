@@ -17,6 +17,7 @@
     <yp-session id="session"></yp-session>
 
     <yp-ajax id="boot" url="/api/domains" on-response="_bootResponse"></yp-ajax>
+    <yp-ajax auto url="/api/videos/hasVideoUploadSupport" on-response="_hasVideoUploadSupport"></yp-ajax>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
   </template>
 
@@ -133,6 +134,12 @@
           goalEvents: {
             type: Array,
             value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
+          }
+        },
+
+        _hasVideoUploadSupport: function (event, detail) {
+          if (detail && detail.hasVideoUploadSupport===true) {
+            window.appGlobals.hasVideoUpload = true;
           }
         },
 

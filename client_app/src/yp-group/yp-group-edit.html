@@ -214,6 +214,8 @@
         <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">[[t('disablePostPageLink')]]</paper-checkbox>
         <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]" checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]</paper-checkbox>
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">[[t('hidePostFilterAndSearch')]]</paper-checkbox>
+        <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]</paper-checkbox>
+        <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]</paper-checkbox>
       </div>
 
       <paper-input id="defaultLocationLongLat"
@@ -406,6 +408,11 @@
       hasSamlLoginProvider: {
         type: Boolean,
         value: false
+      },
+
+      hasVideoUpload: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -531,11 +538,19 @@
           }
         }
       }
+
       this._updateEmojiBindings();
+
       if (window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided) {
         this.set('hasSamlLoginProvider', true);
       } else {
         this.set('hasSamlLoginProvider', false);
+      }
+
+      if (window.appGlobals.hasVideoUpload) {
+        this.set('hasVideoUpload', true);
+      } else {
+        this.set('hasVideoUpload', false);
       }
     },
 

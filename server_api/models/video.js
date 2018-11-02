@@ -12,10 +12,10 @@ var Upload = require('s3-uploader');
 module.exports = function(sequelize, DataTypes) {
   var Video = sequelize.define("Video", {
     name: DataTypes.STRING,
-    video_type: DataTypes.STRING,
     description: DataTypes.TEXT,
     meta: DataType.JSONB,
     formats: DataType.JSONB,
+    viewable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
@@ -46,19 +46,7 @@ module.exports = function(sequelize, DataTypes) {
         operator: 'jsonb_path_ops'
       },
       {
-        fields: ['user_id', 'deleted']
-      },
-      {
-        fields: ['video_type', 'group_id','deleted']
-      },
-      {
-        fields: ['video_type', 'post_id','deleted']
-      },
-      {
-        fields: ['video_type', 'community_id','deleted']
-      },
-      {
-        fields: ['video_type', 'domain_id','deleted']
+        fields: ['user_id', 'viewable', 'deleted']
       }
     ],
 
@@ -73,21 +61,7 @@ module.exports = function(sequelize, DataTypes) {
 
     classMethods: {
 
-      defaultAttributesPublic: ["id","updated_at","formats",'video_type'],
-
-      createFormatsFromVersions: function (versions) {
-        const endPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
-        var formats = [];
-        versions.forEach(function(version) {
-          var n = version.url.lastIndexOf(process.env.S3_BUCKET);
-          var path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
-          var newUrl = "https://"
-            + process.env.S3_BUCKET + "." + (endPoint)
-            + path;
-          formats.push(newUrl);
-        });
-        return formats;
-      },
+      defaultAttributesPublic: ["id","updated_at","formats"],
 
       instanceMethods: {
         getPreSignedUploadUrl: (callback) => {
@@ -95,7 +69,7 @@ module.exports = function(sequelize, DataTypes) {
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             endpoint:  process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || null,
-            useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT ? true : false,
+            useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
             region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
           });
 
@@ -121,7 +95,10 @@ module.exports = function(sequelize, DataTypes) {
                 meta = _.merge(this.meta, meta);
               this.set('meta', meta);
               log.info('Presigned URL:', { url, meta });
-              callback(null, url);
+              log.info('Saving video metadata');
+              this.save().then(() => {
+                callback(null, url);
+              }).catch((error) => { callback(error) });
             }
           });
         },
