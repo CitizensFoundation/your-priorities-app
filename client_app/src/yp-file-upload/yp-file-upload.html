@@ -111,7 +111,7 @@ Example:
             </div>
             <div class="error" hidden$="{{!item.error}}">{{errorText}}</div>
             <div hidden$={{item.complete}}>
-              <paper-progress value$="{{item.progress}}" indeterminate error$="{{item.error}}"></paper-progress>
+              <paper-progress value$="{{item.progress}}" indeterminate$="[[indeterminateProgress]]" error$="{{item.error}}"></paper-progress>
             </div>
           </div>
         </template>
@@ -275,6 +275,13 @@ Example:
       videoUpload: {
         type: Boolean,
         value: false
+      },
+
+      currentFile: String,
+
+      indeterminateProgress: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -403,12 +410,34 @@ Example:
       this.set("_shownDropText", (!this.files.length && this.droppable));
     },
 
+    uploadFile: function (file) {
+      if (this.videoUpload) {
+        this.currentFile = file;
+        var ajax = document.createElement('iron-ajax');
+        ajax.handleAs = 'json';
+        ajax.contentType = 'application/json';
+        ajax.url = '/api/videos/createAndGetPreSignedUploadUrl';
+        ajax.method = 'POST';
+        ajax.body = {};
+        ajax.onResponse = this.getPreSignedUploadUrlAjaxResponse.bind(this);
+        ajax.generateRequest();
+      } else {
+        this.reallyUploadFile(file);
+      }
+    },
+
+    getPreSignedUploadUrlAjaxResponse: function (event, detail) {
+      this.target = detail.url;
+      this.set('indeterminateProgres', true);
+      this.reallyUploadFile(this.currentFile);
+    },
+
     /**
-     * Uploads a file
+     * Really uploads a file
      *
      * @param {object} a file, an element of the files array
     */
-    uploadFile: function(file) {
+    reallyUploadFile: function(file) {
       if (!file) {
         return;
       }
@@ -435,7 +464,7 @@ Example:
         }
       }
       xhr.onload = function(e) {
-      self.fire('file-upload-complete');
+        self.fire('file-upload-complete');
         if (xhr.status === 200) {
           self.fire("success", {xhr: xhr});
           self.set(prefix + ".complete", true);
