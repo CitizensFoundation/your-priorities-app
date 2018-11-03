@@ -1,5 +1,8 @@
 {
-  "postCoverVideoInfo": "",
+  "hidePostImageUploads": "Hide post image uploads",
+  "allowPostVideoUploads": "Allow post video uploads",
+  "useVideoCover": "Use video cover",
+  "postCoverVideoInfo": "Upload your video here.",
   "removalAndDeletionInProgress": "Removal and deletion is in progress. Try to reload the page a bit later.",
   "removalsAndDeletionsInProgress": "Removals and deletions are in progress but can take a while depending on the number of users affected. Try to reload the page a bit later.",
   "removalsInProgress": "Removals are in progress but can take a while to complete, depending on the number of users affected. Try to reload the page a bit later.",

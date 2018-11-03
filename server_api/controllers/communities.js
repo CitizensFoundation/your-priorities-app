@@ -252,11 +252,7 @@ var getCommunity = function(req, done) {
 };
 
 var truthValueFromBody = function(bodyParameter) {
-  if (bodyParameter && bodyParameter!="") {
-    return true;
-  } else {
-    return false;
-  }
+  return (bodyParameter && bodyParameter!=="");
 };
 
 var updateCommunityConfigParameters = function (req, community) {
@@ -295,6 +291,7 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
   community.set('configuration.signupTermsPageId', (req.body.signupTermsPageId && req.body.signupTermsPageId!="") ? req.body.signupTermsPageId : null);
+  community.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
 };
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {

@@ -184,8 +184,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
   group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
   group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
+  group.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   group.set('configuration.videoPostUploadLimitSec', (req.body.videoPostUploadLimitSec && req.body.videoPostUploadLimitSec!="") ? req.body.videoPostUploadLimitSec : "60");
-
 };
 
 var upload = multer({

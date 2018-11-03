@@ -27,6 +27,10 @@ var sendDomainOrError = function (res, domain, context, user, error, errorStatus
   }
 };
 
+var truthValueFromBody = function(bodyParameter) {
+  return (bodyParameter && bodyParameter!=="");
+};
+
 var getDomain = function (req, domainId, done) {
   var domain;
   var attributes = null;
@@ -571,6 +575,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       }
 
       domain.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!="")? req.body.appHomeScreenShortName : null);
+      domain.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
 
       domain.name = req.body.name;
       domain.description = req.body.description;
