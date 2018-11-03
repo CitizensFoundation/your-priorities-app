@@ -280,8 +280,7 @@
                 <div>[[t('post.cover.imageInfo')]]</div>
               </div>
               <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
-                <yp-file-upload id="videoFileUpload" raised="true" multi="false" target="/api/videos?itemType=post-header" method="POST"
-                                on-success="_videoUploaded">
+                <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
                   <iron-icon class="icon" icon="videocams"></iron-icon>
                   <span>[[t('uploadVideo')]]</span>
                 </yp-file-upload>
@@ -385,6 +384,11 @@
         observer: '_uploadedHeaderImageIdChanged'
       },
 
+      uploadedVideoId: {
+        type: String,
+        observer: '_uploadedHeaderImageIdChanged'
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -412,6 +416,10 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _videoUploaded: function (event, detail) {
+      this.set('uploadedVideoId', detail.videoId);
+    },
 
     _documentUploaded: function (event, detail) {
       var document = JSON.parse(detail.xhr.response);
@@ -594,11 +602,26 @@
         if (post.newEndorsement && window.appUser && window.appUser.endorsementPostsIndex) {
           window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
         }
-        this.redirectTo("/post/"+post.id);
-        window.appGlobals.activity('completed', 'newPost');
+        if (this.uploadedVideoId) {
+          var ajax = document.createElement('iron-ajax');
+          ajax.handleAs = 'json';
+          ajax.contentType = 'application/json';
+          ajax.url = '/api/videos/'+this.post.id+'/'+this.uploadedVideoId+'/completeAndAddToPost';
+          ajax.method = 'PUT';
+          ajax.body = {};
+          ajax.onResponse = this._finishRedirect.bind(this);
+          ajax.generateRequest();
+        } else {
+          this._finishRedirect();
+        }
       } else {
         console.warn('No post found on custom redirect');
       }
+    },
+
+    _finishRedirect: function () {
+      this.redirectTo("/post/"+this.post.id);
+      window.appGlobals.activity('completed', 'newPost');
     },
 
     _clear: function () {

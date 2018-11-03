@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
 
     underscored: true,
-
+    timestamps: true,
     tableName: 'relationships',
 
     classMethods: {

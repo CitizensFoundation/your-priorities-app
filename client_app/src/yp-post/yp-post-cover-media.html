@@ -117,6 +117,10 @@
         <iron-image  header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
       </template>
 
+      <template is="dom-if" if="[[videoActive]]">
+        <video on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
+      </template>
+
       <template is="dom-if" if="[[!disableMaps]]">
 
         <template is="dom-if" if="[[streetViewActive]]">
@@ -198,6 +202,12 @@
           computed: '_isImageActive(post)'
         },
 
+        videoActive: {
+          type: Boolean,
+          value: false,
+          computed: '_isVideoActive(post)'
+        },
+
         mapActive: {
           type: Boolean,
           value: false,
@@ -243,6 +253,11 @@
         postImagePath: {
           type: String,
           computed: '_postImagePath(post)'
+        },
+
+        postVideoPath: {
+          type: String,
+          computed: '_postVideoPath(post)'
         },
 
         headerMode: {
@@ -353,6 +368,14 @@
         }
       },
 
+      _isVideoActive: function (post) {
+        if (this._withCoverMediaType(post,'video')) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
       _isMapActive: function (post) {
         if (post && post.location && post.location.latitude && this._withCoverMediaType(post,'map'))
           return true;
@@ -423,6 +446,14 @@
       _postImagePath: function (post) {
         if (post) {
           return this.getImageFormatUrl(post.PostHeaderImages, 0);
+        } else {
+          return "";
+        }
+      },
+
+      _postVideoPath: function (post) {
+        if (post && post.PostVideos && post.PostVideos.length>0) {
+          return post.PostVideos[0].format[0];
         } else {
           return "";
         }

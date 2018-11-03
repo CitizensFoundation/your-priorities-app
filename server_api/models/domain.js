@@ -46,6 +46,8 @@ module.exports = function(sequelize, DataTypes) {
 
     tableName: 'domains',
 
+    timestamps: true,
+
     instanceMethods: {
 
       simple: function() {

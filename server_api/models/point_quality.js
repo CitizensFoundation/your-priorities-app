@@ -13,6 +13,8 @@ module.exports = function(sequelize, DataTypes) {
 
     tableName: 'point_qualities',
 
+    timestamps: true,
+
     defaultScope: {
       where: {
         deleted: false

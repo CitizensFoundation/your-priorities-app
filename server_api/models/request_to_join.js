@@ -7,7 +7,7 @@ module.exports = function(sequelize, DataTypes) {
     underscored: true,
 
     tableName: 'requests_to_join',
-
+    timestamps: true,
     classMethods: {
 
       JOIN_GROUP: 0,

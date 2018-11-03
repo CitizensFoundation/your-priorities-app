@@ -15,6 +15,9 @@ module.exports = function(sequelize, DataTypes) {
         deleted: false
       }
     },
+
+    timestamps: true,
+
     underscored: true,
 
     tableName: 'bulk_status_updates',

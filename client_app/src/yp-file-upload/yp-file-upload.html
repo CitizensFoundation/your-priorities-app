@@ -428,7 +428,7 @@ Example:
 
     getPreSignedUploadUrlAjaxResponse: function (event, detail) {
       this.target = detail.url;
-      this.set('indeterminateProgres', true);
+      this.set('indeterminateProgress', false);
       this.reallyUploadFile(this.currentFile);
     },
 

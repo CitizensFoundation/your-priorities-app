@@ -20,6 +20,8 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    timestamps: true,
+
     instanceMethods: {
 
       setupIconImage: function(body, done) {
