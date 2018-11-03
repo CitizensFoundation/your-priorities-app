@@ -419,17 +419,16 @@ Example:
         ajax.url = '/api/videos/createAndGetPreSignedUploadUrl';
         ajax.method = 'POST';
         ajax.body = {};
-        ajax.onResponse = this.getPreSignedUploadUrlAjaxResponse.bind(this);
+        ajax.addEventListener('response', function (event) {
+          this.target = event.detail.response.presignedUrl;
+          this.method = "PUT";
+          this.set('indeterminateProgress', false);
+          this.reallyUploadFile(this.currentFile);
+        }.bind(this));
         ajax.generateRequest();
       } else {
         this.reallyUploadFile(file);
       }
-    },
-
-    getPreSignedUploadUrlAjaxResponse: function (event, detail) {
-      this.target = detail.url;
-      this.set('indeterminateProgress', false);
-      this.reallyUploadFile(this.currentFile);
     },
 
     /**
@@ -457,13 +456,16 @@ Example:
       };
 
       var url = this.target.replace("<name>", file.name);
+      debugger;
       xhr.open(this.method, url, true);
       for (key in this.headers) {
         if (this.headers.hasOwnProperty(key)) {
           xhr.setRequestHeader(key, this.headers[key]);
         }
       }
+
       xhr.onload = function(e) {
+        debugger;
         self.fire('file-upload-complete');
         if (xhr.status === 200) {
           self.fire("success", {xhr: xhr});
@@ -476,6 +478,7 @@ Example:
           self.fire("error", {xhr:xhr});
         }
       };
+
       xhr.send(formData);
     }
   });

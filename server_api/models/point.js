@@ -243,6 +243,8 @@ module.exports = function(sequelize, DataTypes) {
         Point.belongsTo(sequelize.models.Group);
         Point.hasMany(sequelize.models.PointRevision);
         Point.hasMany(sequelize.models.PointQuality);
+        Point.belongsToMany(models.Video, { as: 'PointVideos', through: 'point_videos' });
+
       },
 
       createComment: function (req, options, callback) {

@@ -19,23 +19,26 @@ module.exports = {
           },
           name: Sequelize.STRING,
           description: Sequelize.TEXT,
-          meta: DataType.JSONB,
-          formats: DataType.JSONB,
-          viewable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-          ip_address: { type: DataTypes.STRING, allowNull: false },
-          user_agent: { type: DataTypes.TEXT, allowNull: false },
-          deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+          meta: Sequelize.JSONB,
+          formats: Sequelize.JSONB,
+          user_id: { type: Sequelize.INTEGER, allowNull: false },
+          viewable: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
+          ip_address: { type: Sequelize.STRING, allowNull: false },
+          user_agent: { type: Sequelize.TEXT, allowNull: false },
+          deleted: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false }
         }
       ),
       await queryInterface.addIndex('videos', {
         fields: ['meta'],
         using: 'gin',
-        operator: 'jsonb_path_ops'
+        operator: 'jsonb_path_ops',
+        name: 'videos_meta_index'
       }),
       await queryInterface.addIndex('videos', {
         fields: ['formats'],
         using: 'gin',
-        operator: 'jsonb_path_ops'
+        operator: 'jsonb_path_ops',
+        name: 'videos_formats_index',
       }),
       await queryInterface.addIndex('videos', ['user_id', 'viewable', 'deleted']),
       await queryInterface.createTable(
@@ -63,6 +66,36 @@ module.exports = {
             type: Sequelize.INTEGER,
             references: {
               model: 'posts',
+              key: 'id'
+            },
+          },
+        }
+      ),
+      await queryInterface.createTable(
+        'point_videos',
+        {
+          id: {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+          },
+          created_at: {
+            type: Sequelize.DATE
+          },
+          updated_at: {
+            type: Sequelize.DATE
+          },
+          videoId: {
+            type: Sequelize.INTEGER,
+            references: {
+              model: 'videos',
+              key: 'id'
+            },
+          },
+          pointId: {
+            type: Sequelize.INTEGER,
+            references: {
+              model: 'points',
               key: 'id'
             },
           },

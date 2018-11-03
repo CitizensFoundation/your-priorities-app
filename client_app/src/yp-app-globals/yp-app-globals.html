@@ -138,7 +138,7 @@
         },
 
         _hasVideoUploadSupport: function (event, detail) {
-          if (detail && detail.hasVideoUploadSupport===true) {
+          if (detail && detail.response && detail.response.hasVideoUploadSupport===true) {
             window.appGlobals.hasVideoUpload = true;
           }
         },
