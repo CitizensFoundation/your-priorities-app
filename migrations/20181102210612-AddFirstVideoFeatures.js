@@ -19,10 +19,6 @@ module.exports = {
           },
           name: Sequelize.STRING,
           description: Sequelize.TEXT,
-          content: {
-            type: Sequelize.TEXT,
-            allowNull: false
-          },
           meta: DataType.JSONB,
           formats: DataType.JSONB,
           viewable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
