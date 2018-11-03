@@ -157,12 +157,12 @@ router.post('/:videoId/comment', auth.isLoggedIn, auth.can('view video'), functi
   });
 });
 
-router.post(':groupId/getSignedUploadUrl', auth.isLoggedIn, auth.can('view group'), (req, res) => {
-
+router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, auth.can('view group'), (req, res) => {
+  models.Video.createAndGetSignedUploadUrl(req, res);
 });
 
-router.post(':groupId/:videoId/videoUploadCompleted', auth.isLoggedIn, auth.can('view group'), (req, res) => {
-
+router.put(':postId/:videoId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
+  models.Video.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, videoId: req.params.videoId });
 });
 
 // Post User Videos

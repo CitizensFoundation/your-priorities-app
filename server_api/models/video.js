@@ -63,7 +63,7 @@ module.exports = function(sequelize, DataTypes) {
 
       defaultAttributesPublic: ["id","updated_at","formats"],
 
-      createAndGetSignedUploadUrl: (req, res, options) => {
+      createAndGetSignedUploadUrl: (req, res) => {
         sequelize.models.Video.build({
           user_agent: req.useragent.source,
           ip_address: req.clientIp,
@@ -84,20 +84,71 @@ module.exports = function(sequelize, DataTypes) {
         })
       },
 
-      addToPost: (video, postId, callback) => {
+      addToPost: (video, id, callback) => {
         sequelize.models.Post.find({
           where: {
-            id: postId
+            id: id
           }
         }).then((post) => {
           post.AddPostVideos(video).then(() => {
-            log.info("Have added video to post", { postId });
+            log.info("Have added video to post", { id });
             callback();
           });
         }).catch((error) => callback(error));
       },
 
-      uploadVideoCompleted: (req, res, options) => {
+      addToDomain: (video, id, callback) => {
+        sequelize.models.Domain.find({
+          where: {
+            id: id
+          }
+        }).then((domain) => {
+          domain.AddDomainLogoVideos(video).then(() => {
+            log.info("Have added video to domain", { id });
+            callback();
+          });
+        }).catch((error) => callback(error));
+      },
+
+      addToCommunity: (video, id, callback) => {
+        sequelize.models.Community.find({
+          where: {
+            id: id
+          }
+        }).then((community) => {
+          community.AddCommunityLogoVideos(video).then(() => {
+            log.info("Have added video to community", { id });
+            callback();
+          });
+        }).catch((error) => callback(error));
+      },
+
+      addToGroup: (video, id, callback) => {
+        sequelize.models.Group.find({
+          where: {
+            id: id
+          }
+        }).then((group) => {
+          group.AddGroupLogoVideos(video).then(() => {
+            log.info("Have added video to group", { id });
+            callback();
+          });
+        }).catch((error) => callback(error));
+      },
+
+      addToCollection: (video, options, callback) => {
+        if (options.postId) {
+          addToPost(video, options.postId, callback);
+        } else if (options.groupId) {
+          addToGroup(video, options.groupId, callback);
+        } else if (options.communityId) {
+          addToCommunity(video, options.communityId, callback);
+        } else if (options.domainId) {
+          addToDomain(video, options.domainId, callback);
+        }
+      },
+
+      completeUploadAndAddToCollection: (req, res, options) => {
         sequelize.models.Video.find({
           where: {
             id: options.videoId
@@ -108,7 +159,14 @@ module.exports = function(sequelize, DataTypes) {
             video.viewable = true;
             video.createFormats();
             video.save().then(() => {
-              res.sendStatus(200);
+              this.addToCollection(video, options, (error) => {
+                if (error) {
+                  log.error("Could not add video to collection", { error, options});
+                  res.sendStatus(500);
+                } else {
+                  res.sendStatus(200);
+                }
+              });
             }).catch((error) => {
               log.error("Could not save video", { error });
               res.sendStatus(500);
