@@ -221,6 +221,36 @@ module.exports = {
           },
         }
       ),
+      await queryInterface.createTable(
+        'VideoImages',
+        {
+          id: {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+          },
+          created_at: {
+            type: Sequelize.DATE
+          },
+          updated_at: {
+            type: Sequelize.DATE
+          },
+          video_id: {
+            type: Sequelize.INTEGER,
+            references: {
+              model: 'videos',
+              key: 'id'
+            },
+          },
+          image_id: {
+            type: Sequelize.INTEGER,
+            references: {
+              model: 'images',
+              key: 'id'
+            },
+          },
+        }
+      ),
     ]
   },
 

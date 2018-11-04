@@ -116,6 +116,7 @@ Example:
           </div>
         </template>
       </div>
+      <yp-ajax id="transcodePollingAjax" on-response="_transcodePollingResponse"></yp-ajax>
     </div>
     <input type="file" id="fileInput" on-change="_fileChange" hidden multiple="{{multi}}">
     <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
@@ -279,7 +280,14 @@ Example:
 
       currentVideoId: Number,
 
+      transcodingJobId: Number,
+
       currentFile: String,
+
+      isPollingForTranscoding: {
+        type: Boolean,
+        value: false
+      },
 
       indeterminateProgress: {
         type: Boolean,
@@ -435,6 +443,28 @@ Example:
       }
     },
 
+    _checkTranscodingJob: function () {
+      this.async(function () {
+        this.$.transcodePollingAjax.generateRequest();
+      }, 1000);
+    },
+
+    _transcodePollingResponse: function (event, detail) {
+      if (detail.completed) {
+        this.fire("success", {xhr: xhr, videoId: this.currentVideoId });
+      } else if (detail.error) {
+        this.set(prefix + ".error", true);
+        this.set(prefix + ".complete", false);
+        this.set(prefix + ".progress", 100);
+        this.updateStyles();
+        this.fire("error", {xhr:event});
+      } else {
+        this.set('indeterminateProgress', false);
+        this.set(prefix + ".progress", Math.floor((detail.done/detail.total)*1000)/10);
+        this._checkTranscodingJob();
+      }
+    },
+
     /**
      * Really uploads a file
      *
@@ -470,8 +500,15 @@ Example:
       xhr.onload = function(e) {
         self.fire('file-upload-complete');
         if (xhr.status === 200) {
-          self.fire("success", {xhr: xhr, videoId: this.currentVideoId });
           self.set(prefix + ".complete", true);
+          if (this.videoUpload) {
+            this.set('indeterminateProgress', true);
+            self.set(prefix + ".progress", 0);
+            this.$.transcodePollingAjax.url = '/api/videos/'+this.currentVideoId+'/'+this.transcodingJobId+'/getTranscodingJobStatus';
+            this._checkTranscodingJob();
+          } else {
+            self.fire("success", {xhr: xhr, videoId: this.currentVideoId });
+          }
         } else {
           self.set(prefix + ".error", true);
           self.set(prefix + ".complete", false);

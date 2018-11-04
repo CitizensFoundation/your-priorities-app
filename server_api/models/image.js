@@ -345,6 +345,7 @@ module.exports = function(sequelize, DataTypes) {
         Image.belongsToMany(models.Group, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
         Image.belongsToMany(models.Domain, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
         Image.belongsToMany(models.Domain, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
+        Image.belongsToMany(models.Video, { as: 'VideoImages', through: 'VideoImage' });
       },
 
       downloadFacebookImagesForUser: function (user, done) {

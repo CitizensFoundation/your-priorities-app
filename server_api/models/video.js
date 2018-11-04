@@ -61,6 +61,7 @@ module.exports = function(sequelize, DataTypes) {
       Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
       Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
       Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideo' });
+      Video.belongsToMany(models.Image, { as: 'VideoImages', through: 'VideoImage' });
     },
 
     classMethods: {
@@ -73,8 +74,13 @@ module.exports = function(sequelize, DataTypes) {
 
       getFullUrl: (meta) => {
         if (meta) {
-          return 'https://'+meta.bucketName+'.'+meta.endPoint+'/'+meta.fileKey;
+          return 'https://'+meta.publicBucketName+'.'+meta.endPoint+'/'+meta.fileKey;
         }
+      },
+
+      getThumbnailUrl: (video, number) => {
+          const fileKey = 'thumbs-' + video.id + '-{'+number+'}';
+          return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
       },
 
       createAndGetSignedUploadUrl: (req, res) => {
@@ -84,7 +90,8 @@ module.exports = function(sequelize, DataTypes) {
           user_agent: req.useragent.source,
           ip_address: req.clientIp,
         }).save().then((video) => {
-          video.getPreSignedUploadUrl((error, presignedUrl) => {
+          const maxDuration = req.params.maxDuration ? req.params.maxDuration : 60;
+          video.getPreSignedUploadUrl({maxDuration: maxDuration}, (error, presignedUrl) => {
             if (error) {
               log.error("Could not get preSigned URL for video", { error });
               res.sendStatus(500);
@@ -178,7 +185,82 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
 
-      completeUploadAndAddToCollection: function (req, res, options) {
+      setupThumbnailsAfterTranscoding: (video, duration, callback) => {
+        const interval = 10;
+        let frames = [];
+        const numberOfFrames = Math.max(1, Math.floor(duration/interval));
+
+        for (let frame = 0; frame < numberOfFrames; frame++) {
+          frames.push(sequelize.models.Video.getThumbnailUrl(video,frame));
+        }
+
+        async.forEach(frames, (frame, foreachCallback) => {
+          sequelize.models.Image.build({
+            s3_bucket_name: video.meta.thumbnailBucket,
+            user_id: req.user.id,
+            user_agent: "AWS Transcoder",
+            ip_address: "127.0.0.1",
+            formats: JSON.stringify([frame])
+          }).save().then((image) => {
+            video.addVideoImage(image).then(() => {
+              foreachCallback();
+            }).catch((error) => {
+              foreachCallback(error);
+            })
+          }).catch((error) => {
+            foreachCallback(error);
+          })
+        }, (error) => {
+          callback(error)
+        });
+      },
+
+      getTranscodingJobStatus: (req, res ) => {
+        var params = {
+          Id: req.params.jobId
+        };
+        const eltr = new aws.ElasticTranscoder({
+          apiVersion: '2012–09–25',
+          region: 'eu-west-1'
+        });
+        eltr.readJob(params, function(error, data) {
+          if (error) {
+            log.error("Could not get status of transcoding job", { error });
+            res.sendStatus(500);
+          } else {
+            const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
+            if (jobStatus.status==="Completed") {
+              sequelize.models.Video.find({
+                where: {
+                  id: req.params.videoId
+                }
+              }).then((video) => {
+                if (video) {
+                  const duration = 42;
+                  sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, (error) => {
+                    if (error) {
+                      log.error("Could not connect image and video", { error });
+                      res.sendStatus(500);
+                    } else {
+                      res.send(jobStatus);
+                    }
+                  })
+                } else {
+                  log.error("Could not get video", { error });
+                  res.sendStatus(404);
+                }
+              }).catch((error) => {
+                log.error("Could not get video", { error });
+                res.sendStatus(500);
+              });
+            } else {
+              res.send(jobStatus);
+            }
+          }
+        });
+      },
+
+      completeUploadAndAddToCollection: (req, res, options) => {
         sequelize.models.Video.find({
           where: {
             id: options.videoId
@@ -194,7 +276,14 @@ module.exports = function(sequelize, DataTypes) {
                   log.error("Could not add video to collection", { error, options});
                   res.sendStatus(500);
                 } else {
-                  res.sendStatus(200);
+                  sequelize.models.Video.startTranscodingJob(video, (error, data) => {
+                    if (error) {
+                      log.error("Could not start transcoding job", { error, options});
+                      res.sendStatus(500);
+                    } else {
+                      res.send({ transcodingJobId: data.Job.Id });
+                    }
+                  });
                 }
               });
             }).catch((error) => {
@@ -210,6 +299,48 @@ module.exports = function(sequelize, DataTypes) {
           res.sendStatus(500);
         });
       },
+    
+      startTranscodingJob: function (video, callback) {
+        const eltr = new aws.ElasticTranscoder({
+          apiVersion: '2012–09–25',
+          region: 'eu-west-1'
+        });
+        var fileKey = video.meta.fileKey;
+        var pipelineId = process.env.AWS_TRANSCODER_PIPELINE_ID;
+        var params = {
+          PipelineId: pipelineId,
+          Input: {
+            Key: fileKey,
+            FrameRate: 'auto',
+            Resolution: 'auto',
+            AspectRatio: 'auto',
+            Interlaced: 'auto',
+            Container: 'auto',
+            TimeSpan: {
+              Duration: video.meta.maxDuration+'.000'
+            }
+          },
+          Outputs: [{
+            Key:fileKey,
+            ThumbnailPattern: 'thumbs-' + video.id + '-{count}',
+            PresetId: process.env.AWS_TRANSCODER_PRESET_ID,
+            /*Watermarks: [{
+              InputKey: 'watermarks/logo-horiz-large.png',
+              PresetWatermarkId: 'BottomRight'
+            }],*/
+          }
+          ]
+        };
+        log.info('Starting AWS transcoding Job');
+        eltr.createJob(params, function (error, data) {
+          if (error) {
+            log.error("Error creating AWS transcoding job", { error });
+            callback(error);
+          } else {
+            callback(null, data)
+          }
+        });
+      },
     },
 
     instanceMethods: {
@@ -218,7 +349,7 @@ module.exports = function(sequelize, DataTypes) {
         this.formats.push(sequelize.models.Video.getFullUrl(video.meta));
       },
 
-      getPreSignedUploadUrl: function (callback) {
+      getPreSignedUploadUrl: function (options, callback) {
         const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
         const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
         const s3 = new aws.S3({
@@ -231,6 +362,8 @@ module.exports = function(sequelize, DataTypes) {
 
         const signedUrlExpireSeconds = 60 * 60;
         const bucketName = process.env.S3_VIDEO_UPLOAD_BUCKET;
+        const publicBucket = process.env.S3_VIDEO_PUBLIC_BUCKET;
+        const thumbnailBucket = process.env.S3_VIDEO_THUMBNAIL_BUCKET;
 
         const contentType = 'video/mp4';
         const a = this.id;
@@ -248,7 +381,8 @@ module.exports = function(sequelize, DataTypes) {
             callback(err);
           }
           else {
-            let meta = { bucketName, endPoint, accelEndPoint, fileKey: sequelize.models.Video.getFileKey(this.id), contentType, uploadUrl: url };
+            let meta = { bucketName, publicBucket, endPoint, accelEndPoint, thumbnailBucket,
+                         maxDuration: options.maxDuration, fileKey: sequelize.models.Video.getFileKey(this.id), contentType, uploadUrl: url };
             if (this.meta)
               meta = _.merge(this.meta, meta);
             this.set('meta', meta);

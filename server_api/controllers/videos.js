@@ -89,6 +89,10 @@ router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) =>
   models.Video.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, videoId: req.body.videoId });
 });
 
+router.put('/:videoId/:jobId/getTranscodingJobStatus', auth.can('edit post'), (req, res) => {
+  models.Video.getTranscodingJobStatus(req, res);
+});
+
 // Post User Videos
 router.get('/:postId/user_videos', auth.can('view post'), function(req, res) {
   models.Post.find({
