@@ -386,8 +386,7 @@
       },
 
       uploadedVideoId: {
-        type: String,
-        observer: '_uploadedHeaderImageIdChanged'
+        type: String
       },
 
       selected: {
@@ -420,6 +419,7 @@
 
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
+      this.set('selectedCoverMediaType','video');
     },
 
     _documentUploaded: function (event, detail) {
@@ -614,7 +614,7 @@
             videoId: this.uploadedVideoId
           };
           ajax.addEventListener('response', function (event) {
-            this._finishRedirect();
+            this._finishRedirect(post);
           }.bind(this));
           ajax.generateRequest();
         } else {
@@ -626,7 +626,7 @@
     },
 
     _finishRedirect: function (post) {
-      this.redirectTo("/post/"+(post ? post : this.post.id));
+      this.redirectTo("/post/"+(post ? post.id : this.post.id));
       window.appGlobals.activity('completed', 'newPost');
     },
 
