@@ -5,6 +5,7 @@ var randomstring = require("randomstring");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 const aws = require('aws-sdk');
+const _ = require('lodash');
 
 "use strict";
 
@@ -72,7 +73,7 @@ module.exports = function(sequelize, DataTypes) {
 
       getFullUrl: (meta) => {
         if (meta) {
-          return meta.endPoint+'/'+meta.bucketName+'/'+meta.fileKey;
+          return 'https://'+meta.endPoint+'/'+meta.bucketName+'/'+meta.fileKey;
         }
       },
 
@@ -165,30 +166,30 @@ module.exports = function(sequelize, DataTypes) {
 
       addToCollection: (video, options, callback) => {
         if (options.postId) {
-          addToPost(video, options.postId, callback);
+          sequelize.models.Video.addToPost(video, options.postId, callback);
         } else if (options.groupId) {
-          addToGroup(video, options.groupId, callback);
+          sequelize.models.Video.addToGroup(video, options.groupId, callback);
         } else if (options.communityId) {
-          addToCommunity(video, options.communityId, callback);
+          sequelize.models.Video.addToCommunity(video, options.communityId, callback);
         } else if (options.domainId) {
-          addToDomain(video, options.domainId, callback);
+          sequelize.models.Video.addToDomain(video, options.domainId, callback);
         } else if (options.pointId) {
-          addToDomain(video, options.pointId, callback);
+          sequelize.models.Video.addToPoint(video, options.pointId, callback);
         }
       },
 
-      completeUploadAndAddToCollection: (req, res, options) => {
+      completeUploadAndAddToCollection: function (req, res, options) {
         sequelize.models.Video.find({
           where: {
             id: options.videoId
           },
-          attributes: _.merge(sequelize.models.Video.defaultAttributesPublic, ['user_id'])
+          attributes: sequelize.models.Video.defaultAttributesPublic.concat(['user_id','meta'])
         }).then((video) => {
           if (video.user_id===req.user.id) {
             video.viewable = true;
-            video.createFormats();
+            video.createFormats(video);
             video.save().then(() => {
-              this.addToCollection(video, options, (error) => {
+              sequelize.models.Video.addToCollection(video, options, (error) => {
                 if (error) {
                   log.error("Could not add video to collection", { error, options});
                   res.sendStatus(500);
@@ -212,9 +213,9 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     instanceMethods: {
-      createFormats: function () {
+      createFormats: function (video) {
         this.formats = [];
-        this.formats.push(sequelize.models.Video.getFullUrl(this.meta));
+        this.formats.push(sequelize.models.Video.getFullUrl(video.meta));
       },
 
       getPreSignedUploadUrl: function (callback) {

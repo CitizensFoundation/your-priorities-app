@@ -423,7 +423,6 @@ Example:
         ajax.method = 'POST';
         ajax.body = {};
         ajax.addEventListener('response', function (event) {
-          debugger;
           this.target = event.detail.response.presignedUrl;
           this.set('currentVideoId',  event.detail.response.videoId);
           this.method = "PUT";

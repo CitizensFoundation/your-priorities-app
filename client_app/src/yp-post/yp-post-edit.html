@@ -419,7 +419,6 @@
     ],
 
     _videoUploaded: function (event, detail) {
-      debugger;
       this.set('uploadedVideoId', detail.videoId);
     },
 
@@ -609,9 +608,11 @@
           var ajax = document.createElement('iron-ajax');
           ajax.handleAs = 'json';
           ajax.contentType = 'application/json';
-          ajax.url = '/api/videos/'+this.post.id+'/'+this.uploadedVideoId+'/completeAndAddToPost';
+          ajax.url = '/api/videos/'+this.post.id+'/completeAndAddToPost';
           ajax.method = 'PUT';
-          ajax.body = {};
+          ajax.body = {
+            videoId: this.uploadedVideoId
+          };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect();
           }.bind(this));

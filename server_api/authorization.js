@@ -667,11 +667,12 @@ auth.role('post.vote', function (post, req, done) {
 
 auth.entity('post', function(req, done) {
   var match = req.originalUrl.match(/posts\/(\w+)/);
-  if (!match) {
+  if (!match)
     match = req.originalUrl.match(/images\/(\w+)/);
-    if (!match)
-      done(new Error('Expected url like /posts/:postId or /images/:postId'));
-  }
+  if (!match)
+    match = req.originalUrl.match(/videos\/(\w+)/);
+  if (!match)
+    done(new Error('Expected url like /posts/:postId or /images/:postId'));
   if (match) {
     var post = { id: match[1] };
     done(null, post)

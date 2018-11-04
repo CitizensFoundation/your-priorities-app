@@ -85,8 +85,8 @@ router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
   models.Video.createAndGetSignedUploadUrl(req, res);
 });
 
-router.put(':postId/:videoId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
-  models.Video.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, videoId: req.params.videoId });
+router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
+  models.Video.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, videoId: req.body.videoId });
 });
 
 // Post User Videos
