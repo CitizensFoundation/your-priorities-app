@@ -55,12 +55,12 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       Video.belongsTo(models.User);
-      Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideos', foreignKey: 'postId' });
-      Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'PointVideos', foreignKey: 'pointId' });
-      Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'UserProfileVideos', foreignKey: 'userId' });
-      Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideos', foreignKey: 'communityId' });
-      Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideos', foreignKey: 'groupId' });
-      Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideos', foreignKey: 'domainId' });
+      Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideo' });
+      Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'PointVideo' });
+      Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'UserProfileVideo' });
+      Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
+      Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
+      Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideo' });
     },
 
     classMethods: {
@@ -105,7 +105,7 @@ module.exports = function(sequelize, DataTypes) {
             id: id
           }
         }).then((post) => {
-          post.AddPostVideos(video).then(() => {
+          post.addPostVideo(video).then(() => {
             log.info("Have added video to post", { id });
             callback();
           });
@@ -118,7 +118,7 @@ module.exports = function(sequelize, DataTypes) {
             id: id
           }
         }).then((post) => {
-          post.AddPointVideos(video).then(() => {
+          post.addPointVideo(video).then(() => {
             log.info("Have added video to point", { id });
             callback();
           });
@@ -131,7 +131,7 @@ module.exports = function(sequelize, DataTypes) {
             id: id
           }
         }).then((domain) => {
-          domain.AddDomainLogoVideos(video).then(() => {
+          domain.addDomainLogoVideo(video).then(() => {
             log.info("Have added video to domain", { id });
             callback();
           });
@@ -144,7 +144,7 @@ module.exports = function(sequelize, DataTypes) {
             id: id
           }
         }).then((community) => {
-          community.AddCommunityLogoVideos(video).then(() => {
+          community.addCommunityLogoVideo(video).then(() => {
             log.info("Have added video to community", { id });
             callback();
           });
@@ -157,7 +157,7 @@ module.exports = function(sequelize, DataTypes) {
             id: id
           }
         }).then((group) => {
-          group.AddGroupLogoVideos(video).then(() => {
+          group.addGroupLogoVideo(video).then(() => {
             log.info("Have added video to group", { id });
             callback();
           });

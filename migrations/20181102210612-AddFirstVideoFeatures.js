@@ -42,7 +42,7 @@ module.exports = {
       }),
       await queryInterface.addIndex('videos', ['user_id', 'viewable', 'deleted']),
       await queryInterface.createTable(
-        'post_videos',
+        'PostVideo',
         {
           id: {
             type: Sequelize.INTEGER,
@@ -55,14 +55,14 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          videoId: {
+          video_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'videos',
               key: 'id'
             },
           },
-          postId: {
+          post_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'posts',
@@ -72,7 +72,7 @@ module.exports = {
         }
       ),
       await queryInterface.createTable(
-        'point_videos',
+        'PointVideo',
         {
           id: {
             type: Sequelize.INTEGER,
@@ -85,14 +85,14 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          videoId: {
+          video_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'videos',
               key: 'id'
             },
           },
-          pointId: {
+          point_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'points',
@@ -102,7 +102,7 @@ module.exports = {
         }
       ),
       await queryInterface.createTable(
-        'user_profile_videos',
+        'UserProfileVideo',
         {
           id: {
             type: Sequelize.INTEGER,
@@ -115,14 +115,14 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          videoId: {
+          video_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'videos',
               key: 'id'
             },
           },
-          userId: {
+          user_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'users',
@@ -132,7 +132,7 @@ module.exports = {
         }
       ),
       await queryInterface.createTable(
-        'community_logo_videos',
+        'CommunityLogoVideo',
         {
           id: {
             type: Sequelize.INTEGER,
@@ -145,14 +145,14 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          videoId: {
+          video_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'videos',
               key: 'id'
             },
           },
-          communityId: {
+          community_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'communities',
@@ -162,7 +162,7 @@ module.exports = {
         }
       ),
       await queryInterface.createTable(
-        'group_logo_videos',
+        'GroupLogoVideo',
         {
           id: {
             type: Sequelize.INTEGER,
@@ -175,14 +175,14 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          videoId: {
+          video_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'videos',
               key: 'id'
             },
           },
-          groupId: {
+          group_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'groups',
@@ -192,7 +192,7 @@ module.exports = {
         }
       ),
       await queryInterface.createTable(
-        'domain_logo_videos',
+        'DomainLogoVideo',
         {
           id: {
             type: Sequelize.INTEGER,
@@ -205,14 +205,14 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          videoId: {
+          video_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'videos',
               key: 'id'
             },
           },
-          domainId: {
+          domain_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'domains',
