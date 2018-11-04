@@ -413,6 +413,7 @@ Example:
     uploadFile: function (file) {
       if (this.videoUpload) {
         this.currentFile = file;
+        this.headers =  {"Content-Type": 'video/mp4'};
         var ajax = document.createElement('iron-ajax');
         ajax.handleAs = 'json';
         ajax.contentType = 'application/json';
@@ -456,7 +457,6 @@ Example:
       };
 
       var url = this.target.replace("<name>", file.name);
-      debugger;
       xhr.open(this.method, url, true);
       for (key in this.headers) {
         if (this.headers.hasOwnProperty(key)) {
@@ -465,7 +465,6 @@ Example:
       }
 
       xhr.onload = function(e) {
-        debugger;
         self.fire('file-upload-complete');
         if (xhr.status === 200) {
           self.fire("success", {xhr: xhr});
@@ -479,7 +478,11 @@ Example:
         }
       };
 
-      xhr.send(formData);
+      if (this.videoUpload) {
+        xhr.send(file)
+      } else {
+        xhr.send(formData);
+      }
     }
   });
 

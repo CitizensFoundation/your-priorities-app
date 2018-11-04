@@ -239,7 +239,7 @@ module.exports = function(sequelize, DataTypes) {
           Bucket: bucketName,
           Key: sequelize.models.Video.getFileKey(this.id),
           Expires: signedUrlExpireSeconds,
-          ACL: 'bucket-owner-full-control',
+          ACL: 'public-read',
           ContentType: contentType
         };
         s3.getSignedUrl('putObject', s3Params, (error, url) => {
