@@ -8,8 +8,6 @@ const aws = require('aws-sdk');
 
 "use strict";
 
-var Upload = require('s3-uploader');
-
 module.exports = function(sequelize, DataTypes) {
   var Video = sequelize.define("Video", {
     name: DataTypes.STRING,
@@ -56,12 +54,12 @@ module.exports = function(sequelize, DataTypes) {
 
     associate: function(models) {
       Video.belongsTo(models.User);
-      Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'post_videos' });
-      Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'point_videos' });
-      Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'user_profile_videos' });
-      Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'community_logo_videos' });
-      Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'group_logo_videos' });
-      Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'domain_logo_videos' });
+      Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideos', foreignKey: 'postId' });
+      Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'PointVideos', foreignKey: 'pointId' });
+      Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'UserProfileVideos', foreignKey: 'userId' });
+      Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideos', foreignKey: 'communityId' });
+      Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideos', foreignKey: 'groupId' });
+      Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideos', foreignKey: 'domainId' });
     },
 
     classMethods: {

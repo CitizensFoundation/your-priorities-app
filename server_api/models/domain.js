@@ -325,7 +325,7 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Domain.hasMany(models.Community, { foreignKey: "domain_id" });
-        Domain.belongsToMany(models.Image, { as: 'DomainLogoVideos', through: 'domain_logo_videos' });
+        Domain.belongsToMany(models.Video, { as: 'DomainLogoVideos', through: 'DomainLogoVideos', foreignKey: 'videoId' });
         Domain.belongsToMany(models.Image, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
         Domain.belongsToMany(models.Image, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
         Domain.belongsToMany(models.User, { through: 'DomainUser' });

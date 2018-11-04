@@ -277,6 +277,8 @@ Example:
         value: false
       },
 
+      currentVideoId: Number,
+
       currentFile: String,
 
       indeterminateProgress: {
@@ -421,7 +423,9 @@ Example:
         ajax.method = 'POST';
         ajax.body = {};
         ajax.addEventListener('response', function (event) {
+          debugger;
           this.target = event.detail.response.presignedUrl;
+          this.set('currentVideoId',  event.detail.response.videoId);
           this.method = "PUT";
           this.set('indeterminateProgress', false);
           this.reallyUploadFile(this.currentFile);
@@ -467,7 +471,7 @@ Example:
       xhr.onload = function(e) {
         self.fire('file-upload-complete');
         if (xhr.status === 200) {
-          self.fire("success", {xhr: xhr});
+          self.fire("success", {xhr: xhr, videoId: this.currentVideoId });
           self.set(prefix + ".complete", true);
         } else {
           self.set(prefix + ".error", true);
@@ -476,7 +480,7 @@ Example:
           self.updateStyles();
           self.fire("error", {xhr:xhr});
         }
-      };
+      }.bind(this);
 
       if (this.videoUpload) {
         xhr.send(file)

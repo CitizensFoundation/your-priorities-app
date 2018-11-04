@@ -223,7 +223,7 @@ module.exports = function(sequelize, DataTypes) {
         Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
         Group.belongsTo(models.User);
         Group.belongsToMany(models.Image, { through: 'GroupImage' });
-        Group.belongsToMany(models.Image, { as: 'GroupLogoVideos', through: 'group_logo_videos' });
+        Group.belongsToMany(models.Video, { as: 'GroupLogoVideos', through: 'GroupLogoVideos', foreignKey: 'videoId' });
         Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });
         Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
         Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });

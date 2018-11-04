@@ -291,6 +291,7 @@
               <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" selected="{{selectedCoverMediaType}}">
                 <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
                 <paper-radio-button name="image" hidden$="[[!uploadedHeaderImageId]]">[[t('post.cover.image')]]</paper-radio-button>
+                <paper-radio-button name="video" hidden$="[[!uploadedVideoId]]">[[t('postCoverVideo')]]</paper-radio-button>
                 <template is="dom-if" if="[[location]]">
                   <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
                   <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
@@ -418,6 +419,7 @@
     ],
 
     _videoUploaded: function (event, detail) {
+      debugger;
       this.set('uploadedVideoId', detail.videoId);
     },
 
@@ -603,24 +605,27 @@
           window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
         }
         if (this.uploadedVideoId) {
+          this.post = post;
           var ajax = document.createElement('iron-ajax');
           ajax.handleAs = 'json';
           ajax.contentType = 'application/json';
           ajax.url = '/api/videos/'+this.post.id+'/'+this.uploadedVideoId+'/completeAndAddToPost';
           ajax.method = 'PUT';
           ajax.body = {};
-          ajax.onResponse = this._finishRedirect.bind(this);
+          ajax.addEventListener('response', function (event) {
+            this._finishRedirect();
+          }.bind(this));
           ajax.generateRequest();
         } else {
-          this._finishRedirect();
+          this._finishRedirect(post);
         }
       } else {
         console.warn('No post found on custom redirect');
       }
     },
 
-    _finishRedirect: function () {
-      this.redirectTo("/post/"+this.post.id);
+    _finishRedirect: function (post) {
+      this.redirectTo("/post/"+(post ? post : this.post.id));
       window.appGlobals.activity('completed', 'newPost');
     },
 
