@@ -118,7 +118,7 @@
       </template>
 
       <template is="dom-if" if="[[videoActive]]">
-        <video on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
+        <video controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
       </template>
 
       <template is="dom-if" if="[[!disableMaps]]">

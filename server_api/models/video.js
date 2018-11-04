@@ -73,7 +73,7 @@ module.exports = function(sequelize, DataTypes) {
 
       getFullUrl: (meta) => {
         if (meta) {
-          return 'https://'+meta.endPoint+'/'+meta.bucketName+'/'+meta.fileKey;
+          return 'https://'+meta.bucketName+'.'+meta.endPoint+'/'+meta.fileKey;
         }
       },
 
@@ -219,11 +219,12 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       getPreSignedUploadUrl: function (callback) {
-        const endPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT;
+        const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
+        const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
         const s3 = new aws.S3({
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
           accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-          endpoint: endPoint,
+          endpoint: accelEndPoint,
           useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
           region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
         });
@@ -247,7 +248,7 @@ module.exports = function(sequelize, DataTypes) {
             callback(err);
           }
           else {
-            let meta = { bucketName, endPoint, fileKey: sequelize.models.Video.getFileKey(this.id), contentType, uploadUrl: url };
+            let meta = { bucketName, endPoint, accelEndPoint, fileKey: sequelize.models.Video.getFileKey(this.id), contentType, uploadUrl: url };
             if (this.meta)
               meta = _.merge(this.meta, meta);
             this.set('meta', meta);
