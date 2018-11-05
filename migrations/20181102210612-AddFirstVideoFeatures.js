@@ -235,13 +235,6 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          video_id: {
-            type: Sequelize.INTEGER,
-            references: {
-              model: 'videos',
-              key: 'id'
-            },
-          },
           image_id: {
             type: Sequelize.INTEGER,
             references: {
@@ -249,8 +242,15 @@ module.exports = {
               key: 'id'
             },
           },
+          video_id: {
+            type: Sequelize.INTEGER,
+            references: {
+              model: 'videos',
+              key: 'id'
+            }
+          }
         }
-      ),
+      )
     ]
   },
 

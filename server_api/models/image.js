@@ -331,6 +331,7 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Image.belongsTo(models.User);
+        Image.belongsToMany(models.Video, { as: 'VideoImages', through: 'VideoImage' });
         Image.belongsToMany(models.Post, { as: 'PostImages', through: 'PostImage' });
         Image.belongsToMany(models.Post, { as: 'PostHeaderImages', through: 'PostHeaderImage' });
         Image.belongsToMany(models.Post, { as: 'PostUserImages', through: 'PostUserImage' });
@@ -345,7 +346,6 @@ module.exports = function(sequelize, DataTypes) {
         Image.belongsToMany(models.Group, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
         Image.belongsToMany(models.Domain, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
         Image.belongsToMany(models.Domain, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
-        Image.belongsToMany(models.Video, { as: 'VideoImages', through: 'VideoImage' });
       },
 
       downloadFacebookImagesForUser: function (user, done) {

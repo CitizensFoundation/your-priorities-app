@@ -53,18 +53,19 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
-    associate: function(models) {
-      Video.belongsTo(models.User);
-      Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideo' });
-      Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'PointVideo' });
-      Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'UserProfileVideo' });
-      Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
-      Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
-      Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideo' });
-      Video.belongsToMany(models.Image, { as: 'VideoImages', through: 'VideoImage' });
-    },
 
     classMethods: {
+
+      associate: function(models) {
+        Video.belongsTo(models.User);
+        Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideo' });
+        Video.belongsToMany(models.Image, { as: 'VideoImages', through: 'VideoImage' });
+        Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'PointVideo' });
+        Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'UserProfileVideo' });
+        Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
+        Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
+        Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideo' });
+      },
 
       defaultAttributesPublic: ["id","updated_at","formats"],
 
@@ -74,7 +75,7 @@ module.exports = function(sequelize, DataTypes) {
 
       getFullUrl: (meta) => {
         if (meta) {
-          return 'https://'+meta.publicBucketName+'.'+meta.endPoint+'/'+meta.fileKey;
+          return 'https://'+meta.publicBucket+'.'+meta.endPoint+'/'+meta.fileKey;
         }
       },
 
@@ -239,6 +240,9 @@ module.exports = function(sequelize, DataTypes) {
                   res.send(jobStatus);
                 }
               })
+            } else if (jobStatus.status==="Error") {
+              log.error("Could not transcode video image and video", { detail: jobStatus.statusDetail });
+              res.sendStatus(500);
             } else {
               res.send(jobStatus);
             }

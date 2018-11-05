@@ -452,7 +452,7 @@ Example:
 
     _transcodePollingResponse: function (event, detail) {
       if (detail.response.status==="Complete") {
-        this.fire("success", {xhr: xhr, videoId: this.currentVideoId });
+        this.fire("success", {detail: detail, videoId: this.currentVideoId });
       } else if (detail.error) {
         this.set(prefix + ".error", true);
         this.set(prefix + ".complete", false);

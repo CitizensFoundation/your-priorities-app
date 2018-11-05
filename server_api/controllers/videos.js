@@ -111,7 +111,14 @@ router.put('/:videoId/getTranscodingJobStatus', auth.isLoggedIn, (req, res) => {
   models.Video.find({
     where: {
       id: req.params.videoId
-    }
+    },
+    include: [
+      {
+        model: models.Image,
+        as: 'VideoImages',
+        required: false
+      }
+    ]
   }).then((video) => {
     if (video && video.user_id===req.user.id) {
       models.Video.getTranscodingJobStatus(video, req, res);
