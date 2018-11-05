@@ -1,8 +1,9 @@
 {
   "postCoverVideo": "Video",
   "uploadVideo": "Upload video",
-  "uploadCompleted": "Upload video",
+  "uploadCompleted": "Upload completed",
   "uploadingVideo":"Uploading video...",
+  "uploadingImage":"Uploading image...",
   "transcodingVideo":"Preparing video...",
   "hidePostImageUploads": "Hide post image uploads",
   "allowPostVideoUploads": "Allow post video uploads",

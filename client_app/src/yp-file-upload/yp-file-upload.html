@@ -432,8 +432,8 @@ Example:
     },
 
     uploadFile: function (file) {
-      this.set('uploadStatus', this.t("uploadingVideo"));
       if (this.videoUpload) {
+        this.set('uploadStatus', this.t("uploadingVideo"));
         this.set('indeterminateProgress', true);
         this.currentFile = file;
         this.headers =  {"Content-Type": 'video/mp4'};
@@ -452,6 +452,7 @@ Example:
         }.bind(this));
         ajax.generateRequest();
       } else {
+        this.set('uploadStatus', this.t("uploadingImage"));
         this.reallyUploadFile(file);
       }
     },
@@ -468,12 +469,14 @@ Example:
         this.set(prefix + ".complete", true);
         this.set('uploadStatus', this.t('uploadCompleted'));
         this.fire("success", { detail: detail, videoId: this.currentVideoId });
+        this.fire('file-upload-complete');
       } else if (detail.error) {
         this.set(prefix + ".error", true);
         this.set(prefix + ".complete", false);
         this.set(prefix + ".progress", 100);
         this.updateStyles();
         this.fire("error", {xhr:event});
+        this.fire('file-upload-complete');
       } else {
         this._checkTranscodingJob();
       }
@@ -518,7 +521,6 @@ Example:
       }
 
       xhr.onload = function(e) {
-        self.fire('file-upload-complete');
         if (xhr.status === 200) {
           if (this.videoUpload) {
             this.set('indeterminateProgress', true);
@@ -528,10 +530,12 @@ Example:
             this.$.startTranscodeAjax.generateRequest();
           } else {
             this.set('uploadStatus', this.t('uploadCompleted'));
+            self.fire('file-upload-complete');
             self.set(prefix + ".complete", true);
             self.fire("success", {xhr: xhr, videoId: this.currentVideoId });
           }
         } else {
+          self.fire('file-upload-complete');
           self.set(prefix + ".error", true);
           self.set(prefix + ".complete", false);
           self.set(prefix + ".progress", 100);
