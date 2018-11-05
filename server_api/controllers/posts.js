@@ -171,7 +171,8 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at'],
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Video, as: 'PostVideos' } ,'updated_at', 'asc' ]
+      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'asc' ],
+      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       {
@@ -238,7 +239,15 @@ router.get('/:id', auth.can('view post'), function(req, res) {
         model: models.Video,
         required: false,
         attributes: models.Video.defaultAttributesPublic,
-        as: 'PostVideos'
+        as: 'PostVideos',
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats"],
+            required: false
+          },
+        ]
       },
       // PointRevision
       {

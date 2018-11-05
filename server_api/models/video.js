@@ -80,7 +80,8 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       getThumbnailUrl: (video, number) => {
-          const fileKey = 'thumbs-' + video.id + '-{'+number+'}';
+          var zerofilled = ('00000'+number).slice(-5);
+          const fileKey = 'thumbs-' + video.id + '-'+zerofilled+'.png';
           return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
       },
 

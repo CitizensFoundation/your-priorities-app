@@ -114,11 +114,16 @@
       </template>
 
       <template is="dom-if" if="[[imageActive]]">
-        <iron-image  header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[videoActive]]">
-        <video controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
+        <template is="dom-if" if="[[showVideo]]">
+          <video controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
+        </template>
+        <template is="dom-if" if="[[!showVideo]]">
+          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPath]]"></iron-image>
+        </template>
       </template>
 
       <template is="dom-if" if="[[!disableMaps]]">
@@ -304,8 +309,12 @@
         defaultPostImageEnabled: {
           type: Boolean,
           value: false
-        }
+        },
 
+        showVideo: {
+          type: Boolean,
+          value: false
+        }
       },
 
       _headerModeChanged: function (headerMode) {
@@ -452,8 +461,19 @@
       },
 
       _postVideoPath: function (post) {
-        if (post && post.PostVideos && post.PostVideos.length>0) {
-          return post.PostVideos[0].formats[0];
+        if (post &&
+          post.PostVideos &&
+          post.PostVideos.length>0 &&
+          post.PostVideos[0].formats &&
+          post.PostVideos[0].formats.length>0) {
+          if (this.showVideo) {
+            return post.PostVideos[0].formats[0];
+          } else if (post.PostVideos[0].VideoImages &&
+                     post.PostVideos[0].VideoImages.length>0) {
+            return JSON.parse(post.PostVideos[0].VideoImages[0].formats)[0];
+          } else {
+            return "";
+          }
         } else {
           return "";
         }

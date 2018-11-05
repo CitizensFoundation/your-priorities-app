@@ -920,7 +920,9 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
     order: [
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'asc' ],
+      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       {
@@ -934,6 +936,20 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
             attributes: { exclude: ['ip_address', 'user_agent'] },
             as: 'CategoryIconImages'
           }
+        ]
+      },
+      {
+        model: models.Video,
+        attributes: ['id','formats'],
+        as: 'PostVideos',
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats"],
+            required: false
+          },
         ]
       },
       {
@@ -973,7 +989,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     postOrder = "created_at DESC";
   }
 
-  console.log(req.param["categoryId"]);
+  console.log(req.params.categoryId);
   console.log(req.params);
 
   if (req.params.categoryId!='null') {
