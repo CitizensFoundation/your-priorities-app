@@ -69,8 +69,9 @@ module.exports = function(sequelize, DataTypes) {
 
       defaultAttributesPublic: ["id","updated_at","formats"],
 
-      getFileKey: (id) => {
-        return 'video' + id +'.mp4';
+      getRandomFileKey: (id) => {
+        const random =  Math.random().toString(36).substring(2, 9);
+        return random+'_video' + id +'.mp4';
       },
 
       getFullUrl: (meta) => {
@@ -81,7 +82,7 @@ module.exports = function(sequelize, DataTypes) {
 
       getThumbnailUrl: (video, number) => {
           var zerofilled = ('00000'+number).slice(-5);
-          const fileKey = 'thumbs-' + video.id + '-'+zerofilled+'.png';
+          const fileKey = video.meta.fileKey+'_thumbs-' + video.id + '-'+zerofilled+'.png';
           return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
       },
 
@@ -317,7 +318,7 @@ module.exports = function(sequelize, DataTypes) {
           },
           Outputs: [{
             Key:fileKey,
-            ThumbnailPattern: 'thumbs-' + video.id + '-{count}',
+            ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
             PresetId: process.env.AWS_TRANSCODER_PRESET_ID,
             /*Watermarks: [{
               InputKey: 'watermarks/logo-horiz-large.png',
@@ -362,12 +363,13 @@ module.exports = function(sequelize, DataTypes) {
 
         const contentType = 'video/mp4';
         const a = this.id;
+        const fileKey = sequelize.models.Video.getRandomFileKey(this.id);
 
         const s3Params = {
           Bucket: bucketName,
-          Key: sequelize.models.Video.getFileKey(this.id),
+          Key: fileKey,
           Expires: signedUrlExpireSeconds,
-          ACL: 'public-read',
+          ACL: 'bucket-owner-full-control',
           ContentType: contentType
         };
         s3.getSignedUrl('putObject', s3Params, (error, url) => {
@@ -377,7 +379,7 @@ module.exports = function(sequelize, DataTypes) {
           }
           else {
             let meta = { bucketName, publicBucket, endPoint, accelEndPoint, thumbnailBucket,
-                         maxDuration: options.maxDuration, fileKey: sequelize.models.Video.getFileKey(this.id), contentType, uploadUrl: url };
+                         maxDuration: options.maxDuration, fileKey, contentType, uploadUrl: url };
             if (this.meta)
               meta = _.merge(this.meta, meta);
             this.set('meta', meta);

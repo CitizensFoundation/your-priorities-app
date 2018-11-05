@@ -120,7 +120,7 @@ Example:
       <yp-ajax hidden id="transcodePollingAjax" method="PUT" on-response="_transcodePollingResponse"></yp-ajax>
       <yp-ajax hidden id="startTranscodeAjax" method="POST" on-response="_startTranscodeResponse"></yp-ajax>
     </div>
-    <input type="file" id="fileInput" on-change="_fileChange" hidden multiple="{{multi}}">
+    <input type="file" id="fileInput" on-change="_fileChange" accept$="[[accept]]" hidden multiple="{{multi}}">
     <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
     <paper-toast id="toastFail" text="Error uploading file!"></paper-toast>-->
   </template>
@@ -302,6 +302,11 @@ Example:
 
       uploadStatus: {
         type: String
+      },
+
+      accept: {
+        type: String,
+        value: "image/*"
       }
     },
 
@@ -324,6 +329,9 @@ Example:
       if (this.droppable) {
         this._showDropText();
         this.setupDrop();
+      }
+      if (this.videoUpload) {
+        this.set('accept','video/*')
       }
     },
 
