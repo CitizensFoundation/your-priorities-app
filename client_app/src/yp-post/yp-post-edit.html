@@ -127,6 +127,11 @@
       .postEmoji {
         margin-left: 16px;
       }
+
+      .uploadSection {
+        max-width: 300px;
+        margin: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -268,24 +273,28 @@
 
           <section>
             <div class="layout vertical center-center" hidden$="[[hidePostImageUploads]]">
-              <div>
-                <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header"
-                                method="POST" on-success="_imageUploaded">
-                  <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                  <span>[[t('image.upload')]]</span>
-                </yp-file-upload>
-                <div class="imageSizeInfo layout horizontal">
-                  <div>864 x 486 (16/9 widescreen)</div>
+              <div class="layout horizontal">
+                <div class="layout vertical uploadSection">
+                  <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header"
+                                  method="POST" on-success="_imageUploaded">
+                    <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                    <span>[[t('image.upload')]]</span>
+                  </yp-file-upload>
+                  <div class="imageSizeInfo layout horizontal">
+                    <div>864 x 486 (16/9 widescreen)</div>
+                  </div>
+                  <div>[[t('post.cover.imageInfo')]]</div>
                 </div>
-                <div>[[t('post.cover.imageInfo')]]</div>
+                <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
+                  <div class="layout vertical uploadSection">
+                    <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+                      <iron-icon class="icon" icon="videocam"></iron-icon>
+                      <span>[[t('uploadVideo')]]</span>
+                    </yp-file-upload>
+                    <div>[[t('postCoverVideoInfo')]]</div>
+                  </div>
+                </template>
               </div>
-              <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
-                <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
-                  <iron-icon class="icon" icon="videocams"></iron-icon>
-                  <span>[[t('uploadVideo')]]</span>
-                </yp-file-upload>
-                <div>[[t('postCoverVideoInfo')]]</div>
-              </template>
               <br>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
               <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" selected="{{selectedCoverMediaType}}">
@@ -386,7 +395,8 @@
       },
 
       uploadedVideoId: {
-        type: String
+        type: String,
+        value: null
       },
 
       selected: {
