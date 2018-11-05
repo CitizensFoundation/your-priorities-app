@@ -89,8 +89,40 @@ router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) =>
   models.Video.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, videoId: req.body.videoId });
 });
 
-router.put('/:videoId/:jobId/getTranscodingJobStatus', auth.can('edit post'), (req, res) => {
-  models.Video.getTranscodingJobStatus(req, res);
+router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
+  models.Video.find({
+    where: {
+      id: req.params.videoId
+    }
+  }).then((video) => {
+    if (video && video.user_id===req.user.id) {
+      models.Video.startTranscoding(video, req, res);
+    } else {
+      log.error("Can't find video");
+      res.sendStatus(404);
+    }
+  }).catch((error) => {
+    log.error("Error getting video", { error });
+    res.sendStatus(500);
+  });
+});
+
+router.put('/:videoId/getTranscodingJobStatus', auth.isLoggedIn, (req, res) => {
+  models.Video.find({
+    where: {
+      id: req.params.videoId
+    }
+  }).then((video) => {
+    if (video && video.user_id===req.user.id) {
+      models.Video.getTranscodingJobStatus(video, req, res);
+    } else {
+      log.error("Can't find video");
+      res.sendStatus(404);
+    }
+  }).catch((error) => {
+    log.error("Error getting video", { error });
+    res.sendStatus(500);
+  });
 });
 
 // Post User Videos

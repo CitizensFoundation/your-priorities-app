@@ -222,7 +222,7 @@ module.exports = {
         }
       ),
       await queryInterface.createTable(
-        'VideoImages',
+        'VideoImage',
         {
           id: {
             type: Sequelize.INTEGER,

@@ -185,13 +185,13 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
 
-      setupThumbnailsAfterTranscoding: (video, duration, callback) => {
+      setupThumbnailsAfterTranscoding: (video, duration, req, callback) => {
         const interval = 10;
         let frames = [];
         const numberOfFrames = Math.max(1, Math.floor(duration/interval));
 
         for (let frame = 0; frame < numberOfFrames; frame++) {
-          frames.push(sequelize.models.Video.getThumbnailUrl(video,frame));
+          frames.push(sequelize.models.Video.getThumbnailUrl(video,frame+1));
         }
 
         async.forEach(frames, (frame, foreachCallback) => {
@@ -215,9 +215,9 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
 
-      getTranscodingJobStatus: (req, res ) => {
+      getTranscodingJobStatus: (video, req, res ) => {
         var params = {
-          Id: req.params.jobId
+          Id: req.body.jobId
         };
         const eltr = new aws.ElasticTranscoder({
           apiVersion: '2012–09–25',
@@ -229,33 +229,30 @@ module.exports = function(sequelize, DataTypes) {
             res.sendStatus(500);
           } else {
             const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
-            if (jobStatus.status==="Completed") {
-              sequelize.models.Video.find({
-                where: {
-                  id: req.params.videoId
-                }
-              }).then((video) => {
-                if (video) {
-                  const duration = 42;
-                  sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, (error) => {
-                    if (error) {
-                      log.error("Could not connect image and video", { error });
-                      res.sendStatus(500);
-                    } else {
-                      res.send(jobStatus);
-                    }
-                  })
+            if (jobStatus.status==="Complete") {
+              const duration = data.Job.Output.Duration;
+              sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, req, (error) => {
+                if (error) {
+                  log.error("Could not connect image and video", { error });
+                  res.sendStatus(500);
                 } else {
-                  log.error("Could not get video", { error });
-                  res.sendStatus(404);
+                  res.send(jobStatus);
                 }
-              }).catch((error) => {
-                log.error("Could not get video", { error });
-                res.sendStatus(500);
-              });
+              })
             } else {
               res.send(jobStatus);
             }
+          }
+        });
+      },
+
+      startTranscoding: (video, req, res) => {
+        sequelize.models.Video.startTranscodingJob(video, (error, data) => {
+          if (error) {
+            log.error("Could not start transcoding job", { error, options});
+            res.sendStatus(500);
+          } else {
+            res.send({ transcodingJobId: data.Job.Id });
           }
         });
       },
@@ -276,14 +273,7 @@ module.exports = function(sequelize, DataTypes) {
                   log.error("Could not add video to collection", { error, options});
                   res.sendStatus(500);
                 } else {
-                  sequelize.models.Video.startTranscodingJob(video, (error, data) => {
-                    if (error) {
-                      log.error("Could not start transcoding job", { error, options});
-                      res.sendStatus(500);
-                    } else {
-                      res.send({ transcodingJobId: data.Job.Id });
-                    }
-                  });
+                  res.sendStatus(200);
                 }
               });
             }).catch((error) => {
