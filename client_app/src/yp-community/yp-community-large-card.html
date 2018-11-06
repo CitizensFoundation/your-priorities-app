@@ -244,7 +244,7 @@
         <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
-          <template is="dom-if" if="[[communityVideoURL]]">
+          <template is="dom-if" if="[[communityVideoURL]]" restamp>
             <video id="videoPlayer" controls class="image pointer" src="[[communityVideoURL]]"></video>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">

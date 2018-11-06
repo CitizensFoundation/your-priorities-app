@@ -186,6 +186,17 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
   group.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   group.set('configuration.videoPostUploadLimitSec', (req.body.videoPostUploadLimitSec && req.body.videoPostUploadLimitSec!="") ? req.body.videoPostUploadLimitSec : "60");
+  group.set('configuration.videoPointUploadLimitSec', (req.body.videoPointUploadLimitSec && req.body.videoPointUploadLimitSec!="") ? req.body.videoPointUploadLimitSec : "30");
+  if (group.configuration.videoPostUploadLimitSec && parseInt(group.configuration.videoPostUploadLimitSec)) {
+    if (parseInt(group.configuration.videoPostUploadLimitSec)>150) {
+      group.set('configuration.videoPostUploadLimitSec', 150);
+    }
+  }
+  if (group.configuration.videoPointUploadLimitSec && parseInt(group.configuration.videoPointUploadLimitSec)) {
+    if (parseInt(group.configuration.videoPointUploadLimitSec)>90) {
+      group.set('configuration.videoPointUploadLimitSec', 90);
+    }
+  }
 };
 
 var upload = multer({

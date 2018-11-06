@@ -166,7 +166,7 @@
 
     <div class="layout horizontal wrap">
       <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
-        <template is="dom-if" if="[[domainVideoURL]]">
+        <template is="dom-if" if="[[domainVideoURL]]" restamp>
           <video id="videoPlayer" controls class="image" src="[[domainVideoURL]]"></video>
         </template>
         <template is="dom-if" if="[[!domainVideoURL]]">

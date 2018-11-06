@@ -1,4 +1,6 @@
 {
+  "videoPostUploadLimitSec": "Video clip limit in seconds (max 150)",
+  "videoPointUploadLimitSec": "Video clip limit in seconds (max 90)",
   "postCoverVideo": "Video",
   "uploadVideo": "Upload video",
   "uploadCompleted": "Upload completed",
