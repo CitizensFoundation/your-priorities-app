@@ -921,7 +921,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
       [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'asc' ],
+      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
@@ -940,14 +940,14 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       },
       {
         model: models.Video,
-        attributes: ['id','formats'],
+        attributes: ['id','formats','updated_at'],
         as: 'PostVideos',
         required: false,
         include: [
           {
             model: models.Image,
             as: 'VideoImages',
-            attributes:["formats"],
+            attributes:["formats","updated_at"],
             required: false
           },
         ]

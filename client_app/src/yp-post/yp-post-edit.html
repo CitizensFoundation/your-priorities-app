@@ -647,7 +647,8 @@
         this.set('selectedCategoryArrayId',null);
         this.set('selectedCategoryId',null);
         this.set('selected', 0);
-        this.set('uploadedHeaderImageId',null);
+        this.set('uploadedHeaderImageId', null);
+        this.set('uploadedVideoId', null);
         this.$$("#imageFileUpload").clear();
         this.set('selectedCoverMediaType', 'none');
       }
@@ -657,6 +658,9 @@
       this._setupGroup(group);
       if (post) {
         this.set('post', post);
+        if (post.PostVideos && post.PostVideos.length>0) {
+          this.set('uploadedVideoId', post.PostVideos[0].id)
+        }
       } else {
         this.set('post', null);
       }
