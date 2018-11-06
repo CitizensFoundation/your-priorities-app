@@ -167,7 +167,7 @@
     <div class="layout horizontal wrap">
       <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
         <template is="dom-if" if="[[domainVideoURL]]">
-          <video controls class="image" src="[[domainVideoURL]]"></video>
+          <video id="videoPlayer" controls class="image" src="[[domainVideoURL]]"></video>
         </template>
         <template is="dom-if" if="[[!domainVideoURL]]">
           <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
@@ -212,6 +212,7 @@
 
     <iron-media-query query="(max-width: 945px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
   </template>
 
   <script>
@@ -259,6 +260,13 @@
         domainVideoURL: {
           type: String,
           computed: '_domainVideoURL(domain)'
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
         }
       },
 

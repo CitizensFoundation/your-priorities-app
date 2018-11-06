@@ -238,7 +238,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       {
         model: models.Video,
         required: false,
-        attributes: ['id','formats','updated_at'],
+        attributes: ['id','formats','updated_at','viewable'],
         as: 'PostVideos',
         include: [
           {

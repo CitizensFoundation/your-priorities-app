@@ -176,11 +176,12 @@
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
 
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
         <template is="dom-if" if="[[groupVideoURL]]">
-          <video controls class="logo" src="[[groupVideoURL]]"></video>
+          <video id="videoPlayer" controls class="logo" src="[[groupVideoURL]]"></video>
         </template>
         <template is="dom-if" if="[[!groupVideoURL]]">
           <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
@@ -269,6 +270,13 @@
         groupVideoURL: {
           type: String,
           computed: '_groupVideoURL(group)'
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
         }
       },
 

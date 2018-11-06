@@ -245,7 +245,7 @@
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
           <template is="dom-if" if="[[communityVideoURL]]">
-            <video controls class="image pointer" src="[[communityVideoURL]]"></video>
+            <video id="videoPlayer" controls class="image pointer" src="[[communityVideoURL]]"></video>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">
             <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
@@ -291,6 +291,7 @@
     </div>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
   </template>
 
   <script>
@@ -328,6 +329,13 @@
         communityVideoURL: {
           type: String,
           computed: '_communityVideoURL(community)'
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
         }
       },
 

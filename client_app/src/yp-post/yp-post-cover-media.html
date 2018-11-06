@@ -91,6 +91,14 @@
       [hidden] {
         display: none !important;
       }
+
+      .videoCamStatic {
+        width: 32px;
+        height: 32px;
+        color: var(--primary-background-color);
+        margin-top: -68px;
+        margin-left: 8px;
+      }
     </style>
 
     <div class="mapCanvas">
@@ -119,10 +127,11 @@
 
       <template is="dom-if" if="[[videoActive]]">
         <template is="dom-if" if="[[showVideo]]">
-          <video controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
+          <video id="videoPlayer" controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
           <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPath]]"></iron-image>
+          <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
         </template>
       </template>
 
@@ -161,7 +170,8 @@
         </template>
       </template>
     </div>
-
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
   </template>
 
   <script>
@@ -314,6 +324,13 @@
         showVideo: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
         }
       },
 
