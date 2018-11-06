@@ -588,7 +588,6 @@
         } else {
           this.set('endorsementButtons', "hearts");
         }
-        console.error(this.allowPostVideoUploads);
 
         this._setFromConfiguration('locationHidden');
         this._setFromConfiguration('hideAllTabs');
@@ -615,7 +614,6 @@
         }
         if (window.appGlobals.hasVideoUpload) {
           this.set('hasVideoUpload', true);
-          console.error(this.allowPostVideoUploads);
           if (this.allowPostVideoUploads===null) {
             this.set('allowPostVideoUploads', true);
           }
@@ -635,7 +633,7 @@
     },
 
     _setFromConfiguration: function (propertyName, setNullDefault) {
-      if (this.group.configuration && this.group.configuration[propertyName]!=undefined && this.group.configuration[propertyName]!="") {
+      if (this.group.configuration && this.group.configuration[propertyName]!=undefined && this.group.configuration[propertyName]!=="") {
         this.set(propertyName, this.group.configuration[propertyName]);
       } else {
         this.set(propertyName, setNullDefault ? null : false);

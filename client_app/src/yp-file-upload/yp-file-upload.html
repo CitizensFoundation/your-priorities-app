@@ -307,7 +307,9 @@ Example:
       accept: {
         type: String,
         value: "image/*"
-      }
+      },
+
+      group: Object
     },
 
     /**
@@ -534,7 +536,16 @@ Example:
             this.set('indeterminateProgress', true);
             this.set('uploadStatus', this.t("transcodingVideo"));
             this.$.startTranscodeAjax.url = '/api/videos/'+this.currentVideoId+'/startTranscoding';
-            this.$.startTranscodeAjax.body = {};
+            let options;
+            if (this.group && this.group.configuration) {
+              options = {
+                videoPostUploadLimitSec: this.group.configuration.videoPostUploadLimitSec,
+                videoPointUploadLimitSec: this.group.configuration.videoPointUploadLimitSec,
+              }
+            } else {
+              options = {}
+            }
+            this.$.startTranscodeAjax.body = options;
             this.$.startTranscodeAjax.generateRequest();
           } else {
             this.set('uploadStatus', this.t('uploadCompleted'));

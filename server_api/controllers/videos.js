@@ -12,71 +12,6 @@ var isAuthenticated = function (req, res, next) {
     return next();
   res.status(401).send('Unauthorized');
 };
-
-var sendError = function (res, video, context, user, error) {
-  log.error("Video Error", { context: context, video: toJson(video),
-                             user: toJson(user), err: error, errorStatus: 500 });
-  res.sendStatus(500);
-};
-
-var sendPostUserVideoActivity = function(req, type, post, video, callback) {
-  models.AcActivity.createActivity({
-    type: type,
-    userId: post.user_id,
-    domainId: req.ypDomain.id,
-    groupId: post.group_id,
-//    communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-    postId : post.id,
-    videoId: video.id,
-    access: models.AcActivity.ACCESS_PUBLIC
-  }, function (error) {
-    callback(error);
-  });
-};
-
-var addUserVideoToPost = function(postId, videoId, callback) {
-  models.Post.find({
-    where: { id: postId },
-    attributes: ['id']
-  }).then(function (post) {
-    if (post) {
-      models.Video.find({
-        where: {
-          id: videoId
-        }
-      }).then(function (video) {
-        if (video) {
-          post.addPostUserVideo(video).then(function (results) {
-            callback(null, post, video);
-          });
-        }
-      });
-    }
-  }).catch(function (error) {
-    callback(error);
-  });
-};
-
-var deleteVideo = function (videoId, callback) {
-  models.Video.find({
-    where: { id: videoId },
-    attributes: ['id','deleted']
-  }).then(function (video) {
-    if (video) {
-    video.deleted = true;
-      video.save().then(function () {
-        log.info('Post User Video Deleted', { videoId: videoId, context: 'delete' });
-      });
-      callback();
-    } else {
-      log.error('Post User Video Delete Error', { videoId: videoId, context: 'delete' });
-      callback('Not found');
-    }
-  }).catch(function(error) {
-    callback(error);
-  });
-};
-
 router.get('/hasVideoUploadSupport', (req, res) => {
   res.send({ hasVideoUploadSupport: process.env.S3_VIDEO_UPLOAD_BUCKET!=null })
 });
@@ -102,13 +37,18 @@ router.put('/:domainId/completeAndAddToDomain', auth.can('edit domain'), (req, r
 });
 
 router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
+  const options = {
+    videoPostUploadLimitSec: req.body.videoPostUploadLimitSec,
+    videoPointUploadLimitSec: req.body.videoPointUploadLimitSec,
+  };
+
   models.Video.find({
     where: {
       id: req.params.videoId
     }
   }).then((video) => {
     if (video && video.user_id===req.user.id) {
-      models.Video.startTranscoding(video, req, res);
+      models.Video.startTranscoding(video, options, req, res);
     } else {
       log.error("Can't find video or not same user", { videoUserId: video ? video.user_id : -1, userId: req.user.id });
       res.sendStatus(404);
@@ -137,37 +77,5 @@ router.put('/:videoId/getTranscodingJobStatus', auth.isLoggedIn, (req, res) => {
   });
 });
 
-// Post User Videos
-router.get('/:postId/user_videos', auth.can('view post'), function(req, res) {
-  models.Post.find({
-    where: {
-      id: req.params.postId
-    },
-    order: [
-      [ { model: models.Video, as: 'PostUserVideos' } , 'created_at', 'desc' ]
-    ],
-    attributes: ['id'],
-    include: [
-      {
-        model: models.Video,
-        as: 'PostUserVideos',
-        required: true,
-        where: {
-          deleted: false
-        }
-      }
-    ]
-  }).then(function(post) {
-    if (post) {
-      log.info('Post User Videos Viewed', { postId: post.id, context: 'view', user: toJson(req.user) });
-      res.send(post.PostUserVideos);
-    } else {
-      res.send([]);
-    }
-  }).catch(function(error) {
-    log.error("Get videos did not work", { error });
-    res.sendStatus(500);
-  });
-});
 
 module.exports = router;

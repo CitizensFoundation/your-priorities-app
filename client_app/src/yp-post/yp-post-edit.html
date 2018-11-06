@@ -132,6 +132,10 @@
         max-width: 300px;
         margin: 8px;
       }
+
+      .postCoverVideoInfo {
+        margin-top: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -287,11 +291,14 @@
                 </div>
                 <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
                   <div class="layout vertical uploadSection">
-                    <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+                    <yp-file-upload id="videoFileUpload" group="[[group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span>[[t('uploadVideo')]]</span>
                     </yp-file-upload>
-                    <div>[[t('postCoverVideoInfo')]]</div>
+                    <div class="imageSizeInfo layout horizontal">
+                      <div>1080p or 720p (16/9 widescreen)</div>
+                    </div>
+                    <div>[[t('postCoverVideoInfo')]] <b>[[group.configuration.videoPostUploadLimitSec]] [[t('seconds')]].</b></div>
                   </div>
                 </template>
               </div>

@@ -93,8 +93,7 @@ module.exports = function(sequelize, DataTypes) {
           user_agent: req.useragent.source,
           ip_address: req.clientIp,
         }).save().then((video) => {
-          const maxDuration = req.params.maxDuration ? req.params.maxDuration : 60;
-          video.getPreSignedUploadUrl({maxDuration: maxDuration}, (error, presignedUrl) => {
+          video.getPreSignedUploadUrl({}, (error, presignedUrl) => {
             if (error) {
               log.error("Could not get preSigned URL for video", { error });
               res.sendStatus(500);
@@ -252,14 +251,28 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
 
-      startTranscoding: (video, req, res) => {
-        sequelize.models.Video.startTranscodingJob(video, (error, data) => {
-          if (error) {
-            log.error("Could not start transcoding job", { error, options});
-            res.sendStatus(500);
-          } else {
-            res.send({ transcodingJobId: data.Job.Id });
-          }
+      startTranscoding: (video, options, req, res) => {
+        if (options.videoPostUploadLimitSec && options.videoPostUploadLimitSec!=="") {
+          const postLimitSeconds = parseInt(options.videoPostUploadLimitSec);
+          video.set('meta.maxDuration', Math.min(postLimitSeconds, 150));
+        } else if (options.videoPointUploadLimitSec && options.videoPointUploadLimitSec!=="") {
+          const pointLimitSeconds = parseInt(options.videoPointUploadLimitSec);
+          video.set('meta.maxDuration', Math.min(pointLimitSeconds, 150));
+        } else {
+          video.set('meta.maxDuration', "600");
+        }
+        video.save().then((video) => {
+          sequelize.models.Video.startTranscodingJob(video, (error, data) => {
+            if (error) {
+              log.error("Could not start transcoding job", { error });
+              res.sendStatus(500);
+            } else {
+              res.send({ transcodingJobId: data.Job.Id });
+            }
+          });
+        }).catch((error) => {
+          log.error("Could not start transcoding job", { error });
+          res.sendStatus(500);
         });
       },
 
