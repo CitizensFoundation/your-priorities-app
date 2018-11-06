@@ -316,15 +316,16 @@ module.exports = function(sequelize, DataTypes) {
               Duration: video.meta.maxDuration+'.000'
             }
           },
-          Outputs: [{
-            Key:fileKey,
-            ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
-            PresetId: process.env.AWS_TRANSCODER_PRESET_ID,
-            /*Watermarks: [{
-              InputKey: 'watermarks/logo-horiz-large.png',
-              PresetWatermarkId: 'BottomRight'
-            }],*/
-          }
+          Outputs: [
+            {
+              Key:fileKey,
+              ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
+              PresetId: process.env.AWS_TRANSCODER_PRESET_ID,
+            },
+            {
+              Key: fileKey.slice(0, fileKey.length-4)+'.flac',
+              PresetId: process.env.AWS_TRANSCODER_FLAC_PRESET_ID
+            }
           ]
         };
         log.info('Starting AWS transcoding Job');

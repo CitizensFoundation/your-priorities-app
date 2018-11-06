@@ -805,7 +805,8 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     where: { id: req.params.id },
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ]
+      [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ]
     ],
     include: [
       {
@@ -837,6 +838,12 @@ router.get('/:id', auth.can('view group'), function(req, res) {
         model: models.Image,
         as: 'GroupLogoImages',
         attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Video,
+        as: 'GroupLogoVideos',
+        attributes:  ['id','formats','viewable'],
         required: false
       },
       {
@@ -940,7 +947,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       },
       {
         model: models.Video,
-        attributes: ['id','formats','updated_at'],
+        attributes: ['id','formats','updated_at','viewable'],
         as: 'PostVideos',
         required: false,
         include: [

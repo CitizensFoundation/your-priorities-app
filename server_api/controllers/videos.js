@@ -89,6 +89,18 @@ router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) =>
   models.Video.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, videoId: req.body.videoId });
 });
 
+router.put('/:groupId/completeAndAddToGroup', auth.can('edit group'), (req, res) => {
+  models.Video.completeUploadAndAddToCollection(req, res, { groupId: req.params.groupId, videoId: req.body.videoId });
+});
+
+router.put('/:communityId/completeAndAddToCommunity', auth.can('edit community'), (req, res) => {
+  models.Video.completeUploadAndAddToCollection(req, res, { communityId: req.params.communityId, videoId: req.body.videoId });
+});
+
+router.put('/:domainId/completeAndAddToDomain', auth.can('edit domain'), (req, res) => {
+  models.Video.completeUploadAndAddToCollection(req, res, { domainId: req.params.domainId, videoId: req.body.videoId });
+});
+
 router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
   models.Video.find({
     where: {
@@ -98,7 +110,7 @@ router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
     if (video && video.user_id===req.user.id) {
       models.Video.startTranscoding(video, req, res);
     } else {
-      log.error("Can't find video");
+      log.error("Can't find video or not same user", { videoUserId: video ? video.user_id : -1, userId: req.user.id });
       res.sendStatus(404);
     }
   }).catch((error) => {
@@ -116,7 +128,7 @@ router.put('/:videoId/getTranscodingJobStatus', auth.isLoggedIn, (req, res) => {
     if (video && video.user_id===req.user.id) {
       models.Video.getTranscodingJobStatus(video, req, res);
     } else {
-      log.error("Can't find video");
+      log.error("Can't find video or not same user", { videoUserId: video ? video.user_id : -1, userId: req.user.id });
       res.sendStatus(404);
     }
   }).catch((error) => {

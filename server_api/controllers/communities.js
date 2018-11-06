@@ -104,7 +104,8 @@ var getCommunity = function(req, done) {
           [ { model: models.Group }, 'counter_users', 'desc' ],
           [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
           [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
-          [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ]
+          [ models.Group, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ],
+          [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ]
         ],
         attributes: models.Community.defaultAttributesPublic,
         include: [
@@ -122,6 +123,12 @@ var getCommunity = function(req, done) {
             model: models.Image,
             as: 'CommunityHeaderImages',
             attributes:  models.Image.defaultAttributesPublic,
+            required: false
+          },
+          {
+            model: models.Video,
+            as: 'CommunityLogoVideos',
+            attributes:  ['id','formats','viewable'],
             required: false
           },
           {

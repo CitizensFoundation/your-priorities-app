@@ -286,6 +286,8 @@ auth.role('domain.viewUser', function (domain, req, done) {
 
 auth.entity('domain', function(req, done) {
   var match = req.originalUrl.match(/domains\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /domains/:domainId'));
   } else {
@@ -430,6 +432,8 @@ auth.role('community.viewUser', function (community, req, done) {
 
 auth.entity('community', function(req, done) {
   var match = req.originalUrl.match(/communities\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /communities/:communityId'));
   } else {
@@ -520,6 +524,8 @@ auth.role('group.addTo', function (group, req, done) {
 
 auth.entity('group', function(req, done) {
   var match = req.originalUrl.match(/groups\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /groups/:groupId'));
   } else {

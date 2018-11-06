@@ -87,10 +87,11 @@
         right: 0;
       }
 
-      iron-image {
+      iron-image, video {
         width: 432px;
         height: 243px;
       }
+
 
       .description {
         padding: 0;
@@ -138,7 +139,7 @@
           left: 265px;
         }
 
-        iron-image {
+        iron-image, video {
           width: 306px;
           height: 172px !important;
         }
@@ -178,7 +179,12 @@
 
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
-        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+        <template is="dom-if" if="[[groupVideoURL]]">
+          <video controls on-tap="goToPost" class="logo pointer" src="[[groupVideoURL]]"></video>
+        </template>
+        <template is="dom-if" if="[[!groupVideoURL]]">
+          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+        </template>
       </paper-material>
       <paper-material id="card" elevation="3" animated-shadow class="groupCard textBox">
         <div class="layout vertical">
@@ -258,6 +264,23 @@
           type: Boolean,
           value: false,
           computed: '_showMenuItem(hasGroupAccess, group)'
+        },
+
+        groupVideoURL: {
+          type: String,
+          computed: '_groupVideoURL(group)'
+        }
+      },
+
+      _groupVideoURL: function (group) {
+        if (group &&
+            group.configuration.useVideoCover &&
+            group.GroupLogoVideos &&
+            group.GroupLogoVideos.length>0 &&
+            group.GroupLogoVideos[0].viewable) {
+          return group.GroupLogoVideos[0].formats[0]
+        } else {
+          return null;
         }
       },
 
