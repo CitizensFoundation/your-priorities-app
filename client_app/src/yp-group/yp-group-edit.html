@@ -80,6 +80,11 @@
         max-width: 300px;
         margin: 8px;
       }
+
+      .useVideoCover {
+        margin-left: 4px;
+        margin-top: 4px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -129,7 +134,7 @@
               <iron-icon class="icon" icon="videocam"></iron-icon>
               <span>[[t('uploadVideo')]]</span>
             </yp-file-upload>
-            <div>[[t('postCoverVideoInfo')]]</div>
+            <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]" checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
           </div>
         </template>
 
@@ -228,7 +233,6 @@
         <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">[[t('disablePostPageLink')]]</paper-checkbox>
         <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]" checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]</paper-checkbox>
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">[[t('hidePostFilterAndSearch')]]</paper-checkbox>
-        <paper-checkbox name="useVideoCover" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
         <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]</paper-checkbox>
         <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]</paper-checkbox>
       </div>
