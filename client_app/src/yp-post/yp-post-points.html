@@ -213,9 +213,21 @@
       .mainSpinner {
         margin: 32px;
       }
+
+      paper-button[disabled] {
+        background-color: #333;
+        color: #FFF;
+      }
+
+      .videoInfo {
+        margin-top: 4px;
+        margin-bottom: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
+    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+
     <iron-media-query query="(min-width: 985px)" query-matches="{{largeMode}}"></iron-media-query>
 
     <div class="layout horizontal center-center" hidden$="[[ajaxActive]]">
@@ -243,27 +255,28 @@
 
               <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                               value="{{textValueUp}}" label$="[[labelUp]]"
-                              char-counter rows="2"
+                              char-counter rows="2" hidden$="[[uploadedVideoUpId]]"
                               max-rows="3" maxlength="500">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
-                <emoji-selector id="pointUpEmojiSelector"></emoji-selector>
+                <emoji-selector id="pointUpEmojiSelector" hidden$="[[uploadedVideoUpId]]"></emoji-selector>
               </div>
 
-              <template is="dom-if" if="[[group.configuration.allowPointVideoUploads]]">
-                <div class="layout vertical uploadSection" hidden$="[[!loggedInUser]]">
+              <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
+                <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
                   <yp-file-upload id="videoFileUploadUp" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
                     <iron-icon class="icon" icon="videocam"></iron-icon>
                     <span>[[t('uploadVideoPointFor')]]</span>
                   </yp-file-upload>
-                  <div>[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                  <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
                 </div>
+                <paper-button style="maxWidth: 200px;" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadVideoPointFor')]]</paper-button>
               </template>
 
               <div hidden="[[!ifLengthUpIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button disabled$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
+                  <paper-button class="submitButton" disabled$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
                                 title="[[t('point.add_up')]]">[[t('point.postComment')]]</paper-button>
                 </div>
               </div>
@@ -526,8 +539,11 @@
           }
         },
 
+        _openLogin: function () {
+          this.fire('yp-open-login');
+        },
+
         _videoUpUploaded: function (event, detail) {
-          debugger;
           this.set('uploadedVideoUpId', detail.videoId);
         },
 
@@ -656,14 +672,10 @@
           }
         },
 
-        _postChanged: function (newPost) {
-          // Remove any manually inserted points when the list is updated
-          this.set('points', null);
-          this.set('upPoints', null);
-          this.set('downPoints', null);
-          this.set('latestPointCreatedAt', null);
+        _clearVideo: function () {
           this.set('uploadedVideoUpId', null);
           this.set('uploadedVideoDownId', null);
+          this.set('uploadedVideoMobileId', null);
           this.set('currentVideoId', null);
           this.set('uploadedVideoMobileId', null);
           if (this.$$("#videoFileUploadUp"))
@@ -672,6 +684,15 @@
             this.$$("#videoFileUploadDown").clear();
           if (this.$$("#videoFileUploadMobile"))
             this.$$("#videoFileUploadMobile").clear();
+        },
+
+        _postChanged: function (newPost) {
+          // Remove any manually inserted points when the list is updated
+          this.set('points', null);
+          this.set('upPoints', null);
+          this.set('downPoints', null);
+          this.set('latestPointCreatedAt', null);
+          this._clearVideo();
           if (newPost) {
             if (this.host) {
               this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
@@ -812,8 +833,7 @@
 
         _newPointResponse: function (inEvent, inDetail) {
           if (this.currentVideoId) {
-            debugger;
-            var point = this._preProcessPoints([detail.response])[0];
+            var point = this._preProcessPoints([inDetail.response])[0];
             var ajax = document.createElement('iron-ajax');
             ajax.handleAs = 'json';
             ajax.contentType = 'application/json';
@@ -823,7 +843,7 @@
               videoId: this.currentVideoId
             };
             ajax.addEventListener('response', function (event, detail) {
-              this._completeNewPointResponse(event, detail);
+              this._completeNewPointResponse(event, event.detail);
             }.bind(this));
             ajax.generateRequest();
           } else {
@@ -851,6 +871,7 @@
           } else {
             window.appGlobals.activity('completed', 'newPointAgainst');
           }
+          this._clearVideo();
         },
 
         addPointUp: function () {
@@ -906,7 +927,13 @@
         },
 
         ifLengthIsRight: function (textValue, hasVideoId) {
-          return hasVideoId || textValue.length > 1;
+          if (hasVideoId != null) {
+            return true;
+          } else if (textValue && textValue.length > 1) {
+            return true;
+          } else {
+            return false;
+          }
         }
       });
     }());

@@ -965,6 +965,8 @@ auth.role('point.vote', function (point, req, done) {
 
 auth.entity('point', function(req, done) {
   var match = req.originalUrl.match(/points\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /points/:pointId'));
   } else {

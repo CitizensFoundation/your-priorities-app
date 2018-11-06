@@ -124,7 +124,7 @@ router.put('/:domainId/completeAndAddToDomain', auth.can('edit domain'), (req, r
   models.Video.completeUploadAndAddToCollection(req, res, { domainId: req.params.domainId, videoId: req.body.videoId });
 });
 
-router.put('/:pointId/completeAndAddToPoint', auth.can('edit domain'), (req, res) => {
+router.put('/:pointId/completeAndAddToPoint', auth.can('edit point'), (req, res) => {
   models.Video.completeUploadAndAddToPoint(req, res, { pointId: req.params.pointId, videoId: req.body.videoId }, (error) => {
     if (error) {
       log.error("Error adding point to video", { error });
