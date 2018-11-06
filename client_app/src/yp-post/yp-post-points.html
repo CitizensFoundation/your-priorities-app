@@ -264,20 +264,22 @@
               </div>
 
               <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
-                <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                  <yp-file-upload id="videoFileUploadUp" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
-                    <iron-icon class="icon" icon="videocam"></iron-icon>
-                    <span>[[t('uploadVideoPointFor')]]</span>
-                  </yp-file-upload>
-                  <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                <div hidden$="[[hideUpVideo]]">
+                  <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
+                    <yp-file-upload id="videoFileUploadUp" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
+                      <iron-icon class="icon" icon="videocam"></iron-icon>
+                      <span>[[t('uploadVideoPointFor')]]</span>
+                    </yp-file-upload>
+                    <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                  </div>
+                  <paper-button style="maxWidth: 200px;" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadVideoPointFor')]]</paper-button>
                 </div>
-                <paper-button style="maxWidth: 200px;" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadVideoPointFor')]]</paper-button>
               </template>
 
               <div hidden="[[!ifLengthUpIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
                   <paper-button class="submitButton" disabled$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
-                                title="[[t('point.add_up')]]">[[t('point.postComment')]]</paper-button>
+                                title="[[t('point.add_up')]]">[[t('postPoint')]]</paper-button>
                 </div>
               </div>
             </paper-material>
@@ -325,7 +327,7 @@
               <div hidden="[[!ifLengthDownIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
                   <paper-button disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addPointDown"
-                                title="[[t('point.add_down')]]">[[t('point.postComment')]]</paper-button>
+                                title="[[t('point.add_down')]]">[[t('postPoint')]]</paper-button>
                 </div>
               </div>
             </paper-material>
@@ -365,7 +367,7 @@
         <div hidden="[[!ifLengthMobileRight]]">
           <div class="addPointFab layout horizontal center-center mobileFab">
             <paper-button disabled$="[[addPointDisabled]]" icon="add" z="3" on-tap="addMobilePointUpOrDown"
-                          title="[[t('point.postComment')]]">[[t('point.postComment')]]</paper-button>
+                          title="[[t('postPoint')]]">[[t('postPoint')]]</paper-button>
           </div>
         </div>
       </paper-material>
@@ -488,19 +490,19 @@
           ifLengthUpIsRight: {
             type: Boolean,
             value: false,
-            computed: 'ifLengthIsRight(textValueUp, uploadedVideoUpId)'
+            computed: 'ifLengthIsRight("up",textValueUp, uploadedVideoUpId)'
           },
 
           ifLengthDownIsRight: {
             type: Boolean,
             value: false,
-            computed: 'ifLengthIsRight(textValueDown)'
+            computed: 'ifLengthIsRight("down", textValueDown, uploadedVideoDownId)'
           },
 
           ifLengthMobileRight: {
             type: Boolean,
             value: false,
-            computed: 'ifLengthIsRight(textValueMobileUpOrDown)'
+            computed: 'ifLengthIsRight("mobile", textValueMobileUpOrDown, uploadedVideoMobileId)'
           },
 
           addPointDisabled: {
@@ -536,6 +538,21 @@
           currentVideoId:{
             type: String,
             value: null
+          },
+
+          hideUpVideo: {
+            type: Boolean,
+            value: false
+          },
+
+          hideDownVideo: {
+            type: Boolean,
+            value: false
+          },
+
+          hideMobileVideo: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -678,6 +695,9 @@
           this.set('uploadedVideoMobileId', null);
           this.set('currentVideoId', null);
           this.set('uploadedVideoMobileId', null);
+          this.set('hideUpVideo', false);
+          this.set('hideDownVideo', false);
+          this.set('hideMobileVideo', false);
           if (this.$$("#videoFileUploadUp"))
             this.$$("#videoFileUploadUp").clear();
           if (this.$$("#videoFileUploadDown"))
@@ -926,10 +946,32 @@
           event.currentTarget.parentElement.elevation = 1;
         },
 
-        ifLengthIsRight: function (textValue, hasVideoId) {
+        ifLengthIsRight: function (type, textValue, hasVideoId) {
           if (hasVideoId != null) {
+            if (type==="up")
+              this.set("hideUpVideo", false);
+            if (type==="down")
+              this.set("hideDownVideo", false);
+            if (type==="mobile")
+              this.set("hideMobileVideo", false);
             return true;
-          } else if (textValue && textValue.length > 1) {
+          } else if (textValue!=null && textValue.length === 0) {
+            if (type==="up")
+              this.set("hideUpVideo", false);
+            if (type==="down")
+              this.set("hideDownVideo", false);
+            if (type==="mobile")
+              this.set("hideMobileVideo", false);
+            return false;
+          } else if (textValue!=null && textValue.length > 0) {
+            if (type==="up")
+              this.set("hideUpVideo", true);
+            if (type==="down")
+              this.set("hideDownVideo", true);
+            if (type==="mobile")
+              this.set("hideMobileVideo", true);
+            return true;
+          } else if (textValue!=null && textValue.length > 1) {
             return true;
           } else {
             return false;

@@ -1,4 +1,5 @@
 {
+  "postPoint": "Post point",
   "uploadVideoPointFor": "Video point",
   "pointVideoInfo": "Upload video in landscape HD format. Maximum video length is ",
   "allowPointVideoUploads": "Allow point video uploads",
