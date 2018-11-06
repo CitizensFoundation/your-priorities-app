@@ -63,7 +63,7 @@
         margin-top: 0 !important;
       }
 
-      .image {
+      .image, video {
         width: 432px;
         height: 243px;
       }
@@ -131,7 +131,7 @@
           left: 265px;
         }
 
-        iron-image {
+        iron-image, video {
           width: 306px;
           height: 172px !important;
         }
@@ -166,9 +166,12 @@
 
     <div class="layout horizontal wrap">
       <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
-        <div class="layout horizontal wrap">
+        <template is="dom-if" if="[[domainVideoURL]]" restamp>
+          <video id="videoPlayer" controls class="image" src="[[domainVideoURL]]"></video>
+        </template>
+        <template is="dom-if" if="[[!domainVideoURL]]">
           <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
-        </div>
+        </template>
       </paper-material>
       <paper-material id="card" elevation="4" animated class="large-card textBox">
         <div class="layout vertical">
@@ -209,6 +212,7 @@
 
     <iron-media-query query="(max-width: 945px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
   </template>
 
   <script>
@@ -251,6 +255,30 @@
           type: Boolean,
           value: false,
           computed: '_showMenuItem(hasDomainAccess, domain)'
+        },
+
+        domainVideoURL: {
+          type: String,
+          computed: '_domainVideoURL(domain)'
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
+        }
+      },
+
+      _domainVideoURL: function (domain) {
+        if (domain &&
+          domain.configuration.useVideoCover &&
+          domain.DomainLogoVideos &&
+          domain.DomainLogoVideos.length>0 &&
+          domain.DomainLogoVideos[0].viewable) {
+          return domain.DomainLogoVideos[0].formats[0]
+        } else {
+          return null;
         }
       },
 

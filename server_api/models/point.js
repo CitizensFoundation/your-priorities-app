@@ -222,6 +222,8 @@ module.exports = function(sequelize, DataTypes) {
 
     underscored: true,
 
+    timestamps: true,
+
     tableName: 'points',
 
     classMethods: {
@@ -241,6 +243,7 @@ module.exports = function(sequelize, DataTypes) {
         Point.belongsTo(sequelize.models.Group);
         Point.hasMany(sequelize.models.PointRevision);
         Point.hasMany(sequelize.models.PointQuality);
+        Point.belongsToMany(models.Video, { as: 'PointVideos', through: 'PointVideo' });
       },
 
       createComment: function (req, options, callback) {

@@ -57,6 +57,16 @@
       paper-checkbox {
         margin-top: 4px;
       }
+
+      .uploadSection {
+        max-width: 300px;
+        margin: 8px;
+      }
+
+      .useVideoCover {
+        margin-left: 4px;
+        margin-top: 4px;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -92,18 +102,30 @@
           <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
         </div>
 
-        <div class="layout vertical additionalSettings">
-          <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
-            <iron-icon class="icon" icon="photo-camera"></iron-icon>
-            <span> [[t('image.logo.upload')]] - 864 x 486</span><br>
-          </yp-file-upload>
-        </div>
+        <div class="layout horizontal wrap">
+          <div class="layout vertical additionalSettings">
+            <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+              <iron-icon class="icon" icon="photo-camera"></iron-icon>
+              <span> [[t('image.logo.upload')]] - 864 x 486</span><br>
+            </yp-file-upload>
+          </div>
 
-        <div class="layout vertical additionalSettings">
-          <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
-            <iron-icon class="icon" icon="photo-camera"></iron-icon>
-            <span> [[t('image.header.upload')]] - 1920 x 600</span><br>
-          </yp-file-upload>
+          <div class="layout vertical additionalSettings">
+            <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
+              <iron-icon class="icon" icon="photo-camera"></iron-icon>
+              <span> [[t('image.header.upload')]] - 1920 x 600</span><br>
+            </yp-file-upload>
+          </div>
+
+          <template is="dom-if" if="[[hasVideoUpload]]">
+            <div class="layout vertical uploadSection">
+              <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+                <iron-icon class="icon" icon="videocam"></iron-icon>
+                <span>[[t('uploadVideo')]]</span>
+              </yp-file-upload>
+              <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]" checked$="{{domain.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+            </div>
+          </template>
         </div>
 
         <paper-input id="customUserRegistrationText"
@@ -271,12 +293,26 @@
         type: String
       },
 
-      appHomeScreenIconImageId: String
+      appHomeScreenIconImageId: String,
+
+      hasVideoUpload: {
+        type: Boolean,
+        value: false
+      },
+
+      uploadedVideoId: {
+        type: Number,
+        value: null
+      }
     },
 
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _videoUploaded: function (event, detail) {
+      this.set('uploadedVideoId', detail.videoId);
+    },
 
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
@@ -297,12 +333,39 @@
 
     _domainChanged: function (domain) {
       this._updateEmojiBindings();
+      if (window.appGlobals.hasVideoUpload) {
+        this.set('hasVideoUpload', true);
+      } else {
+        this.set('hasVideoUpload', false);
+      }
     },
 
     _customRedirect: function (domain) {
-      if (this.new) {
-        this.redirectTo("/domain/"+domain.id);
+      if (domain) {
+        if (this.uploadedVideoId) {
+          var ajax = document.createElement('iron-ajax');
+          ajax.handleAs = 'json';
+          ajax.contentType = 'application/json';
+          ajax.url = '/api/videos/'+domain.id+'/completeAndAddToDomain';
+          ajax.method = 'PUT';
+          ajax.body = {
+            videoId: this.uploadedVideoId
+          };
+          ajax.addEventListener('response', function (event) {
+            this._finishRedirect(domain);
+          }.bind(this));
+          ajax.generateRequest();
+        } else {
+          this._finishRedirect(domain);
+        }
+      } else {
+        console.warn('No group found on custom redirect');
       }
+    },
+
+    _finishRedirect: function (domain) {
+      this.redirectTo("/domain/"+domain.id);
+      window.appGlobals.activity('completed', 'editDomain');
     },
 
     _clear: function () {
@@ -319,6 +382,9 @@
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
+      if (domain && domain.DomainLogoVideos && domain.DomainLogoVideos.length>0) {
+        this.set('uploadedVideoId', domain.DomainLogoVideos[0].id)
+      }
     },
 
     _setupTranslation: function () {

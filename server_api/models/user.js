@@ -264,6 +264,7 @@ module.exports = function(sequelize, DataTypes) {
         User.belongsToMany(models.Group, { as: 'GroupAdmins', through: 'GroupAdmin' });
         User.belongsToMany(models.Organization, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
         User.belongsToMany(models.Organization, { as: 'OrganizationUsers', through: 'OrganizationUser' });
+        User.belongsToMany(models.Video, { as: 'UserProfileVideos', through: 'UserProfileVideo'});
       },
 
       getUserWithAll: function (userId, callback) {

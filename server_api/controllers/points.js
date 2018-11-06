@@ -120,6 +120,20 @@ var loadPointWithAll = function (pointId, callback) {
         ]
       },
       {
+        model: models.Video,
+        required: false,
+        attributes: ['id','formats','updated_at','viewable'],
+        as: 'PointVideos',
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      },
+      {
         model: models.Post,
         required: false,
         attributes: ['id','group_id'],

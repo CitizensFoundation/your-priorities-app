@@ -45,18 +45,19 @@ var decrementOldCountersIfNeeded = function (req, oldEndorsementValue, postId, e
 
 var sendPostOrError = function (res, post, context, user, error, errorStatus) {
   if (error || !post) {
+
     if (errorStatus == 404) {
-      log.warn("Post Not Found", { context: context, post: toJson(post), user: toJson(user), err: error,
-        errorStatus: 404 });
+      log.warn("Post Not Found", { context: context, post: toJson(post), user: toJson(user), err: error, errorStatus: 404 });
     } else {
-      log.error("Post Error", { context: context, post: toJson(post), user: toJson(user), err: error,
-        errorStatus: errorStatus ? errorStatus : 500 });
+      log.error("Post Error", { context: context, post: toJson(post), user: toJson(user), err: error, errorStatus: errorStatus ? errorStatus : 500 });
     }
+
     if (errorStatus) {
       res.sendStatus(errorStatus);
     } else {
       res.sendStatus(500);
     }
+
   } else {
     res.send(post);
   }
@@ -169,7 +170,9 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     attributes: ['id','name','description','status','content_type','official_status','counter_endorsements_up','cover_media_type',
       'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at'],
     order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       {
@@ -231,6 +234,20 @@ router.get('/:id', auth.can('view post'), function(req, res) {
         model: models.Image,
         required: false,
         as: 'PostHeaderImages'
+      },
+      {
+        model: models.Video,
+        required: false,
+        attributes: ['id','formats','updated_at','viewable'],
+        as: 'PostVideos',
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
       },
       // PointRevision
       {

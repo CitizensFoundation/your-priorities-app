@@ -4,25 +4,27 @@ var fs = require('fs');
 var randomstring = require("randomstring");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
+const aws = require('aws-sdk');
+const _ = require('lodash');
 
 "use strict";
-
-var Upload = require('s3-uploader');
 
 module.exports = function(sequelize, DataTypes) {
   var Video = sequelize.define("Video", {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
-    meta: DataType.JSONB,
-    formats: DataTypes.TEXT,
-    original_filename: DataTypes.STRING,
-    s3_bucket_name: DataTypes.STRING,
+    meta: DataTypes.JSONB,
+    formats: DataTypes.JSONB,
+    user_id: DataTypes.INTEGER,
+    viewable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
 
     underscored: true,
+
+    timestamps: true,
 
     tableName: 'videos',
 
@@ -35,362 +37,395 @@ module.exports = function(sequelize, DataTypes) {
       ]
     },
 
+    indexes: [
+      {
+        fields: ['meta'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['formats'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['user_id', 'viewable', 'deleted']
+      }
+    ],
+
+
     classMethods: {
-
-      defaultAttributesPublic: ["id","updated_at","formats"],
-
-      createFormatsFromVersions: function (versions) {
-        const endPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
-        var formats = [];
-        versions.forEach(function(version) {
-          var n = version.url.lastIndexOf(process.env.S3_BUCKET);
-          var path = version.url.substring(n+process.env.S3_BUCKET.length, version.url.length);
-          var newUrl = "https://"
-            + process.env.S3_BUCKET + "." + (endPoint)
-            + path;
-          formats.push(newUrl);
-        });
-        return formats;
-      },
-
-      getUploadClient: function (itemType) {
-        var versions;
-
-        if (itemType && itemType === 'user-profile') {
-          versions = [
-            {
-              maxHeight: 200,
-              maxWidth: 200,
-              format: 'png',
-              aspect: '1:1!h',
-              suffix: '-small',
-              quality: 99
-            },
-            {
-              maxHeight: 50,
-              maxWidth: 50,
-              aspect: '1:1!h',
-              format: 'png',
-              suffix: '-tiny',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType === 'domain-logo') {
-            versions = [
-              {
-                maxWidth: 864,
-                maxHeight: 486,
-                format: 'png',
-                suffix: '-retina',
-                quality: 99
-              },
-              {
-                maxWidth: 432,
-                maxHeight: 243,
-                format: 'png',
-                suffix: '-medium',
-                quality: 99
-              }
-            ]
-        } else if (itemType && itemType === 'community-logo') {
-          versions = [
-            {
-              maxWidth: 864,
-              maxHeight: 486,
-              format: 'png',
-              suffix: '-retina',
-              quality: 99
-            },
-            {
-              maxWidth: 432,
-              maxHeight: 243,
-              format: 'png',
-              suffix: '-medium',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType === 'app-home-screen-icon') {
-          versions = [
-            {
-              maxWidth: 512,
-              maxHeight: 512,
-              format: 'png',
-              suffix: '-512',
-              quality: 99
-            },
-            {
-              maxWidth: 384,
-              maxHeight: 384,
-              format: 'png',
-              suffix: '-384',
-              quality: 99
-            },
-            {
-              maxWidth: 256,
-              maxHeight: 256,
-              format: 'png',
-              suffix: '-256',
-              quality: 99
-            },
-            {
-              maxWidth: 192,
-              maxHeight: 192,
-              format: 'png',
-              suffix: '-192',
-              quality: 99
-            },
-            {
-              maxWidth: 180,
-              maxHeight: 180,
-              format: 'png',
-              suffix: '-180',
-              quality: 99
-            },
-            {
-              maxWidth: 152,
-              maxHeight: 152,
-              format: 'png',
-              suffix: '-152',
-              quality: 99
-            },
-            {
-              maxWidth: 144,
-              maxHeight: 144,
-              format: 'png',
-              suffix: '-144',
-              quality: 99
-            },
-            {
-              maxWidth: 96,
-              maxHeight: 96,
-              format: 'png',
-              suffix: '-96',
-              quality: 99
-            },
-            {
-              maxWidth: 48,
-              maxHeight: 48,
-              format: 'png',
-              suffix: '-48',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType === 'organization-logo') {
-          versions = [
-            {
-              maxWidth: 1000,
-              maxHeight: 1000,
-              format: 'png',
-              suffix: '-large',
-              quality: 99
-            },
-            {
-              maxWidth: 200,
-              maxHeight: 200,
-              format: 'png',
-              suffix: '-medium',
-              quality: 99
-            },
-            {
-              maxWidth: 50,
-              maxHeight: 50,
-              format: 'png',
-              suffix: '-small',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType === 'group-logo') {
-          versions = [
-            {
-              maxWidth: 864,
-              maxHeight: 486,
-              format: 'png',
-              suffix: '-retina',
-              quality: 99
-            },
-            {
-              maxWidth: 432,
-              maxHeight: 243,
-              format: 'png',
-              suffix: '-medium',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType === 'post-header') {
-          versions = [
-            {
-              maxWidth: 864,
-              maxHeight: 486,
-              format: 'png',
-              suffix: '-retina',
-              quality: 99
-            },
-            {
-              maxWidth: 432,
-              maxHeight: 243,
-              format: 'png',
-              suffix: '-medium',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType === 'category-icon') {
-          versions = [
-            {
-              maxWidth: 864,
-              maxHeight: 486,
-              format: 'png',
-              suffix: '-retina',
-              quality: 99
-            },
-            {
-              maxWidth: 432,
-              maxHeight: 243,
-              format: 'png',
-              suffix: '-medium',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType.indexOf('-header') > -1) {
-          versions = [
-            {
-              maxHeight: 300,
-              format: 'png',
-              suffix: '-large',
-              quality: 99
-            }
-          ]
-        } else if (itemType && itemType.indexOf('post-user-video') > -1) {
-          versions = [
-            {
-              maxHeight: 2048,
-              maxWidth: 1536,
-              format: 'png',
-              suffix: '-desktop-retina',
-              quality: 99
-            },
-            {
-              maxHeight: 720,
-              maxWidth: 540,
-              format: 'png',
-              suffix: '-mobile-retina',
-              quality: 99
-            },
-            {
-              maxHeight: 120,
-              maxWidth: 90,
-              format: 'png',
-              suffix: '-thumb',
-              quality: 99
-            }
-          ]
-        } else {
-          versions = [
-            {
-              maxWidth: 945,
-              format: 'jpg',
-              suffix: '-16_9',
-              aspect: '16:9!h',
-              quality: 80
-            },
-            {
-              maxHeight: 512,
-              maxWidth: 512,
-              format: 'jpg',
-              suffix: '-box',
-              quality: 80
-            },
-            {
-              maxWidth: 945,
-              format: 'jpg',
-              suffix: '-header',
-              quality: 80
-            }
-          ]
-        }
-
-        return new Upload(process.env.S3_BUCKET, {
-          aws: {
-            endpoint: process.env.S3_ENDPOINT || null,
-            region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
-            acl: 'public-read'
-          },
-
-          cleanup: {
-            versions: false,
-            original: false
-          },
-
-          versions: versions
-        });
-      },
 
       associate: function(models) {
         Video.belongsTo(models.User);
         Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideo' });
-        Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
-        Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
+        Video.belongsToMany(models.Image, { as: 'VideoImages', through: 'VideoImage' });
+        Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'PointVideo' });
         Video.belongsToMany(models.User, { as: 'UserProfileVideos', through: 'UserProfileVideo' });
+        Video.belongsToMany(models.Community, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo' });
         Video.belongsToMany(models.Group, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
         Video.belongsToMany(models.Domain, { as: 'DomainLogoVideos', through: 'DomainLogoVideo' });
       },
 
-      downloadFacebookVideosForUser: function (user, done) {
-        var facebookId = user.facebook_id;
-        //var facebookId = 746850516;
-        if (facebookId && !user.UserProfileVideos || user.UserProfileVideos.length===0) {
-          request.get('https://graph.facebook.com/' + facebookId + '/picture', function (err, downloadResponse, body) {
-            if (err) {
-              return done(err);
+      defaultAttributesPublic: ["id","updated_at","formats"],
+
+      getRandomFileKey: (id) => {
+        const random =  Math.random().toString(36).substring(2, 9);
+        return random+'_video' + id +'.mp4';
+      },
+
+      getFullUrl: (meta) => {
+        if (meta) {
+          return 'https://'+meta.publicBucket+'.'+meta.endPoint+'/'+meta.fileKey;
+        }
+      },
+
+      getThumbnailUrl: (video, number) => {
+          var zerofilled = ('00000'+number).slice(-5);
+          const fileKey = video.meta.fileKey+'_thumbs-' + video.id + '-'+zerofilled+'.png';
+          return 'https://'+video.meta.thumbnailBucket+'.'+video.meta.endPoint+'/'+fileKey;
+      },
+
+      createAndGetSignedUploadUrl: (req, res) => {
+        const userId = req.user.id;
+        sequelize.models.Video.build({
+          user_id: userId,
+          user_agent: req.useragent.source,
+          ip_address: req.clientIp,
+        }).save().then((video) => {
+          video.getPreSignedUploadUrl({}, (error, presignedUrl) => {
+            if (error) {
+              log.error("Could not get preSigned URL for video", { error });
+              res.sendStatus(500);
+            } else {
+              log.info("Got presigned url", { presignedUrl })
+              res.send({ presignedUrl, videoId: video.id });
             }
-            var filepath = "uploads/fb_video_download"+randomstring.generate(10) + '.png';
-            var originalFilename = "facebook_profile_"+facebookId+".png";
-            fs.writeFile(filepath, body, function(err) {
-              if (err) {
-                log.error("Error when trying to write video", {err: error});
-                return done(err);
-              }
-              var s3UploadClient = sequelize.models.Video.getUploadClient("user-profile");
-              s3UploadClient.upload(filepath, {}, function(error, versions, meta) {
+          });
+        }).catch((error) => {
+          log.error("Could not create video", { error });
+          res.sendStatus(500);
+        })
+      },
+
+      addToPost: (video, id, callback) => {
+        sequelize.models.Post.find({
+          where: {
+            id: id
+          }
+        }).then((post) => {
+          post.addPostVideo(video).then(() => {
+            log.info("Have added video to post", { id });
+            callback();
+          });
+        }).catch((error) => callback(error));
+      },
+
+      addToDomain: (video, id, callback) => {
+        sequelize.models.Domain.find({
+          where: {
+            id: id
+          }
+        }).then((domain) => {
+          domain.addDomainLogoVideo(video).then(() => {
+            log.info("Have added video to domain", { id });
+            callback();
+          });
+        }).catch((error) => callback(error));
+      },
+
+      addToCommunity: (video, id, callback) => {
+        sequelize.models.Community.find({
+          where: {
+            id: id
+          }
+        }).then((community) => {
+          community.addCommunityLogoVideo(video).then(() => {
+            log.info("Have added video to community", { id });
+            callback();
+          });
+        }).catch((error) => callback(error));
+      },
+
+      addToGroup: (video, id, callback) => {
+        sequelize.models.Group.find({
+          where: {
+            id: id
+          }
+        }).then((group) => {
+          group.addGroupLogoVideo(video).then(() => {
+            log.info("Have added video to group", { id });
+            callback();
+          });
+        }).catch((error) => callback(error));
+      },
+
+      addToCollection: (video, options, callback) => {
+        if (options.postId) {
+          sequelize.models.Video.addToPost(video, options.postId, callback);
+        } else if (options.groupId) {
+          sequelize.models.Video.addToGroup(video, options.groupId, callback);
+        } else if (options.communityId) {
+          sequelize.models.Video.addToCommunity(video, options.communityId, callback);
+        } else if (options.domainId) {
+          sequelize.models.Video.addToDomain(video, options.domainId, callback);
+        } else if (options.pointId) {
+          sequelize.models.Video.addToPoint(video, options.pointId, callback);
+        }
+      },
+
+      setupThumbnailsAfterTranscoding: (video, duration, req, callback) => {
+        const interval = 10;
+        let frames = [];
+        const numberOfFrames = Math.max(1, Math.floor(duration/interval));
+
+        for (let frame = 0; frame < numberOfFrames; frame++) {
+          frames.push(sequelize.models.Video.getThumbnailUrl(video,frame+1));
+        }
+
+        async.forEach(frames, (frame, foreachCallback) => {
+          sequelize.models.Image.build({
+            s3_bucket_name: video.meta.thumbnailBucket,
+            user_id: req.user.id,
+            user_agent: "AWS Transcoder",
+            ip_address: "127.0.0.1",
+            formats: JSON.stringify([frame])
+          }).save().then((image) => {
+            video.addVideoImage(image).then(() => {
+              foreachCallback();
+            }).catch((error) => {
+              foreachCallback(error);
+            })
+          }).catch((error) => {
+            foreachCallback(error);
+          })
+        }, (error) => {
+          callback(error)
+        });
+      },
+
+      getTranscodingJobStatus: (video, req, res ) => {
+        var params = {
+          Id: req.body.jobId
+        };
+        const eltr = new aws.ElasticTranscoder({
+          apiVersion: '2012–09–25',
+          region: 'eu-west-1'
+        });
+        eltr.readJob(params, function(error, data) {
+          if (error) {
+            log.error("Could not get status of transcoding job", { error });
+            res.sendStatus(500);
+          } else {
+            const jobStatus = { status: data.Job.Status, statusDetail: data.Job.StatusDetail };
+            if (jobStatus.status==="Complete") {
+              const duration = data.Job.Output.Duration;
+              sequelize.models.Video.setupThumbnailsAfterTranscoding(video, duration, req, (error) => {
                 if (error) {
-                  done(error);
+                  log.error("Could not connect image and video", { error });
+                  res.sendStatus(500);
                 } else {
-                  var video = sequelize.models.Video.build({
-                    user_id: user.id,
-                    s3_bucket_name: process.env.S3_BUCKET,
-                    original_filename: originalFilename,
-                    formats: JSON.stringify(sequelize.models.Video.createFormatsFromVersions(versions)),
-                    user_agent: "Downloaded from Facebook",
-                    ip_address: "127.0.0.1"
-                  });
-                  video.save().then(function() {
-                    log.info('Video Created', { video: toJson(video), context: 'create', user: toJson(user) });
-                    user.setupVideos({uploadedProfileVideoId: video.id}, function (error) {
-                      fs.unlink(filepath, function(error) {
-                        if (error) {
-                          log.error("Error in unlinking video file: "+filepath);
-                          return done(error);
-                        } else {
-                          setTimeout(function () {
-                            sequelize.models.User.getUserWithAll(user.id, function (error, newUser) {
-                              done(null, newUser);
-                            });
-                          },10);
-                        }
-                      });
-                    });
-                  }).catch(function(error) {
-                    done(error);
-                  });
+                  res.send(jobStatus);
+                }
+              })
+            } else if (jobStatus.status==="Error") {
+              log.error("Could not transcode video image and video", { detail: jobStatus.statusDetail });
+              res.sendStatus(500);
+            } else {
+              res.send(jobStatus);
+            }
+          }
+        });
+      },
+
+      startTranscoding: (video, options, req, res) => {
+        if (options.videoPostUploadLimitSec && options.videoPostUploadLimitSec!=="") {
+          const postLimitSeconds = parseInt(options.videoPostUploadLimitSec);
+          video.set('meta.maxDuration', Math.min(postLimitSeconds, 150));
+        } else if (options.videoPointUploadLimitSec && options.videoPointUploadLimitSec!=="") {
+          const pointLimitSeconds = parseInt(options.videoPointUploadLimitSec);
+          video.set('meta.maxDuration', Math.min(pointLimitSeconds, 150));
+        } else {
+          video.set('meta.maxDuration', "600");
+        }
+        video.save().then((video) => {
+          sequelize.models.Video.startTranscodingJob(video, (error, data) => {
+            if (error) {
+              log.error("Could not start transcoding job", { error });
+              res.sendStatus(500);
+            } else {
+              res.send({ transcodingJobId: data.Job.Id });
+            }
+          });
+        }).catch((error) => {
+          log.error("Could not start transcoding job", { error });
+          res.sendStatus(500);
+        });
+      },
+
+      completeUploadAndAddToPoint: (req, res, options, callback) => {
+        sequelize.models.Video.find({
+          where: {
+            id: options.videoId
+          },
+          attributes: sequelize.models.Video.defaultAttributesPublic.concat(['user_id','meta'])
+        }).then((video) => {
+          if (video.user_id===req.user.id) {
+            video.viewable = true;
+            video.createFormats(video);
+            video.save().then(() => {
+              sequelize.models.Point.find({
+                where: {
+                  id: options.pointId
+                }
+              }).then((point) => {
+                point.addPointVideo(video).then(() => {
+                  log.info("Have added video to point", { id: options.pointId });
+                  callback();
+                });
+              }).catch((error) => callback(error));
+            }).catch((error) => {
+              callback(error);
+            });
+          } else {
+            callback("Could not get video for wrong user");
+          }
+        }).catch((error) => {
+          callback(error);
+        });
+      },
+
+      completeUploadAndAddToCollection: (req, res, options) => {
+        sequelize.models.Video.find({
+          where: {
+            id: options.videoId
+          },
+          attributes: sequelize.models.Video.defaultAttributesPublic.concat(['user_id','meta'])
+        }).then((video) => {
+          if (video.user_id===req.user.id) {
+            video.viewable = true;
+            video.createFormats(video);
+            video.save().then(() => {
+              sequelize.models.Video.addToCollection(video, options, (error) => {
+                if (error) {
+                  log.error("Could not add video to collection", { error, options});
+                  res.sendStatus(500);
+                } else {
+                  res.sendStatus(200);
                 }
               });
+            }).catch((error) => {
+              log.error("Could not save video", { error });
+              res.sendStatus(500);
             });
-          });
-        } else {
-          log.info("User already has an video", {user: user, facebook_id: user ? user.facebook_id : null});
-          done()
-        }
-      }
+          } else {
+            log.error("Could not get video for wrong user");
+            res.sendStatus(401);
+          }
+        }).catch((error) => {
+          log.error("Could not get video", { error });
+          res.sendStatus(500);
+        });
+      },
+    
+      startTranscodingJob: function (video, callback) {
+        const eltr = new aws.ElasticTranscoder({
+          apiVersion: '2012–09–25',
+          region: 'eu-west-1'
+        });
+        var fileKey = video.meta.fileKey;
+        var pipelineId = process.env.AWS_TRANSCODER_PIPELINE_ID;
+        var params = {
+          PipelineId: pipelineId,
+          Input: {
+            Key: fileKey,
+            FrameRate: 'auto',
+            Resolution: 'auto',
+            AspectRatio: 'auto',
+            Interlaced: 'auto',
+            Container: 'auto',
+            TimeSpan: {
+              Duration: video.meta.maxDuration+'.000'
+            }
+          },
+          Outputs: [
+            {
+              Key:fileKey,
+              ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
+              PresetId: process.env.AWS_TRANSCODER_PRESET_ID,
+            },
+            {
+              Key: fileKey.slice(0, fileKey.length-4)+'.flac',
+              PresetId: process.env.AWS_TRANSCODER_FLAC_PRESET_ID
+            }
+          ]
+        };
+        log.info('Starting AWS transcoding Job');
+        eltr.createJob(params, function (error, data) {
+          if (error) {
+            log.error("Error creating AWS transcoding job", { error });
+            callback(error);
+          } else {
+            callback(null, data)
+          }
+        });
+      },
+    },
+
+    instanceMethods: {
+      createFormats: function (video) {
+        this.formats = [];
+        this.formats.push(sequelize.models.Video.getFullUrl(video.meta));
+      },
+
+      getPreSignedUploadUrl: function (options, callback) {
+        const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
+        const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
+        const s3 = new aws.S3({
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          endpoint: accelEndPoint,
+          useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
+          region: process.env.S3_REGION || ((process.env.S3_ENDPOINT || process.env.S3_ACCELERATED_ENDPOINT) ? null : 'us-east-1'),
+        });
+
+        const signedUrlExpireSeconds = 60 * 60;
+        const bucketName = process.env.S3_VIDEO_UPLOAD_BUCKET;
+        const publicBucket = process.env.S3_VIDEO_PUBLIC_BUCKET;
+        const thumbnailBucket = process.env.S3_VIDEO_THUMBNAIL_BUCKET;
+
+        const contentType = 'video/mp4';
+        const a = this.id;
+        const fileKey = sequelize.models.Video.getRandomFileKey(this.id);
+
+        const s3Params = {
+          Bucket: bucketName,
+          Key: fileKey,
+          Expires: signedUrlExpireSeconds,
+          ACL: 'bucket-owner-full-control',
+          ContentType: contentType
+        };
+        s3.getSignedUrl('putObject', s3Params, (error, url) => {
+          if (error) {
+            log.error('Error getting presigned url from AWS S3', { error });
+            callback(err);
+          }
+          else {
+            let meta = { bucketName, publicBucket, endPoint, accelEndPoint, thumbnailBucket,
+                         maxDuration: options.maxDuration, fileKey, contentType, uploadUrl: url };
+            if (this.meta)
+              meta = _.merge(this.meta, meta);
+            this.set('meta', meta);
+            log.info('Presigned URL:', { url, meta });
+            log.info('Saving video metadata');
+            this.save().then(() => {
+              callback(null, url);
+            }).catch((error) => { callback(error) });
+          }
+        });
+      },
     }
+
   });
 
   return Video;

@@ -59,6 +59,16 @@
       paper-checkbox {
         margin-bottom: 4px;
       }
+
+      .uploadSection {
+        max-width: 300px;
+        margin: 8px;
+      }
+
+      .useVideoCover {
+        margin-left: 4px;
+        margin-top: 4px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -109,20 +119,30 @@
 
       </div>
 
-      <div class="layout horizontal">
-        <div class="layout vertical additionalSettings half">
+      <div class="layout horizontal wrap">
+        <div class="layout vertical additionalSettings uploadSection">
           <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=community-logo" method="POST" on-success="_logoImageUploaded">
             <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.logo.upload')]]</span>
           </yp-file-upload>
         </div>
 
-        <div class="layout vertical additionalSettings half">
+        <div class="layout vertical additionalSettings uploadSection">
           <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=community-header" method="POST" on-success="_headerImageUploaded">
             <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
           </yp-file-upload>
         </div>
+
+        <template is="dom-if" if="[[hasVideoUpload]]">
+          <div class="layout vertical uploadSection">
+            <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+              <iron-icon class="icon" icon="videocam"></iron-icon>
+              <span>[[t('uploadVideo')]]</span>
+            </yp-file-upload>
+            <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]" checked$="{{community.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+          </div>
+        </template>
       </div>
 
       <yp-theme-selector object="[[community]]"  selected-theme="{{themeId}}"></yp-theme-selector>
@@ -292,12 +312,26 @@
         value: null
       },
 
-      appHomeScreenIconImageId: String
+      appHomeScreenIconImageId: String,
+
+      hasVideoUpload: {
+        type: Boolean,
+        value: false
+      },
+
+      uploadedVideoId: {
+        type: Number,
+        value: null
+      }
     },
 
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _videoUploaded: function (event, detail) {
+      this.set('uploadedVideoId', detail.videoId);
+    },
 
     _pagesResponse: function (event, detail) {
       var pages = detail.response;
@@ -338,11 +372,31 @@
       } else {
         if (community) {
           window.appUser.recheckAdminRights();
-          this.redirectTo("/community/"+community.id);
+          if (this.uploadedVideoId) {
+            var ajax = document.createElement('iron-ajax');
+            ajax.handleAs = 'json';
+            ajax.contentType = 'application/json';
+            ajax.url = '/api/videos/'+community.id+'/completeAndAddToCommunity';
+            ajax.method = 'PUT';
+            ajax.body = {
+              videoId: this.uploadedVideoId
+            };
+            ajax.addEventListener('response', function (event) {
+              this._finishRedirect(community);
+            }.bind(this));
+            ajax.generateRequest();
+          } else {
+            this._finishRedirect(community);
+          }
         } else {
           console.warn('No community found on custom redirect');
         }
       }
+    },
+
+    _finishRedirect: function (community) {
+      this.redirectTo("/community/"+community.id);
+      window.appGlobals.activity('completed', 'editCommunity');
     },
 
     _communityChanged: function (newValue, oldValue) {
@@ -360,6 +414,12 @@
       }
 
       this._updateEmojiBindings();
+
+      if (window.appGlobals.hasVideoUpload) {
+        this.set('hasVideoUpload', true);
+      } else {
+        this.set('hasVideoUpload', false);
+      }
     },
 
     _clear: function () {
@@ -377,6 +437,9 @@
         this.set('community', { name: '', description: '', access: 0, status: 'active' });
       } else {
         this.set('community', community);
+        if (community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
+          this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
+        }
         this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
         this.$.pagesAjax.generateRequest();
       }

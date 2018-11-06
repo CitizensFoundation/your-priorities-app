@@ -165,6 +165,7 @@ module.exports = function(sequelize, DataTypes) {
         Post.belongsToMany(models.Image, { as: 'PostImages', through: 'PostImage' });
         Post.belongsToMany(models.Image, { as: 'PostHeaderImages', through: 'PostHeaderImage' });
         Post.belongsToMany(models.Image, { as: 'PostUserImages', through: 'PostUserImage' });
+        Post.belongsToMany(models.Video, { as: 'PostVideos', through: 'PostVideo' });
       },
 
       getSearchVector: function() {

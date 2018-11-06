@@ -234,7 +234,12 @@
               <div class="titleHeaderMobile">[[title]]</div>
               <div class="flex"></div>
               <template is="dom-if" if="[[!useNextTabAction]]">
-                <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
+                <template is="dom-if" if="[[!uploadingState]]">
+                  <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
+                </template>
+                <template is="dom-if" if="[[uploadingState]]">
+                  <paper-button disabled on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
+                </template>
               </template>
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button on-tap="_nextTab"><span class="smallButtonText">[[nextActionText]]</span></paper-button>

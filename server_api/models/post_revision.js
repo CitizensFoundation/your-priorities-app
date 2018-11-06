@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
         deleted: false
       }
     },
-
+    timestamps: true,
     underscored: true,
     tableName: 'post_revisions',
     classMethods: {

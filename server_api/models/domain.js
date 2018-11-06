@@ -46,6 +46,8 @@ module.exports = function(sequelize, DataTypes) {
 
     tableName: 'domains',
 
+    timestamps: true,
+
     instanceMethods: {
 
       simple: function() {
@@ -323,6 +325,7 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Domain.hasMany(models.Community, { foreignKey: "domain_id" });
+        Domain.belongsToMany(models.Video, { as: 'DomainLogoVideos', through: 'DomainLogoVideo' });
         Domain.belongsToMany(models.Image, { as: 'DomainLogoImages', through: 'DomainLogoImage' });
         Domain.belongsToMany(models.Image, { as: 'DomainHeaderImages', through: 'DomainHeaderImage' });
         Domain.belongsToMany(models.User, { through: 'DomainUser' });

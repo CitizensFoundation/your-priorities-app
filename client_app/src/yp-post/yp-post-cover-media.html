@@ -91,6 +91,14 @@
       [hidden] {
         display: none !important;
       }
+
+      .videoCamStatic {
+        width: 32px;
+        height: 32px;
+        color: var(--primary-background-color);
+        margin-top: -68px;
+        margin-left: 8px;
+      }
     </style>
 
     <div class="mapCanvas">
@@ -114,7 +122,17 @@
       </template>
 
       <template is="dom-if" if="[[imageActive]]">
-        <iron-image  header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+      </template>
+
+      <template is="dom-if" if="[[videoActive]]">
+        <template is="dom-if" if="[[showVideo]]" restamp>
+          <video id="videoPlayer" controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
+        </template>
+        <template is="dom-if" if="[[!showVideo]]">
+          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPath]]"></iron-image>
+          <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
+        </template>
       </template>
 
       <template is="dom-if" if="[[!disableMaps]]">
@@ -152,7 +170,8 @@
         </template>
       </template>
     </div>
-
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
   </template>
 
   <script>
@@ -196,6 +215,12 @@
           type: Boolean,
           value: false,
           computed: '_isImageActive(post)'
+        },
+
+        videoActive: {
+          type: Boolean,
+          value: false,
+          computed: '_isVideoActive(post)'
         },
 
         mapActive: {
@@ -245,6 +270,11 @@
           computed: '_postImagePath(post)'
         },
 
+        postVideoPath: {
+          type: String,
+          computed: '_postVideoPath(post)'
+        },
+
         headerMode: {
           type: Boolean,
           value: false,
@@ -289,8 +319,19 @@
         defaultPostImageEnabled: {
           type: Boolean,
           value: false
-        }
+        },
 
+        showVideo: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
+        }
       },
 
       _headerModeChanged: function (headerMode) {
@@ -347,6 +388,14 @@
 
       _isImageActive: function (post) {
         if (this._withCoverMediaType(post,'image')) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _isVideoActive: function (post) {
+        if (this._withCoverMediaType(post,'video')) {
           return true;
         } else {
           return false;
@@ -423,6 +472,25 @@
       _postImagePath: function (post) {
         if (post) {
           return this.getImageFormatUrl(post.PostHeaderImages, 0);
+        } else {
+          return "";
+        }
+      },
+
+      _postVideoPath: function (post) {
+        if (post &&
+          post.PostVideos &&
+          post.PostVideos.length>0 &&
+          post.PostVideos[0].formats &&
+          post.PostVideos[0].formats.length>0) {
+          if (this.showVideo) {
+            return post.PostVideos[0].formats[0];
+          } else if (post.PostVideos[0].VideoImages &&
+                     post.PostVideos[0].VideoImages.length>0) {
+            return JSON.parse(post.PostVideos[0].VideoImages[0].formats)[0];
+          } else {
+            return "";
+          }
         } else {
           return "";
         }

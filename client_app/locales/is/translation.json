@@ -1,4 +1,5 @@
 {
+  "media": "Media",
   "removalAndDeletionInProgress": "Er að eyða notendum og efni. Prófaðu að endurhlaða síðu eftir smá stund.",
   "removalsAndDeletionsInProgress": "Er að eyða notendum og efni. Þetta getur tekið tíma eftir því hversu mörgum notendurm er verið að eyða. Prófaðu að endurhlaða síðu seinna.",
   "removalsInProgress": "Er að eyða notendum og efni. Þetta getur tekið tíma eftir því hversu mörgum notendurm er verið að eyða. Prófaðu að endurhlaða síðu seinna.",
@@ -469,7 +470,7 @@
   "news": "Fréttaveita",
 
   "uploading": {
-    "inProgress": "Sendi mynd..."
+    "inProgress": "Sendi inn..."
   },
 
   "notice": {

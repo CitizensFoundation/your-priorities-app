@@ -75,6 +75,16 @@
       [hidden] {
         display: none !important;
       }
+
+      .uploadSection {
+        max-width: 300px;
+        margin: 8px;
+      }
+
+      .useVideoCover {
+        margin-left: 4px;
+        margin-top: 4px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -103,27 +113,37 @@
         <emoji-selector id="emojiSelectorDescription"></emoji-selector>
       </div>
 
-      <div class="layout horizontal">
-        <div class="layout vertical additionalSettings">
+      <div class="layout horizontal wrap">
+        <div class="layout vertical additionalSettings uploadSection">
           <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
             <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.logo.upload')]]</span>
           </yp-file-upload>
         </div>
 
-        <div class="layout vertical additionalSettings">
+        <div class="layout vertical additionalSettings uploadSection">
           <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
             <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('image.header.upload')]]</span>
           </yp-file-upload>
         </div>
 
+        <template is="dom-if" if="[[hasVideoUpload]]">
+          <div class="layout vertical uploadSection">
+            <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+              <iron-icon class="icon" icon="videocam"></iron-icon>
+              <span>[[t('uploadVideo')]]</span>
+            </yp-file-upload>
+            <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]" checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+          </div>
+        </template>
+
         <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       </div>
 
       <div class="layout vertical">
-        <div class="layout vertica config">
+        <div class="layout vertical config">
           <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
           <div class="layout vertical">
             <paper-dropdown-menu label="[[t('status.select')]]">
@@ -154,6 +174,8 @@
           <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
           <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
           <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
+          <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]</paper-checkbox>
+          <paper-checkbox name="allowPointVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPointVideoUploads}}">[[t('allowPointVideoUploads')]]</paper-checkbox>
         </div>
       </div>
 
@@ -183,9 +205,28 @@
             <span>[[t('defaultPostImage')]]</span>
           </yp-file-upload>
         </div>
-
         <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
       </div>
+
+      <paper-input id="videoPostUploadLimitSec"
+                   name="videoPostUploadLimitSec"
+                   allowed-pattern="[0-9]"
+                   maxlength="3"
+                   type="number"
+                   disabled$="[[!hasVideoUpload]]"
+                   label="[[t('videoPostUploadLimitSec')]]"
+                   value="{{group.configuration.videoPostUploadLimitSec}}">
+      </paper-input>
+
+      <paper-input id="videoPointUploadLimitSec"
+                   name="videoPointUploadLimitSec"
+                   type="text"
+                   maxlength="3"
+                   allowed-pattern="[0-9]"
+                   disabled$="[[!hasVideoUpload]]"
+                   label="[[t('videoPointUploadLimitSec')]]"
+                   value="{{group.configuration.videoPointUploadLimitSec}}">
+      </paper-input>
 
       <div class="layout vertical config">
         <h2>[[t('additionalGroupConfig')]]</h2>
@@ -214,6 +255,7 @@
         <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">[[t('disablePostPageLink')]]</paper-checkbox>
         <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]" checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]</paper-checkbox>
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">[[t('hidePostFilterAndSearch')]]</paper-checkbox>
+        <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]</paper-checkbox>
       </div>
 
       <paper-input id="defaultLocationLongLat"
@@ -230,6 +272,8 @@
       <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
       <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
       <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
+      <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
+      <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
 
       <paper-input id="alternativePointForHeader"
                    name="alternativePointForHeader"
@@ -382,6 +426,16 @@
         type: String
       },
 
+      allowPostVideoUploads: {
+        type: Boolean,
+        value: null
+      },
+
+      allowPointVideoUploads: {
+        type: Boolean,
+        value: null
+      },
+
       status: String,
 
       publicCommunity: {
@@ -406,7 +460,21 @@
       hasSamlLoginProvider: {
         type: Boolean,
         value: false
+      },
+
+      hasVideoUpload: {
+        type: Boolean,
+        value: false
+      },
+
+      uploadedVideoId: {
+        type: Number,
+        value: null
       }
+    },
+
+    _videoUploaded: function (event, detail) {
+      this.set('uploadedVideoId', detail.videoId);
     },
 
     observers: [
@@ -472,10 +540,30 @@
     _customRedirect: function (group) {
       if (group) {
         window.appUser.recheckAdminRights();
-        this.redirectTo("/group/"+group.id);
+        if (this.uploadedVideoId) {
+          var ajax = document.createElement('iron-ajax');
+          ajax.handleAs = 'json';
+          ajax.contentType = 'application/json';
+          ajax.url = '/api/videos/'+group.id+'/completeAndAddToGroup';
+          ajax.method = 'PUT';
+          ajax.body = {
+            videoId: this.uploadedVideoId
+          };
+          ajax.addEventListener('response', function (event) {
+            this._finishRedirect(group);
+          }.bind(this));
+          ajax.generateRequest();
+        } else {
+          this._finishRedirect(group);
+        }
       } else {
         console.warn('No group found on custom redirect');
       }
+    },
+
+    _finishRedirect: function (group) {
+      this.redirectTo("/group/"+group.id);
+      window.appGlobals.activity('completed', 'editGroup');
     },
 
     _groupChanged: function (newValue, oldValue) {
@@ -516,6 +604,8 @@
         this._setFromConfiguration('hideEmoji');
         this._setFromConfiguration('hideGroupHeader');
         this._setFromConfiguration('showWhoPostedPosts');
+        this._setFromConfiguration('allowPostVideoUploads', true);
+        this._setFromConfiguration('allowPointVideoUploads', true);
 
         if (this.community) {
           if (this.community.access==0) {
@@ -530,20 +620,34 @@
             this.set('publicCommunity', false);
           }
         }
+        if (window.appGlobals.hasVideoUpload) {
+          this.set('hasVideoUpload', true);
+          if (this.allowPostVideoUploads===null) {
+            this.set('allowPostVideoUploads', true);
+          }
+          if (this.allowPointVideoUploads===null) {
+            this.set('allowPointVideoUploads', true);
+          }
+        } else {
+          this.set('hasVideoUpload', false);
+        }
       }
+
       this._updateEmojiBindings();
+
       if (window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided) {
         this.set('hasSamlLoginProvider', true);
       } else {
         this.set('hasSamlLoginProvider', false);
       }
+
     },
 
-    _setFromConfiguration: function (propertyName) {
-      if (this.group.configuration && this.group.configuration[propertyName]!=undefined && this.group.configuration[propertyName]!="") {
+    _setFromConfiguration: function (propertyName, setNullDefault) {
+      if (this.group.configuration && this.group.configuration[propertyName]!=undefined && this.group.configuration[propertyName]!=="") {
         this.set(propertyName, this.group.configuration[propertyName]);
       } else {
-        this.set(propertyName, false);
+        this.set(propertyName, setNullDefault ? null : false);
       }
     },
 
@@ -552,6 +656,7 @@
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
       this.set('uploadedDefaultDataImageId', null);
+      this.set('uploadedVideoId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
       this.$.defaultDataImageUpload.clear();
@@ -562,6 +667,9 @@
         this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
       } else {
         this.set('group', group);
+        if (group.GroupLogoVideos && group.GroupLogoVideos.length>0) {
+          this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
+        }
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);

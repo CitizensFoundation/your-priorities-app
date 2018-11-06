@@ -127,6 +127,15 @@
       .postEmoji {
         margin-left: 16px;
       }
+
+      .uploadSection {
+        max-width: 300px;
+        margin: 8px;
+      }
+
+      .postCoverVideoInfo {
+        margin-top: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -151,7 +160,7 @@
         <template is="dom-if" if="[[!locationHidden]]" restamp>
           <paper-tab>[[t('post.location')]]</paper-tab>
         </template>
-        <paper-tab>[[t('post.photo')]]</paper-tab>
+        <paper-tab>[[t('media')]]</paper-tab>
       </paper-tabs>
 
       <div class="layout vertical wrap">
@@ -267,20 +276,38 @@
           </template>
 
           <section>
-            <div class="layout vertical center-center">
-              <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
-                <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                <span>[[t('image.upload')]]</span>
-              </yp-file-upload>
-              <div class="imageSizeInfo layout horizontal">
-                <div>864 x 486 (16/9 widescreen)</div>
+            <div class="layout vertical center-center" hidden$="[[hidePostImageUploads]]">
+              <div class="layout horizontal wrap">
+                <div class="layout vertical uploadSection">
+                  <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header"
+                                  method="POST" on-success="_imageUploaded">
+                    <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                    <span>[[t('image.upload')]]</span>
+                  </yp-file-upload>
+                  <div class="imageSizeInfo layout horizontal">
+                    <div>864 x 486 (16/9 widescreen)</div>
+                  </div>
+                  <div>[[t('post.cover.imageInfo')]]</div>
+                </div>
+                <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
+                  <div class="layout vertical uploadSection">
+                    <yp-file-upload id="videoFileUpload" container-type="posts" group="[[group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+                      <iron-icon class="icon" icon="videocam"></iron-icon>
+                      <span>[[t('uploadVideo')]]</span>
+                    </yp-file-upload>
+                    <div class="imageSizeInfo layout horizontal">
+                      <div>1080p or 720p (16/9 widescreen)</div>
+                    </div>
+                    <div>[[t('postCoverVideoInfo')]] <b>[[group.configuration.videoPostUploadLimitSec]] [[t('seconds')]].</b></div>
+                  </div>
+                </template>
               </div>
-              <div>[[t('post.cover.imageInfo')]]</div>
               <br>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
               <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" selected="{{selectedCoverMediaType}}">
                 <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
                 <paper-radio-button name="image" hidden$="[[!uploadedHeaderImageId]]">[[t('post.cover.image')]]</paper-radio-button>
+                <paper-radio-button name="video" hidden$="[[!uploadedVideoId]]">[[t('postCoverVideo')]]</paper-radio-button>
                 <template is="dom-if" if="[[location]]">
                   <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
                   <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
@@ -374,6 +401,11 @@
         observer: '_uploadedHeaderImageIdChanged'
       },
 
+      uploadedVideoId: {
+        type: String,
+        value: null
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -401,6 +433,11 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _videoUploaded: function (event, detail) {
+      this.set('uploadedVideoId', detail.videoId);
+      this.set('selectedCoverMediaType','video');
+    },
 
     _documentUploaded: function (event, detail) {
       var document = JSON.parse(detail.xhr.response);
@@ -583,11 +620,31 @@
         if (post.newEndorsement && window.appUser && window.appUser.endorsementPostsIndex) {
           window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
         }
-        this.redirectTo("/post/"+post.id);
-        window.appGlobals.activity('completed', 'newPost');
+        if (this.uploadedVideoId) {
+          this.post = post;
+          var ajax = document.createElement('iron-ajax');
+          ajax.handleAs = 'json';
+          ajax.contentType = 'application/json';
+          ajax.url = '/api/videos/'+this.post.id+'/completeAndAddToPost';
+          ajax.method = 'PUT';
+          ajax.body = {
+            videoId: this.uploadedVideoId
+          };
+          ajax.addEventListener('response', function (event) {
+            this._finishRedirect(post);
+          }.bind(this));
+          ajax.generateRequest();
+        } else {
+          this._finishRedirect(post);
+        }
       } else {
         console.warn('No post found on custom redirect');
       }
+    },
+
+    _finishRedirect: function (post) {
+      this.redirectTo("/post/"+(post ? post.id : this.post.id));
+      window.appGlobals.activity('completed', 'newPost');
     },
 
     _clear: function () {
@@ -597,7 +654,8 @@
         this.set('selectedCategoryArrayId',null);
         this.set('selectedCategoryId',null);
         this.set('selected', 0);
-        this.set('uploadedHeaderImageId',null);
+        this.set('uploadedHeaderImageId', null);
+        this.set('uploadedVideoId', null);
         this.$$("#imageFileUpload").clear();
         this.set('selectedCoverMediaType', 'none');
       }
@@ -607,6 +665,9 @@
       this._setupGroup(group);
       if (post) {
         this.set('post', post);
+        if (post.PostVideos && post.PostVideos.length>0) {
+          this.set('uploadedVideoId', post.PostVideos[0].id)
+        }
       } else {
         this.set('post', null);
       }

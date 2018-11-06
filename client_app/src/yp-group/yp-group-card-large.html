@@ -87,10 +87,11 @@
         right: 0;
       }
 
-      iron-image {
+      iron-image, video {
         width: 432px;
         height: 243px;
       }
+
 
       .description {
         padding: 0;
@@ -138,7 +139,7 @@
           left: 265px;
         }
 
-        iron-image {
+        iron-image, video {
           width: 306px;
           height: 172px !important;
         }
@@ -175,10 +176,16 @@
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
 
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
-        <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+        <template is="dom-if" if="[[groupVideoURL]]" restamp>
+          <video id="videoPlayer" controls class="logo" src="[[groupVideoURL]]"></video>
+        </template>
+        <template is="dom-if" if="[[!groupVideoURL]]">
+          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+        </template>
       </paper-material>
       <paper-material id="card" elevation="3" animated-shadow class="groupCard textBox">
         <div class="layout vertical">
@@ -258,6 +265,30 @@
           type: Boolean,
           value: false,
           computed: '_showMenuItem(hasGroupAccess, group)'
+        },
+
+        groupVideoURL: {
+          type: String,
+          computed: '_groupVideoURL(group)'
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
+        }
+      },
+
+      _groupVideoURL: function (group) {
+        if (group &&
+            group.configuration.useVideoCover &&
+            group.GroupLogoVideos &&
+            group.GroupLogoVideos.length>0 &&
+            group.GroupLogoVideos[0].viewable) {
+          return group.GroupLogoVideos[0].formats[0]
+        } else {
+          return null;
         }
       },
 
@@ -350,11 +381,28 @@
       },
 
       _openEdit: function () {
-        window.appGlobals.activity('open', 'group.new');
+        window.appGlobals.activity('open', 'group.edit');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
-          dialog.setup(this.group, false, this._refresh.bind(this));
-          dialog.open('edit', {groupId: this.group.id});
+          this._refreshGroup(this.group.id, function (group) {
+            dialog.setup(group, false, this._refresh.bind(this));
+            dialog.open('edit', {groupId: group.id});
+          }.bind(this));
         }.bind(this));
+      },
+
+      _refreshGroup: function (groupId, callback) {
+        var ajax = document.createElement('iron-ajax');
+        ajax.url = '/api/groups/'+groupId;
+        ajax.handleAs = 'json';
+        ajax.contentType = 'application/json';
+        ajax.body = {};
+        ajax.addEventListener('response', function (event, detail) {
+          callback(event.detail.response.group);
+        }.bind(this));
+        ajax.addEventListener('error', function (event, detail) {
+          console.error("Couldn't refresh grop");
+        }.bind(this));
+        ajax.generateRequest();
       },
 
       _openDelete: function () {

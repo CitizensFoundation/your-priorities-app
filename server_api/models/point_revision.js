@@ -18,6 +18,8 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    timestamps: true,
+
     underscored: true,
     tableName: 'point_revisions',
     classMethods: {

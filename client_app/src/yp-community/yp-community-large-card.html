@@ -56,7 +56,7 @@
 
       }
 
-      iron-image {
+      iron-image, video {
         width: 432px;
         height: 243px;
       }
@@ -200,7 +200,7 @@
           left: 265px;
         }
 
-        iron-image {
+        iron-image, video {
           width: 306px;
           height: 172px !important;
         }
@@ -244,7 +244,12 @@
         <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
-          <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+          <template is="dom-if" if="[[communityVideoURL]]" restamp>
+            <video id="videoPlayer" controls class="image pointer" src="[[communityVideoURL]]"></video>
+          </template>
+          <template is="dom-if" if="[[!communityVideoURL]]">
+            <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+          </template>
         </div>
       </paper-material>
       <paper-material id="card" elevation="3" animated class="large-card textBox">
@@ -286,6 +291,7 @@
     </div>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
   </template>
 
   <script>
@@ -319,6 +325,29 @@
           type: Boolean,
           value: false,
           computed: '_showMenuItem(hasCommunityAccess, community)'
+        },
+        communityVideoURL: {
+          type: String,
+          computed: '_communityVideoURL(community)'
+        }
+      },
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
+        }
+      },
+
+      _communityVideoURL: function (community) {
+        if (community &&
+          community.configuration.useVideoCover &&
+          community.CommunityLogoVideos &&
+          community.CommunityLogoVideos.length>0 &&
+          community.CommunityLogoVideos[0].viewable) {
+          return community.CommunityLogoVideos[0].formats[0]
+        } else {
+          return null;
         }
       },
 

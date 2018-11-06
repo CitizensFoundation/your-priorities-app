@@ -17,6 +17,7 @@
     <yp-session id="session"></yp-session>
 
     <yp-ajax id="boot" url="/api/domains" on-response="_bootResponse"></yp-ajax>
+    <yp-ajax auto url="/api/videos/hasVideoUploadSupport" on-response="_hasVideoUploadSupport"></yp-ajax>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
   </template>
 
@@ -136,6 +137,12 @@
           }
         },
 
+        _hasVideoUploadSupport: function (event, detail) {
+          if (detail && detail.response && detail.response.hasVideoUploadSupport===true) {
+            window.appGlobals.hasVideoUpload = true;
+          }
+        },
+
         changeLocaleIfNeededAfterWait: function (locale, force) {
           console.log("changeLocaleIfNeeded "+locale);
           if (locale && this.language!=locale) {
@@ -154,7 +161,6 @@
                     detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale}  }
                   })
                 );
-
               });
             }
           }

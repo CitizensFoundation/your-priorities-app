@@ -39,6 +39,8 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    timestamps: true,
+
     underscored: true,
 
     tableName: 'communities',
@@ -188,6 +190,7 @@ module.exports = function(sequelize, DataTypes) {
         Community.hasMany(models.Group, { foreignKey: "community_id" });
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
         Community.belongsTo(models.User);
+        Community.belongsToMany(models.Video, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo'});
         Community.belongsToMany(models.Image, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
         Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
         Community.belongsToMany(models.User, { as: 'CommunityUsers', through: 'CommunityUser' });
