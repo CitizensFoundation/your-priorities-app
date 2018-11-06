@@ -121,19 +121,6 @@ module.exports = function(sequelize, DataTypes) {
         }).catch((error) => callback(error));
       },
 
-      addToPoint: (video, id, callback) => {
-        sequelize.models.Point.find({
-          where: {
-            id: id
-          }
-        }).then((post) => {
-          post.addPointVideo(video).then(() => {
-            log.info("Have added video to point", { id });
-            callback();
-          });
-        }).catch((error) => callback(error));
-      },
-
       addToDomain: (video, id, callback) => {
         sequelize.models.Domain.find({
           where: {
@@ -273,6 +260,38 @@ module.exports = function(sequelize, DataTypes) {
         }).catch((error) => {
           log.error("Could not start transcoding job", { error });
           res.sendStatus(500);
+        });
+      },
+
+      completeUploadAndAddToPoint: (req, res, options, callback) => {
+        sequelize.models.Video.find({
+          where: {
+            id: options.videoId
+          },
+          attributes: sequelize.models.Video.defaultAttributesPublic.concat(['user_id','meta'])
+        }).then((video) => {
+          if (video.user_id===req.user.id) {
+            video.viewable = true;
+            video.createFormats(video);
+            video.save().then(() => {
+              sequelize.models.Point.find({
+                where: {
+                  id: options.pointId
+                }
+              }).then((point) => {
+                point.addPointVideo(video).then(() => {
+                  log.info("Have added video to point", { id: options.pointId });
+                  callback();
+                });
+              }).catch((error) => callback(error));
+            }).catch((error) => {
+              callback(error);
+            });
+          } else {
+            callback("Could not get video for wrong user");
+          }
+        }).catch((error) => {
+          callback(error);
         });
       },
 

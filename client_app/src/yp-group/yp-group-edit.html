@@ -175,6 +175,7 @@
           <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
           <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
           <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]</paper-checkbox>
+          <paper-checkbox name="allowPointVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPointVideoUploads}}">[[t('allowPointVideoUploads')]]</paper-checkbox>
         </div>
       </div>
 
@@ -272,6 +273,7 @@
       <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
       <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
       <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
+      <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
 
       <paper-input id="alternativePointForHeader"
                    name="alternativePointForHeader"
@@ -425,6 +427,11 @@
       },
 
       allowPostVideoUploads: {
+        type: Boolean,
+        value: null
+      },
+
+      allowPointVideoUploads: {
         type: Boolean,
         value: null
       },
@@ -598,6 +605,7 @@
         this._setFromConfiguration('hideGroupHeader');
         this._setFromConfiguration('showWhoPostedPosts');
         this._setFromConfiguration('allowPostVideoUploads', true);
+        this._setFromConfiguration('allowPointVideoUploads', true);
 
         if (this.community) {
           if (this.community.access==0) {
@@ -616,6 +624,9 @@
           this.set('hasVideoUpload', true);
           if (this.allowPostVideoUploads===null) {
             this.set('allowPostVideoUploads', true);
+          }
+          if (this.allowPointVideoUploads===null) {
+            this.set('allowPointVideoUploads', true);
           }
         } else {
           this.set('hasVideoUpload', false);

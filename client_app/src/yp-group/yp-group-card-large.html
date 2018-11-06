@@ -381,11 +381,28 @@
       },
 
       _openEdit: function () {
-        window.appGlobals.activity('open', 'group.new');
+        window.appGlobals.activity('open', 'group.edit');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
-          dialog.setup(this.group, false, this._refresh.bind(this));
-          dialog.open('edit', {groupId: this.group.id});
+          this._refreshGroup(this.group.id, function (group) {
+            dialog.setup(group, false, this._refresh.bind(this));
+            dialog.open('edit', {groupId: group.id});
+          }.bind(this));
         }.bind(this));
+      },
+
+      _refreshGroup: function (groupId, callback) {
+        var ajax = document.createElement('iron-ajax');
+        ajax.url = '/api/groups/'+groupId;
+        ajax.handleAs = 'json';
+        ajax.contentType = 'application/json';
+        ajax.body = {};
+        ajax.addEventListener('response', function (event, detail) {
+          callback(event.detail.response.group);
+        }.bind(this));
+        ajax.addEventListener('error', function (event, detail) {
+          console.error("Couldn't refresh grop");
+        }.bind(this));
+        ajax.generateRequest();
       },
 
       _openDelete: function () {

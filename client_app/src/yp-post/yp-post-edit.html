@@ -291,7 +291,7 @@
                 </div>
                 <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
                   <div class="layout vertical uploadSection">
-                    <yp-file-upload id="videoFileUpload" group="[[group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+                    <yp-file-upload id="videoFileUpload" container-type="posts" group="[[group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span>[[t('uploadVideo')]]</span>
                     </yp-file-upload>

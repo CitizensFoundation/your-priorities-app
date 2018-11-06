@@ -12,6 +12,94 @@ var isAuthenticated = function (req, res, next) {
     return next();
   res.status(401).send('Unauthorized');
 };
+
+var loadPointWithAll = function (pointId, callback) {
+  models.Point.find({
+    where: {
+      id: pointId
+    },
+    order: [
+      [ models.PointRevision, 'created_at', 'asc' ],
+      [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+    ],
+    include: [
+      { model: models.User,
+        attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+        required: false,
+        include: [
+          {
+            model: models.Image, as: 'UserProfileImages',
+            required: false
+          },
+          {
+            model: models.Organization,
+            as: 'OrganizationUsers',
+            required: false,
+            attributes: ['id', 'name'],
+            include: [
+              {
+                model: models.Image,
+                as: 'OrganizationLogoImages',
+                attributes: ['id', 'formats'],
+                required: false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        model: models.PointRevision,
+        required: false
+      },
+      { model: models.PointQuality,
+        required: false,
+        include: [
+          { model: models.User,
+            attributes: ["id", "name", "email"],
+            required: false
+          }
+        ]
+      },
+      {
+        model: models.Video,
+        required: false,
+        attributes: ['id','formats','updated_at','viewable'],
+        as: 'PointVideos',
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      },
+      {
+        model: models.Post,
+        required: false,
+        attributes: ['id','group_id'],
+        include: [
+          {
+            model: models.Group,
+            attributes: ['id','configuration'],
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function(point) {
+    if (point) {
+      callback(null, point);
+    } else {
+      callback("Can't find point");
+    }
+  }).catch(function(error) {
+    callback(error);
+  });
+};
+
+
 router.get('/hasVideoUploadSupport', (req, res) => {
   res.send({ hasVideoUploadSupport: process.env.S3_VIDEO_UPLOAD_BUCKET!=null })
 });
@@ -34,6 +122,24 @@ router.put('/:communityId/completeAndAddToCommunity', auth.can('edit community')
 
 router.put('/:domainId/completeAndAddToDomain', auth.can('edit domain'), (req, res) => {
   models.Video.completeUploadAndAddToCollection(req, res, { domainId: req.params.domainId, videoId: req.body.videoId });
+});
+
+router.put('/:pointId/completeAndAddToPoint', auth.can('edit domain'), (req, res) => {
+  models.Video.completeUploadAndAddToPoint(req, res, { pointId: req.params.pointId, videoId: req.body.videoId }, (error) => {
+    if (error) {
+      log.error("Error adding point to video", { error });
+      res.sendStatus(500);
+    } else {
+      loadPointWithAll(req.params.pointId, (error, point) => {
+        if (error) {
+          log.error("Error loading point ", { error });
+          res.sendStatus(500);
+        } else {
+          res.send(point);
+        }
+      });
+    }
+  });
 });
 
 router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {

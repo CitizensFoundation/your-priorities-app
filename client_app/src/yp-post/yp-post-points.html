@@ -15,6 +15,7 @@
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
 <link rel="import" href="../yp-point/yp-point.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
+<link rel="import" href="../yp-file-upload/yp-file-upload.html">
 
 <dom-module id="yp-post-points">
   <template>
@@ -221,7 +222,7 @@
       <yp-ajax id="ajax" large-spinner active$="{{ajaxActive}}" on-response="_response"></yp-ajax>
     </div>
 
-    <template is="dom-if" if="[[largeMode]]">
+    <template is="dom-if" if="[[largeMode]]" restamp>
       <div class="layout vertical topContainer">
         <div class="main-container">
           <div class="point">
@@ -249,6 +250,16 @@
               <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
                 <emoji-selector id="pointUpEmojiSelector"></emoji-selector>
               </div>
+
+              <template is="dom-if" if="[[group.configuration.allowPointVideoUploads]]">
+                <div class="layout vertical uploadSection" hidden$="[[!loggedInUser]]">
+                  <yp-file-upload id="videoFileUploadUp" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
+                    <iron-icon class="icon" icon="videocam"></iron-icon>
+                    <span>[[t('uploadVideoPointFor')]]</span>
+                  </yp-file-upload>
+                  <div>[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                </div>
+              </template>
 
               <div hidden="[[!ifLengthUpIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
@@ -322,7 +333,7 @@
       </div>
     </template>
 
-    <template is="dom-if" if="[[!largeMode]]">
+    <template is="dom-if" if="[[!largeMode]]" restamp>
       <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
         <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                         value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
@@ -375,7 +386,8 @@
 
         behaviors: [
           Polymer.ypLanguageBehavior,
-          Polymer.ypTruncateBehavior
+          Polymer.ypTruncateBehavior,
+          Polymer.ypLoggedInUserBehavior
         ],
 
         properties: {
@@ -463,7 +475,7 @@
           ifLengthUpIsRight: {
             type: Boolean,
             value: false,
-            computed: 'ifLengthIsRight(textValueUp)'
+            computed: 'ifLengthIsRight(textValueUp, uploadedVideoUpId)'
           },
 
           ifLengthDownIsRight: {
@@ -491,7 +503,40 @@
           ajaxActive: {
             type: Boolean,
             value: false
+          },
+
+          uploadedVideoUpId: {
+            type: String,
+            value: null
+          },
+
+          uploadedVideoDownId: {
+            type: String,
+            value: null
+          },
+
+          uploadedVideoMobileId: {
+            type: String,
+            value: null
+          },
+
+          currentVideoId:{
+            type: String,
+            value: null
           }
+        },
+
+        _videoUpUploaded: function (event, detail) {
+          debugger;
+          this.set('uploadedVideoUpId', detail.videoId);
+        },
+
+        _videoDownUploaded: function (event, detail) {
+          this.set('uploadedVideoDownId', detail.videoId);
+        },
+
+        _videoMobileUploaded: function (event, detail) {
+          this.set('uploadedVideoDownId', detail.videoId);
         },
 
         _mobileScrollOffset: function (large, post) {
@@ -617,6 +662,16 @@
           this.set('upPoints', null);
           this.set('downPoints', null);
           this.set('latestPointCreatedAt', null);
+          this.set('uploadedVideoUpId', null);
+          this.set('uploadedVideoDownId', null);
+          this.set('currentVideoId', null);
+          this.set('uploadedVideoMobileId', null);
+          if (this.$$("#videoFileUploadUp"))
+            this.$$("#videoFileUploadUp").clear();
+          if (this.$$("#videoFileUploadDown"))
+            this.$$("#videoFileUploadDown").clear();
+          if (this.$$("#videoFileUploadMobile"))
+            this.$$("#videoFileUploadMobile").clear();
           if (newPost) {
             if (this.host) {
               this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
@@ -755,7 +810,28 @@
           }
         },
 
-        _newPointResponse: function (event, detail) {
+        _newPointResponse: function (inEvent, inDetail) {
+          if (this.currentVideoId) {
+            debugger;
+            var point = this._preProcessPoints([detail.response])[0];
+            var ajax = document.createElement('iron-ajax');
+            ajax.handleAs = 'json';
+            ajax.contentType = 'application/json';
+            ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
+            ajax.method = 'PUT';
+            ajax.body = {
+              videoId: this.currentVideoId
+            };
+            ajax.addEventListener('response', function (event, detail) {
+              this._completeNewPointResponse(event, detail);
+            }.bind(this));
+            ajax.generateRequest();
+          } else {
+            this._completeNewPointResponse(inEvent, inDetail);
+          }
+        },
+
+        _completeNewPointResponse: function (event, detail) {
           this.set('addPointDisabled', false);
           var point = this._preProcessPoints([detail.response])[0];
           if (point.value > 0) {
@@ -778,26 +854,26 @@
         },
 
         addPointUp: function () {
-          this.addPoint(this.textValueUp, 1);
+          this.addPoint(this.textValueUp, 1, this.uploadedVideoUpId ? this.uploadedVideoUpId : null);
           window.appGlobals.activity('add', 'pointUp');
         },
 
         addPointDown: function () {
-          this.addPoint(this.textValueDown, -1);
+          this.addPoint(this.textValueDown, -1, this.uploadedVideoDownId ? this.uploadedVideoDownId : null);
           window.appGlobals.activity('add', 'pointDown');
         },
 
         addMobilePointUpOrDown: function () {
           if (this.pointUpOrDownSelected=='pointFor') {
-            this.addPoint(this.textValueMobileUpOrDown, 1);
+            this.addPoint(this.textValueMobileUpOrDown, 1, this.uploadedVideoMobileId ? this.uploadedVideoMobileId : null);
             window.appGlobals.activity('add', 'pointUp');
           } else if (this.pointUpOrDownSelected=='pointAgainst') {
-            this.addPoint(this.textValueMobileUpOrDown, -1);
+            this.addPoint(this.textValueMobileUpOrDown, -1, this.uploadedVideoMobileId ? this.uploadedVideoMobileId : null);
             window.appGlobals.activity('add', 'pointDown');
           }
         },
 
-        addPoint: function (content, value) {
+        addPoint: function (content, value, videoId) {
           if (window.appUser.loggedIn() === true) {
             this.$.newPointAjax.url = "/api/points/" + this.post.group_id;
             this.$.newPointAjax.body = {
@@ -807,6 +883,7 @@
             };
             this.$.newPointAjax.generateRequest();
             this.set('addPointDisabled', true);
+            this.set('currentVideoId', videoId);
           } else {
             window.appUser.loginForNewPoint(this, {content: content, value: value});
           }
@@ -828,8 +905,8 @@
           event.currentTarget.parentElement.elevation = 1;
         },
 
-        ifLengthIsRight: function (textValue) {
-          return textValue.length > 1;
+        ifLengthIsRight: function (textValue, hasVideoId) {
+          return hasVideoId || textValue.length > 1;
         }
       });
     }());

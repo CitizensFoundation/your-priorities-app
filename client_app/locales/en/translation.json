@@ -1,4 +1,5 @@
 {
+  "allowPointVideoUploads": "Allow point video uploads",
   "seconds": "seconds",
   "videoPostUploadLimitSec": "Video clip limit in seconds (max 150)",
   "videoPointUploadLimitSec": "Video clip limit in seconds (max 90)",

@@ -309,7 +309,9 @@ Example:
         value: "image/*"
       },
 
-      group: Object
+      group: Object,
+
+      containerType: String
     },
 
     /**
@@ -319,6 +321,10 @@ Example:
       this.set("files", []);
       this._showDropText();
       this.set('uploadStatus', null);
+      this.set('currentVideoId', null);
+      this.set('currentFile', null);
+      this.set('transcodingJobId', null);
+      this.set('indeterminateProgress', false);
     },
 
     ready: function() {
@@ -537,10 +543,13 @@ Example:
             this.set('uploadStatus', this.t("transcodingVideo"));
             this.$.startTranscodeAjax.url = '/api/videos/'+this.currentVideoId+'/startTranscoding';
             let options;
-            if (this.group && this.group.configuration) {
+            if (this.containerType==="posts") {
               options = {
-                videoPostUploadLimitSec: this.group.configuration.videoPostUploadLimitSec,
-                videoPointUploadLimitSec: this.group.configuration.videoPointUploadLimitSec,
+                videoPostUploadLimitSec: this.group.configuration.videoPostUploadLimitSec
+              }
+            } else if (this.containerType==="points") {
+              options = {
+                videoPointUploadLimitSec: this.group.configuration.videoPointUploadLimitSec
               }
             } else {
               options = {}
