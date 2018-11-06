@@ -437,6 +437,9 @@
         this.set('community', { name: '', description: '', access: 0, status: 'active' });
       } else {
         this.set('community', community);
+        if (community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
+          this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
+        }
         this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
         this.$.pagesAjax.generateRequest();
       }

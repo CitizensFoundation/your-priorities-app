@@ -434,7 +434,10 @@
         value: false
       },
 
-      uploadedVideoId: Number
+      uploadedVideoId: {
+        type: Number,
+        value: null
+      }
     },
 
     _videoUploaded: function (event, detail) {
@@ -623,6 +626,9 @@
         this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
       } else {
         this.set('group', group);
+        if (group.GroupLogoVideos && group.GroupLogoVideos.length>0) {
+          this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
+        }
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
