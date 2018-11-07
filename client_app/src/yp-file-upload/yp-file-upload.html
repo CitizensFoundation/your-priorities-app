@@ -90,15 +90,15 @@ Example:
           display: none !important;
         }
        ::slotted(iron-icon) {
-         padding-right: 4px;
+         padding-right: 6px;
        }
       </style>
 
-    <div>
+    <div class="layout vertical center-center">
       <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
         <slot></slot>
       </paper-button>
-      <div id='UploadBorder'>
+      <div id="UploadBorder">
         <div id="dropArea" hidden$="{{!_shownDropText}}">{{dropText}}</div>
         <template is="dom-repeat" items="{{files}}">
           <div class="file">

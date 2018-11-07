@@ -181,6 +181,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 },
     embed_data: DataTypes.JSONB,
+    data: DataTypes.JSONB,
     language: { type: DataTypes.STRING, allowNull: true }
   }, {
 
@@ -196,6 +197,11 @@ module.exports = function(sequelize, DataTypes) {
         where: {
           deleted: false
         }
+      },
+      {
+        fields: ['data'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
       },
       {
         fields: ['image_id'],

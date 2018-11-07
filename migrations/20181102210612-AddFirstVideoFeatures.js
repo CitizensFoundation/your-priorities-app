@@ -3,12 +3,12 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return [
-      await queryInterface.addColumn('posts','transcripts', { type: Sequelize.JSONB, allowNull: true }),
-      await queryInterface.addIndex('posts', {
-        fields: ['transcripts'],
+      await queryInterface.addColumn('points','data', { type: Sequelize.JSONB, allowNull: true }),
+      await queryInterface.addIndex('points', {
+        fields: ['data'],
         using: 'gin',
         operator: 'jsonb_path_ops',
-        name: 'posts_transcripts_index',
+        name: 'points_data_index',
       }),
       await queryInterface.createTable(
         'videos',

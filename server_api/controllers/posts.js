@@ -392,7 +392,9 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         ['created_at', 'asc'],
         [ models.PointRevision, 'created_at', 'asc' ],
         [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
-        [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+        [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
+        [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+          [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
       ],
       include: [
         { model: models.User,
@@ -423,6 +425,20 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
           model: models.PointRevision,
           attributes: { exclude: ['ip_address', 'user_agent'] },
           required: false
+        },
+        {
+          model: models.Video,
+          required: false,
+          attributes: ['id','formats','updated_at','viewable'],
+          as: 'PointVideos',
+          include: [
+            {
+              model: models.Image,
+              as: 'VideoImages',
+              attributes:["formats",'updated_at'],
+              required: false
+            },
+          ]
         },
         { model: models.PointQuality,
           attributes: { exclude: ['ip_address', 'user_agent'] },
@@ -465,6 +481,8 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
       [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
@@ -506,6 +524,20 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
             attributes: ["id"],
             required: false
           }
+        ]
+      },
+      {
+        model: models.Video,
+        required: false,
+        attributes: ['id','formats','updated_at','viewable'],
+        as: 'PointVideos',
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
         ]
       },
       {

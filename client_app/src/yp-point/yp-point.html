@@ -32,6 +32,7 @@
         @apply --layout-vertical;
         padding-right: 16px;
         padding-left: 16px;
+        margin-top: 16px;
       }
 
       #pointContent {
@@ -49,10 +50,9 @@
       }
 
       .userInfoContainer {
-        border-bottom: solid 3px;
+        border-bottom: solid 4px;
         width: 100%;
         padding-bottom: 16px;
-        margin-bottom: 16px;
       }
 
       .userInfoContainer[up-vote] {
@@ -102,11 +102,32 @@
       [hidden] {
         display: none !important;
       }
+
+      .pointer {
+        cursor: pointer;
+      }
+
+      .playOverlay {
+        width: 90px;
+        height: 90px;
+        margin-top: -272px;
+        margin-left: 154px;
+        color: #EEE;
+        cursor: pointer;
+      }
+
+      iron-image, video {
+        width: 398px;
+        height: 224px;
+        margin: 0;
+        padding: 0;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
 
     <div class="layout vertical">
 
@@ -118,15 +139,28 @@
         </div>
       </div>
 
-      <div class="point-content">
-        <span hidden$="[[!point.name]]">
-          <span>[[point.name]]</span>.
-        </span>
-        <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
-          <yp-magic-text text-type="pointContent" content-language="[[point.language]]"
-                         content="[[point.latestContent]]" content-id="[[point.id]]">
-          </yp-magic-text>
-        </div>
+      <div class="layout certical">
+        <template is="dom-if" if="[[videoActive]]">
+          <div hidden$="[[!showVideo]]">
+            <video id="videoPlayer" controls preload="none" class="video" src="[[pointVideoPath]]"></video>
+          </div>
+          <div hidden$="[[showVideo]]">
+            <iron-image on-tap="_playVideo" sizing="cover" class="main-image pointer" src="[[pointImageVideoPath]]"></iron-image>
+            <iron-icon on-tap="_playVideo" icon="play-circle-outline" class="playOverlay"></iron-icon>
+          </div>
+        </template>
+        <template is="dom-if" if="[[!videoActive]]">
+          <div class="point-content">
+            <span hidden$="[[!point.name]]">
+              <span>[[point.name]]</span>.
+            </span>
+              <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
+              <yp-magic-text text-type="pointContent" content-language="[[point.language]]"
+                             content="[[point.latestContent]]" content-id="[[point.id]]">
+              </yp-magic-text>
+            </div>
+          </div>
+        </template>
         <template is="dom-if" if="[[isEditing]]" restamp>
           <div class="layout vertical">
             <paper-textarea id="pointContentEditor" char-counter maxlength="500" value="{{editText}}"></paper-textarea>
@@ -215,7 +249,21 @@
           computed: '_pointUrl(point)'
         },
 
-        editText: String
+        editText: String,
+
+        videoActive: {
+          type: Boolean,
+          value: false
+        },
+
+        pointVideoPath: String,
+
+        pointImageVideoPath: String,
+
+        showVideo: {
+          type: Boolean,
+          value: false,
+        }
       },
 
       behaviors: [
@@ -225,6 +273,13 @@
         Polymer.ypGotAdminRightsBehavior,
         Polymer.ypGotoBehavior
       ],
+
+      _pauseVideo: function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.pause();
+        }
+      },
 
       _isEditingChanged: function (value) {
         this._updateEmojiBindings(value);
@@ -333,12 +388,42 @@
         return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
       },
 
-      _pointChanged: function(point, oldValue) {
+      _playVideo: function () {
+        this.set('showVideo', true);
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          videoPlayer.play();
+        } else {
+          console.error("Can't find video player");
+        }
+      },
+
+      _pointChanged: function(point) {
         if (point) {
           this.set('user', this.point.User);
+          if (point.PointVideos &&
+            point.PointVideos.length>0 &&
+            point.PointVideos[0].formats &&
+            point.PointVideos[0].formats.length>0 &&
+            point.PointVideos[0].VideoImages &&
+            point.PointVideos[0].VideoImages.length>0) {
+            this.set('videoActive', true);
+            this.set('pointVideoPath',  point.PointVideos[0].formats[0]);
+            this.set('pointImageVideoPath', JSON.parse(point.PointVideos[0].VideoImages[0].formats)[0]);
+          } else {
+            this._resetVideo();
+          }
         } else {
           this.set('user', null);
+          this._resetVideo();
         }
+      },
+
+      _resetVideo: function () {
+        this.set('videoActive', false);
+        this.set('showVideo', false);
+        this.set('pointVideoPath', null);
+        this.set('pointImageVideoPath', null);
       },
 
       loginName: function () {
