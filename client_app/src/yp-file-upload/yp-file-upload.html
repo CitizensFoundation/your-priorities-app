@@ -449,6 +449,7 @@ Example:
 
     uploadFile: function (file) {
       if (this.videoUpload) {
+        window.appGlobals.activity('starting', 'videoUpload');
         this.set('uploadStatus', this.t("uploadingVideo"));
         this.set('indeterminateProgress', true);
         this.currentFile = file;
@@ -468,6 +469,7 @@ Example:
         }.bind(this));
         ajax.generateRequest();
       } else {
+        window.appGlobals.activity('starting', 'imageUpload');
         this.set('uploadStatus', this.t("uploadingImage"));
         this.reallyUploadFile(file);
       }
@@ -486,6 +488,7 @@ Example:
         this.set('uploadStatus', this.t('uploadCompleted'));
         this.fire("success", { detail: detail, videoId: this.currentVideoId });
         this.fire('file-upload-complete');
+        window.appGlobals.activity('complete', 'mediaTranscoding');
       } else if (detail.error) {
         this.set(prefix + ".error", true);
         this.set(prefix + ".complete", false);
@@ -493,6 +496,7 @@ Example:
         this.updateStyles();
         this.fire("error", {xhr:event});
         this.fire('file-upload-complete');
+        window.appGlobals.activity('error', 'mediaTranscoding');
       } else {
         this._checkTranscodingJob();
       }
@@ -556,11 +560,14 @@ Example:
             }
             this.$.startTranscodeAjax.body = options;
             this.$.startTranscodeAjax.generateRequest();
+            window.appGlobals.activity('complete', 'videoUpload');
+            window.appGlobals.activity('start', 'mediaTranscoding');
           } else {
             this.set('uploadStatus', this.t('uploadCompleted'));
             self.fire('file-upload-complete');
             self.set(prefix + ".complete", true);
             self.fire("success", {xhr: xhr, videoId: this.currentVideoId });
+            window.appGlobals.activity('complete', 'imageUpload');
           }
         } else {
           self.fire('file-upload-complete');
@@ -569,6 +576,7 @@ Example:
           self.set(prefix + ".progress", 100);
           self.updateStyles();
           self.fire("error", {xhr:xhr});
+          window.appGlobals.activity('error', 'mediaUpload');
         }
       }.bind(this);
 

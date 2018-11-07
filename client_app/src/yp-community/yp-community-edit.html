@@ -423,13 +423,15 @@
     },
 
     _clear: function () {
-      this.set('community', { name: '', description: '', access: 0 });
+      this.set('community', null);
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
       this.set('appHomeScreenIconImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
       this.$.appHomeScreenIconImageUpload.clear();
+      if (this.$$("#videoFileUpload"))
+        this.$$("#videoFileUpload").clear();
     },
 
     setup: function (community, newNotEdit, refreshFunction) {

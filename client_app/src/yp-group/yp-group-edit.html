@@ -484,7 +484,6 @@
     _openCategoryEdit: function (event) {
       window.appGlobals.activity('open', 'category.new');
       Polymer.dom(document).querySelector('yp-app').getDialogAsync("categoryEdit", function (dialog) {
-        debugger;
         dialog.setup(this.group, false, this._refreshCategories.bind(this), event.model.category);
         dialog.open("edit", {categoryId: event.model.category.id});
       }.bind(this));
@@ -532,8 +531,11 @@
     },
 
     _publicCommunity: function (group) {
+      debugger;
       if (group) {
-        return group.Community.access==0
+        return group.Community.access===0
+      } else {
+        return false;
       }
     },
 
@@ -607,27 +609,34 @@
         this._setFromConfiguration('allowPostVideoUploads', true);
         this._setFromConfiguration('allowPointVideoUploads', true);
 
-        if (this.community) {
-          if (this.community.access==0) {
-            this.set('publicCommunity', true);
-          } else {
-            this.set('publicCommunity', false);
+        this.async(function () {
+          if (this.community) {
+            if (this.community.access==0) {
+              debugger;
+              this.set('publicCommunity', true);
+            } else {
+              this.set('publicCommunity', false);
+            }
+          } else if (this.group && this.group.Community) {
+            if (this.group.Community.access==0) {
+              this.set('publicCommunity', true);
+            } else {
+              this.set('publicCommunity', false);
+            }
           }
-        } else if (this.group && this.group.Community) {
-          if (this.group.Community.access==0) {
-            this.set('publicCommunity', true);
-          } else {
-            this.set('publicCommunity', false);
-          }
-        }
-        if (window.appGlobals.hasVideoUpload) {
-          this.set('hasVideoUpload', true);
+        });
+
+        if ((!this.group || !this.group.id) && window.appGlobals.hasVideoUpload) {
           if (this.allowPostVideoUploads===null) {
             this.set('allowPostVideoUploads', true);
           }
           if (this.allowPointVideoUploads===null) {
             this.set('allowPointVideoUploads', true);
           }
+        }
+
+        if (window.appGlobals.hasVideoUpload) {
+          this.set('hasVideoUpload', true);
         } else {
           this.set('hasVideoUpload', false);
         }
@@ -652,7 +661,7 @@
     },
 
     _clear: function () {
-      this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
+      this.set('group', null);
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
       this.set('uploadedDefaultDataImageId', null);
@@ -660,6 +669,8 @@
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
       this.$.defaultDataImageUpload.clear();
+      if (this.$$("#videoFileUpload"))
+        this.$$("#videoFileUpload").clear();
     },
 
     setup: function (group, newNotEdit, refreshFunction) {

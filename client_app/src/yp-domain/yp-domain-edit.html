@@ -369,12 +369,15 @@
     },
 
     _clear: function () {
-      this.set('domain', { name: '', description: '' });
+      this.set('domain', null);
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
       this.set('appHomeScreenIconImageId', null);
       this.$.headerImageUpload.clear();
       this.$.logoImageUpload.clear();
+      if (this.$$("#videoFileUpload"))
+        this.$$("#videoFileUpload").clear();
+
     },
 
     setup: function (domain, newNotEdit, refreshFunction) {
