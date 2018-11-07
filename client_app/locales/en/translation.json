@@ -1,4 +1,6 @@
 {
+  "postPointFor": "Post point for",
+  "postPointAgainst": "Post point against",
   "uploadVideoPointAgainst": "Video point against",
   "postPoint": "Post point",
   "uploadVideoPointFor": "Video point for",

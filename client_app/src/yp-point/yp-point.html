@@ -122,6 +122,24 @@
         margin: 0;
         padding: 0;
       }
+
+      @media (max-width: 600px) {
+        iron-image, video {
+          width: 300px;
+          height: 169px;
+          margin: 0;
+          padding: 0;
+        }
+
+        .playOverlay {
+          width: 72px;
+          height: 72px;
+          margin-top: -202px;
+          margin-left: 114px;
+          color: #EEE;
+          cursor: pointer;
+        }
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>

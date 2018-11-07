@@ -229,6 +229,10 @@
         background-color: #FFF;
         color: #000;
       }
+
+      .pointButtons {
+        margin-bottom: 4px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -377,20 +381,42 @@
                         value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
                         char-counter rows="2"
                         max-rows="3" maxlength="500"></paper-textarea>
-        <div class="horizontal end-justified layout">
-          <div class="layout horizontal">
+        <div class="vertical end-justified layout">
+          <div class="layout horizontal pointButtons">
             <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
               <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
               <paper-radio-button name="pointAgainst">[[t('pointAgainstShort')]]</paper-radio-button>
             </paper-radio-group>
+            <div class="flex"></div>
+            <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
           </div>
-          <div class="flex"></div>
-          <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
+          <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
+            <div hidden$="[[hideMobileVideo]]">
+              <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
+                <yp-file-upload id="videoFileUploadMobile" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoMobileUploaded">
+                  <iron-icon class="icon" icon="videocam"></iron-icon>
+
+                  <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
+                  <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
+                </yp-file-upload>
+                <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+              </div>
+              <div class="layout horizontal center-center">
+                <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                  <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
+                  <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
+                </paper-button>
+              </div>
+            </div>
+          </template>
         </div>
         <div hidden="[[!ifLengthMobileRight]]">
           <div class="addPointFab layout horizontal center-center mobileFab">
             <paper-button raised disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addMobilePointUpOrDown"
-                          title="[[t('postPoint')]]">[[t('postPoint')]]</paper-button>
+                          title="[[t('postPoint')]]">
+              <span hidden$="[[!selectedPointForMobile]]">[[t('postPointFor')]]</span>
+              <span hidden$="[[selectedPointForMobile]]">[[t('postPointAgainst')]]</span>
+            </paper-button>
           </div>
         </div>
       </paper-material>
@@ -576,6 +602,11 @@
           hideMobileVideo: {
             type: Boolean,
             value: false
+          },
+
+          selectedPointForMobile: {
+            type: Boolean,
+            value: true
           }
         },
 
@@ -592,7 +623,7 @@
         },
 
         _videoMobileUploaded: function (event, detail) {
-          this.set('uploadedVideoDownId', detail.videoId);
+          this.set('uploadedVideoMobileId', detail.videoId);
         },
 
         _mobileScrollOffset: function (large, post) {
@@ -703,12 +734,14 @@
             } else {
               this.set('labelMobileUpOrDown', this.t('point.for'));
             }
+            this.set('selectedPointForMobile', true);
           } else if (newValue=='pointAgainst') {
             if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointAgainstLabel) {
               this.set('labelMobileUpOrDown', this.post.Group.configuration.alternativePointAgainstLabel);
             } else {
               this.set('labelMobileUpOrDown', this.t('point.against'));
             }
+            this.set('selectedPointForMobile', false);
           }
         },
 
@@ -717,7 +750,6 @@
           this.set('uploadedVideoDownId', null);
           this.set('uploadedVideoMobileId', null);
           this.set('currentVideoId', null);
-          this.set('uploadedVideoMobileId', null);
           this.set('hideUpVideo', false);
           this.set('hideDownVideo', false);
           this.set('hideMobileVideo', false);
