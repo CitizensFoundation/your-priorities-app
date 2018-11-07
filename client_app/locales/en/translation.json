@@ -1,6 +1,7 @@
 {
+  "uploadVideoPointAgainst": "Video point against",
   "postPoint": "Post point",
-  "uploadVideoPointFor": "Video point",
+  "uploadVideoPointFor": "Video point for",
   "pointVideoInfo": "Upload video in landscape HD format. Maximum video length is ",
   "allowPointVideoUploads": "Allow point video uploads",
   "seconds": "seconds",
