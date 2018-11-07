@@ -294,6 +294,9 @@ router.post('/:parentPointId/comment', auth.isLoggedIn, auth.can('add to point')
 });
 
 router.put('/:pointId', auth.can('edit point'), function(req, res) {
+  if (!req.body.content) {
+    req.body.content="";
+  }
   var point = models.Point.find({
     where: {
       id: req.params.pointId
@@ -381,6 +384,9 @@ router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
 });
 
 router.post('/:groupId', auth.can('create point'), function(req, res) {
+  if (!req.body.content) {
+    req.body.content="";
+  }
   var point = models.Point.build({
     group_id: req.params.groupId,
     post_id: req.body.postId,
