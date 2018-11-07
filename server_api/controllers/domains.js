@@ -427,10 +427,6 @@ router.get('/:domainId/admin_users', auth.can('edit domain'), function (req, res
   });
 });
 
-
-
-
-
 router.put('/:domainId/:pageId/update_page_locale', auth.can('edit domain'), function(req, res) {
   models.Page.updatePageLocale(req, { domain_id: req.params.domainId, id: req.params.pageId }, function (error) {
     if (error) {

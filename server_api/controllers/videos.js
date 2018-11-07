@@ -101,7 +101,14 @@ var loadPointWithAll = function (pointId, callback) {
 
 
 router.get('/hasVideoUploadSupport', (req, res) => {
-  res.send({ hasVideoUploadSupport: process.env.S3_VIDEO_UPLOAD_BUCKET!=null })
+  res.send({
+    hasVideoUploadSupport: (process.env.S3_VIDEO_UPLOAD_BUCKET!=null &&
+                            process.env.S3_VIDEO_PUBLIC_BUCKET!=null &&
+                            process.env.S3_VIDEO_THUMBNAIL_BUCKET!=null &&
+                            process.env.AWS_TRANSCODER_PIPELINE_ID!=null &&
+                            process.env.AWS_TRANSCODER_PRESET_ID!=null &&
+                            process.env.AWS_TRANSCODER_FLAC_PRESET_ID!=null)
+  })
 });
 
 router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
