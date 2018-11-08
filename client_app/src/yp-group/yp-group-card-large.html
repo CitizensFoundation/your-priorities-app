@@ -181,7 +181,7 @@
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
         <template is="dom-if" if="[[groupVideoURL]]" restamp>
-          <video id="videoPlayer" controls class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
+          <video id="videoPlayer" controls preload="meta" class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!groupVideoURL]]">
           <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>

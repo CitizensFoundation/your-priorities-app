@@ -160,13 +160,7 @@
 
       <div class="layout vertical">
         <template is="dom-if" if="[[videoActive]]">
-          <div hidden$="[[!showVideo]]">
-            <video id="videoPlayer" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline></video>
-          </div>
-          <div hidden$="[[showVideo]]">
-            <iron-image on-click="_playVideo" sizing="cover" class="main-image pointer" src="[[pointImageVideoPath]]"></iron-image>
-            <iron-icon on-click="_playVideo" icon="play-circle-outline" class="playOverlay"></iron-icon>
-          </div>
+          <video id="videoPlayer" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
         </template>
         <template is="dom-if" if="[[!videoActive]]">
           <div class="point-content">
@@ -277,12 +271,7 @@
 
         pointVideoPath: String,
 
-        pointImageVideoPath: String,
-
-        showVideo: {
-          type: Boolean,
-          value: false,
-        }
+        pointImageVideoPath: String
       },
 
       behaviors: [
@@ -401,16 +390,6 @@
         return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
       },
 
-      _playVideo: function () {
-        var videoPlayer = this.$$("#videoPlayer");
-        if (videoPlayer) {
-          videoPlayer.play();
-        } else {
-          console.error("Can't find video player");
-        }
-        this.set('showVideo', true);
-      },
-
       _pointChanged: function(point) {
         if (point) {
           this.set('user', this.point.User);
@@ -431,7 +410,6 @@
 
       _resetVideo: function () {
         this.set('videoActive', false);
-        this.set('showVideo', false);
         this.set('pointVideoPath', null);
         this.set('pointImageVideoPath', null);
       },

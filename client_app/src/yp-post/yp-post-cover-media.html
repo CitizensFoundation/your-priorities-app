@@ -127,7 +127,7 @@
 
       <template is="dom-if" if="[[videoActive]]">
         <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          <video id="videoPlayer" controls on-tap="goToPost" preload="meta" class="main-image pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
           <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
