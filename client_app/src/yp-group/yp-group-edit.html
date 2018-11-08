@@ -89,7 +89,6 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog name="groupEdit" id="editDialog" title="[[editHeaderText]]" icon="people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-      <template is="dom-if" if="[[group]]" restamp>
         <paper-input id="name"
                      name="name"
                      type="text"
@@ -348,7 +347,6 @@
             </paper-item>
           </template>
         </div>
-      </template>
     </yp-edit-dialog>
   </template>
 
@@ -570,32 +568,32 @@
       window.appGlobals.activity('completed', 'editGroup');
     },
 
-    _groupChanged: function (newValue, oldValue) {
-      if (this.group) {
-        if (this.group.access==0) {
-          this.groupAccess = "public"
-        } else if (this.group.access==1) {
-          this.groupAccess = "closed"
-        } else if (this.group.access==2) {
-          this.groupAccess = "secret"
-        } else if (this.group.access==3) {
-          this.groupAccess = "open_to_community"
+    _groupChanged: function (group, oldValue) {
+      if (group) {
+        if (group.access==0) {
+          groupAccess = "public"
+        } else if (group.access==1) {
+          groupAccess = "closed"
+        } else if (group.access==2) {
+          groupAccess = "secret"
+        } else if (group.access==3) {
+          groupAccess = "open_to_community"
         }
 
-        if (this.group && this.group.status) {
-          this.set('status', this.group.status);
+        if (group && group.status) {
+          this.set('status', group.status);
         }
 
-        if (this.group.configuration && this.group.configuration.canVote!=undefined) {
-          this.set('canVote', this.group.configuration.canVote);
-          this.set('canAddNewPosts', this.group.configuration.canAddNewPosts);
+        if (group.configuration && group.configuration.canVote!=undefined) {
+          this.set('canVote', group.configuration.canVote);
+          this.set('canAddNewPosts', group.configuration.canAddNewPosts);
         } else {
           this.set('canVote', true);
           this.set('canAddNewPosts', true);
         }
 
-        if (this.group.configuration && this.group.configuration.endorsementButtons!=undefined) {
-          this.set('endorsementButtons', this.group.configuration.endorsementButtons);
+        if (group.configuration && group.configuration.endorsementButtons!=undefined) {
+          this.set('endorsementButtons', group.configuration.endorsementButtons);
         } else {
           this.set('endorsementButtons', "hearts");
         }
@@ -619,8 +617,8 @@
             } else {
               this.set('publicCommunity', false);
             }
-          } else if (this.group && this.group.Community) {
-            if (this.group.Community.access==0) {
+          } else if (group && group.Community) {
+            if (group.Community.access==0) {
               this.set('publicCommunity', true);
             } else {
               this.set('publicCommunity', false);
@@ -628,7 +626,7 @@
           }
         });
 
-        if ((!this.group || !this.group.id) && window.appGlobals.hasVideoUpload) {
+        if ((!group || !group.id) && window.appGlobals.hasVideoUpload) {
           if (this.allowPostVideoUploads===null) {
             this.set('allowPostVideoUploads', true);
           }

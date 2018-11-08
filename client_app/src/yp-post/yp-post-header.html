@@ -261,8 +261,8 @@
                       <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
                       <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
                       <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-                      <paper-item id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>
-                      <paper-item id="deleteContentMenuItem">[[t('deletePostContent')]]</paper-item>
+                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>
+                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="deleteContentMenuItem">[[t('deletePostContent')]]</paper-item>
                     </template>
                     <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
                   </paper-listbox>
