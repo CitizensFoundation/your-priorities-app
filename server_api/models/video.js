@@ -183,7 +183,7 @@ module.exports = function(sequelize, DataTypes) {
           frames.push(sequelize.models.Video.getThumbnailUrl(video,frame+1));
         }
 
-        async.forEach(frames, (frame, foreachCallback) => {
+        async.forEachSeries(frames, (frame, foreachCallback) => {
           sequelize.models.Image.build({
             s3_bucket_name: video.meta.thumbnailBucket,
             user_id: req.user.id,
@@ -191,11 +191,14 @@ module.exports = function(sequelize, DataTypes) {
             ip_address: "127.0.0.1",
             formats: JSON.stringify([frame])
           }).save().then((image) => {
-            video.addVideoImage(image).then(() => {
-              foreachCallback();
-            }).catch((error) => {
-              foreachCallback(error);
-            })
+            // We add a small delay to make sure the images can be ordered by updated_at
+            setTimeout(function(){
+              video.addVideoImage(image).then(() => {
+                foreachCallback();
+              }).catch((error) => {
+                foreachCallback(error);
+              })
+            }, 1)
           }).catch((error) => {
             foreachCallback(error);
           })
