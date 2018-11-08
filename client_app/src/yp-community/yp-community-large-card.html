@@ -19,7 +19,7 @@
 
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
 
 <link rel="import" href="yp-community-behaviors.html">
 <link rel="import" href="yp-community-stats.html">
@@ -245,7 +245,7 @@
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
           <template is="dom-if" if="[[communityVideoURL]]" restamp>
-            <video id="videoPlayer" controls class="image pointer" src="[[communityVideoURL]]"></video>
+            <video id="videoPlayer" controls class="image pointer" src="[[communityVideoURL]]" playsinline></video>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">
             <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
@@ -306,7 +306,7 @@
         Polymer.ypGotAdminRightsBehavior,
         Polymer.ypGotoBehavior,
         Polymer.ypTruncateBehavior,
-        Polymer.ypImageFormatsBehavior
+        Polymer.ypMediaFormatsBehavior
       ],
 
       properties: {
@@ -329,13 +329,6 @@
         communityVideoURL: {
           type: String,
           computed: '_communityVideoURL(community)'
-        }
-      },
-
-      _pauseVideo: function () {
-        var videoPlayer = this.$$("#videoPlayer");
-        if (videoPlayer) {
-          videoPlayer.pause();
         }
       },
 

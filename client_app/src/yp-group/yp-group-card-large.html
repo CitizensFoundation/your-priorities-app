@@ -21,7 +21,7 @@
 <link rel="import" href="../yp-behaviors/yp-large-card-behaviors.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
 <link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <link rel="import" href="yp-group-stats.html">
@@ -181,7 +181,7 @@
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" animated class="groupCard imageCard top-card">
         <template is="dom-if" if="[[groupVideoURL]]" restamp>
-          <video id="videoPlayer" controls class="logo" src="[[groupVideoURL]]"></video>
+          <video id="videoPlayer" controls class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!groupVideoURL]]">
           <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
@@ -241,7 +241,7 @@
         Polymer.ypGotAdminRightsBehavior,
         Polymer.ypGotoBehavior,
         Polymer.ypTruncateBehavior,
-        Polymer.ypImageFormatsBehavior
+        Polymer.ypMediaFormatsBehavior
       ],
 
       properties: {
@@ -269,26 +269,12 @@
 
         groupVideoURL: {
           type: String,
-          computed: '_groupVideoURL(group)'
-        }
-      },
+          value: null
+        },
 
-      _pauseVideo: function () {
-        var videoPlayer = this.$$("#videoPlayer");
-        if (videoPlayer) {
-          videoPlayer.pause();
-        }
-      },
-
-      _groupVideoURL: function (group) {
-        if (group &&
-            group.configuration.useVideoCover &&
-            group.GroupLogoVideos &&
-            group.GroupLogoVideos.length>0 &&
-            group.GroupLogoVideos[0].viewable) {
-          return group.GroupLogoVideos[0].formats[0]
-        } else {
-          return null;
+        groupVideoPosterURL: {
+          type: String,
+          value: null
         }
       },
 
@@ -314,6 +300,24 @@
         } else {
           this.$$("#objectives").style.fontSize = "16px";
         }
+
+        if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
+          var videoURL = this._getVideoURL(group.GroupLogoVideos);
+          var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos);
+          if (videoURL && videoPosterURL) {
+            this.set('groupVideoURL', videoURL);
+            this.set('groupVideoPosterURL', videoPosterURL);
+          } else {
+            this._resetVideo();
+          }
+        } else {
+          this._resetVideo();
+        }
+      },
+
+      _resetVideo: function () {
+        this.set('groupVideoURL', null);
+        this.set('groupVideoPosterURL', null);
       },
 
       _groupAccessText: function(group, language) {
@@ -383,6 +387,7 @@
       _openEdit: function () {
         window.appGlobals.activity('open', 'group.edit');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("groupEdit", function (dialog) {
+          dialog._clear();
           this._refreshGroup(this.group.id, function (group) {
             dialog.setup(group, false, this._refresh.bind(this));
             dialog.open('edit', {groupId: group.id});

@@ -9,7 +9,7 @@
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-image-formats-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 
 <dom-module id="yp-post-cover-media">
@@ -127,10 +127,10 @@
 
       <template is="dom-if" if="[[videoActive]]">
         <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]"></video>
+          <video id="videoPlayer" controls on-tap="goToPost" class="main-image pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
-          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPath]]"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
           <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
         </template>
       </template>
@@ -180,7 +180,7 @@
 
       behaviors: [
         Polymer.ypLanguageBehavior,
-        Polymer.ypImageFormatsBehavior,
+        Polymer.ypMediaFormatsBehavior,
         Polymer.ypGotoBehavior
       ],
 
@@ -275,6 +275,11 @@
           computed: '_postVideoPath(post)'
         },
 
+        postVideoPosterPath: {
+          type: String,
+          computed: '_postVideoPosterPath(post)'
+        },
+
         headerMode: {
           type: Boolean,
           value: false,
@@ -324,13 +329,6 @@
         showVideo: {
           type: Boolean,
           value: false
-        }
-      },
-
-      _pauseVideo: function () {
-        var videoPlayer = this.$$("#videoPlayer");
-        if (videoPlayer) {
-          videoPlayer.pause();
         }
       },
 
@@ -478,21 +476,28 @@
       },
 
       _postVideoPath: function (post) {
-        if (post &&
-          post.PostVideos &&
-          post.PostVideos.length>0 &&
-          post.PostVideos[0].formats &&
-          post.PostVideos[0].formats.length>0) {
-          if (this.showVideo) {
-            return post.PostVideos[0].formats[0];
-          } else if (post.PostVideos[0].VideoImages &&
-                     post.PostVideos[0].VideoImages.length>0) {
-            return JSON.parse(post.PostVideos[0].VideoImages[0].formats)[0];
+        if (post && post.PostVideos) {
+          var videoURL = this._getVideoURL(post.PostVideos);
+          if (videoURL) {
+            return videoURL;
           } else {
-            return "";
+            return null;
           }
         } else {
-          return "";
+          return null;
+        }
+      },
+
+      _postVideoPosterPath: function (post) {
+        if (post && post.PostVideos) {
+          var videoPosterURL = this._getVideoPosterURL(post.PostVideos);
+          if (videoPosterURL) {
+            return videoPosterURL;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
         }
       },
 

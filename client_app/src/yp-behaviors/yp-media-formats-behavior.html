@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /** @polymerBehavior Polymer.ypMediaFormatsBehavior */
+  Polymer.ypMediaFormatsBehavior = {
+    getImageFormatUrl: function(images, formatId) {
+      if (images && images.length>0) {
+        var formats = JSON.parse(images[images.length-1].formats);
+        if (formats && formats.length>0)
+          return formats[formatId];
+      } else {
+        return "";
+      }
+    },
+
+    _pauseVideo: function () {
+      var videoPlayer = this.$$("#videoPlayer");
+      if (videoPlayer) {
+        videoPlayer.pause();
+      }
+    },
+
+    _getVideoURL: function (videos) {
+      if (videos &&
+          videos.length>0 &&
+          videos[0].formats &&
+          videos[0].formats.length>0) {
+        return videos[0].formats[0];
+      } else {
+        return null;
+      }
+    },
+
+    _getVideoPosterURL: function (videos, selectedImageIndex) {
+      if (!selectedImageIndex)
+        selectedImageIndex = 0;
+      if (videos &&
+        videos.length>0 &&
+        videos[0].VideoImages &&
+        videos[0].VideoImages.length>0) {
+          return JSON.parse(videos[0].VideoImages[0].formats)[selectedImageIndex];
+      } else {
+        return null;
+      }
+    }
+  };
+</script>

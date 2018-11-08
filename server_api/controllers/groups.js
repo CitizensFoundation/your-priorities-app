@@ -818,7 +818,9 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ]
+      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+
     ],
     include: [
       {
@@ -856,7 +858,15 @@ router.get('/:id', auth.can('view group'), function(req, res) {
         model: models.Video,
         as: 'GroupLogoVideos',
         attributes:  ['id','formats','viewable'],
-        required: false
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
       },
       {
         model: models.Image,

@@ -160,11 +160,11 @@
       <div class="layout vertical">
         <template is="dom-if" if="[[videoActive]]">
           <div hidden$="[[!showVideo]]">
-            <video id="videoPlayer" controls preload="none" class="video" src="[[pointVideoPath]]"></video>
+            <video id="videoPlayer" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline></video>
           </div>
           <div hidden$="[[showVideo]]">
-            <iron-image on-tap="_playVideo" sizing="cover" class="main-image pointer" src="[[pointImageVideoPath]]"></iron-image>
-            <iron-icon on-tap="_playVideo" icon="play-circle-outline" class="playOverlay"></iron-icon>
+            <iron-image on-click="_playVideo" sizing="cover" class="main-image pointer" src="[[pointImageVideoPath]]"></iron-image>
+            <iron-icon on-click="_playVideo" icon="play-circle-outline" class="playOverlay"></iron-icon>
           </div>
         </template>
         <template is="dom-if" if="[[!videoActive]]">
@@ -289,15 +289,9 @@
         Polymer.AccessHelpers,
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypGotAdminRightsBehavior,
-        Polymer.ypGotoBehavior
+        Polymer.ypGotoBehavior,
+        Polymer.ypMediaFormatsBehavior
       ],
-
-      _pauseVideo: function () {
-        var videoPlayer = this.$$("#videoPlayer");
-        if (videoPlayer) {
-          videoPlayer.pause();
-        }
-      },
 
       _isEditingChanged: function (value) {
         this._updateEmojiBindings(value);
@@ -407,27 +401,24 @@
       },
 
       _playVideo: function () {
-        this.set('showVideo', true);
         var videoPlayer = this.$$("#videoPlayer");
         if (videoPlayer) {
           videoPlayer.play();
         } else {
           console.error("Can't find video player");
         }
+        this.set('showVideo', true);
       },
 
       _pointChanged: function(point) {
         if (point) {
           this.set('user', this.point.User);
-          if (point.PointVideos &&
-            point.PointVideos.length>0 &&
-            point.PointVideos[0].formats &&
-            point.PointVideos[0].formats.length>0 &&
-            point.PointVideos[0].VideoImages &&
-            point.PointVideos[0].VideoImages.length>0) {
+          var videoURL = this._getVideoURL(point.PointVideos);
+          var videoPosterURL = this._getVideoPosterURL(point.PointVideos);
+          if (videoURL && videoPosterURL) {
             this.set('videoActive', true);
-            this.set('pointVideoPath',  point.PointVideos[0].formats[0]);
-            this.set('pointImageVideoPath', JSON.parse(point.PointVideos[0].VideoImages[0].formats)[0]);
+            this.set('pointVideoPath', videoURL);
+            this.set('pointImageVideoPath', videoPosterURL);
           } else {
             this._resetVideo();
           }
