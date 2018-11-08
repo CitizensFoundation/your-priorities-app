@@ -331,6 +331,7 @@
 
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
+      this.set('community.configuration.useVideoCover', true);
     },
 
     _pagesResponse: function (event, detail) {

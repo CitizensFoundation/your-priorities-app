@@ -132,7 +132,7 @@
         }
 
         iron-image, video {
-          width: 306px;
+          width: 306px !important;
           height: 172px !important;
         }
 
@@ -167,7 +167,7 @@
     <div class="layout horizontal wrap">
       <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
         <template is="dom-if" if="[[domainVideoURL]]" restamp>
-          <video id="videoPlayer" controls class="image" src="[[domainVideoURL]]" playsinline></video>
+          <video id="videoPlayer" controls class="image" src="[[domainVideoURL]]" playsinline poster="[[domainVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!domainVideoURL]]">
           <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
@@ -260,6 +260,41 @@
         domainVideoURL: {
           type: String,
           computed: '_domainVideoURL(domain)'
+        },
+
+        domainVideoPosterURL: {
+          type: String,
+          computed: '_domainVideoPosterURL(domain)'
+        }
+      },
+
+      _domainVideoURL: function (domain) {
+        if (domain &&
+          domain.configuration.useVideoCover &&
+          domain.DomainLogoVideos) {
+          var videoURL = this._getVideoURL(domain.DomainLogoVideos);
+          if (videoURL) {
+            return videoURL;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      },
+
+      _domainVideoPosterURL: function (domain) {
+        if (domain &&
+          domain.configuration.useVideoCover &&
+          domain.DomainLogoVideos) {
+          var videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos);
+          if (videoPosterURL) {
+            return videoPosterURL;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
         }
       },
 

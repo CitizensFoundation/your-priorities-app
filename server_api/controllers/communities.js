@@ -129,7 +129,15 @@ var getCommunity = function(req, done) {
             model: models.Video,
             as: 'CommunityLogoVideos',
             attributes:  ['id','formats','viewable'],
-            required: false
+            required: false,
+            include: [
+              {
+                model: models.Image,
+                as: 'VideoImages',
+                attributes:["formats",'updated_at'],
+                required: false
+              },
+            ]
           },
           {
             model: models.Group,

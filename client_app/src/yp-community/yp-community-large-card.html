@@ -245,7 +245,7 @@
         </div>
         <div hidden$="[[community.configuration.welcomeHTML]]">
           <template is="dom-if" if="[[communityVideoURL]]" restamp>
-            <video id="videoPlayer" controls class="image pointer" src="[[communityVideoURL]]" playsinline></video>
+            <video id="videoPlayer" controls class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">
             <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
@@ -326,19 +326,43 @@
           value: false,
           computed: '_showMenuItem(hasCommunityAccess, community)'
         },
+
         communityVideoURL: {
           type: String,
           computed: '_communityVideoURL(community)'
+        },
+
+        communityVideoPosterURL: {
+          type: String,
+          computed: '_communityVideoPosterURL(community)'
         }
       },
 
       _communityVideoURL: function (community) {
         if (community &&
           community.configuration.useVideoCover &&
-          community.CommunityLogoVideos &&
-          community.CommunityLogoVideos.length>0 &&
-          community.CommunityLogoVideos[0].viewable) {
-          return community.CommunityLogoVideos[0].formats[0]
+          community.CommunityLogoVideos) {
+          var videoURL = this._getVideoURL(community.CommunityLogoVideos);
+          if (videoURL) {
+            return videoURL;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      },
+
+      _communityVideoPosterURL: function (community) {
+        if (community &&
+          community.configuration.useVideoCover &&
+          community.CommunityLogoVideos) {
+          var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
+          if (videoPosterURL) {
+            return videoPosterURL;
+          } else {
+            return null;
+          }
         } else {
           return null;
         }
