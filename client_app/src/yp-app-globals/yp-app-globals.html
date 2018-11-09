@@ -17,7 +17,8 @@
     <yp-session id="session"></yp-session>
 
     <yp-ajax id="boot" url="/api/domains" on-response="_bootResponse"></yp-ajax>
-    <yp-ajax auto url="/api/videos/hasVideoUploadSupport" on-response="_hasVideoUploadSupport"></yp-ajax>
+    <yp-ajax hidden auto url="/api/videos/hasVideoUploadSupport" on-response="_hasVideoUploadSupport"></yp-ajax>
+    <yp-ajax id="videoViewsAjax" hidden method="PUT" url="/api/videos/videoView"></yp-ajax>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
   </template>
 
@@ -141,6 +142,12 @@
           if (detail && detail.response && detail.response.hasVideoUploadSupport===true) {
             window.appGlobals.hasVideoUpload = true;
           }
+        },
+
+        sendVideoView: function (videoId) {
+          this.$.videoViewsAjax.body = { videoId: videoId };
+          this.$.videoViewsAjax.generateRequest();
+          this.activity('view', 'video', videoId);
         },
 
         changeLocaleIfNeededAfterWait: function (locale, force) {

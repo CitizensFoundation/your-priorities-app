@@ -13,6 +13,27 @@
       }
     },
 
+    attached: function () {
+      this.async(function () {
+        var videoPlayer = this.$$("#videoPlayer");
+        if (videoPlayer) {
+          var videoId = videoPlayer.getAttribute('data-id');
+          if (videoId) {
+            videoPlayer.addEventListener("play", function () {
+              window.appGlobals.sendVideoView(videoId)
+            }.bind(this));
+          }
+        }
+      }, 500);
+    },
+
+    detached: function () {
+      var videoPlayer = this.$$("#videoPlayer");
+      if (videoPlayer) {
+        videoPlayer.removeEventListener("play");
+      }
+    },
+
     _pauseVideo: function () {
       var videoPlayer = this.$$("#videoPlayer");
       if (videoPlayer) {

@@ -111,6 +111,23 @@ router.get('/hasVideoUploadSupport', (req, res) => {
   })
 });
 
+router.put('/videoView', (req, res) => {
+  models.Video.find({
+    where: {
+      id: req.body.videoId
+    }
+  }).then((video) => {
+    if (video) {
+      video.increment('views');
+    } else {
+      log.error("Did not find video for view increment");
+    }
+    res.sendStatus(200);
+  }).catch((error) => {
+    log.error("Error setting video increment", { error });res.sendStatus(200);
+  });
+});
+
 router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
   models.Video.createAndGetSignedUploadUrl(req, res);
 });

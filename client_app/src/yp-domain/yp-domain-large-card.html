@@ -167,7 +167,7 @@
     <div class="layout horizontal wrap">
       <paper-material id="cardImage" elevation="3" animated class="large-card imageCard top-card">
         <template is="dom-if" if="[[domainVideoURL]]" restamp>
-          <video id="videoPlayer" controls preload="meta" class="image" src="[[domainVideoURL]]" playsinline poster="[[domainVideoPosterURL]]"></video>
+          <video id="videoPlayer" data-id$="[[domainVideoId]]" controls preload="meta" class="image" src="[[domainVideoURL]]" playsinline poster="[[domainVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!domainVideoURL]]">
           <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
@@ -265,7 +265,9 @@
         domainVideoPosterURL: {
           type: String,
           computed: '_domainVideoPosterURL(domain)'
-        }
+        },
+
+        domainVideoId: Number
       },
 
       _domainVideoURL: function (domain) {
@@ -274,6 +276,8 @@
           domain.DomainLogoVideos) {
           var videoURL = this._getVideoURL(domain.DomainLogoVideos);
           if (videoURL) {
+            this.set('domainVideoId', domain.DomainLogoVideos[0].id);
+            debugger;
             return videoURL;
           } else {
             return null;
@@ -293,18 +297,6 @@
           } else {
             return null;
           }
-        } else {
-          return null;
-        }
-      },
-
-      _domainVideoURL: function (domain) {
-        if (domain &&
-          domain.configuration.useVideoCover &&
-          domain.DomainLogoVideos &&
-          domain.DomainLogoVideos.length>0 &&
-          domain.DomainLogoVideos[0].viewable) {
-          return domain.DomainLogoVideos[0].formats[0]
         } else {
           return null;
         }
