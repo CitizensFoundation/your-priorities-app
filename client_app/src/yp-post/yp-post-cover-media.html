@@ -35,7 +35,7 @@
         padding: 0;
       }
 
-      .main-image {
+      .main-image, video {
         width: 100%;
         height: 100%;
         margin: 0;
@@ -77,6 +77,14 @@
           height: 100%;
           margin: 0 !important;
           padding: 0 !important;
+        }
+
+        .main-image[header-mode] {
+          height: 100%;
+        }
+
+        video {
+          height: auto;
         }
       }
 
@@ -127,7 +135,7 @@
 
       <template is="dom-if" if="[[videoActive]]">
         <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" controls on-tap="goToPost" preload="meta" class="main-image pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          <video id="videoPlayer"header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
           <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>

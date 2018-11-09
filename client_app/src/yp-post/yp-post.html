@@ -161,10 +161,6 @@
         .statusColumn {
           width: 320px;
         }
-
-        paper-tab {
-          font-size: 14px;
-        }
       }
 
       yp-ajax {
@@ -252,15 +248,19 @@
 
       @media (max-width: 900px) {
         .tabs {
-          max-width: 450px;
+          max-width: 100%;
           font-size: 13px !important;
           word-wrap: break-word !important;
           margin-top: 16px;
+          width: 100%;
+          margin-bottom: 16px;
         }
 
         .tabs .tab {
-          width: 120px;
+          width: 100%;
           word-wrap: break-word !important;
+          margin-left: 8px;
+          margin-right: 8px;
         }
 
         .topArea {
@@ -272,14 +272,8 @@
         }
       }
 
-      @media (max-width: 380px) {
+      @media (max-width: 360px) {
         .tabs {
-          max-width: 330px;
-          font-size: 10px !important;
-        }
-
-        paper-tab {
-          width: 100px;
           font-size: 10px !important;
         }
 
@@ -309,14 +303,14 @@
         <paper-tabs id="paper_tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab name="debate">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('post.tabs.debate')]]</span><div class="counterInfo" id="tabCountDebate"></div>
+              <span>[[t('post.tabs.debate')]] (<span id="tabCountDebate"></span>)</span>
             </div>
           </paper-tab>
           <paper-tab name="news">[[t('post.tabs.news')]]</paper-tab>
           <paper-tab name="location" hidden$="[[locationHidden]]">[[t('post.tabs.location')]]</paper-tab>
           <paper-tab name="photos">
             <div class="layout vertical center-center tabCounterContainer">
-              <span>[[t('post.tabs.photos')]]</span><div class="counterInfo" id="tabCountPhotos"></div>
+              <span>[[t('post.tabs.photos')]] (<span id="tabCountPhotos"></span>)</span>
             </div>
           </paper-tab>
         </paper-tabs>

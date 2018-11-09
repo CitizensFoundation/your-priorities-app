@@ -108,15 +108,6 @@
         cursor: pointer;
       }
 
-      .playOverlay {
-        width: 90px;
-        height: 90px;
-        margin-top: -262px;
-        margin-left: 154px;
-        color: #EEE;
-        cursor: pointer;
-      }
-
       iron-image, video {
         width: 398px;
         height: 224px;
@@ -126,19 +117,11 @@
 
       @media (max-width: 600px) {
         iron-image, video {
-          width: 300px;
-          height: 169px;
-          margin: 0;
+          width: 100%;
+          margin: 0 !important;
           padding: 0;
-        }
-
-        .playOverlay {
-          width: 72px;
-          height: 72px;
-          margin-top: -202px;
-          margin-left: 114px;
-          color: #EEE;
-          cursor: pointer;
+          height: initial;
+          vertical-align: top;
         }
       }
     </style>

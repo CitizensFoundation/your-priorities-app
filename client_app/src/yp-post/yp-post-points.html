@@ -125,6 +125,7 @@
 
       #pointUpOrDownMaterial {
         margin-top: 16px;
+        width: 100%;
       }
 
       .mobileFab {
@@ -138,28 +139,25 @@
 
       @media (max-width: 985px) {
         .pointInputMaterial {
-          width: 420px;
-          font-size: 30px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .pointInputMaterial {
-          width: 268px;
-          font-size: 10px;
+          width: 91vw !important;
+          max-width: 500px;
+          font-size: 12px;
           padding-top: 4px;
         }
 
         .pointMaterial {
-          width: 300px;
+          width: 100%;
         }
 
         .main-container {
-          width: 310px;
+          width: 100%;
         }
 
         iron-list {
-          width: 300px;
+          width: 100vw;
+        }
+
+        .pointMaterial {
         }
       }
 
@@ -297,7 +295,7 @@
             </paper-material>
 
             <div id="allUpPoints">
-              <iron-list items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
+              <iron-list id="ironListUp" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
                 <template>
                   <div class="item" tabindex$="[[tabIndex]]">
                     <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
@@ -376,52 +374,54 @@
     </template>
 
     <template is="dom-if" if="[[!largeMode]]" restamp>
-      <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
-        <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
-                        value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
-                        char-counter rows="2" hidden$="[[uploadedVideoMobileId]]"
-                        max-rows="3" maxlength="500"></paper-textarea>
-        <div class="vertical end-justified layout">
-          <div class="layout horizontal pointButtons">
-            <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
-              <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
-              <paper-radio-button name="pointAgainst">[[t('pointAgainstShort')]]</paper-radio-button>
-            </paper-radio-group>
-            <div class="flex"></div>
-            <div hidden$="[[uploadedVideoMobileId]]">
-              <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
+      <div class="layout vertical center-center">
+        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
+          <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
+                          value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
+                          char-counter rows="2" hidden$="[[uploadedVideoMobileId]]"
+                          max-rows="3" maxlength="500"></paper-textarea>
+          <div class="layout vertical end-justified">
+            <div class="layout horizontal pointButtons">
+              <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
+                <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
+                <paper-radio-button name="pointAgainst">[[t('pointAgainstShort')]]</paper-radio-button>
+              </paper-radio-group>
+              <div class="flex"></div>
+              <div hidden$="[[uploadedVideoMobileId]]">
+                <emoji-selector id="pointUpDownEmojiSelector" hidden$="[[post.Group.configuration.hideEmoji]]"></emoji-selector>
+              </div>
             </div>
-          </div>
-          <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
-            <div hidden$="[[hideMobileVideo]]">
-              <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                <yp-file-upload id="videoFileUploadMobile" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoMobileUploaded">
-                  <iron-icon class="icon" icon="videocam"></iron-icon>
+            <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
+              <div hidden$="[[hideMobileVideo]]">
+                <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
+                  <yp-file-upload id="videoFileUploadMobile" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoMobileUploaded">
+                    <iron-icon class="icon" icon="videocam"></iron-icon>
 
-                  <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
-                  <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
-                </yp-file-upload>
-                <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                    <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
+                    <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
+                  </yp-file-upload>
+                  <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                </div>
+                <div class="layout horizontal center-center">
+                  <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                    <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
+                    <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
+                  </paper-button>
+                </div>
               </div>
-              <div class="layout horizontal center-center">
-                <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
-                  <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
-                  <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
-                </paper-button>
-              </div>
-            </div>
-          </template>
-        </div>
-        <div hidden="[[!ifLengthMobileRight]]">
-          <div class="addPointFab layout horizontal center-center mobileFab">
-            <paper-button raised disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addMobilePointUpOrDown"
-                          title="[[t('postPoint')]]">
-              <span hidden$="[[!selectedPointForMobile]]">[[t('postPointFor')]]</span>
-              <span hidden$="[[selectedPointForMobile]]">[[t('postPointAgainst')]]</span>
-            </paper-button>
+            </template>
           </div>
-        </div>
-      </paper-material>
+          <div hidden="[[!ifLengthMobileRight]]">
+            <div class="addPointFab layout horizontal center-center mobileFab">
+              <paper-button raised disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addMobilePointUpOrDown"
+                            title="[[t('postPoint')]]">
+                <span hidden$="[[!selectedPointForMobile]]">[[t('postPointFor')]]</span>
+                <span hidden$="[[selectedPointForMobile]]">[[t('postPointAgainst')]]</span>
+              </paper-button>
+            </div>
+          </div>
+        </paper-material>
+      </div>
       <div class="layout vertical center-center">
         <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
           <template>
@@ -900,11 +900,20 @@
           if (this.largeMode) {
             if (point.value > 0) {
               this.unshift('upPoints', point);
+              this.async(function () {
+                this.$$("#ironListUp").fire("iron-resize");
+              }, 420);
             } else if (point.value < 0) {
               this.unshift('downPoints', point);
+              this.async(function () {
+                this.$$("#ironListDown").fire("iron-resize");
+              }, 420);
             }
           } else {
             this.unshift('points', point);
+            this.async(function () {
+              this.$$("#ironListMobile").fire("iron-resize");
+            }, 420);
           }
         },
 

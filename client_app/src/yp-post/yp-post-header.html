@@ -128,17 +128,16 @@
 
       @media (max-width: 960px) {
         :host {
-          width: 600px;
+          max-width: 600px;
         }
 
         .postCard {
-          width: 600px;
+          width: 100%;
           @apply --layout-wrap;
         }
 
         yp-post-cover-media {
-          width: 420px;
-          height: 236px;
+          width: 100%;
         }
 
         .voting {
@@ -153,8 +152,8 @@
         }
 
         .card-content {
-          width: 600px !important;
-          padding-bottom: 74px;
+          width: 100% !important;
+          padding-bottom: 16px;
         }
 
         .infoContainer {
@@ -183,17 +182,18 @@
 
       @media (max-width: 420px) {
         :host {
-          width: 304px;
+          width: 100%;
         }
 
         .postCard {
-          height: 100% !important;
-          width: 304px !important;
+          width: 100% !important;
+          margin: 8px;
+          margin-top: 4px;
         }
 
         yp-post-cover-media {
-          width: 304px !important;
-          height: 171px !important;
+          width: 100% !important;
+          height: 225px;
         }
 
         .card-actions {
@@ -205,9 +205,31 @@
           font-size: 18px;
         }
 
+        .post-name[logged-in] {
+          padding-right: 24px;
+        }
+
         .description {
           padding-bottom: 32px;
           font-size: 15px;
+        }
+      }
+
+      @media (max-width: 375px) {
+        yp-post-cover-media[header-mode] {
+          height: 205px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        yp-post-cover-media[header-mode] {
+          height: 200px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        yp-post-cover-media[header-mode] {
+          height: 180px;
         }
       }
 
@@ -225,7 +247,7 @@
     <div class="layout horizontal center-center">
       <paper-material class="postCard" elevation="[[elevation]]" animated>
         <div class="layout vertical wrap">
-          <div class="post-name layout vertical" on-tap="goToPostIfNotHeader">
+          <div class="post-name layout vertical" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
             <div>
               <yp-magic-text text-type="postName" content-language="[[post.language]]"
                              content="[[postName]]" content-id="[[post.id]]">
