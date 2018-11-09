@@ -135,7 +135,7 @@
 
       <template is="dom-if" if="[[videoActive]]">
         <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer"header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          <video id="videoPlayer" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
           <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
@@ -287,6 +287,8 @@
           type: String,
           computed: '_postVideoPosterPath(post)'
         },
+
+        postVideoId: Number,
 
         headerMode: {
           type: Boolean,
@@ -487,6 +489,7 @@
         if (post && post.PostVideos) {
           var videoURL = this._getVideoURL(post.PostVideos);
           if (videoURL) {
+            this.set('postVideoId', post.PostVideos[0].id);
             return videoURL;
           } else {
             return null;

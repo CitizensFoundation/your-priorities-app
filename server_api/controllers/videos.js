@@ -118,7 +118,11 @@ router.put('/videoView', (req, res) => {
     }
   }).then((video) => {
     if (video) {
-      video.increment('views');
+      if (req.body.longPlaytime) {
+        video.increment('long_views');
+      } else {
+        video.increment('views');
+      }
     } else {
       log.error("Did not find video for view increment");
     }

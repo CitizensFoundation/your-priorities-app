@@ -147,7 +147,7 @@
 
       <div class="layout vertical">
         <template is="dom-if" if="[[videoActive]]">
-          <video id="videoPlayer" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
+          <video id="videoPlayer" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
         </template>
         <template is="dom-if" if="[[!videoActive]]">
           <div class="point-content">
@@ -258,7 +258,9 @@
 
         pointVideoPath: String,
 
-        pointImageVideoPath: String
+        pointImageVideoPath: String,
+
+        pointVideoId: Number
       },
 
       behaviors: [
@@ -386,6 +388,7 @@
             this.set('videoActive', true);
             this.set('pointVideoPath', videoURL);
             this.set('pointImageVideoPath', videoPosterURL);
+            this.set('pointVideoId', point.PointVideos[0].id);
           } else {
             this._resetVideo();
           }
@@ -399,6 +402,7 @@
         this.set('videoActive', false);
         this.set('pointVideoPath', null);
         this.set('pointImageVideoPath', null);
+        this.set('pointVideoId', null);
       },
 
       loginName: function () {

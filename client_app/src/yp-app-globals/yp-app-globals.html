@@ -150,6 +150,11 @@
           this.activity('view', 'video', videoId);
         },
 
+        sendLongVideoView: function (videoId) {
+          this.$.videoViewsAjax.body = { videoId: videoId, longPlaytime: true };
+          this.$.videoViewsAjax.generateRequest();
+        },
+
         changeLocaleIfNeededAfterWait: function (locale, force) {
           console.log("changeLocaleIfNeeded "+locale);
           if (locale && this.language!=locale) {

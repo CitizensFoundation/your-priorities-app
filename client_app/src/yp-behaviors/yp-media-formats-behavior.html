@@ -3,6 +3,30 @@
 <script>
   /** @polymerBehavior Polymer.ypMediaFormatsBehavior */
   Polymer.ypMediaFormatsBehavior = {
+
+    properties: {
+      playStartedAt: {
+        type: Date,
+        value: null
+      }
+    },
+
+    _checkVideoLongPlayTimeAndReset(videoPlayer) {
+      var videoId = videoPlayer.getAttribute('data-id');
+      if (this.playStartedAt && videoId) {
+        var seconds = (new Date().getTime() - this.playStartedAt.getTime()) / 1000;
+        console.error("Video player for: "+seconds);
+        if (seconds>5) {
+          window.appGlobals.sendLongVideoView(videoId)
+        }
+        window.appGlobals.activity("completed",'video',seconds);
+        this.playStartedAt = null;
+      } else if (this.playStartedAt) {
+        console.error("Got long view check without id");
+        this.playStartedAt = null;
+      }
+    },
+
     getImageFormatUrl: function(images, formatId) {
       if (images && images.length>0) {
         var formats = JSON.parse(images[images.length-1].formats);
@@ -20,7 +44,14 @@
           var videoId = videoPlayer.getAttribute('data-id');
           if (videoId) {
             videoPlayer.addEventListener("play", function () {
+              this.set('playStartedAt', new Date());
               window.appGlobals.sendVideoView(videoId)
+            }.bind(this));
+            videoPlayer.addEventListener("pause", function () {
+              this._checkVideoLongPlayTimeAndReset(videoPlayer);
+            }.bind(this));
+            videoPlayer.addEventListener("ended", function () {
+              this._checkVideoLongPlayTimeAndReset(videoPlayer);
             }.bind(this));
           }
         }
@@ -31,6 +62,9 @@
       var videoPlayer = this.$$("#videoPlayer");
       if (videoPlayer) {
         videoPlayer.removeEventListener("play");
+        videoPlayer.removeEventListener("pause");
+        videoPlayer.removeEventListener("ended");
+        this._checkVideoLongPlayTimeAndReset(videoPlayer);
       }
     },
 

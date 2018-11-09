@@ -51,7 +51,8 @@ var getDomain = function (req, domainId, done) {
         order: [
           [{model: models.Image, as: 'DomainLogoImages'}, 'created_at', 'asc'],
           [{model: models.Image, as: 'DomainHeaderImages'}, 'created_at', 'asc'],
-          [{model: models.Video, as: "DomainLogoVideos" }, 'updated_at', 'desc' ]
+          [{model: models.Video, as: "DomainLogoVideos" }, 'updated_at', 'desc' ],
+          [{model: models.Video, as: "DomainLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
         ],
         include: [
           {
