@@ -945,6 +945,9 @@
         _completeNewPointResponse: function (event, detail) {
           this.set('addPointDisabled', false);
           var point = this._preProcessPoints([detail.response])[0];
+          if (this.currentVideoId) {
+            point.checkTranscriptFor = "video";
+          }
           if (point.value > 0) {
             this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
             this.set("textValueUp", "");

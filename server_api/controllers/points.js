@@ -79,7 +79,9 @@ var loadPointWithAll = function (pointId, callback) {
     order: [
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
-      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ],
+      [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       { model: models.User,
@@ -381,6 +383,58 @@ router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
   } else {
     sendPointOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
   }
+});
+
+router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, res) {
+  loadPointWithAll(req.params.id, (error, point) => {
+    if (error) {
+      sendPointOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+    } else if (point.PointVideos && point.PointVideos.length>0) {
+      models.Video.find({
+        where: {
+          id: point.PointVideos[0].id
+        }
+      }).then( video => {
+        if (video.meta.transcript && video.meta.transcript.text) {
+          point.save().then( savedPoint => {
+            var pointRevision = models.PointRevision.build({
+              group_id: savedPoint.group_id,
+              post_id: savedPoint.post_id,
+              content: savedPoint.content,
+              user_id: req.user.id,
+              status: savedPoint.status,
+              value: savedPoint.value,
+              point_id: savedPoint.id,
+              user_agent: req.useragent.source,
+              ip_address: req.clientIp
+            });
+            pointRevision.save().then( () => {
+              loadPointWithAll(point.id, function (error, loadedPoint) {
+                if (error) {
+                  log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
+                  res.sendStatus(500);
+                } else {
+                  res.send(loadedPoint);
+                }
+              });
+            }).catch( error => {
+              sendPointOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+            });
+          }).catch( error => {
+            sendPointOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+          });
+        } else if (video.meta.transcript && video.meta.transcript.error) {
+          res.send({ error: video.meta.transcript.error });
+        } else {
+          res.send({ inProgress: true });
+        }
+      }).catch( error => {
+        sendPointOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+      });
+    } else {
+      sendPointOrError(res, req.params.id, 'videoTranscriptStatus', req.user, "No video for videoTranscriptStatus", 500);
+    }
+  });
 });
 
 router.post('/:groupId', auth.can('create point'), function(req, res) {

@@ -36,11 +36,11 @@
         margin-top: 16px;
       }
 
-      #pointContent {
+      #pointContentTranscript, #pointContent {
         cursor: default;
       }
 
-      #pointContent[link-point] {
+      #pointContentTranscript, #pointContent[link-point] {
         cursor: pointer;
       }
 
@@ -148,13 +148,28 @@
       <div class="layout vertical">
         <template is="dom-if" if="[[videoActive]]">
           <video id="videoPlayer" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
+
+          <template is="dom-if" if="[[checkingTranscript]]">
+            <div class="layout horizontal">
+              <div>[[t('checkingForTranscript')]]</div>
+              <paper-spinner active></paper-spinner>
+            </div>
+          </template>
+          <template is="dom-if" if="[[point.latestContent]]">
+            <div class="transcriptHeader">[[t('automaticTranscript')]]</div>
+            <div id="pointContentTranscript" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
+              <yp-magic-text text-type="pointContent" content-language="[[point.language]]"
+                             content="[[point.latestContent]]" content-id="[[point.id]]">
+              </yp-magic-text>
+            </div>
+          </template>
         </template>
         <template is="dom-if" if="[[!videoActive]]">
           <div class="point-content">
             <span hidden$="[[!point.name]]">
               <span>[[point.name]]</span>.
             </span>
-              <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
+            <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
               <yp-magic-text text-type="pointContent" content-language="[[point.language]]"
                              content="[[point.latestContent]]" content-id="[[point.id]]">
               </yp-magic-text>
@@ -175,7 +190,7 @@
         </template>
         <div class="layout horizontal actionContainer">
           <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]"></yp-point-actions>
-          <paper-icon-button hidden$="[[!loggedInUser]]" title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
+          <paper-icon-button title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           <div class="flex"></div>
           <template is="dom-if" if="[[hasPointAccess]]">
             <div class="layout horizontal self-end" hidden$="">
@@ -185,6 +200,7 @@
               <paper-icon-button title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
             </div>
           </template>
+          <yp-ajax id="checkTranscriptStatusAjax" on-response="_transcriptStatusResponse"></yp-ajax>
         </div>
       </div>
     </div>
@@ -260,7 +276,12 @@
 
         pointImageVideoPath: String,
 
-        pointVideoId: Number
+        pointVideoId: Number,
+
+        checkingTranscript: {
+          type: Boolean,
+          value: false
+        }
       },
 
       behaviors: [
@@ -389,12 +410,45 @@
             this.set('pointVideoPath', videoURL);
             this.set('pointImageVideoPath', videoPosterURL);
             this.set('pointVideoId', point.PointVideos[0].id);
+            debugger;
+            if (point.checkTranscriptFor==="video") {
+              this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/videoTranscriptStatus';
+              this.$.checkTranscriptStatusAjax.generateRequest();
+              this.set('checkingTranscript', true);
+            }
           } else {
             this._resetVideo();
           }
         } else {
           this.set('user', null);
           this._resetVideo();
+        }
+      },
+
+
+      _transcriptStatusResponse: function (event, detail) {
+        debugger;
+        if (detail && detail.point) {
+          var point = detail.point;
+          this.set('checkingTranscript', false);
+          point.latestContent = point.PointRevisions[point.PointRevisions.length-1].content;
+          this.set('point', point);
+          if (this._hasPointAccess(point)) {
+            this.set('editText',  point.latestContent);
+            this.set('isEditing', true);
+          }
+          this.async(function () {
+            this.fire('iron-resize');
+          });
+        } else if (detail && detail.inProgress) {
+          this.async(function () {
+            this.$.checkTranscriptStatusAjax.generateRequest();
+          }, 2000);
+        } else if (detail && detail.error) {
+          this.set('checkingTranscript', false);
+          this.set('checkTranscriptError', true);
+        } else {
+          this.set('checkingTranscript', false);
         }
       },
 
