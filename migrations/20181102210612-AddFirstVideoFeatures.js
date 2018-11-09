@@ -69,6 +69,8 @@ module.exports = {
           description: Sequelize.TEXT,
           meta: Sequelize.JSONB,
           formats: Sequelize.JSONB,
+          listens: { type: Sequelize.BIGINT, defaultValue: 0 },
+          long_listens: { type: Sequelize.BIGINT, defaultValue: 0 },
           user_id: { type: Sequelize.INTEGER, allowNull: false },
           listenable: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
           ip_address: { type: Sequelize.STRING, allowNull: false },
