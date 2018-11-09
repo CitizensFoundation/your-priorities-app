@@ -15,6 +15,7 @@ module.exports = function(sequelize, DataTypes) {
     description: DataTypes.TEXT,
     meta: DataTypes.JSONB,
     formats: DataTypes.JSONB,
+    views: DataTypes.BIGINT,
     user_id: DataTypes.INTEGER,
     viewable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     ip_address: { type: DataTypes.STRING, allowNull: false },

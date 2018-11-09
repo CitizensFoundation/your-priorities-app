@@ -28,6 +28,7 @@ module.exports = {
           description: Sequelize.TEXT,
           meta: Sequelize.JSONB,
           formats: Sequelize.JSONB,
+          views: Sequelize.BIGINT,
           user_id: { type: Sequelize.INTEGER, allowNull: false },
           viewable: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
           ip_address: { type: Sequelize.STRING, allowNull: false },

@@ -209,6 +209,10 @@
           padding-right: 24px;
         }
 
+        .headerTopLevel {
+          width: 100%;
+        }
+
         .description {
           padding-bottom: 32px;
           font-size: 15px;
@@ -246,7 +250,7 @@
 
     <div class="layout horizontal center-center">
       <paper-material class="postCard" elevation="[[elevation]]" animated>
-        <div class="layout vertical wrap">
+        <div class="layout vertical wrap headerTopLevel">
           <div class="post-name layout vertical" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
             <div>
               <yp-magic-text text-type="postName" content-language="[[post.language]]"
