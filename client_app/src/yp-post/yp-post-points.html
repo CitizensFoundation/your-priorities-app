@@ -930,7 +930,8 @@
             ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
             ajax.method = 'PUT';
             ajax.body = {
-              videoId: this.currentVideoId
+              videoId: this.currentVideoId,
+              appLanguage: this.language
             };
             ajax.addEventListener('response', function (event, detail) {
               this._completeNewPointResponse(event, event.detail);
