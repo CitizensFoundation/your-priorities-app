@@ -291,6 +291,7 @@
         color: #444;
         padding-bottom: 0;
         font-style: italic;
+        margin-bottom: 8px;
       }
 
       .transcriptHeader {
@@ -300,7 +301,7 @@
       }
 
       .editIcon {
-        color: #444;
+        color: #656565;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -507,10 +508,8 @@
       },
 
       _editPostTranscriptResponse: function (event, detail) {
-        if (detail.response) {
-          this.set('post.public_data.transcript.text', this.editText);
-          this.set('post.public_data.transcript.userEdited', true);
-        }
+        this.set('post.public_data.transcript.text', this.editText);
+        this.set('post.public_data.transcript.userEdited', true);
         this.set('isEditing', false);
       },
 

@@ -91,14 +91,14 @@
       var videoPlayer = this.$$("#videoPlayer");
       var audioPlayer = this.$$("#audioPlayer");
       if (videoPlayer) {
-        videoPlayer.removeEventListener("play");
-        videoPlayer.removeEventListener("pause");
-        videoPlayer.removeEventListener("ended");
+        videoPlayer.removeAllListeners("play");
+        videoPlayer.removeAllListeners("pause");
+        videoPlayer.removeAllListeners("ended");
         this._checkVideoLongPlayTimeAndReset(videoPlayer);
       } else if (audioPlayer) {
-        audioPlayer.removeEventListener("play");
-        audioPlayer.removeEventListener("pause");
-        audioPlayer.removeEventListener("ended");
+        audioPlayer.removeAllListeners("play");
+        audioPlayer.removeAllListeners("pause");
+        audioPlayer.removeAllListeners("ended");
         this._checkVideoLongPlayTimeAndReset(audioPlayer);
       }
     },
