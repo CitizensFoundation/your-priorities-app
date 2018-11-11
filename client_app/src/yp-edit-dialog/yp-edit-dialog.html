@@ -210,16 +210,10 @@
         font-weight: bold;
       }
 
-      #scrollable {
-        min-height: 350px;
-        max-height: 450px;
-      }
-
-
-      @media (max-height: 500px) {
+      @media all and (-ms-high-contrast:none)
+      {
         #scrollable {
-          min-height: 170px;
-          max-height: 280px;
+          min-height: 350px;
         }
       }
     </style>

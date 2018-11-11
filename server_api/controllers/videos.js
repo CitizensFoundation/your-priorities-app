@@ -146,7 +146,12 @@ router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
 });
 
 router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
-  models.Video.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, videoId: req.body.videoId });
+  models.Video.completeUploadAndAddToCollection(req, res, {
+    postId: req.params.postId,
+    videoId: req.body.videoId,
+    browserLanguage: req.headers["accept-language"] ? req.headers["accept-language"].split(',')[0] : 'en-US',
+    appLanguage: req.body.appLanguage,
+  });
 });
 
 router.put('/:groupId/completeAndAddToGroup', auth.can('edit group'), (req, res) => {

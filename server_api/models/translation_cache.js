@@ -44,6 +44,8 @@ module.exports = function(sequelize, DataTypes) {
             return modelInstance.objectives;
           case 'categoryName':
             return modelInstance.name;
+          case 'postTranscriptContent':
+            return modelInstance.public_data.transcript.text;
           default:
             console.error("No valid textType for translation");
             return null;

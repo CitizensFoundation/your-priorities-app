@@ -651,7 +651,8 @@
           ajax.url = '/api/videos/'+this.post.id+'/completeAndAddToPost';
           ajax.method = 'PUT';
           ajax.body = {
-            videoId: this.uploadedVideoId
+            videoId: this.uploadedVideoId,
+            appLanguage: this.language
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);
@@ -665,7 +666,8 @@
           ajax.url = '/api/audios/'+this.post.id+'/completeAndAddToPost';
           ajax.method = 'PUT';
           ajax.body = {
-            audioId: this.uploadedAudioId
+            audioId: this.uploadedAudioId,
+            appLanguage: this.language
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);

@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 const aws = require('aws-sdk');
 const _ = require('lodash');
+var queue = require('../active-citizen/workers/queue');
 
 "use strict";
 
@@ -116,15 +117,35 @@ module.exports = function(sequelize, DataTypes) {
         })
       },
 
-      addToPost: (video, id, callback) => {
+      addToPost: (video, options, callback) => {
         sequelize.models.Post.find({
           where: {
-            id: id
+            id: options.postId
           }
         }).then((post) => {
           post.addPostVideo(video).then(() => {
-            log.info("Have added video to post", { id });
-            callback();
+            log.info("Have added video to post", { id: options.postId });
+            if (process.env.GOOGLE_TRANSCODING_FLAC_BUCKET && process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+              if (!post.public_data) {
+                post.set('public_data', {});
+              }
+              post.set('public_data.transcript', {});
+              post.set('public_data.transcript', { videoId: video.id });
+              post.set('public_data.transcript.inProgress', true);
+              const workPackage = {
+                browserLanguage: options.browserLanguage,
+                appLanguage:options.appLanguage,
+                videoId: video.id,
+                type: 'create-video-transcript' };
+              queue.create('process-voice-to-text', workPackage).priority('high').removeOnComplete(true).save();
+              post.save().then( () => {
+                callback();
+              }).catch( error => {
+                callback(error);
+              })
+            } else {
+              callback();
+            }
           });
         }).catch((error) => callback(error));
       },
@@ -170,7 +191,7 @@ module.exports = function(sequelize, DataTypes) {
 
       addToCollection: (video, options, callback) => {
         if (options.postId) {
-          sequelize.models.Video.addToPost(video, options.postId, callback);
+          sequelize.models.Video.addToPost(video, options, callback);
         } else if (options.groupId) {
           sequelize.models.Video.addToGroup(video, options.groupId, callback);
         } else if (options.communityId) {

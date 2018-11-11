@@ -129,7 +129,12 @@ router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
 });
 
 router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
-  models.Audio.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, audioId: req.body.audioId });
+  models.Audio.completeUploadAndAddToCollection(req, res, {
+    postId: req.params.postId,
+    audioId: req.body.audioId,
+    browserLanguage: req.headers["accept-language"] ? req.headers["accept-language"].split(',')[0] : 'en-US',
+    appLanguage: req.body.appLanguage,
+  });
 });
 
 router.put('/:pointId/completeAndAddToPoint', auth.can('edit point'), (req, res) => {

@@ -6,6 +6,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 const aws = require('aws-sdk');
 const _ = require('lodash');
+var queue = require('../active-citizen/workers/queue');
 
 "use strict";
 
@@ -104,22 +105,42 @@ module.exports = function(sequelize, DataTypes) {
         })
       },
 
-      addToPost: (audio, id, callback) => {
+      addToPost: (audio, options, callback) => {
         sequelize.models.Post.find({
           where: {
-            id: id
+            id: options.postId
           }
         }).then((post) => {
           post.addPostAudio(audio).then(() => {
-            log.info("Have added audio to post", { id });
-            callback();
+            log.info("Have added audio to post", { id: options.postId });
+            if (process.env.GOOGLE_TRANSCODING_FLAC_BUCKET && process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+              if (!post.public_data) {
+                post.set('public_data', {});
+              }
+              post.set('public_data.transcript', {});
+              post.set('public_data.transcript', { audioId: audio.id });
+              post.set('public_data.transcript.inProgress', true);
+              const workPackage = {
+                browserLanguage: options.browserLanguage,
+                appLanguage:options.appLanguage,
+                audioId: audio.id,
+                type: 'create-audio-transcript' };
+              queue.create('process-voice-to-text', workPackage).priority('high').removeOnComplete(true).save();
+              post.save().then( () => {
+                callback();
+              }).catch( error => {
+                callback(error);
+              })
+            } else {
+              callback();
+            }
           });
         }).catch((error) => callback(error));
       },
 
       addToCollection: (audio, options, callback) => {
         if (options.postId) {
-          sequelize.models.Audio.addToPost(audio, options.postId, callback);
+          sequelize.models.Audio.addToPost(audio, options, callback);
         } else {
           callback("No collection to add to")
         }
