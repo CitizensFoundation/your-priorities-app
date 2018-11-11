@@ -102,6 +102,15 @@
         height: 236px;
       }
 
+      yp-post-cover-media[audio-cover] {
+        height: 120px;
+      }
+
+      .transcriptContainer {
+        width: 420px;
+        max-width: 420px;
+      }
+
       .postCard {
         width: 960px;
         background-color: #fff;
@@ -113,6 +122,7 @@
         padding-bottom: 2px;
         padding-left: 8px;
         padding-right: 8px;
+        margin-bottom: 48px;
       }
 
       paper-icon-button {
@@ -140,6 +150,12 @@
           width: 100%;
         }
 
+
+        .transcriptContainer {
+          width: 100%;
+          max-width: 100%;
+        }
+
         .voting {
           padding-left: 0;
           padding-right: 0;
@@ -162,6 +178,10 @@
 
         .description[no-user-info] {
           padding-bottom: 32px;
+        }
+
+        .description {
+          margin-bottom: 8px;
         }
 
         .userInfo {
@@ -284,7 +304,7 @@
 
     <div class="layout horizontal center-center">
       <paper-material class="postCard" elevation="[[elevation]]" animated>
-        <div class="layout vertical wrap headerTopLevel">
+        <div class="layout vertical headerTopLevel">
           <div class="post-name layout vertical" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
             <div>
               <yp-magic-text text-type="postName" content-language="[[post.language]]"
@@ -299,8 +319,8 @@
           </div>
           <div class="layout horizontal wrap mediaAndInfoContainer">
             <div class="layout vertical center-center">
-              <yp-post-cover-media show-video show-audio header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
-              <div>
+              <yp-post-cover-media show-video show-audio audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
+              <div class="transcriptContainer">
                 <template is="dom-if" if="[[checkingTranscript]]">
                   <div class="layout vertical center-center checkTranscript">
                     <div>[[t('checkingForTranscript')]]</div>
@@ -324,10 +344,10 @@
                     </div>
                   </div>
                   <template is="dom-if" if="[[hasPostAccess]]">
-                    <div class="layout horizontal actionContainer">
-                      <div class="flex"></div>
-                        <yp-ajax id="editPostTranscriptAjax" method="PUT" on-response="_editPostTranscriptResponse"></yp-ajax>
-                        <paper-icon-button title$="[[t('edit')]]" icon="create" on-tap="_editPostTranscript"></paper-icon-button>
+                    <div class="layout horizontal">
+                      <div class="flesx"></div>
+                      <yp-ajax id="editPostTranscriptAjax" method="PUT" on-response="_editPostTranscriptResponse"></yp-ajax>
+                      <paper-icon-button title$="[[t('edit')]]" icon="create" on-tap="_editPostTranscript"></paper-icon-button>
                     </div>
                   </template>
                 </template>
@@ -440,6 +460,11 @@
         },
 
         checkTranscriptError: {
+          type: Boolean,
+          value: false
+        },
+
+        isAudioCover: {
           type: Boolean,
           value: false
         }
@@ -558,6 +583,13 @@
                 this.set('checkingTranscript', true);
               }
             }
+          }
+        }
+        if (post) {
+          if (post.cover_media_type==='audio') {
+            this.set('isAudioCover', true);
+          } else {
+            this.set('isAudioCover', false);
           }
         }
         this.set('checkTranscriptError', false);
