@@ -400,7 +400,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
             var pointRevision = models.PointRevision.build({
               group_id: savedPoint.group_id,
               post_id: savedPoint.post_id,
-              content: savedPoint.content,
+              content: video.meta.transcript.text,
               user_id: req.user.id,
               status: savedPoint.status,
               value: savedPoint.value,
@@ -414,7 +414,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
                   log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
-                  res.send(loadedPoint);
+                  res.send({point: loadedPoint});
                 }
               });
             }).catch( error => {

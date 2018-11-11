@@ -906,18 +906,18 @@
               this.unshift('upPoints', point);
               this.async(function () {
                 this.$$("#ironListUp").fire("iron-resize");
-              }, 420);
+              }, 700);
             } else if (point.value < 0) {
               this.unshift('downPoints', point);
               this.async(function () {
                 this.$$("#ironListDown").fire("iron-resize");
-              }, 420);
+              }, 700);
             }
           } else {
             this.unshift('points', point);
             this.async(function () {
               this.$$("#ironListMobile").fire("iron-resize");
-            }, 420);
+            }, 700);
           }
         },
 

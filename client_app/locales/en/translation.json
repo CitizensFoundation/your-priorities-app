@@ -1,4 +1,7 @@
 {
+  "automaticTranscript": "Machine generated transcript",
+  "checkTranscriptError": "Could not automatically create a transcript",
+  "checkingForTranscript": "Creating a transcript from speech...",
   "postPointFor": "Post point for",
   "postPointAgainst": "Post point against",
   "uploadVideoPointAgainst": "Video point against",
