@@ -120,7 +120,7 @@ Example:
       <yp-ajax hidden id="transcodePollingAjax" method="PUT" on-response="_transcodePollingResponse"></yp-ajax>
       <yp-ajax hidden id="startTranscodeAjax" method="POST" on-response="_startTranscodeResponse"></yp-ajax>
     </div>
-    <input type="file" id="fileInput" on-change="_fileChange" accept$="[[accept]]" hidden multiple="{{multi}}">
+    <input type="file" id="fileInput" capture$="[[capture]]" on-change="_fileChange" accept$="[[accept]]" hidden multiple="{{multi}}">
     <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
     <paper-toast id="toastFail" text="Error uploading file!"></paper-toast>-->
   </template>
@@ -318,6 +318,11 @@ Example:
 
       group: Object,
 
+      capture: {
+        type: Boolean,
+        value: false
+      },
+
       containerType: String
     },
 
@@ -333,6 +338,7 @@ Example:
       this.set('currentFile', null);
       this.set('transcodingJobId', null);
       this.set('indeterminateProgress', false);
+      this.set('capture', false);
     },
 
     ready: function() {
@@ -348,8 +354,10 @@ Example:
       }
       if (this.videoUpload) {
         this.set('accept','video/*')
+        this.set('capture', true);
       } else if (this.audioUpload) {
         this.set('accept','audio/*')
+        this.set('capture', true);
       }
     },
 

@@ -22,6 +22,7 @@ var loadPointWithAll = function (pointId, callback) {
     order: [
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
       [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
     ],
     include: [
@@ -65,7 +66,7 @@ var loadPointWithAll = function (pointId, callback) {
       {
         model: models.Audio,
         required: false,
-        attributes: ['id','formats','updated_at','listenable','public_data'],
+        attributes: ['id','formats','updated_at','listenable','public_meta'],
         as: 'PointAudios'
       },
       {

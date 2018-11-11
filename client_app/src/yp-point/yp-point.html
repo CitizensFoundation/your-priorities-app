@@ -161,6 +161,11 @@
         margin-bottom: 2px;
         font-style: normal;
       }
+
+      audio {
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -184,7 +189,9 @@
         </template>
 
         <template is="dom-if" if="[[audioActive]]">
-          <audio id="audioPlayer" data-id$="[[pointAudioId]]" controls preload="none" class="audio" src="[[pointAudioPath]]" playsinline></audio>
+          <div class="layout vertical center-center">
+            <audio id="audioPlayer" data-id$="[[pointAudioId]]" controls preload="meta" class="audio" src="[[pointAudioPath]]" playsinline></audio>
+          </div>
         </template>
 
         <template is="dom-if" if="[[videoOrAudioActive]]">

@@ -452,12 +452,13 @@
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
       this.set('selectedCoverMediaType','video');
+      this.async(function () { this.fire('iron-resize'); });
     },
 
     _audioUploaded: function (event, detail) {
-      debugger;
       this.set('uploadedAudioId', detail.audioId);
       this.set('selectedCoverMediaType','audio');
+      this.async(function () { this.fire('iron-resize'); });
     },
 
     _documentUploaded: function (event, detail) {
@@ -642,7 +643,6 @@
           window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
         }
         var ajax;
-        debugger;
         if (this.uploadedVideoId) {
           this.post = post;
           ajax = document.createElement('iron-ajax');
@@ -696,6 +696,7 @@
         this.set('uploadedAudioId', null);
         this.$$("#imageFileUpload").clear();
         this.set('selectedCoverMediaType', 'none');
+        this.async(function () { this.fire('iron-resize'); });
       }
     },
 

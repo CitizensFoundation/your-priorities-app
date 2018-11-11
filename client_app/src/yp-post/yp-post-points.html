@@ -298,7 +298,9 @@
                         <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                         <span>[[t('uploadAudioPointFor')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                      <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
+                      <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
+                      </div>
                     </div>
                     <div class="layout horizontal center-center">
                       <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadAudioPointFor')]]</paper-button>
@@ -378,7 +380,9 @@
                         <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                         <span>[[t('uploadAudioPointAgainst')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                      <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
+                        <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
+                      </div>
                     </div>
                     <div class="layout horizontal center-center">
                       <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadAudioPointAgainst')]]</paper-button>
@@ -459,7 +463,9 @@
                       <span hidden$="[[!selectedPointForMobile]]">[[t('uploadAudioPointFor')]]</span>
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadAudioPointAgainst')]]</span>
                     </yp-file-upload>
-                    <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                    <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
+                      <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
+                    </div>
                   </div>
                   <div class="layout horizontal center-center">
                     <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
@@ -721,6 +727,11 @@
           selectedPointForMobile: {
             type: Boolean,
             value: true
+          },
+
+          isAndroid: {
+            type: Boolean,
+            value: false
           }
         },
 
@@ -741,15 +752,15 @@
         },
 
         _audioUpUploaded: function (event, detail) {
-          this.set('uploadedAudioUpId', detail.videoId);
+          this.set('uploadedAudioUpId', detail.audioId);
         },
 
         _audioDownUploaded: function (event, detail) {
-          this.set('uploadedAudioDownId', detail.videoId);
+          this.set('uploadedAudioDownId', detail.audioId);
         },
 
         _audioMobileUploaded: function (event, detail) {
-          this.set('uploadedAudioMobileId', detail.videoId);
+          this.set('uploadedAudioMobileId', detail.audioId);
         },
 
         _mobileScrollOffset: function (large, post) {
@@ -780,6 +791,14 @@
             return 600;
           } else {
             return 500;
+          }
+        },
+
+        ready: function () {
+          var ua = navigator.userAgent.toLowerCase();
+          var isAndroid = ua.indexOf("android") > -1;
+          if (isAndroid) {
+            this.set('isAndroid', true);
           }
         },
 
@@ -1083,7 +1102,7 @@
             ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
             ajax.method = 'PUT';
             ajax.body = {
-              videoId: this.currentAudioId,
+              audioId: this.currentAudioId,
               appLanguage: this.language
             };
             ajax.addEventListener('response', function (event, detail) {
@@ -1157,8 +1176,7 @@
             if (videoId)
               this.set('currentVideoId', videoId);
             else if (audioId)
-              this.set('currentAudioId', videoId);
-
+              this.set('currentAudioId', audioId);
           } else {
             window.appUser.loginForNewPoint(this, {content: content, value: value});
           }
