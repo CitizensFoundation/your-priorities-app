@@ -8,7 +8,7 @@
       //this.fire("yp-redirect-to", { path: path });
       window.history.pushState({}, null, path);
       window.dispatchEvent(new CustomEvent('location-changed'));
-      document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-video',data:{}}}));
+      document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
     },
 
     goToPost: function (postIdIn, pointId) {

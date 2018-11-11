@@ -182,9 +182,10 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hidePostActionsInGrid', truthValueFromBody(req.body.hidePostActionsInGrid));
   group.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
+  group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
+
   group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
   group.set('configuration.allowPointVideoUploads', truthValueFromBody(req.body.allowPointVideoUploads));
-  group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
   group.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   group.set('configuration.videoPostUploadLimitSec', (req.body.videoPostUploadLimitSec && req.body.videoPostUploadLimitSec!="") ? req.body.videoPostUploadLimitSec : "60");
   group.set('configuration.videoPointUploadLimitSec', (req.body.videoPointUploadLimitSec && req.body.videoPointUploadLimitSec!="") ? req.body.videoPointUploadLimitSec : "30");
@@ -196,6 +197,23 @@ var updateGroupConfigParamters = function (req, group) {
   if (group.configuration.videoPointUploadLimitSec && parseInt(group.configuration.videoPointUploadLimitSec)) {
     if (parseInt(group.configuration.videoPointUploadLimitSec)>90) {
       group.set('configuration.videoPointUploadLimitSec', 90);
+    }
+  }
+
+  group.set('configuration.allowPostAudioUploads', truthValueFromBody(req.body.allowPostAudioUploads));
+  group.set('configuration.allowPointAudioUploads', truthValueFromBody(req.body.allowPointAudioUploads));
+  group.set('configuration.useAudioCover', truthValueFromBody(req.body.useAudioCover));
+  group.set('configuration.audioPostUploadLimitSec', (req.body.audioPostUploadLimitSec && req.body.audioPostUploadLimitSec!="") ? req.body.audioPostUploadLimitSec : "60");
+  group.set('configuration.audioPointUploadLimitSec', (req.body.audioPointUploadLimitSec && req.body.audioPointUploadLimitSec!="") ? req.body.audioPointUploadLimitSec : "30");
+  if (group.configuration.audioPostUploadLimitSec && parseInt(group.configuration.audioPostUploadLimitSec)) {
+    if (parseInt(group.configuration.audioPostUploadLimitSec)>150) {
+      group.set('configuration.audioPostUploadLimitSec', 150);
+    }
+  }
+
+  if (group.configuration.audioPointUploadLimitSec && parseInt(group.configuration.audioPointUploadLimitSec)) {
+    if (parseInt(group.configuration.audioPointUploadLimitSec)>90) {
+      group.set('configuration.audioPointUploadLimitSec', 90);
     }
   }
 };

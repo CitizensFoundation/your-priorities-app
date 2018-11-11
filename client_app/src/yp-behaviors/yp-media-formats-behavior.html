@@ -15,7 +15,6 @@
       var videoId = videoPlayer.getAttribute('data-id');
       if (this.playStartedAt && videoId) {
         var seconds = (new Date().getTime() - this.playStartedAt.getTime()) / 1000;
-        console.error("Video player for: "+seconds);
         if (seconds>5) {
           window.appGlobals.sendLongVideoView(videoId)
         }
@@ -23,6 +22,21 @@
         this.playStartedAt = null;
       } else if (this.playStartedAt) {
         console.error("Got long view check without id");
+        this.playStartedAt = null;
+      }
+    },
+
+    _checkAudioLongPlayTimeAndReset(audioPlayer) {
+      var audioId = audioPlayer.getAttribute('data-id');
+      if (this.playStartedAt && audioId) {
+        var seconds = (new Date().getTime() - this.playStartedAt.getTime()) / 1000;
+        if (seconds>5) {
+          window.appGlobals.sendLongAudioListen(audioId)
+        }
+        window.appGlobals.activity("completed",'audio',seconds);
+        this.playStartedAt = null;
+      } else if (this.playStartedAt) {
+        console.error("Got long view check without audio id");
         this.playStartedAt = null;
       }
     },
@@ -40,6 +54,7 @@
     attached: function () {
       this.async(function () {
         var videoPlayer = this.$$("#videoPlayer");
+        var audioPlayer = this.$$("#audioPlayer");
         if (videoPlayer) {
           var videoId = videoPlayer.getAttribute('data-id');
           if (videoId) {
@@ -54,24 +69,48 @@
               this._checkVideoLongPlayTimeAndReset(videoPlayer);
             }.bind(this));
           }
+        } else if (audioPlayer) {
+          var audioId = audioPlayer.getAttribute('data-id');
+          if (audioId) {
+            audioPlayer.addEventListener("play", function () {
+              this.set('playStartedAt', new Date());
+              window.appGlobals.sendAudioListen(audioId)
+            }.bind(this));
+            audioPlayer.addEventListener("pause", function () {
+              this._checkAudioLongPlayTimeAndReset(audioPlayer);
+            }.bind(this));
+            audioPlayer.addEventListener("ended", function () {
+              this._checkAudioLongPlayTimeAndReset(audioPlayer);
+            }.bind(this));
+          }
         }
       }, 500);
     },
 
     detached: function () {
       var videoPlayer = this.$$("#videoPlayer");
+      var audioPlayer = this.$$("#audioPlayer");
       if (videoPlayer) {
         videoPlayer.removeEventListener("play");
         videoPlayer.removeEventListener("pause");
         videoPlayer.removeEventListener("ended");
         this._checkVideoLongPlayTimeAndReset(videoPlayer);
+      } else if (audioPlayer) {
+        audioPlayer.removeEventListener("play");
+        audioPlayer.removeEventListener("pause");
+        audioPlayer.removeEventListener("ended");
+        this._checkVideoLongPlayTimeAndReset(audioPlayer);
       }
     },
 
-    _pauseVideo: function () {
+    _pauseMediaPlayback: function () {
       var videoPlayer = this.$$("#videoPlayer");
+      var audioPlayer = this.$$("#audioPlayer");
       if (videoPlayer) {
         videoPlayer.pause();
+      }
+      if (audioPlayer) {
+        audioPlayer.pause();
       }
     },
 
@@ -81,6 +120,17 @@
           videos[0].formats &&
           videos[0].formats.length>0) {
         return videos[0].formats[0];
+      } else {
+        return null;
+      }
+    },
+
+    _getAudioURL: function (audios) {
+      if (audios &&
+          audios.length>0 &&
+          audios[0].formats &&
+          audios[0].formats.length>0) {
+          return audios[0].formats[0];
       } else {
         return null;
       }

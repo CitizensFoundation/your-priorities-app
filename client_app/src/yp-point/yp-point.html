@@ -166,7 +166,7 @@
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-yp-pause-video="_pauseVideo"></lite-signal>
+    <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
 
     <div class="layout vertical">
 
@@ -181,7 +181,13 @@
       <div class="layout vertical">
         <template is="dom-if" if="[[videoActive]]">
           <video id="videoPlayer" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
+        </template>
 
+        <template is="dom-if" if="[[audioActive]]">
+          <audio id="audioPlayer" data-id$="[[pointAudioId]]" controls preload="none" class="audio" src="[[pointAudioPath]]" playsinline></audio>
+        </template>
+
+        <template is="dom-if" if="[[videoOrAudioActive]]">
           <template is="dom-if" if="[[checkingTranscript]]">
             <div class="layout vertical center-center checkTranscript">
               <div>[[t('checkingForTranscript')]]</div>
@@ -202,7 +208,8 @@
             </div>
           </template>
         </template>
-        <template is="dom-if" if="[[!videoActive]]">
+
+        <template is="dom-if" if="[[!videoOrAudioActive]]">
           <div class="point-content">
             <span hidden$="[[!point.name]]">
               <span>[[point.name]]</span>.
@@ -316,6 +323,20 @@
 
         pointVideoId: Number,
 
+        audioActive: {
+          type: Boolean,
+          value: false
+        },
+
+        pointAudioPath: String,
+
+        pointAudioId: Number,
+
+        videoOrAudioActive: {
+          type: Boolean,
+          computed: '_videoOrAudioActive(videoActive, audioActive)'
+        },
+
         checkingTranscript: {
           type: Boolean,
           value: false
@@ -330,6 +351,10 @@
         Polymer.ypGotoBehavior,
         Polymer.ypMediaFormatsBehavior
       ],
+
+      _videoOrAudioActive: function (videoActive, audioActive) {
+        return videoActive || audioActive;
+      },
 
       _isEditingChanged: function (value) {
         this._updateEmojiBindings(value);
@@ -455,12 +480,25 @@
               this.set('checkingTranscript', true);
             }
           } else {
-            this._resetVideo();
+            var audioURL = this._getAudioURL(point.PointAudios);
+            if (audioURL) {
+              this.set('audioActive', true);
+              this.set('pointAudioPath', audioURL);
+              this.set('pointAudioId', point.PointAudios[0].id);
+              this.set('checkTranscriptError', false);
+              if (point.checkTranscriptFor==="audio") {
+                this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/audioTranscriptStatus';
+                this.$.checkTranscriptStatusAjax.generateRequest();
+                this.set('checkingTranscript', true);
+              }
+            } else {
+              this._resetMedia();
+            }
           }
         } else {
           this.set('user', null);
           this.set('checkTranscriptError', false);
-          this._resetVideo();
+          this._resetMedia();
         }
       },
 
@@ -493,11 +531,14 @@
         }
       },
 
-      _resetVideo: function () {
+      _resetMedia: function () {
         this.set('videoActive', false);
         this.set('pointVideoPath', null);
         this.set('pointImageVideoPath', null);
         this.set('pointVideoId', null);
+        this.set('audioActive', false);
+        this.set('pointAudioPath', null);
+        this.set('pointAudioId', null);
       },
 
       loginName: function () {

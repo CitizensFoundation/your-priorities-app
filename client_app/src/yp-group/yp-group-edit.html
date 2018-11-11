@@ -176,6 +176,8 @@
             <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
             <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]</paper-checkbox>
             <paper-checkbox name="allowPointVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPointVideoUploads}}">[[t('allowPointVideoUploads')]]</paper-checkbox>
+            <paper-checkbox name="allowPostAudioUploads" disabled$="[[!hasAudioUpload]]" checked$="{{allowPostAudioUploads}}">[[t('allowPostAudioUploads')]]</paper-checkbox>
+            <paper-checkbox name="allowPointAudioUploads" disabled$="[[!hasAudioUpload]]" checked$="{{allowPointAudioUploads}}">[[t('allowPointAudioUploads')]]</paper-checkbox>
           </div>
         </div>
 
@@ -228,6 +230,26 @@
                      value="{{group.configuration.videoPointUploadLimitSec}}">
         </paper-input>
 
+      <paper-input id="audioPostUploadLimitSec"
+                   name="audioPostUploadLimitSec"
+                   allowed-pattern="[0-9]"
+                   maxlength="3"
+                   type="number"
+                   disabled$="[[!hasaudioUpload]]"
+                   label="[[t('audioPostUploadLimitSec')]]"
+                   value="{{group.configuration.audioPostUploadLimitSec}}">
+      </paper-input>
+
+      <paper-input id="audioPointUploadLimitSec"
+                   name="audioPointUploadLimitSec"
+                   type="text"
+                   maxlength="3"
+                   allowed-pattern="[0-9]"
+                   disabled$="[[!hasaudioUpload]]"
+                   label="[[t('audioPointUploadLimitSec')]]"
+                   value="{{group.configuration.audioPointUploadLimitSec}}">
+      </paper-input>
+
         <div class="layout vertical config">
           <h2>[[t('additionalGroupConfig')]]</h2>
           <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">[[t('attachmentsEnabled')]]</paper-checkbox>
@@ -274,6 +296,8 @@
         <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
         <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
         <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
+        <input type="hidden" name="allowPostAudioUploads" value$="[[allowPostAudioUploads]]">
+        <input type="hidden" name="allowPointAudioUploads" value$="[[allowPointAudioUploads]]">
 
         <paper-input id="alternativePointForHeader"
                      name="alternativePointForHeader"
@@ -436,6 +460,16 @@
         value: null
       },
 
+      allowPostAudioUploads: {
+        type: Boolean,
+        value: null
+      },
+
+      allowPointAudioUploads: {
+        type: Boolean,
+        value: null
+      },
+
       status: String,
 
       publicCommunity: {
@@ -463,6 +497,11 @@
       },
 
       hasVideoUpload: {
+        type: Boolean,
+        value: false
+      },
+
+      hasAudioUpload: {
         type: Boolean,
         value: false
       },
@@ -609,6 +648,8 @@
         this._setFromConfiguration('showWhoPostedPosts');
         this._setFromConfiguration('allowPostVideoUploads', true);
         this._setFromConfiguration('allowPointVideoUploads', true);
+        this._setFromConfiguration('allowPostAudioUploads', true);
+        this._setFromConfiguration('allowPointAudioUploads', true);
 
         this.async(function () {
           if (this.community) {
@@ -640,6 +681,21 @@
           this.set('hasVideoUpload', true);
         } else {
           this.set('hasVideoUpload', false);
+        }
+
+        if ((!group || !group.id) && window.appGlobals.hasAudioUpload) {
+          if (this.allowPostAudioUploads===null) {
+            this.set('allowPostAudioUploads', true);
+          }
+          if (this.allowPointAudioUploads===null) {
+            this.set('allowPointAudioUploads', true);
+          }
+        }
+
+        if (window.appGlobals.hasAudioUpload) {
+          this.set('hasAudioUpload', true);
+        } else {
+          this.set('hasAudioUpload', false);
         }
       }
 

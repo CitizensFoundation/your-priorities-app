@@ -1,0 +1,200 @@
+var express = require('express');
+var router = express.Router();
+var models = require("../models");
+var multer  = require('multer');
+var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
+var auth = require('../authorization');
+var log = require('../utils/logger');
+var toJson = require('../utils/to_json');
+var queue = require('../active-citizen/workers/queue');
+
+var isAuthenticated = function (req, res, next) {
+  if (req.isAuthenticated())
+    return next();
+  res.status(401).send('Unauthorized');
+};
+
+var loadPointWithAll = function (pointId, callback) {
+  models.Point.find({
+    where: {
+      id: pointId
+    },
+    order: [
+      [ models.PointRevision, 'created_at', 'asc' ],
+      [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+    ],
+    include: [
+      { model: models.User,
+        attributes: ["id", "name", "email", "facebook_id", "twitter_id", "google_id", "github_id"],
+        required: false,
+        include: [
+          {
+            model: models.Image, as: 'UserProfileImages',
+            required: false
+          },
+          {
+            model: models.Organization,
+            as: 'OrganizationUsers',
+            required: false,
+            attributes: ['id', 'name'],
+            include: [
+              {
+                model: models.Image,
+                as: 'OrganizationLogoImages',
+                attributes: ['id', 'formats'],
+                required: false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        model: models.PointRevision,
+        required: false
+      },
+      { model: models.PointQuality,
+        required: false,
+        include: [
+          { model: models.User,
+            attributes: ["id", "name", "email"],
+            required: false
+          }
+        ]
+      },
+      {
+        model: models.Audio,
+        required: false,
+        attributes: ['id','formats','updated_at','listenable','public_data'],
+        as: 'PointAudios'
+      },
+      {
+        model: models.Post,
+        required: false,
+        attributes: ['id','group_id'],
+        include: [
+          {
+            model: models.Group,
+            attributes: ['id','configuration'],
+            required: false
+          }
+        ]
+      }
+    ]
+  }).then(function(point) {
+    if (point) {
+      callback(null, point);
+    } else {
+      callback("Can't find point");
+    }
+  }).catch(function(error) {
+    callback(error);
+  });
+};
+
+router.get('/hasAudioUploadSupport', (req, res) => {
+  res.send({
+    hasAudioUploadSupport: (process.env.S3_AUDIO_UPLOAD_BUCKET!=null &&
+                            process.env.S3_AUDIO_PUBLIC_BUCKET!=null &&
+                            process.env.AWS_TRANSCODER_AUDIO_PIPELINE_ID!=null &&
+                            process.env.AWS_TRANSCODER_AUDIOPRESET_ID!=null &&
+                            process.env.AWS_TRANSCODER_FLAC_PRESET_ID!=null)
+  })
+});
+
+router.put('/audioView', (req, res) => {
+  models.Audio.find({
+    where: {
+      id: req.body.audioId
+    }
+  }).then((audio) => {
+    if (audio) {
+      if (req.body.longPlaytime) {
+        audio.increment('long_listens');
+      } else {
+        audio.increment('listens');
+      }
+    } else {
+      log.error("Did not find audio for view increment");
+    }
+    res.sendStatus(200);
+  }).catch((error) => {
+    log.error("Error setting audio increment", { error });res.sendStatus(200);
+  });
+});
+
+router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
+  models.Audio.createAndGetSignedUploadUrl(req, res);
+});
+
+router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
+  models.Audio.completeUploadAndAddToCollection(req, res, { postId: req.params.postId, audioId: req.body.audioId });
+});
+
+router.put('/:pointId/completeAndAddToPoint', auth.can('edit point'), (req, res) => {
+  models.Audio.completeUploadAndAddToPoint(req, res, { pointId: req.params.pointId, audioId: req.body.audioId }, (error) => {
+    if (error) {
+      log.error("Error adding point to audio", { error });
+      res.sendStatus(500);
+    } else {
+      loadPointWithAll(req.params.pointId, (error, point) => {
+        if (error) {
+          log.error("Error loading point ", { error });
+          res.sendStatus(500);
+        } else {
+          if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+            const workPackage = { browserLanguage: req.headers["accept-language"] ? req.headers["accept-language"].split(',')[0] : 'en-US',
+                                  appLanguage: req.body.appLanguage,
+                                  audioId: req.body.audioId,
+                                  type: 'create-audio-transcript' };
+            queue.create('process-voice-to-text', workPackage).priority('high').removeOnComplete(true).save();
+          }
+          res.send(point);
+        }
+      });
+    }
+  });
+});
+
+router.post('/:audioId/startTranscoding', auth.isLoggedIn, (req, res) => {
+  const options = {
+    audioPostUploadLimitSec: req.body.audioPostUploadLimitSec,
+    audioPointUploadLimitSec: req.body.audioPointUploadLimitSec,
+  };
+
+  models.Audio.find({
+    where: {
+      id: req.params.audioId
+    }
+  }).then((audio) => {
+    if (audio && audio.user_id===req.user.id) {
+      models.Audio.startTranscoding(audio, options, req, res);
+    } else {
+      log.error("Can't find audio or not same user", { audioUserId: audio ? audio.user_id : -1, userId: req.user.id });
+      res.sendStatus(404);
+    }
+  }).catch((error) => {
+    log.error("Error getting audio", { error });
+    res.sendStatus(500);
+  });
+});
+
+router.put('/:audioId/getTranscodingJobStatus', auth.isLoggedIn, (req, res) => {
+  models.Audio.find({
+    where: {
+      id: req.params.audioId
+    }
+  }).then((audio) => {
+    if (audio && audio.user_id===req.user.id) {
+      models.Audio.getTranscodingJobStatus(audio, req, res);
+    } else {
+      log.error("Can't find audio or not same user", { audioUserId: audio ? audio.user_id : -1, userId: req.user.id });
+      res.sendStatus(404);
+    }
+  }).catch((error) => {
+    log.error("Error getting audio", { error });
+    res.sendStatus(500);
+  });
+});
+
+module.exports = router;

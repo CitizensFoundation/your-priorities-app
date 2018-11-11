@@ -18,7 +18,9 @@
 
     <yp-ajax id="boot" url="/api/domains" on-response="_bootResponse"></yp-ajax>
     <yp-ajax hidden auto url="/api/videos/hasVideoUploadSupport" on-response="_hasVideoUploadSupport"></yp-ajax>
+    <yp-ajax hidden auto url="/api/audios/hasAudioUploadSupport" on-response="_hasAudioUploadSupport"></yp-ajax>
     <yp-ajax id="videoViewsAjax" hidden method="PUT" url="/api/videos/videoView"></yp-ajax>
+    <yp-ajax id="audioListenAjax" hidden method="PUT" url="/api/audios/audioListen"></yp-ajax>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
   </template>
 
@@ -153,6 +155,23 @@
         sendLongVideoView: function (videoId) {
           this.$.videoViewsAjax.body = { videoId: videoId, longPlaytime: true };
           this.$.videoViewsAjax.generateRequest();
+        },
+
+        _hasAudioUploadSupport: function (event, detail) {
+          if (detail && detail.response && detail.response.hasAudioUploadSupport===true) {
+            window.appGlobals.hasAudioUpload = true;
+          }
+        },
+
+        sendAudioListen: function (audioId) {
+          this.$.audioListenAjax.body = { audioId: audioId };
+          this.$.audioListenAjax.generateRequest();
+          this.activity('view', 'audio', audioId);
+        },
+
+        sendLongAudioListen: function (audioId) {
+          this.$.audioListenAjax.body = { audioId: audioId, longPlaytime: true };
+          this.$.audioListenAjax.generateRequest();
         },
 
         changeLocaleIfNeededAfterWait: function (locale, force) {

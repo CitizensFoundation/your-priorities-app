@@ -437,6 +437,58 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
   });
 });
 
+router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, res) {
+  loadPointWithAll(req.params.id, (error, point) => {
+    if (error) {
+      sendPointOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+    } else if (point.PointAudios && point.PointAudios.length>0) {
+      models.Audio.find({
+        where: {
+          id: point.PointAudios[0].id
+        }
+      }).then( audio => {
+        if (audio.meta.transcript && audio.meta.transcript.text) {
+          point.save().then( savedPoint => {
+            var pointRevision = models.PointRevision.build({
+              group_id: savedPoint.group_id,
+              post_id: savedPoint.post_id,
+              content: audio.meta.transcript.text,
+              user_id: req.user.id,
+              status: savedPoint.status,
+              value: savedPoint.value,
+              point_id: savedPoint.id,
+              user_agent: req.useragent.source,
+              ip_address: req.clientIp
+            });
+            pointRevision.save().then( () => {
+              loadPointWithAll(point.id, function (error, loadedPoint) {
+                if (error) {
+                  log.error('Could not reload point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
+                  res.sendStatus(500);
+                } else {
+                  res.send({point: loadedPoint});
+                }
+              });
+            }).catch( error => {
+              sendPointOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+            });
+          }).catch( error => {
+            sendPointOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+          });
+        } else if (audio.meta.transcript && audio.meta.transcript.error) {
+          res.send({ error: audio.meta.transcript.error });
+        } else {
+          res.send({ inProgress: true });
+        }
+      }).catch( error => {
+        sendPointOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+      });
+    } else {
+      sendPointOrError(res, req.params.id, 'audioTranscriptStatus', req.user, "No audio for audioTranscriptStatus", 500);
+    }
+  });
+});
+
 router.post('/:groupId', auth.can('create point'), function(req, res) {
   if (!req.body.content) {
     req.body.content="";

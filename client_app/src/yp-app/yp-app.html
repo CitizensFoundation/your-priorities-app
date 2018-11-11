@@ -724,7 +724,7 @@
         }
 
         this.set('this.keepOpenForPost', null);
-        document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-video',data:{}}}));
+        document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
       },
 
       _closePostHeader: function (page, keepOpenForPost) {
@@ -862,7 +862,7 @@
       goBack: function (event, detail) {
         if (this.backPath) {
           if (this.useHardBack) {
-            document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-video',data:{}}}));
+            document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
             window.location = this.backPath;
           } else {
             this.redirectTo(this.backPath);

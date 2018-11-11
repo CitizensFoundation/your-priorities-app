@@ -301,6 +301,15 @@
                     <div>[[t('postCoverVideoInfo')]] <b>[[group.configuration.videoPostUploadLimitSec]] [[t('seconds')]].</b></div>
                   </div>
                 </template>
+                <template is="dom-if" if="[[group.configuration.allowPostAudioUploads]]">
+                  <div class="layout vertical uploadSection">
+                    <yp-file-upload id="audioFileUpload" container-type="posts" group="[[group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioUploaded">
+                      <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                      <span>[[t('uploadAudio')]]</span>
+                    </yp-file-upload>
+                    <div>[[t('postCoverAudioInfo')]] <b>[[group.configuration.audioPostUploadLimitSec]] [[t('seconds')]].</b></div>
+                  </div>
+                </template>
               </div>
               <br>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
@@ -308,6 +317,7 @@
                 <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
                 <paper-radio-button name="image" hidden$="[[!uploadedHeaderImageId]]">[[t('post.cover.image')]]</paper-radio-button>
                 <paper-radio-button name="video" hidden$="[[!uploadedVideoId]]">[[t('postCoverVideo')]]</paper-radio-button>
+                <paper-radio-button name="audio" hidden$="[[!uploadedAudioId]]">[[t('postCoverAudio')]]</paper-radio-button>
                 <template is="dom-if" if="[[location]]">
                   <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
                   <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
@@ -406,6 +416,11 @@
         value: null
       },
 
+      uploadedAudioId: {
+        type: String,
+        value: null
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -437,6 +452,11 @@
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
       this.set('selectedCoverMediaType','video');
+    },
+
+    _audioUploaded: function (event, detail) {
+      this.set('uploadedAudioId', detail.audioId);
+      this.set('selectedCoverMediaType','audio');
     },
 
     _documentUploaded: function (event, detail) {
@@ -620,15 +640,30 @@
         if (post.newEndorsement && window.appUser && window.appUser.endorsementPostsIndex) {
           window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
         }
+        var ajax;
         if (this.uploadedVideoId) {
           this.post = post;
-          var ajax = document.createElement('iron-ajax');
+          ajax = document.createElement('iron-ajax');
           ajax.handleAs = 'json';
           ajax.contentType = 'application/json';
           ajax.url = '/api/videos/'+this.post.id+'/completeAndAddToPost';
           ajax.method = 'PUT';
           ajax.body = {
             videoId: this.uploadedVideoId
+          };
+          ajax.addEventListener('response', function (event) {
+            this._finishRedirect(post);
+          }.bind(this));
+          ajax.generateRequest();
+        } else if (this.uploadedAudioId) {
+          this.post = post;
+          ajax = document.createElement('iron-ajax');
+          ajax.handleAs = 'json';
+          ajax.contentType = 'application/json';
+          ajax.url = '/api/audios/'+this.post.id+'/completeAndAddToPost';
+          ajax.method = 'PUT';
+          ajax.body = {
+            audioId: this.uploadedAudioId
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);
@@ -656,6 +691,7 @@
         this.set('selected', 0);
         this.set('uploadedHeaderImageId', null);
         this.set('uploadedVideoId', null);
+        this.set('uploadedAudioId', null);
         this.$$("#imageFileUpload").clear();
         this.set('selectedCoverMediaType', 'none');
       }
@@ -667,6 +703,10 @@
         this.set('post', post);
         if (post.PostVideos && post.PostVideos.length>0) {
           this.set('uploadedVideoId', post.PostVideos[0].id)
+        }
+
+        if (post.PostAudios && post.PostAudios.length>0) {
+          this.set('uploadedAudioId', post.PostAudios[0].id)
         }
       } else {
         this.set('post', null);
