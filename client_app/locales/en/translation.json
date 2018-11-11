@@ -1,4 +1,6 @@
 {
+  "transcodingAudio": "Preparing audio...",
+  "uploadingAudio": "Uploading audio...",
   "automaticTranscript": "Machine generated transcript",
   "checkTranscriptError": "Could not automatically create a transcript",
   "checkingForTranscript": "Creating a transcript from speech...",

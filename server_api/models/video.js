@@ -14,6 +14,7 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
     meta: DataTypes.JSONB,
+    public_meta: DataTypes.JSONB,
     formats: DataTypes.JSONB,
     views:{ type: DataTypes.BIGINT, defaultValue: 0 },
     long_views:{ type: DataTypes.BIGINT, defaultValue: 0 },
@@ -42,6 +43,11 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         fields: ['meta'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['public_meta'],
         using: 'gin',
         operator: 'jsonb_path_ops'
       },

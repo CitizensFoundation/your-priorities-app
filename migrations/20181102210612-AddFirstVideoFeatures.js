@@ -7,8 +7,19 @@ module.exports = {
       await queryInterface.addIndex('points', {
         fields: ['data'],
         using: 'gin',
-        operator: 'jsonb_path_ops',
-        name: 'points_data_index',
+        operator: 'jsonb_path_ops'
+      }),
+      await queryInterface.addColumn('points','public_data', { type: Sequelize.JSONB, allowNull: true }),
+      await queryInterface.addIndex('points', {
+        fields: ['public_data'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      }),
+      await queryInterface.addColumn('posts','public_data', { type: Sequelize.JSONB, allowNull: true }),
+      await queryInterface.addIndex('posts', {
+        fields: ['public_data'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
       }),
       await queryInterface.createTable(
         'videos',
@@ -27,6 +38,7 @@ module.exports = {
           name: Sequelize.STRING,
           description: Sequelize.TEXT,
           meta: Sequelize.JSONB,
+          public_meta: Sequelize.JSONB,
           formats: Sequelize.JSONB,
           views: { type: Sequelize.BIGINT, defaultValue: 0 },
           long_views: { type: Sequelize.BIGINT, defaultValue: 0 },
@@ -40,14 +52,17 @@ module.exports = {
       await queryInterface.addIndex('videos', {
         fields: ['meta'],
         using: 'gin',
-        operator: 'jsonb_path_ops',
-        name: 'videos_meta_index'
+        operator: 'jsonb_path_ops'
+      }),
+      await queryInterface.addIndex('videos', {
+        fields: ['public_meta'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
       }),
       await queryInterface.addIndex('videos', {
         fields: ['formats'],
         using: 'gin',
-        operator: 'jsonb_path_ops',
-        name: 'videos_formats_index',
+        operator: 'jsonb_path_ops'
       }),
       await queryInterface.addIndex('videos', ['user_id', 'viewable', 'deleted']),
 
@@ -68,6 +83,7 @@ module.exports = {
           name: Sequelize.STRING,
           description: Sequelize.TEXT,
           meta: Sequelize.JSONB,
+          public_meta: Sequelize.JSONB,
           formats: Sequelize.JSONB,
           listens: { type: Sequelize.BIGINT, defaultValue: 0 },
           long_listens: { type: Sequelize.BIGINT, defaultValue: 0 },
@@ -81,14 +97,17 @@ module.exports = {
       await queryInterface.addIndex('audios', {
         fields: ['meta'],
         using: 'gin',
-        operator: 'jsonb_path_ops',
-        name: 'audios_meta_index'
+        operator: 'jsonb_path_ops'
+      }),
+      await queryInterface.addIndex('audios', {
+        fields: ['public_meta'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
       }),
       await queryInterface.addIndex('audios', {
         fields: ['formats'],
         using: 'gin',
-        operator: 'jsonb_path_ops',
-        name: 'audios_formats_index',
+        operator: 'jsonb_path_ops'
       }),
       await queryInterface.addIndex('audios', ['user_id', 'listenable', 'deleted']),
       await queryInterface.createTable(

@@ -182,6 +182,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 },
     embed_data: DataTypes.JSONB,
     data: DataTypes.JSONB,
+    public_data: DataTypes.JSONB,
     language: { type: DataTypes.STRING, allowNull: true }
   }, {
 
@@ -200,6 +201,11 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['data'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
+      {
+        fields: ['public_data'],
         using: 'gin',
         operator: 'jsonb_path_ops'
       },
@@ -250,6 +256,7 @@ module.exports = function(sequelize, DataTypes) {
         Point.hasMany(sequelize.models.PointRevision);
         Point.hasMany(sequelize.models.PointQuality);
         Point.belongsToMany(models.Video, { as: 'PointVideos', through: 'PointVideo' });
+        Point.belongsToMany(models.Audio, { as: 'PointAudios', through: 'PointAudio' });
       },
 
       createComment: function (req, options, callback) {

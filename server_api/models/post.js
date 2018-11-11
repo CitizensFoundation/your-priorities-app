@@ -2,8 +2,6 @@ var async = require("async");
 
 "use strict";
 
-// https://www.npmjs.org/package/enum for state of posts
-
 module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define("Post", {
     content_type: { type: DataTypes.INTEGER, allowNull: false },
@@ -25,6 +23,7 @@ module.exports = function(sequelize, DataTypes) {
     counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_impressions: { type: DataTypes.INTEGER, defaultValue: 0 },
     data: DataTypes.JSONB,
+    public_data: DataTypes.JSONB,
     position: DataTypes.INTEGER,
     location: DataTypes.JSONB,
     cover_media_type: DataTypes.STRING,
@@ -46,7 +45,6 @@ module.exports = function(sequelize, DataTypes) {
           status: 'published'
         }
       },
-
       {
         name: 'published_by_official_status_w_category',
         fields: ['group_id', 'official_status', 'deleted', 'category_id'],
@@ -54,29 +52,29 @@ module.exports = function(sequelize, DataTypes) {
           status: 'published'
         }
       },
-
       {
         name: 'all_statuses_by_official_status',
         fields: ['group_id', 'official_status','deleted','status']
       },
-
       {
         name: 'all_statuses_by_official_status_w_category',
         fields: ['group_id', 'official_status', 'deleted', 'status', 'category_id']
       },
-
       {
         fields: ['data'],
         using: 'gin',
         operator: 'jsonb_path_ops'
       },
-
+      {
+        fields: ['public_data'],
+        using: 'gin',
+        operator: 'jsonb_path_ops'
+      },
       {
         fields: ['location'],
         using: 'gin',
         operator: 'jsonb_path_ops'
       },
-
       {
         fields: ['user_interaction_profile'],
         using: 'gin',
@@ -166,6 +164,7 @@ module.exports = function(sequelize, DataTypes) {
         Post.belongsToMany(models.Image, { as: 'PostHeaderImages', through: 'PostHeaderImage' });
         Post.belongsToMany(models.Image, { as: 'PostUserImages', through: 'PostUserImage' });
         Post.belongsToMany(models.Video, { as: 'PostVideos', through: 'PostVideo' });
+        Post.belongsToMany(models.Audio, { as: 'PostAudios', through: 'PostAudio' });
       },
 
       getSearchVector: function() {

@@ -284,7 +284,14 @@ Example:
         value: false
       },
 
+      audioUpload: {
+        type: Boolean,
+        value: false
+      },
+
       currentVideoId: Number,
+
+      currentAudioId: Number,
 
       transcodingJobId: Number,
 
@@ -322,6 +329,7 @@ Example:
       this._showDropText();
       this.set('uploadStatus', null);
       this.set('currentVideoId', null);
+      this.set('currentAudioId', null);
       this.set('currentFile', null);
       this.set('transcodingJobId', null);
       this.set('indeterminateProgress', false);
@@ -340,6 +348,8 @@ Example:
       }
       if (this.videoUpload) {
         this.set('accept','video/*')
+      } else if (this.audioUpload) {
+        this.set('accept','audio/*')
       }
     },
 
@@ -448,21 +458,32 @@ Example:
     },
 
     uploadFile: function (file) {
-      if (this.videoUpload) {
-        window.appGlobals.activity('starting', 'videoUpload');
-        this.set('uploadStatus', this.t("uploadingVideo"));
+      if (this.videoUpload || this.audioUpload) {
         this.set('indeterminateProgress', true);
         this.currentFile = file;
-        this.headers =  {"Content-Type": 'video/mp4'};
         var ajax = document.createElement('iron-ajax');
         ajax.handleAs = 'json';
         ajax.contentType = 'application/json';
-        ajax.url = '/api/videos/createAndGetPreSignedUploadUrl';
+
+        if (this.videoUpload) {
+          window.appGlobals.activity('starting', 'videoUpload');
+          this.set('uploadStatus', this.t("uploadingVideo"));
+          this.headers =  {"Content-Type": 'video/mp4'};
+          ajax.url = '/api/videos/createAndGetPreSignedUploadUrl';
+        } else {
+          window.appGlobals.activity('starting', 'audioUpload');
+          this.set('uploadStatus', this.t("uploadingAudio"));
+          this.headers =  {"Content-Type": 'audio/mp4'};
+          ajax.url = '/api/audios/createAndGetPreSignedUploadUrl';
+        }
         ajax.method = 'POST';
         ajax.body = {};
         ajax.addEventListener('response', function (event) {
           this.target = event.detail.response.presignedUrl;
-          this.set('currentVideoId',  event.detail.response.videoId);
+          if (this.videoUpload)
+            this.set('currentVideoId',  event.detail.response.videoId);
+          else
+            this.set('currentAudioId',  event.detail.response.audioId);
           this.method = "PUT";
           this.set('indeterminateProgress', false);
           this.reallyUploadFile(this.currentFile);
@@ -486,7 +507,10 @@ Example:
       if (detail.response.status==="Complete") {
         this.set(prefix + ".complete", true);
         this.set('uploadStatus', this.t('uploadCompleted'));
-        this.fire("success", { detail: detail, videoId: this.currentVideoId });
+        if (this.videoUpload)
+          this.fire("success", { detail: detail, videoId: this.currentVideoId });
+        else
+          this.fire("success", { detail: detail, audioId: this.currentAudioId });
         this.fire('file-upload-complete');
         window.appGlobals.activity('complete', 'mediaTranscoding');
       } else if (detail.error) {
@@ -503,7 +527,10 @@ Example:
     },
 
     _startTranscodeResponse: function (event, detail) {
-      this.$.transcodePollingAjax.url = '/api/videos/'+this.currentVideoId+'/getTranscodingJobStatus';
+      if (this.videoUpload)
+        this.$.transcodePollingAjax.url = '/api/videos/'+this.currentVideoId+'/getTranscodingJobStatus';
+      else
+        this.$.transcodePollingAjax.url = '/api/audios/'+this.currentAudioId+'/getTranscodingJobStatus';
       this.$.transcodePollingAjax.body = { jobId: detail.response.transcodingJobId };
       this._checkTranscodingJob();
     },
@@ -562,6 +589,26 @@ Example:
             this.$.startTranscodeAjax.generateRequest();
             window.appGlobals.activity('complete', 'videoUpload');
             window.appGlobals.activity('start', 'mediaTranscoding');
+          } else if (this.audioUpload) {
+            this.set('indeterminateProgress', true);
+            this.set('uploadStatus', this.t("transcodingAudio"));
+            this.$.startTranscodeAjax.url = '/api/audios/'+this.currentAudioId+'/startTranscoding';
+            let options;
+            if (this.containerType==="posts") {
+              options = {
+                audioPostUploadLimitSec: this.group.configuration.audioPostUploadLimitSec
+              }
+            } else if (this.containerType==="points") {
+              options = {
+                audioPointUploadLimitSec: this.group.configuration.audioPointUploadLimitSec
+              }
+            } else {
+              options = {}
+            }
+            this.$.startTranscodeAjax.body = options;
+            this.$.startTranscodeAjax.generateRequest();
+            window.appGlobals.activity('complete', 'audioUpload');
+            window.appGlobals.activity('start', 'mediaTranscoding');
           } else {
             this.set('uploadStatus', this.t('uploadCompleted'));
             self.fire('file-upload-complete');
@@ -580,7 +627,7 @@ Example:
         }
       }.bind(this);
 
-      if (this.videoUpload) {
+      if (this.videoUpload || this.audioUpload) {
         xhr.send(file)
       } else {
         xhr.send(formData);
