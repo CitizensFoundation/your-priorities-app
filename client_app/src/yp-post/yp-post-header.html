@@ -125,7 +125,7 @@
         margin-bottom: 48px;
       }
 
-      paper-icon-button {
+      paper-icon-button.moreVert {
         position: absolute;
         top: 0;
         right: 0;
@@ -266,7 +266,7 @@
       }
 
 
-      #pointContentEditor {
+      #postTranscriptionEditor {
         padding-left: 8px;
         padding-right: 8px;
       }
@@ -342,14 +342,14 @@
                                      content="[[post.public_data.transcript.text]]" content-id="[[post.id]]">
                       </yp-magic-text>
                     </div>
+                    <template is="dom-if" if="[[hasPostAccess]]">
+                      <div class="layout horizontal" hidden$="[[isEditing]]">
+                        <div class="flex"></div>
+                        <yp-ajax id="editPostTranscriptAjax" method="PUT" on-response="_editPostTranscriptResponse"></yp-ajax>
+                        <paper-icon-button title$="[[t('edit')]]" icon="create" on-tap="_editPostTranscript"></paper-icon-button>
+                      </div>
+                    </template>
                   </div>
-                  <template is="dom-if" if="[[hasPostAccess]]">
-                    <div class="layout horizontal">
-                      <div class="flesx"></div>
-                      <yp-ajax id="editPostTranscriptAjax" method="PUT" on-response="_editPostTranscriptResponse"></yp-ajax>
-                      <paper-icon-button title$="[[t('edit')]]" icon="create" on-tap="_editPostTranscript"></paper-icon-button>
-                    </div>
-                  </template>
                 </template>
                 <template is="dom-if" if="[[isEditing]]" restamp>
                   <div class="layout vertical" hidden$="[[!hasPostAccess]]">
@@ -381,7 +381,7 @@
             <template is="dom-if" if="[[headerMode]]">
               <template is="dom-if" if="[[loggedInUser]]">
                 <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
-                  <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                  <paper-icon-button class="moreVert" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
                   <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                     <template is="dom-if" if="[[hasPostAccess]]">
                       <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
@@ -497,19 +497,20 @@
       },
 
       _saveEdit: function () {
-        this.$$("#editPostTranscriptAjax").url = "/api/post/"+this.post.id+'/editTranscript';
+        this.$$("#editPostTranscriptAjax").url = "/api/posts/"+this.post.id+'/editTranscript';
         this.$$("#editPostTranscriptAjax").body = { content: this.editText };
         this.$$("#editPostTranscriptAjax").generateRequest();
       },
 
-      _editResponse: function (event, detail) {
+      _editPostTranscriptResponse: function (event, detail) {
         if (detail.response) {
-          this.set('post.public_data.transcript', detail.response);
+          this.set('post.public_data.transcript.text', this.editText);
+          this.set('post.public_data.transcript.userEdited', true);
         }
         this.set('isEditing', false);
       },
 
-      _editPoint: function () {
+      _editPostTranscript: function () {
         if (this.hasPostAccess) {
           this.set('editText', this.post.public_data.transcript.text);
           this.set('isEditing', true);

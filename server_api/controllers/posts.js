@@ -617,6 +617,29 @@ var updatePostData = function (req, post) {
   }
 };
 
+router.put('/:id/editTranscript', auth.can('edit post'), function (req, res) {
+  models.Post.find({
+    where: {
+      id: req.params.id
+    }
+  }).then( post => {
+    if (post) {
+      post.set('public_data.transcript.text', req.body.content);
+      post.set('public_data.transcript.userEdited', true);
+      post.save().then( () => {
+        res.sendStatus(200);
+      }).catch( error => {
+        sendPostOrError(res, req.params.id, 'editTranscript', req.user, error, 500);
+      });
+    } else {
+      sendPostOrError(res, req.params.id, 'editTranscript', req.user, "Not found", 404);
+    }
+
+  }).catch( error => {
+    sendPostOrError(res, req.params.id, 'editTranscript', req.user, error, 500);
+  })
+});
+
 router.post('/:groupId', auth.can('create post'), function(req, res) {
   var post = models.Post.build({
     name: req.body.name,
