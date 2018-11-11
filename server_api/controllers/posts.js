@@ -172,6 +172,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
       [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
       [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
@@ -248,6 +249,12 @@ router.get('/:id', auth.can('view post'), function(req, res) {
             required: false
           },
         ]
+      },
+      {
+        model: models.Audio,
+        required: false,
+        attributes: ['id','formats','updated_at','listenable'],
+        as: 'PostAudios',
       },
       // PointRevision
       {
@@ -393,6 +400,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         [ models.PointRevision, 'created_at', 'asc' ],
         [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
         [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
+        [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
         [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
           [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
       ],
@@ -440,6 +448,12 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
             },
           ]
         },
+        {
+          model: models.Audio,
+          required: false,
+          attributes: ['id','formats','updated_at','listenable'],
+          as: 'PointAudios'
+        },
         { model: models.PointQuality,
           attributes: { exclude: ['ip_address', 'user_agent'] },
           required: false,
@@ -482,6 +496,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
       [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
       [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
       [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
     ],
@@ -539,6 +554,12 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
             required: false
           },
         ]
+      },
+      {
+        model: models.Audio,
+        required: false,
+        attributes: ['id','formats','updated_at','listenable'],
+        as: 'PointAudios'
       },
       {
         model: models.Post,

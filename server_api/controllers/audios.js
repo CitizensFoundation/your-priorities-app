@@ -97,12 +97,12 @@ router.get('/hasAudioUploadSupport', (req, res) => {
     hasAudioUploadSupport: (process.env.S3_AUDIO_UPLOAD_BUCKET!=null &&
                             process.env.S3_AUDIO_PUBLIC_BUCKET!=null &&
                             process.env.AWS_TRANSCODER_AUDIO_PIPELINE_ID!=null &&
-                            process.env.AWS_TRANSCODER_AUDIOPRESET_ID!=null &&
+                            process.env.AWS_TRANSCODER_AUDIO_PRESET_ID!=null &&
                             process.env.AWS_TRANSCODER_FLAC_PRESET_ID!=null)
   })
 });
 
-router.put('/audioView', (req, res) => {
+router.put('/audioListen', (req, res) => {
   models.Audio.find({
     where: {
       id: req.body.audioId

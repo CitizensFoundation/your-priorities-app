@@ -40,6 +40,7 @@ var categories = require('./controllers/categories');
 var images = require('./controllers/images');
 var bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
 var videos = require('./controllers/videos');
+var audios = require('./controllers/audios');
 
 var legacyPosts = require('./controllers/legacyPosts');
 var legacyUsers = require('./controllers/legacyUsers');
@@ -287,6 +288,7 @@ app.use('/api/posts', posts);
 app.use('/api/points', points);
 app.use('/api/images', images);
 app.use('/api/videos', videos);
+app.use('/api/audios', audios);
 app.use('/api/categories', categories);
 app.use('/api/users', users);
 app.use('/api/news_feeds', news_feeds);

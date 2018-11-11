@@ -910,7 +910,7 @@
           this.set('downPoints', null);
           this.set('latestPointCreatedAt', null);
           this._clearVideo();
-          this._audioVideo();
+          this._clearAudio();
 
           if (newPost) {
             if (this.host) {
@@ -1121,7 +1121,7 @@
             window.appGlobals.activity('completed', 'newPointAgainst');
           }
           this._clearVideo();
-          this._audioVideo();
+          this._clearAudio();
         },
 
         addPointUp: function () {

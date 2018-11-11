@@ -154,7 +154,7 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          video_id: {
+          audio_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'audios',
@@ -214,7 +214,7 @@ module.exports = {
           updated_at: {
             type: Sequelize.DATE
           },
-          video_id: {
+          audio_id: {
             type: Sequelize.INTEGER,
             references: {
               model: 'audios',

@@ -678,6 +678,8 @@ auth.entity('post', function(req, done) {
   if (!match)
     match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match)
+    match = req.originalUrl.match(/audios\/(\w+)/);
+  if (!match)
     done(new Error('Expected url like /posts/:postId or /images/:postId'));
   if (match) {
     var post = { id: match[1] };
@@ -967,6 +969,8 @@ auth.entity('point', function(req, done) {
   var match = req.originalUrl.match(/points\/(\w+)/);
   if (!match)
     match = req.originalUrl.match(/videos\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/audios\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /points/:pointId'));
   } else {

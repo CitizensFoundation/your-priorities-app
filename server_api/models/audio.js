@@ -120,8 +120,8 @@ module.exports = function(sequelize, DataTypes) {
       addToCollection: (audio, options, callback) => {
         if (options.postId) {
           sequelize.models.Audio.addToPost(audio, options.postId, callback);
-        } else if (options.pointId) {
-          sequelize.models.Audio.addToPoint(audio, options.pointId, callback);
+        } else {
+          callback("No collection to add to")
         }
       },
 

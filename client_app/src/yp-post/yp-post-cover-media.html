@@ -107,6 +107,32 @@
         margin-top: -68px;
         margin-left: 8px;
       }
+
+      .voiceIcon {
+        height: 42px;
+        width: 42px;
+        color: #333;
+        margin-top: 96px;
+      }
+
+      @media (max-width: 600px) {
+        .voiceIcon {
+          height: 42px;
+          width: 42px;
+          color: #333;
+          margin-top: 64px;
+        }
+      }
+
+      audio {
+        margin-top: 16px;
+        margin-bottom: 8px;
+      }
+
+      .playInfo {
+        font-style: italic;
+      }
+
     </style>
 
     <div class="mapCanvas">
@@ -141,6 +167,18 @@
           <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
           <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
         </template>
+      </template>
+
+      <template is="dom-if" if="[[audioActive]]">
+        <template is="dom-if" if="[[showAudio]]">
+          <div class="layout vertical center-center">
+            <audio id="audioPlayer" data-id$="[[postAudioId]]" header-mode$="[[headerMode]]" controls preload="meta" class="pointer" src="[[postAudioPath]]" hidden$="[[!postAudioPath]]" playsinline></audio>
+            <div class="playInfo">[[t('playVoiceRecording')]]</div>
+          </div>
+        </template>
+        <div hidden$="[[showAudio]]" class="layout horizontal center-center pointer" on-tap="goToPost">
+          <iron-icon icon="keyboard-voice" class="voiceIcon"></iron-icon>
+        </div>
       </template>
 
       <template is="dom-if" if="[[!disableMaps]]">
@@ -231,6 +269,12 @@
           computed: '_isVideoActive(post)'
         },
 
+        audioActive: {
+          type: Boolean,
+          value: false,
+          computed: '_isAudioActive(post)'
+        },
+
         mapActive: {
           type: Boolean,
           value: false,
@@ -290,6 +334,13 @@
 
         postVideoId: Number,
 
+        postAudioPath: {
+          type: String,
+          computed: '_postAudioPath(post)'
+        },
+
+        postAudioId: Number,
+
         headerMode: {
           type: Boolean,
           value: false,
@@ -337,6 +388,11 @@
         },
 
         showVideo: {
+          type: Boolean,
+          value: false
+        },
+
+        showAudio: {
           type: Boolean,
           value: false
         }
@@ -404,6 +460,14 @@
 
       _isVideoActive: function (post) {
         if (this._withCoverMediaType(post,'video')) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _isAudioActive: function (post) {
+        if (this._withCoverMediaType(post,'audio')) {
           return true;
         } else {
           return false;
@@ -491,6 +555,20 @@
           if (videoURL) {
             this.set('postVideoId', post.PostVideos[0].id);
             return videoURL;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      },
+
+      _postAudioPath: function (post) {
+        if (post && post.PostAudios) {
+          var audioURL = this._getAudioURL(post.PostAudios);
+          if (audioURL) {
+            this.set('postAudioId', post.PostAudios[0].id);
+            return audioURL;
           } else {
             return null;
           }

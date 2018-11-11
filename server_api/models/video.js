@@ -177,8 +177,8 @@ module.exports = function(sequelize, DataTypes) {
           sequelize.models.Video.addToCommunity(video, options.communityId, callback);
         } else if (options.domainId) {
           sequelize.models.Video.addToDomain(video, options.domainId, callback);
-        } else if (options.pointId) {
-          sequelize.models.Video.addToPoint(video, options.pointId, callback);
+        } else {
+          callback("No collection to add to");
         }
       },
 
