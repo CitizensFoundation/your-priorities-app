@@ -298,6 +298,10 @@
         margin-bottom: 2px;
         font-style: normal;
       }
+
+      .editIcon {
+        color: #444;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -346,7 +350,7 @@
                       <div class="layout horizontal" hidden$="[[isEditing]]">
                         <div class="flex"></div>
                         <yp-ajax id="editPostTranscriptAjax" method="PUT" on-response="_editPostTranscriptResponse"></yp-ajax>
-                        <paper-icon-button title$="[[t('edit')]]" icon="create" on-tap="_editPostTranscript"></paper-icon-button>
+                        <paper-icon-button class="editIcon" title$="[[t('edit')]]" icon="create" on-tap="_editPostTranscript"></paper-icon-button>
                       </div>
                     </template>
                   </div>
