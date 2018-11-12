@@ -103,7 +103,7 @@
       }
 
       yp-post-cover-media[audio-cover] {
-        height: 120px;
+        height: 90px;
       }
 
       .transcriptContainer {
@@ -245,17 +245,26 @@
         yp-post-cover-media[header-mode] {
           height: 205px;
         }
+        yp-post-cover-media[audio-cover] {
+          height: 80px;
+        }
       }
 
       @media (max-width: 360px) {
         yp-post-cover-media[header-mode] {
           height: 200px;
         }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
       }
 
       @media (max-width: 320px) {
         yp-post-cover-media[header-mode] {
           height: 180px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
         }
       }
 
@@ -305,6 +314,12 @@
       .editIcon {
         color: #656565;
       }
+
+      @media (min-width: 960px) {
+        yp-post-cover-media {
+          margin-bottom: 16px;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -325,9 +340,9 @@
             </template>
           </div>
           <div class="layout horizontal wrap mediaAndInfoContainer">
-            <div class="layout vertical center-center coverContainer">
+            <div class="layout vertical center-center self-start coverContainer">
               <yp-post-cover-media show-video show-audio audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
-              <div class="transcriptContainer" hidden>
+              <div class="transcriptContainer">
                 <template is="dom-if" if="[[checkingTranscript]]">
                   <div class="layout vertical center-center checkTranscript">
                     <div>[[t('checkingForTranscript')]]</div>

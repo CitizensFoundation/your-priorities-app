@@ -188,7 +188,7 @@
       </template>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" scroll-offset="550" items="[[posts]]" as="post" scroll-target="document" grid>
+        <iron-list id="ironList" scroll-offset="550" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
           <template>
             <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
               <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>

@@ -130,7 +130,7 @@
         bottom: 2px;
       }
 
-      @media (max-width: 420px) {
+      @media (max-width: 430px) {
         :host {
 
         }
@@ -205,6 +205,23 @@
           height: 118px;
           min-height: 118px;
         }
+
+        .card {
+          height: 100%;
+          padding-bottom: 48px;
+        }
+
+        .postCard {
+          height: 100% !important;
+        }
+
+        yp-post-cover-media[audio-cover] {
+          width: 100%;
+          height: 90px !important;
+        }
+
+
+
       }
 
       [hidden] {
@@ -218,9 +235,10 @@
     <paper-material mini$="[[mini]]" hide-post-cover$="[[post.Group.configuration.hidePostCover]]"
                     hide-description$="[[post.Group.configuration.hidePostDescription]]"
                     hide-actions$="[[post.Group.configuration.hidePostActionsInGrid]]"
+                    audio-cover$="[[isAudioCover]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <yp-post-cover-media mini$="[[mini]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
+        <yp-post-cover-media mini$="[[mini]]" audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
         <div class="postNameContainer">
           <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
             <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
@@ -284,6 +302,11 @@
         mini: {
           type: Boolean,
           value: false
+        },
+
+        isAudioCover: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -313,6 +336,11 @@
 
       _postChanged: function (post) {
         if (post) {
+          if (post.cover_media_type==='audio') {
+            this.set('isAudioCover', true);
+          } else {
+            this.set('isAudioCover', false);
+          }
           this.async(function () {
             var postName = this.$$("#postName");
             if (postName) {
