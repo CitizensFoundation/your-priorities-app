@@ -147,9 +147,12 @@
         }
 
         yp-post-cover-media {
-          width: 100%;
+          width: 100% !important;
         }
 
+        .coverContainer {
+          width: 100%;
+        }
 
         .transcriptContainer {
           width: 100%;
@@ -200,7 +203,7 @@
         }
       }
 
-      @media (max-width: 420px) {
+      @media (max-width: 430px) {
         :host {
           width: 100%;
         }
@@ -212,7 +215,6 @@
         }
 
         yp-post-cover-media {
-          width: 100% !important;
           height: 225px;
         }
 
@@ -323,9 +325,9 @@
             </template>
           </div>
           <div class="layout horizontal wrap mediaAndInfoContainer">
-            <div class="layout vertical center-center">
+            <div class="layout vertical center-center coverContainer">
               <yp-post-cover-media show-video show-audio audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
-              <div class="transcriptContainer">
+              <div class="transcriptContainer" hidden>
                 <template is="dom-if" if="[[checkingTranscript]]">
                   <div class="layout vertical center-center checkTranscript">
                     <div>[[t('checkingForTranscript')]]</div>

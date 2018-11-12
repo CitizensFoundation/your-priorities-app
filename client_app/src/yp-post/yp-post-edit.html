@@ -129,8 +129,16 @@
       }
 
       .uploadSection {
-        max-width: 300px;
-        margin: 8px;
+        max-width: 220px;
+        vertical-align: top;
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
+      @media (max-width: 600px) {
+        .uploadSection {
+          max-width: 100%;
+        }
       }
 
       .postCoverVideoInfo {
@@ -278,7 +286,7 @@
           <section>
             <div class="layout vertical center-center" hidden$="[[hidePostImageUploads]]">
               <div class="layout horizontal center-center wrap">
-                <div class="layout vertical center-center uploadSection">
+                <div class="layout vertical center-center self-start uploadSection">
                   <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header"
                                   method="POST" on-success="_imageUploaded">
                     <iron-icon class="icon" icon="photo-camera"></iron-icon>
@@ -290,7 +298,7 @@
                   <div>[[t('post.cover.imageInfo')]]</div>
                 </div>
                 <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
-                  <div class="layout vertical center-center uploadSection">
+                  <div class="layout vertical center-center self-start uploadSection">
                     <yp-file-upload id="videoFileUpload" container-type="posts" group="[[group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span>[[t('uploadVideo')]]</span>
@@ -302,7 +310,7 @@
                   </div>
                 </template>
                 <template is="dom-if" if="[[group.configuration.allowPostAudioUploads]]">
-                  <div class="layout vertical center-center uploadSection">
+                  <div class="layout vertical center-center self-start uploadSection">
                     <yp-file-upload id="audioFileUpload" container-type="posts" group="[[group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioUploaded">
                       <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                       <span>[[t('uploadAudio')]]</span>
