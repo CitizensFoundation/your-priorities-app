@@ -280,7 +280,7 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
       where: {
         id: req.params.id
       },
-      attributes: ['id','name','description']
+      attributes: ['id','name','description','public_data']
     }).then(function(post) {
       if (post) {
         models.TranslationCache.getTranslation(req, post, function (error, translation) {

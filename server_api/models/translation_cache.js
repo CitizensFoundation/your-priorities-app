@@ -52,7 +52,7 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
 
-      getTranslationFromGoogle: function (indexKey, contentToTranslate, targetLanguage, modelInstance, callback) {
+      getTranslationFromGoogle: function (textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback) {
         const translateAPI = new Translate({
           credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
         });
@@ -68,11 +68,20 @@ module.exports = function(sequelize, DataTypes) {
                 index_key: indexKey,
                 content: translation.translatedText
               }).then(function () {
-                modelInstance.update({
-                  language: translation.detectedSourceLanguage
-                }).then(function () {
-                  callback(null, { content: translation.translatedText });
-                });
+                if (textType==='postTranscriptContent') {
+                  modelInstance.set('public_data.transcript.language', translation.detectedSourceLanguage);
+                  modelInstance.save().then( () => {
+                    callback(null, { content: translation.translatedText });
+                  }).catch( error => {
+                    callback(error);
+                  });
+                } else {
+                  modelInstance.update({
+                    language: translation.detectedSourceLanguage
+                  }).then(function () {
+                    callback(null, { content: translation.translatedText });
+                  });
+                }
               }).catch(function (error) {
                 callback(error);
               });
@@ -87,7 +96,8 @@ module.exports = function(sequelize, DataTypes) {
       getTranslation: function (req, modelInstance, callback) {
         const contentToTranslate = TranslationCache.getContentToTranslate(req, modelInstance);
         const contentHash = farmhash.hash32(contentToTranslate).toString();
-        let indexKey = `${req.query.textType}-${modelInstance.id}-${req.query.targetLanguage}-${contentHash}`;
+        const textType = req.query.textType;
+        let indexKey = `${textType}-${modelInstance.id}-${req.query.targetLanguage}-${contentHash}`;
 
         TranslationCache.findOne({
           where: {
@@ -97,7 +107,7 @@ module.exports = function(sequelize, DataTypes) {
           if (translationModel) {
             callback(null, { content: translationModel.content });
           } else {
-            TranslationCache.getTranslationFromGoogle(indexKey, contentToTranslate, req.query.targetLanguage, modelInstance, callback);
+            TranslationCache.getTranslationFromGoogle(textType, indexKey, contentToTranslate, req.query.targetLanguage, modelInstance, callback);
           }
         }).catch(function (error) {
           callback(error);
