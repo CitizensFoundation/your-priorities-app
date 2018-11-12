@@ -179,7 +179,6 @@
         <template is="dom-if" if="[[showAudio]]">
           <div class="layout vertical center-center">
             <audio id="audioPlayer" data-id$="[[postAudioId]]" header-mode$="[[headerMode]]" controls preload="meta" class="pointer" src="[[postAudioPath]]" hidden$="[[!postAudioPath]]" playsinline></audio>
-            <div class="playInfo">[[t('playVoiceRecording')]]</div>
           </div>
         </template>
         <div hidden$="[[showAudio]]" class="layout horizontal center-center pointer" on-tap="goToPost">
