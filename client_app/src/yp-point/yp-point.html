@@ -472,6 +472,7 @@
 
       _pointChanged: function(point, previousPoint) {
         this.setupMediaEventListeners(point, previousPoint);
+        this._resetMedia();
         if (point) {
           this.set('user', this.point.User);
           var videoURL = this._getVideoURL(point.PointVideos);
@@ -499,14 +500,11 @@
                 this.$.checkTranscriptStatusAjax.generateRequest();
                 this.set('checkingTranscript', true);
               }
-            } else {
-              this._resetMedia();
             }
           }
         } else {
           this.set('user', null);
           this.set('checkTranscriptError', false);
-          this._resetMedia();
         }
       },
 

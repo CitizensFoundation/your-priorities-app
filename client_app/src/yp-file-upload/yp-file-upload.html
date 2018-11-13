@@ -17,6 +17,7 @@ Example:
 -->
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
@@ -92,14 +93,25 @@ Example:
        ::slotted(iron-icon) {
          padding-right: 6px;
        }
+
+       .mainContainer {
+         @apply --layout-center-center;
+         width: 100%;
+       }
+
+       .removeButton {
+         margin-bottom: 12px;
+       }
       </style>
 
-    <div class="layout vertical center-center">
-      <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
-        <slot></slot>
-      </paper-button>
+    <div class="layout vertical center-center mainContainer">
+      <div class="layout horizontal">
+        <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
+          <slot></slot>
+        </paper-button>
+        <paper-icon-button class="removeButton" icon="delete" on-tap="clear" hidden$="[[!currentFile]]"></paper-icon-button>
+      </div>
       <div id="UploadBorder">
-        <div id="dropArea" hidden$="{{!_shownDropText}}">{{dropText}}</div>
         <template is="dom-repeat" items="{{files}}">
           <div class="file">
             <div class="name">
@@ -295,7 +307,11 @@ Example:
 
       transcodingJobId: Number,
 
-      currentFile: String,
+      currentFile: {
+        type: String,
+        value: null,
+        notify: true
+      },
 
       isPollingForTranscoding: {
         type: Boolean,
@@ -339,6 +355,11 @@ Example:
       this.set('transcodingJobId', null);
       this.set('indeterminateProgress', false);
       this.set('capture', false);
+      this.$.fileInput.value = null;
+      if (this.videoUpload)
+        this.fire("success", { detail: null, videoId: null });
+      else
+        this.fire("success", { detail: null, audioId: null });
     },
 
     ready: function() {
@@ -468,7 +489,7 @@ Example:
     uploadFile: function (file) {
       if (this.videoUpload || this.audioUpload) {
         this.set('indeterminateProgress', true);
-        this.currentFile = file;
+        this.set('currentFile', file);
         var ajax = document.createElement('iron-ajax');
         ajax.handleAs = 'json';
         ajax.contentType = 'application/json';

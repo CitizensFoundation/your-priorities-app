@@ -141,7 +141,7 @@
         .pointInputMaterial {
           width: 91vw !important;
           max-width: 500px;
-          font-size: 12px;
+          font-size: 14px;
           padding-top: 4px;
         }
 
@@ -219,8 +219,9 @@
 
       .videoInfo {
         margin-top: 8px;
-        margin-bottom: 8px;
+        margin-bottom: 14px;
         color: #656565;
+        @apply --layout-self-start;
       }
 
       .uploadNotLoggedIn {
@@ -238,9 +239,11 @@
       }
 
       .uploadSection {
-        width: 183px;
+        justify-content: space-evenly;
+        width: 50%;
         margin-left: 8px;
         margin-right: 8px;
+        vertical-align: top;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -284,13 +287,13 @@
 
               <div class="layout horizontal center-justified">
                 <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
-                  <div hidden$="[[hideUpVideo]]">
-                    <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="videoFileUploadUp" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
+                  <div hidden$="[[hideUpVideo]]" class="uploadSection">
+                    <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
+                      <yp-file-upload id="videoFileUploadUp" current-file="{{hasCurrentUpVideo}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         <span>[[t('uploadVideoPointFor')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                      <div class="videoInfo self-start">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
                     </div>
                     <div class="layout horizontal center-center">
                       <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadVideoPointFor')]]</paper-button>
@@ -299,13 +302,13 @@
                 </template>
 
                 <template is="dom-if" if="[[post.Group.configuration.allowPointAudioUploads]]">
-                  <div hidden$="[[hideUpAudio]]">
-                    <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="videoAudioUploadUp" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioUpUploaded">
+                  <div hidden$="[[hideUpAudio]]" class="uploadSection">
+                    <div class="layout vertical center-center" hidden$="[[!loggedInUser]]">
+                      <yp-file-upload id="videoAudioUploadUp" current-file="{{hasCurrentUpAudio}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioUpUploaded">
                         <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                         <span>[[t('uploadAudioPointFor')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
+                      <div class="videoInfo self-start">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
                       <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
                       </div>
                     </div>
@@ -366,13 +369,13 @@
 
               <div class="layout horizontal center-justified">
                 <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
-                  <div hidden$="[[hideDownVideo]]">
-                    <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="videoFileUploadDown" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoDownUploaded">
+                  <div hidden$="[[hideDownVideo]]" class="uploadSection">
+                    <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
+                      <yp-file-upload id="videoFileUploadDown" current-file="{{hasCurrentDownVideo}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoDownUploaded">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         <span>[[t('uploadVideoPointAgainst')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                      <div class="videoInfo self-start">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
                     </div>
                     <div class="layout horizontal center-center">
                       <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadVideoPointAgainst')]]</paper-button>
@@ -381,13 +384,13 @@
                 </template>
 
                 <template is="dom-if" if="[[post.Group.configuration.allowPointAudioUploads]]">
-                  <div hidden$="[[hideDownAudio]]">
-                    <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="audioFileUploadDown" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioDownUploaded">
+                  <div hidden$="[[hideDownAudio]]" class="uploadSection">
+                    <div class="layout vertical center-center" hidden$="[[!loggedInUser]]">
+                      <yp-file-upload id="audioFileUploadDown" current-file="{{hasCurrentDownAudio}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioDownUploaded">
                         <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                         <span>[[t('uploadAudioPointAgainst')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
+                      <div class="videoInfo self-start">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
                         <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
                       </div>
                     </div>
@@ -430,7 +433,7 @@
                           char-counter rows="2" hidden$="[[hideMobileText]]"
                           max-rows="3" maxlength="500"></paper-textarea>
           <div class="layout vertical end-justified">
-            <div class="layout horizontal pointButtons">
+            <div class="layout horizontal center-center pointButtons">
               <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
                 <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
                 <paper-radio-button name="pointAgainst">[[t('pointAgainstShort')]]</paper-radio-button>
@@ -443,15 +446,15 @@
 
             <div class="layout horizontal center-justified">
               <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
-                <div hidden$="[[hideMobileVideo]]">
-                  <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                    <yp-file-upload id="videoFileUploadMobile" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoMobileUploaded">
+                <div hidden$="[[hideMobileVideo]]" class="uploadSection">
+                  <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
+                    <yp-file-upload id="videoFileUploadMobile" current-file="{{hasCurrentMobileVideo}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoMobileUploaded">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
 
                       <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
                     </yp-file-upload>
-                    <div class="videoInfo">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
+                    <div class="videoInfo self-start">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
                   </div>
                   <div class="layout horizontal center-center">
                     <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
@@ -462,15 +465,15 @@
                 </div>
               </template>
               <template is="dom-if" if="[[post.Group.configuration.allowPointAudioUploads]]">
-                <div hidden$="[[hideMobileAudio]]">
-                  <div class="layout vertical center-center uploadSection" hidden$="[[!loggedInUser]]">
-                    <yp-file-upload id="audioFileUploadMobile" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioMobileUploaded">
+                <div hidden$="[[hideMobileAudio]]" class="uploadSection">
+                  <div class="layout vertical center-center  self-start" hidden$="[[!loggedInUser]]">
+                    <yp-file-upload id="audioFileUploadMobile" current-file="{{hasCurrentMobileAudio}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioMobileUploaded">
                       <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
 
                       <span hidden$="[[!selectedPointForMobile]]">[[t('uploadAudioPointFor')]]</span>
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadAudioPointAgainst')]]</span>
                     </yp-file-upload>
-                    <div class="videoInfo">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
+                    <div class="videoInfo self-start">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
                       <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
                     </div>
                   </div>
@@ -739,7 +742,37 @@
           isAndroid: {
             type: Boolean,
             value: false
-          }
+          },
+
+          hasCurrentUpVideo: {
+            type: String,
+            observer: '_hasCurrentUpVideo'
+          },
+
+          hasCurrentDownVideo: {
+            type: String,
+            observer: '_hasCurrentDownVideo'
+          },
+
+          hasCurrentMobileVideo: {
+            type: String,
+            observer: '_hasCurrentMobileVideo'
+          },
+
+          hasCurrentUpAudio: {
+            type: String,
+            observer: '_hasCurrentUpAudio'
+          },
+
+          hasCurrentDownAudio: {
+            type: String,
+            observer: '_hasCurrentDownAudio'
+          },
+
+          hasCurrentMobileAudio: {
+            type: String,
+            observer: '_hasCurrentMobileAudio'
+          },
         },
 
         _openLogin: function () {
@@ -1206,6 +1239,66 @@
 
         blurTextArea: function (event) {
           event.currentTarget.parentElement.elevation = 1;
+        },
+
+        _hasCurrentUpVideo: function (value) {
+          if (value) {
+            this.set('hideUpAudio', true);
+            this.set('hideUpText', true);
+          } else {
+            this.set('hideUpAudio', false);
+            this.set('hideUpText', false);
+          }
+        },
+
+        _hasCurrentDownVideo: function (value) {
+          if (value) {
+            this.set('hideDownAudio', true);
+            this.set('hideDownText', true);
+          } else {
+            this.set('hideDownAudio', false);
+            this.set('hideDownText', false);
+          }
+        },
+
+        _hasCurrentUpAudio: function (value) {
+          if (value) {
+            this.set('hideUpVideo', true);
+            this.set('hideUpText', true);
+          } else {
+            this.set('hideUpVideo', false);
+            this.set('hideUpText', false);
+          }
+        },
+
+        _hasCurrentDownAudio: function (value) {
+          if (value) {
+            this.set('hideDownVideo', true);
+            this.set('hideDownText', true);
+          } else {
+            this.set('hideDownVideo', false);
+            this.set('hideDownText', false);
+          }
+        },
+
+        _hasCurrentMobileVideo: function (value) {
+          if (value) {
+            this.set('hideMobileAudio', true);
+            this.set('hideMobileText', true);
+          } else {
+            this.set('hideMobileAudio', false);
+            this.set('hideMobileText', false);
+          }
+        },
+
+        _hasCurrentMobileAudio: function (value) {
+          if (value) {
+            this.set('hideMobileVideo', true);
+            this.set('hideMobileText', true);
+          } else {
+            this.set('hideMobileVideo', false);
+            this.set('hideMobileText', false);
+          }
         },
 
         ifLengthIsRight: function (type, textValue, hasVideoId, hasAudioId) {
