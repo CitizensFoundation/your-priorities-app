@@ -185,7 +185,9 @@
 
       <div class="layout vertical">
         <template is="dom-if" if="[[videoActive]]" restamp>
-          <video id="videoPlayer" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
+          <div class="layout horizontal center-center">
+            <video id="videoPlayer" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
+          </div>
         </template>
 
         <template is="dom-if" if="[[audioActive]]" restamp>
