@@ -183,7 +183,7 @@
         <template is="dom-if" if="[[groupVideoURL]]" restamp>
           <video id="videoPlayer" data-id$="[[groupVideoId]]" controls preload="meta" class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
         </template>
-        <template is="dom-if" if="[[!groupVideoURL]]">
+        <template is="dom-if" if="[[!groupVideoURL]]" restamp>
           <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
         </template>
       </paper-material>

@@ -270,7 +270,9 @@
       },
 
       _refreshAjax: function () {
-        this.$.ajax.generateRequest();
+        this.async(function () {
+          this.$.ajax.generateRequest();
+        }, 100);
       },
 
       _newCommunity: function () {

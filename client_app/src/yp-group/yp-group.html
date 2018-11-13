@@ -608,11 +608,13 @@
       },
 
       _refreshAjax: function () {
-        this.$.ajax.generateRequest();
-        var groupActivities = this.$$("#groupActivities");
-        if (groupActivities) {
-          this.$$("#groupActivities").loadNewData();
-        }
+        this.async(function () {
+          this.$.ajax.generateRequest();
+          var groupActivities = this.$$("#groupActivities");
+          if (groupActivities) {
+            this.$$("#groupActivities").loadNewData();
+          }
+        }, 100);
       },
 
       ready: function () {

@@ -736,11 +736,43 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 router.put('/:id', auth.can('edit group'), function(req, res) {
   models.Group.find({
     where: {id: req.params.id },
+    order: [
+      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+    ],
     include: [
       {
         model: models.Community,
         required: true,
         attributes: ['id','access']
+      },
+      {
+        model: models.Image,
+        as: 'GroupLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Video,
+        as: 'GroupLogoVideos',
+        attributes:  ['id','formats','viewable'],
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      },
+      {
+        model: models.Image,
+        as: 'GroupHeaderImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
       }
     ]
   }).then(function (group) {

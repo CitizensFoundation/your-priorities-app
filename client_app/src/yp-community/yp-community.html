@@ -447,7 +447,9 @@
       },
 
       _refreshAjax: function () {
-        this.$$('#ajax').generateRequest();
+        this.async(function () {
+          this.$$('#ajax').generateRequest();
+        }, 100);
       },
 
       ready: function () {
