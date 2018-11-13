@@ -316,7 +316,7 @@
       }
 
       @media (min-width: 960px) {
-        yp-post-cover-media {
+        yp-post-cover-media[has-transcript][audio-cover] {
           margin-bottom: 16px;
         }
       }
@@ -341,7 +341,7 @@
           </div>
           <div class="layout horizontal wrap mediaAndInfoContainer">
             <div class="layout vertical center-center self-start coverContainer">
-              <yp-post-cover-media show-video show-audio audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
+              <yp-post-cover-media show-video show-audio has-transcript$="[[post.public_data.transcript.text]]" audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
               <div class="transcriptContainer">
                 <template is="dom-if" if="[[checkingTranscript]]">
                   <div class="layout vertical center-center checkTranscript">

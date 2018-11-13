@@ -664,6 +664,9 @@
           };
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);
+            this.async(function () {
+              window.appGlobals.showSpeechToTextInfoIfNeeded();
+            }, 20);
           }.bind(this));
           ajax.generateRequest();
         } else if (this.uploadedAudioId) {
@@ -680,6 +683,9 @@
           ajax.addEventListener('response', function (event) {
             this._finishRedirect(post);
           }.bind(this));
+          this.async(function () {
+            window.appGlobals.showSpeechToTextInfoIfNeeded();
+          }, 20);
           ajax.generateRequest();
         } else {
           this._finishRedirect(post);

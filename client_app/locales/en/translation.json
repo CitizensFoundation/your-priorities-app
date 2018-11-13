@@ -1,4 +1,5 @@
 {
+  "speechToTextInfo": "We will try to automatically convert your speech to text. For this to work well it is important to set your user interface language (top left menu) to the same language as you speak and to speak clearly.",
   "edited": "edited",
   "playVoiceRecording": "Play voice recording",
   "uploadAudio": "Upload speech",
@@ -37,6 +38,7 @@
   "postCoverVideoInfo": "Upload video in landscape HD format. Maximum video length is ",
   "postCoverAudio": "Audio",
   "postCoverAudioInfo": "Speak with a clear voice. Maximum audio length is ",
+  "media": "Media",
   "removalAndDeletionInProgress": "Removal and deletion is in progress. Try to reload the page a bit later.",
   "removalsAndDeletionsInProgress": "Removals and deletions are in progress but can take a while depending on the number of users affected. Try to reload the page a bit later.",
   "removalsInProgress": "Removals are in progress but can take a while to complete, depending on the number of users affected. Try to reload the page a bit later.",

@@ -758,6 +758,7 @@
           this.set('uploadedVideoMobileId', detail.videoId);
         },
 
+
         _audioUpUploaded: function (event, detail) {
           this.set('uploadedAudioUpId', detail.audioId);
         },
@@ -1099,6 +1100,7 @@
             };
             ajax.addEventListener('response', function (event, detail) {
               this._completeNewPointResponse(event, event.detail);
+              window.appGlobals.showSpeechToTextInfoIfNeeded();
             }.bind(this));
             ajax.generateRequest();
           } else if (this.currentAudioId) {
@@ -1114,6 +1116,7 @@
             };
             ajax.addEventListener('response', function (event, detail) {
               this._completeNewPointResponse(event, event.detail);
+              window.appGlobals.showSpeechToTextInfoIfNeeded();
             }.bind(this));
             ajax.generateRequest();
           } else {
