@@ -592,7 +592,7 @@
               console.error("Can't find description element");
             }
           });
-          if (this.hasPostAccess) {
+          if (this.hasPostAccess && window.appGlobals.hasTranscriptSupport===true) {
             if (post.public_data && post.public_data.transcript && post.public_data.transcript.inProgress) {
               if (post.cover_media_type==="audio") {
                 this.$$("#checkTranscriptStatusAjax").url = "/api/posts/"+post.id+'/audioTranscriptStatus';

@@ -144,6 +144,10 @@
           if (detail && detail.response && detail.response.hasVideoUploadSupport===true) {
             window.appGlobals.hasVideoUpload = true;
           }
+
+          if (detail && detail.response && detail.response.hasTranscriptSupport===true) {
+            window.appGlobals.hasTranscriptSupport = true;
+          }
         },
 
         sendVideoView: function (videoId) {

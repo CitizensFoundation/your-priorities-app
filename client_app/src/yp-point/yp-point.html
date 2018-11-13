@@ -184,11 +184,11 @@
       </div>
 
       <div class="layout vertical">
-        <template is="dom-if" if="[[videoActive]]">
+        <template is="dom-if" if="[[videoActive]]" restamp>
           <video id="videoPlayer" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
         </template>
 
-        <template is="dom-if" if="[[audioActive]]">
+        <template is="dom-if" if="[[audioActive]]" restamp>
           <div class="layout vertical center-center">
             <audio id="audioPlayer" data-id$="[[pointAudioId]]" controls preload="meta" class="audio" src="[[pointAudioPath]]" playsinline></audio>
           </div>
@@ -470,7 +470,8 @@
         return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
       },
 
-      _pointChanged: function(point) {
+      _pointChanged: function(point, previousPoint) {
+        this.setupMediaEventListeners(point, previousPoint);
         if (point) {
           this.set('user', this.point.User);
           var videoURL = this._getVideoURL(point.PointVideos);
@@ -481,7 +482,7 @@
             this.set('pointImageVideoPath', videoPosterURL);
             this.set('pointVideoId', point.PointVideos[0].id);
             this.set('checkTranscriptError', false);
-            if (point.checkTranscriptFor==="video") {
+            if (point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
               this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/videoTranscriptStatus';
               this.$.checkTranscriptStatusAjax.generateRequest();
               this.set('checkingTranscript', true);
@@ -493,7 +494,7 @@
               this.set('pointAudioPath', audioURL);
               this.set('pointAudioId', point.PointAudios[0].id);
               this.set('checkTranscriptError', false);
-              if (point.checkTranscriptFor==="audio") {
+              if (point.checkTranscriptFor==="audio" && window.appGlobals.hasTranscriptSupport===true) {
                 this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/audioTranscriptStatus';
                 this.$.checkTranscriptStatusAjax.generateRequest();
                 this.set('checkingTranscript', true);

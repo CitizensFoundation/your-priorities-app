@@ -233,7 +233,8 @@
         domain: {
           type: Object,
           notify: true,
-          value: null
+          value: null,
+          observer: '_domainChanged'
         },
 
         elevation: {
@@ -268,6 +269,10 @@
         },
 
         domainVideoId: Number
+      },
+
+      _domainChanged: function (domain, previousDomain) {
+        this.setupMediaEventListeners(domain, previousDomain);
       },
 
       _domainVideoURL: function (domain) {

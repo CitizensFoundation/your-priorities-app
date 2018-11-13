@@ -165,7 +165,7 @@
         <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
       </template>
 
-      <template is="dom-if" if="[[videoActive]]">
+      <template is="dom-if" if="[[videoActive]]" restamp>
         <template is="dom-if" if="[[showVideo]]" restamp>
           <video id="videoPlayer" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
@@ -175,7 +175,7 @@
         </template>
       </template>
 
-      <template is="dom-if" if="[[audioActive]]">
+      <template is="dom-if" if="[[audioActive]]" restamp>
         <template is="dom-if" if="[[showAudio]]">
           <div class="layout vertical center-center">
             <audio id="audioPlayer" data-id$="[[postAudioId]]" header-mode$="[[headerMode]]" controls preload="meta" class="pointer" src="[[postAudioPath]]" hidden$="[[!postAudioPath]]" playsinline></audio>
@@ -494,7 +494,7 @@
           return false;
       },
 
-      _postChanged: function(post, oldValue) {
+      _postChanged: function(post, previousPost) {
         if (post && post.Group && post.Group.configuration && post.Group.configuration.uploadedDefaultPostImageId && post.Group.configuration.uploadedDefaultPostImageId!="") {
           this.set('uploadedDefaultPostImageId', post.Group.configuration.uploadedDefaultPostImageId);
           this.set('defaultImageGroupId', post.Group.id);
@@ -505,6 +505,10 @@
             this.set('defaultImageGroupId', null);
             this.set('uploadedDefaultPostImageId', null);
           });
+        }
+
+        if (this.headerMode) {
+          this.setupMediaEventListeners(post, previousPost);
         }
       },
 
@@ -525,7 +529,7 @@
 
       _withCoverMediaType: function (post, mediaType) {
         if (!post) {
-          console.error("No post for "+mediaType);
+          console.info("No post for "+mediaType);
           return false;
         } else {
           if (mediaType == 'none') {

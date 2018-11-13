@@ -375,7 +375,7 @@
         return hasCommunityAccess || (community && !community.only_admins_can_create_groups)
       },
 
-      _communityChanged: function (community) {
+      _communityChanged: function (community, previousCommunity) {
         if (community && community.description) {
           this.async(function () {
             if (community.configuration && community.configuration.welcomeHTML &&
@@ -395,6 +395,7 @@
             this.$$("#description").style.fontSize = "16px";
           }
         }
+        this.setupMediaEventListeners(community, previousCommunity);
       },
 
       _hasCommunityAccess: function(community, gotAdminRights) {

@@ -51,54 +51,94 @@
       }
     },
 
-    attached: function () {
+    setupMediaEventListeners: function (current, previous) {
+      if (previous && current) {
+        this.detachMediaListeners();
+        this.attachMediaListeners();
+      } else if (current) {
+        this.attachMediaListeners();
+      } else if (!current && previous) {
+        this.detachMediaListeners();
+      }
+    },
+
+    attachMediaListeners: function () {
       this.async(function () {
         var videoPlayer = this.$$("#videoPlayer");
         var audioPlayer = this.$$("#audioPlayer");
         if (videoPlayer) {
           var videoId = videoPlayer.getAttribute('data-id');
           if (videoId) {
-            videoPlayer.addEventListener("play", function () {
+            this.videoPlayListener = function () {
               this.set('playStartedAt', new Date());
               window.appGlobals.sendVideoView(videoId)
-            }.bind(this));
-            videoPlayer.addEventListener("pause", function () {
+            }.bind(this);
+            this.videoPauseListener = function () {
               this._checkVideoLongPlayTimeAndReset(videoPlayer);
-            }.bind(this));
-            videoPlayer.addEventListener("ended", function () {
+            }.bind(this);
+            this.videoEndedListener = function () {
               this._checkVideoLongPlayTimeAndReset(videoPlayer);
-            }.bind(this));
-          }
-        } else if (audioPlayer) {
-          var audioId = audioPlayer.getAttribute('data-id');
-          if (audioId) {
-            audioPlayer.addEventListener("play", function () {
-              this.set('playStartedAt', new Date());
-              window.appGlobals.sendAudioListen(audioId)
-            }.bind(this));
-            audioPlayer.addEventListener("pause", function () {
-              this._checkAudioLongPlayTimeAndReset(audioPlayer);
-            }.bind(this));
-            audioPlayer.addEventListener("ended", function () {
-              this._checkAudioLongPlayTimeAndReset(audioPlayer);
-            }.bind(this));
+            }.bind(this);
+            videoPlayer.addEventListener("play", this.videoPlayListener);
+            videoPlayer.addEventListener("pause", this.videoPauseListener);
+            videoPlayer.addEventListener("ended", this.videoEndedListener);
           }
         }
-      }, 500);
+
+        if (audioPlayer) {
+          var audioId = audioPlayer.getAttribute('data-id');
+          if (audioId) {
+            this.audioPlayListener =  function () {
+              this.set('playStartedAt', new Date());
+              window.appGlobals.sendAudioListen(audioId)
+            }.bind(this);
+            this.audioPauseListener = function () {
+              this._checkAudioLongPlayTimeAndReset(audioPlayer);
+            }.bind(this);
+            this.audioEndedListener = function () {
+              this._checkAudioLongPlayTimeAndReset(audioPlayer);
+            }.bind(this);
+            audioPlayer.addEventListener("play", this.audioPlayListener);
+            audioPlayer.addEventListener("pause", this.audioPauseListener);
+            audioPlayer.addEventListener("ended", this.audioEndedListener);
+          }
+        }
+      }, 200);
+
     },
 
-    detached: function () {
+    detachMediaListeners: function () {
       var videoPlayer = this.$$("#videoPlayer");
       var audioPlayer = this.$$("#audioPlayer");
       if (videoPlayer) {
-        videoPlayer.removeAllListeners("play");
-        videoPlayer.removeAllListeners("pause");
-        videoPlayer.removeAllListeners("ended");
+        if (this.videoPlayListener) {
+          videoPlayer.removeEventListener("play", this.videoPlayListener);
+          this.videoPlayListener = null;
+        }
+        if (this.videoPauseListener) {
+          videoPlayer.removeEventListener("pause", this.videoPauseListener);
+          this.videoPauseListener = null;
+        }
+        if (this.videoEndedListener) {
+          videoPlayer.removeEventListener("ended", this.videoEndedListener);
+          this.videoEndedListener = null;
+        }
         this._checkVideoLongPlayTimeAndReset(videoPlayer);
-      } else if (audioPlayer) {
-        audioPlayer.removeAllListeners("play");
-        audioPlayer.removeAllListeners("pause");
-        audioPlayer.removeAllListeners("ended");
+      }
+
+      if (audioPlayer) {
+        if (this.audioPlayListener) {
+          audioPlayer.removeEventListener("play", this.audioPlayListener);
+          this.audioPlayListener = null;
+        }
+        if (this.audioPauseListener) {
+          audioPlayer.removeEventListener("pause", this.audioPauseListener);
+          this.audioPauseListener = null;
+        }
+        if (this.audioEndedListener) {
+          audioPlayer.removeEventListener("ended", this.audioEndedListener);
+          this.audioEndedListener = null;
+        }
         this._checkVideoLongPlayTimeAndReset(audioPlayer);
       }
     },

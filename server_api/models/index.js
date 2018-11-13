@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
     dialectOptions: {
       ssl: true
     },
-    logging: true
+    logging: process.env.DISABLE_DEV_DB_LOGGING ? false : true,
   }));
 }
 

@@ -111,6 +111,8 @@ var loadPointWithAll = function (pointId, callback) {
 
 router.get('/hasVideoUploadSupport', (req, res) => {
   res.send({
+    hasTranscriptSupport: (process.env.GOOGLE_TRANSCODING_FLAC_BUCKET!=null &&
+                           process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON!=null),
     hasVideoUploadSupport: (process.env.S3_VIDEO_UPLOAD_BUCKET!=null &&
                             process.env.S3_VIDEO_PUBLIC_BUCKET!=null &&
                             process.env.S3_VIDEO_THUMBNAIL_BUCKET!=null &&
