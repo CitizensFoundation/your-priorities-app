@@ -358,7 +358,7 @@ Example:
       this.$.fileInput.value = null;
       if (this.videoUpload)
         this.fire("success", { detail: null, videoId: null });
-      else
+      else if (this.audioUpload)
         this.fire("success", { detail: null, audioId: null });
     },
 

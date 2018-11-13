@@ -276,7 +276,7 @@
       },
 
       _domainVideoURL: function (domain) {
-        if (domain &&
+        if (domain && domain.configuration &&
           domain.configuration.useVideoCover &&
           domain.DomainLogoVideos) {
           var videoURL = this._getVideoURL(domain.DomainLogoVideos);
@@ -292,7 +292,7 @@
       },
 
       _domainVideoPosterURL: function (domain) {
-        if (domain &&
+        if (domain && domain.configuration &&
           domain.configuration.useVideoCover &&
           domain.DomainLogoVideos) {
           var videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos);
