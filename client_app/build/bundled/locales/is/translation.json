@@ -7,7 +7,7 @@
   "allowPostAudioUploads": "Leyfa tal hugmyndir",
   "allowPointAudioUploads": "Leyfa tal rök",
   "transcodingAudio": "Geri tal tilbúið...",
-  "uploadingAudio": "Send inn tal...",
+  "uploadingAudio": "Sendi inn tal...",
   "automaticTranscript": "Vélrænn texti frá tali",
   "checkTranscriptError": "Gat ekki búið til texta frá tali",
   "checkingForTranscript": "Bý til texta frá tali...",
