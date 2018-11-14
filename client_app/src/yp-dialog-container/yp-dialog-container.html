@@ -147,6 +147,10 @@
       <template is="dom-if" if="[[gotUsersGrid]]">
         <yp-users-grid id="usersGrid"></yp-users-grid>
       </template>
+
+      <template is="dom-if" if="[[gotMediaRecorder]]">
+        <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
+      </template>
     </div>
 
     <paper-dialog id="loadingDialog">
@@ -205,6 +209,11 @@
         },
 
         gotUsersGrid: {
+          type: Boolean,
+          value: false
+        },
+
+        gotMediaRecorder: {
           type: Boolean,
           value: false
         }
@@ -275,13 +284,31 @@
       },
 
       getUsersGridAsync: function (callback) {
-        this.$.loadingDialog.open();
-        this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
-          this.$.loadingDialog.close();
-          console.info("Have loaded users grid container");
-          this.set('gotUsersGrid', true);
+        if (this.gotUsersGrid) {
           this.getDialogAsync("usersGrid", callback);
-        }.bind(this), null, true);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded users grid container");
+            this.set('gotUsersGrid', true);
+            this.getDialogAsync("usersGrid", callback);
+          }.bind(this), null, true);
+        }
+      },
+
+      getMediaRecorderAsync: function (callback) {
+        if (this.gotMediaRecorder) {
+          this.getDialogAsync("mediaRecorder", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("yp-dialog-container-media-recorder.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded media recorder container");
+            this.set('gotMediaRecorder', true);
+            this.getDialogAsync("mediaRecorder", callback);
+          }.bind(this), null, true);
+        }
       },
 
       getDialogAsync: function (idName, callback) {

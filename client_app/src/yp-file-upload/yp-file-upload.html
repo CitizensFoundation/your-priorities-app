@@ -489,12 +489,28 @@ Example:
      * Clicks the invisible file input
     */
     _fileClick: function() {
+      if (true) {
+        this._openMediaRecorder();
+      } else {
+
+      }
       var elem = this.$.fileInput;
       if (elem && document.createEvent) { // sanity check
         var evt = document.createEvent("MouseEvents");
         evt.initEvent("click", true, false);
         elem.dispatchEvent(evt);
       }
+    },
+
+    _openMediaRecorder: function () {
+      window.appGlobals.activity('open', 'mediaRecorder');
+      Polymer.dom(document).querySelector('yp-app').getMediaRecorderAsync(function (dialog) {
+        dialog.open({ callbackFunction: this._dataFromMediaRecorder.bind(this), videoRecording: true });
+      }.bind(this));
+    },
+
+    _dataFromMediaRecorder: function (data) {
+      debugger;
     },
 
     /**
