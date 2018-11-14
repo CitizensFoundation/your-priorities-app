@@ -64,7 +64,7 @@ var getDomain = function (req, domainId, done) {
           {
             model: models.Video,
             as: 'DomainLogoVideos',
-            attributes:  ['id','formats','viewable'],
+            attributes:  ['id','formats','viewable','public_meta'],
             required: false,
             include: [
               {

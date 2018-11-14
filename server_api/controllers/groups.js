@@ -757,7 +757,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       {
         model: models.Video,
         as: 'GroupLogoVideos',
-        attributes:  ['id','formats','viewable'],
+        attributes:  ['id','formats','viewable','public_meta'],
         required: false,
         include: [
           {
@@ -906,7 +906,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
       {
         model: models.Video,
         as: 'GroupLogoVideos',
-        attributes:  ['id','formats','viewable'],
+        attributes:  ['id','formats','viewable','public_meta'],
         required: false,
         include: [
           {
@@ -1025,7 +1025,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       },
       {
         model: models.Video,
-        attributes: ['id','formats','updated_at','viewable'],
+        attributes: ['id','formats','updated_at','viewable','public_meta'],
         as: 'PostVideos',
         required: false,
         include: [

@@ -239,7 +239,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       {
         model: models.Video,
         required: false,
-        attributes: ['id','formats','updated_at','viewable'],
+        attributes: ['id','formats','updated_at','viewable','public_meta'],
         as: 'PostVideos',
         include: [
           {
@@ -437,7 +437,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         {
           model: models.Video,
           required: false,
-          attributes: ['id','formats','updated_at','viewable'],
+          attributes: ['id','formats','updated_at','viewable','public_meta'],
           as: 'PointVideos',
           include: [
             {
@@ -544,7 +544,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       {
         model: models.Video,
         required: false,
-        attributes: ['id','formats','updated_at','viewable'],
+        attributes: ['id','formats','updated_at','viewable','public_meta'],
         as: 'PointVideos',
         include: [
           {

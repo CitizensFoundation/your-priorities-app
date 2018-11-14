@@ -7,6 +7,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var queue = require('../active-citizen/workers/queue');
+const _ = require('lodash');
 
 var isAuthenticated = function (req, res, next) {
   if (req.isAuthenticated())
@@ -68,7 +69,7 @@ var loadPointWithAll = function (pointId, callback) {
       {
         model: models.Video,
         required: false,
-        attributes: ['id','formats','updated_at','viewable'],
+        attributes: ['id','formats','updated_at','viewable','public_meta'],
         as: 'PointVideos',
         include: [
           {
@@ -198,7 +199,6 @@ router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
     videoPostUploadLimitSec: req.body.videoPostUploadLimitSec,
     videoPointUploadLimitSec: req.body.videoPointUploadLimitSec,
   };
-
   models.Video.find({
     where: {
       id: req.params.videoId
@@ -212,6 +212,67 @@ router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
     }
   }).catch((error) => {
     log.error("Error getting video", { error });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:videoId/formatsAndImages', auth.isLoggedIn, (req, res) => {
+  models.Video.find({
+    where: {
+      id: req.params.videoId
+    },
+    order: [
+      [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+    ],
+
+    include: [
+      {
+        model: models.Image,
+        as: 'VideoImages'
+      }
+    ]
+  }).then((video) => {
+    if (video && video.user_id===req.user.id) {
+      video.createFormats(video);
+      const previewVideoUrl = video.formats[0];
+      let videoImages = [];
+      _.forEach(video.VideoImages, image => {
+       const formats = JSON.parse(image.formats);
+       videoImages.push(formats[0]);
+      });
+      res.send( {previewVideoUrl, videoImages } )
+    } else {
+      log.error("Can't find video or not same user", { videoUserId: video ? video.user_id : -1, userId: req.user.id });
+      res.sendStatus(404);
+    }
+  }).catch((error) => {
+    log.error("Error getting video formatsAndImages", { error });
+    res.sendStatus(500);
+  });
+});
+
+router.put('/:videoId/setVideoCover', auth.isLoggedIn, (req, res) => {
+  models.Video.find({
+    where: {
+      id: req.params.videoId
+    }
+  }).then((video) => {
+    if (video && video.user_id===req.user.id) {
+      if (!video.public_meta)
+        video.set('public_meta', {});
+      video.set('public_meta.selectedVideoFrameIndex', req.body.frameIndex );
+      video.save().then( () => {
+        res.sendStatus(200);
+      }).catch( error => {
+        log.error("Error getting video formatsAndImages", { error });
+        res.sendStatus(500);
+      });
+    } else {
+      log.error("Can't find video or not same user", { videoUserId: video ? video.user_id : -1, userId: req.user.id });
+      res.sendStatus(404);
+    }
+  }).catch((error) => {
+    log.error("Error getting video formatsAndImages", { error });
     res.sendStatus(500);
   });
 });

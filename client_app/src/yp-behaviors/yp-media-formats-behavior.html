@@ -177,13 +177,19 @@
     },
 
     _getVideoPosterURL: function (videos, selectedImageIndex) {
-      if (!selectedImageIndex)
-        selectedImageIndex = 0;
       if (videos &&
         videos.length>0 &&
         videos[0].VideoImages &&
         videos[0].VideoImages.length>0) {
-          return JSON.parse(videos[0].VideoImages[0].formats)[selectedImageIndex];
+          if (!selectedImageIndex)
+            selectedImageIndex = 0;
+          if (videos[0].public_meta && videos[0].public_meta.selectedVideoFrameIndex) {
+            selectedImageIndex = parseInt(videos[0].public_meta.selectedVideoFrameIndex);
+          }
+          if (selectedImageIndex>videos[0].VideoImages.length-1) {
+            selectedImageIndex = 0;
+          }
+          return JSON.parse(videos[0].VideoImages[selectedImageIndex].formats)[0];
       } else {
         return null;
       }

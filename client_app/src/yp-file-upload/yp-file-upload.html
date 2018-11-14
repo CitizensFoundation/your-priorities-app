@@ -102,6 +102,37 @@ Example:
        .removeButton {
          margin-bottom: 12px;
        }
+
+       .previewFrame {
+         max-height: 50px;
+         max-width: 89px;
+         height: 50px;
+         width: 89px;
+         cursor: pointer;
+       }
+
+       .videoImages {
+         overflow-x: auto;
+         width: 200px;
+         max-height: 70px;
+         height: 70px;
+       }
+
+       .videoPreviewContainer {
+       }
+
+       .selectedCover {
+         border-top: 2px solid var(--accent-color);
+         max-height: 50px;
+         max-width: 89px;
+         white-space: nowrap;
+       }
+
+       .coverImage {
+         max-height: 50px;
+         max-width: 89px;
+         white-space: nowrap;
+       }
       </style>
 
     <div class="layout vertical center-center mainContainer">
@@ -128,9 +159,21 @@ Example:
             </div>
           </div>
         </template>
+        <template is="dom-if" if="[[videoImages]]" restamp>
+          <video hidden controls class="previewVideo" url="[[previewVideoUrl]]"></video>
+          <div class="layout horizontal videoImages videoPreviewContainer">
+            <div style="white-space: nowrap">
+              <template is="dom-repeat" items="[[videoImages]]" as="image">
+                 <img class$="[[_classFromImageIndex(index)]]" data-index$="[[index]]" on-tap="_selectVideoCover" sizing="cover" class="previewFrame" src="[[image]]"/>
+              </template>
+            </div>
+          </div>
+        </template>
       </div>
       <yp-ajax hidden id="transcodePollingAjax" method="PUT" on-response="_transcodePollingResponse"></yp-ajax>
       <yp-ajax hidden id="startTranscodeAjax" method="POST" on-response="_startTranscodeResponse"></yp-ajax>
+      <yp-ajax hidden id="getVideoMetaAjax" on-response="_getVideoMetaResponse"></yp-ajax>
+      <yp-ajax hidden id="setVideoCoverAjax" method="PUT"></yp-ajax>
     </div>
     <input type="file" id="fileInput" capture$="[[capture]]" on-change="_fileChange" accept$="[[accept]]" hidden multiple="{{multi}}">
     <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
@@ -339,7 +382,30 @@ Example:
         value: false
       },
 
-      containerType: String
+      containerType: String,
+
+      previewVideoUrl: {
+        type: String,
+        value: null
+      },
+
+      videoImages: {
+        type: Array,
+        value: null
+      },
+
+      selectedVideoCoverIndex: {
+        type: Number,
+        value: 0
+      }
+    },
+
+    _classFromImageIndex: function (index) {
+      if (index == this.selectedVideoCoverIndex) {
+        return 'selectedCover';
+      } else {
+        return "coverImage";
+      }
     },
 
     /**
@@ -355,6 +421,10 @@ Example:
       this.set('transcodingJobId', null);
       this.set('indeterminateProgress', false);
       this.set('capture', false);
+      this.set('previewVideoUrl', null);
+      this.set('videoImages', null);
+      this.set('isPollingForTranscoding', false);
+
       this.$.fileInput.value = null;
       if (this.videoUpload)
         this.fire("success", { detail: null, videoId: null });
@@ -531,14 +601,45 @@ Example:
       }, 1000);
     },
 
+    _getVideoMetaResponse: function (event, detail) {
+      if (detail.response.previewVideoUrl && detail.response.videoImages) {
+        this.set('previewVideoUrl', detail.response.previewVideoUrl);
+        this.set('videoImages', detail.response.videoImages);
+        this.set('uploadStatus', this.t('selectCoverImage'));
+      }
+    },
+
+    _getVideoMeta: function () {
+      if (this.currentVideoId) {
+        this.$.getVideoMetaAjax.url = "/api/videos/"+this.currentVideoId+"/formatsAndImages";
+        this.$.getVideoMetaAjax.generateRequest();
+      } else {
+        console.error("_getVideoImages no video id");
+      }
+    },
+
+    _selectVideoCover: function (event, detail) {
+      var frameIndex = event.target.getAttribute('data-index');
+      this.set('selectedVideoCoverIndex', frameIndex);
+      this.$.setVideoCoverAjax.url ="/api/videos/"+this.currentVideoId+'/setVideoCover';
+      this.$.setVideoCoverAjax.body = { frameIndex: frameIndex };
+      this.$.setVideoCoverAjax.generateRequest();
+      var videoImages = this.videoImages;
+      this.set('videoImages', null);
+      this.async(function () {
+        this.set('videoImages', videoImages);
+      });
+    },
+
     _transcodePollingResponse: function (event, detail) {
       var prefix = "files." + this.files.indexOf(this.currentFile);
       if (detail.response.status==="Complete") {
         this.set(prefix + ".complete", true);
         this.set('uploadStatus', this.t('uploadCompleted'));
-        if (this.videoUpload)
+        if (this.videoUpload) {
           this.fire("success", { detail: detail, videoId: this.currentVideoId });
-        else
+          this._getVideoMeta();
+        } else
           this.fire("success", { detail: detail, audioId: this.currentAudioId });
         this.fire('file-upload-complete');
         window.appGlobals.activity('complete', 'mediaTranscoding');

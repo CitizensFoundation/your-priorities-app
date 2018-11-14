@@ -125,7 +125,7 @@ var loadPointWithAll = function (pointId, callback) {
       {
         model: models.Video,
         required: false,
-        attributes: ['id','formats','updated_at','viewable'],
+        attributes: ['id','formats','updated_at','viewable','public_meta'],
         as: 'PointVideos',
         include: [
           {
