@@ -161,7 +161,7 @@
 
         showSpeechToTextInfoIfNeeded: function () {
           if (window.appGlobals.hasTranscriptSupport && !localStorage.getItem("haveShownTranscriptInfo")) {
-            //localStorage.setItem("haveShownTranscriptInfo", true);
+            localStorage.setItem("haveShownTranscriptInfo", true);
             this.set('notifyDialogText', this.t('speechToTextInfo'));
             this.$.dialog.open();
           }
