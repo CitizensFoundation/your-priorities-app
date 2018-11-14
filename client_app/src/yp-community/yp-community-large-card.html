@@ -341,7 +341,7 @@
       },
 
       _communityVideoURL: function (community) {
-        if (community &&
+        if (community && community.configuration &&
           community.configuration.useVideoCover &&
           community.CommunityLogoVideos) {
           var videoURL = this._getVideoURL(community.CommunityLogoVideos);
@@ -357,7 +357,7 @@
       },
 
       _communityVideoPosterURL: function (community) {
-        if (community &&
+        if (community && community.configuration &&
           community.configuration.useVideoCover &&
           community.CommunityLogoVideos) {
           var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);

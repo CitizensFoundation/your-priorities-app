@@ -1079,7 +1079,11 @@
             if (!this.latestPointCreatedAt || (!this.latestPointCreatedAt || points[i].created_at > this.latestPointCreatedAt)) {
               this.set('latestPointCreatedAt', points[i].created_at);
             }
-            points[i].latestContent = points[i].PointRevisions[points[i].PointRevisions.length-1].content;
+            if (points[i].PointRevisions[points[i].PointRevisions.length-1] && points[i].PointRevisions[points[i].PointRevisions.length-1].content) {
+              points[i].latestContent = points[i].PointRevisions[points[i].PointRevisions.length-1].content;
+            } else {
+              console.warn("No content for point in _preProcessPoints");
+            }
           }
           return points;
         },
