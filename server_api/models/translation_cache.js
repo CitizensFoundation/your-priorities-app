@@ -97,7 +97,11 @@ module.exports = function(sequelize, DataTypes) {
         const contentToTranslate = TranslationCache.getContentToTranslate(req, modelInstance);
         const contentHash = farmhash.hash32(contentToTranslate).toString();
         const textType = req.query.textType;
-        let indexKey = `${textType}-${modelInstance.id}-${req.query.targetLanguage}-${contentHash}`;
+        let targetLanguage = req.query.targetLanguage.replace('_','-');
+        if (targetLanguage!='zh-CN' && targetLanguage!='zh-TW') {
+          targetLanguage = targetLanguage.split("-")[0];
+        }
+        let indexKey = `${textType}-${modelInstance.id}-${targetLanguage}-${contentHash}`;
 
         TranslationCache.findOne({
           where: {
@@ -107,7 +111,7 @@ module.exports = function(sequelize, DataTypes) {
           if (translationModel) {
             callback(null, { content: translationModel.content });
           } else {
-            TranslationCache.getTranslationFromGoogle(textType, indexKey, contentToTranslate, req.query.targetLanguage, modelInstance, callback);
+            TranslationCache.getTranslationFromGoogle(textType, indexKey, contentToTranslate, targetLanguage, modelInstance, callback);
           }
         }).catch(function (error) {
           callback(error);
