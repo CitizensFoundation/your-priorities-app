@@ -6,11 +6,6 @@
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
-<link rel="import" href="videojs-css.html">
-
-<script src="https://unpkg.com/video.js@7.0.0/dist/video.min.js"></script>
-<script src="https://unpkg.com/videojs-record@2.4.1/dist/videojs.record.min.js"></script>
-
 <script src="https://unpkg.com/recordrtc@5.4.8/RecordRTC.js"></script>
 
 <!--
@@ -22,27 +17,35 @@
 
 <dom-module id="yp-media-recorder">
   <template>
-    <style include="videojs-css">
-      .video-js {
+    <style>
+      video {
         height: 720px;
         width: 1280px;
+      }
 
+      paper-dialog {
+        background-color: #FFF;
       }
     </style>
 
     <paper-dialog id="dialog" modal>
       <div class="layout vertical">
         <template is="dom-if" if="[[videoRecording]]">
-          <video id="videoRecorder" class="video-js vjs-default-skin"></video>
+          <video id="videoRecorder" class="videoRecorder"></video>
         </template>
         <template is="dom-if" if="[[audioRecording]]">
-          <audio id="audioRecorder" class="video-js vjs-default-skin"></audio>
+          <audio id="audioRecorder" class="audioRecorder"></audio>
         </template>
-        <div class="layout horizontal center-justified">
+        <div class="layout horizontal" hidden$="[[!recorder]]">
           <paper-icon-button icon="delete" on-tap="_close"></paper-icon-button>
+          <paper-button on-tap="_startRecording" hidden$="[[recordedData]]"><iron-icon icon="fiber-manual-record"></iron-icon>[[t('record')]]</paper-button>
+          <paper-button on-tap="_stopRecording" hidden$="[[recordedData]]"><iron-icon icon="stop"></iron-icon>[[t('stop')]]</paper-button>
           <div class="flex"></div>
-          <paper-icon-button icon="send" on-tap="_sendBack"></paper-icon-button>
+          <paper-icon-button icon="send" on-tap="_sendBack" hidden$="[[!recordedData]]"></paper-icon-button>
+          <div id="secondsLeft" hidden$="[[recordedData]]">[[recordSecondsLeft]] [[t('seconds')]]</div>
         </div>
+
+        <div class="layout horizontal center-justified"></div>
       </div>
       <div hidden$="[[!error]]">
         [[error]]
@@ -60,10 +63,12 @@
 
       static get properties() {
         return {
-          player: {
+          recorder: {
             type: Object,
             value: null
           },
+
+          mediaStream: Object,
 
           audioRecording: {
             type: Boolean,
@@ -97,6 +102,13 @@
           error: {
             type: String,
             value: null
+          },
+
+          recordSecondsLeft: Number,
+
+          isRecording: {
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -106,15 +118,31 @@
       }
 
       _sendBack () {
-        debugger;
-        if (this.callbackFunction && this.player) {
-          this.callbackFunction(this.player.recordedData);
-          this.player.record().destroy();
-          this.player = null;
+        if (this.callbackFunction && this.recorder) {
+          this.callbackFunction(this.recordedData);
+          this.recordedData = null;
+          this.recorder.clearRecordedData();
+          this.recorder.reset();
+          this.recorder = null;
           this._close();
         } else {
           console.error("No callback function for media player");
         }
+      }
+
+      captureUserMedia (callback) {
+        var session = {
+          audio: true,
+          video: this.videoRecording ? { width: 1280, height: 720 } : null
+        };
+
+        debugger;
+
+        navigator.getUserMedia(session, callback, function(error) {
+          console.error(error);
+          //TODO: Fire user error
+          callback(null);
+        });
       }
 
       open (options) {
@@ -131,77 +159,97 @@
         setTimeout(function () {
           this.setupRecorders();
           this.$.dialog.open();
-        }.bind(this));
+        }.bind(this), 100);
+      }
+
+      _generateRandomString () {
+        if (window.crypto) {
+          var a = window.crypto.getRandomValues(new Uint32Array(3)),
+            token = '';
+          for (var i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
+          return token;
+        } else {
+          return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
+        }
+      }
+
+      _startRecording () {
+        this.recorder.startRecording();
+        this.recordSecondsLeft = this.maxLength;
+        this.set('isRecording', true);
+        this._recordingTimer();
+      }
+
+      _stopRecording () {
+        this.set('isRecording', false);
+        this.recorder.stopRecording(this._storeRecordedData.bind(this));
+      }
+
+      _storeRecordedData () {
+        var blob = this.recorder.getBlob();
+        var fileName;
+
+        if (this.videoRecording) {
+          var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+          fileName = this._generateRandomString() + '.webm';
+          this.recordedData = new File([blob], fileName, {
+            type: 'video/webm'
+          });
+          videoElement.controls = true;
+
+        } else if (this.audioRecording) {
+          var audioElement = this.shadowRoot.querySelector('#audioRecorder');
+          fileName = this._generateRandomString() + '.mp3';
+          this.recordedData = new File([blob], fileName, {
+            type: 'audio/mp3'
+          });
+          audioElement.controls = true;
+        }
+      }
+
+      _recordingTimer () {
+        if (this.isRecording) {
+          setTimeout(function () {
+            if (this.isRecording) {
+              this.recordSecondsLeft -= 1;
+              if (this.recordSecondsLeft>0) {
+                this._recordingTimer();
+              } else {
+                this._stopRecording();
+              }
+            }
+          }.bind(this), 1000);
+        } else {
+          console.error("_recordingTimer called without in recording mode");
+        }
       }
 
       setupRecorders () {
         if (this.videoRecording) {
           var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-          this.player = videojs(videoElement, {
-            controls: true,
-            width: 430,
-            height: 242,
-            fluid: false,
-            plugins: {
-              record: {
-                audio: true,
-                video: true,
-                maxLength: this.maxLength,
-                debug: true
+
+          this.captureUserMedia(function(stream) {
+            if (stream) {
+              this.mediaStream = stream;
+              try {
+                var mediaSource = new MediaSource();
+                mediaSource.addSourceBuffer(stream);
+                videoElement.srcObject = mediaSource;
+              } catch (error) {
+                console.error(error);
+                videoElement.src = window.URL.createObjectURL(stream);
               }
-            }
-          }, function(){
-            var msg = 'Using video.js ' + videojs.VERSION +
-              ' with videojs-record ' + videojs.getPluginVersion('record') +
-              ' and recordrtc ' + RecordRTC.version;
-            console.log(msg);
-          });
+              videoElement.play();
+              videoElement.muted = true;
+              videoElement.controls = false;
 
-          this.player.on('startRecord', function () {
-            console.log("startRecord recording");
-            this.set('recordingFinished', false);
-          }.bind(this));
-
-          this.player.on('progressRecord', function (event, detail) {
-            var duration = this.player.record().getDuration();
-            console.log("progressRecord recording "+duration);
-            if (duration>=this.maxLength) {
-              this.player.record().stop();
+              this.recorder = RecordRTC(stream, {
+                type: 'video'
+              });
+            } else {
+              console.error("Can't find stream");
             }
           }.bind(this));
-
-
-          this.player.on('error', function (error) {
-            console.error(error);
-          });
-
-          this.player.on('finishRecord', function () {
-            console.log("Finished recording");
-            this.set('recordingFinished', true);
-            setTimeout(function () {
-              this.player.record().stopDevice();
-              this.player.currentTime(0);
-              this.player.play();
-            }.bind(this), 100);
-          }.bind(this));
-
-          this.player.on('deviceError', function () {
-            this.set('recordingFinished', false);
-            this.set('error', this.player.deviceErrorCode);
-            console.error(this.player.deviceErrorCode);
-          }.bind(this));
-          this.player.on('enumerateError', function () {
-            this.set('recordingFinished', false);
-            this.set('error', this.player.enumerateError);
-            console.error(this.player.enumerateError);
-          }.bind(this));
-
-          this.player.record().getDevice();
-
-          setTimeout(function () {
-            console.error("Start");
-            this.player.record().start();
-          }.bind(this), 5000);
 
         } else if (this.audioRecording) {
 

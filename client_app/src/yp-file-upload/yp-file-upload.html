@@ -489,6 +489,7 @@ Example:
      * Clicks the invisible file input
     */
     _fileClick: function() {
+      this._openMediaRecorder();
       var elem = this.$.fileInput;
       if (elem && document.createEvent) { // sanity check
         var evt = document.createEvent("MouseEvents");
@@ -504,8 +505,12 @@ Example:
       }.bind(this));
     },
 
-    _dataFromMediaRecorder: function (data) {
-      debugger;
+    _dataFromMediaRecorder: function (file) {
+      file.progress = 0;
+      file.error = false;
+      file.complete = false;
+      this.push("files", file);
+      this.uploadFile(file);
     },
 
     /**
