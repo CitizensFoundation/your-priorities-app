@@ -12,12 +12,27 @@
   <template>
     <style>
       video {
-        height: 720px;
-        width: 1280px;
       }
 
       paper-dialog {
         background-color: #FFF;
+      }
+
+      #dialog {
+      }
+
+      .buttons {
+        width: 100%;
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+
+      .horizontal {
+        @apply --layout-horizontal;
+      }
+
+      .flex {
+        @apply --layout-flex;
       }
     </style>
 
@@ -45,15 +60,17 @@
     <paper-dialog id="dialog" modal>
       <div class="layout vertical">
         <template is="dom-if" if="[[videoRecording]]">
-          <video id="videoRecorder" class="videoRecorder"></video>
+          <video id="videoRecorder" class="videoRecorder" hidden$="[[previewActive]]"></video>
+          <video id="videoPreviewer" class="videoRecorder" hidden$="[[!previewActive]]"></video>
         </template>
         <template is="dom-if" if="[[audioRecording]]">
           <audio id="audioRecorder" class="audioRecorder"></audio>
         </template>
-        <div class="layout horizontal" hidden$="[[!recorder]]">
-          <paper-icon-button icon="delete" on-tap="_close"></paper-icon-button>
+        <div class="layout horizontal buttons" hidden$="[[!recorder]]">
+          <paper-icon-button icon="clear" on-tap="_close"></paper-icon-button>
+          <paper-icon-button icon="delete" on-tap="_deleteRecording" hidden$="[[!recordedData]]"></paper-icon-button>
           <paper-button on-tap="_startRecording" hidden$="[[recordedData]]"><iron-icon icon="fiber-manual-record"></iron-icon>[[t('record')]]</paper-button>
-          <paper-button on-tap="_stopRecording" hidden$="[[recordedData]]"><iron-icon icon="stop"></iron-icon>[[t('stop')]]</paper-button>
+          <paper-button on-tap="_stopRecording" hidden$="[[!isRecording]]"><iron-icon icon="stop"></iron-icon>[[t('stop')]]</paper-button>
           <div class="flex"></div>
           <paper-icon-button icon="send" on-tap="_sendBack" hidden$="[[!recordedData]]"></paper-icon-button>
           <div id="secondsLeft" hidden$="[[recordedData]]">[[recordSecondsLeft]] [[t('seconds')]]</div>
@@ -72,7 +89,7 @@
 
   <script>
 
-    class YpMediaRecorder extends  Polymer.mixinBehaviors([Polymer.ypLanguageBehavior],Polymer.Element) {
+    class YpMediaRecorder extends  Polymer.mixinBehaviors([Polymer.ypLanguageBehavior], Polymer.Element) {
       static get is() { return 'yp-media-recorder'; }
 
       static get properties() {
@@ -100,7 +117,8 @@
           },
 
           recordedData: {
-            type: Object
+            type: Object,
+            value: null
           },
 
           recordingFinished: {
@@ -132,7 +150,16 @@
 
           audioDevices: Array,
 
-          captureCallback: Function
+          captureCallback: Function,
+
+          captureStream: Object,
+
+          previewActive: {
+            type: Boolean,
+            value: false
+          },
+
+          videoOptions: Object
         }
       }
 
@@ -150,6 +177,11 @@
       }
 
       _close () {
+        if (this.mediaStream) {
+          this.mediaStream.getTracks().forEach(function (track) {
+            track.stop();
+          });
+        }
         this.$.dialog.close();
       }
 
@@ -168,11 +200,9 @@
 
       captureUserMedia (callback) {
         navigator.mediaDevices.enumerateDevices().then( function (devicesIn) {
-          var devices =  devicesIn.filter(function (d) {
+          this.audioDevices =  devicesIn.filter(function (d) {
             return d.kind === 'audioinput'
           });
-          this.audioDevices = devices;
-          debugger;
           if (this.audioDevices && this.audioDevices.length>1) {
             this.captureCallback = callback;
             if (localStorage.getItem("selectedAudioDeviceId")) {
@@ -187,9 +217,13 @@
       }
 
       _openMediaSession (callback) {
+        setTimeout(function () {
+          this.$.dialog.open();
+        }.bind(this), 100);
+
         var session = {
           audio: this.selectedAudioDeviceId ? { deviceId: this.selectedAudioDeviceId } : true,
-          video: this.videoRecording ? { width: 1280, height: 720 } : null
+          video: this.videoRecording ? this.videoSettings : null
         };
 
         navigator.getUserMedia(session, callback, function(error) {
@@ -197,6 +231,10 @@
           //TODO: Fire user error
           callback(null);
         });
+      }
+
+      $$ (id) {
+        return this.shadowRoot.querySelector(id)
       }
 
       open (options) {
@@ -210,10 +248,31 @@
         } else if (options.audioRecording) {
           this.set('audioRecording', true);
         }
+
+        setTimeout(function () {
+          if (this.videoRecording) {
+            var width, height;
+            if (window.innerHeight>window.innerWidth) {
+              this.set('videoSettings', { width: 720, height: 1280 });
+              height = Math.min(1280, Math.abs(window.innerHeight/0.8));
+              width = Math.min(720, Math.abs(height*(1.0+0.5625)));
+              this.$$("#videoRecorder").style.height = height;
+              this.$$("#videoRecorder").style.width = width;
+            } else {
+              this.set('videoSettings', { width: 1280, height: 720 });
+              height = Math.min(720, Math.abs(window.innerHeight/0.8));
+              width = Math.min(1280, Math.abs(height*1.77777777778));
+              this.$$("#videoRecorder").style.height = height;
+              this.$$("#videoRecorder").style.width = width;
+            }
+          } else {
+
+          }
+        }.bind(this));
+
         setTimeout(function () {
           this.setupRecorders();
-          this.$.dialog.open();
-        }.bind(this), 100);
+        }.bind(this), 20);
       }
 
       _generateRandomString () {
@@ -228,6 +287,7 @@
       }
 
       _startRecording () {
+        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
         this.recorder.startRecording();
         this.recordSecondsLeft = this.maxLength;
         this.set('isRecording', true);
@@ -235,8 +295,18 @@
       }
 
       _stopRecording () {
+        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+        videoElement.pause();
         this.set('isRecording', false);
         this.recorder.stopRecording(this._storeRecordedData.bind(this));
+      }
+
+      _deleteRecording () {
+        this.recorder.reset();
+        this.set('previewActive', false);
+        this.set('recordedData',  null);
+        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+        videoElement.play();
       }
 
       _storeRecordedData () {
@@ -245,12 +315,16 @@
 
         if (this.videoRecording) {
           var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+          var videoPreviewer = this.shadowRoot.querySelector('#videoPreviewer');
           fileName = this._generateRandomString() + '.webm';
           this.recordedData = new File([blob], fileName, {
             type: 'video/webm'
           });
           videoElement.controls = true;
-
+          this.recorder.reset();
+          videoPreviewer.src = window.URL.createObjectURL(this.recordedData);
+          videoPreviewer.controls = true;
+          this.set('previewActive', true);
         } else if (this.audioRecording) {
           var audioElement = this.shadowRoot.querySelector('#audioRecorder');
           fileName = this._generateRandomString() + '.mp3';
@@ -258,6 +332,14 @@
             type: 'audio/mp3'
           });
           audioElement.controls = true;
+          audioElement.pause();
+          this.recorder.reset();
+          try {
+            audioElement.srcObject = this.recordedData;
+          } catch (error) {
+            console.error(error);
+            audioElement.src = window.URL.createObjectURL(this.recordedData);
+          }
         }
       }
 
@@ -279,6 +361,7 @@
       }
 
       setupRecorders () {
+        this.recordSecondsLeft = this.maxLength;
         if (this.videoRecording) {
           var videoElement = this.shadowRoot.querySelector('#videoRecorder');
 
@@ -306,6 +389,9 @@
         } else if (this.audioRecording) {
 
         }
+        setTimeout(function () {
+          this.$.dialog.center();
+        }.bind(this));
       }
 
       ready () {
