@@ -8,13 +8,6 @@
 
 <script src="https://unpkg.com/recordrtc@5.4.8/RecordRTC.js"></script>
 
-<!--
-<script src="../../bower_components/video.js/src/js/video.js"></script>
-<script src="../../bower_components/videojs-record/src/js/videojs.record.js"></script>
-<script src="../../bower_components/wavesurfer.js/src/wavesurfer.js"></script>
-<script src="../../bower_components/videojs-wavesurfer/src/js/videojs.wavesurfer.js"></script>
--->
-
 <dom-module id="yp-media-recorder">
   <template>
     <style>
@@ -27,6 +20,27 @@
         background-color: #FFF;
       }
     </style>
+
+    <paper-dialog id="selectAudioDevices" modal>
+      <h2>[[t('selectAudioDevice')]]</h2>
+      <paper-dialog-scrollable>
+        <paper-listbox>
+          <template is="dom-repeat" items="[[audioDevices]]">
+            <paper-item on-tap="_selectAudioDevice" id="[[item.deviceId]]">[[item.label]]</paper-item>
+          </template>
+        </paper-listbox>
+        <div class="layout horizontal">
+          <div>
+            [[t('rememberAudioDevice')]]
+          </div>
+          <paper-checkbox checked$="{{rememberAudioDevice}}"></paper-checkbox>
+        </div>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[t('Close')]]</paper-button>
+      </div>
+    </paper-dialog>
 
     <paper-dialog id="dialog" modal>
       <div class="layout vertical">
@@ -58,7 +72,7 @@
 
   <script>
 
-    class YpMediaRecorder extends Polymer.Element {
+    class YpMediaRecorder extends  Polymer.mixinBehaviors([Polymer.ypLanguageBehavior],Polymer.Element) {
       static get is() { return 'yp-media-recorder'; }
 
       static get properties() {
@@ -109,8 +123,30 @@
           isRecording: {
             type: Boolean,
             value: false
-          }
+          },
+
+          rememberAudioDevice: {
+            type: Boolean,
+            value: false
+          },
+
+          audioDevices: Array,
+
+          captureCallback: Function
         }
+      }
+
+      _selectAudioDevice (event, detail) {
+        if (event.target.id) {
+          this.set('selectedAudioDeviceId', event.target.id);
+        }
+
+        if (this.rememberAudioDevice) {
+          localStorage.setItem("selectedAudioDeviceId", this.selectedAudioDeviceId);
+        }
+
+        this.$.selectAudioDevices.close();
+        this._openMediaSession(this.captureCallback);
       }
 
       _close () {
@@ -131,12 +167,30 @@
       }
 
       captureUserMedia (callback) {
+        navigator.mediaDevices.enumerateDevices().then( function (devicesIn) {
+          var devices =  devicesIn.filter(function (d) {
+            return d.kind === 'audioinput'
+          });
+          this.audioDevices = devices;
+          debugger;
+          if (this.audioDevices && this.audioDevices.length>1) {
+            this.captureCallback = callback;
+            if (localStorage.getItem("selectedAudioDeviceId")) {
+              this.set('selectedAudioDeviceId', localStorage.getItem("selectedAudioDeviceId"));
+            } else {
+              this.$.selectAudioDevices.open();
+            }
+          } else {
+            this._openMediaSession(callback);
+          }
+        }.bind(this));
+      }
+
+      _openMediaSession (callback) {
         var session = {
-          audio: true,
+          audio: this.selectedAudioDeviceId ? { deviceId: this.selectedAudioDeviceId } : true,
           video: this.videoRecording ? { width: 1280, height: 720 } : null
         };
-
-        debugger;
 
         navigator.getUserMedia(session, callback, function(error) {
           console.error(error);
@@ -212,7 +266,7 @@
           setTimeout(function () {
             if (this.isRecording) {
               this.recordSecondsLeft -= 1;
-              if (this.recordSecondsLeft>0) {
+              if (this.recordSecondsLeft>=0) {
                 this._recordingTimer();
               } else {
                 this._stopRecording();
@@ -232,9 +286,7 @@
             if (stream) {
               this.mediaStream = stream;
               try {
-                var mediaSource = new MediaSource();
-                mediaSource.addSourceBuffer(stream);
-                videoElement.srcObject = mediaSource;
+                videoElement.srcObject = stream;
               } catch (error) {
                 console.error(error);
                 videoElement.src = window.URL.createObjectURL(stream);

@@ -490,11 +490,13 @@ Example:
     */
     _fileClick: function() {
       this._openMediaRecorder();
-      var elem = this.$.fileInput;
-      if (elem && document.createEvent) { // sanity check
-        var evt = document.createEvent("MouseEvents");
-        evt.initEvent("click", true, false);
-        elem.dispatchEvent(evt);
+      if (false) {
+        var elem = this.$.fileInput;
+        if (elem && document.createEvent) { // sanity check
+          var evt = document.createEvent("MouseEvents");
+          evt.initEvent("click", true, false);
+          elem.dispatchEvent(evt);
+        }
       }
     },
 
