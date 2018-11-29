@@ -34,6 +34,46 @@
       .flex {
         @apply --layout-flex;
       }
+
+      .recording {
+        color: #f00;
+        animation-name: pulse;
+        animation-duration: 1.3s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      @keyframes pulse {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+
+      .buttonText {
+        margin-left: 6px;
+      }
+
+      .actionButton {
+        color: var(--accent-color);
+      }
+
+      .iconButtons {
+        margin-top: 2px;
+      }
+
+      #secondsLeft {
+        margin-top: 12px;
+        margin-left: 4px;
+        margin-right: 4px;
+      }
+
+      @media (max-width: 640px) {
+        #dialog {
+          padding: 0;
+          margin: 0;
+          @apply --layout-self-start;
+        }
+      }
+
     </style>
 
     <paper-dialog id="selectAudioDevices" modal>
@@ -61,19 +101,27 @@
       <div class="layout vertical">
         <template is="dom-if" if="[[videoRecording]]">
           <video id="videoRecorder" class="videoRecorder" hidden$="[[previewActive]]"></video>
-          <video id="videoPreviewer" class="videoRecorder" hidden$="[[!previewActive]]"></video>
+          <video id="videoPreviewer" preload="auto" class="videoRecorder" hidden$="[[!previewActive]]"></video>
         </template>
         <template is="dom-if" if="[[audioRecording]]">
           <audio id="audioRecorder" class="audioRecorder"></audio>
         </template>
         <div class="layout horizontal buttons" hidden$="[[!recorder]]">
-          <paper-icon-button icon="clear" on-tap="_close"></paper-icon-button>
-          <paper-icon-button icon="delete" on-tap="_deleteRecording" hidden$="[[!recordedData]]"></paper-icon-button>
-          <paper-button on-tap="_startRecording" hidden$="[[recordedData]]"><iron-icon icon="fiber-manual-record"></iron-icon>[[t('record')]]</paper-button>
-          <paper-button on-tap="_stopRecording" hidden$="[[!isRecording]]"><iron-icon icon="stop"></iron-icon>[[t('stop')]]</paper-button>
-          <div class="flex"></div>
-          <paper-icon-button icon="send" on-tap="_sendBack" hidden$="[[!recordedData]]"></paper-icon-button>
+          <paper-icon-button icon="clear" class="iconButtons" on-tap="_close"></paper-icon-button>
+          <paper-icon-button icon="delete" class="iconButtons" on-tap="_deleteRecording" hidden$="[[!recordedData]]"></paper-icon-button>
+          <paper-button on-tap="_startRecording" hidden$="[[recordedData]]">
+            <iron-icon id="recordingIcon" icon="fiber-manual-record"></iron-icon>
+            <div class="buttonText">[[t('record')]]</div>
+          </paper-button>
           <div id="secondsLeft" hidden$="[[recordedData]]">[[recordSecondsLeft]] [[t('seconds')]]</div>
+          <paper-button on-tap="_stopRecording" hidden$="[[!isRecording]]">
+            <iron-icon icon="stop"></iron-icon>
+            <div class="buttonText">[[t('stop')]]</div>
+          </paper-button>
+          <paper-button on-tap="_stopRecording" on-tap="_sendBack" class="actionButton" hidden$="[[!recordedData]]">
+            <iron-icon icon="send"></iron-icon>
+            <div class="buttonText">[[t('send')]]</div>
+          </paper-button>
         </div>
 
         <div class="layout horizontal center-justified"></div>
@@ -217,10 +265,6 @@
       }
 
       _openMediaSession (callback) {
-        setTimeout(function () {
-          this.$.dialog.open();
-        }.bind(this), 100);
-
         var session = {
           audio: this.selectedAudioDeviceId ? { deviceId: this.selectedAudioDeviceId } : true,
           video: this.videoRecording ? this.videoSettings : null
@@ -229,8 +273,9 @@
         navigator.getUserMedia(session, callback, function(error) {
           console.error(error);
           //TODO: Fire user error
-          callback(null);
-        });
+          callback(null)
+          ;
+        }.bind(this));
       }
 
       $$ (id) {
@@ -251,20 +296,28 @@
 
         setTimeout(function () {
           if (this.videoRecording) {
+            var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+            var videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
             var width, height;
             if (window.innerHeight>window.innerWidth) {
               this.set('videoSettings', { width: 720, height: 1280 });
-              height = Math.min(1280, Math.abs(window.innerHeight/0.8));
-              width = Math.min(720, Math.abs(height*(1.0+0.5625)));
-              this.$$("#videoRecorder").style.height = height;
-              this.$$("#videoRecorder").style.width = width;
+              height = Math.min(1280, Math.abs(window.innerHeight*0.8)).toFixed();
+              width = Math.min(720, Math.abs(height*0.5625)).toFixed();
+              console.error("Portrait - width: "+width+" height: "+height);
             } else {
               this.set('videoSettings', { width: 1280, height: 720 });
-              height = Math.min(720, Math.abs(window.innerHeight/0.8));
-              width = Math.min(1280, Math.abs(height*1.77777777778));
-              this.$$("#videoRecorder").style.height = height;
-              this.$$("#videoRecorder").style.width = width;
+              height = Math.min(720, Math.abs(window.innerHeight*0.8)).toFixed();
+              width = Math.min(1280, Math.abs(height*1.77777777778)).toFixed();
+              console.error("Landscape - width: "+width+" height: "+height);
             }
+            videoElement.style.height = height + 'px';
+            videoElement.style.width = width + 'px';
+            videoPreviewElement.style.height = height + 'px';
+            videoPreviewElement.style.width = width + 'px';
+
+            setTimeout(function () {
+              this.$.dialog.open();
+            }.bind(this));
           } else {
 
           }
@@ -291,12 +344,14 @@
         this.recorder.startRecording();
         this.recordSecondsLeft = this.maxLength;
         this.set('isRecording', true);
+        this.$$("#recordingIcon").className = "recording";
         this._recordingTimer();
       }
 
       _stopRecording () {
         var videoElement = this.shadowRoot.querySelector('#videoRecorder');
         videoElement.pause();
+        this.$$("#recordingIcon").className = "";
         this.set('isRecording', false);
         this.recorder.stopRecording(this._storeRecordedData.bind(this));
       }
@@ -305,6 +360,7 @@
         this.recorder.reset();
         this.set('previewActive', false);
         this.set('recordedData',  null);
+        this.recordSecondsLeft = this.maxLength;
         var videoElement = this.shadowRoot.querySelector('#videoRecorder');
         videoElement.play();
       }
