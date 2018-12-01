@@ -100,7 +100,7 @@ Example:
        }
 
        .removeButton {
-         margin-bottom: 12px;
+         margin-bottom: 18px;
        }
 
        .previewFrame {
@@ -150,12 +150,13 @@ Example:
 
     <div class="layout vertical center-center mainContainer">
       <div class="layout vertical center-center">
-        <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
-          <slot></slot>
-        </paper-button>
-        <div hidden$="[[!uploadLimitSeconds]]" class="limitInfo layout horizontal center-center"><em>[[uploadLimitSeconds]] [[t('seconds')]]</em></div>
-
-        <paper-icon-button class="removeButton" icon="delete" on-tap="clear" hidden$="[[!currentFile]]"></paper-icon-button>
+        <div class="layout horizontal center-center">
+          <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
+            <slot></slot>
+          </paper-button>
+          <paper-icon-button class="removeButton layout self-start" icon="delete" on-tap="clear" hidden$="[[!currentFile]]"></paper-icon-button>
+        </div>
+        <div hidden$="[[!uploadLimitSeconds]]" class="limitInfo layout horizontal center-center"><em hidden$="[[currentFile]]">[[uploadLimitSeconds]] [[t('seconds')]]</em></div>
       </div>
       <div id="UploadBorder">
         <template is="dom-repeat" items="{{files}}">
@@ -505,25 +506,50 @@ Example:
       }
     },
 
-    /**
-     * Clicks the invisible file input
-    */
-    _fileClick: function() {
-      this._openMediaRecorder();
-      if (false) {
-        var elem = this.$.fileInput;
-        if (elem && document.createEvent) { // sanity check
-          var evt = document.createEvent("MouseEvents");
-          evt.initEvent("click", true, false);
-          elem.dispatchEvent(evt);
+    _hasRecorderApp: function () {
+      var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
+      if (this.videoRecording) {
+        if (isIOs || isAndroid) {
+          return true;
+        } else {
+          return false;
         }
+      } else if (this.audioRecording) {
+        if (isIOs) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return null;
+      }
+    },
+
+    _fileClick: function() {
+      if (this._hasRecorderApp()) {
+        this._openFileInput();
+      }  else {
+        this._openMediaRecorder();
+      }
+    },
+
+    _openFileInput: function () {
+      var elem = this.$.fileInput;
+      if (elem && document.createEvent) { // sanity check
+        var evt = document.createEvent("MouseEvents");
+        evt.initEvent("click", true, false);
+        elem.dispatchEvent(evt);
       }
     },
 
     _openMediaRecorder: function () {
       window.appGlobals.activity('open', 'mediaRecorder');
       Polymer.dom(document).querySelector('yp-app').getMediaRecorderAsync(function (dialog) {
-        dialog.open({ callbackFunction: this._dataFromMediaRecorder.bind(this), videoRecording: true });
+        dialog.open({ callbackFunction: this._dataFromMediaRecorder.bind(this),
+                      videoRecording: true,
+                      uploadFileFunction: this._openFileInput.bind(this),
+                      maxLength: this.uploadLimitSeconds });
       }.bind(this));
     },
 

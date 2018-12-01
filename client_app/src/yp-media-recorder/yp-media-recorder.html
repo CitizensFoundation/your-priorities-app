@@ -44,9 +44,17 @@
         animation-timing-function: linear;
       }
 
+      .recordingTime {
+        color: #f00;
+        animation-name: pulse;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
       @keyframes pulse {
         from { opacity: 1; }
-        to { opacity: 0; }
+        to { opacity: 0.5; }
       }
 
       .buttonText {
@@ -122,7 +130,13 @@
             <iron-icon icon="stop"></iron-icon>
             <div class="buttonText">[[t('stop')]]</div>
           </paper-button>
-          <paper-button on-tap="_stopRecording" on-tap="_sendBack" class="actionButton" hidden$="[[!recordedData]]">
+          <span hidden$="[[isRecording]]">
+            <paper-button on-tap="_uploadFile" hidden$="[[recordedData]]">
+              <iron-icon icon="file-upload"></iron-icon>
+              <div class="buttonText">[[t('uploadFile')]]</div>
+            </paper-button>
+          </span>
+          <paper-button on-tap="_sendBack" class="actionButton" hidden$="[[!recordedData]]">
             <iron-icon icon="send"></iron-icon>
             <div class="buttonText">[[t('send')]]</div>
           </paper-button>
@@ -207,6 +221,8 @@
           allDevices: Array,
 
           captureCallback: Function,
+
+          uploadFileFunction: Function,
 
           captureStream: Object,
 
@@ -301,6 +317,11 @@
         this.$.dialog.close();
       }
 
+      _uploadFile () {
+        this._close();
+        this.uploadFileFunction();
+      }
+
       _sendBack () {
         if (this.callbackFunction && this.recorder) {
           this.callbackFunction(this.recordedData);
@@ -366,6 +387,8 @@
         } else if (options.audioRecording) {
           this.set('audioRecording', true);
         }
+        this.set('maxLength', options.maxLength);
+        this.set('uploadFileFunction', options.uploadFileFunction);
 
         setTimeout(function () {
           if (this.videoRecording) {
@@ -427,6 +450,7 @@
         this.$$("#recordingIcon").className = "";
         this.set('isRecording', false);
         this.recorder.stopRecording(this._storeRecordedData.bind(this));
+        this.$$("#secondsLeft").className = "";
       }
 
       _deleteRecording () {
@@ -481,6 +505,9 @@
                 this._recordingTimer();
               } else {
                 this._stopRecording();
+              }
+              if (this.recordSecondsLeft<=5) {
+                this.$$("#secondsLeft").className = "recordingTime";
               }
             }
           }.bind(this), 1000);
