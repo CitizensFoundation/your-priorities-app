@@ -133,13 +133,28 @@ Example:
          max-width: 89px;
          white-space: nowrap;
        }
+
+
+       .limitInfo  {
+         margin-top: 0;
+         color: #656565;
+         text-align: center;
+         @apply --layout-center-center;
+         font-size: 14px;
+       }
+
+       paper-button {
+         min-width: 100px;
+       }
       </style>
 
     <div class="layout vertical center-center mainContainer">
-      <div class="layout horizontal">
+      <div class="layout vertical center-center">
         <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
           <slot></slot>
         </paper-button>
+        <div hidden$="[[!uploadLimitSeconds]]" class="limitInfo layout horizontal center-center"><em>[[uploadLimitSeconds]] [[t('seconds')]]</em></div>
+
         <paper-icon-button class="removeButton" icon="delete" on-tap="clear" hidden$="[[!currentFile]]"></paper-icon-button>
       </div>
       <div id="UploadBorder">
@@ -218,6 +233,11 @@ Example:
       target: {
         type: String,
         value: ""
+      },
+
+      uploadLimitSeconds: {
+        type: Number,
+        value: null
       },
 
       /**

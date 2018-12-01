@@ -21,7 +21,7 @@
       #dialog {
       }
 
-      .buttons {
+      .mainbuttons {
         width: 100%;
         margin-top: 8px;
         margin-bottom: 8px;
@@ -76,8 +76,8 @@
 
     </style>
 
-    <paper-dialog id="selectAudioDevices" modal>
-      <h2>[[t('selectAudioDevice')]]</h2>
+    <paper-dialog id="selectDevices" modal>
+      <h2>[[selecteDeviceTitle]]</h2>
       <paper-dialog-scrollable>
         <paper-listbox>
           <template is="dom-repeat" items="[[audioDevices]]">
@@ -86,9 +86,9 @@
         </paper-listbox>
         <div class="layout horizontal">
           <div>
-            [[t('rememberAudioDevice')]]
+            [[t('rememberDevice')]]
           </div>
-          <paper-checkbox checked$="{{rememberAudioDevice}}"></paper-checkbox>
+          <paper-checkbox checked$="{{rememberDevice}}"></paper-checkbox>
         </div>
       </paper-dialog-scrollable>
 
@@ -106,7 +106,7 @@
         <template is="dom-if" if="[[audioRecording]]">
           <audio id="audioRecorder" class="audioRecorder"></audio>
         </template>
-        <div class="layout horizontal buttons" hidden$="[[!recorder]]">
+        <div class="layout horizontal buttons mainbuttons" hidden$="[[!recorder]]">
           <paper-icon-button icon="clear" class="iconButtons" on-tap="_close"></paper-icon-button>
           <paper-icon-button icon="delete" class="iconButtons" on-tap="_deleteRecording" hidden$="[[!recordedData]]"></paper-icon-button>
           <paper-button on-tap="_startRecording" hidden$="[[recordedData]]">
@@ -191,12 +191,14 @@
             value: false
           },
 
-          rememberAudioDevice: {
+          rememberDevice: {
             type: Boolean,
             value: false
           },
 
           audioDevices: Array,
+
+          videoDevices: Array,
 
           captureCallback: Function,
 
@@ -207,7 +209,9 @@
             value: false
           },
 
-          videoOptions: Object
+          videoOptions: Object,
+
+          selectDeviceTitle: String
         }
       }
 
@@ -216,12 +220,53 @@
           this.set('selectedAudioDeviceId', event.target.id);
         }
 
-        if (this.rememberAudioDevice) {
+        if (this.rememberDevice) {
           localStorage.setItem("selectedAudioDeviceId", this.selectedAudioDeviceId);
         }
 
-        this.$.selectAudioDevices.close();
+        this.$.selectDevices.close();
         this._openMediaSession(this.captureCallback);
+      }
+
+      _selectVideoDevice (event) {
+        if (event.target.id) {
+          this.set('selectedVideoDeviceId', event.target.id);
+        }
+
+        if (this.rememberDevice) {
+          localStorage.setItem("selectedVideoDeviceId", this.selectedVideoDeviceId);
+        }
+
+        this.$.selectDevices.close();
+        this._checkAudioDevices();
+      }
+
+      _checkAudioDevices () {
+        if (this.audioDevices && this.audioDevices.length>1) {
+          if (localStorage.getItem("selectedAudioDeviceId")) {
+            this.set('selectedAudioDeviceId', localStorage.getItem("selectedAudioDeviceId"));
+          } else {
+            this.set('selectDeviceTitle', this.t('selectAudioDevice'));
+            this.set('rememberVideoDevice', false);
+            this.$.selectDevices.open();
+          }
+        } else {
+          this._openMediaSession(this.captureCallback);
+        }
+      }
+
+      _checkVideoDevices () {
+        if (this.videoDevices && this.videoDevices.length>0) {
+          if (localStorage.getItem("selectedVideoDeviceId")) {
+            this.set('selectedVideoDeviceId', localStorage.getItem("selectedVideoDeviceId"));
+          } else {
+            this.set('selectDeviceTitle', this.t('selectVideoDevice'));
+            this.set('rememberVideoDevice', false);
+            this.$.selectDevices.open();
+          }
+        } else {
+          this._checkAudioDevices();
+        }
       }
 
       _close () {
@@ -246,22 +291,23 @@
         }
       }
 
-      captureUserMedia (callback) {
+      checkDevices (callback) {
         navigator.mediaDevices.enumerateDevices().then( function (devicesIn) {
           this.audioDevices =  devicesIn.filter(function (d) {
             return d.kind === 'audioinput'
           });
-          if (this.audioDevices && this.audioDevices.length>1) {
-            this.captureCallback = callback;
-            if (localStorage.getItem("selectedAudioDeviceId")) {
-              this.set('selectedAudioDeviceId', localStorage.getItem("selectedAudioDeviceId"));
-            } else {
-              this.$.selectAudioDevices.open();
-            }
-          } else {
-            this._openMediaSession(callback);
-          }
+
+          this.videosDevices =  devicesIn.filter(function (d) {
+            return d.kind === 'audioinput'
+          });
+
+          this._checkVideoDevices();
         }.bind(this));
+      }
+
+      captureUserMedia (callback) {
+        this.captureCallback = callback;
+        this.checkDevices();
       }
 
       _openMediaSession (callback) {

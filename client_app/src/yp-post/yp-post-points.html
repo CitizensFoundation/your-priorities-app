@@ -45,7 +45,6 @@
 
       .pointInputMaterial {
         padding-top: 24px;
-        padding-bottom: 16px;
         padding-left: 16px;
         padding-right: 16px;
         margin-bottom: 16px;
@@ -217,17 +216,14 @@
         color: #FFF;
       }
 
-      .videoInfo {
-        margin-top: 8px;
-        margin-bottom: 14px;
-        color: #656565;
-        @apply --layout-self-start;
-      }
-
       .uploadNotLoggedIn {
-        width: 100px;
+        min-width: 100px;
         background-color: #FFF;
         color: #000;
+      }
+
+      .uploadNotLoggedIn > .icon {
+        padding-right: 8px;
       }
 
       .pointButtons {
@@ -289,14 +285,18 @@
                 <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
                   <div hidden$="[[hideUpVideo]]" class="uploadSection">
                     <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="videoFileUploadUp" current-file="{{hasCurrentUpVideo}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
+                      <yp-file-upload id="videoFileUploadUp" upload-limit-seconds="[[post.Group.configuration.videoPointUploadLimitSec]]"
+                                      current-file="{{hasCurrentUpVideo}}" container-type="points" group="[[post.Group]]"
+                                      raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         <span>[[t('uploadVideoPointFor')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo self-start">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadVideoPointFor')]]</paper-button>
+                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                        <iron-icon class="icon" icon="videocam"></iron-icon>
+                        [[t('uploadVideoPointFor')]]
+                      </paper-button>
                     </div>
                   </div>
                 </template>
@@ -304,16 +304,19 @@
                 <template is="dom-if" if="[[post.Group.configuration.allowPointAudioUploads]]">
                   <div hidden$="[[hideUpAudio]]" class="uploadSection">
                     <div class="layout vertical center-center" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="videoAudioUploadUp" current-file="{{hasCurrentUpAudio}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioUpUploaded">
+                      <yp-file-upload id="videoAudioUploadUp" current-file="{{hasCurrentUpAudio}}" container-type="points"
+                                      upload-limit-seconds="[[post.Group.configuration.audioPointUploadLimitSec]]"
+                                      group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST"
+                                      on-success="_audioUpUploaded">
                         <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                         <span>[[t('uploadAudioPointFor')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo self-start">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
-                      <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
-                      </div>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadAudioPointFor')]]</paper-button>
+                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                        <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                        [[t('uploadAudioPointFor')]]
+                      </paper-button>
                     </div>
                   </div>
                 </template>
@@ -371,14 +374,19 @@
                 <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
                   <div hidden$="[[hideDownVideo]]" class="uploadSection">
                     <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="videoFileUploadDown" current-file="{{hasCurrentDownVideo}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoDownUploaded">
+                      <yp-file-upload id="videoFileUploadDown" current-file="{{hasCurrentDownVideo}}" container-type="points"
+                                      upload-limit-seconds="[[post.Group.configuration.videoPointUploadLimitSec]]"
+                                      group="[[post.Group]]" raised="true" multi="false" video-upload method="POST"
+                                      on-success="_videoDownUploaded">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         <span>[[t('uploadVideoPointAgainst')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo self-start">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadVideoPointAgainst')]]</paper-button>
+                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                        <iron-icon class="icon" icon="videocam"></iron-icon>
+                        [[t('uploadVideoPointAgainst')]]
+                      </paper-button>
                     </div>
                   </div>
                 </template>
@@ -386,16 +394,19 @@
                 <template is="dom-if" if="[[post.Group.configuration.allowPointAudioUploads]]">
                   <div hidden$="[[hideDownAudio]]" class="uploadSection">
                     <div class="layout vertical center-center" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="audioFileUploadDown" current-file="{{hasCurrentDownAudio}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioDownUploaded">
+                      <yp-file-upload id="audioFileUploadDown" current-file="{{hasCurrentDownAudio}}" container-type="points"
+                                      upload-limit-seconds="[[post.Group.configuration.audioPointUploadLimitSec]]"
+                                      group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST"
+                                      on-success="_audioDownUploaded">
                         <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                         <span>[[t('uploadAudioPointAgainst')]]</span>
                       </yp-file-upload>
-                      <div class="videoInfo self-start">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
-                        <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
-                      </div>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">[[t('uploadAudioPointAgainst')]]</paper-button>
+                      <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                        <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                        [[t('uploadAudioPointAgainst')]]
+                      </paper-button>
                     </div>
                   </div>
                 </template>
@@ -448,16 +459,19 @@
               <template is="dom-if" if="[[post.Group.configuration.allowPointVideoUploads]]">
                 <div hidden$="[[hideMobileVideo]]" class="uploadSection">
                   <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
-                    <yp-file-upload id="videoFileUploadMobile" current-file="{{hasCurrentMobileVideo}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoMobileUploaded">
+                    <yp-file-upload id="videoFileUploadMobile" current-file="{{hasCurrentMobileVideo}}" container-type="points"
+                                    upload-limit-seconds="[[post.Group.configuration.videoPointUploadLimitSec]]"
+                                    group="[[post.Group]]" raised="true" multi="false" video-upload method="POST"
+                                    on-success="_videoMobileUploaded">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
 
                       <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
                     </yp-file-upload>
-                    <div class="videoInfo self-start">[[t('pointVideoInfo')]] <b>[[post.Group.configuration.videoPointUploadLimitSec]] [[t('seconds')]].</b></div>
                   </div>
                   <div class="layout horizontal center-center">
                     <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                      <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span hidden$="[[!selectedPointForMobile]]">[[t('uploadVideoPointFor')]]</span>
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
                     </paper-button>
@@ -467,18 +481,19 @@
               <template is="dom-if" if="[[post.Group.configuration.allowPointAudioUploads]]">
                 <div hidden$="[[hideMobileAudio]]" class="uploadSection">
                   <div class="layout vertical center-center  self-start" hidden$="[[!loggedInUser]]">
-                    <yp-file-upload id="audioFileUploadMobile" current-file="{{hasCurrentMobileAudio}}" container-type="points" group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioMobileUploaded">
+                    <yp-file-upload id="audioFileUploadMobile" current-file="{{hasCurrentMobileAudio}}" container-type="points"
+                                    upload-limit-seconds="[[post.Group.configuration.audioPointUploadLimitSec]]"
+                                    group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST"
+                                    on-success="_audioMobileUploaded">
                       <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
 
                       <span hidden$="[[!selectedPointForMobile]]">[[t('uploadAudioPointFor')]]</span>
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadAudioPointAgainst')]]</span>
                     </yp-file-upload>
-                    <div class="videoInfo self-start">[[t('pointAudioInfo')]] <b>[[post.Group.configuration.audioPointUploadLimitSec]] [[t('seconds')]].</b>
-                      <span hidden$="[[!isAndroid]]">[[t('pointAudioInfoAndroid')]]</span>
-                    </div>
                   </div>
                   <div class="layout horizontal center-center">
                     <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
+                      <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                       <span hidden$="[[!selectedPointForMobile]]">[[t('uploadAudioPointFor')]]</span>
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadAudioPointAgainst')]]</span>
                     </paper-button>
