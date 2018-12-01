@@ -1,4 +1,7 @@
 {
+  "selectVideoDevice": "Select video device",
+  "selectAudioDevice": "Select audio device",
+  "rememberDevice": "Remember device",
   "selectCoverImage": "Select cover image",
   "speechToTextInfo": "We will try to automatically convert your speech to text. For this to work well it is important to set your user interface language (top left menu) to the same language as you speak and to speak clearly.",
   "edited": "edited",
