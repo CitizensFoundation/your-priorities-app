@@ -8,6 +8,8 @@
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
 <script src="https://unpkg.com/recordrtc@5.4.8/RecordRTC.js"></script>
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<script src="./wavesurfer.mic.js"></script>
 
 <dom-module id="yp-media-recorder">
   <template>
@@ -30,6 +32,10 @@
 
       .horizontal {
         @apply --layout-horizontal;
+      }
+
+      .center-center {
+        @apply --layout-center-center;
       }
 
       .flex {
@@ -75,11 +81,25 @@
         margin-right: 4px;
       }
 
+      .mainContainer {
+        padding: 0 24px;
+      }
+
       @media (max-width: 640px) {
         #dialog {
           padding: 0;
           margin: 0;
           @apply --layout-self-start;
+        }
+        .mainContainer {
+          padding: 0 0;
+        }
+        .buttons {}
+      }
+
+      @media (max-width: 360px) {
+        .uploadFileText {
+          display: none;
         }
       }
 
@@ -89,6 +109,16 @@
 
       #checkBox {
         margin-left: 6px;
+      }
+
+      .header {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .uploadFileButton {
+        color: #888;
       }
     </style>
 
@@ -110,15 +140,20 @@
     </paper-dialog>
 
     <paper-dialog id="dialog" modal>
-      <div class="layout vertical">
+      <div class="layout vertical no-padding mainContainer">
         <template is="dom-if" if="[[videoRecording]]">
           <video id="videoRecorder" class="videoRecorder" hidden$="[[previewActive]]"></video>
           <video id="videoPreviewer" preload="auto" class="videoRecorder" hidden$="[[!previewActive]]"></video>
         </template>
         <template is="dom-if" if="[[audioRecording]]">
-          <audio id="audioRecorder" class="audioRecorder"></audio>
+          <div class="layout vertical center-center">
+            <div class="layout horizontal center-center header">[[t('voiceRecorder')]]</div>
+            <div id="waveform" hidden$="[[recordedData]]"></div>
+            <audio id="audioRecorder" class="audioRecorder" hidden$="[[previewActive]]"></audio>
+            <audio id="audioPreviewer" controls preload="auto" class="audioRecorder" hidden$="[[!previewActive]]"></audio>
+          </div>
         </template>
-        <div class="layout horizontal buttons mainbuttons" hidden$="[[!recorder]]">
+        <div class="layout horizontal mainbuttons" hidden$="[[!recorder]]">
           <paper-icon-button icon="clear" class="iconButtons" on-tap="_close"></paper-icon-button>
           <paper-icon-button icon="delete" class="iconButtons" on-tap="_deleteRecording" hidden$="[[!recordedData]]"></paper-icon-button>
           <paper-button on-tap="_startRecording" hidden$="[[recordedData]]">
@@ -131,9 +166,9 @@
             <div class="buttonText">[[t('stop')]]</div>
           </paper-button>
           <span hidden$="[[isRecording]]">
-            <paper-button on-tap="_uploadFile" hidden$="[[recordedData]]">
+            <paper-button class="uploadFileButton" on-tap="_uploadFile" hidden$="[[recordedData]]">
               <iron-icon icon="file-upload"></iron-icon>
-              <div class="buttonText">[[t('uploadFile')]]</div>
+              <div class="buttonText uploadFileText">[[t('uploadFile')]]</div>
             </paper-button>
           </span>
           <paper-button on-tap="_sendBack" class="actionButton" hidden$="[[!recordedData]]">
@@ -141,7 +176,6 @@
             <div class="buttonText">[[t('send')]]</div>
           </paper-button>
         </div>
-
         <div class="layout horizontal center-justified"></div>
       </div>
       <div hidden$="[[!error]]">
@@ -238,6 +272,11 @@
           selectDeviceFunction: {
             type: Function,
             value: null
+          },
+
+          surfer: {
+            type: Object,
+            value: null
           }
         }
       }
@@ -290,7 +329,7 @@
       }
 
       _checkVideoDevices () {
-        if (this.videoDevices && this.videoDevices.length>1) {
+        if (this.videoRecording && this.videoDevices && this.videoDevices.length>1) {
           if (localStorage.getItem("selectedVideoDeviceId")) {
             this.set('selectedVideoDeviceId', localStorage.getItem("selectedVideoDeviceId"));
             this._checkAudioDevices();
@@ -314,6 +353,11 @@
             track.stop();
           });
         }
+        if (this.surfer) {
+          this.surfer.microphone.stop();
+          this.surfer.destroy();
+        }
+        this.set('previewActive', false);
         this.$.dialog.close();
       }
 
@@ -389,6 +433,7 @@
         }
         this.set('maxLength', options.maxLength);
         this.set('uploadFileFunction', options.uploadFileFunction);
+        this.$$("#secondsLeft").className = "";
 
         setTimeout(function () {
           if (this.videoRecording) {
@@ -414,8 +459,10 @@
             setTimeout(function () {
               this.$.dialog.open();
             }.bind(this));
-          } else {
-
+          } else if (this.audioRecording) {
+            setTimeout(function () {
+              this.$.dialog.open();
+            }.bind(this));
           }
         }.bind(this));
 
@@ -436,7 +483,6 @@
       }
 
       _startRecording () {
-        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
         this.recorder.startRecording();
         this.recordSecondsLeft = this.maxLength;
         this.set('isRecording', true);
@@ -445,8 +491,6 @@
       }
 
       _stopRecording () {
-        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-        videoElement.pause();
         this.$$("#recordingIcon").className = "";
         this.set('isRecording', false);
         this.recorder.stopRecording(this._storeRecordedData.bind(this));
@@ -458,8 +502,6 @@
         this.set('previewActive', false);
         this.set('recordedData',  null);
         this.recordSecondsLeft = this.maxLength;
-        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-        videoElement.play();
       }
 
       _storeRecordedData () {
@@ -480,19 +522,16 @@
           this.set('previewActive', true);
         } else if (this.audioRecording) {
           var audioElement = this.shadowRoot.querySelector('#audioRecorder');
+          var audioPreviewer = this.shadowRoot.querySelector('#audioPreviewer');
           fileName = this._generateRandomString() + '.mp3';
           this.recordedData = new File([blob], fileName, {
             type: 'audio/mp3'
           });
           audioElement.controls = true;
           audioElement.pause();
-          this.recorder.reset();
-          try {
-            audioElement.srcObject = this.recordedData;
-          } catch (error) {
-            console.error(error);
-            audioElement.src = window.URL.createObjectURL(this.recordedData);
-          }
+          audioPreviewer.src = window.URL.createObjectURL(this.recordedData);
+          audioPreviewer.controls = true;
+          this.set('previewActive', true);
         }
       }
 
@@ -543,6 +582,39 @@
           }.bind(this));
 
         } else if (this.audioRecording) {
+          var audioElement = this.shadowRoot.querySelector('#audioRecorder');
+
+          this.captureUserMedia(function(stream) {
+            if (stream) {
+              this.mediaStream = stream;
+              try {
+                audioElement.srcObject = stream;
+              } catch (error) {
+                console.error(error);
+                audioElement.src = window.URL.createObjectURL(stream);
+              }
+              audioElement.play();
+              audioElement.muted = true;
+              audioElement.controls = false;
+              this.surfer = WaveSurfer.create({
+                container: this.$$("#waveform"),
+                waveColor: '#ff3d00',
+                progressColor: '#ff3d00',
+                cursorWidth: 0,
+                plugins: [
+                  WaveSurfer.microphone.create({ stream: this.mediaStream })
+                ]
+              });
+
+              this.surfer.microphone.play();
+
+              this.recorder = RecordRTC(stream, {
+                type: 'audio'
+              });
+            } else {
+              console.error("Can't find stream");
+            }
+          }.bind(this));
 
         }
         setTimeout(function () {

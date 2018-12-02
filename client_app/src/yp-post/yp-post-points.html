@@ -306,7 +306,7 @@
                 <template is="dom-if" if="[[post.Group.configuration.allowPointAudioUploads]]">
                   <div hidden$="[[hideUpAudio]]" class="uploadSection">
                     <div class="layout vertical center-center" hidden$="[[!loggedInUser]]">
-                      <yp-file-upload id="videoAudioUploadUp" current-file="{{hasCurrentUpAudio}}" container-type="points"
+                      <yp-file-upload id="audioFileUploadUp" current-file="{{hasCurrentUpAudio}}" container-type="points"
                                       upload-limit-seconds="[[post.Group.configuration.audioPointUploadLimitSec]]"
                                       group="[[post.Group]]" raised="true" multi="false" audio-upload method="POST"
                                       on-success="_audioUpUploaded">

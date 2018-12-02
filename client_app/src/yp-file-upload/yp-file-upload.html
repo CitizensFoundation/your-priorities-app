@@ -547,7 +547,8 @@ Example:
       window.appGlobals.activity('open', 'mediaRecorder');
       Polymer.dom(document).querySelector('yp-app').getMediaRecorderAsync(function (dialog) {
         dialog.open({ callbackFunction: this._dataFromMediaRecorder.bind(this),
-                      videoRecording: true,
+                      videoRecording: this.videoUpload,
+                      audioRecording: this.audioUpload,
                       uploadFileFunction: this._openFileInput.bind(this),
                       maxLength: this.uploadLimitSeconds });
       }.bind(this));
