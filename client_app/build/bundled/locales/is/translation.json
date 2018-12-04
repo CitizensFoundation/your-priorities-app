@@ -1,4 +1,7 @@
 {
+  "selectVideoDevice": "Veldu myndtæki",
+  "selectAudioDevice": "Veldu hljóðtæki",
+  "rememberDevice": "Muna tæki",
   "selectCoverImage": "Veldu forsíðumynd",
   "speechToTextInfo": "Við munum reyna að breyta öllu tali í texta sjálfkrafa. Það er mikilvægt að rétt tungumál sé valið í valmynd efst vinstra megin. Með íslensku má búast við að gervigreindarkerfið nái að skilja rétt um 70%-80% af talinu.",
   "edited": "breytt",
