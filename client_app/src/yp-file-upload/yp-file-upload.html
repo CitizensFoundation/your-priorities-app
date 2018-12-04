@@ -509,13 +509,15 @@ Example:
     _hasRecorderApp: function () {
       var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
-      if (this.videoRecording) {
+      console.error("isAndroid: "+isAndroid);
+      console.error("isIOs: "+isIOs);
+      if (this.videoUpload) {
         if (isIOs || isAndroid) {
           return true;
         } else {
           return false;
         }
-      } else if (this.audioRecording) {
+      } else if (this.audioUpload) {
         if (isIOs) {
           return true;
         } else {
