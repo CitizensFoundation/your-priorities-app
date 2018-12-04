@@ -280,6 +280,13 @@ module.exports = function(sequelize, DataTypes) {
         } else {
           video.set('meta.maxDuration', "600");
         }
+
+        if (options.aspect==="portrait") {
+          video.set('meta.aspect',"portrait");
+        } else if (options.aspect==="landscape") {
+          video.set('meta.aspect',"landscape");
+        }
+
         video.save().then((video) => {
           sequelize.models.Video.startTranscodingJob(video, (error, data) => {
             if (error) {
@@ -367,6 +374,14 @@ module.exports = function(sequelize, DataTypes) {
         });
         var fileKey = video.meta.fileKey;
         var pipelineId = process.env.AWS_TRANSCODER_PIPELINE_ID;
+        var videoPresetId;
+
+        if (video.meta.aspect && video.meta.aspect==="portrait") {
+          videoPresetId = process.env.AWS_TRANSCODER_PORTRAIT_PRESET_ID;
+        } else {
+          videoPresetId = process.env.AWS_TRANSCODER_PRESET_ID;
+        }
+
         var params = {
           PipelineId: pipelineId,
           Input: {
@@ -382,9 +397,9 @@ module.exports = function(sequelize, DataTypes) {
           },
           Outputs: [
             {
-              Key:fileKey,
+              Key: fileKey,
               ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
-              PresetId: process.env.AWS_TRANSCODER_PRESET_ID,
+              PresetId: videoPresetId,
             },
             {
               Key: fileKey.slice(0, fileKey.length-4)+'.flac',

@@ -198,6 +198,7 @@ router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
   const options = {
     videoPostUploadLimitSec: req.body.videoPostUploadLimitSec,
     videoPointUploadLimitSec: req.body.videoPointUploadLimitSec,
+    aspect: req.body.aspect
   };
   models.Video.find({
     where: {

@@ -299,23 +299,22 @@
                 </div>
                 <template is="dom-if" if="[[group.configuration.allowPostVideoUploads]]">
                   <div class="layout vertical center-center self-start uploadSection">
-                    <yp-file-upload id="videoFileUpload" container-type="posts" group="[[group]]" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+                    <yp-file-upload id="videoFileUpload" container-type="posts" group="[[group]]" raised="true"
+                                    upload-limit-seconds="[[group.configuration.videoPostUploadLimitSec]]"
+                                    multi="false" video-upload method="POST" on-success="_videoUploaded">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span>[[t('uploadVideo')]]</span>
                     </yp-file-upload>
-                    <div class="imageSizeInfo layout horizontal">
-                      <div>1080p or 720p (16/9 widescreen)</div>
-                    </div>
-                    <div>[[t('postCoverVideoInfo')]] <b>[[group.configuration.videoPostUploadLimitSec]] [[t('seconds')]].</b></div>
                   </div>
                 </template>
                 <template is="dom-if" if="[[group.configuration.allowPostAudioUploads]]">
                   <div class="layout vertical center-center self-start uploadSection">
-                    <yp-file-upload id="audioFileUpload" container-type="posts" group="[[group]]" raised="true" multi="false" audio-upload method="POST" on-success="_audioUploaded">
+                    <yp-file-upload id="audioFileUpload" container-type="posts" group="[[group]]" raised="true"
+                                    upload-limit-seconds="[[group.configuration.audioPostUploadLimitSec]]"
+                                    multi="false" audio-upload method="POST" on-success="_audioUploaded">
                       <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                       <span>[[t('uploadAudio')]]</span>
                     </yp-file-upload>
-                    <div>[[t('postCoverAudioInfo')]] <b>[[group.configuration.audioPostUploadLimitSec]] [[t('seconds')]].</b></div>
                   </div>
                 </template>
               </div>

@@ -94,7 +94,14 @@
         .mainContainer {
           padding: 0 0;
         }
-        .buttons {}
+
+        .mainbuttons {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          background-color: rgba(240,240,240,0.5);
+        }
       }
 
       @media (max-width: 360px) {
@@ -149,7 +156,7 @@
           <div class="layout vertical center-center">
             <div class="layout horizontal center-center header">[[t('voiceRecorder')]]</div>
             <div id="waveform" hidden$="[[recordedData]]"></div>
-            <audio id="audioRecorder" class="audioRecorder" hidden$="[[previewActive]]"></audio>
+            <audio id="audioRecorder" class="audioRecorder" hidden></audio>
             <audio id="audioPreviewer" controls preload="auto" class="audioRecorder" hidden$="[[!previewActive]]"></audio>
           </div>
         </template>
@@ -176,7 +183,6 @@
             <div class="buttonText">[[t('send')]]</div>
           </paper-button>
         </div>
-        <div class="layout horizontal center-justified"></div>
       </div>
       <div hidden$="[[!error]]">
         [[error]]
@@ -403,17 +409,23 @@
           this.videoSettings.deviceId = this.selectedVideoDeviceId;
         }
 
-        var session = {
+        var constraints = {
           audio: this.selectedAudioDeviceId ? { deviceId: this.selectedAudioDeviceId } : true,
           video: this.videoRecording ? this.videoSettings : null
         };
 
-        navigator.getUserMedia(session, callback, function(error) {
+        debugger;
+        navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+          stream.getTracks().forEach(function (track) {
+            console.error(track.getCapabilities());
+          });
+
+          callback(stream);
+        }).catch(function(error) {
           console.error(error);
           //TODO: Fire user error
-          callback(null)
-          ;
-        }.bind(this));
+          callback(null);
+        });
       }
 
       $$ (id) {
@@ -440,21 +452,25 @@
             var videoElement = this.shadowRoot.querySelector('#videoRecorder');
             var videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
             var width, height;
+
             if (window.innerHeight>window.innerWidth) {
-              this.set('videoSettings', { width: 720, height: 1280 });
-              height = Math.min(1280, Math.abs(window.innerHeight*0.8)).toFixed();
+              this.set('videoSettings', { width: 720, height: 1280 } );
+              height = Math.min(1280, Math.abs(window.innerHeight)).toFixed();
               width = Math.min(720, Math.abs(height*0.5625)).toFixed();
-              console.error("Portrait - width: "+width+" height: "+height);
+              console.error("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
             } else {
               this.set('videoSettings', { width: 1280, height: 720 });
-              height = Math.min(720, Math.abs(window.innerHeight*0.8)).toFixed();
+              height = Math.min(720, Math.abs(window.innerHeight)).toFixed();
               width = Math.min(1280, Math.abs(height*1.77777777778)).toFixed();
               console.error("Landscape - width: "+width+" height: "+height);
             }
             videoElement.style.height = height + 'px';
             videoElement.style.width = width + 'px';
-            videoPreviewElement.style.height = height + 'px';
-            videoPreviewElement.style.width = width + 'px';
+
+
+
+            videoPreviewElement.style.height = (height*0.8).toFixed() + 'px';
+            videoPreviewElement.style.width = (width*0.8).toFixed() + 'px';
 
             setTimeout(function () {
               this.$.dialog.open();

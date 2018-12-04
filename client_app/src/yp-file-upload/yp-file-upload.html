@@ -780,6 +780,12 @@ Example:
             } else {
               options = {}
             }
+            if (window.innerHeight>window.innerWidth) {
+              options.aspect = "portrait";
+            } else {
+              options.aspect = "landscape";
+            }
+
             this.$.startTranscodeAjax.body = options;
             this.$.startTranscodeAjax.generateRequest();
             window.appGlobals.activity('complete', 'videoUpload');
