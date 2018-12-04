@@ -7,6 +7,7 @@
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
+<script src="./rtc-adapter.js"></script>
 <script src="./RecordRTC.js"></script>
 <script src="./wavesurfer.js"></script>
 <script src="./wavesurfer.mic.js"></script>
@@ -317,7 +318,7 @@
       }
 
       _checkAudioDevices () {
-        if (this.audioDevices && this.audioDevices.length>1) {
+        if (this.audioDevices && this.audioDevices.length>10) {
           if (localStorage.getItem("selectedAudioDeviceId")) {
             this.set('selectedAudioDeviceId', localStorage.getItem("selectedAudioDeviceId"));
             this._openMediaSession(this.captureCallback);
@@ -395,6 +396,8 @@
             return d.kind === 'videoinput'
           });
 
+          debugger;
+
           this._checkVideoDevices();
         }.bind(this));
       }
@@ -414,18 +417,28 @@
           video: this.videoRecording ? this.videoSettings : null
         };
 
-        debugger;
-        navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-          stream.getTracks().forEach(function (track) {
-            console.error(track.getCapabilities());
-          });
+        var isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
 
-          callback(stream);
-        }).catch(function(error) {
-          console.error(error);
-          //TODO: Fire user error
-          callback(null);
-        });
+        if (isFirefox) {
+          navigator.getUserMedia(constraints, function (stream) {
+            callback(stream);
+          }, function(error) {
+            console.error(error);
+            //TODO: Fire user error
+            callback(null);
+          });
+        } else {
+          navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+            stream.getTracks().forEach(function (track) {
+              console.error(track.getCapabilities());
+            });
+            callback(stream);
+          }).catch(function(error) {
+            console.error(error);
+            //TODO: Fire user error
+            callback(null);
+          });
+        }
       }
 
       $$ (id) {
@@ -555,12 +568,13 @@
         if (this.isRecording) {
           setTimeout(function () {
             if (this.isRecording) {
-              this.recordSecondsLeft -= 1;
               if (this.recordSecondsLeft>=0) {
                 this._recordingTimer();
               } else {
                 this._stopRecording();
               }
+              if (this.recordSecondsLeft>0)
+                this.recordSecondsLeft -= 1;
               if (this.recordSecondsLeft<=5) {
                 this.$$("#secondsLeft").className = "recordingTime";
               }
