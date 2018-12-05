@@ -397,13 +397,15 @@
             this.$.page.setupTopHeaderImage(null);
           }
 
-          this.fire("change-header", { headerTitle: this.community.Domain.name,
-                                       headerDescription: this.community.Domain.description,
-                                       headerIcon: "group-work",
-                                       disableDomainUpLink: (this.community.configuration &&
-                                                             this.community.configuration.disableDomainUpLink === true),
-                                       documentTitle: this.community.name,
-                                       backPath: "/domain/" + this.community.domain_id });
+          if (window.location.href.indexOf("/community") >-1) {
+            this.fire("change-header", { headerTitle: this.community.Domain.name,
+              headerDescription: this.community.Domain.description,
+              headerIcon: "group-work",
+              disableDomainUpLink: (this.community.configuration &&
+                this.community.configuration.disableDomainUpLink === true),
+              documentTitle: this.community.name,
+              backPath: "/domain/" + this.community.domain_id });
+          }
           this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
           this.$.pagesAjax.generateRequest();
           window.appGlobals.setAnonymousGroupStatus(null);
