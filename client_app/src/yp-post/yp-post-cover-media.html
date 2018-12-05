@@ -84,7 +84,7 @@
         }
 
         video {
-          height: auto;
+          height: 100%;
         }
       }
 
@@ -139,6 +139,18 @@
         }
       }
 
+      video {
+        background-color: #000 !important;
+      }
+
+      #videoPlayer[portrait] {
+        width: 100% !important;
+        height: 100%;
+      }
+
+      .mapCanvas[portrait] {
+        background-color: #000;
+      }
     </style>
 
     <div class="mapCanvas">
@@ -167,7 +179,7 @@
 
       <template is="dom-if" if="[[videoActive]]" restamp>
         <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
           <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
@@ -400,6 +412,11 @@
         showAudio: {
           type: Boolean,
           value: false
+        },
+
+        portraitVideo: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -561,6 +578,7 @@
       _postVideoPath: function (post) {
         if (post && post.PostVideos) {
           var videoURL = this._getVideoURL(post.PostVideos);
+          this.set('portraitVideo', this._isPortraitVideo(post.PostVideos))
           if (videoURL) {
             this.set('postVideoId', post.PostVideos[0].id);
             return videoURL;

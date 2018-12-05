@@ -281,10 +281,16 @@ module.exports = function(sequelize, DataTypes) {
           video.set('meta.maxDuration', "600");
         }
 
+        if (!video.public_meta) {
+          video.set('public_meta', {});
+        }
+
         if (options.aspect==="portrait") {
           video.set('meta.aspect',"portrait");
+          video.set('public_meta.aspect',"portrait");
         } else if (options.aspect==="landscape") {
           video.set('meta.aspect',"landscape");
+          video.set('public_meta.aspect',"landscape");
         }
 
         video.save().then((video) => {

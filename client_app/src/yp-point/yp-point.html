@@ -129,6 +129,14 @@
         }
       }
 
+      #videoPlayer[portrait] {
+        width: 50% !important;
+      }
+
+      .topContainer[portrait] {
+        background-color: #000;
+      }
+
       #pointContentEditor {
         padding-left: 8px;
         padding-right: 8px;
@@ -166,6 +174,10 @@
         margin-top: 16px;
         margin-bottom: 16px;
       }
+
+      video {
+        background-color: #000 !important;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -184,11 +196,13 @@
       </div>
 
       <div class="layout vertical">
-        <template is="dom-if" if="[[videoActive]]" restamp>
-          <div class="layout horizontal center-center">
-            <video id="videoPlayer" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
-          </div>
-        </template>
+        <div class="topContainer" portrait$="[[portraitVideo]]">
+          <template is="dom-if" if="[[videoActive]]" restamp>
+            <div class="layout horizontal center-center">
+              <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[pointVideoId]]" controls preload="none" class="video" src="[[pointVideoPath]]" playsinline poster="[[pointImageVideoPath]]"></video>
+            </div>
+          </template>
+        </div>
 
         <template is="dom-if" if="[[audioActive]]" restamp>
           <div class="layout vertical center-center">
@@ -349,6 +363,11 @@
         checkingTranscript: {
           type: Boolean,
           value: false
+        },
+
+        portraitVideo: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -479,6 +498,7 @@
           this.set('user', this.point.User);
           var videoURL = this._getVideoURL(point.PointVideos);
           var videoPosterURL = this._getVideoPosterURL(point.PointVideos);
+          this.set('portraitVideo', this._isPortraitVideo(point.PointVideos));
           if (videoURL && videoPosterURL) {
             this.set('videoActive', true);
             this.set('pointVideoPath', videoURL);

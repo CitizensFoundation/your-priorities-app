@@ -103,6 +103,12 @@
           width: 100%;
           background-color: rgba(240,240,240,0.5);
         }
+
+        #dialog {
+          min-height: 242px;
+          min-width: 320px;
+          width: 100%;
+        }
       }
 
       @media (max-width: 360px) {
@@ -127,6 +133,10 @@
 
       .uploadFileButton {
         color: #888;
+      }
+
+      #waveform {
+        height: 128px;
       }
     </style>
 
@@ -318,7 +328,7 @@
       }
 
       _checkAudioDevices () {
-        if (this.audioDevices && this.audioDevices.length>10) {
+        if (this.audioDevices && this.audioDevices.length>1) {
           if (localStorage.getItem("selectedAudioDeviceId")) {
             this.set('selectedAudioDeviceId', localStorage.getItem("selectedAudioDeviceId"));
             this._openMediaSession(this.captureCallback);
@@ -396,7 +406,18 @@
             return d.kind === 'videoinput'
           });
 
-          debugger;
+          var hasLabels=false;
+
+          this.videoDevices.forEach(function (device) {
+            if (device.label && device.label!="") {
+              hasLabels = true;
+            }
+          });
+
+          if (!hasLabels) {
+            this.videoDevices = null;
+            this.audioDevices = null;
+          }
 
           this._checkVideoDevices();
         }.bind(this));
@@ -479,12 +500,8 @@
             }
             videoElement.style.height = height + 'px';
             videoElement.style.width = width + 'px';
-
-
-
             videoPreviewElement.style.height = (height*0.8).toFixed() + 'px';
             videoPreviewElement.style.width = (width*0.8).toFixed() + 'px';
-
             setTimeout(function () {
               this.$.dialog.open();
             }.bind(this));
