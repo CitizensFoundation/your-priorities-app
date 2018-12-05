@@ -86,6 +86,10 @@
         margin-top: 42px;
         margin-bottom: 8px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
 
@@ -95,7 +99,7 @@
 
       <paper-tabs id="paper_tabs" apple$="[[isOldiOs]]" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
         <paper-tab name="communities" class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
-        <paper-tab name="news" class="tab">[[t('news')]]</paper-tab>
+        <paper-tab name="news" class="tab" hidden$="[[domain.configuration.hideDomainNews]]">[[t('news')]]</paper-tab>
       </paper-tabs>
 
       <iron-pages class="tabPages" fullbleed slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
