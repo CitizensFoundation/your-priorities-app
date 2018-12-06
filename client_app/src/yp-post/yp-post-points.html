@@ -1045,6 +1045,41 @@
 
           this._updateCounterInfo();
           this._scrollPointIntoView();
+          this._checkForMultipleLanguages();
+        },
+
+        _checkForMultipleLanguages: function () {
+          if (!localStorage.getItem("dontPromptForAutoTranslation")) {
+            var firstLanguage;
+            var multipleLanguages = false;
+            this.upPoints.forEach(function (point) {
+              if (point.language) {
+                if (!firstLanguage) {
+                  firstLanguage = point.language;
+                } else if (firstLanguage!=point.language) {
+                  multipleLanguages = true;
+                }
+              }
+            });
+
+            if (!multipleLanguages) {
+              this.downPoints.forEach(function (point) {
+                if (point.language) {
+                  if (!firstLanguage) {
+                    firstLanguage = point.language;
+                  } else if (firstLanguage!=point.language) {
+                    multipleLanguages = true;
+                  }
+                }
+              });
+            }
+
+            if (multipleLanguages) {
+              Polymer.dom(document).querySelector('yp-app').getDialogAsync("autoTranslateDialog", function (dialog) {
+                dialog.openLaterIfAutoTranslationEnabled();
+              }.bind(this));
+            }
+          }
         },
 
         _scrollToIdChanged: function (id) {
@@ -1087,7 +1122,7 @@
                   point.elevation = 1;
                 }.bind(this), 10000);
               }
-            }.bind(this), 200);
+            }.bind(this), 500);
           }
         },
 

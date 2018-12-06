@@ -532,11 +532,12 @@ Example:
       var isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
       var rawChrome = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
       var chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
+      var isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
 
       if (this._hasRecorderApp()) {
         this._openFileInput();
       }  else {
-        if (isFirefox || chromeVersion) {
+        if (isFirefox || (chromeVersion && !isSamsungBrowser)) {
           this._openMediaRecorder();
         } else {
           this._openFileInput();
