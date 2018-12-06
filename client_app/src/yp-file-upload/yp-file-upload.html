@@ -529,10 +529,18 @@ Example:
     },
 
     _fileClick: function() {
+      var isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
+      var rawChrome = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+      var chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
+
       if (this._hasRecorderApp()) {
         this._openFileInput();
       }  else {
-        this._openMediaRecorder();
+        if (isFirefox || chromeVersion) {
+          this._openMediaRecorder();
+        } else {
+          this._openFileInput();
+        }
       }
     },
 
