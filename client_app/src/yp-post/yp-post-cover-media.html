@@ -151,6 +151,20 @@
       .mapCanvas[portrait] {
         background-color: #000;
       }
+
+      #videoPreviewImage[portrait] {
+        width: 40%;
+        @apply --layout-self-center;
+      }
+
+      .videoPreviewContainer {
+        width: 100%;
+        height: 100%;
+      }
+
+      .videoPreviewContainer[portrait] {
+        background-color: #000 !important;
+      }
     </style>
 
     <div class="mapCanvas">
@@ -182,7 +196,9 @@
           <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
-          <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
+          <div class="layout vertical center-center videoPreviewContainer" portrait$="[[portraitVideo]]" >
+            <iron-image id="videoPreviewImage" portrait$="[[portraitVideo]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
+          </div>
           <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
         </template>
       </template>
