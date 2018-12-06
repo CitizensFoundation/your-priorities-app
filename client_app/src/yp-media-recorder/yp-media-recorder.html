@@ -585,7 +585,7 @@
         if (this.isRecording) {
           setTimeout(function () {
             if (this.isRecording) {
-              if (this.recordSecondsLeft>=0) {
+              if (this.recordSecondsLeft>0) {
                 this._recordingTimer();
               } else {
                 this._stopRecording();
