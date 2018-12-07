@@ -41,7 +41,7 @@
       </div>
       <div class="buttons">
         <paper-button on-tap="_dontAskAgain" dialog-dismiss>[[t('never')]]</paper-button>
-        <paper-button dialog-dismiss>[[t('no')]]</paper-button>
+        <paper-button dialog-dismiss on-tap="_no">[[t('no')]]</paper-button>
         <paper-button raised dialog-confirm on-tap="_startAutoTranslate">[[t('yes')]]</paper-button>
       </div>
     </paper-dialog>
@@ -57,6 +57,10 @@
         Polymer.ypLanguageBehavior
       ],
 
+      _no: function () {
+        sessionStorage.setItem("dontPromptForAutoTranslation", true);
+      },
+
       _dontAskAgain: function () {
         localStorage.setItem("dontPromptForAutoTranslation", true);
       },
@@ -66,11 +70,14 @@
       },
 
       openLaterIfAutoTranslationEnabled: function () {
-        this.async(function () {
-          if (this.$.languageSelector.canUseAutoTranslate===true) {
-            this.$.dialog.open();
-          }
-        }, 750);
+        if (this.$.dialog.opened===false) {
+          this.async(function () {
+            if (this.$.languageSelector.canUseAutoTranslate===true &&
+                this.$.languageSelector.autoTranslate===false) {
+              this.$.dialog.open();
+            }
+          }, 750);
+        }
       }
     });
   </script>

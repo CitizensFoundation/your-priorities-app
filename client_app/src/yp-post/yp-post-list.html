@@ -507,6 +507,32 @@
         );
 
         this._processCategories();
+        this._checkForMultipleLanguages(posts);
+      },
+
+      _checkForMultipleLanguages: function (posts) {
+        if (!localStorage.getItem("dontPromptForAutoTranslation") &&
+            !sessionStorage.getItem("dontPromptForAutoTranslation")) {
+          var firstLanguage=null;
+          var multipleLanguages = false;
+          posts.forEach(function (post) {
+            if (post.language) {
+              if (!firstLanguage) {
+                firstLanguage = post.language;
+                console.error("First language: "+firstLanguage);
+              } else if (firstLanguage!=post.language) {
+                console.error("First: "+firstLanguage+" second: "+post.language+" "+post.name);
+                multipleLanguages = true;
+              }
+            }
+          });
+
+          if (multipleLanguages) {
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("autoTranslateDialog", function (dialog) {
+              dialog.openLaterIfAutoTranslationEnabled();
+            }.bind(this));
+          }
+        }
       },
 
       _processCategories: function () {

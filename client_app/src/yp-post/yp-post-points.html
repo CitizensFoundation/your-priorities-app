@@ -1049,7 +1049,8 @@
         },
 
         _checkForMultipleLanguages: function () {
-          if (!localStorage.getItem("dontPromptForAutoTranslation")) {
+          if (!localStorage.getItem("dontPromptForAutoTranslation") &&
+              !sessionStorage.getItem("dontPromptForAutoTranslation")) {
             var firstLanguage;
             var multipleLanguages = false;
             this.upPoints.forEach(function (point) {
