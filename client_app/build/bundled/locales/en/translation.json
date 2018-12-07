@@ -1,8 +1,8 @@
 {
-  "shouldAutoTranslateInfo": "This page has more than one language, do you want to enable auto translation?",
-  "dontAskAgain": "Don't ask again",
+  "shouldAutoTranslateInfo": "This page includes more than one language, do you want to turn on auto translation?",
+  "dontAskAgain": "Never",
   "no": "No",
-  "startAutoTranslate": "Start auto translation",
+  "yes": "Yes",
   "hideDomainNews": "Hide domain news",
   "voiceRecorder": "Voice Recorder",
   "uploadFile": "Upload file",
