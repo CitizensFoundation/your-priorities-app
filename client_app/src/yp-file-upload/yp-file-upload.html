@@ -509,16 +509,15 @@ Example:
     _hasRecorderApp: function () {
       var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
-      console.error("isAndroid: "+isAndroid);
-      console.error("isIOs: "+isIOs);
+      var isEdge = /Edge/.test(navigator.userAgent);
       if (this.videoUpload) {
-        if (isIOs || isAndroid) {
+        if ((isIOs || isAndroid) && !isEdge) {
           return true;
         } else {
           return false;
         }
       } else if (this.audioUpload) {
-        if (isIOs) {
+        if (isIOs && !isEdge) {
           return true;
         } else {
           return false;
@@ -533,11 +532,12 @@ Example:
       var rawChrome = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
       var chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
       var isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
+      var isEdge = /Edge/.test(navigator.userAgent);
 
       if (this._hasRecorderApp()) {
         this._openFileInput();
       }  else {
-        if (isFirefox || (chromeVersion && !isSamsungBrowser)) {
+        if (!isEdge && (isFirefox || (chromeVersion && !isSamsungBrowser))) {
           this._openMediaRecorder();
         } else {
           this._openFileInput();
