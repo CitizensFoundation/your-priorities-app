@@ -517,11 +517,7 @@ Example:
           return false;
         }
       } else if (this.audioUpload) {
-        if (isIOs && !isEdge) {
-          return true;
-        } else {
-          return false;
-        }
+        return false;
       } else {
         return true;
       }
@@ -533,11 +529,12 @@ Example:
       var chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
       var isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
       var isEdge = /Edge/.test(navigator.userAgent);
+      var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
       if (this._hasRecorderApp()) {
         this._openFileInput();
       }  else {
-        if (!isEdge && (isFirefox || (chromeVersion && !isSamsungBrowser))) {
+        if (!isEdge && ((isIOs && this.audioUpload) || isFirefox || (chromeVersion && !isSamsungBrowser))) {
           this._openMediaRecorder();
         } else {
           this._openFileInput();
