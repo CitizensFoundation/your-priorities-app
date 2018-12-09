@@ -488,12 +488,12 @@
               this.set('videoSettings', { width: 720, height: 1280 } );
               height = Math.min(1280, Math.abs(window.innerHeight)).toFixed();
               width = Math.min(720, Math.abs(height*0.5625)).toFixed();
-              console.error("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
+              console.info("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
             } else {
               this.set('videoSettings', { width: 1280, height: 720 });
               height = Math.min(720, Math.abs(window.innerHeight)).toFixed();
               width = Math.min(1280, Math.abs(height*1.77777777778)).toFixed();
-              console.error("Landscape - width: "+width+" height: "+height);
+              console.info("Landscape - width: "+width+" height: "+height);
             }
             videoElement.style.height = height + 'px';
             videoElement.style.width = width + 'px';
@@ -622,6 +622,7 @@
               });
             } else {
               console.error("Can't find stream");
+              this._uploadFile();
             }
           }.bind(this));
 
@@ -657,6 +658,7 @@
               });
             } else {
               console.error("Can't find stream");
+              this._uploadFile();
             }
           }.bind(this));
 
