@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["index.html?v=8.1.0.18","e0ec355ae83cd61ee42182f066364256"],["src/yp-app/yp-app.html?v=8.1.0.18","31738fff9040158f88d98156f6b389a5"],["src/yp-app/yp-view-404.html?v=8.1.0.18","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=8.1.0.18","3411ed3f521261f7111a40d55abcb6be"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=8.1.0.18","045623fd19681a5353ed0e8b54d83c30"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=8.1.0.18","9b567777bf442db8eb7f23f0a98a82fc"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=8.1.0.18","872340ee5ddae0031f231350f870eb40"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=8.1.0.18","e4f9b5510919ef5ab7599cd0513628e3"],["src/yp-dialog-container/yp-dialog-container-media-recorder.html?v=8.1.0.18","493a79d37f534ff1a2ec4d994acafbb5"],["src/yp-dialog-container/yp-dialog-container-users-grid.html?v=8.1.0.18","ead768f6c471e7fe495562faf74625fc"],["src/yp-domain/yp-domain.html?v=8.1.0.18","f23281359c52fa41bbb2169ab962bea3"],["src/yp-group/yp-group.html?v=8.1.0.18","7549f1813d09d70deecf3ba42a55218f"],["src/yp-post/yp-post.html?v=8.1.0.18","e31778e6c57080844786703484b62fde"],["src/yp-user/yp-user.html?v=8.1.0.18","43f30318a713f68181b0c8269ddf387f"]];
+var precacheConfig = [["index.html?v=8.1.0.19","3c13f76db968fb0c0b53892a3671b022"],["src/yp-app/yp-app.html?v=8.1.0.19","05d5ff59e13cae6c47733402efd6ba06"],["src/yp-app/yp-view-404.html?v=8.1.0.19","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=8.1.0.19","3411ed3f521261f7111a40d55abcb6be"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=8.1.0.19","045623fd19681a5353ed0e8b54d83c30"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=8.1.0.19","9b567777bf442db8eb7f23f0a98a82fc"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=8.1.0.19","872340ee5ddae0031f231350f870eb40"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=8.1.0.19","e4f9b5510919ef5ab7599cd0513628e3"],["src/yp-dialog-container/yp-dialog-container-media-recorder.html?v=8.1.0.19","493a79d37f534ff1a2ec4d994acafbb5"],["src/yp-dialog-container/yp-dialog-container-users-grid.html?v=8.1.0.19","ead768f6c471e7fe495562faf74625fc"],["src/yp-domain/yp-domain.html?v=8.1.0.19","f23281359c52fa41bbb2169ab962bea3"],["src/yp-group/yp-group.html?v=8.1.0.19","7549f1813d09d70deecf3ba42a55218f"],["src/yp-post/yp-post.html?v=8.1.0.19","e31778e6c57080844786703484b62fde"],["src/yp-user/yp-user.html?v=8.1.0.19","43f30318a713f68181b0c8269ddf387f"]];
 var cacheName = 'sw-precache-v3--' + (self.registration ? self.registration.scope : '');
 
 
@@ -285,7 +285,7 @@ self.addEventListener('fetch', function(event) {
 
 // Runtime cache configuration, using the sw-toolbox library.
 
-toolbox.router.get(/\/(.*)/, toolbox.networkFirst, {});
+toolbox.router.get(/\/(.html|.js)/, toolbox.networkFirst, {});
 
 
 
