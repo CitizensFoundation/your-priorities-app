@@ -299,7 +299,6 @@
       }
 
       _selectAudioDevice (event, detail) {
-        console.error("_selectAudioDevice");
         if (event.target.id) {
           this.set('selectedAudioDeviceId', event.target.id);
         }
@@ -313,8 +312,6 @@
       }
 
       _selectVideoDevice (event) {
-        console.error("_selectVideoDevice");
-
         if (event.target.id) {
           this.set('selectedVideoDeviceId', event.target.id);
         }
@@ -451,7 +448,7 @@
         } else {
           navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
             stream.getTracks().forEach(function (track) {
-              console.error(track.getCapabilities());
+              console.info(track.getCapabilities());
             });
             callback(stream);
           }).catch(function(error) {

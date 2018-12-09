@@ -519,9 +519,7 @@
             if (post.language) {
               if (!firstLanguage) {
                 firstLanguage = post.language;
-                console.error("First language: "+firstLanguage);
               } else if (firstLanguage!=post.language) {
-                console.error("First: "+firstLanguage+" second: "+post.language+" "+post.name);
                 multipleLanguages = true;
               }
             }
