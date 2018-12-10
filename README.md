@@ -19,6 +19,8 @@
 * Ideas and debate points can be shared effectively on social media
 * The client app is a progressive web app
 * Built with Web Components making the app fast on inexpensive mobile phones
+* Open source, non profit and built with passion over 10 years
+* Supported by mass amounts of volunteer work, the EU, city of Reykjavik, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority  
 
 ## Examples of live servers running Your Priorities
 
