@@ -2,6 +2,21 @@
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
+## Key Features
+
+* Citizen participation social network for digital democracy and social innovation
+* Communities and groups
+* Crowdsource ideas
+* Effective debating system that is highly resistant to trolling and personal argument
+* Vote ideas and debate points up or down
+* Users can submit ideas and debate poiunts as text, audio or video
+* AI driven recommendation engine that recommends relevant posts to users
+* Smart notifications
+* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comment.
+* Ideas and debate points can be shared effectively on social media
+* The client app is a progressive web app
+* Built with Web Components making the app fast on inexpensive mobile phones
+
 ## Examples of live servers running Your Priorities
 
 * https://yrpri.org/
@@ -9,7 +24,6 @@
 * https://betrireykjavik.is/
 * https://mineideer.forbrukerradet.no/
 * https://consultation.parlement-ouvert.fr/group/4
-* https://yrpr.e-dem.nl (v6.3)
 
 ## How to run
 
