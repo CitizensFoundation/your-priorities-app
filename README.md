@@ -9,8 +9,11 @@
 * Crowdsource ideas
 * Effective debating system that is highly resistant to trolling and personal argument
 * Vote ideas and debate points up or down
-* Users can submit ideas and debate poiunts as text, audio or video
+* Users can submit ideas and debate points as text, audio or video
+* Highly scalable audio and video processing engine using Amazon ElasticEncoder
+* Automatic SpeechToText conversion in over 20 languages (using Google's TextToSpeech API)
 * AI driven recommendation engine that recommends relevant posts to users
+* Machine translations between over 20 languages (using Google Translate API)
 * Smart notifications
 * Fully functional newsfeeds for all communities, groups and ideas where users can share links and comment.
 * Ideas and debate points can be shared effectively on social media
