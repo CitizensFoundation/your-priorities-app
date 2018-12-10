@@ -5,17 +5,17 @@
 ## Key Features
 
 * Citizen participation social network for digital democracy and social innovation
-* Communities and groups
-* Crowdsource ideas
+* Communities and groups for simple organization of any type of participation project
+* Crowdsource ideas about any subject
 * Effective debating system that is highly resistant to trolling and personal argument
 * Vote ideas and debate points up or down
 * Users can submit ideas and debate points as text, audio or video
-* Highly scalable audio and video processing engine using Amazon ElasticEncoder
-* Automatic SpeechToText conversion in over 20 languages (using Google's TextToSpeech API)
 * AI driven recommendation engine that recommends relevant posts to users
+* Automatic SpeechToText conversion in over 20 languages (using Google's TextToSpeech API)
 * Machine translations between over 20 languages (using Google Translate API)
+* Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3)
 * Smart notifications
-* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comment.
+* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comment
 * Ideas and debate points can be shared effectively on social media
 * The client app is a progressive web app
 * Built with Web Components making the app fast on inexpensive mobile phones
