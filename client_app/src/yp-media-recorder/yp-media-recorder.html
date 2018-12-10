@@ -157,6 +157,13 @@
       </paper-dialog-scrollable>
     </paper-dialog>
 
+    <paper-dialog id="noDevices">
+      <h2>[[t('noDevicesFound')]]</h2>
+      <div class="button layout horizontal center-center">
+        <paper-button dialog-dismiss raised>[[t('ok')]]</paper-button>
+      </div>
+    </paper-dialog>
+
     <paper-dialog id="dialog" modal>
       <div class="layout vertical no-padding mainContainer">
         <template is="dom-if" if="[[videoRecording]]">
@@ -184,7 +191,7 @@
             <div class="buttonText">[[t('stop')]]</div>
           </paper-button>
           <span hidden$="[[isRecording]]">
-            <paper-button class="uploadFileButton" on-tap="_uploadFile" hidden$="[[recordedData]]">
+            <paper-button id="uploadFileButton" class="uploadFileButton" on-tap="_uploadFile" hidden$="[[recordedData]]">
               <iron-icon icon="file-upload"></iron-icon>
               <div class="buttonText uploadFileText">[[t('uploadFile')]]</div>
             </paper-button>
@@ -622,7 +629,8 @@
               });
             } else {
               console.error("Can't find stream");
-              this._uploadFile();
+              this.$.noDevices.open();
+              this.$$("#uploadFileButton").style.color = "#F00";
             }
           }.bind(this));
 
@@ -658,7 +666,8 @@
               });
             } else {
               console.error("Can't find stream");
-              this._uploadFile();
+              this.$.noDevices.open();
+              this.$$("#uploadFileButton").style.color = "#F00";
             }
           }.bind(this));
 

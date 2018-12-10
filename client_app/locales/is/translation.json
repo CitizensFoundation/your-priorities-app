@@ -1,4 +1,12 @@
 {
+  "noDevicesFound": "Fann ekkert upptökutæki",
+  "shouldAutoTranslateInfo": "Þessi síða er með fleiri en eitt tungumál, viltu kveikja á sjálfvirkum þýðingum?",
+  "dontAskAgain": "Aldrei",
+  "no": "Nei",
+  "yes": "Já",
+  "hideDomainNews": "Fela domain fréttir",
+  "voiceRecorder": "Upptaka á hljóði",
+  "uploadFile": "Send skrá",
   "selectVideoDevice": "Veldu myndtæki",
   "selectAudioDevice": "Veldu hljóðtæki",
   "rememberDevice": "Muna tæki",
