@@ -15,12 +15,12 @@
 * Automatic SpeechToText conversion in over 20 languages (using Google's TextToSpeech API)
 * Machine translations between over 20 languages (using Google Translate API)
 * Smart notifications
-* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comment
-* Ideas and debate points can be shared effectively on social media
-* The client app is a progressive web app that works like a native app on mobile phones while also being a website
+* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comments just like on Faceook
+* Ideas and debate points can be easily shared on social media
+* The client app/website is a progressive web app that works like a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
 * Open source, non profit and built with passion over 10 years
-* Supported by mass amounts of volunteer work, the EU, city of Reykjavik, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority  
+* Supported by mass amounts of volunteer work, the EU, city of Reykjavik, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
 ## Examples of live servers running Your Priorities
 
