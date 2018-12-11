@@ -3,7 +3,6 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
 
-
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
@@ -99,6 +98,9 @@
     <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
       <section name="status_updates">
         <yp-bulk-status-display user-id$="[[userId]]" status-update-id$="[[statusUpdateId]]"></yp-bulk-status-display>
+      </section>
+      <section name="status_updates_templates">
+        <yp-bulk-status-display by-template user-id$="[[userId]]" status-update-id$="[[statusUpdateId]]"></yp-bulk-status-display>
       </section>
       <section>
         <ac-activities selected-tab="[[selectedTab]]" user-id="[[user.id]]"></ac-activities>

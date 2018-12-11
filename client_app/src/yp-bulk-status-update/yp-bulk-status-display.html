@@ -100,6 +100,11 @@
       [hidden] {
         display: none !important;
       }
+
+      .templateList {
+        background-color: #FFF;
+        padding: 32px;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -111,38 +116,52 @@
       </paper-material>
     </div>
 
-    <template is="dom-repeat" items="[[config.groups]]" as="group">
-      <paper-material elevation="2" class="statusMaterial layout horizontal center-center wrap">
-        <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
-          <div class="layout vertical self-start">
-            <h1 hidden$="[[hideGroupName]]">[[group.name]]</h1>
-            <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
-            <template is="dom-repeat" items="[[status.posts]]" as="post">
-              <div class="layout vertical">
-                <div class="layout horizontal">
-                  <iron-icon class="openCloseButton" data-args$="[[post.id]]" icon="keyboard-arrow-right" on-tap="_setOpen"></iron-icon>
-                  <div class="postName">
-                    <div class="ideaLink" data-args$="[[post.id]]" on-tap="_setOpen">[[post.name]]</div>
+    <template is="dom-if" if="[[!byTemplate]]">
+      <template is="dom-repeat" items="[[config.groups]]" as="group">
+        <paper-material elevation="2" class="statusMaterial layout horizontal center-center wrap">
+          <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
+            <div class="layout vertical self-start">
+              <h1 hidden$="[[hideGroupName]]">[[group.name]]</h1>
+              <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
+              <template is="dom-repeat" items="[[status.posts]]" as="post">
+                <div class="layout vertical">
+                  <div class="layout horizontal">
+                    <iron-icon class="openCloseButton" data-args$="[[post.id]]" icon="keyboard-arrow-right" on-tap="_setOpen"></iron-icon>
+                    <div class="postName">
+                      <div class="ideaLink" data-args$="[[post.id]]" on-tap="_setOpen">[[post.name]]</div>
+                    </div>
+                  </div>
+                  <div id="detail_[[post.id]]" class="detail" hidden>
+                    <div class="reason" hidden$="[[post.uniqueStatusMessage]]">
+                      [[_getTemplate(post.selectedTemplateName)]]
+                    </div>
+                    <div class="reason" hidden$="[[!post.uniqueStatusMessage]]">
+                      [[post.uniqueStatusMessage]]
+                    </div>
+                    <div class="postName">
+                      [[t('urlLink')]]: <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+                    </div>
                   </div>
                 </div>
-                <div id="detail_[[post.id]]" class="detail" hidden>
-                  <div class="reason" hidden$="[[post.uniqueStatusMessage]]">
-                    [[_getTemplate(post.selectedTemplateName)]]
-                  </div>
-                  <div class="reason" hidden$="[[!post.uniqueStatusMessage]]">
-                    [[post.uniqueStatusMessage]]
-                  </div>
-                  <div class="postName">
-                    [[t('urlLink')]]: <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </template>
-      </paper-material>
+              </template>
+            </div>
+          </template>
+        </paper-material>
+      </template>
     </template>
 
+    <template is="dom-if" if="[[gotModifiedTemplates]]" restamp>
+      <div class="templateList">
+        <template is="dom-repeat" items="[[_toArray(templates)]]" as="template">
+          <h2>[[template.title]]</h2>
+          <template is="dom-repeat" items="[[template.posts]]" as="post">
+            <div class="postName">
+              <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+            </div>
+          </template>
+        </template>
+      </div>
+    </template>
     <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
 
   </template>
@@ -189,7 +208,21 @@
         hideGroupName: {
           type: Boolean,
           value: false
+        },
+
+        byTemplate: {
+          type: Boolean,
+          value: false
+        },
+
+        gotModifiedTemplates: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      _toArray: function (object) {
+        return Object.values(object);
       },
 
       _communityChanged: function (community) {
@@ -274,7 +307,28 @@
           this.setTheme(this.community.theme_id);
         }
 
-
+        if (this.byTemplate) {
+          this.config.groups.forEach(function (group) {
+            group.statuses.forEach(function (groupItems) {
+              groupItems.posts.forEach(function (post) {
+                if (post.selectedTemplateName && this.templates[post.selectedTemplateName]) {
+                  if (!this.templates[post.selectedTemplateName].posts) {
+                    this.templates[post.selectedTemplateName].posts = [];
+                  }
+                  this.templates[post.selectedTemplateName].posts.push(post);
+                  console.log("Pusing to:"+post.selectedTemplateName+" id:"+post.id);
+                } else {
+                  if (!this.templates["No template"]) {
+                    this.templates["No template"] = {};
+                    this.templates["No template"].posts = [];
+                  }
+                  this.templates["No template"].posts.push(post);
+                }
+              }.bind(this));
+            }.bind(this));
+          }.bind(this));
+          this.set('gotModifiedTemplates', true);
+        }
       }
     });
   </script>
