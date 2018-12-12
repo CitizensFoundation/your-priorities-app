@@ -70,14 +70,14 @@
       },
 
       openLaterIfAutoTranslationEnabled: function () {
-        if (this.$.dialog.opened===false) {
-          this.async(function () {
-            if (this.$.languageSelector.canUseAutoTranslate===true &&
-                this.$.languageSelector.autoTranslate===false) {
+        this.async(function () {
+          if (this.$.dialog.opened===false) {
+            if (this.$.languageSelector.canUseAutoTranslate === true &&
+              window.autoTranslate !== true) {
               this.$.dialog.open();
             }
-          }, 750);
-        }
+          }
+        }, 750);
       }
     });
   </script>
