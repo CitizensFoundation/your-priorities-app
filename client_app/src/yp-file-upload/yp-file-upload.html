@@ -474,6 +474,10 @@ Example:
         this.set('accept','audio/*');
         this.set('capture', true);
       }
+
+      if (!this.uploadLimitSeconds && (this.videoUpload || this.audioUpload)) {
+        this.set('uploadLimitSeconds', 600);
+      }
     },
 
     /**
