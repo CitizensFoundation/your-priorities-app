@@ -537,39 +537,35 @@ auth.entity('group', function(req, done) {
 // Post admin and view
 
 auth.role('post.admin', function (post, req, done) {
-  if (!auth.isAuthenticated(req)) {
-    done();
-  } else {
-    models.Post.findOne({
-      where: { id: post.id },
-      attributes: ['id','user_id'],
-      include: [
-        {
-          model: models.Group,
-          attributes: ['id', 'access','user_id','configuration'],
-        }
-      ]
-    }).then(function (post) {
-      if (post) {
-        var group = post.Group;
-        if (!auth.isAuthenticated(req, group)) {
-          done(null, false);
-        } else if (post.user_id === req.user.id) {
-          done(null, true);
-        } else {
-          group.hasGroupAdmins(req.user).then(function (result) {
-            if (result) {
-              done(null, true);
-            } else {
-              done(null, false);
-            }
-          });
-        }
-      } else {
-        done(null, false);
+  models.Post.findOne({
+    where: { id: post.id },
+    attributes: ['id','user_id'],
+    include: [
+      {
+        model: models.Group,
+        attributes: ['id', 'access','user_id','configuration'],
       }
-    });
-  }
+    ]
+  }).then(function (post) {
+    if (post) {
+      var group = post.Group;
+      if (!auth.isAuthenticated(req, group)) {
+        done(null, false);
+      } else if (post.user_id === req.user.id) {
+        done(null, true);
+      } else {
+        group.hasGroupAdmins(req.user).then(function (result) {
+          if (result) {
+            done(null, true);
+          } else {
+            done(null, false);
+          }
+        });
+      }
+    } else {
+      done(null, false);
+    }
+  });
 });
 
 auth.role('post.statusChange', function (post, req, done) {
@@ -1102,6 +1098,10 @@ auth.role('createGroupPost.createPost', function (group, req, done) {
 
 auth.entity('createGroupPost', function(req, done) {
   var match = req.originalUrl.match(/posts\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/videos\/(\w+)/);
+  if (!match)
+    match = req.originalUrl.match(/audios\/(\w+)/);
   if (!match) {
     done(new Error('Expected url like /posts/:groupId'));
   } else {
