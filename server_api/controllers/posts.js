@@ -780,7 +780,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, re
           sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
         });
       } else {
-        send({ noInProgress: true });
+        res.send({ noInProgress: true });
       }
     } else {
       sendPostOrError(res, req.params.id, 'audioPostTranscriptStatus', req.user, "not found", 404);
