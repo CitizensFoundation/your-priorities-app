@@ -8,12 +8,6 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var queue = require('../active-citizen/workers/queue');
 
-var isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.status(401).send('Unauthorized');
-};
-
 var loadPointWithAll = function (pointId, callback) {
   models.Point.find({
     where: {
@@ -124,10 +118,6 @@ router.put('/audioListen', (req, res) => {
   });
 });
 
-router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
-  models.Audio.createAndGetSignedUploadUrl(req, res);
-});
-
 router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
   models.Audio.completeUploadAndAddToCollection(req, res, {
     postId: req.params.postId,
@@ -162,7 +152,15 @@ router.put('/:pointId/completeAndAddToPoint', auth.can('edit point'), (req, res)
   });
 });
 
-router.post('/:audioId/startTranscoding', auth.isLoggedIn, (req, res) => {
+router.post('/:groupId/createAndGetPreSignedUploadUrl', auth.can('create media'), (req, res) => {
+  models.Audio.createAndGetSignedUploadUrl(req, res);
+});
+
+router.post('/createAndGetPreSignedUploadUrlLoggedIn', auth.isLoggedIn, (req, res) => {
+  models.Audio.createAndGetSignedUploadUrl(req, res);
+});
+
+const startTranscoding = (req, res) => {
   const options = {
     audioPostUploadLimitSec: req.body.audioPostUploadLimitSec,
     audioPointUploadLimitSec: req.body.audioPointUploadLimitSec,
@@ -183,9 +181,17 @@ router.post('/:audioId/startTranscoding', auth.isLoggedIn, (req, res) => {
     log.error("Error getting audio", { error });
     res.sendStatus(500);
   });
+};
+
+router.post('/:groupId/:audioId/startTranscoding', auth.can('create media'), (req, res) => {
+  startTranscoding(req, res);
 });
 
-router.put('/:audioId/getTranscodingJobStatus', auth.isLoggedIn, (req, res) => {
+router.post('/:audioId/startTranscodingLoggedIn', auth.isLoggedIn, (req, res) => {
+  startTranscoding(req, res);
+});
+
+router.put('/:audioId/getTranscodingJobStatus', (req, res) => {
   models.Audio.find({
     where: {
       id: req.params.audioId

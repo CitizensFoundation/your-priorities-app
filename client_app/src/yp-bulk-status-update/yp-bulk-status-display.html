@@ -319,13 +319,18 @@
                   console.log("Pusing to:"+post.selectedTemplateName+" id:"+post.id);
                 } else {
                   if (!this.templates["No template"]) {
-                    this.templates["No template"] = {};
+                    this.templates["No template"] = { title: "No template" };
                     this.templates["No template"].posts = [];
                   }
                   this.templates["No template"].posts.push(post);
                 }
               }.bind(this));
             }.bind(this));
+          }.bind(this));
+          this._toArray(this.templates).forEach(function (template) {
+            if (!template.posts || template.posts.length==0) {
+              delete this.templates[template.title];
+            }
           }.bind(this));
           this.set('gotModifiedTemplates', true);
         }

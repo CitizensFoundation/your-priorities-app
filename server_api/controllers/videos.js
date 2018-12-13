@@ -9,12 +9,6 @@ var toJson = require('../utils/to_json');
 var queue = require('../active-citizen/workers/queue');
 const _ = require('lodash');
 
-var isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.status(401).send('Unauthorized');
-};
-
 var loadPointWithAll = function (pointId, callback) {
   models.Point.find({
     where: {
@@ -144,10 +138,6 @@ router.put('/videoView', (req, res) => {
   });
 });
 
-router.post('/createAndGetPreSignedUploadUrl', auth.isLoggedIn, (req, res) => {
-  models.Video.createAndGetSignedUploadUrl(req, res);
-});
-
 router.put('/:postId/completeAndAddToPost', auth.can('edit post'), (req, res) => {
   models.Video.completeUploadAndAddToCollection(req, res, {
     postId: req.params.postId,
@@ -194,7 +184,15 @@ router.put('/:pointId/completeAndAddToPoint', auth.can('edit point'), (req, res)
   });
 });
 
-router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
+router.post('/:groupId/createAndGetPreSignedUploadUrl', auth.can('create media'), (req, res) => {
+  models.Video.createAndGetSignedUploadUrl(req, res);
+});
+
+router.post('/createAndGetPreSignedUploadUrlLoggedIn', auth.isLoggedIn, (req, res) => {
+  models.Video.createAndGetSignedUploadUrl(req, res);
+});
+
+const startTranscoding = (req, res) => {
   const options = {
     videoPostUploadLimitSec: req.body.videoPostUploadLimitSec,
     videoPointUploadLimitSec: req.body.videoPointUploadLimitSec,
@@ -215,9 +213,17 @@ router.post('/:videoId/startTranscoding', auth.isLoggedIn, (req, res) => {
     log.error("Error getting video", { error });
     res.sendStatus(500);
   });
+};
+
+router.post('/:groupId/:videoId/startTranscoding', auth.can('create media'), (req, res) => {
+  startTranscoding(req, res);
 });
 
-router.get('/:videoId/formatsAndImages', auth.isLoggedIn, (req, res) => {
+router.post('/:videoId/startTranscodingLoggedIn', auth.isLoggedIn, (req, res) => {
+  startTranscoding(req, res);
+});
+
+router.get('/:videoId/formatsAndImages', (req, res) => {
   models.Video.find({
     where: {
       id: req.params.videoId
@@ -252,7 +258,7 @@ router.get('/:videoId/formatsAndImages', auth.isLoggedIn, (req, res) => {
   });
 });
 
-router.put('/:videoId/setVideoCover', auth.isLoggedIn, (req, res) => {
+router.put('/:videoId/setVideoCover', (req, res) => {
   models.Video.find({
     where: {
       id: req.params.videoId
@@ -278,7 +284,7 @@ router.put('/:videoId/setVideoCover', auth.isLoggedIn, (req, res) => {
   });
 });
 
-router.put('/:videoId/getTranscodingJobStatus', auth.isLoggedIn, (req, res) => {
+router.put('/:videoId/getTranscodingJobStatus', (req, res) => {
   models.Video.find({
     where: {
       id: req.params.videoId

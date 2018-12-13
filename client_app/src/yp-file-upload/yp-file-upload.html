@@ -396,7 +396,10 @@ Example:
         value: "image/*"
       },
 
-      group: Object,
+      group: {
+        type: Object,
+        value: null
+      },
 
       capture: {
         type: Boolean,
@@ -465,10 +468,10 @@ Example:
         this.setupDrop();
       }
       if (this.videoUpload) {
-        this.set('accept','video/*')
+        this.set('accept','video/*');
         this.set('capture', true);
       } else if (this.audioUpload) {
-        this.set('accept','audio/*')
+        this.set('accept','audio/*');
         this.set('capture', true);
       }
     },
@@ -641,12 +644,20 @@ Example:
           window.appGlobals.activity('starting', 'videoUpload');
           this.set('uploadStatus', this.t("uploadingVideo"));
           this.headers =  {"Content-Type": 'video/mp4'};
-          ajax.url = '/api/videos/createAndGetPreSignedUploadUrl';
+          if (this.group) {
+            ajax.url = '/api/videos/'+this.group.id+'/createAndGetPreSignedUploadUrl';
+          } else {
+            ajax.url = '/api/videos/createAndGetPreSignedUploadUrlLoggedIn';
+          }
         } else {
           window.appGlobals.activity('starting', 'audioUpload');
           this.set('uploadStatus', this.t("uploadingAudio"));
           this.headers =  {"Content-Type": 'audio/mp4'};
-          ajax.url = '/api/audios/createAndGetPreSignedUploadUrl';
+          if (this.group) {
+            ajax.url = '/api/audios/'+this.group.id+'/createAndGetPreSignedUploadUrl';
+          } else {
+            ajax.url = '/api/audios/createAndGetPreSignedUploadUrlLoggedIn';
+          }
         }
         ajax.method = 'POST';
         ajax.body = {};
@@ -775,7 +786,11 @@ Example:
           if (this.videoUpload) {
             this.set('indeterminateProgress', true);
             this.set('uploadStatus', this.t("transcodingVideo"));
-            this.$.startTranscodeAjax.url = '/api/videos/'+this.currentVideoId+'/startTranscoding';
+            if (this.group) {
+              this.$.startTranscodeAjax.url = '/api/videos/'+this.group.id+'/'+this.currentVideoId+'/startTranscoding';
+            } else {
+              this.$.startTranscodeAjax.url = '/api/videos/'+this.currentVideoId+'/startTranscodingLoggedIn';
+            }
             let options;
             if (this.containerType==="posts") {
               options = {
@@ -801,7 +816,13 @@ Example:
           } else if (this.audioUpload) {
             this.set('indeterminateProgress', true);
             this.set('uploadStatus', this.t("transcodingAudio"));
-            this.$.startTranscodeAjax.url = '/api/audios/'+this.currentAudioId+'/startTranscoding';
+
+            if (this.group) {
+              this.$.startTranscodeAjax.url = '/api/audios/'+this.group.id+'/'+this.currentAudioId+'/startTranscoding';
+            } else {
+              this.$.startTranscodeAjax.url = '/api/audios/'+this.currentAudioId+'/startTranscodingLoggedIn';
+            }
+
             let options;
             if (this.containerType==="posts") {
               options = {

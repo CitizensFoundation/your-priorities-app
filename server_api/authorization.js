@@ -1282,6 +1282,7 @@ auth.action('create communityOrganization', ['createCommunityOrganization.create
 auth.action('create community', ['createDomainCommunity.createCommunity']);
 auth.action('create group', ['createCommunityGroup.createGroup']);
 auth.action('create post', ['createGroupPost.createPost']);
+auth.action('create media', ['createGroupPost.createPost']);
 auth.action('create category', ['createGroupCategory.createCategory']);
 auth.action('create point', ['createGroupPoint.createPoint']);
 auth.action('create bulkStatusUpdate', ['createCommunityBulkStatusUpdate.createBulkStatusUpdate']);

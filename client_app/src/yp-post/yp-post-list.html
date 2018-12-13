@@ -521,6 +521,7 @@
                 firstLanguage = post.language;
               } else if (firstLanguage!=post.language) {
                 multipleLanguages = true;
+                console.info("Multiple post languages: "+firstLanguage+" and "+post.language);
               }
             }
           });

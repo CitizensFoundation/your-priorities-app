@@ -1059,6 +1059,7 @@
                   firstLanguage = point.language;
                 } else if (firstLanguage!=point.language) {
                   multipleLanguages = true;
+                  console.info("Multiple point languages: "+firstLanguage+" and "+point.language);
                 }
               }
             });
@@ -1070,6 +1071,7 @@
                     firstLanguage = point.language;
                   } else if (firstLanguage!=point.language) {
                     multipleLanguages = true;
+                    console.info("Multiple point languages: "+firstLanguage+" and "+point.language);
                   }
                 }
               });
