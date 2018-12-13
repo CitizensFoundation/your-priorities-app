@@ -734,7 +734,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, re
           sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
         });
       } else {
-        send({ noInProgress: true });
+        res.send({ noInProgress: true });
       }
     } else {
       sendPostOrError(res, req.params.id, 'videoPostTranscriptStatus', req.user, "not found", 404);
