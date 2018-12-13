@@ -15,7 +15,7 @@
 * Automatic SpeechToText conversion in over 20 languages (using Google's TextToSpeech API)
 * Machine translations between over 20 languages (using Google Translate API)
 * Smart notifications
-* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comments just like on Faceook
+* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comments just like on Facebook
 * Ideas and debate points can be easily shared on social media
 * The client app/website is a progressive web app that works like a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
