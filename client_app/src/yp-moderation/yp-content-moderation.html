@@ -21,7 +21,7 @@
         background-color: #FFF;
       }
 
-      .userItem {
+      .itemItem {
         padding-right: 16px;
       }
 
@@ -163,7 +163,7 @@
         </vaadin-grid-column>
 
         <vaadin-grid-column>
-          <template class="header">[[t('userEmail')]]</template>
+          <template class="header">[[t('itemEmail')]]</template>
           <template>[[item.email]]</template>
         </vaadin-grid-column>
 
@@ -334,20 +334,20 @@
           this.set('selectedItemsEmpty', true);
           this.set('selectedContentCount', 0);
         }
-        this.selectedItemIds = this.selectedItems.map(function (user) { return user.id });
+        this.selectedItemIds = this.selectedItems.map(function (item) { return item.id });
       },
 
-      _userOrganizationId: function (user) {
-        if (user && user.OrganizationItems && user.OrganizationItems.length>0) {
-          return user.OrganizationItems[0].id;
+      _itemOrganizationId: function (item) {
+        if (item && item.OrganizationItems && item.OrganizationItems.length>0) {
+          return item.OrganizationItems[0].id;
         } else {
           return null;
         }
       },
 
-      _userOrganizationName: function (user) {
-        if (user && user.OrganizationItems && user.OrganizationItems.length>0) {
-          return user.OrganizationItems[0].name;
+      _itemOrganizationName: function (item) {
+        if (item && item.OrganizationItems && item.OrganizationItems.length>0) {
+          return item.OrganizationItems[0].name;
         } else {
           return null;
         }
@@ -361,38 +361,17 @@
         }
       },
 
-      _addToOrganization: function (event) {
-        this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
-        this.set('availableOrganizations', this._availableOrganizations());
-        this.$.selectOrganizationDialog.open();
-      },
-
-      _deleteFromOrganization: function (event) {
-        var userId = event.target.getAttribute('data-args');
-        var organizationId = event.target.getAttribute('data-args-org');
-        this.$.deleteOrganizationAjax.body = {};
-        this.$.deleteOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/delete_user";
-        this.$.deleteOrganizationAjax.generateRequest();
-      },
-
-      _selectOrganization: function (event, detail) {
-        this.$.addOrganizationAjax.body = {};
-        this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
-        this.$.addOrganizationAjax.generateRequest();
-        this.$.selectOrganizationDialog.close();
-      },
-
       _deleteAdmin: function (event) {
-        var userId = event.target.getAttribute('data-args');
+        var itemId = event.target.getAttribute('data-args');
         this.$.deleteAdminAjax.body = {};
         if (this.modelType=="groups" && this.groupId) {
-          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/delete_admin";
+          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + itemId + "/delete_admin";
           this.$.deleteAdminAjax.generateRequest();
         } else if (this.modelType=="communities" && this.communityId) {
-          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/delete_admin";
+          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + itemId + "/delete_admin";
           this.$.deleteAdminAjax.generateRequest();
         } else if (this.modelType=="domains" && this.domainId) {
-          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/delete_admin";
+          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + itemId + "/delete_admin";
           this.$.deleteAdminAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
@@ -447,21 +426,21 @@
       },
 
       _reallyDeletedUserFromCollection: function () {
-        this._deleteMaster(this.$.deleteUserAjax, 'delete_user');
+        this._deleteMaster(this.$.deleteUserAjax, 'delete_item');
       },
 
       _reallyDeletedAndDeleteUserContent: function () {
-        this._deleteMaster(this.$.deleteAndDeleteAjax, 'delete_and_delete_user_content');
+        this._deleteMaster(this.$.deleteAndDeleteAjax, 'delete_and_delete_item_content');
       },
 
       _setupUserIdFromEvent(event) {
-        var userId = event.target.parentElement.getAttribute('data-args');
-        if (!userId)
-          userId = event.target.getAttribute('data-args');
-        this.set('selectedItemId', userId);
+        var itemId = event.target.parentElement.getAttribute('data-args');
+        if (!itemId)
+          itemId = event.target.getAttribute('data-args');
+        this.set('selectedItemId', itemId);
       },
 
-      _deleteMaster: function (ajax, type, userIds) {
+      _deleteMaster: function (ajax, type, itemIds) {
         var url, collectionId;
         if (this.modelType==="groups" && this.groupId) {
           collectionId = this.groupId;
@@ -473,14 +452,14 @@
           console.error("Can't find model type or ids");
           return;
         }
-        if (userIds && userIds.length>0) {
+        if (itemIds && itemIds.length>0) {
           url = "/api/" + this.modelType + "/" + collectionId + "/" +type;
-          ajax.body = { userIds: userIds };
+          ajax.body = { itemIds: itemIds };
         } else if (this.selectedItemId) {
           url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedItemId + "/"+type;
           ajax.body = {};
         } else {
-          console.error("No user ids to delete");
+          console.error("No item ids to delete");
           return;
         }
         if (this.modelType==="groups" && this.groupId) {
@@ -496,23 +475,23 @@
           console.warn("Can't find model type or ids");
         }
         if (this.selectedItemId) {
-          var user = this._findUserFromId(this.selectedItemId);
-          if (user)
-            this.$.grid.deselectItem(user);
+          var item = this._findUserFromId(this.selectedItemId);
+          if (item)
+            this.$.grid.deselectItem(item);
         }
       },
 
       _setSelected: function (event) {
-        var user = this._findUserFromId(event.target.getAttribute('data-args'));
-        if (user)
-          this.$.grid.selectItem(user);
+        var item = this._findUserFromId(event.target.getAttribute('data-args'));
+        if (item)
+          this.$.grid.selectItem(item);
       },
 
       _findUserFromId: function (id) {
         var foundUser;
-        this.items.forEach(function (user) {
-          if (user.id==id) {
-            foundUser = user;
+        this.items.forEach(function (item) {
+          if (item.id==id) {
+            foundUser = item;
           }
         }.bind(this));
         return foundUser;
@@ -537,10 +516,10 @@
       _inviteUser: function (event) {
         this.$.inviteUserAjax.body = {};
         if (this.modelType==="groups" && this.groupId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
+          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_item";
           this.$.inviteUserAjax.generateRequest();
         } else if (this.modelType==="communities" && this.communityId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
+          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_item";
           this.$.inviteUserAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");
@@ -581,7 +560,7 @@
       },
 
       _deleteUserResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('userDeleted'));
+        window.appGlobals.notifyUserViaToast(this.t('itemDeleted'));
         this.$.ajax.generateRequest();
       },
 
