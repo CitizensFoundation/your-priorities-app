@@ -533,11 +533,15 @@
       }
 
       _startRecording () {
-        this.recorder.startRecording();
-        this.recordSecondsLeft = this.maxLength;
-        this.set('isRecording', true);
-        this.$$("#recordingIcon").className = "recording";
-        this._recordingTimer();
+        if (!this.isRecording) {
+          this.recorder.startRecording();
+          this.recordSecondsLeft = this.maxLength;
+          this.set('isRecording', true);
+          this.$$("#recordingIcon").className = "recording";
+          this._recordingTimer();
+        } else {
+          this._stopRecording();
+        }
       }
 
       _stopRecording () {
