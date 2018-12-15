@@ -53,7 +53,8 @@ module.exports = function(sequelize, DataTypes) {
 
     defaultScope: {
       where: {
-        deleted: false
+        deleted: false,
+        status: 'active'
       }
     },
     indexes: [
@@ -79,6 +80,9 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['id','deleted']
+      },
+      {
+        fields: ['id','deleted','status']
       }
     ],
 

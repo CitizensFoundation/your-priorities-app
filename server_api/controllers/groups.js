@@ -928,7 +928,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     if (group) {
       log.info('Group Viewed', { group: toJson(group.simple()), context: 'view', user: toJson(req.user) });
       var PostsByNotOpen = models.Post.scope('not_open');
-      PostsByNotOpen.count({ where: { status: { $in: ['published','inactive']}, group_id: req.params.id} }).then(function (count) {
+      PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
         res.send({group: group, hasNonOpenPosts: count != 0});
       }).catch(function (error) {
         sendGroupOrError(res, null, 'count_posts', req.user, error);
@@ -1062,7 +1062,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
 
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
 
-  var where = { status: { $in: ['published','inactive']}, group_id: req.params.id, deleted: false };
+  var where = { group_id: req.params.id, deleted: false };
 
   var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 

@@ -20,8 +20,8 @@ module.exports = function(sequelize, DataTypes) {
     counter_points: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_all_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_main_activities: { type: DataTypes.INTEGER, defaultValue: 0 },
-    counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_impressions: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     data: DataTypes.JSONB,
     public_data: DataTypes.JSONB,
     position: DataTypes.INTEGER,
@@ -33,7 +33,8 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     defaultScope: {
       where: {
-        deleted: false
+        deleted: false,
+        status: 'published'
       }
     },
 
@@ -82,6 +83,15 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['user_id','group_id','deleted']
+      },
+      {
+        fields: ['user_id','group_id','deleted','status']
+      },
+      {
+        fields: ['id','deleted','status']
+      },
+      {
+        fields: ['user_id','deleted','status']
       }
     ],
 

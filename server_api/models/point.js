@@ -177,9 +177,9 @@ module.exports = function(sequelize, DataTypes) {
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     counter_revisions: { type: DataTypes.INTEGER, defaultValue: 1 },
-    counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_up: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_quality_down: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     embed_data: DataTypes.JSONB,
     data: DataTypes.JSONB,
     public_data: DataTypes.JSONB,
@@ -188,7 +188,8 @@ module.exports = function(sequelize, DataTypes) {
 
     defaultScope: {
       where: {
-        deleted: false
+        deleted: false,
+        status: 'published'
       }
     },
 
@@ -229,6 +230,15 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['user_id','group_id','deleted']
+      },
+      {
+        fields: ['user_id','group_id','deleted','status']
+      },
+      {
+        fields: ['id','deleted','status']
+      },
+      {
+        fields: ['post_id','deleted','status']
       }
     ],
 
@@ -266,7 +276,7 @@ module.exports = function(sequelize, DataTypes) {
         options.user_id = req.user.id;
         options.content_type = sequelize.models.Point.CONTENT_COMMENT;
         options.value = 0;
-        options.status = 'active';
+        options.status = 'published';
         options.user_agent = req.useragent.source;
         options.ip_address = req.clientIp;
 
@@ -377,7 +387,7 @@ module.exports = function(sequelize, DataTypes) {
           options.user_id = req.user.id;
           options.content_type = sequelize.models.Point.CONTENT_NEWS_STORY;
           options.value = 0;
-          options.status = 'active';
+          options.status = 'published';
           options.user_agent = req.useragent.source;
           options.ip_address = req.clientIp;
 

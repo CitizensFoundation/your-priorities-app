@@ -1166,7 +1166,7 @@ async.series([
       incoming['id'] = null;
 
       if (incoming['status']==null) {
-        incoming['status']="active";
+        incoming['status']="published";
       }
 
       incoming['deleted'] = getDeletedStatus(incoming['status']);

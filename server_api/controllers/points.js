@@ -506,7 +506,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     content: req.body.content,
     value: req.body.value,
     user_id: req.user.id,
-    status: 'active',
+    status: 'published',
     user_agent: req.useragent.source,
     ip_address: req.clientIp
   });

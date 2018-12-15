@@ -696,7 +696,7 @@ router.get('/:communityId/users', auth.can('edit community'), function (req, res
 });
 
 router.get('/:communityId/posts', auth.can('view community'), function (req, res) {
-  var where = { status: { $in: ['published','inactive']}, deleted: false };
+  var where = { status: 'published', deleted: false };
 
   var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 

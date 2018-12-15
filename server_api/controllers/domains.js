@@ -7,6 +7,8 @@ var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
 var queue = require('../active-citizen/workers/queue');
+var moderationItemsActionDomain = require('../active-citizen/engine/moderation/controller_utils').moderationItemsActionDomain;
+var getAllModeratedItemsByDomain = require('../active-citizen/engine/moderation/controller_utils').getAllModeratedItemsByDomain;
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -91,17 +93,17 @@ var getDomain = function (req, domainId, done) {
               access: {
                 $ne: models.Community.ACCESS_SECRET
               },
-              $or: [
-                {
-                  counter_users: {
-                    $gt: 5
+
+              status: { $or: [
+                  {
+                    counter_users: {
+                      $gt: 5
+                    },
                   },
-                },
-                {
-                  status: "featured"
-                }
-              ],
-              status: {
+                  {
+                    status: "featured"
+                  }
+                ],
                 $ne: 'hidden'
               }
             },
@@ -658,54 +660,6 @@ router.get(':id/news', auth.can('view domain'), function(req, res) {
     res.sendStatus(500);
   });
 });
-
-const itemsActionMaster = (model, req, res, actionType) => {
-  model.find({
-    where: {
-      id: req.params.itemId
-    },
-    include: [
-      {
-        model: models.Group,
-        required: true,
-        include: [
-          {
-            model: models.Community,
-            required: true,
-            include: [
-              {
-                model: models.Domain,
-                where: {
-                  id: req.params.domainId
-                },
-                required: true
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }).then(item => {
-    if (item) {
-      if (actionType==='delete') {
-        item.deleted = true;
-      } else if (actionType==='approve') {
-        item.moderationStatus = 'approved';
-      } else if (actionType==='clearFlags') {
-        item.counter_flags = 0;
-      }
-      item.save().then( () => {
-        res.sendStatus(200);
-      }).catch( error => {
-        log.error("Error deleting moderated item", { error });
-        res.sendStatus(500);
-      });
-    }
-  }).catch(error => {
-    log.error("Error deleting moderated item", { error });
-    res.sendStatus(500);
-  })
-};
 
 router.delete('/:domainId/:itemId/:itemModelClass/delete_moderated_item', auth.can('edit domain'), (req, res) => {
   if (req.params.itemModelClass==='post') {
