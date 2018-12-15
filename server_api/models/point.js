@@ -248,6 +248,54 @@ module.exports = function(sequelize, DataTypes) {
 
     tableName: 'points',
 
+    instanceMethods: {
+      setupModerationData: function () {
+        if (!this.data) {
+          this.set('data', {});
+        }
+        if (!this.data.moderation) {
+          this.set('data.moderation', {});
+        }
+      },
+
+      report: function (req, source, post, callback) {
+        this.setupModerationData();
+        async.series([
+          function (seriesCallback) {
+
+            if (!this.data.moderation.lastReportedBy) {
+              this.set('data.moderation.lastReportedBy', []);
+            }
+            this.set('data.moderation.lastReportedBy',
+              [{ date: new Date(), source: source, userId: (req && req.User) ? req.User.email : null, userEmail: (req && req.User) ? req.User.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
+            );
+
+            this.save().then(function () {
+              seriesCallback();
+            }).catch(function (error) {
+              seriesCallback(error);
+            });
+          }.bind(this),
+          function (seriesCallback) {
+            sequelize.models.AcActivity.createActivity({
+              type: 'activity.report.content',
+              userId: req.user.id,
+              postId: post.id,
+              groupId: post.Group.id,
+              pointId: this.id,
+              communityId: post.Group.Community.id,
+              domainId: post.Group.Community.Domain.id
+            }, function (error) {
+              seriesCallback();
+            });
+          }.bind(this)
+        ], function (error) {
+          this.increment('counter_flags');
+          callback(error);
+        }.bind(this));
+      },
+    },
+
     classMethods: {
 
       CONTENT_DEBATE: 0,

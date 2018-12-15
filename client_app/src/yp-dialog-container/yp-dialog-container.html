@@ -140,21 +140,25 @@
 
         <template is="dom-if" name="none" restamp>
         </template>
+
+        <template is="dom-if" name="usersGrid" restamp>
+          <yp-users-grid id="usersGrid"></yp-users-grid>
+        </template>
+
+        <template is="dom-if" name="mediaRecorder" restamp>
+          <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
+        </template>
+
+        <template is="dom-if" name="contentModeration" restamp>
+          <yp-content-moderation id="contentModeration"></yp-content-moderation>
+        </template>
       </iron-lazy-pages>
 
-      <template is="dom-if" if="[[bulkStatusUpdates]]">
+      <template is="dom-if" if="[[bulkStatusUpdates]]" restamp>
         <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
         <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
         <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
         <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
-      </template>
-
-      <template is="dom-if" if="[[gotUsersGrid]]">
-        <yp-users-grid id="usersGrid"></yp-users-grid>
-      </template>
-
-      <template is="dom-if" if="[[gotMediaRecorder]]">
-        <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
       </template>
     </div>
 
@@ -214,6 +218,11 @@
         },
 
         gotUsersGrid: {
+          type: Boolean,
+          value: false
+        },
+
+        gotContentModeration: {
           type: Boolean,
           value: false
         },
@@ -293,11 +302,29 @@
           this.getDialogAsync("usersGrid", callback);
         } else {
           this.$.loadingDialog.open();
-          this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
-            this.$.loadingDialog.close();
-            console.info("Have loaded users grid container");
-            this.set('gotUsersGrid', true);
-            this.getDialogAsync("usersGrid", callback);
+          this.importHref(this.resolveUrl("yp-dialog-vaadin-grid-shared.html"), function () {
+            this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
+              this.$.loadingDialog.close();
+              console.info("Have loaded users grid container");
+              this.set('gotUsersGrid', true);
+              this.getDialogAsync("usersGrid", callback);
+            }.bind(this), null, true);
+          }.bind(this), null, true);
+        }
+      },
+
+      getContentModerationAsync: function (callback) {
+        if (this.gotContentModeration) {
+          this.getDialogAsync("contentModeration", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("yp-dialog-vaadin-grid-shared.html"), function () {
+            this.importHref(this.resolveUrl("yp-dialog-container-moderation.html"), function () {
+              this.$.loadingDialog.close();
+              console.info("Have loaded contentModeration");
+              this.set('gotContentModeration', true);
+              this.getDialogAsync("contentModeration", callback);
+            }.bind(this), null, true);
           }.bind(this), null, true);
         }
       },

@@ -359,14 +359,7 @@ router.put('/:id/report', auth.can('vote on post'), function (req, res) {
     ]
   }).then(function (post) {
     if (post) {
-      models.AcActivity.createActivity({
-        type: 'activity.report.content',
-        userId: req.user.id,
-        postId: req.params.id,
-        groupId: post.Group.id,
-        communityId: post.Group.Community.id,
-        domainId: post.Group.Community.Domain.id
-      }, function (error) {
+      post.report(req, 'fromUser', (error) => {
         if (error) {
           log.error("Post Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
           res.sendStatus(500);

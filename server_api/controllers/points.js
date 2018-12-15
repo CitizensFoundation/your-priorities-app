@@ -172,58 +172,54 @@ router.put('/:id/report', auth.can('vote on point'), function (req, res) {
       id: req.params.id
     }
   }).then(function (point) {
-    models.Post.find({
-      where: {
-        id: point.post_id
-      },
-      include: [
-        {
-          model: models.Group,
-          required: true,
-          attributes: ['id'],
-          include: [
-            {
-              model: models.Community,
-              required: true,
-              attributes: ['id'],
-              include: [
-                {
-                  model: models.Domain,
-                  required: true,
-                  attributes: ['id']
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }).then(function (post) {
-      if (post) {
-        models.AcActivity.createActivity({
-          type: 'activity.report.content',
-          userId: req.user.id,
-          postId: post.id,
-          groupId: post.Group.id,
-          pointId: point.id,
-          communityId: post.Group.Community.id,
-          domainId: post.Group.Community.Domain.id
-        }, function (error) {
-          if (error) {
-            log.error("Point Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
-            res.sendStatus(500);
-          } else {
-            log.info('Point Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
-            res.sendStatus(200);
+    if (point) {
+      models.Post.find({
+        where: {
+          id: point.post_id
+        },
+        include: [
+          {
+            model: models.Group,
+            required: true,
+            attributes: ['id'],
+            include: [
+              {
+                model: models.Community,
+                required: true,
+                attributes: ['id'],
+                include: [
+                  {
+                    model: models.Domain,
+                    required: true,
+                    attributes: ['id']
+                  }
+                ]
+              }
+            ]
           }
-        });
-      } else {
-        log.error("Point Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: "Could not created post" });
+        ]
+      }).then(function (post) {
+        if (post) {
+          point.report(req, 'fromUser', post, function (error) {
+            if (error) {
+              log.error("Point Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
+              res.sendStatus(500);
+            } else {
+              log.info('Point Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
+              res.sendStatus(200);
+            }
+          });
+        } else {
+          log.error("Point Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: "Could not created post" });
+          res.sendStatus(500);
+        }
+      }).catch(function (error) {
+        log.error("Point Report", { context: 'report', user: toJson(req.user), err: error });
         res.sendStatus(500);
-      }
-    }).catch(function (error) {
-      log.error("Point Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
-      res.sendStatus(500);
-    });
+      });
+    } else {
+      res.sendStatus(404);
+    }
   })
 });
 

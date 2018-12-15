@@ -200,6 +200,7 @@
               <paper-item hidden$="[[!hasDomainAccess]]" id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="usersMenuItem">[[t('domainUsers')]]</paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="moderationMenuItem">[[t('contentModeration')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="adminsMenuItem">[[t('domainAdmins')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
@@ -335,6 +336,8 @@
           this._openUsersDialog();
         else if (detail.item.id==="adminsMenuItem")
           this._openAdminsDialog();
+        else if (detail.item.id==="moderationMenuItem")
+          this._openContentModeration();
         else if (detail.item.id=="addCommunityMenuItem")
           this.fire('yp-new-community');
         this.$$("paper-listbox").select(null);
@@ -378,6 +381,14 @@
           dialog.open('edit', {domainId: this.domain.id});
         }.bind(this));
       },
+
+      _openContentModeration: function () {
+        window.appGlobals.activity('open', 'domainContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, null, this.domain.id, false);
+          dialog.open(this.domain.name);
+        }.bind(this));
+    },
 
       _newOrganization: function () {
         window.appGlobals.activity('open', 'organizationEdit');

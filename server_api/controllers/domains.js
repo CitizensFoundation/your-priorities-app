@@ -93,17 +93,17 @@ var getDomain = function (req, domainId, done) {
               access: {
                 $ne: models.Community.ACCESS_SECRET
               },
-
-              status: { $or: [
-                  {
-                    counter_users: {
-                      $gt: 5
-                    },
+              $or: [
+                {
+                  counter_users: {
+                    $gt: 5
                   },
-                  {
-                    status: "featured"
-                  }
-                ],
+                },
+                {
+                  status: "featured"
+                }
+              ],
+              status: {
                 $ne: 'hidden'
               }
             },
@@ -661,16 +661,28 @@ router.get(':id/news', auth.can('view domain'), function(req, res) {
   });
 });
 
+// MODERATION
+
 router.delete('/:domainId/:itemId/:itemModelClass/delete_moderated_item', auth.can('edit domain'), (req, res) => {
   if (req.params.itemModelClass==='post') {
-    itemsActionMaster(models.Post, req, res, 'delete');
+    moderationItemsActionDomain(req, res, models.Post, 'delete');
   } else if (req.params.itemModelClass==='point') {
-    //TODO: Look into community and domain points
-    itemsActionMaster(models.Point, req, res, 'delete');
+    moderationItemsActionDomain(req, res, models.Point, 'delete');
   } else {
     log.error("Can't find item model class");
     res.sendStatus(500);
   }
+});
+
+router.get('/:domainId/moderation_items', auth.can('edit domain'), (req, res) => {
+  getAllModeratedItemsByDomain(req.params.domainId, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      req.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
 });
 
 router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {

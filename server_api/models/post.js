@@ -272,6 +272,48 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     instanceMethods: {
+      setupModerationData: function () {
+        if (!this.data) {
+          this.set('data', {});
+        }
+        if (!this.data.moderation) {
+          this.set('data.moderation', {});
+        }
+      },
+
+      report: function (req, source, callback) {
+        this.setupModerationData();
+        async.series([
+          function (seriesCallback) {
+            if (!this.data.moderation.lastReportedBy) {
+              this.set('data.moderation.lastReportedBy', []);
+            }
+            this.set('data.moderation.lastReportedBy',
+              [{ date: new Date(), source: source, userId: (req && req.User) ? req.User.email : null, userEmail: (req && req.User) ? req.User.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
+            );
+            this.save().then(function () {
+              seriesCallback();
+            }).catch(function (error) {
+              seriesCallback(error);
+            });
+          }.bind(this),
+          function (seriesCallback) {
+            sequelize.models.AcActivity.createActivity({
+              type: 'activity.report.content',
+              userId: req.user.id,
+              postId: req.params.id,
+              groupId: this.Group.id,
+              communityId: this.Group.Community.id,
+              domainId: this.Group.Community.Domain.id
+            }, function (error) {
+              seriesCallback(error);
+            });
+          }.bind(this)
+        ], function (error) {
+          this.increment('counter_flags');
+          callback(error);
+        }.bind(this));
+      },
 
       simple: function() {
         return { id: this.id, name: this.name };
