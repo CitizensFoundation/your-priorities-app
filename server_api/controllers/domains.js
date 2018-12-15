@@ -659,6 +659,66 @@ router.get(':id/news', auth.can('view domain'), function(req, res) {
   });
 });
 
+const itemsActionMaster = (model, req, res, actionType) => {
+  model.find({
+    where: {
+      id: req.params.itemId
+    },
+    include: [
+      {
+        model: models.Group,
+        required: true,
+        include: [
+          {
+            model: models.Community,
+            required: true,
+            include: [
+              {
+                model: models.Domain,
+                where: {
+                  id: req.params.domainId
+                },
+                required: true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }).then(item => {
+    if (item) {
+      if (actionType==='delete') {
+        item.deleted = true;
+      } else if (actionType==='approve') {
+        item.moderationStatus = 'approved';
+      } else if (actionType==='clearFlags') {
+        item.counter_flags = 0;
+      }
+      item.save().then( () => {
+        res.sendStatus(200);
+      }).catch( error => {
+        log.error("Error deleting moderated item", { error });
+        res.sendStatus(500);
+      });
+    }
+  }).catch(error => {
+    log.error("Error deleting moderated item", { error });
+    res.sendStatus(500);
+  })
+};
+
+router.delete('/:domainId/:itemId/:itemModelClass/delete_moderated_item', auth.can('edit domain'), (req, res) => {
+  if (req.params.itemModelClass==='post') {
+    itemsActionMaster(models.Post, req, res, 'delete');
+  } else if (req.params.itemModelClass==='point') {
+    //TODO: Look into community and domain points
+    itemsActionMaster(models.Point, req, res, 'delete');
+  } else {
+    log.error("Can't find item model class");
+    res.sendStatus(500);
+  }
+});
+
 router.delete('/:domainId/remove_many_admins', auth.can('edit domain'), (req, res) => {
   queue.create('process-deletion', { type: 'remove-many-domain-admins', userIds: req.body.userIds, domainId: req.params.domainId }).
   priority('high').removeOnComplete(true).save();

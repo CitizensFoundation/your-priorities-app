@@ -4,7 +4,6 @@
 
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html" >
 <link rel="import" href="../../bower_components/paper-button/paper-button.html" >
-<link rel="import" href="../../bower_components/paper-input/paper-input.html" >
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html" >
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
 
@@ -38,17 +37,8 @@
         overflow-wrap: break-word;
       }
 
-      .organization {
-        width: 150px;
-      }
-
       .addDeletedButtons {
         width: 150px;
-      }
-
-      #selectOrganizationDialog {
-        background-color: #FFF;
-
       }
 
       [hidden] {
@@ -68,15 +58,6 @@
 
       paper-button {
         margin-left: 24px;
-      }
-
-      .inputBox {
-        margin-left: 16px;
-        padding-left: 8px;
-        padding-right: 8px;
-        padding-bottom: 4px;
-        margin-bottom: 4px;
-        align-self: flex-start;
       }
 
       #grid {
@@ -116,7 +97,7 @@
 
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
-        <div class="headerText"><div class="innerHeader">[[collectionName]] <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span></div></div>
+        <div class="headerText"><div class="innerHeader">[[headerText]] <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span></div></div>
       </div>
 
       <vaadin-grid id="grid" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
@@ -173,14 +154,14 @@
               <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
-                  <paper-item data-args$="[[item.id]]" on-tap="_deleteSelectedContent">
-                    [[t('deleteSelectedContent')]] [[selectedContentCount]]
+                  <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
+                    [[t('deleteSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[adminItems]]" on-tap="_approveSelectedContent">
-                    [[t('approveSelectedContent')]] [[selectedContentCount]]
+                  <paper-item data-args$="[[item.id]]" hidden$="[[adminItems]]" on-tap="_approveSelected">
+                    [[t('approveSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[adminItems]]" on-tap="_clearSelectedFlags">
-                    [[t('clearSelectedFlags')]] [[selectedContentCount]]
+                    [[t('clearSelectedFlags')]] [[selectedItemsCount]]
                   </paper-item>
                 </template>
               </paper-listbox>
@@ -190,13 +171,13 @@
             <paper-menu-button horizontal-align="right" class="helpButton">
               <paper-icon-button icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" on-tap="_deleteContent">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" on-tap="_delete">
                   [[t('deleteContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminItems]]" on-tap="_approveContent">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[adminItems]]" on-tap="_approve">
                   [[t('approveContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" hidden$="[[adminItems]]" on-tap="_clearFlags">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[adminItems]]" on-tap="_clearFlags">
                   [[t('clearFlags')]]
                 </paper-item>
               </paper-listbox>
@@ -212,16 +193,14 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_itemsResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteAdminAjax" on-response="_deleteAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteManyAdminAjax" on-response="_deleteManyAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteUserAjax" on-response="_deleteUserResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="deleteItemAjax" on-response="_deleteItemResponse"></yp-ajax>
       <yp-ajax method="DELETE" id="deleteManyItemsAjax" on-response="_deleteManyItemsResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteOrganizationAjax" on-response="_deleteOrganizationResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteAndDeleteAjax" on-response="_deleteAndDeleteCompleted"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteAndDeleteManyAjax" on-response="_deleteAndDeleteManyCompleted"></yp-ajax>
-      <yp-ajax method="POST" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
-      <yp-ajax method="POST" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
-      <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
+
+      <yp-ajax method="PUT" id="approveItemAjax" on-response="_approveItemResponse"></yp-ajax>
+      <yp-ajax method="PUT" id="approveManyItemsAjax" on-response="_approveManyItemsResponse"></yp-ajax>
+
+      <yp-ajax method="PUT" id="clearFlagsItemAjax" on-response="_clearFlagsItemResponse"></yp-ajax>
+      <yp-ajax method="PUT" id="clearFlagsManyItemsAjax" on-response="_clearFlagsManyItemsResponse"></yp-ajax>
     </div>
   </template>
 
@@ -279,7 +258,7 @@
           notify: true
         },
 
-        selectedContentCount: {
+        selectedItemsCount: {
           type: Number,
           value: 0
         },
@@ -289,11 +268,15 @@
           value: true
         },
 
-        selectedItemIds: {
+        selectedItemIdsAndType: {
           type: Array
         },
 
         selectedItemId: {
+          type: String
+        },
+
+        selectedModelClass: {
           type: String
         },
 
@@ -329,118 +312,63 @@
       _selectedItemsChanged: function () {
         if (this.selectedItems && this.selectedItems.length>0) {
           this.set('selectedItemsEmpty', false);
-          this.set('selectedContentCount', this.selectedItems.length);
+          this.set('selectedItemsCount', this.selectedItems.length);
         } else {
           this.set('selectedItemsEmpty', true);
-          this.set('selectedContentCount', 0);
+          this.set('selectedItemsCount', 0);
         }
-        this.selectedItemIds = this.selectedItems.map(function (item) { return item.id });
+        this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.modelType }});
       },
 
-      _itemOrganizationId: function (item) {
-        if (item && item.OrganizationItems && item.OrganizationItems.length>0) {
-          return item.OrganizationItems[0].id;
-        } else {
-          return null;
-        }
-      },
-
-      _itemOrganizationName: function (item) {
-        if (item && item.OrganizationItems && item.OrganizationItems.length>0) {
-          return item.OrganizationItems[0].name;
-        } else {
-          return null;
-        }
-      },
-
-      _availableOrganizations: function () {
-        if (window.appUser.adminRights && window.appUser.adminRights.OrganizationAdmins) {
-          return  window.appUser.adminRights.OrganizationAdmins;
-        } else {
-          return [];
-        }
-      },
-
-      _deleteAdmin: function (event) {
-        var itemId = event.target.getAttribute('data-args');
-        this.$.deleteAdminAjax.body = {};
-        if (this.modelType=="groups" && this.groupId) {
-          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + itemId + "/delete_admin";
-          this.$.deleteAdminAjax.generateRequest();
-        } else if (this.modelType=="communities" && this.communityId) {
-          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + itemId + "/delete_admin";
-          this.$.deleteAdminAjax.generateRequest();
-        } else if (this.modelType=="domains" && this.domainId) {
-          this.$.deleteAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + itemId + "/delete_admin";
-          this.$.deleteAdminAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
-      },
-
-      _deleteSelectedAdmins: function (event) {
-        this._setupUserIdFromEvent(event);
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureYouWantToDeletedAdmins'), this._reallyDeletedSelectedAdmins.bind(this), true, false);
-        }.bind(this));
-      },
-
-      _deleteAndDeleteContentselectedItems: function (event) {
-        this._setupUserIdFromEvent(event);
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureDeletedAndDeleteSelectedUserContent'), this._reallyDeletedAndDeleteContentselectedItems.bind(this), true, true);
-        }.bind(this));
-      },
-
-      _deleteselectedItemsFromCollection: function (event) {
-        this._setupUserIdFromEvent(event);
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureDeletedselectedItems'), this._reallyDeletedselectedItemsFromCollection.bind(this), true, true);
-        }.bind(this));
-      },
-
-      _deleteUserFromCollection: function (event) {
-        this._setupUserIdFromEvent(event);
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureDeletedUser'), this._reallyDeletedUserFromCollection.bind(this), true, false);
-        }.bind(this));
-      },
-
-      _deleteAndDeleteUserContent: function (event) {
-        this._setupUserIdFromEvent(event);
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureDeletedAndDeleteUser'), this._reallyDeletedAndDeleteUserContent.bind(this), true, true);
-        }.bind(this));
-      },
-
-      _reallyDeletedSelectedAdmins: function () {
-        this._deleteMaster(this.$.deleteManyAdminAjax, 'delete_many_admins', this.selectedItemIds);
-      },
-
-      _reallyDeletedAndDeleteContentselectedItems: function () {
-        this._deleteMaster(this.$.deleteAndDeleteManyAjax, 'delete_many_items_and_delete_content', this.selectedItemIds);
-      },
-
-      _reallyDeletedselectedItemsFromCollection: function () {
-        this._deleteMaster(this.$.deleteManyItemsAjax, 'delete_many_items', this.selectedItemIds);
-      },
-
-      _reallyDeletedUserFromCollection: function () {
-        this._deleteMaster(this.$.deleteUserAjax, 'delete_item');
-      },
-
-      _reallyDeletedAndDeleteUserContent: function () {
-        this._deleteMaster(this.$.deleteAndDeleteAjax, 'delete_and_delete_item_content');
-      },
-
-      _setupUserIdFromEvent(event) {
+      _setupItemIdFromEvent(event) {
         var itemId = event.target.parentElement.getAttribute('data-args');
         if (!itemId)
           itemId = event.target.getAttribute('data-args');
-        this.set('selectedItemId', itemId);
+        var modelClass = event.target.parentElement.getAttribute('data-model-class');
+        if (!modelClass)
+          modelClass = event.target.getAttribute('data-model-class');
+        this.set('selectedModelClass', modelClass);
       },
 
-      _deleteMaster: function (ajax, type, itemIds) {
+      _deleteSelected: function (event) {
+        this._setupItemIdFromEvent(event);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureDeleteSelectedContent'), this._reallyDeleteSelected.bind(this), true, true);
+        }.bind(this));
+      },
+
+      _reallyDeleteSelected: function () {
+        this._ajaxMaster(this.$.deleteManyItemsAjax, 'delete_moderated_items', this.selectedItemIdsAndType);
+      },
+
+      _delete: function (event) {
+        this._setupItemIdFromEvent(event);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureDeletedContent'), this._reallyDeleteSelected.bind(this), true, false);
+        }.bind(this));
+      },
+
+      _reallyDelete: function () {
+        this._ajaxMaster(this.$.deleteItemAjax, 'delete_moderated_item');
+      },
+
+      _approve: function () {
+        this._ajaxMaster(this.$.approveItemAjax, 'approve_moderated_item');
+      },
+
+      _approveSelected: function () {
+        this._ajaxMaster(this.$.approveManyItemsAjax, 'approve_moderated_items', this.selectedItemIdsAndType);
+      },
+
+      _clearFlags: function () {
+        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clear_flags_moderated_item');
+      },
+
+      _clearSelectedFlags: function () {
+        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clear_flags_moderated_items', this.selectedItemIdsAndType);
+      },
+
+      _ajaxMaster: function (ajax, action, itemIdsAndType) {
         var url, collectionId;
         if (this.modelType==="groups" && this.groupId) {
           collectionId = this.groupId;
@@ -453,131 +381,41 @@
           return;
         }
         if (itemIds && itemIds.length>0) {
-          url = "/api/" + this.modelType + "/" + collectionId + "/" +type;
-          ajax.body = { itemIds: itemIds };
+          url = "/api/" + this.modelType + "/" + collectionId + "/" +action;
+          ajax.body = { itemIdsAndType: itemIdsAndType };
         } else if (this.selectedItemId) {
-          url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedItemId + "/"+type;
+          url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedItemId+ '/'+this.selectedModelClass+'/'+action ;
           ajax.body = {};
         } else {
           console.error("No item ids to delete");
           return;
         }
-        if (this.modelType==="groups" && this.groupId) {
-          ajax.url = url;
-          ajax.generateRequest();
-        } else if (this.modelType==="communities" && this.communityId) {
-          ajax.url = url;
-          ajax.generateRequest();
-        } else if (this.modelType==="domains" && this.domainId) {
-          ajax.url = url;
-          ajax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
+        ajax.url = url;
+        ajax.generateRequest();
+
         if (this.selectedItemId) {
-          var item = this._findUserFromId(this.selectedItemId);
+          var item = this._findItemFromId(this.selectedItemId);
           if (item)
             this.$.grid.deselectItem(item);
+          this.selectedItemId = null;
+          this.selectedModelClass = null;
         }
       },
 
       _setSelected: function (event) {
-        var item = this._findUserFromId(event.target.getAttribute('data-args'));
+        var item = this._findItemFromId(event.target.getAttribute('data-args'));
         if (item)
           this.$.grid.selectItem(item);
       },
 
-      _findUserFromId: function (id) {
-        var foundUser;
+      _findItemFromId: function (id) {
+        var foundItem;
         this.items.forEach(function (item) {
           if (item.id==id) {
-            foundUser = item;
+            foundItem = item;
           }
         }.bind(this));
-        return foundUser;
-      },
-
-      _addAdmin: function (event) {
-        this.$.addAdminAjax.body = {};
-        if (this.modelType==="groups" && this.groupId) {
-          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addAdminEmail + "/add_admin";
-          this.$.addAdminAjax.generateRequest();
-        } else if (this.modelType==="communities" && this.communityId) {
-          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
-          this.$.addAdminAjax.generateRequest();
-        } else if (this.modelType==="domains" && this.domainId) {
-          this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + this.addAdminEmail + "/add_admin";
-          this.$.addAdminAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
-      },
-
-      _inviteUser: function (event) {
-        this.$.inviteUserAjax.body = {};
-        if (this.modelType==="groups" && this.groupId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_item";
-          this.$.inviteUserAjax.generateRequest();
-        } else if (this.modelType==="communities" && this.communityId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_item";
-          this.$.inviteUserAjax.generateRequest();
-        } else {
-          console.warn("Can't find model type or ids");
-        }
-      },
-
-      _deleteAdminResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('adminDeleted'));
-        this.$.ajax.generateRequest();
-      },
-
-      _deleteManyAdminResponse: function () {
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('removalsInProgress'), null, true, false, true);
-        }.bind(this));
-        this.$.dialog.close();
-      },
-
-      _deleteManyItemsResponse: function () {
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('removalsInProgress'), null, true, false, true);
-        }.bind(this));
-        this.$.dialog.close();
-      },
-
-      _deleteAndDeleteCompleted: function () {
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('removalAndDeletionInProgress'), null, true, false, true);
-        }.bind(this));
-        this.$.dialog.close();
-      },
-
-      _deleteAndDeleteManyCompleted: function () {
-        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('removalsAndDeletionsInProgress'), null, true, false, true);
-        }.bind(this));
-        this.$.dialog.close();
-      },
-
-      _deleteUserResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('itemDeleted'));
-        this.$.ajax.generateRequest();
-      },
-
-      _addAdminResponse: function () {
-        window.appGlobals.notifyUserViaToast(this.t('adminAdded')+' '+this.addAdminEmail);
-        this.set('addAdminEmail', null);
-        this.$.ajax.generateRequest();
-      },
-
-      _addOrganizationResponse: function (event, detail) {
-        window.appGlobals.notifyUserViaToast(this.t('organizationUserAdded')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
-      },
-
-      _deleteOrganizationResponse: function (event, detail) {
-        window.appGlobals.notifyUserViaToast(this.t('organizationUserDeleted')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
+        return foundItem;
       },
 
       _domainIdChanged: function (newDomainId) {
@@ -612,7 +450,7 @@
       _itemsResponse: function (event, detail) {
         this.set('items', detail.response);
         this.$.grid.clearCache();
-        this.set('selectedContentCount', 0);
+        this.set('selectedItemsCount', 0);
         this.set('selectedItemsEmpty', true);
       },
 
@@ -642,35 +480,19 @@
       _reset: function () {
         this.set('items', []);
         this.set('selectedItems', []);
-        this.set('selectedContentCount', 0);
+        this.set('selectedItemsCount', 0);
         this.set('selectedItemsEmpty', true);
         this.$.grid.clearCache();
       },
 
       _setupHeaderText: function () {
-        if (this.adminItems) {
-          this.set('itemsCountText', this.t('adminsCount'));
-        } else {
-          this.set('itemsCountText', this.t('itemsCount'));
-        }
+        this.set('itemsCountText', this.t('itemsCount'));
         if (this.groupId) {
-          if (this.adminItems) {
-            this.set('headerText', this.t('group.admins'));
-          } else {
-            this.set('headerText', this.t('group.items'));
-          }
+          this.set('headerText', this.t('groupContentModeration'));
         } else if (this.communityId) {
-          if (this.adminItems) {
-            this.set('headerText', this.t('community.admins'));
-          } else {
-            this.set('headerText', this.t('community.items'));
-          }
+          this.set('headerText', this.t('communityContentModeration'));
         } else if (this.domainId) {
-          if (this.adminItems) {
-            this.set('headerText', this.t('domainAdmins'));
-          } else {
-            this.set('headerText', this.t('domainItems'));
-          }
+          this.set('headerText', this.t('domainContentModeration'));
         }
       }
     });

@@ -18,7 +18,7 @@
 * Fully functional newsfeeds for all communities, groups and ideas where users can share links and comments just like on Facebook
 * Ideas and debate points can be easily shared on social media
 * Participation groups can be configured for many different types of participation projects
-* Authentication is configurable enabling eID, Facebook, email and/or anonymous login
+* Authentication is configurable enabling eID, Facebook, email and/or anonymous logins
 * The client app/website is a progressive web app that works like a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
 * Open source, non profit and built with passion over 10 years
