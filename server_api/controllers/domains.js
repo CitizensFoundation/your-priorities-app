@@ -678,7 +678,7 @@ router.get('/:domainId/moderation_items', auth.can('edit domain'), (req, res) =>
   getAllModeratedItemsByDomain(req.params.domainId, (error, items) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
-      req.sendStatus(500)
+      res.sendStatus(500)
     } else {
       res.send(items);
     }

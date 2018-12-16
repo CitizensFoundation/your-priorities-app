@@ -46,7 +46,7 @@
     "twemoji-min": "^2.3.0",
     "web-component-tester": "Polymer/web-component-tester#^6.5.0",
     "iron-lazy-pages": "^2.1.1",
-    "vaadin-grid": "^5.1.0",
+    "vaadin-grid": "^5.2.5",
     "videojs-record": "^2.4.1"
   },
   "devDependencies": {

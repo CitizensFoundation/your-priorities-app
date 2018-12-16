@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
 
 <link rel="import" href="../yp-ajax/yp-ajax.html" >
+<link rel="import" href="../yp-post/yp-post-cover-media.html" >
 <link rel="import" href="../yp-behaviors/yp-number-format-behavior.html" >
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html" >
 
@@ -15,8 +16,12 @@
   <template>
     <style include="iron-flex iron-flex-alignment">
       #dialog {
-        width: 90%;
-        max-width: 1024px;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 24px;
+        top: unset !important;
+        left: unset !important;
         background-color: #FFF;
       }
 
@@ -83,6 +88,7 @@
           width: 100%;
           height: 100%;
           margin: 0;
+          padding: 0;
         }
 
         .headerText {
@@ -92,6 +98,15 @@
         }
       }
 
+      .details {
+        display: flex;
+      }
+
+
+      yp-post-cover-media {
+        width: 432px;
+        height: 243px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -100,9 +115,22 @@
         <div class="headerText"><div class="innerHeader">[[headerText]] <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span></div></div>
       </div>
 
-      <vaadin-grid id="grid" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
-        <vaadin-grid-selection-column auto-select>
+      <vaadin-grid id="grid" active-item="{{activeItem}}" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
+        <vaadin-grid-selection-column>
         </vaadin-grid-selection-column>
+
+        <template class="row-details">
+          <div class="details">
+            <div class="layout horizontal">
+              <template is="dom-if" if="[[item.is_post]]">
+                <yp-post-cover-media post="[[item]]"></yp-post-cover-media>
+              </template>
+              <div>
+                [[item.content]]
+              </div>
+            </div>
+          </div>
+        </template>
 
         <vaadin-grid-column>
           <template class="header">[[t('date')]]</template>
@@ -116,7 +144,7 @@
 
         <vaadin-grid-column>
           <template class="header">[[t('moderationStatus')]]</template>
-          <template>[[item.moderationStatus]]</template>
+          <template>[[item.status]]</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column>
@@ -124,7 +152,7 @@
           <template>[[item.counter_flags]]</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column>
+        <vaadin-grid-column flex-grow="2">
           <template class="header">[[t('content')]]</template>
           <template>
             <yp-magic-text content="[[item.content]]" content-type="[[item.contentTranslationType]]"></yp-magic-text>
@@ -134,13 +162,6 @@
         <vaadin-grid-column>
           <template class="header">[[t('title')]]</template>
           <template>[[item.title]]</template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column>
-          <template class="header">[[t('media')]]</template>
-          <template>
-            <yp-moderation-media item="[[item]]"></yp-moderation-media>
-          </template>
         </vaadin-grid-column>
 
         <vaadin-grid-column>
@@ -287,18 +308,62 @@
 
         collectionName: String,
 
-        itemsCountText: String
+        itemsCountText: String,
+
+        resizeTimeout: {
+          type: Object,
+          value: null
+        },
+
+        activeItem: {
+          type: Object,
+          observer: '_activeItemChanged'
+        }
       },
 
       observers: [
         '_selectedItemsChanged(selectedItems.splices)'
       ],
 
+      _activeItemChanged: function (item, oldItem) {
+        if (item) {
+          this.$.grid.openItemDetails(item);
+        }
+
+        if (oldItem) {
+          this.$.grid.closeItemDetails(oldItem);
+        }
+      },
+
       _menuSelection: function (event, detail) {
         var allMenus = this.$.grid.querySelectorAll("paper-listbox");
         allMenus.forEach(function (item) {
           item.select(null);
         });
+      },
+
+      ready: function () {
+        this._setGridSize();
+        window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+      },
+
+      _resizeThrottler: function () {
+        if ( !this.resizeTimeout ) {
+          this.resizeTimeout = setTimeout(function() {
+            this.resizeTimeout = null;
+            this._setGridSize();
+          }.bind(this), 66);
+        }
+      },
+
+      _setGridSize: function () {
+        if (window.innerWidth<=600) {
+          this.$.grid.style.width = (window.innerWidth-48).toFixed()+'px';
+          this.$.grid.style.height = (window.innerHeight-100).toFixed()+'px';
+        } else {
+          this.$.grid.style.width = (window.innerWidth-48).toFixed()+'px';
+          this.$.grid.style.height = (window.innerHeight-220).toFixed()+'px';
+        }
       },
 
       _totalItemsCount: function (items) {
@@ -404,8 +469,9 @@
 
       _setSelected: function (event) {
         var item = this._findItemFromId(event.target.getAttribute('data-args'));
-        if (item)
+        if (item) {
           this.$.grid.selectItem(item);
+        }
       },
 
       _findItemFromId: function (id) {

@@ -642,7 +642,8 @@
           this._openAnonymizeContent();
         else if (detail.item.id=="deleteContentMenuItem")
           this._openDeleteContent();
-
+        else if (detail.item.id=="reportMenuItem")
+          this._openReport();
         this.$$("paper-listbox").select(null);
       },
 
