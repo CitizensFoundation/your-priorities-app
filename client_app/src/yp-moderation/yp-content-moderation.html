@@ -115,6 +115,11 @@
         min-height: 200px;
         max-width: 500px;
       }
+
+      paper-button {
+        font-size: 18px;
+        margin-top: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -215,7 +220,7 @@
         </vaadin-grid-column>
       </vaadin-grid>
 
-      <div class="buttons">
+      <div class="buttons layout horizontal center-center"">
         <paper-button raised dialog-dismiss>[[t('close')]]</paper-button>
       </div>
     </paper-dialog>
