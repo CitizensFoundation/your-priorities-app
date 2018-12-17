@@ -257,7 +257,7 @@
             </div>
           </div>
         </template>
-        <div class="layout horizontal actionContainer">
+        <div class="layout horizontal actionContainer" hidden$="[[hideActions]]">
           <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]"></yp-point-actions>
           <paper-icon-button title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           <div class="flex"></div>
@@ -309,6 +309,11 @@
         },
 
         hideUser: {
+          type: Boolean,
+          value: false
+        },
+
+        hideActions: {
           type: Boolean,
           value: false
         },
@@ -551,11 +556,9 @@
             this.$.checkTranscriptStatusAjax.generateRequest();
           }, 2000);
         } else if (detail && detail.error) {
-          debugger;
           this.set('checkingTranscript', false);
           this.set('checkTranscriptError', true);
         } else {
-          debugger;
           this.set('checkingTranscript', false);
         }
       },

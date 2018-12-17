@@ -8,7 +8,9 @@
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
 
 <link rel="import" href="../yp-ajax/yp-ajax.html" >
-<link rel="import" href="../yp-post/yp-post-cover-media.html" >
+<link rel="import" href="../yp-post/yp-post-header.html">
+
+<link rel="import" href="../yp-point/yp-point.html">
 <link rel="import" href="../yp-behaviors/yp-number-format-behavior.html" >
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html" >
 
@@ -100,12 +102,18 @@
 
       .details {
         display: flex;
+        margin: 8px;
       }
-
 
       yp-post-cover-media {
         width: 432px;
         height: 243px;
+        margin-right: 8px;
+      }
+
+      yp-point {
+        min-height: 200px;
+        max-width: 500px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -120,14 +128,14 @@
         </vaadin-grid-selection-column>
 
         <template class="row-details">
-          <div class="details">
+          <div class="details layout horizontal center-center">
             <div class="layout horizontal">
               <template is="dom-if" if="[[item.is_post]]">
-                <yp-post-cover-media post="[[item]]"></yp-post-cover-media>
+                <yp-post-header hide-actions post="[[item]]" post-name="[[item.]]"header-mode></yp-post-header>
               </template>
-              <div>
-                [[item.content]]
-              </div>
+              <template is="dom-if" if="[[item.is_point]]">
+                <yp-point hide-actions point="[[item]]"></yp-point>
+              </template>
             </div>
           </div>
         </template>
@@ -138,12 +146,12 @@
         </vaadin-grid-column>
 
         <vaadin-grid-column>
-          <template class="header">[[t('contentType')]]</template>
+          <template class="header">[[t('type')]]</template>
           <template>[[item.type]]</template>
         </vaadin-grid-column>
 
         <vaadin-grid-column>
-          <template class="header">[[t('moderationStatus')]]</template>
+          <template class="header">[[t('status')]]</template>
           <template>[[item.status]]</template>
         </vaadin-grid-column>
 
