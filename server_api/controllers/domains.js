@@ -7,8 +7,8 @@ var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
 var queue = require('../active-citizen/workers/queue');
-var moderationItemsActionDomain = require('../active-citizen/engine/moderation/controller_utils').moderationItemsActionDomain;
-var getAllModeratedItemsByDomain = require('../active-citizen/engine/moderation/controller_utils').getAllModeratedItemsByDomain;
+var moderationItemsActionDomain = require('../active-citizen/engine/moderation/moderation_items').moderationItemsActionDomain;
+var getAllModeratedItemsByDomain = require('../active-citizen/engine/moderation/moderation_items').getAllModeratedItemsByDomain;
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {

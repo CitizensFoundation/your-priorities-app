@@ -145,10 +145,6 @@
           <yp-users-grid id="usersGrid"></yp-users-grid>
         </template>
 
-        <template is="dom-if" name="mediaRecorder" restamp>
-          <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
-        </template>
-
         <template is="dom-if" name="contentModeration" restamp>
           <yp-content-moderation id="contentModeration"></yp-content-moderation>
         </template>
@@ -159,6 +155,10 @@
         <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
         <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
         <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
+      </template>
+
+      <template is="dom-if" if="[[gotMediaRecorder]]" restamp>
+        <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
       </template>
     </div>
 
