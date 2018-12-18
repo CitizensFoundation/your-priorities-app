@@ -611,13 +611,13 @@
     _groupChanged: function (group, oldValue) {
       if (group) {
         if (group.access==0) {
-          groupAccess = "public"
+          this.groupAccess = "public"
         } else if (group.access==1) {
-          groupAccess = "closed"
+          this.groupAccess = "closed"
         } else if (group.access==2) {
-          groupAccess = "secret"
+          this.groupAccess = "secret"
         } else if (group.access==3) {
-          groupAccess = "open_to_community"
+          this.groupAccess = "open_to_community"
         }
 
         if (group && group.status) {
