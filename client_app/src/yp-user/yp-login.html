@@ -394,6 +394,8 @@
                              type="text"
                              label="[[t('user.email')]]"
                              value="{{email}}"
+                             name="username"
+                             autocomplete="username"
                              pattern="[[emailValidationPattern]]"
                              error-message="[[emailErrorMessage]]">
                 </paper-input>
@@ -402,6 +404,7 @@
                              type="password"
                              label="[[t('user.password')]]"
                              value="{{password}}"
+                             autocomplete="current-password"
                              error-message="[[passwordErrorMessage]]">
                 </paper-input>
               </div>
@@ -838,7 +841,7 @@
       this._loginCompleted(detail.response);
     },
 
-    _loginCompleted: function (user) {
+    _loginAfterSavePassword: function (user) {
       if (this.redirectToURL)
         this.redirectTo(this.redirectToURL);
       this.fire("login", user);
@@ -854,6 +857,20 @@
           detail: {name: 'logged-in', data: user}
         })
       );
+    },
+
+    _loginCompleted: function (user) {
+      if (window.PasswordCredential) {
+        var c = new PasswordCredential({ name: this.email, id: this.email, password: this.password });
+        navigator.credentials.store(c).then(function (message) {
+          this._loginAfterSavePassword(user);
+        }.bind(this)).catch(function (error) {
+          console.error(error);
+          this._loginAfterSavePassword(user);
+        }.bind(this));
+      } else {
+        this._loginAfterSavePassword(user);
+      }
     },
 
     open: function (redirectToURL, email) {
