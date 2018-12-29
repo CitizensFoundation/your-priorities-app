@@ -1,6 +1,7 @@
 "use strict";
 
 var async = require('async');
+var queue = require('../active-citizen/workers/queue');
 
 var findCommunityAndDomainForPointFromGroup = function (sequelize, options, callback) {
   sequelize.models.Group.find({
@@ -394,6 +395,7 @@ module.exports = function(sequelize, DataTypes) {
               options.point_id = point.id;
               var pointRevision = sequelize.models.PointRevision.build(options);
               pointRevision.save().then(function () {
+                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
                 sequelize.models.AcActivity.createActivity({
                   type: 'activity.point.comment.new',
                   userId: options.user_id,
@@ -443,6 +445,7 @@ module.exports = function(sequelize, DataTypes) {
             options.point_id = point.id;
             var pointRevision = sequelize.models.PointRevision.build(options);
             pointRevision.save().then(function () {
+              queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
               sequelize.models.AcActivity.createActivity({
                 type: 'activity.point.newsStory.new',
                 userId: options.user_id,

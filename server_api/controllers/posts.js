@@ -676,6 +676,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
               }, function (error) {
                 if (!error && post) {
                   post.setDataValue('newEndorsement', endorsement);
+                  queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
                   sendPostOrError(res, post, 'setupImages', req.user, error);
                 } else {
                   sendPostOrError(res, post, 'setupImages', req.user, error);

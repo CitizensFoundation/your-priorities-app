@@ -1,4 +1,5 @@
 var async = require("async");
+var queue = require('../active-citizen/workers/queue');
 
 "use strict";
 
@@ -441,6 +442,7 @@ module.exports = function(sequelize, DataTypes) {
                 ip_address: req.clientIp
               });
               pointRevision.save().then(function () {
+                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
                 post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
                   post.increment('counter_points');
                   done();
