@@ -301,11 +301,11 @@ module.exports = function(sequelize, DataTypes) {
           function (seriesCallback) {
             sequelize.models.AcActivity.createActivity({
               type: 'activity.report.content',
-              userId: req.user.id,
-              postId: req.params.id,
-              groupId: this.Group.id,
-              communityId: this.Group.Community.id,
-              domainId: this.Group.Community.Domain.id
+              userId: (req && req.user) ? req.user.id : null,
+              postId: this.id,
+              groupId: this.group_id,
+              communityId: (this.Group && this.Group.Community) ? this.Group.Community.id : null,
+              domainId:  (this.Group && this.Group.Community && this.Group.Community.Domain) ? this.Group.Community.Domain.id : null
             }, function (error) {
               seriesCallback(error);
             });

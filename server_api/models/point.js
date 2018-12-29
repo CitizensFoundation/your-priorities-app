@@ -280,12 +280,12 @@ module.exports = function(sequelize, DataTypes) {
           function (seriesCallback) {
             sequelize.models.AcActivity.createActivity({
               type: 'activity.report.content',
-              userId: req.user.id,
-              postId: post.id,
-              groupId: post.Group.id,
+              userId: (req && req.user) ? req.user.id : null,
+              postId: post ? post.id : null,
+              groupId: post ? post.Group.id : this.group_id,
               pointId: this.id,
-              communityId: post.Group.Community.id,
-              domainId: post.Group.Community.Domain.id
+              communityId: post ? post.Group.Community.id : null,
+              domainId: post ? post.Group.Community.Domain.id : null
             }, function (error) {
               seriesCallback();
             });
