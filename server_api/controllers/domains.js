@@ -674,13 +674,24 @@ router.delete('/:domainId/:itemId/:itemModelClass/delete_moderated_item', auth.c
   }
 });
 
-router.get('/:domainId/moderation_items', auth.can('edit domain'), (req, res) => {
+router.get('/:domainId/flagged_content', auth.can('edit domain'), (req, res) => {
   getAllModeratedItemsByDomain(req.params.domainId, (error, items) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
       res.sendStatus(500)
     } else {
       res.send(items);
+    }
+  });
+});
+
+router.get('/:domainId/flagged_content_count', (req, res) => {
+  getAllModeratedItemsByDomain(req.params.domainId, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send({count: items ? items.length : 0});
     }
   });
 });

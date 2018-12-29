@@ -582,7 +582,7 @@
       },
 
       _generateRequest: function (id) {
-        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/moderation_items";
+        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/flagged_content";
         this.$.ajax.generateRequest();
       },
 

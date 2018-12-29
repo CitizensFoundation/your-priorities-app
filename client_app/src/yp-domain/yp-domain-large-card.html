@@ -200,7 +200,9 @@
               <paper-item hidden$="[[!hasDomainAccess]]" id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="usersMenuItem">[[t('domainUsers')]]</paper-item>
-              <paper-item hidden$="[[!hasDomainAccess]]" id="moderationMenuItem">[[t('contentModeration')]]</paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="moderationMenuItem">
+                [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
+              </paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="adminsMenuItem">[[t('domainAdmins')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
@@ -210,6 +212,10 @@
         <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
       </paper-material>
     </div>
+
+    <template is="dom-if" if="[[domain]]">
+      <yp-ajax method="GET" url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+    </template>
 
     <iron-media-query query="(max-width: 945px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
