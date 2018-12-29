@@ -288,6 +288,9 @@ module.exports = function(sequelize, DataTypes) {
           function (seriesCallback) {
             if (!this.data.moderation.lastReportedBy) {
               this.set('data.moderation.lastReportedBy', []);
+              if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
+                queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
+              }
             }
             this.set('data.moderation.lastReportedBy',
               [{ date: new Date(), source: source, userId: (req && req.User) ? req.User.email : null, userEmail: (req && req.User) ? req.User.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)

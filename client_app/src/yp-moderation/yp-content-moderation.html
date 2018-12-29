@@ -162,11 +162,11 @@
           <template>[[item.status]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="35px" path="counter_flags" header="[[t('flags')]]">
-          <template>[[item.counter_flags]]</template>
+        <vaadin-grid-sort-column  width="25px" path="counter_flags" header="[[t('flags')]]">
+          <template style="text-align: center;">[[item.counter_flags]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column path="source" header="[[t('source')]]">
+        <vaadin-grid-sort-column  width="50px" path="source" header="[[t('source')]]">
           <template>[[item.source]]</template>
         </vaadin-grid-sort-column>
 
@@ -576,7 +576,7 @@
       },
 
       _setupHeaderText: function () {
-        this.set('itemsCountText', this.t('itemsCount'));
+        this.set('itemsCountText', this.t('contentItemsFlagged'));
         if (this.groupId) {
           this.set('headerText', this.t('groupContentModeration'));
         } else if (this.communityId) {
