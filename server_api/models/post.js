@@ -299,16 +299,20 @@ module.exports = function(sequelize, DataTypes) {
             });
           }.bind(this),
           function (seriesCallback) {
-            sequelize.models.AcActivity.createActivity({
-              type: 'activity.report.content',
-              userId: (req && req.user) ? req.user.id : null,
-              postId: this.id,
-              groupId: this.group_id,
-              communityId: (this.Group && this.Group.Community) ? this.Group.Community.id : null,
-              domainId:  (this.Group && this.Group.Community && this.Group.Community.Domain) ? this.Group.Community.Domain.id : null
-            }, function (error) {
-              seriesCallback(error);
-            });
+            if (req && req.disableNotification===true) {
+              seriesCallback();
+            } else {
+              sequelize.models.AcActivity.createActivity({
+                type: 'activity.report.content',
+                userId: (req && req.user) ? req.user.id : null,
+                postId: this.id,
+                groupId: this.group_id,
+                communityId: (this.Group && this.Group.Community) ? this.Group.Community.id : null,
+                domainId:  (this.Group && this.Group.Community && this.Group.Community.Domain) ? this.Group.Community.Domain.id : null
+              }, function (error) {
+                seriesCallback(error);
+              });
+            }
           }.bind(this)
         ], function (error) {
           this.increment('counter_flags');

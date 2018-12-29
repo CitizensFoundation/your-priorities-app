@@ -278,17 +278,21 @@ module.exports = function(sequelize, DataTypes) {
             });
           }.bind(this),
           function (seriesCallback) {
-            sequelize.models.AcActivity.createActivity({
-              type: 'activity.report.content',
-              userId: (req && req.user) ? req.user.id : null,
-              postId: post ? post.id : null,
-              groupId: post ? post.Group.id : this.group_id,
-              pointId: this.id,
-              communityId: post ? post.Group.Community.id : null,
-              domainId: post ? post.Group.Community.Domain.id : null
-            }, function (error) {
+            if (req && req.disableNotification===true) {
               seriesCallback();
-            });
+            } else {
+              sequelize.models.AcActivity.createActivity({
+                type: 'activity.report.content',
+                userId: (req && req.user) ? req.user.id : null,
+                postId: post ? post.id : null,
+                groupId: post ? post.Group.id : this.group_id,
+                pointId: this.id,
+                communityId: post ? post.Group.Community.id : null,
+                domainId: post ? post.Group.Community.Domain.id : null
+              }, function (error) {
+                seriesCallback();
+              });
+            }
           }.bind(this)
         ], function (error) {
           this.increment('counter_flags');

@@ -1,4 +1,13 @@
 {
+  "firstReported": "First at",
+  "lastReported": "Last at",
+  "content": "Content",
+  "multiSortEnabled": "Enable multi sort",
+  "creator": "Creator",
+  "severeToxicityScore": "S.Toxicity",
+  "toxicityScore": "Toxicity",
+  "source": "Source",
+  "domainContentModeration": "Domain Content Moderation",
   "flags": "Flags",
   "date": "Date",
   "type": "Type",

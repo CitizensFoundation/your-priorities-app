@@ -125,9 +125,11 @@
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
         <div class="headerText"><div class="innerHeader">[[headerText]] <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span></div></div>
+        <div class="flex"></div>
+        <paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox>
       </div>
 
-      <vaadin-grid id="grid" active-item="{{activeItem}}" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
+      <vaadin-grid id="grid" multi-sort="[[multiSortEnabled]]" active-item="{{activeItem}}" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
         <vaadin-grid-selection-column>
         </vaadin-grid-selection-column>
 
@@ -144,42 +146,47 @@
           </div>
         </template>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('date')]]</template>
+        <vaadin-grid-sort-column width="55px" path="formatted_date" header="[[t('firstReported')]]">
           <template>[[item.formatted_date]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-sort-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('type')]]</template>
+        <vaadin-grid-sort-column width="55px" path="lastReportedAtDate" header="[[t('lastReported')]]">
+          <template>[[item.lastReportedAtDate]]</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column width="40px" path="type" header="[[t('type')]]">
           <template>[[item.type]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-sort-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('status')]]</template>
+        <vaadin-grid-sort-column width="50px" path="status" header="[[t('status')]]">
           <template>[[item.status]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-sort-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('flags')]]</template>
+        <vaadin-grid-sort-column width="35px" path="counter_flags" header="[[t('flags')]]">
           <template>[[item.counter_flags]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-sort-column>
 
-        <vaadin-grid-column flex-grow="2">
-          <template class="header">[[t('content')]]</template>
+        <vaadin-grid-sort-column path="source" header="[[t('source')]]">
+          <template>[[item.source]]</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column width="45px" style="text-align: center;"  path="toxicityScore" header="[[t('toxicityScore')]]">
+          <template>[[item.toxicityScore]]</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column width="45px" style="text-align: center;" path="severeToxicityScore" header="[[t('severeToxicityScore')]]">
+          <template>[[item.severeToxicityScore]]</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-filter-column flex-grow="3" path="content" header="[[t('content')]]">
           <template>
             <yp-magic-text content="[[item.content]]" content-type="[[item.contentTranslationType]]"></yp-magic-text>
           </template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('title')]]</template>
-          <template>[[item.title]]</template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column>
-          <template class="header">[[t('itemEmail')]]</template>
+        <vaadin-grid-filter-column path="user_email" header="[[t('creator')]]">
           <template>[[item.user_email]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
         <vaadin-grid-column width="70px" flex-grow="0">
           <template class="header">
@@ -248,6 +255,11 @@
       ],
 
       properties: {
+
+        multiSortEnabled: {
+          type: Boolean,
+          value: false
+        },
 
         items: {
           type: Array,

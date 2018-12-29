@@ -200,7 +200,7 @@ router.put('/:id/report', auth.can('vote on point'), function (req, res) {
         ]
       }).then(function (post) {
         if (post) {
-          point.report(req, 'fromUser', post, function (error) {
+          point.report(req, 'user', post, function (error) {
             if (error) {
               log.error("Point Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
               res.sendStatus(500);

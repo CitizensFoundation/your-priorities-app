@@ -359,7 +359,7 @@ router.put('/:id/report', auth.can('vote on post'), function (req, res) {
     ]
   }).then(function (post) {
     if (post) {
-      post.report(req, 'fromUser', (error) => {
+      post.report(req, 'user', (error) => {
         if (error) {
           log.error("Post Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
           res.sendStatus(500);
