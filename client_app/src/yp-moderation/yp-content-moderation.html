@@ -119,6 +119,15 @@
         font-size: 18px;
         margin-top: 16px;
       }
+
+      .analysis {
+        margin-top: 8px;
+        color: #656565;
+      }
+
+      .leftColumn {
+        padding-right: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -134,7 +143,7 @@
         </vaadin-grid-selection-column>
 
         <template class="row-details">
-          <div class="details layout horizontal center-center">
+          <div class="details layout vertical center-center">
             <div class="layout horizontal">
               <template is="dom-if" if="[[item.is_post]]">
                 <yp-post-header hide-actions post="[[item]]" post-name="[[item.]]"header-mode></yp-post-header>
@@ -142,6 +151,21 @@
               <template is="dom-if" if="[[item.is_point]]">
                 <yp-point hide-actions point="[[item]]"></yp-point>
               </template>
+            </div>
+            <div hidden$="[[!item.toxicityScore]]" class="layout horizontal analysis">
+              <div class="layout vertical leftColumn">
+                <div hidden$="[[!item.moderation_data.moderation.toxicityScore]]">Toxicity Score: [[_toPercent(item.moderation_data.moderation.toxicityScore)]]</div>
+                <div hidden$="[[!item.moderation_data.moderation.identityAttackScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttackScore)]]</div>
+                <div hidden$="[[!item.moderation_data.moderation.identityAttachScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttachScore)]]</div>
+                <div hidden$="[[!item.moderation_data.moderation.threatScore]]">Threat Score: [[_toPercent(item.moderation_data.moderation.threatScore)]]</div>
+                <div hidden$="[[!item.moderation_data.moderation.insultScore]]">Insult Score: [[_toPercent(item.moderation_data.moderation.insultScore)]]</div>
+              </div>
+              <div class="layout vertical">
+                <div hidden$="[[!item.moderation_data.moderation.severeToxicityScore]]">Severe Toxicity Score: [[_toPercent(item.moderation_data.moderation.severeToxicityScore)]]</div>
+                <div hidden$="[[!item.moderation_data.moderation.profanityScore]]">Profanity Score: [[_toPercent(item.moderation_data.moderation.profanityScore)]]</div>
+                <div hidden$="[[!item.moderation_data.moderation.sexuallyExplicitScore]]">Sexually Excplicit Score: [[_toPercent(item.moderation_data.moderation.sexuallyExplicitScore)]]</div>
+                <div hidden$="[[!item.moderation_data.moderation.flirtationScore]]">Flirtation Score: [[_toPercent(item.moderation_data.moderation.flirtationScore)]]</div>
+              </div>
             </div>
           </div>
         </template>
@@ -369,6 +393,14 @@
       ready: function () {
         this._setGridSize();
         window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+      },
+
+      _toPercent: function(number) {
+        if (number) {
+          return Math.round(number*100)+'%';
+        } else {
+          return null;
+        }
       },
 
       _resizeThrottler: function () {

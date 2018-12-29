@@ -164,15 +164,13 @@
           <template>[[item.id]]</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('name')]]</template>
+        <vaadin-grid-filter-column path="name" header="[[t('name')]]">
           <template>[[item.name]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('email')]]</template>
+        <vaadin-grid-filter-column path="email" header="[[t('email')]]">
           <template>[[item.email]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
         <vaadin-grid-column>
           <template class="header">[[t('organization')]]</template>
