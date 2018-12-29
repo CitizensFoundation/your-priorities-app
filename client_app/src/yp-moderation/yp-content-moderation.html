@@ -121,19 +121,35 @@
       }
 
       .analysis {
-        margin-top: 8px;
+        margin-top: 12px;
         color: #656565;
       }
 
       .leftColumn {
         padding-right: 16px;
       }
+
+      .mainScore {
+        color: #000;
+      }
+
+      paper-spinner {
+        margin-left: 8px;
+        margin-top: 12px;
+        width: 24px;
+        height: 24px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
-        <div class="headerText"><div class="innerHeader">[[headerText]] <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span></div></div>
+        <div class="headerText">
+          <div class="innerHeader">[[headerText]]
+            <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span>
+            <span hidden$="[[totalItemsCount]]"><paper-spinner active></paper-spinner></span>
+          </div>
+        </div>
         <div class="flex"></div>
         <paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox>
       </div>
@@ -154,14 +170,14 @@
             </div>
             <div hidden$="[[!item.toxicityScore]]" class="layout horizontal analysis">
               <div class="layout vertical leftColumn">
-                <div hidden$="[[!item.moderation_data.moderation.toxicityScore]]">Toxicity Score: [[_toPercent(item.moderation_data.moderation.toxicityScore)]]</div>
+                <div class="mainScore" hidden$="[[!item.moderation_data.moderation.toxicityScore]]">Toxicity Score: [[_toPercent(item.moderation_data.moderation.toxicityScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.identityAttackScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttackScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.identityAttachScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttachScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.threatScore]]">Threat Score: [[_toPercent(item.moderation_data.moderation.threatScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.insultScore]]">Insult Score: [[_toPercent(item.moderation_data.moderation.insultScore)]]</div>
               </div>
               <div class="layout vertical">
-                <div hidden$="[[!item.moderation_data.moderation.severeToxicityScore]]">Severe Toxicity Score: [[_toPercent(item.moderation_data.moderation.severeToxicityScore)]]</div>
+                <div class="mainScore" hidden$="[[!item.moderation_data.moderation.severeToxicityScore]]">Severe Toxicity Score: [[_toPercent(item.moderation_data.moderation.severeToxicityScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.profanityScore]]">Profanity Score: [[_toPercent(item.moderation_data.moderation.profanityScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.sexuallyExplicitScore]]">Sexually Excplicit Score: [[_toPercent(item.moderation_data.moderation.sexuallyExplicitScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.flirtationScore]]">Flirtation Score: [[_toPercent(item.moderation_data.moderation.flirtationScore)]]</div>
@@ -287,7 +303,8 @@
 
         items: {
           type: Array,
-          notify: true
+          notify: true,
+          value: null
         },
 
         headerText: {
@@ -600,7 +617,7 @@
       },
 
       _reset: function () {
-        this.set('items', []);
+        this.set('items', null);
         this.set('selectedItems', []);
         this.set('selectedItemsCount', 0);
         this.set('selectedItemsEmpty', true);
