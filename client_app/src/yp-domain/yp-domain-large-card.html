@@ -214,7 +214,9 @@
     </div>
 
     <template is="dom-if" if="[[domain]]">
-      <yp-ajax method="GET" url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+      <template is="dom-if" if="[[hasDomainAccess]]">
+        <yp-ajax method="GET" url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+      </template>
     </template>
 
     <iron-media-query query="(max-width: 945px)" query-matches="{{narrowScreen}}"></iron-media-query>

@@ -685,7 +685,7 @@ router.get('/:domainId/flagged_content', auth.can('edit domain'), (req, res) => 
   });
 });
 
-router.get('/:domainId/flagged_content_count', (req, res) => {
+router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, res) => {
   getAllModeratedItemsByDomain(req.params.domainId, (error, items) => {
     if (error) {
       log.error("Error getting items for moderation", { error });
