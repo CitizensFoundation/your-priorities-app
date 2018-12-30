@@ -63,6 +63,7 @@
           <div class="email">[[user.email]]</div>
           <div class="layout vertical center-justified buttons">
             <paper-button raised icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit">[[t('user.edit')]]</paper-button>
+            <paper-button raised icon="create" title$="[[t('myContent')]]" on-tap="_openAllContentModeration">[[t('myContent')]]</paper-button>
             <paper-button raised icon="input" title$="[[t('user.logout')]]" on-tap="onLogout">[[t('user.logout')]]</paper-button>
           </div>
         </div>
@@ -85,6 +86,14 @@
           value: null,
           notify: true
         }
+      },
+
+      _openAllContentModeration: function () {
+        window.appGlobals.activity('open', 'userAllContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, null, null, '/moderate_all_content', this.user.id);
+          dialog.open(this.user.email);
+        }.bind(this));
       },
 
       _openEdit: function () {

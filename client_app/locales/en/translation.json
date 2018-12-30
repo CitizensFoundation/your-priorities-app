@@ -1,4 +1,12 @@
 {
+  "clearSelectedFlags": "Clear Flags on all:",
+  "approveSelectedContent": "Approve All Selected:",
+  "clearFlags": "Clear flags",
+  "approveContent": "Approve Content",
+  "deleteSelectedContent": "Delete All Selected:",
+  "deleteContent": "Delete Content",
+  "allContent": "All Content",
+  "myContent": "My content",
   "always": "Always",
   "flaggedContent": "Flagged content",
   "contentItemsFlagged": "items flagged",
@@ -425,6 +433,7 @@
 
   "posts": {
     "posts": "Ideas",
+    "post": "Idea",
     "open": "Open",
     "inProgress": "In progress",
     "successful": "Successful",

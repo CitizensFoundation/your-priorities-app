@@ -139,11 +139,16 @@
         width: 24px;
         height: 24px;
       }
+
+      .linkIcon {
+        color: #000;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
+        <div></div>
         <div class="headerText">
           <div class="innerHeader">[[headerText]]
             <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span>
@@ -162,21 +167,27 @@
           <div class="details layout vertical center-center">
             <div class="layout horizontal">
               <template is="dom-if" if="[[item.is_post]]">
-                <yp-post-header hide-actions post="[[item]]" post-name="[[item.]]"header-mode></yp-post-header>
+                <div class="layout vertical center-center">
+                  <yp-post-header hide-actions post="[[item]]" post-name="[[item.name]]"header-mode></yp-post-header>
+                  <a href="/post/[[item.id]]" target="_blank"><paper-icon-button class="linkIcon" icon="link"></paper-icon-button></a>
+                </div>
               </template>
               <template is="dom-if" if="[[item.is_point]]">
-                <yp-point hide-actions point="[[item]]"></yp-point>
+                <div class="layout vertical center-center">
+                  <yp-point hide-actions point="[[item]]"></yp-point>
+                  <a hidden$="[[!item.post_id]]" href="/post/[[item.post_id]]/[[item.id]]" target="_blank"><paper-icon-button class="linkIcon" icon="link"></paper-icon-button></a>
+                </div>
               </template>
             </div>
             <div hidden$="[[!item.toxicityScore]]" class="layout horizontal analysis">
-              <div class="layout vertical leftColumn">
+              <div class="layout vertical leftColumn" hidden$="[[userId]]">
                 <div class="mainScore" hidden$="[[!item.moderation_data.moderation.toxicityScore]]">Toxicity Score: [[_toPercent(item.moderation_data.moderation.toxicityScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.identityAttackScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttackScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.identityAttachScore]]">Identity Attack Score: [[_toPercent(item.moderation_data.moderation.identityAttachScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.threatScore]]">Threat Score: [[_toPercent(item.moderation_data.moderation.threatScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.insultScore]]">Insult Score: [[_toPercent(item.moderation_data.moderation.insultScore)]]</div>
               </div>
-              <div class="layout vertical">
+              <div class="layout vertical" hidden$="[[userId]]">
                 <div class="mainScore" hidden$="[[!item.moderation_data.moderation.severeToxicityScore]]">Severe Toxicity Score: [[_toPercent(item.moderation_data.moderation.severeToxicityScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.profanityScore]]">Profanity Score: [[_toPercent(item.moderation_data.moderation.profanityScore)]]</div>
                 <div hidden$="[[!item.moderation_data.moderation.sexuallyExplicitScore]]">Sexually Excplicit Score: [[_toPercent(item.moderation_data.moderation.sexuallyExplicitScore)]]</div>
@@ -186,35 +197,35 @@
           </div>
         </template>
 
-        <vaadin-grid-sort-column width="55px" path="formatted_date" header="[[t('firstReported')]]">
+        <vaadin-grid-sort-column width="55px" path="created_at" header="[[t('firstReported')]]">
           <template>[[item.formatted_date]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="55px" path="lastReportedAtDate" header="[[t('lastReported')]]">
+        <vaadin-grid-sort-column width="55px" path="lastReportedAtDate" header="[[t('lastReported')]]" hidden$="[[userId]]">
           <template>[[item.lastReportedAtDate]]</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column width="40px" path="type" header="[[t('type')]]">
-          <template>[[item.type]]</template>
+          <template>[[_getType(item.type)]]</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column width="50px" path="status" header="[[t('status')]]">
           <template>[[item.status]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column  width="25px" path="counter_flags" header="[[t('flags')]]">
+        <vaadin-grid-sort-column  width="25px" path="counter_flags" header="[[t('flags')]]" hidden$="[[userId]]">
           <template style="text-align: center;">[[item.counter_flags]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column  width="50px" path="source" header="[[t('source')]]">
+        <vaadin-grid-sort-column  width="50px" path="source" header="[[t('source')]]" hidden$="[[userId]]">
           <template>[[item.source]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="45px" style="text-align: center;"  path="toxicityScore" header="[[t('toxicityScore')]]">
+        <vaadin-grid-sort-column width="45px" style="text-align: center;"  path="toxicityScore" header="[[t('toxicityScore')]]" hidden$="[[userId]]">
           <template>[[item.toxicityScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="45px" style="text-align: center;" path="severeToxicityScore" header="[[t('severeToxicityScore')]]">
+        <vaadin-grid-sort-column width="45px" style="text-align: center;" path="severeToxicityScore" header="[[t('severeToxicityScore')]]" hidden$="[[userId]]">
           <template>[[item.severeToxicityScore]]</template>
         </vaadin-grid-sort-column>
 
@@ -224,7 +235,7 @@
           </template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-filter-column path="user_email" header="[[t('creator')]]">
+        <vaadin-grid-filter-column path="user_email" header="[[t('creator')]]" hidden$="[[userId]]">
           <template>[[item.user_email]]</template>
         </vaadin-grid-filter-column>
 
@@ -237,10 +248,10 @@
                   <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
                     [[t('deleteSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[adminItems]]" on-tap="_approveSelected">
+                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
                     [[t('approveSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[adminItems]]" on-tap="_clearSelectedFlags">
+                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_clearSelectedFlags">
                     [[t('clearSelectedFlags')]] [[selectedItemsCount]]
                   </paper-item>
                 </template>
@@ -254,10 +265,10 @@
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" on-tap="_delete">
                   [[t('deleteContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[adminItems]]" on-tap="_approve">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[userId]]" on-tap="_approve">
                   [[t('approveContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[adminItems]]" on-tap="_clearFlags">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[userId]]" on-tap="_clearFlags">
                   [[t('clearFlags')]]
                 </paper-item>
               </paper-listbox>
@@ -266,7 +277,7 @@
         </vaadin-grid-column>
       </vaadin-grid>
 
-      <div class="buttons layout horizontal center-center"">
+      <div class="buttons layout horizontal center-center">
         <paper-button raised dialog-dismiss>[[t('close')]]</paper-button>
       </div>
     </paper-dialog>
@@ -326,6 +337,11 @@
           observer: '_communityIdChanged'
         },
 
+        userId: {
+          type: Number,
+          observer: '_userIdChanged'
+        },
+
         selected: {
           type: Object
         },
@@ -383,12 +399,24 @@
         activeItem: {
           type: Object,
           observer: '_activeItemChanged'
+        },
+
+        typeOfModeration: {
+          type: String,
+          value: "/flagged_content"
         }
       },
 
       observers: [
         '_selectedItemsChanged(selectedItems.splices)'
       ],
+
+      _getType: function(type) {
+        if (type==='post')
+          return this.t('posts.posts');
+        else if (type==='point')
+          return this.t('point.point');
+      },
 
       _activeItemChanged: function (item, oldItem) {
         if (item) {
@@ -431,7 +459,7 @@
 
       _setGridSize: function () {
         if (window.innerWidth<=600) {
-          this.$.grid.style.width = (window.innerWidth-48).toFixed()+'px';
+          this.$.grid.style.width = (window.innerWidth).toFixed()+'px';
           this.$.grid.style.height = (window.innerHeight-100).toFixed()+'px';
         } else {
           this.$.grid.style.width = (window.innerWidth-48).toFixed()+'px';
@@ -581,8 +609,17 @@
         }
       },
 
+      _userIdChanged: function (userId) {
+        if (userId) {
+          this._reset();
+          this.set('modelType', 'users');
+          this._generateRequest(userId);
+        }
+      },
+
+
       _generateRequest: function (id) {
-        this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/flagged_content";
+        this.$.ajax.url = "/api/"+this.modelType+"/"+id+this.typeOfModeration;
         this.$.ajax.generateRequest();
       },
 
@@ -593,10 +630,17 @@
         this.set('selectedItemsEmpty', true);
       },
 
-      setup: function (groupId, communityId, domainId) {
+      setup: function (groupId, communityId, domainId, typeOfModeration, userId) {
+        if (typeOfModeration) {
+          this.set('typeOfModeration', typeOfModeration);
+        } else {
+          this.set('typeOfModeration', "/flagged_content");
+        }
+
         this.set('groupId', null);
         this.set('communityId', null);
         this.set('domainId', null);
+        this.set('userId', null);
         this.set('items', null);
 
         if (groupId)
@@ -607,6 +651,9 @@
 
         if (domainId)
           this.set('domainId', domainId);
+
+        if (userId)
+          this.set('userId', userId);
 
         this._setupHeaderText();
       },

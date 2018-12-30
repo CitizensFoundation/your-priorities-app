@@ -9,6 +9,7 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
+var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
@@ -195,6 +196,17 @@ router.post('/register_anonymously', function (req, res) {
   }).catch(function (error) {
     log.error("User Error", { context: 'register_anonymous', err: error, errorStatus: 500 });
     res.status(500).send({status:500, message: error.name, type:'internal'});
+  });
+});
+
+router.get('/:userId/moderate_all_content', auth.can('edit user'), (req, res) => {
+  getAllModeratedItemsByUser({ userId: req.params.userId, allContent: true }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
   });
 });
 

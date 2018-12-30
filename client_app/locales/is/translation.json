@@ -310,6 +310,7 @@
     "groups": "Fjöldi hópa",
     "users": "Fjöldi notenda"
   },
+
   "notification": {
     "passwordResetAndLoggedIn": "Lykilorði hefur verið breytt og þú er innskráð(ur)",
     "method": "Aðferð",
@@ -425,6 +426,7 @@
 
   "posts": {
     "posts": "Hugmyndir",
+    "post": "Hugmynd",
     "open": "Hugmyndir",
     "inProgress": "Í ferli",
     "successful": "Samþykktar",
