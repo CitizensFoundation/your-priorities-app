@@ -42,7 +42,8 @@
       <div class="buttons">
         <paper-button on-tap="_dontAskAgain" dialog-dismiss>[[t('never')]]</paper-button>
         <paper-button dialog-dismiss on-tap="_no">[[t('no')]]</paper-button>
-        <paper-button raised dialog-confirm on-tap="_startAutoTranslate">[[t('yes')]]</paper-button>
+        <paper-button dialog-confirm on-tap="_startAutoTranslate">[[t('yes')]]</paper-button>
+        <paper-button dialog-confirm on-tap="_startAutoTranslateAndDoSoAlways">[[t('always')]]</paper-button>
       </div>
     </paper-dialog>
 
@@ -65,6 +66,11 @@
         localStorage.setItem("dontPromptForAutoTranslation", true);
       },
 
+      _startAutoTranslateAndDoSoAlways: function () {
+        this._startAutoTranslate();
+        localStorage.setItem("alwaysStartAutoTranslation", true);
+      },
+
       _startAutoTranslate: function () {
         this.$.languageSelector._startTranslation();
       },
@@ -74,7 +80,11 @@
           if (this.$.dialog.opened===false) {
             if (this.$.languageSelector.canUseAutoTranslate === true &&
               window.autoTranslate !== true) {
-              this.$.dialog.open();
+              if (localStorage.getItem("alwaysStartAutoTranslation")!=null) {
+                this._startAutoTranslate();
+              } else {
+                this.$.dialog.open();
+              }
             }
           }
         }, 750);
