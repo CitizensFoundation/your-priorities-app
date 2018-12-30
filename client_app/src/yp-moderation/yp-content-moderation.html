@@ -225,7 +225,7 @@
           <template>[[item.toxicityScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="45px" style="text-align: center;" path="severeToxicityScore" header="[[t('severeToxicityScore')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column width="45px" style="text-align: center;" path="severeToxicityScore" header="[[t('severeToxicityScore')]]" hidden>
           <template>[[item.severeToxicityScore]]</template>
         </vaadin-grid-sort-column>
 
@@ -616,7 +616,6 @@
           this._generateRequest(userId);
         }
       },
-
 
       _generateRequest: function (id) {
         this.$.ajax.url = "/api/"+this.modelType+"/"+id+this.typeOfModeration;

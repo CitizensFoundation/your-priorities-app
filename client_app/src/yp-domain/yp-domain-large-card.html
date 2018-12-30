@@ -218,7 +218,7 @@
 
     <template is="dom-if" if="[[domain]]">
       <template is="dom-if" if="[[hasDomainAccess]]">
-        <yp-ajax method="GET" url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+        <yp-ajax method="GET" hidden url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
       </template>
     </template>
 
@@ -280,7 +280,12 @@
           computed: '_domainVideoPosterURL(domain)'
         },
 
-        domainVideoId: Number
+        domainVideoId: Number,
+
+        flaggedContentCount: {
+          type: Number,
+          value: null
+        }
       },
 
       _domainChanged: function (domain, previousDomain) {
@@ -335,13 +340,13 @@
       },
 
       _menuSelection: function (event, detail) {
-        if (detail.item.id=="editMenuItem")
+        if (detail.item.id==="editMenuItem")
           this._openEdit();
-        else if (detail.item.id=="createOrganizationMenuItem")
+        else if (detail.item.id==="createOrganizationMenuItem")
           this._newOrganization();
-        else if (detail.item.id=="pagesMenuItem")
+        else if (detail.item.id==="pagesMenuItem")
           this._openPagesDialog();
-        else if (detail.item.id=="organizationsGridMenuItem")
+        else if (detail.item.id==="organizationsGridMenuItem")
           this._openOrganizationsGrid();
         else if (detail.item.id==="usersMenuItem")
           this._openUsersDialog();
@@ -351,7 +356,7 @@
           this._openContentModeration();
         else if (detail.item.id==="moderationAllMenuItem")
           this._openAllContentModeration();
-        else if (detail.item.id=="addCommunityMenuItem")
+        else if (detail.item.id==="addCommunityMenuItem")
           this.fire('yp-new-community');
         this.$$("paper-listbox").select(null);
       },

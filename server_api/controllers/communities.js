@@ -8,6 +8,8 @@ var _ = require('lodash');
 var async = require('async');
 var crypto = require("crypto");
 var queue = require('../active-citizen/workers/queue');
+const moderationItemsActionCommunity = require('../active-citizen/engine/moderation/get_moderation_items').moderationItemsActionCommunity;
+const getAllModeratedItemsByCommunity = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByCommunity;
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -973,6 +975,52 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
     }
   }).catch(function(error) {
     sendCommunityOrError(res, null, 'view post locations', req.user, error);
+  });
+});
+
+// Moderation
+
+router.delete('/:communityId/:itemId/:itemModelClass/delete_moderated_item', auth.can('edit community'), (req, res) => {
+  if (req.params.itemModelClass==='post') {
+    moderationItemsActionCommunity(req, res, models.Post, 'delete');
+  } else if (req.params.itemModelClass==='point') {
+    moderationItemsActionCommunity(req, res, models.Point, 'delete');
+  } else {
+    log.error("Can't find item model class");
+    res.sendStatus(500);
+  }
+});
+
+router.get('/:communityId/flagged_content', auth.can('edit community'), (req, res) => {
+  getAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:communityId/moderate_all_content', auth.can('edit community'), (req, res) => {
+  getAllModeratedItemsByCommunity({ communityId: req.params.communityId, allContent: true }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:communityId/flagged_content_count',  auth.can('edit community'), (req, res) => {
+  getAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send({count: items ? items.length : 0});
+    }
   });
 });
 
