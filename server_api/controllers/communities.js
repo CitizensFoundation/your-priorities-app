@@ -782,7 +782,7 @@ router.get('/:id/translatedText', auth.can('view community'), function(req, res)
       attributes: ['id','name','description']
     }).then(function(community) {
       if (community) {
-        models.TranslationCache.getTranslation(req, community, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, community, function (error, translation) {
           if (error) {
             sendCommunityOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {

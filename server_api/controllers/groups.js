@@ -953,7 +953,7 @@ router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
       attributes: ['id','name','objectives']
     }).then(function(group) {
       if (group) {
-        models.TranslationCache.getTranslation(req, group, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
           if (error) {
             sendGroupOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {

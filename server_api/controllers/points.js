@@ -369,7 +369,7 @@ router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
       ]
     }).then(function(point) {
       if (point) {
-        models.TranslationCache.getTranslation(req, point, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, point, function (error, translation) {
           if (error) {
             sendPointOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {

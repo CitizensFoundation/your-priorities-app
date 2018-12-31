@@ -283,7 +283,7 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
       attributes: ['id','name','description','public_data']
     }).then(function(post) {
       if (post) {
-        models.TranslationCache.getTranslation(req, post, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, post, function (error, translation) {
           if (error) {
             sendPostOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {
@@ -312,7 +312,7 @@ router.get('/:id/:statusId/translatedStatusText', auth.can('view post'), functio
       attributes: ['id','content']
     }).then(function(change) {
       if (change) {
-        models.TranslationCache.getTranslation(req, change, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, change, function (error, translation) {
           if (error) {
             sendPostOrError(res, req.params.id, 'translatedStatusText', req.user, error, 500);
           } else {
