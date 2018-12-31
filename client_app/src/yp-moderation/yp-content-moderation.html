@@ -253,7 +253,7 @@
           <template>[[item.counter_flags]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column  width="130px" text-align="start" flex-grow="0" path="source" header="[[t('source')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column  width="130px" text-align="start" flex-grow="0" path="source" header="[[t('source')]]" hidden$="[[!onlyFlaggedItems]]">
           <template>[[item.source]]</template>
         </vaadin-grid-sort-column>
 
