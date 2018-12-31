@@ -200,7 +200,7 @@
         </vaadin-grid-selection-column>
 
         <template class="row-details">
-          <div class="details layout vertical center-center">
+          <div class="details layout vertical center-center detailArea">
             <div class="layout horizontal">
               <template is="dom-if" if="[[item.is_post]]">
                 <div class="layout vertical center-center">
@@ -233,7 +233,7 @@
           </div>
         </template>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="firstReportedDate" header="[[t('firstReported')]]">
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="firstReportedDate" header="[[t('firstReported')]]" hidden$="[[onlyFlaggedItems]]">
           <template>[[item.firstReportedDateFormatted]]</template>
         </vaadin-grid-sort-column>
 
@@ -257,7 +257,7 @@
           <template>[[item.source]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="toxicityScore" header="[[t('toxicityScore')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="toxicityScoreRaw" header="[[t('toxicityScore')]]" hidden$="[[userId]]">
           <template>[[item.toxicityScore]]</template>
         </vaadin-grid-sort-column>
 
@@ -265,7 +265,7 @@
           <template>[[item.severeToxicityScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-filter-column flex-grow="4" path="content" header="[[t('content')]]" hidden$="[[narrow]]">
+        <vaadin-grid-filter-column width="200px" flex-grow="4" path="content" header="[[t('content')]]" hidden$="[[narrow]]">
           <template>
             <yp-magic-text content="[[item.content]]" content-type="[[item.contentTranslationType]]"></yp-magic-text>
           </template>
@@ -273,6 +273,9 @@
 
         <vaadin-grid-filter-column flex-grow="1" path="user_email" width="150px" header="[[t('creator')]]" hidden$="[[userId]]">
           <template>[[item.user_email]]</template>
+        </vaadin-grid-filter-column>
+
+        <vaadin-grid-filter-column flex-grow="0" path="lastReportedByEmail" width="150px" header="[[t('flaggedBy')]]" hidden$="[[!onlyFlaggedItems]]">
         </vaadin-grid-filter-column>
 
         <vaadin-grid-column width="70px" flex-grow="0">

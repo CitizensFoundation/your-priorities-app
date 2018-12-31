@@ -271,7 +271,7 @@ module.exports = function(sequelize, DataTypes) {
               }
             }
             this.set('data.moderation.lastReportedBy',
-              [{ date: new Date(), source: source, userId: (req && req.User) ? req.User.email : null, userEmail: (req && req.User) ? req.User.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
+              [{ date: new Date(), source: source, userId: (req && req.user) ? req.user.id : null, userEmail: (req && req.user) ? req.user.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
             );
 
             this.save().then(function () {
