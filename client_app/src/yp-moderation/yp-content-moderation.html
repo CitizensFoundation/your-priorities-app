@@ -233,12 +233,12 @@
           </div>
         </template>
 
-        <vaadin-grid-sort-column width="130px" flex-grow="0" path="created_at" header="[[t('firstReported')]]">
-          <template>[[item.formatted_date]]</template>
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="firstReportedDate" header="[[t('firstReported')]]">
+          <template>[[item.firstReportedDateFormatted]]</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column width="130px" flex-grow="0" path="lastReportedAtDate" header="[[t('lastReported')]]" hidden$="[[userId]]">
-          <template>[[item.lastReportedAtDate]]</template>
+          <template>[[item.lastReportedAtDateFormatted]]</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column width="80px" text-align="start" flex-grow="0" path="type" header="[[t('type')]]">
