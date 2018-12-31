@@ -218,7 +218,7 @@
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
               </paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
-                [[t('allContent')]]
+                [[t('manageAllContent')]]
               </paper-item>
               <a hidden$="[[!hasGroupAccess]]" target="_blank" href="/api/groups/[[group.id]]/export_group"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>

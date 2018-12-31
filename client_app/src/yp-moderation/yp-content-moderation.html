@@ -21,7 +21,6 @@
         width: 100%;
         height: 100%;
         margin: 0;
-        padding: 24px;
         top: unset !important;
         left: unset !important;
         background-color: #FFF;
@@ -57,31 +56,61 @@
       }
 
       .headerBox {
-        margin: 16px;
-        margin-bottom: 0;
-        margin-left: 0;
-        margin-right: 0;
+        background-color: var(--accent-color);
+        color: #FFF;
+        margin: 0;
+        padding: 0 0;
+        padding-top: 8px;
+        padding-bottom: 6px;
       }
 
       paper-button {
-        margin-left: 24px;
+        margin-left: 8px;
       }
 
       #grid {
-        margin-top: 8px;
+        margin-top: 0;
       }
 
       .headerText {
-        display: flex;
+        padding: 0 0 !important;
+      }
+
+      .collectionName {
         font-size: 22px;
+        margin-bottom: 1px;
+        margin-top: 4px;
       }
 
       .innerHeader {
         align-self: flex-end;
-        margin-bottom: 24px;
+        font-size: 17px;
+        color: #F5F5F5;
+      }
+
+      .closeButton {
+        width: 50px;
+        height: 50px;
+        margin-left: 4px;
+        margin-right: 4px;
+      }
+
+      paper-checkbox {
+        color: #FFF !important;
+        margin-top: 16px;
+        margin-right: 24px;
+        --primary-color: #FFF;
+        --primary-text-color: #FFF;
+        --paper-checkbox-checked-ink-color: #FFF;
+        --paper-checkbox-unchecked-ink-color: #FFF;
       }
 
       @media (max-width: 600px) {
+        .closeButton {
+          width: 45px;
+          height: 45px;
+        }
+
         paper-listbox {
           margin-right: 8px;
         }
@@ -134,10 +163,11 @@
       }
 
       paper-spinner {
-        margin-left: 8px;
-        margin-top: 12px;
-        width: 24px;
-        height: 24px;
+        margin-left: 16px;
+        margin-top: 8px;--paper-spinner-layer-1-color: #FFF;
+        --paper-spinner-layer-2-color: #FFF;
+        --paper-spinner-layer-3-color: #FFF;
+        --paper-spinner-layer-4-color: #FFF;
       }
 
       .linkIcon {
@@ -148,15 +178,21 @@
 
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
-        <div></div>
-        <div class="headerText">
+        <div>
+          <paper-icon-button id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
+        </div>
+
+        <div class="headerText layout vertical">
+          <div class="layout horizontal">
+            <div class="collectionName">[[collectionName]]</div>
+          </div>
           <div class="innerHeader">[[headerText]]
             <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span>
-            <span hidden$="[[totalItemsCount]]"><paper-spinner active></paper-spinner></span>
           </div>
         </div>
+        <div hidden$="[[totalItemsCount]]"><paper-spinner active></paper-spinner></div>
         <div class="flex"></div>
-        <paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox>
+        <div class="checkBox" hidden$="[[narrow]]"><paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox></div>
       </div>
 
       <vaadin-grid id="grid" multi-sort="[[multiSortEnabled]]" active-item="{{activeItem}}" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
@@ -197,45 +233,45 @@
           </div>
         </template>
 
-        <vaadin-grid-sort-column width="55px" path="created_at" header="[[t('firstReported')]]">
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="created_at" header="[[t('firstReported')]]">
           <template>[[item.formatted_date]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="55px" path="lastReportedAtDate" header="[[t('lastReported')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column width="130px" flex-grow="0" path="lastReportedAtDate" header="[[t('lastReported')]]" hidden$="[[userId]]">
           <template>[[item.lastReportedAtDate]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="40px" path="type" header="[[t('type')]]">
+        <vaadin-grid-sort-column width="80px" text-align="start" flex-grow="0" path="type" header="[[t('type')]]">
           <template>[[_getType(item.type)]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="50px" path="status" header="[[t('status')]]">
+        <vaadin-grid-sort-column width="120px" text-align="start" flex-grow="0" path="status" header="[[t('status')]]">
           <template>[[item.status]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column  width="25px" path="counter_flags" header="[[t('flags')]]" hidden$="[[userId]]">
-          <template style="text-align: center;">[[item.counter_flags]]</template>
+        <vaadin-grid-sort-column width="80px" text-align="center" flex-grow="0" path="counter_flags" header="[[t('flags')]]" hidden$="[[userId]]">
+          <template>[[item.counter_flags]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column  width="50px" path="source" header="[[t('source')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column  width="130px" text-align="start" flex-grow="0" path="source" header="[[t('source')]]" hidden$="[[userId]]">
           <template>[[item.source]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="45px" style="text-align: center;"  path="toxicityScore" header="[[t('toxicityScore')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="toxicityScore" header="[[t('toxicityScore')]]" hidden$="[[userId]]">
           <template>[[item.toxicityScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="45px" style="text-align: center;" path="severeToxicityScore" header="[[t('severeToxicityScore')]]" hidden>
+        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="severeToxicityScore" header="[[t('severeToxicityScore')]]" hidden>
           <template>[[item.severeToxicityScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-filter-column flex-grow="3" path="content" header="[[t('content')]]">
+        <vaadin-grid-filter-column flex-grow="4" path="content" header="[[t('content')]]" hidden$="[[narrow]]">
           <template>
             <yp-magic-text content="[[item.content]]" content-type="[[item.contentTranslationType]]"></yp-magic-text>
           </template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-filter-column path="user_email" header="[[t('creator')]]" hidden$="[[userId]]">
+        <vaadin-grid-filter-column flex-grow="1" path="user_email" width="150px" header="[[t('creator')]]" hidden$="[[userId]]">
           <template>[[item.user_email]]</template>
         </vaadin-grid-filter-column>
 
@@ -248,11 +284,17 @@
                   <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
                     [[t('deleteSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
+                  <paper-item data-args$="[[item.id]]" on-tap="_blockSelectedContent">
+                    [[t('blockSelectedContent')]] [[selectedItemsCount]]
+                  </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
                     [[t('approveSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_clearSelectedFlags">
                     [[t('clearSelectedFlags')]] [[selectedItemsCount]]
+                  </paper-item>
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!userId]]" on-tap="_anonymizeSelectedContent">
+                    [[t('anonymizeSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
                 </template>
               </paper-listbox>
@@ -265,21 +307,23 @@
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" on-tap="_delete">
                   [[t('deleteContent')]]
                 </paper-item>
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" on-tap="_blockSelected">
+                  [[t('blockContent')]]
+                </paper-item>
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[userId]]" on-tap="_approve">
                   [[t('approveContent')]]
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[userId]]" on-tap="_clearFlags">
                   [[t('clearFlags')]]
                 </paper-item>
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[!userId]]" on-tap="_anonymize">
+                  [[t('anonymizeContent')]]
+                </paper-item>
               </paper-listbox>
             </paper-menu-button>
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-
-      <div class="buttons layout horizontal center-center">
-        <paper-button raised dialog-dismiss>[[t('close')]]</paper-button>
-      </div>
     </paper-dialog>
 
     <div class="layout horizontal center-center">
@@ -293,6 +337,7 @@
       <yp-ajax method="PUT" id="clearFlagsItemAjax" on-response="_clearFlagsItemResponse"></yp-ajax>
       <yp-ajax method="PUT" id="clearFlagsManyItemsAjax" on-response="_clearFlagsManyItemsResponse"></yp-ajax>
     </div>
+    <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
   </template>
 
   <script>
@@ -404,12 +449,21 @@
         typeOfModeration: {
           type: String,
           value: "/flagged_content"
+        },
+
+        onlyFlaggedItems: {
+          type: Boolean,
+          computed: '_onlyFlaggedItems(typeOfModeration)'
         }
       },
 
       observers: [
         '_selectedItemsChanged(selectedItems.splices)'
       ],
+
+      _onlyFlaggedItems: function (typeOfModeration) {
+        return typeOfModeration==="/flagged_content";
+      },
 
       _getType: function(type) {
         if (type==='post')
@@ -460,10 +514,10 @@
       _setGridSize: function () {
         if (window.innerWidth<=600) {
           this.$.grid.style.width = (window.innerWidth).toFixed()+'px';
-          this.$.grid.style.height = (window.innerHeight-100).toFixed()+'px';
+          this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
         } else {
-          this.$.grid.style.width = (window.innerWidth-48).toFixed()+'px';
-          this.$.grid.style.height = (window.innerHeight-220).toFixed()+'px';
+          this.$.grid.style.width = (window.innerWidth-16).toFixed()+'px';
+          this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
         }
       },
 
@@ -658,6 +712,7 @@
       },
 
       open: function (name) {
+        this.set('collectionName', name);
         this.set('opened', true);
         this.$.dialog.open();
       },
@@ -671,13 +726,19 @@
       },
 
       _setupHeaderText: function () {
-        this.set('itemsCountText', this.t('contentItemsFlagged'));
+        if (this.onlyFlaggedItems) {
+          this.set('itemsCountText', this.t('contentItemsFlagged'));
+        } else {
+          this.set('itemsCountText', this.t('items'));
+        }
         if (this.groupId) {
           this.set('headerText', this.t('groupContentModeration'));
         } else if (this.communityId) {
           this.set('headerText', this.t('communityContentModeration'));
         } else if (this.domainId) {
           this.set('headerText', this.t('domainContentModeration'));
+        } else if (this.userId) {
+          this.set('headerText', this.t('userContentModeration'));
         }
       }
     });

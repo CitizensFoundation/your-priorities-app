@@ -92,7 +92,7 @@
         window.appGlobals.activity('open', 'userAllContentModeration');
         Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
           dialog.setup(null, null, null, '/moderate_all_content', this.user.id);
-          dialog.open(this.user.email);
+          dialog.open(this.user.name);
         }.bind(this));
       },
 
