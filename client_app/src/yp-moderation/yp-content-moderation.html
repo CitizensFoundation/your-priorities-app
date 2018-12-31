@@ -83,7 +83,6 @@
       }
 
       .innerHeader {
-        align-self: flex-end;
         font-size: 17px;
         color: #F5F5F5;
       }
@@ -163,8 +162,9 @@
       }
 
       paper-spinner {
-        margin-left: 16px;
-        margin-top: 8px;--paper-spinner-layer-1-color: #FFF;
+        margin-left: 20px;
+        margin-top: 8px;
+        --paper-spinner-layer-1-color: #FFF;
         --paper-spinner-layer-2-color: #FFF;
         --paper-spinner-layer-3-color: #FFF;
         --paper-spinner-layer-4-color: #FFF;
@@ -467,7 +467,7 @@
 
       _getType: function(type) {
         if (type==='post')
-          return this.t('posts.posts');
+          return this.t('posts.post');
         else if (type==='point')
           return this.t('point.point');
       },

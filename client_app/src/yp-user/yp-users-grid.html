@@ -69,10 +69,13 @@
       }
 
       .headerBox {
-        margin: 16px;
-        margin-bottom: 0;
-        margin-left: 0;
-        margin-right: 0;
+        background-color: var(--accent-color);
+        color: #FFF;
+        margin: 0;
+        padding: 0 0;
+        padding-top: 8px;
+        padding-bottom: 6px;
+
       }
 
       paper-button {
@@ -86,23 +89,49 @@
         padding-bottom: 4px;
         margin-bottom: 4px;
         align-self: flex-start;
+        background-color: #FFF;
+        color: #000;
+        margin-top: 2px;
+        margin-right: 12px;
       }
 
       #grid {
-        margin-top: 8px;
+        margin-top: 0;
+        margin-bottom: 0;
       }
 
       .headerText {
-        display: flex;
+        padding: 0 0 !important;
+      }
+
+      .collectionName {
         font-size: 22px;
+        margin-bottom: 1px;
+        margin-top: 4px;
       }
 
       .innerHeader {
-        align-self: flex-end;
-        margin-bottom: 24px;
+        font-size: 17px;
+        color: #F5F5F5;
+      }
+
+      .closeButton {
+        width: 50px;
+        height: 50px;
+        margin-left: 4px;
+        margin-right: 4px;
       }
 
       @media (max-width: 600px) {
+        .closeButton {
+          width: 45px;
+          height: 45px;
+        }
+
+        .inputBox {
+          margin-top: 6px;
+        }
+
         paper-listbox {
           margin-right: 8px;
         }
@@ -121,10 +150,16 @@
       }
 
       paper-spinner {
-        margin-left: 8px;
-        margin-top: 12px;
-        width: 24px;
-        height: 24px;
+        margin-left: 16px;
+        margin-top: 8px;
+        --paper-spinner-layer-1-color: #FFF;
+        --paper-spinner-layer-2-color: #FFF;
+        --paper-spinner-layer-3-color: #FFF;
+        --paper-spinner-layer-4-color: #FFF;
+      }
+
+      .inviteButton {
+        margin-top: 5px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -146,23 +181,32 @@
 
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
-        <div class="headerText">
-          <div class="innerHeader">[[collectionName]]
-            <span hidden$="[[!totalUserCount]]">([[totalUserCount]] [[usersCountText]])</span>
-            <span hidden$="[[totalUserCount]]"><paper-spinner active></paper-spinner></span>
+
+        <div>
+          <paper-icon-button id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
+        </div>
+
+        <div class="headerText layout vertical">
+          <div class="layout horizontal">
+            <div class="collectionName">[[collectionName]]</div>
+          </div>
+          <div class="innerHeader">[[headerText]]
+            <span hidden$="[[!totalUserCount]]">([[totalUserCount]])</span>
           </div>
         </div>
+        <div hidden$="[[totalUserCount]]"><paper-spinner active></paper-spinner></div>
+
         <div class="flex"></div>
         <div hidden$="[[domainId]]">
           <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
-            <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
-            <paper-button on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
+            <paper-input label="[[t('email')]]" value="{{inviteUserEmail}}"></paper-input>
+            <paper-button class="inviteButton" on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
           </paper-material>
         </div>
 
         <paper-material hidden$="[[!adminUsers]]" class="layout horizontal wrap inputBox">
-          <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
-          <paper-button on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
+          <paper-input label="[[t('email')]]" value="{{addAdminEmail}}"></paper-input>
+          <paper-button class="inviteButton" on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
         </paper-material>
       </div>
 
@@ -175,15 +219,15 @@
           <template>[[item.id]]</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-filter-column path="name" header="[[t('name')]]">
+        <vaadin-grid-filter-column flex-grow="2" width="140px" path="name" header="[[t('name')]]">
           <template>[[item.name]]</template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-filter-column path="email" header="[[t('email')]]">
+        <vaadin-grid-filter-column path="email" flex-grow="1" width="150px" header="[[t('email')]]">
           <template>[[item.email]]</template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" width="150px">
           <template class="header">[[t('organization')]]</template>
           <template>
             <div class="organization" hidden$="[[!_userOrganizationName(item)]]">
@@ -254,11 +298,7 @@
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-
-      <div class="buttons layout horizontal center-center" style="text-align: center">
-        <paper-button raised dialog-dismiss>[[t('close')]]</paper-button>
-      </div>
-    </paper-dialog>
+   </paper-dialog>
 
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
@@ -380,6 +420,28 @@
       observers: [
         '_selectedUsersChanged(selectedUsers.splices)'
       ],
+
+      ready: function () {
+        this._setGridSize();
+        window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+      },
+
+      _resizeThrottler: function () {
+        if ( !this.resizeTimeout ) {
+          this.resizeTimeout = setTimeout(function() {
+            this.resizeTimeout = null;
+            this._setGridSize();
+          }.bind(this), 66);
+        }
+      },
+
+      _setGridSize: function () {
+        if (window.innerWidth<=600) {
+          this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
+        } else {
+          this.$.grid.style.height = (window.innerHeight*0.8).toFixed()+'px';
+        }
+      },
 
       _menuSelection: function (event, detail) {
         var allMenus = this.$.grid.querySelectorAll("paper-listbox");
