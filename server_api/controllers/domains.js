@@ -7,7 +7,7 @@ var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
 var queue = require('../active-citizen/workers/queue');
-var moderationItemsActionDomain = require('../active-citizen/engine/moderation/get_moderation_items').moderationItemsActionDomain;
+var performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 var getAllModeratedItemsByDomain = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByDomain;
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
@@ -663,15 +663,31 @@ router.get(':id/news', auth.can('view domain'), function(req, res) {
 
 // MODERATION
 
-router.delete('/:domainId/:itemId/:itemModelClass/delete_moderated_item', auth.can('edit domain'), (req, res) => {
-  if (req.params.itemModelClass==='post') {
-    moderationItemsActionDomain(req, res, models.Post, 'delete');
-  } else if (req.params.itemModelClass==='point') {
-    moderationItemsActionDomain(req, res, models.Point, 'delete');
-  } else {
-    log.error("Can't find item model class");
-    res.sendStatus(500);
-  }
+router.delete('/:domainId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit domain'), (req, res) => {
+  performSingleModerationAction(req, res, {
+    domainId: req.params.domainId,
+    itemId: req.params.itemId,
+    itemType: req.params.itemType,
+    actionType: req.params.actionType
+  });
+});
+
+router.delete('/:domainId/:actionType/process_many_moderation_item', auth.can('edit domain'), (req, res) => {
+  let job;
+
+  queue.create('process-moderation', {
+      type: 'perform-many-moderation-actions',
+      items: req.body.items,
+      actionType: req.params.actionType,
+      domainId: req.params.domainId
+    }).priority('high').removeOnComplete(true).save();
+  res.send({});
+});
+
+router.get('/:jobId/get_job_status', (req, res) => {
+  const job = queue.get(req.params.jobId, (error, job) => {
+    var a = 122;
+  });
 });
 
 router.get('/:domainId/flagged_content', auth.can('edit domain'), (req, res) => {

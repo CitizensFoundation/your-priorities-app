@@ -1,4 +1,6 @@
 {
+  "areYouSureDeleteSelectedContent": "Are you sure you want to delete the selected content",
+  "areYouSureDeleteContent": "Are you sure you want to delete this content",
   "flaggedBy": "Flagged by",
   "communityContentModeration": "Community moderation",
   "groupContentModeration": "Group moderation",

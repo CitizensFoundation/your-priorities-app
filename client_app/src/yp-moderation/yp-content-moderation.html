@@ -193,6 +193,9 @@
         <div hidden$="[[totalItemsCount]]"><paper-spinner active></paper-spinner></div>
         <div class="flex"></div>
         <div class="checkBox" hidden$="[[narrow]]"><paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox></div>
+        <div hidden$="[[!showReload]]">
+          <paper-icon-button icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+        </div>
       </div>
 
       <vaadin-grid id="grid" multi-sort="[[multiSortEnabled]]" active-item="{{activeItem}}" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
@@ -307,19 +310,19 @@
             <paper-menu-button horizontal-align="right" class="helpButton">
               <paper-icon-button icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" on-tap="_delete">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_delete">
                   [[t('deleteContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" on-tap="_blockSelected">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_blockSelected">
                   [[t('blockContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[userId]]" on-tap="_approve">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_approve">
                   [[t('approveContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[userId]]" on-tap="_clearFlags">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_clearFlags">
                   [[t('clearFlags')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.modelClass]]" hidden$="[[!userId]]" on-tap="_anonymize">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[!userId]]" on-tap="_anonymize">
                   [[t('anonymizeContent')]]
                 </paper-item>
               </paper-listbox>
@@ -457,6 +460,11 @@
         onlyFlaggedItems: {
           type: Boolean,
           computed: '_onlyFlaggedItems(typeOfModeration)'
+        },
+
+        showReload: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -464,8 +472,20 @@
         '_selectedItemsChanged(selectedItems.splices)'
       ],
 
+      _reload: function () {
+        this.$.ajax.generateRequest();
+      },
+
       _onlyFlaggedItems: function (typeOfModeration) {
         return typeOfModeration==="/flagged_content";
+      },
+
+      _deleteManyItemsResponse: function () {
+        this.set('showReload', true);
+      },
+
+      _deleteItemResponse: function () {
+        this._reload();
       },
 
       _getType: function(type) {
@@ -540,13 +560,14 @@
           this.set('selectedItemsEmpty', true);
           this.set('selectedItemsCount', 0);
         }
-        this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.modelType }});
+        this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.type }});
       },
 
       _setupItemIdFromEvent(event) {
         var itemId = event.target.parentElement.getAttribute('data-args');
         if (!itemId)
           itemId = event.target.getAttribute('data-args');
+        this.set('selectedItemId', itemId);
         var modelClass = event.target.parentElement.getAttribute('data-model-class');
         if (!modelClass)
           modelClass = event.target.getAttribute('data-model-class');
@@ -561,22 +582,22 @@
       },
 
       _reallyDeleteSelected: function () {
-        this._ajaxMaster(this.$.deleteManyItemsAjax, 'delete_moderated_items', this.selectedItemIdsAndType);
+        this._ajaxMaster(this.$.deleteManyItemsAjax, 'delete', this.selectedItemIdsAndType);
       },
 
       _delete: function (event) {
         this._setupItemIdFromEvent(event);
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-          dialog.open(this.t('areYouSureDeletedContent'), this._reallyDeleteSelected.bind(this), true, false);
+          dialog.open(this.t('areYouSureDeleteContent'), this._reallyDelete.bind(this), true, false);
         }.bind(this));
       },
 
       _reallyDelete: function () {
-        this._ajaxMaster(this.$.deleteItemAjax, 'delete_moderated_item');
+        this._ajaxMaster(this.$.deleteItemAjax, 'delete');
       },
 
       _approve: function () {
-        this._ajaxMaster(this.$.approveItemAjax, 'approve_moderated_item');
+        this._ajaxMaster(this.$.approveItemAjax, 'approve');
       },
 
       _approveSelected: function () {
@@ -584,11 +605,11 @@
       },
 
       _clearFlags: function () {
-        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clear_flags_moderated_item');
+        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clearFlags');
       },
 
       _clearSelectedFlags: function () {
-        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clear_flags_moderated_items', this.selectedItemIdsAndType);
+        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clearFlags', this.selectedItemIdsAndType);
       },
 
       _ajaxMaster: function (ajax, action, itemIdsAndType) {
@@ -603,14 +624,14 @@
           console.error("Can't find model type or ids");
           return;
         }
-        if (itemIds && itemIds.length>0) {
-          url = "/api/" + this.modelType + "/" + collectionId + "/" +action;
-          ajax.body = { itemIdsAndType: itemIdsAndType };
+        if (itemIdsAndType && itemIdsAndType.length>0) {
+          url = "/api/" + this.modelType + "/" + collectionId + "/" +action+ "/process_many_moderation_item";
+          ajax.body = { items: itemIdsAndType };
         } else if (this.selectedItemId) {
-          url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedItemId+ '/'+this.selectedModelClass+'/'+action ;
+          url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedItemId+ '/'+this.selectedModelClass+'/'+action+"/process_one_moderation_item" ;
           ajax.body = {};
         } else {
-          console.error("No item ids to delete");
+          console.error("No item ids to process");
           return;
         }
         ajax.url = url;
@@ -681,9 +702,7 @@
 
       _itemsResponse: function (event, detail) {
         this.set('items', detail.response);
-        this.$.grid.clearCache();
-        this.set('selectedItemsCount', 0);
-        this.set('selectedItemsEmpty', true);
+        this._resetSelectedAndClearCache();
       },
 
       setup: function (groupId, communityId, domainId, typeOfModeration, userId) {
@@ -722,9 +741,14 @@
 
       _reset: function () {
         this.set('items', null);
-        this.set('selectedItems', []);
+        this._resetSelectedAndClearCache();
+      },
+
+      _resetSelectedAndClearCache: function () {
         this.set('selectedItemsCount', 0);
         this.set('selectedItemsEmpty', true);
+        this.set('selectedItemIdsAndType', []);
+        this.set('selectedItems', []);
         this.$.grid.clearCache();
       },
 
