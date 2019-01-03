@@ -1,4 +1,5 @@
 {
+  "operationInProgressTryReloading": "Operation in progress, try reloading the data in a bit",
   "areYouSureDeleteSelectedContent": "Are you sure you want to delete the selected content",
   "areYouSureDeleteContent": "Are you sure you want to delete this content",
   "flaggedBy": "Flagged by",

@@ -290,7 +290,7 @@
                   <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
                     [[t('deleteSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" on-tap="_blockSelectedContent">
+                  <paper-item data-args$="[[item.id]]" on-tap="_blockSelected">
                     [[t('blockSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
@@ -313,7 +313,7 @@
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_delete">
                   [[t('deleteContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_blockSelected">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_block">
                   [[t('blockContent')]]
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_approve">
@@ -334,14 +334,8 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_itemsResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteItemAjax" on-response="_deleteItemResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deleteManyItemsAjax" on-response="_deleteManyItemsResponse"></yp-ajax>
-
-      <yp-ajax method="PUT" id="approveItemAjax" on-response="_approveItemResponse"></yp-ajax>
-      <yp-ajax method="PUT" id="approveManyItemsAjax" on-response="_approveManyItemsResponse"></yp-ajax>
-
-      <yp-ajax method="PUT" id="clearFlagsItemAjax" on-response="_clearFlagsItemResponse"></yp-ajax>
-      <yp-ajax method="PUT" id="clearFlagsManyItemsAjax" on-response="_clearFlagsManyItemsResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="singleItemAjax" on-response="_singleItemResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="manyItemsAjax" on-response="_manyItemsResponse"></yp-ajax>
     </div>
     <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
   </template>
@@ -480,11 +474,12 @@
         return typeOfModeration==="/flagged_content";
       },
 
-      _deleteManyItemsResponse: function () {
+      _manyItemsResponse: function () {
         this.set('showReload', true);
+        window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
       },
 
-      _deleteItemResponse: function () {
+      _singleItemResponse: function () {
         this._reload();
       },
 
@@ -593,23 +588,37 @@
       },
 
       _reallyDelete: function () {
-        this._ajaxMaster(this.$.deleteItemAjax, 'delete');
+        this._ajaxMaster(this.$.singleItemAjax, 'delete');
       },
 
-      _approve: function () {
-        this._ajaxMaster(this.$.approveItemAjax, 'approve');
+      _approve: function (event) {
+        this._setupItemIdFromEvent(event);
+        this._ajaxMaster(this.$.singleItemAjax, 'approve');
       },
 
-      _approveSelected: function () {
-        this._ajaxMaster(this.$.approveManyItemsAjax, 'approve_moderated_items', this.selectedItemIdsAndType);
+      _approveSelected: function (event) {
+        this._setupItemIdFromEvent(event);
+        this._ajaxMaster(this.$.manyItemsAjax, 'approve', this.selectedItemIdsAndType);
       },
 
-      _clearFlags: function () {
-        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clearFlags');
+      _block: function (event) {
+        this._setupItemIdFromEvent(event);
+        this._ajaxMaster(this.$.singleItemAjax, 'block');
       },
 
-      _clearSelectedFlags: function () {
-        this._ajaxMaster(this.$.clearFlagsItemAjax, 'clearFlags', this.selectedItemIdsAndType);
+      _blockSelected: function (event) {
+        this._setupItemIdFromEvent(event);
+        this._ajaxMaster(this.$.manyItemsAjax, 'block', this.selectedItemIdsAndType);
+      },
+
+      _clearFlags: function (event) {
+        this._setupItemIdFromEvent(event);
+        this._ajaxMaster(this.$.singleItemAjax, 'clearFlags');
+      },
+
+      _clearSelectedFlags: function (event) {
+        this._setupItemIdFromEvent(event);
+        this._ajaxMaster(this.$.manyItemsAjax, 'clearFlags', this.selectedItemIdsAndType);
       },
 
       _ajaxMaster: function (ajax, action, itemIdsAndType) {
