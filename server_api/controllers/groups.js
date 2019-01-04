@@ -15,8 +15,8 @@ var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDa
 var moment = require('moment');
 var sanitizeFilename = require("sanitize-filename");
 var queue = require('../active-citizen/workers/queue');
-const moderationItemsActionGroup = require('../active-citizen/engine/moderation/get_moderation_items').moderationItemsActionGroup;
 const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByGroup;
+const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -1354,15 +1354,23 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
 
 // Moderation
 
-router.delete('/:groupId/:itemId/:itemModelClass/delete_moderated_item', auth.can('edit group'), (req, res) => {
-  if (req.params.itemModelClass==='post') {
-    moderationItemsActionGroup(req, res, models.Post, 'delete');
-  } else if (req.params.itemModelClass==='point') {
-    moderationItemsActionGroup(req, res, models.Point, 'delete');
-  } else {
-    log.error("Can't find item model class");
-    res.sendStatus(500);
-  }
+router.delete('/:groupId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit group'), (req, res) => {
+  performSingleModerationAction(req, res, {
+    groupId: req.params.groupId,
+    itemId: req.params.itemId,
+    itemType: req.params.itemType,
+    actionType: req.params.actionType
+  });
+});
+
+router.delete('/:groupId/:actionType/process_many_moderation_item', auth.can('edit group'), (req, res) => {
+  queue.create('process-moderation', {
+    type: 'perform-many-moderation-actions',
+    items: req.body.items,
+    actionType: req.params.actionType,
+    groupId: req.params.groupId
+  }).priority('high').removeOnComplete(true).save();
+  res.send({});
 });
 
 router.get('/:groupId/flagged_content', auth.can('edit group'), (req, res) => {

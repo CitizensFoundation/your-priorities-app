@@ -270,7 +270,12 @@
 
         <vaadin-grid-filter-column width="200px" flex-grow="4" path="content" header="[[t('content')]]" hidden$="[[narrow]]">
           <template>
-            <yp-magic-text content="[[item.content]]" content-type="[[item.contentTranslationType]]"></yp-magic-text>
+            <div class="layout horizontal">
+              <yp-magic-text content-id="[[item.id]]" content="[[item.pointTextContent]]" text-type="pointContent"></yp-magic-text>
+              <yp-magic-text content-id="[[item.id]]" content="[[item.postNameContent]]" text-type="postName"></yp-magic-text> &nbsp;
+              <yp-magic-text content-id="[[item.id]]" content="[[item.postTextContent]]" text-type="postContent"></yp-magic-text> &nbsp;
+              <yp-magic-text content-id="[[item.id]]" content="[[item.postTranscriptContent]]" text-type="postTranscriptContent"></yp-magic-text>
+            </div>
           </template>
         </vaadin-grid-filter-column>
 
@@ -293,7 +298,7 @@
                   <paper-item data-args$="[[item.id]]" hidden$="[[!onlyFlaggedItems]]" on-tap="_clearSelectedFlags">
                     [[t('clearSelectedFlags')]] [[selectedItemsCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" on-tap="_blockSelected">
+                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_blockSelected">
                     [[t('blockSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[!userId]]" on-tap="_anonymizeSelectedContent">
@@ -316,7 +321,7 @@
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[!onlyFlaggedItems]]" on-tap="_clearFlags">
                   [[t('clearFlags')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_block">
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_block">
                   [[t('blockContent')]]
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[!userId]]" on-tap="_anonymize">
@@ -333,9 +338,9 @@
     </paper-dialog>
 
     <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_itemsResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="singleItemAjax" on-response="_singleItemResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="manyItemsAjax" on-response="_manyItemsResponse"></yp-ajax>
+      <yp-ajax id="ajax" on-response="_itemsResponse" on-error="_ajaxError"></yp-ajax>
+      <yp-ajax method="DELETE" id="singleItemAjax" on-error="_ajaxError" on-response="_singleItemResponse"></yp-ajax>
+      <yp-ajax method="DELETE" id="manyItemsAjax" on-error="_ajaxError" on-response="_manyItemsResponse"></yp-ajax>
     </div>
     <iron-media-query query="(max-width: 600px)" query-matches="{{narrow}}"></iron-media-query>
   </template>
@@ -480,6 +485,10 @@
         '_selectedItemsChanged(selectedItems.splices)'
       ],
 
+      _ajaxError: function () {
+        this.set('forceSpinner', false);
+      },
+
       _reload: function () {
         this.$.ajax.generateRequest();
         this.set('forceSpinner', true);
@@ -608,6 +617,29 @@
         this._ajaxMaster(this.$.singleItemAjax, 'delete');
       },
 
+      _anonymizeSelected: function (event) {
+        this._setupItemIdFromEvent(event);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureAnonymizeSelectedContent'), this._reallyAnonymizeSelected.bind(this), true, true);
+        }.bind(this));
+      },
+
+      _reallyAnonymizeSelected: function () {
+        this._ajaxMaster(this.$.manyItemsAjax, 'anonymize', this.selectedItemIdsAndType);
+      },
+
+      _anonymize: function (event) {
+        this._setupItemIdFromEvent(event);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+          dialog.open(this.t('areYouSureAnonymizeContent'), this._reallyAnonymize.bind(this), true, false);
+        }.bind(this));
+      },
+
+      _reallyAnonymize: function () {
+        this._ajaxMaster(this.$.singleItemAjax, 'anonymize');
+      },
+
+
       _approve: function (event) {
         this._setupItemIdFromEvent(event);
         this._ajaxMaster(this.$.singleItemAjax, 'approve');
@@ -646,6 +678,8 @@
           collectionId = this.communityId;
         } else if (this.modelType==="domains" && this.domainId) {
           collectionId = this.domainId;
+        } else if (this.modelType==="users" && this.userId) {
+          collectionId = this.userId;
         } else {
           console.error("Can't find model type or ids");
           return;
