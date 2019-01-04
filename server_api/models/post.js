@@ -100,7 +100,8 @@ module.exports = function(sequelize, DataTypes) {
       open: {
         where: {
           official_status: 0,
-          deleted: false
+          deleted: false,
+          status: 'published'
         }
       },
       not_open: {
@@ -108,7 +109,8 @@ module.exports = function(sequelize, DataTypes) {
           official_status: {
             $in: [-2,-1,1,2]
           },
-          deleted: false
+          deleted: false,
+          status: 'published'
         }
       },
       finished: {
@@ -116,19 +118,22 @@ module.exports = function(sequelize, DataTypes) {
           official_status: {
             $in: [-2, -1, 2]
           },
-          deleted: false
+          deleted: false,
+          status: 'published'
         }
       },
       successful: {
         where: {
           official_status: 2,
-          deleted: false
+          deleted: false,
+          status: 'published'
         }
       },
       compromised: {
         where: {
           official_status: -991,
-          deleted: false
+          deleted: false,
+          status: 'published'
         }
       },
       failed: {
@@ -136,7 +141,8 @@ module.exports = function(sequelize, DataTypes) {
           official_status: {
             $in: [-2]
           },
-          deleted: false
+          deleted: false,
+          status: 'published'
         }
       },
       in_progress: {
@@ -144,7 +150,8 @@ module.exports = function(sequelize, DataTypes) {
           official_status: {
             $in: [-1, 1]
           },
-          deleted: false
+          deleted: false,
+          status: 'published'
         }
       }
     },

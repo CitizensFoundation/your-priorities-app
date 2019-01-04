@@ -301,7 +301,7 @@
                   <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_blockSelected">
                     [[t('blockSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[!userId]]" on-tap="_anonymizeSelectedContent">
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!userId]]" on-tap="_anonymizeSelected">
                     [[t('anonymizeSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
@@ -505,7 +505,6 @@
       },
 
       _singleItemResponse: function () {
-        this.set('forceSpinner', false);
         this._reload();
       },
 

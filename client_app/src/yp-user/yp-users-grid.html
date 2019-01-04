@@ -193,9 +193,12 @@
             <span hidden$="[[!totalUserCount]]">([[totalUserCount]])</span>
           </div>
         </div>
-        <div hidden$="[[totalUserCount]]"><paper-spinner active></paper-spinner></div>
+        <div hidden$="[[!spinnerActive]]"><paper-spinner active></paper-spinner></div>
 
         <div class="flex"></div>
+        <div hidden$="[[!showReload]]">
+          <paper-icon-button icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+        </div>
         <div hidden$="[[domainId]]">
           <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
             <paper-input label="[[t('email')]]" value="{{inviteUserEmail}}"></paper-input>
@@ -301,16 +304,16 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeAndDeleteAjax" on-response="_removeAndDeleteCompleted"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
-      <yp-ajax method="POST" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
-      <yp-ajax method="POST" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
-      <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteAjax" on-response="_removeAndDeleteCompleted"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
     </div>
   </template>
 
@@ -413,16 +416,44 @@
 
         collectionName: String,
 
-        usersCountText: String
+        usersCountText: String,
+
+        showReload: {
+          type: Boolean,
+          value: false
+        },
+
+        forceSpinner: {
+          type: Boolean,
+          value: false
+        },
+
+        spinnerActive: {
+          type: Boolean,
+          computed: '_spinnerActive(totalUserCount, forceSpinner)'
+        }
       },
 
       observers: [
         '_selectedUsersChanged(selectedUsers.splices)'
       ],
 
+      _spinnerActive: function (count, force) {
+        return !count || force
+      },
+
+      _ajaxError: function () {
+        this.set('forceSpinner', false);
+      },
+
       ready: function () {
         this._setGridSize();
         window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+      },
+
+      _reload: function () {
+        this.$.ajax.generateRequest();
+        this.set('forceSpinner', true);
       },
 
       _resizeThrottler: function () {
@@ -617,12 +648,15 @@
         if (this.modelType==="groups" && this.groupId) {
           ajax.url = url;
           ajax.generateRequest();
+          this.set('forceSpinner', true);
         } else if (this.modelType==="communities" && this.communityId) {
           ajax.url = url;
           ajax.generateRequest();
+          this.set('forceSpinner', true);
         } else if (this.modelType==="domains" && this.domainId) {
           ajax.url = url;
           ajax.generateRequest();
+          this.set('forceSpinner', true);
         } else {
           console.warn("Can't find model type or ids");
         }
@@ -678,64 +712,72 @@
         }
       },
 
+      _manyItemsResponse: function (showToast) {
+        this.set('forceSpinner', false);
+        debugger;
+        this.set('showReload', true);
+        if (showToast)
+          window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
+      },
+
       _removeAdminResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('adminRemoved'));
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _removeManyAdminResponse: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalsInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeManyUsersResponse: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalsInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeAndDeleteCompleted: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalAndDeletionInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeAndDeleteManyCompleted: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalsAndDeletionsInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeUserResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('userRemoved'));
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _addAdminResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('adminAdded')+' '+this.addAdminEmail);
         this.set('addAdminEmail', null);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _addOrganizationResponse: function (event, detail) {
         window.appGlobals.notifyUserViaToast(this.t('organizationUserAdded')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _removeOrganizationResponse: function (event, detail) {
         window.appGlobals.notifyUserViaToast(this.t('organizationUserRemoved')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _inviteUserResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('users.userInvited')+' '+this.inviteUserEmail);
         this.set('inviteUserEmail', null);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _domainIdChanged: function (newGroupId) {
@@ -769,10 +811,9 @@
       },
 
       _usersResponse: function (event, detail) {
+        this.set('forceSpinner', false);
         this.set('users', detail.response);
-        this.$.grid.clearCache();
-        this.set('selectedUsersCount', 0);
-        this.set('selectedUsersEmpty', true);
+        this._resetSelectedAndClearCache();
       },
 
       setup: function (groupId, communityId, domainId, adminUsers) {
@@ -802,6 +843,10 @@
 
       _reset: function () {
         this.set('users', null);
+        this._resetSelectedAndClearCache();
+      },
+
+      _resetSelectedAndClearCache: function () {
         this.set('selectedUsers', []);
         this.set('selectedUsersCount', 0);
         this.set('selectedUsersEmpty', true);
