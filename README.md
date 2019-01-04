@@ -14,7 +14,10 @@
 * Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3)
 * Automatic SpeechToText conversion in over 20 languages (using Google's TextToSpeech API)
 * Machine translations between over 20 languages (using Google Translate API)
-* Smart notifications
+* Simple moderation of all content for community and groups in one place
+* Assigns an automated toxicity score for all incoming content. Uses the new Perspective API, developed by the New York Times, The Economist, Guardian, Google, and others to automatically assign a toxicity score to submitted content. Will automatically flag content that has more than 50% chance of toxicity and sends an email to admins if there is over 70% chance.
+* Users can view and moderate their own submitted content in one place
+* Smart notifications in browser and email
 * Fully functional newsfeeds for all communities, groups and ideas where users can share links and comments just like on Facebook
 * Ideas and debate points can be easily shared on social media
 * Participation groups can be configured for many different types of participation projects
