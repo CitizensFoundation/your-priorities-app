@@ -323,8 +323,8 @@
               <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" selected="{{selectedCoverMediaType}}">
                 <paper-radio-button name="none">[[t('post.cover.none')]]</paper-radio-button>
                 <paper-radio-button name="image" hidden$="[[!uploadedHeaderImageId]]">[[t('post.cover.image')]]</paper-radio-button>
-                <paper-radio-button name="video" hidden$="[[!uploadedVideoId]]">[[t('postCoverVideo')]]</paper-radio-button>
-                <paper-radio-button name="audio" hidden$="[[!uploadedAudioId]]">[[t('postCoverAudio')]]</paper-radio-button>
+                <paper-radio-button name="video" hidden$="[[!showVideoCover]]">[[t('postCoverVideo')]]</paper-radio-button>
+                <paper-radio-button name="audio" hidden$="[[!showAudioCover]]">[[t('postCoverAudio')]]</paper-radio-button>
                 <template is="dom-if" if="[[location]]">
                   <paper-radio-button name="map">[[t('post.cover.map')]]</paper-radio-button>
                   <paper-radio-button name="streetView">[[t('post.cover.streetview')]]</paper-radio-button>
@@ -428,6 +428,26 @@
         value: null
       },
 
+      currentVideoId: {
+        type: String,
+        value: null
+      },
+
+      currentAudioId: {
+        type: String,
+        value: null
+      },
+
+      showVideoCover: {
+        type: Boolean,
+        computed: '_showVideoCover(uploadedVideoId, currentVideoId)'
+      },
+
+      showAudioCover: {
+        type: Boolean,
+        computed: '_showAudioCover(uploadedAudioId, currentAudioId)'
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -455,6 +475,14 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _showVideoCover: function (uploaded, current) {
+      return uploaded || current;
+    },
+
+    _showAudioCover: function (uploaded, current) {
+      return uploaded || current;
+    },
 
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
@@ -668,7 +696,7 @@
             }, 20);
           }.bind(this));
           ajax.generateRequest();
-        } else if (this.uploadedAudioId) {
+        } else if (this.uploadedAudioId && this.newPost) {
           this.post = post;
           ajax = document.createElement('iron-ajax');
           ajax.handleAs = 'json';
@@ -709,6 +737,8 @@
         this.set('uploadedHeaderImageId', null);
         this.set('uploadedVideoId', null);
         this.set('uploadedAudioId', null);
+        this.set('currentVideoId', null);
+        this.set('currentAudioId', null);
         this.$$("#imageFileUpload").clear();
         this.set('selectedCoverMediaType', 'none');
         this.async(function () { this.fire('iron-resize'); });
@@ -720,11 +750,11 @@
       if (post) {
         this.set('post', post);
         if (post.PostVideos && post.PostVideos.length>0) {
-          this.set('uploadedVideoId', post.PostVideos[0].id)
+          this.set('currentVideoId', post.PostVideos[0].id)
         }
 
         if (post.PostAudios && post.PostAudios.length>0) {
-          this.set('uploadedAudioId', post.PostAudios[0].id)
+          this.set('currentAudioId', post.PostAudios[0].id)
         }
       } else {
         this.set('post', null);

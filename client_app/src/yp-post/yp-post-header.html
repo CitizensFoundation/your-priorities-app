@@ -284,6 +284,7 @@
 
       .transcriptError {
         margin-top: 8px;
+        margin-bottom: 8px;
         color: #F00;
       }
 
@@ -585,6 +586,8 @@
       },
 
       _postChanged: function (post) {
+        this.set("checkingTranscript", false);
+        this.set('checkTranscriptError', false);
         if (post && post.description) {
           this.async(function () {
             var description = this.$$("#description");
@@ -597,6 +600,7 @@
               console.error("Can't find description element");
             }
           });
+
           if (this.hasPostAccess && window.appGlobals.hasTranscriptSupport===true) {
             if (post.public_data && post.public_data.transcript && post.public_data.transcript.inProgress) {
               if (post.cover_media_type==="audio") {
@@ -618,7 +622,6 @@
             this.set('isAudioCover', false);
           }
         }
-        this.set('checkTranscriptError', false);
       },
 
       updateDescriptionIfEmpty: function (description) {

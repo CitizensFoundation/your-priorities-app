@@ -132,6 +132,7 @@ module.exports = function(sequelize, DataTypes) {
               post.set('public_data.transcript', {});
               post.set('public_data.transcript', { videoId: video.id });
               post.set('public_data.transcript.inProgress', true);
+              post.set('public_data.transcript.inProgressDate', new Date());
               const workPackage = {
                 browserLanguage: options.browserLanguage,
                 appLanguage:options.appLanguage,

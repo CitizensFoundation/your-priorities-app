@@ -417,6 +417,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
                   log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
+                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
                   res.send({point: loadedPoint});
                 }
               });
@@ -469,6 +470,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
                   log.error('Could not reload point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
+                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
                   res.send({point: loadedPoint});
                 }
               });

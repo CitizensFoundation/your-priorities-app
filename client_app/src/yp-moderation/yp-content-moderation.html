@@ -260,11 +260,11 @@
           <template>[[item.source]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="toxicityScoreRaw" header="[[t('toxicityScore')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="toxicityScoreRaw" header="[[t('toxicityScore')]]?" hidden$="[[userId]]">
           <template>[[item.toxicityScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="severeToxicityScore" header="[[t('severeToxicityScore')]]" hidden>
+        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="severeToxicityScore" header="[[t('severeToxicityScore')]]?" hidden>
           <template>[[item.severeToxicityScore]]</template>
         </vaadin-grid-sort-column>
 

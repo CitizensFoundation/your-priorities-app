@@ -498,7 +498,12 @@
               console.info("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
             } else {
               this.set('videoSettings', { width: 1280, height: 720 });
-              height = Math.min(720, Math.abs(window.innerHeight)).toFixed();
+              var scaleFactor = 0.8;
+              if (window.innerHeight<700)
+                scaleFactor = 0.7;
+              if (window.innerHeight<500)
+                scaleFactor = 0.6;
+              height = Math.min(720, Math.abs(window.innerHeight*scaleFactor)).toFixed();
               width = Math.min(1280, Math.abs(height*1.77777777778)).toFixed();
               console.info("Landscape - width: "+width+" height: "+height);
             }
