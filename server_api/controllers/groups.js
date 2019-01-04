@@ -15,6 +15,8 @@ var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDa
 var moment = require('moment');
 var sanitizeFilename = require("sanitize-filename");
 var queue = require('../active-citizen/workers/queue');
+const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByGroup;
+const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -22,7 +24,7 @@ var s3 = new aws.S3({
   endpoint: process.env.S3_ENDPOINT || null,
   acl: 'public-read',
   region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
-})
+});
 
 var sendGroupOrError = function (res, group, context, user, error, errorStatus) {
   if (error || !group) {
@@ -928,7 +930,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     if (group) {
       log.info('Group Viewed', { group: toJson(group.simple()), context: 'view', user: toJson(req.user) });
       var PostsByNotOpen = models.Post.scope('not_open');
-      PostsByNotOpen.count({ where: { status: { $in: ['published','inactive']}, group_id: req.params.id} }).then(function (count) {
+      PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
         res.send({group: group, hasNonOpenPosts: count != 0});
       }).catch(function (error) {
         sendGroupOrError(res, null, 'count_posts', req.user, error);
@@ -951,7 +953,7 @@ router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
       attributes: ['id','name','objectives']
     }).then(function(group) {
       if (group) {
-        models.TranslationCache.getTranslation(req, group, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
           if (error) {
             sendGroupOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {
@@ -1062,7 +1064,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
 
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
 
-  var where = { status: { $in: ['published','inactive']}, group_id: req.params.id, deleted: false };
+  var where = { group_id: req.params.id, deleted: false };
 
   var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
@@ -1349,5 +1351,60 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
     }
   });
 });
+
+// Moderation
+
+router.delete('/:groupId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit group'), (req, res) => {
+  performSingleModerationAction(req, res, {
+    groupId: req.params.groupId,
+    itemId: req.params.itemId,
+    itemType: req.params.itemType,
+    actionType: req.params.actionType
+  });
+});
+
+router.delete('/:groupId/:actionType/process_many_moderation_item', auth.can('edit group'), (req, res) => {
+  queue.create('process-moderation', {
+    type: 'perform-many-moderation-actions',
+    items: req.body.items,
+    actionType: req.params.actionType,
+    groupId: req.params.groupId
+  }).priority('high').removeOnComplete(true).save();
+  res.send({});
+});
+
+router.get('/:groupId/flagged_content', auth.can('edit group'), (req, res) => {
+  getAllModeratedItemsByGroup({ groupId: req.params.groupId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:groupId/moderate_all_content', auth.can('edit group'), (req, res) => {
+  getAllModeratedItemsByGroup({ groupId: req.params.groupId, allContent: true }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res) => {
+  getAllModeratedItemsByGroup({ groupId: req.params.groupId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send({count: items ? items.length : 0});
+    }
+  });
+});
+
 
 module.exports = router;

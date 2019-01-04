@@ -8,6 +8,8 @@ var async = require('async');
 var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 const getAnonymousUser = require('../active-citizen/utils/get_anonymous_system_user');
+const moment = require('moment');
+
 
 var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
@@ -283,7 +285,7 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
       attributes: ['id','name','description','public_data']
     }).then(function(post) {
       if (post) {
-        models.TranslationCache.getTranslation(req, post, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, post, function (error, translation) {
           if (error) {
             sendPostOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {
@@ -312,7 +314,7 @@ router.get('/:id/:statusId/translatedStatusText', auth.can('view post'), functio
       attributes: ['id','content']
     }).then(function(change) {
       if (change) {
-        models.TranslationCache.getTranslation(req, change, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, change, function (error, translation) {
           if (error) {
             sendPostOrError(res, req.params.id, 'translatedStatusText', req.user, error, 500);
           } else {
@@ -359,14 +361,7 @@ router.put('/:id/report', auth.can('vote on post'), function (req, res) {
     ]
   }).then(function (post) {
     if (post) {
-      models.AcActivity.createActivity({
-        type: 'activity.report.content',
-        userId: req.user.id,
-        postId: req.params.id,
-        groupId: post.Group.id,
-        communityId: post.Group.Community.id,
-        domainId: post.Group.Community.Domain.id
-      }, function (error) {
+      post.report(req, 'user', (error) => {
         if (error) {
           log.error("Post Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
           res.sendStatus(500);
@@ -683,6 +678,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
               }, function (error) {
                 if (!error && post) {
                   post.setDataValue('newEndorsement', endorsement);
+                  queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
                   sendPostOrError(res, post, 'setupImages', req.user, error);
                 } else {
                   sendPostOrError(res, post, 'setupImages', req.user, error);
@@ -706,33 +702,49 @@ router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, re
   }).then( post => {
     if (post && post.public_data && post.public_data.transcript) {
       if (post.public_data.transcript.inProgress===true && post.public_data.transcript.videoId) {
-        models.Video.find({
-          where: {
-            id: post.public_data.transcript.videoId
-          }
-        }).then( video => {
-          if (video.meta.transcript && video.meta.transcript.text) {
-            post.set('public_data.transcript.inProgress', false);
-            post.set('public_data.transcript.text', video.meta.transcript.text);
-            post.save().then( savedPost => {
-              res.send({ text:video.meta.transcript.text })
-            }).catch( error => {
-              sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
-            });
-          } else if (video.meta.transcript && video.meta.transcript.error) {
-            post.set('public_data.transcript.inProgress', false);
-            post.set('public_data.transcript.error', video.meta.transcript.error );
-            post.save().then( savedPost => {
-              res.send({ error: video.meta.transcript.error });
-            }).catch( error => {
-              sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
-            });
-          } else {
-            res.send({ inProgress: true });
-          }
-        }).catch( error => {
-          sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
-        });
+        const timeOutDate = moment().add(-15, 'minutes').toDate();
+        let startDate;
+        if (post.public_data.transcript.inProgressDate) {
+          startDate = moment(post.public_data.transcript.inProgressDate).toDate();
+        }
+        if (!post.public_data.transcript.inProgressDate || startDate<timeOutDate) {
+          post.set('public_data.transcript.inProgress', false);
+          post.set('public_data.transcript.error', "Timeout" );
+          post.save().then( savedPost => {
+            res.send({ error: "Timeout" });
+          }).catch( error => {
+            sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+          });
+        } else {
+          models.Video.find({
+            where: {
+              id: post.public_data.transcript.videoId
+            }
+          }).then( video => {
+            if (video.meta.transcript && video.meta.transcript.text) {
+              post.set('public_data.transcript.inProgress', false);
+              post.set('public_data.transcript.text', video.meta.transcript.text);
+              post.save().then( savedPost => {
+                queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: savedPost.id }).priority('high').removeOnComplete(true).save();
+                res.send({ text:video.meta.transcript.text })
+              }).catch( error => {
+                sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+              });
+            } else if (video.meta.transcript && video.meta.transcript.error) {
+              post.set('public_data.transcript.inProgress', false);
+              post.set('public_data.transcript.error', video.meta.transcript.error );
+              post.save().then( savedPost => {
+                res.send({ error: video.meta.transcript.error });
+              }).catch( error => {
+                sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+              });
+            } else {
+              res.send({ inProgress: true });
+            }
+          }).catch( error => {
+            sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
+          });
+        }
       } else {
         res.send({ noInProgress: true });
       }
@@ -751,36 +763,55 @@ router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, re
     }
   }).then( post => {
     if (post && post.public_data && post.public_data.transcript) {
-      if (post.public_data.transcript.inProgress===true && post.public_data.transcript.audioId) {
-        models.Audio.find({
-          where: {
-            id: post.public_data.transcript.audioId
-          }
-        }).then( audio => {
-          if (audio.meta.transcript && audio.meta.transcript.text) {
-            post.set('public_data.transcript.inProgress', false);
-            post.set('public_data.transcript.text', audio.meta.transcript.text);
-            post.save().then( savedPost => {
-              res.send({ text:audio.meta.transcript.text })
-            }).catch( error => {
-              sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
-            });
-          } else if (audio.meta.transcript && audio.meta.transcript.error) {
-            post.set('public_data.transcript.inProgress', false);
-            post.set('public_data.transcript.error', audio.meta.transcript.error );
-            post.save().then( savedPost => {
-              res.send({ error: audio.meta.transcript.error });
-            }).catch( error => {
-              sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
-            });
-          } else {
-            res.send({ inProgress: true });
-          }
+      const timeOutDate = moment().add(-15, 'minutes').toDate();
+      let startDate;
+      if (post.public_data.transcript.inProgressDate) {
+        startDate = moment(post.public_data.transcript.inProgressDate).toDate();
+      }
+      if (!post.public_data.transcript.inProgressDate || startDate<timeOutDate) {
+        post.set('public_data.transcript.inProgress', false);
+        post.set('public_data.transcript.error', "Timeout" );
+        post.save().then( savedPost => {
+          res.send({ error: "Timeout" });
         }).catch( error => {
-          sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+          sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
         });
       } else {
-        res.send({ noInProgress: true });
+        if (post.public_data.transcript.inProgress === true && post.public_data.transcript.audioId) {
+          models.Audio.find({
+            where: {
+              id: post.public_data.transcript.audioId
+            }
+          }).then(audio => {
+            if (audio.meta.transcript && audio.meta.transcript.text) {
+              post.set('public_data.transcript.inProgress', false);
+              post.set('public_data.transcript.text', audio.meta.transcript.text);
+              post.save().then(savedPost => {
+                queue.create('process-moderation', {
+                  type: 'estimate-post-toxicity',
+                  postId: savedPost.id
+                }).priority('high').removeOnComplete(true).save();
+                res.send({text: audio.meta.transcript.text})
+              }).catch(error => {
+                sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+              });
+            } else if (audio.meta.transcript && audio.meta.transcript.error) {
+              post.set('public_data.transcript.inProgress', false);
+              post.set('public_data.transcript.error', audio.meta.transcript.error);
+              post.save().then(savedPost => {
+                res.send({error: audio.meta.transcript.error});
+              }).catch(error => {
+                sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+              });
+            } else {
+              res.send({inProgress: true});
+            }
+          }).catch(error => {
+            sendPostOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
+          });
+        } else {
+          res.send({noInProgress: true});
+        }
       }
     } else {
       sendPostOrError(res, req.params.id, 'audioPostTranscriptStatus', req.user, "not found", 404);

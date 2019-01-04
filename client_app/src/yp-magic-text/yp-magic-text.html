@@ -251,7 +251,10 @@
       _update() {
         this.processedContent = this.content;
         if (this.processedContent) {
-          if (this.autoTranslate && this.language!==this.contentLanguage  && !this.disableTranslation) {
+          if (this.autoTranslate &&
+              this.language!==this.contentLanguage &&
+              !this.disableTranslation &&
+              this.contentLanguage!=='??') {
             this._startTranslationAndFinalize();
           } else {
             this._finalize();

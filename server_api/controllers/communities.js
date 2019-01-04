@@ -8,6 +8,8 @@ var _ = require('lodash');
 var async = require('async');
 var crypto = require("crypto");
 var queue = require('../active-citizen/workers/queue');
+const getAllModeratedItemsByCommunity = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByCommunity;
+const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -696,7 +698,7 @@ router.get('/:communityId/users', auth.can('edit community'), function (req, res
 });
 
 router.get('/:communityId/posts', auth.can('view community'), function (req, res) {
-  var where = { status: { $in: ['published','inactive']}, deleted: false };
+  var where = { status: 'published', deleted: false };
 
   var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
@@ -780,7 +782,7 @@ router.get('/:id/translatedText', auth.can('view community'), function(req, res)
       attributes: ['id','name','description']
     }).then(function(community) {
       if (community) {
-        models.TranslationCache.getTranslation(req, community, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, community, function (error, translation) {
           if (error) {
             sendCommunityOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {
@@ -973,6 +975,60 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
     }
   }).catch(function(error) {
     sendCommunityOrError(res, null, 'view post locations', req.user, error);
+  });
+});
+
+// Moderation
+
+router.delete('/:communityId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit community'), (req, res) => {
+  performSingleModerationAction(req, res, {
+    communityId: req.params.communityId,
+    itemId: req.params.itemId,
+    itemType: req.params.itemType,
+    actionType: req.params.actionType
+  });
+});
+
+router.delete('/:communityId/:actionType/process_many_moderation_item', auth.can('edit community'), (req, res) => {
+  queue.create('process-moderation', {
+    type: 'perform-many-moderation-actions',
+    items: req.body.items,
+    actionType: req.params.actionType,
+    communityId: req.params.communityId
+  }).priority('high').removeOnComplete(true).save();
+  res.send({});
+});
+
+router.get('/:communityId/flagged_content', auth.can('edit community'), (req, res) => {
+  getAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:communityId/moderate_all_content', auth.can('edit community'), (req, res) => {
+  getAllModeratedItemsByCommunity({ communityId: req.params.communityId, allContent: true }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:communityId/flagged_content_count',  auth.can('edit community'), (req, res) => {
+  getAllModeratedItemsByCommunity({ communityId: req.params.communityId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send({count: items ? items.length : 0});
+    }
   });
 });
 

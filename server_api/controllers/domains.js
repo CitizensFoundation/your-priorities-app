@@ -7,6 +7,8 @@ var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var async = require('async');
 var queue = require('../active-citizen/workers/queue');
+var performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
+const getAllModeratedItemsByDomain = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByDomain;
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -524,7 +526,7 @@ router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
       attributes: ['id','name','description']
     }).then(function(domain) {
       if (domain) {
-        models.TranslationCache.getTranslation(req, domain, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, domain, function (error, translation) {
           if (error) {
             sendDomainOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {
@@ -656,6 +658,60 @@ router.get(':id/news', auth.can('view domain'), function(req, res) {
     log.error("Domain News Error", { context: context, domain: toJson(domain), user: toJson(user), err: error,
       errorStatus: errorStatus ? errorStatus : 500 });
     res.sendStatus(500);
+  });
+});
+
+// MODERATION
+
+router.delete('/:domainId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit domain'), (req, res) => {
+  performSingleModerationAction(req, res, {
+    domainId: req.params.domainId,
+    itemId: req.params.itemId,
+    itemType: req.params.itemType,
+    actionType: req.params.actionType
+  });
+});
+
+router.delete('/:domainId/:actionType/process_many_moderation_item', auth.can('edit domain'), (req, res) => {
+  queue.create('process-moderation', {
+      type: 'perform-many-moderation-actions',
+      items: req.body.items,
+      actionType: req.params.actionType,
+      domainId: req.params.domainId
+    }).priority('high').removeOnComplete(true).save();
+  res.send({});
+});
+
+router.get('/:domainId/flagged_content', auth.can('edit domain'), (req, res) => {
+  getAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:domainId/moderate_all_content', auth.can('edit domain'), (req, res) => {
+  getAllModeratedItemsByDomain({ domainId: req.params.domainId, allContent: true }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
+  });
+});
+
+router.get('/:domainId/flagged_content_count',  auth.can('edit domain'), (req, res) => {
+  getAllModeratedItemsByDomain({ domainId: req.params.domainId }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send({count: items ? items.length : 0});
+    }
   });
 });
 

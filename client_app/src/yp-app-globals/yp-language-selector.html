@@ -192,6 +192,7 @@
           toast.show();
         }.bind(this));
         window.appGlobals.activity('click', 'stopTranslation', this.language);
+        sessionStorage.setItem("dontPromptForAutoTranslation", true);
       },
 
       _startTranslation: function () {

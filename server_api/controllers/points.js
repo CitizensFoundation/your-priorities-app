@@ -172,58 +172,54 @@ router.put('/:id/report', auth.can('vote on point'), function (req, res) {
       id: req.params.id
     }
   }).then(function (point) {
-    models.Post.find({
-      where: {
-        id: point.post_id
-      },
-      include: [
-        {
-          model: models.Group,
-          required: true,
-          attributes: ['id'],
-          include: [
-            {
-              model: models.Community,
-              required: true,
-              attributes: ['id'],
-              include: [
-                {
-                  model: models.Domain,
-                  required: true,
-                  attributes: ['id']
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }).then(function (post) {
-      if (post) {
-        models.AcActivity.createActivity({
-          type: 'activity.report.content',
-          userId: req.user.id,
-          postId: post.id,
-          groupId: post.Group.id,
-          pointId: point.id,
-          communityId: post.Group.Community.id,
-          domainId: post.Group.Community.Domain.id
-        }, function (error) {
-          if (error) {
-            log.error("Point Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
-            res.sendStatus(500);
-          } else {
-            log.info('Point Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
-            res.sendStatus(200);
+    if (point) {
+      models.Post.find({
+        where: {
+          id: point.post_id
+        },
+        include: [
+          {
+            model: models.Group,
+            required: true,
+            attributes: ['id'],
+            include: [
+              {
+                model: models.Community,
+                required: true,
+                attributes: ['id'],
+                include: [
+                  {
+                    model: models.Domain,
+                    required: true,
+                    attributes: ['id']
+                  }
+                ]
+              }
+            ]
           }
-        });
-      } else {
-        log.error("Point Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: "Could not created post" });
+        ]
+      }).then(function (post) {
+        if (post) {
+          point.report(req, 'user', post, function (error) {
+            if (error) {
+              log.error("Point Report Error", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
+              res.sendStatus(500);
+            } else {
+              log.info('Point Report Created', { post: toJson(post), context: 'report', user: toJson(req.user) });
+              res.sendStatus(200);
+            }
+          });
+        } else {
+          log.error("Point Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: "Could not created post" });
+          res.sendStatus(500);
+        }
+      }).catch(function (error) {
+        log.error("Point Report", { context: 'report', user: toJson(req.user), err: error });
         res.sendStatus(500);
-      }
-    }).catch(function (error) {
-      log.error("Point Report", { context: 'report', post: toJson(post), user: toJson(req.user), err: error });
-      res.sendStatus(500);
-    });
+      });
+    } else {
+      res.sendStatus(404);
+    }
   })
 });
 
@@ -373,7 +369,7 @@ router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
       ]
     }).then(function(point) {
       if (point) {
-        models.TranslationCache.getTranslation(req, point, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, point, function (error, translation) {
           if (error) {
             sendPointOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {
@@ -421,6 +417,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
                   log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
+                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
                   res.send({point: loadedPoint});
                 }
               });
@@ -473,6 +470,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
                   log.error('Could not reload point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
+                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
                   res.send({point: loadedPoint});
                 }
               });
@@ -506,7 +504,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     content: req.body.content,
     value: req.body.value,
     user_id: req.user.id,
-    status: 'active',
+    status: 'published',
     user_agent: req.useragent.source,
     ip_address: req.clientIp
   });
@@ -550,6 +548,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
           }).then(function(post) {
             post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
               post.increment('counter_points');
+              queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
               loadPointWithAll(point.id, function (error, loadedPoint) {
                 if (error) {
                   log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });

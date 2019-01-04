@@ -9,9 +9,6 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html" >
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html" >
 
-<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html" >
-<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid-selection-column.html" >
-
 <link rel="import" href="../yp-ajax/yp-ajax.html" >
 <link rel="import" href="../yp-behaviors/yp-number-format-behavior.html" >
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html" >
@@ -72,10 +69,12 @@
       }
 
       .headerBox {
-        margin: 16px;
-        margin-bottom: 0;
-        margin-left: 0;
-        margin-right: 0;
+        background-color: var(--accent-color);
+        color: #FFF;
+        margin: 0;
+        padding: 0 0;
+        padding-top: 12px;
+        padding-bottom: 10px;
       }
 
       paper-button {
@@ -89,23 +88,49 @@
         padding-bottom: 4px;
         margin-bottom: 4px;
         align-self: flex-start;
+        background-color: #FFF;
+        color: #000;
+        margin-top: 2px;
+        margin-right: 12px;
       }
 
       #grid {
-        margin-top: 8px;
+        margin-top: 0;
+        margin-bottom: 0;
       }
 
       .headerText {
-        display: flex;
+        padding: 0 0 !important;
+      }
+
+      .collectionName {
         font-size: 22px;
+        margin-bottom: 1px;
+        margin-top: 4px;
       }
 
       .innerHeader {
-        align-self: flex-end;
-        margin-bottom: 24px;
+        font-size: 17px;
+        color: #F5F5F5;
+      }
+
+      .closeButton {
+        width: 50px;
+        height: 50px;
+        margin-left: 4px;
+        margin-right: 4px;
       }
 
       @media (max-width: 600px) {
+        .closeButton {
+          width: 45px;
+          height: 45px;
+        }
+
+        .inputBox {
+          margin-top: 6px;
+        }
+
         paper-listbox {
           margin-right: 8px;
         }
@@ -123,6 +148,18 @@
         }
       }
 
+      paper-spinner {
+        margin-left: 16px;
+        margin-top: 8px;
+        --paper-spinner-layer-1-color: #FFF;
+        --paper-spinner-layer-2-color: #FFF;
+        --paper-spinner-layer-3-color: #FFF;
+        --paper-spinner-layer-4-color: #FFF;
+      }
+
+      .inviteButton {
+        margin-top: 5px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -143,18 +180,35 @@
 
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
-        <div class="headerText"><div class="innerHeader">[[collectionName]] <span hidden$="[[!totalUserCount]]">([[totalUserCount]] [[usersCountText]])</span></div></div>
+
+        <div>
+          <paper-icon-button id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
+        </div>
+
+        <div class="headerText layout vertical">
+          <div class="layout horizontal">
+            <div class="collectionName">[[collectionName]]</div>
+          </div>
+          <div class="innerHeader">[[headerText]]
+            <span hidden$="[[!totalUserCount]]">([[totalUserCount]])</span>
+          </div>
+        </div>
+        <div hidden$="[[!spinnerActive]]"><paper-spinner active></paper-spinner></div>
+
         <div class="flex"></div>
+        <div hidden$="[[!showReload]]">
+          <paper-icon-button icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+        </div>
         <div hidden$="[[domainId]]">
           <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
-            <paper-input label="[[t('users.email')]]" value="{{inviteUserEmail}}"></paper-input>
-            <paper-button on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
+            <paper-input label="[[t('email')]]" value="{{inviteUserEmail}}"></paper-input>
+            <paper-button class="inviteButton" on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
           </paper-material>
         </div>
 
         <paper-material hidden$="[[!adminUsers]]" class="layout horizontal wrap inputBox">
-          <paper-input label="[[t('users.email')]]" value="{{addAdminEmail}}"></paper-input>
-          <paper-button on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
+          <paper-input label="[[t('email')]]" value="{{addAdminEmail}}"></paper-input>
+          <paper-button class="inviteButton" on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
         </paper-material>
       </div>
 
@@ -167,17 +221,15 @@
           <template>[[item.id]]</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('name')]]</template>
+        <vaadin-grid-filter-column flex-grow="2" width="140px" path="name" header="[[t('name')]]">
           <template>[[item.name]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
-        <vaadin-grid-column>
-          <template class="header">[[t('email')]]</template>
+        <vaadin-grid-filter-column path="email" flex-grow="1" width="150px" header="[[t('email')]]">
           <template>[[item.email]]</template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
-        <vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" width="150px">
           <template class="header">[[t('organization')]]</template>
           <template>
             <div class="organization" hidden$="[[!_userOrganizationName(item)]]">
@@ -248,24 +300,20 @@
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-
-      <div class="buttons">
-        <paper-button raised dialog-dismiss>[[t('close')]]</paper-button>
-      </div>
-    </paper-dialog>
+   </paper-dialog>
 
     <div class="layout horizontal center-center">
       <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeAndDeleteAjax" on-response="_removeAndDeleteCompleted"></yp-ajax>
-      <yp-ajax method="DELETE" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
-      <yp-ajax method="POST" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
-      <yp-ajax method="POST" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
-      <yp-ajax method="POST" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteAjax" on-response="_removeAndDeleteCompleted"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
     </div>
   </template>
 
@@ -291,7 +339,8 @@
 
         users: {
           type: Array,
-          notify: true
+          notify: true,
+          value: null
         },
 
         headerText: {
@@ -367,12 +416,62 @@
 
         collectionName: String,
 
-        usersCountText: String
+        usersCountText: String,
+
+        showReload: {
+          type: Boolean,
+          value: false
+        },
+
+        forceSpinner: {
+          type: Boolean,
+          value: false
+        },
+
+        spinnerActive: {
+          type: Boolean,
+          computed: '_spinnerActive(totalUserCount, forceSpinner)'
+        }
       },
 
       observers: [
         '_selectedUsersChanged(selectedUsers.splices)'
       ],
+
+      _spinnerActive: function (count, force) {
+        return !count || force
+      },
+
+      _ajaxError: function () {
+        this.set('forceSpinner', false);
+      },
+
+      ready: function () {
+        this._setGridSize();
+        window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+      },
+
+      _reload: function () {
+        this.$.ajax.generateRequest();
+        this.set('forceSpinner', true);
+      },
+
+      _resizeThrottler: function () {
+        if ( !this.resizeTimeout ) {
+          this.resizeTimeout = setTimeout(function() {
+            this.resizeTimeout = null;
+            this._setGridSize();
+          }.bind(this), 66);
+        }
+      },
+
+      _setGridSize: function () {
+        if (window.innerWidth<=600) {
+          this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
+        } else {
+          this.$.grid.style.height = (window.innerHeight*0.8).toFixed()+'px';
+        }
+      },
 
       _menuSelection: function (event, detail) {
         var allMenus = this.$.grid.querySelectorAll("paper-listbox");
@@ -549,12 +648,15 @@
         if (this.modelType==="groups" && this.groupId) {
           ajax.url = url;
           ajax.generateRequest();
+          this.set('forceSpinner', true);
         } else if (this.modelType==="communities" && this.communityId) {
           ajax.url = url;
           ajax.generateRequest();
+          this.set('forceSpinner', true);
         } else if (this.modelType==="domains" && this.domainId) {
           ajax.url = url;
           ajax.generateRequest();
+          this.set('forceSpinner', true);
         } else {
           console.warn("Can't find model type or ids");
         }
@@ -610,64 +712,72 @@
         }
       },
 
+      _manyItemsResponse: function (showToast) {
+        this.set('forceSpinner', false);
+        debugger;
+        this.set('showReload', true);
+        if (showToast)
+          window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
+      },
+
       _removeAdminResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('adminRemoved'));
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _removeManyAdminResponse: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalsInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeManyUsersResponse: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalsInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeAndDeleteCompleted: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalAndDeletionInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeAndDeleteManyCompleted: function () {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
           dialog.open(this.t('removalsAndDeletionsInProgress'), null, true, false, true);
         }.bind(this));
-        this.$.dialog.close();
+        this._manyItemsResponse();
       },
 
       _removeUserResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('userRemoved'));
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _addAdminResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('adminAdded')+' '+this.addAdminEmail);
         this.set('addAdminEmail', null);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _addOrganizationResponse: function (event, detail) {
         window.appGlobals.notifyUserViaToast(this.t('organizationUserAdded')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _removeOrganizationResponse: function (event, detail) {
         window.appGlobals.notifyUserViaToast(this.t('organizationUserRemoved')+' '+ detail.response.email);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _inviteUserResponse: function () {
         window.appGlobals.notifyUserViaToast(this.t('users.userInvited')+' '+this.inviteUserEmail);
         this.set('inviteUserEmail', null);
-        this.$.ajax.generateRequest();
+        this._reload();
       },
 
       _domainIdChanged: function (newGroupId) {
@@ -701,10 +811,9 @@
       },
 
       _usersResponse: function (event, detail) {
+        this.set('forceSpinner', false);
         this.set('users', detail.response);
-        this.$.grid.clearCache();
-        this.set('selectedUsersCount', 0);
-        this.set('selectedUsersEmpty', true);
+        this._resetSelectedAndClearCache();
       },
 
       setup: function (groupId, communityId, domainId, adminUsers) {
@@ -733,7 +842,11 @@
       },
 
       _reset: function () {
-        this.set('users', []);
+        this.set('users', null);
+        this._resetSelectedAndClearCache();
+      },
+
+      _resetSelectedAndClearCache: function () {
         this.set('selectedUsers', []);
         this.set('selectedUsersCount', 0);
         this.set('selectedUsersEmpty', true);

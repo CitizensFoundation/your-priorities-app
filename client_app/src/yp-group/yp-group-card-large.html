@@ -214,6 +214,12 @@
               <paper-item hidden$="[[!hasGroupAccess]]" id="usersMenuItem">[[t('group.users')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="adminsMenuItem">[[t('group.admins')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="moderationMenuItem">
+                [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
+              </paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
+                [[t('manageAllContent')]]
+              </paper-item>
               <a hidden$="[[!hasGroupAccess]]" target="_blank" href="/api/groups/[[group.id]]/export_group"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
@@ -225,6 +231,13 @@
         <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
       </paper-material>
     </div>
+
+    <template is="dom-if" if="[[group]]">
+      <template is="dom-if" if="[[hasGroupAccess]]">
+        <yp-ajax hidden method="GET" url="/api/groups/[[group.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+      </template>
+    </template>
+
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
   </template>
@@ -277,7 +290,12 @@
           value: null
         },
 
-        groupVideoId: Number
+        groupVideoId: Number,
+
+        flaggedContentCount: {
+          type: Number,
+          value: null
+        }
       },
 
       _showMenuItem: function (hasGroupAccess, group) {
@@ -360,9 +378,28 @@
           this.fire('yp-post-new');
         else if (detail.item.id==="deleteContentMenuItem")
           this._openDeleteContent();
+        else if (detail.item.id==="moderationMenuItem")
+          this._openContentModeration();
+        else if (detail.item.id==="moderationAllMenuItem")
+          this._openAllContentModeration();
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
         this.$$("paper-listbox").select(null);
+      },
+      _openContentModeration: function () {
+        window.appGlobals.activity('open', 'groupContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(this.group.id, null, null, false);
+          dialog.open(this.group.name);
+        }.bind(this));
+      },
+
+      _openAllContentModeration: function () {
+        window.appGlobals.activity('open', 'communityAllContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(this.group.id, null, null, '/moderate_all_content');
+          dialog.open(this.group.name);
+        }.bind(this));
       },
 
       _openPagesDialog: function () {

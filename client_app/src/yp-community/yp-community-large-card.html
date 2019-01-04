@@ -278,6 +278,12 @@
               <paper-item hidden$="[[!hasCommunityAccess]]" id="usersMenuItem">[[t('community.users')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="adminsMenuItem">[[t('community.admins')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="moderationMenuItem">
+                [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
+              </paper-item>
+              <paper-item hidden$="[[!hasCommunityAccess]]" id="moderationAllMenuItem">
+                [[t('manageAllContent')]]
+              </paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteContentMenuItem">[[t('deleteCommunityContent')]]</paper-item>
@@ -289,6 +295,13 @@
         <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
       </paper-material>
     </div>
+
+    <template is="dom-if" if="[[community]]">
+      <template is="dom-if" if="[[hasCommunityAccess]]">
+        <yp-ajax hidden method="GET" url="/api/communities/[[community.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+      </template>
+    </template>
+
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
@@ -337,7 +350,12 @@
           computed: '_communityVideoPosterURL(community)'
         },
 
-        communityVideoId: Number
+        communityVideoId: Number,
+
+        flaggedContentCount: {
+          type: Number,
+          value: null
+        }
       },
 
       _communityVideoURL: function (community) {
@@ -425,25 +443,45 @@
       },
 
       _menuSelection: function (event, detail) {
-        if (detail.item.id=="editMenuItem")
+        if (detail.item.id==="editMenuItem")
           this._openEdit();
-        else if (detail.item.id=="deleteMenuItem")
+        else if (detail.item.id==="deleteMenuItem")
           this._openDelete();
-        else if (detail.item.id=="usersMenuItem")
+        else if (detail.item.id==="usersMenuItem")
           this._openUsersDialog();
-        else if (detail.item.id=="adminsMenuItem")
+        else if (detail.item.id==="adminsMenuItem")
           this._openAdminsDialog();
-        else if (detail.item.id=="pagesMenuItem")
+        else if (detail.item.id==="pagesMenuItem")
           this._openPagesDialog();
-        else if (detail.item.id=="bulkStatusUpdateMenuItem")
+        else if (detail.item.id==="bulkStatusUpdateMenuItem")
           this._openBulkStatusUpdates();
-        else if (detail.item.id=="addGroupMenuItem")
+        else if (detail.item.id==="addGroupMenuItem")
           this.fire('yp-new-group');
+        else if (detail.item.id==="moderationMenuItem")
+          this._openContentModeration();
+        else if (detail.item.id==="moderationAllMenuItem")
+          this._openAllContentModeration();
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
         else if (detail.item.id==="deleteContentMenuItem")
           this._openDeleteContent();
         this.$$("paper-listbox").select(null);
+      },
+
+      _openContentModeration: function () {
+        window.appGlobals.activity('open', 'communityContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, this.community.id, null, false);
+          dialog.open(this.community.name);
+        }.bind(this));
+      },
+
+      _openAllContentModeration: function () {
+        window.appGlobals.activity('open', 'communityAllContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, this.community.id, null, '/moderate_all_content');
+          dialog.open(this.community.name);
+        }.bind(this));
       },
 
       _openBulkStatusUpdates: function () {

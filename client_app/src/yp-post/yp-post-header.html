@@ -284,6 +284,7 @@
 
       .transcriptError {
         margin-top: 8px;
+        margin-bottom: 8px;
         color: #F00;
       }
 
@@ -397,12 +398,12 @@
                 </yp-magic-text>
               </div>
               <div class="card-actions">
-                <yp-post-actions floating header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                <yp-post-actions hidden$="[[hideActions]]" floating header-mode="[[headerMode]]" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
               </div>
             </div>
             <template is="dom-if" if="[[headerMode]]">
               <template is="dom-if" if="[[loggedInUser]]">
-                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit">
+                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[hideActions]]">
                   <paper-icon-button class="moreVert" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
                   <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                     <template is="dom-if" if="[[hasPostAccess]]">
@@ -487,6 +488,11 @@
         },
 
         isAudioCover: {
+          type: Boolean,
+          value: false
+        },
+
+        hideActions: {
           type: Boolean,
           value: false
         }
@@ -580,6 +586,8 @@
       },
 
       _postChanged: function (post) {
+        this.set("checkingTranscript", false);
+        this.set('checkTranscriptError', false);
         if (post && post.description) {
           this.async(function () {
             var description = this.$$("#description");
@@ -592,6 +600,7 @@
               console.error("Can't find description element");
             }
           });
+
           if (this.hasPostAccess && window.appGlobals.hasTranscriptSupport===true) {
             if (post.public_data && post.public_data.transcript && post.public_data.transcript.inProgress) {
               if (post.cover_media_type==="audio") {
@@ -613,7 +622,6 @@
             this.set('isAudioCover', false);
           }
         }
-        this.set('checkTranscriptError', false);
       },
 
       updateDescriptionIfEmpty: function (description) {
@@ -642,7 +650,8 @@
           this._openAnonymizeContent();
         else if (detail.item.id=="deleteContentMenuItem")
           this._openDeleteContent();
-
+        else if (detail.item.id=="reportMenuItem")
+          this._openReport();
         this.$$("paper-listbox").select(null);
       },
 

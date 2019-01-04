@@ -200,6 +200,12 @@
               <paper-item hidden$="[[!hasDomainAccess]]" id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="usersMenuItem">[[t('domainUsers')]]</paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="moderationMenuItem">
+                [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
+              </paper-item>
+              <paper-item hidden$="[[!hasDomainAccess]]" id="moderationAllMenuItem">
+                [[t('manageAllContent')]]
+              </paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="adminsMenuItem">[[t('domainAdmins')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
@@ -209,6 +215,12 @@
         <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
       </paper-material>
     </div>
+
+    <template is="dom-if" if="[[domain]]">
+      <template is="dom-if" if="[[hasDomainAccess]]">
+        <yp-ajax method="GET" hidden url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+      </template>
+    </template>
 
     <iron-media-query query="(max-width: 945px)" query-matches="{{narrowScreen}}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -268,7 +280,12 @@
           computed: '_domainVideoPosterURL(domain)'
         },
 
-        domainVideoId: Number
+        domainVideoId: Number,
+
+        flaggedContentCount: {
+          type: Number,
+          value: null
+        }
       },
 
       _domainChanged: function (domain, previousDomain) {
@@ -323,19 +340,23 @@
       },
 
       _menuSelection: function (event, detail) {
-        if (detail.item.id=="editMenuItem")
+        if (detail.item.id==="editMenuItem")
           this._openEdit();
-        else if (detail.item.id=="createOrganizationMenuItem")
+        else if (detail.item.id==="createOrganizationMenuItem")
           this._newOrganization();
-        else if (detail.item.id=="pagesMenuItem")
+        else if (detail.item.id==="pagesMenuItem")
           this._openPagesDialog();
-        else if (detail.item.id=="organizationsGridMenuItem")
+        else if (detail.item.id==="organizationsGridMenuItem")
           this._openOrganizationsGrid();
         else if (detail.item.id==="usersMenuItem")
           this._openUsersDialog();
         else if (detail.item.id==="adminsMenuItem")
           this._openAdminsDialog();
-        else if (detail.item.id=="addCommunityMenuItem")
+        else if (detail.item.id==="moderationMenuItem")
+          this._openContentModeration();
+        else if (detail.item.id==="moderationAllMenuItem")
+          this._openAllContentModeration();
+        else if (detail.item.id==="addCommunityMenuItem")
           this.fire('yp-new-community');
         this.$$("paper-listbox").select(null);
       },
@@ -376,6 +397,22 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("domainEdit", function (dialog) {
           dialog.setup(this.domain, false, this._refresh.bind(this));
           dialog.open('edit', {domainId: this.domain.id});
+        }.bind(this));
+      },
+
+      _openContentModeration: function () {
+        window.appGlobals.activity('open', 'domainContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, null, this.domain.id, false);
+          dialog.open(this.domain.name);
+        }.bind(this));
+      },
+
+      _openAllContentModeration: function () {
+        window.appGlobals.activity('open', 'domainAllContentModeration');
+        Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+          dialog.setup(null, null, this.domain.id, '/moderate_all_content');
+          dialog.open(this.domain.name);
         }.bind(this));
       },
 

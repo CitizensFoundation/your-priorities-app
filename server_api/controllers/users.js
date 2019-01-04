@@ -9,6 +9,8 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
+var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
+const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
 var sendUserOrError = function (res, user, context, error, errorStatus) {
   if (error || !user) {
@@ -195,6 +197,38 @@ router.post('/register_anonymously', function (req, res) {
   }).catch(function (error) {
     log.error("User Error", { context: 'register_anonymous', err: error, errorStatus: 500 });
     res.status(500).send({status:500, message: error.name, type:'internal'});
+  });
+});
+
+// Moderation
+
+router.delete('/:userId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit user'), (req, res) => {
+  performSingleModerationAction(req, res, {
+    userId: req.params.userId,
+    itemId: req.params.itemId,
+    itemType: req.params.itemType,
+    actionType: req.params.actionType
+  });
+});
+
+router.delete('/:userId/:actionType/process_many_moderation_item', auth.can('edit user'), (req, res) => {
+  queue.create('process-moderation', {
+    type: 'perform-many-moderation-actions',
+    items: req.body.items,
+    actionType: req.params.actionType,
+    userId: req.params.userId
+  }).priority('high').removeOnComplete(true).save();
+  res.send({});
+});
+
+router.get('/:userId/moderate_all_content', auth.can('edit user'), (req, res) => {
+  getAllModeratedItemsByUser({ userId: req.params.userId, allContent: true }, (error, items) => {
+    if (error) {
+      log.error("Error getting items for moderation", { error });
+      res.sendStatus(500)
+    } else {
+      res.send(items);
+    }
   });
 });
 

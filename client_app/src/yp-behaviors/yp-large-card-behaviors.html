@@ -12,7 +12,16 @@
         computed: '_getEditMenuAlignment(narrowScreen)'
       },
 
+      flaggedContentCount: {
+        type: Number,
+        value: null
+      },
+
       narrowScreen: Boolean
+    },
+
+    _setFlaggedContentCount: function (event, detail) {
+      this.set('flaggedContentCount', detail.response.count);
     },
 
     _getEditMenuAlignment: function (narrow) {

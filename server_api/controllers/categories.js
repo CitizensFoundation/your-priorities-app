@@ -59,7 +59,7 @@ router.get('/:id/translatedText', auth.can('view category'), function(req, res) 
       attributes: ['id','name']
     }).then(function(category) {
       if (category) {
-        models.TranslationCache.getTranslation(req, category, function (error, translation) {
+        models.AcTranslationCache.getTranslation(req, category, function (error, translation) {
           if (error) {
             sendCategoryOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {

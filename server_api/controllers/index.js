@@ -7,20 +7,22 @@ let fs = require('fs');
 
 let replaceForBetterReykjavik = function (data) {
   data = data.replace(/XappNameX/g, "Betri Reykjavík");
-  data = data.replace(/XdescriptionX/g, "Betri Reykjavík er samráðsverkefni Reykjavíkurborgar, Íbúa ses og Reykvíkinga.");
-  return data.replace(/XmanifestPathX/g, "manifest_br");
+  return data.replace(/XdescriptionX/g, "Betri Reykjavík er samráðsverkefni Reykjavíkurborgar, Íbúa ses og Reykvíkinga.");
 };
 
 let replaceForBetterIceland = function (data) {
   data = data.replace(/XappNameX/g, "Betra Ísland");
-  data = data.replace(/XdescriptionX/g, "Betra Ísland er samráðsvefur fyrir alla Íslendinga");
-  return data.replace(/XmanifestPathX/g, "manifest_bi");
+  return data.replace(/XdescriptionX/g, "Betra Ísland er samráðsvefur fyrir alla Íslendinga");
 };
 
 let replaceForYrpri = function (data) {
   data = data.replace(/XappNameX/g, "Your Priorities");
-  data = data.replace(/XdescriptionX/g, "Citizen participation application");
-  return data.replace(/XmanifestPathX/g, "manifest_yp");
+  return data.replace(/XdescriptionX/g, "Citizen participation application");
+};
+
+let replaceFromEnv = function (data) {
+  data = data.replace(/XappNameX/g, process.env.YP_INDEX_APP_NAME ? process.env.YP_INDEX_APP_NAME : "Your Priorities");
+  return data.replace(/XdescriptionX/g, process.env.YP_INDEX_DESCRIPTION ? process.env.YP_INDEX_DESCRIPTION : "Citizen participation application");
 };
 
 let sendIndex = function (req, res) {
@@ -42,8 +44,10 @@ let sendIndex = function (req, res) {
         res.send(replaceForBetterReykjavik(indexFileData));
       } else if (req.hostname.indexOf('betraisland.is') > -1) {
         res.send(replaceForBetterIceland(indexFileData));
-      } else {
+      } else if (req.hostname.indexOf('yrpri.org') > -1) {
         res.send(replaceForYrpri(indexFileData));
+      } else {
+        res.send(replaceFromEnv(indexFileData));
       }
     }
   });
