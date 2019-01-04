@@ -703,7 +703,10 @@ router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, re
     if (post && post.public_data && post.public_data.transcript) {
       if (post.public_data.transcript.inProgress===true && post.public_data.transcript.videoId) {
         const timeOutDate = moment().add(-15, 'minutes').toDate();
-        const startDate = moment(post.public_data.transcript.inProgressDate).toDate();
+        let startDate;
+        if (post.public_data.transcript.inProgressDate) {
+          startDate = moment(post.public_data.transcript.inProgressDate).toDate();
+        }
         if (!post.public_data.transcript.inProgressDate || startDate<timeOutDate) {
           post.set('public_data.transcript.inProgress', false);
           post.set('public_data.transcript.error', "Timeout" );
@@ -761,7 +764,10 @@ router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, re
   }).then( post => {
     if (post && post.public_data && post.public_data.transcript) {
       const timeOutDate = moment().add(-15, 'minutes').toDate();
-      const startDate = moment(post.public_data.transcript.inProgressDate).toDate();
+      let startDate;
+      if (post.public_data.transcript.inProgressDate) {
+        startDate = moment(post.public_data.transcript.inProgressDate).toDate();
+      }
       if (!post.public_data.transcript.inProgressDate || startDate<timeOutDate) {
         post.set('public_data.transcript.inProgress', false);
         post.set('public_data.transcript.error', "Timeout" );

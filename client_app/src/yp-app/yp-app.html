@@ -527,6 +527,7 @@
           toast.text = this.t('autoTranslationStopped');
           toast.show();
         }.bind(this));
+        sessionStorage.setItem("dontPromptForAutoTranslation", true);
       },
 
       _setLanguageName: function (event, detail) {

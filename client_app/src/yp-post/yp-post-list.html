@@ -517,11 +517,11 @@
           var firstContent=null;
           var multipleLanguages = false;
           posts.forEach(function (post) {
-            if (post.language) {
-              if (!firstLanguage) {
+            if (post.language && !multipleLanguages) {
+              if (!firstLanguage && post.language!=='??') {
                 firstLanguage = post.language;
                 firstContent = post.description;
-              } else if (firstLanguage!=post.language) {
+              } else if (firstLanguage && firstLanguage!==post.language && post.language!=='??') {
                 multipleLanguages = true;
                 console.info("Multiple post languages: "+firstLanguage+" and "+post.language);
                 console.info("A: "+firstContent+" B: "+post.description);
