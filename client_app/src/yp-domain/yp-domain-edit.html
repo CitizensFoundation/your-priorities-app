@@ -67,6 +67,10 @@
         margin-left: 4px;
         margin-top: 4px;
       }
+
+      #google_analytics_code {
+        margin-top: 4px;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -164,6 +168,14 @@
         <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{domain.default_locale}}"></yp-language-selector>
 
         <paper-checkbox name="onlyAdminsCanCreateCommunities" checked$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+
+        <paper-input id="google_analytics_code"
+                     name="google_analytics_code"
+                     type="text"
+                     label="[[t('analyticsTrackerCode')]]"
+                     value="{{domain.google_analytics_code}}"
+                     maxlength="40" style="width: 200px;">
+        </paper-input>
 
         <paper-input id="facebookClientId"
                      name="facebookClientId"

@@ -580,6 +580,12 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
         domain.set('configuration', {});
       }
 
+      if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
+        domain.google_analytics_code = req.body.google_analytics_code;
+      } else {
+        domain.google_analytics_code = null;
+      }
+
       domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText!="") ? req.body.customUserRegistrationText : null);
       domain.set('configuration.downloadFacebookImagesForUser', (req.body.downloadFacebookImagesForUser && req.body.downloadFacebookImagesForUser!="") ? true : false);
       domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);
