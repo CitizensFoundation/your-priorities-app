@@ -264,8 +264,8 @@
           <template>[[item.toxicityScore]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="severeToxicityScore" header="[[t('severeToxicityScore')]]?" hidden>
-          <template>[[item.severeToxicityScore]]</template>
+        <vaadin-grid-sort-column width="150px" text-align="left" flex-grow="1" path="groupName" header="[[t('groupName')]]" hidden$="[[!userId]]">
+          <template>[[item.groupName]]</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-filter-column width="200px" flex-grow="4" path="content" header="[[t('content')]]" hidden$="[[narrow]]">

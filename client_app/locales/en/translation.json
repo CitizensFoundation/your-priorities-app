@@ -1,4 +1,5 @@
 {
+  "groupName": "Group",
   "areYouSureAnonymizeSelectedContent": "Are you sure you want to anonymize the selected content?",
   "areYouSureAnonymizeContent": "Are you sure you want to anonymize this content?",
   "operationInProgressTryReloading": "Operation in progress, try reloading the data in a bit",
