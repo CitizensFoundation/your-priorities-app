@@ -379,7 +379,7 @@
 
               <div hidden$="[[forceSecureSamlLogin]]">
                 <template is="dom-if" if="[[registerMode]]" restamp>
-                  <paper-input id="name"
+                  <paper-input id="fullname"
                                type="text"
                                label="[[t('user.name')]]"
                                value="{{name}}"
@@ -591,6 +591,11 @@
       forceSecureSamlLogin: {
         type: Boolean,
         value: false
+      },
+
+      isSending: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -747,6 +752,7 @@
     },
 
     _registerError: function (event, error) {
+      this.set('isSending', false);
       if (error == 'SequelizeUniqueConstraintError') {
         this.$$("#registerAjax").showErrorDialog(this.t('user.alreadyRegisterred'));
       } else {
@@ -756,6 +762,7 @@
     },
 
     _loginError: function (event, error) {
+      this.set('isSending', false);
       if (error == 'Unauthorized') {
         this.$$("#loginAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
       } else {
@@ -816,28 +823,36 @@
     },
 
     _validateAndSend: function (e) {
-      window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Submit' : 'Login Submit', 'Email');
-      if (this.$$("#form").validate() && this.email && this.password) {
-        if (this.registerMode) {
-          this.$$("#registerAjax").body = this.credentials;
-          this.$$("#registerAjax").generateRequest();
+      if (!this.isSending) {
+        this.set('isSending', true);
+        window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Submit' : 'Login Submit', 'Email');
+        if (this.$$("#form").validate() && this.email && this.password) {
+          if (this.registerMode) {
+            this.$$("#registerAjax").body = this.credentials;
+            this.$$("#registerAjax").generateRequest();
+          } else {
+            this.$$("#loginAjax").body = this.credentials;
+            this.$$("#loginAjax").generateRequest();
+          }
         } else {
-          this.$$("#loginAjax").body = this.credentials;
-          this.$$("#loginAjax").generateRequest();
+          this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
+          window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Fail' : 'Login Fail', 'Email', 'Form not validated');
+          this.set('isSending', false);
+          return false;
         }
       } else {
-        this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
-        window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Fail' : 'Login Fail', 'Email', 'Form not validated');
-        return false;
+        console.warn("Trying to call _validateAndSend while sending");
       }
     },
 
     _registerResponse: function (event, detail) {
+      this.set('isSending', false);
       window.appGlobals.sendLoginAndSignupToAnalytics(detail.response.id, "Signup Success", 'Email');
       this._loginCompleted(detail.response);
     },
 
     _loginResponse: function (event, detail) {
+      this.set('isSending', false);
       this._loginCompleted(detail.response);
     },
 
@@ -886,7 +901,22 @@
           this.$$("#dialog").open();
         });
       });
+
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup/Login Opened', 'Undecided');
+
+      this.async(function () {
+        if (!this.forceSecureSamlLogin && window.PasswordCredential && navigator.credentials) {
+          navigator.credentials.get({password: true}).then(function (credentials) {
+            if (credentials && credentials.id && credentials.password) {
+              this.set('email', credentials.id);
+              this.set('password', credentials.password);
+              this._validateAndSend();
+            } else {
+              console.warn("Canceling credentials.get");
+            }
+          }.bind(this));
+        }
+      });
     },
 
     close: function () {

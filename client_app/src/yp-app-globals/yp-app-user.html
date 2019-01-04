@@ -507,6 +507,7 @@
           this.$.logoutToast.show();
           this.fire('yp-close-right-drawer');
           this.removeUserSession();
+          this.recheckAdminRights();
         },
 
         _isLoggedInResponse: function(event, detail) {
