@@ -190,7 +190,7 @@
             <span hidden$="[[!totalItemsCount]]">([[totalItemsCount]] [[itemsCountText]])</span>
           </div>
         </div>
-        <div hidden$="[[totalItemsCount]]"><paper-spinner active></paper-spinner></div>
+        <div hidden$="[[!spinnerActive]]"><paper-spinner active></paper-spinner></div>
         <div class="flex"></div>
         <div class="checkBox" hidden$="[[narrow]]"><paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox></div>
         <div hidden$="[[!showReload]]">
@@ -287,20 +287,20 @@
               <paper-icon-button icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
-                  <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
-                    [[t('deleteSelectedContent')]] [[selectedItemsCount]]
+                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
+                    [[t('approveSelectedContent')]] [[selectedItemsCount]]
+                  </paper-item>
+                  <paper-item data-args$="[[item.id]]" hidden$="[[!onlyFlaggedItems]]" on-tap="_clearSelectedFlags">
+                    [[t('clearSelectedFlags')]] [[selectedItemsCount]]
                   </paper-item>
                   <paper-item data-args$="[[item.id]]" on-tap="_blockSelected">
                     [[t('blockSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
-                    [[t('approveSelectedContent')]] [[selectedItemsCount]]
-                  </paper-item>
-                  <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_clearSelectedFlags">
-                    [[t('clearSelectedFlags')]] [[selectedItemsCount]]
-                  </paper-item>
                   <paper-item data-args$="[[item.id]]" hidden$="[[!userId]]" on-tap="_anonymizeSelectedContent">
                     [[t('anonymizeSelectedContent')]] [[selectedItemsCount]]
+                  </paper-item>
+                  <paper-item data-args$="[[item.id]]" on-tap="_deleteSelected">
+                    [[t('deleteSelectedContent')]] [[selectedItemsCount]]
                   </paper-item>
                 </template>
               </paper-listbox>
@@ -310,20 +310,20 @@
             <paper-menu-button horizontal-align="right" class="helpButton">
               <paper-icon-button icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_delete">
-                  [[t('deleteContent')]]
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_approve">
+                  [[t('approveContent')]]
+                </paper-item>
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[!onlyFlaggedItems]]" on-tap="_clearFlags">
+                  [[t('clearFlags')]]
                 </paper-item>
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_block">
                   [[t('blockContent')]]
                 </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_approve">
-                  [[t('approveContent')]]
-                </paper-item>
-                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_clearFlags">
-                  [[t('clearFlags')]]
-                </paper-item>
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[!userId]]" on-tap="_anonymize">
                   [[t('anonymizeContent')]]
+                </paper-item>
+                <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" on-tap="_delete">
+                  [[t('deleteContent')]]
                 </paper-item>
               </paper-listbox>
             </paper-menu-button>
@@ -459,7 +459,21 @@
         showReload: {
           type: Boolean,
           value: false
+        },
+
+        forceSpinner: {
+          type: Boolean,
+          value: false
+        },
+
+        spinnerActive: {
+          type: Boolean,
+          computed: '_spinnerActive(totalItemsCount, forceSpinner)'
         }
+      },
+
+      _spinnerActive: function (count, force) {
+        return !count || force
       },
 
       observers: [
@@ -468,6 +482,7 @@
 
       _reload: function () {
         this.$.ajax.generateRequest();
+        this.set('forceSpinner', true);
       },
 
       _onlyFlaggedItems: function (typeOfModeration) {
@@ -475,11 +490,13 @@
       },
 
       _manyItemsResponse: function () {
+        this.set('forceSpinner', false);
         this.set('showReload', true);
         window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
       },
 
       _singleItemResponse: function () {
+        this.set('forceSpinner', false);
         this._reload();
       },
 
@@ -577,7 +594,7 @@
       },
 
       _reallyDeleteSelected: function () {
-        this._ajaxMaster(this.$.deleteManyItemsAjax, 'delete', this.selectedItemIdsAndType);
+        this._ajaxMaster(this.$.manyItemsAjax, 'delete', this.selectedItemIdsAndType);
       },
 
       _delete: function (event) {
@@ -645,6 +662,7 @@
         }
         ajax.url = url;
         ajax.generateRequest();
+        this.set('forceSpinner', true);
 
         if (this.selectedItemId) {
           var item = this._findItemFromId(this.selectedItemId);
@@ -710,6 +728,7 @@
       },
 
       _itemsResponse: function (event, detail) {
+        this.set('forceSpinner', false);
         this.set('items', detail.response);
         this._resetSelectedAndClearCache();
       },

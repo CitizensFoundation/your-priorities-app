@@ -8,8 +8,8 @@ var _ = require('lodash');
 var async = require('async');
 var crypto = require("crypto");
 var queue = require('../active-citizen/workers/queue');
-const moderationItemsActionCommunity = require('../active-citizen/engine/moderation/get_moderation_items').moderationItemsActionCommunity;
 const getAllModeratedItemsByCommunity = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByCommunity;
+const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -980,15 +980,23 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
 
 // Moderation
 
-router.delete('/:communityId/:itemId/:itemModelClass/delete_moderated_item', auth.can('edit community'), (req, res) => {
-  if (req.params.itemModelClass==='post') {
-    moderationItemsActionCommunity(req, res, models.Post, 'delete');
-  } else if (req.params.itemModelClass==='point') {
-    moderationItemsActionCommunity(req, res, models.Point, 'delete');
-  } else {
-    log.error("Can't find item model class");
-    res.sendStatus(500);
-  }
+router.delete('/:communityId/:itemId/:itemType/:actionType/process_one_moderation_item', auth.can('edit community'), (req, res) => {
+  performSingleModerationAction(req, res, {
+    communityId: req.params.communityId,
+    itemId: req.params.itemId,
+    itemType: req.params.itemType,
+    actionType: req.params.actionType
+  });
+});
+
+router.delete('/:communityId/:actionType/process_many_moderation_item', auth.can('edit community'), (req, res) => {
+  queue.create('process-moderation', {
+    type: 'perform-many-moderation-actions',
+    items: req.body.items,
+    actionType: req.params.actionType,
+    communityId: req.params.communityId
+  }).priority('high').removeOnComplete(true).save();
+  res.send({});
 });
 
 router.get('/:communityId/flagged_content', auth.can('edit community'), (req, res) => {
