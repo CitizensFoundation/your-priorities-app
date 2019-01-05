@@ -2,70 +2,70 @@
 
 FORCE_PRODUCTION = false;
 
-var debug = require('debug')('your-priorities-app');
-var express = require('express');
-var session = require('express-session');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var morgan = require('morgan');
-var ConnectRoles = require('connect-roles');
-var RedisStore = require('connect-redis')(session);
-var useragent = require('express-useragent');
-var requestIp = require('request-ip');
-var compression = require('compression');
+const debug = require('debug')('your-priorities-app');
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const ConnectRoles = require('connect-roles');
+const RedisStore = require('connect-redis')(session);
+const useragent = require('express-useragent');
+const requestIp = require('request-ip');
+const compression = require('compression');
 
-var passport = require('passport')
+const passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , FacebookStrategy = require('passport-facebook').Strategy
   , GitHubStrategy = require('passport-github').Strategy
   , TwitterStrategy = require('passport-twitter').Strategy
   , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-var index = require('./controllers/index');
-var news_feeds = require('./active-citizen/controllers/news_feeds');
-var activities = require('./active-citizen/controllers/activities');
-var notifications = require('./active-citizen/controllers/notifications');
-var recommendations = require('./active-citizen/controllers/recommendations');
+const index = require('./controllers/index');
+const news_feeds = require('./active-citizen/controllers/news_feeds');
+const activities = require('./active-citizen/controllers/activities');
+const notifications = require('./active-citizen/controllers/notifications');
+const recommendations = require('./active-citizen/controllers/recommendations');
 
-var posts = require('./controllers/posts');
-var groups = require('./controllers/groups');
-var communities = require('./controllers/communities');
-var domains = require('./controllers/domains');
-var organizations = require('./controllers/organizations');
-var points = require('./controllers/points');
-var users = require('./controllers/users');
-var categories = require('./controllers/categories');
-var images = require('./controllers/images');
-var bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
-var videos = require('./controllers/videos');
-var audios = require('./controllers/audios');
+const posts = require('./controllers/posts');
+const groups = require('./controllers/groups');
+const communities = require('./controllers/communities');
+const domains = require('./controllers/domains');
+const organizations = require('./controllers/organizations');
+const points = require('./controllers/points');
+const users = require('./controllers/users');
+const categories = require('./controllers/categories');
+const images = require('./controllers/images');
+const bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
+const videos = require('./controllers/videos');
+const audios = require('./controllers/audios');
 
-var legacyPosts = require('./controllers/legacyPosts');
-var legacyUsers = require('./controllers/legacyUsers');
-var legacyPages = require('./controllers/legacyPages');
+const legacyPosts = require('./controllers/legacyPosts');
+const legacyUsers = require('./controllers/legacyUsers');
+const legacyPages = require('./controllers/legacyPages');
 
-var nonSPArouter = require('./controllers/nonSpa');
+const nonSPArouter = require('./controllers/nonSpa');
 
-var generateSitemap = require('./utils/sitemap_generator');
-var generateManifest = require('./utils/manifest_generator');
+const generateSitemap = require('./utils/sitemap_generator');
+const generateManifest = require('./utils/manifest_generator');
 
-var models = require('./models');
-var auth = require('./authorization');
-var log = require('./utils/logger');
-var toJson = require('./utils/to_json');
-var sso = require('passport-sso');
-var cors = require('cors');
+const models = require('./models');
+const auth = require('./authorization');
+const log = require('./utils/logger');
+const toJson = require('./utils/to_json');
+const sso = require('passport-sso');
+const cors = require('cors');
 
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;
 }
 
-var app = express();
+const app = express();
 app.set('port', process.env.PORT || 4242);
 
-var airbrake = null;
+let airbrake = null;
 
 if (process.env.AIRBRAKE_PROJECT_ID) {
   airbrake = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID, process.env.AIRBRAKE_API_KEY);
@@ -391,7 +391,7 @@ app.use(function (err, req, res, next) {
 });
 
 var server = app.listen(app.get('port'), function () {
-  debug('Your Priorities server listening on port ' + server.address().port);
+  log.info('Your Priorities server listening on port ' + server.address().port);
 });
 
 module.exports = app;
