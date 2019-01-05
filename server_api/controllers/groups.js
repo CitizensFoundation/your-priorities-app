@@ -1406,5 +1406,4 @@ router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res)
   });
 });
 
-
 module.exports = router;
