@@ -232,8 +232,8 @@
       </paper-material>
     </div>
 
-    <template is="dom-if" if="[[group]]">
-      <template is="dom-if" if="[[hasGroupAccess]]">
+    <template is="dom-if" if="[[group]]" restamp>
+      <template is="dom-if" if="[[hasGroupAccess]]" restamp>
         <yp-ajax hidden method="GET" url="/api/groups/[[group.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
       </template>
     </template>
