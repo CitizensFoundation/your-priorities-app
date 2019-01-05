@@ -1160,6 +1160,8 @@
                   var point = this.$$("#point"+this.scrollToId);
                   if (point) {
                     point.elevation = 5;
+                    point.elevation = 1;
+                    point.elevation = 5;
                     this.async(function () {
                       point.elevation = 1;
                     }.bind(this), 7000);
