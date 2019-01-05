@@ -618,8 +618,7 @@
 
           scrollToId: {
             type: String,
-            value: null,
-            observer: '_scrollToIdChanged'
+            value: null
           },
 
           ironListResizeScrollThreshold: {
@@ -1108,12 +1107,6 @@
           }
         },
 
-        _scrollToIdChanged: function (id) {
-          if (id) {
-            this._scrollPointIntoView();
-          }
-        },
-
         interleaveArrays: function (arrayA, arrayB) {
           var arrs = [arrayA, arrayB];
           var maxLength = Math.max.apply(Math, arrs.map(function (arr) {
@@ -1134,21 +1127,49 @@
         },
 
         _scrollPointIntoView: function () {
-          //TODO: Find out why this does not work when you are not logged in
-          if (this.points && this.points.length > 0 && this.scrollToId) {
+          if (this.scrollToId) {
             this.async(function () {
-              var point = this.$$("#point"+this.scrollToId);
-              console.log("Looking for point");
-              if (point) {
-                console.log("Scrolling to point");
-                point.scrollIntoView();
-                this.set('scrollToId', null);
-                point.elevation = 5;
-                this.async(function () {
-                  point.elevation = 1;
-                }.bind(this), 10000);
+              var hasFoundIt=false;
+              if (!this.largeMode) {
+                this.points.forEach(function (point) {
+                  if (!hasFoundIt && point.id == this.scrollToId) {
+                    this.$$("#ironListMobile").scrollToItem(point);
+                    hasFoundIt = true;
+                  }
+                }.bind(this));
+              } else {
+                this.upPoints.forEach(function (point) {
+                  if (!hasFoundIt && point.id == this.scrollToId) {
+                    this.$$("#ironListUp").scrollToItem(point);
+                    hasFoundIt = true;
+                  }
+                }.bind(this));
+                if (!hasFoundIt) {
+                  this.downPoints.forEach(function (point) {
+                    if (!hasFoundIt && point.id == this.scrollToId) {
+                      this.$$("#ironListDown").scrollToItem(point);
+                      hasFoundIt = true;
+                    }
+                  }.bind(this));
+                }
               }
-            }.bind(this), 500);
+
+              if (hasFoundIt) {
+                this.async(function () {
+                  // Change elevation
+                  var point = this.$$("#point"+this.scrollToId);
+                  if (point) {
+                    point.elevation = 5;
+                    this.async(function () {
+                      point.elevation = 1;
+                    }.bind(this), 7000);
+                  } else {
+                    console.warn("Can't find point to elevate");
+                  }
+                  this.set('scrollToId', null);
+                }, 50);
+              }
+            }, 20);
           }
         },
 
