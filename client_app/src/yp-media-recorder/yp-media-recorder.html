@@ -23,6 +23,7 @@
       }
 
       #dialog {
+        width: 430px;
       }
 
       .mainbuttons {
@@ -561,6 +562,8 @@
         this.set('previewActive', false);
         this.set('recordedData',  null);
         this.recordSecondsLeft = this.maxLength;
+        this.$$("#secondsLeft").className = "";
+        this.$$("#recordingIcon").className = "";
       }
 
       _storeRecordedData () {
