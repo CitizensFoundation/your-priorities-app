@@ -2,6 +2,7 @@
 
 var async = require('async');
 var queue = require('../active-citizen/workers/queue');
+const log = require('../utils/logger');
 
 var findCommunityAndDomainForPointFromGroup = function (sequelize, options, callback) {
   sequelize.models.Group.find({
