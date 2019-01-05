@@ -12,17 +12,18 @@
 * Users can prioritize ideas and debate points by voting them up or down
 * AI driven recommendation engine that recommends relevant posts to users
 * Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3)
-* Automatic SpeechToText conversion in over 20 languages (using Google's TextToSpeech API)
+* Automatic Speech to Text conversion in over 20 languages (using Google's TextToSpeech API)
 * Machine translations between over 20 languages (using Google Translate API)
 * Simple moderation of all content for community and groups in one place
 * Assigns an automated toxicity score for all incoming content. Uses the open source Perspective API, developed by the New York Times, The Economist, Guardian, Google & others.
 * Users can view and moderate their own submitted content in one place
 * Full GDPR compliance
+* Localized in over 20 languages
 * Smart notifications in browser and email
-* Fully functional newsfeeds for all communities, groups and ideas where users can share links and comments just like on Facebook
+* Newsfeeds for communities, groups and posts with activity lists where users can also share links and comment
 * Ideas and debate points can be easily shared on social media
 * Participation groups can be configured for many different types of participation projects
-* Authentication is configurable enabling eID, Facebook, email and/or anonymous logins
+* Authentication is configurable offering eID, Facebook, email and/or anonymous login
 * The client app/website is a progressive web app that works like a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
 * Open source, non profit and built with passion over 10 years
