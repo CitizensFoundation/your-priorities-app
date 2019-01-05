@@ -861,7 +861,8 @@
         },
 
         listeners: {
-          'yp-point-deleted': '_pointDeleted'
+          'yp-point-deleted': '_pointDeleted',
+          'yp-update-point-in-list': '_updatePointInLists'
         },
 
         observers: [
@@ -1046,6 +1047,28 @@
           this._updateCounterInfo();
           this._scrollPointIntoView();
           this._checkForMultipleLanguages();
+        },
+
+        _updatePointInLists: function (event, changedPoint) {
+          this.upPoints.forEach(function (point, index) {
+            if (point.id===changedPoint.id) {
+              this.upPoints[index] = changedPoint;
+            }
+          }.bind(this));
+
+          this.downPoints.forEach(function (point, index) {
+            if (point.id===changedPoint.id) {
+              this.downPoints[index] = changedPoint;
+            }
+          }.bind(this));
+
+          if (this.points && this.points.length>0) {
+            this.points.forEach(function (point, index) {
+              if (point.id===changedPoint.id) {
+                this.points[index] = changedPoint;
+              }
+            }.bind(this));
+          }
         },
 
         _checkForMultipleLanguages: function () {

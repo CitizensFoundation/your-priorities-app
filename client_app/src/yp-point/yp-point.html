@@ -546,6 +546,7 @@
           this.set('checkingTranscript', false);
           point.latestContent = point.PointRevisions[point.PointRevisions.length-1].content;
           this.set('point', point);
+          this.fire('yp-update-point-in-list', point);
           if (this._hasPointAccess(point)) {
             this.set('editText',  point.latestContent);
             this.set('isEditing', true);
