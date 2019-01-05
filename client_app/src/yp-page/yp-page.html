@@ -161,7 +161,7 @@
           <slot name="largeAddButton"></slot>
         </div>
       </template>
-      <div class="tab-wrapper layout horizontal center-center">
+      <div class="tab-wrapper layout horizontal center-center" hidden$="[[hideAllTabs]]">
         <slot name="tabs"></slot>
       </div>
       <div class="tab-pages-wrapper layout vertical">
@@ -202,6 +202,11 @@
         },
 
         hasLargeButton: {
+          type: Boolean,
+          value: false
+        },
+
+        hideAlTabs: {
           type: Boolean,
           value: false
         }
