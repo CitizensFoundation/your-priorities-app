@@ -515,6 +515,7 @@
               this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/videoTranscriptStatus';
               this.$.checkTranscriptStatusAjax.generateRequest();
               this.set('checkingTranscript', true);
+              point.checkTranscriptFor = null;
             }
           } else {
             var audioURL = this._getAudioURL(point.PointAudios);
@@ -527,6 +528,7 @@
                 this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/audioTranscriptStatus';
                 this.$.checkTranscriptStatusAjax.generateRequest();
                 this.set('checkingTranscript', true);
+                point.checkTranscriptFor = null;
               }
             }
           }
