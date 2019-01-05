@@ -316,7 +316,7 @@
             <template is="dom-if" if="[[user]]">
               <div class="userImageNotificationContainer layout horizontal" on-tap="_toggleUserDrawer">
                 <yp-user-image id="userImage" small user="[[user]]"></yp-user-image>
-                <paper-badge class="activeBadge" label="[[numberOfUnViewedNotifications]]" hidden$="[[!numberOfUnViewedNotifications]]"></paper-badge>
+                <paper-badge id="notificationBadge" class="activeBadge" label="[[numberOfUnViewedNotifications]]" hidden$="[[!numberOfUnViewedNotifications]]"></paper-badge>
               </div>
             </template>
 
@@ -462,7 +462,7 @@
 
         numberOfUnViewedNotifications: {
           type: String,
-          value: ""
+          value: null
         },
 
         // Use window.location when clicking back link
@@ -573,6 +573,9 @@
         } else {
           this.set('numberOfUnViewedNotifications', '');
         }
+        this.async(function () {
+          this.$$("#notificationBadge").fire("iron-resize");
+        });
       },
 
       _redirectTo: function (event, detail) {
