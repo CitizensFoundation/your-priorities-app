@@ -678,6 +678,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
               }, function (error) {
                 if (!error && post) {
                   post.setDataValue('newEndorsement', endorsement);
+                  log.info("process-moderation post toxicity in post controller");
                   queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
                   sendPostOrError(res, post, 'setupImages', req.user, error);
                 } else {
@@ -725,6 +726,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, re
               post.set('public_data.transcript.inProgress', false);
               post.set('public_data.transcript.text', video.meta.transcript.text);
               post.save().then( savedPost => {
+                log.info("process-moderation post toxicity after video transcript");
                 queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: savedPost.id }).priority('high').removeOnComplete(true).save();
                 res.send({ text:video.meta.transcript.text })
               }).catch( error => {
@@ -787,6 +789,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, re
               post.set('public_data.transcript.inProgress', false);
               post.set('public_data.transcript.text', audio.meta.transcript.text);
               post.save().then(savedPost => {
+                log.info("process-moderation post toxicity after audio transcript");
                 queue.create('process-moderation', {
                   type: 'estimate-post-toxicity',
                   postId: savedPost.id

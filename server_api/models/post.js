@@ -302,6 +302,7 @@ module.exports = function(sequelize, DataTypes) {
             if (!this.data.moderation.lastReportedBy) {
               this.set('data.moderation.lastReportedBy', []);
               if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
+                log.info("process-moderation post toxicity on manual report");
                 queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
               }
             }
@@ -462,6 +463,7 @@ module.exports = function(sequelize, DataTypes) {
                 ip_address: req.clientIp
               });
               pointRevision.save().then(function () {
+                log.info("process-moderation point toxicity after post and point has been saved");
                 queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
                 post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
                   post.increment('counter_points');

@@ -417,6 +417,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
                   log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
+                  log.info("process-moderation point toxicity after video transcript");
                   queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
                   res.send({point: loadedPoint});
                 }
@@ -470,6 +471,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
                   log.error('Could not reload point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
                   res.sendStatus(500);
                 } else {
+                  log.info("process-moderation point toxicity after audio transcript");
                   queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
                   res.send({point: loadedPoint});
                 }
@@ -495,6 +497,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
 });
 
 router.post('/:groupId', auth.can('create point'), function(req, res) {
+  log.info("In  POST createPoint");
   if (!req.body.content) {
     req.body.content="";
   }
@@ -549,9 +552,10 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
             post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
               post.increment('counter_points');
               if (point.content && point.content!=='') {
+                log.info("process-moderation point toxicity after create point");
                 queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
               } else {
-                log.info("Not processing moderation for empty text on point");
+                log.info("No process-moderation toxicity for empty text on point");
               }
               loadPointWithAll(point.id, function (error, loadedPoint) {
                 if (error) {
