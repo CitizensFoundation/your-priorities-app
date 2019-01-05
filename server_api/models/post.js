@@ -1,5 +1,6 @@
 var async = require("async");
 var queue = require('../active-citizen/workers/queue');
+const log = require('../utils/logger');
 
 "use strict";
 
@@ -202,22 +203,27 @@ module.exports = function(sequelize, DataTypes) {
         var Post = this;
 
         var vectorName = Post.getSearchVector();
-        sequelize
-            .query('ALTER TABLE "' + Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
-            .then(function() {
-              return sequelize
+        sequelize.queryInterface.describeTable("posts").then( (data) => {
+          if (!data.PostText) {
+            sequelize
+              .query('ALTER TABLE "' + Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
+              .then(function() {
+                return sequelize
                   .query('UPDATE "' + Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
                   .error(console.log);
+              }).then(function() {
+              return sequelize
+                .query('CREATE INDEX post_search_idx ON "' + Post.tableName + '" USING gin("' + vectorName + '");')
+                .error(console.log);
             }).then(function() {
               return sequelize
-                  .query('CREATE INDEX post_search_idx ON "' + Post.tableName + '" USING gin("' + vectorName + '");')
-                  .error(console.log);
-            }).then(function() {
-              return sequelize
-                  .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
-                  .error(console.log);
+                .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
+                .error(console.log);
             }).error(console.log);
-
+          } else {
+            log.info("PostText search index is already setup");
+          }
+        });
       },
 
       search: function(query, groupId, modelCategory) {

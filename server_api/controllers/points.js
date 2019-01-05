@@ -548,7 +548,11 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
           }).then(function(post) {
             post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
               post.increment('counter_points');
-              queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+              if (point.content && point.content!=='') {
+                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+              } else {
+                log.info("Not processing moderation for empty text on point");
+              }
               loadPointWithAll(point.id, function (error, loadedPoint) {
                 if (error) {
                   log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
