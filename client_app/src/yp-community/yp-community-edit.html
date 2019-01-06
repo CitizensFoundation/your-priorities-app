@@ -368,6 +368,8 @@
       if (communityFolders && communityFolders.length>0) {
         communityFolders.unshift({id: -1, name: { en: this.t('none') } });
         this.set('availableCommunityFolders', communityFolders);
+      } else {
+        this.set('availableCommunityFolders', null);
       }
     },
 
@@ -427,7 +429,11 @@
     },
 
     _finishRedirect: function (community) {
-      this.redirectTo("/community/"+community.id);
+      if (this.community.is_community_folder) {
+        this.redirectTo("/community_folder/"+community.id);
+      } else {
+        this.redirectTo("/community/"+community.id);
+      }
       window.appGlobals.activity('completed', 'editCommunity');
     },
 
@@ -499,12 +505,20 @@
     _setupTranslation: function () {
       if (this.t) {
         if (this.new) {
-          this.set('editHeaderText', this.t('community.new'));
-          this.set('toastText', this.t('communityToastCreated'));
+          if (this.community && this.community.is_community_folder) {
+            this.set('editHeaderText', this.t('newCommunityFolder'));
+          } else {
+            this.set('editHeaderText', this.t('community.new'));
+          }
           this.set('saveText', this.t('create'));
+          this.set('toastText', this.t('communityToastCreated'));
         } else {
+          if (this.community && this.community.is_community_folder) {
+            this.set('editHeaderText', this.t('updateCommunityFolder'));
+          } else {
+            this.set('editHeaderText', this.t('Update community info'));
+          }
           this.set('saveText', this.t('save'));
-          this.set('editHeaderText', this.t('Update community info'));
           this.set('toastText', this.t('communityToastUpdated'));
         }
       }

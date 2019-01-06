@@ -1,5 +1,7 @@
 {
-  "newCommunityFolder": "New community folder",
+  "updateCommunityFolder": "Uppfæra svæða möppu",
+  "inCommunityFolder": "Í svæða möppu",
+  "newCommunityFolder": "Ný svæða mappa",
   "publishStatus": "Staða",
   "groupName": "Hópur",
   "areYouSureAnonymizeSelectedContent": "Ertu viss um að þú viljir afpersónugreina allt valið efni?",

@@ -61,7 +61,8 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['deleted', 'in_community_folder_id','status', 'access']
       },
       {
-        fields: ['deleted', 'domain_id', 'access', 'counter_user', 'status', 'in_community_folder_id']
+        name: 'ComDelDomAccCountStatInCommunity',
+        fields: ['deleted', 'domain_id', 'access', 'counter_users', 'status', 'in_community_folder_id']
       },
       {
         fields: ['id', 'deleted', 'is_community_folder']
@@ -226,8 +227,8 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Community.hasMany(models.Group, { foreignKey: "community_id" });
-        Community.hasMany(models.Community, { as: 'FolderCommunities', foreignKey: "in_community_folder_id" });
-        Community.belongsTo(models.Community, {  as: 'FolderCommunity', foreignKey: "in_community_folder_id"});
+        Community.hasMany(models.Community, { as: 'CommunityFolders', foreignKey: "in_community_folder_id" });
+        Community.belongsTo(models.Community, {  as: 'CommunityFolder', foreignKey: "in_community_folder_id"});
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
         Community.belongsTo(models.User);
         Community.belongsToMany(models.Video, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo'});

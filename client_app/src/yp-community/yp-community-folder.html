@@ -21,13 +21,13 @@
 
 <link rel="import" href="../yp-ajax/yp-ajax.html">
 <link rel="import" href="../yp-page/yp-page.html">
-<link rel="import" href="../yp-communityFolder/yp-communityFolder-collection-behaviors.html">
-<link rel="import" href="../yp-communityFolder/yp-communityFolder-grid.html">
+<link rel="import" href="../yp-community/yp-community-collection-behaviors.html">
+<link rel="import" href="../yp-community/yp-community-grid.html">
 
-<link rel="import" href="yp-communityFolder-header.html">
-<link rel="import" href="yp-communityFolder-large-card.html">
+<link rel="import" href="yp-community-header.html">
+<link rel="import" href="yp-community-large-card.html">
 
-<dom-module id="yp-communityFolder">
+<dom-module id="yp-community-folder">
   <template>
     <style include="iron-flex iron-flex-alignment">
       .card-container {
@@ -64,7 +64,7 @@
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" hide-all-tabs create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup" hide-all-tabs="[[communityFolder.configuration.hideAllTabs]]">
 
-      <yp-communityFolder-large-card id="communityCard" slot="largeCard" class="largeCard card" communityFolder="[[communityFolder]]" on-update-communityFolder="_refreshAjax"></yp-communityFolder-large-card>
+      <yp-community-large-card id="communityCard" slot="largeCard" class="largeCard card" community="[[communityFolder]]" on-update-community="_refreshAjax"></yp-community-large-card>
 
       <div class="layout horizontal center-center wrap">
         <yp-community-grid
@@ -101,7 +101,7 @@
   <script>
     Polymer({
 
-      is: 'yp-communityFolder',
+      is: 'yp-community-folder',
 
       behaviors: [
         Polymer.ypLanguageBehavior,
@@ -181,6 +181,7 @@
       },
 
       _routeIdChanged: function (newId) {
+        debugger;
         if (newId) {
           this.set('communityFolderId', newId);
         }
@@ -201,6 +202,8 @@
       },
 
       _communityFolderIdChanged: function (newValue, oldValue) {
+        debugger;
+
         if (newValue) {
           this.set("communityFolder", null);
           this.set("featuredCommunities",null);

@@ -365,7 +365,7 @@
       },
 
       _hasCommunityAccessAndNotFolder: function (community, hasCommunityAccess) {
-        return !community.is_community_folder && hasCommunityAccess
+        return (community && !community.is_community_folder && hasCommunityAccess) || false
       },
 
       _communityVideoURL: function (community) {

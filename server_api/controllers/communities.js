@@ -48,6 +48,11 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             required: false
           },
           {
+            model: models.Domain,
+            required: true,
+            attributes: models.Domain.defaultAttributesPublic
+          },
+          {
             model: models.Image,
             as: 'CommunityHeaderImages',
             attributes:  models.Image.defaultAttributesPublic,
@@ -91,6 +96,11 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             as: 'CommunityLogoImages',
             attributes:  models.Image.defaultAttributesPublic,
             required: false
+          },
+          {
+            model: models.Domain,
+            required: true,
+            attributes: models.Domain.defaultAttributesPublic
           },
           {
             model: models.Community,
@@ -137,6 +147,11 @@ var getCommunityFolder = function (req, communityFolderId, done) {
                 {
                   model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
                   required: false
+                },
+                {
+                  model: models.Domain,
+                  required: true,
+                  attributes: models.Domain.defaultAttributesPublic
                 },
                 {
                   model: models.Community,
@@ -217,7 +232,7 @@ var getCommunityFolder = function (req, communityFolderId, done) {
       }
     }
   ], function (error) {
-    communityFolder.dateValues.Communities = combinedCommunities;
+    communityFolder.dataValues.Communities = combinedCommunities;
     done(error, communityFolder);
   });
 };
