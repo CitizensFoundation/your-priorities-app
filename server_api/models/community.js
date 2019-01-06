@@ -52,6 +52,12 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['domain_id', 'deleted', 'in_community_folder_id', 'status']
       },
       {
+        fields: ['domain_id', 'deleted', 'is_community_folder']
+      },
+      {
+        fields: ['domain_id', 'deleted', 'is_community_folder','access']
+      },
+      {
         fields: ['deleted', 'in_community_folder_id','status', 'access']
       },
       {
@@ -154,7 +160,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultAttributesPublic: ['id', 'access', 'configuration', 'counter_groups', 'counter_organizations', 'counter_points',
         'counter_posts', 'counter_users', 'created_at','default_locale','hostname',
         'description','domain_id','google_analytics_code','name','only_admins_can_create_groups',
-        'status','theme_id','updated_at','weight'],
+        'status','theme_id','updated_at','weight','is_community_folder','in_community_folder_id'],
 
       setYpCommunity: function (req,res,next) {
         var hostname = null;

@@ -30,6 +30,198 @@ var sendCommunityOrError = function (res, community, context, user, error, error
   }
 };
 
+var getCommunityFolder = function (req, communityFolderId, done) {
+  var communityFolder, openCommunities, combinedCommunities;
+
+  async.series([
+    function (seriesCallback) {
+      models.Community.find({
+        where: {
+          id: communityFolderId
+        },
+        attributes: models.Community.defaultAttributesPublic,
+        include: [
+          {
+            model: models.Image,
+            as: 'CommunityLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
+          },
+          {
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            order: 'created_at asc',
+            required: false
+          },
+          {
+            model: models.Community,
+            required: false,
+            as: 'CommunityFolder',
+            attributes: ['id', 'name', 'description']
+          }
+        ]
+      }).then(function (community) {
+        communityFolder = community;
+        seriesCallback(null);
+        return null;
+      }).catch(function (error) {
+        seriesCallback(error)
+      });
+    },
+    function (seriesCallback) {
+      models.Community.findAll({
+        where: {
+          access: {
+            $ne: models.Community.ACCESS_SECRET
+          },
+          status: {
+            $ne: 'hidden'
+          },
+          in_community_folder_id: communityFolderId
+        },
+        attributes: models.Community.defaultAttributesPublic,
+        order: [
+          [ 'counter_users', 'desc'],
+          [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+        ],
+        include: [
+          {
+            model: models.Image,
+            as: 'CommunityLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
+          },
+          {
+            model: models.Community,
+            required: false,
+            as: 'CommunityFolder',
+            attributes: ['id', 'name', 'description']
+          },
+          {
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            order: 'created_at asc',
+            required: false
+          }
+        ]
+      }).then(function (communities) {
+        openCommunities = communities;
+        seriesCallback(null);
+        return null;
+      }).catch(function (error) {
+        seriesCallback(error)
+      });
+    },
+    function (seriesCallback) {
+      if (req.user) {
+        var adminCommunities, userCommunities;
+
+        async.parallel([
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                in_community_folder_id: communityFolderId
+              },
+              attributes: models.Community.defaultAttributesPublic,
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  required: false
+                },
+                {
+                  model: models.Community,
+                  required: false,
+                  as: 'CommunityFolder',
+                  attributes: ['id', 'name', 'description']
+                },
+                {
+                  model: models.User,
+                  as: 'CommunityAdmins',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              adminCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          },
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                in_community_folder_id: communityFolderId
+              },
+              attributes: models.Community.defaultAttributesPublic,
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  required: false
+                },
+                {
+                  model: models.Community,
+                  required: false,
+                  as: 'CommunityFolder',
+                  attributes: ['id', 'name', 'description']
+                },
+                {
+                  model: models.User,
+                  as: 'CommunityUsers',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              userCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          }
+        ], function (error) {
+          combinedCommunities = _.concat(userCommunities, openCommunities);
+          combinedCommunities = _.concat(adminCommunities, combinedCommunities);
+          combinedCommunities = _.uniqBy(combinedCommunities, function (community) {
+            return community.id;
+          });
+          seriesCallback(error);
+        });
+      } else {
+        combinedCommunities = openCommunities;
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    communityFolder.dateValues.Communities = combinedCommunities;
+    done(error, communityFolder);
+  });
+};
+
 var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
   var user, community;
 
@@ -312,6 +504,19 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   community.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
 };
+
+router.get('/:communityFolderId/communityFolders', auth.can('view community'), function(req, res) {
+  getCommunityFolder(req, req.params.communityFolderId, function (error, communityFolder) {
+    if (error) {
+      log.error('Could not get communityFolder', { err: error, communityFolderId: req.params.communityFolderId, user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (communityFolder) {
+      res.send(communityFolder);
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
   models.AcActivity.find({
@@ -822,6 +1027,8 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
         user_id: req.user.id,
         hostname: req.body.hostname,
         website: req.body.website,
+        in_community_folder_id: (req.body.in_community_folder_id && req.body.in_community_folder_id!='-1') ?
+          req.body.in_community_folder_id : null,
         admin_email: admin_email,
         admin_name: admin_name,
         user_agent: req.useragent.source,
@@ -852,6 +1059,8 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
     if (community) {
       community.name = req.body.name;
       community.description = req.body.description;
+      community.in_community_folder_id = (req.body.in_community_folder_id && req.body.in_community_folder_id!='-1') ?
+        req.body.in_community_folder_id : null;
 
       if (req.body.hostname && req.body.hostname!="") {
         community.hostname = req.body.hostname;

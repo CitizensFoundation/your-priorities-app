@@ -13,6 +13,8 @@ module.exports = {
       await queryInterface.addIndex('communities', ['deleted', 'in_community_folder_id']),
       await queryInterface.addIndex('communities', ['domain_id', 'deleted', 'in_community_folder_id']),
       await queryInterface.addIndex('communities', ['domain_id', 'deleted', 'in_community_folder_id','status']),
+      await queryInterface.addIndex('communities', ['domain_id', 'deleted', 'is_community_folder']),
+      await queryInterface.addIndex('communities', ['domain_id', 'deleted', 'is_community_folder','access']),
       await queryInterface.addIndex('communities', ['deleted', 'in_community_folder_id','status', 'access']),
       await queryInterface.addIndex('communities', ['deleted','domain_id','access','counter_user','status','in_community_folder_id'])
     ]

@@ -217,7 +217,8 @@
       ],
 
       listeners: {
-        'yp-new-community': '_newCommunity'
+        'yp-new-community': '_newCommunity',
+        'yp-new-community-folder': '_newCommunityFolder'
       },
 
       _userLoggedIn: function (user) {
@@ -283,6 +284,14 @@
         window.appGlobals.activity('open', 'newCommunity');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
           dialog.setup(null, true, this._refreshAjax.bind(this));
+          dialog.open('new', {domainId: this.domainId} );
+        }.bind(this));
+      },
+
+      _newCommunityFolder: function () {
+        window.appGlobals.activity('open', 'newCommunityFolder');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(null, true, this._refreshAjax.bind(this), true);
           dialog.open('new', {domainId: this.domainId} );
         }.bind(this));
       },

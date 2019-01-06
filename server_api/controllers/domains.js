@@ -33,7 +33,7 @@ var truthValueFromBody = function(bodyParameter) {
   return (bodyParameter && bodyParameter!=="");
 };
 
-var getCommunityFolder = function (req, communityFolderId, done) {
+var getAvailableCommunityFolders = function (req, domainId, done) {
   var openCommunities, combinedCommunities;
 
   async.series([
@@ -43,32 +43,12 @@ var getCommunityFolder = function (req, communityFolderId, done) {
           access: {
             $ne: models.Community.ACCESS_SECRET
           },
-          status: {
-            $ne: 'hidden'
-          },
-          in_community_folder_id: communityFolderId
+          domain_id: domainId,
+          is_community_folder: true
         },
-        attributes: models.Community.defaultAttributesPublic,
-        order: [
-          [ 'counter_users', 'desc'],
-          [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
-        ],
-        include: [
-          {
-            model: models.Image,
-            as: 'CommunityLogoImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            required: false
-          },
-          {
-            model: models.Image,
-            as: 'CommunityHeaderImages',
-            attributes:  models.Image.defaultAttributesPublic,
-            order: 'created_at asc',
-            required: false
-          }
-        ]
+        attributes: ['id','name'],
       }).then(function (communities) {
+        openCommunities = communities;
         seriesCallback(null);
         return null;
       }).catch(function (error) {
@@ -83,22 +63,11 @@ var getCommunityFolder = function (req, communityFolderId, done) {
           function (parallelCallback) {
             models.Community.findAll({
               where: {
-                in_community_folder_id: communityFolderId
+                is_community_folder: true,
+                domain_id: domainId
               },
-              attributes: models.Community.defaultAttributesPublic,
-              order: [
-                [ 'counter_users', 'desc'],
-                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
-              ],
+              attributes: ['id','name'],
               include: [
-                {
-                  model: models.Image, as: 'CommunityLogoImages',
-                  required: false
-                },
-                {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
-                  required: false
-                },
                 {
                   model: models.User,
                   as: 'CommunityAdmins',
@@ -119,22 +88,11 @@ var getCommunityFolder = function (req, communityFolderId, done) {
           function (parallelCallback) {
             models.Community.findAll({
               where: {
-                in_community_folder_id: communityFolderId
+                is_community_folder: true,
+                domain_id: domainId
               },
-              attributes: models.Community.defaultAttributesPublic,
-              order: [
-                [ 'counter_users', 'desc'],
-                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
-              ],
+              attributes: ['id','name'],
               include: [
-                {
-                  model: models.Image, as: 'CommunityLogoImages',
-                  required: false
-                },
-                {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
-                  required: false
-                },
                 {
                   model: models.User,
                   as: 'CommunityUsers',
@@ -169,7 +127,6 @@ var getCommunityFolder = function (req, communityFolderId, done) {
     done(error, combinedCommunities);
   });
 };
-
 
 var getDomain = function (req, domainId, done) {
   var domain;
@@ -454,6 +411,19 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
     }
   });
 };
+
+router.get('/:domainId/availableCommunityFolders', auth.can('view domain'), function(req, res) {
+  getAvailableCommunityFolders(req, req.params.communityFolderId, function (error, availableCommunityFolders) {
+    if (error) {
+      log.error('Could not get availableCommunityFolders', { err: error, user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (availableCommunityFolders) {
+      res.send(availableCommunityFolders);
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
 
 router.delete('/:domainId/:activityId/delete_activity', auth.can('edit domain'), function(req, res) {
   models.AcActivity.find({

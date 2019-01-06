@@ -211,7 +211,7 @@
       },
 
       _getCommunityFolder: function () {
-        this.$$('#ajax').url = '/api/community_folder/' + this.communityFolderId;
+        this.$$('#ajax').url = '/api/communities/' + this.communityFolderId + '/communityFolders';
         this.$$('#ajax').retryMethodAfter401Login = this._getCommunityFolder.bind(this);
         this.$$('#ajax').generateRequest();
       },
@@ -302,6 +302,13 @@
           window.appGlobals.disableFacebookLoginForGroup = false;
           window.appGlobals.externalGoalTriggerUrl = null;
           window.appGlobals.currentGroupForceSaml = false;
+
+          if (this.community.configuration && this.community.configuration.signupTermsPageId &&
+            this.community.configuration.signupTermsPageId!=-1) {
+            window.appGlobals.signupTermsPageId = this.community.configuration.signupTermsPageId;
+          } else {
+            window.appGlobals.signupTermsPageId = null;
+          }
         }
       }
     });
