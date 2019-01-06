@@ -22,7 +22,7 @@
         background-color: #FFF;
       }
 
-      #dialog {
+      #dialog[audio-recording] {
         width: 430px;
       }
 
@@ -165,7 +165,7 @@
       </div>
     </paper-dialog>
 
-    <paper-dialog id="dialog" modal>
+    <paper-dialog id="dialog" modal audio-recording="[[audioRecording]]">
       <div class="layout vertical no-padding mainContainer">
         <template is="dom-if" if="[[videoRecording]]">
           <video id="videoRecorder" class="videoRecorder" hidden$="[[previewActive]]"></video>
