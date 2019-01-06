@@ -217,7 +217,8 @@ var getDomain = function (req, domainId, done) {
               {
                 model: models.Community,
                 as: 'CommunityFolders',
-                attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups']
+                attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+                required: false,
               },
               {
                 model: models.Image,
@@ -282,7 +283,7 @@ var getDomain = function (req, domainId, done) {
                   model: models.Community,
                   as: 'CommunityFolders',
                   attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
-                  
+                  required: false,
                 },
                 {
                   model: models.User,
@@ -316,6 +317,12 @@ var getDomain = function (req, domainId, done) {
                 {
                   model: models.Image, as: 'CommunityLogoImages',
                   required: false
+                },
+                {
+                  model: models.Community,
+                  as: 'CommunityFolders',
+                  attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+                  required: false,
                 },
                 {
                   model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',

@@ -53,6 +53,12 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             attributes: models.Domain.defaultAttributesPublic
           },
           {
+            model: models.Community,
+            as: 'CommunityFolders',
+            attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+            required: false,
+          },
+          {
             model: models.Image,
             as: 'CommunityHeaderImages',
             attributes:  models.Image.defaultAttributesPublic,
@@ -104,6 +110,12 @@ var getCommunityFolder = function (req, communityFolderId, done) {
           },
           {
             model: models.Community,
+            as: 'CommunityFolders',
+            attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+            required: false,
+          },
+          {
+            model: models.Community,
             required: false,
             as: 'CommunityFolder',
             attributes: ['id', 'name', 'description']
@@ -147,6 +159,12 @@ var getCommunityFolder = function (req, communityFolderId, done) {
                 {
                   model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
                   required: false
+                },
+                {
+                  model: models.Community,
+                  as: 'CommunityFolders',
+                  attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+                  required: false,
                 },
                 {
                   model: models.Domain,
