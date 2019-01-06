@@ -85,20 +85,22 @@
                      char-counter class="mainInput">
         </paper-input>
 
-        <paper-input id="hostname"
-                     name="hostname"
-                     type="text"
-                     allowed-pattern="[a-z0-9-]"
-                     label="[[t('community.hostname')]]"
-                     value="{{community.hostname}}"
-                     maxlength="80"
-                     minlength="1"
-                     required
-                     char-counter class="mainInput">
-        </paper-input>
-        <div class="hostnameInfo">
-          https://[[hostnameExample]]
-        </div>
+        <template is="dom-if" if="[[!community.is_domain_folder]]">
+          <paper-input id="hostname"
+                       name="hostname"
+                       type="text"
+                       allowed-pattern="[a-z0-9-]"
+                       label="[[t('community.hostname')]]"
+                       value="{{community.hostname}}"
+                       maxlength="80"
+                       minlength="1"
+                       required
+                       char-counter class="mainInput">
+          </paper-input>
+          <div class="hostnameInfo">
+            https://[[hostnameExample]]
+          </div>
+        </template>
 
         <paper-textarea id="description"
                         name="description"
@@ -146,103 +148,116 @@
       </div>
 
       <yp-theme-selector object="[[community]]"  selected-theme="{{themeId}}"></yp-theme-selector>
-
-      <div class="layout vertical config">
-        <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
-        <paper-checkbox hidden$="[[!community.configuration.alternativeHeader]]" name="alternativeHeader" checked$="{{community.configuration.alternativeHeader}}">[[t('community.alternativeHeader')]]</paper-checkbox>
-        <paper-checkbox name="disableDomainUpLink" checked$="{{community.configuration.disableDomainUpLink}}">[[t('disableCommunityDomainUpLink')]]</paper-checkbox>
-        <paper-checkbox name="disableNameAutoTranslation" checked$="{{community.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
-        <paper-checkbox name="hideAllTabs" checked$="{{community.configuration.hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
-      </div>
-
       <input type="hidden" name="themeId" value="[[themeId]]">
-
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
 
-      <div class="layout horizontal config">
-        <paper-dropdown-menu label="[[t('status.select')]]">
-          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
-            <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
-              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
-        <input type="hidden" name="status" value="[[status]]">
+      <div hidden$="[[community.is_domain_folder]]">
+
+        <div class="layout horizontal config">
+          <paper-dropdown-menu label="[[t('status.select')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
+              <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
+                <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="status" value="[[status]]">
+        </div>
+
+        <div class="layout horizontal config" hidden$="[[!availableCommunityFolders]]">
+          <paper-dropdown-menu label="[[t('inCommunityFolder')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="folderid" selected="{{inCommunityFolder}}">
+              <template is="dom-repeat" items="[[availableCommunityFolders]]" as="communityFolder">
+                <paper-item folderid="[[communityFolder.id]]">[[communityFolder.name]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="in_community_folder" value="[[inCommunityFolder]]">
+        </div>
+
+        <div class="layout vertical config">
+          <paper-checkbox name="onlyAdminsCanCreateGroups" checked$="{{community.only_admins_can_create_groups}}">[[t('community.onlyAdminsCanCreateGroups')]]</paper-checkbox>
+          <paper-checkbox hidden$="[[!community.configuration.alternativeHeader]]" name="alternativeHeader" checked$="{{community.configuration.alternativeHeader}}">[[t('community.alternativeHeader')]]</paper-checkbox>
+          <paper-checkbox name="disableDomainUpLink" checked$="{{community.configuration.disableDomainUpLink}}">[[t('disableCommunityDomainUpLink')]]</paper-checkbox>
+          <paper-checkbox name="disableNameAutoTranslation" checked$="{{community.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
+          <paper-checkbox name="hideAllTabs" checked$="{{community.configuration.hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
+        </div>
+
+        <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{community.default_locale}}"></yp-language-selector>
+
+        <div class="layout horizontal config" hidden$="[[!pages]]">
+          <paper-dropdown-menu label="[[t('signupTermsSelectPage')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.signupTermsPageId}}">
+              <template is="dom-repeat" items="[[translatedPages]]" as="page">
+                <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="signupTermsPageId" value="[[community.configuration.signupTermsPageId]]">
+        </div>
+
+        <paper-input id="google_analytics_code"
+                     name="google_analytics_code"
+                     type="text"
+                     label="[[t('analyticsTrackerCode')]]"
+                     value="{{community.google_analytics_code}}"
+                     maxlength="40" style="width: 200px;">
+        </paper-input>
+
+        <paper-input id="facebookPixelId"
+                     name="facebookPixelId"
+                     type="text"
+                     label="[[t('facebookPixelId')]]"
+                     value="{{community.configuration.facebookPixelId}}"
+                     maxlength="40" style="width: 200px;">
+        </paper-input>
+
+        <paper-input id="defaultLocationLongLat"
+                     name="defaultLocationLongLat"
+                     type="text"
+                     label="[[t('defaultLocationLongLat')]]"
+                     value="{{community.defaultLocationLongLat}}"
+                     maxlength="100" style="width: 300px;">
+        </paper-input>
+
+        <h3 class="accessHeader">[[t('access')]]</h3>
+        <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
+          <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
+          <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
+          <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
+        </paper-radio-group>
+
+        <paper-textarea id="welcomeHTML"
+                        name="welcomeHTML"
+                        value="{{community.configuration.welcomeHTML}}"
+                        always-float-label="[[community.configuration.welcomeHTML]]"
+                        label="[[t('welcomeHTML')]]"
+                        rows="2"
+                        max-rows="5"
+                        minlength="1"
+                        class="mainInput">
+        </paper-textarea>
+
+        <paper-input id="appHomeScreenShortName"
+                     name="appHomeScreenShortName"
+                     type="text"
+                     label="[[t('appHomeScreenShortName')]]"
+                     value="{{community.configuration.appHomeScreenShortName}}"
+                     maxlength="12" style="width: 200px;">
+        </paper-input>
+
+        <div class="layout vertical additionalSettings half">
+          <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"
+                          multi="false" target="/api/images?itemType=app-home-screen-icon"
+                          method="POST" on-success="_appHomeScreenIconImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
+            <span>[[t('appHomeScreenIconImageUpload')]] (512x512)</span>
+          </yp-file-upload>
+        </div>
       </div>
 
-      <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{community.default_locale}}"></yp-language-selector>
-
-      <div class="layout horizontal config" hidden$="[[!pages]]">
-        <paper-dropdown-menu label="[[t('signupTermsSelectPage')]]">
-          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.signupTermsPageId}}">
-            <template is="dom-repeat" items="[[translatedPages]]" as="page">
-              <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
-            </template>
-          </paper-listbox>
-        </paper-dropdown-menu>
-        <input type="hidden" name="signupTermsPageId" value="[[community.configuration.signupTermsPageId]]">
-      </div>
-
-      <paper-input id="google_analytics_code"
-                   name="google_analytics_code"
-                   type="text"
-                   label="[[t('analyticsTrackerCode')]]"
-                   value="{{community.google_analytics_code}}"
-                   maxlength="40" style="width: 200px;">
-      </paper-input>
-
-      <paper-input id="facebookPixelId"
-                   name="facebookPixelId"
-                   type="text"
-                   label="[[t('facebookPixelId')]]"
-                   value="{{community.configuration.facebookPixelId}}"
-                   maxlength="40" style="width: 200px;">
-      </paper-input>
-
-      <paper-input id="defaultLocationLongLat"
-                   name="defaultLocationLongLat"
-                   type="text"
-                   label="[[t('defaultLocationLongLat')]]"
-                   value="{{community.defaultLocationLongLat}}"
-                   maxlength="100" style="width: 300px;">
-      </paper-input>
-
-      <h3 class="accessHeader">[[t('access')]]</h3>
-      <paper-radio-group id="access" name="access" class="access" selected="{{communityAccess}}">
-        <paper-radio-button name="public">[[t('public')]]</paper-radio-button>
-        <paper-radio-button name="closed">[[t('closed')]]</paper-radio-button>
-        <paper-radio-button name="secret">[[t('secret')]]</paper-radio-button>
-      </paper-radio-group>
-
-      <paper-textarea id="welcomeHTML"
-                      name="welcomeHTML"
-                      value="{{community.configuration.welcomeHTML}}"
-                      always-float-label="[[community.configuration.welcomeHTML]]"
-                      label="[[t('welcomeHTML')]]"
-                      rows="2"
-                      max-rows="5"
-                      minlength="1"
-                      class="mainInput">
-      </paper-textarea>
-
-      <paper-input id="appHomeScreenShortName"
-                   name="appHomeScreenShortName"
-                   type="text"
-                   label="[[t('appHomeScreenShortName')]]"
-                   value="{{community.configuration.appHomeScreenShortName}}"
-                   maxlength="12" style="width: 200px;">
-      </paper-input>
-
-      <div class="layout vertical additionalSettings half">
-        <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"
-                        multi="false" target="/api/images?itemType=app-home-screen-icon"
-                        method="POST" on-success="_appHomeScreenIconImageUploaded">
-          <iron-icon class="icon" icon="photo-camera"></iron-icon>
-          <span>[[t('appHomeScreenIconImageUpload')]] (512x512)</span>
-        </yp-file-upload>
-      </div>
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
 
     </yp-edit-dialog>
@@ -436,16 +451,25 @@
         this.$$("#videoFileUpload").clear();
     },
 
-    setup: function (community, newNotEdit, refreshFunction) {
+    setup: function (community, newNotEdit, refreshFunction, isCommunityFolder, communityFolderId) {
       if (!community) {
-        this.set('community', { name: '', description: '', access: 0, status: 'active' });
+        this.set('community', {
+          name: '',
+          description: '',
+          access: 0,
+          status: 'active',
+          community_folder_id: communityFolderId ? communityFolderId : null,
+          is_community_folder: isCommunityFolder ? isCommunityFolder : null
+        });
       } else {
         this.set('community', community);
         if (community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
           this.set('uploadedVideoId', community.CommunityLogoVideos[0].id)
         }
-        this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
-        this.$.pagesAjax.generateRequest();
+        if (!community.is_community_folder) {
+          this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
+          this.$.pagesAjax.generateRequest();
+        }
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);

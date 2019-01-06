@@ -33,10 +33,147 @@ var truthValueFromBody = function(bodyParameter) {
   return (bodyParameter && bodyParameter!=="");
 };
 
+var getCommunityFolder = function (req, communityFolderId, done) {
+  var openCommunities, combinedCommunities;
+
+  async.series([
+    function (seriesCallback) {
+      models.Community.findAll({
+        where: {
+          access: {
+            $ne: models.Community.ACCESS_SECRET
+          },
+          status: {
+            $ne: 'hidden'
+          },
+          in_community_folder_id: communityFolderId
+        },
+        attributes: models.Community.defaultAttributesPublic,
+        order: [
+          [ 'counter_users', 'desc'],
+          [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+        ],
+        include: [
+          {
+            model: models.Image,
+            as: 'CommunityLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
+          },
+          {
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            order: 'created_at asc',
+            required: false
+          }
+        ]
+      }).then(function (communities) {
+        seriesCallback(null);
+        return null;
+      }).catch(function (error) {
+        seriesCallback(error)
+      });
+    },
+    function (seriesCallback) {
+      if (req.user) {
+        var adminCommunities, userCommunities;
+
+        async.parallel([
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                in_community_folder_id: communityFolderId
+              },
+              attributes: models.Community.defaultAttributesPublic,
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  required: false
+                },
+                {
+                  model: models.User,
+                  as: 'CommunityAdmins',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              adminCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          },
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                in_community_folder_id: communityFolderId
+              },
+              attributes: models.Community.defaultAttributesPublic,
+              order: [
+                [ 'counter_users', 'desc'],
+                [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
+              ],
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  required: false
+                },
+                {
+                  model: models.User,
+                  as: 'CommunityUsers',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              userCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          }
+        ], function (error) {
+          combinedCommunities = _.concat(userCommunities, openCommunities);
+          combinedCommunities = _.concat(adminCommunities, combinedCommunities);
+          combinedCommunities = _.uniqBy(combinedCommunities, function (community) {
+            return community.id;
+          });
+          seriesCallback(error);
+        });
+      } else {
+        combinedCommunities = openCommunities;
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    done(error, combinedCommunities);
+  });
+};
+
+
 var getDomain = function (req, domainId, done) {
   var domain;
   var attributes = null;
-  var memberAdminCommunities;
   async.series([
     function (seriesCallback) {
       auth.hasDomainAdmin(domainId, req, function (error, isAdmin) {
@@ -105,7 +242,8 @@ var getDomain = function (req, domainId, done) {
               ],
               status: {
                 $ne: 'hidden'
-              }
+              },
+              in_community_folder_id: null
             },
             attributes: models.Community.defaultAttributesPublic,
             order: [
@@ -161,8 +299,10 @@ var getDomain = function (req, domainId, done) {
           function (parallelCallback) {
             models.Community.findAll({
               where: {
-                domain_id: domain.id
+                domain_id: domain.id,
+                in_community_folder_id: null
               },
+              attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
                 [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
@@ -196,8 +336,10 @@ var getDomain = function (req, domainId, done) {
           function (parallelCallback) {
             models.Community.findAll({
               where: {
-                domain_id: domain.id
+                domain_id: domain.id,
+                in_community_folder_id: null
               },
+              attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
                 [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']

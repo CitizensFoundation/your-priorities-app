@@ -17,6 +17,8 @@ module.exports = function(sequelize, DataTypes) {
     google_analytics_code: { type: DataTypes.STRING, allowNull: true },
     description: DataTypes.TEXT,
     website: DataTypes.TEXT,
+    is_community_folder: { type: DataTypes.BOOLEAN, defaultValue: false },
+    in_community_folder_id: { type: DataTypes.INTEGER, defaultValue: null },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -38,6 +40,36 @@ module.exports = function(sequelize, DataTypes) {
         deleted: false
       }
     },
+
+    indexes: [
+      {
+        fields: ['id', 'deleted']
+      },
+      {
+        fields: ['domain_id', 'deleted', 'in_community_folder_id']
+      },
+      {
+        fields: ['domain_id', 'deleted', 'in_community_folder_id', 'status']
+      },
+      {
+        fields: ['deleted', 'in_community_folder_id','status', 'access']
+      },
+      {
+        fields: ['deleted', 'domain_id', 'access', 'counter_user', 'status', 'in_community_folder_id']
+      },
+      {
+        fields: ['id', 'deleted', 'is_community_folder']
+      },
+      {
+        fields: ['deleted', 'is_community_folder']
+      },
+      {
+        fields: ['id', 'deleted', 'in_community_folder_id']
+      },
+      {
+        fields: ['deleted', 'in_community_folder_id']
+      }
+    ],
 
     timestamps: true,
 
@@ -188,6 +220,8 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Community.hasMany(models.Group, { foreignKey: "community_id" });
+        Community.hasMany(models.Community, { as: 'FolderCommunities', foreignKey: "in_community_folder_id" });
+        Community.belongsTo(models.Community, {  as: 'FolderCommunity', foreignKey: "in_community_folder_id"});
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
         Community.belongsTo(models.User);
         Community.belongsToMany(models.Video, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo'});
