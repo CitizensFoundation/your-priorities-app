@@ -431,7 +431,7 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
 };
 
 router.get('/:domainId/availableCommunityFolders', auth.can('view domain'), function(req, res) {
-  getAvailableCommunityFolders(req, req.params.communityFolderId, function (error, availableCommunityFolders) {
+  getAvailableCommunityFolders(req, req.params.domainId, function (error, availableCommunityFolders) {
     if (error) {
       log.error('Could not get availableCommunityFolders', { err: error, user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);

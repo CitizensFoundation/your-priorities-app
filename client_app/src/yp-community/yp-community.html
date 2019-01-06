@@ -320,24 +320,28 @@
       _response: function (event, detail, sender) {
         this.set('community', detail.response);
 
-        this.refresh();
+        if (this.community.is_community_folder) {
+          this.redirectTo("/community_folder/"+this.community.id);
+        } else {
+          this.refresh();
 
-        if (!this.community.only_admins_can_create_groups || this.checkCommunityAccess(this.community)) {
-          this.set('createFabIcon', 'add');
-        }
-
-        var url = this._communityHeaderUrl(this.community);
-
-        this.setupGroups(this.community.Groups);
-        this._setLocationHidden(this.community.Groups);
-
-        this.async(function() {
-          var communityCard = this.$$('#communityCard');
-          if (communityCard) {
-            communityCard.setElevation(5);
-            communityCard.lowerCardLater();
+          if (!this.community.only_admins_can_create_groups || this.checkCommunityAccess(this.community)) {
+            this.set('createFabIcon', 'add');
           }
-        },20);
+
+          var url = this._communityHeaderUrl(this.community);
+
+          this.setupGroups(this.community.Groups);
+          this._setLocationHidden(this.community.Groups);
+
+          this.async(function() {
+            var communityCard = this.$$('#communityCard');
+            if (communityCard) {
+              communityCard.setElevation(5);
+              communityCard.lowerCardLater();
+            }
+          },20);
+        }
       },
 
       _gotAdminRights: function (event, detail) {
@@ -398,13 +402,26 @@
           }
 
           if (window.location.href.indexOf("/community") >-1) {
-            this.fire("change-header", { headerTitle: this.community.Domain.name,
-              headerDescription: this.community.Domain.description,
+            var backPath, headerTitle, headerDescription;
+            debugger;
+            if (this.community.CommunityFolder) {
+              backPath = "/community_folder/" + this.community.CommunityFolder.id;
+              headerTitle = this.community.CommunityFolder.name;
+              headerDescription = this.community.CommunityFolder.description;
+            } else {
+              backPath = "/domain/" + this.community.domain_id;
+              headerTitle = this.community.Domain.name;
+              headerDescription = this.community.Domain.description;
+            }
+            this.fire("change-header", {
+              headerTitle: headerTitle,
+              headerDescription: headerDescription,
               headerIcon: "group-work",
               disableDomainUpLink: (this.community.configuration &&
                 this.community.configuration.disableDomainUpLink === true),
               documentTitle: this.community.name,
-              backPath: "/domain/" + this.community.domain_id });
+              backPath: backPath
+            });
           }
           this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
           this.$.pagesAjax.generateRequest();

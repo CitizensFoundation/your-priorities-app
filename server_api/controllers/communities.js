@@ -354,6 +354,12 @@ var getCommunity = function(req, done) {
             required: false
           },
           {
+            model: models.Community,
+            required: false,
+            as: 'CommunityFolder',
+            attributes: ['id', 'name', 'description']
+          },
+          {
             model: models.Video,
             as: 'CommunityLogoVideos',
             attributes:  ['id','formats','viewable'],
@@ -1040,49 +1046,59 @@ router.get('/:id/translatedText', auth.can('view community'), function(req, res)
   }
 });
 
-router.post('/:domainId', auth.can('create community'), function(req, res) {
-  models.Community.find({
-    where: {
-      hostname: req.body.hostname
-    }
-  }).then(function (oldCommunity) {
-    if (oldCommunity) {
-      log.error("Can't save community, hostname already taken", {hostname:  req.body.hostname});
-      res.send({hostnameTaken: true, isError: true});
-    } else {
-      var admin_email = req.user.email;
-      var admin_name = "Administrator";
-      var community = models.Community.build({
-        name: req.body.name,
-        description: req.body.description,
-        access: models.Community.convertAccessFromRadioButtons(req.body),
-        domain_id: req.params.domainId,
-        user_id: req.user.id,
-        hostname: req.body.hostname,
-        website: req.body.website,
-        in_community_folder_id: (req.body.in_community_folder_id && req.body.in_community_folder_id!='-1') ?
-          req.body.in_community_folder_id : null,
-        admin_email: admin_email,
-        admin_name: admin_name,
-        user_agent: req.useragent.source,
-        ip_address: req.clientIp
-      });
-
-      updateCommunityConfigParameters(req, community);
-      community.save().then(function() {
-        log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
-        community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
-          community.setupImages(req.body, function(error) {
-            community.addCommunityAdmins(req.user).then(function (results) {
-              sendCommunityOrError(res, community, 'setupImages', req.user, error);
-            });
-          });
-        });
-      }).catch(function(error) {
-        sendCommunityOrError(res, null, 'create', req.user, error);
-      });
-    }
+const createNewCommunity = (req, res) => {
+  var admin_email = req.user.email;
+  var admin_name = "Administrator";
+  var community = models.Community.build({
+    name: req.body.name,
+    description: req.body.description,
+    access: models.Community.convertAccessFromRadioButtons(req.body),
+    domain_id: req.params.domainId,
+    user_id: req.user.id,
+    hostname: req.body.hostname,
+    website: req.body.website,
+    in_community_folder_id: (req.body.in_community_folder_id && req.body.in_community_folder_id!='-1') ?
+      req.body.in_community_folder_id : null,
+    is_community_folder: (req.body.is_community_folder && req.body.is_community_folder!='-1') ?
+      req.body.is_community_folder : null,
+    admin_email: admin_email,
+    admin_name: admin_name,
+    user_agent: req.useragent.source,
+    ip_address: req.clientIp
   });
+
+  updateCommunityConfigParameters(req, community);
+  community.save().then(function() {
+    log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
+    community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
+      community.setupImages(req.body, function(error) {
+        community.addCommunityAdmins(req.user).then(function (results) {
+          sendCommunityOrError(res, community, 'setupImages', req.user, error);
+        });
+      });
+    });
+  }).catch(function(error) {
+    sendCommunityOrError(res, null, 'create', req.user, error);
+  });
+};
+
+router.post('/:domainId', auth.can('create community'), function(req, res) {
+  if (req.body.hostname && req.body.hostname!=='') {
+    models.Community.find({
+      where: {
+        hostname: req.body.hostname
+      }
+    }).then(function (oldCommunity) {
+      if (oldCommunity) {
+        log.error("Can't save community, hostname already taken", {hostname:  req.body.hostname});
+        res.send({hostnameTaken: true, isError: true});
+      } else {
+        createNewCommunity(req, res);
+      }
+    });
+  } else {
+    createNewCommunity(req, res);
+  }
 });
 
 router.put('/:id', auth.can('edit community'), function(req, res) {
@@ -1094,6 +1110,8 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
       community.description = req.body.description;
       community.in_community_folder_id = (req.body.in_community_folder_id && req.body.in_community_folder_id!='-1') ?
         req.body.in_community_folder_id : null;
+      community.is_community_folder = (req.body.is_community_folder && req.body.is_community_folder!='-1') ?
+        req.body.is_community_folder : null;
 
       if (req.body.hostname && req.body.hostname!="") {
         community.hostname = req.body.hostname;

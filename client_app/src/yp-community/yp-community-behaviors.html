@@ -88,7 +88,12 @@
     },
 
     _goToCommunity: function (e) {
-      var communityUrl = '/community/' + this.community.id;
+      var communityUrl;
+      if (this.community.is_community_folder) {
+        communityUrl = '/community_folder/' + this.community.id;
+      } else {
+        communityUrl = '/community/' + this.community.id;
+      }
       window.appGlobals.activity('open', 'community', communityUrl);
       this.redirectTo(communityUrl);
     },

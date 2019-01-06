@@ -69,6 +69,10 @@
         margin-left: 4px;
         margin-top: 4px;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -93,7 +97,7 @@
                      value="{{community.hostname}}"
                      maxlength="80"
                      minlength="1"
-                     required
+                     required="[[!community.is_community_folder]]"
                      char-counter class="mainInput">
         </paper-input>
         <div class="hostnameInfo">
@@ -160,6 +164,7 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
+      <input type="hidden" name="is_community_folder" value="[[community.is_community_folder]]">
 
       <div class="layout horizontal config">
         <paper-dropdown-menu label="[[t('status.select')]]">
@@ -365,8 +370,17 @@
 
     _communityFoldersResponse: function (event, detail) {
       var communityFolders = detail.response;
+      if (this.community.id) {
+        var deleteIndex;
+        communityFolders.forEach(function (community, index) {
+          if (community.id==this.community.id)
+            deleteIndex = index;
+        }.bind(this));
+        if (deleteIndex)
+          communityFolders.splice(deleteIndex, 1);
+      }
       if (communityFolders && communityFolders.length>0) {
-        communityFolders.unshift({id: -1, name: { en: this.t('none') } });
+        communityFolders.unshift({id: -1, name: this.t('none') });
         this.set('availableCommunityFolders', communityFolders);
       } else {
         this.set('availableCommunityFolders', null);
@@ -478,6 +492,17 @@
         this.$$("#videoFileUpload").clear();
     },
 
+    _checkCommunityFolders: function (community) {
+      var domain;
+      if (community.Domain) {
+        domain = community.Domain;
+      } else {
+        domain = window.appGlobals.domain;
+      }
+      this.$.communityFoldersAjax.url = "/api/domains/"+domain.id+"/availableCommunityFolders";
+      this.$.communityFoldersAjax.generateRequest();
+    },
+
     setup: function (community, newNotEdit, refreshFunction, isCommunityFolder, communityFolderId) {
       if (!community) {
         this.set('community', {
@@ -488,6 +513,7 @@
           community_folder_id: communityFolderId ? communityFolderId : null,
           is_community_folder: isCommunityFolder ? isCommunityFolder : null
         });
+        this._checkCommunityFolders(this.community);
       } else {
         this.set('community', community);
         if (community.CommunityLogoVideos && community.CommunityLogoVideos.length>0) {
@@ -495,7 +521,7 @@
         }
         this.$.pagesAjax.url = "/api/communities/"+community.id+"/pages";
         this.$.pagesAjax.generateRequest();
-        this.$.communityFoldersAjax.url = "/api/domains/"+community.Domain.id+"/availableCommunityFolders";
+        this._checkCommunityFolders(this.community);
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);

@@ -228,7 +228,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Community.hasMany(models.Group, { foreignKey: "community_id" });
         Community.hasMany(models.Community, { as: 'CommunityFolders', foreignKey: "in_community_folder_id" });
-        Community.belongsTo(models.Community, {  as: 'CommunityFolder', foreignKey: "in_community_folder_id"});
+        Community.belongsTo(models.Community, { as: 'CommunityFolder', foreignKey: "in_community_folder_id"});
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
         Community.belongsTo(models.User);
         Community.belongsToMany(models.Video, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo'});
