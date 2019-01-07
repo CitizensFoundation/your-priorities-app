@@ -34,6 +34,8 @@
     "express-useragent": "^0.2.4",
     "farmhash": "^2.0.5",
     "flickrapi": "~0.3.28",
+    "gulp": "gulpjs/gulp#4.0",
+    "gulp-cli": "^2.0.1",
     "heroku-node-settings": "^1.0.2",
     "i18next": "^3.0.0",
     "i18next-node-fs-backend": "^0.1.2",
@@ -77,7 +79,6 @@
     "temp": "^0.8.3",
     "wordwrap": "^1.0.0",
     "xml2js": "^0.4.17",
-    "gulp": "gulpjs/gulp#4.0",
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
