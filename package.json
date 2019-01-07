@@ -77,6 +77,7 @@
     "temp": "^0.8.3",
     "wordwrap": "^1.0.0",
     "xml2js": "^0.4.17",
+    "gulp": "gulpjs/gulp#4.0",
     "yamljs": "^0.2.7"
   },
   "devDependencies": {
@@ -112,7 +113,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "10.15.0",
-    "gulp": "4.0"
+    "node": "10.15.0"
   }
 }
