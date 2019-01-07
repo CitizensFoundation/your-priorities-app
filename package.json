@@ -73,7 +73,7 @@
     "s3-uploader": "^1.0.0",
     "sanitize-filename": "^1.6.1",
     "sequelize": "^3.31.1",
-    "sequelize-cli": "^2.4.0",
+    "sequelize-cli": "^2.8.0",
     "serve-favicon": "~2.1.6",
     "sitemap": "^1.9.0",
     "temp": "^0.8.3",

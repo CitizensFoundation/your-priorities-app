@@ -10213,9 +10213,10 @@ sentence-case@^1.1.1, sentence-case@^1.1.2:
   dependencies:
     lower-case "^1.1.1"
 
-sequelize-cli@^2.4.0:
+sequelize-cli@^2.8.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/sequelize-cli/-/sequelize-cli-2.8.0.tgz#4304cce60e499169603f838dedbab421c9849e74"
+  integrity sha1-QwTM5g5JkWlgP4ON7bq0IcmEnnQ=
   dependencies:
     bluebird "^3.5.0"
     cli-color "~1.2.0"
