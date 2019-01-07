@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["index.html?v=8.2.0.14","15e2d1ddda129c8b33bdaddc8923f18d"],["src/yp-app/yp-app.html?v=8.2.0.14","87dfb18aa3bac19b834900f0f5fa12cd"],["src/yp-app/yp-view-404.html?v=8.2.0.14","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=8.2.0.14","be517b00898dc0a1419cc2cdfcc61cd2"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=8.2.0.14","88b9f29951390039ef7a304b33fcd489"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=8.2.0.14","9b567777bf442db8eb7f23f0a98a82fc"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=8.2.0.14","3155d871af8441506c58646a30bb8771"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=8.2.0.14","e4f9b5510919ef5ab7599cd0513628e3"],["src/yp-dialog-container/yp-dialog-container-media-recorder.html?v=8.2.0.14","40c6bc335ebafbd15672749ec60ef465"],["src/yp-dialog-container/yp-dialog-container-moderation.html?v=8.2.0.14","05a568895357295b8e135628f78e3392"],["src/yp-dialog-container/yp-dialog-container-users-grid.html?v=8.2.0.14","1e60b23cd02bca31c96afb41484e5cdb"],["src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html?v=8.2.0.14","6b35cc77298e968a35cb94fae3c8e217"],["src/yp-domain/yp-domain.html?v=8.2.0.14","8b0775373f610238462b333b8f772251"],["src/yp-group/yp-group.html?v=8.2.0.14","4047610f684c3cff2d33ca0f0eef3972"],["src/yp-post/yp-post.html?v=8.2.0.14","53660f20e59db12d64ed0c6f0965f05a"],["src/yp-user/yp-user.html?v=8.2.0.14","c72e7acb2c8dab04c8259f3b020d94df"]];
+var precacheConfig = [["index.html?v=8.2.0.15","8986fbb728fdd64417eed39afd6ab793"],["src/yp-app/yp-app.html?v=8.2.0.15","1b3a3dcb9dc9b0d781a7c8589e1e8047"],["src/yp-app/yp-view-404.html?v=8.2.0.15","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=8.2.0.15","be517b00898dc0a1419cc2cdfcc61cd2"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=8.2.0.15","88b9f29951390039ef7a304b33fcd489"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=8.2.0.15","9b567777bf442db8eb7f23f0a98a82fc"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=8.2.0.15","3155d871af8441506c58646a30bb8771"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=8.2.0.15","e4f9b5510919ef5ab7599cd0513628e3"],["src/yp-dialog-container/yp-dialog-container-media-recorder.html?v=8.2.0.15","ba5b80cec6b288eeba1741bfa3e96a98"],["src/yp-dialog-container/yp-dialog-container-moderation.html?v=8.2.0.15","05a568895357295b8e135628f78e3392"],["src/yp-dialog-container/yp-dialog-container-users-grid.html?v=8.2.0.15","1e60b23cd02bca31c96afb41484e5cdb"],["src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html?v=8.2.0.15","6b35cc77298e968a35cb94fae3c8e217"],["src/yp-domain/yp-domain.html?v=8.2.0.15","8b0775373f610238462b333b8f772251"],["src/yp-group/yp-group.html?v=8.2.0.15","4047610f684c3cff2d33ca0f0eef3972"],["src/yp-post/yp-post.html?v=8.2.0.15","53660f20e59db12d64ed0c6f0965f05a"],["src/yp-user/yp-user.html?v=8.2.0.15","c72e7acb2c8dab04c8259f3b020d94df"]];
 var cacheName = 'sw-precache-v3--' + (self.registration ? self.registration.scope : '');
 
 
@@ -45,7 +45,7 @@ var ignoreUrlParametersMatching = [/^utm_/];
 
 
 
-var addDirectoryIndex = function (originalUrl, index) {
+var addDirectoryIndex = function(originalUrl, index) {
     var url = new URL(originalUrl);
     if (url.pathname.slice(-1) === '/') {
       url.pathname += index;
@@ -53,7 +53,7 @@ var addDirectoryIndex = function (originalUrl, index) {
     return url.toString();
   };
 
-var cleanResponse = function (originalResponse) {
+var cleanResponse = function(originalResponse) {
     // If this is not a redirected response, then we don't have to do anything.
     if (!originalResponse.redirected) {
       return Promise.resolve(originalResponse);
@@ -75,7 +75,7 @@ var cleanResponse = function (originalResponse) {
     });
   };
 
-var createCacheKey = function (originalUrl, paramName, paramValue,
+var createCacheKey = function(originalUrl, paramName, paramValue,
                            dontCacheBustUrlsMatching) {
     // Create a new URL object to avoid modifying originalUrl.
     var url = new URL(originalUrl);
@@ -91,7 +91,7 @@ var createCacheKey = function (originalUrl, paramName, paramValue,
     return url.toString();
   };
 
-var isPathWhitelisted = function (whitelist, absoluteUrlString) {
+var isPathWhitelisted = function(whitelist, absoluteUrlString) {
     // If the whitelist is empty, then consider all URLs to be whitelisted.
     if (whitelist.length === 0) {
       return true;
@@ -104,7 +104,7 @@ var isPathWhitelisted = function (whitelist, absoluteUrlString) {
     });
   };
 
-var stripIgnoredUrlParameters = function (originalUrl,
+var stripIgnoredUrlParameters = function(originalUrl,
     ignoreUrlParametersMatching) {
     var url = new URL(originalUrl);
     // Remove the hash; see https://github.com/GoogleChrome/sw-precache/issues/290
