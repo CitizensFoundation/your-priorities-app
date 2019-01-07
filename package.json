@@ -112,6 +112,7 @@
     "node_modules"
   ],
   "engines": {
-    "node": "10.15.0"
+    "node": "10.15.0",
+    "gulp": "4.0"
   }
 }
