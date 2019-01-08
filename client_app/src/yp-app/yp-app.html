@@ -863,18 +863,13 @@
       },
 
       ready: function () {
-        console.error("yp-app is ready");
+        console.info("yp-app is ready");
         Polymer.setPassiveTouchGestures(true);
         window.app = this;
         this._setupTranslationSystem();
         this.setTheme(16);
         this._setupSamlCallback();
       },
-
-      attached: function () {
-        console.error("Have been called attached");
-      },
-
 
       getDialogAsync: function (idName, callback) {
         this.$$("#dialogContainer").getDialogAsync(idName, callback);
