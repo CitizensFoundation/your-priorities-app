@@ -21,11 +21,12 @@
 
   var setupLocale = function (locale) {
 
+    var language;
     var storedLocale = localStorage.getItem('yp-user-locale');
     if (storedLocale) {
-      window.locale = storedLocale;
+      language = storedLocale;
     } else {
-      window.locale = locale;
+      language = locale;
     }
 
     var splitLocale = window.location.href.split('locale=');
@@ -36,59 +37,52 @@
     }
 
     if (localeFromUrl && localeFromUrl.length==2) {
-      window.locale = localeFromUrl;
+      language = localeFromUrl;
       localStorage.setItem('yp-user-locale', localeFromUrl);
     }
 
-    var language = window.locale;
     i18next.use(i18nextXHRBackend).
             init({ lng: language, fallbackLng: 'en', backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' } }, function(loaded) {
+      console.info("Have loaded languages");
+      window.locale = language;
       window.i18nTranslation = i18next;
-      if (typeof moment !== 'undefined' && moment ) {
-        moment.locale([language, 'en']);
-      } else {
+      setTimeout(function () {
+        window.haveLoadedLanguages = true;
+        if (typeof moment !== 'undefined' && moment ) {
+          moment.locale([language, 'en']);
+        } else {
+          setTimeout(function(){
+            if (typeof moment !== 'undefined' && moment ) {
+              moment.locale([language, 'en']);
+            }
+          }, 500);
+        }
+
+        console.log("Changed language to "+language);
+
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
+          })
+        );
+
         setTimeout(function(){
-          if (typeof moment !== 'undefined' && moment ) {
-            moment.locale([language, 'en']);
-          }
+          console.log("setTimeout 1");
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
+            })
+          );
         }, 500);
-      }
 
-      console.log("Changed language to "+language);
-
-      document.dispatchEvent(
-        new CustomEvent("lite-signal", {
-          bubbles: true,
-          compose: true,
-          detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
-        })
-      );
-
-      setTimeout(function(){
-        console.log("setTimeout 1");
-        document.dispatchEvent(
-          new CustomEvent("lite-signal", {
-            bubbles: true,
-            compose: true,
-            detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
-          })
-        );
-      }, 500);
-
-      setTimeout(function(){
-        console.log("setTimeout 2");
-        document.dispatchEvent(
-          new CustomEvent("lite-signal", {
-            bubbles: true,
-            compose: true,
-            detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
-          })
-        );
-      }, 5000);
-
-      setTimeout(function(){
-        onSplashClick();
-      }, 720);
+        setTimeout(function(){
+          onSplashClick();
+        }, 720);
+      }, 100);
     });
   };
 
