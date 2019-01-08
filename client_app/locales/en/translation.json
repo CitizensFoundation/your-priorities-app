@@ -632,7 +632,7 @@
 
   "user": {
     "loginCompleteFor": "Login for",
-    "acceptInvite": "Accept invite participate",
+    "acceptInvite": "Accept invite to participate",
     "hasSentYouAndInvitation": "has sent you an invitation to participate in",
     "acceptInviteInstructions": "Click on the button below to accept the invitation",
     "setEmail": "Add email to account",
