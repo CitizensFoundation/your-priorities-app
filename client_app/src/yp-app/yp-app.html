@@ -543,6 +543,7 @@
       },
 
       _setupTranslationSystem: function () {
+        console.log("Have started _setupTranslationSystem");
         var hostname = window.location.hostname;
         var defaultLocale = 'en';
         if (hostname.indexOf('betrireykjavik') > -1) {
@@ -583,6 +584,7 @@
             localStorage.setItem('yp-user-locale', localeFromUrl);
           }
 
+          console.info("Have started loading i18n for "+defaultLocale);
           i18next.use(i18nextXHRBackend).init(
             {
               lng: defaultLocale,
