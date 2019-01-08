@@ -82,7 +82,7 @@
         setTimeout(function(){
           onSplashClick();
         }, 720);
-      }, 100);
+      }, 250);
     });
   };
 
