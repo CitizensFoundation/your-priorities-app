@@ -72,7 +72,7 @@
             detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
           })
         );
-      }, 400);
+      }, 500);
 
       setTimeout(function(){
         onSplashClick();
