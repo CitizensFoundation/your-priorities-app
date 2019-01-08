@@ -65,6 +65,7 @@
       );
 
       setTimeout(function(){
+        console.log("setTimeout 1");
         document.dispatchEvent(
           new CustomEvent("lite-signal", {
             bubbles: true,
@@ -75,6 +76,7 @@
       }, 500);
 
       setTimeout(function(){
+        console.log("setTimeout 2");
         document.dispatchEvent(
           new CustomEvent("lite-signal", {
             bubbles: true,
@@ -82,7 +84,7 @@
             detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
           })
         );
-      }, 750);
+      }, 5000);
 
       setTimeout(function(){
         onSplashClick();
