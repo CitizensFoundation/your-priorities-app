@@ -94,6 +94,9 @@ var generateManifest = function(req, res) {
         manifest["name"] = req.ypDomain.name;
       }
 
+      if (manifest['short_name'] && manifest['short_name'].length>12) {
+        manifest['short_name'] = manifest['short_name'].substring(0, 12);
+      }
       res.header('Content-Type', 'application/json');
       res.send( manifest );
     }
