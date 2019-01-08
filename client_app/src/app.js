@@ -75,6 +75,16 @@
       }, 500);
 
       setTimeout(function(){
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-language', data: { type: 'language-loaded', language: language }  }
+          })
+        );
+      }, 750);
+
+      setTimeout(function(){
         onSplashClick();
       }, 720);
     });
