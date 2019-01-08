@@ -48,7 +48,7 @@ var setupIconsFromImage = function (imageId, callback) {
 var generateManifest = function(req, res) {
   var manifest = {
     "display": "standalone",
-    "start_url": "./?utm_source=web_app_manifest",
+    "start_url": "./index.html?utm_source=web_app_manifest",
     "theme_color": "#103458",
     "background_color": "#cfd8dc",
     "orientation": "portrait"
