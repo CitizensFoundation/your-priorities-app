@@ -233,9 +233,9 @@
             this.changeLocaleIfNeededAfterWait(locale, force)
           } else {
             this.async(function () {
-              console.warn("Locales not loaded while trying to load languages, trying again in 1000 ms");
+              console.warn("Locales not loaded while trying to load languages, trying again in 500 ms");
               this.changeLocaleIfNeeded(locale, force)
-            }, 1000);
+            }, 500);
           }
         },
 
