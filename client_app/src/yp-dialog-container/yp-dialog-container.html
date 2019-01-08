@@ -241,7 +241,7 @@
 
       ready: function () {
         this.async(function () {
-          this.importHref(this.resolveUrl("yp-dialog-container-delayed.html"), function () {
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-delayed.html"), function () {
             this.set('haveLoadedDelayed', true)
           }, null, true);
         });
@@ -253,7 +253,7 @@
           this.set('loggedInUser', user);
           if (!this.loadingStartedLoggedIn) {
             this.loadingStartedLoggedIn = true;
-            this.importHref(this.resolveUrl("yp-dialog-container-logged-in.html"), function () {
+            this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-logged-in.html"), function () {
               console.info("Have loaded logged-in container");
             }, null, true);
           } else {
@@ -268,7 +268,7 @@
           this.set('gotAdminRights', true);
           if (!this.loadingStartedAdmin) {
             this.loadingStartedAdmin = true;
-            this.importHref(this.resolveUrl("yp-dialog-container-admin.html"), function () {
+            this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-admin.html"), function () {
               console.info("Have loaded admin container");
             }, null, true);
           } else {
@@ -279,7 +279,7 @@
 
       _openBulkStatusUpdates: function () {
         this.$.loadingDialog.open();
-        this.importHref(this.resolveUrl("yp-dialog-container-bulk-status-updates.html"), function () {
+        this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html"), function () {
           this.$.loadingDialog.close();
           console.info("Have loaded bulk status container");
         }.bind(this), null, true);
@@ -308,8 +308,8 @@
           this.getDialogAsync("usersGrid", callback);
         } else {
           this.$.loadingDialog.open();
-          this.importHref(this.resolveUrl("yp-dialog-vaadin-grid-shared.html"), function () {
-            this.importHref(this.resolveUrl("yp-dialog-container-users-grid.html"), function () {
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html"), function () {
+            this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-users-grid.html"), function () {
               this.$.loadingDialog.close();
               console.info("Have loaded users grid container");
               this.set('gotUsersGrid', true);
@@ -324,8 +324,8 @@
           this.getDialogAsync("contentModeration", callback);
         } else {
           this.$.loadingDialog.open();
-          this.importHref(this.resolveUrl("yp-dialog-vaadin-grid-shared.html"), function () {
-            this.importHref(this.resolveUrl("yp-dialog-container-moderation.html"), function () {
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html"), function () {
+            this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-moderation.html"), function () {
               this.$.loadingDialog.close();
               console.info("Have loaded contentModeration");
               this.set('gotContentModeration', true);
@@ -340,7 +340,7 @@
           this.getDialogAsync("mediaRecorder", callback);
         } else {
           this.$.loadingDialog.open();
-          this.importHref(this.resolveUrl("yp-dialog-container-media-recorder.html"), function () {
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-media-recorder.html"), function () {
             this.$.loadingDialog.close();
             console.info("Have loaded media recorder container");
             this.set('gotMediaRecorder', true);

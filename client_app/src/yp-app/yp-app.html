@@ -666,7 +666,7 @@
           if (page=="view-404") {
             resolvedPageUrl = this.resolveUrl("yp-view-404.html");
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=@version@");
+            resolvedPageUrl = this.resolveUrl('/src/yp-' + page + '/' + 'yp-' + page + ".html?v=@version@");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
