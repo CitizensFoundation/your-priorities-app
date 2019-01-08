@@ -207,12 +207,9 @@
 
         changeLocaleIfNeededAfterWait: function (locale, force) {
           console.log("changeLocaleIfNeeded "+locale);
-          if (locale && this.language!=locale) {
+          if (window.haveLoadedLanguages===true && locale && this.language!=locale) {
             if (force || !localStorage.getItem('yp-user-locale')) {
               i18next.changeLanguage(locale, function(loaded) {
-                if (!window.i18nTranslation) {
-                  window.i18nTranslation = i18next;
-                }
                 console.log("i18n init loaded "+loaded);
                 moment.locale([locale, 'en']);
                 console.log("Changed language to "+locale);
@@ -229,12 +226,13 @@
         },
 
         changeLocaleIfNeeded: function (locale, force) {
-          if (typeof i18next !== 'undefined') {
+          if (window.haveLoadedLanguages) {
             this.changeLocaleIfNeededAfterWait(locale, force)
           } else {
             this.async(function () {
-              this.changeLocaleIfNeededAfterWait(locale, force)
-            }, 1000);
+              console.warn("Locales not loaded while trying to load languages, trying again in 500 ms");
+              this.changeLocaleIfNeeded(locale, force)
+            }, 500);
           }
         },
 
@@ -509,7 +507,7 @@
           var cookiearray = strCookies.split(';');
           var sid = '';
           for (var i = 0; i < cookiearray.length; i++) {
-            name = cookiearray[i].split('=')[0];
+            var name = cookiearray[i].split('=')[0];
             var value = cookiearray[i].split('=')[1];
             if (name == ' connect.sid')
               sid = value;

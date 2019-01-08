@@ -1,3 +1,23 @@
+<script src="../../bower_components/i18next/i18next.min.js"></script>
+<script src="../../bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
+
+<script src='../../bower_components/moment/min/moment.min.js'></script>
+<script src='../../bower_components/moment/locale/is.js'></script>
+<script src='../../bower_components/moment/locale/nb.js'></script>
+<script src='../../bower_components/moment/locale/nl.js'></script>
+<script src='../../bower_components/moment/locale/hu.js'></script>
+<script src='../../bower_components/moment/locale/zh-tw.js'></script>
+<script src='../../bower_components/moment/locale/sr.js'></script>
+<script src='../../bower_components/moment/locale/hr.js'></script>
+<script src='../../bower_components/moment/locale/tr.js'></script>
+<script src='../../bower_components/moment/locale/sl.js'></script>
+<script src='../../bower_components/moment/locale/pt.js'></script>
+<script src='../../bower_components/moment/locale/pl.js'></script>
+<script src='../../bower_components/moment/locale/de.js'></script>
+<script src='../../bower_components/moment/locale/fr.js'></script>
+<script src='../../bower_components/moment/locale/da.js'></script>
+<script src='../../bower_components/moment/locale/nb.js'></script>
+
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
@@ -22,7 +42,6 @@
 <link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <link rel="import" href="../yp-behaviors/yp-lodash-behavior.html">
-<link rel="import" href="../yp-behaviors/yp-moment-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-app-globals/yp-app-globals.html">
 <link rel="import" href="../yp-app-globals/yp-app-user.html">
@@ -510,6 +529,89 @@
         'yp-open-login': '_login'
       },
 
+      _setupSamlCallback: function () {
+        var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+        var eventer = window[eventMethod];
+        var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+        console.log("Have created event listener for samlLogin");
+
+        eventer(messageEvent,function(e) {
+          if (e.data=='samlLogin' && window.appUser) {
+            window.appUser.loginFromSaml();
+            console.log("Have contacted app user 2");
+          }
+        },false);
+      },
+
+      _setupTranslationSystem: function () {
+        console.log("Have started _setupTranslationSystem");
+        var hostname = window.location.hostname;
+        var defaultLocale = 'en';
+        if (hostname.indexOf('betrireykjavik') > -1) {
+          defaultLocale = 'is';
+        } else if (hostname.indexOf('betraisland') > -1) {
+          defaultLocale = 'is';
+        } else if (hostname.indexOf('forbrukerradet') > -1) {
+            defaultLocale = 'no';
+        } else {
+          var tld = hostname.substring(hostname.lastIndexOf('.'));
+          var localeByTld = {
+            '.fr': 'fr',
+            '.hr': 'hr',
+            '.hu': 'hu',
+            '.is': 'is',
+            '.nl': 'nl',
+            '.no': 'no',
+            '.pl': 'pl',
+            '.tw': 'zh_TW',
+          };
+          defaultLocale = localeByTld[tld] || 'en';
+
+          var language;
+          var storedLocale = localStorage.getItem('yp-user-locale');
+          if (storedLocale) {
+            defaultLocale = storedLocale;
+          }
+
+          var splitLocale = window.location.href.split('locale=');
+
+          var localeFromUrl;
+          if (splitLocale && splitLocale[1]) {
+            localeFromUrl = splitLocale[1];
+          }
+
+          if (localeFromUrl && localeFromUrl.length == 2) {
+            defaultLocale = localeFromUrl;
+            localStorage.setItem('yp-user-locale', localeFromUrl);
+          }
+        }
+
+        console.info("Have started loading i18n for "+defaultLocale);
+        i18next.use(i18nextXHRBackend).init(
+          {
+            lng: defaultLocale,
+            fallbackLng: 'en',
+            backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' }
+            }, function(loaded) {
+          console.info("Have loaded languages for "+defaultLocale);
+          window.locale = defaultLocale;
+          window.i18nTranslation = i18next;
+          window.haveLoadedLanguages = true;
+          moment.locale([defaultLocale, 'en']);
+
+          console.log("Changed language to "+defaultLocale);
+
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: { name: 'yp-language', data: { type: 'language-loaded', language: defaultLocale }  }
+            })
+          );
+        }.bind(this));
+      },
+
       _openPageFromEvent: function (event, detail) {
         if (detail.pageId) {
           this.openPageFromId(detail.pageId);
@@ -675,7 +777,7 @@
           } else if (page==='community_folder') {
             resolvedPageUrl = this.resolveUrl('../yp-community/yp-community-folder.html?v=@version@');
           } else {
-            resolvedPageUrl = this.resolveUrl('../yp-' + page + '/' + 'yp-' + page + ".html?v=@version@");
+            resolvedPageUrl = this.resolveUrl('/src/yp-' + page + '/' + 'yp-' + page + ".html?v=@version@");
           }
           console.log("Trying to load "+resolvedPageUrl);
           this.importHref(resolvedPageUrl, null, this._showPage404, true);
@@ -772,9 +874,12 @@
       },
 
       ready: function () {
+        console.info("yp-app is ready");
         Polymer.setPassiveTouchGestures(true);
         window.app = this;
+        this._setupTranslationSystem();
         this.setTheme(16);
+        this._setupSamlCallback();
       },
 
       getDialogAsync: function (idName, callback) {

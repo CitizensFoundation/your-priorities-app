@@ -267,16 +267,16 @@
           this._linksAndEmojis()
         }
 
-        if (this.simpleFormat) {
-          this.processedContent = this.processedContent.replace(/(\r\n)/g,"<br>");
-        }
-
         if (this.truncate && this.content && (this.content.length>this.truncate || this.autoTranslate)) {
           let truncateBy = this.truncate;
           if (this.autoTranslate && YpMagicTextBox.doubleWidthLanguages.indexOf(this.language) > -1) {
             truncateBy = truncateBy / 2;
           }
           this.processedContent = YpMagicTextBox.truncate(YpMagicTextBox.trim(this.processedContent), truncateBy, '...');
+        }
+
+        if (this.simpleFormat) {
+          this.processedContent = this.processedContent.replace(/(\n)/g,"<br>");
         }
 
         this.subClassProcessing();

@@ -7,22 +7,26 @@ let fs = require('fs');
 
 let replaceForBetterReykjavik = function (data) {
   data = data.replace(/XappNameX/g, "Betri Reykjavík");
-  return data.replace(/XdescriptionX/g, "Betri Reykjavík er samráðsverkefni Reykjavíkurborgar, Íbúa ses og Reykvíkinga.");
+  data = data.replace(/XdescriptionX/g, "Betri Reykjavík er samráðsverkefni Reykjavíkurborgar, Íbúa ses og Reykvíkinga.");
+  return data.replace(/XmanifestPathX/g, "manifest_br");
 };
 
 let replaceForBetterIceland = function (data) {
   data = data.replace(/XappNameX/g, "Betra Ísland");
-  return data.replace(/XdescriptionX/g, "Betra Ísland er samráðsvefur fyrir alla Íslendinga");
+  data = data.replace(/XdescriptionX/g, "Betra Ísland er samráðsvefur fyrir alla Íslendinga");
+  return data.replace(/XmanifestPathX/g, "manifest_bi");
 };
 
 let replaceForYrpri = function (data) {
   data = data.replace(/XappNameX/g, "Your Priorities");
-  return data.replace(/XdescriptionX/g, "Citizen participation application");
+  data = data.replace(/XdescriptionX/g, "Citizen participation application");
+  return data.replace(/XmanifestPathX/g, "manifest_yp");
 };
 
 let replaceFromEnv = function (data) {
   data = data.replace(/XappNameX/g, process.env.YP_INDEX_APP_NAME ? process.env.YP_INDEX_APP_NAME : "Your Priorities");
-  return data.replace(/XdescriptionX/g, process.env.YP_INDEX_DESCRIPTION ? process.env.YP_INDEX_DESCRIPTION : "Citizen participation application");
+  data = data.replace(/XdescriptionX/g, process.env.YP_INDEX_DESCRIPTION ? process.env.YP_INDEX_DESCRIPTION : "Citizen participation application");
+  return data.replace(/XmanifestPathX/g, process.env.YP_INDEX_MANIFEST_PATH ? process.env.YP_INDEX_MANIFEST_PATH : "manifest_yp");
 };
 
 let sendIndex = function (req, res) {
