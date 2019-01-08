@@ -44,9 +44,9 @@
     i18next.use(i18nextXHRBackend).
             init({ lng: language, fallbackLng: 'en', backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' } }, function(loaded) {
       console.info("Have loaded languages");
-      window.locale = language;
-      window.i18nTranslation = i18next;
       setTimeout(function () {
+        window.locale = language;
+        window.i18nTranslation = i18next;
         window.haveLoadedLanguages = true;
         if (typeof moment !== 'undefined' && moment ) {
           moment.locale([language, 'en']);
