@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-FORCE_PRODUCTION = true;
+FORCE_PRODUCTION = false;
 
 const debug = require('debug')('your-priorities-app');
 const express = require('express');
