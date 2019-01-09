@@ -23,6 +23,10 @@
         padding-top: 16px;
       }
 
+      .card[wide-padding] {
+        padding: 16px !important;
+      }
+
       .archivedText {
         font-size: 25px;
         color: #333;
@@ -48,9 +52,6 @@
       }
 
       @media (max-width: 960px) {
-        yp-community-card {
-          width: 100%;
-        }
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -58,7 +59,9 @@
 
     <iron-list id="ironList" scroll-offset="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid$="[[wide]]">
       <template>
-        <yp-community-card tabindex$="[[tabIndex]]" wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        <div class="card layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
+          <yp-community-card wide$="[[wide]]"  community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        </div>
       </template>
     </iron-list>
   </template>

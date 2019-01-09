@@ -147,6 +147,7 @@
 
         .pointMaterial {
           width: 100%;
+          max-width: 600px;
         }
 
         .main-container {
@@ -519,7 +520,7 @@
       <div class="layout vertical center-center">
         <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
           <template>
-            <div class="item" tabindex$="[[tabIndex]]">
+            <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
               <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                 <yp-point point="[[point]]"></yp-point>
               </paper-material>
