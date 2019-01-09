@@ -140,35 +140,8 @@
           margin-right: 0;
           padding-left: 0;
           padding-right: 0;
-          width: 304px;
-        }
-
-        .postCard[hide-post-cover] {
-          height: 230px;
-        }
-
-        .postCard[hide-description] {
-          height: 302px;
-        }
-
-        .postCard[hide-description][hide-post-cover] {
-          height: 134px;
-        }
-
-        .postCard[hide-post-cover][hide-actions] {
-          height: 180px;
-        }
-
-        .postCard[hide-description][hide-actions] {
-          height: 240px;
-        }
-
-        .postCard[hide-description][hide-post-cover][hide-actions] {
-          height: 77px;
-        }
-
-        .postCard[hide-actions] {
-          height: 402px;
+          width: 100%;
+          height: 100%;
         }
 
         .postCard[mini] {
@@ -181,8 +154,8 @@
           margin-right: 0;
           padding-left: 0;
           padding-right: 0;
-          width: 304px;
-          height: 400px;
+          width: 100%;
+          height: 100%;
         }
 
         .card[mini] {
@@ -196,8 +169,8 @@
         }
 
         yp-post-cover-media {
-          width: 304px;
-          height: 171px;
+          width: 100%;
+          height: 225px;
         }
 
         yp-post-cover-media[mini] {
@@ -219,9 +192,33 @@
           width: 100%;
           height: 90px !important;
         }
+      }
 
+      @media (max-width: 375px) {
+        yp-post-cover-media {
+          height: 205px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 80px;
+        }
+      }
 
+      @media (max-width: 360px) {
+        yp-post-cover-media {
+          height: 200px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
+      }
 
+      @media (max-width: 320px) {
+        yp-post-cover-media {
+          height: 180px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
       }
 
       [hidden] {
