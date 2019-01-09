@@ -1,4 +1,6 @@
 {
+  "publishStatus": "Status",
+  "groupName": "Gruppe",
   "areYouSureAnonymizeSelectedContent": "Er du sikker på at du vil anonymisere det valgte innholdet?",
   "areYouSureAnonymizeContent": "Er du sikker på at du vil anonymisere dette innholdet?",
   "operationInProgressTryReloading": "Pågår, prøv å oppdatere dataene senere",
@@ -630,7 +632,7 @@
 
   "user": {
     "loginCompleteFor": "Pålogging for",
-    "acceptInvite": "Godta invitasjon",
+    "acceptInvite": "Godta invitasjon til å delta",
     "hasSentYouAndInvitation": "har sendt deg en invitasjon til å delta i",
     "acceptInviteInstructions": "Klikk på knappen under for å godta invitasjonen",
     "setEmail": "Legg til e-postadresse til kontoen",
