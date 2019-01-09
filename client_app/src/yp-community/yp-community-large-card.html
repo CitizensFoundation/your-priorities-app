@@ -82,8 +82,8 @@
       .edit {
         color: #FFF;
         position: absolute;
-        top: 0px;
-        left: 390px;
+        top: 0;
+        right: 0px;
         padding-right: 0;
         margin-right: 0;
       }
@@ -115,6 +115,7 @@
         padding-top: 16px;
         padding-bottom: 16px;
         min-height: 31px;
+        padding-right: 24px;
       }
 
       .textBox {
@@ -152,9 +153,12 @@
         display: none;
       }
 
-      @media (max-width: 945px) {
+      @media (max-width: 960px) {
         :host {
-          width: 306px;
+          max-width: 600px;
+          padding: 0 !important;
+          padding-top: 8px !important;
+          width: 100%;
         }
 
         .k2017Image {
@@ -188,30 +192,24 @@
         }
 
         .large-card {
-          width: 306px;
+          width: 100%;
           height: 100%;
+          margin-left: 8px;
+          margin-right: 8px;
+          margin-top: 8px !important;
         }
 
         .top-card {
           margin-bottom: 16px;
         }
 
-        .edit {
-          left: 265px;
-        }
-
-        iron-image, video {
-          width: 306px;
-          height: 172px !important;
-        }
-
-        .image {
-          width: 306px;
-          height: 172px !important;
+        iron-image, video, .image {
+          width: 100%;
+          height: 225px;
         }
 
         .imageCard {
-          height: 172px !important;
+          height: 225px;
         }
 
         .community-name {
@@ -228,7 +226,37 @@
         }
 
         .textBox {
-          margin-left: 0;
+          margin-left: 8px;
+        }
+      }
+
+      @media (max-width: 375px) {
+        iron-image, video, .image {
+          height: 205px;
+        }
+
+        .imageCard {
+          height: 205px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        iron-image, video, .image {
+          height: 200px;
+        }
+
+        .imageCard {
+          height: 200px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        iron-image, video, .image {
+          height: 180px;
+        }
+
+        .imageCard {
+          height: 180px;
         }
       }
 

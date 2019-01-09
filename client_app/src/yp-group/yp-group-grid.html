@@ -24,7 +24,8 @@
         padding: 16px !important;
       }
 
-      #ironList {
+      iron-list {
+        height: 100vh;
       }
 
       [hidden] {
@@ -34,14 +35,19 @@
       :focus {
         outline: none;
       }
+
+      @media (max-width: 1199px) {
+        .groupCard {
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
+    <iron-media-query query="(min-width: 1199px)" query-matches="{{wide}}"></iron-media-query>
 
-    <div class="layout vertical center-center">
-      <iron-list id="ironList" scroll-offset="350" items="[[activeGroups]]" as="group" scroll-target="document" grid>
+    <div class="layout horizontal center-center">
+      <iron-list id="ironList" scroll-offset="350" items="[[activeGroups]]" as="group" scroll-target="document" grid$="[[wide]]">
         <template>
-          <div class="groupCard" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
+          <div class="groupCard layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
             <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
           </div>
         </template>

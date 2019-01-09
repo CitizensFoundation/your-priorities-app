@@ -84,15 +84,15 @@
       .group-name {
         margin: 0;
         font-size: var(--large-heading-size, 26px);
-        height: 45px;
-        padding: 14px;
+        padding: 8px;
+        padding-top: 16px;
+        padding-bottom: 16px;
         background-color: var(--primary-color-800);
         color: #FFF;
         font-weight: bold;
         cursor: pointer;
         vertical-align: middle;
-        display: table-cell !important;
-        width: 416px;
+        width: auto;
       }
 
       .group-name[featured] {
@@ -117,9 +117,11 @@
         padding: 8px;
       }
 
-      @media (max-width: 420px) {
+      @media (max-width: 960px) {
         :host {
-          width: 304px;
+          max-width: 600px;
+          width: 100%;
+          padding-top: 0 !important;
         }
 
         .groupCard {
@@ -127,16 +129,40 @@
           margin-right: 8px;
           padding-left: 0;
           padding-right: 0;
-          width: 304px;
+          width: 100%;
+          height: 100%;
+          padding-bottom: 38px;
+        }
+
+        yp-membership-button {
+          top: 204px;
         }
 
         iron-image {
-          width: 304px;
-          height: 165px;
+          width: 100%;
+          height: 225px;
         }
 
         .group-name {
-          width: 304px;
+          width: auto;
+        }
+      }
+
+      @media (max-width: 375px) {
+        iron-image {
+          height: 205px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        iron-image {
+          height: 200px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        iron-image {
+          height: 180px;
         }
       }
 
@@ -151,29 +177,23 @@
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <template is="dom-if" if="[[group]]">
-      <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
-        <template is="dom-if" if="[[noImage]]">
-          <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
-        </template>
-        <template is="dom-if" if="[[!noImage]]">
-          <iron-image archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
-        </template>
-        <div id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
-          <yp-magic-text text-type="groupName" content-language="[[group.language]]"
-                         disable-translation="[[group.configuration.disableNameAutoTranslation]]"
-                         text-only content="[[groupName]]" content-id="[[group.id]]">
-          </yp-magic-text>
-          <span hidden$="[[!archived]]">- [[t('archived')]]</span>
-        </div>
-        <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
-                       text-type="groupContent" content-language="[[group.language]]"
-                       text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
+    <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
+      <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
+      <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
+      <div id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
+        <yp-magic-text text-type="groupName" content-language="[[group.language]]"
+                       disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                       text-only content="[[groupName]]" content-id="[[group.id]]">
         </yp-magic-text>
-        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-        <yp-membership-button archived$="[[archived]]" group="[[group]]"></yp-membership-button>
-      </paper-card>
-    </template>
+        <span hidden$="[[!archived]]">- [[t('archived')]]</span>
+      </div>
+      <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
+                     text-type="groupContent" content-language="[[group.language]]"
+                     text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
+      </yp-magic-text>
+      <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
+      <yp-membership-button archived$="[[archived]]" group="[[group]]"></yp-membership-button>
+    </paper-card>
   </template>
 
   <script>

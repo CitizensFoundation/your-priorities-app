@@ -71,7 +71,7 @@
         color: #FFF;
         position: absolute;
         top: 0;
-        left: 384px;
+        right: 0;
         padding-right: 0;
         margin-right: 0;
       }
@@ -111,7 +111,7 @@
         padding-left: 16px;
         padding-top: 16px;
         padding-bottom: 16px;
-        padding-right: 32px !important;
+        padding-right: 24px !important;
         min-height: 28px;
       }
 
@@ -123,6 +123,7 @@
       @media (max-width: 960px) {
         :host {
           max-width: 600px;
+          width: 100%;
         }
 
         .groupCard {
@@ -135,10 +136,6 @@
 
         .top-card {
           margin-top: 16px !important;
-        }
-
-        .edit {
-          left: 265px;
         }
 
         iron-image, video {
