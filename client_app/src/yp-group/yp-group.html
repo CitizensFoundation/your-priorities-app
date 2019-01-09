@@ -104,16 +104,20 @@
         margin-top: 4px;
       }
 
+      @media (max-width: 1000px) {
+        .tabs {
+          font-size: 15px;
+        }
+      }
+
       @media (max-width: 600px) {
         .tabs {
-          max-width: 550px;
-          width: 550px;
           font-size: 14px;
           word-wrap: break-word !important;
         }
 
         .tabs[has-non-open-posts] {
-          font-size: 10px;
+          font-size: 14px;
         }
 
         .counterInfo[has-non-open-posts] {
@@ -121,7 +125,6 @@
         }
 
         .tabs .tab {
-          width: 120px;
           word-wrap: break-word !important;
         }
 
@@ -140,25 +143,20 @@
 
       @media (max-width: 380px) {
         .tabs {
-          max-width: 360px;
-          font-size: 12px;
+          font-size: 14px;
           width: 360px;
         }
 
         paper-tab {
-          width: 170px;
         }
       }
 
       @media (max-width: 320px) {
         .tabs {
-          max-width: 320px;
-          font-size: 12px;
-          width: 320px;
+          font-size: 13px;
         }
 
         paper-tab {
-          width: 160px;
         }
       }
 
@@ -190,7 +188,7 @@
       </div>
 
       <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
-        <paper-tabs scrollable$="[[!phoneWidth]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+        <paper-tabs scrollable$="[[shouldScrollTabs]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
               <div hidden$="[[isTabOpen]]">
@@ -295,7 +293,7 @@
     <lite-signal on-lite-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></lite-signal>
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
-    <iron-media-query query="(min-width: 450px)" query-matches="{{phoneWidth}}"></iron-media-query>
+    <iron-media-query query="(max-width: 700px)" query-matches="{{phoneWidth}}"></iron-media-query>
 
     <app-route
       route="{{idRoute}}"
@@ -442,7 +440,21 @@
         isIpad: {
           type: Boolean,
           computed: '_isIpad(groupId)'
+        },
+
+        shouldScrollTabs: {
+          type: Boolean,
+          computed: '_shouldScrollTabs(phoneWidth, hasNonOpenPosts)'
+        },
+
+        phoneWidth: {
+          type: Boolean,
+          value: null
         }
+      },
+
+      _shouldScrollTabs: function (phoneWidth, hasNonOpenPosts) {
+        return phoneWidth && hasNonOpenPosts;
       },
 
       observers: [
