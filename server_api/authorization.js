@@ -768,7 +768,14 @@ auth.role('point.viewUser', function (point, req, done) {
       {
         model: models.Group,
         attributes: ['id', 'access','user_id','configuration'],
-        required: false
+        required: false,
+        include: [
+          {
+            model: models.Community,
+            required: false,
+            attributes: ['id','access','user_id']
+          }
+        ]
       }
     ]
   }).then(function (point) {
