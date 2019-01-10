@@ -24,7 +24,7 @@
 * Ideas and debate points can be easily shared on social media
 * Participation groups can be configured for many different types of participation projects
 * Authentication is configurable offering eID, Facebook, email and/or anonymous login
-* The client app/website is a progressive web app that works like a native app on mobile phones while also being a website
+* The client app is a progressive web app that can be very easily installed as a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
 * Open source, non profit and built with passion over 10 years
 * Supported by mass amounts of volunteer work, the EU, city of Reykjavik, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
