@@ -907,17 +907,18 @@
       this.async(function () {
         if (!this.forceSecureSamlLogin && window.PasswordCredential && navigator.credentials) {
           navigator.credentials.get({password: true}).then(function (credentials) {
-            if (window.appUser.hasIssuedLogout===true) {
-              console.log("Have issued logout not auto logging in");
-            } else {
-              if (credentials && credentials.id && credentials.password) {
-                this.set('email', credentials.id);
-                this.set('password', credentials.password);
-                this._validateAndSend();
+            if (credentials && credentials.id && credentials.password) {
+              this.set('email', credentials.id);
+              this.set('password', credentials.password);
+              if (window.appUser.hasIssuedLogout===true) {
+                console.log("Have issued logout not auto logging in");
               } else {
-                console.warn("Canceling credentials.get");
+                this._validateAndSend();
               }
+            } else {
+              console.warn("Canceling credentials.get");
             }
+
           }.bind(this));
         }
       });
