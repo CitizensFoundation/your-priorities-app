@@ -199,7 +199,7 @@
 
       <template is="dom-if" if="[[videoActive]]" restamp>
         <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          <video id="videoPlayer" crossorigin="anonymous" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
           <div class="layout vertical center-center videoPreviewContainer" portrait$="[[portraitVideo]]" >
