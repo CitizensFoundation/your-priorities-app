@@ -1045,7 +1045,7 @@
         _processStoredPoints: function () {
           console.info("_processStoredPoints");
           if (this.upPoints===null) {
-            if (this.storedPoints.length > 0) {
+            if (this.storedPoints && this.storedPoints.length > 0) {
               var upPoints = [];
               var downPoints = [];
 
