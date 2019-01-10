@@ -1011,6 +1011,7 @@
           this.set('upPoints', null);
           this.set('downPoints', null);
           this.set('latestPointCreatedAt', null);
+          this.set('storedPoints', null);
           this._clearVideo();
           this._clearAudio();
 
@@ -1043,26 +1044,30 @@
 
         _processStoredPoints: function () {
           console.info("_processStoredPoints");
-          if (this.storedPoints.length > 0) {
-            var upPoints = [];
-            var downPoints = [];
+          if (this.upPoints===null) {
+            if (this.storedPoints.length > 0) {
+              var upPoints = [];
+              var downPoints = [];
 
-            for (var i = 0; i < this.storedPoints.length; i++) {
-              if (this.storedPoints[i].value>0) {
-                upPoints.push(this.storedPoints[i]);
-              } else if (this.storedPoints[i].value<0) {
-                downPoints.push(this.storedPoints[i]);
+              for (var i = 0; i < this.storedPoints.length; i++) {
+                if (this.storedPoints[i].value>0) {
+                  upPoints.push(this.storedPoints[i]);
+                } else if (this.storedPoints[i].value<0) {
+                  downPoints.push(this.storedPoints[i]);
+                }
               }
+              this.set('upPoints', upPoints);
+              this.set('downPoints', downPoints);
+            } else {
+              this.set('upPoints', []);
+              this.set('downPoints', []);
+              this.set('points', []);
             }
-            this.set('upPoints', upPoints);
-            this.set('downPoints', downPoints);
           } else {
-            this.set('upPoints', []);
-            this.set('downPoints', []);
-            this.set('points', []);
+            console.log("Landscape points already setup");
           }
 
-          if (!this.largeMode) {
+          if (!this.largeMode && !this.points) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
         },
