@@ -116,15 +116,22 @@
 
       @media (max-width: 985px) {
         .pointInputMaterial {
-          width: 91vw !important;
-          max-width: 500px;
+          width: 100%;
+          max-width: 568px;
           font-size: 14px;
           padding-top: 4px;
+          margin-top: 0;
         }
 
         .pointMaterial {
           width: 100%;
           max-width: 600px;
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        #pointUpOrDownMaterial {
+          margin-top: 0;
         }
 
         .main-container {
@@ -136,6 +143,13 @@
         }
 
         .pointMaterial {
+        }
+      }
+
+      @media (max-width: 420px) {
+        .pointInputMaterial {
+          width: 90%;
+          max-width: 90%;
         }
       }
 
