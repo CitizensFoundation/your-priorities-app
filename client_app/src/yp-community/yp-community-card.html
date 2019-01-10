@@ -123,13 +123,13 @@
 
       @media (max-width: 960px) {
         :host {
-          max-width: 600px;
+          max-width: 423px;
           width: 100%;
           padding-top: 0 !important;
         }
 
         yp-membership-button {
-          top: 200px;
+          top: 205px;
         }
 
         .communityCard {
@@ -144,7 +144,7 @@
 
         iron-image {
           width: 100%;
-          height: 225px;
+          height: 230px;
         }
 
         iron-image[featured] {
@@ -155,6 +155,15 @@
         }
       }
 
+      @media (max-width: 420px) {
+        iron-image {
+          height: 225px;
+        }
+
+        yp-membership-button {
+          top: 200px;
+        }
+      }
 
       @media (max-width: 375px) {
         iron-image {
