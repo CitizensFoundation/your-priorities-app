@@ -804,6 +804,11 @@
             type: String,
             observer: '_hasCurrentMobileAudio'
           },
+
+          storedPoints: {
+            type: Array,
+            value: null
+          }
         },
 
         _openLogin: function () {
@@ -872,6 +877,11 @@
           if (isAndroid) {
             this.set('isAndroid', true);
           }
+          window.addEventListener("resize", this._processStoredPoints.bind(this));
+        },
+
+        detached: function() {
+          window.removeEventListener("resize", this._processStoredPoints);
         },
 
         listeners: {
@@ -1031,19 +1041,17 @@
           }
         },
 
-        _response: function (event, detail) {
-          var points = this._preProcessPoints(detail.response);
-          this.removeElementsByClass(this, 'inserted-outside-list');
-
-          if (points.length > 0) {
+        _processStoredPoints: function () {
+          console.info("_processStoredPoints");
+          if (this.storedPoints.length > 0) {
             var upPoints = [];
             var downPoints = [];
 
-            for (var i = 0; i < points.length; i++) {
-              if (points[i].value>0) {
-                upPoints.push(points[i]);
-              } else if (points[i].value<0) {
-                downPoints.push(points[i]);
+            for (var i = 0; i < this.storedPoints.length; i++) {
+              if (this.storedPoints[i].value>0) {
+                upPoints.push(this.storedPoints[i]);
+              } else if (this.storedPoints[i].value<0) {
+                downPoints.push(this.storedPoints[i]);
               }
             }
             this.set('upPoints', upPoints);
@@ -1057,7 +1065,12 @@
           if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
+        },
 
+        _response: function (event, detail) {
+          this.set('storedPoints', this._preProcessPoints(detail.response));
+          this._processStoredPoints();
+          this.removeElementsByClass(this, 'inserted-outside-list');
           this._updateCounterInfo();
           this._scrollPointIntoView();
           this._checkForMultipleLanguages();
