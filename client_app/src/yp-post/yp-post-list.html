@@ -93,7 +93,7 @@
 
       .searchBox {
         --paper-input-container-label: {
-          font-size: 22px;
+          font-size: 23px;
           color: #555;
         };
         margin-bottom: 22px;
@@ -104,9 +104,13 @@
 
         .searchBox {
           --paper-input-container-label: {
-            font-size: 17px;
+            font-size: 18px;
           };
           margin-bottom: 8px;
+        }
+
+        .searchBox {
+          margin-top: 8px;
         }
 
         .half {
@@ -115,7 +119,14 @@
 
         .searchContainer {
           @apply --layout-center-center;
+          margin-top: 0;
         }
+
+        .postsFilter {
+          padding-left: 16px;
+          width: 215px !important;
+        }
+
       }
 
       .noIdeas {
@@ -164,7 +175,7 @@
                     on-keys-pressed="_search"></iron-a11y-keys>
 
     <div class="layout vertical center-center">
-      <div class="searchContainer layout horizontal wrap" hidden$="[[group.configuration.hidePostFilterAndSearch]]">
+      <div class="searchContainer layout horizontal center-center wrap" hidden$="[[group.configuration.hidePostFilterAndSearch]]">
         <div class="layout horizontal center-center">
           <yp-posts-filter on-tap="_tapOnFilter"
                            sub-title="{{subTitle}}" class="filter" id="postsFilter" tab-name="[[statusFilter]]" class="postsFilter" on-refresh-group="_refreshGroupFromFilter"
