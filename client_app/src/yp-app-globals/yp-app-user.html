@@ -123,7 +123,12 @@
           lastLoginMethod: String,
           facebookPopupWindow: Object,
           samlPopupWindow: Object,
-          pollingStartedAt: Date
+          pollingStartedAt: Date,
+
+          hasIssuedLogout: {
+            type: Boolean,
+            value: false
+          }
         },
 
         loginForAcceptInvite: function(editDialog, token, email) {
@@ -322,6 +327,7 @@
         },
 
         logout: function () {
+          this.hasIssuedLogout = true;
           this.$.logoutAjax.body = {};
           this.$.logoutAjax.generateRequest();
         },
