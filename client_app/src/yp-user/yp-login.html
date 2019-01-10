@@ -907,7 +907,7 @@
       this.async(function () {
         if (!this.forceSecureSamlLogin && window.PasswordCredential && navigator.credentials) {
           navigator.credentials.get({password: true}).then(function (credentials) {
-            if (window.appGlobals.hasIssuedLogout===true) {
+            if (window.appUser.hasIssuedLogout===true) {
               console.log("Have issued logout not auto logging in");
             } else {
               if (credentials && credentials.id && credentials.password) {
