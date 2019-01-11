@@ -19,12 +19,13 @@
 * Users can view and moderate their own submitted content in one place
 * Full GDPR compliance
 * Localized in over 20 languages
+* Post status system where posts can be set to open open, in progress, approved or rejected
+* Admins can easily and automatically email post status update all the people who supported or opposed posts
+* Optional categories system for posts with simple filters
 * Smart notifications in browser and email
 * Newsfeeds for communities, groups and posts with activity lists where users can also share links and comment
 * Ideas and debate points can be easily shared on social media
 * Participation groups can be configured for many different types of participation projects
-* Post status system where posts can be set to open open, in progress, approved or rejected
-* Admins can easily and automatically email post status update all the people who supported or opposed posts
 * Authentication is configurable offering eID, Facebook, email and/or anonymous login
 * The client app is a progressive web app that can be very easily installed as a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
