@@ -182,7 +182,7 @@
       <div class="layout horizontal headerBox wrap">
 
         <div>
-          <paper-icon-button aria-label="[[t('close')]]" id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
+          <paper-icon-button aria-label$="[[t('close')]]" id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
         </div>
 
         <div class="headerText layout vertical">
@@ -197,7 +197,7 @@
 
         <div class="flex"></div>
         <div hidden$="[[!showReload]]">
-          <paper-icon-button aria-label="[[t('reload')]]"  icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+          <paper-icon-button aria-label$="[[t('reload')]]"  icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
         </div>
         <div hidden$="[[domainId]]">
           <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
@@ -212,7 +212,7 @@
         </paper-material>
       </div>
 
-      <vaadin-grid id="grid" aria-label="[[headerText]]" items="[[users]]" selected-items="{{selectedUsers}}">
+      <vaadin-grid id="grid" aria-label$="[[headerText]]" items="[[users]]" selected-items="{{selectedUsers}}">
         <vaadin-grid-selection-column auto-select>
         </vaadin-grid-selection-column>
 
@@ -243,7 +243,7 @@
         <vaadin-grid-column width="70px" flex-grow="0">
           <template class="header">
             <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedUsersEmpty]]">
-              <paper-icon-button aria-label="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedUsersEmpty]]" restamp>
                   <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeAndDeleteContentSelectedUsers">
@@ -267,7 +267,7 @@
           </template>
           <template>
             <paper-menu-button horizontal-align="right" class="helpButton">
-              <paper-icon-button aria-label="[[t('openOneItemMenu')]]" icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('openOneItemMenu')]]" icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <paper-item data-args$="[[item.id]]" hidden$="[[adminUsers]]" on-tap="_removeUserFromCollection">
                   <div hidden$="[[!groupId]]">

@@ -248,7 +248,7 @@
             </div>
           </div>
           <paper-menu-button class="edit" horizontal-align="[[editMenuAlign]]" hidden$="[[!showMenuItem]]">
-            <paper-icon-button aria-label="[[t('openGroupMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button aria-label$="[[t('openGroupMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item hidden$="[[!hasGroupAccess]]" id="editMenuItem">[[t('group.edit')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="newCategoryMenuItem">[[t('category.new')]]</paper-item>

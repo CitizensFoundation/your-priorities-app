@@ -179,7 +179,7 @@
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
         <div>
-          <paper-icon-button aria-label="[[t('close')]]" id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
+          <paper-icon-button aria-label$="[[t('close')]]" id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
         </div>
 
         <div class="headerText layout vertical">
@@ -194,11 +194,11 @@
         <div class="flex"></div>
         <div class="checkBox" hidden$="[[narrow]]"><paper-checkbox checked="{{multiSortEnabled}}">[[t('multiSortEnabled')]]</paper-checkbox></div>
         <div hidden$="[[!showReload]]">
-          <paper-icon-button aria-label="[[t('reload')]]" icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+          <paper-icon-button aria-label$="[[t('reload')]]" icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
         </div>
       </div>
 
-      <vaadin-grid id="grid" multi-sort="[[multiSortEnabled]]" active-item="{{activeItem}}" aria-label="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
+      <vaadin-grid id="grid" multi-sort="[[multiSortEnabled]]" active-item="{{activeItem}}" aria-label$="[[headerText]]" items="[[items]]" selected-items="{{selectedItems}}">
         <vaadin-grid-selection-column>
         </vaadin-grid-selection-column>
 
@@ -208,13 +208,13 @@
               <template is="dom-if" if="[[item.is_post]]">
                 <div class="layout vertical center-center">
                   <yp-post-header hide-actions post="[[item]]" post-name="[[item.name]]"header-mode></yp-post-header>
-                  <a href="/post/[[item.id]]" target="_blank"><paper-icon-button aria-label="[[t('linkToContentItem')]]" class="linkIcon" icon="link"></paper-icon-button></a>
+                  <a href="/post/[[item.id]]" target="_blank"><paper-icon-button aria-label$="[[t('linkToContentItem')]]" class="linkIcon" icon="link"></paper-icon-button></a>
                 </div>
               </template>
               <template is="dom-if" if="[[item.is_point]]">
                 <div class="layout vertical center-center">
                   <yp-point hide-actions point="[[item]]"></yp-point>
-                  <a hidden$="[[!item.post_id]]" href="/post/[[item.post_id]]/[[item.id]]" target="_blank"><paper-icon-button aria-label="[[t('linkToContentItem')]]" class="linkIcon" icon="link"></paper-icon-button></a>
+                  <a hidden$="[[!item.post_id]]" href="/post/[[item.post_id]]/[[item.id]]" target="_blank"><paper-icon-button aria-label$="[[t('linkToContentItem')]]" class="linkIcon" icon="link"></paper-icon-button></a>
                 </div>
               </template>
             </div>
@@ -289,7 +289,7 @@
         <vaadin-grid-column width="70px" flex-grow="0">
           <template class="header">
             <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedItemsEmpty]]">
-              <paper-icon-button aria-label="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
                   <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
@@ -313,7 +313,7 @@
           </template>
           <template>
             <paper-menu-button horizontal-align="right" class="helpButton">
-              <paper-icon-button aria-label="[[t('openOneItemMenu')]]" icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('openOneItemMenu')]]" icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_approve">
                   [[t('approveContent')]]

@@ -413,7 +413,7 @@
             <template is="dom-if" if="[[headerMode]]">
               <template is="dom-if" if="[[loggedInUser]]">
                 <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[hideActions]]">
-                  <paper-icon-button aria-label="[[t('openPostMenu')]]" class="moreVert" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                  <paper-icon-button aria-label$="[[t('openPostMenu')]]" class="moreVert" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
                   <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                     <template is="dom-if" if="[[hasPostAccess]]">
                       <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
