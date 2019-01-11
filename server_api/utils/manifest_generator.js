@@ -51,7 +51,7 @@ var generateManifest = function(req, res) {
     "start_url": "/?utm_source=web_app_manifest",
     "theme_color": "#103458",
     "background_color": "#ffffff",
-    "orientation": "portrait"
+    "orientation": "any"
   };
 
   var shortName, name;
