@@ -205,7 +205,7 @@
           </paper-menu-button>
         </template>
         <template is="dom-if" if="[[searchingFor]]">
-          <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
+          <paper-icon-button aria-label="[[t('clearSearchInput')]]" icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
       </div>
     </template>

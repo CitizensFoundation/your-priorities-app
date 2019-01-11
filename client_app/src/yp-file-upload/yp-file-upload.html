@@ -154,7 +154,7 @@ Example:
           <paper-button id="button" icon="file-upload" class="blue" on-click="_fileClick">
             <slot></slot>
           </paper-button>
-          <paper-icon-button class="removeButton layout self-start" icon="delete" on-tap="clear" hidden$="[[!currentFile]]"></paper-icon-button>
+          <paper-icon-button aria-label="[[t('deleteFile')]]" class="removeButton layout self-start" icon="delete" on-tap="clear" hidden$="[[!currentFile]]"></paper-icon-button>
         </div>
         <div hidden$="[[!uploadLimitSeconds]]" class="limitInfo layout horizontal center-center"><em hidden$="[[currentFile]]">[[uploadLimitSeconds]] [[t('seconds')]]</em></div>
       </div>

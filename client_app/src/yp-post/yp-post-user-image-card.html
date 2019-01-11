@@ -98,8 +98,8 @@
           [[image.photographer_name]]
         </div>
         <div class="editMenu layout horizontal flex end-justified" hidden$="[[!hasImageAccess(image, post)]]">
-          <paper-icon-button icon="create" on-tap="_openEdit"></paper-icon-button>
-          <paper-icon-button icon="clear" on-tap="_openDelete"></paper-icon-button>
+          <paper-icon-button aria-label="[[t('edit')]]" icon="create" on-tap="_openEdit"></paper-icon-button>
+          <paper-icon-button aria-label="[[t('delete')]]" icon="clear" on-tap="_openDelete"></paper-icon-button>
         </div>
       </div>
       <yp-point-comment-list class="commentsList" image="[[image]]"></yp-point-comment-list>

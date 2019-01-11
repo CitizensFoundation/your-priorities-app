@@ -91,8 +91,8 @@
             <div class="commentText">[[t('noComments')]]</div>
           </div>
           <div class="layout horizontal">
-            <paper-icon-button class="openCloseButton" icon="keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
-            <paper-icon-button class="openCloseButton" icon="keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+            <paper-icon-button aria-label="[[t('toggleOpenClose')]]" class="openCloseButton" icon="keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+            <paper-icon-button aria-label="[[t('toggleOpenClose')]]" class="openCloseButton" icon="keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
           </div>
         </div>
       </div>

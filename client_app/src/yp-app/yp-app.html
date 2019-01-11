@@ -304,13 +304,13 @@
         <app-header slot="header" id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
             <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
+              <paper-icon-button aria-label="[[t('close')]]" id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
-            <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
+            <paper-icon-button aria-label="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
             <div hide$="[[closePostHeader]]" class="layout horizontal navContainer">
               <div class="layout horizontal" style="height: 100%; vertical-align: center;">
                 <div id="headerTitle" title class="layout vertical">[[headerTitle]]</div>
-                <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hide$="[[!showBack]]"></paper-icon-button>
+                <paper-icon-button aria-label="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="backIcon" hide$="[[!showBack]]"></paper-icon-button>
               </div>
             </div>
 
@@ -323,7 +323,7 @@
             <span class="flex"></span>
 
             <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
-              <paper-icon-button icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
+              <paper-icon-button aria-label="[[t('menu.help')]]" icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
 
               <paper-listbox slot="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
