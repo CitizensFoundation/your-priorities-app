@@ -4,7 +4,7 @@ module.exports = {
   ],
   navigateFallback: '/',
   runtimeCaching: [{
-    urlPattern: /\/(.*)(?!\.mp4$)/,
+    urlPattern: /(?!(.*)mp4)\/(.*)/,
     handler: 'networkFirst'
   }]
 };
