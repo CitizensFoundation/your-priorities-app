@@ -4,7 +4,7 @@ module.exports = {
   ],
   navigateFallback: '/',
   runtimeCaching: [{
-    urlPattern: /(\/$|.html|.js|.json|\/api\/)/,
+    urlPattern: /\/(.*)(?!\.mp4$)/,
     handler: 'networkFirst'
   }]
 };
