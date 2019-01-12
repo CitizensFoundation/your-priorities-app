@@ -769,10 +769,18 @@
 
             if (oldPageData && oldPageData.page) {
               if (oldPageData.page==="post" && pageData.page==="group") {
-                if (this.$$("#groupPage")) {
+                if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
                   this.async(function () {
                     this.$$("#groupPage").goToPostOrNewsItem();
                   }, 10);
+                } else {
+                  this.async(function () {
+                    if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
+                      this.$$("#groupPage").goToPostOrNewsItem();
+                    } else {
+                      console.error("Can't find groupPage for goToPostOrNewsItem");
+                    }
+                  }, 200);
                 }
               }
             }
