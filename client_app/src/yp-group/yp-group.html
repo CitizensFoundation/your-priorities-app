@@ -491,8 +491,29 @@
         }
       },
 
+      _goToPostIdTab: function (tabId, postId) {
+        var tab = this.$$("#"+tabId);
+        if (tab) {
+          tab.goToPostId(postId);
+        } else {
+          console.error("Cant find tab "+tabId);
+        }
+      },
+
       _isIpad: function () {
         return /iPad/.test(navigator.userAgent) && !window.MSStream;
+      },
+
+      goToPostId: function (postId) {
+        if (this.selectedTab=="open") {
+          this._goToPostIdTab("openPostList", postId);
+        } else if (this.selectedTab=="in_progress") {
+          this._goToPostIdTab("inProgressPostList", postId);
+        } else if (this.selectedTab=="successful") {
+          this._goToPostIdTab("successfulPostList", postId);
+        } else if (this.selectedTab=="failed") {
+          this._goToPostIdTab("failedPostList", postId);
+        }
       },
 
       _loadMoreData: function () {

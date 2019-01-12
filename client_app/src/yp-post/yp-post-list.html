@@ -199,7 +199,7 @@
       </template>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" scroll-offset="550" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
+        <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
           <template>
             <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
               <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
@@ -225,6 +225,8 @@
       ],
 
       properties: {
+
+        wide: Boolean,
 
         categories: {
           type: Array
@@ -339,7 +341,30 @@
         randomSeed: {
           type: Number,
           value: null
+        },
+
+        scrollOffset: {
+          type: Number,
+          computed: '_scrollOffset(wide, group)'
         }
+      },
+
+      _scrollOffset: function (wide, group) {
+        var offset;
+        if (wide)
+          offset = 550;
+        else
+          offset = 700;
+
+        if (group && group.configuration) {
+          if (group.configuration.hideAllTabs)
+            offset -= 60;
+          if (group.configuration.hideNewPost)
+            offset -= 100;
+          if (group.configuration.hidePostFilterAndSearch)
+            offset -= 100;
+        }
+        return offset;
       },
 
       _tapOnFilter: function () {
@@ -394,6 +419,21 @@
 
       _categoryIdChanged: function (newValue, oldValue) {
         this.set('moreToLoad', true);
+      },
+
+      goToPostId: function (postId) {
+        if (postId && this.posts) {
+          var found = false;
+          this.posts.forEach(function (post) {
+            if (!found && postId==post.id) {
+              var list = this.$$("iron-list");
+              found = true;
+              list.scrollToItem(post);
+            }
+          }.bind(this));
+        } else {
+          console.error("No post id on goToPostId");
+        }
       },
 
       ready: function () {

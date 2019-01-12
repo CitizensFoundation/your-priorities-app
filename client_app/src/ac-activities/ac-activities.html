@@ -368,9 +368,9 @@
 
       _ironListPaddingTop: function (wide) {
         if (wide) {
-          return 600;
+          return  this._hasLoggedInUser? 650 : 550;
         } else {
-          return 500;
+          return this._hasLoggedInUser? 850 :  700;
         }
       },
 

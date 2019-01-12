@@ -451,6 +451,11 @@
 
         storedBackPath: String,
 
+        backListId: {
+          type: Number,
+          value: null
+        },
+
         storedLastDocumentTitle: String,
 
         headerTitle: {
@@ -749,14 +754,34 @@
 
             if (oldPageData != null && oldPageData.page != null) {
               map[oldPageData.page] = window.pageYOffset;
+              console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
+            }
+
+            if (this.backListId && oldPageData && oldPageData.page) {
+              if (oldPageData.page==="post" && pageData.page==="group" && this.storedBackPath) {
+                if (this.$$("#groupPage")) {
+                  var backListId = this.backListId;
+                  this.async(function () {
+                    this.$$("#groupPage").goToPostId(backListId);
+                  }, 100);
+                }
+              }
             }
 
             this.page = pageData.page;
 
-            if (map[pageData.page] != null) {
-              Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
+            if (map[pageData.page] != null && pageData.page!=='post') {
+              this.async(function () {
+                window.scrollTo(0, map[pageData.page]);
+                //Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
+                console.info("AppLayout scroll "+pageData.page+" to "+map[pageData.page]);
+              });
             } else if (this.isAttached) {
-              Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+              console.info("AppLayout scroll to top");
+              this.async(function () {
+                window.scrollTo(0, 0);
+                //Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+              });
             }
           }
         }
@@ -961,6 +986,12 @@
         } else {
           this.set('showBack', false);
           this.set('backPath', null);
+        }
+
+        if (header.backListId) {
+          this.set('backListId', header.backListId);
+        } else {
+          this.set('backListId', null);
         }
 
         if (header.hideHelpIcon) {
