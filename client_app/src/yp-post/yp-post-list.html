@@ -353,7 +353,7 @@
         var list = this.$$("iron-list");
         if (list) {
           var offset = list.offsetTop;
-          offset -= 100;
+          offset -= 75;
           if (list.offsetTop>0 && offset>0) {
             console.error("Post list scroll offset: "+offset);
             return offset;
@@ -443,6 +443,13 @@
               var list = this.$$("iron-list");
               found = true;
               list.scrollToItem(post);
+              document.dispatchEvent(
+                new CustomEvent("lite-signal", {
+                  bubbles: true,
+                  compose: true,
+                  detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
+                })
+              );
             }
           }.bind(this));
         } else {
