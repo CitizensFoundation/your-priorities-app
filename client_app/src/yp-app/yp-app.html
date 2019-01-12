@@ -811,6 +811,23 @@
                   }
                 }
 
+                // Community -> Domain
+                else if ((oldPageData.page==="community" || oldPageData.page==="post") && pageData.page==="domain") {
+                  if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToCommunityItem !== "undefined") {
+                    this.$$("#domainPage").scrollToCommunityItem();
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll domainPage for scrollToCommunityItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToGroupItem !== "undefined") {
+                        this.$$("#domainPage").scrollToCommunityItem();
+                      } else {
+                        console.error("Can't find scroll domainPage for scrollToCommunityItem");
+                      }
+                    }, 200);
+                  }
+                }
+
                 // Community/CommunityFolder  -> Community
                 else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
                      pageData.page==="community_folder") {

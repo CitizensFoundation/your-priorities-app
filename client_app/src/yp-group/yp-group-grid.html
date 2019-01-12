@@ -80,9 +80,8 @@
 
         scrollOffset: {
           type: Number,
-          computed: '_scrollOffset(wide, featuredGroups)'
-        },
-
+          computed: '_scrollOffset(wide, featuredGroups, activeGroups)'
+        }
       },
 
       _scrollOffset: function (wide, featuredGroups) {
