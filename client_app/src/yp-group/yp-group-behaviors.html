@@ -118,6 +118,10 @@
     _goToGroup: function (e) {
       var groupUrl = '/group/' + this.group.id;
       window.appGlobals.activity('open', 'group', groupUrl);
+      if (window.appGlobals.backToCommunityGroupItems===null)
+        window.appGlobals.backToCommunityGroupItems = {};
+      window.appGlobals.backToCommunityGroupItems[this.group.community_id] = this.group;
+      console.log("Saving group item for community "+this.group.community_id);
       this.redirectTo(groupUrl);
     },
 

@@ -777,6 +777,7 @@
               var skipMasterScroll = false;
 
               if (oldPageData && oldPageData.page) {
+                // Post -> Group
                 if (oldPageData.page==="post" && pageData.page==="group") {
                   if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
                     this.$$("#groupPage").goToPostOrNewsItem();
@@ -792,7 +793,43 @@
                     }, 200);
                   }
                 }
+
+                // Group -> Community
+                else if ((oldPageData.page==="group" || oldPageData.page==="post") && pageData.page==="community") {
+                  if (this.$$("#communityPage") && typeof this.$$("#communityPage").scrollToGroupItem !== "undefined") {
+                    this.$$("#communityPage").scrollToGroupItem();
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#communityPage") && typeof this.$$("#communityPage").scrollToGroupItem !== "undefined") {
+                        this.$$("#communityPage").scrollToGroupItem();
+                      } else {
+                        console.error("Can't find scroll communityPage for goToPostOrNewsItem");
+                      }
+                    }, 200);
+                  }
+                }
+
+                // Community/CommunityFolder  -> Community
+                else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
+                     pageData.page==="community_folder") {
+                  if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
+                    this.$$("#communityFolderPage").scrollToGroupItem();
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
+                        this.$$("#communityFolderPage").scrollToGroupItem();
+                      } else {
+                        console.error("Can't find scroll communityPage for goToPostOrNewsItem");
+                      }
+                    }, 200);
+                  }
+                }
               }
+
               if (map[pageData.page] != null && pageData.page!=='post') {
                 if (!skipMasterScroll) {
                   window.scrollTo(0, map[pageData.page]);

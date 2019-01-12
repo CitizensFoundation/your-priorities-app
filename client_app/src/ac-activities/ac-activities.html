@@ -388,6 +388,10 @@
       _ironListPaddingTop: function (wide, groupId, hasLoggedInUser, selectedTab) {
         var offset = this.$.ironList.offsetTop;
         offset -= 75;
+
+        if (!hasLoggedInUser && !groupId)
+          offset -= 75;
+
         if (offset>0) {
           console.info("News scroll offset: "+offset);
           return offset;
@@ -400,9 +404,9 @@
             }
           } else {
             if (wide) {
-              offset = hasLoggedInUser? 620 : 450;
+              offset = hasLoggedInUser? 600 : 400;
             } else {
-              offset = hasLoggedInUser? 525 : 420;
+              offset = hasLoggedInUser? 700 : 610;
             }
           }
           console.info("News (manual) scroll offset: "+offset);

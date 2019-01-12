@@ -30,12 +30,12 @@
       console.log(windowLocation);
 
       if (cachedActivityItem) {
-        console.info("Saving cached scroll to item "+cachedActivityItem);
+        console.info("Saving cached scroll to item "+cachedActivityItem.id);
         window.appGlobals.cachedActivityItem = cachedActivityItem;
       }
 
       if (cachedPostItem) {
-        console.info("Saving cached scroll to post "+cachedPostItem);
+        console.info("Saving cached scroll to post "+cachedPostItem.id);
         window.appGlobals.cachedPostItem = cachedPostItem;
       }
 

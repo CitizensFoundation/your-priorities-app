@@ -84,6 +84,7 @@
         <section name="groups">
           <div class="layout horizontal center-center">
             <yp-group-grid
+              id="groupGrid"
               featured-groups="[[featuredGroups]]"
               active-groups="[[activeGroups]]"
               archived-groups="[[archivedGroups]]"
@@ -237,6 +238,24 @@
             paperTabs.notifyResize();
           }
         }, 10);
+      },
+
+      scrollToGroupItem: function () {
+        if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
+          var list = this.$$("#communityNews");
+          if (list) {
+            list.scrollToItem(window.appGlobals.cachedActivityItem);
+            window.appGlobals.cachedActivityItem = null;
+          } else {
+            console.warn("No community activities for scroll to item");
+          }
+        } else if (this.selectedTab==="groups") {
+          if (window.appGlobals.backToCommunityGroupItems &&
+            window.appGlobals.backToCommunityGroupItems[this.community.id]) {
+            this.$.groupGrid.scrollToItem(window.appGlobals.backToCommunityGroupItems[this.community.id]);
+            window.appGlobals.backToCommunityGroupItems[this.community.id] = null;
+          }
+        }
       },
 
       _routeIdChanged: function (newId) {
