@@ -504,7 +504,7 @@
         return /iPad/.test(navigator.userAgent) && !window.MSStream;
       },
 
-      goToPostId: function (postId) {
+      goToPostIdOrNews: function (postId) {
         if (this.selectedTab=="open") {
           this._goToPostIdTab("openPostList", postId);
         } else if (this.selectedTab=="in_progress") {
@@ -513,6 +513,14 @@
           this._goToPostIdTab("successfulPostList", postId);
         } else if (this.selectedTab=="failed") {
           this._goToPostIdTab("failedPostList", postId);
+        } else if (this.selectedTab=="news" && window.appGlobals.cachedActivityItem!==null) {
+          var list = this.$$("#groupActivities");
+          if (list) {
+            list.scrollToItem(window.appGlobals.cachedActivityItem);
+            window.appGlobals.cachedActivityItem = null;
+          } else {
+            console.warn("No group activities for scroll to item");
+          }
         }
       },
 
@@ -604,14 +612,16 @@
 
         if (this.hasNonOpenPosts) {
           if (this.haveGotTabCountInfoCount==4) {
-            if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
-              this.set('selectedTab', 'open');
-            } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
-              this.set('selectedTab', 'in_progress');
-            } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
-              this.set('selectedTab', 'successful');
-            } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
-              this.set('selectedTab', 'failed');
+            if (this.selectedTab==='open') {
+              if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
+                this.set('selectedTab', 'open');
+              } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
+                this.set('selectedTab', 'in_progress');
+              } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
+                this.set('selectedTab', 'successful');
+              } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
+                this.set('selectedTab', 'failed');
+              }
             }
           }
         }
@@ -654,11 +664,15 @@
             this.$$("#tabCountSuccessful").innerHTML = "";
             this.$$("#tabCountFailed").innerHTML = "";
           }
-          this.set('selectedTab', 'open');
           this.set('hasNonOpenPosts', false);
           this.set('haveGotTabCountInfoCount', 0);
           this.set('tabCounters', {});
           this._getGroup();
+          this.async(function () {
+            if (!this.selectedTab) {
+              this.set('selectedTab', 'open');
+            }
+          });
         }
       },
 

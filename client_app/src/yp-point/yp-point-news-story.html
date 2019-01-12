@@ -18,7 +18,6 @@
     <style include="iron-flex iron-flex-alignment">
 
       :host {
-        display: inline;
         width: 100%;
         margin-top: 8px;
       }
@@ -68,15 +67,19 @@
         cursor: pointer;
       }
 
+      .newsContainer {
+        width: auto;
+      }
+
       [hidden] {
         display: none !important;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <div class="layout vertical">
+    <div class="layout vertical newsContainer">
       <yp-magic-text id="content" class="story" text-type="pointContent" content-language="[[point.language]]"
-                     text-only content="[[point.latestContent]]" content-id="[[point.id]]">
+                     content="[[point.latestContent]]" content-id="[[point.id]]">
       </yp-magic-text>
 
       <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>

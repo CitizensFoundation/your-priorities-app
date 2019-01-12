@@ -152,7 +152,12 @@
             value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
           },
 
-          notifyDialogText: String
+          notifyDialogText: String,
+
+          cachedActivityItem: {
+            type: Object,
+            value: null
+          }
         },
 
         _resetNotifyDialogText: function () {
