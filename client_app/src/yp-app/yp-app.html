@@ -767,39 +767,49 @@
               console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
             }
 
-            if (oldPageData && oldPageData.page) {
-              if (oldPageData.page==="post" && pageData.page==="group") {
-                if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                  this.async(function () {
+            var delayUntilScrollToPost = null;
+
+            if (this.wide) {
+              delayUntilScrollToPost = 2;
+            }
+
+            this.async(function () {
+              var skipMasterScroll = false;
+
+              if (oldPageData && oldPageData.page) {
+                if (oldPageData.page==="post" && pageData.page==="group") {
+                  if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
                     this.$$("#groupPage").goToPostOrNewsItem();
-                  }, 10);
-                } else {
-                  this.async(function () {
-                    if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                      this.$$("#groupPage").goToPostOrNewsItem();
-                    } else {
-                      console.error("Can't find groupPage for goToPostOrNewsItem");
-                    }
-                  }, 200);
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll groupPage for goToPostOrNewsItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
+                        this.$$("#groupPage").goToPostOrNewsItem();
+                      } else {
+                        console.error("Can't find scroll groupPage for goToPostOrNewsItem");
+                      }
+                    }, 200);
+                  }
                 }
               }
-            }
+              if (map[pageData.page] != null && pageData.page!=='post') {
+                if (!skipMasterScroll) {
+                  window.scrollTo(0, map[pageData.page]);
+                  console.info("Main window scroll " + pageData.page + " to " + map[pageData.page]);
+                } else {
+                  console.info("Skipping master scroller for " + pageData.page);
+                }
+              } else if (this.isAttached) {
+                console.info("AppLayout scroll to top");
+                this.async(function () {
+                  window.scrollTo(0, 0);
+                  //Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
+                });
+              }
+            }, delayUntilScrollToPost);
 
             this.page = pageData.page;
-
-            if (map[pageData.page] != null && pageData.page!=='post') {
-              this.async(function () {
-                window.scrollTo(0, map[pageData.page]);
-                //Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
-                console.info("AppLayout scroll "+pageData.page+" to "+map[pageData.page]);
-              });
-            } else if (this.isAttached) {
-              console.info("AppLayout scroll to top");
-              this.async(function () {
-                window.scrollTo(0, 0);
-                //Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
-              });
-            }
           }
         }
       },
