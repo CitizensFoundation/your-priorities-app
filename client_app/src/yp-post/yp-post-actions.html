@@ -539,13 +539,13 @@
       },
 
       _shareTap: function (event, detail) {
-        window.appGlobals.activity('postShareOpen', detail.brand, this.post.id);
+        window.appGlobals.activity('postShareOpen', detail.brand, this.post ? this.post.id : -1);
       },
 
       upVote: function (event) {
         this.set('allDisabled', true);
         this.generateEndorsement(1);
-        window.appGlobals.activity('clicked', 'endorse_up', this.post.id);
+        window.appGlobals.activity('clicked', 'endorse_up', this.post ? this.post.id : -1);
         this.set('isEndorsed', true);
         this.updateStyles();
         this._setVoteHidingStatus();
@@ -554,7 +554,7 @@
       downVote: function (event) {
         this.set('allDisabled', true);
         this.generateEndorsement(-1);
-        window.appGlobals.activity('clicked', 'endorse_down', this.post.id);
+        window.appGlobals.activity('clicked', 'endorse_down', this.post ? this.post.id : -1);
         this._setVoteHidingStatus();
       },
 

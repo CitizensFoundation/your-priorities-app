@@ -176,34 +176,34 @@
     <div class="mapCanvas">
       <template is="dom-if" if="[[noneActive]]">
         <iron-image header-mode$="[[headerMode]]" sizing="cover" hidden$="[[defaultPostImageEnabled]]"
-                    class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="goToPost"></iron-image>
+                    class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToPost"></iron-image>
 
         <template is="dom-if" if="[[defaultPostImageEnabled]]" restamp>
-          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="goToPost"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="_goToPost"></iron-image>
         </template>
       </template>
 
       <template is="dom-if" if="[[categoryActive]]">
         <div id="categoryImageId" class="layout horizontal center-center">
-          <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="_goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
         </div>
       </template>
 
       <template is="dom-if" if="[[categoryLargeActive]]">
-        <iron-image header-mode$="[[headerMode]]" large on-tap="goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="cover" src$="[[getCategoryImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" large on-tap="_goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="cover" src$="[[getCategoryImagePath]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[imageActive]]">
-        <iron-image header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[videoActive]]" restamp>
         <template is="dom-if" if="[[showVideo]]" restamp>
-          <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
+          <video id="videoPlayer" portrait$="[[portraitVideo]]" data-id$="[[postVideoId]]" header-mode$="[[headerMode]]" controls on-tap="_goToPost" preload="meta" class="pointer" src="[[postVideoPath]]" playsinline poster="[[postVideoPosterPath]]"></video>
         </template>
         <template is="dom-if" if="[[!showVideo]]">
           <div class="layout vertical center-center videoPreviewContainer" portrait$="[[portraitVideo]]" >
-            <iron-image id="videoPreviewImage" portrait$="[[portraitVideo]]" header-mode$="[[headerMode]]" on-tap="goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
+            <iron-image id="videoPreviewImage" portrait$="[[portraitVideo]]" header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postVideoPosterPath]]"></iron-image>
           </div>
           <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
         </template>
@@ -215,7 +215,7 @@
             <audio id="audioPlayer" data-id$="[[postAudioId]]" header-mode$="[[headerMode]]" controls preload="meta" class="pointer" src="[[postAudioPath]]" hidden$="[[!postAudioPath]]" playsinline></audio>
           </div>
         </template>
-        <div hidden$="[[showAudio]]" class="layout horizontal center-center pointer" on-tap="goToPost">
+        <div hidden$="[[showAudio]]" class="layout horizontal center-center pointer" on-tap="_goToPost">
           <iron-icon icon="keyboard-voice" class="voiceIcon"></iron-icon>
         </div>
       </template>
@@ -223,7 +223,7 @@
       <template is="dom-if" if="[[!disableMaps]]">
 
         <template is="dom-if" if="[[streetViewActive]]">
-          <iron-image on-tap="goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&zoom=[[zoomLevel]]&size=432x243&maptype=hybrid&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
+          <iron-image on-tap="_goToPost" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&zoom=[[zoomLevel]]&size=432x243&maptype=hybrid&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]" hidden$="[[streetViewActivated]]"></iron-image>
 
           <template is="dom-if" if="[[streetViewActivated]]">
             <google-streetview-pano
@@ -239,7 +239,7 @@
         </template>
 
         <template is="dom-if" if="[[mapActive]]">
-          <iron-image on-tap="goToPost" class="main-image pointer" hidden$="[[mapActivated]]"
+          <iron-image on-tap="_goToPost" class="main-image pointer" hidden$="[[mapActivated]]"
                       sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&size=432x243&zoom=[[zoomLevel]]&maptype=[[mapType]]&markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&key=[[staticMapsApiKey]]"></iron-image>
 
           <template is="dom-if" if="[[mapActivated]]">
@@ -439,6 +439,18 @@
         portraitVideo: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _goToPost: function () {
+        if (this.post) {
+          if (this.headerMode) {
+            this.goToPost(this.post.id)
+          } else {
+            this.goToPost(this.post.id, null, null, this.post);
+          }
+        } else {
+          console.error("No post in post cover media on goToPost");
         }
       },
 
