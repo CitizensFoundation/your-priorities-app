@@ -99,6 +99,8 @@
         if (list) {
           var offset = list.offsetTop;
           offset -= 100;
+          if (!this.wide)
+            offset += 75;
           if (list.offsetTop>0 && offset>0) {
             console.info("Community list scroll offset: "+offset);
             return offset;
@@ -106,7 +108,7 @@
             if (wide)
               offset = 390;
             else
-              offset = 450;
+              offset = 610;
             console.info("Community list (manual) scroll offset: "+offset);
             return offset;
           }
