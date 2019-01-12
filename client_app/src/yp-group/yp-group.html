@@ -282,7 +282,7 @@
     </template>
 
     <iron-scroll-threshold id="scrollTheshold"
-                           lower-threshold="450"
+                           lower-threshold="550"
                            on-lower-threshold="_loadMoreData"
                            scroll-target="document">
     </iron-scroll-threshold>
@@ -491,12 +491,14 @@
         }
       },
 
-      _goToPostIdTab: function (tabId, postId) {
+      _goToPostIdTab: function (tabId) {
         var tab = this.$$("#"+tabId);
-        if (tab) {
-          tab.goToPostId(postId);
+        if (tab && window.appGlobals.cachedPostItem!==null) {
+          tab.scrollToPost(window.appGlobals.cachedPostItem);
+          window.appGlobals.cachedPostItem = null;
+          tab.scrollToPost(post);
         } else {
-          console.error("Cant find tab "+tabId);
+          console.error("Cant find tab or post "+tabId);
         }
       },
 
@@ -504,15 +506,15 @@
         return /iPad/.test(navigator.userAgent) && !window.MSStream;
       },
 
-      goToPostIdOrNews: function (postId) {
+      goToPostOrNewsItem: function () {
         if (this.selectedTab=="open") {
-          this._goToPostIdTab("openPostList", postId);
+          this._goToPostIdTab("openPostList");
         } else if (this.selectedTab=="in_progress") {
-          this._goToPostIdTab("inProgressPostList", postId);
+          this._goToPostIdTab("inProgressPostList");
         } else if (this.selectedTab=="successful") {
-          this._goToPostIdTab("successfulPostList", postId);
+          this._goToPostIdTab("successfulPostList");
         } else if (this.selectedTab=="failed") {
-          this._goToPostIdTab("failedPostList", postId);
+          this._goToPostIdTab("failedPostList");
         } else if (this.selectedTab=="news" && window.appGlobals.cachedActivityItem!==null) {
           var list = this.$$("#groupActivities");
           if (list) {

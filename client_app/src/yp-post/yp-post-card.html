@@ -334,7 +334,7 @@
         if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
           console.log("goToPostDisabled");
         } else {
-          this.goToPost();
+          this.goToPost(null, null, null, this.post);
         }
       },
 

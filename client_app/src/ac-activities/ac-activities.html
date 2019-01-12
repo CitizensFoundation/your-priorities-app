@@ -329,7 +329,7 @@
 
         ironListPaddingTop: {
           type: Number,
-          computed: '_ironListPaddingTop(wide, groupId, hasLoggedInUser)'
+          computed: '_ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab)'
         },
 
         wideListOffset: {
@@ -389,7 +389,7 @@
         var offset = this.$.ironList.offsetTop;
         offset -= 75;
         if (offset>0) {
-          console.error("News scroll offset: "+offset);
+          console.info("News scroll offset: "+offset);
           return offset;
         } else {
           if (groupId) {
@@ -405,7 +405,7 @@
               offset = hasLoggedInUser? 525 : 420;
             }
           }
-          console.error("News (manual) scroll offset: "+offset);
+          console.info("News (manual) scroll offset: "+offset);
           return offset;
         }
       },

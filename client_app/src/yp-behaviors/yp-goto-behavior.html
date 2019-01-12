@@ -11,7 +11,7 @@
       document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
     },
 
-    goToPost: function (postIdIn, pointId, cachedActivityItem) {
+    goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem) {
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
@@ -32,6 +32,11 @@
       if (cachedActivityItem) {
         console.info("Saving cached scroll to item "+cachedActivityItem);
         window.appGlobals.cachedActivityItem = cachedActivityItem;
+      }
+
+      if (cachedPostItem) {
+        console.info("Saving cached scroll to post "+cachedPostItem);
+        window.appGlobals.cachedPostItem = cachedPostItem;
       }
 
       if (windowLocation.indexOf(postUrl) == -1) {
