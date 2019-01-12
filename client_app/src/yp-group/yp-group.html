@@ -496,7 +496,6 @@
         if (tab && window.appGlobals.cachedPostItem!==null) {
           tab.scrollToPost(window.appGlobals.cachedPostItem);
           window.appGlobals.cachedPostItem = null;
-          tab.scrollToPost(post);
         } else {
           console.error("Cant find tab or post "+tabId);
         }
