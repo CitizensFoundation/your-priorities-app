@@ -540,7 +540,8 @@
         'yp-language-name': '_setLanguageName',
         'yp-dialog-closed': '_dialogClosed',
         'yp-open-page': '_openPageFromEvent',
-        'yp-open-login': '_login'
+        'yp-open-login': '_login',
+        'yp-reset-keep-open-for-page': '_resetKeepOpenForPage'
       },
 
       _setupSamlCallback: function () {
@@ -921,6 +922,12 @@
         this.set('keepOpenForPost', goBackToPage);
         this.set('storedBackPath', this.backPath);
         this.set('storedLastDocumentTitle', document.title);
+      },
+
+      _resetKeepOpenForPage: function () {
+        this.set('keepOpenForPost', null);
+        this.set('storedBackPath', null);
+        this.set('storedLastDocumentTitle', null);
       },
 
       _closePost: function () {
