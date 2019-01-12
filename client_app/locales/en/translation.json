@@ -1,4 +1,5 @@
 {
+  "loginToShareALink": "Login to share a link",
   "addImage": "Add image",
   "startSearch": "Start search",
   "toggleOpenClose": "Toggle open and close",
@@ -567,7 +568,7 @@
     "add_down": "Add point against",
     "helpful": "Vote up as helpful",
     "not_helpful": "Vote down as not helpful",
-    "addNewsStory": "Add a news story",
+    "addNewsStory": "Add a news story or share a link",
     "postNewsStory": "Add news story",
     "addComment": "Your comment...",
     "postComment": "Post",

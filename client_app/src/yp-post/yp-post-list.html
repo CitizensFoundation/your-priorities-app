@@ -345,26 +345,40 @@
 
         scrollOffset: {
           type: Number,
-          computed: '_scrollOffset(wide, group)'
+          computed: '_scrollOffset(wide, group, selectedTab)'
         }
       },
 
       _scrollOffset: function (wide, group) {
-        var offset;
-        if (wide)
-          offset = 550;
-        else
-          offset = 700;
+        var list = this.$$("iron-list");
+        if (list) {
+          var offset = list.offsetTop;
+          offset -= 100;
+          if (list.offsetTop>0 && offset>0) {
+            console.error("Post list scroll offset: "+offset);
+            return offset;
+          } else {
+            if (wide)
+              offset = 550;
+            else
+              offset = 700;
 
-        if (group && group.configuration) {
-          if (group.configuration.hideAllTabs)
-            offset -= 60;
-          if (group.configuration.hideNewPost)
-            offset -= 100;
-          if (group.configuration.hidePostFilterAndSearch)
-            offset -= 100;
+            if (group && group.configuration) {
+              if (group.configuration.hideAllTabs)
+                offset -= 60;
+              if (group.configuration.hideNewPost)
+                offset -= 100;
+              if (group.configuration.hidePostFilterAndSearch)
+                offset -= 100;
+            }
+
+            console.error("Post list (manual) scroll offset: "+offset);
+            return offset;
+          }
+        } else {
+          console.warn("No list for scroll offset");
+          return null;
         }
-        return offset;
       },
 
       _tapOnFilter: function () {

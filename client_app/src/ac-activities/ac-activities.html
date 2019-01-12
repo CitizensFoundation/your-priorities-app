@@ -165,6 +165,13 @@
       :focus {
         outline: none;
       }
+
+      .notLoggedInButton {
+        margin-top: 8px;
+        width: 200px;
+        background-color: #FFF;
+        margin-bottom: 8px;
+      }
     </style>
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
@@ -178,6 +185,13 @@
                                       on-refresh="loadNewData">
             </yp-point-news-story-edit>
           </paper-material>
+        </template>
+        <template is="dom-if" if="[[!loggedInUser]]">
+          <div class="layout vertical center-center">
+            <paper-button raised class="layout horizontal notLoggedInButton" on-tap="_openLogin">
+              [[t('loginToShareALink')]]
+            </paper-button>
+          </div>
         </template>
         <iron-list id="ironList" scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
@@ -314,7 +328,7 @@
 
         ironListPaddingTop: {
           type: Number,
-          computed: '_ironListPaddingTop(wide, groupId, loggedInUser)'
+          computed: '_ironListPaddingTop(wide, groupId, hasLoggedInUser)'
         },
 
         wideListOffset: {
@@ -330,6 +344,10 @@
 
       listeners: {
         'yp-point-deleted': '_pointDeleted'
+      },
+
+      _openLogin: function () {
+        this.fire('yp-open-login');
       },
 
       _pointDeleted: function (event, detail) {
@@ -366,23 +384,29 @@
         }
       },
 
-      _ironListPaddingTop: function (wide, groupId, hasLoggedInUser) {
-        var offset;
-        if (groupId) {
-          if (wide) {
-            offset = hasLoggedInUser? 680 : 480;
-          } else {
-            offset = hasLoggedInUser? 950 :  690;
-          }
+      _ironListPaddingTop: function (wide, groupId, hasLoggedInUser, selectedTab) {
+        var offset = this.$.ironList.offsetTop;
+        offset -= 75;
+        if (offset>0) {
+          console.error("News scroll offset: "+offset);
+          return offset;
         } else {
-          if (wide) {
-            offset = hasLoggedInUser? 550 : 350;
+          if (groupId) {
+            if (wide) {
+              offset = hasLoggedInUser? 700 : 580;
+            } else {
+              offset = hasLoggedInUser? 950 :  690;
+            }
           } else {
-            offset = hasLoggedInUser? 500 :  390;
+            if (wide) {
+              offset = hasLoggedInUser? 620 : 450;
+            } else {
+              offset = hasLoggedInUser? 525 : 420;
+            }
           }
+          console.error("News (manual) scroll offset: "+offset);
+          return offset;
         }
-        console.error(offset);
-        return offset;
       },
 
       _skipIronListWidth: function (wide) {
