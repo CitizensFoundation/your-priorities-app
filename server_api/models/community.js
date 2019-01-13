@@ -17,6 +17,8 @@ module.exports = function(sequelize, DataTypes) {
     google_analytics_code: { type: DataTypes.STRING, allowNull: true },
     description: DataTypes.TEXT,
     website: DataTypes.TEXT,
+    is_community_folder: { type: DataTypes.BOOLEAN, defaultValue: false },
+    in_community_folder_id: { type: DataTypes.INTEGER, defaultValue: null },
     ip_address: { type: DataTypes.STRING, allowNull: false },
     user_agent: { type: DataTypes.TEXT, allowNull: false },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -38,6 +40,43 @@ module.exports = function(sequelize, DataTypes) {
         deleted: false
       }
     },
+
+    indexes: [
+      {
+        fields: ['id', 'deleted']
+      },
+      {
+        fields: ['domain_id', 'deleted', 'in_community_folder_id']
+      },
+      {
+        fields: ['domain_id', 'deleted', 'in_community_folder_id', 'status']
+      },
+      {
+        fields: ['domain_id', 'deleted', 'is_community_folder']
+      },
+      {
+        fields: ['domain_id', 'deleted', 'is_community_folder','access']
+      },
+      {
+        fields: ['deleted', 'in_community_folder_id','status', 'access']
+      },
+      {
+        name: 'ComDelDomAccCountStatInCommunity',
+        fields: ['deleted', 'domain_id', 'access', 'counter_users', 'status', 'in_community_folder_id']
+      },
+      {
+        fields: ['id', 'deleted', 'is_community_folder']
+      },
+      {
+        fields: ['deleted', 'is_community_folder']
+      },
+      {
+        fields: ['id', 'deleted', 'in_community_folder_id']
+      },
+      {
+        fields: ['deleted', 'in_community_folder_id']
+      }
+    ],
 
     timestamps: true,
 
@@ -122,7 +161,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultAttributesPublic: ['id', 'access', 'configuration', 'counter_groups', 'counter_organizations', 'counter_points',
         'counter_posts', 'counter_users', 'created_at','default_locale','hostname',
         'description','domain_id','google_analytics_code','name','only_admins_can_create_groups',
-        'status','theme_id','updated_at','weight'],
+        'status','theme_id','updated_at','weight','is_community_folder','in_community_folder_id'],
 
       setYpCommunity: function (req,res,next) {
         var hostname = null;
@@ -188,6 +227,8 @@ module.exports = function(sequelize, DataTypes) {
 
       associate: function(models) {
         Community.hasMany(models.Group, { foreignKey: "community_id" });
+        Community.hasMany(models.Community, { as: 'CommunityFolders', foreignKey: "in_community_folder_id" });
+        Community.belongsTo(models.Community, { as: 'CommunityFolder', foreignKey: "in_community_folder_id"});
         Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
         Community.belongsTo(models.User);
         Community.belongsToMany(models.Video, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo'});

@@ -253,6 +253,7 @@
               <paper-item hidden$="[[!hasDomainAccess]]" id="adminsMenuItem">[[t('domainAdmins')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
+              <paper-item id="addCommunityFolderMenuItem" hidden$="[[!hasDomainAccess]]">[[t('newCommunityFolder')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -402,6 +403,8 @@
           this._openAllContentModeration();
         else if (detail.item.id==="addCommunityMenuItem")
           this.fire('yp-new-community');
+        else if (detail.item.id==="addCommunityFolderMenuItem")
+          this.fire('yp-new-community-folder');
         this.$$("paper-listbox").select(null);
       },
 

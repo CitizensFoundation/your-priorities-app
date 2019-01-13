@@ -13,6 +13,8 @@ module.exports = function(sequelize, DataTypes) {
     objectives: DataTypes.TEXT,
     message_for_new_idea: DataTypes.TEXT,
     message_to_users: DataTypes.TEXT,
+    is_group_folder: { type: DataTypes.BOOLEAN, defaultValue: false },
+    in_group_folder_id: { type: DataTypes.INTEGER, defaultValue: null },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
     status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'active' },
     counter_posts: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -41,6 +43,40 @@ module.exports = function(sequelize, DataTypes) {
         where: {
           deleted: false
         }
+      },
+      {
+        fields: ['id', 'deleted']
+      },
+      {
+        fields: ['community_id', 'deleted', 'in_group_folder_id']
+      },
+      {
+        fields: ['community_id', 'deleted', 'in_group_folder_id', 'status']
+      },
+      {
+        fields: ['community_id', 'deleted', 'is_group_folder']
+      },
+      {
+        fields: ['community_id', 'deleted', 'is_group_folder','access']
+      },
+      {
+        fields: ['deleted', 'in_group_folder_id','status', 'access']
+      },
+      {
+        name: 'ComDelComAccCountStatInGroup',
+        fields: ['deleted', 'community_id', 'access', 'counter_users', 'status', 'in_group_folder_id']
+      },
+      {
+        fields: ['id', 'deleted', 'is_group_folder']
+      },
+      {
+        fields: ['deleted', 'is_group_folder']
+      },
+      {
+        fields: ['id', 'deleted', 'in_group_folder_id']
+      },
+      {
+        fields: ['deleted', 'in_group_folder_id']
       }
     ],
 
@@ -222,6 +258,8 @@ module.exports = function(sequelize, DataTypes) {
         Group.belongsTo(models.Community);
         Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
         Group.belongsTo(models.User);
+        Group.hasMany(models.Group, { as: 'GroupFolders', foreignKey: "in_group_folder_id" });
+        Group.belongsTo(models.Group, { as: 'GroupFolder', foreignKey: "in_group_folder_id"});
         Group.belongsToMany(models.Image, { through: 'GroupImage' });
         Group.belongsToMany(models.Video, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
         Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });

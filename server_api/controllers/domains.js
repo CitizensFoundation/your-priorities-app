@@ -33,10 +33,104 @@ var truthValueFromBody = function(bodyParameter) {
   return (bodyParameter && bodyParameter!=="");
 };
 
+var getAvailableCommunityFolders = function (req, domainId, done) {
+  var openCommunities, combinedCommunities;
+
+  async.series([
+    function (seriesCallback) {
+      models.Community.findAll({
+        where: {
+          access: {
+            $ne: models.Community.ACCESS_SECRET
+          },
+          domain_id: domainId,
+          is_community_folder: true
+        },
+        attributes: ['id','name'],
+      }).then(function (communities) {
+        openCommunities = communities;
+        seriesCallback(null);
+        return null;
+      }).catch(function (error) {
+        seriesCallback(error)
+      });
+    },
+    function (seriesCallback) {
+      if (req.user) {
+        var adminCommunities, userCommunities;
+
+        async.parallel([
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                is_community_folder: true,
+                domain_id: domainId
+              },
+              attributes: ['id','name'],
+              include: [
+                {
+                  model: models.User,
+                  as: 'CommunityAdmins',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              adminCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          },
+          function (parallelCallback) {
+            models.Community.findAll({
+              where: {
+                is_community_folder: true,
+                domain_id: domainId
+              },
+              attributes: ['id','name'],
+              include: [
+                {
+                  model: models.User,
+                  as: 'CommunityUsers',
+                  attributes: ['id'],
+                  required: true,
+                  where: {
+                    id: req.user.id
+                  }
+                }
+              ]
+            }).then(function (communities) {
+              userCommunities = communities;
+              parallelCallback();
+            }).catch(function (error) {
+              parallelCallback(error)
+            });
+          }
+        ], function (error) {
+          combinedCommunities = _.concat(userCommunities, openCommunities);
+          combinedCommunities = _.concat(adminCommunities, combinedCommunities);
+          combinedCommunities = _.uniqBy(combinedCommunities, function (community) {
+            return community.id;
+          });
+          seriesCallback(error);
+        });
+      } else {
+        combinedCommunities = openCommunities;
+        seriesCallback();
+      }
+    }
+  ], function (error) {
+    done(error, combinedCommunities);
+  });
+};
+
 var getDomain = function (req, domainId, done) {
   var domain;
   var attributes = null;
-  var memberAdminCommunities;
   async.series([
     function (seriesCallback) {
       auth.hasDomainAdmin(domainId, req, function (error, isAdmin) {
@@ -101,11 +195,17 @@ var getDomain = function (req, domainId, done) {
                 },
                 {
                   status: "featured"
+                },
+                {
+                  is_community_folder: {
+                    $ne: null
+                  }
                 }
               ],
               status: {
                 $ne: 'hidden'
-              }
+              },
+              in_community_folder_id: null
             },
             attributes: models.Community.defaultAttributesPublic,
             order: [
@@ -118,6 +218,12 @@ var getDomain = function (req, domainId, done) {
                 as: 'CommunityLogoImages',
                 attributes:  models.Image.defaultAttributesPublic,
                 required: false
+              },
+              {
+                model: models.Community,
+                as: 'CommunityFolders',
+                attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+                required: false,
               },
               {
                 model: models.Image,
@@ -161,8 +267,10 @@ var getDomain = function (req, domainId, done) {
           function (parallelCallback) {
             models.Community.findAll({
               where: {
-                domain_id: domain.id
+                domain_id: domain.id,
+                in_community_folder_id: null
               },
+              attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
                 [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
@@ -175,6 +283,12 @@ var getDomain = function (req, domainId, done) {
                 {
                   model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
                   required: false
+                },
+                {
+                  model: models.Community,
+                  as: 'CommunityFolders',
+                  attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+                  required: false,
                 },
                 {
                   model: models.User,
@@ -196,8 +310,10 @@ var getDomain = function (req, domainId, done) {
           function (parallelCallback) {
             models.Community.findAll({
               where: {
-                domain_id: domain.id
+                domain_id: domain.id,
+                in_community_folder_id: null
               },
+              attributes: models.Community.defaultAttributesPublic,
               order: [
                 [ 'counter_users', 'desc'],
                 [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc']
@@ -206,6 +322,12 @@ var getDomain = function (req, domainId, done) {
                 {
                   model: models.Image, as: 'CommunityLogoImages',
                   required: false
+                },
+                {
+                  model: models.Community,
+                  as: 'CommunityFolders',
+                  attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
+                  required: false,
                 },
                 {
                   model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
@@ -312,6 +434,19 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
     }
   });
 };
+
+router.get('/:domainId/availableCommunityFolders', auth.can('view domain'), function(req, res) {
+  getAvailableCommunityFolders(req, req.params.domainId, function (error, availableCommunityFolders) {
+    if (error) {
+      log.error('Could not get availableCommunityFolders', { err: error, user: req.user ? toJson(req.user.simple()) : null });
+      res.sendStatus(500);
+    } else if (availableCommunityFolders) {
+      res.send(availableCommunityFolders);
+    } else {
+      res.sendStatus(404);
+    }
+  });
+});
 
 router.delete('/:domainId/:activityId/delete_activity', auth.can('edit domain'), function(req, res) {
   models.AcActivity.find({

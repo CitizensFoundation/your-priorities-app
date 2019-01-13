@@ -3,6 +3,7 @@
   "shell": "src/yp-app/yp-app.html",
   "fragments": [
     "src/yp-community/yp-community.html",
+    "src/yp-community/yp-community-folder.html",
     "src/yp-group/yp-group.html",
     "src/yp-domain/yp-domain.html",
     "src/yp-post/yp-post.html",

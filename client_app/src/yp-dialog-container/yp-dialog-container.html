@@ -38,6 +38,10 @@
     <lite-signal on-lite-signal-logged-in="_loggedInUser"></lite-signal>
     <lite-signal on-lite-signal-open-bulk-status-updates="_openBulkStatusUpdates"></lite-signal>
 
+    <template is="dom-if" if="[[loggedInUser]]" restamp>
+      <ac-notification-toast id="notificationToast"></ac-notification-toast>
+    </template>
+
     <div id="dialogs" hide$="[[hideDialogs]]">
       <paper-toast id="masterToast"></paper-toast>
       <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
@@ -105,10 +109,6 @@
 
         <template is="dom-if" name="userDeleteOrAnonymize" restamp>
           <yp-user-delete-or-anonymize id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
-        </template>
-
-        <template is="dom-if" name="notificationToast" restamp>
-          <ac-notification-toast id="notificationToast"></ac-notification-toast>
         </template>
 
         <template is="dom-if" name="categoryEdit" restamp>
@@ -356,7 +356,7 @@
           this.set('pageDialogOpen', true);
         } else if (idName==="confirmationDialog") {
           this.set('confirmationDialogOpen', true);
-        } else {
+        } else if (idName!=='notificationToast') {
           this.set('pageDialogOpen', false);
           this.set('confirmationDialogOpen', false);
           this.set('selectedDialog', idName);

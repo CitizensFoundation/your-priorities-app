@@ -209,6 +209,11 @@
         isOldiOs: {
           type: Boolean,
           computed: '_isOldiOs(domainId)'
+        },
+
+        disableRefreshOnce: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -218,7 +223,8 @@
       ],
 
       listeners: {
-        'yp-new-community': '_newCommunity'
+        'yp-new-community': '_newCommunity',
+        'yp-new-community-folder': '_newCommunityFolder'
       },
 
       scrollToCommunityItem: function () {
@@ -298,10 +304,23 @@
         }, 100);
       },
 
+      _refreshAjaxLimited: function () {
+        this.set('disableRefreshOnce', true);
+        this._refreshAjax();
+      },
+
       _newCommunity: function () {
         window.appGlobals.activity('open', 'newCommunity');
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
-          dialog.setup(null, true, this._refreshAjax.bind(this));
+          dialog.setup(null, true, this._refreshAjaxLimited.bind(this));
+          dialog.open('new', {domainId: this.domainId} );
+        }.bind(this));
+      },
+
+      _newCommunityFolder: function () {
+        window.appGlobals.activity('open', 'newCommunityFolder');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(null, true, this._refreshAjaxLimited.bind(this), true);
           dialog.open('new', {domainId: this.domainId} );
         }.bind(this));
       },
@@ -317,7 +336,11 @@
 
         window.appGlobals.domain = this.domain;
 
-        this.refresh();
+        if (this.disableRefreshOnce) {
+          this.set('disableRefreshOnce', false);
+        } else {
+          this.refresh();
+        }
 
         if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
           this.set('createFabIcon', 'group-work');

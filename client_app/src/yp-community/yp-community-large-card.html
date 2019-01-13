@@ -330,17 +330,18 @@
               <paper-item hidden$="[[!hasCommunityAccess]]" id="usersMenuItem">[[t('community.users')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="adminsMenuItem">[[t('community.admins')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-              <paper-item hidden$="[[!hasCommunityAccess]]" id="moderationMenuItem">
+              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationMenuItem">
                 [[t('flaggedContent')]] <span hidden$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
               </paper-item>
-              <paper-item hidden$="[[!hasCommunityAccess]]" id="moderationAllMenuItem">
+              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>
               <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
-              <paper-item hidden$="[[!hasCommunityAccess]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
-              <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteContentMenuItem">[[t('deleteCommunityContent')]]</paper-item>
-              <paper-item hidden$="[[!hasCommunityAccess]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
-              <paper-item id="addGroupMenuItem">[[t('group.new')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="deleteContentMenuItem">[[t('deleteCommunityContent')]]</paper-item>
+              <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
+              <paper-item id="addGroupMenuItem" hidden$="[[community.is_community_folder]]">[[t('group.new')]]</paper-item>
+              <paper-item  hidden id="addCommunityFolderMenuItem">[[t('newCommunityFolder')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -402,12 +403,21 @@
           computed: '_communityVideoPosterURL(community)'
         },
 
+        hasCommunityAccessAndNotFolder: {
+          type: Boolean,
+          computed: '_hasCommunityAccessAndNotFolder(community, hasCommunityAccess)'
+        },
+
         communityVideoId: Number,
 
         flaggedContentCount: {
           type: Number,
           value: null
         }
+      },
+
+      _hasCommunityAccessAndNotFolder: function (community, hasCommunityAccess) {
+        return (community && !community.is_community_folder && hasCommunityAccess) || false
       },
 
       _communityVideoURL: function (community) {
@@ -517,6 +527,8 @@
           this._openAnonymizeContent();
         else if (detail.item.id==="deleteContentMenuItem")
           this._openDeleteContent();
+        else if (detail.item.id==="addCommunityFolderMenuItem")
+          this.fire('yp-new-community-folder');
         this.$$("paper-listbox").select(null);
       },
 

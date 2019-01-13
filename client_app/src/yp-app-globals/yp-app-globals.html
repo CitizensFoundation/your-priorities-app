@@ -394,8 +394,10 @@
 
           this.setupGoogleAnalytics(this.domain);
           if (window.location.pathname=="/") {
-            if (detail.response.community) {
+            if (detail.response.community && !detail.response.community.is_community_folder) {
               this.redirectTo("/community/"+detail.response.community.id);
+            } else if (detail.response.community && detail.response.community.is_community_folder) {
+              this.redirectTo("/community_folder/"+detail.response.community.id);
             } else {
               this.redirectTo("/domain/" + this.domain.id);
               this.fire("change-header", { headerTitle: this.domain.domain_name,

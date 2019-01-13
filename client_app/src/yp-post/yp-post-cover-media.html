@@ -552,10 +552,8 @@
           this.set('defaultPostImageEnabled', true);
         } else {
           this.set('defaultPostImageEnabled', false);
-          this.async(function () {
-            this.set('defaultImageGroupId', null);
-            this.set('uploadedDefaultPostImageId', null);
-          });
+          this.set('defaultImageGroupId', null);
+          this.set('uploadedDefaultPostImageId', null);
         }
 
         if (this.headerMode) {
