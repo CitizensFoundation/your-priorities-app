@@ -17,12 +17,12 @@
       :host {
         margin-top: 8px;
         margin-bottom: 8px;
+        width: 100%;
       }
 
       .postCard {
-        width: 280px;
-        min-height: 80px;
-        height: 100%;
+        width: 100%;
+        min-height: 75px;
         margin-top: 8px;
         padding: 16px;
         background-color: var(--accent-color);
@@ -30,6 +30,8 @@
         font-size: 16px;
         cursor: pointer;
         margin-bottom: 8px;
+        text-align: center;
+        max-width: 310px;
       }
 
       iron-icon {
@@ -70,36 +72,19 @@
 
       .addNewIdeaText {
         font-size: 26px;
-        width: 100%;
         color: #FFF;
       }
 
       .closed {
-        font-size: 18px;
-        padding: 8px;
-      }
-
-      @media (max-width: 832px) {
-        .postCard {
-          width: 100%;
-          margin-left: 64px;
-          margin-right: 64px;
-        }
+        font-size: 22px;
       }
 
       paper-card[disabled] {
         background-color: #888;
         cursor: initial;
-        max-width: 250px;
-        width: 220px;
-        padding: 8px;
-        margin-top: 4px;
-        min-height: initial;
       }
 
       iron-icon[disabled] {
-        height: 36px;
-        width: 36px;
       }
 
       @media (max-width: 420px) {
@@ -108,7 +93,7 @@
         }
 
         .postCard {
-          width: 225px;
+          width: 100%;
           margin-left: 0;
           margin-right: 0;
           margin-bottom: 4px;
@@ -116,8 +101,8 @@
         }
 
         .addNewIdeaText {
-          font-size: 20px;
-          width: 100%;
+          font-size: 24px;
+          width: auto;
         }
 
         iron-icon {
@@ -126,19 +111,30 @@
         }
 
         .closed {
-          font-size: 17px;
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .postCard {
+          max-width: 300px;
         }
 
       }
+
+
 
       [hidden] {
         display: none !important;
       }
 
+      .container {
+        width: 100%;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <div class="layout vertical center-center">
+    <div class="layout vertical center-center container">
       <paper-card disabled$="[[disabled]]" elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
         <div class="layout horizontal center-center addNewIdeaText">
           <iron-icon disabled$="[[disabled]]" icon="lightbulb-outline"></iron-icon>
@@ -148,7 +144,6 @@
           <div class="flex addText closed" hidden$="[[!disabled]]">
             [[t('closedForNewPosts')]]
           </div>
-
         </div>
       </paper-card>
     </div>
