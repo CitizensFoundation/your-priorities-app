@@ -165,6 +165,14 @@
       :focus {
         outline: none;
       }
+
+      .notLoggedInButton {
+        margin-top: 8px;
+        width: 200px;
+        background-color: #FFF;
+        margin-bottom: 8px;
+        text-align: center;
+      }
     </style>
     <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
       <div class="layout vertical self-start">
@@ -178,6 +186,13 @@
                                       on-refresh="loadNewData">
             </yp-point-news-story-edit>
           </paper-material>
+        </template>
+        <template is="dom-if" if="[[!loggedInUser]]">
+          <div class="layout vertical center-center">
+            <paper-button raised class="layout horizontal notLoggedInButton" on-tap="_openLogin">
+              [[t('loginToShareALink')]]
+            </paper-button>
+          </div>
         </template>
         <iron-list id="ironList" scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
@@ -314,7 +329,7 @@
 
         ironListPaddingTop: {
           type: Number,
-          computed: '_ironListPaddingTop(wide)'
+          computed: '_ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab)'
         },
 
         wideListOffset: {
@@ -330,6 +345,10 @@
 
       listeners: {
         'yp-point-deleted': '_pointDeleted'
+      },
+
+      _openLogin: function () {
+        this.fire('yp-open-login');
       },
 
       _pointDeleted: function (event, detail) {
@@ -366,11 +385,32 @@
         }
       },
 
-      _ironListPaddingTop: function (wide) {
-        if (wide) {
-          return 600;
+      _ironListPaddingTop: function (wide, groupId, hasLoggedInUser, selectedTab) {
+        var offset = this.$.ironList.offsetTop;
+        offset -= 75;
+
+        if (!hasLoggedInUser && !groupId)
+          offset -= 75;
+
+        if (offset>0) {
+          console.info("News scroll offset: "+offset);
+          return offset;
         } else {
-          return 500;
+          if (groupId) {
+            if (wide) {
+              offset = hasLoggedInUser? 700 : 580;
+            } else {
+              offset = hasLoggedInUser? 950 :  690;
+            }
+          } else {
+            if (wide) {
+              offset = hasLoggedInUser? 600 : 400;
+            } else {
+              offset = hasLoggedInUser? 700 : 610;
+            }
+          }
+          console.info("News (manual) scroll offset: "+offset);
+          return offset;
         }
       },
 
@@ -447,13 +487,13 @@
 
       _loadMoreData: function () {
         this.async(function () {
-          console.log("_loadMoreData");
+          console.log("_loadMoreData for scroll");
           if (this.$$("#ironList").offsetWidth > 0 && this.$$("#ironList").offsetHeight > 0) {
-            console.log("_loadMoreData 2 url: "+this.url+" moreToLoad: "+this.moreToLoad);
+            console.log("_loadMoreData for scroll 2 url: "+this.url+" moreToLoad: "+this.moreToLoad);
             if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
-              console.log("_loadMoreData 3");
+              console.log("_loadMoreData for scroll 3");
               this.set('moreToLoad', false);
-              console.info("_loadMoreData for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
+              console.info("_loadMoreData for scroll for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
               this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
               this.$.ajax.generateRequest();
             }
@@ -563,6 +603,14 @@
 
         this.async(function () {
           this.$.ironList.fire('iron-resize');
+        });
+      },
+
+      scrollToItem: function (item) {
+        console.log("Activity scrolling to item");
+        this.$.ironList.scrollToItem(item);
+        this.async(function () {
+          this._clearScrollThreshold();
         });
       },
 

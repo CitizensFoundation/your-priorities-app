@@ -23,6 +23,10 @@
         padding-top: 16px;
       }
 
+      .card[wide-padding] {
+        padding: 16px !important;
+      }
+
       .archivedText {
         font-size: 25px;
         color: #333;
@@ -36,9 +40,7 @@
       }
 
       iron-list {
-      }
-
-      #ironList {
+        height: 100vh;
       }
 
       [hidden] {
@@ -48,12 +50,18 @@
       :focus {
         outline: none;
       }
+
+      @media (max-width: 960px) {
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
-    <iron-list id="ironList" scroll-offset="350" items="[[activeCommunities]]" as="community" scroll-target="document" grid>
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wide}}"></iron-media-query>
+
+    <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeCommunities]]" as="community" scroll-target="document" grid$="[[wide]]">
       <template>
-        <yp-community-card tabindex$="[[tabIndex]]" wide$="[[wide]]" class="card" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        <div class="card layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
+          <yp-community-card wide$="[[wide]]"  community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+        </div>
       </template>
     </iron-list>
   </template>
@@ -75,11 +83,51 @@
         hideAdd: {
           type: Boolean,
           value: false
+        },
+        scrollOffset: {
+          type: Number,
+          computed: '_scrollOffset(wide, featuredGroups, activeCommunities)'
         }
       },
 
       _newCommunity: function () {
         this.fire('add-new-community');
+      },
+
+      _scrollOffset: function (wide, communityGrid) {
+        var list = this.$.ironList;
+        if (list) {
+          var offset = list.offsetTop;
+          offset -= 100;
+          if (!this.wide)
+            offset += 75;
+          if (list.offsetTop>0 && offset>0) {
+            console.info("Community list scroll offset: "+offset);
+            return offset;
+          } else {
+            if (wide)
+              offset = 390;
+            else
+              offset = 610;
+            console.info("Community list (manual) scroll offset: "+offset);
+            return offset;
+          }
+        } else {
+          console.warn("No community list for scroll offset");
+          return null;
+        }
+      },
+
+      scrollToItem: function (item) {
+        console.log("Community grid scrolling to item");
+        this.$.ironList.scrollToItem(item);
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
+          })
+        );
       }
 
     });

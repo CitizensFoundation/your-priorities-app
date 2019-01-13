@@ -864,6 +864,15 @@ router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, re
   });
 });
 
+router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
+  var PostsByNotOpen = models.Post.scope('not_open');
+  PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
+    res.send({ hasNonOpenPosts: count != 0});
+  }).catch(function (error) {
+    sendGroupOrError(res, null, 'checkNonOpenPosts', req.user, error);
+  });
+});
+
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.find({
     where: { id: req.params.id },
@@ -995,7 +1004,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
         $in: collectedIds
       }
     },
-    attributes: ['id','name','description','status','official_status','counter_endorsements_up','cover_media_type',
+    attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
       'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at'],
     order: [
       models.sequelize.literal(postOrder),
@@ -1040,6 +1049,33 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
         ]
       },
       {
+        model: models.User,
+        required: false,
+        attributes: models.User.defaultAttributesWithSocialMediaPublic,
+        include: [
+          {
+            model: models.Image, as: 'UserProfileImages',
+            attributes:['id',"formats",'updated_at'],
+            required: false
+          },
+          {
+            model: models.Organization,
+            as: 'OrganizationUsers',
+            required: false,
+            attributes: ['id', 'name'],
+            include: [
+              {
+                model: models.Image,
+                as: 'OrganizationLogoImages',
+                //TODO: Figure out why there are no formats attributes coming through here
+                attributes: ['id', 'formats'],
+                required: false
+              }
+            ]
+          }
+        ]
+      },
+      {
         model: models.PostRevision,
         attributes: { exclude: ['ip_address', 'user_agent'] },
         required: false
@@ -1047,7 +1083,18 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       {
         model: models.Group,
         required: true,
-        attributes: ['id','configuration']
+        attributes: ['id','configuration','name','theme_id'],
+        include: [
+          {
+            model: models.Category,
+            required: false
+          },
+          {
+            model: models.Community,
+            attributes: ['id','name','theme_id','google_analytics_code','configuration'],
+            required: false
+          }
+        ]
       },
       { model: models.Image,
         attributes: { exclude: ['ip_address', 'user_agent'] },

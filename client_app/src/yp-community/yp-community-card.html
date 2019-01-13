@@ -89,14 +89,12 @@
 
       .community-name {
         font-size: 26px;
-        height: 42px;
         padding: 14px;
         background-color: var(--primary-color-800);
         color: #FFF;
         cursor: pointer;
         vertical-align: middle;
-        display: table-cell;
-        width: 320px;
+        width: auto;
       }
 
       iron-image[archived] {
@@ -123,27 +121,30 @@
         display: none;
       }
 
-      @media (max-width: 480px) {
+      @media (max-width: 960px) {
         :host {
-          width: 304px;
+          max-width: 423px;
+          width: 100%;
+          padding-top: 0 !important;
         }
 
-
         yp-membership-button {
-          top: 146px;
+          top: 205px;
         }
 
         .communityCard {
-          margin-right: 8px;
-          height: 430px;
+          margin-left: 0;
+          margin-right: 0;
           padding-left: 0;
           padding-right: 0;
-          width: 304px;
+          width: 100%;
+          height: 100%;
+          padding-bottom: 8px;
         }
 
         iron-image {
-          width: 304px;
-          height: 165px;
+          width: 100%;
+          height: 230px;
         }
 
         iron-image[featured] {
@@ -154,13 +155,39 @@
         }
       }
 
-      @media (max-width: 680px) {
-        .communityCard[featured] {
-          width: 304px;
+      @media (max-width: 420px) {
+        iron-image {
+          height: 225px;
         }
 
-        .secondImage {
-          display: none;
+        yp-membership-button {
+          top: 205px;
+        }
+      }
+
+      @media (max-width: 375px) {
+        iron-image {
+          height: 207px;
+        }
+
+        yp-membership-button {
+          top: 185px;
+        }
+      }
+
+      @media (max-width: 360px) {
+        iron-image {
+          height: 200px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        iron-image {
+          height: 180px;
+        }
+
+        yp-membership-button {
+          top: 155px;
         }
       }
 
@@ -175,36 +202,33 @@
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <template is="dom-if" if="[[community]]">
-      <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
-        <div class="layout horizontal">
-          <template is="dom-if" if="[[noImage]]">
-            <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToCommunity"></iron-image>
-          </template>
-          <template is="dom-if" if="[[!noImage]]">
-            <iron-image sizing="cover" archived$="[[archived]]" featured$="[[featured]]" preload src="[[communityLogoImagePath]]" class="post-image withPointer" on-tap="_goToCommunity"></iron-image>
-          </template>
-        </div>
-        <div class="informationText">
-          <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">
-            <yp-magic-text text-type="communityName" content-language="[[community.language]]"
-                           disable-translation="[[community.configuration.disableNameAutoTranslation]]"
-                           text-only content="[[communityName]]" content-id="[[community.id]]">
-            </yp-magic-text>
-            <span hidden old-hidden$="[[!archived]]">- [[t('archived')]]</span>
-          </div>
-
-          <yp-magic-text id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunity"
-                         text-type="communityContent" content-language="[[community.language]]"
-                         text-only content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
-          </yp-magic-text>
-        </div>
-        <template is="dom-if" if="[[!community.is_community_folder]]">
-          <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
-          <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
+    <paper-card featured$="[[featured]]" class="communityCard" animated elevation="[[elevation]]" class="layout vertical flex">
+      <div class="layout horizontal">
+        <template is="dom-if" if="[[noImage]]">
+          <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToCommunity"></iron-image>
         </template>
-      </paper-card>
-    </template>
+        <template is="dom-if" if="[[!noImage]]">
+          <iron-image sizing="cover" archived$="[[archived]]" featured$="[[featured]]" preload src="[[communityLogoImagePath]]" class="post-image withPointer" on-tap="_goToCommunity"></iron-image>
+        </template>
+      </div>
+      <div class="informationText">
+        <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">
+          <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+                         disable-translation="[[community.configuration.disableNameAutoTranslation]]"
+                         text-only content="[[communityName]]" content-id="[[community.id]]">
+          </yp-magic-text>
+          <span hidden old-hidden$="[[!archived]]">- [[t('archived')]]</span>
+        </div>
+        <yp-magic-text id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunity"
+                       text-type="communityContent" content-language="[[community.language]]"
+                       text-only content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
+        </yp-magic-text>
+      </div>
+      <template is="dom-if" if="[[!community.is_community_folder]]">
+        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <yp-membership-button archived$="[[archived]]" featured$="[[featured]]" community="[[community]]"></yp-membership-button>
+      </template>
+    </paper-card>
   </template>
 
   <script>

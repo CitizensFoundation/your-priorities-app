@@ -118,7 +118,7 @@
         <template is="dom-if" if="[[point.embed_data]]">
           <div class="embedData layout vertical center-center">
             <yp-point-news-story-embed embed-data="[[point.embed_data]]"></yp-point-news-story-embed>
-            <paper-icon-button icon="clear" on-tap="_clearEmbed"></paper-icon-button>
+            <paper-icon-button aria-label$="[[t('clearEmbededMedia')]]" icon="clear" on-tap="_clearEmbed"></paper-icon-button>
           </div>
         </template>
       </div>
@@ -195,6 +195,7 @@
 
       _reset: function () {
         this.set('point', { content: '' });
+        this.set('point.embed_data', null);
         this._clearButtonState();
       },
 

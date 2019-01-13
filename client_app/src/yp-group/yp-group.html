@@ -101,29 +101,26 @@
 
       .largeAddButton {
         margin-bottom: 4px;
-        margin-top: 4px;
       }
 
-      @media (max-width: 1024px) {
+      @media (max-width: 1000px) {
         .tabs {
-          max-width: 920px;
+          font-size: 15px;
         }
 
-        .tabs .tab {
-          width: 200px;
+        .topArea {
+          height: auto;
         }
       }
 
-      @media (max-width: 900px) {
+      @media (max-width: 600px) {
         .tabs {
-          max-width: 550px;
-          width: 550px;
           font-size: 14px;
           word-wrap: break-word !important;
         }
 
         .tabs[has-non-open-posts] {
-          font-size: 10px;
+          font-size: 14px;
         }
 
         .counterInfo[has-non-open-posts] {
@@ -131,12 +128,7 @@
         }
 
         .tabs .tab {
-          width: 120px;
           word-wrap: break-word !important;
-        }
-
-        .topArea {
-          height: auto;
         }
 
         .largeAddButton[is-apple] {
@@ -150,25 +142,20 @@
 
       @media (max-width: 380px) {
         .tabs {
-          max-width: 360px;
-          font-size: 12px;
+          font-size: 14px;
           width: 360px;
         }
 
         paper-tab {
-          width: 170px;
         }
       }
 
       @media (max-width: 320px) {
         .tabs {
-          max-width: 320px;
-          font-size: 12px;
-          width: 320px;
+          font-size: 13px;
         }
 
         paper-tab {
-          width: 160px;
         }
       }
 
@@ -200,7 +187,7 @@
       </div>
 
       <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
-        <paper-tabs scrollable$="[[!wideWidth]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+        <paper-tabs scrollable$="[[shouldScrollTabs]]" id="paperTabs" has-non-open-posts$="[[hasNonOpenPosts]]" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
               <div hidden$="[[isTabOpen]]">
@@ -305,6 +292,7 @@
     <lite-signal on-lite-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></lite-signal>
 
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+    <iron-media-query query="(max-width: 700px)" query-matches="{{phoneWidth}}"></iron-media-query>
 
     <app-route
       route="{{idRoute}}"
@@ -321,7 +309,8 @@
     </app-route>
 
     <div class="layout horizontal center-center">
-      <yp-ajax large-spinner id="ajax" on-response="_groupsResponse"></yp-ajax>
+      <yp-ajax large-spinner id="ajax" on-response="_groupResponse"></yp-ajax>
+      <yp-ajax id="ajaxCheckNonOpenPosts" on-response="_nonOpenPosts"></yp-ajax>
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
 
@@ -451,7 +440,21 @@
         isIpad: {
           type: Boolean,
           computed: '_isIpad(groupId)'
+        },
+
+        shouldScrollTabs: {
+          type: Boolean,
+          computed: '_shouldScrollTabs(phoneWidth, hasNonOpenPosts)'
+        },
+
+        phoneWidth: {
+          type: Boolean,
+          value: null
         }
+      },
+
+      _shouldScrollTabs: function (phoneWidth, hasNonOpenPosts) {
+        return phoneWidth && hasNonOpenPosts;
       },
 
       observers: [
@@ -489,8 +492,51 @@
         }
       },
 
+      _goToPostIdTab: function (tabId) {
+        var tab = this.$$("#"+tabId);
+        if (tab && window.appGlobals.cachedPostItem!==null) {
+          tab.scrollToPost(window.appGlobals.cachedPostItem);
+          window.appGlobals.cachedPostItem = null;
+        } else {
+          console.warn("Cant find tab or scroll post "+tabId+ " retrying for item "+window.appGlobals.cachedPostItem);
+          this._retryGoToPostIdTab(tabId);
+        }
+      },
+
+      _retryGoToPostIdTab: function (tabId) {
+        this.async(function () {
+          var tab = this.$$("#"+tabId);
+          if (tab && window.appGlobals.cachedPostItem!==null) {
+            tab.scrollToPost(window.appGlobals.cachedPostItem);
+            window.appGlobals.cachedPostItem = null;
+          } else {
+            console.error("Cant find tab or scroll post "+tabId+ " not retrying for item "+window.appGlobals.cachedPostItem);
+          }
+        }, 100);
+      },
+
       _isIpad: function () {
         return /iPad/.test(navigator.userAgent) && !window.MSStream;
+      },
+
+      goToPostOrNewsItem: function () {
+        if (this.selectedTab=="open") {
+          this._goToPostIdTab("openPostList");
+        } else if (this.selectedTab=="in_progress") {
+          this._goToPostIdTab("inProgressPostList");
+        } else if (this.selectedTab=="successful") {
+          this._goToPostIdTab("successfulPostList");
+        } else if (this.selectedTab=="failed") {
+          this._goToPostIdTab("failedPostList");
+        } else if (this.selectedTab=="news" && window.appGlobals.cachedActivityItem!==null) {
+          var list = this.$$("#groupActivities");
+          if (list) {
+            list.scrollToItem(window.appGlobals.cachedActivityItem);
+            window.appGlobals.cachedActivityItem = null;
+          } else {
+            console.warn("No group activities for scroll to item");
+          }
+        }
       },
 
       _loadMoreData: function () {
@@ -517,7 +563,9 @@
 
       _routeTabChanged: function (newTabName) {
         if (newTabName) {
-          this.set('selectedTab', newTabName);
+          this.async(function () {
+            this.set('selectedTab', newTabName);
+          });
         }
       },
 
@@ -569,8 +617,18 @@
           }
         }, 10);
       },
-
+      
       _updateTabPostCount: function (event, tabCounterInfo) {
+        if (this.$.ajaxCheckNonOpenPosts.active===true) {
+          this.async(function () {
+            this._reallyUpdateTabPostCount(event, tabCounterInfo);
+          }, 200);
+        } else {
+          this._reallyUpdateTabPostCount(event, tabCounterInfo);
+        }
+      },
+
+      _reallyUpdateTabPostCount: function (event, tabCounterInfo) {
         var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
         if (tabCounter) {
           tabCounter.innerHTML = this.formatNumber(tabCounterInfo.count);
@@ -581,14 +639,16 @@
 
         if (this.hasNonOpenPosts) {
           if (this.haveGotTabCountInfoCount==4) {
-            if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
-              this.set('selectedTab', 'open');
-            } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
-              this.set('selectedTab', 'in_progress');
-            } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
-              this.set('selectedTab', 'successful');
-            } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
-              this.set('selectedTab', 'failed');
+            if (this.selectedTab==='open') {
+              if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
+                this.set('selectedTab', 'open');
+              } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
+                this.set('selectedTab', 'in_progress');
+              } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
+                this.set('selectedTab', 'successful');
+              } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
+                this.set('selectedTab', 'failed');
+              }
             }
           }
         }
@@ -617,12 +677,9 @@
         }, 100);
       },
 
-      ready: function () {
-      },
-
-      _groupIdChanged: function (newValue, oldValue) {
-        if (newValue && newValue!=this.lastValidGroupId) {
-          this.set('lastValidGroupId', newValue);
+      _groupIdChanged: function (groupId) {
+        if (groupId && groupId!=this.lastValidGroupId) {
+          this.set('lastValidGroupId', groupId);
           this.set('group', null);
           this.$.groupCard.resetGroup();
           this.$.tabCountOpen.innerHTML = "";
@@ -631,11 +688,25 @@
             this.$$("#tabCountSuccessful").innerHTML = "";
             this.$$("#tabCountFailed").innerHTML = "";
           }
-          this.set('selectedTab', 'open');
           this.set('hasNonOpenPosts', false);
           this.set('haveGotTabCountInfoCount', 0);
           this.set('tabCounters', {});
-          this._getGroup();
+          var groupIdInt = parseInt(groupId);
+          if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
+            this._groupResponse(null, { response: {
+                group: window.appGlobals.groupItemsCache[groupIdInt],
+                checkServerForNonOpenPosts: true
+              }});
+            window.appGlobals.groupItemsCache[groupIdInt] = null;
+            console.info("Using cache for group id "+groupId);
+          } else {
+            this._getGroup();
+          }
+          this.async(function () {
+            if (!this.selectedTab) {
+              this.set('selectedTab', 'open');
+            }
+          });
         }
       },
 
@@ -649,9 +720,12 @@
         this.fire('yp-set-pages', detail.response);
       },
 
-      _groupsResponse: function (event, detail, sender) {
-        this.set('group', detail.response.group);
+      _nonOpenPosts: function (event, detail) {
+        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+      },
 
+      _groupResponse: function (event, detail) {
+        this.set('group', detail.response.group);
         this.set('group.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
 
         this.refresh();
@@ -666,7 +740,12 @@
           this.set('disableNewPosts', false);
         }
 
-        this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+        if (detail.response.checkServerForNonOpenPosts && this.group) {
+          this.$.ajaxCheckNonOpenPosts.url = "/api/groups/"+this.group.id+"/checkNonOpenPosts";
+          this.$.ajaxCheckNonOpenPosts.generateRequest();
+        } else {
+          this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+        }
 
         if (this.selectedTab=='edit') {
           this.set('tabName', 'open');

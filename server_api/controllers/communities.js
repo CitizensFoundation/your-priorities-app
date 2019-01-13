@@ -320,6 +320,60 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
   });
 };
 
+const masterGroupIncludes = [
+  {
+    model: models.Community,
+    attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+    include: [
+      {
+        model: models.Domain,
+        attributes: ['id','theme_id','name']
+      }
+    ]
+  },
+  {
+    model: models.Category,
+    required: false,
+    include: [
+      {
+        model: models.Image,
+        required: false,
+        as: 'CategoryIconImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        order: [
+          [ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
+        ]
+      }
+    ]
+  },
+  {
+    model: models.Image,
+    as: 'GroupLogoImages',
+    attributes:  models.Image.defaultAttributesPublic,
+    required: false
+  },
+  {
+    model: models.Video,
+    as: 'GroupLogoVideos',
+    attributes:  ['id','formats','viewable','public_meta'],
+    required: false,
+    include: [
+      {
+        model: models.Image,
+        as: 'VideoImages',
+        attributes:["formats",'updated_at'],
+        required: false
+      },
+    ]
+  },
+  {
+    model: models.Image,
+    as: 'GroupHeaderImages',
+    attributes:  models.Image.defaultAttributesPublic,
+    required: false
+  }
+];
+
 var getCommunity = function(req, done) {
   var community;
 
@@ -381,14 +435,13 @@ var getCommunity = function(req, done) {
               }
             },
             required: false,
-            include: [
-              {
-                model: models.Image,
-                as: 'GroupLogoImages',
-                attributes:  models.Image.defaultAttributesPublic,
-                required: false
-              }
-            ]
+            order: [
+              [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+              [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+              [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+              [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+            ],
+            include: masterGroupIncludes
           }
         ]
       }).then(function(communityIn) {
@@ -417,13 +470,12 @@ var getCommunity = function(req, done) {
               },
               order: [
                 [ 'counter_users', 'desc'],
-                [ {model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc']
+                [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+                [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+                [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+                [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
               ],
               include: [
-                {
-                  model: models.Image, as: 'GroupLogoImages',
-                  required: false
-                },
                 {
                   model: models.User,
                   as: 'GroupAdmins',
@@ -433,7 +485,7 @@ var getCommunity = function(req, done) {
                     id: req.user.id
                   }
                 }
-              ]
+              ].concat(masterGroupIncludes)
             }).then(function (groups) {
               adminGroups = groups;
               parallelCallback(null, "admin");
@@ -449,13 +501,12 @@ var getCommunity = function(req, done) {
               },
               order: [
                 [ 'counter_users', 'desc'],
-                [ {model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc']
+                [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+                [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+                [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+                [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
               ],
               include: [
-                {
-                  model: models.Image, as: 'GroupLogoImages',
-                  required: false
-                },
                 {
                   model: models.User,
                   as: 'GroupUsers',
@@ -465,7 +516,7 @@ var getCommunity = function(req, done) {
                     id: req.user.id
                   }
                 }
-              ]
+              ].concat(masterGroupIncludes)
             }).then(function (groups) {
               userGroups = groups;
               parallelCallback(null, "users");

@@ -22,6 +22,8 @@
       :host {
         margin: 0;
         height: 100vh;
+        max-width: 242px;
+        overflow-x: hidden;
       }
 
       iron-list {
@@ -68,52 +70,56 @@
       :focus {
         outline: none;
       }
-    </style>
-      <iron-scroll-threshold lower-threshold="100" on-lower-threshold="_loadMoreData" id="threshold">
-        <template is="dom-if" if="[[opened]]">
-          <div elevation="2" id="material">
-            <template is="dom-if" if="[[user]]">
-              <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
-              <div class="notificationHeader layout horizontal center-center">
-                [[t('notifications')]]
-              </div>
-              <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
-                <div>[[unViewedCount]] [[t('unviewed')]]</div>
-                <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
-              </div>
 
-              <iron-list id="list" items="[[notifications]]" scroll-offset="300" as="notification" scroll-target="threshold" >
-                <template>
-                  <div tabindex$="[[tabIndex]]" class="layout vertical">
-                    <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
-                      <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
-                    </template>
-                    <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
-                      <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
-                    </template>
-                    <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
-                      <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
-                    </template>
-                    <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
-                      <ac-notification-list-general-item icon="face" notification="[[notification]]"
-                                                         short-text="[[notification.AcActivities.0.Point.content]]">
-                      </ac-notification-list-general-item>
-                    </template>
-                    <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
-                      <ac-notification-list-general-item icon="chat-bubble-outline"
-                                                         notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
-                    </template>
-                    <template is="dom-if" if="[[_notificationType(notification, 'notification.generalUserNotification')]]">
-                      <ac-notification-list-general-item icon="language"
-                                                         notification="[[notification]]" short-text="[[_getNotificationTypeAndName(notification.AcActivities.0.object.type, notification.AcActivities.0.object.name)]]"></ac-notification-list-general-item>
-                    </template>
-                  </div>
-                </template>
-              </iron-list>
-            </template>
-          </div>
-        </template>
-      </iron-scroll-threshold>
+      .overflowSettings {
+        overflow-x: hidden; max-width: 255px !important;
+      }
+    </style>
+    <iron-scroll-threshold lower-threshold="250" on-lower-threshold="_loadMoreData" id="threshold">
+      <template is="dom-if" if="[[opened]]">
+        <div elevation="2" id="material" class="oversflowSettings">
+          <template is="dom-if" if="[[user]]">
+            <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
+            <div class="notificationHeader layout horizontal center-center">
+              [[t('notifications')]]
+            </div>
+            <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
+              <div>[[unViewedCount]] [[t('unviewed')]]</div>
+              <paper-button on-tap="_markAllAsViewed">[[t('notificationMarkAllViewed')]]</paper-button>
+            </div>
+
+            <iron-list id="list" items="[[notifications]]" scroll-offset="300" as="notification" scroll-target="threshold" >
+              <template>
+                <div tabindex$="[[tabIndex]]" class="layout vertical overflowSettings">
+                  <template is="dom-if" if="[[_notificationType(notification, 'postNotification')]]">
+                    <ac-notification-list-post class="notificationItem" notification="[[notification]]"></ac-notification-list-post>
+                  </template>
+                  <template is="dom-if" if="[[_notificationType(notification, 'pointNotification')]]">
+                    <ac-notification-list-point class="notificationItem" notification="[[notification]]"></ac-notification-list-point>
+                  </template>
+                  <template is="dom-if" if="[[_notificationType(notification, 'notification.post.status.change')]]">
+                    <ac-notification-list-general-item icon="language" notification="[[notification]]"></ac-notification-list-general-item>
+                  </template>
+                  <template is="dom-if" if="[[_notificationType(notification, 'notification.point.newsStory')]]">
+                    <ac-notification-list-general-item icon="face" notification="[[notification]]"
+                                                       short-text="[[notification.AcActivities.0.Point.content]]">
+                    </ac-notification-list-general-item>
+                  </template>
+                  <template is="dom-if" if="[[_notificationType(notification, 'notification.point.comment')]]">
+                    <ac-notification-list-general-item icon="chat-bubble-outline"
+                                                       notification="[[notification]]" short-text="[[notification.AcActivities.0.Point.content]]"></ac-notification-list-general-item>
+                  </template>
+                  <template is="dom-if" if="[[_notificationType(notification, 'notification.generalUserNotification')]]">
+                    <ac-notification-list-general-item icon="language"
+                                                       notification="[[notification]]" short-text="[[_getNotificationTypeAndName(notification.AcActivities.0.object.type, notification.AcActivities.0.object.name)]]"></ac-notification-list-general-item>
+                  </template>
+                </div>
+              </template>
+            </iron-list>
+          </template>
+        </div>
+      </template>
+    </iron-scroll-threshold>
 
     <div class="layout horizontal center-center" hidden>
       <yp-ajax id="loadNotificationsAjax" on-response="_loadNotificationsResponse"></yp-ajax>

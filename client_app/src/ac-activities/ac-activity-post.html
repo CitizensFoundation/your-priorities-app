@@ -231,7 +231,7 @@
 
       _goToPost: function () {
         if (this.activity.Post && !this.postId) {
-          this.goToPost(this.activity.Post.id);
+          this.goToPost(this.activity.Post.id, null, this.activity);
         }
       },
 

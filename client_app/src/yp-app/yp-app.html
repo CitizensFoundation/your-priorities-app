@@ -181,16 +181,25 @@
       #translationButton {
         color: #FFF;
         background-color: var(--accent-color);
-        margin-left: 4px;
         padding: 6px;
         min-width: 0 !important;
+        margin-left: 8px;
+        margin-right: 8px;
       }
 
       .stopIcon {
         margin-left: 6px;
       }
 
+      .helpButton {
+        margin-right: 8px;
+      }
+
       @media (max-width: 480px) {
+        .helpButton {
+          margin-right: 4px;
+        }
+
         .stopIcon {
           display: none;
         }
@@ -198,7 +207,9 @@
         #translationButton {
           width: 40px !important;
           max-width: 40px !important;
+          margin-left: 8px;
         }
+
         div[title] {
           font-size: 17px;
           white-space: normal !important;
@@ -279,6 +290,11 @@
       #headerTitle {
         padding-right: 0 !important;
       }
+
+      app-toolbar {
+        padding-left: 8px;
+        padding-right: 16px;
+      }
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
@@ -288,13 +304,13 @@
     <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed>
 
       <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
-        <div style="height: 100%; overflow: auto;">
+        <div style="height: 100%; overflow-x: hidden; max-width: 255px !important; width: 255px;">
           <ac-notification-list id="acNotificationsList" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></ac-notification-list>
         </div>
       </app-drawer>
 
       <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open opened="{{navDrawOpened}}">
-        <div style="height: 100%; overflow: auto;">
+        <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
           <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </div>
       </app-drawer>
@@ -304,26 +320,23 @@
         <app-header slot="header" id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
             <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
-            <paper-icon-button id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
             <div hide$="[[closePostHeader]]" class="layout horizontal navContainer">
-              <div class="layout horizontal" style="height: 100%; vertical-align: center;">
-                <div id="headerTitle" title class="layout vertical">[[headerTitle]]</div>
-                <paper-icon-button icon="arrow-upward" on-tap="goBack" class="backIcon" hide$="[[!showBack]]"></paper-icon-button>
-              </div>
+              <paper-icon-button aria-label$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="closePostIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
+            <div hide$="[[closePostHeader]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
 
+            <span class="flex"></span>
             <div hidden$="[[!autoTranslate]]" class="layout horizontal">
               <paper-button raised id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
                 <iron-icon icon="translate"></iron-icon>
                 <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
               </paper-button>
             </div>
-            <span class="flex"></span>
-
+            <paper-icon-button aria-label$="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
             <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
-              <paper-icon-button icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('menu.help')]]" icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
 
               <paper-listbox slot="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
@@ -375,6 +388,7 @@
   </template>
 
   <script>
+    Polymer.setPassiveTouchGestures(true);
     Polymer({
 
       is: 'yp-app',
@@ -452,6 +466,21 @@
 
         storedBackPath: String,
 
+        backListPostItem: {
+          type: Number,
+          value: null
+        },
+
+        backListGroupItemId: {
+          type: Number,
+          value: null
+        },
+
+        backListCommuntiyItemId: {
+          type: Number,
+          value: null
+        },
+
         storedLastDocumentTitle: String,
 
         headerTitle: {
@@ -526,7 +555,8 @@
         'yp-language-name': '_setLanguageName',
         'yp-dialog-closed': '_dialogClosed',
         'yp-open-page': '_openPageFromEvent',
-        'yp-open-login': '_login'
+        'yp-open-login': '_login',
+        'yp-reset-keep-open-for-page': '_resetKeepOpenForPage'
       },
 
       _setupSamlCallback: function () {
@@ -574,11 +604,18 @@
             defaultLocale = storedLocale;
           }
 
-          var splitLocale = window.location.href.split('locale=');
-
           var localeFromUrl;
-          if (splitLocale && splitLocale[1]) {
-            localeFromUrl = splitLocale[1];
+
+          if (window.appGlobals.originalQueryParameters &&
+              window.appGlobals.originalQueryParameters["locale"]) {
+            localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
+          }
+
+          if (window.appGlobals.originalQueryParameters &&
+            window.appGlobals.originalQueryParameters["startAutoTranslate"]) {
+            this.async(function () {
+              this._startTranslation();
+            }, 2000);
           }
 
           if (localeFromUrl && localeFromUrl.length == 2) {
@@ -616,6 +653,22 @@
         if (detail.pageId) {
           this.openPageFromId(detail.pageId);
         }
+      },
+
+      _startTranslation: function () {
+        window.autoTranslate = true;
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-auto-translate', data: true }
+          })
+        );
+        this.fire('yp-language-name', this.supportedLanguages[this.language]);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+          toast.text = this.t('autoTranslationStarted');
+          toast.show();
+        }.bind(this));
       },
 
       _stopTranslation: function () {
@@ -755,15 +808,106 @@
 
             if (oldPageData != null && oldPageData.page != null) {
               map[oldPageData.page] = window.pageYOffset;
+              console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
             }
+
+            var delayUntilScrollToPost = null;
+
+            if (this.wide) {
+              delayUntilScrollToPost = 2;
+            }
+
+            this.async(function () {
+              var skipMasterScroll = false;
+
+              if (oldPageData && oldPageData.page) {
+                // Post -> Group
+                if (oldPageData.page==="post" && pageData.page==="group") {
+                  if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
+                    this.$$("#groupPage").goToPostOrNewsItem();
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll groupPage for goToPostOrNewsItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
+                        this.$$("#groupPage").goToPostOrNewsItem();
+                      } else {
+                        console.error("Can't find scroll groupPage for goToPostOrNewsItem");
+                      }
+                    }, 200);
+                  }
+                }
+
+                // Group -> Community
+                else if ((oldPageData.page==="group" || oldPageData.page==="post") && pageData.page==="community") {
+                  if (this.$$("#communityPage") && typeof this.$$("#communityPage").scrollToGroupItem !== "undefined") {
+                    this.$$("#communityPage").scrollToGroupItem();
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#communityPage") && typeof this.$$("#communityPage").scrollToGroupItem !== "undefined") {
+                        this.$$("#communityPage").scrollToGroupItem();
+                      } else {
+                        console.error("Can't find scroll communityPage for goToPostOrNewsItem");
+                      }
+                    }, 200);
+                  }
+                }
+
+                // Community -> Domain
+                else if ((oldPageData.page==="community" || oldPageData.page==="post") && pageData.page==="domain") {
+                  if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToCommunityItem !== "undefined") {
+                    this.$$("#domainPage").scrollToCommunityItem();
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll domainPage for scrollToCommunityItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToGroupItem !== "undefined") {
+                        this.$$("#domainPage").scrollToCommunityItem();
+                      } else {
+                        console.error("Can't find scroll domainPage for scrollToCommunityItem");
+                      }
+                    }, 200);
+                  }
+                }
+
+                // Community/CommunityFolder  -> Community
+                else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
+                     pageData.page==="community_folder") {
+                  if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
+                    this.$$("#communityFolderPage").scrollToGroupItem();
+                    skipMasterScroll = true;
+                  } else {
+                    console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
+                    this.async(function () {
+                      if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
+                        this.$$("#communityFolderPage").scrollToGroupItem();
+                      } else {
+                        console.error("Can't find scroll communityPage for goToPostOrNewsItem");
+                      }
+                    }, 200);
+                  }
+                }
+              }
+
+              if (map[pageData.page] != null && pageData.page!=='post' &&
+                 !(oldPageData.page==="community" && pageData.page==="group")) {
+                if (!skipMasterScroll) {
+                  window.scrollTo(0, map[pageData.page]);
+                  console.info("Main window scroll " + pageData.page + " to " + map[pageData.page]);
+                } else {
+                  console.info("Skipping master scroller for " + pageData.page);
+                }
+              } else if (this.isAttached) {
+                console.info("AppLayout scroll to top");
+                this.async(function () {
+                  window.scrollTo(0, 0);
+                });
+              }
+            }, delayUntilScrollToPost);
 
             this.page = pageData.page;
-
-            if (map[pageData.page] != null) {
-              Polymer.AppLayout.scroll({ top: map[pageData.page], behavior: 'silent' });
-            } else if (this.isAttached) {
-              Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
-            }
           }
         }
       },
@@ -825,6 +969,12 @@
         this.set('storedLastDocumentTitle', document.title);
       },
 
+      _resetKeepOpenForPage: function () {
+        this.set('keepOpenForPost', null);
+        this.set('storedBackPath', null);
+        this.set('storedLastDocumentTitle', null);
+      },
+
       _closePost: function () {
         if (this.keepOpenForPost)
           this.redirectTo(this.keepOpenForPost);
@@ -875,7 +1025,6 @@
 
       ready: function () {
         console.info("yp-app is ready");
-        Polymer.setPassiveTouchGestures(true);
         window.app = this;
         this._setupTranslationSystem();
         this.setTheme(16);
@@ -970,6 +1119,12 @@
         } else {
           this.set('showBack', false);
           this.set('backPath', null);
+        }
+
+        if (header.backListPostItem) {
+          this.set('backListPostItem', header.backListPostItem);
+        } else {
+          this.set('backListPostItem', null);
         }
 
         if (header.hideHelpIcon) {

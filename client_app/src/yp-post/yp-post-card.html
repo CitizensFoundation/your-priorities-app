@@ -32,12 +32,9 @@
         font-size: var(--extra-large-heading-size, 28px);
         background-color: var(--primary-color-600);
         color: #FFF;
-        height: 50px;
-        padding: 14px;
+        padding: 15px;
         cursor: pointer;
         vertical-align: middle !important;
-        display: table-cell !important;
-        width: 416px;
         font-weight: bold;
       }
 
@@ -130,9 +127,10 @@
         bottom: 2px;
       }
 
-      @media (max-width: 430px) {
+      @media (max-width: 960px) {
         :host {
-
+          width: 100%;
+          max-width: 423px;
         }
 
         .postCard {
@@ -140,35 +138,8 @@
           margin-right: 0;
           padding-left: 0;
           padding-right: 0;
-          width: 304px;
-        }
-
-        .postCard[hide-post-cover] {
-          height: 230px;
-        }
-
-        .postCard[hide-description] {
-          height: 302px;
-        }
-
-        .postCard[hide-description][hide-post-cover] {
-          height: 134px;
-        }
-
-        .postCard[hide-post-cover][hide-actions] {
-          height: 180px;
-        }
-
-        .postCard[hide-description][hide-actions] {
-          height: 240px;
-        }
-
-        .postCard[hide-description][hide-post-cover][hide-actions] {
-          height: 77px;
-        }
-
-        .postCard[hide-actions] {
-          height: 402px;
+          width: 100%;
+          height: 100%;
         }
 
         .postCard[mini] {
@@ -181,8 +152,8 @@
           margin-right: 0;
           padding-left: 0;
           padding-right: 0;
-          width: 304px;
-          height: 400px;
+          width: 100%;
+          height: 100%;
         }
 
         .card[mini] {
@@ -196,8 +167,8 @@
         }
 
         yp-post-cover-media {
-          width: 304px;
-          height: 171px;
+          width: 100%;
+          height: 230px;
         }
 
         yp-post-cover-media[mini] {
@@ -217,11 +188,44 @@
 
         yp-post-cover-media[audio-cover] {
           width: 100%;
-          height: 90px !important;
+          height: 100px;
         }
+      }
 
+      @media (max-width: 420px) {
+        yp-post-cover-media {
+          height: 225px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 100px;
+        }
+      }
 
+      @media (max-width: 375px) {
+        yp-post-cover-media {
+          height: 207px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 100px;
+        }
+      }
 
+      @media (max-width: 360px) {
+        yp-post-cover-media {
+          height: 200px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        yp-post-cover-media {
+          height: 180px;
+        }
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
       }
 
       [hidden] {
@@ -330,7 +334,7 @@
         if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
           console.log("goToPostDisabled");
         } else {
-          this.goToPost();
+          this.goToPost(null, null, null, this.post);
         }
       },
 

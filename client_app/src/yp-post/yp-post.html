@@ -232,16 +232,16 @@
         padding-bottom: 8px;
       }
 
-      .tabs .tab {
+      .tab {
         width: 250px;
       }
 
-      @media (max-width: 1024px) {
+      @media (max-width: 1000px) {
         .tabs {
-          max-width: 920px;
+          width: 100%;
         }
 
-        .tabs .tab {
+        .tab {
           width: 200px;
         }
       }
@@ -249,9 +249,9 @@
       @media (max-width: 900px) {
         .tabs {
           max-width: 100%;
-          font-size: 13px !important;
+          font-size: 14px !important;
           word-wrap: break-word !important;
-          margin-top: 16px;
+          margin-top: 8px;
           width: 100%;
           margin-bottom: 16px;
         }
@@ -272,9 +272,9 @@
         }
       }
 
-      @media (max-width: 360px) {
+      @media (max-width: 380px) {
         .tabs {
-          font-size: 10px !important;
+          font-size: 12px !important;
         }
 
         .topArea[is-post] {
@@ -283,6 +283,12 @@
 
         ac-activities {
           min-height: 600px !important;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .tabs {
+          font-size: 10px !important;
         }
       }
 
@@ -377,7 +383,7 @@
     </div>
 
     <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <yp-ajax id="ajax" on-response="_handleIncomingPostResponse"></yp-ajax>
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
   </template>
@@ -581,11 +587,16 @@
         _postChanged: function (newValue, oldValue) {
         },
 
-        _postIdChanged: function (newValue, oldValue) {
-          this.set("post",null);
-          if (newValue) {
-            this._getPost();
-            this.set('selectedTab', 'debate');
+        _postIdChanged: function (postId) {
+          var cachedItem = window.appGlobals.cachedPostItem;
+          if (cachedItem && cachedItem.id==postId) {
+            this._handleIncomingPostResponse(null, { response: cachedItem });
+          } else {
+            this.set("post",null);
+            if (postId) {
+              this._getPost();
+              this.set('selectedTab', 'debate');
+            }
           }
         },
 
@@ -603,7 +614,7 @@
           this.$.ajax.generateRequest();
         },
 
-        _response: function (event, detail, sender) {
+        _handleIncomingPostResponse: function (event, detail) {
           this.set("post", detail.response);
 
           this.refresh();
@@ -616,11 +627,6 @@
             }
           } else {
             this.set('disableNewPosts', false);
-          }
-
-          if (this.post.description === null) {
-            this.post.description = this.post.Points[0].content;
-            this.post.Points.shift();
           }
         },
 
@@ -662,10 +668,13 @@
               documentTitle: this.post.name,
               headerDescription: '',//this.truncate(this.post.Group.objectives,45),
               backPath: "/group/" + this.post.group_id,
+              backListItem: this.post,
               hideHelpIcon: (this.post.Group.configuration && this.post.Group.configuration.hideHelpIcon) ? true : null,
             });
+
             this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
             this.$.pagesAjax.generateRequest();
+
             if (this.post.Group.configuration && this.post.Group.configuration.disableFacebookLoginForGroup===true) {
               window.appGlobals.disableFacebookLoginForGroup = true;
             } else {

@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["index.html?v=8.2.0.28","201d12b7005326d18ce3c2dc8f0b6b18"],["src/yp-app/yp-app.html?v=8.2.0.28","f1fc9a7d121b95d10fa474de9573e477"],["src/yp-app/yp-view-404.html?v=8.2.0.28","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=8.2.0.28","be517b00898dc0a1419cc2cdfcc61cd2"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=8.2.0.28","88b9f29951390039ef7a304b33fcd489"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=8.2.0.28","9b567777bf442db8eb7f23f0a98a82fc"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=8.2.0.28","3155d871af8441506c58646a30bb8771"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=8.2.0.28","e4f9b5510919ef5ab7599cd0513628e3"],["src/yp-dialog-container/yp-dialog-container-media-recorder.html?v=8.2.0.28","ba5b80cec6b288eeba1741bfa3e96a98"],["src/yp-dialog-container/yp-dialog-container-moderation.html?v=8.2.0.28","05a568895357295b8e135628f78e3392"],["src/yp-dialog-container/yp-dialog-container-users-grid.html?v=8.2.0.28","1e60b23cd02bca31c96afb41484e5cdb"],["src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html?v=8.2.0.28","6b81af4e186b378b4ef134100a5fb86c"],["src/yp-domain/yp-domain.html?v=8.2.0.28","8b0775373f610238462b333b8f772251"],["src/yp-group/yp-group.html?v=8.2.0.28","4047610f684c3cff2d33ca0f0eef3972"],["src/yp-post/yp-post.html?v=8.2.0.28","53660f20e59db12d64ed0c6f0965f05a"],["src/yp-user/yp-user.html?v=8.2.0.28","c72e7acb2c8dab04c8259f3b020d94df"]];
+var precacheConfig = [["index.html?v=8.3.0.4","d97ef7c48796f6cc32534b1694193989"],["src/yp-app/yp-app.html?v=8.3.0.4","53edcf809392003dbcac021119087747"],["src/yp-app/yp-view-404.html?v=8.3.0.4","0c51323d422345cf65e9d23d463970eb"],["src/yp-community/yp-community.html?v=8.3.0.4","24dc09dac4a8a00e28b763b2a4cd2fa4"],["src/yp-dialog-container/yp-dialog-container-admin.html?v=8.3.0.4","88b9f29951390039ef7a304b33fcd489"],["src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html?v=8.3.0.4","9b567777bf442db8eb7f23f0a98a82fc"],["src/yp-dialog-container/yp-dialog-container-delayed.html?v=8.3.0.4","219aaf0023e9fad50a0921f000c84a00"],["src/yp-dialog-container/yp-dialog-container-logged-in.html?v=8.3.0.4","b8043f2e2120ae10b8871c3a679028c7"],["src/yp-dialog-container/yp-dialog-container-media-recorder.html?v=8.3.0.4","1136b263ad09bcb2fea70d8fdafadd9d"],["src/yp-dialog-container/yp-dialog-container-moderation.html?v=8.3.0.4","af9978dac5e793f1d82d92a0d10ac02e"],["src/yp-dialog-container/yp-dialog-container-users-grid.html?v=8.3.0.4","bb26ba9f950716c173da7174b8cff61d"],["src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html?v=8.3.0.4","6b81af4e186b378b4ef134100a5fb86c"],["src/yp-domain/yp-domain.html?v=8.3.0.4","62363a286442ddf6f4a5dc7bbb0e3ed7"],["src/yp-group/yp-group.html?v=8.3.0.4","e9cadf201282eb2246b470e0aa370019"],["src/yp-post/yp-post.html?v=8.3.0.4","f8c3ffed4a9fe89502526d2d36ebdfeb"],["src/yp-user/yp-user.html?v=8.3.0.4","c72e7acb2c8dab04c8259f3b020d94df"]];
 var cacheName = 'sw-precache-v3--' + (self.registration ? self.registration.scope : '');
 
 
@@ -285,7 +285,7 @@ self.addEventListener('fetch', function(event) {
 
 // Runtime cache configuration, using the sw-toolbox library.
 
-toolbox.router.get(/(.html|.js|.json|\/api\/)/, toolbox.networkFirst, {});
+toolbox.router.get(/(?!(.*)mp4)\/(.*)/, toolbox.networkFirst, {});
 
 
 

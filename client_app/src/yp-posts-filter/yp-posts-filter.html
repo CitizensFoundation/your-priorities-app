@@ -70,6 +70,14 @@
         margin-left: 0;
       }
 
+
+      #dropDownTrigger {
+        background-color: var(--accent-color);
+        margin-left: 16px;
+        color: #FFF;
+
+      }
+
       @media (max-width: 600px) {
         .subTitle {
           font-size: 17px;
@@ -91,7 +99,17 @@
           margin-bottom: 0;
           margin-top: 0;
         }
-      }
+
+        paper-button {
+          width: 225px;
+          margin-right: 0 !important;
+        }
+
+        #dropDownTrigger {
+          margin-left: 0;
+          margin-right: 0;
+        }
+
 
       paper-dropdown-menu {
         padding-left: 8px;
@@ -112,12 +130,6 @@
         parring-right: 16px;
       }
 
-      #dropDownTrigger {
-        background-color: var(--accent-color);
-        margin-left: 16px;
-        color: #FFF;
-
-      }
 
       .dropdownIcon {
         color: #FFF;
@@ -130,6 +142,7 @@
         height: 24px;
         margin-right: 8px;
       }
+
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -192,7 +205,7 @@
           </paper-menu-button>
         </template>
         <template is="dom-if" if="[[searchingFor]]">
-          <paper-icon-button icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
+          <paper-icon-button aria-label$="[[t('clearSearchInput')]]" icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
         </template>
       </div>
     </template>

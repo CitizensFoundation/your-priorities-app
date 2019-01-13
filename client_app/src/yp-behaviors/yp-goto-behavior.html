@@ -9,9 +9,10 @@
       window.history.pushState({}, null, path);
       window.dispatchEvent(new CustomEvent('location-changed'));
       document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
+      console.log("REDIRECTING TO: "+path);
     },
 
-    goToPost: function (postIdIn, pointId) {
+    goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem) {
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
@@ -26,8 +27,19 @@
         postUrl += '/' + pointId;
       }
       var windowLocation = window.location.href;
-      console.log(postUrl);
-      console.log(windowLocation);
+      console.log("Go to post: "+postUrl);
+      console.log("Current window location: "+windowLocation);
+
+      if (cachedActivityItem) {
+        console.info("Saving cached scroll to item "+cachedActivityItem.id);
+        window.appGlobals.cachedActivityItem = cachedActivityItem;
+      }
+
+      if (cachedPostItem) {
+        console.info("Saving cached scroll to post "+cachedPostItem.id);
+        window.appGlobals.cachedPostItem = cachedPostItem;
+      }
+
       if (windowLocation.indexOf(postUrl) == -1) {
         window.appGlobals.activity('open', 'post', postUrl);
         window.app.setKeepOpenForPostsOn(window.location.pathname);

@@ -16,7 +16,6 @@
       }
 
       .newsStoryContainer {
-        width: 100% !important;
         padding-left: 8px;
         padding-right: 8px;
       }
@@ -41,11 +40,15 @@
         cursor: pointer;
       }
 
+      .mainContainer {
+        width: auto;
+      }
+
       [hidden] {
         display: none !important;
       }
     </style>
-    <div class="layout vertical">
+    <div class="layout vertical mainContainer">
       <yp-magic-text on-tap="_goToPost" class="postName" hidden$="[[!activity.Post.name]]"
                      text-only text-type="postName" content-language="[[activity.Post.language]]"
                      content="[[activity.Post.name]]" content-id="[[activity.Post.id]]">
@@ -83,7 +86,7 @@
       },
 
       _goToPost: function (){
-        this.goToPost(this.activity.Post.id);
+        this.goToPost(this.activity.Post.id, null, this.activity);
       },
 
       _hidePostName: function (activity) {

@@ -95,6 +95,10 @@
         communityUrl = '/community/' + this.community.id;
       }
       window.appGlobals.activity('open', 'community', communityUrl);
+      if (window.appGlobals.backToDomainCommunityItems===null)
+        window.appGlobals.backToDomainCommunityItems = {};
+      window.appGlobals.backToDomainCommunityItems[this.community.domain_id] = this.community;
+      console.log("Saving community scroll item for domain "+this.community.domain_id);
       this.redirectTo(communityUrl);
     },
 

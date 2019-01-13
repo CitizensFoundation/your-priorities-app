@@ -139,14 +139,22 @@
 
       @media (max-width: 985px) {
         .pointInputMaterial {
-          width: 91vw !important;
-          max-width: 500px;
+          width: 100%;
+          max-width: 568px;
           font-size: 14px;
           padding-top: 4px;
+          margin-top: 0;
         }
 
         .pointMaterial {
           width: 100%;
+          max-width: 600px;
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        #pointUpOrDownMaterial {
+          margin-top: 0;
         }
 
         .main-container {
@@ -158,6 +166,13 @@
         }
 
         .pointMaterial {
+        }
+      }
+
+      @media (max-width: 420px) {
+        .pointInputMaterial {
+          width: 90%;
+          max-width: 90%;
         }
       }
 
@@ -519,7 +534,7 @@
       <div class="layout vertical center-center">
         <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
           <template>
-            <div class="item" tabindex$="[[tabIndex]]">
+            <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
               <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                 <yp-point point="[[point]]"></yp-point>
               </paper-material>
@@ -789,6 +804,11 @@
             type: String,
             observer: '_hasCurrentMobileAudio'
           },
+
+          storedPoints: {
+            type: Array,
+            value: null
+          }
         },
 
         _openLogin: function () {
@@ -824,9 +844,14 @@
           if (!large && post) {
             var element = this.$$("#ironListMobile");
             if (element) {
-              return element.getBoundingClientRect().top;
+              var top = element.getBoundingClientRect().top;
+              if (top<=0) {
+                top = 800;
+              }
+              return top;
             } else {
-              console.error("Can't find mobile list element");
+              console.warn("Can't find mobile list element, returning 800");
+              return 800;
             }
           }
         },
@@ -857,6 +882,11 @@
           if (isAndroid) {
             this.set('isAndroid', true);
           }
+          window.addEventListener("resize", this._processStoredPoints.bind(this));
+        },
+
+        detached: function() {
+          window.removeEventListener("resize", this._processStoredPoints);
         },
 
         listeners: {
@@ -986,6 +1016,7 @@
           this.set('upPoints', null);
           this.set('downPoints', null);
           this.set('latestPointCreatedAt', null);
+          this.set('storedPoints', null);
           this._clearVideo();
           this._clearAudio();
 
@@ -1016,33 +1047,40 @@
           }
         },
 
-        _response: function (event, detail) {
-          var points = this._preProcessPoints(detail.response);
-          this.removeElementsByClass(this, 'inserted-outside-list');
+        _processStoredPoints: function () {
+          console.info("_processStoredPoints");
+          if (this.upPoints===null) {
+            if (this.storedPoints && this.storedPoints.length > 0) {
+              var upPoints = [];
+              var downPoints = [];
 
-          if (points.length > 0) {
-            var upPoints = [];
-            var downPoints = [];
-
-            for (var i = 0; i < points.length; i++) {
-              if (points[i].value>0) {
-                upPoints.push(points[i]);
-              } else if (points[i].value<0) {
-                downPoints.push(points[i]);
+              for (var i = 0; i < this.storedPoints.length; i++) {
+                if (this.storedPoints[i].value>0) {
+                  upPoints.push(this.storedPoints[i]);
+                } else if (this.storedPoints[i].value<0) {
+                  downPoints.push(this.storedPoints[i]);
+                }
               }
+              this.set('upPoints', upPoints);
+              this.set('downPoints', downPoints);
+            } else {
+              this.set('upPoints', []);
+              this.set('downPoints', []);
+              this.set('points', []);
             }
-            this.set('upPoints', upPoints);
-            this.set('downPoints', downPoints);
           } else {
-            this.set('upPoints', []);
-            this.set('downPoints', []);
-            this.set('points', []);
+            console.log("Landscape points already setup");
           }
 
-          if (!this.largeMode) {
+          if (!this.largeMode && !this.points) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
+        },
 
+        _response: function (event, detail) {
+          this.set('storedPoints', this._preProcessPoints(detail.response));
+          this._processStoredPoints();
+          this.removeElementsByClass(this, 'inserted-outside-list');
           this._updateCounterInfo();
           this._scrollPointIntoView();
           this._checkForMultipleLanguages();

@@ -148,7 +148,7 @@
           </div>
           <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
           <paper-menu-button class="edit" hidden$="[[!checkCommunityAccess(community)]]">
-            <paper-icon-button icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button aria-label$="[[t('openOrganizationMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
               <paper-item id="editMenuItem">[[t('community.edit')]]</paper-item>
               <paper-item id="deleteMenuItem">[[t('community.delete')]]</paper-item>

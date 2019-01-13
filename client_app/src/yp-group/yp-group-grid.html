@@ -24,7 +24,8 @@
         padding: 16px !important;
       }
 
-      #ironList {
+      iron-list {
+        height: 100vh;
       }
 
       [hidden] {
@@ -34,14 +35,19 @@
       :focus {
         outline: none;
       }
+
+      @media (max-width: 1199px) {
+        .groupCard {
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wide}}"></iron-media-query>
 
-    <div class="layout vertical center-center">
-      <iron-list id="ironList" scroll-offset="350" items="[[activeGroups]]" as="group" scroll-target="document" grid>
+    <div class="layout horizontal center-center">
+      <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeGroups]]" as="group" scroll-target="document" grid$="[[wide]]">
         <template>
-          <div class="groupCard" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
+          <div class="groupCard layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
             <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
           </div>
         </template>
@@ -70,7 +76,46 @@
         wide: {
           type: Boolean,
           value: false
+        },
+
+        scrollOffset: {
+          type: Number,
+          computed: '_scrollOffset(wide, featuredGroups, activeGroups)'
         }
+      },
+
+      _scrollOffset: function (wide, featuredGroups) {
+        var list = this.$.ironList;
+        if (list) {
+          var offset = list.offsetTop;
+          offset -= 75;
+          if (list.offsetTop>0 && offset>0) {
+            console.info("Group list scroll offset: "+offset);
+            return offset;
+          } else {
+            if (wide)
+              offset = 390;
+            else
+              offset = 450;
+            console.info("Group list (manual) scroll offset: "+offset);
+            return offset;
+          }
+        } else {
+          console.warn("No group list for scroll offset");
+          return null;
+        }
+      },
+
+      scrollToItem: function (item) {
+        console.log("Group grid scrolling to item");
+        this.$.ironList.scrollToItem(item);
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
+          })
+        );
       },
 
       _newGroup: function () {

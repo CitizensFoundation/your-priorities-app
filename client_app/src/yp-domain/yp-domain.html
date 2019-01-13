@@ -106,6 +106,7 @@
         <section name="communities" class="layout vertical">
           <div class="card-container layout center-center wrap">
             <yp-community-grid
+              id="communityGrid"
               featured-communities="[[featuredCommunities]]"
               active-communities="[[activeCommunities]]"
               archived-communities="[[archivedCommunities]]"
@@ -219,6 +220,24 @@
       listeners: {
         'yp-new-community': '_newCommunity',
         'yp-new-community-folder': '_newCommunityFolder'
+      },
+
+      scrollToCommunityItem: function () {
+        if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
+          var list = this.$$("#domainNews");
+          if (list) {
+            list.scrollToItem(window.appGlobals.cachedActivityItem);
+            window.appGlobals.cachedActivityItem = null;
+          } else {
+            console.warn("No domain activities for scroll to item");
+          }
+        } else if (this.selectedTab==="communities") {
+          if (window.appGlobals.backToDomainCommunityItems &&
+            window.appGlobals.backToDomainCommunityItems[this.domain.id]) {
+            this.$.communityGrid.scrollToItem(window.appGlobals.backToDomainCommunityItems[this.domain.id]);
+            window.appGlobals.backToDomainCommunityItems[this.domain.id] = null;
+          }
+        }
       },
 
       _userLoggedIn: function (user) {

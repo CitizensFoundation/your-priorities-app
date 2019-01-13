@@ -16,6 +16,7 @@
     <style include="iron-flex iron-flex-alignment">
       :host {
         margin-top: 8px;
+        margin-bottom: 8px;
       }
 
       .postCard {
@@ -102,14 +103,16 @@
       }
 
       @media (max-width: 420px) {
+        :host {
+          margin-top: 0;
+        }
+
         .postCard {
-          max-width: 250px;
-          width: 250px;
+          width: 225px;
           margin-left: 0;
           margin-right: 0;
           margin-bottom: 4px;
-          padding: 8px;
-          min-height: 64px;
+          padding: 16px;
         }
 
         .addNewIdeaText {
