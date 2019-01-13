@@ -1,8 +1,8 @@
 {
   "name": "your-priorities-app",
-  "version": "8.3.0.6",
+  "version": "8.3.0.7",
   "license": "AGPL-3.0",
-  resolutions": {
+  "resolutions": {
     "natives": "1.1.6"
   },
   "dependencies": {
