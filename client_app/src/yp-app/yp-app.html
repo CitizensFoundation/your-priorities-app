@@ -855,8 +855,8 @@
                   }
                 }
 
-                // Community -> Domain
-                else if ((oldPageData.page==="community" || oldPageData.page==="post") && pageData.page==="domain") {
+                // Community/CommunityFolder -> Domain
+                else if ((oldPageData.page==="community_folder" || oldPageData.page==="community" || oldPageData.page==="post") && pageData.page==="domain") {
                   if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToCommunityItem !== "undefined") {
                     this.$$("#domainPage").scrollToCommunityItem();
                     skipMasterScroll = true;
@@ -879,12 +879,12 @@
                     this.$$("#communityFolderPage").scrollToGroupItem();
                     skipMasterScroll = true;
                   } else {
-                    console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
+                    console.warn("Can't find scroll communityFolderPage for goToPostOrNewsItem, trying again");
                     this.async(function () {
                       if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
                         this.$$("#communityFolderPage").scrollToGroupItem();
                       } else {
-                        console.error("Can't find scroll communityPage for goToPostOrNewsItem");
+                        console.error("Can't find scroll communityFolderPage for goToPostOrNewsItem");
                       }
                     }, 200);
                   }
