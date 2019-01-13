@@ -17,7 +17,23 @@ module.exports = {
       await queryInterface.addIndex('communities', ['domain_id', 'deleted', 'is_community_folder','access']),
       await queryInterface.addIndex('communities', ['deleted', 'in_community_folder_id','status', 'access']),
       await queryInterface.addIndex('communities', ['deleted','domain_id','access','counter_users','status','in_community_folder_id'],
-        { name: 'ComDelDomAccCountStatInCommunity' })
+        { name: 'ComDelDomAccCountStatInCommunity' }),
+
+      await queryInterface.addColumn('groups','is_group_folder', { type: Sequelize.BOOLEAN, defaultValue: false }),
+      await queryInterface.addColumn('groups','in_group_folder_id', { type: Sequelize.INTEGER, defaultValue: null }),
+
+      await queryInterface.addIndex('groups', ['id', 'deleted']),
+      await queryInterface.addIndex('groups', ['id', 'deleted', 'is_group_folder']),
+      await queryInterface.addIndex('groups', ['id', 'deleted', 'in_group_folder_id']),
+      await queryInterface.addIndex('groups', ['deleted', 'is_group_folder']),
+      await queryInterface.addIndex('groups', ['deleted', 'in_group_folder_id']),
+      await queryInterface.addIndex('groups', ['community_id', 'deleted', 'in_group_folder_id']),
+      await queryInterface.addIndex('groups', ['community_id', 'deleted', 'in_group_folder_id','status']),
+      await queryInterface.addIndex('groups', ['community_id', 'deleted', 'is_group_folder']),
+      await queryInterface.addIndex('groups', ['community_id', 'deleted', 'is_group_folder','access']),
+      await queryInterface.addIndex('groups', ['deleted', 'in_group_folder_id','status', 'access']),
+      await queryInterface.addIndex('groups', ['deleted','community_id','access','counter_users','status','in_group_folder_id'],
+        { name: 'ComDelComAccCountStatInGroup' })
     ]
   },
 
