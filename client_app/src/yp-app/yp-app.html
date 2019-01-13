@@ -183,7 +183,8 @@
         background-color: var(--accent-color);
         padding: 6px;
         min-width: 0 !important;
-        margin-left: 16px;
+        margin-left: 8px;
+        margin-right: 8px;
       }
 
       .stopIcon {
@@ -206,7 +207,7 @@
         #translationButton {
           width: 40px !important;
           max-width: 40px !important;
-          margin-left: 4px;
+          margin-left: 8px;
         }
 
         div[title] {
@@ -292,7 +293,7 @@
 
       app-toolbar {
         padding-left: 8px;
-        padding-right: 8px;
+        padding-right: 16px;
       }
     </style>
 
@@ -326,13 +327,13 @@
             </div>
             <div hide$="[[closePostHeader]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
 
+            <span class="flex"></span>
             <div hidden$="[[!autoTranslate]]" class="layout horizontal">
               <paper-button raised id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
                 <iron-icon icon="translate"></iron-icon>
                 <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
               </paper-button>
             </div>
-            <span class="flex"></span>
             <paper-icon-button aria-label$="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
             <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
               <paper-icon-button aria-label$="[[t('menu.help')]]" icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
@@ -601,11 +602,18 @@
             defaultLocale = storedLocale;
           }
 
-          var splitLocale = window.location.href.split('locale=');
-
           var localeFromUrl;
-          if (splitLocale && splitLocale[1]) {
-            localeFromUrl = splitLocale[1];
+
+          if (window.appGlobals.originalQueryParameters &&
+              window.appGlobals.originalQueryParameters["locale"]) {
+            localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
+          }
+
+          if (window.appGlobals.originalQueryParameters &&
+            window.appGlobals.originalQueryParameters["startAutoTranslate"]) {
+            this.async(function () {
+              this._startTranslation();
+            }, 2000);
           }
 
           if (localeFromUrl && localeFromUrl.length == 2) {
@@ -643,6 +651,22 @@
         if (detail.pageId) {
           this.openPageFromId(detail.pageId);
         }
+      },
+
+      _startTranslation: function () {
+        window.autoTranslate = true;
+        document.dispatchEvent(
+          new CustomEvent("lite-signal", {
+            bubbles: true,
+            compose: true,
+            detail: { name: 'yp-auto-translate', data: true }
+          })
+        );
+        this.fire('yp-language-name', this.supportedLanguages[this.language]);
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+          toast.text = this.t('autoTranslationStarted');
+          toast.show();
+        }.bind(this));
       },
 
       _stopTranslation: function () {
