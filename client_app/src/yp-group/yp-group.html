@@ -692,7 +692,7 @@
           this.set('haveGotTabCountInfoCount', 0);
           this.set('tabCounters', {});
           var groupIdInt = parseInt(groupId);
-          if (window.appGlobals.groupItemsCache[groupIdInt]) {
+          if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
             this._groupResponse(null, { response: {
                 group: window.appGlobals.groupItemsCache[groupIdInt],
                 checkServerForNonOpenPosts: true
