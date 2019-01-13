@@ -195,6 +195,11 @@ var getDomain = function (req, domainId, done) {
                 },
                 {
                   status: "featured"
+                },
+                {
+                  is_community_folder: {
+                    $ne: null
+                  }
                 }
               ],
               status: {
