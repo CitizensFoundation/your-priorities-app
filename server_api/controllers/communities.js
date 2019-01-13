@@ -323,6 +323,7 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
 const masterGroupIncludes = [
   {
     model: models.Community,
+    required: false,
     attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
     include: [
       {
@@ -1062,7 +1063,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
   getCommunity(req, function (error, community) {
     if (community) {
       res.send(community);
-    } else if (error) {
+    } else if (error && error!="Not found") {
       sendCommunityOrError(res, null, 'view', req.user, error);
     } else {
       sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
