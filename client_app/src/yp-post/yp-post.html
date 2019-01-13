@@ -383,7 +383,7 @@
     </div>
 
     <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+      <yp-ajax id="ajax" on-response="_handleIncomingPostResponse"></yp-ajax>
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
   </template>
@@ -587,11 +587,16 @@
         _postChanged: function (newValue, oldValue) {
         },
 
-        _postIdChanged: function (newValue, oldValue) {
-          this.set("post",null);
-          if (newValue) {
-            this._getPost();
-            this.set('selectedTab', 'debate');
+        _postIdChanged: function (postId) {
+          var cachedItem = window.appGlobals.cachedPostItem;
+          if (cachedItem && cachedItem.id==postId) {
+            this._handleIncomingPostResponse(null, { response: cachedItem });
+          } else {
+            this.set("post",null);
+            if (postId) {
+              this._getPost();
+              this.set('selectedTab', 'debate');
+            }
           }
         },
 
@@ -609,7 +614,7 @@
           this.$.ajax.generateRequest();
         },
 
-        _response: function (event, detail, sender) {
+        _handleIncomingPostResponse: function (event, detail) {
           this.set("post", detail.response);
 
           this.refresh();
@@ -622,11 +627,6 @@
             }
           } else {
             this.set('disableNewPosts', false);
-          }
-
-          if (this.post.description === null) {
-            this.post.description = this.post.Points[0].content;
-            this.post.Points.shift();
           }
         },
 

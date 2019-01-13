@@ -173,6 +173,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at'],
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
       [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
       [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
@@ -181,6 +182,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       {
         // Category
         model: models.Category,
+        attributes: { exclude: ['ip_address', 'user_agent'] },
         required: false,
         include: [
           {
@@ -213,6 +215,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
         include: [
           {
             model: models.Image, as: 'UserProfileImages',
+            attributes:['id',"formats",'updated_at'],
             required: false
           },
           {
