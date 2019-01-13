@@ -262,7 +262,7 @@
 
     <template is="dom-if" if="[[domain]]" restamp>
       <template is="dom-if" if="[[hasDomainAccess]]" restamp>
-        <yp-ajax method="GET" hidden url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+        <yp-ajax method="GET" disable-user-error hidden url="/api/domains/[[domain.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
       </template>
     </template>
 

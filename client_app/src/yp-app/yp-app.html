@@ -181,16 +181,24 @@
       #translationButton {
         color: #FFF;
         background-color: var(--accent-color);
-        margin-left: 4px;
         padding: 6px;
         min-width: 0 !important;
+        margin-left: 16px;
       }
 
       .stopIcon {
         margin-left: 6px;
       }
 
+      .helpButton {
+        margin-right: 8px;
+      }
+
       @media (max-width: 480px) {
+        .helpButton {
+          margin-right: 4px;
+        }
+
         .stopIcon {
           display: none;
         }
@@ -198,7 +206,9 @@
         #translationButton {
           width: 40px !important;
           max-width: 40px !important;
+          margin-left: 4px;
         }
+
         div[title] {
           font-size: 17px;
           white-space: normal !important;
@@ -279,6 +289,11 @@
       #headerTitle {
         padding-right: 0 !important;
       }
+
+      app-toolbar {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
     </style>
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
@@ -306,13 +321,10 @@
             <template is="dom-if" if="[[closePostHeader]]">
               <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
-            <paper-icon-button aria-label$="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
             <div hide$="[[closePostHeader]]" class="layout horizontal navContainer">
-              <div class="layout horizontal" style="height: 100%; vertical-align: center;">
-                <div id="headerTitle" title class="layout vertical">[[headerTitle]]</div>
-                <paper-icon-button aria-label$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="backIcon" hide$="[[!showBack]]"></paper-icon-button>
-              </div>
+              <paper-icon-button aria-label$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="closePostIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
+            <div hide$="[[closePostHeader]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
 
             <div hidden$="[[!autoTranslate]]" class="layout horizontal">
               <paper-button raised id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
@@ -321,7 +333,7 @@
               </paper-button>
             </div>
             <span class="flex"></span>
-
+            <paper-icon-button aria-label$="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
             <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
               <paper-icon-button aria-label$="[[t('menu.help')]]" icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
 
@@ -848,7 +860,8 @@
                 }
               }
 
-              if (map[pageData.page] != null && pageData.page!=='post') {
+              if (map[pageData.page] != null && pageData.page!=='post' &&
+                 !(oldPageData.page==="community" && pageData.page==="group")) {
                 if (!skipMasterScroll) {
                   window.scrollTo(0, map[pageData.page]);
                   console.info("Main window scroll " + pageData.page + " to " + map[pageData.page]);
@@ -859,7 +872,6 @@
                 console.info("AppLayout scroll to top");
                 this.async(function () {
                   window.scrollTo(0, 0);
-                  //Polymer.AppLayout.scroll({ top: 0, behavior: 'silent' });
                 });
               }
             }, delayUntilScrollToPost);

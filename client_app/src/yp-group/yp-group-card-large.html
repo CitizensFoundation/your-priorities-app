@@ -275,7 +275,7 @@
 
     <template is="dom-if" if="[[group]]" restamp>
       <template is="dom-if" if="[[hasGroupAccess]]" restamp>
-        <yp-ajax hidden method="GET" url="/api/groups/[[group.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+        <yp-ajax hidden disable-user-error method="GET" url="/api/groups/[[group.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
       </template>
     </template>
 

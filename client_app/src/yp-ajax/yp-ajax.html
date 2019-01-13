@@ -133,6 +133,11 @@
           type: Boolean,
           reflectToAttribute: true,
           notify: true
+        },
+
+        disableUserError: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -171,7 +176,7 @@
                    this._is401(event.detail.error.message) && !window.appUser.user &&
                    this.retryMethodAfter401Login) {
           window.appUser.loginFor401(this.retryMethodAfter401Login);
-        } else if (this.useDialog) {
+        } else if (this.useDialog && !this.disableUserError) {
           this.showErrorDialog(event.detail.error);
         }
       },

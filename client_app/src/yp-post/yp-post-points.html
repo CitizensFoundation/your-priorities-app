@@ -844,9 +844,14 @@
           if (!large && post) {
             var element = this.$$("#ironListMobile");
             if (element) {
-              return element.getBoundingClientRect().top;
+              var top = element.getBoundingClientRect().top;
+              if (top<=0) {
+                top = 800;
+              }
+              return top;
             } else {
-              console.error("Can't find mobile list element");
+              console.warn("Can't find mobile list element, returning 800");
+              return 800;
             }
           }
         },

@@ -864,6 +864,15 @@ router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, re
   });
 });
 
+router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
+  var PostsByNotOpen = models.Post.scope('not_open');
+  PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
+    res.send({ hasNonOpenPosts: count != 0});
+  }).catch(function (error) {
+    sendGroupOrError(res, null, 'checkNonOpenPosts', req.user, error);
+  });
+});
+
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.find({
     where: { id: req.params.id },

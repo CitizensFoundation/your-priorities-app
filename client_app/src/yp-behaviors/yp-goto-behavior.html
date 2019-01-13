@@ -9,6 +9,7 @@
       window.history.pushState({}, null, path);
       window.dispatchEvent(new CustomEvent('location-changed'));
       document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
+      console.log("REDIRECTING TO: "+path);
     },
 
     goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem) {
@@ -26,8 +27,8 @@
         postUrl += '/' + pointId;
       }
       var windowLocation = window.location.href;
-      console.log(postUrl);
-      console.log(windowLocation);
+      console.log("Go to post: "+postUrl);
+      console.log("Current window location: "+windowLocation);
 
       if (cachedActivityItem) {
         console.info("Saving cached scroll to item "+cachedActivityItem.id);

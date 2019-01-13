@@ -350,7 +350,7 @@
 
     <template is="dom-if" if="[[community]]" restamp>
       <template is="dom-if" if="[[hasCommunityAccess]]" restamp>
-        <yp-ajax hidden method="GET" url="/api/communities/[[community.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
+        <yp-ajax hidden disable-user-error method="GET" url="/api/communities/[[community.id]]/flagged_content_count" auto on-response="_setFlaggedContentCount"></yp-ajax>
       </template>
     </template>
 
