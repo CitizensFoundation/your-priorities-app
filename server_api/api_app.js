@@ -23,6 +23,9 @@ const passport = require('passport')
   , TwitterStrategy = require('passport-twitter').Strategy
   , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
+const models = require('./models');
+const auth = require('./authorization');
+
 const index = require('./controllers/index');
 const news_feeds = require('./active-citizen/controllers/news_feeds');
 const activities = require('./active-citizen/controllers/activities');
@@ -51,8 +54,6 @@ const nonSPArouter = require('./controllers/nonSpa');
 const generateSitemap = require('./utils/sitemap_generator');
 const generateManifest = require('./utils/manifest_generator');
 
-const models = require('./models');
-const auth = require('./authorization');
 const log = require('./utils/logger');
 const toJson = require('./utils/to_json');
 const sso = require('passport-sso');

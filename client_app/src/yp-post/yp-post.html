@@ -591,7 +591,12 @@
           var cachedItem = window.appGlobals.cachedPostItem;
           if (cachedItem && cachedItem.id==postId) {
             this._handleIncomingPostResponse(null, { response: cachedItem });
+            console.log("Got post from item cache");
+          } else if (window.appGlobals.getPostFromCache(postId)) {
+            this._handleIncomingPostResponse(null, { response: window.appGlobals.getPostFromCache(postId) });
+            console.log("Got post from cache");
           } else {
+            console.log("Got post from server not cache");
             this.set("post",null);
             if (postId) {
               this._getPost();
@@ -628,6 +633,32 @@
           } else {
             this.set('disableNewPosts', false);
           }
+
+          window.appGlobals.getNextRecommendationForGroup(this.post.group_id, this.post.id, this._processRecommendation.bind(this));
+        },
+
+        _processRecommendation: function (recommendedPost) {
+           if (recommendedPost && this.post) {
+             var postName = recommendedPost.name;
+             if (this.wideWidth) {
+               postName = this.truncate(postName, 60);
+             } else {
+               postName = this.truncate(postName, 30);
+             }
+
+             this.fire("yp-set-next-post", {
+               currentPostId: this.post.id,
+               goForwardToPostId: recommendedPost.id,
+               goForwardPostName: postName
+             });
+           } else {
+             this.fire("yp-set-next-post", {
+               currentPostId: this.post.id,
+               goForwardToPostId: null,
+               goForwardPostName: null
+             });
+             console.log("Not recommended post");
+           }
         },
 
         refresh: function () {

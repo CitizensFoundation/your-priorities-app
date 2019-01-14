@@ -28,12 +28,12 @@
       }
     },
 
-    getNextRecommendationForGroup: function (groupId, recommendationCallback) {
+    getNextRecommendationForGroup: function (groupId, currentPostId, recommendationCallback) {
       groupId = parseInt(groupId);
-      this.recommendationCallback = recommendationCallback;
+      this.recommendationCallbacks[groupId] = recommendationCallback;
       if (!this.recommendationsGroupCache[groupId]) {
         console.log("Recommendation getting initial cache from server groupId: "+groupId);
-        this.$.recommendationsForGroupAjax.url = '/api/groups/'+groupdId+'/getRecommendations';
+        this.$.recommendationsForGroupAjax.url = '/api/recommendations/groups/'+groupId+'/getPostRecommendations';
         this.$.recommendationsForGroupAjax.body = {};
         this.$.recommendationsForGroupAjax.generateRequest();
       } else if (this.recommendationsGroupCache[groupId].length>0) {
@@ -41,11 +41,11 @@
         var selectedPost = this._getSelectedPostAndRemove(groupId);
         if (!this.recommendationsSeenPostIds[groupId])
           this.recommendationsSeenPostIds[groupId] = [];
-        this.recommendationsSeenPostIds[group].push(selectedPost.id);
+        this.recommendationsSeenPostIds[groupId].push(selectedPost.id);
         recommendationCallback(selectedPost);
-      } else if (this.lastRecommendationResponseLengths[groupId] && this.lastRecommendationResponseLengths[groupId]>0) {
+      } else if (false && this.lastRecommendationResponseLengths[groupId] && this.lastRecommendationResponseLengths[groupId]>0) {
         console.log("Recommendation getting more from server groupId: "+groupId);
-        this.$.recommendationsForGroupAjax.url = '/api/groups/'+groupdId+'/getRecommendations';
+        this.$.recommendationsForGroupAjax.url = '/api/recommendations/groups/'+groupId+'/getPostRecommendations';
         this.$.recommendationsForGroupAjax.body = { seenPostIds: this.recommendationsSeenPostIds[groupId] };
         this.$.recommendationsForGroupAjax.generateRequest();
       } else {
@@ -58,22 +58,21 @@
       var recommendations = detail.response.recommendations;
       var groupId = parseInt(detail.response.groupId);
 
-
       this.lastRecommendationResponseLengths[groupId] = recommendations.length;
       if (!this.recommendationsGroupCache[groupId]) {
         this.recommendationsGroupCache[groupId] = recommendations;
       } else {
         this.recommendationsGroupCache[groupId] = this.recommendationsGroupCache[groupId].concat(recommendations);
       }
-      if (this.recommendationCallback[groupId]) {
-        this.recommendationCallback[groupId](this._getSelectedPostAndRemove(groupId));
-        this.recommendationCallback[groupId] = null;
+      if (this.recommendationCallbacks[groupId]) {
+        this.recommendationCallbacks[groupId](this._getSelectedPostAndRemove(groupId));
+        this.recommendationCallbacks[groupId] = null;
       }
     },
 
     _getSelectedPostAndRemove: function (groupId) {
       if (this.recommendationsGroupCache[groupId]) {
-        var post = this.recommendationsGroupCache[groupId][this.recommendationsGroupCache.length-1];
+        var post = this.recommendationsGroupCache[groupId][0];
         console.log("Recommendations length before shift: "+this.recommendationsGroupCache.length);
         this.recommendationsGroupCache[groupId].shift();
         console.log("Recommendations length after shift: "+this.recommendationsGroupCache.length);

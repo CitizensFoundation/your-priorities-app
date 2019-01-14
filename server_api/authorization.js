@@ -1,5 +1,5 @@
 var auth = require('authorized');
-var models = require("./models");
+var models = require("./models/index");
 var log = require('./utils/logger');
 var toJson = require('./utils/to_json');
 

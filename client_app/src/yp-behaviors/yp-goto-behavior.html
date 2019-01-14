@@ -12,7 +12,7 @@
       console.log("REDIRECTING TO: "+path);
     },
 
-    goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem) {
+    goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem, skipKeepOpen) {
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
@@ -42,7 +42,8 @@
 
       if (windowLocation.indexOf(postUrl) == -1) {
         window.appGlobals.activity('open', 'post', postUrl);
-        window.app.setKeepOpenForPostsOn(window.location.pathname);
+        if (skipKeepOpen!==true)
+          window.app.setKeepOpenForPostsOn(window.location.pathname);
         this.async(function () {
           this.redirectTo(postUrl);
         });

@@ -195,9 +195,24 @@
         margin-right: 8px;
       }
 
+      .forwardPostName {
+        margin-left: 4px;
+        margin-top: 14px;
+      }
+
       @media (max-width: 480px) {
+        #forwardPostName {
+          display: none !important;
+        }
+
         .stopIcon {
           display: none;
+        }
+
+        .forwardPostName {
+          margin-left: 4px;
+          margin-top: 14px;
+          font-size: 15px;
         }
 
         #translationButton {
@@ -315,20 +330,20 @@
 
         <app-header slot="header" id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
-            <div class="layout horizontal navContainer">
+            <div class="layout horizontal navContainer" hidden$="[[closePostHeader]]">
               <paper-icon-button aria-label$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
             <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
             <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost" hidden$="[[goForwardToPostId]]"></paper-icon-button>
             </template>
-            <template is="dom-if" if="[[goBackToPostId]]">
-              <paper-icon-button aria-label$="[[t('backToPost')]]" id="goPostBack" class="masterActionIcon" icon="arrow-back" on-tap="_goPostBack"></paper-icon-button>
+            <template is="dom-if" if="[[showBackToPost]]">
+              <paper-icon-button aria-label$="[[t('backToPost')]]" id="goPostBack" class="masterActionIcon" icon="arrow-back" on-tap="_goToPreviousPost"></paper-icon-button>
             </template>
             <template is="dom-if" if="[[goForwardToPostId]]">
               <div class="layout horizontal">
-                <paper-icon-button aria-label$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="arrow-back" on-tap="_goPostBack"></paper-icon-button>
-                <div class="forwardPostName">
+                <paper-icon-button aria-label$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="fast-forward" on-tap="_goToNextPost"></paper-icon-button>
+                <div id="forwardPostName" class="forwardPostName">
                   [[goForwardPostName]]
                 </div>
               </div>
@@ -558,7 +573,7 @@
           value: null
         },
 
-        currentToPostId: {
+        currentPostId: {
           type: Number,
           value: null
         },
@@ -568,9 +583,19 @@
           value: null
         },
 
+        showBackToPost: {
+          type: Boolean,
+          value: false
+        },
+
         goForwardPostName:{
           type: String,
           value: null
+        },
+
+        goForwardCount:{
+          type: String,
+          value: 0
         }
       },
 
@@ -594,26 +619,52 @@
       _goToNextPost: function () {
         if (this.currentPostId) {
           this.set('goBackToPostId', this.currentPostId);
-          this.set('showBack', true);
-
+        } else {
+          console.error("No currentPostId on next");
         }
 
-
+        if (this.goForwardToPostId) {
+          this.goToPost(this.goForwardToPostId, null, null, null, true);
+          this.goForwardCount += 1;
+          this.set('showBackToPost', true);
+        } else {
+          console.error("No goForwardToPostId");
+        }
       },
 
       _goToPreviousPost: function () {
-
+        if (this.goForwardCount>0) {
+          window.history.back();
+          if (this.goForwardCount===1) {
+            this.set('showBackToPost', false);
+          }
+        } else {
+          this.set('showBackToPost', false);
+        }
+        this.goForwardCount -= 1;
       },
 
       _setNextPost: function (event, detail) {
         if (detail.goForwardToPostId) {
           this.set('goForwardToPostId', detail.goForwardToPostId);
           this.set('goForwardPostName', detail.goForwardPostName);
+          if (this.keepOpenForPost)
+            this.set('backPath', this.keepOpenForPost);
+          else if (this.storedBackPath)
+            this.set('backPath', this.storedBackPath);
+          this.set('showBack', true);
+          this.set('keepOpenForPost', null);
         } else {
-          this.set('goForwardToPostId', null);
-          this.set('goForwardPostName', null);
+          this._clearNextPost();
         }
-        this.set('currentToPostId', detail.currentToPostId);
+        this.set('currentPostId', detail.currentPostId);
+      },
+
+      _clearNextPost: function () {
+        this.set('goForwardToPostId', null);
+        this.set('goForwardPostName', null);
+        this.goForwardCount=0;
+        this.set('showBackToPost', false);
       },
 
       _setupSamlCallback: function () {
@@ -946,6 +997,10 @@
                     }, 200);
                   }
                 }
+              }
+
+              if(pageData.page!=='post') {
+                this._clearNextPost();
               }
 
               if (map[pageData.page] != null && pageData.page!=='post' &&
