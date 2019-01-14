@@ -25,11 +25,17 @@
       lastRecommendationResponseLengths: {
         type: Object,
         value: null
+      },
+
+      currentPostId: {
+        type: Number,
+        value: null
       }
     },
 
     getNextRecommendationForGroup: function (groupId, currentPostId, recommendationCallback) {
       groupId = parseInt(groupId);
+      this.set('currentPostId', parseInt(currentPostId));
       this.recommendationCallbacks[groupId] = recommendationCallback;
       if (!this.recommendationsGroupCache[groupId]) {
         console.log("Recommendation getting initial cache from server groupId: "+groupId);
@@ -73,6 +79,14 @@
     _getSelectedPostAndRemove: function (groupId) {
       if (this.recommendationsGroupCache[groupId]) {
         var post = this.recommendationsGroupCache[groupId][0];
+        if (post.id===this.currentPostId) {
+          this.recommendationsGroupCache[groupId].shift();
+          if (this.recommendationsGroupCache[groupId].length>0) {
+            post = this.recommendationsGroupCache[groupId][0];
+          } else {
+            post = null;
+          }
+        }
         console.log("Recommendations length before shift: "+this.recommendationsGroupCache.length);
         this.recommendationsGroupCache[groupId].shift();
         console.log("Recommendations length after shift: "+this.recommendationsGroupCache.length);

@@ -593,7 +593,7 @@
             this._handleIncomingPostResponse(null, { response: cachedItem });
             console.log("Got post from item cache");
           } else if (window.appGlobals.getPostFromCache(postId)) {
-            this._handleIncomingPostResponse(null, { response: window.appGlobals.getPostFromCache(postId) });
+            this._handleIncomingPostResponse(null, { response: window.appGlobals.getPostFromCache(postId), fromCache: true });
             console.log("Got post from cache");
           } else {
             console.log("Got post from server not cache");
@@ -634,6 +634,8 @@
             this.set('disableNewPosts', false);
           }
 
+          if (!detail.fromCache)
+            window.appGlobals.addPostsToCacheLater([this.post]);
           window.appGlobals.getNextRecommendationForGroup(this.post.group_id, this.post.id, this._processRecommendation.bind(this));
         },
 
