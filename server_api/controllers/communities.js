@@ -435,7 +435,7 @@ var getCommunity = function(req, done) {
                 $ne: models.Group.ACCESS_SECRET
               }
             },
-            attributes: ['id','configuration','objectives','name','theme_id','community_id',
+            attributes: ['id','configuration','access','objectives','name','theme_id','community_id',
               'access','status','counter_points','counter_posts','counter_users','language'],
             required: false,
             order: [
