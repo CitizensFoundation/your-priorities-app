@@ -1,4 +1,6 @@
 {
+  "backToPost": "Back to post",
+  "forwardToPost": "Forward to post",
   "hostnameTaken": "This hostname is already taken",
   "updateCommunityFolder": "Update community folder",
   "inCommunityFolder": "In community folder",

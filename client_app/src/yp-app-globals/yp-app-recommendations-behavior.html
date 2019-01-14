@@ -1,0 +1,94 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior Polymer.ypAppRecommendationsBehavior
+   */
+  Polymer.ypAppRecommendationsBehavior = {
+
+    properties: {
+      recommendationsGroupCache: {
+        type: Object,
+        value: null
+      },
+
+      recommendationsSeenPostIds: {
+        type: Object,
+        value: null
+      },
+
+      recommendationCallbacks: {
+        type: Object,
+        value: null
+      },
+
+      lastRecommendationResponseLengths: {
+        type: Object,
+        value: null
+      }
+    },
+
+    getNextRecommendationForGroup: function (groupId, recommendationCallback) {
+      groupId = parseInt(groupId);
+      this.recommendationCallback = recommendationCallback;
+      if (!this.recommendationsGroupCache[groupId]) {
+        console.log("Recommendation getting initial cache from server groupId: "+groupId);
+        this.$.recommendationsForGroupAjax.url = '/api/groups/'+groupdId+'/getRecommendations';
+        this.$.recommendationsForGroupAjax.body = {};
+        this.$.recommendationsForGroupAjax.generateRequest();
+      } else if (this.recommendationsGroupCache[groupId].length>0) {
+        console.log("Recommendation getting next from cache groupId: "+groupId);
+        var selectedPost = this._getSelectedPostAndRemove(groupId);
+        if (!this.recommendationsSeenPostIds[groupId])
+          this.recommendationsSeenPostIds[groupId] = [];
+        this.recommendationsSeenPostIds[group].push(selectedPost.id);
+        recommendationCallback(selectedPost);
+      } else if (this.lastRecommendationResponseLengths[groupId] && this.lastRecommendationResponseLengths[groupId]>0) {
+        console.log("Recommendation getting more from server groupId: "+groupId);
+        this.$.recommendationsForGroupAjax.url = '/api/groups/'+groupdId+'/getRecommendations';
+        this.$.recommendationsForGroupAjax.body = { seenPostIds: this.recommendationsSeenPostIds[groupId] };
+        this.$.recommendationsForGroupAjax.generateRequest();
+      } else {
+        console.log("Recommendation found no post on cache or server groupId: "+groupId);
+        recommendationCallback(null);
+      }
+    },
+
+    _recommendationsForGroupResponse: function (event, detail) {
+      var recommendations = detail.response.recommendations;
+      var groupId = parseInt(detail.response.groupId);
+
+
+      this.lastRecommendationResponseLengths[groupId] = recommendations.length;
+      if (!this.recommendationsGroupCache[groupId]) {
+        this.recommendationsGroupCache[groupId] = recommendations;
+      } else {
+        this.recommendationsGroupCache[groupId] = this.recommendationsGroupCache[groupId].concat(recommendations);
+      }
+      if (this.recommendationCallback[groupId]) {
+        this.recommendationCallback[groupId](this._getSelectedPostAndRemove(groupId));
+        this.recommendationCallback[groupId] = null;
+      }
+    },
+
+    _getSelectedPostAndRemove: function (groupId) {
+      if (this.recommendationsGroupCache[groupId]) {
+        var post = this.recommendationsGroupCache[groupId][this.recommendationsGroupCache.length-1];
+        console.log("Recommendations length before shift: "+this.recommendationsGroupCache.length);
+        this.recommendationsGroupCache[groupId].shift();
+        console.log("Recommendations length after shift: "+this.recommendationsGroupCache.length);
+        return post;
+      } else {
+        return null;
+      }
+    },
+
+    ready: function () {
+      this.set('recommendationsSeenPostIds', {});
+      this.set('lastRecommendationResponseLengths', {});
+      this.set('recommendationCallbacks', {});
+      this.set('recommendationsGroupCache', {});
+      console.log("Recommendations have initialized");
+    }
+  }
+</script>

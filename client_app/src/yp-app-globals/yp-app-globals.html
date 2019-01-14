@@ -5,6 +5,7 @@
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="yp-app-recommendations-behavior.html">
 
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
@@ -33,8 +34,8 @@
     <yp-ajax hidden auto url="/api/audios/hasAudioUploadSupport" on-response="_hasAudioUploadSupport"></yp-ajax>
     <yp-ajax id="videoViewsAjax" hidden method="PUT" url="/api/videos/videoView"></yp-ajax>
     <yp-ajax id="audioListenAjax" hidden method="PUT" url="/api/audios/audioListen"></yp-ajax>
+    <yp-ajax id="recommendationsForGroupAjax" hidden method="PUT"></yp-ajax>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
-
   </template>
 
   <script>
@@ -45,7 +46,8 @@
 
         behaviors: [
           Polymer.ypLanguageBehavior,
-          Polymer.ypGotoBehavior
+          Polymer.ypGotoBehavior,
+          Polymer.ypAppRecommendationsBehavior
         ],
 
         properties: {

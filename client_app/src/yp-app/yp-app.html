@@ -158,7 +158,7 @@
         display: none;
       }
 
-      .closePostIcon {
+      .masterActionIcon {
         width: 52px;
         height: 52px;
       }
@@ -217,7 +217,7 @@
           min-height: 28px !important;
         }
 
-        .closePostIcon {
+        .masterActionIcon {
           width: 48px;
           height: 48px;
         }
@@ -315,14 +315,24 @@
 
         <app-header slot="header" id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
-            <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="closePostIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
-            </template>
-            <div hide$="[[closePostHeader]]" class="layout horizontal navContainer">
-              <paper-icon-button aria-label$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="closePostIcon" hidden$="[[!showBack]]"></paper-icon-button>
+            <div class="layout horizontal navContainer">
+              <paper-icon-button aria-label$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
-            <div hide$="[[closePostHeader]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
-
+            <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
+            <template is="dom-if" if="[[closePostHeader]]">
+              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
+            </template>
+            <template is="dom-if" if="[[goBackToPostId]]">
+              <paper-icon-button aria-label$="[[t('backToPost')]]" id="goPostBack" class="masterActionIcon" icon="arrow-back" on-tap="_goPostBack"></paper-icon-button>
+            </template>
+            <template is="dom-if" if="[[goForwardToPostId]]">
+              <div class="layout horizontal">
+                <paper-icon-button aria-label$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="arrow-back" on-tap="_goPostBack"></paper-icon-button>
+                <div class="forwardPostName">
+                  [[goForwardPostName]]
+                </div>
+              </div>
+            </template>
             <span class="flex"></span>
             <div hidden$="[[!autoTranslate]]" class="layout horizontal">
               <paper-button raised id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
@@ -460,6 +470,11 @@
           type: String
         },
 
+        forwardToPostId: {
+          type: String,
+          value: null
+        },
+
         storedBackPath: String,
 
         backListPostItem: {
@@ -536,11 +551,32 @@
           value: false
         },
 
-        languageName: String
+        languageName: String,
+
+        goBackToPostId: {
+          type: Number,
+          value: null
+        },
+
+        currentToPostId: {
+          type: Number,
+          value: null
+        },
+
+        goForwardToPostId: {
+          type: Number,
+          value: null
+        },
+
+        goForwardPostName:{
+          type: String,
+          value: null
+        }
       },
 
       listeners: {
         'yp-set-pages': '_setPages',
+        'yp-set-next-post': '_setNextPost',
         'yp-set-home-link': '_setHomeLink',
         'yp-redirect-to': '_redirectTo',
         'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
@@ -553,6 +589,31 @@
         'yp-open-page': '_openPageFromEvent',
         'yp-open-login': '_login',
         'yp-reset-keep-open-for-page': '_resetKeepOpenForPage'
+      },
+
+      _goToNextPost: function () {
+        if (this.currentPostId) {
+          this.set('goBackToPostId', this.currentPostId);
+          this.set('showBack', true);
+
+        }
+
+
+      },
+
+      _goToPreviousPost: function () {
+
+      },
+
+      _setNextPost: function (event, detail) {
+        if (detail.goForwardToPostId) {
+          this.set('goForwardToPostId', detail.goForwardToPostId);
+          this.set('goForwardPostName', detail.goForwardPostName);
+        } else {
+          this.set('goForwardToPostId', null);
+          this.set('goForwardPostName', null);
+        }
+        this.set('currentToPostId', detail.currentToPostId);
       },
 
       _setupSamlCallback: function () {
