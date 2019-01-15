@@ -717,31 +717,31 @@
             '.tw': 'zh_TW',
           };
           defaultLocale = localeByTld[tld] || 'en';
+        }
 
-          var language;
-          var storedLocale = localStorage.getItem('yp-user-locale');
-          if (storedLocale) {
-            defaultLocale = storedLocale;
-          }
+        var language;
+        var storedLocale = localStorage.getItem('yp-user-locale');
+        if (storedLocale) {
+          defaultLocale = storedLocale;
+        }
 
-          var localeFromUrl;
+        var localeFromUrl;
 
-          if (window.appGlobals.originalQueryParameters &&
-              window.appGlobals.originalQueryParameters["locale"]) {
-            localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
-          }
+        if (window.appGlobals.originalQueryParameters &&
+            window.appGlobals.originalQueryParameters["locale"]) {
+          localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
+        }
 
-          if (window.appGlobals.originalQueryParameters &&
-            window.appGlobals.originalQueryParameters["startAutoTranslate"]) {
-            this.async(function () {
-              this._startTranslation();
-            }, 2000);
-          }
+        if (window.appGlobals.originalQueryParameters &&
+          window.appGlobals.originalQueryParameters["startAutoTranslate"]) {
+          this.async(function () {
+            this._startTranslation();
+          }, 4200);
+        }
 
-          if (localeFromUrl && localeFromUrl.length == 2) {
-            defaultLocale = localeFromUrl;
-            localStorage.setItem('yp-user-locale', localeFromUrl);
-          }
+        if (localeFromUrl && localeFromUrl.length == 2) {
+          defaultLocale = localeFromUrl;
+          localStorage.setItem('yp-user-locale', localeFromUrl);
         }
 
         console.info("Have started loading i18n for "+defaultLocale);
@@ -784,7 +784,11 @@
             detail: { name: 'yp-auto-translate', data: true }
           })
         );
-        this.fire('yp-language-name', this.supportedLanguages[this.language]);
+
+        if (this.supportedLanguages) {
+          this.fire('yp-language-name', this.supportedLanguages[this.language]);
+        }
+
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
           toast.text = this.t('autoTranslationStarted');
           toast.show();
