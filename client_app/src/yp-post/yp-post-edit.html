@@ -631,7 +631,7 @@
     },
 
     _formInvalid: function () {
-      if (this.newPost && this.$$('#name').validate() && this.$$('#description').validate()) {
+      if (this.newPost && !this.$$('#pointFor').validate()) {
         this.set('selected', 1);
       } else {
         this.set('selected', 0);
