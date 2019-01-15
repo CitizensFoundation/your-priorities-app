@@ -406,10 +406,22 @@
 
         title: String,
 
-        name: String
+        name: String,
+
+        customSubmit: {
+          type: Boolean,
+          value: false
+        }
       },
 
-      _dialogClosed: function (event) {
+
+    scrollResize: function () {
+      if (this.$$("#scrollable")) {
+        this.$$("#scrollable").fire('iron-resize');
+      }
+    },
+
+    _dialogClosed: function (event) {
         if(event.target.nodeName === "PAPER-DIALOG" && event.target.attributes.name && event.target.attributes.name.nodeValue) {
           this.fire('yp-dialog-closed', { name: event.target.attributes.name.nodeValue });
         }
@@ -501,12 +513,16 @@
       },
 
       _submit: function () {
-        if (this.confirmationText) {
-          Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-            dialog.open(this.confirmationText, this._reallySubmit.bind(this));
-          }.bind(this));
+        if (this.customSubmit) {
+          this.fire('yp-custom-form-submit');
         } else {
-          this._reallySubmit();
+          if (this.confirmationText) {
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+              dialog.open(this.confirmationText, this._reallySubmit.bind(this));
+            }.bind(this));
+          } else {
+            this._reallySubmit();
+          }
         }
       },
 

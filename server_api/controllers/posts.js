@@ -613,6 +613,14 @@ var updatePostData = function (req, post) {
   if (req.body.deleteAttachment && req.body.deleteAttachment!=="") {
     post.set('data.attachment', {});
   }
+
+  if (!post.public_data) {
+    post.set('public_data', {});
+  }
+
+  if (req.body.structuredAnswers && req.body.structuredAnswers!="") {
+    post.set('public_data.structuredAnswers',req.body.structuredAnswers);
+  }
 };
 
 router.put('/:id/editTranscript', auth.can('edit post'), function (req, res) {

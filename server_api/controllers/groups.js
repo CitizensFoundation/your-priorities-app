@@ -218,6 +218,9 @@ var updateGroupConfigParamters = function (req, group) {
       group.set('configuration.audioPointUploadLimitSec', 90);
     }
   }
+
+  group.set('configuration.structuredQuestions', (req.body.structuredQuestions && req.body.structuredQuestions!="") ? req.body.structuredQuestions : null);
+
 };
 
 var upload = multer({
