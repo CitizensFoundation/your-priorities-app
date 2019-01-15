@@ -1,7 +1,8 @@
 {
+  "recommendationToastInfo": "You have pressed fast forward or swept the screen to activate the AI recommended posts feature. You will only see posts here that you have not already voted on.",
   "structuredQuestions": "Structured questions",
   "structuredQuestionsInfo": "Use comma to separate questions and max character lengths. Keep questions to less than 32 characters for display on mobiles. Example: Question 1,200,Question 2,150,Question 3,150",
-  "backToPost": "Back to recommended post",
+  "backToPost": "Back to post",
   "forwardToPost": "Forward to recommended post",
   "hostnameTaken": "This hostname is already taken",
   "updateCommunityFolder": "Update community folder",

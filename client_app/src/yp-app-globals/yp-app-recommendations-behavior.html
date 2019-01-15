@@ -45,15 +45,13 @@
       } else if (this.recommendationsGroupCache[groupId].length>0) {
         console.log("Recommendation getting next from cache groupId: "+groupId);
         var selectedPost = this._getSelectedPost(groupId);
-        if (!this.recommendationsSeenPostIds[groupId])
-          this.recommendationsSeenPostIds[groupId] = [];
         if (selectedPost)
-          this.recommendationsSeenPostIds[groupId].push(selectedPost.id);
+          window.appGlobals.showRecommendationInfoIfNeeded();
         recommendationCallback(selectedPost);
       } else if (false && this.lastRecommendationResponseLengths[groupId] && this.lastRecommendationResponseLengths[groupId]>0) {
         console.log("Recommendation getting more from server groupId: "+groupId);
         this.$.recommendationsForGroupAjax.url = '/api/recommendations/groups/'+groupId+'/getPostRecommendations';
-        this.$.recommendationsForGroupAjax.body = { seenPostIds: this.recommendationsSeenPostIds[groupId] };
+        this.$.recommendationsForGroupAjax.body = {};
         this.$.recommendationsForGroupAjax.generateRequest();
       } else {
         console.log("Recommendation found no post on cache or server groupId: "+groupId);

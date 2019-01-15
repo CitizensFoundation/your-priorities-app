@@ -332,7 +332,7 @@
         <app-header slot="header" id="appHeader" effects="waterfall" reveals class="main-header">
           <app-toolbar>
             <div class="layout horizontal navContainer" hidden$="[[closePostHeader]]">
-              <paper-icon-button aria-label$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('goBack')]]" title$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
             <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
             <template is="dom-if" if="[[closePostHeader]]">
@@ -340,7 +340,7 @@
             </template>
             <template is="dom-if" if="[[goForwardToPostId]]">
               <div class="layout horizontal">
-                <paper-icon-button aria-label$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="fast-forward" on-tap="_goToNextPost"></paper-icon-button>
+                <paper-icon-button aria-label$="[[t('forwardToPost')]]" title$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="fast-forward" on-tap="_goToNextPost"></paper-icon-button>
                 <div id="forwardPostName" class="forwardPostName">
                   [[goForwardPostName]]
                 </div>

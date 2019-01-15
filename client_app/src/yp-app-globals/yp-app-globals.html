@@ -148,6 +148,14 @@
           this.set('notifyDialogText', null);
         },
 
+        showRecommendationInfoIfNeeded: function () {
+          if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
+            localStorage.setItem("ypHaveShownRecommendationInfo", true);
+            this.set('notifyDialogText', this.t('recommendationToastInfo'));
+            this.$.dialog.open();
+          }
+        },
+
         showSpeechToTextInfoIfNeeded: function () {
           if (window.appGlobals.hasTranscriptSupport && !localStorage.getItem("haveShownTranscriptInfo")) {
             localStorage.setItem("haveShownTranscriptInfo", true);
