@@ -97,7 +97,7 @@ module.exports = function(sequelize, DataTypes) {
               where: {
                 ssn: profile.UserSSN
               },
-              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'ssn']
+              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'ssn','legacy_passwords_disabled']
             }).then (function (userIn) {
               if (userIn) {
                 user = userIn;
@@ -150,7 +150,7 @@ module.exports = function(sequelize, DataTypes) {
               where: {
                 facebook_id: profile.identifier
               },
-              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id']
+              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled']
             }).then (function (userIn) {
               if (userIn) {
                 user = userIn;
@@ -168,7 +168,7 @@ module.exports = function(sequelize, DataTypes) {
                 where: {
                   email: profile.email
                 },
-                attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id']
+                attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled']
               }).then (function (userIn) {
                 if (userIn) {
                   userIn.facebook_id = profile.identifier;
@@ -231,7 +231,7 @@ module.exports = function(sequelize, DataTypes) {
       localCallback: function (req, email, password, done) {
         sequelize.models.User.find({
           where: { email: email },
-          attributes: ['id', 'encrypted_password']
+          attributes: ['id', 'encrypted_password','legacy_passwords_disabled']
         }).then(function(user) {
           if (user) {
             user.validatePassword(password, done);
@@ -246,11 +246,11 @@ module.exports = function(sequelize, DataTypes) {
         });
       },
 
-      defaultAttributesWithSocialMedia: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'default_locale'],
+      defaultAttributesWithSocialMedia: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'default_locale','legacy_passwords_disabled'],
 
-      defaultAttributesWithSocialMediaPublic: ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
+      defaultAttributesWithSocialMediaPublic: ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'],
 
-      defaultAttributesWithSocialMediaPublicAndEmail: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id'],
+      defaultAttributesWithSocialMediaPublicAndEmail: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'],
 
       associate: function(models) {
         User.hasMany(models.Post);
