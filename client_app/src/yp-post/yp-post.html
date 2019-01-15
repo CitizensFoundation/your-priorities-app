@@ -590,9 +590,11 @@
         _postIdChanged: function (postId) {
           var cachedItem = window.appGlobals.cachedPostItem;
           if (cachedItem && cachedItem.id==postId) {
+            this._setupAjaxUrl();
             this._handleIncomingPostResponse(null, { response: cachedItem });
             console.log("Got post from item cache");
           } else if (window.appGlobals.getPostFromCache(postId)) {
+            this._setupAjaxUrl();
             this._handleIncomingPostResponse(null, { response: window.appGlobals.getPostFromCache(postId), fromCache: true });
             console.log("Got post from cache");
           } else {
@@ -605,16 +607,20 @@
           }
         },
 
-        _pagesResponse: function (event, detail) {
-          this.fire('yp-set-pages', detail.response);
-        },
-
-        _getPost: function () {
+        _setupAjaxUrl: function () {
           if (this.host) {
             this.$.ajax.url = this.host+'/api/posts/' + this.postId;
           } else {
             this.$.ajax.url = '/api/posts/' + this.postId;
           }
+        },
+
+        _pagesResponse: function (event, detail) {
+          this.fire('yp-set-pages', detail.response);
+        },
+
+        _getPost: function () {
+          this._setupAjaxUrl();
           this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
           this.$.ajax.generateRequest();
         },
