@@ -1086,7 +1086,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       {
         model: models.Group,
         required: true,
-        attributes: ['id','configuration','name','theme_id'],
+        attributes: ['id','configuration','name','theme_id','access'],
         include: [
           {
             model: models.Category,
@@ -1094,8 +1094,8 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
           },
           {
             model: models.Community,
-            attributes: ['id','name','theme_id','google_analytics_code','configuration'],
-            required: false
+            attributes: ['id','name','theme_id','access','google_analytics_code','configuration'],
+            required: true
           }
         ]
       },

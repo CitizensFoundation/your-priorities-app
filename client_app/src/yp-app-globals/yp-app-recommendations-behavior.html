@@ -44,10 +44,11 @@
         this.$.recommendationsForGroupAjax.generateRequest();
       } else if (this.recommendationsGroupCache[groupId].length>0) {
         console.log("Recommendation getting next from cache groupId: "+groupId);
-        var selectedPost = this._getSelectedPostAndRemove(groupId);
+        var selectedPost = this._getSelectedPost(groupId);
         if (!this.recommendationsSeenPostIds[groupId])
           this.recommendationsSeenPostIds[groupId] = [];
-        this.recommendationsSeenPostIds[groupId].push(selectedPost.id);
+        if (selectedPost)
+          this.recommendationsSeenPostIds[groupId].push(selectedPost.id);
         recommendationCallback(selectedPost);
       } else if (false && this.lastRecommendationResponseLengths[groupId] && this.lastRecommendationResponseLengths[groupId]>0) {
         console.log("Recommendation getting more from server groupId: "+groupId);
@@ -71,15 +72,16 @@
         this.recommendationsGroupCache[groupId] = this.recommendationsGroupCache[groupId].concat(recommendations);
       }
       if (this.recommendationCallbacks[groupId]) {
-        this.recommendationCallbacks[groupId](this._getSelectedPostAndRemove(groupId));
+        this.recommendationCallbacks[groupId](this._getSelectedPost(groupId));
         this.recommendationCallbacks[groupId] = null;
       }
     },
 
-    _getSelectedPostAndRemove: function (groupId) {
+    _getSelectedPost: function (groupId) {
       if (this.recommendationsGroupCache[groupId]) {
         var post = this.recommendationsGroupCache[groupId][0];
         if (post.id===this.currentPostId) {
+          console.info("Recommendation not showing current post id: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
           this.recommendationsGroupCache[groupId].shift();
           if (this.recommendationsGroupCache[groupId].length>0) {
             post = this.recommendationsGroupCache[groupId][0];
@@ -87,9 +89,6 @@
             post = null;
           }
         }
-        console.log("Recommendations length before shift: "+this.recommendationsGroupCache.length);
-        this.recommendationsGroupCache[groupId].shift();
-        console.log("Recommendations length after shift: "+this.recommendationsGroupCache.length);
         return post;
       } else {
         return null;

@@ -195,6 +195,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       // Group
       {
         model: models.Group,
+        attributes: ['id','configuration','name','theme_id','access'],
         include: [
           {
             model: models.Category,
@@ -203,7 +204,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
           {
             model: models.Community,
             attributes: ['id','name','theme_id','google_analytics_code','configuration'],
-            required: false
+            required: true
           }
         ]
       },

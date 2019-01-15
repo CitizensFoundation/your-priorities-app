@@ -35,7 +35,7 @@
         window.appGlobals.cachedActivityItem = cachedActivityItem;
       }
 
-      if (cachedPostItem) {
+      if (cachedPostItem && cachedPostItem.Group && cachedPostItem.Group.Community) {
         console.info("Saving cached scroll to post "+cachedPostItem.id);
         window.appGlobals.cachedPostItem = cachedPostItem;
       }

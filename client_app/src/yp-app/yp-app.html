@@ -335,10 +335,7 @@
             </div>
             <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
             <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost" hidden$="[[goForwardToPostId]]"></paper-icon-button>
-            </template>
-            <template is="dom-if" if="[[showBackToPost]]">
-              <paper-icon-button aria-label$="[[t('backToPost')]]" id="goPostBack" class="masterActionIcon" icon="arrow-back" on-tap="_goToPreviousPost"></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
             <template is="dom-if" if="[[goForwardToPostId]]">
               <div class="layout horizontal">
@@ -596,7 +593,12 @@
         goForwardCount:{
           type: String,
           value: 0
-        }
+        },
+
+        touchXDown: Number,
+        touchYDown: Number,
+        touchXUp: Number,
+        touchYUp: Number
       },
 
       listeners: {
@@ -614,6 +616,64 @@
         'yp-open-page': '_openPageFromEvent',
         'yp-open-login': '_login',
         'yp-reset-keep-open-for-page': '_resetKeepOpenForPage'
+      },
+
+      attached: function () {
+        document.addEventListener('touchstart', this._handleTouchStart.bind(this), {passive: true});
+        document.addEventListener('touchmove', this._handleTouchMove.bind(this), {passive: true});
+        document.addEventListener('touchend', this._handleTouchEnd.bind(this), {passive: true});
+      },
+
+      detached: function () {
+        document.addEventListener('touchstart', this._handleTouchStart.bind(this));
+        document.addEventListener('touchmove', this._handleTouchMove.bind(this));
+        document.addEventListener('touchend', this._handleTouchEnd.bind(this));
+      },
+
+      _handleTouchStart: function (event) {
+        if (this.page==='post') {
+          var touches = event.touches || event.originalEvent.touches;
+          const firstTouch = touches[0];
+
+          if (firstTouch.clientX>32 && firstTouch.clientX<window.innerWidth-32) {
+            this.touchXDown = firstTouch.clientX;
+            this.touchYXDown = firstTouch.clientY;
+            this.touchXUp = null;
+            this.touchYUp = null;
+          }
+        }
+      },
+
+      _handleTouchMove: function (event) {
+        if (this.page==='post' && this.touchXDown) {
+          var touches = event.touches || event.originalEvent.touches;
+          this.touchXUp = touches[0].clientX;
+          this.touchYUp = touches[0].clientY;
+        }
+      },
+
+      _handleTouchEnd: function (event) {
+        if (this.page==='post' && this.touchXUp) {
+          var xDiff = this.touchXDown-this.touchXUp;
+          var thirdOfWidth = Math.round(window.innerWidth/3);
+          console.error(xDiff);
+
+          if ( xDiff > 0 && xDiff > thirdOfWidth ) {
+            console.error("LEFT SWIPE: "+xDiff);
+            window.scrollTo(0, 0);
+            this.$$("#goPostForward").dispatchEvent(new Event('tap'));
+
+          } else if (xDiff < 0 && xDiff < (-Math.abs(thirdOfWidth))) {
+            if (this.showBackToPost===true) {
+              window.scrollTo(0, 0);
+              this._goToPreviousPost();
+            }
+            console.error("RIGHT SWIPE: "+xDiff);
+          }
+
+          this.touchXDown = null;
+          this.touchXUp = null;
+        }
       },
 
       _goToNextPost: function () {
@@ -635,9 +695,6 @@
       _goToPreviousPost: function () {
         if (this.goForwardCount>0) {
           window.history.back();
-          if (this.goForwardCount===1) {
-            this.set('showBackToPost', false);
-          }
         } else {
           this.set('showBackToPost', false);
         }
@@ -648,10 +705,6 @@
         if (detail.goForwardToPostId) {
           this.set('goForwardToPostId', detail.goForwardToPostId);
           this.set('goForwardPostName', detail.goForwardPostName);
-          if (this.keepOpenForPost)
-            this.set('backPath', this.keepOpenForPost);
-          this.set('showBack', true);
-          this.set('keepOpenForPost', null);
         } else {
           this._clearNextPost();
         }
