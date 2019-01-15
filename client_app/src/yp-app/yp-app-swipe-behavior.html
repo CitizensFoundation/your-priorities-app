@@ -71,7 +71,6 @@
 
 
           if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
-            debugger;
             if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
               window.scrollTo(0, 0);
               this.$$("#goPostForward").dispatchEvent(new Event('tap'));
