@@ -20,10 +20,14 @@
         background-color: #FFF;
         max-width: 400px;
       }
+
+      .dialogText {
+        margin-bottom: 0;
+      }
     </style>
 
     <paper-dialog id="dialog">
-      <p>[[notifyDialogText]]</p>
+      <div class="dialogText">[[notifyDialogText]]</div>
       <div class="buttons">
         <paper-button dialog-confirm autofocus on-tap="_resetNotifyDialogText">OK</paper-button>
       </div>
