@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "8.3.0.10",
+  "version": "8.3.0.12",
   "license": "AGPL-3.0",
   "dependencies": {
     "@google-cloud/speech": "^2.1.1",
