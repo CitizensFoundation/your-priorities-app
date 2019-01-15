@@ -523,9 +523,10 @@
             description += '\n\n';
           }
         }
-        debugger;
         this.set('post.description', description);
         this.set('structuredAnswers', answers);
+        this.$.editDialog._reallySubmit();
+      } else {
         this.$.editDialog._reallySubmit();
       }
     },
