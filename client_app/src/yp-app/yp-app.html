@@ -429,8 +429,18 @@
         postSubRoute: Object,
         userSubRoute: Object,
 
-        userDrawerOpened: Boolean,
-        navDrawOpened: Boolean,
+        userDrawerOpened: {
+          type: Boolean,
+          observer: '_userDrawerOpened'
+        },
+
+        navDrawOpened:  {
+          type: Boolean,
+          observer: '_navDrawOpened'
+        },
+
+        userDrawerOpenedDelayed: Boolean,
+        navDrawOpenedDelayed: Boolean,
 
         homeLink: {
           type: Object
@@ -613,6 +623,18 @@
         'yp-open-page': '_openPageFromEvent',
         'yp-open-login': '_login',
         'yp-reset-keep-open-for-page': '_resetKeepOpenForPage'
+      },
+
+      _userDrawerOpened: function (value) {
+        this.async(function() {
+          this.set('userDrawerOpenedDelayed', value);
+        }, 500);
+      },
+
+      _navDrawOpened: function (value) {
+        this.async(function() {
+          this.set('navDrawOpenedDelayed', value);
+        }, 500);
       },
 
       _goToNextPost: function () {

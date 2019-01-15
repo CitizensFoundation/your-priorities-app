@@ -69,15 +69,21 @@
 
           console.log("Recommendation swipe minScrollFactorPx: "+minScrollFactorPx);
 
-          if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
-            window.scrollTo(0, 0);
-            this.$$("#goPostForward").dispatchEvent(new Event('tap'));
 
-          } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
-            if (this.showBackToPost===true) {
+          if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
+            debugger;
+            if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
               window.scrollTo(0, 0);
-              this._goToPreviousPost();
+              this.$$("#goPostForward").dispatchEvent(new Event('tap'));
+
+            } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
+              if (this.showBackToPost===true) {
+                window.scrollTo(0, 0);
+                this._goToPreviousPost();
+              }
             }
+          } else {
+            console.log("Recommendation swipe not active with open drawers")
           }
 
           this.touchXDown = null;
