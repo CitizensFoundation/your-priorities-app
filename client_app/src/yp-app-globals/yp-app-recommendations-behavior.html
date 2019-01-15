@@ -78,16 +78,22 @@
     _getSelectedPost: function (groupId) {
       if (this.recommendationsGroupCache[groupId]) {
         var post = this.recommendationsGroupCache[groupId][0];
-        if (post.id===this.currentPostId) {
-          console.info("Recommendation not showing current post id: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
-          this.recommendationsGroupCache[groupId].shift();
-          if (this.recommendationsGroupCache[groupId].length>0) {
-            post = this.recommendationsGroupCache[groupId][0];
-          } else {
-            post = null;
+        if (post) {
+          if (post.id===this.currentPostId) {
+            console.info("Recommendation not showing current post id: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
+            this.recommendationsGroupCache[groupId].shift();
+            if (this.recommendationsGroupCache[groupId].length>0) {
+              post = this.recommendationsGroupCache[groupId][0];
+            } else {
+              post = null;
+            }
           }
+          return post;
+        } else {
+          console.error("Recommendation no post for getSelectedPost");
+          return null;
+
         }
-        return post;
       } else {
         return null;
       }
