@@ -32,7 +32,7 @@
 
         if (firstTouch.clientX>32 && firstTouch.clientX<window.innerWidth-32) {
           this.touchXDown = firstTouch.clientX;
-          this.touchYXDown = firstTouch.clientY;
+          this.touchYDown = firstTouch.clientY;
           this.touchXUp = null;
           this.touchYUp = null;
         }
@@ -50,35 +50,41 @@
     _handleTouchEnd: function (event) {
       if (this.page==='post' && this.touchXUp && this.goForwardToPostId) {
         var xDiff = this.touchXDown-this.touchXUp;
+        var yDiff = this.touchYDown-this.touchYUp;
+        console.error("xDiff: "+xDiff+" yDiff: "+yDiff);
 
-        var factor = 3;
+        if ((Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(yDiff)<100)) {
+          var factor = 3;
 
-        if (window.innerWidth>500)
-          factor = 4;
+          if (window.innerWidth>500)
+            factor = 4;
 
-        if (window.innerWidth>1023)
-          factor = 5;
+          if (window.innerWidth>1023)
+            factor = 5;
 
-        if (window.innerWidth>1400)
-          factor = 6;
+          if (window.innerWidth>1400)
+            factor = 6;
 
-        var minScrollFactorPx = Math.round(window.innerWidth/factor);
+          var minScrollFactorPx = Math.round(window.innerWidth/factor);
 
-        console.log("Recommendation swipe minScrollFactorPx: "+minScrollFactorPx);
+          console.log("Recommendation swipe minScrollFactorPx: "+minScrollFactorPx);
 
-        if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
-          window.scrollTo(0, 0);
-          this.$$("#goPostForward").dispatchEvent(new Event('tap'));
-
-        } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
-          if (this.showBackToPost===true) {
+          if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
             window.scrollTo(0, 0);
-            this._goToPreviousPost();
-          }
-        }
+            this.$$("#goPostForward").dispatchEvent(new Event('tap'));
 
-        this.touchXDown = null;
-        this.touchXUp = null;
+          } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
+            if (this.showBackToPost===true) {
+              window.scrollTo(0, 0);
+              this._goToPreviousPost();
+            }
+          }
+
+          this.touchXDown = null;
+          this.touchXUp = null;
+          this.touchYDown = null;
+          this.touchYUp = null;
+        }
       }
     }
   }
