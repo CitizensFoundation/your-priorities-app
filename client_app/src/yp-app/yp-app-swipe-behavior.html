@@ -26,7 +26,7 @@
     },
 
     _handleTouchStart: function (event) {
-      if (this.page==='post') {
+      if (this.page==='post' && this.goForwardToPostId) {
         var touches = event.touches || event.originalEvent.touches;
         const firstTouch = touches[0];
 
@@ -40,7 +40,7 @@
     },
 
     _handleTouchMove: function (event) {
-      if (this.page==='post' && this.touchXDown) {
+      if (this.page==='post' && this.touchXDown && this.goForwardToPostId) {
         var touches = event.touches || event.originalEvent.touches;
         this.touchXUp = touches[0].clientX;
         this.touchYUp = touches[0].clientY;
@@ -48,7 +48,7 @@
     },
 
     _handleTouchEnd: function (event) {
-      if (this.page==='post' && this.touchXUp) {
+      if (this.page==='post' && this.touchXUp && this.goForwardToPostId) {
         var xDiff = this.touchXDown-this.touchXUp;
 
         var factor = 3;
