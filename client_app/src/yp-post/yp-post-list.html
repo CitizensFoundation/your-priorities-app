@@ -569,6 +569,7 @@
 
         this._processCategories();
         this._checkForMultipleLanguages(posts);
+        window.appGlobals.addPostsToCacheLater(posts);
       },
 
       _checkForMultipleLanguages: function (posts) {

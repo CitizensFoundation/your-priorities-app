@@ -219,7 +219,6 @@
 
       _clearScrollThreshold: function () {
         this.$$("#threshold").clearTriggers();
-        console.info("Clearing scrolling triggers for notifications");
       },
 
       _markAllAsViewed: function () {
@@ -363,8 +362,7 @@
         if (this.user) {
           this.timer = this.async(function () {
             this.loadNewData();
-          }.bind(this), this.notificationGetTTL)
-          console.log("notifications: have started timer with delay");
+          }.bind(this), this.notificationGetTTL);
         }
       },
 
@@ -387,8 +385,6 @@
 
       _loadNewNotificationsResponse: function (event, detail) {
         var notifications = detail.response.notifications;
-
-        console.log("Found "+notifications.length+" new notifications");
 
         notifications.forEach(function (notification) {
           this._removeOldIfExists(notification);

@@ -785,10 +785,12 @@
 
           if (this.group.theme_id!=null) {
             this.setTheme(this.group.theme_id);
-          } else if (this.group.Community.theme_id!=null) {
+          } else if (this.group.Community && this.group.Community.theme_id!=null) {
             this.setTheme(this.group.Community.theme_id);
-          } else if (this.group.Community.Domain.theme_id!=null) {
+          } else if (this.group.Community && this.group.Community.Domain && this.group.Community.Domain.theme_id!=null) {
             this.setTheme(this.group.Community.Domain.theme_id);
+          } else {
+            this.setTheme(1);
           }
 
           if (this.group.configuration.locationHidden) {

@@ -85,6 +85,12 @@
         margin-left: 4px;
         margin-top: 4px;
       }
+
+      .structuredQuestionsInfo {
+        color: #555;
+        font-style: italic;
+        font-size: 14px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -344,6 +350,7 @@
                      char-counter>
         </paper-input>
 
+
         <paper-input id="externalGoalTriggerUrl"
                      name="externalGoalTriggerUrl"
                      type="text"
@@ -362,7 +369,18 @@
           <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
         </div>
 
-        <div class="layout vertical config" hidden$="[[!group.Categories]]">
+      <paper-textarea id="structuredQuestions"
+                      name="structuredQuestions"
+                      type="text"
+                      rows="2"
+                      always-float-label="[[group.configuration.structuredQuestions]]"
+                      maxrows="2"
+                      label="[[t('structuredQuestions')]]"
+                      value="{{group.configuration.structuredQuestions}}">
+      </paper-textarea>
+      <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
+
+      <div class="layout vertical config" hidden$="[[!group.Categories]]">
           <h2>[[t('categories.the_all')]]</h2>
           <template is="dom-repeat" items="[[group.Categories]]" as="category">
             <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">

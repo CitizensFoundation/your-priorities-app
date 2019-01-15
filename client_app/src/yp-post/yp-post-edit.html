@@ -149,7 +149,7 @@
 
     <yp-edit-dialog name="postEdit" double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
                     use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
-                    title="[[editHeaderText]]" save-text="[[saveText]]" class="container"
+                    title="[[editHeaderText]]" save-text="[[saveText]]" class="container" custom-submit
                     next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <paper-tabs selected="{{selected}}" id="paperTabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
@@ -200,12 +200,14 @@
 
               <template is="dom-if" if="[[postDescriptionLimit]]">
                 <paper-textarea id="description"
-                                required
+                                hidden$="[[structuredQuestions]]"
+                                required$="[[!structuredQuestions]]"
                                 minlength="3"
                                 name="description"
                                 value="{{post.description}}"
                                 always-float-label="[[post.description]]"
                                 label="[[t('post.description')]]"
+                                on-value-changed="_resizeScrollerIfNeeded"
                                 char-counter
                                 rows="2"
                                 max-rows="5"
@@ -214,8 +216,26 @@
                 </paper-textarea>
 
                 <div class="horizontal end-justified layout postEmoji" hidden$="[[group.configuration.hideEmoji]]">
-                  <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+                  <emoji-selector id="emojiSelectorDescription" hidden$="[[structuredQuestions]]"></emoji-selector>
                 </div>
+              </template>
+
+              <template is="dom-if" if="[[structuredQuestions]]">
+                <template is="dom-repeat" items="[[structuredQuestions]]">
+                  <paper-textarea id="structuredQuestion_[[index]]"
+                                  value="{{item.value}}"
+                                  always-float-label="[[item.value]]"
+                                  label="[[item.translatedQuestion]]"
+                                  char-counter
+                                  minlength="2"
+                                  on-value-changed="_resizeScrollerIfNeeded"
+                                  rows="2"
+                                  max-rows="3"
+                                  maxrows="3"
+                                  required
+                                  maxlength="[[item.maxLength]]">
+                  </paper-textarea>
+                </template>
               </template>
 
               <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">
@@ -338,6 +358,7 @@
         <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
         <input type="hidden" name="uploadedDocumentUrl" value="[[uploadedDocumentUrl]]">
         <input type="hidden" name="uploadedDocumentFilename" value="[[uploadedDocumentFilename]]">
+        <input type="hidden" name="structuredAnswers" value="[[structuredAnswers]]"
       </div>
     </yp-edit-dialog>
   </template>
@@ -464,17 +485,81 @@
         value: null
       },
 
+      structuredQuestions: {
+        type: Array,
+        computed: '_structuredQuestions(post, group)'
+      },
+
+      sructuredAnswers: {
+        type: String,
+        value: null
+      },
+
       uploadedDocumentUrl: String,
       uploadedDocumentFilename: String
     },
 
     listeners: {
-      'iron-form-invalid': '_formInvalid'
+      'iron-form-invalid': '_formInvalid',
+      'yp-custom-form-submit': '_customSubmit'
     },
 
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _customSubmit: function (value, valueB) {
+      if (this.structuredQuestions && this.structuredQuestions.length>0) {
+        var description="", answers="";
+        for (i=0 ; i<this.structuredQuestions.length; i+=1) {
+          description += this.structuredQuestions[i].question;
+          if (this.structuredQuestions[i].question && this.structuredQuestions[i].question[this.structuredQuestions[i].question.length-1]!=='?')
+            description += ':';
+          description += '\n';
+          description += this.structuredQuestions[i].value;
+          answers+=this.structuredQuestions[i].value;
+          if (i!==this.structuredQuestions.length-1) {
+            answers+="%!#x";
+            description += '\n\n';
+          }
+        }
+        debugger;
+        this.set('post.description', description);
+        this.set('structuredAnswers', answers);
+        this.$.editDialog._reallySubmit();
+      }
+    },
+
+    _resizeScrollerIfNeeded: function () {
+      this.$.editDialog.scrollResize();
+    },
+
+    _structuredQuestions: function (post, group) {
+      if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
+        var structuredQuestions = [];
+
+        var questionComponents = group.configuration.structuredQuestions.split(",");
+        for (i=0 ; i<questionComponents.length; i+=2) {
+          var question = questionComponents[i];
+          var maxLength = questionComponents[i+1];
+          structuredQuestions.push({
+            translatedQuestion: question,
+            question: question,
+            maxLength: maxLength, value: ""
+          });
+        }
+        if (!this.newPost && post.public_data.structuredAnswers && post.public_data.structuredAnswers!=="") {
+          var answers = post.public_data.structuredAnswers.split("%!#x");
+          for (i=0 ; i<answers.length; i+=1) {
+            if (structuredQuestions[i])
+              structuredQuestions[i].value = answers[i];
+          }
+        }
+        return structuredQuestions;
+      } else {
+        return null;
+      }
+    },
 
     _showVideoCover: function (uploaded, current) {
       return uploaded || current;

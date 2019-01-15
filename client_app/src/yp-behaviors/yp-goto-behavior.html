@@ -12,7 +12,7 @@
       console.log("REDIRECTING TO: "+path);
     },
 
-    goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem) {
+    goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem, skipKeepOpen) {
       var postId;
       if (postIdIn && !(postIdIn instanceof Event)) {
         postId = postIdIn;
@@ -35,14 +35,15 @@
         window.appGlobals.cachedActivityItem = cachedActivityItem;
       }
 
-      if (cachedPostItem) {
+      if (cachedPostItem && cachedPostItem.Group && cachedPostItem.Group.Community) {
         console.info("Saving cached scroll to post "+cachedPostItem.id);
         window.appGlobals.cachedPostItem = cachedPostItem;
       }
 
       if (windowLocation.indexOf(postUrl) == -1) {
         window.appGlobals.activity('open', 'post', postUrl);
-        window.app.setKeepOpenForPostsOn(window.location.pathname);
+        if (skipKeepOpen!==true)
+          window.app.setKeepOpenForPostsOn(window.location.pathname);
         this.async(function () {
           this.redirectTo(postUrl);
         });
