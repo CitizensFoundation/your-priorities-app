@@ -1,5 +1,5 @@
 {
-  "recommendationToastInfo": "You have pressed fast forward or swept the screen to activate the AI recommended posts feature.",
+  "recommendationToastInfo": "Press fast forward or swipe left to see recommended posts for this group.",
   "structuredQuestions": "Structured questions",
   "structuredQuestionsInfo": "Use comma to separate questions and max character lengths. Keep questions to less than 32 characters for display on mobiles. Example: Question 1,200,Question 2,150,Question 3,150",
   "backToPost": "Back to post",
@@ -12,7 +12,7 @@
   "addImage": "Add image",
   "startSearch": "Start search",
   "toggleOpenClose": "Toggle open and close",
-  "clearEmbededMedia": "Clear embeded media",
+  "clearEmbededMedia": "Clear embedded media",
   "openOneItemMenu": "Open one item menu",
   "openSelectedItemsMenu": "Open selected items menu",
   "linkToContentItem": "Link to content item",
