@@ -875,7 +875,7 @@
     },
 
     _loginCompleted: function (user) {
-      if (window.PasswordCredential) {
+      if (window.PasswordCredential && this.email && this.password) {
         var c = new PasswordCredential({ name: this.email, id: this.email, password: this.password });
         navigator.credentials.store(c).then(function (message) {
           this._loginAfterSavePassword(user);
