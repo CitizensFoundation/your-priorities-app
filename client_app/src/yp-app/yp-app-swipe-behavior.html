@@ -73,12 +73,14 @@
           if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
             if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
               window.scrollTo(0, 0);
+              window.appGlobals.activity('swipe', 'postForward');
               this.$$("#goPostForward").dispatchEvent(new Event('tap'));
 
             } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
               if (this.showBackToPost===true) {
                 window.scrollTo(0, 0);
                 this._goToPreviousPost();
+                window.appGlobals.activity('swipe', 'postBackward');
               }
             }
           } else {

@@ -647,6 +647,7 @@
 
         if (this.goForwardToPostId) {
           this.goToPost(this.goForwardToPostId, null, null, null, true);
+          window.appGlobals.activity('recommendations', 'goForward', this.goForwardToPostId);
           this.goForwardCount += 1;
           this.set('showBackToPost', true);
         } else {
@@ -657,6 +658,7 @@
       _goToPreviousPost: function () {
         if (this.goForwardCount>0) {
           window.history.back();
+          window.appGlobals.activity('recommendations', 'goBack');
         } else {
           this.set('showBackToPost', false);
         }
@@ -945,7 +947,7 @@
             this.async(function () {
               var skipMasterScroll = false;
 
-              if (oldPageData && oldPageData.page) {
+              if (oldPageData && oldPageData.page && pageData) {
                 // Post -> Group
                 if (oldPageData.page==="post" && pageData.page==="group") {
                   if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
@@ -1036,7 +1038,11 @@
               }
             }, delayUntilScrollToPost);
 
-            this.page = pageData.page;
+            if (pageData) {
+              this.page = pageData.page;
+            } else {
+              console.error("No page data, current page: "+this.page);
+            }
           }
         }
       },
