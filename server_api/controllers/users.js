@@ -362,11 +362,14 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         models.User.find({
           where: {id: req.user.id},
           attributes: ['id'],
+          order: [
+            [ { model: models.Domain, as: 'DomainAdmins' } , 'updated_at', 'desc' ]
+          ],
           include: [
             {
               model: models.Domain,
               as: 'DomainAdmins',
-              attributes: ['id','name'],
+              attributes: ['id','name','updated_at'],
               required: false
             }
           ]
@@ -381,11 +384,14 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         models.User.find({
           where: {id: req.user.id},
           attributes: ['id'],
+          order: [
+            [ { model: models.Community, as: 'CommunityAdmins' } , 'updated_at', 'desc' ]
+          ],
           include: [
             {
               model: models.Community,
               as: 'CommunityAdmins',
-              attributes: ['id','name'],
+              attributes: ['id','name','updated_at'],
               required: false
             }
           ]
@@ -400,16 +406,19 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         models.User.find({
           where: {id: req.user.id},
           attributes: ['id'],
+          order: [
+            [ { model: models.Group, as: 'GroupAdmins' } , 'updated_at', 'desc' ]
+          ],
           include: [
             {
               model: models.Group,
               as: 'GroupAdmins',
-              attributes: ['id','name','configuration'],
+              attributes: ['id','name','configuration','updated_at'],
               required: false,
               include: [
                 {
                   model: models.Community,
-                  attributes: ['id','name','domain_id'],
+                  attributes: ['id','name','domain_id','updated_at'],
                   required: false
                 }
               ]
@@ -426,11 +435,14 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         models.User.find({
           where: {id: req.user.id},
           attributes: ['id'],
+          order: [
+            [ { model: models.Organization, as: 'OrganizationAdmins' } , 'updated_at', 'desc' ]
+          ],
           include: [
             {
               model: models.Organization,
               as: 'OrganizationAdmins',
-              attributes: ['id','name','description','website','access'],
+              attributes: ['id','name','description','website','access','updated_at'],
               required: false
             }
           ]
@@ -465,13 +477,13 @@ router.get('/loggedInUser/memberships', function (req, res) {
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
-            [ { model: models.Domain, as: 'DomainUsers' } , 'counter_users', 'desc' ]
+            [ { model: models.Domain, as: 'DomainUsers' } , 'updated_at', 'desc' ]
           ],
           include: [
             {
               model: models.Domain,
               as: 'DomainUsers',
-              attributes: ['id','name','counter_users'],
+              attributes: ['id','name','counter_users','updated_at'],
               required: false
             }
           ]
@@ -487,13 +499,13 @@ router.get('/loggedInUser/memberships', function (req, res) {
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
-            [ { model: models.Community, as: 'CommunityUsers' } , 'counter_users', 'desc' ]
+            [ { model: models.Community, as: 'CommunityUsers' } , 'updated_at', 'desc' ]
           ],
           include: [
             {
               model: models.Community,
               as: 'CommunityUsers',
-              attributes: ['id','name','counter_users'],
+              attributes: ['id','name','counter_users','updated_at'],
               required: false
             }
           ]
@@ -509,18 +521,18 @@ router.get('/loggedInUser/memberships', function (req, res) {
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
-            [ { model: models.Group, as: 'GroupUsers' } , 'counter_users', 'desc' ]
+            [ { model: models.Group, as: 'GroupUsers' } , 'updated_at', 'desc' ]
           ],
           include: [
             {
               model: models.Group,
               as: 'GroupUsers',
-              attributes: ['id','name','counter_users','configuration'],
+              attributes: ['id','name','counter_users','configuration','updated_at'],
               required: false,
               include: [
                 {
                   model: models.Community,
-                  attributes: ['id','name','domain_id'],
+                  attributes: ['id','name','domain_id','updated_at'],
                   required: false
                 }
               ]
