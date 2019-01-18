@@ -35,7 +35,7 @@ async.series([
 
           fs.unlink(clientApiLocaleFilePath, (error) => {
             console.warn(error);
-            fs.rename(fullImportPath, clientApiLocaleFilePath, function (error) {
+            fs.copyFile(fullImportPath, clientApiLocaleFilePath, function (error) {
               if (error) {
                 console.error("File moving error.", error);
                 seriesCallback(error);

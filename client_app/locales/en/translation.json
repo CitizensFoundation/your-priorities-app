@@ -1,6 +1,5 @@
 {
-  "maxDaysBackForRecommendations": "Max days back for recommendations",
-  "recommendationToastInfo": "Click on the fast forward button or swipe left to see recommended posts for this group.",
+  "recommendationToastInfo": "Press fast forward or swipe left to see recommended posts for this group.",
   "structuredQuestions": "Structured questions",
   "structuredQuestionsInfo": "Use comma to separate questions and max character lengths. Keep questions to less than 32 characters for display on mobiles. Example: Question 1,200,Question 2,150,Question 3,150",
   "backToPost": "Back to post",
