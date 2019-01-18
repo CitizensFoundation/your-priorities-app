@@ -59,6 +59,11 @@
       }
     },
 
+    _recommendationsForUser: function () {
+      this._reset();
+      console.error("Recommendation user reset");
+    },
+
     _recommendationsForGroupResponse: function (event, detail) {
       var recommendations = detail.response.recommendations;
       var groupId = parseInt(detail.response.groupId);
@@ -99,12 +104,16 @@
       }
     },
 
-    ready: function () {
+    _reset: function () {
       this.set('recommendationsSeenPostIds', {});
       this.set('lastRecommendationResponseLengths', {});
       this.set('recommendationCallbacks', {});
       this.set('recommendationsGroupCache', {});
       console.log("Recommendations have initialized");
+    },
+
+    ready: function () {
+      this._reset();
     }
   }
 </script>
