@@ -591,7 +591,8 @@
           }
 
           if (tabName && window.appGlobals) {
-            window.appGlobals.activity('open', 'group_tab_' + tabName);
+            window.appGlobals.activity('open', 'group_tab_' + tabName,'',
+              { id: this.groupId, modelType: "group" });
           }
 
           this.async(function () {

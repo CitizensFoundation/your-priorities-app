@@ -282,7 +282,8 @@
         }
 
         if (tabName && window.appGlobals) {
-          window.appGlobals.activity('open', 'community_tab_' + tabName);
+          window.appGlobals.activity('open', 'community_tab_' + tabName, '',
+            { id: this.communityId, modelType: "community" });
         }
 
         this.async(function () {

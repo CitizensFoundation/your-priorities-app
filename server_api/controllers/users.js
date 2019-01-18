@@ -839,7 +839,7 @@ router.post('/createActivityFromApp', function(req, res) {
     type: 'activity.fromApp',
     sub_type: req.body.type,
     actor: { appActor: req.body.actor },
-    object: { name: req.body.object },
+    object: { name: req.body.object, target: req.body.target },
     context: { pathName: req.body.path_name, name: req.body.context, eventTime: req.body.event_time,
                sessionId: req.body.sessionId, userAgent: req.body.user_agent },
     userId: req.user ? req.user.id : null,

@@ -402,7 +402,7 @@
           }
         },
 
-        activity: function (type, object, context) {
+        activity: function (type, object, context, target) {
           var actor;
 
           if (window.appUser && window.appUser.user) {
@@ -437,6 +437,7 @@
             actor: actor,
             type: type,
             object: object,
+            target: target,
             context: context ? context : "",
             path_name: location.pathname,
             event_time: date.toISOString(),

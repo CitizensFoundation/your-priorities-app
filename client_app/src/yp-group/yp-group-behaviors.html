@@ -117,7 +117,7 @@
 
     _goToGroup: function (e) {
       var groupUrl = '/group/' + this.group.id + '/open';
-      window.appGlobals.activity('open', 'group', groupUrl);
+      window.appGlobals.activity('open', 'group', groupUrl, { id: this.group.id, modelType: 'group' });
       if (window.appGlobals.backToCommunityGroupItems===null)
         window.appGlobals.backToCommunityGroupItems = {};
       window.appGlobals.backToCommunityGroupItems[this.group.community_id] = this.group;

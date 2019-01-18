@@ -507,7 +507,7 @@
           }
 
           if (tabName && window.appGlobals) {
-            window.appGlobals.activity('open', 'post_tab_' + tabName);
+            window.appGlobals.activity('open', 'post_tab_' + tabName, '', { id: this.postId, modelType: "post" });
           }
 
           this.async(function () {
