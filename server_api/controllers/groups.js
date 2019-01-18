@@ -186,6 +186,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hidePostFilterAndSearch', truthValueFromBody(req.body.hidePostFilterAndSearch));
   group.set('configuration.hidePostImageUploads', truthValueFromBody(req.body.hidePostImageUploads));
 
+  group.set('configuration.maxDaysBackForRecommendations', (req.body.maxDaysBackForRecommendations && req.body.maxDaysBackForRecommendations!="") ? req.body.maxDaysBackForRecommendations : null);
+
   group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
   group.set('configuration.allowPointVideoUploads', truthValueFromBody(req.body.allowPointVideoUploads));
   group.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));

@@ -256,6 +256,15 @@
                    value="{{group.configuration.audioPointUploadLimitSec}}">
       </paper-input>
 
+      <paper-input id="maxDaysBackForRecommendations"
+                   name="maxDaysBackForRecommendations"
+                   type="text"
+                   maxlength="4"
+                   allowed-pattern="[0-9]"
+                   label="[[t('maxDaysBackForRecommendations')]]"
+                   value="{{group.configuration.maxDaysBackForRecommendations}}">
+      </paper-input>
+
         <div class="layout vertical config">
           <h2>[[t('additionalGroupConfig')]]</h2>
           <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">[[t('attachmentsEnabled')]]</paper-checkbox>
