@@ -437,7 +437,7 @@
             actor: actor,
             type: type,
             object: object,
-            target: target,
+            target: JSON.stringify(target),
             context: context ? context : "",
             path_name: location.pathname,
             event_time: date.toISOString(),
