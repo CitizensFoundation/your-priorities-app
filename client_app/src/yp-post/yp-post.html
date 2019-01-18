@@ -677,6 +677,11 @@
               this.setTheme(this.post.Group.Community.theme_id);
             }
 
+            if (!this.post.Group.Community) {
+              console.error("No community!");
+              debugger;
+            }
+
             if (window.appGlobals) {
               window.appGlobals.setCommunityAnalyticsTracker(this.post.Group.Community.google_analytics_code);
 
