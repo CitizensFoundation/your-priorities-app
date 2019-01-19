@@ -30,6 +30,16 @@
       currentPostId: {
         type: Number,
         value: null
+      },
+
+      currentlyDownloadingIds: {
+        type: Object,
+        value: null
+      },
+
+      preCacheLimit: {
+        type: Number,
+        value: 3
       }
     },
 
@@ -64,6 +74,87 @@
       console.log("Recommendation user reset");
     },
 
+    _preCacheMediaForPost: function (post) {
+      this.async(function () {
+        var imagePath=null;
+        if ((!post.cover_media_type || post.cover_media_type==='none') && !post.Category) {
+          imagePath = "https://i.imgur.com/sdsFAoT.png";
+          console.log("Recommendation downloading default image: "+post.id);
+        } else  if ((!post.cover_media_type || post.cover_media_type==='none') && post.Category) {
+          imagePath = this._getCategoryImagePath(post);
+          console.log("Recommendation downloading category image: "+post.id);
+        } else if (post.cover_media_type==='image') {
+          imagePath = this.getImageFormatUrl(post.PostHeaderImages, 0);
+          console.log("Recommendation downloading image: "+post.id);
+        }
+
+        if (imagePath) {
+          new Image().src=imagePath;
+          console.log("Recommendation preCaching image: "+imagePath);
+        }
+        else
+          console.log("Recommendation no image download for: "+post.id);
+      });
+    },
+
+    getImageFormatUrl: function(images, formatId) {
+      if (images && images.length>0) {
+        var formats = JSON.parse(images[images.length-1].formats);
+        if (formats && formats.length>0)
+          return formats[formatId];
+      } else {
+        return "";
+      }
+    },
+
+    _getCategoryImagePath: function (post) {
+      if (post && post.Category && post.Category.CategoryIconImages) {
+        return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
+      } else {
+        return "";
+      }
+    },
+
+    _downloadItemToCache: function (postId) {
+      if (window.fetch) {
+        this.async(function () {
+          if (!this.currentlyDownloadingIds[postId]) {
+            this.currentlyDownloadingIds[postId]=true;
+            console.log("Recommendation downloading for cache: "+postId);
+            fetch('/api/posts/'+postId).then(function(response) {
+              this.currentlyDownloadingIds[postId]=null;
+              return response.json();
+            }.bind(this)).then(function(post) {
+              if (post) {
+                this._preCacheMediaForPost(post);
+              } else {
+                console.error("Recommendation no post to save to cache");
+              }
+              window.appGlobals.postItemsCache[postId]=post;
+              console.log("Recommendation saved post to cache: "+postId);
+            }.bind(this)).catch(function(ex) {
+              console.error("Recommendation: Error in getting post for cache", ex);
+              this.currentlyDownloadingIds[postId]=null;
+            }.bind(this));
+          } else {
+            console.warn("Recommendation already downloading: "+postId);
+          }
+        });
+      } else {
+        console.warn("Recommendation: No fetch to download cache");
+      }
+    },
+
+    _ensureNextItemsAreCached: function (groupId) {
+      for (var i = 0; i < Math.min(this.recommendationsGroupCache[groupId].length-1, this.preCacheLimit); i++) {
+       if (!window.appGlobals.postItemsCache[this.recommendationsGroupCache[groupId][i].id]) {
+         this._downloadItemToCache(this.recommendationsGroupCache[groupId][i].id);
+       } else {
+         console.log("Recommendation already in cache for group: "+groupId);
+       }
+      }
+    },
+
     _recommendationsForGroupResponse: function (event, detail) {
       var recommendations = detail.response.recommendations;
       var groupId = parseInt(detail.response.groupId);
@@ -84,18 +175,26 @@
       if (this.recommendationsGroupCache[groupId]) {
         var post = this.recommendationsGroupCache[groupId][0];
         if (post) {
+          console.info("Recommendation found post: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
           if (post.id===this.currentPostId) {
             console.info("Recommendation not showing current post id: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
             this.recommendationsGroupCache[groupId].shift();
             if (this.recommendationsGroupCache[groupId].length>0) {
               post = this.recommendationsGroupCache[groupId][0];
+              console.info("Recommendation found 2nd time: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
             } else {
+              console.info("Recommendation not found 2nd time: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
               post = null;
             }
           }
+
+          if (post) {
+            this._ensureNextItemsAreCached(groupId);
+          }
+
           return post;
         } else {
-          console.error("Recommendation no post for getSelectedPost, groupId: "+groupId);
+          console.warn("Recommendation no post for getSelectedPost, groupId: "+groupId);
           return null;
 
         }
@@ -114,6 +213,7 @@
 
     ready: function () {
       this._reset();
+      this.set('currentlyDownloadingIds', {});
     }
   }
 </script>

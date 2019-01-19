@@ -596,7 +596,7 @@
           } else if (window.appGlobals.getPostFromCache(postId)) {
             this._setupAjaxUrl();
             this._handleIncomingPostResponse(null, { response: window.appGlobals.getPostFromCache(postId), fromCache: true });
-            console.log("Got post from cache");
+            console.log("Got post from cache possibly from recommendations");
           } else {
             console.log("Got post from server not cache");
             this.set("post",null);
