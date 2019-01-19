@@ -634,7 +634,7 @@
       },
 
       updateDescriptionIfEmpty: function (description) {
-        if (!this.post.description || this.post.description=='') {
+        if (this.post && (!this.post.description || this.post.description=='')) {
           this.set('post.description', description);
         }
       },
