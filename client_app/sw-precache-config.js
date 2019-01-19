@@ -1,6 +1,7 @@
 module.exports = {
   staticFileGlobs: [
-    '/index.html'
+    '/index.html',
+    '/locales/*'
   ],
   navigateFallback: '/',
   runtimeCaching: [{
