@@ -93,6 +93,9 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['id','deleted','status']
       },
       {
+        fields: ['id','deleted']
+      },
+      {
         fields: ['user_id','deleted','status']
       }
     ],

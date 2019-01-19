@@ -41,6 +41,12 @@ module.exports = function(sequelize, DataTypes) {
       ]
     },
 
+    indexes: [
+      {
+        fields: ['id', 'deleted']
+      }
+    ],
+
     classMethods: {
 
       defaultAttributesPublic: ["id","updated_at","formats"],

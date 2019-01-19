@@ -20,6 +20,12 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
 
+    indexes: [
+      {
+        fields: ['id', 'deleted']
+      }
+    ],
+
     timestamps: true,
 
     instanceMethods: {
