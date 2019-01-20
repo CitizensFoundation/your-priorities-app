@@ -162,6 +162,10 @@
         margin-top: 32px;
       }
 
+      .topSpinnerContainer {
+        margin-top: 16px;
+      }
+
       :focus {
         outline: none;
       }
@@ -195,7 +199,7 @@
           </div>
         </template>
 
-        <div class="layout horizontal center-center" hidden$="[[gotInitialData]]">
+        <div class="layout horizontal center-center topSpinnerContainer" hidden$="[[gotInitialData]]">
           <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
         </div>
 
