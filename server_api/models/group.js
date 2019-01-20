@@ -176,6 +176,9 @@ module.exports = function(sequelize, DataTypes) {
       ACCESS_SECRET: 2,
       ACCESS_OPEN_TO_COMMUNITY: 3,
 
+      defaultPublicAttributes: ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id','status',
+        'weight','theme_id','created_at','updated_at','configuration','language'],
+
       addUserToGroupIfNeeded: function (groupId, req, done) {
         sequelize.models.Group.find({
           where: { id: groupId }
