@@ -194,6 +194,11 @@
             </paper-button>
           </div>
         </template>
+
+        <div class="layout horizontal center-center" hidden$="[[gotInitialData]]">
+          <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
+        </div>
+
         <iron-list id="ironList" scroll-offset$="[[ironListPaddingTop]]" scroll-target="document" items="[[activities]]" as="activity">
           <template>
             <div tabindex$="[[tabIndex]]" class="layout vertical center-center">
@@ -204,7 +209,6 @@
         </iron-list>
         <div class="layout horizontal center-center spinnerContainer">
           <yp-ajax id="deleteActivityAjax" method="DELETE" large-spinner on-response="_activityDeletedResponse"></yp-ajax>
-          <yp-ajax id="ajax" large-spinner on-response="_activitiesResponse"></yp-ajax>
         </div>
       </div>
       <div class="layout vertical self-start recommendedPosts" not-active$="[[noRecommendedPosts]]" small$="[[!wide]]" hidden$="[[!recommendedPosts]]">
@@ -340,6 +344,11 @@
         hasLoggedInUser: {
           type: Boolean,
           computed: '_hasLoggedInUser(loggedInUser)'
+        },
+
+        gotInitialData: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -562,6 +571,8 @@
 
       _activitiesResponse: function (event, detail) {
         var activities = this._preProcessActivities(detail.response.activities);
+
+        this.set('gotInitialData', true);
 
         if (detail.response.oldestProcessedActivityAt) {
           this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
