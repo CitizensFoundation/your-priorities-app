@@ -9023,9 +9023,9 @@ prebuild-install@^2.5.0:
     tunnel-agent "^0.6.0"
     which-pm-runs "^1.0.0"
 
-"predictionio-driver@git+https://github.com/rbjarnason/predictionio-driver.git":
-  version "0.4.0"
-  resolved "git+https://github.com/rbjarnason/predictionio-driver.git#4a995e7193696e51eb24e97098ce81869e29b1c5"
+"predictionio-driver@git+https://github.com/rbjarnason/predictionio-driver.git#0.4.1":
+  version "0.4.1"
+  resolved "git+https://github.com/rbjarnason/predictionio-driver.git#d49cc40fc043e821c9a601df76d740e65b1dca31"
   dependencies:
     bluebird "~3.0.0"
     lodash "~3.0.0"
