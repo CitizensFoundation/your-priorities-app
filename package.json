@@ -67,6 +67,7 @@
     "polymer-lint": "^0.9.0",
     "posix": "^4.1.2",
     "predictionio-driver": "git+https://github.com/rbjarnason/predictionio-driver.git",
+    "random-words": "^1.1.0",
     "randomstring": "^1.1.4",
     "request-ip": "^1.2.2",
     "s3-uploader": "^1.0.0",
