@@ -995,10 +995,13 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
       invite.save().then(function (results) {
         if (invite.Group) {
           invite.Group.addGroupUsers(req.user).then(function (error) {
-            res.send({name: invite.Group.name, redirectTo: "/group/"+ invite.Group.id});
+            models.Group.addUserToGroupIfNeeded(invite.Group.id, req, function () {
+              res.send({name: invite.Group.name, redirectTo: "/group/"+ invite.Group.id});
+            });
           });
         } else if (invite.Community) {
           invite.Community.addCommunityUsers(req.user).then(function (error) {
+            invite.Community.increment('counter_users');
             res.send({name: invite.Community.name, redirectTo: "/community/"+ invite.Community.id});
           });
         }
