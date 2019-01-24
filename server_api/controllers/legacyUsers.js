@@ -30,7 +30,7 @@ router.get('/:id', function(req, res) {
     }
   }).catch(function(error) {
     log.error({err: error, context: 'legacy_user_id'});
-    res.sendStatus(500);
+    res.sendStatus(404);
   });
 });
 

@@ -46,6 +46,9 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 };
 
@@ -62,6 +65,9 @@ auth.hasCommunityAccess = function (community, req, done) {
         }
       });
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 };
 
@@ -96,8 +102,14 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
         } else {
           done(null, false);
         }
+      }).catch(function (error) {
+        log.error("Error in authentication", { error });
+        done(null, false);
       });
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 };
 
@@ -119,6 +131,9 @@ auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
         }
       });
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 };
 
@@ -140,6 +155,9 @@ auth.hasDomainAdmin = function (domainId, req, done) {
         }
       });
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 };
 
@@ -215,6 +233,9 @@ auth.role('user.admin', function (user, req, done) {
       } else {
         done(null, false);
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -249,6 +270,9 @@ auth.role('domain.admin', function (domain, req, done) {
           }
         });
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -278,6 +302,9 @@ auth.role('domain.viewUser', function (domain, req, done) {
       } else {
         done(null, false);
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   } else {
     done(null, false);
@@ -316,6 +343,9 @@ auth.role('organization.admin', function (organization, req, done) {
           }
         });
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -340,6 +370,9 @@ auth.role('organization.viewUser', function (organization, req, done) {
         }
       });
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -373,6 +406,9 @@ auth.role('bulkStatusUpdates.admin', function (community, req, done) {
           }
         });
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -407,6 +443,9 @@ auth.role('community.admin', function (community, req, done) {
           }
         });
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -462,6 +501,9 @@ auth.role('group.admin', function (group, req, done) {
           }
         });
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -490,6 +532,9 @@ auth.role('group.viewUser', function (group, req, done) {
     } else {
       auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -519,6 +564,9 @@ auth.role('group.addTo', function (group, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -565,6 +613,9 @@ auth.role('post.admin', function (post, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -594,6 +645,9 @@ auth.role('post.statusChange', function (post, req, done) {
           }
         });
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -632,6 +686,9 @@ auth.role('post.viewUser', function (post, req, done) {
     } else {
       done(null, false)
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -664,6 +721,9 @@ auth.role('post.vote', function (post, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -738,7 +798,10 @@ auth.role('point.admin', function (point, req, done) {
     } else {
       done(null, false);
     }
-  })
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
+  });
 });
 
 auth.role('point.viewUser', function (point, req, done) {
@@ -802,6 +865,9 @@ auth.role('point.viewUser', function (point, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -859,6 +925,9 @@ auth.role('point.addTo', function (point, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -907,6 +976,9 @@ auth.role('image.viewUser', function (image, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -965,6 +1037,9 @@ auth.role('point.vote', function (point, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -1016,6 +1091,9 @@ auth.role('category.admin', function (category, req, done) {
           }
         });
       }
+    }).catch(function (error) {
+      log.error("Error in authentication", { error });
+      done(null, false);
     });
   }
 });
@@ -1050,6 +1128,9 @@ auth.role('category.viewUser', function (category, req, done) {
     } else {
       done(null, false);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -1148,6 +1229,9 @@ auth.role('createCommunityGroup.createGroup', function (community, req, done) {
     } else {
       auth.hasCommunityAccess(community, req, done);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -1182,6 +1266,9 @@ auth.role('createDomainCommunity.createCommunity', function (domain, req, done) 
         }
       });
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -1216,6 +1303,9 @@ auth.role('createDomainOrganization.createDomainOrganization', function (domain,
         }
       });
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
@@ -1232,6 +1322,9 @@ auth.role('createCommunityOrganization.createCommunityOrganization', function (d
     } else {
       auth.hasCommunityAccess(community, req, done);
     }
+  }).catch(function (error) {
+    log.error("Error in authentication", { error });
+    done(null, false);
   });
 });
 
