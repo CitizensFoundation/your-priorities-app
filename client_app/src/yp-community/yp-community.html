@@ -397,8 +397,8 @@
             window.appGlobals.setCommunityPixelTracker(this.community.configuration.facebookPixelId);
           }
 
-          if (this.community.theme_id!=null) {
-            this.setTheme(this.community.theme_id);
+          if (this.community.theme_id!=null || (this.community.configuration && this.community.configuration.themeOverrideColorPrimary!=null)) {
+            this.setTheme(this.community.theme_id, this.community.configuration);
           } else if (this.community.Domain.theme_id!=null) {
             this.setTheme(this.community.Domain.theme_id);
           }

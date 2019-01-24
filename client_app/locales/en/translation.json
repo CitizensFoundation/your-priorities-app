@@ -1,4 +1,7 @@
 {
+  "themeOverrideColorInfo": "Set both theme override colors in hex. Example: #A1A1A1",
+  "themeOverrideColorPrimary": "Theme primary color override",
+  "themeOverrideColorAccent": "Theme accent color override",
   "maxDaysBackForRecommendations": "Max days back for recommendations",
   "recommendationToastInfo": "Press fast forward or swipe left to see recommended posts for this group.",
   "structuredQuestions": "Structured questions",

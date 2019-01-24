@@ -151,6 +151,30 @@
         <div class="layout vertical">
           <div class="layout vertical config">
             <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+
+            <paper-input id="themeOverrideColorPrimary"
+                         name="themeOverrideColorPrimary"
+                         allowed-pattern="[#-#0-9A-Fa-f]"
+                         maxlength="7"
+                         char-counter
+                         label="[[t('themeOverrideColorPrimary')]]"
+                         value="{{group.configuration.themeOverrideColorPrimary}}">
+              <div prefix>#</div>
+            </paper-input>
+
+            <paper-input id="themeOverrideColorAccent"
+                         name="themeOverrideColorAccent"
+                         allowed-pattern="[#-#0-9A-Fa-f]"
+                         maxlength="7"
+                         char-counter
+                         label="[[t('themeOverrideColorAccent')]]"
+                         value="{{group.configuration.themeOverrideColorAccent}}">
+            </paper-input>
+
+            <div class="themeOverrideInfo">
+              <b><em>[[t('themeOverrideColorInfo')]]</em></b>
+            </div>
+
             <div class="layout vertical">
               <paper-dropdown-menu label="[[t('status.select')]]">
                 <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
@@ -295,7 +319,7 @@
           <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]</paper-checkbox>
         </div>
 
-        <paper-input id="defaultLocationLongLat"
+      <paper-input id="defaultLocationLongLat"
                      name="defaultLocationLongLat"
                      type="text"
                      label="[[t('defaultLocationLongLat')]]"

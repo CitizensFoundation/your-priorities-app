@@ -160,6 +160,28 @@
       </div>
 
       <input type="hidden" name="themeId" value="[[themeId]]">
+      <paper-input id="themeOverrideColorPrimary"
+                   name="themeOverrideColorPrimary"
+                   allowed-pattern="[#-#0-9A-Fa-f]"
+                   maxlength="7"
+                   char-counter
+                   label="[[t('themeOverrideColorPrimary')]]"
+                   value="{{community.configuration.themeOverrideColorPrimary}}">
+        <div prefix>#</div>
+      </paper-input>
+
+      <paper-input id="themeOverrideColorAccent"
+                   name="themeOverrideColorAccent"
+                   allowed-pattern="[#-#0-9A-Fa-f]"
+                   maxlength="7"
+                   char-counter
+                   label="[[t('themeOverrideColorAccent')]]"
+                   value="{{community.configuration.themeOverrideColorAccent}}">
+      </paper-input>
+
+      <div class="themeOverrideInfo">
+        <b><em>[[t('themeOverrideColorInfo')]]</em></b>
+      </div>
 
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">

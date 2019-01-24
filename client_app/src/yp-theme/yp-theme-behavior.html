@@ -688,9 +688,45 @@
       this.push('fonts', {});
     },
 
-    setTheme: function (number) {
-      if (this.themes[number]) {
-        Polymer.updateStyles(this.themes[number]);
+    _setupOverrideTheme: function (primary, accent) {
+      return {
+        name: 'Override theme',
+        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-color': primary,
+        '--primary-color-200': primary,
+        '--primary-color-300': primary,
+        '--primary-color-400': primary,
+        '--primary-color-600': primary,
+        '--primary-color-700': primary,
+        '--primary-color-800': primary,
+        '--primary-color-900': primary,
+        '--accent-color': accent,
+        '--accent-color-100':  accent,
+        '--accent-color-200':  accent,
+        '--accent-color-300':  accent,
+        '--accent-color-400': accent,
+        '--middle-color': 'var(--primary-color-200)',
+        '--icon-general-color': '#fff',
+        'body': 'var(--primary-background-color)'
+      }
+    },
+
+    setTheme: function (number, configuration) {
+      if (configuration && configuration.themeOverrideColorPrimary &&
+          configuration.themeOverrideColorPrimary.length>5 &&
+          configuration.themeOverrideColorAccent &&
+          configuration.themeOverrideColorAccent.length>5) {
+        if (configuration.themeOverrideColorPrimary.length===6) {
+          configuration.themeOverrideColorPrimary = "#"+configuration.themeOverrideColorPrimary;
+        }
+        if (configuration.themeOverrideColorAccent.length===6) {
+          configuration.themeOverrideColorAccent = "#"+configuration.themeOverrideColorAccent;
+        }
+        Polymer.updateStyles(this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent))
+      } else {
+        if (this.themes[number]) {
+          Polymer.updateStyles(this.themes[number]);
+        }
       }
 
       var defaultFontPath = "/styles/fonts/default-font.html";

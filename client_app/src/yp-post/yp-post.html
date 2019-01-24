@@ -671,11 +671,17 @@
 
         refresh: function () {
           if (this.post) {
-            if (this.post.Group.theme_id!=null) {
-              this.setTheme(this.post.Group.theme_id);
-            } else if (this.post.Group.Community && this.post.Group.Community.theme_id!=null) {
-              this.setTheme(this.post.Group.Community.theme_id);
+            if (this.post.Group.theme_id!=null ||
+              (this.post.Group.configuration && this.post.Group.configuration.themeOverrideColorPrimary!=null)) {
+              this.setTheme(this.post.Group.theme_id, this.post.Group.configuration);
+            } else if (this.post.Group.Community &&
+                      (this.post.Group.Community.theme_id!=null ||
+                        (this.post.Group.Community.configuration && this.post.Group.Community.configuration.themeOverrideColorPrimary))) {
+              this.setTheme(this.post.Group.Community.theme_id, this.post.Group.Community.configuration);
+            } else {
+              this.setTheme(1);
             }
+
 
             if (!this.post.Group.Community) {
               console.error("No community!");

@@ -784,10 +784,13 @@
             window.appGlobals.setCommunityPixelTracker(this.group.Community.configuration.facebookPixelId);
           }
 
-          if (this.group.theme_id!=null) {
-            this.setTheme(this.group.theme_id);
-          } else if (this.group.Community && this.group.Community.theme_id!=null) {
-            this.setTheme(this.group.Community.theme_id);
+          if (this.group.theme_id!=null ||
+             (this.group.configuration && this.group.configuration.themeOverrideColorPrimary!=null)) {
+            this.setTheme(this.group.theme_id, this.group.configuration);
+          } else if (this.group.Community &&
+                    (this.group.Community.theme_id!=null ||
+                      (this.group.Community.configuration && this.group.Community.configuration.themeOverrideColorPrimary))) {
+            this.setTheme(this.group.Community.theme_id, this.group.Community.configuration);
           } else if (this.group.Community && this.group.Community.Domain && this.group.Community.Domain.theme_id!=null) {
             this.setTheme(this.group.Community.Domain.theme_id);
           } else {
