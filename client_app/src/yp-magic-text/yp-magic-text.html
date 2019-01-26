@@ -132,6 +132,11 @@
           simpleFormat: {
             type: Boolean,
             value: false
+          },
+
+          structuredQuestionsConfig: {
+            type: String,
+            value: null
           }
         }
       }
@@ -146,7 +151,9 @@
 
       _openFullScreen() {
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("magicTextDialog", function (dialog) {
-          dialog.open(this.content, this.contentId, this.extraId, this.textType, this.contentLanguage, this.closeDialogText);
+          dialog.open(this.content, this.contentId, this.extraId,
+                      this.textType, this.contentLanguage, this.closeDialogText,
+                      this.structuredQuestionsConfig);
         }.bind(this));
       }
 
@@ -262,6 +269,22 @@
         }
       }
 
+      _setupStructuredQuestions() {
+        if (this.structuredQuestionsConfig) {
+          var structuredQuestions = [];
+          var questionComponents = this.structuredQuestionsConfig.split(",");
+          if (questionComponents && questionComponents.length>1) {
+            for (var i=0 ; i<questionComponents.length; i+=2) {
+              structuredQuestions.push(questionComponents[i]);
+            }
+            var regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
+            this.processedContent = this.processedContent.replace(regEx, '<b>$1</b>');
+          } else {
+            console.warn("Not questions for structuredQuestionsConfig");
+          }
+        }
+      }
+
       _finalize() {
         if (!this.textOnly) {
           this._linksAndEmojis()
@@ -278,6 +301,8 @@
         if (this.simpleFormat) {
           this.processedContent = this.processedContent.replace(/(\n)/g,"<br>");
         }
+
+        this._setupStructuredQuestions();
 
         this.subClassProcessing();
 
