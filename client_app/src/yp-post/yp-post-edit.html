@@ -239,7 +239,13 @@
               </template>
 
               <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">
-                <yp-file-upload id="attachmentFileUpload" raised="true" multi="false" target="/api/groups/[[group.id]]/upload_document" method="POST" on-success="_documentUploaded">
+                <yp-file-upload id="attachmentFileUpload"
+                                raised="true"
+                                multi="false"
+                                accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*"
+                                target="/api/groups/[[group.id]]/upload_document"
+                                method="POST"
+                                on-success="_documentUploaded">
                   <iron-icon class="icon" icon="attach-file"></iron-icon>
                   <span>[[t('uploadAttachment')]]</span>
                 </yp-file-upload>
