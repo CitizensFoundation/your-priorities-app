@@ -1006,10 +1006,8 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
       invite.joined_at = Date.now();
       invite.save().then(function (results) {
         if (invite.Group) {
-          invite.Group.addGroupUsers(req.user).then(function (error) {
-            models.Group.addUserToGroupIfNeeded(invite.Group.id, req, function () {
-              res.send({name: invite.Group.name, redirectTo: "/group/"+ invite.Group.id});
-            });
+          models.Group.addUserToGroupIfNeeded(invite.Group.id, req, function () {
+            res.send({name: invite.Group.name, redirectTo: "/group/"+ invite.Group.id});
           });
         } else if (invite.Community) {
           invite.Community.addCommunityUsers(req.user).then(function (error) {
