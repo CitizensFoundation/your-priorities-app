@@ -427,6 +427,7 @@
             this.sendToAnalyticsTrackers('send', 'event', object, type);
           }
 
+          //TODO: Use fetch here
           var activityAjax = document.createElement('iron-ajax');
           var date = new Date();
           activityAjax.handleAs = 'json';
