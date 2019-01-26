@@ -178,8 +178,8 @@
         <iron-image header-mode$="[[headerMode]]" sizing="cover" hidden$="[[defaultPostImageEnabled]]"
                     class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToPost"></iron-image>
 
-        <template is="dom-if" if="[[defaultPostImageEnabled]]" restamp>
-          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="/api/groups/[[defaultImageGroupId]]/default_post_image/[[uploadedDefaultPostImageId]]" on-tap="_goToPost"></iron-image>
+        <template is="dom-if" if="[[activeDefaultImageUrl]]" restamp>
+          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="[[activeDefaultImageUrl]]" on-tap="_goToPost"></iron-image>
         </template>
       </template>
 
@@ -439,6 +439,20 @@
         portraitVideo: {
           type: Boolean,
           value: false
+        },
+
+        activeDefaultImageUrl: {
+          type: String,
+          computed: '_activeDefaultImageUrl(defaultPostImageEnabled, defaultImageGroupId, uploadedDefaultPostImageId)',
+          value: null
+        }
+      },
+
+      _activeDefaultImageUrl: function (defaultPostImageEnabled, defaultImageGroupId, uploadedDefaultPostImageId) {
+        if (defaultPostImageEnabled && defaultImageGroupId && uploadedDefaultPostImageId) {
+          return "/api/groups/"+defaultImageGroupId+"/default_post_image/"+uploadedDefaultPostImageId;
+        } else {
+          return null;
         }
       },
 

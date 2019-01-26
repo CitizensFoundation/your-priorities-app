@@ -804,34 +804,39 @@ router.post('/forgot_password', function(req, res) {
 });
 
 router.get('/reset/:token', function(req, res) {
-  models.User.find({
-    attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
-    where:
-    {
-      reset_password_token: req.params.token,
-      reset_password_expires: {
-        $gt: Date.now()
-      }
-    }
-  }).then(function (user) {
-    if (user) {
-      log.info('Get User For Reset Password Token', { user: toJson(user), context: 'getUserToken', loggedInUser: toJson(req.user), errorStatus: 401 });
-      getUserWithAll(user.id, function (error, user) {
-        if (error || !user) {
-          log.error("User Error", { context: 'reset_password_expires', user: req.user.id, err: error, errorStatus: 500 });
-          res.sendStatus(500);
-        } else {
-          res.send(user);
+  if (req.params.token) {
+    models.User.find({
+      attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
+      where:
+        {
+          reset_password_token: req.params.token,
+          reset_password_expires: {
+            $gt: Date.now()
+          }
         }
-      });
-    } else {
-      log.error('Get User For Reset Password Token Not found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: toJson(req.user), errorStatus: 401 });
-      res.send({ error: 'not_found' });
-    }
-  }).catch(function (error) {
-    log.error('Get User For Reset Password Token Error', { user: null, context: 'getUserToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
-    res.sendStatus(500);
-  });
+    }).then(function (user) {
+      if (user) {
+        log.info('Get User For Reset Password Token', { user: toJson(user), context: 'getUserToken', loggedInUser: toJson(req.user), errorStatus: 401 });
+        getUserWithAll(user.id, function (error, user) {
+          if (error || !user) {
+            log.error("User Error", { context: 'reset_password_expires', user: req.user.id, err: error, errorStatus: 500 });
+            res.sendStatus(500);
+          } else {
+            res.send(user);
+          }
+        });
+      } else {
+        log.error('Get User For Reset Password Token Not found', { user: null, context: 'getUserToken', err: 'Token not found', loggedInUser: toJson(req.user), errorStatus: 401 });
+        res.send({ error: 'not_found' });
+      }
+    }).catch(function (error) {
+      log.error('Get User For Reset Password Token Error', { user: null, context: 'getUserToken', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
+      res.sendStatus(500);
+    });
+  } else {
+    log.error('No token with request', { user: null, context: 'getUserToken', loggedInUser: req.user ? toJson(req.user) : null, errorStatus: 404 });
+    res.sendStatus(404);
+  }
 });
 
 router.post('/createActivityFromApp', function(req, res) {

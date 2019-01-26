@@ -261,7 +261,7 @@
               <paper-item hidden$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>
-              <a hidden$="[[!hasGroupAccess]]" target="_blank" href="/api/groups/[[group.id]]/export_group"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
+              <a hidden$="[[!hasGroupAccess]]" target="_blank" href$="[[exportUrl]]"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
@@ -321,6 +321,11 @@
           computed: '_showMenuItem(hasGroupAccess, group)'
         },
 
+        exportUrl: {
+          type: String,
+          computed: '_exportUrl(hasGroupAccess, group)'
+        },
+
         groupVideoURL: {
           type: String,
           value: null
@@ -336,6 +341,14 @@
         flaggedContentCount: {
           type: Number,
           value: null
+        }
+      },
+
+      _exportUrl: function (access, group) {
+        if (access && group) {
+          return '/api/groups/'+group.id+'/export_group';
+        } else {
+          return null;
         }
       },
 
