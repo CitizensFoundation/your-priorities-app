@@ -131,9 +131,9 @@
           }
         },
 
-        loginForAcceptInvite: function(editDialog, token, email) {
+        loginForAcceptInvite: function(editDialog, token, email, collectionConfiguration) {
           this.loginForAcceptInviteParams = { editDialog: editDialog, token: token };
-          this.openUserlogin(email);
+          this.openUserlogin(email, collectionConfiguration);
         },
 
         loginForEdit: function(editDialog,newOrUpdate,params,refreshFunction) {
@@ -172,10 +172,10 @@
           this.openUserlogin();
         },
 
-        openUserlogin: function (email) {
+        openUserlogin: function (email, collectionConfiguration) {
           Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
             dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
-            dialog.open(null, email);
+            dialog.open(null, email, collectionConfiguration);
           }.bind(this));
         },
 

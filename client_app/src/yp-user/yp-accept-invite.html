@@ -88,6 +88,11 @@
       targetEmail: {
         type: String,
         value: null
+      },
+
+      collectionConfiguration: {
+        type: Object,
+        value: null
       }
     },
 
@@ -109,7 +114,7 @@
       if (window.appUser && window.appUser.loggedIn()===true) {
         this._reallyAcceptInvite();
       } else {
-        window.appUser.loginForAcceptInvite(this, this.token, this.targetEmail);
+        window.appUser.loginForAcceptInvite(this, this.token, this.targetEmail, this.collectionConfiguration);
       }
     },
 
@@ -130,6 +135,7 @@
       this.set('inviteName', detail.response.inviteName);
       this.set('targetName', detail.response.targetName);
       this.set('targetEmail', detail.response.targetEmail);
+      this.set('collectionConfiguration', detail.response.configuration);
     },
 
     _acceptInviteResponse: function(event, detail) {

@@ -888,13 +888,20 @@
       }
     },
 
-    open: function (redirectToURL, email) {
+    open: function (redirectToURL, email, collectionConfiguration) {
       this.redirectToURL = redirectToURL;
       this.set('userSpinner', false);
       this.set('opened', false);
+
       if (email) {
         this.set('email', email);
       }
+
+      if (collectionConfiguration &&
+         (collectionConfiguration.disableFacebookLoginForGroup || collectionConfiguration.disableFacebookLoginForCommunity)) {
+        window.appGlobals.disableFacebookLoginForGroup = true;
+      }
+
       this.async(function () {
         this.set('opened', true);
         this.async(function () {

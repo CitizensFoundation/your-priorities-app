@@ -958,13 +958,20 @@ router.get('/get_invite_info/:token', function(req, res) {
     ]
   }).then(function (invite) {
     if (invite) {
-      var targetName;
+      var targetName, configuration;
       if (invite.Group) {
         targetName = invite.Group.name;
+        configuration = invite.Group.configuration;
       } else if (invite.Community) {
         targetName = invite.Community.name;
+        configuration = invite.Community.configuration;
       }
-      res.send({ targetName: targetName, inviteName: invite.FromUser.name, targetEmail: invite.metadata ? invite.metadata.toEmail : null });
+      res.send({
+        configuration: configuration,
+        targetName: targetName,
+        inviteName: invite.FromUser.name,
+        targetEmail: invite.metadata ? invite.metadata.toEmail : null
+      });
     } else {
       log.info('User Invite Token Not found', {context: 'get_invite_info'});
       res.sendStatus(404);
