@@ -1,4 +1,7 @@
 {
+  "themeOverrideColorInfo": "Settu liti fyrir bæði aðallit og áherslulit: #A1A1A1",
+  "themeOverrideColorPrimary": "Aðallitur",
+  "themeOverrideColorAccent": "Áherslulitur",
   "maxDaysBackForRecommendations": "Mælt með: hversu margir dagar til baka",
   "recommendationToastInfo": "Smelltu á áfram takkann eða strjúktu til vinstri til að sjá hugmyndir sem við mælum með fyrir þig.",
   "structuredQuestions": "Skipulagðar spurningar",
