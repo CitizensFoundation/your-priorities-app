@@ -1095,7 +1095,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
 });
 
 router.get('/:id/translatedText', auth.can('view community'), function(req, res) {
-  if (req.query.textType.indexOf("community") > -1) {
+  if (req.query.textType && req.query.textType.indexOf("community") > -1) {
     models.Community.find({
       where: {
         id: req.params.id
@@ -1118,7 +1118,7 @@ router.get('/:id/translatedText', auth.can('view community'), function(req, res)
       sendCommunityOrError(res, null, 'translated', req.user, error);
     });
   } else {
-    sendCommunityOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+    sendCommunityOrError(res, req.params.id, 'translated', req.user, 'Wrong textType or missing textType', 401);
   }
 });
 
