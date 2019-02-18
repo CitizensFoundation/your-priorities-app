@@ -12,6 +12,30 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group) {
 };
 
 auth.isAuthenticated = function (req, group) {
+  if (group) {
+    if (group.configuration) {
+      if (group.configuration.allowAnonymousUsers) {
+        log.info("isAuthenticated: Group allows anonymous users");
+      } else {
+        log.info("isAuthenticated: Group does not allow anonymous users");
+      }
+    } else {
+      log.info("isAuthenticated: No group config");
+    }
+  } else {
+    log.info("isAuthenticated: No group");
+  }
+
+  if (req.user) {
+    if (req.user && req.user.profile_data && req.user.profile_data.isAnonymousUser) {
+      log.info("isAuthenticated: Is anonymous user");
+    } else {
+      log.info("isAuthenticated: Is regular user");
+    }
+  } else {
+    log.log("isAuthenticated: No user");
+  }
+
   if (req.user && req.user.profile_data && req.user.profile_data.isAnonymousUser===true) {
     return (group && group.configuration && group.configuration.allowAnonymousUsers);
   } else {
@@ -693,6 +717,7 @@ auth.role('post.viewUser', function (post, req, done) {
 });
 
 auth.role('post.vote', function (post, req, done) {
+  log.info("In post.vote");
   models.Post.findOne({
     where: { id: post.id },
     attributes: ['id','user_id'],
@@ -710,6 +735,7 @@ auth.role('post.vote', function (post, req, done) {
       }
     ]
   }).then(function (post) {
+    log.info("In post.vote found post");
     if (post && isAuthenticatedAndCorrectLoginProvider(req, post.Group)) {
       if (post.Group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
