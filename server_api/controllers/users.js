@@ -177,6 +177,7 @@ router.post('/register_anonymously', function (req, res) {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {
               log.info("Have logged in Anon 2", { error, user: req.user });
+              log.info("Anon debug Session", { session: req.session });
               sendUserOrError(res, user, 'register_anonymous', error, 401);
             });
           }).catch(function (error) {
