@@ -327,7 +327,7 @@ app.post('/authenticate_from_island_is', function (req, res) {
 
 app.use(function (err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
-    log.info("Anon debug UnauthorizedError");
+    log.info("Anon debug UnauthorizedError", { user: req && req.user ? req.user : null});
     log.error("User Unauthorized", {
       context: 'unauthorizedError',
       user: toJson(req.user),
