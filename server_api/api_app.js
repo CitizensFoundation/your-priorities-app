@@ -271,6 +271,8 @@ app.use('/', index);
 
 // Set caching for IE so it wont cache the json queries
 app.use(function (req, res, next) {
+  log.info("Anon debug Session", { session: req.session });
+
   var ua = req.headers['user-agent'];
   if (/Trident/gi.test(ua)) {
     res.set("Cache-Control", "no-cache,no-store");
