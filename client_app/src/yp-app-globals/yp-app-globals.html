@@ -258,7 +258,7 @@
             if (!window.appUser.user && this.currentAnonymousUser) {
               console.debug("Setting anon user from cache");
               window.appUser.setLoggedInUser(this.currentAnonymousUser);
-            } else if (window.appUser &&!window.appUser.user && group.configuration.allowAnonymousAutoLogin &&
+            } else if (window.appUser && !window.appUser.user && group.configuration.allowAnonymousAutoLogin &&
                        this.originalQueryParameters && this.originalQueryParameters.autoLogin) {
               window.appUser.autoAnonymousLogin();
             }

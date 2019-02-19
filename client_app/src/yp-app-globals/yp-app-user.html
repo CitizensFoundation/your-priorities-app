@@ -180,17 +180,18 @@
         },
 
         autoAnonymousLogin: function () {
+          console.log("In autoAnonymousLogin 1");
           this.async(function () {
-            console.log("In autoAnonymousLogin");
+            console.log("In autoAnonymousLogin 2");
             if (this.user==null) {
               Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
                 dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
                 dialog.anonymousLogin();
               }.bind(this));
             } else {
-              console.log("Not doing auto login as user already exists")
+              console.log("Not doing auto anon login as user already exists")
             }
-          }, 1000);
+          }, 1200);
         },
 
         _closeUserLogin: function () {
@@ -312,6 +313,7 @@
         },
 
         removeAnonymousUser: function () {
+          console.log("Remove anon user");
           this.removeUserSession();
         },
 
