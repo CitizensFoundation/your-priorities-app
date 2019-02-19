@@ -849,6 +849,7 @@
       this.set('isSending', false);
       window.appGlobals.sendLoginAndSignupToAnalytics(detail.response.id, "Signup Success", 'Email');
       this._loginCompleted(detail.response);
+      console.error("Got register response for: "+ detail.response ? detail.response.email : 'unknown');
     },
 
     _loginResponse: function (event, detail) {

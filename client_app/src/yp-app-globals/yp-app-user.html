@@ -180,10 +180,17 @@
         },
 
         autoAnonymousLogin: function () {
-          Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
-            dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
-            dialog.anonymousLogin();
-          }.bind(this));
+          this.async(function () {
+            console.log("In autoAnonymousLogin");
+            if (this.user==null) {
+              Polymer.dom(document).querySelector('yp-app').getDialogAsync("userLogin", function (dialog) {
+                dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain);
+                dialog.anonymousLogin();
+              }.bind(this));
+            } else {
+              console.log("Not doing auto login as user already exists")
+            }
+          }, 1000);
         },
 
         _closeUserLogin: function () {
@@ -311,6 +318,7 @@
         removeUserSession: function () {
           this.$.session.unset('user');
           this.set('user', null);
+          window.appGlobals.setAnonymousUser(null);
           document.dispatchEvent(
             new CustomEvent("lite-signal", {
               bubbles: true,
@@ -519,15 +527,18 @@
         _isLoggedInResponse: function(event, detail) {
           var user = detail.response;
           if (user===0) {
+            console.info("Remove user session");
             this.removeUserSession();
           } else if (user.name && user.profile_data && user.profile_data.isAnonymousUser) {
+            console.info("Logging in anon user");
             this.async(function () {
+              console.info("Logging in anon user 2");
               if (window.appGlobals.currentAnonymousGroup) {
                 this.setLoggedInUser(user);
               } else {
                 window.appGlobals.setAnonymousUser(user);
               }
-            }, 300);
+            }, 500);
           } else if (user.name) {
             this.setLoggedInUser(user);
           }

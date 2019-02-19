@@ -64,7 +64,7 @@
           <div class="layout vertical center-justified buttons">
             <paper-button raised icon="create" title$="[[t('user.edit')]]" on-tap="_openEdit">[[t('user.edit')]]</paper-button>
             <paper-button raised icon="create" title$="[[t('myContent')]]" on-tap="_openAllContentModeration">[[t('myContent')]]</paper-button>
-            <paper-button raised icon="input" title$="[[t('user.logout')]]" on-tap="onLogout">[[t('user.logout')]]</paper-button>
+            <paper-button raised icon="input" title$="[[t('user.logout')]]" on-tap="_logout">[[t('user.logout')]]</paper-button>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@
         this.fire('open-user-edit');
       },
 
-      onLogout: function() {
+      _logout: function() {
         window.appUser.logout();
       }
     });
