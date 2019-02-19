@@ -179,7 +179,8 @@ app.use(function (req, res, next) {
 });
 
 passport.serializeUser(function (req, profile, done) {
-  log.info("User Serialized From", {profile: profile});
+  log.info("Anon debug passport.serializeUser");
+  log.info("User Serialized From ", {profile: profile});
   if (profile.provider && profile.provider == 'facebook') {
     models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
       if (error) {
@@ -212,6 +213,7 @@ passport.serializeUser(function (req, profile, done) {
 });
 
 passport.deserializeUser(function (sessionUser, done) {
+  log.info("Anon debug passport.deserializeUser", { sessionUser });
   models.User.find({
     where: {id: sessionUser.userId},
     attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data"],
@@ -325,6 +327,7 @@ app.post('/authenticate_from_island_is', function (req, res) {
 
 app.use(function (err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
+    log.info("Anon debug UnauthorizedError");
     log.error("User Unauthorized", {
       context: 'unauthorizedError',
       user: toJson(req.user),

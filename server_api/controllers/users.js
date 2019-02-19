@@ -141,6 +141,7 @@ router.post('/register', function (req, res) {
 
 // Register anonymous
 router.post('/register_anonymously', function (req, res) {
+  log.info("Anon debug in register_anonymously");
   var groupId = req.body.groupId;
 
   models.Group.find({
@@ -158,7 +159,7 @@ router.post('/register_anonymously', function (req, res) {
         if (existingUser && existingUser.profile_data && existingUser.profile_data.isAnonymousUser) {
           log.info('Found Already Registered Anonymous', { user: toJson(existingUser), context: 'register_anonymous' });
           req.logIn(existingUser, function (error, detail) {
-            log.info("Have logged in anonymoususer 1");
+            log.info("Have logged in anonymoususer 1", { error });
             sendUserOrError(res, existingUser, 'register_anonymous', error, 401);
           });
         } else {
@@ -175,7 +176,7 @@ router.post('/register_anonymously', function (req, res) {
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {
-              log.info("Have logged in anonymoususer 2");
+              log.info("Have logged in anonymoususer 2", { error });
               sendUserOrError(res, user, 'register_anonymous', error, 401);
             });
           }).catch(function (error) {
