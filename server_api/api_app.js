@@ -179,7 +179,7 @@ app.use(function (req, res, next) {
 });
 
 passport.serializeUser(function (req, profile, done) {
-  log.info("Anon debug passport.serializeUser");
+  log.info("Anon debug passport.serializeUser", { profile });
   log.info("User Serialized From ", {profile: profile});
   if (profile.provider && profile.provider == 'facebook') {
     models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
@@ -202,7 +202,7 @@ passport.serializeUser(function (req, profile, done) {
       }
     });
   } else {
-    log.info("User Serialized", {
+    log.info("User Serialized Anon Debug", {
       profile: profile,
       context: 'deserializeUser',
       userEmail: profile.email,
