@@ -179,7 +179,6 @@ app.use(function (req, res, next) {
 });
 
 passport.serializeUser(function (req, profile, done) {
-  log.info("Anon debug passport.serializeUser", { profile });
   log.info("User Serialized From ", {profile: profile});
   if (profile.provider && profile.provider == 'facebook') {
     models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
@@ -202,7 +201,7 @@ passport.serializeUser(function (req, profile, done) {
       }
     });
   } else {
-    log.info("User Serialized Anon Debug", {
+    log.info("User Serialized Debug", {
       profile: profile,
       context: 'deserializeUser',
       userEmail: profile.email,
@@ -213,7 +212,7 @@ passport.serializeUser(function (req, profile, done) {
 });
 
 passport.deserializeUser(function (sessionUser, done) {
-  log.info("Anon debug passport.deserializeUser", { sessionUser });
+  log.info("Debug passport.deserializeUser", { sessionUser });
   models.User.find({
     where: {id: sessionUser.userId},
     attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data"],
@@ -271,7 +270,6 @@ app.use('/', index);
 
 // Set caching for IE so it wont cache the json queries
 app.use(function (req, res, next) {
-  log.info("Anon debug Session", { sessionID: req.sessionID, session: req.session });
   var ua = req.headers['user-agent'];
   if (/Trident/gi.test(ua)) {
     res.set("Cache-Control", "no-cache,no-store");
