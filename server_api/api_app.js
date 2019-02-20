@@ -100,7 +100,7 @@ var sessionConfig = {
   store: new RedisStore({url: process.env.REDIS_URL}),
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
-  resave: true,
+  resave: false,
   cookie: {autoSubDomain: true},
   saveUninitialized: true
 };
