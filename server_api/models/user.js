@@ -89,7 +89,16 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       serializeSamlUser: function (profile, callback) {
-        log.info("User Serialized In Serialize SAML User", { context: 'serializeSamlUser', profile: profile });
+        log.info("Serialize SAML user", { context: 'serializeSamlUser', profile: profile });
+        if (profile.UserSSN) {
+          this.serializeIslandIsSamlUser(profile, callback);
+        } else if (profile.SamlUniqueId) {
+          this.serializeGeneralSamlUser(profile, callback);
+        }
+      },
+
+      serializeIslandIsSamlUser: function (profile, callback) {
+        log.info("User Serialized In Serialize IslandIs SAML User", { context: 'serializeSamlUser', profile: profile });
         var user;
         async.series([
           function (seriesCallback) {
@@ -101,7 +110,7 @@ module.exports = function(sequelize, DataTypes) {
             }).then (function (userIn) {
               if (userIn) {
                 user = userIn;
-                log.info("User Serialized Found SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
+                log.info("User Serialized Found IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
                 seriesCallback();
               } else {
                 seriesCallback();
@@ -121,7 +130,7 @@ module.exports = function(sequelize, DataTypes) {
                 }).then (function (userIn) {
                 if (userIn) {
                   user = userIn;
-                  log.info("User Serialized Created SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
+                  log.info("User Serialized Created IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
                   seriesCallback();
                 } else {
                   seriesCallback("Could not create user from SAML");
