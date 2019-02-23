@@ -459,6 +459,7 @@
               this.goalEvents.indexOf(object) > -1) {
             this.externalGoalCounter += 1;
             if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
+              //TODO: Use fetch
               var goalTriggerAjax = document.createElement('iron-ajax');
               goalTriggerAjax.handleAs = 'json';
               goalTriggerAjax.url = this.externalGoalTriggerUrl;

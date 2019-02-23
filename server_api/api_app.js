@@ -178,43 +178,97 @@ app.use(function (req, res, next) {
   next();
 });
 
+const completeRegisterUserLogin = (user, loginType, req, done) => {
+  user.last_login_at = Date.now();
+  user.save().then(() => {
+    models.AcActivity.createActivity({
+      type:'activity.user.login',
+      userId: user.id,
+      domainId: req.ypDomain.id,
+      communityId: req.ypCommunity ? req.ypCommunity.id : null,
+      object: {
+        loginType: loginType,
+        userDepartment: user.private_profile_data ? user.private_profile_data.saml_agency : null,
+        samlProvider: user.private_profile_data ? user.private_profile_data.saml_provider : null
+      },
+      access: models.AcActivity.PRIVATE
+    }, function (error) {
+      if (error)
+        log.error("Error in create activity", { error });
+      done();
+    });
+  }).catch( (error) => {
+    log.error("Error saving user for login registration", { error });
+    done();
+  });
+};
+
+const registerUserLogin = (user, userId, loginProvider, req, done) => {
+  if (user) {
+    completeRegisterUserLogin(user, loginProvider, req, done);
+  } else {
+    models.User.find({
+      where: {
+        id: userId
+      },
+      attributes: ['id','private_profile_data','last_login_at']
+    }).then((user) => {
+      if (user) {
+        completeRegisterUserLogin(user, loginProvider, req, done);
+      } else {
+        log.error("Did not find user for login registration", { error });
+        done();
+      }
+    }).catch( (error) => {
+      log.error("Error saving user for login registration", { error });
+      done();
+    });
+  }
+};
+
 passport.serializeUser(function (req, profile, done) {
   log.info("User Serialized From", {profile: profile});
-  if (profile.provider && profile.provider == 'facebook') {
+  if (profile.provider && profile.provider === 'facebook') {
     models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
       if (error) {
         log.error("Error in User Serialized from Facebook", {err: error});
         done(error);
       } else {
         log.info("User Serialized Connected to Facebook", {context: 'loginFromFacebook', user: toJson(user)});
-        done(null, {userId: user.id, loginProvider: 'facebook'});
+        registerUserLogin(user, user.id, 'facebook', req, function () {
+          done(null, {userId: user.id, loginProvider: 'facebook'});
+        });
       }
     });
-  } else if (profile.provider && profile.UserSSN) {
+  } else if (profile.provider && profile.provider === "saml") {
     models.User.serializeSamlUser(profile, function (error, user) {
       if (error) {
         log.error("Error in User Serialized from SAML", {err: error});
         done(error);
       } else {
         log.info("User Serialized Connected to SAML", {context: 'loginFromSaml', user: toJson(user)});
-        done(null, {userId: user.id, loginProvider: 'saml'});
+        registerUserLogin(user, user.id, 'saml', req, function () {
+          done(null, {userId: user.id, loginProvider: 'saml'});
+        });
       }
     });
   } else {
     log.info("User Serialized", {
       profile: profile,
-      context: 'deserializeUser',
+      context: 'serializeUser',
       userEmail: profile.email,
       userId: profile.id
     });
-    done(null, {userId: profile.id, loginProvider: 'email'});
+    registerUserLogin(null, profile.id, 'email', req, function () {
+      done(null, {userId: profile.id, loginProvider: 'email'});
+    });
   }
 });
 
 passport.deserializeUser(function (sessionUser, done) {
   models.User.find({
     where: {id: sessionUser.userId},
-    attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data"],
+    attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data", 'private_profile_data'],
     include: [
       {
         model: models.Image, as: 'UserProfileImages',
@@ -318,6 +372,28 @@ app.post('/authenticate_from_island_is', function (req, res) {
       }
     } else {
       log.info("SAML SAML 3", {domainId: req.ypDomain.id});
+      res.render('samlLoginComplete', {});
+    }
+  })
+});
+
+app.post('/saml_assertion', function (req, res) {
+  log.info("SAML SAML 1 General", {domainId: req.ypDomain.id});
+  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
+    log.info("SAML SAML 2 General", {domainId: req.ypDomain.id, err: error});
+    if (error) {
+      log.error("Error from SAML General login", {err: error});
+      error.url = req.url;
+      if (airbrake) {
+        airbrake.notify(error, function (airbrakeErr, url) {
+          if (airbrakeErr) {
+            log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr, errorStatus: 500});
+          }
+          res.sendStatus(500);
+        });
+      }
+    } else {
+      log.info("SAML SAML 3 General", {domainId: req.ypDomain.id});
       res.render('samlLoginComplete', {});
     }
   })

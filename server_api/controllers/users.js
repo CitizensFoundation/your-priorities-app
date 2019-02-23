@@ -1049,6 +1049,33 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
   });
 });
 
+router.put('/email_confirmation_shown', auth.isLoggedIn, function(req, res, next) {
+  models.User.find({
+    attribues: ['id', 'profile_data'],
+    where: {
+      id: req.user.id
+    }}).then( function (user) {
+    if (user) {
+      if (user.profile_data && user.profile_data.saml_show_confirm_email_completed) {
+         user.set('profile_data.saml_show_confirm_email_completed', true);
+         user.save().then(function () {
+           res.sendStatus(200);
+         }).catch(function (error) {
+           log.error("Error in saving user", { error });
+           res.sendStatus(500);
+         });
+      } else {
+        res.sendStatus(200);
+      }
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error("Error from setEmail", { err: error });
+    res.sendStatus(500);
+  });
+});
+
 router.delete('/disconnectFacebookLogin', auth.isLoggedIn, function(req, res, next) {
   models.User.find({
     where: {

@@ -360,12 +360,22 @@
                     </span>
                     </template>
                     <template is="dom-if" if="[[hasSamlLogin]]">
-                      <div class="islandIs cursor layout horizontal center-center">
-                        <img hidden$="[[forceSecureSamlLogin]]" on-tap="_islandIsLogin" width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
-                        <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_islandIsLogin">
-                          <img width="130" height="30" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                      <template is="dom-if" if="[[samlLoginButtonUrl]]">
+                        <div class="islandIs cursor layout horizontal center-center">
+                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" height="18" src="[[samlLoginButtonUrl]]"/>
+                          <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin">
+                            <img width="130" height="30" src="[[samlLoginButtonUrl]]"/>
+                          </div>
                         </div>
-                      </div>
+                      </template>
+                      <template is="dom-if" if="[[!samlLoginButtonUrl]]">
+                        <div class="islandIs cursor layout horizontal center-center">
+                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                          <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin">
+                            <img width="130" height="30" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
+                          </div>
+                        </div>
+                      </template>
                     </template>
                   </div>
                 </div>
@@ -482,17 +492,17 @@
 
       name: {
         type: String,
-        value: "" //"Róbert Viðar Bjarnason"
+        value: ""
       },
 
       email: {
         type: String,
-        value: "" //robert@citizens.is"
+        value: ""
       },
 
       password: {
         type: String,
-        value: "" //"DksdSodksSokssss"
+        value: ""
       },
 
       credentials: {
@@ -596,6 +606,11 @@
       isSending: {
         type: Boolean,
         value: false
+      },
+
+      samlLoginButtonUrl: {
+        type: String,
+        value: null
       }
     },
 
@@ -648,7 +663,7 @@
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous');
     },
 
-    _islandIsLogin: function () {
+    _openSamlLogin: function () {
       if (this.forceSecureSamlLogin && window.appUser && window.appUser.user) {
         window.appUser.logout();
         this.async(function () {
@@ -721,6 +736,7 @@
         } else {
           this.set('disableFacebookLoginForGroup', false);
         }
+
         if (window.appGlobals.domain &&
           window.appGlobals.domain.configuration &&
           window.appGlobals.domain.configuration.customUserRegistrationText) {
@@ -728,6 +744,15 @@
         } else {
           this.set('customUserRegistrationText', null);
         }
+
+        if (window.appGlobals.domain &&
+          window.appGlobals.domain.configuration &&
+          window.appGlobals.domain.configuration.samlLoginButtonUrl) {
+          this.set('samlLoginButtonUrl', window.appGlobals.domain.configuration.samlLoginButtonUrl);
+        } else {
+          this.set('samlLoginButtonUrl', null);
+        }
+
         this.async(function () {
           this.$$("#a11y").target = this.$$("#form");
           this.$$("#email").focus();

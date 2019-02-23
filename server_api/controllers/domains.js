@@ -705,6 +705,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('secret_api_keys.twitter.client_secret', req.body.twitterClientSecret);
       domain.set('secret_api_keys.github.client_id', req.body.githubClientId);
       domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
+
       if (req.body.samlEntryPoint) {
         domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
         domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
@@ -713,6 +714,10 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
 
       if (!domain.configuration) {
         domain.set('configuration', {});
+      }
+
+      if (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl!=='') {
+        domain.set('configuration.samlLoginButtonUrl', req.body.samlLoginButtonUrl);
       }
 
       if (req.body.google_analytics_code && req.body.google_analytics_code!="") {

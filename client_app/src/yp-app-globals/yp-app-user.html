@@ -535,6 +535,12 @@
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
               dialog.open(user.loginProvider);
             }.bind(this));
+          } else if (user.profile_data &&
+                     user.profile_data.saml_show_confirm_email_completed &&
+                     user.profile_data.saml_show_confirm_email_completed===false) {
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
+              dialog.open(user.loginProvider, true, user.email);
+            }.bind(this));
           }
 
           if (this.completeExternalLoginText) {
