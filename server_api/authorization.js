@@ -50,7 +50,7 @@ auth.isAuthenticated = function (req, group) {
       log.info("isAuthenticated: Is regular user");
     }
   } else {
-    log.log("isAuthenticated: No user");
+    log.info("isAuthenticated: No user");
   }
 
   if (req.user && req.user.profile_data && req.user.profile_data.isAnonymousUser===true) {

@@ -97,7 +97,7 @@ var getUserWithAll = function (userId, callback) {
 router.post('/login', function (req, res) {
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
     console.log(user);
-    log.info('User Login', {context: 'view', user: toJson(req.user)});
+    log.info('User Login', {context: 'view', userId: req.user ? req.user.id : null});
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
         log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});

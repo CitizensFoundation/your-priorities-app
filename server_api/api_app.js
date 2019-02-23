@@ -227,14 +227,14 @@ const registerUserLogin = (user, userId, loginProvider, req, done) => {
 };
 
 passport.serializeUser(function (req, profile, done) {
-  log.info("User Serialized From", {profile: profile});
+  log.info("User Serialized", { profileProvider: profile.provider });
   if (profile.provider && profile.provider === 'facebook') {
     models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
       if (error) {
         log.error("Error in User Serialized from Facebook", {err: error});
         done(error);
       } else {
-        log.info("User Serialized Connected to Facebook", {context: 'loginFromFacebook', user: toJson(user)});
+        log.info("User Serialized Connected to Facebook", {context: 'loginFromFacebook', userId: user.id });
         registerUserLogin(user, user.id, 'facebook', req, function () {
           done(null, {userId: user.id, loginProvider: 'facebook'});
         });
@@ -246,7 +246,7 @@ passport.serializeUser(function (req, profile, done) {
         log.error("Error in User Serialized from SAML", {err: error});
         done(error);
       } else {
-        log.info("User Serialized Connected to SAML", {context: 'loginFromSaml', user: toJson(user)});
+        log.info("User Serialized Connected to SAML", {context: 'loginFromSaml', userId: user.id});
         registerUserLogin(user, user.id, 'saml', req, function () {
           done(null, {userId: user.id, loginProvider: 'saml'});
         });
@@ -254,7 +254,6 @@ passport.serializeUser(function (req, profile, done) {
     });
   } else {
     log.info("User Serialized", {
-      profile: profile,
       context: 'serializeUser',
       userEmail: profile.email,
       userId: profile.id
