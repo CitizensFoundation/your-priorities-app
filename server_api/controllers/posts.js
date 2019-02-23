@@ -1057,6 +1057,7 @@ router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
 
 router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
   var post;
+  log.info("Have passed post.vote authentication");
 
   models.Endorsement.find({
     where: {

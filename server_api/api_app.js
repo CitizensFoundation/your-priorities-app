@@ -100,7 +100,7 @@ var sessionConfig = {
   store: new RedisStore({url: process.env.REDIS_URL}),
   name: 'yrpri.sid',
   secret: process.env.SESSION_SECRET ? process.env.SESSION_SECRET : 'not so secret... use env var.',
-  resave: true,
+  resave: false,
   cookie: {autoSubDomain: true},
   saveUninitialized: true
 };
@@ -227,7 +227,7 @@ const registerUserLogin = (user, userId, loginProvider, req, done) => {
 };
 
 passport.serializeUser(function (req, profile, done) {
-  log.info("User Serialized", { profileProvider: profile.provider });
+  log.info("User Serialized", { logionProvider: profile.provider });
   if (profile.provider && profile.provider === 'facebook') {
     models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
       if (error) {
@@ -265,6 +265,7 @@ passport.serializeUser(function (req, profile, done) {
 });
 
 passport.deserializeUser(function (sessionUser, done) {
+  log.info("Debug passport.deserializeUser", { sessionUser });
   models.User.find({
     where: {id: sessionUser.userId},
     attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data", 'private_profile_data'],
@@ -400,6 +401,7 @@ app.post('/saml_assertion', function (req, res) {
 
 app.use(function (err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
+    log.info("Anon debug UnauthorizedError", { user: req && req.user ? req.user : null});
     log.error("User Unauthorized", {
       context: 'unauthorizedError',
       user: toJson(req.user),

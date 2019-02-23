@@ -32,7 +32,7 @@ auth.isAuthenticated = function (req, group) {
   if (group) {
     if (group.configuration) {
       if (group.configuration.allowAnonymousUsers) {
-        log.info("isAuthenticated: Group allows anonymous users")
+        log.info("isAuthenticated: Group allows anonymous users");
       } else {
         log.info("isAuthenticated: Group does not allow anonymous users");
       }
