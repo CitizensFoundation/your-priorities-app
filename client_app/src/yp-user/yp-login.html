@@ -333,7 +333,12 @@
             </paper-tabs>
 
             <div class="forceSecureSamlLoginInfo" hidden$="[[!forceSecureSamlLogin]]">
-              [[t('forceSecureSamlLoginInfo')]]
+              <div hidden$="[[!customSamlLoginText]]">
+                [[customSamlLoginText]]
+              </div>
+              <div hidden$="[[customSamlLoginText]]">
+                [[t('forceSecureSamlLoginInfo')]]
+              </div>
             </div>
 
             <div class="layout vertical innerScroll">
@@ -611,6 +616,11 @@
       samlLoginButtonUrl: {
         type: String,
         value: null
+      },
+
+      customSamlLoginText: {
+        type: String,
+        value: null
       }
     },
 
@@ -751,6 +761,13 @@
           this.set('samlLoginButtonUrl', window.appGlobals.domain.configuration.samlLoginButtonUrl);
         } else {
           this.set('samlLoginButtonUrl', null);
+        }
+        if (window.appGlobals.domain &&
+          window.appGlobals.domain.configuration &&
+          window.appGlobals.domain.configuration.customSamlLoginText) {
+          this.set('customSamlLoginText', window.appGlobals.domain.configuration.customSamlLoginText);
+        } else {
+          this.set('customSamlLoginText', null);
         }
 
         this.async(function () {

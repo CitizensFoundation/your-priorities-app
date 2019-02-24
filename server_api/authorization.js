@@ -758,7 +758,7 @@ auth.role('post.vote', function (post, req, done) {
   }).then(function (post) {
     log.info("In post.vote found post");
     if (post) {
-      isAuthenticatedAndCorrectLoginProvider(req, Post.group, function(results) {
+      isAuthenticatedAndCorrectLoginProvider(req, post.Group, function(results) {
         if (!results) {
           done(null, false);
         } else {
