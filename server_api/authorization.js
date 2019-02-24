@@ -12,7 +12,7 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
           if (req.user.loginProvider!=="saml")
             isCorrectLoginProviderAndAgency = false;
 
-          if (group.configuration.forceSecureSamlAgencyLogin &&
+          if (group.configuration.forceSecureSamlEmployeeLogin &&
             (!req.user.private_profile_data || !req.user.private_profile_data.saml_agency)) {
             isCorrectLoginProviderAndAgency = false;
           }

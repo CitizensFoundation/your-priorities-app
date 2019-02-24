@@ -30,14 +30,14 @@
       }
 
       .subHeaders {
-        color: #111;
+        color: #333;
         font-weight: normal;
         margin-bottom: 8px;
         margin-top: 30px;
         font-size: 22px;
         width: 100%;
-        padding-bottom: 6px;
-        border-bottom: 3px solid #aaa;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #888;
         text-align: center;
       }
 
@@ -93,10 +93,18 @@
         margin-top: 4px;
       }
 
-      .structuredQuestionsInfo {
+      .themeOverrideInfo, .structuredQuestionsInfo {
         color: #555;
         font-style: italic;
         font-size: 14px;
+      }
+
+      .exteraTopMargin {
+        margin-top: 8px;
+      }
+
+      .defaultPostImage {
+        margin-top: 16px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -129,8 +137,6 @@
       </div>
 
       <div class="layout vertical">
-        <yp-language-selector name="defaultLocale" no-user-events
-                              selected-locale="{{group.configuration.defaultLocale}}"></yp-language-selector>
 
         <div class="subHeaders">[[t('headerMedia')]]</div>
 
@@ -168,7 +174,7 @@
           <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
         </div>
 
-        <div class="subHeaders">[[t('access')]]</div>
+        <div class="subHeaders exteraTopMargin">[[t('access')]]</div>
 
         <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
           <paper-radio-button name="public" hidden$="[[!publicCommunity]]">[[t('group.public')]]</paper-radio-button>
@@ -200,11 +206,33 @@
                         checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
         </paper-checkbox>
 
-        <paper-checkbox name="forceSecureSamlEmployeeLogin" disabled$="[[!forceSecureSamlEmployeeLogin]]"
+        <paper-checkbox name="forceSecureSamlEmployeeLogin" disabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{group.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
         </paper-checkbox>
 
+        <paper-input id="samlLoginButtonUrl"
+                     disabled$="[[!hasSamlLoginProvider]]"
+                     name="samlLoginButtonUrl"
+                     label="[[t('samlLoginButtonUrl')]]"
+                     value="{{group.configuration.samlLoginButtonUrl}}">
+        </paper-input>
+
+        <paper-input id="customSamlLoginText"
+                     disabled$="[[!hasSamlLoginProvider]]"
+                     name="customSamlLoginText"
+                     label="[[t('customSamlLoginText')]]"
+                     value="{{group.configuration.customSamlLoginText}}">
+        </paper-input>
+
         <input type="hidden" name="status" value="[[status]]">
+
+        <div class="subHeaders">[[t('languageSettings')]]</div>
+
+        <yp-language-selector name="defaultLocale" no-user-events
+                              selected-locale="{{group.configuration.defaultLocale}}"></yp-language-selector>
+        <paper-checkbox name="disableNameAutoTranslation" checked$="{{group.configuration.disableNameAutoTranslation}}">
+          [[t('disableNameAutoTranslation')]]
+        </paper-checkbox>
 
         <div class="subHeaders">[[t('themeSettings')]]</div>
 
@@ -284,6 +312,10 @@
           [[t('attachmentsEnabled')]]
         </paper-checkbox>
         <paper-checkbox name="hideNewPost" checked$="{{group.configuration.hideNewPost}}">[[t('hideNewPost')]]</paper-checkbox>
+        <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">
+          [[t('hideNewPostOnPostPage')]]
+        </paper-checkbox>
+
         <paper-checkbox name="hidePostCover" checked$="{{group.configuration.hidePostCover}}">[[t('hidePostCover')]]
         </paper-checkbox>
         <paper-checkbox name="hidePostDescription" checked$="{{group.configuration.hidePostDescription}}">
@@ -294,9 +326,6 @@
         </paper-checkbox>
         <paper-checkbox name="hideDebateIcon" checked$="{{group.configuration.hideDebateIcon}}">
           [[t('hideDebateIcon')]]
-        </paper-checkbox>
-        <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">
-          [[t('hideNewPostOnPostPage')]]
         </paper-checkbox>
         <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
         <paper-checkbox name="hidePostAuthor" checked$="{{group.configuration.hidePostAuthor}}">
@@ -331,8 +360,7 @@
         </paper-textarea>
         <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
 
-
-        <div class="layout vertical additionalSettings">
+        <div class="layout vertical additionalSettings defaultPostImage">
           <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false"
                           target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
             <iron-icon class="icon" icon="photo-camera"></iron-icon>
@@ -359,7 +387,7 @@
         <input type="hidden" name="themeId" value="[[themeId]]">
         <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
 
-        <div class="subHeaders">[[t('voteSettings')]]</div>
+        <div class="subHeaders exteraTopMargin">[[t('voteSettings')]]</div>
 
         <div class="layout horizontal">
           <paper-dropdown-menu label="[[t('endorsementButtons')]]">
@@ -386,6 +414,9 @@
         <div class="subHeaders">[[t('pointSettings')]]</div>
 
         <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
+        <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">
+          [[t('hidePointAuthor')]]
+        </paper-checkbox>
 
         <paper-input id="alternativePointForHeader"
                      name="alternativePointForHeader"
@@ -453,12 +484,6 @@
         <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
         <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
         <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
-        <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">
-          [[t('hidePointAuthor')]]
-        </paper-checkbox>
-        <paper-checkbox name="disableNameAutoTranslation" checked$="{{group.configuration.disableNameAutoTranslation}}">
-          [[t('disableNameAutoTranslation')]]
-        </paper-checkbox>
 
         <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
         <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
