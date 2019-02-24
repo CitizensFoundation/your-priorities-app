@@ -222,6 +222,19 @@
                      char-counter class="mainInput">
         </paper-input>
 
+        <paper-input id="samlLoginButtonUrl"
+                     name="samlLoginButtonUrl"
+                     label="[[t('samlLoginButtonUrl')]]"
+                     value="{{domain.configuration.samlLoginButtonUrl}}">
+        </paper-input>
+
+        <paper-input id="customSamlLoginText"
+                     name="customSamlLoginText"
+                     label="[[t('customSamlLoginText')]]"
+                     value="{{domain.configuration.customSamlLoginText}}">
+        </paper-input>
+
+
         <paper-input id="samlCallbackUrl"
                      name="samlCallbackUrl"
                      type="text"

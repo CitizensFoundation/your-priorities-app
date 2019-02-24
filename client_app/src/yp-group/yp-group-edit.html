@@ -202,28 +202,14 @@
                         checked$="{{group.configuration.disableFacebookLoginForGroup}}">
           [[t('disableFacebookLoginForGroup')]]
         </paper-checkbox>
-        <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+        <paper-checkbox name="forceSecureSamlLogin" ddisabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
         </paper-checkbox>
 
-        <paper-checkbox name="forceSecureSamlEmployeeLogin" disabled$="[[!hasSamlLoginProvider]]"
+        <paper-checkbox name="forceSecureSamlEmployeeLogin" ddisabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{group.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
         </paper-checkbox>
-
-        <paper-input id="samlLoginButtonUrl"
-                     disabled$="[[!hasSamlLoginProvider]]"
-                     name="samlLoginButtonUrl"
-                     label="[[t('samlLoginButtonUrl')]]"
-                     value="{{group.configuration.samlLoginButtonUrl}}">
-        </paper-input>
-
-        <paper-input id="customSamlLoginText"
-                     disabled$="[[!hasSamlLoginProvider]]"
-                     name="customSamlLoginText"
-                     label="[[t('customSamlLoginText')]]"
-                     value="{{group.configuration.customSamlLoginText}}">
-        </paper-input>
-
+        
         <input type="hidden" name="status" value="[[status]]">
 
         <div class="subHeaders">[[t('languageSettings')]]</div>
@@ -409,7 +395,6 @@
         <paper-checkbox name="hideDownVoteForPost" checked$="{{group.configuration.hideDownVoteForPost}}">
           [[t('hideDownVoteForPost')]]
         </paper-checkbox>
-
 
         <div class="subHeaders">[[t('pointSettings')]]</div>
 
