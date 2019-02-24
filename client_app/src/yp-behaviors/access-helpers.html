@@ -30,7 +30,7 @@
       } else if (!window.appUser) {
         return false;
       } else {
-        console.error("No object in hasAccess");
+        console.warn("No object in hasAccess");
         return false;
       }
     },
@@ -47,7 +47,7 @@
       } else if (post) {
         return false;
       } else {
-        console.error("No post in hasAccess");
+        console.warn("No post in hasAccess");
         return false;
       }
     },
@@ -71,7 +71,7 @@
       } else if (post) {
         return false;
       } else {
-        console.error("No post in hasAccess");
+        console.warn("No post in hasAccess");
         return false;
       }
     },
@@ -82,7 +82,7 @@
       } else if (group) {
         return false;
       } else {
-        console.error("No group in hasAccess");
+        console.warn("No group in hasAccess");
         return false;
       }
     },
@@ -93,7 +93,7 @@
       } else if (community) {
         return false;
       } else {
-        console.error("No community in hasAccess");
+        console.warn("No community in hasAccess");
         return false;
       }
     },
@@ -104,7 +104,7 @@
       } else if (domain) {
         return false;
       } else {
-        console.error("No domain in hasAccess");
+        console.warn("No domain in hasAccess");
         return false;
       }
     },

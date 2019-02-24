@@ -744,6 +744,8 @@
               window.appGlobals.signupTermsPageId = null;
             }
 
+            window.appGlobals.currentGroup = this.post.Group;
+
             if (this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) {
               window.appGlobals.currentGroupForceSaml = true;
             } else {

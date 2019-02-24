@@ -29,10 +29,16 @@
         @apply --layout-center-justified;
       }
 
-      .accessHeader {
-        color: var(--primary-color,#777);
+      .subHeaders {
+        color: #111;
         font-weight: normal;
-        margin-bottom: 0;
+        margin-bottom: 8px;
+        margin-top: 30px;
+        font-size: 22px;
+        width: 100%;
+        padding-bottom: 6px;
+        border-bottom: 3px solid #aaa;
+        text-align: center;
       }
 
       paper-radio-button {
@@ -79,10 +85,11 @@
       .uploadSection {
         max-width: 300px;
         margin: 8px;
+        margin-bottom: 0;
       }
 
       .useVideoCover {
-        margin-left: 4px;
+        margin-left: 16px;
         margin-top: 4px;
       }
 
@@ -94,53 +101,66 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog name="groupEdit" id="editDialog" title="[[editHeaderText]]" icon="people" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
-        <paper-input id="name"
-                     name="name"
-                     type="text"
-                     label="[[t('name')]]"
-                     value="{{group.name}}"
-                     maxlength="50"
-                     char-counter>
-        </paper-input>
+    <yp-edit-dialog name="groupEdit" id="editDialog" title="[[editHeaderText]]" icon="people" action="[[action]]"
+                    method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
 
-        <paper-textarea id="objectives"
-                        name="objectives"
-                        value="{{group.objectives}}"
-                        always-float-label="[[group.objectives]]"
-                        label="[[t('group.objectives')]]"
-                        char-counter
-                        rows="2"
-                        max-rows="5"
-                        maxlength="300">
-        </paper-textarea>
+      <paper-input id="name"
+                   name="name"
+                   type="text"
+                   label="[[t('name')]]"
+                   value="{{group.name}}"
+                   maxlength="50"
+                   char-counter>
+      </paper-input>
 
-        <div class="horizontal end-justified layout">
-          <emoji-selector id="emojiSelectorDescription"></emoji-selector>
-        </div>
+      <paper-textarea id="objectives"
+                      name="objectives"
+                      value="{{group.objectives}}"
+                      always-float-label="[[group.objectives]]"
+                      label="[[t('group.objectives')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      maxlength="300">
+      </paper-textarea>
+
+      <div class="horizontal end-justified layout">
+        <emoji-selector id="emojiSelectorDescription"></emoji-selector>
+      </div>
+
+      <div class="layout vertical">
+        <yp-language-selector name="defaultLocale" no-user-events
+                              selected-locale="{{group.configuration.defaultLocale}}"></yp-language-selector>
+
+        <div class="subHeaders">[[t('headerMedia')]]</div>
 
         <div class="layout horizontal wrap">
           <div class="layout vertical additionalSettings uploadSection">
-            <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_logoImageUploaded">
+            <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo"
+                            method="POST" on-success="_logoImageUploaded">
               <iron-icon class="icon" icon="photo-camera"></iron-icon>
               <span>[[t('image.logo.upload')]]</span>
             </yp-file-upload>
           </div>
 
           <div class="layout vertical additionalSettings uploadSection">
-            <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header" method="POST" on-success="_headerImageUploaded">
+            <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=group-header"
+                            method="POST" on-success="_headerImageUploaded">
               <iron-icon class="icon" icon="photo-camera"></iron-icon>
               <span>[[t('image.header.upload')]]</span>
             </yp-file-upload>
           </div>
 
           <template is="dom-if" if="[[hasVideoUpload]]">
-            <div class="layout vertical uploadSection">
-              <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST" on-success="_videoUploaded">
+            <div class="layout horizontal uploadSection">
+              <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload method="POST"
+                              on-success="_videoUploaded">
                 <iron-icon class="icon" icon="videocam"></iron-icon>
                 <span>[[t('uploadVideo')]]</span>
               </yp-file-upload>
-              <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]" checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+              <paper-checkbox class="useVideoCover" name="useVideoCover" disabled$="[[!uploadedVideoId]]"
+                              checked$="{{group.configuration.useVideoCover}}">[[t('useVideoCover')]]
+              </paper-checkbox>
             </div>
           </template>
 
@@ -148,97 +168,91 @@
           <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
         </div>
 
-        <div class="layout vertical">
-          <div class="layout vertical config">
-            <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+        <div class="subHeaders">[[t('access')]]</div>
 
-            <paper-input id="themeOverrideColorPrimary"
-                         name="themeOverrideColorPrimary"
-                         allowed-pattern="[#-#0-9A-Fa-f]"
-                         maxlength="7"
-                         char-counter
-                         label="[[t('themeOverrideColorPrimary')]]"
-                         value="{{group.configuration.themeOverrideColorPrimary}}">
-              <div prefix>#</div>
-            </paper-input>
-
-            <paper-input id="themeOverrideColorAccent"
-                         name="themeOverrideColorAccent"
-                         allowed-pattern="[#-#0-9A-Fa-f]"
-                         maxlength="7"
-                         char-counter
-                         label="[[t('themeOverrideColorAccent')]]"
-                         value="{{group.configuration.themeOverrideColorAccent}}">
-            </paper-input>
-
-            <div class="themeOverrideInfo">
-              <b><em>[[t('themeOverrideColorInfo')]]</em></b>
-            </div>
-
-            <div class="layout vertical">
-              <paper-dropdown-menu label="[[t('status.select')]]">
-                <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
-                  <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
-                    <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
-                  </template>
-                </paper-listbox>
-              </paper-dropdown-menu>
-
-              <input type="hidden" name="status" value="[[status]]">
-
-              <div class="layout horizontal">
-                <paper-dropdown-menu label="[[t('endorsementButtons')]]">
-                  <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
-                    <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
-                      <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
-                    </template>
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <input type="hidden" name="endorsementButtons" value="[[endorsementButtons]]">
-              </div>
-            </div>
-          </div>
-          <div class="layout vertical config">
-            <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
-            <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
-            <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
-            <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
-            <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
-            <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]</paper-checkbox>
-            <paper-checkbox name="allowPointVideoUploads" disabled$="[[!hasVideoUpload]]" checked$="{{allowPointVideoUploads}}">[[t('allowPointVideoUploads')]]</paper-checkbox>
-            <paper-checkbox name="allowPostAudioUploads" disabled$="[[!hasAudioUpload]]" checked$="{{allowPostAudioUploads}}">[[t('allowPostAudioUploads')]]</paper-checkbox>
-            <paper-checkbox name="allowPointAudioUploads" disabled$="[[!hasAudioUpload]]" checked$="{{allowPointAudioUploads}}">[[t('allowPointAudioUploads')]]</paper-checkbox>
-          </div>
-        </div>
-
-        <input type="hidden" name="canVote" value$="[[canVote]]">
-        <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
-        <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
-        <input type="hidden" name="showWhoPostedPosts" value$="[[showWhoPostedPosts]]">
-
-        <input type="hidden" name="themeId" value="[[themeId]]">
-
-        <yp-language-selector name="defaultLocale" no-user-events selected-locale="{{group.configuration.defaultLocale}}"></yp-language-selector>
-
-        <h3 class="accessHeader">[[t('access')]]</h3>
         <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
           <paper-radio-button name="public" hidden$="[[!publicCommunity]]">[[t('group.public')]]</paper-radio-button>
-          <paper-radio-button name="open_to_community" hidden$="[[publicCommunity]]">[[t('group.openToCommunity')]]</paper-radio-button>
+          <paper-radio-button name="open_to_community" hidden$="[[publicCommunity]]">[[t('group.openToCommunity')]]
+          </paper-radio-button>
           <paper-radio-button name="closed">[[t('group.closed')]]</paper-radio-button>
           <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
         </paper-radio-group>
 
-        <hr>
+        <paper-dropdown-menu label="[[t('status.select')]]">
+          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{status}}">
+            <template is="dom-repeat" items="[[collectionStatusOptions]]" as="statusOption">
+              <paper-item name="[[statusOption.name]]">[[statusOption.translatedName]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
 
-        <div class="layout horizontal">
-          <div class="layout vertical additionalSettings">
-            <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
-              <iron-icon class="icon" icon="photo-camera"></iron-icon>
-              <span>[[t('defaultPostImage')]]</span>
-            </yp-file-upload>
-          </div>
-          <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
+        <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">
+          [[t('allowAnonymousUsers')]]
+        </paper-checkbox>
+        <paper-checkbox name="allowAnonymousAutoLogin" checked$="{{group.configuration.allowAnonymousAutoLogin}}">
+          [[t('allowAnonymousAutoLogin')]]
+        </paper-checkbox>
+        <paper-checkbox name="disableFacebookLoginForGroup"
+                        checked$="{{group.configuration.disableFacebookLoginForGroup}}">
+          [[t('disableFacebookLoginForGroup')]]
+        </paper-checkbox>
+        <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+                        checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
+        </paper-checkbox>
+
+        <paper-checkbox name="forceSecureSamlEmployeeLogin" disabled$="[[!forceSecureSamlEmployeeLogin]]"
+                        checked$="{{group.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
+        </paper-checkbox>
+
+        <input type="hidden" name="status" value="[[status]]">
+
+        <div class="subHeaders">[[t('themeSettings')]]</div>
+
+        <yp-theme-selector object="[[group]]" selected-theme="{{themeId}}"></yp-theme-selector>
+
+        <paper-input id="themeOverrideColorPrimary"
+                     name="themeOverrideColorPrimary"
+                     allowed-pattern="[#-#0-9A-Fa-f]"
+                     maxlength="7"
+                     char-counter
+                     label="[[t('themeOverrideColorPrimary')]]"
+                     value="{{group.configuration.themeOverrideColorPrimary}}">
+          <div prefix>#</div>
+        </paper-input>
+
+        <paper-input id="themeOverrideColorAccent"
+                     name="themeOverrideColorAccent"
+                     allowed-pattern="[#-#0-9A-Fa-f]"
+                     maxlength="7"
+                     char-counter
+                     label="[[t('themeOverrideColorAccent')]]"
+                     value="{{group.configuration.themeOverrideColorAccent}}">
+        </paper-input>
+
+        <div class="themeOverrideInfo">
+          <em>[[t('themeOverrideColorInfo')]]</em>
         </div>
+
+        <div class="subHeaders">[[t('postSettings')]]</div>
+
+        <paper-checkbox name="canAddNewPosts" checked$="{{canAddNewPosts}}">[[t('group.canAddNewPosts')]]</paper-checkbox>
+        <paper-checkbox name="locationHidden" checked$="{{locationHidden}}">[[t('group.locationHidden')]]</paper-checkbox>
+        <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
+        <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
+
+
+        <paper-input id="postDescriptionLimit"
+                     name="postDescriptionLimit"
+                     type="text"
+                     label="[[t('postDescriptionLimit')]]"
+                     value="{{group.configuration.postDescriptionLimit}}"
+                     maxlength="4"
+                     char-counter>
+        </paper-input>
+
+        <paper-checkbox name="allowPostVideoUploads" disabled$="[[!hasVideoUpload]]"
+                        checked$="{{allowPostVideoUploads}}">[[t('allowPostVideoUploads')]]
+        </paper-checkbox>
 
         <paper-input id="videoPostUploadLimitSec"
                      name="videoPostUploadLimitSec"
@@ -250,76 +264,55 @@
                      value="{{group.configuration.videoPostUploadLimitSec}}">
         </paper-input>
 
-        <paper-input id="videoPointUploadLimitSec"
-                     name="videoPointUploadLimitSec"
-                     type="text"
-                     maxlength="3"
+        <paper-checkbox name="allowPostAudioUploads" disabled$="[[!hasAudioUpload]]"
+                        checked$="{{allowPostAudioUploads}}">[[t('allowPostAudioUploads')]]
+        </paper-checkbox>
+        <paper-input id="audioPostUploadLimitSec"
+                     name="audioPostUploadLimitSec"
                      allowed-pattern="[0-9]"
-                     disabled$="[[!hasVideoUpload]]"
-                     label="[[t('videoPointUploadLimitSec')]]"
-                     value="{{group.configuration.videoPointUploadLimitSec}}">
+                     maxlength="3"
+                     type="number"
+                     disabled$="[[!hasaudioUpload]]"
+                     label="[[t('audioPostUploadLimitSec')]]"
+                     value="{{group.configuration.audioPostUploadLimitSec}}">
         </paper-input>
 
-      <paper-input id="audioPostUploadLimitSec"
-                   name="audioPostUploadLimitSec"
-                   allowed-pattern="[0-9]"
-                   maxlength="3"
-                   type="number"
-                   disabled$="[[!hasaudioUpload]]"
-                   label="[[t('audioPostUploadLimitSec')]]"
-                   value="{{group.configuration.audioPostUploadLimitSec}}">
-      </paper-input>
+        <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">
+          [[t('moreContactInformation')]]
+        </paper-checkbox>
+        <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">
+          [[t('attachmentsEnabled')]]
+        </paper-checkbox>
+        <paper-checkbox name="hideNewPost" checked$="{{group.configuration.hideNewPost}}">[[t('hideNewPost')]]</paper-checkbox>
+        <paper-checkbox name="hidePostCover" checked$="{{group.configuration.hidePostCover}}">[[t('hidePostCover')]]
+        </paper-checkbox>
+        <paper-checkbox name="hidePostDescription" checked$="{{group.configuration.hidePostDescription}}">
+          [[t('hidePostDescription')]]
+        </paper-checkbox>
+        <paper-checkbox name="hidePostActionsInGrid" checked$="{{group.configuration.hidePostActionsInGrid}}">
+          [[t('hidePostActionsInGrid')]]
+        </paper-checkbox>
+        <paper-checkbox name="hideDebateIcon" checked$="{{group.configuration.hideDebateIcon}}">
+          [[t('hideDebateIcon')]]
+        </paper-checkbox>
+        <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">
+          [[t('hideNewPostOnPostPage')]]
+        </paper-checkbox>
+        <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
+        <paper-checkbox name="hidePostAuthor" checked$="{{group.configuration.hidePostAuthor}}">
+          [[t('hidePostAuthor')]]
+        </paper-checkbox>
+        <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
+          [[t('hidePostFilterAndSearch')]]
+        </paper-checkbox>
+        <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]"
+                        checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]
+        </paper-checkbox>
+        <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">
+          [[t('disablePostPageLink')]]
+        </paper-checkbox>
 
-      <paper-input id="audioPointUploadLimitSec"
-                   name="audioPointUploadLimitSec"
-                   type="text"
-                   maxlength="3"
-                   allowed-pattern="[0-9]"
-                   disabled$="[[!hasaudioUpload]]"
-                   label="[[t('audioPointUploadLimitSec')]]"
-                   value="{{group.configuration.audioPointUploadLimitSec}}">
-      </paper-input>
-
-      <paper-input id="maxDaysBackForRecommendations"
-                   name="maxDaysBackForRecommendations"
-                   type="text"
-                   maxlength="4"
-                   allowed-pattern="[0-9]"
-                   label="[[t('maxDaysBackForRecommendations')]]"
-                   value="{{group.configuration.maxDaysBackForRecommendations}}">
-      </paper-input>
-
-        <div class="layout vertical config">
-          <h2>[[t('additionalGroupConfig')]]</h2>
-          <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">[[t('attachmentsEnabled')]]</paper-checkbox>
-          <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">[[t('moreContactInformation')]]</paper-checkbox>
-          <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
-          <paper-checkbox name="hideNewPostOnPostPage" checked$="{{hideNewPostOnPostPage}}">[[t('hideNewPostOnPostPage')]]</paper-checkbox>
-          <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
-          <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
-          <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
-          <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
-          <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">[[t('hidePointAuthor')]]</paper-checkbox>
-          <paper-checkbox name="hideDownVoteForPost" checked$="{{group.configuration.hideDownVoteForPost}}">[[t('hideDownVoteForPost')]]</paper-checkbox>
-          <paper-checkbox name="hidePostAuthor" checked$="{{group.configuration.hidePostAuthor}}">[[t('hidePostAuthor')]]</paper-checkbox>
-          <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">[[t('allowAnonymousUsers')]]</paper-checkbox>
-          <paper-checkbox name="allowAnonymousAutoLogin" checked$="{{group.configuration.allowAnonymousAutoLogin}}">[[t('allowAnonymousAutoLogin')]]</paper-checkbox>
-          <paper-checkbox name="disableFacebookLoginForGroup" checked$="{{group.configuration.disableFacebookLoginForGroup}}">[[t('disableFacebookLoginForGroup')]]</paper-checkbox>
-          <paper-checkbox name="disableNameAutoTranslation" checked$="{{group.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
-          <paper-checkbox name="hideNewPost" checked$="{{group.configuration.hideNewPost}}">[[t('hideNewPost')]]</paper-checkbox>
-          <paper-checkbox name="hideVoteCount" checked$="{{group.configuration.hideVoteCount}}">[[t('hideVoteCount')]]</paper-checkbox>
-          <paper-checkbox name="hideVoteCountUntilVoteCompleted" checked$="{{group.configuration.hideVoteCountUntilVoteCompleted}}">[[t('hideVoteCountUntilVoteCompleted')]]</paper-checkbox>
-          <paper-checkbox name="hidePostCover" checked$="{{group.configuration.hidePostCover}}">[[t('hidePostCover')]]</paper-checkbox>
-          <paper-checkbox name="hidePostDescription" checked$="{{group.configuration.hidePostDescription}}">[[t('hidePostDescription')]]</paper-checkbox>
-          <paper-checkbox name="hidePostActionsInGrid" checked$="{{group.configuration.hidePostActionsInGrid}}">[[t('hidePostActionsInGrid')]]</paper-checkbox>
-          <paper-checkbox name="hideDebateIcon" checked$="{{group.configuration.hideDebateIcon}}">[[t('hideDebateIcon')]]</paper-checkbox>
-          <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">[[t('disablePostPageLink')]]</paper-checkbox>
-          <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]" checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]</paper-checkbox>
-          <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">[[t('hidePostFilterAndSearch')]]</paper-checkbox>
-          <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]" checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]</paper-checkbox>
-        </div>
-
-      <paper-input id="defaultLocationLongLat"
+        <paper-input id="defaultLocationLongLat"
                      name="defaultLocationLongLat"
                      type="text"
                      label="[[t('defaultLocationLongLat')]]"
@@ -327,16 +320,72 @@
                      maxlength="100" style="width: 300px;">
         </paper-input>
 
-        <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
-        <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
-        <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
-        <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
-        <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
-        <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
-        <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
-        <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
-        <input type="hidden" name="allowPostAudioUploads" value$="[[allowPostAudioUploads]]">
-        <input type="hidden" name="allowPointAudioUploads" value$="[[allowPointAudioUploads]]">
+        <paper-textarea id="structuredQuestions"
+                        name="structuredQuestions"
+                        type="text"
+                        rows="2"
+                        always-float-label="[[group.configuration.structuredQuestions]]"
+                        maxrows="2"
+                        label="[[t('structuredQuestions')]]"
+                        value="{{group.configuration.structuredQuestions}}">
+        </paper-textarea>
+        <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
+
+
+        <div class="layout vertical additionalSettings">
+          <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false"
+                          target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
+            <iron-icon class="icon" icon="photo-camera"></iron-icon>
+            <span>[[t('defaultPostImage')]]</span>
+          </yp-file-upload>
+        </div>
+
+        <div class="layout horizontal">
+          <div class="layout vertical additionalSettings">
+            <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false"
+                            target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
+              <iron-icon class="icon" icon="photo-camera"></iron-icon>
+              <span>[[t('defaultDataImage')]]</span>
+            </yp-file-upload>
+          </div>
+
+          <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
+        </div>
+
+        <input type="hidden" name="canVote" value$="[[canVote]]">
+        <input type="hidden" name="canAddNewPosts" value$="[[canAddNewPosts]]">
+        <input type="hidden" name="locationHidden" value$="[[locationHidden]]">
+        <input type="hidden" name="showWhoPostedPosts" value$="[[showWhoPostedPosts]]">
+        <input type="hidden" name="themeId" value="[[themeId]]">
+        <input type="hidden" name="uploadedDefaultPostImageId" value="[[uploadedDefaultPostImageId]]">
+
+        <div class="subHeaders">[[t('voteSettings')]]</div>
+
+        <div class="layout horizontal">
+          <paper-dropdown-menu label="[[t('endorsementButtons')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
+              <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
+                <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="endorsementButtons" value="[[endorsementButtons]]">
+        </div>
+        <paper-checkbox name="canVote" checked$="{{canVote}}">[[t('group.canVote')]]</paper-checkbox>
+        <paper-checkbox name="hideVoteCount" checked$="{{group.configuration.hideVoteCount}}">[[t('hideVoteCount')]]
+        </paper-checkbox>
+        <paper-checkbox name="hideVoteCountUntilVoteCompleted"
+                        checked$="{{group.configuration.hideVoteCountUntilVoteCompleted}}">
+          [[t('hideVoteCountUntilVoteCompleted')]]
+        </paper-checkbox>
+        <paper-checkbox name="hideDownVoteForPost" checked$="{{group.configuration.hideDownVoteForPost}}">
+          [[t('hideDownVoteForPost')]]
+        </paper-checkbox>
+
+
+        <div class="subHeaders">[[t('pointSettings')]]</div>
+
+        <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>
 
         <paper-input id="alternativePointForHeader"
                      name="alternativePointForHeader"
@@ -374,15 +423,62 @@
                      char-counter>
         </paper-input>
 
-        <paper-input id="postDescriptionLimit"
-                     name="postDescriptionLimit"
+        <paper-checkbox name="allowPointVideoUploads" disabled$="[[!hasVideoUpload]]"
+                        checked$="{{allowPointVideoUploads}}">[[t('allowPointVideoUploads')]]
+        </paper-checkbox>
+        <paper-input id="videoPointUploadLimitSec"
+                     name="videoPointUploadLimitSec"
                      type="text"
-                     label="[[t('postDescriptionLimit')]]"
-                     value="{{group.configuration.postDescriptionLimit}}"
-                     maxlength="4"
-                     char-counter>
+                     maxlength="3"
+                     allowed-pattern="[0-9]"
+                     disabled$="[[!hasVideoUpload]]"
+                     label="[[t('videoPointUploadLimitSec')]]"
+                     value="{{group.configuration.videoPointUploadLimitSec}}">
         </paper-input>
 
+        <paper-checkbox name="allowPointAudioUploads" disabled$="[[!hasAudioUpload]]"
+                        checked$="{{allowPointAudioUploads}}">[[t('allowPointAudioUploads')]]
+        </paper-checkbox>
+        <paper-input id="audioPointUploadLimitSec"
+                     name="audioPointUploadLimitSec"
+                     type="text"
+                     maxlength="3"
+                     allowed-pattern="[0-9]"
+                     disabled$="[[!hasaudioUpload]]"
+                     label="[[t('audioPointUploadLimitSec')]]"
+                     value="{{group.configuration.audioPointUploadLimitSec}}">
+        </paper-input>
+
+        <div class="subHeaders">[[t('additionalGroupConfig')]]</div>
+        <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
+        <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
+        <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
+        <paper-checkbox name="hidePointAuthor" checked$="{{group.configuration.hidePointAuthor}}">
+          [[t('hidePointAuthor')]]
+        </paper-checkbox>
+        <paper-checkbox name="disableNameAutoTranslation" checked$="{{group.configuration.disableNameAutoTranslation}}">
+          [[t('disableNameAutoTranslation')]]
+        </paper-checkbox>
+
+        <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
+        <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
+        <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
+        <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
+        <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
+        <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
+        <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
+        <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
+        <input type="hidden" name="allowPostAudioUploads" value$="[[allowPostAudioUploads]]">
+        <input type="hidden" name="allowPointAudioUploads" value$="[[allowPointAudioUploads]]">
+
+        <paper-input id="maxDaysBackForRecommendations"
+                     name="maxDaysBackForRecommendations"
+                     type="text"
+                     maxlength="4"
+                     allowed-pattern="[0-9]"
+                     label="[[t('maxDaysBackForRecommendations')]]"
+                     value="{{group.configuration.maxDaysBackForRecommendations}}">
+        </paper-input>
 
         <paper-input id="externalGoalTriggerUrl"
                      name="externalGoalTriggerUrl"
@@ -391,30 +487,8 @@
                      value="{{group.configuration.externalGoalTriggerUrl}}">
         </paper-input>
 
-        <div class="layout horizontal">
-          <div class="layout vertical additionalSettings">
-            <yp-file-upload id="defaultDataImageUpload" raised="true" multi="false" target="/api/images?itemType=group-logo" method="POST" on-success="_defaultDataImageUploaded">
-              <iron-icon class="icon" icon="photo-camera"></iron-icon>
-              <span>[[t('defaultDataImage')]]</span>
-            </yp-file-upload>
-          </div>
-
-          <input type="hidden" name="uploadedDefaultDataImageId" value="[[uploadedDefaultDataImageId]]">
-        </div>
-
-      <paper-textarea id="structuredQuestions"
-                      name="structuredQuestions"
-                      type="text"
-                      rows="2"
-                      always-float-label="[[group.configuration.structuredQuestions]]"
-                      maxrows="2"
-                      label="[[t('structuredQuestions')]]"
-                      value="{{group.configuration.structuredQuestions}}">
-      </paper-textarea>
-      <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
-
-      <div class="layout vertical config" hidden$="[[!group.Categories]]">
-          <h2>[[t('categories.the_all')]]</h2>
+        <div class="layout vertical config" hidden$="[[!group.Categories]]">
+          <div class="subHeaders">[[t('categories.the_all')]]</div>
           <template is="dom-repeat" items="[[group.Categories]]" as="category">
             <paper-item data-category$="[[category]]" data-category-name$="[[category.name]]" on-tap="_openCategoryEdit">
               <img sizing="cover" height="24" width="24" class="filterIcon" src="[[_categoryImageSrc(category)]]">
@@ -422,6 +496,8 @@
             </paper-item>
           </template>
         </div>
+      </div>
+
     </yp-edit-dialog>
   </template>
 
@@ -583,7 +659,7 @@
     _refreshCategories: function (newCategory) {
       var newCategories = [];
       __.each(this.group.Categories, function (oldCategory) {
-        if (oldCategory.id===newCategory.id) {
+        if (oldCategory.id === newCategory.id) {
           newCategories.push(newCategory)
         } else {
           newCategories.push(oldCategory);
@@ -596,13 +672,13 @@
       return this.getImageFormatUrl(category.CategoryIconImages, 0);
     },
 
-    _endorsementButtonsOptions: function(language) {
+    _endorsementButtonsOptions: function (language) {
       if (this.t) {
         return [
           {name: 'hearts', translatedName: this.t('endorsementButtonsHeart')},
-          {name: 'arrows', translatedName: this.t('endorsementArrows') },
-          {name: 'thumbs', translatedName: this.t('endorsementThumbs') },
-          {name: 'hats', translatedName: this.t('endorsementHats') }
+          {name: 'arrows', translatedName: this.t('endorsementArrows')},
+          {name: 'thumbs', translatedName: this.t('endorsementThumbs')},
+          {name: 'hats', translatedName: this.t('endorsementHats')}
         ]
       } else {
         return [];
@@ -624,7 +700,7 @@
     _publicCommunity: function (group) {
       debugger;
       if (group) {
-        return group.Community.access===0
+        return group.Community.access === 0
       } else {
         return false;
       }
@@ -637,7 +713,7 @@
           var ajax = document.createElement('iron-ajax');
           ajax.handleAs = 'json';
           ajax.contentType = 'application/json';
-          ajax.url = '/api/videos/'+group.id+'/completeAndAddToGroup';
+          ajax.url = '/api/videos/' + group.id + '/completeAndAddToGroup';
           ajax.method = 'PUT';
           ajax.body = {
             videoId: this.uploadedVideoId
@@ -655,19 +731,19 @@
     },
 
     _finishRedirect: function (group) {
-      this.redirectTo("/group/"+group.id);
+      this.redirectTo("/group/" + group.id);
       window.appGlobals.activity('completed', 'editGroup');
     },
 
     _groupChanged: function (group, oldValue) {
       if (group) {
-        if (group.access==0) {
+        if (group.access == 0) {
           this.groupAccess = "public"
-        } else if (group.access==1) {
+        } else if (group.access == 1) {
           this.groupAccess = "closed"
-        } else if (group.access==2) {
+        } else if (group.access == 2) {
           this.groupAccess = "secret"
-        } else if (group.access==3) {
+        } else if (group.access == 3) {
           this.groupAccess = "open_to_community"
         }
 
@@ -675,7 +751,7 @@
           this.set('status', group.status);
         }
 
-        if (group.configuration && group.configuration.canVote!=undefined) {
+        if (group.configuration && group.configuration.canVote != undefined) {
           this.set('canVote', group.configuration.canVote);
           this.set('canAddNewPosts', group.configuration.canAddNewPosts);
         } else {
@@ -683,7 +759,7 @@
           this.set('canAddNewPosts', true);
         }
 
-        if (group.configuration && group.configuration.endorsementButtons!=undefined) {
+        if (group.configuration && group.configuration.endorsementButtons != undefined) {
           this.set('endorsementButtons', group.configuration.endorsementButtons);
         } else {
           this.set('endorsementButtons', "hearts");
@@ -704,14 +780,14 @@
 
         this.async(function () {
           if (this.community) {
-            if (this.community.access==0) {
+            if (this.community.access == 0) {
               debugger;
               this.set('publicCommunity', true);
             } else {
               this.set('publicCommunity', false);
             }
           } else if (group && group.Community) {
-            if (group.Community.access==0) {
+            if (group.Community.access == 0) {
               this.set('publicCommunity', true);
             } else {
               this.set('publicCommunity', false);
@@ -720,10 +796,10 @@
         });
 
         if ((!group || !group.id) && window.appGlobals.hasVideoUpload) {
-          if (this.allowPostVideoUploads===null) {
+          if (this.allowPostVideoUploads === null) {
             this.set('allowPostVideoUploads', true);
           }
-          if (this.allowPointVideoUploads===null) {
+          if (this.allowPointVideoUploads === null) {
             this.set('allowPointVideoUploads', true);
           }
         }
@@ -735,10 +811,10 @@
         }
 
         if ((!group || !group.id) && window.appGlobals.hasAudioUpload) {
-          if (this.allowPostAudioUploads===null) {
+          if (this.allowPostAudioUploads === null) {
             this.set('allowPostAudioUploads', true);
           }
-          if (this.allowPointAudioUploads===null) {
+          if (this.allowPointAudioUploads === null) {
             this.set('allowPointAudioUploads', true);
           }
         }
@@ -760,7 +836,7 @@
     },
 
     _setFromConfiguration: function (propertyName, setNullDefault) {
-      if (this.group.configuration && this.group.configuration[propertyName]!=undefined && this.group.configuration[propertyName]!=="") {
+      if (this.group.configuration && this.group.configuration[propertyName] != undefined && this.group.configuration[propertyName] !== "") {
         this.set(propertyName, this.group.configuration[propertyName]);
       } else {
         this.set(propertyName, setNullDefault ? null : false);
@@ -786,10 +862,10 @@
 
     setup: function (group, newNotEdit, refreshFunction) {
       if (!group) {
-        this.set('group', { name: '', objectives: '', access: 0, status: 'active' });
+        this.set('group', {name: '', objectives: '', access: 0, status: 'active'});
       } else {
         this.set('group', group);
-        if (group.GroupLogoVideos && group.GroupLogoVideos.length>0) {
+        if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
           this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
         }
       }
@@ -805,13 +881,13 @@
 
       var defaultAccess = 0;
       if (this.community) {
-        if (this.community.access!=0) {
+        if (this.community.access != 0) {
           this.set('groupAccess', 'open_to_community');
           this.set('group.access', 3);
           defaultAccess = 3;
         }
       } else if (this.group.Community) {
-        if (this.group.Community.access!=0) {
+        if (this.group.Community.access != 0) {
           this.set('groupAccess', 'open_to_community');
           defaultAccess = 3;
         }
