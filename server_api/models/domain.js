@@ -220,7 +220,7 @@ module.exports = function(sequelize, DataTypes) {
                 certInPemFormat : true,
                 issuer          : domain.secret_api_keys.saml.issuer ? domain.secret_api_keys.saml.issuer : null,
                 entryPoint      : domain.secret_api_keys.saml.entryPoint,
-                cert            : null, //domain.secret_api_keys.saml.cert,
+                cert            : domain.secret_api_keys.saml.cert ? domain.secret_api_keys.saml.cert : null,
                 callbackUrl     : null //'https://'+callbackDomainName+'/authenticate_from_island_is' //(domain.secret_api_keys.saml.callbackUrl && domain.secret_api_keys.saml.callbackUrl!="") ? domain.secret_api_keys.saml.callbackUrl : null
               });
             }
