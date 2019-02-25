@@ -168,7 +168,11 @@ module.exports = function(sequelize, DataTypes) {
         var parsedDomain = parseDomain(req.headers.host);
 
         if (parsedDomain && parsedDomain.subdomain) {
-          hostname = parsedDomain.subdomain;
+          if (parsedDomain.subdomain.indexOf('.') > -1) {
+            hostname = parsedDomain.subdomain.split('.')[0];
+          } else {
+            hostname = parsedDomain.subdomain;
+          }
         }
 
         if (hostname!=null) {

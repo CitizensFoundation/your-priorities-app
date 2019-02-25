@@ -246,7 +246,7 @@ module.exports = function(sequelize, DataTypes) {
         };
         const eltr = new aws.ElasticTranscoder({
           apiVersion: '2012–09–25',
-          region: 'eu-west-1'
+          region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
         });
         eltr.readJob(params, function(error, data) {
           if (error) {
@@ -380,7 +380,7 @@ module.exports = function(sequelize, DataTypes) {
       startTranscodingJob: function (video, callback) {
         const eltr = new aws.ElasticTranscoder({
           apiVersion: '2012–09–25',
-          region: 'eu-west-1'
+          region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
         });
         var fileKey = video.meta.fileKey;
         var pipelineId = process.env.AWS_TRANSCODER_PIPELINE_ID;

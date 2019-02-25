@@ -310,9 +310,9 @@
           </template>
 
           <section>
-            <div class="layout vertical center-center" hidden$="[[hidePostImageUploads]]">
+            <div class="layout vertical center-center">
               <div class="layout horizontal center-center wrap">
-                <div class="layout vertical center-center self-start uploadSection">
+                <div class="layout vertical center-center self-start uploadSection" hidden$="[[group.configuration.hidePostImageUploads]]">
                   <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header"
                                   method="POST" on-success="_imageUploaded">
                     <iron-icon class="icon" icon="photo-camera"></iron-icon>

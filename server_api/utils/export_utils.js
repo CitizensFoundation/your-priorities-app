@@ -2,6 +2,7 @@ var models = require('../models/index');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
+const moment = require('moment');
 
 var hostName;
 
@@ -205,12 +206,12 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
 const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
   let outFileContent = "Date, User id, Email, Method, Department\n";
 
-  models.AcActivities.findAll({
+  models.AcActivity.findAll({
     where: {
       type: 'activity.user.login',
-      communityId: communityId
+      community_id: communityId
     },
-    order: ['created_at'],
+    order: 'created_at DESC',
     attributes: ['object','created_at'],
     include: [
       {
@@ -219,7 +220,7 @@ const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
       }
     ]
   }).then( (activities) => {
-    async.series(activities, (activity, seriesCallback) => {
+    async.eachSeries(activities, (activity, seriesCallback) => {
       const date = moment(activity.created_at).format("DD/MM/YY HH:mm");
       outFileContent += date+","+activity.User.id+","+activity.User.email+","+activity.object.loginType+","+activity.object.userDepartment+"\n";
       seriesCallback();

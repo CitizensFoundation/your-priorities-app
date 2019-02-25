@@ -209,7 +209,7 @@
         <paper-checkbox name="forceSecureSamlEmployeeLogin" ddisabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{group.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
         </paper-checkbox>
-        
+
         <input type="hidden" name="status" value="[[status]]">
 
         <div class="subHeaders">[[t('languageSettings')]]</div>
@@ -314,9 +314,7 @@
           [[t('hideDebateIcon')]]
         </paper-checkbox>
         <paper-checkbox name="hideEmoji" checked$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
-        <paper-checkbox name="hidePostAuthor" checked$="{{group.configuration.hidePostAuthor}}">
-          [[t('hidePostAuthor')]]
-        </paper-checkbox>
+
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
           [[t('hidePostFilterAndSearch')]]
         </paper-checkbox>

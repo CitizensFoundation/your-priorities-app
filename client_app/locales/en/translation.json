@@ -1,4 +1,5 @@
 {
+  "exportLogins": "Export all logins",
   "customSamlLoginText": "Custom SAML login text",
   "forceSecureSamlEmployeeLogin": "Force secure SAML employee login",
   "languageSettings": "Language Settings",
