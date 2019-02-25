@@ -4,6 +4,7 @@
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-session/yp-session.html">
 <link rel="import" href="../yp-ajax/yp-ajax.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
 
 <dom-module id="yp-app-user">
   <template>
@@ -35,7 +36,8 @@
         is: 'yp-app-user',
 
         behaviors: [
-          Polymer.ypLanguageBehavior
+          Polymer.ypLanguageBehavior,
+          Polymer.AccessHelpers
         ],
 
         listeners: {
@@ -331,9 +333,24 @@
         },
 
         loggedIn: function () {
-          return this.user!=null &&
-                 (!window.appGlobals.currentGroupForceSaml ||
-                 (window.appGlobals.currentGroupForceSaml && this.user.loginProvider === "saml"));
+          var isCorrectLoginProviderAndAgency = true;
+          if (window.appGlobals.currentGroupForceSaml) {
+            if (!this.checkGroupAccess(window.appGlobals.currentGroup)) {
+              if (this.user) {
+                if (this.user.loginProvider !== "saml")
+                  isCorrectLoginProviderAndAgency = false;
+
+                if (window.appGlobals.currentGroupForceSamlEmployee) {
+                  if (!this.user.isSamlEmployee) {
+                    isCorrectLoginProviderAndAgency = false;
+                  }
+                }
+              } else {
+                isCorrectLoginProviderAndAgency = false;
+              }
+            }
+          }
+          return this.user != null && isCorrectLoginProviderAndAgency;
         },
 
         logout: function () {
@@ -547,6 +564,12 @@
           if (user.missingEmail) {
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
               dialog.open(user.loginProvider);
+            }.bind(this));
+          } else if (user.profile_data &&
+                     user.profile_data.saml_show_confirm_email_completed &&
+                     user.profile_data.saml_show_confirm_email_completed===false) {
+            Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
+              dialog.open(user.loginProvider, true, user.email);
             }.bind(this));
           }
 

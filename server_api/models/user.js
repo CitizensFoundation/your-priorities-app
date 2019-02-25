@@ -18,6 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     my_gender: DataTypes.STRING,
     description: DataTypes.TEXT,
     profile_data: DataTypes.JSONB,
+    private_profile_data: DataTypes.JSONB,
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     facebook_id: DataTypes.BIGINT,
     facebook_profile: DataTypes.JSONB,
@@ -89,7 +90,78 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
 
       serializeSamlUser: function (profile, callback) {
-        log.info("User Serialized In Serialize SAML User", { context: 'serializeSamlUser', profile: profile });
+        log.info("Serialize SAML user", { context: 'serializeSamlUser', profile: profile });
+        if (profile.UserSSN) {
+          this.serializeIslandIsSamlUser(profile, callback);
+        } else if (profile.userCode && profile.pubEmpEmail) {
+          this.serializeMyNJSamlUser(profile, callback);
+        }
+      },
+
+      serializeMyNJSamlUser: function (profile, callback) {
+        log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
+        var user;
+        async.series([
+          function (seriesCallback) {
+            sequelize.models.User.find({
+              where: {
+                ssn: profile.userCode
+              },
+              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn', 'legacy_passwords_disabled']
+            }).then(function (userIn) {
+              if (userIn) {
+                user = userIn;
+                log.info("User Serialized Found MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
+                seriesCallback();
+              } else {
+                seriesCallback();
+              }
+            }).catch(function (error) {
+              seriesCallback(error);
+            })
+          },
+          function (seriesCallback) {
+            if (!user) {
+              sequelize.models.User.create(
+                {
+                  ssn: profile.userCode,
+                  name: profile.firstName + ' ' + profile.lastName,
+                  email: profile.pubEmpEmail,
+                  profile_data: {
+                    saml_show_confirm_email_completed: false
+                  },
+                  private_profile_data: {
+                    saml_agency: profile.pubEmpAgency,
+                    saml_provider: 'MyNJ'
+                  },
+                  notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+                  status: 'active'
+                }).then(function (userIn) {
+                if (userIn) {
+                  user = userIn;
+                  log.info("User Serialized Created MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
+                  seriesCallback();
+                } else {
+                  seriesCallback("Could not create user from SAML");
+                }
+              }).catch(function (error) {
+                seriesCallback(error);
+              })
+            } else {
+              seriesCallback();
+            }
+          }
+        ], function (error) {
+          if (error) {
+            callback(error);
+          } else {
+            callback(null, user);
+          }
+        });
+      },
+
+      serializeIslandIsSamlUser: function (profile, callback) {
+        log.info("User Serialized In Serialize IslandIs SAML User", { context: 'serializeSamlUser', profile: profile });
         var user;
         async.series([
           function (seriesCallback) {
@@ -97,11 +169,11 @@ module.exports = function(sequelize, DataTypes) {
               where: {
                 ssn: profile.UserSSN
               },
-              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'ssn','legacy_passwords_disabled']
+              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn','legacy_passwords_disabled']
             }).then (function (userIn) {
               if (userIn) {
                 user = userIn;
-                log.info("User Serialized Found SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
+                log.info("User Serialized Found IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
                 seriesCallback();
               } else {
                 seriesCallback();
@@ -116,12 +188,13 @@ module.exports = function(sequelize, DataTypes) {
                 {
                   ssn: profile.UserSSN,
                   name: profile.Name,
+                  private_profile_data: { saml_provider: 'island.is' },
                   notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
                   status: 'active'
                 }).then (function (userIn) {
                 if (userIn) {
                   user = userIn;
-                  log.info("User Serialized Created SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
+                  log.info("User Serialized Created IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
                   seriesCallback();
                 } else {
                   seriesCallback("Could not create user from SAML");

@@ -2,6 +2,7 @@ var models = require('../models/index');
 var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
+const moment = require('moment');
 
 var hostName;
 
@@ -202,6 +203,36 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
   });
 };
 
+const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
+  let outFileContent = "Date, User id, Email, Method, Department\n";
+
+  models.AcActivity.findAll({
+    where: {
+      type: 'activity.user.login',
+      community_id: communityId
+    },
+    order: 'created_at DESC',
+    attributes: ['object','created_at'],
+    include: [
+      {
+        model: models.User,
+        attributes: ['id','email']
+      }
+    ]
+  }).then( (activities) => {
+    async.eachSeries(activities, (activity, seriesCallback) => {
+      const date = moment(activity.created_at).format("DD/MM/YY HH:mm");
+      outFileContent += date+","+activity.User.id+","+activity.User.email+","+activity.object.loginType+","+activity.object.userDepartment+"\n";
+      seriesCallback();
+    }, (error) => {
+      callback(error, outFileContent);
+    })
+  }).catch( (error) => {
+    callback(error);
+  })
+};
+
 module.exports = {
-  getExportFileDataForGroup: getExportFileDataForGroup
+  getExportFileDataForGroup: getExportFileDataForGroup,
+  getLoginsExportDataForCommunity: getLoginsExportDataForCommunity
 };

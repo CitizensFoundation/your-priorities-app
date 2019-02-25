@@ -705,6 +705,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('secret_api_keys.twitter.client_secret', req.body.twitterClientSecret);
       domain.set('secret_api_keys.github.client_id', req.body.githubClientId);
       domain.set('secret_api_keys.github.client_secret', req.body.githubClientSecret);
+
       if (req.body.samlEntryPoint) {
         domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
         domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
@@ -715,6 +716,9 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
         domain.set('configuration', {});
       }
 
+      domain.set('configuration.customSamlLoginText', (req.body.customSamlLoginText && req.body.customSamlLoginText!="") ? req.body.customSamlLoginText : null);
+      domain.set('configuration.samlLoginButtonUrl', (req.body.samlLoginButtonUrl && req.body.samlLoginButtonUrl!="") ? req.body.samlLoginButtonUrl : null);
+
       if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
         domain.google_analytics_code = req.body.google_analytics_code;
       } else {
@@ -724,6 +728,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
       domain.set('configuration.customUserRegistrationText', (req.body.customUserRegistrationText && req.body.customUserRegistrationText!="") ? req.body.customUserRegistrationText : null);
       domain.set('configuration.downloadFacebookImagesForUser', (req.body.downloadFacebookImagesForUser && req.body.downloadFacebookImagesForUser!="") ? true : false);
       domain.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);
+
 
       if (req.body.appHomeScreenIconImageId && req.body.appHomeScreenIconImageId!="") {
         domain.set('configuration.appHomeScreenIconImageId', req.body.appHomeScreenIconImageId);

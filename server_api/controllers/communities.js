@@ -10,6 +10,9 @@ var crypto = require("crypto");
 var queue = require('../active-citizen/workers/queue');
 const getAllModeratedItemsByCommunity = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByCommunity;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
+const getLoginsExportDataForCommunity = require('../utils/export_utils').getLoginsExportDataForCommunity;
+var sanitizeFilename = require("sanitize-filename");
+var moment = require('moment');
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -1365,6 +1368,40 @@ router.get('/:communityId/flagged_content_count',  auth.can('edit community'), (
       res.sendStatus(500)
     } else {
       res.send({count: items ? items.length : 0});
+    }
+  });
+});
+
+router.get('/:communityId/export_logins', auth.can('edit community'), function(req, res) {
+  getLoginsExportDataForCommunity(req.params.communityId, req.ypDomain.domain_name, function (error, fileData) {
+    if (error) {
+      log.error('Could not export logins for commnity', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      models.Community.find({
+        where: {
+          id: req.params.communityId
+        },
+        attributes: ["id", "name"]
+      }).then(function (model) {
+        if (model) {
+          log.info('Got Login Exports', {context: 'export_logins', user: toJson(req.user.simple()) });
+          var communityName = sanitizeFilename(model.name).replace(/ /g,'');
+          var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
+          var filename = 'logins_export_for_community_id_'+model.id+'_'+
+            communityName+'_'+dateString+'.csv';
+          res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
+          res.charset = 'utf-8';
+          res.attachment(filename);
+          res.send(fileData);
+        } else {
+          log.error('Cant find community', { err: error, context: 'export_logins', user: toJson(req.user.simple()) });
+          res.sendStatus(404);
+        }
+      }).catch(function (error) {
+        log.error('Could not export for community', { err: error, context: 'export_logins', user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      });
     }
   });
 });

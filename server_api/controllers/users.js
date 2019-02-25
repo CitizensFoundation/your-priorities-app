@@ -97,7 +97,7 @@ var getUserWithAll = function (userId, callback) {
 router.post('/login', function (req, res) {
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
     console.log(user);
-    log.info('User Login', {context: 'view', user: toJson(req.user)});
+    log.info('User Login', {context: 'view', userId: req.user ? req.user.id : null});
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
         log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});
@@ -1051,6 +1051,33 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
     }).catch(function (error) {
       log.error("Error from setEmail", { err: error });
       res.sendStatus(500);
+  });
+});
+
+router.put('/email_confirmation_shown', auth.isLoggedIn, function(req, res, next) {
+  models.User.find({
+    attribues: ['id', 'profile_data'],
+    where: {
+      id: req.user.id
+    }}).then( function (user) {
+    if (user) {
+      if (user.profile_data && user.profile_data.saml_show_confirm_email_completed) {
+         user.set('profile_data.saml_show_confirm_email_completed', true);
+         user.save().then(function () {
+           res.sendStatus(200);
+         }).catch(function (error) {
+           log.error("Error in saving user", { error });
+           res.sendStatus(500);
+         });
+      } else {
+        res.sendStatus(200);
+      }
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error("Error from setEmail", { err: error });
+    res.sendStatus(500);
   });
 });
 

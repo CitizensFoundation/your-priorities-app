@@ -47,7 +47,8 @@
       <paper-dialog id="dialog">
         <h2>[[heading]]</h2>
         <h2 class="setEmailInfo">
-          [[t('user.setEmailInfo')]]
+          <span hidden$="[[!onlyConfirmingEmail]]">[[t('user.setEmailConfirmationInfo')]]</span>
+          <span hidden$="[[onlyConfirmingEmail]]">[[t('user.setEmailInfo')]]</span>
         </h2>
         <form is="iron-form" id="form">
           <paper-input id="email"
@@ -74,6 +75,7 @@
         <div class="buttons">
           <yp-ajax id="setEmailAjax" dispatch-error method="PUT" url="/api/users/missingEmail/setEmail" on-response="_setEmailResponse"></yp-ajax>
           <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
+          <yp-ajax id="confirmEmailShownAjax" dispatch-error method="PUT" url="/api/users/email_confirmation_shown"></yp-ajax>
           <paper-button on-tap="_logout">[[t('user.logout')]]</paper-button>
           <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
           <paper-button raised on-tap="_notNow">[[t('later')]]</paper-button>
@@ -105,7 +107,6 @@
     ],
 
     properties: {
-
 
       emailValidationPattern: {
         type: String,
@@ -152,6 +153,16 @@
 
       target: {
         type: Object
+      },
+
+      onlyConfirmingEmail: {
+        type: Boolean,
+        value: false
+      },
+
+      originalConfirmationEmail: {
+        type: String,
+        value: null
       }
     },
 
@@ -196,8 +207,13 @@
           this.$$("#linkAccountsAjax").generateRequest();
         } else {
           window.appGlobals.activity('confirm', 'setEmail');
-          this.$$("#setEmailAjax").body = {email: this.email };
-          this.$$("#setEmailAjax").generateRequest();
+          if (!this.originalConfirmationEmail || (this.originalConfirmationEmail!=this.email)) {
+            this.$$("#setEmailAjax").body = {email: this.email };
+            this.$$("#setEmailAjax").generateRequest();
+          } else {
+            window.appGlobals.notifyUserViaToast(this.t('userHaveSetEmail')+ " " + this.email);
+            this.close();
+          }
         }
       } else {
         this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.completeForm'));
@@ -228,8 +244,16 @@
       this.$.dialog.fire('iron-resize');
     },
 
-    open: function(loginProvider) {
+    open: function(loginProvider, onlyConfirming, email) {
+      this.set('onlyConfirmingEmail', onlyConfirming);
+      if (email) {
+        this.set('email', email);
+        this.set('originalConfirmationEmail', email);
+      }
       this.$$("#dialog").open();
+      if (this.onlyConfirmingEmail) {
+        this.$.confirmEmailShownAjax.generateRequest();
+      }
     },
 
     close: function() {

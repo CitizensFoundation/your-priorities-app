@@ -255,13 +255,18 @@ module.exports = function(sequelize, DataTypes) {
         var domainName;
         var parsedDomain = parseDomain(req.headers.host);
         if (parsedDomain && parsedDomain.domain) {
-          domainName = parsedDomain.domain+'.'+parsedDomain.tld;
+          if (parsedDomain.subdomain.indexOf('.') > -1) {
+            var subdomain = parsedDomain.subdomain.split('.')[parsedDomain.subdomain.split('.').length-1];
+            domainName = subdomain+'.'+parsedDomain.domain+'.'+parsedDomain.tld;
+          } else {
+            domainName = parsedDomain.domain+'.'+parsedDomain.tld;
+          }
         } else if (parsedDomain) {
           domainName = parsedDomain.tld;
         } else {
           domainName = 'localhost';
         }
-        log.info("DOMAIN NAME", { domainName: domainName });
+        log.info("Domain name", { domainName: domainName });
 
         Domain.findOrCreate({where: { domain_name: domainName },
                                       defaults: { access: Domain.ACCESS_PUBLIC,

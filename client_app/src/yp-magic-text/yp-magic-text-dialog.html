@@ -13,9 +13,20 @@
 
       #dialog {
         background-color: #FFF;
+        max-width: 50%;
+      }
+
+      @media (max-width: 1100px) {
+        #dialog {
+          max-width: 80%;
+        }
       }
 
       @media (max-width: 600px) {
+        #dialog {
+          max-width: 100%;
+        }
+
         paper-dialog {
           padding: 0;
           margin: 0;
