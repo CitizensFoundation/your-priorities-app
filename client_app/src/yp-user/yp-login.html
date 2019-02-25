@@ -332,21 +332,21 @@
               <paper-tab>[[t('user.register')]]</paper-tab>
             </paper-tabs>
 
-            <div class="forceSecureSamlLoginInfo" hidden$="[[!forceSecureSamlLogin]]">
-              <div hidden$="[[!customSamlLoginText]]">
-                [[customSamlLoginText]]
-              </div>
-              <div hidden$="[[customSamlLoginText]]">
-                [[t('forceSecureSamlLoginInfo')]]
-              </div>
-            </div>
-
             <div class="layout vertical innerScroll">
               <span hidden$="[[!registerMode]]">
                 <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
                   [[customUserRegistrationText]]
                 </div>
               </span>
+
+              <div class="forceSecureSamlLoginInfo" hidden$="[[!forceSecureSamlLogin]]">
+                <div hidden$="[[!customSamlLoginText]]">
+                  [[customSamlLoginText]]
+                </div>
+                <div hidden$="[[customSamlLoginText]]">
+                  [[t('forceSecureSamlLoginInfo')]]
+                </div>
+              </div>
 
               <div class="layout vertical center-center socialMediaLogin" hidden$="[[!hasAdditionalAuthMethods]]">
                 <div class="layout vertical center-center">
@@ -784,8 +784,10 @@
 
         if (window.appGlobals.currentGroupForceSaml) {
           this.set('forceSecureSamlLogin', true);
+          this.set('registerMode',1);
         } else {
           this.set('forceSecureSamlLogin', false);
+          this.set('registerMode',0);
         }
       }
     },
