@@ -367,9 +367,9 @@
                     <template is="dom-if" if="[[hasSamlLogin]]">
                       <template is="dom-if" if="[[samlLoginButtonUrl]]">
                         <div class="islandIs cursor layout horizontal center-center">
-                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" height="18" src="[[samlLoginButtonUrl]]"/>
+                          <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" src="[[samlLoginButtonUrl]]"/>
                           <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin">
-                            <img width="130" height="30" src="[[samlLoginButtonUrl]]"/>
+                            <img width="130" src="[[samlLoginButtonUrl]]"/>
                           </div>
                         </div>
                       </template>

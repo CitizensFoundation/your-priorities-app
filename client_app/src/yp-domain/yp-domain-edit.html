@@ -222,6 +222,15 @@
                      char-counter class="mainInput">
         </paper-input>
 
+        <paper-input id="samlIssuer"
+                     name="samlIssuer"
+                     type="text"
+                     label="SAML Issuer"
+                     value="{{domain.secret_api_keys.saml.issuer}}"
+                     maxlength="256"
+                     char-counter class="mainInput">
+        </paper-input>
+
         <paper-input id="samlLoginButtonUrl"
                      name="samlLoginButtonUrl"
                      label="[[t('samlLoginButtonUrl')]]"

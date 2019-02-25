@@ -710,6 +710,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
         domain.set('secret_api_keys.saml.entryPoint', req.body.samlEntryPoint);
         domain.set('secret_api_keys.saml.callbackUrl', req.body.samlCallbackUrl);
         domain.set('secret_api_keys.saml.cert', req.body.samlCert);
+        domain.set('secret_api_keys.saml.issuer', req.body.samlIssuer);
       }
 
       if (!domain.configuration) {
