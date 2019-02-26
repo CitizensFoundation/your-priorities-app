@@ -40,16 +40,20 @@
         margin-right: 4px;
         text-align: center;
       }
+
+      .setEmailInfo {
+        font-size: 18px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div id="outer">
       <paper-dialog id="dialog">
         <h2>[[heading]]</h2>
-        <h2 class="setEmailInfo">
+        <div class="setEmailInfo">
           <span hidden$="[[!onlyConfirmingEmail]]">[[t('user.setEmailConfirmationInfo')]]</span>
           <span hidden$="[[onlyConfirmingEmail]]">[[t('user.setEmailInfo')]]</span>
-        </h2>
+        </div>
         <form is="iron-form" id="form">
           <paper-input id="email"
                        type="text"
@@ -85,7 +89,7 @@
               <span hidden$="[[onlyConfirmingEmail]]">
                 [[t('user.setEmail')]]
               </span>
-              <span hidden$="[[onlyConfirmingEmail]]">
+              <span hidden$="[[!onlyConfirmingEmail]]">
                 [[t('changeEmail')]]
               </span>
             </span>
