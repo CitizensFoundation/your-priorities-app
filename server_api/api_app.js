@@ -283,6 +283,10 @@ passport.deserializeUser(function (sessionUser, done) {
     if (user) {
       log.info("User Deserialized", {context: 'deserializeUser', user: user.email});
       user.loginProvider = sessionUser.loginProvider;
+      if (user.private_profile_data && user.private_profile_data.saml_agency && sessionUser.loginProvider==='saml') {
+        user.isSamlEmployee = true;
+        log.info("SAML isSamlEmployee is true");
+      }
       done(null, user);
       return null;
     } else {

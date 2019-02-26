@@ -626,6 +626,9 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
         if (req.user.loginProvider)
           user.dataValues.loginProvider = req.user.loginProvider;
 
+        if (req.user.isSamlEmployee)
+          user.dataValues.isSamlEmployee = req.user.isSamlEmployee;
+
         res.send(user);
       }
     })
