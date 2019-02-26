@@ -127,7 +127,7 @@ module.exports = function(sequelize, DataTypes) {
               sequelize.models.User.create(
                 {
                   ssn: profile["urn:mynj:userCode"],
-                  name: profile.firstName + ' ' + profile.lastName,
+                  name: profile.FirstName + ' ' + profile.LastName,
                   email: profile["urn:mynj:pubEmpEmail"],
                   profile_data: {
                     saml_show_confirm_email_completed: false
