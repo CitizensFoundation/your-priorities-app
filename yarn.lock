@@ -8440,7 +8440,7 @@ passport-oauth@^1.0.0:
 
 "passport-sso@git+https://github.com/rbjarnason/passport-sso.git":
   version "0.0.6"
-  resolved "git+https://github.com/rbjarnason/passport-sso.git#0a5988e6386db415129b3d92c8b671f06244094f"
+  resolved "git+https://github.com/rbjarnason/passport-sso.git#130fec13afb9251397eb43d3479fc85b8a67c6d7"
   dependencies:
     passport "^0.3.2"
 
