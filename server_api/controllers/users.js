@@ -1058,26 +1058,30 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
 });
 
 router.put('/missingEmail/email_confirmation_shown', auth.isLoggedIn, function(req, res, next) {
+  log.info("email_confirmation_shown 1");
   models.User.find({
     attributes: ['id', 'profile_data'],
     where: {
       id: req.user.id
     }}).then( function (user) {
-    if (user) {
-      if (user.profile_data && user.profile_data.saml_show_confirm_email_completed===false) {
-         user.set('profile_data.saml_show_confirm_email_completed', true);
-         user.save().then(function () {
-           res.sendStatus(200);
-         }).catch(function (error) {
-           log.error("Error in saving user", { error });
-           res.sendStatus(500);
-         });
+      log.info("email_confirmation_shown 2");
+      if (user) {
+        log.info("email_confirmation_shown 3");
+        if (user.profile_data && user.profile_data.saml_show_confirm_email_completed===false) {
+           log.info("email_confirmation_shown 4");
+           user.set('profile_data.saml_show_confirm_email_completed', true);
+           user.save().then(function () {
+             res.sendStatus(200);
+           }).catch(function (error) {
+             log.error("Error in saving user", { error });
+             res.sendStatus(500);
+           });
+        } else {
+          res.sendStatus(200);
+        }
       } else {
-        res.sendStatus(200);
+        res.sendStatus(404);
       }
-    } else {
-      res.sendStatus(404);
-    }
   }).catch(function (error) {
     log.error("Error from setEmail", { err: error });
     res.sendStatus(500);
