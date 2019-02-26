@@ -1158,6 +1158,24 @@ router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, nex
             req.user.github_id = null;
           } else if (req.user.loginProvider=='saml') {
             user.set('ssn', req.user.ssn);
+
+            var profileData = req.user.profile_data;
+            if (profileData && user.profile_data)
+              profileData = _.merge(req.user.profile_data, user.profile_data);
+
+            if (!profileData && user.profile_data)
+              profileData = user.profile_data;
+
+            var privateProfileData = req.user.private_profile_data;
+            if (privateProfileData && user.private_profile_data)
+              privateProfileData = _.merge(req.user.private_profile_data, user.private_profile_data);
+
+            if (!privateProfileData && user.private_profile_data)
+              privateProfileData = user.private_profile_data;
+
+            user.set('private_profile_data', privateProfileData);
+            user.set('profile_data', profileData);
+
             user.UserSSN = user.ssn;
             user.provider = "saml";
             req.user.set('ssn', null);
