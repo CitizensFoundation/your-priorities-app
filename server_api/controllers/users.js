@@ -1057,7 +1057,7 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
   });
 });
 
-router.put('/email_confirmation_shown', auth.isLoggedIn, function(req, res, next) {
+router.put('/missingEmail/email_confirmation_shown', auth.isLoggedIn, function(req, res, next) {
   models.User.find({
     attributes: ['id', 'profile_data'],
     where: {

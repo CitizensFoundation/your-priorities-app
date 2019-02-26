@@ -265,6 +265,22 @@
                       class="mainInput">
       </paper-textarea>
 
+      <paper-input id="customBackURL"
+                   name="customBackURL"
+                   type="text"
+                   maxlength="256"
+                   label="[[t('customBackURL')]]"
+                   value="{{community.configuration.customBackURL}}">
+      </paper-input>
+
+      <paper-input id="customBackName"
+                   name="customBackName"
+                   type="text"
+                   maxlength="20"
+                   label="[[t('customBackName')]]"
+                   value="{{community.configuration.customBackName}}">
+      </paper-input>
+
       <paper-input id="appHomeScreenShortName"
                    name="appHomeScreenShortName"
                    type="text"

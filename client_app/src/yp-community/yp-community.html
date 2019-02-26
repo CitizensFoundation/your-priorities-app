@@ -432,14 +432,20 @@
               headerTitle = this.community.Domain.name;
               headerDescription = this.community.Domain.description;
             }
+
+
             this.fire("change-header", {
-              headerTitle: headerTitle,
+              headerTitle: this.community.configuration.customBackName ?
+                this.community.configuration.customBackName :
+                headerTitle,
               headerDescription: headerDescription,
               headerIcon: "group-work",
+              useHardBack: this.community.configuration.customBackURL ? true : false,
               disableDomainUpLink: (this.community.configuration &&
                 this.community.configuration.disableDomainUpLink === true),
               documentTitle: this.community.name,
-              backPath: backPath
+              backPath:  this.community.configuration.customBackURL ?
+                this.community.configuration.customBackURL : backPath
             });
           }
           this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";

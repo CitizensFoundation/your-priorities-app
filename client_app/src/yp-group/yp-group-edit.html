@@ -468,17 +468,6 @@
         <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
         <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
 
-        <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
-        <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
-        <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
-        <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
-        <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
-        <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
-        <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
-        <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
-        <input type="hidden" name="allowPostAudioUploads" value$="[[allowPostAudioUploads]]">
-        <input type="hidden" name="allowPointAudioUploads" value$="[[allowPointAudioUploads]]">
-
         <paper-input id="maxDaysBackForRecommendations"
                      name="maxDaysBackForRecommendations"
                      type="text"
@@ -494,6 +483,33 @@
                      label="[[t('externalGoalTriggerUrl')]]"
                      value="{{group.configuration.externalGoalTriggerUrl}}">
         </paper-input>
+
+        <paper-input id="customBackURL"
+                     name="customBackURL"
+                     type="text"
+                     maxlength="256"
+                     label="[[t('customBackURL')]]"
+                     value="{{group.configuration.customBackURL}}">
+        </paper-input>
+
+        <paper-input id="customBackName"
+                     name="customBackName"
+                     type="text"
+                     maxlength="20"
+                     label="[[t('customBackName')]]"
+                     value="{{group.configuration.customBackName}}">
+        </paper-input>
+
+        <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
+        <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
+        <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
+        <input type="hidden" name="hideHelpIcon" value$="[[hideHelpIcon]]">
+        <input type="hidden" name="hideEmoji" value$="[[hideEmoji]]">
+        <input type="hidden" name="hideGroupHeader" value$="[[hideGroupHeader]]">
+        <input type="hidden" name="allowPostVideoUploads" value$="[[allowPostVideoUploads]]">
+        <input type="hidden" name="allowPointVideoUploads" value$="[[allowPointVideoUploads]]">
+        <input type="hidden" name="allowPostAudioUploads" value$="[[allowPostAudioUploads]]">
+        <input type="hidden" name="allowPointAudioUploads" value$="[[allowPointAudioUploads]]">
 
         <div class="layout vertical config" hidden$="[[!group.Categories]]">
           <div class="subHeaders">[[t('categories.the_all')]]</div>

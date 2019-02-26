@@ -816,17 +816,17 @@
           }
 
           this.fire("change-header", {
-            headerTitle: this.group.configuration.fixedReturnUrlName ?
-                           this.group.configuration.fixedReturnUrlName :
+            headerTitle: this.group.configuration.customBackName ?
+                           this.group.configuration.customBackName :
                            this.group.Community.name,
             headerDescription: this.group.Community.description,
             headerIcon: "social:group",
             documentTitle: this.group.name,
             enableSearch: true,
             hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
-            useHardBack: this.group.configuration.fixedReturnUrl ? true : false,
-            backPath:  this.group.configuration.fixedReturnUrl ?
-                         this.group.configuration.fixedReturnUrl :
+            useHardBack: this.group.configuration.customBackURL ? true : false,
+            backPath:  this.group.configuration.customBackURL ?
+                         this.group.configuration.customBackURL :
                          "/community/" + this.group.community_id
           });
 
