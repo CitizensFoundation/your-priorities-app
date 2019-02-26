@@ -1059,12 +1059,12 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
 
 router.put('/email_confirmation_shown', auth.isLoggedIn, function(req, res, next) {
   models.User.find({
-    attribues: ['id', 'profile_data'],
+    attributes: ['id', 'profile_data'],
     where: {
       id: req.user.id
     }}).then( function (user) {
     if (user) {
-      if (user.profile_data && user.profile_data.saml_show_confirm_email_completed) {
+      if (user.profile_data && user.profile_data.saml_show_confirm_email_completed===false) {
          user.set('profile_data.saml_show_confirm_email_completed', true);
          user.save().then(function () {
            res.sendStatus(200);
