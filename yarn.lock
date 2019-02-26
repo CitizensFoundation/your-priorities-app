@@ -8428,7 +8428,7 @@ passport-oauth@^1.0.0:
 
 "passport-saml@git+https://github.com/rbjarnason/passport-saml.git#master":
   version "0.15.0"
-  resolved "git+https://github.com/rbjarnason/passport-saml.git#ca7bff883272bbabe301d9e95e10061b39bf5b7b"
+  resolved "git+https://github.com/rbjarnason/passport-saml.git#d61aee72450e2e5cb34695d3e72da8bacdf452ca"
   dependencies:
     passport-strategy "*"
     q "1.1.x"
