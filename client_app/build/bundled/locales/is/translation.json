@@ -695,7 +695,8 @@
     "registrationError": "Villa við nýskráningu",
     "loginError": "Vill við innskráningu",
     "completeForm": "Kláraðu að fylla út form",
-    "loginNotAuthorized": "Netfang eða lykilorð rangt"
+    "loginNotAuthorized": "Netfang eða lykilorð rangt",
+    "setEmailConfirmationInfo": "Þetta netfang verður notað til að senda þér tilkynningar þú getur breytt því."
   },
 
   "other": "Aðrir",
