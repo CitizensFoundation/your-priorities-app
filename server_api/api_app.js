@@ -168,7 +168,7 @@ var bearerCallback = function (req, token) {
 };
 
 app.use(function (req, res, next) {
-  if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/login') > -1) {
+  if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/login') > -1 || req.url.indexOf('saml_assertion') > -1) {
     sso.init(req.ypDomain.loginHosts, req.ypDomain.loginProviders, {
       authorize: bearerCallback,
       login: models.User.localCallback
