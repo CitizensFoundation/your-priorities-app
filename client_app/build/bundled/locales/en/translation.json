@@ -1,4 +1,6 @@
 {
+  "customBackURL": "Custom back URL",
+  "customBackName": "Custom back name",
   "changeEmail": "Change email",
   "exportLogins": "Export all logins",
   "customSamlLoginText": "Custom SAML login text",
