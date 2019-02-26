@@ -77,6 +77,7 @@
           <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
           <yp-ajax id="confirmEmailShownAjax" dispatch-error method="PUT" url="/api/users/email_confirmation_shown"></yp-ajax>
           <paper-button on-tap="_logout" hidden$="[[onlyConfirmingEmail]]">[[t('user.logout')]]</paper-button>
+          <paper-button dialog-dismiss hidden$="[[!onlyConfirmingEmail]]">[[t('cancel')]]</paper-button>
           <paper-button on-tap="_forgotPassword" hidden$="[[!needPassword]]">[[t('user.newPassword')]]</paper-button>
           <paper-button raised on-tap="_notNow" hidden$="[[onlyConfirmingEmail]]">[[t('later')]]</paper-button>
           <paper-button raised id="sendButton" autofocus on-tap="_validateAndSend">
