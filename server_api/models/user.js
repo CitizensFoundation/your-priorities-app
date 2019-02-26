@@ -128,12 +128,12 @@ module.exports = function(sequelize, DataTypes) {
                 {
                   ssn: profile["urn:mynj:userCode"],
                   name: profile.firstName + ' ' + profile.lastName,
-                  email: profile.profile["urn:mynj:pubEmpEmail"],
+                  email: profile["urn:mynj:pubEmpEmail"],
                   profile_data: {
                     saml_show_confirm_email_completed: false
                   },
                   private_profile_data: {
-                    saml_agency: profile.profile["urn:mynj:pubEmpAgency"],
+                    saml_agency: profile["urn:mynj:pubEmpAgency"],
                     saml_provider: 'MyNJ'
                   },
                   notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
