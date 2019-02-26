@@ -227,8 +227,15 @@
                      type="text"
                      label="SAML Issuer"
                      value="{{domain.secret_api_keys.saml.issuer}}"
-                     maxlength="256"
-                     char-counter class="mainInput">
+                     class="mainInput">
+        </paper-input>
+
+        <paper-input id="samlIdentifierFormat"
+                     name="samlIdentifierFormat"
+                     type="text"
+                     label="SAML Identifier Format"
+                     value="{{domain.secret_api_keys.saml.identifierFormat}}"
+                     class="mainInput">
         </paper-input>
 
         <paper-input id="samlLoginButtonUrl"
