@@ -340,7 +340,9 @@
                 if (this.user.loginProvider !== "saml")
                   isCorrectLoginProviderAndAgency = false;
 
-                if (window.appGlobals.currentGroupForceSamlEmployee) {
+                if (window.appGlobals.currentGroup &&
+                    window.appGlobals.currentGroup.configuration &&
+                    window.appGlobals.currentGroup.configuration.forceSecureSamlEmployeeLogin) {
                   if (!this.user.isSamlEmployee) {
                     isCorrectLoginProviderAndAgency = false;
                   }
