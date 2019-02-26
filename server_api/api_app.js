@@ -391,6 +391,8 @@ app.post('/saml_assertion', function (req, res) {
           }
           res.sendStatus(500);
         });
+      } else {
+        res.sendStatus(500);
       }
     } else {
       log.info("SAML SAML 3 General", {domainId: req.ypDomain.id});

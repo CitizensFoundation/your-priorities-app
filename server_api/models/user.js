@@ -93,8 +93,10 @@ module.exports = function(sequelize, DataTypes) {
         log.info("Serialize SAML user", { context: 'serializeSamlUser', profile: profile });
         if (profile.UserSSN) {
           this.serializeIslandIsSamlUser(profile, callback);
-        } else if (profile.userCode && profile.pubEmpEmail) {
+        } else if (profile["urn:mynj:userCode"]) {
           this.serializeMyNJSamlUser(profile, callback);
+        } else {
+          callback("Can't find SAML serialize handler");
         }
       },
 
@@ -105,7 +107,7 @@ module.exports = function(sequelize, DataTypes) {
           function (seriesCallback) {
             sequelize.models.User.find({
               where: {
-                ssn: profile.userCode
+                ssn: profile["urn:mynj:userCode"]
               },
               attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn', 'legacy_passwords_disabled']
             }).then(function (userIn) {
@@ -124,14 +126,14 @@ module.exports = function(sequelize, DataTypes) {
             if (!user) {
               sequelize.models.User.create(
                 {
-                  ssn: profile.userCode,
+                  ssn: profile["urn:mynj:userCode"],
                   name: profile.firstName + ' ' + profile.lastName,
-                  email: profile.pubEmpEmail,
+                  email: profile.profile["urn:mynj:pubEmpEmail"],
                   profile_data: {
                     saml_show_confirm_email_completed: false
                   },
                   private_profile_data: {
-                    saml_agency: profile.pubEmpAgency,
+                    saml_agency: profile.profile["urn:mynj:pubEmpAgency"],
                     saml_provider: 'MyNJ'
                   },
                   notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
