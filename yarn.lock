@@ -8428,7 +8428,7 @@ passport-oauth@^1.0.0:
 
 "passport-saml@git+https://github.com/rbjarnason/passport-saml.git#master":
   version "0.15.0"
-  resolved "git+https://github.com/rbjarnason/passport-saml.git#43bcecacde7529662b4a27c7a39d313bad12292e"
+  resolved "git+https://github.com/rbjarnason/passport-saml.git#df3840f310fc908d8f679f76833bb9126669d02a"
   dependencies:
     passport-strategy "*"
     q "1.1.x"
@@ -12328,12 +12328,14 @@ xmlbuilder@8.2.2:
   resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-8.2.2.tgz#69248673410b4ba42e1a6136551d2922335aa773"
 
 xmlbuilder@~9.0.1:
-  version "9.0.4"
-  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-9.0.4.tgz#519cb4ca686d005a8420d3496f3f0caeecca580f"
+  version "9.0.7"
+  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-9.0.7.tgz#132ee63d2ec5565c557e20f4c22df9aca686b10d"
+  integrity sha1-Ey7mPS7FVlxVfiD0wi35rKaGsQ0=
 
 xmldom@0.1.x, xmldom@~0.1.15:
   version "0.1.27"
   resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.27.tgz#d501f97b3bdb403af8ef9ecc20573187aadac0e9"
+  integrity sha1-1QH5ezvbQDr4757MIFcxh6rawOk=
 
 xmldom@=0.1.19:
   version "0.1.19"
