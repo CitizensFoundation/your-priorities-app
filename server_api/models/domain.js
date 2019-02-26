@@ -221,7 +221,7 @@ module.exports = function(sequelize, DataTypes) {
                 issuer          : domain.secret_api_keys.saml.issuer ? domain.secret_api_keys.saml.issuer : null,
                 entryPoint      : domain.secret_api_keys.saml.entryPoint,
                 cert            : domain.secret_api_keys.saml.cert ? domain.secret_api_keys.saml.cert : null,
-                callbackUrl     : null //'https://'+callbackDomainName+'/authenticate_from_island_is' //(domain.secret_api_keys.saml.callbackUrl && domain.secret_api_keys.saml.callbackUrl!="") ? domain.secret_api_keys.saml.callbackUrl : null
+                callbackUrl     : (domain.secret_api_keys.saml.callbackUrl && domain.secret_api_keys.saml.callbackUrl!="") ? domain.secret_api_keys.saml.callbackUrl : null
               });
             }
             seriesCallback();
