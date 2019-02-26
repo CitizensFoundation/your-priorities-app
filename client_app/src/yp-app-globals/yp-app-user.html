@@ -547,6 +547,7 @@
 
         _isLoggedInResponse: function(event, detail) {
           var user = detail.response;
+
           if (user===0) {
             console.info("Remove user session");
             this.removeUserSession();
@@ -563,12 +564,12 @@
           } else if (user.name) {
             this.setLoggedInUser(user);
           }
+
           if (user.missingEmail) {
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
               dialog.open(user.loginProvider);
             }.bind(this));
           } else if (user.profile_data &&
-                     user.profile_data.saml_show_confirm_email_completed &&
                      user.profile_data.saml_show_confirm_email_completed===false) {
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
               dialog.open(user.loginProvider, true, user.email);
