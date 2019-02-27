@@ -125,6 +125,7 @@ module.exports = function(sequelize, DataTypes) {
           function (seriesCallback) {
             if (!user) {
               var email = profile["urn:mynj:pubEmpEmail"];
+              email = email.toLowerCase();
               sequelize.models.User.find({
                 where: {
                   email: email
