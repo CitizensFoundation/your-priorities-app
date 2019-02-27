@@ -126,7 +126,7 @@ module.exports = function(sequelize, DataTypes) {
             if (!user) {
               if (req.ypDomain.configuration &&
                   req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
-                  profile["urn:mynj:pubEmpAgency"]) {
+                  !profile["urn:mynj:pubEmpAgency"]) {
                 seriesCallback("customError");
               } else {
                 var email = profile["urn:mynj:pubEmpEmail"];
