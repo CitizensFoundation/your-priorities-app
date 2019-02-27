@@ -23,6 +23,12 @@ let replaceForYrpri = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_yp");
 };
 
+let replaceForSmarterNJ = function (data) {
+  data = data.replace(/XappNameX/g, "SmarterNJ");
+  data = data.replace(/XdescriptionX/g, "SmarterNJ is an open government initiative that uses new and innovative technology to meaningfully engage New Jerseyans. Your participation in SmarterNJ will allow us to create policies, programs and services that are more effective, more efficient, and more impactful for all New Jerseyans.");
+  return data.replace(/XmanifestPathX/g, "manifest_smarternj");
+};
+
 let replaceFromEnv = function (data) {
   data = data.replace(/XappNameX/g, process.env.YP_INDEX_APP_NAME ? process.env.YP_INDEX_APP_NAME : "Your Priorities");
   data = data.replace(/XdescriptionX/g, process.env.YP_INDEX_DESCRIPTION ? process.env.YP_INDEX_DESCRIPTION : "Citizen participation application");
@@ -48,6 +54,8 @@ let sendIndex = function (req, res) {
         res.send(replaceForBetterReykjavik(indexFileData));
       } else if (req.hostname.indexOf('betraisland.is') > -1) {
         res.send(replaceForBetterIceland(indexFileData));
+      } else if (req.hostname.indexOf('smarter.nj.gov') > -1) {
+        res.send(replaceForSmarterNJ(indexFileData));
       } else if (req.hostname.indexOf('yrpri.org') > -1) {
         res.send(replaceForYrpri(indexFileData));
       } else {
