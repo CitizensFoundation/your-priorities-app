@@ -241,7 +241,7 @@ passport.serializeUser(function (req, profile, done) {
       }
     });
   } else if (profile.provider && profile.provider === "saml") {
-    models.User.serializeSamlUser(profile, function (error, user) {
+    models.User.serializeSamlUser(profile, req, function (error, user) {
       if (error) {
         log.error("Error in User Serialized from SAML", {err: error});
         done(error);
@@ -387,16 +387,23 @@ app.post('/saml_assertion', function (req, res) {
     log.info("SAML SAML 2 General", {domainId: req.ypDomain.id, err: error});
     if (error) {
       log.error("Error from SAML General login", {err: error});
-      error.url = req.url;
-      if (airbrake) {
-        airbrake.notify(error, function (airbrakeErr, url) {
-          if (airbrakeErr) {
-            log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr, errorStatus: 500});
-          }
-          res.sendStatus(500);
+      if (error==='customError') {
+        res.render('samlCustomError', {
+          customErrorHTML: req.ypDomain.configuration.customSAMLErrorHTML,
+          closeWindowText: "Close window"
         });
       } else {
-        res.sendStatus(500);
+        error.url = req.url;
+        if (airbrake) {
+          airbrake.notify(error, function (airbrakeErr, url) {
+            if (airbrakeErr) {
+              log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr, errorStatus: 500});
+            }
+            res.sendStatus(500);
+          });
+        } else {
+          res.sendStatus(500);
+        }
       }
     } else {
       log.info("SAML SAML 3 General", {domainId: req.ypDomain.id});

@@ -202,11 +202,11 @@
                         checked$="{{group.configuration.disableFacebookLoginForGroup}}">
           [[t('disableFacebookLoginForGroup')]]
         </paper-checkbox>
-        <paper-checkbox name="forceSecureSamlLogin" ddisabled$="[[!hasSamlLoginProvider]]"
+        <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{group.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
         </paper-checkbox>
 
-        <paper-checkbox name="forceSecureSamlEmployeeLogin" ddisabled$="[[!hasSamlLoginProvider]]"
+        <paper-checkbox name="forceSecureSamlEmployeeLogin" disabled$="[[!hasSamlLoginProvider]]"
                         checked$="{{group.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
         </paper-checkbox>
 

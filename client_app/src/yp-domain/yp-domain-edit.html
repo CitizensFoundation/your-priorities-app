@@ -270,6 +270,21 @@
                         max-rows="5"
                         maxlength="20000" class="mainInput">
         </paper-textarea>
+
+        <paper-textarea id="customSAMLErrorHTML"
+                        name="customSAMLErrorHTML"
+                        value="{{domain.configuration.customSAMLErrorHTML}}"
+                        always-float-label="[[domain.configuration.customSAMLErrorHTML]]"
+                        label="[[t('customSAMLErrorHTML')]]"
+                        rows="2"
+                        max-rows="5"
+                        class="mainInput">
+        </paper-textarea>
+
+        <paper-checkbox name="forceSecureSamlEmployeeLogin"
+                        checked$="{{domain.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
+        </paper-checkbox>
+
         <div class="layout vertical">
           <paper-checkbox name="downloadFacebookImagesForUser" checked$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
           <paper-checkbox name="disableNameAutoTranslation" checked$="{{domain.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
