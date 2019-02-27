@@ -127,10 +127,7 @@ module.exports = function(sequelize, DataTypes) {
               if (req.ypDomain.configuration &&
                   req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
                   profile["urn:mynj:pubEmpAgency"]) {
-                res.render('samlCustomError', {
-                  customErrorHTML: req.ypDomain.configuration.customSAMLErrorHTML,
-                  closeWindowText: "Close window"
-                });
+                seriesCallback("customError");
               } else {
                 var email = profile["urn:mynj:pubEmpEmail"];
                 email = email.toLowerCase();
