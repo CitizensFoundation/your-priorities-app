@@ -125,6 +125,7 @@ module.exports = function(sequelize, DataTypes) {
           function (seriesCallback) {
             if (!user) {
               if (!profile["urn:mynj:userCode"] ||
+                  !profile["urn:mynj:pubEmpEmail"] ||
                  (req.ypDomain.configuration &&
                   req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
                   !profile["urn:mynj:pubEmpAgency"])) {
