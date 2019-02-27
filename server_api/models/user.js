@@ -124,9 +124,10 @@ module.exports = function(sequelize, DataTypes) {
           },
           function (seriesCallback) {
             if (!user) {
-              if (req.ypDomain.configuration &&
+              if (!profile["urn:mynj:userCode"] ||
+                 (req.ypDomain.configuration &&
                   req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
-                  !profile["urn:mynj:pubEmpAgency"]) {
+                  !profile["urn:mynj:pubEmpAgency"])) {
                 seriesCallback("customError");
               } else {
                 var email = profile["urn:mynj:pubEmpEmail"];
