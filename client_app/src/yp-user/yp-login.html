@@ -336,13 +336,13 @@
             <div class="layout vertical innerScroll">
               <span hidden$="[[!registerMode]]">
                 <div hidden$="[[!customUserRegistrationText]]" class="customUserRegistrationText">
-                  <yp-magic-text disable-translation content="[[customUserRegistrationText]]"></yp-magic-text>
+                  <yp-magic-text disable-translation linkify-cutoff="100" content="[[customUserRegistrationText]]"></yp-magic-text>
                 </div>
               </span>
 
               <div class="customUserRegistrationText" hidden$="[[!forceSecureSamlLogin]]">
                 <div hidden$="[[!customSamlLoginText]]">
-                  <yp-magic-text disable-translation content="[[customSamlLoginText]]"></yp-magic-text>
+                  <yp-magic-text disable-translation linkify-cutoff="100" content="[[customSamlLoginText]]"></yp-magic-text>
                 </div>
                 <div hidden$="[[customSamlLoginText]]">
                   [[t('forceSecureSamlLoginInfo')]]

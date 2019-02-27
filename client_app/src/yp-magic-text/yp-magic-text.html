@@ -137,6 +137,11 @@
           structuredQuestionsConfig: {
             type: String,
             value: null
+          },
+
+          linkifyCutoff: {
+            type: Number,
+            value: 35
           }
         }
       }
@@ -327,11 +332,11 @@
         this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
         this.processedContent = linkifyStr(this.processedContent, {
           format: function (value, type) {
-            if (type === 'url' && value.length > 34) {
-              value = value.slice(0, 35) + '…';
+            if (type === 'url' && value.length > this.linkifyCutoff-1) {
+              value = value.slice(0, this.linkifyCutoff) + '…';
             }
             return value;
-          },
+          }.bind(this),
           ignoreTags: [
             'b',
             'i',
