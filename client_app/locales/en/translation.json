@@ -1,4 +1,5 @@
 {
+  "hideNewPointOnNewIdea": "Hide new point on new idea",
   "customSAMLErrorHTML": "Custom SAML Error HTML",
   "redirectToGroupId": "Redirect (when no URL path) to Group Id",
   "customBackURL": "Custom back URL",

@@ -153,7 +153,7 @@
                     next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
       <paper-tabs selected="{{selected}}" id="paperTabs" focused>
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
-        <template is="dom-if" restamp if="[[newPost]]">
+        <template is="dom-if" restamp if="[[newPointShown]]">
           <paper-tab>
             <div class="layout vertical center-center">
               <div>
@@ -281,7 +281,7 @@
             </div>
           </section>
 
-          <template is="dom-if" restamp if="[[newPost]]">
+          <template is="dom-if" restamp if="[[newPointShown]]">
             <section class="subContainer">
               <paper-textarea id="pointFor"
                               required$="[[!group.configuration.newPointOptional]]"
@@ -475,6 +475,11 @@
         computed: '_showAudioCover(uploadedAudioId, currentAudioId)'
       },
 
+      newPointShown: {
+        type: Boolean,
+        computed: '_newPointShown(newPost, group)'
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -513,6 +518,15 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _newPointShown: function (newPost, group) {
+      var hideNewPoint = false;
+      if (group && group.configuration && group.configuration.hideNewPointOnNewIdea===true) {
+        hideNewPoint = true;
+      }
+
+      return newPost && !hideNewPoint;
+    },
 
     _customSubmit: function (value, valueB) {
       if (this.structuredQuestions && this.structuredQuestions.length>0) {
@@ -637,14 +651,14 @@
     },
 
     _formInvalid: function () {
-      if (this.newPost && !this.$$('#pointFor').validate()) {
+      if (this.newPointShown && !this.$$('#pointFor').validate()) {
         this.set('selected', 1);
       } else {
         this.set('selected', 0);
       }
       this.$$('#name').autoValidate = true;
       this.$$('#description').autoValidate = true;
-      if (this.newPost) {
+      if (this.newPointShown) {
         this.$$('#pointFor').autoValidate = true;
       }
     },
@@ -670,29 +684,37 @@
       }
     },
 
-    _nextTab: function () {
-      var length = 3;
-      if (!this.newPost) {
-        length = 2;
+    _getTabLength: function () {
+      var length = 4;
+
+      if (!this.newPointShown) {
+        length -= 1;
       }
+
       if (this.locationHidden) {
         length -= 1;
       }
+      return length;
+    },
+
+    _nextTab: function () {
+      var length = this._getTabLength();
+
       if (this.selected<length) {
         this.set('selected', this.selected+1)
       }
     },
 
     _selectedChanged: function (newValue) {
-      if (!this.locationHidden && newValue==(this.newPost ? 2 : 1)) {
+      if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
         this.set('mapActive', true);
       } else {
         this.set('mapActive', false);
       }
 
-      var finalTabNumber = this.locationHidden ? 2 : 3;
+      var finalTabNumber = this._getTabLength()-1;
 
-      if (!this.newPost || (this.newPost && newValue==finalTabNumber)) {
+      if (newValue==finalTabNumber) {
         this.$$("#editDialog").useNextTabAction = false;
       } else {
         this.$$("#editDialog").useNextTabAction = true;
@@ -704,7 +726,7 @@
           nameElement.focus();
         }
       }
-      if (newValue==1) {
+      if (newValue==1 && this.newPointShown) {
         var pointFor = this.$$("#pointFor");
         if (pointFor) {
           pointFor.focus();
