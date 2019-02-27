@@ -15,6 +15,7 @@
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <dom-module id="yp-login">
 
@@ -264,7 +265,7 @@
         color: #555;
       }
 
-      .customUserRegistrationText {
+      yp-magic-text, .customUserRegistrationText {
         font-size: 14px;
         margin: 8px;
         margin-bottom: 8px;
@@ -341,7 +342,7 @@
 
               <div class="customUserRegistrationText" hidden$="[[!forceSecureSamlLogin]]">
                 <div hidden$="[[!customSamlLoginText]]">
-                  [[customSamlLoginText]]
+                  <yp-magic-text disable-translation content="[[customSamlLoginText]]"></yp-magic-text>
                 </div>
                 <div hidden$="[[customSamlLoginText]]">
                   [[t('forceSecureSamlLoginInfo')]]
