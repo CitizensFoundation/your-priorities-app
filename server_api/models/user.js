@@ -133,7 +133,7 @@ module.exports = function(sequelize, DataTypes) {
                 attributes: ['id','email']
               }).then(function (userByEmail) {
                 if (userByEmail) {
-                  email = 'my-ny.'+email;
+                  email = 'my-nj.'+email;
                 }
                 sequelize.models.User.create(
                   {

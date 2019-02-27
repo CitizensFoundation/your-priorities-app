@@ -281,6 +281,14 @@
                    value="{{community.configuration.customBackName}}">
       </paper-input>
 
+      <paper-input id="redirectToGroupId"
+                   name="redirectToGroupId"
+                   type="text"
+                   label="[[t('redirectToGroupId')]]"
+                   value="{{community.configuration.redirectToGroupId}}"
+                   maxlength="11">
+      </paper-input>
+
       <paper-input id="appHomeScreenShortName"
                    name="appHomeScreenShortName"
                    type="text"
@@ -288,6 +296,7 @@
                    value="{{community.configuration.appHomeScreenShortName}}"
                    maxlength="12" style="width: 200px;">
       </paper-input>
+
 
       <div class="layout vertical additionalSettings half">
         <yp-file-upload id="appHomeScreenIconImageUpload" raised="true"

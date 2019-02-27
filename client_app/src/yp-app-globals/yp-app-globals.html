@@ -350,7 +350,9 @@
 
           this.setupGoogleAnalytics(this.domain);
           if (window.location.pathname=="/") {
-            if (detail.response.community && !detail.response.community.is_community_folder) {
+            if (detail.response.community && detail.response.community.configuration && detail.response.community.configuration.redirectToGroupId) {
+              this.redirectTo("/group/"+detail.response.community.configuration.redirectToGroupId);
+            } else if (detail.response.community && !detail.response.community.is_community_folder) {
               this.redirectTo("/community/"+detail.response.community.id);
             } else if (detail.response.community && detail.response.community.is_community_folder) {
               this.redirectTo("/community_folder/"+detail.response.community.id);

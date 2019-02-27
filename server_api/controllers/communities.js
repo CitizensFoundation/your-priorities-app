@@ -589,6 +589,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.defaultLocationLongLat', (req.body.defaultLocationLongLat && req.body.defaultLocationLongLat!="") ? req.body.defaultLocationLongLat : null);
   community.set('configuration.facebookPixelId', (req.body.facebookPixelId && req.body.facebookPixelId!="") ? req.body.facebookPixelId : null);
   community.set('configuration.disableNameAutoTranslation', (req.body.disableNameAutoTranslation && req.body.disableNameAutoTranslation!="") ? true : false);
+  community.set('configuration.redirectToGroupId', (req.body.redirectToGroupId && req.body.redirectToGroupId!="") ? true : false);
 
   community.set('configuration.customBackURL', (req.body.customBackURL && req.body.customBackURL!="") ? req.body.customBackURL : null);
   community.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);

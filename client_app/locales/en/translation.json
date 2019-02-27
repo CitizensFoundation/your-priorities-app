@@ -1,4 +1,5 @@
 {
+  "redirectToGroupId": "Redirect (when no URL path) to Group Id",
   "customBackURL": "Custom back URL",
   "customBackName": "Custom back name",
   "changeEmail": "Change email",
