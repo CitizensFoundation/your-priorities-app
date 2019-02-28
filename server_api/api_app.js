@@ -126,9 +126,6 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
 
 app.use(session(sessionConfig));
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Setup the current domain from the host
 app.use(function (req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
@@ -144,6 +141,9 @@ app.use(function (req, res, next) {
     next();
   });
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(function (req, res, next) {
   var ua = req.headers['user-agent'];
@@ -204,7 +204,7 @@ const completeRegisterUserLogin = (user, loginType, req, done) => {
 };
 
 const registerUserLogin = (user, userId, loginProvider, req, done) => {
-  if (user) {
+  if (user && user.private_profile_data) {
     completeRegisterUserLogin(user, loginProvider, req, done);
   } else {
     models.User.find({
