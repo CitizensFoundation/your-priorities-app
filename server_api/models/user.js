@@ -101,9 +101,20 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       serializeMyNJSamlUser: function (profile, req, callback) {
+        var email = null;
         log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
         var user;
         async.series([
+          function (seriesCallback) {
+            if (!profile["urn:mynj:userCode"] ||
+                (req.ypDomain.configuration &&
+                req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
+                !profile["urn:mynj:pubEmpAgency"])) {
+              seriesCallback("customError");
+            } else {
+              seriesCallback();
+            }
+          },
           function (seriesCallback) {
             sequelize.models.User.find({
               where: {
@@ -124,14 +135,8 @@ module.exports = function(sequelize, DataTypes) {
           },
           function (seriesCallback) {
             if (!user) {
-              if (!profile["urn:mynj:userCode"] ||
-                  !profile["urn:mynj:pubEmpEmail"] ||
-                 (req.ypDomain.configuration &&
-                  req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
-                  !profile["urn:mynj:pubEmpAgency"])) {
-                seriesCallback("customError");
-              } else {
-                var email = profile["urn:mynj:pubEmpEmail"];
+              email = profile["urn:mynj:pubEmpEmail"];
+              if (email) {
                 email = email.toLowerCase();
                 sequelize.models.User.find({
                   where: {
@@ -140,37 +145,46 @@ module.exports = function(sequelize, DataTypes) {
                   attributes: ['id','email']
                 }).then(function (userByEmail) {
                   if (userByEmail) {
-                    email = 'my-nj.'+email;
+                    email = 'my-nj.' + email;
                   }
-                  sequelize.models.User.create(
-                    {
-                      ssn: profile["urn:mynj:userCode"],
-                      name: profile.FirstName + ' ' + profile.LastName,
-                      email: email,
-                      profile_data: {
-                        saml_show_confirm_email_completed: false
-                      },
-                      private_profile_data: {
-                        saml_agency: profile["urn:mynj:pubEmpAgency"],
-                        saml_provider: 'MyNJ'
-                      },
-                      notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
-                      status: 'active'
-                    }).then(function (userIn) {
-                    if (userIn) {
-                      user = userIn;
-                      log.info("User Serialized Created MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
-                      seriesCallback();
-                    } else {
-                      seriesCallback("Could not create user from SAML");
-                    }
-                  }).catch(function (error) {
-                    seriesCallback(error);
-                  })
+                  seriesCallback();
                 }).catch(function (error) {
                   seriesCallback(error);
                 });
+              } else {
+                seriesCallback();
               }
+            } else {
+              seriesCallback();
+            }
+          },
+          function (seriesCallback) {
+            if (!user) {
+              sequelize.models.User.create(
+                {
+                  ssn: profile["urn:mynj:userCode"],
+                  name: profile.FirstName + ' ' + profile.LastName,
+                  email: email,
+                  profile_data: {
+                    saml_show_confirm_email_completed: email ? false: true,
+                  },
+                  private_profile_data: {
+                    saml_agency: profile["urn:mynj:pubEmpAgency"],
+                    saml_provider: 'MyNJ'
+                  },
+                  notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+                  status: 'active'
+                }).then(function (userIn) {
+                  if (userIn) {
+                    user = userIn;
+                    log.info("User Serialized Created MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
+                    seriesCallback();
+                  } else {
+                    seriesCallback("Could not create user from SAML");
+                  }
+              }).catch(function (error) {
+                seriesCallback(error);
+              })
             } else {
               seriesCallback();
             }
