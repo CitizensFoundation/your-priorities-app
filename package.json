@@ -2,6 +2,9 @@
   "name": "your-priorities-app",
   "version": "8.4.0.22",
   "license": "AGPL-3.0",
+  "resolutions": {
+    "natives": "1.1.6"
+  },
   "dependencies": {
     "@google-cloud/speech": "^2.1.1",
     "@google-cloud/storage": "^2.3.0",
