@@ -9,6 +9,9 @@ var async = require('async');
 var queue = require('../active-citizen/workers/queue');
 var performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 const getAllModeratedItemsByDomain = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByDomain;
+const getLoginsExportDataForDomain = require('../utils/export_utils').getLoginsExportDataForDomain;
+var sanitizeFilename = require("sanitize-filename");
+var moment = require('moment');
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -952,6 +955,40 @@ router.delete('/:domainId/:userId/remove_user', auth.can('edit domain'), functio
       });
     } else {
       res.sendStatus(404);
+    }
+  });
+});
+
+router.get('/:domainId/export_logins', auth.can('edit domain'), function(req, res) {
+  getLoginsExportDataForDomain(req.params.domainId, req.ypDomain.domain_name, function (error, fileData) {
+    if (error) {
+      log.error('Could not export logins for domain', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      models.Domain.find({
+        where: {
+          id: req.params.domainId
+        },
+        attributes: ["id", "name"]
+      }).then(function (model) {
+        if (model) {
+          log.info('Got Login Exports', {context: 'export_logins', user: toJson(req.user.simple()) });
+          var domainName = sanitizeFilename(model.name).replace(/ /g,'');
+          var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
+          var filename = 'logins_export_for_domain_id_'+model.id+'_'+
+            domainName+'_'+dateString+'.csv';
+          res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
+          res.charset = 'utf-8';
+          res.attachment(filename);
+          res.send(fileData);
+        } else {
+          log.error('Cant find domain', { err: error, context: 'export_logins', user: toJson(req.user.simple()) });
+          res.sendStatus(404);
+        }
+      }).catch(function (error) {
+        log.error('Could not export for domain', { err: error, context: 'export_logins', user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      });
     }
   });
 });

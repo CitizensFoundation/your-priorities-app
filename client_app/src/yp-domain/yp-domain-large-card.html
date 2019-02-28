@@ -205,6 +205,11 @@
       [hidden] {
         display: none !important;
       }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -252,6 +257,8 @@
               </paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="adminsMenuItem">[[t('domainAdmins')]]</paper-item>
               <paper-item hidden$="[[!hasDomainAccess]]" id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
+              <a hidden$="[[!hasDomainAccess]]" target="_blank" href$="[[exportLoginsUrl]]"><paper-item id="exportLogins">[[t('exportLogins')]]</paper-item></a>
+
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
               <paper-item id="addCommunityFolderMenuItem" hidden$="[[!hasDomainAccess]]">[[t('newCommunityFolder')]]</paper-item>
             </paper-listbox>
@@ -330,6 +337,19 @@
         flaggedContentCount: {
           type: Number,
           value: null
+        },
+
+        exportLoginsUrl: {
+          type: String,
+          computed: '_exportLoginsUrl(hasDomainAccess, domain)'
+        },
+      },
+
+      _exportLoginsUrl: function (access, domain) {
+        if (access && domain) {
+          return '/api/domains/'+domain.id+'/export_logins';
+        } else {
+          return null;
         }
       },
 

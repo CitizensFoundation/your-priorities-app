@@ -232,7 +232,37 @@ const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
   })
 };
 
+const getLoginsExportDataForDomain = (domainId, hostName, callback) => {
+  let outFileContent = "Date, User id, Email, Method, Department\n";
+
+  models.AcActivity.findAll({
+    where: {
+      type: 'activity.user.login',
+      domain_id: domainId
+    },
+    order: 'created_at DESC',
+    attributes: ['object','created_at'],
+    include: [
+      {
+        model: models.User,
+        attributes: ['id','email']
+      }
+    ]
+  }).then( (activities) => {
+    async.eachSeries(activities, (activity, seriesCallback) => {
+      const date = moment(activity.created_at).format("DD/MM/YY HH:mm");
+      outFileContent += date+","+activity.User.id+","+activity.User.email+","+activity.object.loginType+","+activity.object.userDepartment+"\n";
+      seriesCallback();
+    }, (error) => {
+      callback(error, outFileContent);
+    })
+  }).catch( (error) => {
+    callback(error);
+  })
+};
+
 module.exports = {
   getExportFileDataForGroup: getExportFileDataForGroup,
-  getLoginsExportDataForCommunity: getLoginsExportDataForCommunity
+  getLoginsExportDataForCommunity: getLoginsExportDataForCommunity,
+  getLoginsExportDataForDomain: getLoginsExportDataForDomain
 };
