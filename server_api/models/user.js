@@ -93,7 +93,7 @@ module.exports = function(sequelize, DataTypes) {
         log.info("Serialize SAML user", { context: 'serializeSamlUser', profile: profile });
         if (profile.UserSSN) {
           this.serializeIslandIsSamlUser(profile, callback);
-        } else if (profile["urn:mynj:userCode"]) {
+        } else if (profile["urn:mynj:userCode"] || profile.issuer === 'https://my.state.nj.us/idp/shibboleth') {
           this.serializeMyNJSamlUser(profile, req, callback);
         } else {
           callback("Can't find SAML serialize handler");
