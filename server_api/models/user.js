@@ -104,12 +104,14 @@ module.exports = function(sequelize, DataTypes) {
         log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
         var email = null;
         var user;
+        log.info("User not allowed access through MyNJ", {context: 'serializeSamlUser', profile: profile});
         async.series([
           function (seriesCallback) {
             if (!profile["urn:mynj:userCode"] ||
                 (req.ypDomain.configuration &&
                 req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
                 !profile["urn:mynj:pubEmpAgency"])) {
+              log.info("User not allowed access through MyNJ", {context: 'serializeSamlUser', profile: profile});
               seriesCallback("customError");
             } else {
               seriesCallback();
