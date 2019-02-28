@@ -80,7 +80,7 @@
         <div elevation="2" id="material" class="oversflowSettings">
           <template is="dom-if" if="[[user]]">
             <yp-user-info on-open-user-edit="_openEdit" user="{{user}}"></yp-user-info>
-            <div class="notificationHeader layout horizontal center-center">
+            <div class="notificationHeader layout horizontal center-center" hidden$="[[!notificationsLength]]">
               [[t('notifications')]]
             </div>
             <div hidden$="[[!unViewedCount]]" class="unViewedCount layout vertical center-center">
@@ -148,6 +148,11 @@
 
         notifications: Array,
 
+        notificationsLength: {
+          type: Number,
+          computed: '_notificationsLength(notifications)'
+        },
+
         notificationGetTTL: {
           type: Number,
           value: 6500
@@ -195,6 +200,14 @@
 
         route: {
           type: String
+        }
+      },
+
+      _notificationsLength: function (notifications) {
+        if (notifications) {
+          return notifications.length;
+        } else {
+          return 0;
         }
       },
 
@@ -409,6 +422,8 @@
         }
 
         this._handleUnViewedCount(detail.response.unViewedCount);
+        if (this.$$("#list"))
+          this.$$("#list").fire("iron-resize");
       },
 
       _removeOldIfExists: function (notification) {
