@@ -101,8 +101,8 @@ module.exports = function(sequelize, DataTypes) {
       },
 
       serializeMyNJSamlUser: function (profile, req, callback) {
-        var email = null;
         log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
+        var email = null;
         var user;
         async.series([
           function (seriesCallback) {
@@ -145,7 +145,7 @@ module.exports = function(sequelize, DataTypes) {
                   attributes: ['id','email']
                 }).then(function (userByEmail) {
                   if (userByEmail) {
-                    email = 'my-nj.' + email;
+                    email = 'my-nj-' + Math.floor(Math.random() * 999) + '.'+email;
                   }
                   seriesCallback();
                 }).catch(function (error) {
