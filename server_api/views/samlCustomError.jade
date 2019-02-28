@@ -1,28 +1,7 @@
 doctype html
 html(lang='en')
-    head
-        title Authentication error
-        meta(charset='utf-8')
-        style(type='text/css').
-            #textHTML {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-                justify-content: space-around;
-            }
-            body {
-                background-color: #FEFEFE;
-            }
-
-}meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
-    body
-        div#textHTML
-            div
-                != customErrorHTML
-                center
-                    p
-                        button.close(onclick='window.close()')
-                            = closeWindowText
-
-
+    !{customErrorHTML}
+    center
+        div
+            button.close(onclick='window.close()')
+                = closeWindowText
