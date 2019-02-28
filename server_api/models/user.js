@@ -104,6 +104,7 @@ module.exports = function(sequelize, DataTypes) {
         log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
         var email = null;
         var user;
+        profile["urn:mynj:userCode"] = null;
         async.series([
           function (seriesCallback) {
             if (!profile["urn:mynj:userCode"] ||
@@ -166,7 +167,7 @@ module.exports = function(sequelize, DataTypes) {
                   name: profile.FirstName + ' ' + profile.LastName,
                   email: email,
                   profile_data: {
-                    saml_show_confirm_email_completed: email ? false: true,
+                    saml_show_confirm_email_completed: email ? false : true,
                   },
                   private_profile_data: {
                     saml_agency: profile["urn:mynj:pubEmpAgency"],
