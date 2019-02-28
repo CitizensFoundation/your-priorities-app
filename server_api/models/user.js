@@ -104,7 +104,7 @@ module.exports = function(sequelize, DataTypes) {
         log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
         var email = null;
         var user;
-        profile["urn:mynj:userCode"] = null;
+        profile["urn:mynj:pubEmpEmail"] = null;
         async.series([
           function (seriesCallback) {
             if (!profile["urn:mynj:userCode"] ||
