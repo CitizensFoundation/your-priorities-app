@@ -394,6 +394,24 @@
           [[t('hideDownVoteForPost')]]
         </paper-checkbox>
 
+        <paper-input id="customVoteUpHoverText"
+                     name="customVoteUpHoverText"
+                     type="text"
+                     label="[[t('customVoteUpHoverText')]]"
+                     value="{{group.configuration.customVoteUpHoverText}}"
+                     maxlength="100"
+                     char-counter>
+        </paper-input>
+
+        <paper-input id="customVoteDownHoverText"
+                     name="customVoteDownHoverText"
+                     type="text"
+                     label="[[t('customVoteDownHoverText')]]"
+                     value="{{group.configuration.customVoteDownHoverText}}"
+                     maxlength="100"
+                     char-counter>
+        </paper-input>
+
         <div class="subHeaders">[[t('pointSettings')]]</div>
 
         <paper-checkbox name="newPointOptional" checked$="{{newPointOptional}}">[[t('newPointOptional')]]</paper-checkbox>

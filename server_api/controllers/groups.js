@@ -209,6 +209,9 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.customBackURL', (req.body.customBackURL && req.body.customBackURL!="") ? req.body.customBackURL : null);
   group.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
 
+  group.set('configuration.customVoteUpHoverText', (req.body.customVoteUpHoverText && req.body.customVoteUpHoverText!="") ? req.body.customVoteUpHoverText : null);
+  group.set('configuration.customVoteDownHoverText', (req.body.customVoteDownHoverText && req.body.customVoteDownHoverText!="") ? req.body.customVoteDownHoverText : null);
+
   group.set('configuration.allowPostAudioUploads', truthValueFromBody(req.body.allowPostAudioUploads));
   group.set('configuration.allowPointAudioUploads', truthValueFromBody(req.body.allowPointAudioUploads));
   group.set('configuration.useAudioCover', truthValueFromBody(req.body.useAudioCover));

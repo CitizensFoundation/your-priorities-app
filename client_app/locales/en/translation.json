@@ -1,4 +1,6 @@
 {
+  "customVoteDownHoverText": "Custom vote down hover text",
+  "customVoteUpHoverText": "Custom vote up hover text",
   "hideNewPointOnNewIdea": "Hide new point on new idea",
   "customSAMLErrorHTML": "Custom SAML Error HTML",
   "redirectToGroupId": "Redirect (when no URL path) to Group Id",

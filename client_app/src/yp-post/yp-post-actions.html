@@ -191,7 +191,7 @@
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
-        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.up_vote')]]"
+        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
                            icon="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
       </div>
@@ -205,7 +205,7 @@
       <div class="" hidden$="[[!hideDebate]]"></div>
 
       <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
-        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[t('post.down_vote')]]"
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
                            icon="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
       </div>
@@ -322,6 +322,32 @@
         hideDebate: {
           type: Boolean,
           computed: '_hideDebate(small,forceSmall,post)'
+        },
+
+        customVoteUpHoverText: {
+          type: String,
+          computed: '_customVoteUpHoverText(post)'
+        },
+
+        customVoteDownHoverText: {
+          type: String,
+          computed: '_customVoteDownHoverText(post)'
+        }
+      },
+
+      _customVoteUpHoverText: function (post) {
+        if (post && post.Group && post.Group.configuration && post.Group.configuration.customVoteUpHoverText) {
+          return post.Group.configuration.customVoteUpHoverText;
+        } else {
+          return this.t('post.up_vote');
+        }
+      },
+
+      _customVoteDownHoverText: function (post) {
+        if (post && post.Group && post.Group.configuration && post.Group.configuration.customVoteDownHoverText) {
+          return post.Group.configuration.customVoteDownHoverText;
+        } else {
+          return this.t('post.down_vote');
         }
       },
 
