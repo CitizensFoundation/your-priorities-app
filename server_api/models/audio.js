@@ -167,7 +167,7 @@ module.exports = function(sequelize, DataTypes) {
             if (jobStatus.status==="Complete") {
               res.send(jobStatus);
             } else if (jobStatus.status==="Error") {
-              log.error("Could not transcode audio image and audio", { jobStatus: jobStatus });
+              log.error("Could not transcode audio image and audio", { jobStatus: jobStatus, data: data });
               res.sendStatus(500);
             } else {
               res.send(jobStatus);
