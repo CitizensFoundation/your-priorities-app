@@ -265,7 +265,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               })
             } else if (jobStatus.status==="Error") {
-              log.error("Could not transcode video image and video", { detail: jobStatus.statusDetail });
+              log.error("Could not transcode video image and video", { jobStatus: jobStatus });
               res.sendStatus(500);
             } else {
               res.send(jobStatus);
