@@ -1020,7 +1020,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       }
     },
     attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
-      'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at'],
+                 'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
     order: [
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
