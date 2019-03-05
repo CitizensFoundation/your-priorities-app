@@ -205,7 +205,7 @@
                                 minlength="3"
                                 name="description"
                                 value="{{post.description}}"
-                                always-float-label="[[post.description]]"
+                                always-float-label="[[_floatIfValueOrIE(post.description)]]"
                                 label="[[t('post.description')]]"
                                 on-value-changed="_resizeScrollerIfNeeded"
                                 char-counter
@@ -224,7 +224,7 @@
                 <template is="dom-repeat" items="[[structuredQuestions]]">
                   <paper-textarea id="structuredQuestion_[[index]]"
                                   value="{{item.value}}"
-                                  always-float-label="[[item.value]]"
+                                  always-float-label="[[_floatIfValueOrIE(item.value)]]"
                                   label="[[item.translatedQuestion]]"
                                   char-counter
                                   minlength="2"
@@ -288,7 +288,7 @@
                               minlength="3"
                               name="pointFor"
                               value="{{post.pointFor}}"
-                              always-float-label="[[post.pointFor]]"
+                              always-float-label="[[_floatIfValueOrIE(post.pointFor)]]"
                               label="[[t('point.for')]]"
                               char-counter
                               rows="2"
@@ -518,6 +518,11 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _floatIfValueOrIE: function (value) {
+      var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
+      return ie11 || value;
+    },
 
     _newPointShown: function (newPost, group) {
       var hideNewPoint = false;

@@ -290,6 +290,7 @@
 
               <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                               value="{{textValueUp}}" label$="[[labelUp]]"
+                              always-float-label="[[_floatIfValueOrIE()]]"
                               char-counter rows="2" hidden$="[[hideUpText]]"
                               max-rows="3" maxlength="500">
               </paper-textarea>
@@ -380,6 +381,7 @@
               <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                               value="{{textValueDown}}" label$="[[labelDown]]"
                               char-counter rows="2" hidden$="[[hideDownText]]"
+                              always-float-label="[[_floatIfValueOrIE()]]"
                               max-rows="5" maxlength="500">
               </paper-textarea>
 
@@ -1211,6 +1213,11 @@
               }
             }, 20);
           }
+        },
+
+        _floatIfValueOrIE: function (value) {
+          var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
+          return ie11 || value;
         },
 
         _preProcessPoints: function (points) {
