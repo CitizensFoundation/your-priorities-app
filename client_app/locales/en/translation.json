@@ -1,4 +1,7 @@
 {
+  "facebookTrackingToastInfo": "This website uses Facebook tracking cookies for more efficient marketing campaigns",
+  "disableFacebookTracking": "Disable Cookie Tracking",
+  "iAgree": "I agree",
   "customVoteDownHoverText": "Custom vote down hover text",
   "customVoteUpHoverText": "Custom vote up hover text",
   "hideNewPointOnNewIdea": "Hide new point on new idea",
