@@ -1,4 +1,7 @@
 {
+  "facebookTrackingToastInfo": "Þessi vefsíða notar Facebook vafrakökur fyrir betri auglýsingaherferðir",
+  "disableFacebookTracking": "Slökkva á vafrakökum",
+  "iAgree": "Ég samþykki",
   "customVoteDownHoverText": "Texti fyrir kjósa niður (hover)",
   "customVoteUpHoverText": "Texti fyrir kjósa upp (hover)",
   "hideNewPointOnNewIdea": "Fela rök á ný hugmynd",
