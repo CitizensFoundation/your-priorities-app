@@ -59,10 +59,16 @@
 
     setCommunityPixelTracker: function (trackerId) {
       if (trackerId && trackerId!=='') {
-        var oldTrackerId = this.pixelTrackerId;
-        this.set('pixelTrackerId', trackerId);
-        if (trackerId!==oldTrackerId) {
-          this.facebookPixelTracking('pageview');
+        if (localStorage.getItem("consentGivenForFacebookPixelTracking")!=null) {
+          var oldTrackerId = this.pixelTrackerId;
+          this.set('pixelTrackerId', trackerId);
+          if (trackerId!==oldTrackerId) {
+            this.facebookPixelTracking('pageview');
+          }
+        } else if (!localStorage.getItem("disableFacebookPixelTracking")) {
+          Polymer.dom(document).querySelector('yp-app').openPixelCookieConfirm(trackerId);
+        } else {
+          console.log("Facebook tracking disabled");
         }
       } else {
         this.set('pixelTrackerId', null);

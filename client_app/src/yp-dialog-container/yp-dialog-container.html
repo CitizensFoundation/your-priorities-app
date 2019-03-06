@@ -13,6 +13,7 @@
 
 <link rel="import" href="../yp-behaviors/yp-got-admin-rights-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-logged-in-user-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
 <dom-module id="yp-dialog-container">
   <template>
@@ -32,6 +33,22 @@
       paper-dialog {
         background-color: #FFF;
       }
+
+      .trackingInfo, #pixelTrackingCookieConfirm {
+        color: #FFF;
+        background-color: #222;
+      }
+
+      .trackingInfo {
+        margin-bottom: 16px;
+        font-size: 16px;
+      }
+
+      paper-button {
+        background-color: #555;
+        margin-right: 12px;
+        text-align: center;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -40,6 +57,19 @@
 
     <template is="dom-if" if="[[loggedInUser]]" restamp>
       <ac-notification-toast id="notificationToast"></ac-notification-toast>
+    </template>
+
+    <template is="dom-if" if="[[needsPixelCookieConfirm]]" restamp>
+      <paper-toast id="pixelTrackingCookieConfirm" duration="0">
+        <div class="layout vertical">
+          <div class="trackingInfo">[[t('facebookTrackingToastInfo')]]</div>
+          <div class="layout horizontal">
+            <div class="flex"></div>
+            <paper-button raised on-tap="_disableFaceookPixelTracking">[[t('disableFacebookTracking')]]</paper-button>
+            <paper-button raised on-tap="_agreeToFacebookPixelTracking">[[t('iAgree')]]</paper-button>
+          </div>
+        </div>
+      </paper-toast>
     </template>
 
     <div id="dialogs" hide$="[[hideDialogs]]">
@@ -174,7 +204,8 @@
 
       behaviors: [
         Polymer.ypLoggedInUserBehavior,
-        Polymer.ypGotAdminRightsBehavior
+        Polymer.ypGotAdminRightsBehavior,
+        Polymer.ypLanguageBehavior
       ],
 
       properties: {
@@ -236,7 +267,14 @@
         gotMediaRecorder: {
           type: Boolean,
           value: false
-        }
+        },
+
+        needsPixelCookieConfirm: {
+          type: Boolean,
+          value: false
+        },
+
+        facebookPixelTrackingId: String
       },
 
       ready: function () {
@@ -245,6 +283,27 @@
             this.set('haveLoadedDelayed', true)
           }, null, true);
         }, 3000);
+      },
+
+      openPixelCookieConfirm: function (facebookPixelTrackingId) {
+        this.set('facebookPixelTrackingId', facebookPixelTrackingId);
+        this.async(function () {
+          this.set('needsPixelCookieConfirm', true);
+          this.async(function () {
+            this.$$("#pixelTrackingCookieConfirm").open();
+          });
+        }, 2000);
+      },
+
+      _disableFaceookPixelTracking: function () {
+        localStorage.setItem("disableFacebookPixelTracking", true);
+        this.$$("#pixelTrackingCookieConfirm").close();
+      },
+
+      _agreeToFacebookPixelTracking: function () {
+        localStorage.setItem("consentGivenForFacebookPixelTracking", true);
+        window.appGlobals.setCommunityPixelTracker(this.facebookPixelTrackingId);
+        this.$$("#pixelTrackingCookieConfirm").close();
       },
 
       _loggedInUser: function (event, user) {
