@@ -194,7 +194,7 @@
       </template>
 
       <template is="dom-if" if="[[imageActive]]">
-        <iron-image header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="[[sizingMode]]" class="main-image pointer" src="[[postImagePath]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[videoActive]]" restamp>
@@ -445,6 +445,20 @@
           type: String,
           computed: '_activeDefaultImageUrl(defaultPostImageEnabled, defaultImageGroupId, uploadedDefaultPostImageId)',
           value: null
+        },
+
+        sizingMode: {
+          type: String,
+          computed: '_sizingMode(post)'
+        }
+      },
+
+
+      _sizingMode: function (post) {
+        if (post && post.Group && post.Group.configuration && post.Group.configuration.useContainImageMode) {
+          return 'contain'
+        } else {
+          return 'cover';
         }
       },
 
