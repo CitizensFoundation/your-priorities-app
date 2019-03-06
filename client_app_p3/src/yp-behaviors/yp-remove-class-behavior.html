@@ -1,0 +1,19 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /** @polymerBehavior Polymer.ypRemoveClassBehavior */
+  Polymer.ypRemoveClassBehavior = {
+
+    removeClass: function(element, classToRemove) {
+      var newClassName = "";
+      var classes = element.className.split(" ");
+      for(var i = 0; i < classes.length; i++) {
+        if(classes[i] !== classToRemove) {
+          newClassName += classes[i] + " ";
+        }
+      }
+      element.className = newClassName;
+    }
+
+  };
+</script>

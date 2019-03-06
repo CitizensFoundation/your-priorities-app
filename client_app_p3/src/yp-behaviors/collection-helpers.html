@@ -1,0 +1,23 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior Polymer.CollectionHelpers
+   */
+  Polymer.CollectionHelpers = {
+
+    splitByStatus: function (items) {
+      return {
+        active: __.filter(items, function (o) {
+          return o.status == 'active' || o.status == 'hidden';
+        }),
+        archived: __.filter(items, function (o) {
+          return o.status == 'archived';
+        }),
+        featured: __.filter(items, function (o) {
+          return o.status == 'featured';
+        })
+      }
+    }
+  };
+</script>

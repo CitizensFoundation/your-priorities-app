@@ -1,0 +1,112 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html" >
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+
+<link rel="import" href="yp-post-move-behavior.html">
+
+<dom-module id="yp-post-move">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      .additionalSettings {
+        padding-top: 16px;
+      }
+
+      paper-textarea {
+        padding-top: 16px;
+      }
+
+      .groupName {
+        cursor: pointer;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]"
+                    action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+      <template is="dom-repeat" items="[[availableGroups]]" as="group">
+        <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.name]]</div>
+      </template>
+
+      <div class="layout horizontal center-center">
+        <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
+        <yp-ajax method="PUT" id="movePostAjax" on-response="_movePostResponse"></yp-ajax>
+      </div>
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'yp-post-move',
+
+    behaviors: [
+      Polymer.ypLanguageBehavior,
+      Polymer.ypEditDialogBehavior,
+      Polymer.AccessHelpers,
+      Polymer.ypPostMoveBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/posts"
+      },
+
+      post: {
+        type: Object
+      },
+
+      selectedGroupId: Number
+    },
+
+    _selectGroup: function (event) {
+      this.set('selectedGroupId', event.target.getAttribute('data-args'));
+      var groupName = event.target.getAttribute('data-args-name');
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+        dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
+      }.bind(this));
+    },
+
+    _reallyMove: function () {
+      this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+      this.$.movePostAjax.body = {};
+      this.$.movePostAjax.generateRequest();
+    },
+
+    _movePostResponse: function () {
+      location.reload();
+    },
+
+    _clear: function () {
+      this.set('selectedGroupId', null);
+      this.set('post', null);
+    },
+
+    setupAndOpen: function (post, refreshFunction) {
+      this.set('post', post);
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this.$.getAvailableGroupsAjax.generateRequest();
+      this.open();
+    },
+
+    _setupTranslation: function () {
+      this.set('editHeaderText', this.t('post.move'));
+      this.set('toastText', this.t('post.haveMovedPost'));
+      this.set('saveText', this.t('post.move'));
+    }
+  });
+</script>

@@ -1,0 +1,87 @@
+<!--
+@license
+Copyright (c) 2016 Murray Lisook, Citizens Foundation All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+
+Original Polymer 1 version here: https://github.com/rbjarnason/paper-map-info
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-iconset-svg/iron-iconset-svg.html">
+
+<iron-iconset-svg size="24" name="papmapinf">
+  <svg><defs>
+    <g id="close"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></g>
+  </defs></svg>
+</iron-iconset-svg>
+
+<dom-module id="yp-post-map-info">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+
+      .infocard {
+        position: absolute;
+        z-index: 999;
+        max-width: 80%;
+        max-height: 75%;
+        top: 0;
+        left: 0;
+        background: white;
+        box-sizing: border-box;
+        border-radius: 4px;
+        opacity: 0;
+        display: none;
+        @apply --paper-map-info-mixin;
+      }
+
+      .infocard-beak {
+        position: absolute;
+        opacity: 0;
+        display: none;
+      }
+
+      #stdbeak svg rect {
+        fill: blue;
+        stroke: black;
+        stroke-width: 1;
+        @apply --paper-map-info-beak-mixin;
+        color: #F57C00;
+      }
+
+      div.card-content {
+        overflow: hidden;
+        @apply --paper-map-info-content
+      }
+
+      iron-icon.closeicon {
+        --iron-icon-width: 32px;
+        --iron-icon-height: 32px;
+        position: absolute;
+        left: 6px;
+        top: 6px;
+        color: #F57C00;
+      }
+    </style>
+    <div id="stdbeak" class="infocard-beak">
+      <svg width="20" height="20">
+        <rect x="4" y="4" width="12" height="12" transform="rotate(45 10,10)">
+      </svg>
+    </div>
+    <div id="custombeak" class="infocard-beak">
+      <slot id="custombeakcontent" name="paper-map-info-beak"></slot>
+    </div>
+    <paper-material id="infocarddiv" class="infocard" elevation="[[elevation]]">
+      <div class="card-content">
+        <slot id="cardcontent"></slot>
+      </div>
+      <iron-icon class="closeicon" icon="papmapinf:close" on-tap="close"></iron-icon>
+    </paper-material>
+  </template>
+
+  <script src="yp-post-map-info.js"></script>
+</dom-module>
