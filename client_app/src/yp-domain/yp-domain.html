@@ -23,7 +23,7 @@
 <link rel="import" href="../yp-page/yp-page.html">
 <link rel="import" href="../yp-community/yp-community-grid.html">
 
-<link rel="import" href="yp-domain-large-card.html">
+<link rel="import" href="./yp-domain-large-card.html">
 
 <dom-module id="yp-domain">
   <template>
@@ -92,7 +92,6 @@
       }
     </style>
 
-
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
       <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refreshAjax"></yp-domain-large-card>
@@ -143,245 +142,244 @@
       <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
-
   </template>
-</dom-module>
-<script>
-  Polymer({
-
-    is: 'yp-domain',
-
-    behaviors: [
-      Polymer.ypLanguageBehavior,
-      Polymer.ypThemeBehavior,
-      Polymer.CommunityCollectionBehaviors,
-      Polymer.CollectionHelpers,
-      Polymer.AccessHelpers,
-      Polymer.YpNewsTabSelected,
-      Polymer.ypLoggedInUserBehavior,
-      Polymer.ypDetectOldiOs,
-      Polymer.ypGotoBehavior
-    ],
-
-    properties: {
-
-      idRoute: Object,
-      tabRoute: Object,
-      idRouteData: Object,
-      tabRouteData: Object,
-
-      createFabIcon: {
-        type: String,
-        value: null,
-        notify: true
+  <script>
+    Polymer({
+  
+      is: 'yp-domain',
+  
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.ypThemeBehavior,
+        Polymer.CommunityCollectionBehaviors,
+        Polymer.CollectionHelpers,
+        Polymer.AccessHelpers,
+        Polymer.YpNewsTabSelected,
+        Polymer.ypLoggedInUserBehavior,
+        Polymer.ypDetectOldiOs,
+        Polymer.ypGotoBehavior
+      ],
+  
+      properties: {
+  
+        idRoute: Object,
+        tabRoute: Object,
+        idRouteData: Object,
+        tabRouteData: Object,
+  
+        createFabIcon: {
+          type: String,
+          value: null,
+          notify: true
+        },
+  
+        domainId: {
+          type: Number,
+          value: null,
+          observer: "_domainIdChanged"
+        },
+  
+        url: {
+          type: String
+        },
+  
+        domainEmpty: {
+          type: Boolean,
+          value: false
+        },
+  
+        domain: {
+          type: Object
+        },
+  
+        selectedTab: {
+          type: String,
+          value: 'communities',
+          observer: '_selectedTabChanged'
+        },
+  
+        otherSocialMediaActive: {
+          type: Boolean,
+          value: false
+        },
+  
+        isOldiOs: {
+          type: Boolean,
+          computed: '_isOldiOs(domainId)'
+        },
+  
+        disableRefreshOnce: {
+          type: Boolean,
+          value: false
+        }
       },
-
-      domainId: {
-        type: Number,
-        value: null,
-        observer: "_domainIdChanged"
+  
+      observers: [
+        '_routeIdChanged(idRouteData.id)',
+        '_routeTabChanged(tabRouteData.tabName)'
+      ],
+  
+      listeners: {
+        'yp-new-community': '_newCommunity',
+        'yp-new-community-folder': '_newCommunityFolder'
       },
-
-      url: {
-        type: String
+  
+      scrollToCommunityItem: function () {
+        if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
+          var list = this.$$("#domainNews");
+          if (list) {
+            list.scrollToItem(window.appGlobals.cachedActivityItem);
+            window.appGlobals.cachedActivityItem = null;
+          } else {
+            console.warn("No domain activities for scroll to item");
+          }
+        } else if (this.selectedTab==="communities") {
+          if (window.appGlobals.backToDomainCommunityItems &&
+            window.appGlobals.backToDomainCommunityItems[this.domain.id]) {
+            this.$.communityGrid.scrollToItem(window.appGlobals.backToDomainCommunityItems[this.domain.id]);
+            window.appGlobals.backToDomainCommunityItems[this.domain.id] = null;
+          }
+        }
       },
-
-      domainEmpty: {
-        type: Boolean,
-        value: false
+  
+      _userLoggedIn: function (user) {
+        if (user) {
+          if (this.domain && window.location.href.indexOf("/domain/") > -1) {
+            this.$.ajax.generateRequest();
+          }
+        }
       },
-
-      domain: {
-        type: Object
+  
+      _routeIdChanged: function (newId) {
+        if (newId) {
+          this.set('domainId', newId);
+        }
       },
-
-      selectedTab: {
-        type: String,
-        value: 'communities',
-        observer: '_selectedTabChanged'
+  
+      _routeTabChanged: function (newTabName) {
+        if (newTabName) {
+          this.set('selectedTab', newTabName);
+        }
       },
-
-      otherSocialMediaActive: {
-        type: Boolean,
-        value: false
-      },
-
-      isOldiOs: {
-        type: Boolean,
-        computed: '_isOldiOs(domainId)'
-      },
-
-      disableRefreshOnce: {
-        type: Boolean,
-        value: false
-      }
-    },
-
-    observers: [
-      '_routeIdChanged(idRouteData.id)',
-      '_routeTabChanged(tabRouteData.tabName)'
-    ],
-
-    listeners: {
-      'yp-new-community': '_newCommunity',
-      'yp-new-community-folder': '_newCommunityFolder'
-    },
-
-    scrollToCommunityItem: function () {
-      if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
-        var list = this.$$("#domainNews");
-        if (list) {
-          list.scrollToItem(window.appGlobals.cachedActivityItem);
-          window.appGlobals.cachedActivityItem = null;
+  
+      _selectedTabChanged: function (tabName) {
+        if (tabName=='other_social_media') {
+          this.set('otherSocialMediaActive', true);
         } else {
-          console.warn("No domain activities for scroll to item");
+          this.set('otherSocialMediaActive', false);
         }
-      } else if (this.selectedTab==="communities") {
-        if (window.appGlobals.backToDomainCommunityItems &&
-          window.appGlobals.backToDomainCommunityItems[this.domain.id]) {
-          this.$.communityGrid.scrollToItem(window.appGlobals.backToDomainCommunityItems[this.domain.id]);
-          window.appGlobals.backToDomainCommunityItems[this.domain.id] = null;
+  
+        if (this.domain) {
+          this.redirectTo("/domain/" + this.domain.id + '/' + tabName);
         }
-      }
-    },
-
-    _userLoggedIn: function (user) {
-      if (user) {
-        if (this.domain && window.location.href.indexOf("/domain/") > -1) {
+  
+        if (tabName && window.appGlobals) {
+          window.appGlobals.activity('open', 'domain_tab_'+tabName);
+        }
+  
+        this.async(function () {
+          var news = this.$$("#domainNews");
+          if (news) {
+            news.fireResize();
+          }
+        }, 300);
+      },
+  
+      _domainIdChanged: function (newValue, oldValue) {
+        if (newValue) {
+          this.set("featuredCommunities",null);
+          this.set("activeCommunities",null);
+          this.set("archivedCommunities",null);
+          this.$.ajax.url = '/api/domains/' + this.domainId;
           this.$.ajax.generateRequest();
         }
-      }
-    },
-
-    _routeIdChanged: function (newId) {
-      if (newId) {
-        this.set('domainId', newId);
-      }
-    },
-
-    _routeTabChanged: function (newTabName) {
-      if (newTabName) {
-        this.set('selectedTab', newTabName);
-      }
-    },
-
-    _selectedTabChanged: function (tabName) {
-      if (tabName=='other_social_media') {
-        this.set('otherSocialMediaActive', true);
-      } else {
-        this.set('otherSocialMediaActive', false);
-      }
-
-      if (this.domain) {
-        this.redirectTo("/domain/" + this.domain.id + '/' + tabName);
-      }
-
-      if (tabName && window.appGlobals) {
-        window.appGlobals.activity('open', 'domain_tab_'+tabName);
-      }
-
-      this.async(function () {
-        var news = this.$$("#domainNews");
-        if (news) {
-          news.fireResize();
-        }
-      }, 300);
-    },
-
-    _domainIdChanged: function (newValue, oldValue) {
-      if (newValue) {
-        this.set("featuredCommunities",null);
-        this.set("activeCommunities",null);
-        this.set("archivedCommunities",null);
-        this.$.ajax.url = '/api/domains/' + this.domainId;
-        this.$.ajax.generateRequest();
-      }
-    },
-
-    _refreshAjax: function () {
-      this.async(function () {
-        this.$.ajax.generateRequest();
-      }, 100);
-    },
-
-    _refreshAjaxLimited: function () {
-      this.set('disableRefreshOnce', true);
-      this._refreshAjax();
-    },
-
-    _newCommunity: function () {
-      window.appGlobals.activity('open', 'newCommunity');
-      Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
-        dialog.setup(null, true, this._refreshAjaxLimited.bind(this));
-        dialog.open('new', {domainId: this.domainId} );
-      }.bind(this));
-    },
-
-    _newCommunityFolder: function () {
-      window.appGlobals.activity('open', 'newCommunityFolder');
-      Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
-        dialog.setup(null, true, this._refreshAjaxLimited.bind(this), true);
-        dialog.open('new', {domainId: this.domainId} );
-      }.bind(this));
-    },
-
-    _pagesResponse: function (event, detail) {
-      this.fire('yp-set-pages', detail.response);
-    },
-
-    _response: function (event, detail, sender) {
-      console.log("Got domain response: "+detail.response.id);
-
-      this.set('domain', detail.response);
-
-      window.appGlobals.domain = this.domain;
-
-      if (this.disableRefreshOnce) {
-        this.set('disableRefreshOnce', false);
-      } else {
-        this.refresh();
-      }
-
-      if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
-        this.set('createFabIcon', 'group-work');
-      }
-
-      window.appGlobals.setupGoogleAnalytics(this.domain);
-
-      if (this.domain.Communities) {
-        this.setupCommunities(__.dropRight(this.domain.Communities, this.domain.Communities.length-500));
-      }
-
-      this.$.domainCard.setElevation(5);
-      this.$.domainCard.lowerCardLater();
-    },
-
-    refresh: function () {
-      if (this.domain) {
-        if (this.domain.default_locale!=null) {
-          window.appGlobals.changeLocaleIfNeeded(this.domain.default_locale);
-        }
-
-        if (this.domain.theme_id!=null) {
-          this.setTheme(this.domain.theme_id);
-        }
-        this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
-        this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
-                                     headerDescription: this.domain.description});
-        if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
-          this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+      },
+  
+      _refreshAjax: function () {
+        this.async(function () {
+          this.$.ajax.generateRequest();
+        }, 100);
+      },
+  
+      _refreshAjaxLimited: function () {
+        this.set('disableRefreshOnce', true);
+        this._refreshAjax();
+      },
+  
+      _newCommunity: function () {
+        window.appGlobals.activity('open', 'newCommunity');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(null, true, this._refreshAjaxLimited.bind(this));
+          dialog.open('new', {domainId: this.domainId} );
+        }.bind(this));
+      },
+  
+      _newCommunityFolder: function () {
+        window.appGlobals.activity('open', 'newCommunityFolder');
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
+          dialog.setup(null, true, this._refreshAjaxLimited.bind(this), true);
+          dialog.open('new', {domainId: this.domainId} );
+        }.bind(this));
+      },
+  
+      _pagesResponse: function (event, detail) {
+        this.fire('yp-set-pages', detail.response);
+      },
+  
+      _response: function (event, detail, sender) {
+        console.log("Got domain response: "+detail.response.id);
+  
+        this.set('domain', detail.response);
+  
+        window.appGlobals.domain = this.domain;
+  
+        if (this.disableRefreshOnce) {
+          this.set('disableRefreshOnce', false);
         } else {
-          this.$.page.setupTopHeaderImage(null);
+          this.refresh();
         }
-
-        this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
-        this.$.pagesAjax.generateRequest();
+  
+        if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
+          this.set('createFabIcon', 'group-work');
+        }
+  
+        window.appGlobals.setupGoogleAnalytics(this.domain);
+  
+        if (this.domain.Communities) {
+          this.setupCommunities(__.dropRight(this.domain.Communities, this.domain.Communities.length-500));
+        }
+  
+        this.$.domainCard.setElevation(5);
+        this.$.domainCard.lowerCardLater();
+      },
+  
+      refresh: function () {
+        if (this.domain) {
+          if (this.domain.default_locale!=null) {
+            window.appGlobals.changeLocaleIfNeeded(this.domain.default_locale);
+          }
+  
+          if (this.domain.theme_id!=null) {
+            this.setTheme(this.domain.theme_id);
+          }
+          this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
+          this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
+                                       headerDescription: this.domain.description});
+          if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
+            this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+          } else {
+            this.$.page.setupTopHeaderImage(null);
+          }
+  
+          this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
+          this.$.pagesAjax.generateRequest();
+        }
+        window.appGlobals.setAnonymousGroupStatus(null);
+        window.appGlobals.disableFacebookLoginForGroup = false;
+        window.appGlobals.externalGoalTriggerUrl = null;
+        window.appGlobals.currentGroupForceSaml = false;
+        window.appGlobals.currentGroup = null;
       }
-      window.appGlobals.setAnonymousGroupStatus(null);
-      window.appGlobals.disableFacebookLoginForGroup = false;
-      window.appGlobals.externalGoalTriggerUrl = null;
-      window.appGlobals.currentGroupForceSaml = false;
-      window.appGlobals.currentGroup = null;
-    }
-  });
-</script>
+    });
+  </script>  
+</dom-module>
