@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>yp-group tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <script src="../../../../../@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="../../../../../wct-browser-legacy/browser.js"></script>
+  <script src="../../../../../@polymer/test-fixture/test-fixture-mocha.js"></script>
+
+  <script type="module" src="../../../../../@polymer/test-fixture/test-fixture.js"></script>
+  <script type="text/javascript" src="../../i18next-1.7.4.min.js"></script>
+
+  <script type="module" src="../../yp-app-globals/yp-app-globals.js"></script>
+  <script type="module" src="../yp-group-card.js"></script>
+
+</head>
+<body>
+
+<yp-app-globals disable-welcome setup-defaults></yp-app-globals>
+
+<test-fixture id="basic">
+  <template is="dom-template">
+    <div id="card" style="width:500px;">
+      <yp-group id="group" group="{{group}}"></yp-group>
+    </div>
+  </template>
+</test-fixture>
+
+<script type="module">
+import '../../../../../@polymer/test-fixture/test-fixture.js';
+import '../../yp-app-globals/yp-app-globals.js';
+import '../yp-group-card.js';
+suite('basic', function() {
+
+  test('displays name, description & counters', function(done) {
+    var basicGroupFixture = fixture('basic', {group: {id: 368, name:'NHS Citizen',
+                                  top_banner_file_name: 'NHScitizen_logo_final2c.png',
+                                  description:'Test description about something rather. This group is about things. Test description about something rather. This group is about things.', counter_posts: 100,
+                                  counter_points: 1500, counter_users: 10000}});
+
+    var basicGroup = basicGroupFixture.querySelector('#group');
+
+    var group = basicGroup.group;
+    expect(group.counter_posts).to.be.equal(100);
+    expect(group.counter_points).to.be.equal(1500);
+    expect(group.counter_users).to.be.equal(10000);
+    expect(basicGroup.innerHTML).to.include("NHS Citizen");
+    expect(basicGroup.innerHTML).to.include("Test description");
+    expect(basicGroup.innerHTML).to.include("100");
+    expect(basicGroup.innerHTML).to.include("1,500");
+    expect(basicGroup.innerHTML).to.include("10,000");
+  });
+
+  test('displays IsoCountry image', function(done) {
+    var basicGroupFixture = fixture('basic', {group: {id: 368, name:'Test name',
+      top_banner_file_name: 'NHScitizen_logo_final2c.png',
+      description:'Test description', counter_posts: 100,
+      counter_points: 1500, counter_users: 10000, IsoCountry: {code:"is"}}});
+
+    var basicGroup = basicGroupFixture.querySelector('#group');
+
+    this.async(function() {
+      expect(basicGroup.innerHTML).to.include("assets/flags/64/is.png");
+      done();
+    },10000);
+  });
+});
+</script>
+</body>
+</html>

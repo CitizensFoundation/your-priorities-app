@@ -1,0 +1,38 @@
+<script type="module" src="../../../../@polymer/polymer/polymer-legacy.js"></script>
+
+<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
+<script type="module" src="../../../../lite-signal/lite-signal.js"></script>
+<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
+
+<dom-module id="yp-view-404">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .errorMesage {
+        padding: 24px;
+        margin-top: 48px;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <div class="layout vertical center-center">
+      <h1 class="errorMesage">[[t('pageNotFound')]]</h1>
+    </div>
+
+  </template>
+
+  <script type="module">
+import '../../../../@polymer/polymer/polymer-legacy.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../../../../lite-signal/lite-signal.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+Polymer({
+
+  is: 'yp-view-404',
+
+  behaviors: [
+    ypLanguageBehavior
+  ]
+});
+</script>
+</dom-module>

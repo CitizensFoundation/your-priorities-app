@@ -1,0 +1,51 @@
+import '../../../../@polymer/polymer/polymer-legacy.js';
+
+/** @polymerBehavior Polymer.ypGotoBehavior */
+export const ypGotoBehavior = {
+
+  redirectTo: function (path) {
+    //this.fire("yp-redirect-to", { path: path });
+    window.history.pushState({}, null, path);
+    window.dispatchEvent(new CustomEvent('location-changed'));
+    document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
+    console.log("REDIRECTING TO: "+path);
+  },
+
+  goToPost: function (postIdIn, pointId, cachedActivityItem, cachedPostItem, skipKeepOpen) {
+    var postId;
+    if (postIdIn && !(postIdIn instanceof Event)) {
+      postId = postIdIn;
+    } else if (this.post && this.post.id) {
+      postId = this.post.id
+    } else {
+      console.error("Can't find post id for goToPost");
+      return;
+    }
+    var postUrl = '/post/' + postId;
+    if (pointId && !(postIdIn instanceof Event)) {
+      postUrl += '/' + pointId;
+    }
+    var windowLocation = window.location.href;
+    console.log("Go to post: "+postUrl);
+    console.log("Current window location: "+windowLocation);
+
+    if (cachedActivityItem) {
+      console.info("Saving cached scroll to item "+cachedActivityItem.id);
+      window.appGlobals.cachedActivityItem = cachedActivityItem;
+    }
+
+    if (cachedPostItem && cachedPostItem.Group && cachedPostItem.Group.Community) {
+      console.info("Saving cached scroll to post "+cachedPostItem.id);
+      window.appGlobals.cachedPostItem = cachedPostItem;
+    }
+
+    if (windowLocation.indexOf(postUrl) == -1) {
+      window.appGlobals.activity('open', 'post', postUrl, { id: postId, modelType: 'post' });
+      if (skipKeepOpen!==true)
+        window.app.setKeepOpenForPostsOn(window.location.pathname);
+      this.async(function () {
+        this.redirectTo(postUrl);
+      });
+    }
+  }
+};
