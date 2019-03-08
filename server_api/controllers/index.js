@@ -42,8 +42,10 @@ let sendIndex = function (req, res) {
   if (FORCE_PRODUCTION || process.env.NODE_ENV == 'production') {
     indexFilePath = path.resolve(__dirname, '../../client_app/build/bundled/index.html');
   } else {
-    indexFilePath = path.resolve(__dirname, '../../client_app/index.html');
+    indexFilePath = path.resolve(__dirname, '../../p3_client_app/index.html');
   }
+
+  log.info("PATH: "+indexFilePath);
 
   fs.readFile(indexFilePath, 'utf8', function(err, indexFileData) {
     if (err) {

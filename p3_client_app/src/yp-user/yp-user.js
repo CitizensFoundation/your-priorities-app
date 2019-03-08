@@ -1,26 +1,21 @@
-<script type="module" src="../../../../@polymer/polymer/polymer-legacy.js"></script>
-
-<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
-<script type="module" src="../../../../lite-signal/lite-signal.js"></script>
-
-<script type="module" src="../../../../@polymer/paper-tabs/paper-tab.js"></script>
-
-<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
-<script type="module" src="../yp-behaviors/collection-helpers.js"></script>
-
-<script type="module" src="../yp-theme/yp-theme-behavior.js"></script>
-<script type="module" src="../yp-behaviors/yp-goto-behavior.js"></script>
-
-<script type="module" src="../ac-activities/ac-activities.js"></script>
-
-<script type="module" src="../yp-ajax/yp-ajax.js"></script>
-<script type="module" src="../yp-group/yp-group-collection-behaviors.js"></script>
-<script type="module" src="../yp-community/yp-community-collection-behaviors.js"></script>
-<script type="module" src="./yp-user-large-card.js"></script>
-<script type="module" src="../yp-bulk-status-update/yp-bulk-status-display.js"></script>
-
-<dom-module id="yp-user">
-  <template>
+import '../../../../@polymer/polymer/polymer-legacy.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../../../../lite-signal/lite-signal.js';
+import '../../../../@polymer/paper-tabs/paper-tab.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
+import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
+import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
+import '../ac-activities/ac-activities.js';
+import '../yp-ajax/yp-ajax.js';
+import { GroupCollectionBehaviors } from '../yp-group/yp-group-collection-behaviors.js';
+import { CommunityCollectionBehaviors } from '../yp-community/yp-community-collection-behaviors.js';
+import './yp-user-large-card.js';
+import '../yp-bulk-status-update/yp-bulk-status-display.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+Polymer({
+  _template: html`
     <style include="iron-flex iron-flex-alignment">
 
       ac-activities {
@@ -66,29 +61,18 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <app-route
-      route="{{idRoute}}"
-      pattern="/:id"
-      data="{{idRouteData}}"
-      tail="{{tabRoute}}">
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
     </app-route>
 
-    <app-route
-      route="{{tabRoute}}"
-      pattern="/:tabName"
-      data="{{tabRouteData}}"
-      tail="{{statusUpdateRoute}}">
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}" tail="{{statusUpdateRoute}}">
     </app-route>
 
-    <app-route
-      route="{{statusUpdateRoute}}"
-      pattern="/:statusUpdateId"
-      data="{{statusUpdateRouteData}}">
+    <app-route route="{{statusUpdateRoute}}" pattern="/:statusUpdateId" data="{{statusUpdateRouteData}}">
     </app-route>
 
-    <yp-user-large-card hidden id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
+    <yp-user-large-card hidden="" id="userCard" class="largeCard card" user="[[user]]" on-update-domain="_refresh"></yp-user-large-card>
 
-    <paper-tabs hidden id="paper_tabs" class="tabs" selected="{{selected}}" focused>
+    <paper-tabs hidden="" id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
       <paper-tab class="tab">[[t('news')]]</paper-tab>
       <paper-tab class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
       <paper-tab class="tab"><span>[[t('groups')]]</span> &nbsp; (<span>[[groupsLength]]</span>)</paper-tab>
@@ -101,10 +85,10 @@
 
     <iron-pages class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
       <section name="status_updates">
-        <yp-bulk-status-display user-id$="[[userId]]" status-update-id$="[[statusUpdateId]]"></yp-bulk-status-display>
+        <yp-bulk-status-display user-id\$="[[userId]]" status-update-id\$="[[statusUpdateId]]"></yp-bulk-status-display>
       </section>
       <section name="status_updates_templates">
-        <yp-bulk-status-display by-template user-id$="[[userId]]" status-update-id$="[[statusUpdateId]]"></yp-bulk-status-display>
+        <yp-bulk-status-display by-template="" user-id\$="[[userId]]" status-update-id\$="[[statusUpdateId]]"></yp-bulk-status-display>
       </section>
       <section>
         <ac-activities selected-tab="[[selectedTab]]" user-id="[[user.id]]"></ac-activities>
@@ -121,26 +105,7 @@
 
     <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
     <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
-
-  </template>
-
-  <script type="module">
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
-import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import '../ac-activities/ac-activities.js';
-import '../yp-ajax/yp-ajax.js';
-import { GroupCollectionBehaviors } from '../yp-group/yp-group-collection-behaviors.js';
-import { CommunityCollectionBehaviors } from '../yp-community/yp-community-collection-behaviors.js';
-import './yp-user-large-card.js';
-import '../yp-bulk-status-update/yp-bulk-status-display.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-Polymer({
+`,
 
   is: 'yp-user',
 
@@ -295,7 +260,4 @@ Polymer({
       window.appGlobals.disableFacebookLoginForGroup = false;
     }
   }
-
 });
-</script>
-</dom-module>

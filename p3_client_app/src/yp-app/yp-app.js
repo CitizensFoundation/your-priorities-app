@@ -1,66 +1,72 @@
-<script src="../../../../i18next/i18next.min.js"></script>
-<script src="../../../../i18next-xhr-backend/i18nextXHRBackend.min.js"></script>
-
-<script src="../../../../moment/min/moment.min.js"></script>
-<script src="../../../../moment/locale/is.js"></script>
-<script src="../../../../moment/locale/nb.js"></script>
-<script src="../../../../moment/locale/nl.js"></script>
-<script src="../../../../moment/locale/hu.js"></script>
-<script src="../../../../moment/locale/zh-tw.js"></script>
-<script src="../../../../moment/locale/sr.js"></script>
-<script src="../../../../moment/locale/hr.js"></script>
-<script src="../../../../moment/locale/tr.js"></script>
-<script src="../../../../moment/locale/sl.js"></script>
-<script src="../../../../moment/locale/pt.js"></script>
-<script src="../../../../moment/locale/pl.js"></script>
-<script src="../../../../moment/locale/de.js"></script>
-<script src="../../../../moment/locale/fr.js"></script>
-<script src="../../../../moment/locale/da.js"></script>
-<script src="../../../../moment/locale/nb.js"></script>
-
-<script type="module" src="../../../../@polymer/polymer/polymer-legacy.js"></script>
-
-<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
-<script type="module" src="../../../../@polymer/iron-pages/iron-pages.js"></script>
-<script type="module" src="../../../../lite-signal/lite-signal.js"></script>
-<script type="module" src="../../../../@polymer/iron-media-query/iron-media-query.js"></script>
-
-<script type="module" src="../../../../@polymer/paper-icon-button/paper-icon-button.js"></script>
-<script type="module" src="../../../../@polymer/paper-listbox/paper-listbox.js"></script>
-<script type="module" src="../../../../@polymer/paper-badge/paper-badge.js"></script>
-
-<script type="module" src="../../../../@polymer/paper-menu-button/paper-menu-button.js"></script>
-
-<script type="module" src="../../../../@polymer/app-layout/app-drawer-layout/app-drawer-layout.js"></script>
-<script type="module" src="../../../../@polymer/app-layout/app-drawer/app-drawer.js"></script>
-<script type="module" src="../../../../@polymer/app-layout/app-header-layout/app-header-layout.js"></script>
-<script type="module" src="../../../../@polymer/app-layout/app-header/app-header.js"></script>
-<script type="module" src="../../../../@polymer/app-layout/app-scroll-effects/effects/waterfall.js"></script>
-
-<script type="module" src="../../../../@polymer/app-layout/app-toolbar/app-toolbar.js"></script>
-<script type="module" src="../../../../@polymer/app-route/app-location.js"></script>
-<script type="module" src="../../../../@polymer/app-route/app-route.js"></script>
-
-<script type="module" src="../yp-behaviors/yp-lodash-behavior.js"></script>
-<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
-<script type="module" src="../yp-app-globals/yp-app-globals.js"></script>
-<script type="module" src="../yp-app-globals/yp-app-user.js"></script>
-<script type="module" src="../yp-theme/yp-theme-behavior.js"></script>
-<script type="module" src="../yp-behaviors/yp-goto-behavior.js"></script>
-<script type="module" src="../yp-behaviors/yp-translated-pages-behavior.js"></script>
-
-<script type="module" src="../ac-notifications/ac-notification-list.js"></script>
-<script type="module" src="./yp-app-nav-drawer.js"></script>
-<script type="module" src="../yp-dialog-container/yp-dialog-container.js"></script>
-<script type="module" src="../yp-user/yp-user-image.js"></script>
-<script type="module" src="./yp-app-swipe-behavior.js"></script>
-
-<script type="module" src="../yp-app-globals/yp-sw-update-toast.js"></script>
-
-<dom-module id="yp-app">
-
-  <template>
-
+import '../../../../@polymer/polymer/polymer-legacy.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../../../../@polymer/iron-pages/iron-pages.js';
+import '../../../../lite-signal/lite-signal.js';
+import '../../../../@polymer/iron-media-query/iron-media-query.js';
+import '../../../../@polymer/paper-icon-button/paper-icon-button.js';
+import '../../../../@polymer/paper-listbox/paper-listbox.js';
+import '../../../../@polymer/paper-badge/paper-badge.js';
+import '../../../../@polymer/paper-menu-button/paper-menu-button.js';
+import '../../../../@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
+import '../../../../@polymer/app-layout/app-drawer/app-drawer.js';
+import '../../../../@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '../../../../@polymer/app-layout/app-header/app-header.js';
+import '../../../../@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
+import '../../../../@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '../../../../@polymer/app-route/app-location.js';
+import '../../../../@polymer/app-route/app-route.js';
+import '../yp-behaviors/yp-lodash-behavior.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import '../yp-app-globals/yp-app-globals.js';
+import '../yp-app-globals/yp-app-user.js';
+import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
+import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
+import { ypTranslatedPagesBehavior } from '../yp-behaviors/yp-translated-pages-behavior.js';
+import '../ac-notifications/ac-notification-list.js';
+import './yp-app-nav-drawer.js';
+import '../yp-dialog-container/yp-dialog-container.js';
+import '../yp-user/yp-user-image.js';
+import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
+import '../yp-app-globals/yp-sw-update-toast.js';
+import '../yp-community/yp-community.js';
+import '../yp-community/yp-community-folder.js';
+import '../yp-group/yp-group.js';
+import '../yp-domain/yp-domain.js';
+import '../yp-post/yp-post.js';
+import '../yp-user/yp-user.js';
+import '../yp-dialog-container/yp-dialog-container-logged-in.js';
+import '../yp-dialog-container/yp-dialog-container-admin.js';
+import '../yp-dialog-container/yp-dialog-container-bulk-status-updates.js';
+import '../yp-dialog-container/yp-dialog-container-users-grid.js';
+import '../yp-dialog-container/yp-dialog-container-media-recorder.js';
+import '../yp-dialog-container/yp-dialog-container-delayed.js';
+import '../yp-dialog-container/yp-dialog-container-moderation.js';
+import '../yp-dialog-container/yp-dialog-vaadin-grid-shared.js';
+import './yp-view-404.js';
+import { setPassiveTouchGestures } from '../../../../@polymer/polymer/lib/utils/settings.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import '../../../../i18next/i18next.min.js';
+import '../../../../i18next-xhr-backend/i18nextXHRBackend.min.js';
+import '../../../../moment/min/moment.min.js';
+import '../../../../moment/locale/is.js';
+import '../../../../moment/locale/nb.js';
+import '../../../../moment/locale/nl.js';
+import '../../../../moment/locale/hu.js';
+import '../../../../moment/locale/zh-tw.js';
+import '../../../../moment/locale/sr.js';
+import '../../../../moment/locale/hr.js';
+import '../../../../moment/locale/tr.js';
+import '../../../../moment/locale/sl.js';
+import '../../../../moment/locale/pt.js';
+import '../../../../moment/locale/pl.js';
+import '../../../../moment/locale/de.js';
+import '../../../../moment/locale/fr.js';
+import '../../../../moment/locale/da.js';
+setPassiveTouchGestures(true);
+Polymer({
+  _template: html`
     <style include="iron-flex iron-flex-alignment">
       :host {
         --main-stats-color-on-white: #878787;
@@ -312,63 +318,63 @@
 
     <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <yp-app-globals id="appGlobals" setup-defaults on-change-header="onChangeHeader"></yp-app-globals>
+    <yp-app-globals id="appGlobals" setup-defaults="" on-change-header="onChangeHeader"></yp-app-globals>
 
-    <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed>
+    <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed="">
 
-      <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open>
+      <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open="">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important; width: 255px;">
           <ac-notification-list id="acNotificationsList" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></ac-notification-list>
         </div>
       </app-drawer>
 
-      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open opened="{{navDrawOpened}}">
+      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open="" opened="{{navDrawOpened}}">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
           <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
         </div>
       </app-drawer>
 
-      <app-header-layout id="mainArea" fullbleed>
+      <app-header-layout id="mainArea" fullbleed="">
 
-        <app-header slot="header" id="appHeader" effects="waterfall" reveals class="main-header">
+        <app-header slot="header" id="appHeader" effects="waterfall" reveals="" class="main-header">
           <app-toolbar>
-            <div class="layout horizontal navContainer" hidden$="[[closePostHeader]]">
-              <paper-icon-button aria-label$="[[t('goBack')]]" title$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
+            <div class="layout horizontal navContainer" hidden\$="[[closePostHeader]]">
+              <paper-icon-button aria-label\$="[[t('goBack')]]" title\$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden\$="[[!showBack]]"></paper-icon-button>
             </div>
-            <div hide$="[[closePostHeader]]" hidden$="[[goForwardToPostId]]" id="headerTitle" title class="layout vertical navContainer">[[headerTitle]]</div>
+            <div hide\$="[[closePostHeader]]" hidden\$="[[goForwardToPostId]]" id="headerTitle" title="" class="layout vertical navContainer">[[headerTitle]]</div>
             <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button aria-label$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
+              <paper-icon-button aria-label\$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
             </template>
             <template is="dom-if" if="[[goForwardToPostId]]">
               <div class="layout horizontal">
-                <paper-icon-button aria-label$="[[t('forwardToPost')]]" title$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="fast-forward" on-tap="_goToNextPost"></paper-icon-button>
+                <paper-icon-button aria-label\$="[[t('forwardToPost')]]" title\$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="fast-forward" on-tap="_goToNextPost"></paper-icon-button>
                 <div id="forwardPostName" class="forwardPostName">
                   [[goForwardPostName]]
                 </div>
               </div>
             </template>
             <span class="flex"></span>
-            <div hidden$="[[!autoTranslate]]" class="layout horizontal">
-              <paper-button raised id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
+            <div hidden\$="[[!autoTranslate]]" class="layout horizontal">
+              <paper-button raised="" id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
                 <iron-icon icon="translate"></iron-icon>
                 <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
               </paper-button>
             </div>
-            <paper-icon-button aria-label$="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-            <paper-menu-button horizontal-align="right" hide$="[[hideHelpIcon]]" class="helpButton">
-              <paper-icon-button aria-label$="[[t('menu.help')]]" icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button aria-label\$="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
+            <paper-menu-button horizontal-align="right" hide\$="[[hideHelpIcon]]" class="helpButton">
+              <paper-icon-button aria-label\$="[[t('menu.help')]]" icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
 
               <paper-listbox slot="dropdown-content">
                 <template is="dom-repeat" items="[[translatedPages]]" as="page">
-                  <paper-item data-args$="[[index]]" on-tap="_openPageFromMenu">[[_getLocalizePageTitle(page)]]</paper-item>
+                  <paper-item data-args\$="[[index]]" on-tap="_openPageFromMenu">[[_getLocalizePageTitle(page)]]</paper-item>
                 </template>
               </paper-listbox>
             </paper-menu-button>
 
             <template is="dom-if" if="[[user]]">
               <div class="userImageNotificationContainer layout horizontal" on-tap="_toggleUserDrawer">
-                <yp-user-image id="userImage" small user="[[user]]"></yp-user-image>
-                <paper-badge id="notificationBadge" class="activeBadge" label="[[numberOfUnViewedNotifications]]" hidden$="[[!numberOfUnViewedNotifications]]"></paper-badge>
+                <yp-user-image id="userImage" small="" user="[[user]]"></yp-user-image>
+                <paper-badge id="notificationBadge" class="activeBadge" label="[[numberOfUnViewedNotifications]]" hidden\$="[[!numberOfUnViewedNotifications]]"></paper-badge>
               </div>
             </template>
 
@@ -378,13 +384,13 @@
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed>
-          <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
-          <yp-community id="communityPage" name="community" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
-          <yp-community-folder id="communityFolderPage" name="community_folder" id-route$="[[communityFolderSubRoute]]" on-change-header="onChangeHeader"></yp-community-folder>
-          <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
-          <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
-          <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
+        <iron-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed="">
+          <yp-domain id="domainPage" name="domain" id-route\$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
+          <yp-community id="communityPage" name="community" id-route\$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
+          <yp-community-folder id="communityFolderPage" name="community_folder" id-route\$="[[communityFolderSubRoute]]" on-change-header="onChangeHeader"></yp-community-folder>
+          <yp-group id="groupPage" name="group" id-route\$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-post id="postPage" name="post" id-route\$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
+          <yp-user id="userPage" name="user" id-route\$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
           <yp-view-404 name="view-404"></yp-view-404>
         </iron-pages>
 
@@ -396,53 +402,12 @@
 
     <app-location route="{{route}}"></app-location>
 
-    <app-route
-      route="{{route}}"
-      pattern="/:page"
-      data="{{routeData}}"
-      tail="{{subRoute}}"></app-route>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subRoute}}"></app-route>
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
     <yp-sw-update-toast button-label="[[t('reload')]]" message="[[t('newVersionAvailable')]]"></yp-sw-update-toast>
-  </template>
-
-  <script type="module">
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-pages/iron-pages.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/iron-media-query/iron-media-query.js';
-import '../../../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../../../@polymer/paper-listbox/paper-listbox.js';
-import '../../../../@polymer/paper-badge/paper-badge.js';
-import '../../../../@polymer/paper-menu-button/paper-menu-button.js';
-import '../../../../@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '../../../../@polymer/app-layout/app-drawer/app-drawer.js';
-import '../../../../@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '../../../../@polymer/app-layout/app-header/app-header.js';
-import '../../../../@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
-import '../../../../@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '../../../../@polymer/app-route/app-location.js';
-import '../../../../@polymer/app-route/app-route.js';
-import '../yp-behaviors/yp-lodash-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import '../yp-app-globals/yp-app-globals.js';
-import '../yp-app-globals/yp-app-user.js';
-import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { ypTranslatedPagesBehavior } from '../yp-behaviors/yp-translated-pages-behavior.js';
-import '../ac-notifications/ac-notification-list.js';
-import './yp-app-nav-drawer.js';
-import '../yp-dialog-container/yp-dialog-container.js';
-import '../yp-user/yp-user-image.js';
-import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
-import '../yp-app-globals/yp-sw-update-toast.js';
-import { setPassiveTouchGestures } from '../../../../@polymer/polymer/lib/utils/settings.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
-setPassiveTouchGestures(true);
-Polymer({
+`,
 
   is: 'yp-app',
 
@@ -1356,5 +1321,3 @@ Polymer({
     return a === b;
   }
 });
-</script>
-</dom-module>

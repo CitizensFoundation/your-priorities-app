@@ -1,32 +1,26 @@
-<script type="module" src="../../../../@polymer/polymer/polymer-legacy.js"></script>
-
-<script type="module" src="../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js"></script>
-<script type="module" src="../../../../lite-signal/lite-signal.js"></script>
-
-<script type="module" src="../../../../@polymer/paper-tabs/paper-tab.js"></script>
-
-<script type="module" src="../yp-behaviors/yp-language-behavior.js"></script>
-<script type="module" src="../yp-behaviors/collection-helpers.js"></script>
-<script type="module" src="../yp-behaviors/access-helpers.js"></script>
-<script type="module" src="../yp-behaviors/yp-logged-in-user-behavior.js"></script>
-<script type="module" src="../yp-behaviors/yp-news-tab-selected.js"></script>
-<script type="module" src="../yp-behaviors/yp-detect-old-ios.js"></script>
-<script type="module" src="../yp-behaviors/yp-goto-behavior.js"></script>
-
-<script type="module" src="../yp-theme/yp-theme-behavior.js"></script>
-
-<script type="module" src="../yp-community/yp-community-collection-behaviors.js"></script>
-
-<script type="module" src="../ac-activities/ac-activities.js"></script>
-
-<script type="module" src="../yp-ajax/yp-ajax.js"></script>
-<script type="module" src="../yp-page/yp-page.js"></script>
-<script type="module" src="../yp-community/yp-community-grid.js"></script>
-
-<script type="module" src="./yp-domain-large-card.js"></script>
-
-<dom-module id="yp-domain">
-  <template>
+import '../../../../@polymer/polymer/polymer-legacy.js';
+import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '../../../../lite-signal/lite-signal.js';
+import '../../../../@polymer/paper-tabs/paper-tab.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
+import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
+import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
+import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
+import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
+import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
+import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
+import { CommunityCollectionBehaviors } from '../yp-community/yp-community-collection-behaviors.js';
+import '../ac-activities/ac-activities.js';
+import '../yp-ajax/yp-ajax.js';
+import '../yp-page/yp-page.js';
+import '../yp-community/yp-community-grid.js';
+import './yp-domain-large-card.js';
+import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+Polymer({
+  _template: html`
     <style include="iron-flex iron-flex-alignment">
       ac-activities {
         @apply --layout-vertical;
@@ -96,21 +90,15 @@
 
       <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refreshAjax"></yp-domain-large-card>
 
-      <paper-tabs id="paper_tabs" apple$="[[isOldiOs]]" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused>
+      <paper-tabs id="paper_tabs" apple\$="[[isOldiOs]]" slot="tabs" class="tabs" selected="{{selectedTab}}" attr-for-selected="name" focused="">
         <paper-tab name="communities" class="tab"><span>[[t('communities')]]</span> &nbsp; (<span>[[communitiesLength]]</span>)</paper-tab>
-        <paper-tab name="news" class="tab" hidden$="[[domain.configuration.hideDomainNews]]">[[t('news')]]</paper-tab>
+        <paper-tab name="news" class="tab" hidden\$="[[domain.configuration.hideDomainNews]]">[[t('news')]]</paper-tab>
       </paper-tabs>
 
-      <iron-pages class="tabPages" fullbleed slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <iron-pages class="tabPages" fullbleed="" slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <section name="communities" class="layout vertical">
           <div class="card-container layout center-center wrap">
-            <yp-community-grid
-              id="communityGrid"
-              featured-communities="[[featuredCommunities]]"
-              active-communities="[[activeCommunities]]"
-              archived-communities="[[archivedCommunities]]"
-              hide-add$="[[!createFabIcon]]"
-              on-add-new-community="_newCommunity">
+            <yp-community-grid id="communityGrid" featured-communities="[[featuredCommunities]]" active-communities="[[activeCommunities]]" archived-communities="[[archivedCommunities]]" hide-add\$="[[!createFabIcon]]" on-add-new-community="_newCommunity">
             </yp-community-grid>
           </div>
         </section>
@@ -125,46 +113,17 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
 
-    <app-route
-      route="{{idRoute}}"
-      pattern="/:id"
-      data="{{idRouteData}}"
-      tail="{{tabRoute}}">
+    <app-route route="{{idRoute}}" pattern="/:id" data="{{idRouteData}}" tail="{{tabRoute}}">
     </app-route>
 
-    <app-route
-      route="{{tabRoute}}"
-      pattern="/:tabName"
-      data="{{tabRouteData}}">
+    <app-route route="{{tabRoute}}" pattern="/:tabName" data="{{tabRouteData}}">
     </app-route>
 
     <div class="ypBottomContainer">
       <yp-ajax id="ajax" url="[[url]]" on-response="_response"></yp-ajax>
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
-  </template>
-  <script type="module">
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
-import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
-import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
-import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
-import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
-import { CommunityCollectionBehaviors } from '../yp-community/yp-community-collection-behaviors.js';
-import '../ac-activities/ac-activities.js';
-import '../yp-ajax/yp-ajax.js';
-import '../yp-page/yp-page.js';
-import '../yp-community/yp-community-grid.js';
-import './yp-domain-large-card.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
-Polymer({
+`,
 
   is: 'yp-domain',
 
@@ -401,5 +360,3 @@ Polymer({
     window.appGlobals.currentGroup = null;
   }
 });
-</script>  
-</dom-module>
