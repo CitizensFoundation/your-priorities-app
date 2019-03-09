@@ -4,10 +4,10 @@
   from HTML and may be out of place here. Review them and
   then delete this comment!
 */
-import { PolymerElement } from '../../../../@polymer/polymer/polymer-element.js';
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
 
-import '../../../../@polymer/paper-toast/paper-toast.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import '@polymer/paper-toast/paper-toast.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 /**
  * # Service worker update toast
  * `<sw-update-toast>` displays a toast requesting the user to reload the page when a source code update is available.

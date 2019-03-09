@@ -1,6 +1,6 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../iron-lazy-pages/iron-lazy-pages.js';
+import '@polymer/polymer/polymer-legacy.js';
+import 'lite-signal/lite-signal.js';
+import 'iron-lazy-pages/iron-lazy-pages.js';
 import '../yp-ajax/yp-ajax-error-dialog.js';
 import '../yp-user/yp-login.js';
 import '../yp-user/yp-missing-email.js';
@@ -12,8 +12,8 @@ import './yp-autotranslate-dialog.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

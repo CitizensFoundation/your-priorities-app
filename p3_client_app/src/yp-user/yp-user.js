@@ -1,7 +1,7 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-tabs/paper-tab.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
@@ -12,8 +12,8 @@ import { GroupCollectionBehaviors } from '../yp-group/yp-group-collection-behavi
 import { CommunityCollectionBehaviors } from '../yp-community/yp-community-collection-behaviors.js';
 import './yp-user-large-card.js';
 import '../yp-bulk-status-update/yp-bulk-status-display.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

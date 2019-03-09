@@ -1,4 +1,4 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
+import '@polymer/polymer/polymer-legacy.js';
 import '../yp-behaviors/yp-language-behavior.js';
 
 /**

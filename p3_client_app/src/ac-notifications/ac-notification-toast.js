@@ -1,9 +1,9 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/paper-toast/paper-toast.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/paper-toast/paper-toast.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-user/yp-user-with-organization.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

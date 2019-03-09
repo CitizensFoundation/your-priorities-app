@@ -1,12 +1,12 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../lite-signal/lite-signal.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import 'lite-signal/lite-signal.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypCardMouseBehavior } from '../yp-behaviors/yp-card-mouse-behavior.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
 import './yp-community-card.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

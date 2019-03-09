@@ -9,16 +9,16 @@
   from HTML and may be out of place here. Review them and
   then delete this comment!
 */
-import { PolymerElement } from '../../../../@polymer/polymer/polymer-element.js';
+import { PolymerElement } from '@polymer/polymer/polymer-element.js';
 
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/paper-dialog/paper-dialog.js';
-import '../../../../@polymer/paper-checkbox/paper-checkbox.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/paper-dialog/paper-dialog.js';
+import '@polymer/paper-checkbox/paper-checkbox.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { mixinBehaviors } from '../../../../@polymer/polymer/lib/legacy/class.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 
 class YpMediaRecorder extends  mixinBehaviors([ypLanguageBehavior], PolymerElement) {
   static get template() {

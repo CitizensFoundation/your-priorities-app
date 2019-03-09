@@ -1,15 +1,15 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-media-query/iron-media-query.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../google-map/google-map.js';
-import '../../../../google-map/google-map-marker.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-media-query/iron-media-query.js';
+import 'lite-signal/lite-signal.js';
+import 'google-map/google-map.js';
+import 'google-map/google-map-marker.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import './yp-post-card.js';
 import './yp-post-map-info.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

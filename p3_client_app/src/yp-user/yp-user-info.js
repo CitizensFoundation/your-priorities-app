@@ -1,13 +1,13 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-image/iron-image.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-fab/paper-fab.js';
-import '../../../../@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-image/iron-image.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-user-image.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

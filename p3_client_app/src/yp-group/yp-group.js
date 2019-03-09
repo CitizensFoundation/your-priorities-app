@@ -1,13 +1,13 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/iron-pages/iron-pages.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
-import '../../../../@polymer/paper-tabs/paper-tabs.js';
-import '../../../../@polymer/paper-fab/paper-fab.js';
-import '../../../../@polymer/app-route/app-route.js';
-import '../../../../@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/paper-tabs/paper-tab.js';
+import '@polymer/paper-tabs/paper-tabs.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '@polymer/app-route/app-route.js';
+import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
@@ -23,9 +23,9 @@ import '../yp-post/yp-post-map.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
 import './yp-group-card-large.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

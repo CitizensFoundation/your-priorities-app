@@ -1,10 +1,10 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-image/iron-image.js';
-import '../../../../lite-signal/lite-signal.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-image/iron-image.js';
+import 'lite-signal/lite-signal.js';
 import './ac-notification-selection.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

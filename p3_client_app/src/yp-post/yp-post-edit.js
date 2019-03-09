@@ -1,20 +1,20 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/neon-animation/web-animations.js';
-import '../../../../@polymer/paper-input/paper-input.js';
-import '../../../../@polymer/paper-radio-button/paper-radio-button.js';
-import '../../../../@polymer/paper-radio-group/paper-radio-group.js';
-import '../../../../@polymer/paper-input/paper-textarea.js';
-import '../../../../@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '../../../../@polymer/paper-listbox/paper-listbox.js';
-import '../../../../@polymer/paper-item/paper-item.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
-import '../../../../@polymer/paper-checkbox/paper-checkbox.js';
-import '../../../../@polymer/paper-tabs/paper-tabs.js';
-import '../../../../@polymer/neon-animation/neon-animated-pages.js';
-import '../../../../@polymer/neon-animation/neon-animatable.js';
-import '../../../../@polymer/neon-animation/neon-animation.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/neon-animation/web-animations.js';
+import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-radio-button/paper-radio-button.js';
+import '@polymer/paper-radio-group/paper-radio-group.js';
+import '@polymer/paper-input/paper-textarea.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-tabs/paper-tab.js';
+import '@polymer/paper-checkbox/paper-checkbox.js';
+import '@polymer/paper-tabs/paper-tabs.js';
+import '@polymer/neon-animation/neon-animated-pages.js';
+import '@polymer/neon-animation/neon-animatable.js';
+import '@polymer/neon-animation/neon-animation.js';
 import '../yp-file-upload/yp-file-upload.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-behaviors/emoji-selector.js';
@@ -22,8 +22,8 @@ import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
 import './yp-post-location.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
 Polymer({
   _template: html`

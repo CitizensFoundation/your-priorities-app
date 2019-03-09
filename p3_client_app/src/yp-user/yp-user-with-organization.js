@@ -1,12 +1,12 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-image/iron-image.js';
-import '../../../../@polymer/paper-fab/paper-fab.js';
-import '../../../../@polymer/paper-button/paper-button.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-image/iron-image.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '@polymer/paper-button/paper-button.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import './yp-user-image.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

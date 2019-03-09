@@ -1,18 +1,18 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-image/iron-image.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-fab/paper-fab.js';
-import '../../../../@polymer/paper-button/paper-button.js';
-import '../../../../@polymer/paper-dialog/paper-dialog.js';
-import '../../../../@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-image/iron-image.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-dialog/paper-dialog.js';
+import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '../yp-ajax/yp-ajax.js';
 import '../yp-post/yp-post-header.js';
 import '../yp-point/yp-point.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

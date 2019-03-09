@@ -1,12 +1,12 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-form/iron-form.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-button/paper-button.js';
-import '../../../../@polymer/paper-dialog/paper-dialog.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-form/iron-form.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-dialog/paper-dialog.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
 Polymer({
   _template: html`

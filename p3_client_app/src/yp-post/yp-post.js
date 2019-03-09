@@ -1,15 +1,15 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-media-query/iron-media-query.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/iron-pages/iron-pages.js';
-import '../../../../@polymer/paper-material/paper-material.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
-import '../../../../@polymer/paper-tabs/paper-tabs.js';
-import '../../../../@polymer/app-route/app-route.js';
-import '../../../../google-map/google-map.js';
-import '../../../../google-map/google-map-marker.js';
-import '../../../../google-map/google-map.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-media-query/iron-media-query.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/paper-material/paper-material.js';
+import '@polymer/paper-tabs/paper-tab.js';
+import '@polymer/paper-tabs/paper-tabs.js';
+import '@polymer/app-route/app-route.js';
+import 'google-map/google-map.js';
+import 'google-map/google-map-marker.js';
+import 'google-map/google-map.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../ac-activities/ac-activities.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
@@ -21,9 +21,9 @@ import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import './yp-post-header.js';
 import './yp-post-points.js';
 import './yp-post-user-images.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

@@ -1,13 +1,13 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-post/yp-post-cover-media.js';
 import { YpPostBehavior } from '../yp-post/yp-post-behaviors.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

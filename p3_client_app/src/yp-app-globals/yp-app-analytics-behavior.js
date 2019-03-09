@@ -1,5 +1,5 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import '@polymer/polymer/polymer-legacy.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 
 /**
  * @polymerBehavior Polymer.ypAppAnalyticsBehavior

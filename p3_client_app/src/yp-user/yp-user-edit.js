@@ -1,21 +1,21 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-input/paper-input.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
-import '../../../../@polymer/paper-tabs/paper-tabs.js';
-import '../../../../@polymer/neon-animation/neon-animated-pages.js';
-import '../../../../@polymer/neon-animation/neon-animatable.js';
-import '../../../../@polymer/neon-animation/neon-animation.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-tabs/paper-tab.js';
+import '@polymer/paper-tabs/paper-tabs.js';
+import '@polymer/neon-animation/neon-animated-pages.js';
+import '@polymer/neon-animation/neon-animatable.js';
+import '@polymer/neon-animation/neon-animation.js';
 import '../yp-file-upload/yp-file-upload.js';
 import '../yp-ajax/yp-ajax.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
 import '../ac-notifications/ac-notification-settings.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 
 Polymer({
   _template: html`

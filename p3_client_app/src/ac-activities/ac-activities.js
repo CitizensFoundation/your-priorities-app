@@ -1,9 +1,9 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-list/iron-list.js';
-import '../../../../@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-material/paper-material.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-list/iron-list.js';
+import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-material/paper-material.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
@@ -12,9 +12,9 @@ import '../yp-ajax/yp-ajax.js';
 import '../yp-point/yp-point-news-story-edit.js';
 import './ac-activity.js';
 import './ac-activity-recommended-posts.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

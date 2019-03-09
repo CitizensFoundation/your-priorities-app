@@ -1,5 +1,5 @@
-import '../../../../@polymer/iron-icon/iron-icon.js';
-import '../../../../@polymer/iron-iconset-svg/iron-iconset-svg.js';
+import '@polymer/iron-icon/iron-icon.js';
+import '@polymer/iron-iconset-svg/iron-iconset-svg.js';
 const $_documentContainer = document.createElement('template');
 
 $_documentContainer.innerHTML = `<iron-iconset-svg size="24" name="icons">

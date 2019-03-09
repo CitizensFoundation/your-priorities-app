@@ -1,11 +1,11 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-material/paper-material.js';
-import '../../../../@polymer/paper-radio-button/paper-radio-button.js';
-import '../../../../@polymer/paper-radio-group/paper-radio-group.js';
-import '../../../../@polymer/paper-input/paper-textarea.js';
-import '../../../../@polymer/paper-toast/paper-toast.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-material/paper-material.js';
+import '@polymer/paper-radio-button/paper-radio-button.js';
+import '@polymer/paper-radio-group/paper-radio-group.js';
+import '@polymer/paper-input/paper-textarea.js';
+import '@polymer/paper-toast/paper-toast.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-behaviors/yp-iron-list-behavior.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
@@ -13,10 +13,10 @@ import '../yp-behaviors/emoji-selector.js';
 import '../yp-point/yp-point.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import '../yp-file-upload/yp-file-upload.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

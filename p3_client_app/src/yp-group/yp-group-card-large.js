@@ -1,13 +1,13 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-image/iron-image.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../../../@polymer/paper-menu-button/paper-menu-button.js';
-import '../../../../@polymer/neon-animation/web-animations.js';
-import '../../../../@polymer/paper-listbox/paper-listbox.js';
-import '../../../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../../../@polymer/paper-item/paper-item.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-image/iron-image.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-menu-button/paper-menu-button.js';
+import '@polymer/neon-animation/web-animations.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-item/paper-item.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
@@ -19,9 +19,9 @@ import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavio
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-group-stats.js';
 import { GroupBehaviors } from './yp-group-behaviors.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

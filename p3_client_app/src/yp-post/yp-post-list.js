@@ -1,18 +1,18 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-list/iron-list.js';
-import '../../../../@polymer/iron-media-query/iron-media-query.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/iron-a11y-keys/iron-a11y-keys.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-list/iron-list.js';
+import '@polymer/iron-media-query/iron-media-query.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import './yp-post-card.js';
 import '../yp-posts-filter/yp-posts-filter.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

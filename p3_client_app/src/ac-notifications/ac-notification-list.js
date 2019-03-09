@@ -1,8 +1,8 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/iron-list/iron-list.js';
-import '../../../../@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '../../../../@polymer/paper-button/paper-button.js';
+import '@polymer/polymer/polymer-legacy.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/iron-list/iron-list.js';
+import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
+import '@polymer/paper-button/paper-button.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -11,9 +11,9 @@ import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import './ac-notification-list-post.js';
 import './ac-notification-list-point.js';
 import './ac-notification-list-general-item.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

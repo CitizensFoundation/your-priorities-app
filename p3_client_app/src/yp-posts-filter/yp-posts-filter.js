@@ -1,20 +1,20 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../@polymer/iron-image/iron-image.js';
-import '../../../../@polymer/iron-selector/iron-selector.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/paper-item/paper-item.js';
-import '../../../../@polymer/paper-button/paper-button.js';
-import '../../../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../../../@polymer/paper-menu-button/paper-menu-button.js';
-import '../../../../@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-image/iron-image.js';
+import '@polymer/iron-selector/iron-selector.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-menu-button/paper-menu-button.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-ajax/yp-ajax.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

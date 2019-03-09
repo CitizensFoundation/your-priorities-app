@@ -1,10 +1,10 @@
-import '../../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../../@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../../../../../@polymer/paper-icon-button/paper-icon-button.js';
-import '../../../../../@polymer/paper-card/paper-card.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-card/paper-card.js';
 import '../../yp-app-globals/yp-app-icons.js';
-import { Polymer } from '../../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../../@polymer/polymer/lib/utils/html-tag.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { ypLanguageBehavior } from '../../yp-behaviors/yp-language-behavior.js';
 Polymer({
   _template: html`

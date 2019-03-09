@@ -1,16 +1,16 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/iron-image/iron-image.js';
-import '../../../../lite-signal/lite-signal.js';
-import '../../../../@polymer/iron-pages/iron-pages.js';
-import '../../../../@polymer/paper-fab/paper-fab.js';
-import '../../../../@polymer/paper-tabs/paper-tabs.js';
-import '../../../../@polymer/paper-tabs/paper-tab.js';
-import '../../../../@polymer/paper-button/paper-button.js';
-import '../../../../@polymer/paper-input/paper-input.js';
-import '../../../../@polymer/paper-input/paper-textarea.js';
-import '../../../../@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import '../../../../@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '../../../../@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-image/iron-image.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '@polymer/paper-tabs/paper-tabs.js';
+import '@polymer/paper-tabs/paper-tab.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-input/paper-textarea.js';
+import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/paper-listbox/paper-listbox.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypOfficialStatusOptions } from '../yp-behaviors/yp-official-status-options.js';
@@ -18,9 +18,9 @@ import '../yp-ajax/yp-ajax.js';
 import { WordWrap } from '../yp-behaviors/word-wrap.js';
 import { ypPostMoveBehavior } from '../yp-post/yp-post-move-behavior.js';
 import './yp-bulk-status-update-templates.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

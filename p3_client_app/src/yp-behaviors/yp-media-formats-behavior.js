@@ -1,4 +1,4 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
+import '@polymer/polymer/polymer-legacy.js';
 
 /** @polymerBehavior Polymer.ypMediaFormatsBehavior */
 export const ypMediaFormatsBehavior = {

@@ -1,12 +1,12 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import '../../../../@polymer/paper-toast/paper-toast.js';
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/paper-toast/paper-toast.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-session/yp-session.js';
 import '../yp-ajax/yp-ajax.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
-import { Polymer } from '../../../../@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '../../../../@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '../../../../@polymer/polymer/lib/legacy/polymer.dom.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

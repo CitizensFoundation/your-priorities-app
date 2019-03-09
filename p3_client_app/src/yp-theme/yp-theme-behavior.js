@@ -1,5 +1,5 @@
-import '../../../../@polymer/polymer/polymer-legacy.js';
-import { updateStyles } from '../../../../@polymer/polymer/lib/mixins/element-mixin.js';
+import '@polymer/polymer/polymer-legacy.js';
+import { updateStyles } from '@polymer/polymer/lib/mixins/element-mixin.js';
 
 /**
  * @polymerBehavior Polymer.ypThemeBehavior
