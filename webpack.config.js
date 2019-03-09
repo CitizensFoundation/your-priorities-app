@@ -68,10 +68,10 @@ const assets = [
 const commonConfig = merge([
   {
     resolve: {
-      modules: ['p3_client_app/node_modules','node_modules']
+      modules: ['./p3_client_app/node_modules','./node_modules']
       // configuration options
     },
-    entry: './p3_client_app/index.js',
+    entry: './p3_client_app/src/yp-app/yp-app.js',
     output: {
       path: OUTPUT_PATH,
       filename: '[name].[chunkhash:8].js'
