@@ -67,6 +67,10 @@ const assets = [
 
 const commonConfig = merge([
   {
+    resolve: {
+      modules: ['p3_client_app/node_modules','node_modules']
+      // configuration options
+    },
     entry: './p3_client_app/index.js',
     output: {
       path: OUTPUT_PATH,
@@ -159,7 +163,7 @@ const commonConfig = merge([
 
 const developmentConfig = merge([
   {
-    devtool: 'cheap-module-source-map',
+    devtool: 'cheap-eval-source-map',
     plugins: [
       new CopyWebpackPlugin(polyfills),
       new HtmlWebpackPlugin({
@@ -237,10 +241,6 @@ const productionConfig = merge([
 module.exports = mode => {
   if (mode === 'production') {
     return merge(commonConfig, productionConfig, { mode });
-  }
-
-  resolve: {
-    // configuration options
   }
 
   return merge(commonConfig, developmentConfig, { mode });
