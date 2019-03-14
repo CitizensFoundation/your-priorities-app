@@ -50,6 +50,14 @@ let sendIndex = function (req, res) {
       console.error("Cant read index file");
       throw err;
     } else {
+      var userAgent = req.headers['user-agent'];
+      var ie11 = /Trident.*rv[ :]*11\./.test(userAgent);
+      if (true || ie11) {
+        indexFileData = indexFileData.replace('XIE11ForceIE11MetaX','<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">\n')
+      } else {
+        indexFileData = indexFileData.replace('XIE11ForceIE11MetaX','')
+      }
+
       if (req.hostname.indexOf('betrireykjavik.is') > -1) {
         res.send(replaceForBetterReykjavik(indexFileData));
       } else if (req.hostname.indexOf('betraisland.is') > -1) {
