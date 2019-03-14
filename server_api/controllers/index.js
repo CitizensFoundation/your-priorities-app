@@ -51,7 +51,7 @@ let sendIndex = function (req, res) {
       throw err;
     } else {
       var userAgent = req.headers['user-agent'];
-      var ie11 = /Trident.*rv[ :]*11\./.test(userAgent);
+      var ie11 = /Trident/.test(userAgent);
       if (!ie11) {
         indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
       }
