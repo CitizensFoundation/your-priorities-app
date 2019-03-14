@@ -52,10 +52,8 @@ let sendIndex = function (req, res) {
     } else {
       var userAgent = req.headers['user-agent'];
       var ie11 = /Trident.*rv[ :]*11\./.test(userAgent);
-      if (true || ie11) {
-        indexFileData = indexFileData.replace('XIE11ForceIE11MetaX','<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">\n')
-      } else {
-        indexFileData = indexFileData.replace('XIE11ForceIE11MetaX','')
+      if (!ie11) {
+        indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
       }
 
       if (req.hostname.indexOf('betrireykjavik.is') > -1) {
