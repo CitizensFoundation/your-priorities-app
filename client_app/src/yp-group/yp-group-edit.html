@@ -254,7 +254,6 @@
         <paper-checkbox name="showWhoPostedPosts" checked$="{{showWhoPostedPosts}}">[[t('group.showWhoPostedPosts')]]</paper-checkbox>
         <paper-checkbox name="disableDebate" checked$="{{group.configuration.disableDebate}}">[[t('disableDebate')]]</paper-checkbox>
 
-
         <paper-input id="postDescriptionLimit"
                      name="postDescriptionLimit"
                      type="text"
@@ -290,6 +289,10 @@
                      label="[[t('audioPostUploadLimitSec')]]"
                      value="{{group.configuration.audioPostUploadLimitSec}}">
         </paper-input>
+
+        <paper-checkbox name="showVideoUploadDisclaimer" checked$="{{group.configuration.showVideoUploadDisclaimer}}">
+          [[t('showVideoUploadDisclaimer')]]
+        </paper-checkbox>
 
         <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">
           [[t('moreContactInformation')]]

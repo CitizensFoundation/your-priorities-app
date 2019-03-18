@@ -144,6 +144,12 @@
       .postCoverVideoInfo {
         margin-top: 8px;
       }
+
+      .videoUploadDisclamer {
+        margin-top: 0px;
+        font-size: 12px;
+        padding: 0;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -343,6 +349,11 @@
                     </yp-file-upload>
                   </div>
                 </template>
+              </div>
+              <div hidden$="[[!group.configuration.showVideoUploadDisclaimer]]">
+                <div class="videoUploadDisclamer" hidden$="[[!uploadedVideoId]]">
+                  [[t('videoUploadDisclaimer')]]
+                </div>
               </div>
               <br>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
@@ -598,7 +609,7 @@
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
       this.set('selectedCoverMediaType','video');
-      this.async(function () { this.fire('iron-resize'); });
+      this.async(function () { this.fire('iron-resize'); }, 50);
     },
 
     _audioUploaded: function (event, detail) {

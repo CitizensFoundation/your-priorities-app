@@ -258,6 +258,12 @@
         margin-right: 8px;
         vertical-align: top;
       }
+
+      .videoUploadDisclamer {
+        font-size: 12px;
+        padding: 8px;
+        margin-bottom: 4px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -309,6 +315,11 @@
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         <span>[[t('uploadVideoPointFor')]]</span>
                       </yp-file-upload>
+                    </div>
+                    <div hidden$="[[!post.Group.configuration.showVideoUploadDisclaimer]]">
+                      <div class="videoUploadDisclamer" hidden$="[[!uploadedVideoUpId]]">
+                        [[t('videoUploadDisclaimer')]]
+                      </div>
                     </div>
                     <div class="layout horizontal center-center">
                       <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
@@ -401,6 +412,11 @@
                         <span>[[t('uploadVideoPointAgainst')]]</span>
                       </yp-file-upload>
                     </div>
+                    <div hidden$="[[!post.Group.configuration.showVideoUploadDisclaimer]]">
+                      <div class="videoUploadDisclamer" hidden$="[[!uploadedVideoDownId]]">
+                        [[t('videoUploadDisclaimer')]]
+                      </div>
+                    </div>
                     <div class="layout horizontal center-center">
                       <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
@@ -488,6 +504,11 @@
                       <span hidden$="[[selectedPointForMobile]]">[[t('uploadVideoPointAgainst')]]</span>
                     </yp-file-upload>
                   </div>
+                  <div hidden$="[[!post.Group.configuration.showVideoUploadDisclaimer]]">
+                    <div class="videoUploadDisclamer" hidden$="[[!uploadedVideoMobileId]]">
+                      [[t('videoUploadDisclaimer')]]
+                    </div>
+                  </div>
                   <div class="layout horizontal center-center">
                     <paper-button class="uploadNotLoggedIn" raised hidden$="[[loggedInUser]]" on-tap="_openLogin">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
@@ -520,7 +541,6 @@
                 </div>
               </template>
             </div>
-
           </div>
           <div hidden="[[!ifLengthMobileRight]]">
             <div class="addPointFab layout horizontal center-center mobileFab">
