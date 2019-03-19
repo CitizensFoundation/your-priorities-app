@@ -146,9 +146,10 @@
       }
 
       .videoUploadDisclamer {
-        margin-top: 0px;
+        margin-top: 6px;
         font-size: 12px;
         padding: 0;
+        max-width: 200px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -337,6 +338,11 @@
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span>[[t('uploadVideo')]]</span>
                     </yp-file-upload>
+                    <div hidden$="[[!group.configuration.showVideoUploadDisclaimer]]">
+                      <div class="videoUploadDisclamer" hidden$="[[!uploadedVideoId]]">
+                        [[t('videoUploadDisclaimer')]]
+                      </div>
+                    </div>
                   </div>
                 </template>
                 <template is="dom-if" if="[[group.configuration.allowPostAudioUploads]]">
@@ -349,11 +355,6 @@
                     </yp-file-upload>
                   </div>
                 </template>
-              </div>
-              <div hidden$="[[!group.configuration.showVideoUploadDisclaimer]]">
-                <div class="videoUploadDisclamer" hidden$="[[!uploadedVideoId]]">
-                  [[t('videoUploadDisclaimer')]]
-                </div>
               </div>
               <br>
               <h3 class="accessHeader">[[t('post.cover.media')]]</h3>
