@@ -1,4 +1,6 @@
 {
+  "videoUploadDisclaimer": "By uploading video I confirm I have rights to the material and people in the video have given their consent",
+  "showVideoUploadDisclaimer": "Show video upload disclaimer",
   "useContainImageMode": "Use 'contain' post image format",
   "facebookTrackingToastInfo": "This website uses Facebook tracking cookies for more efficient marketing campaigns",
   "disableFacebookTracking": "Disable Cookie Tracking",
