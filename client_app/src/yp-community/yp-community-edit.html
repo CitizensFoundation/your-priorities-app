@@ -489,7 +489,7 @@
     },
 
     _finishRedirect: function (community) {
-      if (this.community.is_community_folder) {
+      if (community.is_community_folder) {
         this.redirectTo("/community_folder/"+community.id);
       } else {
         this.redirectTo("/community/"+community.id);
