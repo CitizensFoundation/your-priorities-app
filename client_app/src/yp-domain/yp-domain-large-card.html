@@ -377,7 +377,7 @@
         if (domain && domain.configuration &&
           domain.configuration.useVideoCover &&
           domain.DomainLogoVideos) {
-          var videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos);
+          var videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos, domain.DomainLogoImages);
           if (videoPosterURL) {
             return videoPosterURL;
           } else {

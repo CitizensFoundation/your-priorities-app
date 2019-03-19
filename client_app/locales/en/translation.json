@@ -1,4 +1,5 @@
 {
+  "useMainPhoto": "Use logo photo",
   "videoUploadDisclaimer": "By uploading video I confirm I have rights to the material and people in the video have given their consent",
   "showVideoUploadDisclaimer": "Show video upload disclaimer",
   "useContainImageMode": "Use 'contain' post image format",

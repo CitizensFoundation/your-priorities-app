@@ -422,7 +422,7 @@ var getCommunity = function(req, done) {
           {
             model: models.Video,
             as: 'CommunityLogoVideos',
-            attributes:  ['id','formats','viewable'],
+            attributes:  ['id','formats','viewable','public_meta'],
             required: false,
             include: [
               {

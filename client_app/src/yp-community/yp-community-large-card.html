@@ -460,7 +460,7 @@
         if (community && community.configuration &&
           community.configuration.useVideoCover &&
           community.CommunityLogoVideos) {
-          var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
+          var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos, community.CommunityLogoImages);
           if (videoPosterURL) {
             return videoPosterURL;
           } else {

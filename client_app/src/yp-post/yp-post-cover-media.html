@@ -666,7 +666,7 @@
 
       _postVideoPosterPath: function (post) {
         if (post && post.PostVideos) {
-          var videoPosterURL = this._getVideoPosterURL(post.PostVideos);
+          var videoPosterURL = this._getVideoPosterURL(post.PostVideos, post.PostHeaderImages);
           if (videoPosterURL) {
             return videoPosterURL;
           } else {

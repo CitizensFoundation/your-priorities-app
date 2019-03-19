@@ -310,6 +310,7 @@
                   <div hidden$="[[hideUpVideo]]" class="uploadSection">
                     <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
                       <yp-file-upload id="videoFileUploadUp" upload-limit-seconds="[[post.Group.configuration.videoPointUploadLimitSec]]"
+                                      no-default-cover-image
                                       current-file="{{hasCurrentUpVideo}}" container-type="points" group="[[post.Group]]"
                                       raised="true" multi="false" video-upload method="POST" on-success="_videoUpUploaded">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
@@ -406,6 +407,7 @@
                     <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
                       <yp-file-upload id="videoFileUploadDown" current-file="{{hasCurrentDownVideo}}" container-type="points"
                                       upload-limit-seconds="[[post.Group.configuration.videoPointUploadLimitSec]]"
+                                      no-default-cover-image
                                       group="[[post.Group]]" raised="true" multi="false" video-upload method="POST"
                                       on-success="_videoDownUploaded">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
@@ -496,6 +498,7 @@
                   <div class="layout vertical center-center self-start" hidden$="[[!loggedInUser]]">
                     <yp-file-upload id="videoFileUploadMobile" current-file="{{hasCurrentMobileVideo}}" container-type="points"
                                     upload-limit-seconds="[[post.Group.configuration.videoPointUploadLimitSec]]"
+                                    no-default-cover-image
                                     group="[[post.Group]]" raised="true" multi="false" video-upload method="POST"
                                     on-success="_videoMobileUploaded">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
