@@ -1,4 +1,5 @@
 {
+  "useMainPhoto": "Nota mynd frá merki",
   "videoUploadDisclaimer": "Með því að hlaða upp myndskeiði staðfesti ég að ég hafi rétt á efninu og fólk í myndskeiðinu hefur gefið samþykki",
   "showVideoUploadDisclaimer": "Sýna fyrirvara um myndhleðslu",
   "useContainImageMode": "Nota 'contain' snið fyrir myndir",
