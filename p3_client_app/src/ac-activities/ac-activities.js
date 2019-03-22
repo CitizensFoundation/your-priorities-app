@@ -15,6 +15,7 @@ import './ac-activity-recommended-posts.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">

@@ -1,3 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
-import 'lodash/lodash.js';
-window.__ = _.noConflict();
+import _ from 'lodash-es';
+window.__ = _//_.noConflict();
+
+

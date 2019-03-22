@@ -48,7 +48,7 @@ import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 import i18next from 'i18next';
-import 'i18next-xhr-backend/i18nextXHRBackend.min.js';
+import XHR from 'i18next-xhr-backend';
 import 'moment/min/moment.min.js';
 import 'moment/locale/is.js';
 import 'moment/locale/nb.js';
@@ -746,7 +746,7 @@ Polymer({
     }
 
     console.info("Have started loading i18n for "+defaultLocale);
-    i18next.use(i18nextXHRBackend).init(
+    i18next.use(XHR).init(
       {
         lng: defaultLocale,
         fallbackLng: 'en',
