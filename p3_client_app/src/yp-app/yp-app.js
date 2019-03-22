@@ -48,7 +48,7 @@ import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 import i18next from 'i18next';
-//import 'i18next-xhr-backend/i18nextXHRBackend.min.js';
+import 'i18next-xhr-backend/i18nextXHRBackend.min.js';
 import 'moment/min/moment.min.js';
 import 'moment/locale/is.js';
 import 'moment/locale/nb.js';
