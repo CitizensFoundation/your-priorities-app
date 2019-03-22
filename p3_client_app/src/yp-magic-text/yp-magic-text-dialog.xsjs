@@ -1,8 +1,9 @@
 import '@polymer/polymer/polymer-element.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import './yp-magic-text.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+
+import './yp-magic-text.js';
 
 class YpMagicTextBoxDialog extends YpMagicTextBox {
   static get template() {

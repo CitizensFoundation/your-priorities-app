@@ -120,21 +120,21 @@
     "webpack": "^4.29.6",
     "webpack-babel-multi-target-plugin": "^2.1.0",
     "webpack-bundle-analyzer": "^3.1.0",
-    "webpack-cli": "^3.2.3",
+    "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.2.1",
     "webpack-merge": "^4.2.1",
     "workbox-webpack-plugin": "^4.1.0"
   },
   "scripts": {
-    "build:analyze": "webpack --env production --analyze",
-    "build": "webpack --env production",
-    "client": "webpack-dev-server --env development",
-    "server": "nodemon server.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "lint": "eslint src/app/*.js src/views/*.js src/styles/*.js",
-    "test": "gulp test:local",
-    "start": "node server_api/api_app.js",
-    "worker": "node server_api/active-citizen/workers/main.js"
+    "xbuild:analyze": "webpack --env production --analyze",
+    "xbuild": "webpack --env production",
+    "xclient": "webpack-dev-server --env development",
+    "xserver": "nodemon server.js",
+    "xdev": "concurrently \"npm run server\" \"npm run client\"",
+    "xlint": "eslint src/app/*.js src/views/*.js src/styles/*.js",
+    "xtest": "gulp test:local",
+    "xstart": "node server_api/api_app.js",
+    "xworker": "node server_api/active-citizen/workers/main.js"
   },
   "cacheDirectories": [
     "node_modules"

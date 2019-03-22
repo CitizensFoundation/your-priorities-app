@@ -1,9 +1,9 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
-import 'google-streetview-pano/google-streetview-pano.js';
-import 'google-map/google-map.js';
-import 'google-map/google-map-marker.js';
+//TODO: import 'google-streetview-pano/google-streetview-pano.js';
+//TODO: import 'google-map/google-map.js';
+//TODO: import 'google-map/google-map-marker.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';

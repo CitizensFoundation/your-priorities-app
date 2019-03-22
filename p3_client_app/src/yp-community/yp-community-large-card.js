@@ -3,7 +3,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/neon-animation/web-animations.js';
+import 'neon-animation-polymer-3/web-animations.js';
 import '@polymer/paper-menu-button/paper-menu-button.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';

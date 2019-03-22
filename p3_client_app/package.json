@@ -41,18 +41,38 @@
     "@polymer/polymer": "^3.0.0",
     "google-apis": "^1.0.0",
     "google-maps": "^3.3.0",
-    "i18next": "^15.0.6",
+    "i18next": "^15.0.7",
     "i18next-xhr-backend": "^2.0.1",
     "iron-lazy-pages": "^3.0.2",
     "linkifyjs": "^2.1.8",
+    "lite-signal": "git+https://github.com/CitizensFoundation/lite-signal.git",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
+    "neon-animation-polymer-3": "^3.0.0",
     "twemoji": "^11.3.0",
-    "vaadin-grid": "^5.0.5",
+    "@vaadin/vaadin-grid": "^5.3.3",
     "wct-browser-legacy": "^1.0.1",
     "web-animations-js": "^2.3.1"
   },
   "devDependencies": {
-    "@polymer/test-fixture": "^4.0.0"
+    "@open-wc/building-rollup": "^0.1.5",
+    "@open-wc/building-webpack": "^0.1.10",
+    "@polymer/test-fixture": "^4.0.0",
+    "http-server": "^0.11.1",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.7.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1"
+  },
+  "scripts": {
+    "build": "rimraf dist && rollup -c",
+    "start:build": "http-server dist -o",
+    "watch:build": "rimraf dist && rollup --watch -c rolllup.config.js & http-server dist -o",
+    "wstart": "webpack-dev-server --mode development --open",
+    "wstart:es5": "webpack-dev-server --mode development --es5",
+    "wstart:build": "http-server dist/ -o",
+    "wbuild": "webpack --mode production",
+    "wbuild:stats": "webpack --mode production --profile --json > bundle-stats.json"
   }
 }

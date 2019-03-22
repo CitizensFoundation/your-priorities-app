@@ -3,7 +3,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
-import 'paper-share-button/paper-share-button.js';
+//TODO: import 'paper-share-button/paper-share-button.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';

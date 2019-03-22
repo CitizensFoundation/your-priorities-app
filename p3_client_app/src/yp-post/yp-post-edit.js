@@ -1,7 +1,7 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/neon-animation/web-animations.js';
+import 'neon-animation-polymer-3/web-animations.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';

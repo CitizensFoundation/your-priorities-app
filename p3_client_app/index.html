@@ -39,30 +39,6 @@
   <meta name="msapplication-TileColor" content="#3f51b5">
   <meta name="msapplication-tap-highlight" content="no">
 
-  <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-
-  <script type="module">
-import '/src/yp-app/yp-app.js';
-// Use Google Analytics
-USE_GOOGLE_ANALYTICS = true;
-
-// Load pre-caching Service Worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/service-worker.js');
-  });
-}
-
-if (USE_GOOGLE_ANALYTICS) {
-  // Setup Google Analytics;
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-}
-</script>
-
-  <script type="module" src="/src/yp-app/yp-app.js"></script>
   <style is="custom-style">
     body {
       font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -149,6 +125,8 @@ if (USE_GOOGLE_ANALYTICS) {
 </head>
 <body class="fullbleed" unresolved>
   <yp-app id="app" fullbleed></yp-app>
+  <script type="module" src="/src/yp-app/yp-app.js"></script>
+
   <noscript>
     You need Javascript enabled in your browser to use this website.
   </noscript>

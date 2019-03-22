@@ -118,7 +118,7 @@ Polymer({
     communityFolder: {
       type: Object
     },
-    
+
     mapActive: {
       type: Boolean,
       value: false
