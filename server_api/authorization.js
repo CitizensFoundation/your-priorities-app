@@ -82,7 +82,7 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
       } else {
         if (group.access === models.Group.ACCESS_PUBLIC) {
           done(null, true);
-        } else if (group.user_id === req.user.id) {
+        } else if (req.user && group.user_id === req.user.id) {
           done(null, true);
         } else {
           auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -206,35 +206,45 @@ auth.hasDomainAdmin = function (domainId, req, done) {
 
 auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
   if (group) {
-    group.hasGroupUsers(req.user).then(function (result) {
-      if (result) {
-        done(null, true);
-      } else if (group.Community && group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
-        group.Community.hasCommunityUsers(req.user).then(function (result) {
-          if (result) {
+    if (group.Community && group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY && group.Community.access === models.Community.ACCESS_PUBLIC) {
+      done(null, true);
+    } else if (!auth.isAuthenticated(req)) {
+      done(null, false);
+    } else {
+      group.hasGroupUsers(req.user).then(function (result) {
+        if (result) {
+          done(null, true);
+        } else if (group.Community && group.access === models.Group.ACCESS_OPEN_TO_COMMUNITY) {
+          if (group.Community.access === models.Community.ACCESS_PUBLIC) {
             done(null, true);
           } else {
-            group.Community.hasCommunityAdmins(req.user).then(function (result) {
+            group.Community.hasCommunityUsers(req.user).then(function (result) {
               if (result) {
                 done(null, true);
               } else {
-                done(null, false);
+                group.Community.hasCommunityAdmins(req.user).then(function (result) {
+                  if (result) {
+                    done(null, true);
+                  } else {
+                    done(null, false);
+                  }
+                });
               }
             });
           }
-        });
-      } else {
-        group.hasGroupAdmins(req.user).then(function (result) {
-          if (result) {
-            done(null, true);
-          } else {
-            done(null, false);
-          }
-        });
-      }
-    }).catch(function (error) {
-      done(error, false);
-    });
+        } else {
+          group.hasGroupAdmins(req.user).then(function (result) {
+            if (result) {
+              done(null, true);
+            } else {
+              done(null, false);
+            }
+          });
+        }
+      }).catch(function (error) {
+        done(error, false);
+      });
+    }
   } else {
     done(null, false);
   }
@@ -568,9 +578,7 @@ auth.role('group.viewUser', function (group, req, done) {
     } else if (group.access === models.Group.ACCESS_PUBLIC &&
         group.Community.access === models.Community.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!auth.isAuthenticated(req)) {
-      done(null, false);
-    } else if (group.user_id === req.user.id) {
+    } else if (req.user && group.user_id === req.user.id) {
       done(null, true);
     } else {
       auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -600,9 +608,7 @@ auth.role('group.addTo', function (group, req, done) {
         if (group.access === models.Group.ACCESS_PUBLIC &&
           group.Community.access === models.Community.ACCESS_PUBLIC) {
           done(null, true);
-        } else if (!auth.isAuthenticated(req)) {
-          done(null, false);
-        } else if (group.user_id === req.user.id) {
+        } else if (req.user && group.user_id === req.user.id) {
           done(null, true);
         } else {
           auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -721,9 +727,7 @@ auth.role('post.viewUser', function (post, req, done) {
       var group = post.Group;
       if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
-      }  else if (!auth.isAuthenticated(req, group)) {
-        done(null, false);
-      } else if (post.user_id === req.user.id) {
+      } else if (req.user && post.user_id === req.user.id) {
         done(null, true);
       } else {
         auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -764,7 +768,7 @@ auth.role('post.vote', function (post, req, done) {
         } else {
           if (post.Group.access === models.Group.ACCESS_PUBLIC) {
             done(null, true);
-          } else if (post.user_id === req.user.id) {
+          } else if (req.user && post.user_id === req.user.id) {
             done(null, true);
           } else {
             auth.isGroupMemberOrOpenToCommunityMember(post.Group, req, done);
@@ -906,9 +910,7 @@ auth.role('point.viewUser', function (point, req, done) {
     if (point && group) {
       if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
-      } else if (!auth.isAuthenticated(req)) {
-        done(null, false);
-      } else if (point.user_id === req.user.id) {
+      } else if (req.user && point.user_id === req.user.id) {
         done(null, true);
       } else if (group.Community) {
         auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -970,9 +972,7 @@ auth.role('point.addTo', function (point, req, done) {
         } else {
           if (group.access === models.Group.ACCESS_PUBLIC) {
             done(null, true);
-          } else if (!auth.isAuthenticated(req)) {
-            done(null, false);
-          } else if (point.user_id === req.user.id) {
+          } else if (req.user && point.user_id === req.user.id) {
             done(null, true);
           } else if (group.Community) {
             auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -1023,9 +1023,7 @@ auth.role('image.viewUser', function (image, req, done) {
     if (group) {
       if (group.access === models.Group.ACCESS_PUBLIC) {
         done(null, true);
-      }  else if (!auth.isAuthenticated(req)) {
-        done(null, false);
-      } else if (group.user_id === req.user.id) {
+      } else if (req.user && group.user_id === req.user.id) {
         done(null, true);
       } else if (group.Community) {
         auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -1086,7 +1084,7 @@ auth.role('point.vote', function (point, req, done) {
         } else {
           if (group.access === models.Group.ACCESS_PUBLIC) {
             done(null, true);
-          } else if (point.user_id === req.user.id) {
+          } else if (req.user && point.user_id === req.user.id) {
             done(null, true);
           } else if (group.Community) {
             auth.isGroupMemberOrOpenToCommunityMember(group, req, done);
@@ -1180,9 +1178,7 @@ auth.role('category.viewUser', function (category, req, done) {
     var group = category.Group;
     if (group.access === models.Group.ACCESS_PUBLIC) {
       done(null, true);
-    }  else if (!auth.isAuthenticated(req)) {
-      done(null, false);
-    } else if (category.user_id === req.user.id) {
+    } else if (req.user && category.user_id === req.user.id) {
       done(null, true);
     } else if (group.Community) {
       auth.isGroupMemberOrOpenToCommunityMember(group, req, done);

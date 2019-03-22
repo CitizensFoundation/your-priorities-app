@@ -177,9 +177,8 @@
         <div class="subHeaders exteraTopMargin">[[t('access')]]</div>
 
         <paper-radio-group id="access" name="access" class="access" selected="{{groupAccess}}">
-          <paper-radio-button name="public" hidden$="[[!publicCommunity]]">[[t('group.public')]]</paper-radio-button>
-          <paper-radio-button name="open_to_community" hidden$="[[publicCommunity]]">[[t('group.openToCommunity')]]
-          </paper-radio-button>
+          <paper-radio-button name="open_to_community">[[t('group.openToCommunity')]]</paper-radio-button>
+          <paper-radio-button name="public">[[t('group.public')]]</paper-radio-button>
           <paper-radio-button name="closed">[[t('group.closed')]]</paper-radio-button>
           <paper-radio-button name="secret">[[t('group.secret')]]</paper-radio-button>
         </paper-radio-group>
