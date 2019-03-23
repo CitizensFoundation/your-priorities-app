@@ -39,6 +39,18 @@
   <meta name="msapplication-TileColor" content="#3f51b5">
   <meta name="msapplication-tap-highlight" content="no">
 
+  <script>
+  WEB_ANIMATIONS_TESTING = false;
+  USE_GOOGLE_ANALYTICS = true;
+    if (USE_GOOGLE_ANALYTICS) {
+      // Setup Google Analytics;
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    }
+  </script>
+  <script src="/node_modules/web-animations-js/web-animations-next.min.js"></script>
   <style is="custom-style">
     body {
       font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;

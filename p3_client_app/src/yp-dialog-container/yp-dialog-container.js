@@ -276,9 +276,9 @@ Polymer({
 
   ready: function () {
     this.async(function () {
-      this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-delayed.html"), function () {
+      import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-delayed.js")).then(() => {
         this.set('haveLoadedDelayed', true)
-      }, null, true);
+      });
     }, 3000);
   },
 
@@ -309,9 +309,9 @@ Polymer({
       this.set('loggedInUser', user);
       if (!this.loadingStartedLoggedIn) {
         this.loadingStartedLoggedIn = true;
-        this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-logged-in.html"), function () {
+        import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-logged-in.js")).then(() => {
           console.info("Have loaded logged-in container");
-        }, null, true);
+        });
       } else {
         console.warn("Trying to load logged in twice, see appUser potentially removing that second event");
       }
@@ -324,9 +324,9 @@ Polymer({
       this.set('gotAdminRights', true);
       if (!this.loadingStartedAdmin) {
         this.loadingStartedAdmin = true;
-        this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-admin.html"), function () {
+        import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-admin.js")).then(() => {
           console.info("Have loaded admin container");
-        }, null, true);
+        });
       } else {
         console.warn("Trying to load admin in twice, see appUser potentially removing that second event");
       }
@@ -335,11 +335,12 @@ Polymer({
 
   _openBulkStatusUpdates: function () {
     this.$.loadingDialog.open();
-    this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-bulk-status-updates.html"), function () {
+
+    import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-bulk-status-updates.js")).then(() => {
       this.$.loadingDialog.close();
       console.info("Have loaded bulk status container");
-    }.bind(this), null, true);
-    this.set('bulkStatusUpdates', true);
+      this.set('bulkStatusUpdates', true);
+    });
   },
 
   closeDialog: function (idName) {
@@ -364,14 +365,14 @@ Polymer({
       this.getDialogAsync("usersGrid", callback);
     } else {
       this.$.loadingDialog.open();
-      this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html"), function () {
-        this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-users-grid.html"), function () {
+      import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js")).then(() => {
+        import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-users-grid.js")).then(() => {
           this.$.loadingDialog.close();
           console.info("Have loaded users grid container");
           this.set('gotUsersGrid', true);
           this.getDialogAsync("usersGrid", callback);
-        }.bind(this), null, true);
-      }.bind(this), null, true);
+        });
+      });
     }
   },
 
@@ -380,14 +381,14 @@ Polymer({
       this.getDialogAsync("contentModeration", callback);
     } else {
       this.$.loadingDialog.open();
-      this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.html"), function () {
-        this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-moderation.html"), function () {
+      import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js")).then(() => {
+        import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-moderation.js")).then(() => {
           this.$.loadingDialog.close();
           console.info("Have loaded contentModeration");
           this.set('gotContentModeration', true);
           this.getDialogAsync("contentModeration", callback);
-        }.bind(this), null, true);
-      }.bind(this), null, true);
+        });
+      });
     }
   },
 
@@ -396,12 +397,12 @@ Polymer({
       this.getDialogAsync("mediaRecorder", callback);
     } else {
       this.$.loadingDialog.open();
-      this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-media-recorder.html"), function () {
+      import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-media-recorder.js")).then(() => {
         this.$.loadingDialog.close();
         console.info("Have loaded media recorder container");
         this.set('gotMediaRecorder', true);
         this.getDialogAsync("mediaRecorder", callback);
-      }.bind(this), null, true);
+      });
     }
   },
 

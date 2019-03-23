@@ -28,29 +28,22 @@ import '../yp-dialog-container/yp-dialog-container.js';
 import '../yp-user/yp-user-image.js';
 import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
 import '../yp-app-globals/yp-sw-update-toast.js';
-import '../yp-community/yp-community.js';
-import '../yp-community/yp-community-folder.js';
-import '../yp-group/yp-group.js';
-import '../yp-domain/yp-domain.js';
-import '../yp-post/yp-post.js';
-import '../yp-user/yp-user.js';
-import '../yp-dialog-container/yp-dialog-container-logged-in.js';
-import '../yp-dialog-container/yp-dialog-container-admin.js';
-import '../yp-dialog-container/yp-dialog-container-bulk-status-updates.js';
-import '../yp-dialog-container/yp-dialog-container-users-grid.js';
-import '../yp-dialog-container/yp-dialog-container-media-recorder.js';
-import '../yp-dialog-container/yp-dialog-container-delayed.js';
-import '../yp-dialog-container/yp-dialog-container-moderation.js';
-import '../yp-dialog-container/yp-dialog-vaadin-grid-shared.js';
-import './yp-view-404.js';
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
-import i18next from 'i18next';
-import XHR from 'i18next-xhr-backend';
-import 'moment/min/moment.min.js';
-import 'moment/locale/is.js';
+//import i18next from 'i18next/dist/es/i18next.js'
+//import { XHR } from 'i18next-xhr-backend/dist/es';
+//import moment from 'moment-es6';
+
+import i18next, { t as translate } from 'i18next'
+import backend from 'i18next-xhr-backend'
+import { format, formatDistance } from 'date-fns';
+//import {
+//  ca,da,de,dev,en,en_CA,en_GB,es,fa,fr,hr,hu,is,it,kl,nl,no,pl,pt,pt_BR,ru,sl,sr,sr_latin,tr,zh_TW
+//} from 'date-fns/locale';
+
+/*import 'moment/locale/is.js';
 import 'moment/locale/nb.js';
 import 'moment/locale/nl.js';
 import 'moment/locale/hu.js';
@@ -64,6 +57,7 @@ import 'moment/locale/pl.js';
 import 'moment/locale/de.js';
 import 'moment/locale/fr.js';
 import 'moment/locale/da.js';
+*/
 setPassiveTouchGestures(true);
 Polymer({
   _template: html`
@@ -746,7 +740,7 @@ Polymer({
     }
 
     console.info("Have started loading i18n for "+defaultLocale);
-    i18next.use(XHR).init(
+    i18next.use(backend).init(
       {
         lng: defaultLocale,
         fallbackLng: 'en',
@@ -756,7 +750,7 @@ Polymer({
       window.locale = defaultLocale;
       window.i18nTranslation = i18next;
       window.haveLoadedLanguages = true;
-      moment.locale([defaultLocale, 'en']);
+//      moment.locale([defaultLocale, 'en']);
 
       console.log("Changed language to "+defaultLocale);
 
@@ -1029,7 +1023,7 @@ Polymer({
           }
 
           if (map[pageData.page] != null && pageData.page!=='post' &&
-             !(oldPageData.page==="community" && pageData.page==="group")) {
+             !(oldPageData && oldPageData.page==="community" && pageData.page==="group")) {
             if (!skipMasterScroll) {
               window.scrollTo(0, map[pageData.page]);
               console.info("Main window scroll " + pageData.page + " to " + map[pageData.page]);
@@ -1060,12 +1054,12 @@ Polymer({
       if (page=="view-404") {
         resolvedPageUrl = this.resolveUrl("yp-view-404.html");
       } else if (page==='community_folder') {
-        resolvedPageUrl = this.resolveUrl('../yp-community/yp-community-folder.html?v=@version@');
+        resolvedPageUrl = this.resolveUrl('../yp-community/yp-community-folder.js?v=@version@');
       } else {
-        resolvedPageUrl = this.resolveUrl('/src/yp-' + page + '/' + 'yp-' + page + ".html?v=@version@");
+        resolvedPageUrl = this.resolveUrl('/src/yp-' + page + '/' + 'yp-' + page + ".js?v=@version@");
       }
       console.log("Trying to load "+resolvedPageUrl);
-      this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      import(resolvedPageUrl).then(null, this._showPage404.bind(this));
     }
 
     if (page) {

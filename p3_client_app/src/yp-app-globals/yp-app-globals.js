@@ -11,6 +11,8 @@ import '../yp-ajax/yp-ajax.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import i18next from 'i18next';
+
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">
@@ -206,7 +208,6 @@ Polymer({
       if (force || !localStorage.getItem('yp-user-locale')) {
         i18next.changeLanguage(locale, function(loaded) {
           console.log("i18n init loaded "+loaded);
-          moment.locale([locale, 'en']);
           console.log("Changed language to "+locale);
           document.dispatchEvent(
             new CustomEvent("lite-signal", {

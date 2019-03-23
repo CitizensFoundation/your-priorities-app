@@ -48,6 +48,7 @@ export const ypAppCacheBehavior = {
     var laterTimeoutMs = Math.floor(Math.random() * 1000) + 750;
     this.async(function () {
       if (posts) {
+        var i;
         for (i = 0; i < posts.length; i++) {
           if (!this.postItemsCache[posts[i].id]) {
             this.postItemsCache[posts[i].id]=posts[i];

@@ -1,0 +1,71 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/yp-app/yp-app.js",
+  "fragments": [
+    "src/yp-community/yp-community.js",
+    "src/yp-community/yp-community-folder.js",
+    "src/yp-group/yp-group.js",
+    "src/yp-domain/yp-domain.js",
+    "src/yp-post/yp-post.js",
+    "src/yp-user/yp-user.js",
+    "src/yp-dialog-container/yp-dialog-container-logged-in.js",
+    "src/yp-dialog-container/yp-dialog-container-admin.js",
+    "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.js",
+    "src/yp-dialog-container/yp-dialog-container-users-grid.js",
+    "src/yp-dialog-container/yp-dialog-container-media-recorder.js",
+    "src/yp-dialog-container/yp-dialog-container-delayed.js",
+    "src/yp-dialog-container/yp-dialog-container-moderation.js",
+    "src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js",
+    "src/yp-app/yp-view-404.js"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "styles/**/*",
+    "locales/**/*",
+    "index.html",
+    "src/yp-app/yp-app.js",
+    "src/yp-community/yp-community.js",
+    "src/yp-community/yp-community-folder.js",
+    "src/yp-group/yp-group.js",
+    "src/yp-domain/yp-domain.js",
+    "src/yp-post/yp-post.js",
+    "src/yp-user/yp-user.js",
+    "src/yp-dialog-container/yp-dialog-container-logged-in.js",
+    "src/yp-dialog-container/yp-dialog-container-admin.js",
+    "src/yp-dialog-container/yp-dialog-container-bulk-status-updates.js",
+    "src/yp-dialog-container/yp-dialog-container-users-grid.js",
+    "src/yp-dialog-container/yp-dialog-container-media-recorder.js",
+    "src/yp-dialog-container/yp-dialog-container-delayed.js",
+    "src/yp-dialog-container/yp-dialog-container-moderation.js",
+    "src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js",
+    "src/yp-app/yp-view-404.js"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js",
+    "node_modules/@webcomponents/webcomponentsjs/bundles/**"
+  ],
+  "builds": [
+    {
+      "name": "bundled",
+      "bundle": true,
+      "js": {
+        "compile": true,
+        "minify": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "addServiceWorker": true
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-3-hybrid"
+    ]
+  },
+  "moduleResolution": "node"
+}

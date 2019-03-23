@@ -7,6 +7,9 @@ import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavio
 import './yp-user-image.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { formatDistance, parseISO } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">
@@ -125,7 +128,11 @@ Polymer({
 
   _computeUserTitle: function (user, titleDate) {
     if (user && titleDate) {
-      return user.name + ' ' + moment(titleDate).fromNow();
+      const dateParsed = parseISO(titleDate);
+      var dateSince = formatDistance(dateParsed, new Date(),  {
+        locale: enUS//this.language
+      });
+      return user.name + ' ' + dateSince;
     } else {
       return null;
     }

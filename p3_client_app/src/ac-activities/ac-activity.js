@@ -13,6 +13,8 @@ import './ac-activity-point-news-story.js';
 import './ac-activity-post-status-update.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { format, formatDistance } from 'date-fns';
+
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">
@@ -199,11 +201,15 @@ Polymer({
   },
 
   fromTime: function (timeValue) {
-    return moment(timeValue).fromNow();
+    return formatDistance(timeValue, new Date(),  {
+      locale: this.language
+    });
   },
 
   fromLongTime: function (timeValue) {
-    return moment(timeValue).format();
+    return format(timeValue,"",{
+      locale: this.language
+    });
   },
 
   _isOldSafariOrIe: function (wide) {
