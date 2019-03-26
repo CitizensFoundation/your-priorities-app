@@ -43,7 +43,8 @@
   ],
   "extraDependencies": [
     "bower_components/webcomponentsjs/*.js",
-    "node_modules/@webcomponents/webcomponentsjs/bundles/**"
+    "node_modules/@webcomponents/webcomponentsjs/bundles/**",
+    "node_modules/web-animations-js/*.js"
   ],
   "builds": [
     {
