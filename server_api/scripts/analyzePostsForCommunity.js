@@ -4,12 +4,12 @@ var ip = require('ip');
 var _ = require('lodash');
 var moment = require('moment');
 
-var communityIdA = 699; // process.argv[2];
-var communityIdB = 470; // process.argv[2];
-var dateRangeAFrom = moment("01.09.2017","DD.MM.YYYY");
-var dateRangeATo = moment("15.09.2017","DD.MM.YYYY");
-var dateRangeBFrom = moment("12.05.2016","DD.MM.YYYY");
-var dateRangeBTo = moment("26.05.2016","DD.MM.YYYY");
+var communityIdA = 973; // process.argv[2];
+var communityIdB = 777; // process.argv[2];
+var dateRangeAFrom = moment("20.03.2019","DD.MM.YYYY");
+var dateRangeATo = moment("25.03.2019","DD.MM.YYYY");
+var dateRangeBFrom = moment("27.02.2018","DD.MM.YYYY");
+var dateRangeBTo = moment("04.03.2018","DD.MM.YYYY");
 
 var getCsvLinesWithHeader = function (csv, headertext, items) {
   var days = _.groupBy(items, function (item) {
@@ -149,37 +149,37 @@ var getNumberOfUsers = function (csv, headerText, communityId, dateRangeFrom, da
 var csv = "";
 async.series([
   function (seriesCallback) {
-    getNumberOfPoints("", "2016 points", communityIdB, dateRangeBFrom, dateRangeBTo, function (csvIn) {
+    getNumberOfPoints("", "2018 points", communityIdB, dateRangeBFrom, dateRangeBTo, function (csvIn) {
       csv += csvIn;
       seriesCallback();
     })
   },
   function (seriesCallback) {
-    getNumberOfPoints("", "2017 points", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
+    getNumberOfPoints("", "2019 points", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
       csv += csvIn;
       seriesCallback();
     })
   },
   function (seriesCallback) {
-    getNumberOfPosts("", "2016 posts", communityIdB, dateRangeBFrom, dateRangeBTo, function (csvIn) {
+    getNumberOfPosts("", "2018 posts", communityIdB, dateRangeBFrom, dateRangeBTo, function (csvIn) {
       csv += csvIn;
       seriesCallback();
     })
   },
   function (seriesCallback) {
-    getNumberOfPosts("", "2017 posts", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
+    getNumberOfPosts("", "2019 posts", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
       csv += csvIn;
       seriesCallback();
     })
   },
   function (seriesCallback) {
-    getNumberOfEndorsement("", "2016 idea votes", communityIdB, dateRangeBFrom, dateRangeBTo, function (csvIn) {
+    getNumberOfEndorsement("", "2018 idea votes", communityIdB, dateRangeBFrom, dateRangeBTo, function (csvIn) {
       csv += csvIn;
       seriesCallback();
     })
   },
   function (seriesCallback) {
-    getNumberOfEndorsement("", "2017 idea votes", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
+    getNumberOfEndorsement("", "2019 idea votes", communityIdA, dateRangeAFrom, dateRangeATo, function (csvIn) {
       csv += csvIn;
       seriesCallback();
     })
