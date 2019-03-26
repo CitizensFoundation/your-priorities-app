@@ -577,7 +577,7 @@
         var structuredQuestions = [];
 
         var questionComponents = group.configuration.structuredQuestions.split(",");
-        for (i=0 ; i<questionComponents.length; i+=2) {
+        for (var i=0 ; i<questionComponents.length; i+=2) {
           var question = questionComponents[i];
           var maxLength = questionComponents[i+1];
           structuredQuestions.push({
