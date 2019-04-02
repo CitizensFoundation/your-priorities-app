@@ -7,9 +7,9 @@ var moment = require('moment');
 var communityIdA = 973; // process.argv[2];
 var communityIdB = 777; // process.argv[2];
 var dateRangeAFrom = moment("20.03.2019","DD.MM.YYYY");
-var dateRangeATo = moment("25.03.2019","DD.MM.YYYY");
+var dateRangeATo = moment("30.03.2019","DD.MM.YYYY");
 var dateRangeBFrom = moment("27.02.2018","DD.MM.YYYY");
-var dateRangeBTo = moment("04.03.2018","DD.MM.YYYY");
+var dateRangeBTo = moment("09.03.2018","DD.MM.YYYY");
 
 var getCsvLinesWithHeader = function (csv, headertext, items) {
   var days = _.groupBy(items, function (item) {
