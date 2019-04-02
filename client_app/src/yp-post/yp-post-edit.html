@@ -231,6 +231,7 @@
                 <template is="dom-repeat" items="[[structuredQuestions]]">
                   <paper-textarea id="structuredQuestion_[[index]]"
                                   value="{{item.value}}"
+                                  minlength="2"
                                   always-float-label="[[_floatIfValueOrIE(item.value)]]"
                                   label="[[item.translatedQuestion]]"
                                   char-counter
