@@ -192,7 +192,7 @@
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
         <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
-                           icon="[[endorseModeIcon(endorsementButtons,'up')]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+                           icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
       </div>
 
@@ -206,7 +206,7 @@
 
       <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
         <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
-                           icon="[[endorseModeIcon(endorsementButtons,'down')]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+                           icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
       </div>
       <div class="share" >
@@ -332,7 +332,25 @@
         customVoteDownHoverText: {
           type: String,
           computed: '_customVoteDownHoverText(post)'
+        },
+
+        endorseModeIconUp: {
+          type: String,
+          computed: '_endorseModeIconUp(endorsementButtons, post, endorseValue)'
+        },
+
+        endorseModeIconDown: {
+          type: String,
+          computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
         }
+      },
+
+      _endorseModeIconUp: function (endorsementButtons) {
+        return this.endorseModeIcon(endorsementButtons, 'up');
+      },
+
+      _endorseModeIconDown: function (endorsementButtons) {
+        return this.endorseModeIcon(endorsementButtons, 'down');
       },
 
       _customVoteUpHoverText: function (post) {
@@ -450,6 +468,8 @@
           var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
           if (thisPostsEndorsement)
             this._setEndorsement(thisPostsEndorsement.value);
+          else
+            this._setEndorsement(0);
         }
       },
 
@@ -480,10 +500,6 @@
 
       _setEndorsement: function (value) {
         this.endorseValue = value;
-
-        if (value>0) {
-          this.set('isEndorsed', true);
-        }
 
         if (value !== 0 && this.post.Group.configuration &&
           (this.post.Group.configuration.hideVoteCount && !this.post.Group.configuration.originalHideVoteCount)) {
@@ -516,6 +532,10 @@
             this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
           }
         }
+
+        if (value>0) {
+          this.set('isEndorsed', true);
+        }
       },
 
       _enableVoting: function () {
@@ -528,8 +548,8 @@
         this._enableVoting();
         var endorsement = detail.response.endorsement;
         var oldEndorsementValue = detail.response.oldEndorsementValue;
-        this._setEndorsement(endorsement.value);
         window.appUser.updateEndorsementForPost(this.post.id, endorsement);
+        this._setEndorsement(endorsement.value);
         if (oldEndorsementValue) {
           if (oldEndorsementValue>0)
             this.set('post.counter_endorsements_up', this.post.counter_endorsements_up-1);
