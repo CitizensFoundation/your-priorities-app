@@ -919,6 +919,12 @@
         } else {
           this.set('postDescriptionLimit', 500);
         }
+
+        this.async(function () {
+          if (this.structuredQuestions) {
+            this.set('postDescriptionLimit', 99999);
+          }
+        }, 50);
       }
     },
 
