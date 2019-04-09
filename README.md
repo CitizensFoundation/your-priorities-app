@@ -125,7 +125,8 @@ If you use an alternative to Amazon AWS S3:
 AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test S3_ENDPOINT=my.s3.website.com ./start
 ```
 
-You will need to have the imagemagick package installed.
+You will need to have the ImageMagick package installed otherwise you might get errors like: "Command failed: identify"
+
 
 ## Your Priorities uses Active Citizen
 ```
