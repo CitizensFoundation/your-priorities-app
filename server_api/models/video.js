@@ -423,6 +423,7 @@ module.exports = function(sequelize, DataTypes) {
             {
               Key: fileKey,
               ThumbnailPattern: fileKey+'_thumbs-' + video.id + '-{count}',
+              Rotate : "auto",
               PresetId: videoPresetId,
             },
             {

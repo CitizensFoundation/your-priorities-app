@@ -9,6 +9,8 @@ var hostName;
 var skipEmail = false;
 
 var getPostUrl = function (post) {
+  hostName = "hverfid-mitt-2019.betrireykjavik.is";
+
   if (hostName) {
     return 'https://'+hostName+'/post/'+post.id;
   } else {
@@ -27,6 +29,13 @@ var getUserEmail = function (post) {
 var clean = function (text) {
   //console.log("Before: "+ text);
   var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
+  //console.log("After:" + newText);
+  return newText.replace(/´/g,'');
+};
+
+var cleanDescription = function (text) {
+  //console.log("Before: "+ text);
+  var newText = text.replace('"',"'").replace(/"/gm,"'").replace(/,/,';').trim();
   //console.log("After:" + newText);
   return newText.replace(/´/g,'');
 };
@@ -106,22 +115,72 @@ var getImageFormatUrl = function(image, formatId) {
     return ""
 };
 
+var getMediaFormatUrl = function (media, formatId) {
+  var formats = media.formats;
+  if (formats && formats.length>0)
+    return formats[formatId];
+  else
+    return ""
+};
+
+var getMediaURLs = function (post) {
+  var mediaURLs = "";
+
+  if (post.Points && post.Points.length>0) {
+    _.forEach(post.Points, function (point) {
+      if (point.PointVideos && point.PointVideos.length>0) {
+        mediaURLs += _.map(point.PointVideos, function (media) {
+          return ""+getMediaFormatUrl(media, 0)+"\n";
+        });
+      }
+
+      if (point.PointAudios && point.PointAudios.length>0) {
+        mediaURLs += _.map(point.PointAudios, function (media) {
+          return ""+getMediaFormatUrl(media, 0)+"\n";
+        });
+      }
+    });
+  }
+
+  if (post.PostVideos && post.PostVideos.length>0) {
+    mediaURLs += _.map(post.PostVideos, function (media) {
+      return ""+getMediaFormatUrl(media, 0)+"\n";
+    });
+  }
+
+  if (post.PostAudios && post.PostAudios.length>0) {
+    mediaURLs += _.map(post.PostAudios, function (media) {
+      return ""+getMediaFormatUrl(media, 0)+"\n";
+    });
+  }
+
+  return '"'+mediaURLs+'"';
+};
+
+var getMediaTranscripts = function (post) {
+  if (post.public_data && post.public_data.transcript && post.public_data.transcript.text) {
+    return '"'+post.public_data.transcript.text+'"';
+  } else {
+    return ""
+  }
+};
+
 var getImages = function (post) {
   var imagesText = "";
 
   if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
     imagesText += _.map(post.PostHeaderImages, function (image) {
-      return ""+getImageFormatUrl(image, 0)+" ";
+      return getImageFormatUrl(image, 0)+"\n";
     });
   }
 
-  if (post.PostHeaderImages && post.PostUserImages.length>0) {
+  if (post.PostUserImages && post.PostUserImages.length>0) {
     imagesText += _.map(post.PostUserImages, function (image) {
-      return ""+getImageFormatUrl(image, 0)+" ";
+      return getImageFormatUrl(image, 0)+"\n";
     });
   }
 
-  return imagesText;
+  return '"'+imagesText.replace(/,/g,"")+'"';
 };
 
 var getCategory = function (post) {
@@ -152,7 +211,21 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
       {
         model: models.Point,
         attributes: ['id','content','value'],
-        required: false
+        required: false,
+        include: [
+          {
+            model: models.Audio,
+            as: 'PointAudios',
+            attributes: ['id','public_meta','formats'],
+            required: false
+          },
+          {
+            model: models.Video,
+            as: 'PointVideos',
+            attributes: ['id','public_meta','formats'],
+            required: false
+          }
+        ]
       },
       { model: models.Image,
         as: 'PostHeaderImages',
@@ -161,6 +234,18 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
       {
         model: models.User,
         required: true
+      },
+      {
+        model: models.Audio,
+        as: 'PostAudios',
+        attributes: ['id','public_meta','formats'],
+        required: false
+      },
+      {
+        model: models.Video,
+        as: 'PostVideos',
+        attributes: ['id','public_meta','formats'],
+        required: false
       },
       {
         model: models.Image,
@@ -174,19 +259,21 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
   }).then(function (posts) {
     var outFileContent = "";
     //console.log(posts.length);
-    outFileContent += "Id, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename\n";
+    outFileContent += "Nr, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript\n";
     postCounter = 0;
     async.eachSeries(posts, function (post, seriesCallback) {
       postCounter += 1;
       if (!post.deleted) {
         outFileContent += postCounter+','+post.id+',"'+getUserEmail(post)+'","'+post.User.name+
-          '","'+clean(post.name)+'","'+clean(post.description)+'",'+
+          '","'+clean(post.name)+'","'+cleanDescription(post.description)+'",'+
           '"'+getPostUrl(post)+'",'+'"'+getCategory(post)+'",'+
           getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
           ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
           getImages(post)+','+
           getContactData(post)+','+
-          getAttachmentData(post)+'\n';
+          getAttachmentData(post)+','+
+          getMediaURLs(post)+','+
+          getMediaTranscripts(post)+'\n';
       } else {
         outFileContent += postCounter+','+post.id+',DELETED,,,,,,,,,,,\n';
       }
