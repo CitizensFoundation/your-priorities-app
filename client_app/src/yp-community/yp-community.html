@@ -435,7 +435,7 @@
 
 
             this.fire("change-header", {
-              headerTitle: this.community.configuration.customBackName ?
+              headerTitle: this.community.configuration && this.community.configuration.customBackName ?
                 this.community.configuration.customBackName :
                 headerTitle,
               headerDescription: headerDescription,
@@ -444,7 +444,7 @@
               disableDomainUpLink: (this.community.configuration &&
                 this.community.configuration.disableDomainUpLink === true),
               documentTitle: this.community.name,
-              backPath:  this.community.configuration.customBackURL ?
+              backPath: this.community.configuration && this.community.configuration.customBackURL ?
                 this.community.configuration.customBackURL : backPath
             });
           }
