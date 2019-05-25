@@ -98,6 +98,9 @@
             en_CA: 'English (CA)',
             nl: 'Dutch',
             no: 'Norwegian',
+            uk: 'Ukrainian',
+            sq: 'Albanian',
+            uz: 'Uzbek',
             tr: 'Turkish',
             fa: 'Persian',
             pl: 'Polish',
@@ -181,11 +184,11 @@
 
       _stopTranslation: function () {
         document.dispatchEvent(
-          new CustomEvent("lite-signal", {
-            bubbles: true,
-            compose: true,
-            detail: { name: 'yp-auto-translate', data: false }
-          })
+                new CustomEvent("lite-signal", {
+                  bubbles: true,
+                  compose: true,
+                  detail: { name: 'yp-auto-translate', data: false }
+                })
         );
         window.autoTranslate = false;
         this.fire('yp-language-name', this.supportedLanguages[this.language]);
@@ -200,11 +203,11 @@
       _startTranslation: function () {
         if (this._canUseAutoTranslate(this.language, this.hasServerAutoTranslation)) {
           document.dispatchEvent(
-            new CustomEvent("lite-signal", {
-              bubbles: true,
-              compose: true,
-              detail: { name: 'yp-auto-translate', data: true }
-            })
+                  new CustomEvent("lite-signal", {
+                    bubbles: true,
+                    compose: true,
+                    detail: { name: 'yp-auto-translate', data: true }
+                  })
           );
           window.autoTranslate = true;
           this.fire('yp-language-name', this.supportedLanguages[this.language]);
