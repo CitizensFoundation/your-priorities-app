@@ -4,7 +4,7 @@ import '@polymer/iron-image/iron-image.js';
 import '@polymer/paper-card/paper-card.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import './yp-community-stats.js';
+import './yp-community-stats-lit.js';
 import { CommunityBehaviors } from './yp-community-behaviors.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
@@ -215,7 +215,7 @@ Polymer({
         <yp-magic-text id="description" class="description withPointer" featured\$="[[featured]]" on-tap="_goToCommunity" text-type="communityContent" content-language="[[community.language]]" text-only="" content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
         </yp-magic-text>
       </div>
-      <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+      <yp-community-stats-lit class="stats" community="[[community]]"></yp-community-stats-lit>
       <template is="dom-if" if="[[!community.is_community_folder]]">
         <yp-membership-button archived\$="[[archived]]" featured\$="[[featured]]" community="[[community]]"></yp-membership-button>
       </template>
