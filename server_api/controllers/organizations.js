@@ -110,7 +110,7 @@ router.get('/:id', auth.can('view organization'), function(req, res) {
 
 router.post('/:domainId', auth.can('create domainOrganization'), function(req, res) {
   var hostname;
-  if (req.hostname=='localhost') {
+  if (req.hostname && req.hostname=='localhost') {
     hostname = 'localhost';
   } else {
     hostname = models.Domain.extractHost(req.headers.host);

@@ -56,17 +56,23 @@ let sendIndex = function (req, res) {
         indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
       }
 
-      if (req.hostname.indexOf('betrireykjavik.is') > -1) {
-        res.send(replaceForBetterReykjavik(indexFileData));
-      } else if (req.hostname.indexOf('betraisland.is') > -1) {
-        res.send(replaceForBetterIceland(indexFileData));
-      } else if (req.hostname.indexOf('smarter.nj.gov') > -1) {
-        res.send(replaceForSmarterNJ(indexFileData));
-      } else if (req.hostname.indexOf('yrpri.org') > -1) {
-        res.send(replaceForYrpri(indexFileData));
+      if (req.hostname) {
+        if (req.hostname.indexOf('betrireykjavik.is') > -1) {
+          res.send(replaceForBetterReykjavik(indexFileData));
+        } else if (req.hostname.indexOf('betraisland.is') > -1) {
+          res.send(replaceForBetterIceland(indexFileData));
+        } else if (req.hostname.indexOf('smarter.nj.gov') > -1) {
+          res.send(replaceForSmarterNJ(indexFileData));
+        } else if (req.hostname.indexOf('yrpri.org') > -1) {
+          res.send(replaceForYrpri(indexFileData));
+        } else {
+          res.send(replaceFromEnv(indexFileData));
+        }
       } else {
+        log.warn("No req.hostname");
         res.send(replaceFromEnv(indexFileData));
       }
+
     }
   });
 };
