@@ -39,6 +39,7 @@
     "i18next": "^3.0.0",
     "i18next-node-fs-backend": "^0.1.2",
     "ip": "^1.1.0",
+    "isbot": "^2.3.0",
     "jade": "^1.11.0",
     "jslint": "^0.12.0",
     "knuth-shuffle-seeded": "^1.0.6",

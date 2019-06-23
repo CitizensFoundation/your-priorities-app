@@ -14,7 +14,39 @@ html
         h1= title
         img(src= imageUrl alt= title)
         p= descriptionText
-        P= contentType
-        a(href != url)
-          != url
+        div
+            b
+                h2= subItemContainerName
+            each val in subItemIds
+                div
+                    a(href != subItemsUrlbase+val.id)
+                        p
+                            != val.name
+        div
+            each val in subItemPoints
+                div
+                    p= val.content
+        p
+            b
+                a(href != backUrl)
+                    div
+                        p= backText
+        p
+            small
+                = "This content is created by the open source Your Priorities citizen engagement platform designed by the non profit Citizens Foundation"
+        p
+            small
+                a(href != "https://github.com/CitizensFoundation/your-priorities-app")
+                    div
+                        = "Your Priorities on GitHub"
+        p
+            small
+                a(href != "https://citizens.is")
+                    div
+                        = "Check out the Citizens Foundation website for more information"
+
+
+
+
+
 

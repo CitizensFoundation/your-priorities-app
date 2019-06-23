@@ -15,6 +15,7 @@ const RedisStore = require('connect-redis')(session);
 const useragent = require('express-useragent');
 const requestIp = require('request-ip');
 const compression = require('compression');
+const isBot = require("isbot");
 
 const passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
@@ -147,7 +148,7 @@ app.use(passport.session());
 
 app.use(function (req, res, next) {
   var ua = req.headers['user-agent'];
-  if (/^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua)) {
+  if (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua)) {
     console.log(ua, ' is a bot');
     nonSPArouter(req, res, next);
   } else {

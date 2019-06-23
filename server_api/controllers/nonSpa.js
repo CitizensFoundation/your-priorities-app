@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var url = require('url');
+var _ = require('lodash');
 
 // TODO: Make sure to load the latest image
 // TODO: Make sure to still support the escaped_fragment routes after moving to the direct urls for backwards sharing capacity
@@ -37,6 +38,14 @@ var sendDomain = function (id, req, res) {
         attributes: ['id','formats'],
         model: models.Image, as: 'DomainLogoImages',
         required: false
+      },
+      {
+        attributes: ['id','name'],
+        model: models.Community,
+        where: {
+          access: models.Community.ACCESS_PUBLIC
+        },
+        required: false
       }
     ]
   }).then(function(domain) {
@@ -51,7 +60,13 @@ var sendDomain = function (id, req, res) {
         url       : fullUrl(req),
         title     :  domain.name,
         descriptionText : domain.description,
-        imageUrl  : imageUrl
+        imageUrl  : imageUrl,
+        subItemsUrlbase: "/community/",
+        subItemContainerName: "Communities",
+        backUrl: "",
+        backText: "",
+        subItemPoints: [],
+        subItemIds: _.dropRight(domain.Communities, domain.Communities.length>10000 ? domain.Communities.length - 10000 : 0)
       };
       res.render('bot', botOptions);
     } else {
@@ -67,7 +82,7 @@ var sendDomain = function (id, req, res) {
 var sendCommunity = function (id, req, res) {
   models.Community.find({
     where: { id: id, access: models.Community.ACCESS_PUBLIC },
-    attributes: ['id', 'name', 'description'],
+    attributes: ['id', 'name', 'description','domain_id'],
     order: [
       [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'desc' ]
     ],
@@ -75,6 +90,14 @@ var sendCommunity = function (id, req, res) {
       {
         attributes: ['id','formats'],
         model: models.Image, as: 'CommunityLogoImages',
+        required: false
+      },
+      {
+        attributes: ['id','name'],
+        model: models.Group,
+        where: {
+          access: models.Group.ACCESS_PUBLIC
+        },
         required: false
       }
     ]
@@ -91,7 +114,13 @@ var sendCommunity = function (id, req, res) {
         title     :  community.name,
         descriptionText : community.description,
         imageUrl  : imageUrl,
-        contentType: 'article'
+        contentType: 'article',
+        subItemsUrlbase: "/group/",
+        subItemContainerName: "Groups",
+        backUrl: "/domain/"+community.domain_id,
+        backText: "Back to domain",
+        subItemPoints: [],
+        subItemIds: _.dropRight(community.Groups, community.Groups.length>10000 ? community.Groups.length - 10000 : 0)
       };
       res.render('bot', botOptions);
     } else {
@@ -107,7 +136,7 @@ var sendCommunity = function (id, req, res) {
 var sendGroup = function (id, req, res) {
   models.Group.find({
     where: { id: id, access: models.Group.ACCESS_PUBLIC },
-    attributes: ['id', 'name', 'objectives'],
+    attributes: ['id', 'name', 'objectives','community_id'],
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'desc' ],
       [ { model: models.Community }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'desc' ]
@@ -116,6 +145,11 @@ var sendGroup = function (id, req, res) {
       {
         attributes: ['id','formats'],
         model: models.Image, as: 'GroupLogoImages',
+        required: false
+      },
+      {
+        attributes: ['id','name'],
+        model: models.Post,
         required: false
       },
       {
@@ -150,7 +184,13 @@ var sendGroup = function (id, req, res) {
         title     :  group.name,
         descriptionText : group.objectives,
         imageUrl  : imageUrl,
-        contentType: 'article'
+        contentType: 'article',
+        subItemsUrlbase: "/post/",
+        subItemContainerName: "Posts",
+        backUrl: "/community/"+group.community_id,
+        backText: "Back to community",
+        subItemPoints: [],
+        subItemIds: _.dropRight(group.Posts, group.Posts.length>10000 ? group.Posts.length - 10000 : 0)
       };
       res.render('bot', botOptions);
     } else {
@@ -166,7 +206,7 @@ var sendGroup = function (id, req, res) {
 var sendPost = function (id, req, res) {
   models.Post.find({
     where: { id: id },
-    attributes: ['id', 'name', 'description'],
+    attributes: ['id', 'name', 'description','group_id'],
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } , 'created_at', 'desc' ],
       [ { model: models.Group }, { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'desc' ],
@@ -176,6 +216,11 @@ var sendPost = function (id, req, res) {
       {
         attributes: ['id','formats'],
         model: models.Image, as: 'PostHeaderImages',
+        required: false
+      },
+      {
+        attributes: ['id','content'],
+        model: models.Point,
         required: false
       },
       {
@@ -227,7 +272,13 @@ var sendPost = function (id, req, res) {
         title     :  post.name,
         descriptionText : post.description,
         imageUrl  : imageUrl,
-        contentType: 'article'
+        contentType: 'article',
+        subItemsUrlbase: "",
+        subItemIds: [],
+        backUrl: "/group/"+post.group_id,
+        backText: "Back to group",
+        subItemContainerName: "Points",
+        subItemPoints: _.dropRight(post.Points, post.Points.length>10000 ? post.Points.length - 10000 : 0)
       };
       res.render('bot', botOptions);
     } else {
