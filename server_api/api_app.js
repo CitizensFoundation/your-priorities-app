@@ -148,7 +148,7 @@ app.use(passport.session());
 
 app.use(function (req, res, next) {
   var ua = req.headers['user-agent'];
-  if (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua)) {
+  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
     console.log(ua, ' is a bot');
     nonSPArouter(req, res, next);
   } else {
