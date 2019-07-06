@@ -14,6 +14,7 @@
 <link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-remove-class-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-rating/yp-rating.html">
 
 <dom-module id="yp-post-actions">
 
@@ -190,29 +191,44 @@
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
-      <div id="actionUp" class="action-up">
-        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
-                           icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
-        <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
-      </div>
+      <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
+        <paper-menu-button class="rate">
+          <paper-icon-button aria-label$="[[t('openRatings')]]" icon="rate-review" slot="dropdown-trigger"></paper-icon-button>
+          <paper-listbox slot="dropdown-content">
+            <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" index-as="ratingIndex" item="rating">
+              <div class="layout vertical">
+                <yp-magic-text class="ratingName" type="customRatingName">[[rating.name]]</yp-magic-text>
+                <yp-rating rating-index="[[ratingIndex]]" emoji="[[rating.emoji]]" on-rating-chanaged="_ratingChanged"></yp-rating>
+              </div>
+            </template>
+          </paper-listbox>
+        </paper-menu-button>
+      </template>
+      <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
+        <div id="actionUp" class="action-up">
+          <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
+                             icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+          <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
+        </div>
 
-      <div class="action-debate" hidden$="[[hideDebate]]">
-        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
-                           class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
-        <div class="action-text debate-text">[[formattedPointCount]]</div>
-      </div>
+        <div class="action-debate" hidden$="[[hideDebate]]">
+          <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
+                             class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
+          <div class="action-text debate-text">[[formattedPointCount]]</div>
+        </div>
 
-      <div class="" hidden$="[[!hideDebate]]"></div>
+        <div class="" hidden$="[[!hideDebate]]"></div>
 
-      <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
-        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
-                           icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
-        <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
-      </div>
-      <div class="share" >
-        <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                            horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
-      </div>
+        <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
+          <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
+                             icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+          <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
+        </div>
+        <div class="share" >
+          <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                              horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+        </div>
+      </template>
     </paper-material>
 
     <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
@@ -423,11 +439,21 @@
       _onPostChanged: function (post, oldValue) {
         this.set('isEndorsed', false);
         if (post) {
-          this.removeClass(this.$.actionUp,'hearts-up-selected');
-          this.removeClass(this.$.actionDown, 'hearts-down-selected');
-          this.removeClass(this.$.actionUp,'default-buttons-up-selected');
-          this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
-          this.set('endorseValue', 0);
+          if (post.Group.configuration && post.Group.configuration.customRatings) {
+            this.set('currentRatings', []);
+          } else {
+            this.removeClass(this.$.actionUp,'hearts-up-selected');
+            this.removeClass(this.$.actionDown, 'hearts-down-selected');
+            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+            this.set('endorseValue', 0);
+            if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
+              this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
+            } else {
+              this.set('endorsementButtons', "hearts");
+            }
+            this._updateEndorsements(post);
+          }
 
           if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
             this.set('votingDisabled', true);
@@ -437,18 +463,13 @@
             this.set('votingDisabled', false);
             this.set('allDisabled', false);
           }
-          if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
-            this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
-          } else {
-            this.set('endorsementButtons', "hearts");
-          }
+
           if (post.Group.configuration) {
             this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
             if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
               this.set('post.Group.configuration.hideVoteCount', true);
             }
           }
-          this._updateEndorsements(post);
         } else {
           console.warn("No post found for post actions");
         }

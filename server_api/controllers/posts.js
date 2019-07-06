@@ -1032,32 +1032,8 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
   });
 });
 
-router.get('/:id/endorsements', auth.can('view post'), function(req, res) {
-  models.Endorsement.findAll({
-    where: {post_id: req.params.id, status: 'active'},
-    order: "created_at DESC",
-    include: [
-      { model: models.User,
-        attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"]
-      }
-    ]
-  }).then(function(endorsements) {
-    if (endorsements) {
-      log.info('Endorsements Viewed', { endorsements: toJson(endorsements), context: 'view', user: toJson(req.user) });
-      res.send(endorsements);
-    } else {
-      log.warn("Endorsements Not found", { context: 'view', post: toJson(post), user: toJson(req.user),
-        err: error, errorStatus: 404 });
-    }
-  }).catch(function(error) {
-    log.error("Endorsements Error", { context: 'view', endorsements: req.params.id, user: toJson(req.user),
-      err: error, errorStatus: 500 });
-  });
-});
-
 router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
   var post;
-  log.info("Have passed post.vote authentication");
 
   models.Endorsement.find({
     where: {

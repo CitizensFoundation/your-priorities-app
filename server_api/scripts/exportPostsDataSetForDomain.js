@@ -26,10 +26,14 @@ var getUserEmail = function (post) {
 };
 
 var clean = function (text) {
-  //console.log("Before: "+ text);
-  var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
-  //console.log("After:" + newText);
-  return newText.replace(/´/g,'');
+  if (text) {
+    //console.log("Before: "+ text);
+    var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
+    //console.log("After:" + newText);
+    return newText.replace(/´/g,'');
+  } else {
+    return "";
+  }
 };
 
 var getLocation = function (post) {
@@ -179,15 +183,16 @@ models.Post.unscoped().findAll({
   var outFilePointForContent = "";
   var outFilePointAgainstContent = "";
   console.log(posts.length);
-  postCounter = 0;
+  var postCounter = 0;
   async.eachSeries(posts, function (post, seriesCallback) {
     if (!post.deleted) {
-      outFilePostContent+= clean(post.name)+"\n"+clean(post.description)+"\n\n";
+      outFilePostContent+= "Name: "+clean(post.name)+"\n"+clean(post.description)+"\n\n";
       outFilePointForContent += getPointsUp(post);
       outFilePointAgainstContent += getPointsDown(post);
       async.series([
        (innerSeriesCallback) => {
-        fs.writeFile(outFolderPath+"/posts/"+post.id+"_post_"+post.language ? post.language : "??"+".txt", clean(post.name)+"\n\n"+clean(post.description), function(err) {
+        var outFileName = outFolderPath+"/posts/"+post.id+"_post_"+(post.language ? post.language : "??")+".txt";
+        fs.writeFile(outFileName, "Name: "+clean(post.name)+"\n\n"+clean(post.description), function(err) {
           if(err) {
             console.log(err);
           }
@@ -195,7 +200,7 @@ models.Post.unscoped().findAll({
         });
        },
        (innerSeriesCallback) => {
-        fs.writeFile(outFolderPath+"/points_for/"+post.id+"_post_points_for_"+post.language ? post.language : "??"+".txt", getPointsUp(post), function(err) {
+        fs.writeFile(outFolderPath+"/points_for/"+post.id+"_post_points_for_"+(post.language ? post.language : "??")+".txt", getPointsUp(post), function(err) {
           if(err) {
             console.log(err);
           }
@@ -203,7 +208,7 @@ models.Post.unscoped().findAll({
         });
       },
       (innerSeriesCallback) => {
-        fs.writeFile(outFolderPath+"/points_against/"+post.id+"_post_points_against_"+post.language ? post.language : "??"+".txt", getPointsDown(post), function(err) {
+        fs.writeFile(outFolderPath+"/points_against/"+post.id+"_post_points_against_"+(post.language ? post.language : "??")+".txt", getPointsDown(post), function(err) {
           if(err) {
             console.log(err);
           }

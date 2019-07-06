@@ -1,0 +1,135 @@
+<!-- Code initially from https://github.com/cmartinezv/rating -->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="yp-rating">
+
+  <template>
+
+    <style>
+
+      :host {
+        display: block;
+      }
+      .rating-wrapper {
+        unicode-bidi: bidi-override;
+        direction: rtl;
+        text-align: center;
+      }
+      .rating-wrapper > span {
+        display: inline-block;
+        position: relative;
+        width: 1em;
+        font-size: 1.5em;
+        cursor: pointer;
+        opacity: 0.4;
+        -webkit-filter: grayscale(100%);
+        filter: grayscale(100%);
+      }
+
+      .rating-wrapper > span.active,
+
+      .rating-wrapper > span.active ~ span {
+        opacity: 1;
+        -webkit-filter: grayscale(0%);
+        filter: grayscale(0%);
+      }
+
+      .rating-wrapper:hover > span.active,
+      .rating-wrapper:hover > span.active ~ span {
+        opacity: 0.4;
+      }
+      .rating-wrapper > span:hover,
+      .rating-wrapper > span:hover ~ span,
+      .rating-wrapper > span.active:hover ~ span {
+        opacity: 0.8 !important;
+      }
+      .rating-wrapper > span:hover {
+        opacity: 0.9 !important;
+      }
+      .rating-wrapper > span.totals {
+        opacity: 1 !important;
+        margin-left: 50px;
+      }
+      .rating-wrapper > span.totals:hover {
+        opacity: 1 !important;
+      }
+    </style>
+
+    <div class="rating-wrapper">
+      <template id="rating" is="dom-repeat" items="{{currentRatings}}">
+        <span class$="{{isActive(rating.numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
+          [[emoji]]
+        </span>
+      </template>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'yp-rating',
+
+      properties: {
+        emoji: {
+          type: String
+        },
+
+        ratingIndex: {
+          type: Number,
+          value: null
+        },
+
+        numberOf: {
+          type: Number
+        },
+
+        rate: {
+          type: Number,
+          value: 0,
+          reflectToAttribute: true,
+          notify: true
+        },
+
+        postId: {
+          type: Number,
+          observer: '_postIdChanged'
+        },
+
+        readonly: {
+          type: Boolean,
+          value: false
+        },
+
+        currentRatings: {
+          type: Array,
+          value: []
+        }
+      },
+
+      isActive: function(index, rate) {
+        if ((index - this.numberOf) * -1 == rate) {
+          return "active";
+        }
+      },
+
+      _postIdChanged: function () {
+        this.currentRatings = [];
+        for (var i = this.numberOf - 1; i >= 0; i--) {
+          this.currentRatings.push(i+1);
+        };
+      },
+
+      _setRate: function(e) {
+        var deep = Polymer.dom(this.root);
+        if(!this.readonly){
+          var index = e.model.index;
+          var indexOld = (this.rate * -1) + this.numberOf;
+          this.rate = (index - this.numberOf) * -1;
+          if (indexOld < this.numberOf) {
+            deep.querySelector('[data-index="'+ indexOld +'"]').classList.remove("active");
+          }
+          deep.querySelector('[data-index="'+ index +'"]').classList.add("active");
+        }
+      }
+    });
+  </script>
+</dom-module>
