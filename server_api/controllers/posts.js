@@ -1094,7 +1094,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
 //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
             groupId : post.group_id,
             postId : post.id,
-            access: models.AcActivity.ACCESS_PUBLIC
+            access: models.AcActivity.ACCESS_PRIVATE
           }, function (error) {
             seriesCallback(error);
           });
