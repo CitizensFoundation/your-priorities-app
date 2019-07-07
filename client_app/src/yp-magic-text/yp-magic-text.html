@@ -223,6 +223,9 @@
             case 'domainContent':
               this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedText";
               break;
+            case 'customRatingName':
+              this.$.getTranslationAjax.url = "/api/ratings/"+this.contentId+"/translatedText/"+this.extraId;
+              break;
             case 'communityName':
             case 'communityContent':
               this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedText";

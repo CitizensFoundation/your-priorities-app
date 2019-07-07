@@ -22,11 +22,11 @@
         display: inline-block;
         position: relative;
         width: 1em;
-        font-size: 1.5em;
+        font-size: 1.8em;
         cursor: pointer;
-        opacity: 0.4;
-        -webkit-filter: grayscale(100%);
-        filter: grayscale(100%);
+        opacity: 0.5;
+        -webkit-filter: grayscale(50%);
+        filter: grayscale(50%);
       }
 
       .rating-wrapper > span.active,
@@ -45,9 +45,13 @@
       .rating-wrapper > span:hover ~ span,
       .rating-wrapper > span.active:hover ~ span {
         opacity: 0.8 !important;
+        -webkit-filter: grayscale(0%);
+        filter: grayscale(0%);
       }
       .rating-wrapper > span:hover {
         opacity: 0.9 !important;
+        -webkit-filter: grayscale(0%);
+        filter: grayscale(0%);
       }
       .rating-wrapper > span.totals {
         opacity: 1 !important;
@@ -109,18 +113,17 @@
       },
 
       isActive: function(index, rate) {
-        if ((index - this.numberOf) * -1 == rate) {
-          debugger;
+        if (index<=rate) {
           return "active";
         }
       },
 
       _postIdChanged: function () {
-        this.currentRatings = [];
+        this.set('currentRatings', []);
         if (typeof this.numberOf==="string")
           this.numberOf = parseInt(this.numberOf);
         for (var i = this.numberOf - 1; i >= 0; i--) {
-          this.currentRatings.push(i+1);
+          this.push('currentRatings', i+1);
         };
       },
 

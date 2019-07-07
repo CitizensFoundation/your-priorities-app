@@ -184,6 +184,14 @@
       [hidden] {
         display: none !important;
       }
+
+      .evaluationButton {
+        color: var(--accent-color);
+      }
+
+      .evalIcon {
+        margin-right: 8px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -193,20 +201,10 @@
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
 
       <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
-        <paper-icon-button aria-label$="[[t('openRatings')]]" icon="rate-review" on-tap="_toggleRatingsBox"></paper-icon-button>
-        <template is="dom-if" if="[[ratingBoxOpen]]">
-          <div class="ratingContainer">
-            <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
-              <div class="layout vertical">
-                <yp-magic-text class="ratingName" type="customRatingName">[[rating.name]]</yp-magic-text>
-                <yp-rating post-id="[[post.id]]" rating-index="[[ratingIndex]]" emoji="[[rating.emoji]]"
-                           number-of="[[rating.numberOf]]"
-                           on-rating-changed="_ratingChanged" on-rating-deleted="_ratingDeleted">
-                </yp-rating>
-              </div>
-            </template>
-          </div>
-        </template>
+        <paper-button aria-label$="[[t('openRatings')]]"
+                      class="evaluationButton" on-tap="openRatingsDialog">
+          <iron-icon class="evalIcon" icon="rate-review"></iron-icon>[[t('evaluate')]]
+        </paper-button>
       </template>
 
       <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
@@ -363,20 +361,26 @@
         endorseModeIconDown: {
           type: String,
           computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
-        },
-
-        currentRatings: {
-          type: Array
-        },
-
-        ratingBoxOpen: {
-          type: Boolean,
-          value: false
         }
       },
 
-      _toggleRatingsBox: function () {
-        this.set('ratingBoxOpen', !this.ratingBoxOpen);
+      openRatingsDialog: function () {
+        window.appGlobals.activity('open', 'post.ratings');
+        if (window.appUser.loggedIn()===true) {
+          Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
+            dialog.open(this.post, this._addRating.bind(this), this._deleteRating.bind(this));
+          }.bind(this));
+        } else {
+          window.appUser.loginForRatings(this);
+        }
+      },
+
+      _addRating: function () {
+
+      },
+
+      _deleteRating: function () {
+
       },
 
       _endorseModeIconUp: function (endorsementButtons) {
@@ -459,7 +463,6 @@
         if (post) {
           this.async(function () {
             if (post.Group.configuration && post.Group.configuration.customRatings) {
-              debugger;
               this.set('currentRatings', []);
             } else {
               if (this.endorsementButtons) {

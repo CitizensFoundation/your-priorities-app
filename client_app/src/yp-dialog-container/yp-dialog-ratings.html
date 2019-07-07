@@ -1,0 +1,102 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+
+<dom-module id="yp-dialog-ratings">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      paper-dialog {
+        background-color: #FFF;
+      }
+
+      .ratingName {
+        margin-bottom: 8px;
+        margin-top: 8px;
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .itemHeader {
+        font-size: 18px;
+      }
+
+      .itemName {
+        font-size: 16px;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <paper-dialog id="ratingsDialog" class="layout vertical">
+      <template is="dom-if" if="[[isOpen]]" restamp>
+        <div class="itemHeader layout horizontal center-center">[[t('evaluatePost')]]</div>
+        <div class="itemName">[[post.name]]</div>
+        <paper-dialog-scrollable>
+          <div class="ratingContainer">
+            <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
+              <div class="layout vertical center-center">
+                <yp-magic-text content-id="[[post.id]]" extra-id="[[index]]" text-only content="[[rating.name]]"
+                               content-language="[[post.Group.language]]"
+                               class="ratingName" text-type="customRatingName"></yp-magic-text>
+                <yp-rating post-id="[[post.id]]" rating-index="[[ratingIndex]]" emoji="[[rating.emoji]]"
+                           number-of="[[rating.numberOf]]"
+                           on-rating-changed="ratingChangedFunction" on-rating-deleted="ratingDeletedFunction">
+                </yp-rating>
+              </div>
+            </template>
+          </div>
+        </paper-dialog-scrollable>
+      </template>
+
+      <div class="buttons">
+        <paper-button dialog-confirm on-tap="_confirm">[[t('done')]]</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'yp-dialog-ratings',
+
+      behaviors: [
+        Polymer.ypLanguageBehavior
+      ],
+
+      properties: {
+
+        itemName: {
+          type: String
+        },
+
+        isOpen: {
+          type: Boolean,
+          value: false
+        },
+
+        post: Object,
+
+        ratingChangedFunction: Function,
+        ratingDeletedFunction: Function
+      },
+
+      open: function (post, ratingChangedFunction, ratingDeletedFunction) {
+        this.set('post', post);
+        this.set('ratingChangedFunction', ratingChangedFunction);
+        this.set('ratingDeletedFunction', ratingDeletedFunction);
+        this.set('isOpen', false);
+        this.async(function () {
+          this.set('isOpen', true);
+          this.$.ratingsDialog.open();
+        });
+      }
+    });
+  </script>
+</dom-module>

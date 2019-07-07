@@ -61,6 +61,10 @@
             type: Object
           },
 
+          loginForRatingsParams: {
+            type: Object
+          },
+
           loginForPointQualityParams: {
             type: Object
           },
@@ -158,6 +162,11 @@
           this.openUserlogin();
         },
 
+        loginForRatings: function(postActionElement) {
+          this.loginForRatingsParams = { postActionElement: postActionElement };
+          this.openUserlogin();
+        },
+
         loginForPointQuality: function(pointActionElement, params) {
           this.loginForPointQualityParams = { pointActionElement: pointActionElement, params: params };
           this.openUserlogin();
@@ -241,6 +250,10 @@
             var endorseParams = this.loginForEndorseParams;
             endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
             this.loginForEndorseParams = null;
+          } else if (this.loginForRatingsParams) {
+            var ratingsParams = this.loginForRatingsParams;
+            ratingsParams.postActionElement.openRatingsDialog();
+            this.loginForRatingsParams = null;
           } else if (this.loginForPointQualityParams) {
             var pointQualityParams = this.loginForPointQualityParams;
             pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);

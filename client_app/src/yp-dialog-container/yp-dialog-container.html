@@ -84,6 +84,10 @@
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
       </template>
 
+      <template is="dom-if" if="[[autoTranslateDialogOpen]]" restamp>
+        <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
+      </template>
+
       <iron-lazy-pages selected="{{selectedDialog}}" attr-for-selected="name">
         <template is="dom-if" name="userLogin" restamp>
           <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
@@ -95,6 +99,10 @@
 
         <template is="dom-if" name="resetPassword" restamp>
           <yp-reset-password id="resetPassword"></yp-reset-password>
+        </template>
+
+        <template is="dom-if" name="ratings" restamp>
+          <yp-dialog-ratings id="ratings"></yp-dialog-ratings>
         </template>
 
         <template is="dom-if" name="acceptInvite" restamp>
@@ -127,10 +135,6 @@
 
         <template is="dom-if" name="apiActionDialog" restamp>
           <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
-        </template>
-
-        <template is="dom-if" name="autoTranslateDialog" restamp>
-          <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
         </template>
 
         <template is="dom-if" name="userEdit" restamp>
@@ -274,6 +278,11 @@
           value: false
         },
 
+        autoTranslateDialogOpen: {
+          type: Boolean,
+          value: false
+        },
+
         facebookPixelTrackingId: String
       },
 
@@ -362,6 +371,20 @@
         }
       },
 
+      getRatingsDialogAsync: function (callback) {
+        if (this.gotRatingsDialog) {
+          this.getDialogAsync("ratings", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-ratings.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded ratings dialog");
+            this.gotRatingsDialog=true;
+            this.getDialogAsync("ratings", callback);
+          }.bind(this), null, true);
+        }
+      },
+
       getUsersGridAsync: function (callback) {
         if (this.gotUsersGrid) {
           this.getDialogAsync("usersGrid", callback);
@@ -415,9 +438,12 @@
           this.set('pageDialogOpen', true);
         } else if (idName==="confirmationDialog") {
           this.set('confirmationDialogOpen', true);
+        } else if (idName==="autoTranslateDialog") {
+          this.set('autoTranslateDialogOpen', true);
         } else if (idName!=='notificationToast') {
           this.set('pageDialogOpen', false);
           this.set('confirmationDialogOpen', false);
+          this.set('autoTranslateDialogOpen', false);
           this.set('selectedDialog', idName);
         }
 
