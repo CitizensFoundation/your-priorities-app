@@ -96,6 +96,10 @@
             type: Object
           },
 
+          ratingPostsIndex: {
+            type: Object
+          },
+
           membershipsIndex: {
             type: Object
           },
@@ -494,6 +498,38 @@
           }
         },
 
+        _updateRatingPostsIndex: function (user) {
+          if (user && user.Ratings && user.Ratings.length>0) {
+            this.ratingPostsIndex = {};
+            for(var i=0; i<user.Ratings.length; i++){
+              this.ratingPostsIndex[ user.Ratings[i].post_id ] = user.Ratings[i];
+            }
+          } else {
+            this.ratingPostsIndex = {}
+          }
+        },
+
+        updateRatingForPost: function (postId, newRating) {
+          if (!this.user.Ratings) {
+            this.user.Ratings = [];
+          }
+          var hasChanged = false;
+          for(var i=0; i<this.user.Ratings.length; i++) {
+            if (this.user.Ratings[i].post_id===postId) {
+              if (newRating) {
+                this.user.Ratings[i] = newRating;
+              } else {
+                this.user.Ratings[i].splice(i, 1);
+              }
+              hasChanged = true;
+              break;
+            }
+          }
+          if (!hasChanged && newRating)
+            this.user.Ratings.push(newRating);
+          this._updateRatingPostsIndex(this.user);
+        },
+
         updatePointQualityForPost: function (pointId, newPointQuality) {
           if (this.user.PointQualities) {
             var hasChanged = false;
@@ -524,11 +560,11 @@
           }
         },
 
-        _onUserChanged: function (newValue, oldValue) {
-          this.fire("user-changed", newValue);
-          if (newValue) {
-            this._updateEndorsementPostsIndex(newValue);
-            this._updatePointQualitiesIndex(newValue);
+        _onUserChanged: function (user) {
+          this.fire("user-changed", user);
+          if (user) {
+            this._updateEndorsementPostsIndex(user);
+            this._updatePointQualitiesIndex(user);
             document.dispatchEvent(
               new CustomEvent("lite-signal", {
                 bubbles: true,

@@ -1,4 +1,6 @@
 {
+  "customRatings": "Custom ratings",
+  "customRatingsInfo": "Use comma to separate rating names, number of ratings (max 5) and emoji. Keep rating names to less than 20 characters for display on mobiles. Example: Innovation,5,\uD83D\uDCA1,Implementability,5,\uD83D\uDD28,Likeability,5,⭐",
   "openRatings": "Open ratings panel",
   "useMainPhoto": "Use logo photo",
   "videoUploadDisclaimer": "By uploading video I confirm I have rights to the material and people in the video have given their consent",

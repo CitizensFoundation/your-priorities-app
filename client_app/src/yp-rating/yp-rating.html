@@ -11,11 +11,13 @@
       :host {
         display: block;
       }
+
       .rating-wrapper {
         unicode-bidi: bidi-override;
         direction: rtl;
         text-align: center;
       }
+
       .rating-wrapper > span {
         display: inline-block;
         position: relative;
@@ -58,7 +60,7 @@
 
     <div class="rating-wrapper">
       <template id="rating" is="dom-repeat" items="{{currentRatings}}">
-        <span class$="{{isActive(rating.numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
+        <span class$="{{isActive(numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
           [[emoji]]
         </span>
       </template>
@@ -90,7 +92,8 @@
         },
 
         postId: {
-          type: Number,
+          type: String,
+          value: null,
           observer: '_postIdChanged'
         },
 
@@ -107,12 +110,15 @@
 
       isActive: function(index, rate) {
         if ((index - this.numberOf) * -1 == rate) {
+          debugger;
           return "active";
         }
       },
 
       _postIdChanged: function () {
         this.currentRatings = [];
+        if (typeof this.numberOf==="string")
+          this.numberOf = parseInt(this.numberOf);
         for (var i = this.numberOf - 1; i >= 0; i--) {
           this.currentRatings.push(i+1);
         };

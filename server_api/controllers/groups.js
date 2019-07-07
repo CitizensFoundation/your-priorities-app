@@ -237,6 +237,22 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
+
+  const customRatingsText = (req.body.customRatingsText && req.body.customRatingsText!="") ? req.body.customRatingsText : null;
+  group.set('configuration.customRatingsText', customRatingsText);
+
+  if (customRatingsText) {
+    var ratingsComponents = customRatingsText.split(",");
+    let ratings = [];
+    if (ratingsComponents && ratingsComponents.length>2) {
+      for (var i=0 ; i<ratingsComponents.length; i+=3) {
+        ratings.push({name: ratingsComponents[i], numberOf: ratingsComponents[i+1], emoji: ratingsComponents[i+2]});
+      }
+      group.set('configuration.customRatings', ratings);
+    } else {
+      log.error("Ratings not in correct format for customRatings");
+    }
+  }
 };
 
 var upload = multer({

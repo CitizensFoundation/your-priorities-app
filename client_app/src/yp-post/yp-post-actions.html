@@ -191,19 +191,24 @@
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
+
       <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
-        <paper-menu-button class="rate">
-          <paper-icon-button aria-label$="[[t('openRatings')]]" icon="rate-review" slot="dropdown-trigger"></paper-icon-button>
-          <paper-listbox slot="dropdown-content">
-            <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" index-as="ratingIndex" item="rating">
+        <paper-icon-button aria-label$="[[t('openRatings')]]" icon="rate-review" on-tap="_toggleRatingsBox"></paper-icon-button>
+        <template is="dom-if" if="[[ratingBoxOpen]]">
+          <div class="ratingContainer">
+            <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
               <div class="layout vertical">
                 <yp-magic-text class="ratingName" type="customRatingName">[[rating.name]]</yp-magic-text>
-                <yp-rating rating-index="[[ratingIndex]]" emoji="[[rating.emoji]]" on-rating-chanaged="_ratingChanged"></yp-rating>
+                <yp-rating post-id="[[post.id]]" rating-index="[[ratingIndex]]" emoji="[[rating.emoji]]"
+                           number-of="[[rating.numberOf]]"
+                           on-rating-changed="_ratingChanged" on-rating-deleted="_ratingDeleted">
+                </yp-rating>
               </div>
             </template>
-          </paper-listbox>
-        </paper-menu-button>
+          </div>
+        </template>
       </template>
+
       <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
         <div id="actionUp" class="action-up">
           <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
@@ -224,11 +229,11 @@
                              icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
           <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
         </div>
-        <div class="share" >
-          <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                              horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
-        </div>
       </template>
+      <div class="share" >
+        <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                            horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+      </div>
     </paper-material>
 
     <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
@@ -358,7 +363,20 @@
         endorseModeIconDown: {
           type: String,
           computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
+        },
+
+        currentRatings: {
+          type: Array
+        },
+
+        ratingBoxOpen: {
+          type: Boolean,
+          value: false
         }
+      },
+
+      _toggleRatingsBox: function () {
+        this.set('ratingBoxOpen', !this.ratingBoxOpen);
       },
 
       _endorseModeIconUp: function (endorsementButtons) {
@@ -439,37 +457,45 @@
       _onPostChanged: function (post, oldValue) {
         this.set('isEndorsed', false);
         if (post) {
-          if (post.Group.configuration && post.Group.configuration.customRatings) {
-            this.set('currentRatings', []);
-          } else {
-            this.removeClass(this.$.actionUp,'hearts-up-selected');
-            this.removeClass(this.$.actionDown, 'hearts-down-selected');
-            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
-            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
-            this.set('endorseValue', 0);
-            if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
-              this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
+          this.async(function () {
+            if (post.Group.configuration && post.Group.configuration.customRatings) {
+              debugger;
+              this.set('currentRatings', []);
             } else {
-              this.set('endorsementButtons', "hearts");
-            }
-            this._updateEndorsements(post);
-          }
+              if (this.endorsementButtons) {
+                this.$$("#actionDown").className += ' ' + 'default-buttons-color';
+                this.$$("#actionUp").className += ' ' + 'default-buttons-color';
+              }
 
-          if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
-            this.set('votingDisabled', true);
-            this.set('allDisabled', true);
-            this.set('disabledTitle', this.t('votingDisabled'));
-          } else {
-            this.set('votingDisabled', false);
-            this.set('allDisabled', false);
-          }
-
-          if (post.Group.configuration) {
-            this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
-            if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
-              this.set('post.Group.configuration.hideVoteCount', true);
+              this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+              this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+              this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+              this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
+              this.set('endorseValue', 0);
+              if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
+                this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
+              } else {
+                this.set('endorsementButtons', "hearts");
+              }
+              this._updateEndorsements(post);
             }
-          }
+
+            if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+              this.set('votingDisabled', true);
+              this.set('allDisabled', true);
+              this.set('disabledTitle', this.t('votingDisabled'));
+            } else {
+              this.set('votingDisabled', false);
+              this.set('allDisabled', false);
+            }
+
+            if (post.Group.configuration) {
+              this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
+              if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
+                this.set('post.Group.configuration.hideVoteCount', true);
+              }
+            }
+          });
         } else {
           console.warn("No post found for post actions");
         }
@@ -535,28 +561,28 @@
 
         if (this.endorsementButtons=='hearts') {
           if (value > 0) {
-            this.$.actionUp.className += ' ' + 'hearts-up-selected';
-            this.removeClass(this.$.actionDown, 'hearts-down-selected');
-            this.$.iconUpButton.icon = "favorite";
+            this.$$("#actionUp").className += ' ' + 'hearts-up-selected';
+            this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+            this.$$("#iconUpButton").icon = "favorite";
           } else if (value < 0) {
-            this.$.actionDown.className += ' ' + 'hearts-down-selected';
-            this.removeClass(this.$.actionUp,'hearts-up-selected');
-            this.$.iconUpButton.icon = "favorite-border";
+            this.$$("#actionDown").className += ' ' + 'hearts-down-selected';
+            this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+            this.$$("#iconUpButton").icon = "favorite-border";
           } else {
-            this.removeClass(this.$.actionUp,'hearts-up-selected');
-            this.removeClass(this.$.actionDown, 'hearts-down-selected');
-            this.$.iconUpButton.icon = "favorite-border";
+            this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+            this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+            this.$$("#iconUpButton").icon = "favorite-border";
           }
         } else {
           if (value > 0) {
-            this.$.actionUp.className += ' ' + 'default-buttons-up-selected';
-            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+            this.$$("#actionUp").className += ' ' + 'default-buttons-up-selected';
+            this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
           } else if (value < 0) {
-            this.$.actionDown.className += ' ' + 'default-buttons-down-selected';
-            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+            this.$$("#actionDown").className += ' ' + 'default-buttons-down-selected';
+            this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
           } else {
-            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
-            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+            this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+            this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
           }
         }
 
@@ -649,13 +675,6 @@
 
       computeActionClass: function (small) {
         return small ? 'action-bar' : 'action-bar';
-      },
-
-      ready: function() {
-        if (this.endorsementButtons) {
-          this.$.actionDown.className += ' ' + 'default-buttons-color';
-          this.$.actionUp.className += ' ' + 'default-buttons-color';
-        }
       }
     });
   </script>

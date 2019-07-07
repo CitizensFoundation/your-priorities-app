@@ -349,6 +349,17 @@
         </paper-textarea>
         <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
 
+        <paper-textarea id="customRatingsText"
+                        name="customRatingsText"
+                        type="text"
+                        rows="2"
+                        always-float-label="[[group.configuration.customRatingsText]]"
+                        maxrows="2"
+                        label="[[t('customRatings')]]"
+                        value="{{group.configuration.customRatingsText}}">
+        </paper-textarea>
+        <div class="structuredQuestionsInfo">[[t('customRatingsInfo')]]</div>
+
         <div class="layout vertical additionalSettings defaultPostImage">
           <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false"
                           target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">
