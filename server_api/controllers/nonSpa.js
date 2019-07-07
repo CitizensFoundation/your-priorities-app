@@ -135,7 +135,13 @@ var sendCommunity = function (id, req, res) {
 
 var sendGroup = function (id, req, res) {
   models.Group.find({
-    where: { id: id, access: models.Group.ACCESS_PUBLIC },
+    where: {
+      id: id,
+      $or: [
+        { access: models.Group.ACCESS_PUBLIC },
+        { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+      ],
+    },
     attributes: ['id', 'name', 'objectives','community_id'],
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'desc' ],
@@ -226,7 +232,10 @@ var sendPost = function (id, req, res) {
       {
         model: models.Group,
         where: {
-          access: models.Group.ACCESS_PUBLIC
+          $or: [
+            { access: models.Group.ACCESS_PUBLIC },
+            { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+          ]
         },
         required: true,
         include: [
