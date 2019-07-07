@@ -22,11 +22,11 @@
         display: inline-block;
         position: relative;
         width: 1em;
-        font-size: 1.8em;
+        font-size: 1.6em;
         cursor: pointer;
-        opacity: 0.5;
-        -webkit-filter: grayscale(50%);
-        filter: grayscale(50%);
+        opacity: 0.4;
+        -webkit-filter: grayscale(40%);
+        filter: grayscale(40%);
       }
 
       .rating-wrapper > span.active,
@@ -60,9 +60,14 @@
       .rating-wrapper > span.totals:hover {
         opacity: 1 !important;
       }
+
+      .rating-wrapper[read-only] > span {
+        cursor: default;
+      }
+
     </style>
 
-    <div class="rating-wrapper">
+    <div class="rating-wrapper" read-only$="[[readOnly]]">
       <template id="rating" is="dom-repeat" items="{{currentRatings}}">
         <span class$="{{isActive(numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
           [[emoji]]
@@ -119,12 +124,18 @@
       },
 
       _postIdChanged: function () {
+        this._resetRatings();
+      },
+
+      _resetRatings: function () {
         this.set('currentRatings', []);
-        if (typeof this.numberOf==="string")
-          this.numberOf = parseInt(this.numberOf);
-        for (var i = this.numberOf - 1; i >= 0; i--) {
-          this.push('currentRatings', i+1);
-        };
+        this.async(function () {
+          if (typeof this.numberOf==="string")
+            this.numberOf = parseInt(this.numberOf);
+          for (var i = this.numberOf - 1; i >= 0; i--) {
+            this.push('currentRatings', i+1);
+          };
+        });
       },
 
       _setRate: function(e) {
@@ -132,7 +143,15 @@
         if(!this.readonly){
           var index = e.model.index;
           var indexOld = (this.rate * -1) + this.numberOf;
+          var oldRate = this.rate;
           this.rate = (index - this.numberOf) * -1;
+          if (oldRate!==this.rate) {
+            this.fire('yp-rating-add', { postId: this.postId, ratingIndex: this.ratingIndex, rate: this.rate });
+          } else {
+            this.fire('yp-rating-delete', { postId: this.postId, ratingIndex: this.ratingIndex });
+            this.set('rate', 0);
+            this._resetRatings();
+          }
           if (indexOld < this.numberOf) {
             deep.querySelector('[data-index="'+ indexOld +'"]').classList.remove("active");
           }
