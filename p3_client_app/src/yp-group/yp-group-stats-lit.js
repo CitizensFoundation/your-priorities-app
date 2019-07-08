@@ -6,13 +6,28 @@ import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { YpBaseElement } from '../yp-base-element.js';
+import { html, css } from 'lit-element';
+import { YpFlexLayout } from '../yp-flex-layout.js';
 
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment">
+  class YpGroupStatsLit extends YpBaseElement {
+    static get properties() {
+      return {
+        group: {
+          type: Object
+        }
+      }
+    }
+  
+
+  static get styles() {
+    return [
+      css`
       :host {
         display: block;
       }
+
+  
 
       .stats {
         padding-top: 8px;
@@ -32,21 +47,27 @@ Polymer({
         padding-left:8px;
         margin-right:4px;
       }
-    </style>
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-
+      `, YpFlexLayout]
+  }
+    
+  render() {
+    return html`
+      ${this.group ? html`
     <div class="stats layout horizontal end-justified">
-      <iron-icon title\$="[[t('stats.posts')]]" icon="lightbulb-outline" class="stats-icon"></iron-icon>
-      <div title\$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
+      <iron-icon title="${this.t('stats.posts')}" icon="lightbulb-outline" class="stats-icon"></iron-icon>
+      <div title="${this.t('stats.posts')}" class="stats-text" style="">${this.formatNumber(this.group.counter_posts)}</div>
 
-      <iron-icon title\$="[[t('stats.discussions')]]" icon="chat-bubble-outline" class="stats-icon"></iron-icon>
-      <div title\$="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
+      <iron-icon title="${this.t('stats.discussions')}" icon="chat-bubble-outline" class="stats-icon"></iron-icon>
+      <div title="${this.t('stats.discussions')}" class="stats-text">${this.formatNumber(this.group.counter_points)}</div>
 
-      <iron-icon title\$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
-      <div title\$="[[t('stats.users')]]" class="stats-text">{{formatNumber(group.counter_users)}}</div>
-    </div>
-`,
-
+      <iron-icon title="${this.t('stats.users')}" icon="face" class="stats-icon"></iron-icon>
+      <div title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.group.counter_users)}</div>
+    </div>  
+    ` : html``
+  }
+  `
+  
+  
   is: 'yp-group-stats',
 
   behaviors: [
@@ -68,3 +89,5 @@ Polymer({
     }
   }
 });
+
+window.customElement.define('yp-group-stats-lit', YpCommunityStatsLit);

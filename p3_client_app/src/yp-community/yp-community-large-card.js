@@ -294,7 +294,7 @@ Polymer({
 
     <div class="layout horizontal wrap">
       <paper-material is-video\$="[[communityVideoURL]]" id="cardImage" elevation="3" animated="" class="large-card imageCard top-card">
-        <div id="welcomeHTML" hidden\$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
+        <div id="welcomeHTML" tittle="${this('!community.configuration.welcomeHTML')}" class="layout vertical center-center">
         </div>
         <div hidden\$="[[community.configuration.welcomeHTML]]">
           <template is="dom-if" if="[[communityVideoURL]]" restamp="">
