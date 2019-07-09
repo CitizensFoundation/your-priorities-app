@@ -367,19 +367,11 @@
         window.appGlobals.activity('open', 'post.ratings');
         if (window.appUser.loggedIn()===true) {
           Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
-            dialog.open(this.post, this._addRating.bind(this), this._deleteRating.bind(this));
+            dialog.open(this.post);
           }.bind(this));
         } else {
           window.appUser.loginForRatings(this);
         }
-      },
-
-      _addRating: function () {
-
-      },
-
-      _deleteRating: function () {
-
       },
 
       _endorseModeIconUp: function (endorsementButtons) {

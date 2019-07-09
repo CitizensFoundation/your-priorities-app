@@ -52,7 +52,7 @@
                                class="ratingName" text-type="customRatingName"></yp-magic-text>
                 <yp-rating post-id="[[post.id]]" class="layout horizontal self-start" rating-index="[[index]]" emoji="[[rating.emoji]]"
                            number-of="[[rating.numberOf]]"
-                           on-rating-changed="ratingChangedFunction" on-rating-deleted="ratingDeletedFunction">
+                           on-yp-rating-add="_addRating" on-yp-rating-delete="_deleteRating">
                 </yp-rating>
               </div>
             </template>
@@ -64,7 +64,7 @@
         <paper-button dialog-confirm on-tap="_confirm">[[t('done')]]</paper-button>
       </div>
     </paper-dialog>
-
+    <yp-ajax id="ajax"></yp-ajax>
   </template>
 
   <script>
@@ -87,16 +87,26 @@
           value: false
         },
 
-        post: Object,
+        post: Object
 
-        ratingChangedFunction: Function,
-        ratingDeletedFunction: Function
       },
 
-      open: function (post, ratingChangedFunction, ratingDeletedFunction) {
+      _addRating: function (event, detail) {
+        this.$.ajax.method="POST";
+        this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
+        this.$.ajax.body = { value: detail.rate };
+        this.$.ajax.generateRequest();
+      },
+
+      _deleteRating: function (event, detail) {
+        this.$.ajax.method="DELETE";
+        this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
+        this.$.ajax.body = {};
+        this.$.ajax.generateRequest();
+      },
+
+      open: function (post) {
         this.set('post', post);
-        this.set('ratingChangedFunction', ratingChangedFunction);
-        this.set('ratingDeletedFunction', ratingDeletedFunction);
         this.set('isOpen', false);
         this.async(function () {
           this.set('isOpen', true);

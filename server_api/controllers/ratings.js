@@ -9,7 +9,7 @@ var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 const moment = require('moment');
 
-router.post('/rate_post/:post_id/:type_index', auth.can('rate post'), function(req, res) {
+router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
   var post;
 
   models.Rating.find({
@@ -120,7 +120,7 @@ router.post('/rate_post/:post_id/:type_index', auth.can('rate post'), function(r
   });
 });
 
-router.delete('/rate_post/:post_id/:type_index', auth.can('rate post'), function(req, res) {
+router.delete('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
   models.Rating.find({
     where: {
       post_id: req.params.post_id,
@@ -146,7 +146,7 @@ router.delete('/rate_post/:post_id/:type_index', auth.can('rate post'), function
           averageRating: sum/count
         });
         rating.Post.save().then(function () {
-          seriesCallback();
+          res.sendStatus(200);
         }).catch(function (error) {
           log.error("Ratings Error - Cant save ratings", {
             context: 'create',
@@ -154,7 +154,7 @@ router.delete('/rate_post/:post_id/:type_index', auth.can('rate post'), function
             err: error,
             user: toJson(req.user)
           });
-          seriesCallback();
+          res.sendStatus(500);
         });
       });
     } else {

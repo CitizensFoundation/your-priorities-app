@@ -1433,7 +1433,7 @@ auth.action('view image', ['image.viewUser']);
 
 auth.action('vote on post', ['post.vote']);
 auth.action('vote on point', ['point.vote']);
-auth.action('submit post rating', ['post.vote']);
+auth.action('rate post', ['post.vote']);
 
 auth.action('add post user images', ['post.vote']);
 
