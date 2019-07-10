@@ -18,32 +18,62 @@
       }
 
       .ratingName {
-        margin-bottom: 8px;
-        margin-top: 8px;
         font-weight: bold;
         font-size: 16px;
+        margin-bottom: 8px;
+        margin-top: 8px;
       }
 
       .itemHeader {
-        font-size: 18px;
+        font-size: 22px;
+        color: #FFF;
+        background-color: var(--accent-color);
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 0;
+        text-align: center;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        width: 100%;
       }
 
       .itemName {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: bold;
+        color: #000;
+        width: 100%;
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: center;
+        padding: 0;
+        padding-bottom: 10px;
+        padding-top: 16px;
+        text-decoration: underline;
+      }
+
+      .evalIcon {
+        margin-right: 8px;
+        padding-top: 8px;
+        width: 40px;
+        height: 40px;
       }
 
       .itemContainer {
         margin-bottom: 8px;
       }
+
+      paper-dialog-scrollable {
+        margin-top: 2px;
+
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog id="ratingsDialog" class="layout vertical  layout vertical center-center">
+    <paper-dialog id="ratingsDialog" class="layout vertical">
       <template is="dom-if" if="[[isOpen]]" restamp>
-        <div class="itemHeader layout horizontal center-center">[[t('evaluatePost')]]</div>
+        <div class="itemHeader layout horizontal center-center"><iron-icon class="evalIcon" icon="rate-review"></iron-icon>[[t('evaluate')]]</div>
         <div class="itemName">[[post.name]]</div>
-        <paper-dialog-scrollable>
+        <paper-dialog-scrollable class=" layout vertical center-center">
           <div class="ratingContainer">
             <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
               <div class="layout vertical self-start itemContainer">
