@@ -51,7 +51,7 @@
                                content-language="[[post.Group.language]]"
                                class="ratingName" text-type="customRatingName"></yp-magic-text>
                 <yp-rating post-id="[[post.id]]" class="layout horizontal self-start" rating-index="[[index]]" emoji="[[rating.emoji]]"
-                           number-of="[[rating.numberOf]]"
+                           number-of="[[rating.numberOf]]" rate="[[getRating(index)]]"
                            on-yp-rating-add="_addRating" on-yp-rating-delete="_deleteRating">
                 </yp-rating>
               </div>
@@ -88,7 +88,16 @@
         },
 
         post: Object
+      },
 
+      getRating: function (index) {
+        if (window.appUser.loggedIn() &&
+            window.appUser.ratingPostsIndex[this.post.id] &&
+            window.appUser.ratingPostsIndex[this.post.id][index]) {
+          return window.appUser.ratingPostsIndex[this.post.id][index].value;
+        } else {
+          return null;
+        }
       },
 
       _addRating: function (event, detail) {

@@ -515,7 +515,9 @@
           if (user && user.Ratings && user.Ratings.length>0) {
             this.ratingPostsIndex = {};
             for(var i=0; i<user.Ratings.length; i++){
-              this.ratingPostsIndex[ user.Ratings[i].post_id ] = user.Ratings[i];
+              if (!this.ratingPostsIndex[ user.Ratings[i].post_id ])
+                this.ratingPostsIndex[ user.Ratings[i].post_id ] = {};
+              this.ratingPostsIndex[ user.Ratings[i].post_id ][user.Ratings[i].type_index] = user.Ratings[i];
             }
           } else {
             this.ratingPostsIndex = {}
@@ -578,6 +580,7 @@
           if (user) {
             this._updateEndorsementPostsIndex(user);
             this._updatePointQualitiesIndex(user);
+            this._updateRatingPostsIndex(user);
             document.dispatchEvent(
               new CustomEvent("lite-signal", {
                 bubbles: true,

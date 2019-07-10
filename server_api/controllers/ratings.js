@@ -25,7 +25,9 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
       }
     ]
   }).then(function(rating) {
+    let oldRatingValue;
     if (rating) {
+      oldRatingValue = rating.value;
       rating.value = req.body.value;
       post = rating.Post;
     } else {
@@ -61,34 +63,38 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
         function (seriesCallback) {
           if (!post.public_data)
             post.set('public_data', {});
-            if (!post.public_data.ratings)
-              post.set('public_data.ratings', {});
-            if (!post.public_data.ratings[rating.type_index]) {
-              post.set('public_data.ratings.'+rating.type_index, {
-                count: 1,
-                sum: rating.value,
-                averageRating: rating.value
-              });
-            } else {
-              const count = post.public_data.ratings[rating.type_index].count+1;
-              const sum = post.public_data.ratings[rating.type_index].sum+rating.value;
-              post.set('public_data.ratings.'+rating.type_index, {
-                count: count,
-                sum: sum,
-                averageRating: sum/count
-              });
-            }
-            post.save().then(function () {
-              seriesCallback();
-            }).catch(function (error) {
-              log.error("Ratings Error - Cant save ratings", {
-                context: 'create',
-                rating: toJson(rating),
-                err: error,
-                user: toJson(req.user)
-              });
-              seriesCallback();
+          if (!post.public_data.ratings)
+            post.set('public_data.ratings', {});
+          if (!post.public_data.ratings[rating.type_index]) {
+            post.set('public_data.ratings.'+rating.type_index, {
+              count: 1,
+              sum: rating.value,
+              averageRating: rating.value
             });
+          } else {
+            let count = post.public_data.ratings[rating.type_index].count+1;
+            let sum = post.public_data.ratings[rating.type_index].sum+rating.value;
+            if (oldRatingValue) {
+              count -= 1;
+              sum -= oldRatingValue;
+            }
+            post.set('public_data.ratings.'+rating.type_index, {
+              count: count,
+              sum: sum,
+              averageRating: sum/count
+            });
+          }
+          post.save().then(function () {
+            seriesCallback();
+          }).catch(function (error) {
+            log.error("Ratings Error - Cant save ratings", {
+              context: 'create',
+              rating: toJson(rating),
+              err: error,
+              user: toJson(req.user)
+            });
+            seriesCallback();
+          });
         },
         function (seriesCallback) {
           models.AcActivity.createActivity({

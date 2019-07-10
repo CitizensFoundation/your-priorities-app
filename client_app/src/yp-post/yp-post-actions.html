@@ -205,12 +205,30 @@
 
       <div class="flex"></div>
 
-      <div class="action-debate" hidden$="[[hideDebate]]">
+      <div class="action-debate" hidden $="[[hideDebate]]">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
                            class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">[[formattedPointCount]]</div>
       </div>
       <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
+        <template is="dom-if" if="[[post.public_data.ratings]]">
+          <div class="layout horizontal wrap" style="max-width: 140px;overflow:hidden;">
+            <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
+              <template is="dom-if" if="[[getRating(index)]]">
+                  <div style="width: 60px;margin-right: 0;" class="layout self-start">
+                    <yp-rating read-only post-id="[[post.id]]"
+                               rating-index="[[index]]"
+                               emoji="[[rating.emoji]]"
+                               rate="[[getRating(index)]]"
+                               number-of="[[rating.numberOf]]"></yp-rating>
+                  </div>
+              </template>
+            </template>
+          </div>
+        </template>
+        <div class="layout horizontal wrap">
+
+        </div>
         <paper-button aria-label$="[[t('openRatings')]]"
                       class="evaluationButton" on-tap="openRatingsDialog">
           <iron-icon class="evalIcon" icon="rate-review"></iron-icon>[[t('evaluate')]]
@@ -361,6 +379,13 @@
           type: String,
           computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
         }
+      },
+
+      getRating: function (ratingIndex) {
+        if (this.post.public_data.ratings[ratingIndex])
+          return this.post.public_data.ratings[ratingIndex].averageRating;
+        else
+          return null;
       },
 
       openRatingsDialog: function () {
