@@ -130,7 +130,6 @@
       }
 
       .shareIcon {
-        margin-left: 16px;
         margin-top: 3px;
         --paper-share-button-icon-color: #656565;
         --paper-share-button-icon-height: 46px;
@@ -157,9 +156,6 @@
       }
 
       .share {
-        position: absolute;
-        bottom: 8px;
-        left: 16px;
         padding: 0;
         margin: 0;
       }
@@ -189,8 +185,21 @@
       }
 
       .evalIcon {
-        margin-right: 8px;
+        margin-right: 4px;
+        margin-top: 4px;
       }
+
+      .ratingsCount {
+        font-size: 0.6em;
+        color: #999;
+      }
+
+      .ratingContainer {
+        margin-right: 12px;
+        margin-left: 16px;
+        margin-bottom: 4px;
+      }
+
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -211,21 +220,26 @@
         <div class="action-text debate-text">[[formattedPointCount]]</div>
       </div>
       <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
-        <template is="dom-if" if="[[post.public_data.ratings]]">
-          <div class="layout horizontal wrap" style="max-width: 140px;overflow:hidden;">
-            <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
-              <template is="dom-if" if="[[getRating(index)]]">
-                  <div style="width: 60px;margin-right: 0;" class="layout self-start">
+        <div class="layout vertical center-center">
+          <template is="dom-if" if="[[post.public_data.ratings]]">
+            <div class="layout horizontal wrap center-center" style="">
+              <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
+                <template is="dom-if" if="[[getRating(index)]]">
+                  <div class="layout horizontal ratingContainer">
                     <yp-rating read-only post-id="[[post.id]]"
                                rating-index="[[index]]"
                                emoji="[[rating.emoji]]"
                                rate="[[getRating(index)]]"
                                number-of="[[rating.numberOf]]"></yp-rating>
+                    <div class="ratingsCount">[[getRatingsCount(index)]]</div>
                   </div>
+                </template>
               </template>
-            </template>
-          </div>
-        </template>
+            </div>
+          </template>
+
+        </div>
+
         <div class="layout horizontal wrap">
 
         </div>
@@ -384,6 +398,13 @@
       getRating: function (ratingIndex) {
         if (this.post.public_data.ratings[ratingIndex])
           return this.post.public_data.ratings[ratingIndex].averageRating;
+        else
+          return null;
+      },
+
+      getRatingsCount: function (ratingIndex) {
+        if (this.post.public_data.ratings[ratingIndex])
+          return this.formatNumber(this.post.public_data.ratings[ratingIndex].count+Math.floor(Math.random() * 10000));
         else
           return null;
       },
