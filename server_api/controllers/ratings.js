@@ -165,7 +165,7 @@ router.delete('/:post_id/:type_index', auth.can('rate post'), function(req, res)
       });
     } else {
       log.error("Rating Not found", { context: 'delete', post: req.params.id, user: toJson(req.user),
-        err: error, errorStatus: 404 });
+        err: "Rating not found", errorStatus: 404 });
       res.sendStatus(404);
     }
   }).catch(function(error) {

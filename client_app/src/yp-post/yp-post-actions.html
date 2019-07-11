@@ -191,7 +191,7 @@
 
       .ratingsCount {
         font-size: 0.6em;
-        color: #999;
+        color: #aaa;
       }
 
       .ratingContainer {
@@ -200,7 +200,7 @@
         margin-bottom: 4px;
       }
 
-      .ratingContainerMain[card-mode] {
+      .ratingContainerMain {
         width: 220px;
       }
 
@@ -210,64 +210,66 @@
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
-      <div class="share" >
-        <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                            horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
-      </div>
+    <template is="dom-if" if="[[active]]" restamp>
+      <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
+        <div class="share" >
+          <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                              horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+        </div>
 
-      <div class="flex"></div>
+        <div class="flex"></div>
 
-      <div class="action-debate" hidden $="[[hideDebate]]">
-        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
-                           class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
-        <div class="action-text debate-text">[[formattedPointCount]]</div>
-      </div>
-      <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
-        <div class="layout vertical center-center self-start">
-          <template is="dom-if" if="[[post.public_data.ratings]]">
-            <div class="ratingContainerMain layout horizontal wrap self-start" card-mode$="[[cardMode]]">
-              <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
-                <template is="dom-if" if="[[getRating(index)]]">
-                  <div class="layout horizontal ratingContainer">
-                    <yp-rating title$="[[rating.name]]" read-only post-id="[[post.id]]"
-                               rating-index="[[index]]"
-                               emoji="[[rating.emoji]]"
-                               rate="[[getRating(index)]]"
-                               number-of="[[rating.numberOf]]"></yp-rating>
-                    <div class="ratingsCount">[[getRatingsCount(index)]]</div>
-                  </div>
+        <div class="action-debate" hidden $="[[hideDebate]]">
+          <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
+                             class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
+          <div class="action-text debate-text">[[formattedPointCount]]</div>
+        </div>
+        <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
+          <div class="layout vertical center-center self-start">
+            <template is="dom-if" if="[[post.public_data.ratings]]">
+              <div class="ratingContainerMain layout horizontal wrap self-start" card-mode$="[[cardMode]]">
+                <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
+                  <template is="dom-if" if="[[getRating(index)]]">
+                    <div class="layout horizontal ratingContainer">
+                      <yp-rating title$="[[rating.name]]" read-only post-id="[[post.id]]"
+                                 rating-index="[[index]]"
+                                 emoji="[[rating.emoji]]"
+                                 rate="[[getRating(index)]]"
+                                 number-of="[[rating.numberOf]]"></yp-rating>
+                      <div class="ratingsCount">[[getRatingsCount(index)]]</div>
+                    </div>
+                  </template>
                 </template>
-              </template>
-            </div>
-          </template>
+              </div>
+            </template>
 
-        </div>
+          </div>
 
-        <div class="layout horizontal wrap">
+          <div class="layout horizontal wrap">
 
-        </div>
-        <paper-button aria-label$="[[t('openRatings')]]"
-                      class="evaluationButton" on-tap="openRatingsDialog">
-          <iron-icon class="evalIcon" icon="rate-review"></iron-icon>[[t('evaluate')]]
-        </paper-button>
-      </template>
+          </div>
+          <paper-button aria-label$="[[t('openRatings')]]"
+                        class="evaluationButton" on-tap="openRatingsDialog">
+            <iron-icon hidden class="evalIcon" icon="rate-review"></iron-icon>[[t('evaluate')]]
+          </paper-button>
+        </template>
 
-      <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
-        <div id="actionUp" class="action-up">
-          <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
-                             icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
-          <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
-        </div>
-        <div class="" hidden$="[[!hideDebate]]"></div>
+        <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
+          <div id="actionUp" class="action-up">
+            <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
+                               icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+            <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
+          </div>
+          <div class="" hidden$="[[!hideDebate]]"></div>
 
-        <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
-          <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
-                             icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
-          <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
-        </div>
-      </template>
-    </paper-material>
+          <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
+            <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
+                               icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+            <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
+          </div>
+        </template>
+      </paper-material>
+    </template>
 
     <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
   </template>
@@ -319,6 +321,11 @@
         },
 
         isEndorsed: {
+          type: Boolean,
+          value: false
+        },
+
+        active: {
           type: Boolean,
           value: false
         },
@@ -413,16 +420,20 @@
 
       getRatingsCount: function (ratingIndex) {
         if (this.post.public_data.ratings[ratingIndex])
-          return this.formatNumber(this.post.public_data.ratings[ratingIndex].count+Math.floor(Math.random() * 1000));
+          return this.formatNumber(this.post.public_data.ratings[ratingIndex].count);
         else
           return null;
+      },
+
+      _fireRefresh: function () {
+        this.fire("refresh", {id: this.post.id});
       },
 
       openRatingsDialog: function () {
         window.appGlobals.activity('open', 'post.ratings');
         if (window.appUser.loggedIn()===true) {
           Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
-            dialog.open(this.post);
+            dialog.open(this.post, this._fireRefresh.bind(this));
           }.bind(this));
         } else {
           window.appUser.loginForRatings(this);
@@ -506,8 +517,10 @@
 
       _onPostChanged: function (post, oldValue) {
         this.set('isEndorsed', false);
+        this.set('active', false);
         if (post) {
           this.async(function () {
+            this.set('active', true);
             if (post.Group.configuration && post.Group.configuration.customRatings) {
               this.set('currentRatings', []);
             } else {
@@ -608,31 +621,34 @@
           this.set('post.Group.configuration.hideVoteCount', false);
         }
 
-        if (this.endorsementButtons=='hearts') {
-          if (value > 0) {
-            this.$$("#actionUp").className += ' ' + 'hearts-up-selected';
-            this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
-            this.$$("#iconUpButton").icon = "favorite";
-          } else if (value < 0) {
-            this.$$("#actionDown").className += ' ' + 'hearts-down-selected';
-            this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
-            this.$$("#iconUpButton").icon = "favorite-border";
+        if (this.$$("#actionUp")) {
+          if (this.endorsementButtons=='hearts') {
+            if (value > 0) {
+              this.$$("#actionUp").className += ' ' + 'hearts-up-selected';
+              this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+              this.$$("#iconUpButton").icon = "favorite";
+            } else if (value < 0) {
+              this.$$("#actionDown").className += ' ' + 'hearts-down-selected';
+              this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+              this.$$("#iconUpButton").icon = "favorite-border";
+            } else {
+              this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+              this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+              this.$$("#iconUpButton").icon = "favorite-border";
+            }
           } else {
-            this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
-            this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
-            this.$$("#iconUpButton").icon = "favorite-border";
+            if (value > 0) {
+              this.$$("#actionUp").className += ' ' + 'default-buttons-up-selected';
+              this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
+            } else if (value < 0) {
+              this.$$("#actionDown").className += ' ' + 'default-buttons-down-selected';
+              this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+            } else {
+              this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+              this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
+            }
           }
-        } else {
-          if (value > 0) {
-            this.$$("#actionUp").className += ' ' + 'default-buttons-up-selected';
-            this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
-          } else if (value < 0) {
-            this.$$("#actionDown").className += ' ' + 'default-buttons-down-selected';
-            this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
-          } else {
-            this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
-            this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
-          }
+
         }
 
         if (value>0) {

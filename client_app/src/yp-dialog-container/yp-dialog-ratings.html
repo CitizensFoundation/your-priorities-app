@@ -91,7 +91,7 @@
       </template>
 
       <div class="buttons">
-        <paper-button dialog-confirm on-tap="_confirm">[[t('done')]]</paper-button>
+        <paper-button dialog-confirm on-tap="_close">[[t('done')]]</paper-button>
       </div>
     </paper-dialog>
     <yp-ajax id="ajax"></yp-ajax>
@@ -117,7 +117,9 @@
           value: false
         },
 
-        post: Object
+        post: Object,
+
+        refreshFunction: Function
       },
 
       getRating: function (index) {
@@ -128,6 +130,10 @@
         } else {
           return null;
         }
+      },
+
+      _close: function () {
+        this.refreshFunction();
       },
 
       _addRating: function (event, detail) {
@@ -146,7 +152,8 @@
         this.$.ajax.generateRequest();
       },
 
-      open: function (post) {
+      open: function (post, refreshFunction) {
+        this.set('refreshFunction', refreshFunction);
         this.set('post', post);
         this.set('isOpen', false);
         this.async(function () {
