@@ -131,6 +131,7 @@
       },
 
       _addRating: function (event, detail) {
+        window.appUser.updateRatingForPost(detail.postId, detail.ratingIndex, { post_id: detail.postId, type_index: detail.ratingIndex, value: detail.rate });
         this.$.ajax.method="POST";
         this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
         this.$.ajax.body = { value: detail.rate };
@@ -138,6 +139,7 @@
       },
 
       _deleteRating: function (event, detail) {
+        window.appUser.updateRatingForPost(detail.postId, detail.ratingIndex, null);
         this.$.ajax.method="DELETE";
         this.$.ajax.url="/api/ratings/"+detail.postId+"/"+detail.ratingIndex;
         this.$.ajax.body = {};

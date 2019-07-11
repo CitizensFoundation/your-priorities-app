@@ -489,7 +489,7 @@
               if (newEndorsement) {
                 this.user.Endorsements[i] = newEndorsement;
               } else {
-                this.user.Endorsements[i].splice(i, 1);
+                this.user.Endorsements.splice(i, 1);
               }
               hasChanged = true;
               break;
@@ -524,17 +524,18 @@
           }
         },
 
-        updateRatingForPost: function (postId, newRating) {
+        updateRatingForPost: function (postId, typeIndex, newRating) {
           if (!this.user.Ratings) {
             this.user.Ratings = [];
           }
+
           var hasChanged = false;
           for(var i=0; i<this.user.Ratings.length; i++) {
-            if (this.user.Ratings[i].post_id===postId) {
+            if (this.user.Ratings[i].post_id===postId && this.user.Ratings[i].type_index===typeIndex) {
               if (newRating) {
                 this.user.Ratings[i] = newRating;
               } else {
-                this.user.Ratings[i].splice(i, 1);
+                this.user.Ratings.splice(i, 1);
               }
               hasChanged = true;
               break;
@@ -553,7 +554,7 @@
                 if (newPointQuality) {
                   this.user.PointQualities[i] = newPointQuality;
                 } else {
-                  this.user.PointQualities[i].splice(i, 1);
+                  this.user.PointQualities.splice(i, 1);
                 }
                 hasChanged = true;
                 break;
