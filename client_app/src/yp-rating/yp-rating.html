@@ -38,22 +38,25 @@
         filter: grayscale(0%);
       }
 
-      .rating-wrapper:hover > span.active,
-      .rating-wrapper:hover > span.active ~ span {
-        opacity: 0.4;
+      @media (pointer: fine) {
+        .rating-wrapper:hover > span.active,
+        .rating-wrapper:hover > span.active ~ span {
+          opacity: 0.4;
+        }
+        .rating-wrapper > span:hover,
+        .rating-wrapper > span:hover ~ span,
+        .rating-wrapper > span.active:hover ~ span {
+          opacity: 0.8 !important;
+          -webkit-filter: grayscale(0%);
+          filter: grayscale(0%);
+        }
+        .rating-wrapper > span:hover {
+          opacity: 0.9 !important;
+          -webkit-filter: grayscale(0%);
+          filter: grayscale(0%);
+        }
       }
-      .rating-wrapper > span:hover,
-      .rating-wrapper > span:hover ~ span,
-      .rating-wrapper > span.active:hover ~ span {
-        opacity: 0.8 !important;
-        -webkit-filter: grayscale(0%);
-        filter: grayscale(0%);
-      }
-      .rating-wrapper > span:hover {
-        opacity: 0.9 !important;
-        -webkit-filter: grayscale(0%);
-        filter: grayscale(0%);
-      }
+
       .rating-wrapper > span.totals {
         opacity: 1 !important;
         margin-left: 50px;
@@ -165,12 +168,14 @@
           };
           if (!this.readOnly && this.rate>0) {
             this.async(function () {
-              console.error("Rate: "+this.rate);
               var inverted = (this.rate * -1) + this.numberOf;
-              console.error("Inverted: "+inverted);
               for (var i =  this.numberOf-1; i >= inverted; i--) {
-                console.error(i);
-                deep.querySelector('[data-index="'+ i +'"]').classList.add("active");
+                var selector =  deep.querySelector('[data-index="'+ i +'"]');
+                if (selector) {
+                  selector.classList.add("active");
+                } else {
+                  console.warn("No selector found for rating");
+                }
               }
             });
           }
