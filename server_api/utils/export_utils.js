@@ -9,8 +9,6 @@ var hostName;
 var skipEmail = false;
 
 var getPostUrl = function (post) {
-  hostName = "hverfid-mitt-2019.betrireykjavik.is";
-
   if (hostName) {
     return 'https://'+hostName+'/post/'+post.id;
   } else {
@@ -191,11 +189,35 @@ var getCategory = function (post) {
   }
 };
 
-var getExportFileDataForGroup = function(groupId, hostName, callback) {
+const getRatingHeaders = (customRatings) => {
+  let out = "";
+  if (customRatings && customRatings.length>0) {
+    customRatings.forEach( (rating) => {
+      out+=',"'+rating.name+' count"';
+      out+=',"'+rating.name+' average"';
+    });
+  }
+  return out;
+};
+
+const getPostRatings = (customRatings, postRatings) => {
+  let out = "";
+  if (customRatings && customRatings.length>0) {
+    customRatings.forEach( (rating, index) => {
+      out+=','+(postRatings && postRatings[index] ? postRatings[index].count : '0');
+      out+=','+(postRatings && postRatings[index] && postRatings[index].averageRating ? postRatings[index].averageRating : '0');
+    });
+  }
+  return out;
+};
+
+
+var getExportFileDataForGroup = function(group, hostName, callback) {
   models.Post.unscoped().findAll({
     where: {
-      group_id: groupId
+      group_id: group.id
     },
+    attributes: ['id','counter_endorsements_down','counter_endorsements_up','counter_points','public_data','name','description','language','location','data'],
     order: [
       ['created_at', 'asc' ]
     ],
@@ -203,6 +225,11 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
       {
         model: models.Category,
         required: false
+      },
+      {
+        model: models.Group,
+        attributes: ['id','configuration'],
+        required: true
       },
       {
         model: models.PostRevision,
@@ -258,12 +285,17 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
     ]
   }).then(function (posts) {
     var outFileContent = "";
+    let customRatings;
+    if (group.configuration && group.configuration.customRatings) {
+      customRatings = group.configuration.customRatings;
+    }
     //console.log(posts.length);
-    outFileContent += "Nr, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript\n";
+    outFileContent += "Nr, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript"+getRatingHeaders(customRatings)+"\n";
     postCounter = 0;
     async.eachSeries(posts, function (post, seriesCallback) {
       postCounter += 1;
       if (!post.deleted) {
+        const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
         outFileContent += postCounter+','+post.id+',"'+getUserEmail(post)+'","'+post.User.name+
           '","'+clean(post.name)+'","'+cleanDescription(post.description)+'",'+
           '"'+getPostUrl(post)+'",'+'"'+getCategory(post)+'",'+
@@ -273,7 +305,8 @@ var getExportFileDataForGroup = function(groupId, hostName, callback) {
           getContactData(post)+','+
           getAttachmentData(post)+','+
           getMediaURLs(post)+','+
-          getMediaTranscripts(post)+'\n';
+          getMediaTranscripts(post)+
+          getPostRatings(customRatings, postRatings)+'\n';
       } else {
         outFileContent += postCounter+','+post.id+',DELETED,,,,,,,,,,,\n';
       }
