@@ -47,47 +47,47 @@ import { YpFlexLayout } from '../yp-flex-layout.js';
         padding-left:8px;
         margin-right:4px;
       }
+
+      @media (max-width: 945px) {
+          .hideIfMobile {
+            display: none;
+          }
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+
       `, YpFlexLayout]
   }
+
+
     
-  render() {
+ render() {
     return html`
-      ${this.group ? html`
-    <div class="stats layout horizontal end-justified">
-      <iron-icon title="${this.t('stats.posts')}" icon="lightbulb-outline" class="stats-icon"></iron-icon>
-      <div title="${this.t('stats.posts')}" class="stats-text" style="">${this.formatNumber(this.group.counter_posts)}</div>
+      <div class="stats layout horizontal end-justified">
+        <div class="layout horizontal wrap">
+          <div class="layout horizontal">
+            <iron-icon title="${this.t('stats.posts')}" icon="lightbulb-outline" class="stats-icon"></iron-icon>
+            <div title="${this.t('stats.posts')}" class="stats-text" style="">${this.formatNumber(this.group.counter_posts)}</div>
 
-      <iron-icon title="${this.t('stats.discussions')}" icon="chat-bubble-outline" class="stats-icon"></iron-icon>
-      <div title="${this.t('stats.discussions')}" class="stats-text">${this.formatNumber(this.group.counter_points)}</div>
+            <iron-icon title="${this.t('stats.discussions')}" icon="chat-bubble-outline" class="stats-icon"></iron-icon>
+            <div title="${this.t('stats.discussions')}" class="stats-text">${this.formatNumber(this.group.counter_points)}</div>
 
-      <iron-icon title="${this.t('stats.users')}" icon="face" class="stats-icon"></iron-icon>
-      <div title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.group.counter_users)}</div>
-    </div>  
-    ` : html``
+            <iron-icon hidden="${!this.wide}" title="${this.t('stats.communities')}" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
+            <div hidden="${!this.wide}" title="${this.t('stats.communities')}" class="stats-text hideIfMobile" style="">${this.formatNumber(this.group.counter_communities)}</div>
+          </div>
+          <div class="layout horizontal">
+            <iron-icon hidden="" title="${this.t('stats.groups')}" icon="people" class="stats-icon hideIfMobile"></iron-icon>
+            <div hidden="" title="${this.t('stats.groups')}" class="stats-text hideIfMobile" style="">${this.formatNumber(this.group.counter_groups)}</div>
+
+            <iron-icon title="${this.t('stats.users')}" icon="face" class="stats-icon"></iron-icon>
+            <div title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.group.counter_users)}</div>
+          </div>
+        </div>  
+      </div>    
+    `
   }
-  `
+} 
   
-  
-  is: 'yp-group-stats',
-
-  behaviors: [
-    ypLanguageBehavior,
-    ypNumberFormatBehavior
-  ],
-
-  properties: {
-    group: {
-      type: Object
-    }
-  },
-
-  ready: function () {
-    // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
-    // the group
-    if (this.group && this.group.IsoCountry) {
-      this.group.counter_users = this.group.counter_users * 30;
-    }
-  }
-});
-
-window.customElement.define('yp-group-stats-lit', YpCommunityStatsLit);
+window.customElement.define('yp-group-stats-lit', YpDomainStatsLit);
