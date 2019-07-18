@@ -90,4 +90,4 @@ import { YpFlexLayout } from '../yp-flex-layout.js';
   }
 } 
   
-window.customElement.define('yp-group-stats-lit', YpDomainStatsLit);
+window.customElement.define('yp-group-stats-lit', YpGroupStatsLit);
