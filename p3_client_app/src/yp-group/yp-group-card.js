@@ -5,7 +5,7 @@ import '@polymer/iron-media-query/iron-media-query.js';
 import '@polymer/paper-card/paper-card.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import './yp-group-stats-lit.js';
+import './yp-group-stats.js';
 import { GroupBehaviors } from './yp-group-behaviors.js';
 import '../yp-membership-button/yp-membership-button.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
@@ -202,7 +202,7 @@ Polymer({
       </div>
       <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup" text-type="groupContent" content-language="[[group.language]]" text-only="" content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
       </yp-magic-text>
-      <yp-group-stats-lit class="stats" group="[[group]]"></yp-group-stats-lit>
+      <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
       <yp-membership-button archived\$="[[archived]]" group="[[group]]"></yp-membership-button>
     </paper-card>
 `,
