@@ -8,7 +8,7 @@ import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 Polymer({
   _template: html`
-    <style include="iron-flex iron-flex-alignment">
+    <style include="iron-flex iron-flex-alignment"></style>
       :host {
         @apply --layout-vertical;
         height: 100%;
@@ -149,15 +149,15 @@ Polymer({
     </style>
 
     <div class="layout vertical mainArea">
-      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post\$="[[isPost]]">
+      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
         <slot name="largeCard"></slot>
       </div>
       <template is="dom-if" if="[[hasLargeButton]]">
-        <div class="largeButtonWrapper layout horizontal center-center" hidden\$="[[!wideWidth]]">
+        <div class="largeButtonWrapper layout horizontal center-center" hidden="${this!wideWidth}">
           <slot name="largeAddButton"></slot>
         </div>
       </template>
-      <div class="tab-wrapper layout horizontal center-center" hidden\$="[[hideAllTabs]]">
+      <div class="tab-wrapper layout horizontal center-center" hidden="${this.hideAllTabs}">
         <slot name="tabs"></slot>
       </div>
       <div class="tab-pages-wrapper layout vertical">
@@ -165,11 +165,11 @@ Polymer({
       </div>
     </div>
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
-      <template is="dom-if" if="[[createFabIcon]]">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout\$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+      <template is="dom-if" if="${this.createFabIcon}">
+        <paper-fab class="createFab" icon="${createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_createTap"></paper-fab>
       </template>
     </div>
-    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
 `,
 
   is: 'yp-page',
@@ -210,15 +210,15 @@ Polymer({
     ypMediaFormatsBehavior
   ],
 
-  listeners: {
-    'yp-setup-header-image': '_setupTopHeaderImageEvent'
+  ready() {
+    this.addEventListener("yp-setup-header-image", this._setupTopHeaderImageEvent);
   },
 
-  _setupTopHeaderImageEvent: function (event, image) {
+  this._setupTopHeaderImageEvent:  ( _event, image) {
     this.setupTopHeaderImage(image);
   },
 
-  setupTopHeaderImage: function (image) {
+  setupTopHeaderImage: (image) {
     if (this.wideWidth) {
       var path;
       if (image) {
@@ -228,12 +228,12 @@ Polymer({
       }
       this.updateStyles({ '--top-area-background-image': path });
     }
+  }
+
+  this._fabTabChanged (newValue) {
   },
 
-  _fabTabChanged: function (newValue) {
-  },
-
-  _createTap: function () {
+  this_createTap: {
     this.fire('yp-create-fab-tap');
   }
 });
