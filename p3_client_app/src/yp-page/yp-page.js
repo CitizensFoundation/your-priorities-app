@@ -5,16 +5,29 @@ import '@polymer/paper-fab/paper-fab.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment"></style>
-      :host {
-        @apply --layout-vertical;
-        height: 100%;
-        width: 100%;
-      }
+import { html } from '@polymer/polymer/lib/utils/html-tag.js' ;
+import { YpBaseElement } from '../yp-base-element.js';
+import { styles } from 'chalk';
+import { YpFlexLayout } from '../yp-flex-layout.js';
 
+class YpPage extends YpBaseElement {
+  static get properties() {
+    return {
+      page: {
+        type: Object
+      }
+    }
+  }
+
+  static get styles() {
+ return [
+  css`     
+  :host {
+    @apply --layout-vertical;
+    height: 100%;
+    width: 100%;
+  }
+     
       .mainArea {
         background-color: var(--primary-background-color);
         height: 100%;
@@ -146,32 +159,40 @@ Polymer({
       [hidden] {
         display: none !important;
       }
-    </style>
 
-    <div class="layout vertical mainArea">
-      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
-        <slot name="largeCard"></slot>
-      </div>
-      <template is="dom-if" if="[[hasLargeButton]]">
-        <div class="largeButtonWrapper layout horizontal center-center" hidden="${this!wideWidth}">
-          <slot name="largeAddButton"></slot>
+      `, YpFlexLayout]
+  }
+
+
+
+  render() {
+    return html`
+      <div class="layout vertical mainArea">
+        <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
+          <slot name="largeCard"></slot>
         </div>
-      </template>
-      <div class="tab-wrapper layout horizontal center-center" hidden="${this.hideAllTabs}">
-        <slot name="tabs"></slot>
+        <template is="dom-if" if="${this.hasLargeButton}">
+          <div class="largeButtonWrapper layout horizontal center-center" hidden="${!this.wideWidth}">
+            <slot name="largeAddButton"></slot>
+          </div>
+        </template>
+        <div class="tab-wrapper layout horizontal center-center" hidden="${this.hideAllTabs}">
+          <slot name="tabs"></slot>
+        </div>
+        <div class="tab-pages-wrapper layout vertical">
+          <slot name="tabPages"></slot>
+        </div>
       </div>
-      <div class="tab-pages-wrapper layout vertical">
-        <slot name="tabPages"></slot>
+      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
+        <template is="dom-if" if="${this.createFabIcon}">
+          <paper-fab class="createFab" icon="${this.createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_createTap"></paper-fab>
+        </template>
       </div>
-    </div>
-    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
-      <template is="dom-if" if="${this.createFabIcon}">
-        <paper-fab class="createFab" icon="${createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_createTap"></paper-fab>
-      </template>
-    </div>
-    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
-`,
+      <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
 
+     `,
+  }
+}
   is: 'yp-page',
 
   properties: {
@@ -218,7 +239,7 @@ Polymer({
     this.setupTopHeaderImage(image);
   },
 
-  setupTopHeaderImage: (image) {
+  this.setupTopHeaderImage: (image) {
     if (this.wideWidth) {
       var path;
       if (image) {
