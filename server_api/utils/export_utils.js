@@ -3,9 +3,7 @@ var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
 const moment = require('moment');
-
 var hostName;
-
 var skipEmail = false;
 
 var getPostUrl = function (post) {
