@@ -14,7 +14,6 @@
 <link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-remove-class-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
-<link rel="import" href="../yp-rating/yp-rating.html">
 
 <dom-module id="yp-post-actions">
 
@@ -89,18 +88,6 @@
         color: var(--primary-hearts-color-up, rgba(168,0,0,0.72));
       }
 
-      .action-debate {
-        @apply --layout-horizontal;
-        @apply --layout-center-justified;
-        color: #757575;
-      }
-
-      .debate-text {
-        padding-top: 10px;
-        padding-right: 6px;
-        color: #757575;
-      }
-
       .down-text {
         padding-right: 0px;
         padding-top: 10px;
@@ -125,11 +112,8 @@
         width: 48px;
       }
 
-      .debate-icon {
-        color: #757575;
-      }
-
       .shareIcon {
+        margin-left: 16px;
         margin-top: 3px;
         --paper-share-button-icon-color: #656565;
         --paper-share-button-icon-height: 46px;
@@ -155,9 +139,13 @@
         }
       }
 
-      .share {
+      .shareButtonContainer {
+        position: absolute;
+        bottom: 55px;
+        right: -32px;
         padding: 0;
         margin: 0;
+        margin-bottom: 8px;
       }
 
       .shareButton {
@@ -170,106 +158,28 @@
         background-color: #FFF;
       }
 
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        .action-debate {
-          display: none;
-        }
-      }
-
       [hidden] {
         display: none !important;
       }
-
-      .evaluationButton {
-        color: var(--accent-color);
-      }
-
-      .evalIcon {
-        margin-right: 4px;
-        margin-top: 4px;
-      }
-
-      .ratingsCount {
-        font-size: 0.6em;
-        color: #aaa;
-      }
-
-      .ratingContainer {
-        margin-right: 12px;
-        margin-left: 16px;
-        margin-bottom: 4px;
-      }
-
-      .ratingContainerMain {
-        width: 220px;
-      }
-
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
-    <template is="dom-if" if="[[active]]" restamp>
-      <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
-        <div class="share" >
-          <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                              horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
-        </div>
+    <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
+      <div id="actionUp" class="action-up">
+        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
+                           icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+        <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
+      </div>
 
-        <div class="flex"></div>
-
-        <div class="action-debate" hidden$="[[hideDebate]]">
-          <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
-                             class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
-          <div class="action-text debate-text">[[formattedPointCount]]</div>
-        </div>
-        <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
-          <div class="layout vertical center-center self-start">
-            <template is="dom-if" if="[[post.public_data.ratings]]">
-              <div class="ratingContainerMain layout horizontal wrap self-start" card-mode$="[[cardMode]]">
-                <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
-                  <template is="dom-if" if="[[getRating(index)]]">
-                    <div class="layout horizontal ratingContainer">
-                      <yp-rating title$="[[rating.name]]" read-only post-id="[[post.id]]"
-                                 rating-index="[[index]]"
-                                 emoji="[[rating.emoji]]"
-                                 rate="[[getRating(index)]]"
-                                 number-of="[[rating.numberOf]]"></yp-rating>
-                      <div class="ratingsCount">[[getRatingsCount(index)]]</div>
-                    </div>
-                  </template>
-                </template>
-              </div>
-            </template>
-
-          </div>
-
-          <div class="layout horizontal wrap">
-
-          </div>
-          <paper-button aria-label$="[[t('openRatings')]]"
-                        class="evaluationButton" on-tap="openRatingsDialog">
-            <iron-icon hidden class="evalIcon" icon="rate-review"></iron-icon>[[t('evaluate')]]
-          </paper-button>
-        </template>
-
-        <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
-          <div id="actionUp" class="action-up">
-            <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
-                               icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
-            <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
-          </div>
-          <div class="" hidden$="[[!hideDebate]]"></div>
-
-          <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
-            <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
-                               icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
-            <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
-          </div>
-        </template>
-      </paper-material>
-    </template>
+      <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
+                           icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+        <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
+      </div>
+    </paper-material>
 
     <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
   </template>
@@ -305,11 +215,6 @@
           value: false
         },
 
-        cardMode: {
-          type: Boolean,
-          value: false
-        },
-
         endorsementButtons: {
           type: String,
           value: 'hearts'
@@ -321,11 +226,6 @@
         },
 
         isEndorsed: {
-          type: Boolean,
-          value: false
-        },
-
-        active: {
           type: Boolean,
           value: false
         },
@@ -365,11 +265,6 @@
           value: false
         },
 
-        formattedPointCount: {
-          type: String,
-          computed: '_formattedPointCount(post.counter_points)'
-        },
-
         formattedDownCount: {
           type: String,
           computed: '_formattedDownCount(post.counter_endorsements_down)'
@@ -383,11 +278,6 @@
         postUrl: {
           type: String,
           computed: '_postUrl(post)'
-        },
-
-        hideDebate: {
-          type: Boolean,
-          computed: '_hideDebate(small,forceSmall,post)'
         },
 
         customVoteUpHoverText: {
@@ -408,35 +298,6 @@
         endorseModeIconDown: {
           type: String,
           computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
-        }
-      },
-
-      getRating: function (ratingIndex) {
-        if (this.post.public_data.ratings[ratingIndex])
-          return this.post.public_data.ratings[ratingIndex].averageRating;
-        else
-          return null;
-      },
-
-      getRatingsCount: function (ratingIndex) {
-        if (this.post.public_data.ratings[ratingIndex])
-          return this.formatNumber(this.post.public_data.ratings[ratingIndex].count);
-        else
-          return null;
-      },
-
-      _fireRefresh: function () {
-        this.fire("refresh", {id: this.post.id});
-      },
-
-      openRatingsDialog: function () {
-        window.appGlobals.activity('open', 'post.ratings');
-        if (window.appUser.loggedIn()===true) {
-          Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
-            dialog.open(this.post, this._fireRefresh.bind(this));
-          }.bind(this));
-        } else {
-          window.appUser.loginForRatings(this);
         }
       },
 
@@ -465,14 +326,6 @@
       },
 
       _formattedUpCount: function (number) {
-        if (number) {
-          return this.formatNumber(number);
-        } else {
-          return "0";
-        }
-      },
-
-      _formattedPointCount: function (number) {
         if (number) {
           return this.formatNumber(number);
         } else {
@@ -511,53 +364,35 @@
         }
       },
 
-      _hideDebate: function (small, forceSmall) {
-        return (small || forceSmall || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
-      },
-
       _onPostChanged: function (post, oldValue) {
         this.set('isEndorsed', false);
-        this.set('active', false);
         if (post) {
-          this.async(function () {
-            this.set('active', true);
-            if (post.Group.configuration && post.Group.configuration.customRatings) {
-              this.set('currentRatings', []);
-            } else {
-              if (this.endorsementButtons) {
-                this.$$("#actionDown").className += ' ' + 'default-buttons-color';
-                this.$$("#actionUp").className += ' ' + 'default-buttons-color';
-              }
+          this.removeClass(this.$.actionUp,'hearts-up-selected');
+          this.removeClass(this.$.actionDown, 'hearts-down-selected');
+          this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+          this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+          this.set('endorseValue', 0);
 
-              this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
-              this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
-              this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
-              this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
-              this.set('endorseValue', 0);
-              if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
-                this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
-              } else {
-                this.set('endorsementButtons', "hearts");
-              }
-              this._updateEndorsements(post);
+          if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+            this.set('votingDisabled', true);
+            this.set('allDisabled', true);
+            this.set('disabledTitle', this.t('votingDisabled'));
+          } else {
+            this.set('votingDisabled', false);
+            this.set('allDisabled', false);
+          }
+          if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
+            this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
+          } else {
+            this.set('endorsementButtons', "hearts");
+          }
+          if (post.Group.configuration) {
+            this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
+            if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
+              this.set('post.Group.configuration.hideVoteCount', true);
             }
-
-            if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
-              this.set('votingDisabled', true);
-              this.set('allDisabled', true);
-              this.set('disabledTitle', this.t('votingDisabled'));
-            } else {
-              this.set('votingDisabled', false);
-              this.set('allDisabled', false);
-            }
-
-            if (post.Group.configuration) {
-              this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
-              if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
-                this.set('post.Group.configuration.hideVoteCount', true);
-              }
-            }
-          });
+          }
+          this._updateEndorsements(post);
         } else {
           console.warn("No post found for post actions");
         }
@@ -621,34 +456,31 @@
           this.set('post.Group.configuration.hideVoteCount', false);
         }
 
-        if (this.$$("#actionUp")) {
-          if (this.endorsementButtons=='hearts') {
-            if (value > 0) {
-              this.$$("#actionUp").className += ' ' + 'hearts-up-selected';
-              this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
-              this.$$("#iconUpButton").icon = "favorite";
-            } else if (value < 0) {
-              this.$$("#actionDown").className += ' ' + 'hearts-down-selected';
-              this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
-              this.$$("#iconUpButton").icon = "favorite-border";
-            } else {
-              this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
-              this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
-              this.$$("#iconUpButton").icon = "favorite-border";
-            }
+        if (this.endorsementButtons=='hearts') {
+          if (value > 0) {
+            this.$.actionUp.className += ' ' + 'hearts-up-selected';
+            this.removeClass(this.$.actionDown, 'hearts-down-selected');
+            this.$.iconUpButton.icon = "favorite";
+          } else if (value < 0) {
+            this.$.actionDown.className += ' ' + 'hearts-down-selected';
+            this.removeClass(this.$.actionUp,'hearts-up-selected');
+            this.$.iconUpButton.icon = "favorite-border";
           } else {
-            if (value > 0) {
-              this.$$("#actionUp").className += ' ' + 'default-buttons-up-selected';
-              this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
-            } else if (value < 0) {
-              this.$$("#actionDown").className += ' ' + 'default-buttons-down-selected';
-              this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
-            } else {
-              this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
-              this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
-            }
+            this.removeClass(this.$.actionUp,'hearts-up-selected');
+            this.removeClass(this.$.actionDown, 'hearts-down-selected');
+            this.$.iconUpButton.icon = "favorite-border";
           }
-
+        } else {
+          if (value > 0) {
+            this.$.actionUp.className += ' ' + 'default-buttons-up-selected';
+            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+          } else if (value < 0) {
+            this.$.actionDown.className += ' ' + 'default-buttons-down-selected';
+            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+          } else {
+            this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+            this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+          }
         }
 
         if (value>0) {
@@ -710,10 +542,6 @@
         }
       },
 
-      _shareTap: function (event, detail) {
-        window.appGlobals.activity('postShareOpen', detail.brand, this.post ? this.post.id : -1);
-      },
-
       upVote: function (event) {
         this.set('allDisabled', true);
         this.generateEndorsement(1);
@@ -740,6 +568,13 @@
 
       computeActionClass: function (small) {
         return small ? 'action-bar' : 'action-bar';
+      },
+
+      ready: function() {
+        if (this.endorsementButtons) {
+          this.$.actionDown.className += ' ' + 'default-buttons-color';
+          this.$.actionUp.className += ' ' + 'default-buttons-color';
+        }
       }
     });
   </script>

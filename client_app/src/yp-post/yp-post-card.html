@@ -234,6 +234,28 @@
       yp-post-actions {
         width: 100%;
       }
+
+      .action-debate {
+        @apply --layout-horizontal;
+        @apply --layout-center-justified;
+        color: #757575;
+      }
+
+      .debate-text {
+        padding-top: 10px;
+        padding-right: 6px;
+        color: #757575;
+      }
+
+      .debate-icon {
+        color: #757575;
+      }
+
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        .action-debate {
+          display: none;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -258,6 +280,11 @@
                        text-only content="[[post.description]]" content-id="[[post.id]]" truncate="100">
         </yp-magic-text>
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]">
+          <div class="action-debate" hidden$="[[hideDebate]]">
+            <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
+                               class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
+            <div class="action-text debate-text">[[formattedPointCount]]</div>
+          </div>
           <yp-post-actions card-mode floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
         </div>
       </div>
@@ -283,6 +310,11 @@
         hideDescription: {
           type: Boolean,
           computed: '_hideDescription(mini, post)'
+        },
+
+        hideDebate: {
+            type: Boolean,
+            computed: '_hideDebate(small,forceSmall,post)'
         },
 
         selectedMenuItem: {
@@ -311,10 +343,31 @@
           value: false
         },
 
+        formattedPointCount: {
+            type: String,
+            computed: '_formattedPointCount(post.counter_points)'
+        },
+
         isAudioCover: {
           type: Boolean,
           value: false
         }
+      },
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity('postShareCardOpen', detail.brand, this.post ? this.post.id : -1);
+      },
+
+      _formattedPointCount: function (number) {
+        if (number) {
+            return this.formatNumber(number);
+        } else {
+            return "0";
+        }
+      },
+
+      _hideDebate: function (small, forceSmall) {
+        return (small || forceSmall || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
       },
 
       _hideDescription: function (mini, post) {

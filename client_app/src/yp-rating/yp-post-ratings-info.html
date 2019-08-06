@@ -1,0 +1,230 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../../bower_components/paper-share-button/paper-share-button.html">
+
+<link rel="import" href="../yp-app-globals/yp-app-icons.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-number-format-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-remove-class-behavior.html">
+<link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="yp-rating.html">
+
+<dom-module id="yp-post-ratings-info">
+
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+      }
+
+      .ratingsCount {
+        font-size: 0.6em;
+        color: #aaa;
+      }
+
+      .ratingContainer {
+        margin-right: 12px;
+        margin-left: 16px;
+        margin-bottom: 4px;
+      }
+
+      .ratingContainerMain {
+        width: 220px;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
+    <div class="layout vertical center-center self-start">
+      <template is="dom-if" if="[[post.public_data.ratings]]">
+        <div class="ratingContainerMain layout horizontal wrap self-start" card-mode$="[[cardMode]]">
+          <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
+            <template is="dom-if" if="[[getRating(index)]]">
+              <div class="layout horizontal ratingContainer">
+                <yp-rating title$="[[rating.name]]" read-only post-id="[[post.id]]"
+                           rating-index="[[index]]"
+                           emoji="[[rating.emoji]]"
+                           rate="[[getRating(index)]]"
+                           number-of="[[rating.numberOf]]"></yp-rating>
+                <div class="ratingsCount">[[getRatingsCount(index)]]</div>
+              </div>
+            </template>
+          </template>
+        </div>
+      </template>
+    </div>
+    <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
+  </template>
+  <script>
+    Polymer({
+      is: 'yp-post-actions',
+
+      behaviors: [
+        Polymer.ypLanguageBehavior,
+        Polymer.ypNumberFormatBehavior,
+        Polymer.ypRemoveClassBehavior,
+        Polymer.ypGotoBehavior
+      ],
+
+      properties: {
+        post: {
+          type: Object,
+          observer: '_onPostChanged'
+        },
+
+        small: {
+          type: Boolean,
+          value: false
+        },
+
+        headerMode: {
+          type: Boolean,
+          value: false
+        },
+
+        forceSmall: {
+          type: Boolean,
+          value: false
+        },
+
+        cardMode: {
+          type: Boolean,
+          value: false
+        },
+
+        active: {
+          type: Boolean,
+          value: false
+        },
+
+        allDisabled: {
+          type: Boolean,
+          value: false
+        },
+
+        votingDisabled: {
+          type: Boolean,
+          value: false
+        },
+
+        postUrl: {
+          type: String,
+          computed: '_postUrl(post)'
+        }
+      },
+
+      getRating: function (ratingIndex) {
+        if (this.post.public_data.ratings[ratingIndex])
+          return this.post.public_data.ratings[ratingIndex].averageRating;
+        else
+          return null;
+      },
+
+      getRatingsCount: function (ratingIndex) {
+        if (this.post.public_data.ratings[ratingIndex])
+          return this.formatNumber(this.post.public_data.ratings[ratingIndex].count);
+        else
+          return null;
+      },
+
+      _fireRefresh: function () {
+        this.fire("refresh", {id: this.post.id});
+      },
+
+      openRatingsDialog: function () {
+        window.appGlobals.activity('open', 'post.ratings');
+        if (window.appUser.loggedIn()===true) {
+          Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
+            dialog.open(this.post, this._fireRefresh.bind(this));
+          }.bind(this));
+        } else {
+          window.appUser.loginForRatings(this);
+        }
+      },
+
+      _goToPostIfNotHeader: function () {
+        if (!this.headerMode) {
+          this.goToPost();
+        }
+      },
+
+      _postUrl: function (post) {
+        if (post) {
+          return encodeURIComponent("https://"+window.location.host+"/post/"+post.id);
+        } else {
+          console.warn("Can't find post for action");
+          return "";
+        }
+      },
+
+      _onPostChanged: function (post, oldValue) {
+        this.set('isEndorsed', false);
+        this.set('active', false);
+        if (post) {
+          this.async(function () {
+            this.set('active', true);
+            if (post.Group.configuration && post.Group.configuration.customRatings) {
+              this.set('currentRatings', []);
+            }
+
+            if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+              this.set('votingDisabled', true);
+              this.set('allDisabled', true);
+              this.set('disabledTitle', this.t('votingDisabled'));
+            } else {
+              this.set('votingDisabled', false);
+              this.set('allDisabled', false);
+            }
+
+            if (post.Group.configuration) {
+              this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
+              if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
+                this.set('post.Group.configuration.hideVoteCount', true);
+              }
+            }
+          });
+        } else {
+          console.warn("No post found for post actions");
+        }
+      },
+
+      _updateEndorsementsFromSignal: function () {
+        if (this.post) {
+          this._updateEndorsements(this.post);
+        } else {
+          this.async(function () {
+            if (this.post) {
+              this._updateEndorsements(this.post);
+            } else {
+              console.warn("Trying to update post null from signal");
+            }
+          }, 50);
+        }
+      },
+
+      _updateEndorsements: function (post) {
+        this.set('isEndorsed', false);
+        if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
+          var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
+          if (thisPostsEndorsement)
+            this._setEndorsement(thisPostsEndorsement.value);
+          else
+            this._setEndorsement(0);
+        }
+      },
+
+    });
+  </script>
+</dom-module>

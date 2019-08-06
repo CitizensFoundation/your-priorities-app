@@ -410,6 +410,10 @@
               </div>
               <div class="card-actions">
                 <yp-post-actions hidden$="[[hideActions]]" elevation="-1" floating header-mode="[[headerMode]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+                <div class="share" >
+                  <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                                      horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+                </div>
               </div>
             </div>
             <template is="dom-if" if="[[headerMode]]">
@@ -507,6 +511,10 @@
           type: Boolean,
           value: false
         }
+      },
+
+      _shareTap: function (event, detail) {
+        window.appGlobals.activity('postShareHeaderOpen', detail.brand, this.post ? this.post.id : -1);
       },
 
       _isEditingChanged: function (value) {
