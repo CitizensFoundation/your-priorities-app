@@ -21,6 +21,11 @@
         display: block;
       }
 
+      .topContainer[top-radius] > iron-image {
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+      }
+
       google-streetview-pano {
         width: 100%;
         height: 100%;
@@ -42,7 +47,7 @@
         padding: 0;
       }
 
-      .mapCanvas {
+      .topContainer {
         width: 100%;
         height: 100%;
       }
@@ -154,7 +159,7 @@
         height: 100%;
       }
 
-      .mapCanvas[portrait] {
+      .topContainer[portrait] {
         background-color: #777;
       }
 
@@ -173,7 +178,7 @@
       }
     </style>
 
-    <div class="mapCanvas">
+    <div class="topContainer" top-radius$="[[topRadius]]">
       <template is="dom-if" if="[[noneActive]]">
         <iron-image header-mode$="[[headerMode]]" sizing="cover" hidden$="[[defaultPostImageEnabled]]"
                     class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToPost"></iron-image>
@@ -276,6 +281,11 @@
           type: Object,
           notify: true,
           observer: "_postChanged"
+        },
+
+        topRadius: {
+          type: Boolean,
+            value: false
         },
 
         noneActive: {

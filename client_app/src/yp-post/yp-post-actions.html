@@ -88,6 +88,18 @@
         color: var(--primary-hearts-color-up, rgba(168,0,0,0.72));
       }
 
+      .action-debate {
+        @apply --layout-horizontal;
+        @apply --layout-center-justified;
+        color: #757575;
+      }
+
+      .debate-text {
+        padding-top: 10px;
+        padding-right: 6px;
+        color: #757575;
+      }
+
       .down-text {
         padding-right: 0px;
         padding-top: 10px;
@@ -112,21 +124,8 @@
         width: 48px;
       }
 
-      .shareIcon {
-        margin-left: 16px;
-        margin-top: 3px;
-        --paper-share-button-icon-color: #656565;
-        --paper-share-button-icon-height: 46px;
-        --paper-share-button-icon-width: 46px;
-        text-align: right;
-      }
-
-      .shareIcon[endorsed] {
-        --paper-share-button-icon-color: var(--accent-color-400);
-      }
-
-      .shareIcon[less-margin] {
-        margin-left: 0;
+      .debate-icon {
+        color: #757575;
       }
 
       .up-vote-icon {
@@ -158,6 +157,12 @@
         background-color: #FFF;
       }
 
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        .action-debate {
+          display: none;
+        }
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -173,6 +178,14 @@
                            icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
       </div>
+
+      <div class="action-debate" hidden$="[[hideDebate]]">
+        <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
+                           class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
+        <div class="action-text debate-text">[[formattedPointCount]]</div>
+      </div>
+
+      <div class="" hidden$="[[!hideDebate]]"></div>
 
       <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
         <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
@@ -265,6 +278,11 @@
           value: false
         },
 
+        formattedPointCount: {
+          type: String,
+          computed: '_formattedPointCount(post.counter_points)'
+        },
+
         formattedDownCount: {
           type: String,
           computed: '_formattedDownCount(post.counter_endorsements_down)'
@@ -278,6 +296,11 @@
         postUrl: {
           type: String,
           computed: '_postUrl(post)'
+        },
+
+        hideDebate: {
+          type: Boolean,
+          computed: '_hideDebate(small,forceSmall,post)'
         },
 
         customVoteUpHoverText: {
@@ -333,6 +356,14 @@
         }
       },
 
+      _formattedPointCount: function (number) {
+        if (number) {
+          return this.formatNumber(number);
+        } else {
+          return "0";
+        }
+      },
+
       _formattedDownCount: function (number) {
         if (number) {
           return this.formatNumber(number);
@@ -362,6 +393,10 @@
         } else {
           return elevation;
         }
+      },
+
+      _hideDebate: function (small, forceSmall) {
+        return (small || forceSmall || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
       },
 
       _onPostChanged: function (post, oldValue) {

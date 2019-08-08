@@ -15,6 +15,9 @@
         max-width: 250px;
         width: 250px;
       }
+      [hidden] {
+        display: none;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -22,7 +25,7 @@
     <paper-dropdown-menu label="[[t('theme.choose')]]">
       <paper-listbox slot="dropdown-content" selected="{{selectedTheme}}">
         <template is="dom-repeat" items="[[themes]]" as="theme">
-          <paper-item name="[[index]]">[[theme.name]]</paper-item>
+          <paper-item name="[[index]]" hidden$="[[theme.disabled]]">[[theme.name]]</paper-item>
         </template>
       </paper-listbox>
     </paper-dropdown-menu>

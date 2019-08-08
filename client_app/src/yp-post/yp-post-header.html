@@ -41,17 +41,16 @@
         line-height: var(--description-line-height, 1.3);
         width: 540px;
         padding: 0px;
-        padding-bottom: 8px;
+        padding-bottom: 16px;
         padding-top: 16px;
       }
 
       .voting {
-        padding-left: 0;
-        padding-right: 0;
-        width: 540px;
-        position: absolute;
-        bottom: 0;
-        right: 0;
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        text-align: center;
+        padding-left: 16px;
+        padding-right: 24px;
       }
 
       .card-actions {
@@ -74,13 +73,13 @@
 
       .post-name {
         margin: 0;
-        font-size: var(--extra-large-heading-size, 28px);
-        background-color: var(--primary-color-600);
-        color: #FFF;
         padding: 16px;
         cursor: pointer;
-        font-weight: bold;
-        min-height: 33px;
+        font-size: 1.25rem;
+        background-color: #fff;
+        color: #000;
+        font-weight: 500;
+        letter-spacing: .0125em;
       }
 
       .category-icon {
@@ -121,19 +120,19 @@
 
       .description {
         padding-bottom: 2px;
-        padding-left: 8px;
-        padding-right: 8px;
-        margin-bottom: 42px;
+        padding-left: 16px;
+        padding-right: 16px;
       }
 
       paper-icon-button.moreVert {
         position: absolute;
         top: 0;
         right: 0;
+        color: #424242;
       }
 
       .userInfo {
-        color: #ddd;
+        color: #a0a0a0;
         font-size: 17px;
       }
 
@@ -166,9 +165,10 @@
         }
 
         .card-actions {
-          left: 24px;
-          right: 0;
-          width: 320px;
+          position: absolute;
+          right: 20px;
+          bottom: 0;
+          margin: 0;
         }
 
         .card-content {
@@ -178,14 +178,12 @@
 
         .infoContainer {
           width: 100%;
-        }
-
-        .description[no-user-info] {
-          padding-bottom: 32px;
+          margin-bottom: 32px;
         }
 
         .description {
           margin-bottom: 8px;
+          margin-top: 8px;
         }
 
         .userInfo {
@@ -199,8 +197,6 @@
 
       @media (max-width: 800px) {
         .post-name {
-          font-size: 22px;
-          min-height: 21px;
         }
 
         :host {
@@ -235,7 +231,6 @@
         }
 
         .post-name {
-          font-size: 18px;
         }
 
         .post-name[logged-in] {
@@ -247,7 +242,7 @@
         }
 
         .description {
-          padding-bottom: 32px;
+          padding-bottom: 8px;
         }
       }
 
@@ -338,18 +333,6 @@
     <div class="layout horizontal center-center">
       <paper-material class="postCard" elevation="[[elevation]]" animated>
         <div class="layout vertical headerTopLevel">
-          <div class="post-name layout vertical" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
-            <div>
-              <yp-magic-text text-type="postName" content-language="[[post.language]]"
-                             content="[[postName]]" content-id="[[post.id]]">
-              </yp-magic-text>
-            </div>
-            <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
-              <div class="layout horizontal userInfo">
-                <yp-user-with-organization class="userWithOrg" hide-image title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
-              </div>
-            </template>
-          </div>
           <div class="layout horizontal wrap mediaAndInfoContainer">
             <div class="layout vertical center-center self-start coverContainer">
               <yp-post-cover-media show-video show-audio has-transcript$="[[post.public_data.transcript.text]]" audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
@@ -435,6 +418,18 @@
               </template>
             </template>
           </div>
+          <div class="post-name layout vertical" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
+            <div>
+              <yp-magic-text text-type="postName" content-language="[[post.language]]"
+                             content="[[postName]]" content-id="[[post.id]]">
+              </yp-magic-text>
+            </div>
+            <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
+              <div class="layout horizontal userInfo">
+                <yp-user-with-organization class="userWithOrg" hide-image title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
+              </div>
+            </template>
+          </div>
         </div>
       </paper-material>
     </div>
@@ -469,7 +464,7 @@
 
         elevation: {
           type: Number,
-          value: 2
+          value: 1
         },
 
         post: {

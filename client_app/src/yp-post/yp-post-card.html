@@ -29,13 +29,29 @@
 
       .post-name {
         margin:0 ;
-        font-size: var(--extra-large-heading-size, 28px);
-        background-color: var(--primary-color-600);
-        color: #FFF;
-        padding: 15px;
+        padding: 16px;
+        padding-top: 20px;
+        padding-bottom: 14px;
         cursor: pointer;
         vertical-align: middle !important;
-        font-weight: bold;
+        font-size: 1.25rem;
+        background-color: #fff;
+        color: #000;
+        font-weight: 500;
+        letter-spacing: .0125em;
+      }
+
+      .bottomBar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        padding: 0;
+        margin: 0;
+        height: 52px;
+        width: 100%;
+        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 4px;
+        background-color: #FFF;
       }
 
       .postNameContainer {
@@ -59,6 +75,7 @@
       .postCard {
         height: 435px;
         width: 416px;
+        border-radius: 4px;
       }
 
       .postCard[hide-post-cover] {
@@ -107,23 +124,33 @@
         min-height: 118px;
       }
 
-      .post-name {
-        font-size: 23px;
-      }
-
       .post-name[mini] {
         padding: 16px;
       }
 
       .description {
-        font-size: 18px;
-        padding: 8px;
+        font-size: 17px;
+        padding: 16px;
+        padding-top: 0;
         cursor: pointer;
+        color: #555;
       }
 
       .postActions  {
         position: absolute;
-        bottom: 2px;
+        right: 20px;
+        bottom: 0;
+        margin: 0;
+      }
+
+      .shareIcon {
+        position: absolute;
+        left: 8px;
+        bottom: 6px;
+        --paper-share-button-icon-color: #656565;
+        --paper-share-button-icon-height: 46px;
+        --paper-share-button-icon-width: 46px;
+        text-align: right;
       }
 
       @media (max-width: 960px) {
@@ -160,10 +187,6 @@
           height: 100%;
         }
 
-        .postActions  {
-          bottom: 0;
-          right: 8px;
-        }
 
         yp-post-cover-media {
           width: 100%;
@@ -230,32 +253,6 @@
       [hidden] {
         display: none !important;
       }
-
-      yp-post-actions {
-        width: 100%;
-      }
-
-      .action-debate {
-        @apply --layout-horizontal;
-        @apply --layout-center-justified;
-        color: #757575;
-      }
-
-      .debate-text {
-        padding-top: 10px;
-        padding-right: 6px;
-        color: #757575;
-      }
-
-      .debate-icon {
-        color: #757575;
-      }
-
-      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-        .action-debate {
-          display: none;
-        }
-      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -267,7 +264,7 @@
                     audio-cover$="[[isAudioCover]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <yp-post-cover-media mini$="[[mini]]" audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
+        <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
         <div class="postNameContainer">
           <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
             <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
@@ -277,15 +274,15 @@
         </div>
         <yp-magic-text class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
                        text-type="postContent" content-language="[[post.language]]"
-                       text-only content="[[post.description]]" content-id="[[post.id]]" truncate="100">
+                       text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
         </yp-magic-text>
+        <div class="bottomBar"></div>
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]">
-          <div class="action-debate" hidden$="[[hideDebate]]">
-            <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
-                               class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
-            <div class="action-text debate-text">[[formattedPointCount]]</div>
+          <div class="share" >
+            <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                                horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
           </div>
-          <yp-post-actions card-mode floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+          <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
         </div>
       </div>
     </paper-material>
@@ -312,18 +309,13 @@
           computed: '_hideDescription(mini, post)'
         },
 
-        hideDebate: {
-            type: Boolean,
-            computed: '_hideDebate(small,forceSmall,post)'
-        },
-
         selectedMenuItem: {
           type: String
         },
 
         elevation: {
           type: Number,
-          value: 2
+          value: 1
         },
 
         post: {
@@ -343,11 +335,6 @@
           value: false
         },
 
-        formattedPointCount: {
-            type: String,
-            computed: '_formattedPointCount(post.counter_points)'
-        },
-
         isAudioCover: {
           type: Boolean,
           value: false
@@ -356,18 +343,6 @@
 
       _shareTap: function (event, detail) {
         window.appGlobals.activity('postShareCardOpen', detail.brand, this.post ? this.post.id : -1);
-      },
-
-      _formattedPointCount: function (number) {
-        if (number) {
-            return this.formatNumber(number);
-        } else {
-            return "0";
-        }
-      },
-
-      _hideDebate: function (small, forceSmall) {
-        return (small || forceSmall || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
       },
 
       _hideDescription: function (mini, post) {
@@ -403,12 +378,12 @@
           }
           this.async(function () {
             var postName = this.$$("#postName");
-            if (postName) {
+            if (postName && false) {
               if (this.mini) {
                 if (post.name.length>200) {
-                  postName.style.fontSize = "12px";
-                } else if (post.name.length>100) {
                   postName.style.fontSize = "13px";
+                } else if (post.name.length>100) {
+                  postName.style.fontSize = "14px";
                 } else if (post.name.length>40) {
                   postName.style.fontSize="16px";
                 } else if (post.name.length>20) {
@@ -418,11 +393,11 @@
                 }
               } else if (!this.wide) {
                 if (post.name.length>200) {
-                  postName.style.fontSize = "13px";
-                } else if (post.name.length>100) {
                   postName.style.fontSize = "15px";
+                } else if (post.name.length>100) {
+                  postName.style.fontSize = "17px";
                 } else if (post.name.length>40) {
-                  postName.style.fontSize="16px";
+                  postName.style.fontSize="18px";
                 } else if (post.name.length>20) {
                   postName.style.fontSize="21px";
                 } else {
