@@ -46,7 +46,7 @@
       }
 
       .action-text {
-        font-size: 18px;
+        font-size: 16px;
         text-align: left;
         vertical-align: bottom;
         padding-top: 8px;
@@ -114,9 +114,15 @@
         margin-right: 0px;
       }
 
-      paper-icon-button.largeButton {
-        width: 52px;
-        height: 52px;
+      paper-icon-button.mainIcons {
+        width: 48px;
+        height: 48px;
+      }
+
+      paper-icon-button.debateIcon {
+        width: 46px;
+        height: 46px;
+        margin-top: 2px;
       }
 
       paper-icon-button[smaller-icons] {
@@ -175,13 +181,13 @@
     <paper-material elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up">
         <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
-                           icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
+                           icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon mainIcons" on-tap="upVote"></paper-icon-button>
         <div class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
       </div>
 
       <div class="action-debate" hidden$="[[hideDebate]]">
         <paper-icon-button disabled="[[allDisabled]]" title$="[[t('post.debate')]]" icon="chat-bubble-outline"
-                           class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
+                           class="action-icon debate-icon mainIcons debateIcon" on-tap="_goToPostIfNotHeader"></paper-icon-button>
         <div class="action-text debate-text">[[formattedPointCount]]</div>
       </div>
 
@@ -189,7 +195,7 @@
 
       <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
         <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
-                           icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
+                           icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon mainIcons" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
       </div>
     </paper-material>
@@ -300,7 +306,7 @@
 
         hideDebate: {
           type: Boolean,
-          computed: '_hideDebate(small,forceSmall,post)'
+          computed: '_hideDebate(small,forceSmall,headerMode,post)'
         },
 
         customVoteUpHoverText: {
@@ -395,8 +401,8 @@
         }
       },
 
-      _hideDebate: function (small, forceSmall) {
-        return (small || forceSmall || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
+      _hideDebate: function (small, forceSmall, headerMode) {
+        return (small || forceSmall || headerMode || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
       },
 
       _onPostChanged: function (post, oldValue) {

@@ -19,12 +19,12 @@
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
 
-<link rel="import" href="../yp-user/yp-user-with-organization.html">
 <link rel="import" href="../yp-magic-text/yp-magic-text.html">
 
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
 <link rel="import" href="yp-post-behaviors.html">
+<link rel="import" href="yp-post-name-with-author.html">
 
 <dom-module id="yp-post-header">
 
@@ -56,12 +56,6 @@
       .card-actions {
       }
 
-      yp-post-actions {
-        position: absolute;
-        right: 8px;
-        bottom: 0px;
-      }
-
       .edit {
         color: #eee;
         position: absolute;
@@ -71,16 +65,6 @@
         margin-right: 0;
       }
 
-      .post-name {
-        margin: 0;
-        padding: 16px;
-        cursor: pointer;
-        font-size: 1.25rem;
-        background-color: #fff;
-        color: #000;
-        font-weight: 500;
-        letter-spacing: .0125em;
-      }
 
       .category-icon {
         width: 100px;
@@ -131,12 +115,37 @@
         color: #424242;
       }
 
-      .userInfo {
-        color: #a0a0a0;
-        font-size: 17px;
+      .mobileName {
+        display: none;
+      }
+
+      .shareIcon {
+        position: absolute;
+        right: 12px;
+        bottom: 2px;
+        --paper-share-button-icon-color: #656565;
+        --paper-share-button-icon-height: 44px;
+        --paper-share-button-icon-width: 44px;
+        text-align: right;
+        width: 46px;
+        height: 46px;
+      }
+
+      .postActions {
+        position: absolute;
+        right: 56px;
+        bottom: 0;
       }
 
       @media (max-width: 960px) {
+        .mobileName {
+          display: block;
+        }
+
+        .desktopName {
+          display: none;
+        }
+
         :host {
           max-width: 600px;
         }
@@ -164,13 +173,6 @@
           padding-right: 0;
         }
 
-        .card-actions {
-          position: absolute;
-          right: 20px;
-          bottom: 0;
-          margin: 0;
-        }
-
         .card-content {
           width: 100% !important;
           padding-bottom: 16px;
@@ -184,10 +186,6 @@
         .description {
           margin-bottom: 8px;
           margin-top: 8px;
-        }
-
-        .userInfo {
-          font-size: 14px;
         }
 
         .mediaAndInfoContainer {
@@ -225,16 +223,7 @@
           height: 225px;
         }
 
-        .card-actions {
-          left: 0;
-          width: 280px;
-        }
-
         .post-name {
-        }
-
-        .post-name[logged-in] {
-          padding-right: 24px;
         }
 
         .headerTopLevel {
@@ -273,10 +262,6 @@
         }
       }
 
-      .userWithOrg {
-        --ak-user-name-color: #555555;
-      }
-
       [hidden] {
         display: none !important;
       }
@@ -290,7 +275,7 @@
       .transcriptError {
         margin-top: 8px;
         margin-bottom: 8px;
-        color: #F00;
+        color: #F00;post-name
       }
 
       paper-spinner {
@@ -333,6 +318,7 @@
     <div class="layout horizontal center-center">
       <paper-material class="postCard" elevation="[[elevation]]" animated>
         <div class="layout vertical headerTopLevel">
+          <yp-post-name-with-author class="mobileName" post="[[post]]" isLoggedIn="[[isLoggedIn]]"></yp-post-name-with-author>
           <div class="layout horizontal wrap mediaAndInfoContainer">
             <div class="layout vertical center-center self-start coverContainer">
               <yp-post-cover-media show-video show-audio has-transcript$="[[post.public_data.transcript.text]]" audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
@@ -387,16 +373,15 @@
                 <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
                                content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
                                structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
-                               content-id="[[post.id]]" class="description" truncate="500"
+                               content-id="[[post.id]]" class="description" truncate="650"
                                more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
                 </yp-magic-text>
               </div>
-              <div class="card-actions">
-                <yp-post-actions hidden$="[[hideActions]]" elevation="-1" floating header-mode="[[headerMode]]" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
-                <div class="share" >
-                  <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                                      horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
-                </div>
+              <yp-post-actions hidden$="[[hideActions]]" hide-debate elevation="-1" floating header-mode="[[headerMode]]"
+                               class="postActions" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+              <div class="share" >
+                <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                                    horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
               </div>
             </div>
             <template is="dom-if" if="[[headerMode]]">
@@ -418,18 +403,7 @@
               </template>
             </template>
           </div>
-          <div class="post-name layout vertical" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
-            <div>
-              <yp-magic-text text-type="postName" content-language="[[post.language]]"
-                             content="[[postName]]" content-id="[[post.id]]">
-              </yp-magic-text>
-            </div>
-            <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
-              <div class="layout horizontal userInfo">
-                <yp-user-with-organization class="userWithOrg" hide-image title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
-              </div>
-            </template>
-          </div>
+          <yp-post-name-with-author desktop class="desktopName" post="[[post]]" isLoggedIn="[[isLoggedIn]]"></yp-post-name-with-author>
         </div>
       </paper-material>
     </div>
@@ -446,7 +420,7 @@
         Polymer.AccessHelpers,
         Polymer.ypGotAdminRightsBehavior,
         Polymer.ypLoggedInUserBehavior,
-        Polymer.ypGotoBehavior,
+        Polymer.ypGotoBehavior,+
         Polymer.ypTruncateBehavior,
         Polymer.ypMediaFormatsBehavior
       ],

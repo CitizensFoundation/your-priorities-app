@@ -1,0 +1,86 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../yp-user/yp-user-with-organization.html">
+<link rel="import" href="../yp-magic-text/yp-magic-text.html">
+
+<dom-module id="yp-post-name-with-author">
+
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      .userWithOrg {
+        --ak-user-name-color: #555555;
+      }
+
+      .post-name {
+        margin: 0;
+        padding: 16px;
+        cursor: pointer;
+        font-size: 1.25rem;
+        background-color: #fff;
+        color: #000;
+        font-weight: 500;
+        letter-spacing: .0125em;
+      }
+
+      .post-name[desktop] {
+        max-width: 420px;
+      }
+
+      .userInfo {
+        color: #999;
+        font-size: 17px;
+      }
+
+      .post-name[logged-in] {
+        padding-right: 24px;
+      }
+
+
+      @media (max-width: 800px) {
+        .post-name {
+        }
+      }
+    </style>
+    <div class="post-name layout vertical" desktop$="[[desktop]]" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
+      <div>
+        <yp-magic-text text-type="postName" content-language="[[post.language]]"
+                       content="[[post.name]]" content-id="[[post.id]]">
+        </yp-magic-text>
+      </div>
+      <template is="dom-if" if="[[post.Group.configuration.showWhoPostedPosts]]">
+        <div class="layout horizontal userInfo">
+          <yp-user-with-organization class="userWithOrg" hide-image title-date="[[post.user.name]]" user$="[[post.User]]"></yp-user-with-organization>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'yp-post-name-with-author',
+
+      properties: {
+        post: {
+          type: Object
+        },
+
+        desktop: {
+          type: Boolean,
+          value: false
+        },
+
+        loggedInUser: {
+          type: Object
+        }
+      },
+
+      _newPost: function () {
+        if (!this.disabled) {
+          this.fire('new-post');
+        }
+      }
+    });
+  </script>
+</dom-module>
