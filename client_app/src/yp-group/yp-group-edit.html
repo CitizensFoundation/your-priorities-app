@@ -943,7 +943,7 @@
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
-      if (group.configuration && group.configuration.customRatingsText && group.configuration.customRatingsText!=="") {
+      if (this.group.configuration && this.group.configuration.customRatingsText && this.group.configuration.customRatingsText!=="") {
           this.set("endorsementButtonsDisabled", true);
       } else {
           this.set("endorsementButtonsDisabled", false);
