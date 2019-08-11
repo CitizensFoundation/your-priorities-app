@@ -61,6 +61,10 @@
         cursor: pointer;
       }
 
+      .topDiv[voting-disabled] {
+        cursor: initial;
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -68,12 +72,13 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
-    <div class="layout vertical center-center topDiv" aria-label="[[t('evaluatePost')]" title="[[t('evaluatePost')]]" on-tap="openRatingsDialog">
+    <div class="layout vertical center-center topDiv" voting-disabled$="[[votingDisabled]]" aria-label="[[t('evaluatePost')]" title="[[t('evaluatePost')]]" on-tap="openRatingsDialog">
       <div id="ratingContainerMain" class="ratingContainerMain layout horizontal center-center  wrap" style="display: flex; justify-content: flex-end" card-mode$="[[cardMode]]">
         <template is="dom-repeat" items="[[customRatings]]" as="rating">
           <div class="layout horizontal ratingContainer" widtha$="[[hasWidthA]]" widthb$="[[hasWidthB]]" widthc$="[[hasWidthC]]" widthd$="[[hasWidthD]]">
             <yp-rating title$="[[rating.name]]" read-only post-id="[[post.id]]"
                        rating-index="[[index]]"
+                       voting-disabled="[[votingDisabled]]"
                        emoji="[[rating.emoji]]"
                        rate="[[getRating(index)]]"
                        number-of="[[rating.numberOf]]"></yp-rating>
@@ -165,13 +170,15 @@
       },
 
       openRatingsDialog: function () {
-        window.appGlobals.activity('open', 'post.ratings');
-        if (window.appUser.loggedIn()===true) {
-          Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
-            dialog.open(this.post, this._fireRefresh.bind(this));
-          }.bind(this));
-        } else {
-          window.appUser.loginForRatings(this);
+        if (!this.post.Group.configuration.canVote===false) {
+          window.appGlobals.activity('open', 'post.ratings');
+          if (window.appUser.loggedIn()===true) {
+            Polymer.dom(document).querySelector('yp-app').getRatingsDialogAsync(function (dialog) {
+                dialog.open(this.post, this._fireRefresh.bind(this));
+            }.bind(this));
+          } else {
+            window.appUser.loginForRatings(this);
+          }
         }
       },
 
@@ -188,6 +195,12 @@
         this.set('isEndorsed', false);
         if (post) {
           if (post.Group.configuration && post.Group.configuration.customRatings) {
+              if (post.Group.configuration.canVote===false){
+                  this.set('votingDisabled', true);
+              } else {
+                  this.set('votingDisabled', false);
+              }
+
               this.set('customRatings', []);
               this.async(function () {
                   this.set('customRatings', post.Group.configuration.customRatings);

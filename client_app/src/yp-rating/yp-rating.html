@@ -34,6 +34,10 @@
       }
 
 
+      .rating-wrapper[voting-disabled] > span {
+        cursor: initial;
+      }
+
       .rating-wrapper > span.active,
 
       .rating-wrapper > span.active ~ span {
@@ -47,14 +51,14 @@
         .rating-wrapper:not([read-only]):hover > span.active ~ span {
           opacity: 0.4;
         }
-        .rating-wrapper > span:not([read-only]):hover,
-        .rating-wrapper > span:not([read-only]):hover ~ span,
-        .rating-wrapper > span:not([read-only]).active:hover ~ span {
+        .rating-wrapper:not([read-only]) > span:hover,
+        .rating-wrapper:not([read-only]) > span:hover ~ span,
+        .rating-wrapper:not([read-only]) > span.active:hover ~ span {
           opacity: 0.8 !important;
           -webkit-filter: grayscale(0%);
           filter: grayscale(0%);
         }
-        .rating-wrapper > span:not([read-only]):hover {
+        .rating-wrapper:not([read-only]) > span:hover {
           opacity: 0.9 !important;
           -webkit-filter: grayscale(0%);
           filter: grayscale(0%);
@@ -65,7 +69,8 @@
         opacity: 1 !important;
         margin-left: 50px;
       }
-      .rating-wrapper > span:not([read-only]).totals:hover {
+
+      .rating-wrapper:not([read-only]) > span.totals:hover {
         opacity: 1 !important;
       }
 
@@ -83,7 +88,7 @@
       }
     </style>
 
-    <div class="rating-wrapper" has-rating$="[[hasRating]]" read-only$="[[readOnly]]">
+    <div class="rating-wrapper" has-rating$="[[hasRating]]" voting-disabled$="[[votingDisabled]]" read-only$="[[readOnly]]">
       <template id="rating" is="dom-repeat" items="{{currentRatings}}">
         <span class$="{{isActive(numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
           [[emoji]]
@@ -98,6 +103,11 @@
       properties: {
         emoji: {
           type: String
+        },
+
+        votingDisabled: {
+          type: Boolean,
+          value: false
         },
 
         hasRating: {

@@ -72,6 +72,11 @@
           margin: 0;
         }
       }
+
+      paper-button {
+        margin-bottom: 16px;
+        margin-top: 32px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -97,7 +102,7 @@
       </template>
 
       <div class="buttons layout horizontal center-center">
-        <paper-button dialog-confirm on-tap="_close">[[t('close')]]</paper-button>
+        <paper-button raised elevation="1" dialog-confirm on-tap="_close">[[t('close')]]</paper-button>
       </div>
     </paper-dialog>
     <yp-ajax id="ajax"></yp-ajax>

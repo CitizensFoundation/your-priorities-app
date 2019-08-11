@@ -484,7 +484,11 @@
             if (group.configuration.canAddNewPosts===true) {
               this.set('filter','newest');
             } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
-              this.set('filter','top');
+              if (group.configuration.customRatings) {
+                  this.set('filter','random');
+              } else {
+                  this.set('filter','top');
+              }
             } else {
               this.set('filter','random');
             }
