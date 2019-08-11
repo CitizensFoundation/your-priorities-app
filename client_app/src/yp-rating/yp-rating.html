@@ -167,6 +167,8 @@
         this.async(function () {
           if (typeof this.numberOf==="string")
             this.numberOf = parseInt(this.numberOf);
+          if (this.numberOf>5)
+            this.numberOf=5;
           for (var i = this.numberOf - 1; i >= 0; i--) {
             this.push('currentRatings', i+1);
           };
