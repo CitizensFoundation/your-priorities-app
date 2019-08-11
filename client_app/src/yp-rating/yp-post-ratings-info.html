@@ -31,13 +31,34 @@
       }
 
       .ratingContainer {
-        margin-right: 12px;
         margin-left: 16px;
         margin-bottom: 4px;
       }
 
+      .ratingContainer[widtha] {
+        width: 105px;
+      }
+
+      .ratingContainer[widthb] {
+        width: 95px;
+      }
+
+      .ratingContainer[widthc] {
+        width: 85px;
+      }
+
+      .ratingContainer[widthd] {
+        width: 70px;
+      }
+
       .ratingContainerMain {
-        width: 220px;
+        text-align: right;
+        margin-right: 8px;
+        max-width: 230px;
+      }
+
+      .topDiv {
+        cursor: pointer;
       }
 
       [hidden] {
@@ -47,29 +68,25 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <iron-media-query query="(max-width: 420px)" query-matches="{{small}}"></iron-media-query>
-    <div class="layout vertical center-center self-start">
-      <template is="dom-if" if="[[post.public_data.ratings]]">
-        <div class="ratingContainerMain layout horizontal wrap self-start" card-mode$="[[cardMode]]">
-          <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
-            <template is="dom-if" if="[[getRating(index)]]">
-              <div class="layout horizontal ratingContainer">
-                <yp-rating title$="[[rating.name]]" read-only post-id="[[post.id]]"
-                           rating-index="[[index]]"
-                           emoji="[[rating.emoji]]"
-                           rate="[[getRating(index)]]"
-                           number-of="[[rating.numberOf]]"></yp-rating>
-                <div class="ratingsCount">[[getRatingsCount(index)]]</div>
-              </div>
-            </template>
-          </template>
-        </div>
-      </template>
+    <div class="layout vertical center-center topDiv" aria-label="[[t('evaluatePost')]" title="[[t('evaluatePost')]]" on-tap="openRatingsDialog">
+      <div id="ratingContainerMain" class="ratingContainerMain layout horizontal center-center  wrap" style="display: flex; justify-content: flex-end" card-mode$="[[cardMode]]">
+        <template is="dom-repeat" items="[[customRatings]]" as="rating">
+          <div class="layout horizontal ratingContainer" widtha$="[[hasWidthA]]" widthb$="[[hasWidthB]]" widthc$="[[hasWidthC]]" widthd$="[[hasWidthD]]">
+            <yp-rating title$="[[rating.name]]" read-only post-id="[[post.id]]"
+                       rating-index="[[index]]"
+                       emoji="[[rating.emoji]]"
+                       rate="[[getRating(index)]]"
+                       number-of="[[rating.numberOf]]"></yp-rating>
+            <div class="ratingsCount">[[getRatingsCount(index)]]</div>
+          </div>
+        </template>
+      </div>
     </div>
     <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
   </template>
   <script>
     Polymer({
-      is: 'yp-post-actions',
+      is: 'yp-post-ratings-info',
 
       behaviors: [
         Polymer.ypLanguageBehavior,
@@ -84,24 +101,24 @@
           observer: '_onPostChanged'
         },
 
-        small: {
+        hasWidthA: {
           type: Boolean,
           value: false
         },
 
-        headerMode: {
-          type: Boolean,
-          value: false
+        hasWidthB: {
+            type: Boolean,
+            value: false
         },
 
-        forceSmall: {
-          type: Boolean,
-          value: false
+        hasWidthC: {
+            type: Boolean,
+            value: false
         },
 
-        cardMode: {
-          type: Boolean,
-          value: false
+        hasWidthD: {
+            type: Boolean,
+            value: false
         },
 
         active: {
@@ -122,21 +139,25 @@
         postUrl: {
           type: String,
           computed: '_postUrl(post)'
-        }
+        },
+
+        customRatings: Array
       },
 
       getRating: function (ratingIndex) {
-        if (this.post.public_data.ratings[ratingIndex])
+        if (this.post.public_data && this.post.public_data.ratings && this.post.public_data.ratings[ratingIndex])
           return this.post.public_data.ratings[ratingIndex].averageRating;
         else
-          return null;
+          return 0;
       },
 
       getRatingsCount: function (ratingIndex) {
-        if (this.post.public_data.ratings[ratingIndex])
+        if (this.post.public_data && this.post.public_data.ratings && this.post.public_data.ratings[ratingIndex])
           return this.formatNumber(this.post.public_data.ratings[ratingIndex].count);
+//          return this.formatNumber(1*(Math.floor(Math.random() * 10000) + 1)) //this.formatNumber(this.post.public_data.ratings[ratingIndex].count);
         else
-          return null;
+          return 0;
+        debugger;
       },
 
       _fireRefresh: function () {
@@ -154,12 +175,6 @@
         }
       },
 
-      _goToPostIfNotHeader: function () {
-        if (!this.headerMode) {
-          this.goToPost();
-        }
-      },
-
       _postUrl: function (post) {
         if (post) {
           return encodeURIComponent("https://"+window.location.host+"/post/"+post.id);
@@ -170,32 +185,80 @@
       },
 
       _onPostChanged: function (post, oldValue) {
+        console.error("Changed");
         this.set('isEndorsed', false);
-        this.set('active', false);
         if (post) {
-          this.async(function () {
-            this.set('active', true);
-            if (post.Group.configuration && post.Group.configuration.customRatings) {
-              this.set('currentRatings', []);
-            }
+          if (post.Group.configuration && post.Group.configuration.customRatings) {
+              this.set('customRatings', []);
+              this.async(function () {
+                  this.set('customRatings', post.Group.configuration.customRatings);
+              });
 
-            if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+              var maxCount = 0;
+              if (this.post.public_data && this.post.public_data.ratings) {
+                  if (this.post.public_data.ratings[0])
+                    this.post.public_data.ratings[0].count=1*(Math.floor(Math.random() * 1000) + 1);
+                  if (this.post.public_data.ratings[1])
+                    this.post.public_data.ratings[1].count=1*(Math.floor(Math.random() * 1000) + 1);
+                  if (this.post.public_data.ratings[2])
+                    this.post.public_data.ratings[2].count=1*(Math.floor(Math.random() * 1000) + 1);
+                  if (this.post.public_data && this.post.public_data.ratings) {
+                      Object.values(this.post.public_data.ratings).forEach(function (item) {
+                          if (item.count>maxCount) {
+                              maxCount=item.count;
+                          }
+                      }.bind(this));
+                  }
+              }
+
+              console.error(maxCount);
+              if (maxCount>100000) {
+                this.set('hasWidthA', true);
+                this.set('hasWidthB', false);
+                this.set('hasWidthC', false);
+                this.set('hasWidthD', false);
+                this.$$("#ratingContainerMain").style.maxWidth="255px";
+                console.error("maxCount>100000")
+              } else if (maxCount>1000) {
+                this.set('hasWidthA', false);
+                this.set('hasWidthB', true);
+                this.set('hasWidthC', false);
+                this.set('hasWidthD', false);
+                this.$$("#ratingContainerMain").style.maxWidth="245px";
+                console.error("maxCount>1000")
+              } else if (maxCount>10) {
+                this.set('hasWidthA', false);
+                this.set('hasWidthB', false);
+                this.set('hasWidthC', true);
+                this.set('hasWidthD', false);
+                this.$$("#ratingContainerMain").style.maxWidth="210px";
+                console.error("maxCount>10")
+             }  else {
+                this.set('hasWidthA', false);
+                this.set('hasWidthB', false);
+                this.set('hasWidthC', false);
+                this.set('hasWidthD', true);
+                this.$$("#ratingContainerMain").style.maxWidth="195px";
+                console.error("maxCount<=10")
+              }
+          }
+          if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
               this.set('votingDisabled', true);
               this.set('allDisabled', true);
               this.set('disabledTitle', this.t('votingDisabled'));
-            } else {
+          } else {
               this.set('votingDisabled', false);
               this.set('allDisabled', false);
-            }
+          }
 
-            if (post.Group.configuration) {
+          if (post.Group.configuration) {
               this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
               if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
-                this.set('post.Group.configuration.hideVoteCount', true);
+                  this.set('post.Group.configuration.hideVoteCount', true);
               }
-            }
-          });
+          }
         } else {
+          this.set('customRatings', post.Group.configuration.null);
           console.warn("No post found for post actions");
         }
       },

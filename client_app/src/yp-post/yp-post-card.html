@@ -13,6 +13,7 @@
 <link rel="import" href="../yp-behaviors/yp-truncate-behavior.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
 <link rel="import" href="../yp-magic-text/yp-magic-text.html">
+<link rel="import" href="../yp-rating/yp-post-ratings-info.html">
 
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
@@ -155,10 +156,24 @@
         height: 48px;
       }
 
+      .customRatings {
+        position: absolute;
+        bottom: 12px;
+        right: 2px;
+      }
+
       @media (max-width: 960px) {
+        .customRatings {
+          bottom: 12px;
+        }
+
         :host {
           width: 100%;
           max-width: 423px;
+        }
+
+        .description[has-custom-ratings] {
+          padding-bottom: 28px;
         }
 
         .postCard {
@@ -252,6 +267,7 @@
         }
       }
 
+
       [hidden] {
         display: none !important;
       }
@@ -274,7 +290,7 @@
             </yp-magic-text>
           </div>
         </div>
-        <yp-magic-text class="description layout horizontal" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
+        <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
                        text-type="postContent" content-language="[[post.language]]"
                        text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
         </yp-magic-text>
@@ -284,7 +300,12 @@
             <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                 horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
           </div>
-          <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+          <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
+            <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
+          </template>
+          <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
+            <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+          </template>
         </div>
       </div>
     </paper-material>

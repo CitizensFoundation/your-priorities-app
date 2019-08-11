@@ -376,7 +376,7 @@
           this.getDialogAsync("ratings", callback);
         } else {
           this.$.loadingDialog.open();
-          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-ratings.html"), function () {
+          this.importHref(this.resolveUrl("/src/yp-rating/yp-dialog-ratings.html"), function () {
             this.$.loadingDialog.close();
             console.info("Have loaded ratings dialog");
             this.gotRatingsDialog=true;

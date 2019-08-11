@@ -18,6 +18,10 @@
         text-align: center;
       }
 
+      .rating-wrapper[has-rating] {
+        opacity: 0.5;
+      }
+
       .rating-wrapper > span {
         display: inline-block;
         position: relative;
@@ -39,18 +43,18 @@
       }
 
       @media (pointer: fine) {
-        .rating-wrapper:hover > span.active,
-        .rating-wrapper:hover > span.active ~ span {
+        .rating-wrapper:not([read-only]):hover > span.active,
+        .rating-wrapper:not([read-only]):hover > span.active ~ span {
           opacity: 0.4;
         }
-        .rating-wrapper > span:hover,
-        .rating-wrapper > span:hover ~ span,
-        .rating-wrapper > span.active:hover ~ span {
+        .rating-wrapper > span:not([read-only]):hover,
+        .rating-wrapper > span:not([read-only]):hover ~ span,
+        .rating-wrapper > span:not([read-only]).active:hover ~ span {
           opacity: 0.8 !important;
           -webkit-filter: grayscale(0%);
           filter: grayscale(0%);
         }
-        .rating-wrapper > span:hover {
+        .rating-wrapper > span:not([read-only]):hover {
           opacity: 0.9 !important;
           -webkit-filter: grayscale(0%);
           filter: grayscale(0%);
@@ -61,37 +65,25 @@
         opacity: 1 !important;
         margin-left: 50px;
       }
-      .rating-wrapper > span.totals:hover {
+      .rating-wrapper > span:not([read-only]).totals:hover {
         opacity: 1 !important;
       }
 
       .rating-wrapper[read-only] > span {
-        cursor: default;
       }
 
       .rating-wrapper[read-only] > span {
         font-size: 0.7em !important;
         width: 0.8em;
-        cursor: default;
-        opacity: 1 !important;
-        -webkit-filter: grayscale(0%);
-        filter: grayscale(0%);
       }
 
-      .rating-wrapper[read-only] > span.active:hover ~ span {
-        opacity: 1.0 !important;
-      }
-
-      .rating-wrapper[read-only] > span:hover {
-        opacity: 1.0 !important;
-      }
 
       :host[read-only] {
 
       }
     </style>
 
-    <div class="rating-wrapper" read-only$="[[readOnly]]">
+    <div class="rating-wrapper" has-rating$="[[hasRating]]" read-only$="[[readOnly]]">
       <template id="rating" is="dom-repeat" items="{{currentRatings}}">
         <span class$="{{isActive(numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
           [[emoji]]
@@ -106,6 +98,11 @@
       properties: {
         emoji: {
           type: String
+        },
+
+        hasRating: {
+          type: Boolean,
+          value: false
         },
 
         ratingIndex: {
@@ -155,9 +152,6 @@
         if (typeof this.rate==="string")
           this.rate = parseFloat(this.rate);
         this.rate = Math.round(this.rate);
-        if (this.readOnly) {
-          this.numberOf=this.rate;
-        }
         this.set('currentRatings', []);
         var deep = Polymer.dom(this.root);
         this.async(function () {
@@ -166,7 +160,7 @@
           for (var i = this.numberOf - 1; i >= 0; i--) {
             this.push('currentRatings', i+1);
           };
-          if (!this.readOnly && this.rate>0) {
+          if (this.rate && this.rate>0) {
             this.async(function () {
               var inverted = (this.rate * -1) + this.numberOf;
               for (var i =  this.numberOf-1; i >= inverted; i--) {
