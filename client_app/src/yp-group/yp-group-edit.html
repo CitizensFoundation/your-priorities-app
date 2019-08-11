@@ -379,7 +379,7 @@
         <div class="subHeaders exteraTopMargin">[[t('voteSettings')]]</div>
 
         <div class="layout horizontal">
-          <paper-dropdown-menu label="[[t('endorsementButtons')]]">
+          <paper-dropdown-menu label="[[t('endorsementButtons')]]" disabled$="[[endorsementButtonsDisabled]]">
             <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{endorsementButtons}}">
               <template is="dom-repeat" items="[[endorsementButtonsOptions]]" as="buttonsSelection">
                 <paper-item name="[[buttonsSelection.name]]">[[buttonsSelection.translatedName]]</paper-item>
@@ -420,6 +420,7 @@
                         name="customRatingsText"
                         type="text"
                         rows="2"
+                        on-value-changed="_customRatingsTextChanged"
                         always-float-label="[[group.configuration.customRatingsText]]"
                         maxrows="2"
                         label="[[t('customRatings')]]"
@@ -655,6 +656,11 @@
         value: null
       },
 
+      endorsementButtonsDisabled: {
+        type: Boolean,
+        value: false
+      },
+
       status: String,
 
       publicCommunity: {
@@ -696,6 +702,14 @@
         value: null
       }
     },
+
+     _customRatingsTextChanged: function (event, detail) {
+       if (detail.value && detail.value!=="") {
+         this.set("endorsementButtonsDisabled", true);
+       } else {
+         this.set("endorsementButtonsDisabled", false);
+       }
+     },
 
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
@@ -929,6 +943,12 @@
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
+      if (group.configuration && group.configuration.customRatingsText!=="") {
+          this.set("endorsementButtonsDisabled", true);
+      } else {
+          this.set("endorsementButtonsDisabled", false);
+      }
+
       this._setupTranslation();
     },
 
