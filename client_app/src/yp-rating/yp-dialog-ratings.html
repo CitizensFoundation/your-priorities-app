@@ -45,9 +45,9 @@
         margin-bottom: 0;
         text-align: center;
         padding: 16px;
-        padding-bottom: 10px;
         padding-top: 16px;
         text-decoration: underline;
+        padding-bottom: 0;
       }
 
       .evalIcon {
@@ -59,11 +59,16 @@
 
       .itemContainer {
         margin-bottom: 8px;
-        width: 100%;
       }
 
       paper-dialog-scrollable {
         margin-top: 2px;
+        width: 100%;
+      }
+
+      .ratingContainer {
+        margin-left: auto;
+        margin-right: auto;
       }
 
       @media (max-width: 600px) {
@@ -79,8 +84,13 @@
       }
 
       paper-button {
-        margin-bottom: 16px;
-        margin-top: 32px;
+        margin-bottom: 24px;
+        margin-top: 16px;
+        color: var(--accent-color);
+      }
+
+      .scrollable {
+        width: 100%;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -89,10 +99,10 @@
       <template is="dom-if" if="[[isOpen]]" restamp>
         <div class="itemHeader layout horizontal center-center"><iron-icon class="evalIcon" icon="rate-review"></iron-icon>[[t('evaluate')]]</div>
         <div class="itemName">[[post.name]]</div>
-        <paper-dialog-scrollable class="layout vertical center-center">
-          <div class="ratingContainer">
+
+          <div class="ratingContainer layout vertical center-center">
             <template is="dom-repeat" items="[[post.Group.configuration.customRatings]]" as="rating">
-              <div class="layout vertical self-start itemContainer">
+              <div class="layout vertical self-start center-center itemContainer">
                 <yp-magic-text content-id="[[post.id]]" extra-id="[[index]]" text-only content="[[rating.name]]"
                                content-language="[[post.Group.language]]"
                                class="ratingName" text-type="customRatingName"></yp-magic-text>
@@ -103,12 +113,10 @@
               </div>
             </template>
           </div>
-        </paper-dialog-scrollable>
+          <div class="buttons layout horizontal center-center">
+            <paper-button class="closeButton" raised elevation="1" dialog-confirm on-tap="_close">[[t('close')]]</paper-button>
+          </div>
       </template>
-
-      <div class="buttons layout horizontal center-center">
-        <paper-button raised elevation="1" dialog-confirm on-tap="_close">[[t('close')]]</paper-button>
-      </div>
     </paper-dialog>
     <yp-ajax id="ajax"></yp-ajax>
   </template>
