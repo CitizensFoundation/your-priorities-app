@@ -41,7 +41,7 @@
         line-height: var(--description-line-height, 1.3);
         width: 540px;
         padding: 0px;
-        padding-bottom: 16px;
+        padding-bottom: 0;
         padding-top: 16px;
       }
 
@@ -109,12 +109,6 @@
         padding-right: 16px;
       }
 
-      paper-icon-button.moreVert {
-        position: absolute;
-        top: 0;
-        right: 0;
-        color: #424242;
-      }
 
       .mobileName {
         display: none;
@@ -122,23 +116,64 @@
 
       .shareIcon {
         position: absolute;
-        right: 12px;
-        bottom: 2px;
         --paper-share-button-icon-color: #656565;
         --paper-share-button-icon-height: 44px;
         --paper-share-button-icon-width: 44px;
         text-align: right;
         width: 46px;
         height: 46px;
+        right: 42px;
+        bottom: 2px;
       }
 
       .postActions {
         position: absolute;
-        right: 56px;
-        bottom: 0;
+        right: 92px;
+        bottom: 2px;
+      }
+
+      .moreVert {
+        position: absolute;
+        bottom: 4px;
+        right: 2px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .moreVertButton {
+        color: #656565;
+        width: 46px;
+        height: 46px;
       }
 
       @media (max-width: 960px) {
+        .moreVert {
+          position: absolute;
+          top: 4px;
+          bottom: initial;
+          right: 2px;
+        }
+
+        .mobileName {
+          margin-right: 38px;
+        }
+
+        .shareIcon {
+          right: 8px;
+          bottom: 2px;
+        }
+
+        .postActions {
+          right: 55px;
+          bottom: 2px;
+        }
+
+
+        .infoContainer {
+          padding-bottom: 16px;
+          padding-top: 16px;
+        }
+
         .mobileName {
           display: block;
         }
@@ -374,7 +409,7 @@
                 <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
                                content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
                                structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
-                               content-id="[[post.id]]" class="description" truncate="650"
+                               content-id="[[post.id]]" class="description" truncate="500"
                                more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
                 </yp-magic-text>
               </div>
@@ -384,25 +419,21 @@
                 <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                     horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
               </div>
+              <paper-menu-button vertical-align="top" horizontal-align="right" class="moreVert" class="edit" hidden$="[[hideActions]]">
+                <paper-icon-button aria-label$="[[t('openPostMenu')]]" class="moreVertButton" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+                  <template is="dom-if" if="[[hasPostAccess]]">
+                    <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
+                    <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
+                    <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
+                    <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
+                    <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>
+                    <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="deleteContentMenuItem">[[t('deletePostContent')]]</paper-item>
+                  </template>
+                  <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
+                </paper-listbox>
+              </paper-menu-button>
             </div>
-            <template is="dom-if" if="[[headerMode]]">
-              <template is="dom-if" if="[[loggedInUser]]">
-                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" hidden$="[[hideActions]]">
-                  <paper-icon-button aria-label$="[[t('openPostMenu')]]" class="moreVert" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-                  <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                    <template is="dom-if" if="[[hasPostAccess]]">
-                      <paper-item id="editMenuItem">[[t('post.edit')]]</paper-item>
-                      <paper-item id="moveMenuItem">[[t('post.move')]]</paper-item>
-                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="statusChangeMenuItem">[[t('post.statusChange')]]</paper-item>
-                      <paper-item id="deleteMenuItem">[[t('post.delete')]]</paper-item>
-                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="anonymizeMenuItem">[[t('anonymizePostAndContent')]]</paper-item>
-                      <paper-item hidden$="[[!checkPostAdminOnlyAccess(post)]]" id="deleteContentMenuItem">[[t('deletePostContent')]]</paper-item>
-                    </template>
-                    <paper-item id="reportMenuItem">[[t('post.report')]]</paper-item>
-                  </paper-listbox>
-                </paper-menu-button>
-              </template>
-            </template>
           </div>
           <yp-post-name-with-author bottom-left-radius desktop class="desktopName" post="[[post]]" isLoggedIn="[[isLoggedIn]]"></yp-post-name-with-author>
         </div>
