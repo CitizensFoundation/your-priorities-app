@@ -21,12 +21,20 @@
         display: block;
       }
 
-      .topContainer[top-radius] > iron-image {
+      .topContainer[top-radius] > iron-image, #videoPreviewImage {
         border-top-right-radius: 4px;
         border-top-left-radius: 4px;
       }
 
-      .topContainer[top-left-radius] > iron-image {
+      video {
+        outline: none !important;
+      }
+
+      .topContainer[top-left-radius] > iron-image, #videoPreviewImage {
+        border-top-left-radius: 4px;
+      }
+
+      .topContainer[top-left-radius] > video {
         border-top-left-radius: 4px;
       }
 
