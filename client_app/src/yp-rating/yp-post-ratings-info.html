@@ -188,7 +188,7 @@
 
               this.set('customRatings', []);
               this.async(function () {
-                  this.set('customRatings', post.Group.configuration.customRatings);
+                  this.set('customRatings', post.Group.configuration.customRatings.slice(0,4));
               });
 
               var maxCount = 0;
