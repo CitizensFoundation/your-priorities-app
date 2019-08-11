@@ -298,7 +298,7 @@
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]">
           <div class="share" >
             <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                                horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>
+                                horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
           </div>
           <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
             <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>

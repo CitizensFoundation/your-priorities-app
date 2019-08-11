@@ -39,6 +39,20 @@
       getCategoryImagePath: {
         type: String,
         computed: '_getCategoryImagePath(post)'
+      },
+
+      fullPostUrl: {
+          type: String,
+          computed: '_fullPostUrl(post)'
+      },
+    },
+
+      _fullPostUrl: function (post) {
+      if (post) {
+        return encodeURIComponent("https://"+window.location.host+"/post/"+post.id);
+      } else {
+        console.warn("Can't find post for action");
+        return "";
       }
     },
 
