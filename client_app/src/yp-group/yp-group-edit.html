@@ -416,6 +416,16 @@
                      maxlength="100"
                      char-counter>
         </paper-input>
+        <paper-textarea id="customRatingsText"
+                        name="customRatingsText"
+                        type="text"
+                        rows="2"
+                        always-float-label="[[group.configuration.customRatingsText]]"
+                        maxrows="2"
+                        label="[[t('customRatings')]]"
+                        value="{{group.configuration.customRatingsText}}">
+        </paper-textarea>
+        <div class="structuredQuestionsInfo">[[t('customRatingsInfo')]]</div>
 
         <div class="subHeaders">[[t('pointSettings')]]</div>
 

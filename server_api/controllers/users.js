@@ -32,7 +32,7 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 };
 
 var getUserWithAll = function (userId, callback) {
-  var user, endorsements, pointQualities;
+  var user, endorsements, ratings, pointQualities;
 
   async.parallel([
     function (seriesCallback) {
@@ -74,6 +74,19 @@ var getUserWithAll = function (userId, callback) {
       });
     },
     function (seriesCallback) {
+      models.Rating.findAll({
+        where: {
+          user_id: userId
+        },
+        attributes: ['id', 'value', 'post_id', 'type_index']
+      }).then(function(ratingsIn) {
+        ratings = ratingsIn;
+        seriesCallback();
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
       models.PointQuality.findAll({
         where: {user_id: userId},
         attributes: ['id', 'value', 'point_id']
@@ -88,6 +101,7 @@ var getUserWithAll = function (userId, callback) {
     if (user) {
       user.dataValues.Endorsements = endorsements;
       user.dataValues.PointQualities = pointQualities;
+      user.dataValues.Ratings = ratings;
     }
     callback(error, user);
   })

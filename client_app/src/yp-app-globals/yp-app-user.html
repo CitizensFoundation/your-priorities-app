@@ -12,6 +12,11 @@
       paper-toast {
         z-index: 9999;
       }
+
+      yp-ajax {
+        margin-top: 10px;
+        margin-right: 4px;
+      }
     </style>
 
     <yp-session id="session"></yp-session>
@@ -61,6 +66,10 @@
             type: Object
           },
 
+          loginForRatingsParams: {
+            type: Object
+          },
+
           loginForPointQualityParams: {
             type: Object
           },
@@ -93,6 +102,10 @@
           },
 
           endorsementPostsIndex: {
+            type: Object
+          },
+
+          ratingPostsIndex: {
             type: Object
           },
 
@@ -151,6 +164,11 @@
 
         loginForEndorse: function(postActionElement, params) {
           this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
+          this.openUserlogin();
+        },
+
+        loginForRatings: function(postActionElement) {
+          this.loginForRatingsParams = { postActionElement: postActionElement };
           this.openUserlogin();
         },
 
@@ -237,6 +255,10 @@
             var endorseParams = this.loginForEndorseParams;
             endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
             this.loginForEndorseParams = null;
+          } else if (this.loginForRatingsParams) {
+            var ratingsParams = this.loginForRatingsParams;
+            ratingsParams.postActionElement.openRatingsDialog();
+            this.loginForRatingsParams = null;
           } else if (this.loginForPointQualityParams) {
             var pointQualityParams = this.loginForPointQualityParams;
             pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
@@ -472,7 +494,7 @@
               if (newEndorsement) {
                 this.user.Endorsements[i] = newEndorsement;
               } else {
-                this.user.Endorsements[i].splice(i, 1);
+                this.user.Endorsements.splice(i, 1);
               }
               hasChanged = true;
               break;
@@ -494,6 +516,41 @@
           }
         },
 
+        _updateRatingPostsIndex: function (user) {
+          if (user && user.Ratings && user.Ratings.length>0) {
+            this.ratingPostsIndex = {};
+            for(var i=0; i<user.Ratings.length; i++){
+              if (!this.ratingPostsIndex[ user.Ratings[i].post_id ])
+                this.ratingPostsIndex[ user.Ratings[i].post_id ] = {};
+              this.ratingPostsIndex[ user.Ratings[i].post_id ][user.Ratings[i].type_index] = user.Ratings[i];
+            }
+          } else {
+            this.ratingPostsIndex = {}
+          }
+        },
+
+        updateRatingForPost: function (postId, typeIndex, newRating) {
+          if (!this.user.Ratings) {
+            this.user.Ratings = [];
+          }
+
+          var hasChanged = false;
+          for(var i=0; i<this.user.Ratings.length; i++) {
+            if (this.user.Ratings[i].post_id===postId && this.user.Ratings[i].type_index===typeIndex) {
+              if (newRating) {
+                this.user.Ratings[i] = newRating;
+              } else {
+                this.user.Ratings.splice(i, 1);
+              }
+              hasChanged = true;
+              break;
+            }
+          }
+          if (!hasChanged && newRating)
+            this.user.Ratings.push(newRating);
+          this._updateRatingPostsIndex(this.user);
+        },
+
         updatePointQualityForPost: function (pointId, newPointQuality) {
           if (this.user.PointQualities) {
             var hasChanged = false;
@@ -502,7 +559,7 @@
                 if (newPointQuality) {
                   this.user.PointQualities[i] = newPointQuality;
                 } else {
-                  this.user.PointQualities[i].splice(i, 1);
+                  this.user.PointQualities.splice(i, 1);
                 }
                 hasChanged = true;
                 break;
@@ -524,11 +581,12 @@
           }
         },
 
-        _onUserChanged: function (newValue, oldValue) {
-          this.fire("user-changed", newValue);
-          if (newValue) {
-            this._updateEndorsementPostsIndex(newValue);
-            this._updatePointQualitiesIndex(newValue);
+        _onUserChanged: function (user) {
+          this.fire("user-changed", user);
+          if (user) {
+            this._updateEndorsementPostsIndex(user);
+            this._updatePointQualitiesIndex(user);
+            this._updateRatingPostsIndex(user);
             document.dispatchEvent(
               new CustomEvent("lite-signal", {
                 bubbles: true,

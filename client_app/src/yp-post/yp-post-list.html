@@ -202,7 +202,7 @@
         <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
           <template>
             <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
-              <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+              <yp-post-card on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
             </div>
           </template>
         </iron-list>
@@ -210,6 +210,7 @@
 
       <div class="layout horizontal center-center largeAjax">
         <yp-ajax id="ajax" large-spinner on-response="_postsResponse"></yp-ajax>
+        <yp-ajax id="refreshPost" on-response="_refreshPostResponse"></yp-ajax>
       </div>
     </div>
   </template>
@@ -349,6 +350,25 @@
         }
       },
 
+      _refreshPost: function (event, detail) {
+        this.$.refreshPost.url="/api/posts/"+detail.id;
+        this.$.refreshPost.generateRequest();
+      },
+
+      _refreshPostResponse: function (event, detail) {
+        var post = detail.response;
+        for (var i = 0; i < this.posts.length; i++) {
+          if (this.posts[i].id==post.id) {
+            this.set('posts.'+i, post);
+            window.appGlobals.updatePostInCache(post);
+            this.async(function () {
+              this.$$("#ironList").fire('iron-resize');
+            });
+            break;
+          }
+        }
+      },
+      
       _scrollOffset: function (wide, group) {
         var list = this.$$("iron-list");
         if (list) {
@@ -464,7 +484,11 @@
             if (group.configuration.canAddNewPosts===true) {
               this.set('filter','newest');
             } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
-              this.set('filter','top');
+              if (group.configuration.customRatings) {
+                  this.set('filter','random');
+              } else {
+                  this.set('filter','top');
+              }
             } else {
               this.set('filter','random');
             }

@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "8.4.1.10",
+  "version": "8.5.0.1",
   "license": "AGPL-3.0",
   "dependencies": {
     "@google-cloud/speech": "^2.1.1",
@@ -70,6 +70,7 @@
     "predictionio-driver": "git+https://github.com/rbjarnason/predictionio-driver.git#0.4.1",
     "random-words": "^1.1.0",
     "randomstring": "^1.1.4",
+    "request": "^2.88.0",
     "request-ip": "^1.2.2",
     "s3-uploader": "^1.0.0",
     "sanitize-filename": "^1.6.1",
@@ -115,6 +116,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "10.15.0"
+    "node": "10.16.2"
   }
 }

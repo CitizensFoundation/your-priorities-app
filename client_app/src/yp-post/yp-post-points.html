@@ -47,6 +47,7 @@
         padding-top: 24px;
         padding-left: 16px;
         padding-right: 16px;
+        padding-bottom: 16px;
         margin-bottom: 16px;
         background-color: #FFF;
       }
@@ -264,6 +265,9 @@
         padding: 8px;
         margin-bottom: 4px;
       }
+
+      .pointMaterialMobile {
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -475,7 +479,7 @@
 
     <template is="dom-if" if="[[!largeMode]]" restamp>
       <div class="layout vertical center-center">
-        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
+        <paper-material id="pointUpOrDownMaterial" elevation="0" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                           value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
                           char-counter rows="2" hidden$="[[hideMobileText]]"
@@ -560,7 +564,7 @@
         <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
           <template>
             <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
-              <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
+              <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
                 <yp-point point="[[point]]"></yp-point>
               </paper-material>
             </div>
@@ -1407,7 +1411,8 @@
         },
 
         focusTextArea: function (event) {
-          event.currentTarget.parentElement.elevation = 3;
+          if (window.innerWidth>500)
+            event.currentTarget.parentElement.elevation = 2;
         },
 
         blurTextArea: function (event) {

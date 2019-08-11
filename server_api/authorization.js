@@ -791,6 +791,8 @@ auth.entity('post', function(req, done) {
   if (!match)
     match = req.originalUrl.match(/videos\/(\w+)/);
   if (!match)
+    match = req.originalUrl.match(/ratings\/(\w+)/);
+  if (!match)
     match = req.originalUrl.match(/audios\/(\w+)/);
   if (!match)
     done(new Error('Expected url like /posts/:postId or /images/:postId'));
@@ -1431,6 +1433,7 @@ auth.action('view image', ['image.viewUser']);
 
 auth.action('vote on post', ['post.vote']);
 auth.action('vote on point', ['point.vote']);
+auth.action('rate post', ['post.vote']);
 
 auth.action('add post user images', ['post.vote']);
 

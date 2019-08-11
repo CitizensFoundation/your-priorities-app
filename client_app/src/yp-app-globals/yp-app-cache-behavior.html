@@ -64,6 +64,10 @@
       return this.postItemsCache[parseInt(postId)];
     },
 
+    updatePostInCache: function (post) {
+      this.postItemsCache[post.id] = post;
+    },
+
     ready: function () {
       this.autoTranslateCache = {};
       this.communityItemsCache = {};
