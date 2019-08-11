@@ -1,4 +1,9 @@
 {
+  "evaluatePost": "Gefa hugmynd einkunn",
+  "evaluate": "Einkunn",
+  "customRatings": "Sértækar einkunnir",
+  "customRatingsInfo": "Notaðu kommu á milli nafna einkunna, hversu hátt þær fara (mest 5) og Emoji. Ekki láta einkunnir heita meira en 20 stafa nafni. Dæmi: Nýsköpun,5,\uD83D\uDCA1,Fýsileiki,5,\uD83D\uDD28,Skemmtanagildi,5,⭐",
+  "openRatings": "Opna einkunnir",
   "useMainPhoto": "Nota mynd frá merki",
   "videoUploadDisclaimer": "Með því að hlaða upp myndskeiði staðfesti ég að ég hafi rétt á efninu og fólk í myndskeiðinu hefur gefið samþykki",
   "showVideoUploadDisclaimer": "Sýna fyrirvara um myndhleðslu",
