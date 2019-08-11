@@ -175,4 +175,43 @@ router.delete('/:post_id/:type_index', auth.can('rate post'), function(req, res)
   });
 });
 
+router.get('/:post_id/:custom_rating_index/translatedText', auth.can('rate post'), function(req, res) {
+  if (req.query.textType.indexOf("customRatingName") > -1) {
+    models.Post.find({
+      where: {
+        id: req.params.post_id
+      },
+      include: [
+        {
+          model: models.Group,
+          attributes: ['id','configuration']
+        }
+      ],
+      attributes: ['id','name','description','public_data']
+    }).then(function(post) {
+      if (post) {
+        post.custom_rating_index = req.params.custom_rating_index;
+        models.AcTranslationCache.getTranslation(req, post, function (error, translation) {
+          if (error) {
+            log.error("Ratings Error", { context: 'delete', post: req.params.id, user: toJson(req.user), err: error, errorStatus: 500 });
+            res.sendStatus(500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Post translatedTitle', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
+      } else {
+        log.error("Rating Not found", { context: 'delete', post: req.params.id, user: toJson(req.user),
+          err: "Rating not found", errorStatus: 404 });
+        res.sendStatus(404);
+      }
+    }).catch(function(error) {
+      log.error("Ratings Error", { context: 'delete', post: req.params.id, user: toJson(req.user), err: error, errorStatus: 500 });
+      res.sendStatus(500);
+    });
+  } else {
+    sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  }
+});
+
 module.exports = router;
