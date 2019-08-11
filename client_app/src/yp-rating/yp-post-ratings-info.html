@@ -87,7 +87,6 @@
         </template>
       </div>
     </div>
-    <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
   </template>
   <script>
     Polymer({
@@ -141,11 +140,6 @@
           value: false
         },
 
-        postUrl: {
-          type: String,
-          computed: '_postUrl(post)'
-        },
-
         customRatings: Array
       },
 
@@ -179,15 +173,6 @@
           } else {
             window.appUser.loginForRatings(this);
           }
-        }
-      },
-
-      _postUrl: function (post) {
-        if (post) {
-          return encodeURIComponent("https://"+window.location.host+"/post/"+post.id);
-        } else {
-          console.warn("Can't find post for action");
-          return "";
         }
       },
 
@@ -262,33 +247,7 @@
           this.set('customRatings', post.Group.configuration.null);
           console.warn("No post found for post actions");
         }
-      },
-
-      _updateEndorsementsFromSignal: function () {
-        if (this.post) {
-          this._updateEndorsements(this.post);
-        } else {
-          this.async(function () {
-            if (this.post) {
-              this._updateEndorsements(this.post);
-            } else {
-              console.warn("Trying to update post null from signal");
-            }
-          }, 50);
-        }
-      },
-
-      _updateEndorsements: function (post) {
-        this.set('isEndorsed', false);
-        if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
-          var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
-          if (thisPostsEndorsement)
-            this._setEndorsement(thisPostsEndorsement.value);
-          else
-            this._setEndorsement(0);
-        }
-      },
-
+      }
     });
   </script>
 </dom-module>
