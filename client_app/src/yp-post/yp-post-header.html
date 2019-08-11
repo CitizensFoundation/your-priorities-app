@@ -20,6 +20,7 @@
 <link rel="import" href="../yp-behaviors/yp-media-formats-behavior.html">
 
 <link rel="import" href="../yp-magic-text/yp-magic-text.html">
+<link rel="import" href="../yp-rating/yp-post-ratings-info.html">
 
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
@@ -146,12 +147,26 @@
         height: 46px;
       }
 
+      .customRatings {
+        position: absolute;
+        bottom: 12px;
+        right: 78px;
+      }
+
       @media (max-width: 960px) {
         .moreVert {
           position: absolute;
           top: 4px;
           bottom: initial;
           right: 2px;
+        }
+
+        .description[has-custom-ratings] {
+          padding-bottom: 18px;
+        }
+
+        .customRatings {
+          right: 44px;
         }
 
         .mobileName {
@@ -409,12 +424,20 @@
                 <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
                                content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
                                structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
+                               has-custom-ratings$="[[post.Group.configuration.customRatings]]"
                                content-id="[[post.id]]" class="description" truncate="500"
                                more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
                 </yp-magic-text>
               </div>
-              <yp-post-actions hidden$="[[hideActions]]" hide-debate elevation="-1" floating header-mode="[[headerMode]]"
-                               class="postActions" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+
+              <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
+                <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
+              </template>
+              <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
+                <yp-post-actions hidden$="[[hideActions]]" hide-debate elevation="-1" floating header-mode="[[headerMode]]"
+                                 class="postActions" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
+              </template>
+
               <div class="share" >
                 <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                     horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" google="" twitter="" popup="" url="[[postUrl]]"></paper-share-button>

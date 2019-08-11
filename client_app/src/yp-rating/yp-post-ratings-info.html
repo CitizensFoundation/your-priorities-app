@@ -185,7 +185,6 @@
       },
 
       _onPostChanged: function (post, oldValue) {
-        console.error("Changed");
         this.set('isEndorsed', false);
         if (post) {
           if (post.Group.configuration && post.Group.configuration.customRatings) {
@@ -196,50 +195,39 @@
 
               var maxCount = 0;
               if (this.post.public_data && this.post.public_data.ratings) {
-                  if (this.post.public_data.ratings[0])
-                    this.post.public_data.ratings[0].count=1*(Math.floor(Math.random() * 1000) + 1);
-                  if (this.post.public_data.ratings[1])
-                    this.post.public_data.ratings[1].count=1*(Math.floor(Math.random() * 1000) + 1);
-                  if (this.post.public_data.ratings[2])
-                    this.post.public_data.ratings[2].count=1*(Math.floor(Math.random() * 1000) + 1);
-                  if (this.post.public_data && this.post.public_data.ratings) {
-                      Object.values(this.post.public_data.ratings).forEach(function (item) {
-                          if (item.count>maxCount) {
-                              maxCount=item.count;
-                          }
-                      }.bind(this));
-                  }
+                if (this.post.public_data && this.post.public_data.ratings) {
+                  Object.values(this.post.public_data.ratings).forEach(function (item) {
+                      if (item.count>maxCount) {
+                        maxCount=item.count;
+                      }
+                  }.bind(this));
+                }
               }
 
-              console.error(maxCount);
               if (maxCount>100000) {
                 this.set('hasWidthA', true);
                 this.set('hasWidthB', false);
                 this.set('hasWidthC', false);
                 this.set('hasWidthD', false);
                 this.$$("#ratingContainerMain").style.maxWidth="255px";
-                console.error("maxCount>100000")
               } else if (maxCount>1000) {
                 this.set('hasWidthA', false);
                 this.set('hasWidthB', true);
                 this.set('hasWidthC', false);
                 this.set('hasWidthD', false);
                 this.$$("#ratingContainerMain").style.maxWidth="245px";
-                console.error("maxCount>1000")
               } else if (maxCount>10) {
                 this.set('hasWidthA', false);
                 this.set('hasWidthB', false);
                 this.set('hasWidthC', true);
                 this.set('hasWidthD', false);
                 this.$$("#ratingContainerMain").style.maxWidth="210px";
-                console.error("maxCount>10")
              }  else {
                 this.set('hasWidthA', false);
                 this.set('hasWidthB', false);
                 this.set('hasWidthC', false);
                 this.set('hasWidthD', true);
                 this.$$("#ratingContainerMain").style.maxWidth="195px";
-                console.error("maxCount<=10")
               }
           }
           if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
