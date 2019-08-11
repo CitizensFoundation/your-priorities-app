@@ -199,7 +199,7 @@ router.get('/:post_id/:custom_rating_index/translatedText', auth.can('rate post'
             res.send(translation);
           }
         });
-        log.info('Post translatedTitle', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
+        log.info('Rating customRatingName', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
       } else {
         log.error("Rating Not found", { context: 'delete', post: req.params.id, user: toJson(req.user),
           err: "Rating not found", errorStatus: 404 });
