@@ -24,6 +24,15 @@
         letter-spacing: .0125em;
       }
 
+      .post-name[bottom-left-radius] {
+        border-bottom-left-radius: 4px;
+      }
+
+      .post-name[top-left-radius] {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+
       .post-name[desktop] {
         max-width: 420px;
       }
@@ -43,7 +52,7 @@
         }
       }
     </style>
-    <div class="post-name layout vertical" desktop$="[[desktop]]" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
+    <div class="post-name layout vertical" top-left-radius$="[[topLeftRadius]]" bottom-left-radius$="[[bottomLeftRadius]]" desktop$="[[desktop]]" on-tap="goToPostIfNotHeader" logged-in$="[[loggedInUser]]">
       <div>
         <yp-magic-text text-type="postName" content-language="[[post.language]]"
                        content="[[post.name]]" content-id="[[post.id]]">
@@ -64,6 +73,16 @@
       properties: {
         post: {
           type: Object
+        },
+
+        topLeftRadius: {
+            type: Boolean,
+            value: false
+        },
+
+        bottomLeftRadius: {
+            type: Boolean,
+            value: false
         },
 
         desktop: {

@@ -1410,7 +1410,8 @@
         },
 
         focusTextArea: function (event) {
-          event.currentTarget.parentElement.elevation = 3;
+          if (window.innerWidth>500)
+            event.currentTarget.parentElement.elevation = 2;
         },
 
         blurTextArea: function (event) {

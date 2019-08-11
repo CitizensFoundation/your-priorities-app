@@ -26,11 +26,7 @@
       .moreText {
         color: var(--accent-color);
         background-color: #FFF;
-        margin-top: 6px;
-        margin-bottom: 6px;
-        position: absolute;
-        bottom: 6px;
-        left: 466px;
+        margin-top: 16px;
       }
 
       @media (max-width: 600px) {
@@ -44,7 +40,7 @@
       <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]" style="max-width:100%"></div>
       <div hidden$="[[finalContent]]" style="max-width:100%">[[truncatedContent]]</div>
       <template is="dom-if" if="[[showMoreText]]">
-        <paper-button raised class="moreText" on-tap="_openFullScreen">[[moreText]]</paper-button>
+        <paper-button raised elevation="1" class="moreText" on-tap="_openFullScreen">[[moreText]]</paper-button>
       </template>
     </div>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
