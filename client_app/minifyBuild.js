@@ -17,7 +17,7 @@ walk('build/').then((results) => {
   results.forEach((file)=>{
     console.log(file)
     if (file.endsWith(".html")) {
-      commandString = "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true "+file+" > /tmp/minify.html"
+      commandString = "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-js true "+file+" > /tmp/minify.html"
       console.log(commandString);
       output = execSync(commandString);
       commandString = "mv /tmp/minify.html "+file
