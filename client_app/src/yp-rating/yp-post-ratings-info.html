@@ -36,19 +36,19 @@
       }
 
       .ratingContainer[widtha] {
-        width: 105px;
+        width: 125px;
       }
 
       .ratingContainer[widthb] {
-        width: 95px;
+        width: 110px;
       }
 
       .ratingContainer[widthc] {
-        width: 85px;
+        width: 100px;
       }
 
       .ratingContainer[widthd] {
-        width: 70px;
+        width: 90px;
       }
 
       .ratingContainerMain {
@@ -191,6 +191,20 @@
                   this.set('customRatings', post.Group.configuration.customRatings.slice(0,4));
               });
 
+              if (false) {
+                  var NUM = 10000000;
+                  if (this.post.public_data && this.post.public_data.ratings) {
+                      if (this.post.public_data.ratings[0])
+                          this.post.public_data.ratings[0].count = 1 * (Math.floor(Math.random() * NUM) + 1);
+                      if (this.post.public_data.ratings[1])
+                          this.post.public_data.ratings[1].count = 1 * (Math.floor(Math.random() * NUM) + 1);
+                      if (this.post.public_data.ratings[2])
+                          this.post.public_data.ratings[2].count = 1 * (Math.floor(Math.random() * NUM) + 1);
+                      if (this.post.public_data.ratings[3])
+                          this.post.public_data.ratings[3].count = 1 * (Math.floor(Math.random() * NUM) + 1);
+                  }
+              }
+
               var maxCount = 0;
               if (this.post.public_data && this.post.public_data.ratings) {
                 if (this.post.public_data && this.post.public_data.ratings) {
@@ -207,25 +221,25 @@
                 this.set('hasWidthB', false);
                 this.set('hasWidthC', false);
                 this.set('hasWidthD', false);
-                this.$$("#ratingContainerMain").style.maxWidth="255px";
+                this.$$("#ratingContainerMain").style.maxWidth="285px";
               } else if (maxCount>1000) {
                 this.set('hasWidthA', false);
                 this.set('hasWidthB', true);
                 this.set('hasWidthC', false);
                 this.set('hasWidthD', false);
-                this.$$("#ratingContainerMain").style.maxWidth="245px";
+                this.$$("#ratingContainerMain").style.maxWidth="255px";
               } else if (maxCount>10) {
                 this.set('hasWidthA', false);
                 this.set('hasWidthB', false);
                 this.set('hasWidthC', true);
                 this.set('hasWidthD', false);
-                this.$$("#ratingContainerMain").style.maxWidth="210px";
+                this.$$("#ratingContainerMain").style.maxWidth="235px";
              }  else {
                 this.set('hasWidthA', false);
                 this.set('hasWidthB', false);
                 this.set('hasWidthC', false);
                 this.set('hasWidthD', true);
-                this.$$("#ratingContainerMain").style.maxWidth="195px";
+                this.$$("#ratingContainerMain").style.maxWidth="215px";
               }
           }
           if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
