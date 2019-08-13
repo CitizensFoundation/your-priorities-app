@@ -936,6 +936,14 @@
       if (!group) {
         this.set('group', {name: '', objectives: '', access: 0, status: 'active'});
       } else {
+        if (group.configuration && group.configuration.customRatings && !group.configuration.customRatingsText) {
+          var customRatingsText = "";
+          group.configuration.customRatings.forEach(function (rating) {
+              customRatingsText += rating.name+","+rating.numberOf+","+rating.emoji+","
+          });
+          customRatingsText = customRatingsText.substring(0, customRatingsText.length - 1);
+          group.configuration.customRatingsText = customRatingsText;
+        }
         this.set('group', group);
         if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
           this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
@@ -943,10 +951,12 @@
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
+
+
       if (this.group.configuration && this.group.configuration.customRatingsText && this.group.configuration.customRatingsText!=="") {
-          this.set("endorsementButtonsDisabled", true);
+        this.set("endorsementButtonsDisabled", true);
       } else {
-          this.set("endorsementButtonsDisabled", false);
+        this.set("endorsementButtonsDisabled", false);
       }
 
       this._setupTranslation();
