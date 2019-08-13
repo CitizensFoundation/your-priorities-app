@@ -1,4 +1,4 @@
-<!-- Code initially from https://github.com/cmartinezv/rating -->
+<!-- Code initially from https://github.com/cmartinezv/star-rating -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
@@ -18,23 +18,15 @@
         text-align: center;
       }
 
-      .rating-wrapper[has-rating] {
-        opacity: 0.5;
-      }
-
       .rating-wrapper > span {
         display: inline-block;
         position: relative;
-        width: 1.1em;
+        width: 1.3em;
         font-size: 1.6em;
         cursor: pointer;
         opacity: 0.4;
-        -webkit-filter: grayscale(40%);
-        filter: grayscale(40%);
-      }
-
-      .rating-wrapper:not([read-only]) > span {
-        width: 1.3em;
+        -webkit-filter: grayscale(50%);
+        filter: grayscale(50%);
       }
 
       .rating-wrapper[voting-disabled] > span {
@@ -82,7 +74,7 @@
 
       .rating-wrapper[read-only] > span {
         font-size: 0.8em !important;
-        width: 1.248em;
+        width: 1.0em;
       }
 
 
@@ -91,7 +83,7 @@
       }
     </style>
 
-    <div class="rating-wrapper" has-rating$="[[hasRating]]" voting-disabled$="[[votingDisabled]]" read-only$="[[readOnly]]">
+    <div class="rating-wrapper" voting-disabled$="[[votingDisabled]]" read-only$="[[readOnly]]">
       <template id="rating" is="dom-repeat" items="{{currentRatings}}">
         <span class$="{{isActive(numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
           [[emoji]]
@@ -109,11 +101,6 @@
         },
 
         votingDisabled: {
-          type: Boolean,
-          value: false
-        },
-
-        hasRating: {
           type: Boolean,
           value: false
         },
