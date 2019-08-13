@@ -21,7 +21,7 @@
       .rating-wrapper > span {
         display: inline-block;
         position: relative;
-        width: 1.3em;
+        width: 1.35em;
         font-size: 1.6em;
         cursor: pointer;
         opacity: 0.4;
@@ -74,7 +74,7 @@
 
       .rating-wrapper[read-only] > span {
         font-size: 0.8em !important;
-        width: 1.0em;
+        width: 1.248em;
       }
 
 
@@ -84,11 +84,7 @@
     </style>
 
     <div class="rating-wrapper" voting-disabled$="[[votingDisabled]]" read-only$="[[readOnly]]">
-      <template id="rating" is="dom-repeat" items="{{currentRatings}}">
-        <span class$="{{isActive(numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">
-          [[emoji]]
-        </span>
-      </template>
+      <template id="rating" is="dom-repeat" items="{{currentRatings}}"><span class$="{{isActive(numberOf, index, rate)}}" on-tap="_setRate" data-index$="{{index}}">[[emoji]]</span></template>
     </div>
   </template>
   <script>
