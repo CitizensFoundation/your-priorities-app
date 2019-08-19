@@ -252,6 +252,8 @@ var updateGroupConfigParamters = function (req, group) {
     } else {
       log.error("Ratings not in correct format for customRatings");
     }
+  } else {
+    group.set('configuration.customRatings', null);
   }
 };
 
