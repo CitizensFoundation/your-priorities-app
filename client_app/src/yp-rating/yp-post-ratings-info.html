@@ -162,19 +162,6 @@
         this.fire("refresh", {id: this.post.id});
       },
 
-      ready: function () {
-        var isIE11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
-        if (isIE11 && !Object.values) {
-            var reduce = Function.bind.call(Function.call, Array.prototype.reduce);
-            var isEnumerable = Function.bind.call(Function.call, Object.prototype.propertyIsEnumerable);
-            var concat = Function.bind.call(Function.call, Array.prototype.concat);
-            var keys = Reflect.ownKeys;
-            Object.values = function values(O) {
-                return reduce(keys(O), (v, k) => concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []), []);
-            };
-        }
-      },
-
       openRatingsDialog: function () {
         if (!this.post.Group.configuration.canVote===false) {
           window.appGlobals.activity('open', 'post.ratings');
@@ -220,11 +207,13 @@
               var maxCount = 0;
               if (this.post.public_data && this.post.public_data.ratings) {
                 if (this.post.public_data && this.post.public_data.ratings) {
-                  Object.values(this.post.public_data.ratings).forEach(function (item) {
-                      if (item.count>maxCount) {
-                        maxCount=item.count;
+                  for (var item in this.post.public_data.ratings) {
+                    if (this.post.public_data.ratings.hasOwnProperty(item)) {
+                      if (this.post.public_data.ratings[item].count>maxCount) {
+                        maxCount=this.post.public_data.ratings[item].count;
                       }
-                  }.bind(this));
+                    }
+                  }
                 }
               }
 
