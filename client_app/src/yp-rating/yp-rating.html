@@ -137,6 +137,8 @@
       isActive: function(index, rate) {
         if (index<=rate) {
           return "active";
+        } else {
+          return "";
         }
       },
 
@@ -162,7 +164,8 @@
             this.async(function () {
               var inverted = (this.rate * -1) + this.numberOf;
               for (var i =  this.numberOf-1; i >= inverted; i--) {
-                var selector =  deep.querySelector('[data-index="'+ i +'"]');
+                var selector =  deep.querySelectorAll('[data-index="'+ i +'"]');
+                selector = selector[0];
                 if (selector) {
                   selector.classList.add("active");
                 } else {
@@ -189,9 +192,9 @@
             this._resetRatings();
           }
           if (indexOld < this.numberOf) {
-            deep.querySelector('[data-index="'+ indexOld +'"]').classList.remove("active");
+            deep.querySelectorAll('[data-index="'+ indexOld +'"]')[0].classList.remove("active");
           }
-          deep.querySelector('[data-index="'+ index +'"]').classList.add("active");
+          deep.querySelectorAll('[data-index="'+ index +'"]')[0].classList.add("active");
         }
       }
     });
