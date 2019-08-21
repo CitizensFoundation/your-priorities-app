@@ -10,6 +10,7 @@
 * Effective debating system that is highly resistant to trolling and personal arguments
 * Users can submit ideas and debate points as text, audio or video
 * Users can prioritize ideas and debate points by voting them up or down
+* Custom emoji ratings where admins can configure groups to allow up to 4 different custom emoji ratings per group instead of the voting up and down
 * AI driven recommendation engine that recommends relevant posts to users
 * Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3)
 * Automatic Speech to Text conversion in over 20 languages (using Google's TextToSpeech API)
