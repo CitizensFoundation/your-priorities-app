@@ -16,6 +16,14 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
             (!req.user.private_profile_data || !req.user.private_profile_data.saml_agency)) {
             isCorrectLoginProviderAndAgency = false;
           }
+
+          if (group.configuration.forceSecureSamlEmployeeLogin && group.data && group.data.allowedEmployeeSsnList) {
+            if (group.data.allowedEmployeeSsnList.indexOf(req.user.ssn)>-1) {
+              isCorrectLoginProviderAndAgency = true;
+            } else {
+              isCorrectLoginProviderAndAgency = false;
+            }
+          }
         }
         done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
       });
