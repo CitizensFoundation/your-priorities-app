@@ -17,6 +17,7 @@ var sanitizeFilename = require("sanitize-filename");
 var queue = require('../active-citizen/workers/queue');
 const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByGroup;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
+const request = require('request');
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -1488,6 +1489,39 @@ router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res)
     } else {
       res.send({count: items ? items.length : 0});
     }
+  });
+});
+
+router.post('/:id/triggerTrackingGoal', auth.can('view group'), (req, res) => {
+  models.Group.find({
+    where: {
+      id: req.params.id
+    },
+    attributes: ['id','configuration']
+  }).then(function(group) {
+    if (group && group.configuration && group.configuration.externalGoalTriggerUrl) {
+      log.info('Group triggerTrackingGoal starting', { context: 'triggerTrackingGoal', params: req.body, group: group});
+      const options = {
+        url: group.configuration.externalGoalTriggerUrl,
+        qs: req.body
+      };
+      request.get(options, (response, message) => {
+        if ((response && response.errno) || (message && message.statusCode!==200)) {
+          log.info('Group triggerTrackingGoal error', { context: 'triggerTrackingGoal', response: response, message: message, params: req.body, group: group});
+          res.sendStatus(500);
+        } else {
+          log.info('Group triggerTrackingGoal completed', { context: 'triggerTrackingGoal', params: req.body, group: group});
+          res.sendStatus(200);
+        }
+      });
+      //
+    } else {
+      log.error("Error getting group for triggerTrackingGoal");
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error("Error getting group for triggerTrackingGoal", {error});
+    res.sendStatus(404);
   });
 });
 

@@ -670,7 +670,7 @@
 
       _refreshAjax: function () {
         this.async(function () {
-          this.$.ajax.generateRequest();
+          this._getGroup();
           var groupActivities = this.$$("#groupActivities");
           if (groupActivities) {
             this.$$("#groupActivities").loadNewData();
@@ -842,9 +842,9 @@
           }
 
           if (this.group.configuration && this.group.configuration.externalGoalTriggerUrl) {
-            window.appGlobals.externalGoalTriggerUrl = this.group.configuration.externalGoalTriggerUrl;
+            window.appGlobals.externalGoalTriggerGroupId = this.group.id;
           } else {
-            window.appGlobals.externalGoalTriggerUrl = null;
+            window.appGlobals.externalGoalTriggerGroupId = null;
           }
 
           if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.signupTermsPageId &&
