@@ -7,9 +7,8 @@ import { ypCardMouseBehavior } from '../yp-behaviors/yp-card-mouse-behavior.js';
 import './yp-group-card.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment">
+
+class YpGroupGridLit 
 
       .groupCard {
         padding: 0;
@@ -44,7 +43,7 @@ Polymer({
       <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeGroups]]" as="group" scroll-target="document" grid\$="[[wide]]">
         <template>
           <div class="groupCard layout vertical center-center" tabindex\$="[[tabIndex]]" wide-padding\$="[[wide]]">
-            <yp-group-card wide-padding\$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+            <yp-group-card-lit wide-padding\$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-lit>
           </div>
         </template>
       </iron-list>
