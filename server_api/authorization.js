@@ -5,7 +5,7 @@ var toJson = require('./utils/to_json');
 
 var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
   var isCorrectLoginProviderAndAgency = true;
-  if (true || (group.configuration && group.configuration.forceSecureSamlLogin) ||
+  if ((group.configuration && group.configuration.forceSecureSamlLogin) ||
        group.Community && group.Community.configuration && group.Community.configuration.forceSecureSamlLogin) {
     if (req.user) {
       group.hasGroupAdmins(req.user).then(function (result) {
