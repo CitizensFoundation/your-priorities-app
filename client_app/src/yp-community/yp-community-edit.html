@@ -313,10 +313,10 @@
 
       <div class="layout horizontal additionalSettings half" hidden$="[[!ssnLoginListDataId]]">
         <div>
-          [[t('ssnLoginListCount')]] [[ssnLoginListDataCount]]
+          <b>[[t('ssnLoginListCount')]]: [[ssnLoginListDataCount]]</b>
         </div>
         <div>
-          <paper-button on-tap="_deleteSsnLoginList">[[t('deleteSsnLoginList')]]</paper-button>
+          <paper-button style="padding: 8px;" raised on-tap="_deleteSsnLoginList">[[t('deleteSsnLoginList')]]</paper-button>
         </div>
       </div>
       <div class="layout vertical additionalSettings half" hidden$="[[ssnLoginListDataId]]">
@@ -324,7 +324,7 @@
                         accept=".txt"
                         multi="false" target="/api/communities/[[community.id]]/upload_ssn_login_list"
                         method="POST" on-success="_ssnLoginListDataUploaded">
-          <iron-icon class="icon" icon="photo-camera"></iron-icon>
+          <iron-icon class="icon" icon="link"></iron-icon>
           <span>[[t('ssnLoginListDataUpload')]]</span>
         </yp-file-upload>
       </div>
