@@ -13,6 +13,11 @@ const performSingleModerationAction = require('../active-citizen/engine/moderati
 const getLoginsExportDataForCommunity = require('../utils/export_utils').getLoginsExportDataForCommunity;
 var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
+var multer  = require('multer');
+var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
+const fs = require('fs');
+const readline = require('readline');
+const stream = require('stream');
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -595,6 +600,9 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
 
   community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
+
+  community.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
+
 
   if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
     community.google_analytics_code = req.body.google_analytics_code;
@@ -1408,6 +1416,138 @@ router.get('/:communityId/export_logins', auth.can('edit community'), function(r
       });
     }
   });
+});
+
+router.get('/:communityId/:ssnListId/ssn_login_list_count', auth.can('edit community'), function(req, res) {
+  models.GeneralDataStore.findOne({
+    where: {
+      id: req.params.ssnListId
+    }
+  }).then((dataItem)=>{
+    if (dataItem.data.ssns) {
+      res.send({count: dataItem.data.ssns.length });
+    } else {
+      log.error('Could not get ssl login list count', { context: 'ssn_login_list_count', user: toJson(req.user.simple()) });
+      res.sendStatus(404);
+    }
+  }).catch((error)=>{
+    log.error('Could not get ssl login list count', { context: 'ssn_login_list_count', error, user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  })
+});
+
+router.delete('/:communityId/:ssnListId/delete_ssn_login_list', auth.can('edit community'), function(req, res) {
+  models.GeneralDataStore.destroy({
+    where: {
+      id: req.params.ssnListId
+    }
+  }).then(()=>{
+    models.Community.findOne({
+      where: {
+        id: req.params.communityId
+      },
+      attributes: ['id','configuration']
+    }).then((community) => {
+      community.set('configuration.ssnLoginListDataId', null);
+      community.save().then(()=>{
+        res.sendStatus(200);
+      }).catch((error)=>{
+        log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      })
+    }).catch((error)=>{
+      log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    });
+  }).catch((error)=>{
+    log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  })
+});
+
+router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), function(req, res) {
+  let ssnLoginListDataId;
+  let mainDataItem;
+  multerMultipartResolver(req, res, function (error) {
+    if (!error && req.file && req.file.path) {
+      const instream = fs.createReadStream(req.file.path);
+      const outstream = new stream();
+      const rl = readline.createInterface(instream, outstream);
+      const ssns = [];
+      rl.on('line', (line) => {
+        const isnum = /^\d+$/.test(line);
+        if (isnum && line.length==10) {
+          ssns.push(line);
+        } else {
+          log.warn("Malformatted line in upload_ssn_login_list", { line });
+        }
+      });
+      rl.on('close', () => {
+        models.GeneralDataStore.create({ data: { ssns: ssns }}).then((dataItem)=>{
+          mainDataItem = dataItem;
+          let community;
+          async.series([
+            (seriesCallback) => {
+              models.Community.find({
+                where: {
+                  id: req.params.communityId
+                },
+                attributes: ['id','configuration']
+              }).then((communityIn)=>{
+                community = communityIn;
+                seriesCallback();
+              }).catch((error)=>{
+                seriesCallback(error);
+              });
+            },
+
+            (seriesCallback) => {
+              if (community && community.configuration && community.configuration.ssnLoginListDataId) {
+                models.GeneralDataStore.destroy({
+                  where: {
+                    id: community.configuration.ssnLoginListDataId
+                  }
+                }).then(()=>{
+                  seriesCallback();
+                }).catch((error)=>{
+                  seriesCallback(error);
+                })
+              } else {
+                seriesCallback();
+              }
+            },
+
+            (seriesCallback) => {
+              community.set('configuration.ssnLoginListDataId', dataItem.id);
+              ssnLoginListDataId = dataItem.id;
+              community.save().then(()=>{
+                seriesCallback();
+              }).catch((error)=>{
+                seriesCallback(error);
+              })
+            }
+          ], (error) => {
+            if (error) {
+              log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+              res.sendStatus(500);
+            } else {
+              res.send({ ssnLoginListDataId, numberOfSsns: mainDataItem.data.ssns.length });
+            }
+          });
+        }).catch((error)=>{
+          log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+          res.sendStatus(500);
+        })
+      });
+      rl.on('error', (error) => {
+        log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      });
+      } else {
+        log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+    }
+  })
 });
 
 module.exports = router;

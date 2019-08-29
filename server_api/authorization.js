@@ -5,7 +5,8 @@ var toJson = require('./utils/to_json');
 
 var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
   var isCorrectLoginProviderAndAgency = true;
-  if (group.configuration && group.configuration.forceSecureSamlLogin) {
+  if ((group.configuration && group.configuration.forceSecureSamlLogin) ||
+       group.Community && group.Community.configuration && group.Community.configuration.forceSecureSamlLogin) {
     if (req.user) {
       group.hasGroupAdmins(req.user).then(function (result) {
         if (!result) {
@@ -16,8 +17,43 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
             (!req.user.private_profile_data || !req.user.private_profile_data.saml_agency)) {
             isCorrectLoginProviderAndAgency = false;
           }
+
+          /*
+              where: {
+                id: group.configuration.ssnLoginListDataId,
+                data: [{
+                  ssn: req.user.ssn
+                }]
+              }
+
+           */
+
+          if (group.Community.configuration.ssnLoginListDataId) {
+            models.GeneralDataStore.findOne({
+              where: {
+                id: group.Community.configuration.ssnLoginListDataId,
+                'data.ssns::jsonb': {
+                  $contains: '["'+req.user.ssn+'"]'
+                }
+              },
+              attributes: ['id']
+            }).then((item)=> {
+              if (item) {
+                isCorrectLoginProviderAndAgency = true;
+              } else {
+                isCorrectLoginProviderAndAgency = false;
+              }
+              done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+            }).catch((error)=>{
+              log.error("Error in isAuthenticatedAndCorrectLoginProvider", { error });
+              done(group && auth.isAuthenticated(req, group) && false);
+            });
+          } else {
+            done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+          }
+        } else {
+          done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
         }
-        done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
       });
     } else {
       isCorrectLoginProviderAndAgency = false;
@@ -72,7 +108,7 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -122,7 +158,7 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -569,7 +605,7 @@ auth.role('group.viewUser', function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -597,7 +633,7 @@ auth.role('group.addTo', function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -717,7 +753,7 @@ auth.role('post.viewUser', function (post, req, done) {
           {
             model: models.Community,
             required: true,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }
@@ -754,7 +790,7 @@ auth.role('post.vote', function (post, req, done) {
           {
             model: models.Community,
             required: true,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }
@@ -880,7 +916,7 @@ auth.role('point.viewUser', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -895,7 +931,7 @@ auth.role('point.viewUser', function (point, req, done) {
           {
             model: models.Community,
             required: false,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }
@@ -945,7 +981,7 @@ auth.role('point.addTo', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -1010,7 +1046,7 @@ auth.role('image.viewUser', function (image, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -1057,7 +1093,7 @@ auth.role('point.vote', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -1171,7 +1207,7 @@ auth.role('category.viewUser', function (category, req, done) {
           {
             model: models.Community,
             required: false,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }

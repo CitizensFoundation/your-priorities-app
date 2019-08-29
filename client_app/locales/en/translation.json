@@ -1,4 +1,7 @@
 {
+  "ssnLoginListCount": "Ssn login list count",
+  "deleteSsnLoginList": "Delete ssn login list",
+  "ssnLoginListDataUpload": "Upload ssn login list",
   "evaluatePost": "Evaluate idea",
   "evaluate": "Evaluate",
   "customRatings": "Custom ratings",

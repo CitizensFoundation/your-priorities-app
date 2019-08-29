@@ -1,4 +1,7 @@
 {
+  "ssnLoginListCount": "Fjöldi kennitalna",
+  "deleteSsnLoginList": "Eyða kennitölu lista",
+  "ssnLoginListDataUpload": "Hlaða inn innskráningar kennitölu lista",
   "evaluatePost": "Gefa hugmynd einkunn",
   "evaluate": "Einkunn",
   "customRatings": "Sértækar einkunnir",

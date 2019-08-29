@@ -186,6 +186,7 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
+      <input type="hidden" name="ssnLoginListDataId" value="[[ssnLoginListDataId]]">
       <input type="hidden" name="is_community_folder" value="[[community.is_community_folder]]">
 
       <div class="layout horizontal config">
@@ -305,8 +306,33 @@
           <span>[[t('appHomeScreenIconImageUpload')]] (512x512)</span>
         </yp-file-upload>
       </div>
+
+      <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+                      checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
+      </paper-checkbox>
+
+      <div class="layout horizontal additionalSettings half" hidden$="[[!ssnLoginListDataId]]">
+        <div>
+          <b>[[t('ssnLoginListCount')]]: [[ssnLoginListDataCount]]</b>
+        </div>
+        <div>
+          <paper-button style="padding: 8px;" raised on-tap="_deleteSsnLoginList">[[t('deleteSsnLoginList')]]</paper-button>
+        </div>
+      </div>
+      <div class="layout vertical additionalSettings half" hidden$="[[ssnLoginListDataId]]">
+        <yp-file-upload id="ssnLoginListDataUpload" raised="true" disabled$="[[!hasSamlLoginProvider]]"
+                        accept=".txt"
+                        multi="false" target="/api/communities/[[community.id]]/upload_ssn_login_list"
+                        method="POST" on-success="_ssnLoginListDataUploaded">
+          <iron-icon class="icon" icon="link"></iron-icon>
+          <span>[[t('ssnLoginListDataUpload')]]</span>
+        </yp-file-upload>
+      </div>
+
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
       <yp-ajax id="communityFoldersAjax" on-response="_communityFoldersResponse"></yp-ajax>
+      <yp-ajax id="ssnLoginListCount" on-response="_ssnLoginListCount"></yp-ajax>
+      <yp-ajax id="ssnLoginListDelete" method="DELETE"></yp-ajax>
 
     </yp-edit-dialog>
   </template>
@@ -316,7 +342,6 @@
 <script>
 
   Polymer({
-
     is: 'yp-community-edit',
 
     behaviors: [
@@ -388,6 +413,13 @@
 
       appHomeScreenIconImageId: String,
 
+      ssnLoginListDataId: {
+        type: String,
+        value: null
+      },
+
+      ssnLoginListDataCount: String,
+
       hasVideoUpload: {
         type: Boolean,
         value: false
@@ -396,6 +428,11 @@
       uploadedVideoId: {
         type: Number,
         value: null
+      },
+
+      hasSamlLoginProvider: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -436,6 +473,28 @@
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
       this.set('appHomeScreenIconImageId', image.id);
+    },
+
+    _deleteSsnLoginList: function () {
+      this.$.ssnLoginListDelete.url="/api/communities/"+this.community.id+"/"+this.ssnLoginListDataId+"/delete_ssn_login_list";
+      this.$.ssnLoginListDelete.body = {};
+      this.$.ssnLoginListDelete.generateRequest();
+      this.set('ssnLoginListDataId', null);
+      this.set('ssnLoginListDataCount', null);
+    },
+
+    _ssnLoginListDataUploaded: function (event, detail) {
+      this.set('ssnLoginListDataId', JSON.parse(detail.xhr.response).ssnLoginListDataId);
+      this._getSsnListCount();
+    },
+
+    _getSsnListCount: function () {
+      this.$.ssnLoginListCount.url="/api/communities/"+this.community.id+"/"+this.ssnLoginListDataId+"/ssn_login_list_count";
+      this.$.ssnLoginListCount.generateRequest();
+    },
+
+    _ssnLoginListCount: function (event, detail) {
+      this.set('ssnLoginListDataCount', detail.response.count);
     },
 
     _updateEmojiBindings: function () {
@@ -522,6 +581,17 @@
       } else {
         this.set('hasVideoUpload', false);
       }
+
+      if (window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided) {
+        this.set('hasSamlLoginProvider', true);
+      } else {
+        this.set('hasSamlLoginProvider', false);
+      }
+
+      if (this.community.configuration && this.community.configuration.ssnLoginListDataId) {
+        this.set('ssnLoginListDataId', this.community.configuration.ssnLoginListDataId)
+        this._getSsnListCount();
+      }
     },
 
     _clear: function () {
@@ -529,6 +599,9 @@
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
       this.set('appHomeScreenIconImageId', null);
+      this.set('ssnLoginListDataId', null);
+      this.set('ssnLoginListDataCount', null);
+
       this.set('communityFolderId', null);
       this.set('availableCommunityFolders', null);
       this.$.headerImageUpload.clear();
