@@ -390,7 +390,7 @@
   "update": "Breyta",
   "errorCantConnect": "Get ekki tengst vefþjóni. Þessi villa gæti verið vegna mikils álags eða uppfærslu á hugbúnaði. Við höfum verið látin vita.",
   "errorNotFound": "Efni sem reynt var að sækja fannst ekki...",
-  "errorNotAuthorized": "Efni finnst ekki eða að þú hefur ekki aðgang að því!",
+  "errorNotAuthorized": "Þú hefur ekki aðgang!",
   "generalError": "Óvænt villa hefur komið upp. Við höfum verið látin vita.",
   "stats": {
     "posts": "Fjöldi hugmynda",
