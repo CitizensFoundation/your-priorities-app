@@ -390,7 +390,7 @@
   "update": "Update",
   "errorCantConnect": "Can't connect to the server. Please try again a bit later. This might be due to high traffic or a software upgrade.",
   "errorNotFound": "Not found...",
-  "errorNotAuthorized": "Content not found or you do not have access!",
+  "errorNotAuthorized": "You do not have access!",
   "generalError": "There has been an unexpected error. We have been notified.",
   "stats": {
     "posts": "Number of ideas",
