@@ -35,7 +35,8 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
                 'data.ssns::jsonb': {
                   $contains: '["'+req.user.ssn+'"]'
                 }
-              }
+              },
+              attributes: ['id']
             }).then((item)=> {
               if (item) {
                 isCorrectLoginProviderAndAgency = true;
@@ -107,7 +108,7 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -157,7 +158,7 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -604,7 +605,7 @@ auth.role('group.viewUser', function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -632,7 +633,7 @@ auth.role('group.addTo', function (group, req, done) {
       {
         model: models.Community,
         required: true,
-        attributes: ['id','access','user_id']
+        attributes: ['id','access','user_id','configuration']
       }
     ]
   }).then(function (group) {
@@ -752,7 +753,7 @@ auth.role('post.viewUser', function (post, req, done) {
           {
             model: models.Community,
             required: true,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }
@@ -789,7 +790,7 @@ auth.role('post.vote', function (post, req, done) {
           {
             model: models.Community,
             required: true,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }
@@ -915,7 +916,7 @@ auth.role('point.viewUser', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -930,7 +931,7 @@ auth.role('point.viewUser', function (point, req, done) {
           {
             model: models.Community,
             required: false,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }
@@ -980,7 +981,7 @@ auth.role('point.addTo', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -1045,7 +1046,7 @@ auth.role('image.viewUser', function (image, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -1092,7 +1093,7 @@ auth.role('point.vote', function (point, req, done) {
               {
                 model: models.Community,
                 required: false,
-                attributes: ['id','access','user_id']
+                attributes: ['id','access','user_id','configuration']
               }
             ]
           }
@@ -1206,7 +1207,7 @@ auth.role('category.viewUser', function (category, req, done) {
           {
             model: models.Community,
             required: false,
-            attributes: ['id','access','user_id']
+            attributes: ['id','access','user_id','configuration']
           }
         ]
       }
