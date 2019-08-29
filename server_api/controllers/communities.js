@@ -1417,9 +1417,53 @@ router.get('/:communityId/export_logins', auth.can('edit community'), function(r
     }
   });
 });
-router.get('/:communityId/:ssnListId/ssn_login_list_count', auth.can('edit community'), function(req, res) {
 
-}
+router.get('/:communityId/:ssnListId/ssn_login_list_count', auth.can('edit community'), function(req, res) {
+  models.GeneralDataStore.findOne({
+    where: {
+      id: req.params.ssnListId
+    }
+  }).then((dataItem)=>{
+    if (dataItem.data.ssns) {
+      res.send({count: dataItem.data.ssns.length });
+    } else {
+      log.error('Could not get ssl login list count', { context: 'ssn_login_list_count', user: toJson(req.user.simple()) });
+      res.sendStatus(404);
+    }
+  }).catch((error)=>{
+    log.error('Could not get ssl login list count', { context: 'ssn_login_list_count', error, user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  })
+});
+
+router.delete('/:communityId/:ssnListId/delete_ssn_login_list', auth.can('edit community'), function(req, res) {
+  models.GeneralDataStore.destroy({
+    where: {
+      id: req.params.ssnListId
+    }
+  }).then(()=>{
+    models.Community.findOne({
+      where: {
+        id: req.params.communityId
+      },
+      attributes: ['id','configuration']
+    }).then((community) => {
+      community.set('configuration.ssnLoginListDataId', null);
+      community.save().then(()=>{
+        res.sendStatus(200);
+      }).catch((error)=>{
+        log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      })
+    }).catch((error)=>{
+      log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    });
+  }).catch((error)=>{
+    log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  })
+});
 
 router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), function(req, res) {
   let ssnLoginListDataId;
