@@ -5,7 +5,8 @@ var toJson = require('./utils/to_json');
 
 var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
   var isCorrectLoginProviderAndAgency = true;
-  if (group.configuration && group.configuration.forceSecureSamlLogin) {
+  if (true || (group.configuration && group.configuration.forceSecureSamlLogin) ||
+       group.Community && group.Community.configuration && group.Community.configuration.forceSecureSamlLogin) {
     if (req.user) {
       group.hasGroupAdmins(req.user).then(function (result) {
         if (!result) {
@@ -17,15 +18,41 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
             isCorrectLoginProviderAndAgency = false;
           }
 
-          if (group.configuration.forceSecureSamlEmployeeLogin && group.data && group.data.allowedEmployeeSsnList) {
-            if (group.data.allowedEmployeeSsnList.indexOf(req.user.ssn)>-1) {
-              isCorrectLoginProviderAndAgency = true;
-            } else {
-              isCorrectLoginProviderAndAgency = false;
-            }
+          /*
+              where: {
+                id: group.configuration.ssnLoginListDataId,
+                data: [{
+                  ssn: req.user.ssn
+                }]
+              }
+
+           */
+
+          if (group.Community.configuration.ssnLoginListDataId) {
+            models.GeneralDataStore.findOne({
+              where: {
+                id: group.Community.configuration.ssnLoginListDataId,
+                'data.ssns::jsonb': {
+                  $contains: '["'+req.user.ssn+'"]'
+                }
+              }
+            }).then((item)=> {
+              if (item) {
+                isCorrectLoginProviderAndAgency = true;
+              } else {
+                isCorrectLoginProviderAndAgency = false;
+              }
+              done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+            }).catch((error)=>{
+              log.error("Error in isAuthenticatedAndCorrectLoginProvider", { error });
+              done(group && auth.isAuthenticated(req, group) && false);
+            });
+          } else {
+            done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
           }
+        } else {
+          done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
         }
-        done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
       });
     } else {
       isCorrectLoginProviderAndAgency = false;

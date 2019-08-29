@@ -186,6 +186,7 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
+      <input type="hidden" name="ssnLoginListDataId" value="[[ssnLoginListDataId]]">
       <input type="hidden" name="is_community_folder" value="[[community.is_community_folder]]">
 
       <div class="layout horizontal config">
@@ -305,6 +306,21 @@
           <span>[[t('appHomeScreenIconImageUpload')]] (512x512)</span>
         </yp-file-upload>
       </div>
+
+      <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+                      checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
+      </paper-checkbox>
+
+      <div class="layout vertical additionalSettings half">
+        <yp-file-upload id="ssnLoginListDataUpload" raised="true" disabled$="[[!hasSamlLoginProvider]]"
+                        accept=".txt"
+                        multi="false" target="/api/communities/[[community.id]]/upload_ssn_login_list"
+                        method="POST" on-success="_ssnLoginListDataUploaded">
+          <iron-icon class="icon" icon="photo-camera"></iron-icon>
+          <span>[[t('ssnLoginListDataUpload')]]</span>
+        </yp-file-upload>
+      </div>
+
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
       <yp-ajax id="communityFoldersAjax" on-response="_communityFoldersResponse"></yp-ajax>
 
@@ -388,6 +404,8 @@
 
       appHomeScreenIconImageId: String,
 
+      ssnLoginListDataId: String,
+
       hasVideoUpload: {
         type: Boolean,
         value: false
@@ -396,6 +414,11 @@
       uploadedVideoId: {
         type: Number,
         value: null
+      },
+
+      hasSamlLoginProvider: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -436,6 +459,10 @@
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
       this.set('appHomeScreenIconImageId', image.id);
+    },
+
+    _ssnLoginListDataUploaded: function (event, detail) {
+      this.set('ssnLoginListDataId', detail.xhr.response);
     },
 
     _updateEmojiBindings: function () {
@@ -522,6 +549,12 @@
       } else {
         this.set('hasVideoUpload', false);
       }
+
+      if (window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided) {
+        this.set('hasSamlLoginProvider', true);
+      } else {
+        this.set('hasSamlLoginProvider', false);
+      }
     },
 
     _clear: function () {
@@ -529,6 +562,8 @@
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
       this.set('appHomeScreenIconImageId', null);
+      this.set('ssnLoginListDataId', null);
+
       this.set('communityFolderId', null);
       this.set('availableCommunityFolders', null);
       this.$.headerImageUpload.clear();
