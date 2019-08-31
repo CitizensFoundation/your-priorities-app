@@ -556,6 +556,8 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
                   async.eachSeries(oldGroup.GroupAdmins, function (admin, adminCallback) {
                     newGroup.addGroupAdmin(admin).then(function () {
                       adminCallback();
+                    }).catch((error)=>{
+                      adminCallback(error);
                     });
                   }, function (error) {
                     groupSeriesCallback(error);
@@ -569,6 +571,8 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
                   async.eachSeries(oldGroup.GroupUsers, function (user, userCallback) {
                     newGroup.addGroupUser(user).then(function () {
                       userCallback();
+                    }).catch((error)=>{
+                      userCallback(error);
                     });
                   }, function (error) {
                     groupSeriesCallback(error);
@@ -750,6 +754,8 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
                   async.eachSeries(oldCommunity.CommunityAdmins, function (admin, adminCallback) {
                     newCommunity.addCommunityAdmin(admin).then(function () {
                       adminCallback();
+                    }).catch((error)=>{
+                      adminCallback(error);
                     });
                   }, function (error) {
                     communitySeriesCallback(error);
@@ -763,6 +769,8 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
                   async.eachSeries(oldCommunity.CommunityUsers, function (user, userCallback) {
                     newCommunity.addCommunityUser(user).then(function () {
                       userCallback();
+                    }).catch((error)=>{
+                      userCallback(error);
                     });
                   }, function (error) {
                     communitySeriesCallback(error);
