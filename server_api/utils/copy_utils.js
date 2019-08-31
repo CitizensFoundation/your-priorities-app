@@ -304,7 +304,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       newPointQuality.set('point_id', newPoint.id);
                       newPointQuality.save().then(function () {
                         models.AcActivity.createActivity({
-                          type: newPointQuality.value > 0 ? 'activity.point.helpful.new' :  'activity.point.unhelpful.new',
+                          type: newPointQuality.value > 0 ? 'activity.point.helpful.copied' :  'activity.point.unhelpful.copied',
                           userId: newPointQuality.user_id,
                           domainId: toDomain.id,
                           groupId: newPost.group_id,
@@ -473,6 +473,12 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
             required: false
           },
           {
+            model: models.User,
+            attributes: ['id'],
+            as: 'GroupUsers',
+            required: false
+          },
+          {
             model: models.Image,
             as: 'GroupLogoImages',
             attributes:  models.Image.defaultAttributesPublic,
@@ -550,6 +556,19 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
                   async.eachSeries(oldGroup.GroupAdmins, function (admin, adminCallback) {
                     newGroup.addGroupAdmin(admin).then(function () {
                       adminCallback();
+                    });
+                  }, function (error) {
+                    groupSeriesCallback(error);
+                  });
+                } else {
+                  groupSeriesCallback();
+                }
+              },
+              (groupSeriesCallback) => {
+                if (oldGroup.GroupUsers && oldGroup.GroupUsers.length>0) {
+                  async.eachSeries(oldGroup.GroupUsers, function (user, userCallback) {
+                    newGroup.addGroupUser(user).then(function () {
+                      userCallback();
                     });
                   }, function (error) {
                     groupSeriesCallback(error);
@@ -648,6 +667,12 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
             required: false
           },
           {
+            model: models.User,
+            attributes: ['id'],
+            as: 'CommunityUsers',
+            required: false
+          },
+          {
             model: models.Image,
             as: 'CommunityLogoImages',
             attributes:  models.Image.defaultAttributesPublic,
@@ -734,6 +759,19 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
                 }
               },
               (communitySeriesCallback) => {
+                if (oldCommunity.CommunityUsers && oldCommunity.CommunityUsers.length>0) {
+                  async.eachSeries(oldCommunity.CommunityUsers, function (user, userCallback) {
+                    newCommunity.addCommunityUser(user).then(function () {
+                      userCallback();
+                    });
+                  }, function (error) {
+                    communitySeriesCallback(error);
+                  });
+                } else {
+                  communitySeriesCallback();
+                }
+              },
+              (communitySeriesCallback) => {
                 if (options && options.copyGroups===true) {
                   models.Group.findAll({
                     where: {
@@ -791,13 +829,9 @@ const copyCommunityWithEverything = (communityId, toDomainId, done) => {
   })
 };
 
-copyCommunityWithEverything(1064,1, () => {
-  process.exit();
-});
-
-/*module.exports = {
+module.exports = {
   copyCommunityWithEverything,
   copyCommunity,
   copyGroup,
   copyPost
-};*/
+};
