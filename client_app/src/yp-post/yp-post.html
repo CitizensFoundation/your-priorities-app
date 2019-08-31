@@ -754,6 +754,7 @@
               (this.post.Group.Community && this.post.Group.Community.configuration && this.post.Group.Community.configuration.forceSecureSamlLogin)) {
               window.appGlobals.currentGroupForceSaml = true;
             } else {
+              window.appGlobals.currentCommunityForceSaml = false;
               window.appGlobals.currentGroupForceSaml = false;
             }
           }

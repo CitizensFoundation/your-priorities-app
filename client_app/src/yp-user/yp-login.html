@@ -783,7 +783,7 @@
           this.signupTermsId = null;
         }
 
-        if (window.appGlobals.currentGroupForceSaml) {
+        if (window.appGlobals.currentGroupForceSaml || window.appGlobals.currentCommunityForceSaml) {
           this.set('forceSecureSamlLogin', true);
           this.set('registerMode',1);
         } else {

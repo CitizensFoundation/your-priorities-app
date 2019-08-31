@@ -456,6 +456,12 @@
           window.appGlobals.currentGroupForceSaml = false;
           window.appGlobals.currentGroup = null;
 
+          if (this.community.configuration && this.community.configuration.forceSecureSamlLogin) {
+            window.appGlobals.currentCommunityForceSaml = true;
+          } else {
+            window.appGlobals.currentCommunityForceSaml = false;
+          }
+
           if (this.community.configuration && this.community.configuration.signupTermsPageId &&
               this.community.configuration.signupTermsPageId!=-1) {
             window.appGlobals.signupTermsPageId = this.community.configuration.signupTermsPageId;
