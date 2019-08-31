@@ -856,7 +856,8 @@
 
           window.appGlobals.currentGroup = this.group;
 
-          if (this.group.configuration && this.group.configuration.forceSecureSamlLogin) {
+          if ((this.group.configuration && this.group.configuration.forceSecureSamlLogin) ||
+             (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.forceSecureSamlLogin)) {
             window.appGlobals.currentGroupForceSaml = true;
           } else {
             window.appGlobals.currentGroupForceSaml = false;

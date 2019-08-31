@@ -750,7 +750,8 @@
 
             window.appGlobals.currentGroup = this.post.Group;
 
-            if (this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) {
+            if ((this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) ||
+              (this.post.Group.Community && this.post.Group.Community.configuration && this.post.Group.Community.configuration.forceSecureSamlLogin)) {
               window.appGlobals.currentGroupForceSaml = true;
             } else {
               window.appGlobals.currentGroupForceSaml = false;
