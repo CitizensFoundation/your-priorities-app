@@ -701,6 +701,9 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
         delete communityJson['id'];
         newCommunity = models.Community.build(communityJson);
         newCommunity.set('domain_id', toDomain.id);
+        if (newCommunity.hostname) {
+          newCommunity.set('hostname', newCommunity.hostname+"-copy");
+        }
         newCommunity.save().then(function () {
           async.series(
             [
