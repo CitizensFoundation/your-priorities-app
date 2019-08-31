@@ -377,7 +377,7 @@
             </div>
           </div>
 
-          <div class="point">
+          <div class="point" hidden$="[[post.Group.configuration.hidePointAgainst]]">
             <template is="dom-if" if="[[!post.Group.configuration.alternativePointAgainstHeader]]">
               <div class="pointMainHeader layout horizontal center-center">
                 [[t('pointsAgainst')]]
@@ -486,7 +486,7 @@
                           max-rows="3" maxlength="500"></paper-textarea>
           <div class="layout vertical end-justified">
             <div class="layout horizontal center-center pointButtons">
-              <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
+              <paper-radio-group hidden$="[[post.Group.configuration.hidePointAgainst]]" id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
                 <paper-radio-button name="pointFor">[[t('pointForShort')]]</paper-radio-button>
                 <paper-radio-button name="pointAgainst">[[t('pointAgainstShort')]]</paper-radio-button>
               </paper-radio-group>
