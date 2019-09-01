@@ -1,4 +1,6 @@
 {
+  "customSamlLoginMessage": "Sértækt SAML innskráningar skilaboð",
+  "customSamlDeniedMessage": "Sértæk SAML aðgangs villuboð",
   "hidePointAgainst": "Fela rök á móti",
   "ssnLoginListCount": "Fjöldi kennitalna",
   "deleteSsnLoginList": "Eyða kennitölu lista",
