@@ -307,7 +307,7 @@
         </yp-file-upload>
       </div>
 
-      <paper-checkbox name="forceSecureSamlLogin" disassbled$="[[!hasSamlLoginProvider]]"
+      <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
                       checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
       </paper-checkbox>
 
