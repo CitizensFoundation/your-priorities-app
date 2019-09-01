@@ -307,9 +307,35 @@
         </yp-file-upload>
       </div>
 
-      <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+      <paper-checkbox name="forceSecureSamlLogin" disassbled$="[[!hasSamlLoginProvider]]"
                       checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
       </paper-checkbox>
+
+      <paper-textarea id="customSamlLoginMessage"
+                      name="customSamlLoginMessage"
+                      value="{{community.configuration.customSamlLoginMessage}}"
+                      always-float-label="[[community.configuration.customSamlLoginMessage]]"
+                      label="[[t('customSamlLoginMessage')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      minlength="1"
+                      required
+                      maxlength="175" class="mainInput">
+      </paper-textarea>
+
+      <paper-textarea id="customSamlDeniedMessage"
+                      name="customSamlDeniedMessage"
+                      value="{{community.configuration.customSamlDeniedMessage}}"
+                      always-float-label="[[community.configuration.customSamlDeniedMessage]]"
+                      label="[[t('customSamlDeniedMessage')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      minlength="1"
+                      required
+                      maxlength="150" class="mainInput">
+      </paper-textarea>
 
       <div class="layout horizontal additionalSettings half" hidden$="[[!ssnLoginListDataId]]">
         <div>

@@ -1,4 +1,6 @@
 {
+  "customSamlLoginMessage": "Custom SAML login message",
+  "customSamlDeniedMessage": "Custom SAML denied message",
   "hidePointAgainst": "Hide point against box",
   "ssnLoginListCount": "Ssn login list count",
   "deleteSsnLoginList": "Delete ssn login list",

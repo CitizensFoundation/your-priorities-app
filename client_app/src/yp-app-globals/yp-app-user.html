@@ -356,7 +356,7 @@
 
         loggedIn: function () {
           var isCorrectLoginProviderAndAgency = true;
-          if (window.appGlobals.currentGroupForceSaml) {
+          if (window.appGlobals.currentForceSaml) {
             if (!this.checkGroupAccess(window.appGlobals.currentGroup)) {
               if (this.user) {
                 if (this.user.loginProvider !== "saml")

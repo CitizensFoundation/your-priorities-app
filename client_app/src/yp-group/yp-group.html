@@ -854,15 +854,28 @@
             window.appGlobals.signupTermsPageId = null;
           }
 
+          if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.customSamlDeniedMessage) {
+            window.appGlobals.currentSamlDeniedMessage = this.group.Community.configuration.customSamlDeniedMessage;
+          } else {
+            window.appGlobals.currentSamlDeniedMessage = null;
+          }
+
+          if (this.group.Community.configuration && this.group.Community.configuration.customSamlLoginMessage) {
+            window.appGlobals.currentSamlLoginMessage = this.group.Community.configuration.customSamlLoginMessage;
+          } else {
+            window.appGlobals.currentSamlLoginMessage = null;
+          }
+
           window.appGlobals.currentGroup = this.group;
 
           if ((this.group.configuration && this.group.configuration.forceSecureSamlLogin) ||
              (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.forceSecureSamlLogin)) {
-            window.appGlobals.currentGroupForceSaml = true;
+            window.appGlobals.currentForceSaml = true;
           } else {
-            window.appGlobals.currentGroupForceSaml = false;
-            window.appGlobals.currentCommunityForceSaml = false;
+            window.appGlobals.currentForceSaml = false;
           }
+
+
         }
       },
 

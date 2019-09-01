@@ -752,10 +752,21 @@
 
             if ((this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) ||
               (this.post.Group.Community && this.post.Group.Community.configuration && this.post.Group.Community.configuration.forceSecureSamlLogin)) {
-              window.appGlobals.currentGroupForceSaml = true;
+              window.appGlobals.currentForceSaml = true;
             } else {
-              window.appGlobals.currentCommunityForceSaml = false;
-              window.appGlobals.currentGroupForceSaml = false;
+              window.appGlobals.currentForceSaml = false;
+            }
+
+            if (this.post.Group.Community && this.post.Group.Community.configuration && this.post.Group.Community.configuration.customSamlDeniedMessage) {
+              window.appGlobals.currentSamlDeniedMessage = this.post.Group.Community.configuration.customSamlDeniedMessage;
+            } else {
+              window.appGlobals.currentSamlDeniedMessage = null;
+            }
+
+            if (this.post.Group.Community.configuration && this.post.Group.Community.configuration.customSamlLoginMessage) {
+              window.appGlobals.currentSamlLoginMessage = this.post.Group.Community.configuration.customSamlLoginMessage;
+            } else {
+              window.appGlobals.currentSamlLoginMessage = null;
             }
           }
         },

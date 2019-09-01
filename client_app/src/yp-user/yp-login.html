@@ -768,6 +768,8 @@
           window.appGlobals.domain.configuration &&
           window.appGlobals.domain.configuration.customSamlLoginText) {
           this.set('customSamlLoginText', window.appGlobals.domain.configuration.customSamlLoginText);
+        } else if (window.appGlobals.currentSamlLoginMessage) {
+          this.set('customSamlLoginText', window.appGlobals.currentSamlLoginMessage);
         } else {
           this.set('customSamlLoginText', null);
         }
@@ -783,7 +785,7 @@
           this.signupTermsId = null;
         }
 
-        if (window.appGlobals.currentGroupForceSaml || window.appGlobals.currentCommunityForceSaml) {
+        if (window.appGlobals.currentForceSaml) {
           this.set('forceSecureSamlLogin', true);
           this.set('registerMode',1);
         } else {
