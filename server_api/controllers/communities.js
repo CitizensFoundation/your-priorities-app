@@ -605,6 +605,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.customSamlLoginMessage', (req.body.customSamlLoginMessage && req.body.customSamlLoginMessage!="") ? req.body.customSamlLoginMessage : null);
 
   community.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
+  community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
 
   if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
     community.google_analytics_code = req.body.google_analytics_code;

@@ -556,7 +556,20 @@
       },
 
       _recommendedPostsResponse: function (event, detail) {
-        if (detail.response && detail.response.length>0) {
+        var allowRecommendations = true;
+        if (this.activities && this.activities.length>0) {
+          if( this.activities[0].Group &&
+            this.activities[0].Group.configuration &&
+            this.activities[0].Group.configuration.hideRecommendationOnNewsFeed) {
+            allowRecommendations = false;
+          }
+          if( this.activities[0].Community &&
+            this.activities[0].Community.configuration &&
+            this.activities[0].Community.configuration.hideRecommendationOnNewsFeed) {
+            allowRecommendations = false;
+          }
+        }
+        if (allowRecommendations && detail.response && detail.response.length>0) {
           this.set('recommendedPosts', detail.response);
           this.set('noRecommendedPosts', false);
         } else {

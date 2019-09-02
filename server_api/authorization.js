@@ -18,17 +18,7 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
             isCorrectLoginProviderAndAgency = false;
           }
 
-          /*
-              where: {
-                id: group.configuration.ssnLoginListDataId,
-                data: [{
-                  ssn: req.user.ssn
-                }]
-              }
-
-           */
-
-          if (group.Community.configuration.ssnLoginListDataId) {
+          if (group.Community.configuration && group.Community.configuration.ssnLoginListDataId && req.user.ssn) {
             models.GeneralDataStore.findOne({
               where: {
                 id: group.Community.configuration.ssnLoginListDataId,
@@ -131,6 +121,30 @@ auth.authNeedsGroupForCreate = function (group, req, done) {
   });
 };
 
+auth.hasCommunitySsnLoginListAccess = function (community, req, done) {
+  if (community.configuration && community.configuration.ssnLoginListDataId && req.user.ssn) {
+    models.GeneralDataStore.findOne({
+      where: {
+        id: community.configuration.ssnLoginListDataId,
+        'data.ssns::jsonb': {
+          $contains: '["'+req.user.ssn+'"]'
+        }
+      },
+      attributes: ['id']
+    }).then((item)=> {
+      if (item) {
+        done(null, true);
+      } else {
+        done(null, false);
+      }
+    }).catch((error)=>{
+      done(error, false);
+    });
+  } else {
+    done(null, false);
+  }
+};
+
 auth.hasCommunityAccess = function (community, req, done) {
   community.hasCommunityUsers(req.user).then(function (result) {
     if (result) {
@@ -140,7 +154,7 @@ auth.hasCommunityAccess = function (community, req, done) {
         if (result) {
           done(null, true);
         } else {
-          done(null, false);
+          auth.hasCommunitySsnLoginListAccess(community, req, done);
         }
       });
     }
@@ -262,7 +276,7 @@ auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
                   if (result) {
                     done(null, true);
                   } else {
-                    done(null, false);
+                    auth.hasCommunitySsnLoginListAccess(group.Community, req, done);
                   }
                 });
               }
