@@ -324,6 +324,7 @@
       behaviors: [
         Polymer.ypLanguageBehavior,
         Polymer.ypThemeBehavior,
+        Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
         Polymer.ypDetectOldiOs,
         Polymer.ypGotoBehavior,
@@ -868,14 +869,17 @@
 
           window.appGlobals.currentGroup = this.group;
 
-          if ((this.group.configuration && this.group.configuration.forceSecureSamlLogin) ||
-             (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.forceSecureSamlLogin)) {
+          if ((this.group.configuration &&
+               this.group.configuration.forceSecureSamlLogin &&
+               !this.checkGroupAccess(this.group)) ||
+             (this.group.Community &&
+              this.group.Community.configuration &&
+              this.group.Community.configuration.forceSecureSamlLogin &&
+              !this.checkCommunityAccess(this.group.Community))) {
             window.appGlobals.currentForceSaml = true;
           } else {
             window.appGlobals.currentForceSaml = false;
           }
-
-
         }
       },
 

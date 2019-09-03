@@ -455,7 +455,9 @@
           window.appGlobals.externalGoalTriggerGroupId = null;
           window.appGlobals.currentGroup = null;
 
-          if (this.community.configuration && this.community.configuration.forceSecureSamlLogin) {
+          if (this.community.configuration &&
+              this.community.configuration.forceSecureSamlLogin &&
+              !this.checkCommunityAccess(this.community)) {
             window.appGlobals.currentForceSaml = true;
           } else {
             window.appGlobals.currentForceSaml = false;

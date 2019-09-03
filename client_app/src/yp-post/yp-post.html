@@ -402,6 +402,7 @@
           Polymer.ypLanguageBehavior,
           Polymer.ypThemeBehavior,
           Polymer.YpNewsTabSelected,
+          Polymer.AccessHelpers,
           Polymer.ypGotoBehavior,
           Polymer.ypMediaFormatsBehavior,
           Polymer.ypNumberFormatBehavior,
@@ -749,6 +750,18 @@
             }
 
             window.appGlobals.currentGroup = this.post.Group;
+
+            if ((this.post.Group.configuration &&
+              this.post.Group.configuration.forceSecureSamlLogin &&
+              !this.checkGroupAccess(this.post.Group)) ||
+              (this.post.Group.Community &&
+                this.post.Group.Community.configuration &&
+                this.post.Group.Community.configuration.forceSecureSamlLogin &&
+                !this.checkCommunityAccess(this.post.Group.Community))) {
+              window.appGlobals.currentForceSaml = true;
+            } else {
+              window.appGlobals.currentForceSaml = false;
+            }
 
             if ((this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) ||
               (this.post.Group.Community && this.post.Group.Community.configuration && this.post.Group.Community.configuration.forceSecureSamlLogin)) {
