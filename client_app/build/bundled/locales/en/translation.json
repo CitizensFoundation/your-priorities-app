@@ -1,4 +1,5 @@
 {
+  "ssn": "Social security number",
   "hideRecommendationOnNewsFeed": "Hide recommendations on news feed",
   "customSamlLoginMessage": "Custom SAML login message",
   "customSamlDeniedMessage": "Custom SAML denied message",
