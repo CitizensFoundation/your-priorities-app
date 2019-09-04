@@ -59,6 +59,12 @@
       paper-button {
         text-align: center;
       }
+
+      .ssn {
+        margin-top: 0;
+        margin-bottom: 4px;
+        font-weight: 400;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -75,6 +81,8 @@
                        maxlength="50"
                        char-counter>
           </paper-input>
+
+          <div class="ssn" hidden$="[[!user.ssn]]">[[t('ssn')]]: [[user.ssn]]</div>
 
           <paper-input id="email"
                        name="email"
