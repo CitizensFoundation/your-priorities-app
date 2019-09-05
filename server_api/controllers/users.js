@@ -9,6 +9,8 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
+const url = require('url');
+
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
@@ -619,6 +621,152 @@ router.put('/loggedInUser/setLocale', auth.isLoggedIn, function (req, res) {
   }
 });
 
+const setSAMLSettingsOnUser = (req, user, done) => {
+  let forceSecureSamlLogin = null;
+  let customSamlLoginMessage = null;
+  let customSamlDeniedMessage = null;
+  const referrer = req.get('Referrer');
+  const urlComponents = url.parse(referrer);
+  let id=null;
+  if (urlComponents && urlComponents.pathname && urlComponents.pathname.split("/").length>1) {
+    id = urlComponents.pathname.split("/")[2];
+  }
+  let community, group, isGroupAdmin, isCommunityAdmin;
+
+  async.parallel([
+    (parallelCallback) => {
+      if (id && referrer.indexOf("/community/")>-1) {
+        models.Community.find({
+          where: {
+            id: id
+          },
+          attributes: ['id','configuration']
+        }).then((communityIn) => {
+          community = communityIn;
+          parallelCallback();
+        }).catch((error)=> {
+          parallelCallback(error);
+        });
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (id && referrer.indexOf("/group/")>-1) {
+        models.Group.find({
+          where: {
+            id: id
+          },
+          attributes: ['id','configuration'],
+          include: [
+            {
+              model: models.Community,
+              attributes: ['id','configuration'],
+            }
+          ]
+        }).then((groupIn) => {
+          group = groupIn;
+          community = groupIn.Community;
+          parallelCallback();
+        }).catch((error)=> {
+          parallelCallback(error);
+        });
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (id && referrer.indexOf("/post/")>-1) {
+        models.Post.find({
+          where: {
+            id: id
+          },
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              attributes: ['id','configuration'],
+              include: [
+                {
+                  model: models.Community,
+                  attributes: ['id','configuration'],
+                }
+              ]
+            }
+          ]
+        }).then((postIn) => {
+          group = postIn.Group;
+          community = postIn.Group.Community;
+          parallelCallback();
+        }).catch((error)=> {
+          parallelCallback(error);
+        });
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (group && req.user) {
+        group.hasGroupAdmins(req.user).then((results) => {
+          isGroupAdmin = results;
+          parallelCallback();
+        }).catch((error)=>{
+          parallelCallback(error);
+        })
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (community && req.user) {
+        community.hasCommunityAdmins(req.user).then((results) => {
+          isCommunityAdmin = results;
+          parallelCallback();
+        }).catch((error)=>{
+          parallelCallback(error);
+        })
+      } else {
+        parallelCallback();
+      }
+    }
+  ], (error) => {
+    if (error) {
+      done(error);
+    } else {
+      if (group && group.configuration && !isGroupAdmin) {
+        if (group.configuration.forceSecureSamlLogin) {
+          forceSecureSamlLogin = true;
+        }
+      }
+
+      if (community && community.configuration && !isCommunityAdmin) {
+        if (community.configuration.forceSecureSamlLogin) {
+          forceSecureSamlLogin = true;
+        }
+
+        if (community.configuration.customSamlDeniedMessage) {
+          customSamlDeniedMessage = community.configuration.customSamlDeniedMessage;
+        }
+
+        if (community.configuration.customSamlLoginMessage) {
+          customSamlLoginMessage = community.configuration.customSamlLoginMessage;
+        }
+      }
+
+      if (user.dataValues) {
+        user.dataValues.forceSecureSamlLogin = forceSecureSamlLogin;
+        user.dataValues.customSamlDeniedMessage = customSamlDeniedMessage;
+        user.dataValues.customSamlLoginMessage = customSamlLoginMessage;
+      } else {
+        user.forceSecureSamlLogin = forceSecureSamlLogin;
+        user.customSamlDeniedMessage = customSamlDeniedMessage;
+        user.customSamlLoginMessage = customSamlLoginMessage;
+      }
+      done();
+    }
+  });
+};
+
 router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('User Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
@@ -643,11 +791,26 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
         if (req.user.isSamlEmployee)
           user.dataValues.isSamlEmployee = req.user.isSamlEmployee;
 
-        res.send(user);
+        setSAMLSettingsOnUser(req, user, (error) => {
+          if (error) {
+            log.error("User IsLoggedIn Error", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
+            res.sendStatus(500);
+          } else {
+            res.send(user);
+          }
+        });
       }
     })
   } else {
-    res.send('0');
+    const user = { notLoggedIn: true };
+    setSAMLSettingsOnUser(req, user, (error) => {
+      if (error) {
+        log.error("User IsLoggedIn Error", {context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500});
+        res.sendStatus(500);
+      } else {
+        res.send(user);
+      }
+    })
   }
 });
 

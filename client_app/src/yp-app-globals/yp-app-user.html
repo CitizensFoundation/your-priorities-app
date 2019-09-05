@@ -472,7 +472,6 @@
         },
 
         checkLogin: function () {
-          debugger;
           this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
           this.$.isLoggedInAjax.generateRequest();
           this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
@@ -609,10 +608,10 @@
         _isLoggedInResponse: function(event, detail) {
           var user = detail.response;
 
-          if (user===0) {
+          if (user && user.notLoggedIn===true) {
             console.info("Remove user session");
             this.removeUserSession();
-          } else if (user.name && user.profile_data && user.profile_data.isAnonymousUser) {
+          } else if (user && user.name && user.profile_data && user.profile_data.isAnonymousUser) {
             console.info("Logging in anon user");
             this.async(function () {
               console.info("Logging in anon user 2");
@@ -622,19 +621,39 @@
                 window.appGlobals.setAnonymousUser(user);
               }
             }, 500);
-          } else if (user.name) {
+          } else if (user && user.name) {
             this.setLoggedInUser(user);
           }
 
-          if (user.missingEmail) {
+          if (user && user.missingEmail) {
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
               dialog.open(user.loginProvider);
             }.bind(this));
-          } else if (user.profile_data &&
+          } else if (user && user.profile_data &&
                      user.profile_data.saml_show_confirm_email_completed===false) {
             Polymer.dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
               dialog.open(user.loginProvider, true, user.email);
             }.bind(this));
+          }
+
+          if (user) {
+            if (user.customSamlDeniedMessage) {
+              window.appGlobals.currentSamlDeniedMessage = user.customSamlDeniedMessage;
+            } else {
+              window.appGlobals.currentSamlDeniedMessage = null;
+            }
+
+            if (user.customSamlLoginMessage) {
+              window.appGlobals.currentSamlLoginMessage = user.customSamlLoginMessage;
+            } else {
+              window.appGlobals.currentSamlLoginMessage = null;
+            }
+
+            if (user.forceSecureSamlLogin) {
+              window.appGlobals.currentForceSaml = true;
+            } else {
+              window.appGlobals.currentForceSaml = false;
+            }
           }
 
           if (this.completeExternalLoginText) {
