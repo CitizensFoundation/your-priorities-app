@@ -20,7 +20,7 @@ class YpPointCommentEditLit extends YpBaseElement {
             type: Object,
             notify: true
         },
-        
+          
         point: {
           type: Object,
           notify: true

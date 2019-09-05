@@ -35,7 +35,7 @@ class YpGroupGridLit extends YpBaseElement {
   static get styles() {
       return [
         css`    
-  }
+        
         .groupCard {
         padding: 0;
         padding-top: 16px;

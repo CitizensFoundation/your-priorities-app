@@ -10,8 +10,15 @@ import '../yp-user/yp-user-image.js';
 import '../yp-ajax/yp-ajax.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-
-class YpPointCommentEdit
+Polymer({
+  _template: html`
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        width: 100%;
+        margin-top: 6px;
+        margin-bottom: 64px;
+      }
 
       paper-textarea {
         width: 370px;

@@ -19,6 +19,13 @@ import './yp-domain-stats-lit.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { YpBaseElement } from '../yp-base-element.js';
+
+class YpDomainLargeCardLit extends YpBaseElement {
+  static get properties() {
+    return {
+      
+    }
 
 
       :host {

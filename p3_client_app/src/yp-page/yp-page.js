@@ -5,29 +5,16 @@ import '@polymer/paper-fab/paper-fab.js';
 import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js' ;
-import { YpBaseElement } from '../yp-base-element.js';
-import { styles } from 'chalk';
-import { YpFlexLayout } from '../yp-flex-layout.js';
-
-class YpPage extends YpBaseElement {
-  static get properties() {
-    return {
-      page: {
-        type: Object
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+Polymer({
+  _template: html`
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        @apply --layout-vertical;
+        height: 100%;
+        width: 100%;
       }
-    }
-  }
 
-  static get styles() {
- return [
-  css`     
-  :host {
-    @apply --layout-vertical;
-    height: 100%;
-    width: 100%;
-  }
-     
       .mainArea {
         background-color: var(--primary-background-color);
         height: 100%;
@@ -159,40 +146,32 @@ class YpPage extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
+    </style>
 
-      `, YpFlexLayout]
-  }
-
-
-
-  render() {
-    return html`
-      <div class="layout vertical mainArea">
-        <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
-          <slot name="largeCard"></slot>
-        </div>
-        <template is="dom-if" if="${this.hasLargeButton}">
-          <div class="largeButtonWrapper layout horizontal center-center" hidden="${!this.wideWidth}">
-            <slot name="largeAddButton"></slot>
-          </div>
-        </template>
-        <div class="tab-wrapper layout horizontal center-center" hidden="${this.hideAllTabs}">
-          <slot name="tabs"></slot>
-        </div>
-        <div class="tab-pages-wrapper layout vertical">
-          <slot name="tabPages"></slot>
-        </div>
+    <div class="layout vertical mainArea">
+      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post\$="[[isPost]]">
+        <slot name="largeCard"></slot>
       </div>
-      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
-        <template is="dom-if" if="${this.createFabIcon}">
-          <paper-fab class="createFab" icon="${this.createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_createTap"></paper-fab>
-        </template>
+      <template is="dom-if" if="[[hasLargeButton]]">
+        <div class="largeButtonWrapper layout horizontal center-center" hidden\$="[[!wideWidth]]">
+          <slot name="largeAddButton"></slot>
+        </div>
+      </template>
+      <div class="tab-wrapper layout horizontal center-center" hidden\$="[[hideAllTabs]]">
+        <slot name="tabs"></slot>
       </div>
-      <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
+      <div class="tab-pages-wrapper layout vertical">
+        <slot name="tabPages"></slot>
+      </div>
+    </div>
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
+      <template is="dom-if" if="[[createFabIcon]]">
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout\$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+      </template>
+    </div>
+    <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
+`,
 
-     `,
-  }
-}
   is: 'yp-page',
 
   properties: {
@@ -231,15 +210,15 @@ class YpPage extends YpBaseElement {
     ypMediaFormatsBehavior
   ],
 
-  ready() {
-    this.addEventListener("yp-setup-header-image", this._setupTopHeaderImageEvent);
+  listeners: {
+    'yp-setup-header-image': '_setupTopHeaderImageEvent'
   },
 
-  this._setupTopHeaderImageEvent:  ( _event, image) {
+  _setupTopHeaderImageEvent: function (event, image) {
     this.setupTopHeaderImage(image);
   },
 
-  this.setupTopHeaderImage: (image) {
+  setupTopHeaderImage: function (image) {
     if (this.wideWidth) {
       var path;
       if (image) {
@@ -249,12 +228,12 @@ class YpPage extends YpBaseElement {
       }
       this.updateStyles({ '--top-area-background-image': path });
     }
-  }
-
-  this._fabTabChanged (newValue) {
   },
 
-  this_createTap: {
+  _fabTabChanged: function (newValue) {
+  },
+
+  _createTap: function () {
     this.fire('yp-create-fab-tap');
   }
 });

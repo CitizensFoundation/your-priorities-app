@@ -27,8 +27,6 @@ import { YpFlexLayout } from '../yp-flex-layout.js';
         display: block;
       }
 
-  
-
       .stats {
         padding-top: 8px;
         padding-bottom: 8px;
@@ -62,9 +60,9 @@ import { YpFlexLayout } from '../yp-flex-layout.js';
   }
 
 
-    
- render() {
+  render() {
     return html`
+      ${this.group ? html`
       <div class="stats layout horizontal end-justified">
         <div class="layout horizontal wrap">
           <div class="layout horizontal">
@@ -85,9 +83,10 @@ import { YpFlexLayout } from '../yp-flex-layout.js';
             <div title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.group.counter_users)}</div>
           </div>
         </div>  
-      </div>    
+      </div>
+    ` : html``     
+    }
     `
-  }
-} 
-  
-window.customElement.define('yp-group-stats-lit', YpGroupStatsLit);
+  } 
+}  
+window.customElements.define('yp-group-stats-lit', YpGroupStatsLit);
