@@ -472,6 +472,7 @@
         },
 
         checkLogin: function () {
+          debugger;
           this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
           this.$.isLoggedInAjax.generateRequest();
           this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();

@@ -209,7 +209,7 @@ auth.authNeedsGroupAdminForCreate = function (group, req, done) {
 auth.authNeedsCommunnityAdminForCreate = function (community, req, done) {
   models.Community.findOne({
     where: { id: community.id },
-    attributes: ['id','access','user_id']
+    attributes: ['id','access','user_id','configuration']
   }).then(function (community) {
     if (!auth.isAuthenticated(req)) {
       done(null, false);
@@ -496,7 +496,7 @@ auth.role('bulkStatusUpdates.admin', function (community, req, done) {
   } else {
     models.Community.findOne({
       where: { id: community.id },
-      attributes: ['id','access','user_id']
+      attributes: ['id','access','user_id','configuration']
     }).then(function (community) {
       if (community.user_id === req.user.id) {
         done(null, true);
@@ -533,7 +533,7 @@ auth.role('community.admin', function (community, req, done) {
   } else {
     models.Community.findOne({
       where: { id: community.id },
-      attributes: ['id','access','user_id'],
+      attributes: ['id','access','user_id','configuration'],
     }).then(function (community) {
       if (community.user_id === req.user.id) {
         done(null, true);
@@ -556,7 +556,7 @@ auth.role('community.admin', function (community, req, done) {
 auth.role('community.viewUser', function (community, req, done) {
   models.Community.findOne({
     where: { id: community.id },
-    attributes: ['id','access','user_id'],
+    attributes: ['id','access','user_id','configuration'],
   }).then(function (community) {
     if (!community) {
       done(null, false);
