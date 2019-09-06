@@ -626,8 +626,13 @@ const setSAMLSettingsOnUser = (req, user, done) => {
   let customSamlLoginMessage = null;
   let customSamlDeniedMessage = null;
   const referrer = req.get('Referrer');
-  const urlComponents = url.parse(referrer);
   let id=null;
+  let urlComponents;
+  if (referrer) {
+    urlComponents = url.parse(referrer);
+  } else {
+    log.warn("Can't find referrer for URL when setting up SAML");
+  }
   if (urlComponents && urlComponents.pathname && urlComponents.pathname.split("/").length>1) {
     id = urlComponents.pathname.split("/")[2];
   }
