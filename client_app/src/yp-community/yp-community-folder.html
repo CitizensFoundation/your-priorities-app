@@ -310,8 +310,8 @@
           window.appGlobals.externalGoalTriggerGroupId = null;
           window.appGlobals.currentGroup = null;
 
-          if (this.community.configuration &&
-            this.community.configuration.forceSecureSamlLogin &&
+          if (this.communityFolder.configuration &&
+            this.communityFolder.configuration.forceSecureSamlLogin &&
             !this.checkCommunityAccess(this.community)) {
             window.appGlobals.currentForceSaml = true;
           } else {
