@@ -322,7 +322,7 @@ var getExportFileDataForGroup = function(group, hostName, callback) {
 };
 
 const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
-  let outFileContent = "Date, User id, Email, Method, Department\n";
+  let outFileContent = "Date, User id, Name, Email, Method, Department\n";
 
   models.AcActivity.findAll({
     where: {
@@ -334,13 +334,45 @@ const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
     include: [
       {
         model: models.User,
-        attributes: ['id','email']
+        attributes: ['id','email','name']
       }
     ]
   }).then( (activities) => {
     async.eachSeries(activities, (activity, seriesCallback) => {
       const date = moment(activity.created_at).format("DD/MM/YY HH:mm");
-      outFileContent += date+","+activity.User.id+","+activity.User.email+","+activity.object.loginType+","+activity.object.userDepartment+"\n";
+      outFileContent += date+","+activity.User.id+',"'+activity.User.name+'",'+activity.User.email+","+activity.object.loginType+","+activity.object.userDepartment+"\n";
+      seriesCallback();
+    }, (error) => {
+      callback(error, outFileContent);
+    })
+  }).catch( (error) => {
+    callback(error);
+  })
+};
+
+const getUsersForCommunity = (communityId, callback) => {
+  let outFileContent = "User id, Name, Email, Ssn\n";
+
+  models.Community.find({
+    where: {
+      id: communityId
+    },
+    attributes: ['id'],
+    include: [
+      {
+        model: models.User,
+        attributes: ['id','email','name','ssn'],
+        as: "CommunityUsers"
+      }
+    ]
+  }).then( (community) => {
+    async.eachSeries(community.CommunityUsers, (user, seriesCallback) => {
+      if (!user.ssn)
+        user.ssn = "";
+
+      if (!user.email)
+        user.email = "";
+      outFileContent += user.id+',"'+user.name+'",'+user.email+","+user.ssn+"\n";
       seriesCallback();
     }, (error) => {
       callback(error, outFileContent);
@@ -351,7 +383,7 @@ const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
 };
 
 const getLoginsExportDataForDomain = (domainId, hostName, callback) => {
-  let outFileContent = "Date, User id, Email, Method, Department\n";
+  let outFileContent = "Date, User id, Name, Email, Method, Department\n";
 
   models.AcActivity.findAll({
     where: {
@@ -363,13 +395,13 @@ const getLoginsExportDataForDomain = (domainId, hostName, callback) => {
     include: [
       {
         model: models.User,
-        attributes: ['id','email']
+        attributes: ['id','email','name']
       }
     ]
   }).then( (activities) => {
     async.eachSeries(activities, (activity, seriesCallback) => {
       const date = moment(activity.created_at).format("DD/MM/YY HH:mm");
-      outFileContent += date+","+activity.User.id+","+activity.User.email+","+activity.object.loginType+","+activity.object.userDepartment+"\n";
+      outFileContent += date+","+activity.User.id+',"'+activity.User.name+'",'+activity.User.email+","+activity.object.loginType+","+activity.object.userDepartment+"\n";
       seriesCallback();
     }, (error) => {
       callback(error, outFileContent);
@@ -382,5 +414,6 @@ const getLoginsExportDataForDomain = (domainId, hostName, callback) => {
 module.exports = {
   getExportFileDataForGroup: getExportFileDataForGroup,
   getLoginsExportDataForCommunity: getLoginsExportDataForCommunity,
-  getLoginsExportDataForDomain: getLoginsExportDataForDomain
+  getLoginsExportDataForDomain: getLoginsExportDataForDomain,
+  getUsersForCommunity
 };

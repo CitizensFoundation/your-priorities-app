@@ -1,4 +1,5 @@
 {
+  "exportUsers": "Export users",
   "ssn": "Social security number",
   "hideRecommendationOnNewsFeed": "Hide recommendations on news feed",
   "customSamlLoginMessage": "Custom SAML login message",

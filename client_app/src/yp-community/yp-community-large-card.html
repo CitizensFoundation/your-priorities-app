@@ -346,6 +346,7 @@
                 [[t('manageAllContent')]]
               </paper-item>
               <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportLoginsUrl]]"><paper-item id="exportLogins">[[t('exportLogins')]]</paper-item></a>
+              <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportUsersUrl]]"><paper-item id="exportUsers">[[t('exportUsers')]]</paper-item></a>
 
               <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
@@ -430,11 +431,24 @@
           type: String,
           computed: '_exportLoginsUrl(hasCommunityAccess, community)'
         },
+
+        exportUsersUrl: {
+          type: String,
+          computed: '_exportUsersUrl(hasCommunityAccess, community)'
+        },
       },
 
       _exportLoginsUrl: function (access, community) {
         if (access && community) {
           return '/api/communities/'+community.id+'/export_logins';
+        } else {
+          return null;
+        }
+      },
+
+      _exportUsersUrl: function (access, community) {
+        if (access && community) {
+          return '/api/communities/'+community.id+'/export_users';
         } else {
           return null;
         }
