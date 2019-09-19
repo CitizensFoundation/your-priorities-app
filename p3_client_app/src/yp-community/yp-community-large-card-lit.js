@@ -338,7 +338,7 @@ static get styles() {
       a {
         text-decoration: none;
         color: inherit;
-      }
+        }
     `, YpFlexLayout]
   }
 
@@ -643,4 +643,4 @@ static get styles() {
   }
 }
 
-window.customElements.define('yp-community-large-card-lit',YpCommunityLargeCardLit)
+window.customElements.define('yp-community-large-card-lit', YpCommunityLargeCardLit)
