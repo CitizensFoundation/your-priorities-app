@@ -49,7 +49,7 @@ class YpPointNewsStoryLit extends YpBaseElement {
   static get styles() {
     return [
       css`   
-  }  
+    
       :host {
         width: 100%;
         margin-top: 8px;

@@ -14,11 +14,9 @@ import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 class YpPointCommentEditLit extends YpBaseElement {
   static get properties() {
     return {
-      properties: {
-        
         comment: {
-            type: Object,
-            notify: true
+          type: Object,
+          notify: true
         },
           
         point: {
@@ -30,15 +28,12 @@ class YpPointCommentEditLit extends YpBaseElement {
           type: Object,
           notify: true
         }
-        
       }
     }
-  }
 
   static get styles() {
     return [
       css`
-  }
 
       paper-textarea {
         width: 370px;
@@ -79,10 +74,9 @@ class YpPointCommentEditLit extends YpBaseElement {
     `, YpFlexLayout]  
   } 
 
-  render() {
-    return html`
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-
+render() {
+  return html`
+    ${this.point ? html`
     <div class="layout vertical center-center" hidden="${!this.loggedInUser}">
       <div class="layout horizontal">
         <yp-user-image class="userImage" user="${this.loggedInUser}"></yp-user-image>
@@ -101,8 +95,9 @@ class YpPointCommentEditLit extends YpBaseElement {
 
     </div>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+` : html``}
 `  
-  }
+}  
   
   updated(changedProps) {
     if (changedProps.has('comment')) {
