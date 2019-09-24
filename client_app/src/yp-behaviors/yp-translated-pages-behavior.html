@@ -36,8 +36,22 @@
         this._openPage(this.pages[pageId]);
       } else {
         this.async(function () {
-          this._openPage(this.pages[pageId]);
-        }, 1000);
+          if (this.pages && this.pages.length>0) {
+            this._openPage(this.pages[pageId]);
+          } else {
+            this.async(function () {
+              if (this.pages && this.pages.length>0) {
+                this._openPage(this.pages[pageId]);
+              } else {
+                this.async(function () {
+                  if (this.pages && this.pages.length>0) {
+                    this._openPage(this.pages[pageId]);
+                  }
+                }, 1500);
+              }
+            }, 1000);
+          }
+        }, 1500);
       }
     },
 
