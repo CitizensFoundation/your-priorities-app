@@ -420,7 +420,8 @@
         _pollForLoginResponse: function (event, detail) {
           console.log("Got polling for login response");
           if (this.pollingStartedAt) {
-            if (detail.response===0 && this.pollingStartedAt) {
+            var user = detail.response;
+            if (user && user.notLoggedIn===true && this.pollingStartedAt) {
               var timeSpent = (new Date() - this.pollingStartedAt);
               if (timeSpent<5*60*1000) {
                 this.async(function () {
@@ -430,7 +431,7 @@
                 this.pollingStartedAt = null;
                 console.error("Timeout in login polling");
               }
-            } else if (detail.response.name) {
+            } else if (user.name) {
               this.cancelLoginPolling();
               if (this.facebookPopupWindow) {
                 this.loginFromFacebook();
