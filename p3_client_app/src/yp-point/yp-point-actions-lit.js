@@ -98,7 +98,7 @@ class YpPointActionsLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-  `, YpFlexLayout]
+  `, YpFlexLayout0]
 }
 
 render() {
