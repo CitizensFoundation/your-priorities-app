@@ -98,11 +98,11 @@ render() {
       <div class="layout vertical">
         <div class="comment">
           ${this.point.content}
-          <div class="layout horizontal" hidden="${!this.point}">
+          <div class="layout horizontal" ?hidden="${!this.point}">
             <yp-point-actions point="${this.point}" hide-sharing=""></yp-point-actions>
-            <paper-icon-button hidden="" hidden="${!this.loggedInUser}" title="${this.t('point.report')}" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
+            <paper-icon-button ?hidden="" ?hidden="${!this.loggedInUser}" title="${this.t('point.report')}" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
             <template is="dom-if" if="${this.hasPointAccess}">
-              <div class="layout horizontal self-end" hidden="">
+              <div class="layout horizontal self-end" ?hidden="">
                 <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
                 <paper-icon-button id="deleteButton" title="${this.t('delete')}" icon="clear" on-tap="_deletePoint"></paper-icon-button>
               </div>

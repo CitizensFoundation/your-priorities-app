@@ -292,36 +292,36 @@ static get styles() {
     return html`
       ${this.post ? html`
     
-    <iron-media-query query="(min-width: 1024px)" query-matches="{{wide}}"></iron-media-query>
+    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
 
-    <iron-a11y-keys id="a11y" target="[[searchTarget]]" keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
+    <iron-a11y-keys id="a11y" target="${this.searchTarget}" keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
 
     <div class="layout vertical center-center">
-      <div class="searchContainer layout horizontal center-center wrap" hidden\$="[[group.configuration.hidePostFilterAndSearch]]">
+      <div class="searchContainer layout horizontal center-center wrap" ?hidden="${this.group.configuration.hidePostFilterAndSearch}">
         <div class="layout horizontal center-center">
-          <yp-posts-filter on-tap="_tapOnFilter" sub-title="{{subTitle}}" class="filter" id="postsFilter" tab-name="[[statusFilter]]" on-refresh-group="_refreshGroupFromFilter" group="[[group]]" filter="{{filter}}" searching-for="{{searchingFor}}" category-id="{{categoryId}}" category-name="{{categoryName}}" posts-count="{{postsCount}}">
+          <yp-posts-filter on-tap="_tapOnFilter" sub-title="${this.subTitle}" class="filter" id="postsFilter" tab-name="${this.statusFilter}" on-refresh-group="_refreshGroupFromFilter" group="${this.group}" filter="${this.filter}" searching-for="${this.searchingFor}" category-id="${this.categoryId}" category-name="${this.categoryName}" posts-count="${this.postsCount}">
           </yp-posts-filter>
         </div>
         <div class="layout horizontal center-center">
-          <paper-input id="searchInput" label\$="[[t('searchFor')]]" value="{{searchingFor}}" class="searchBox">
+          <paper-input id="searchInput" label="${this.t('searchFor')}" value="${this.searchingFor}" class="searchBox">
           </paper-input>
-          <paper-icon-button aria-label\$="[[t('startSearch')]]" icon="search" on-tap="_search" hidsden\$="[[!showSearchIcon]]"></paper-icon-button>
+          <paper-icon-button aria-label="${this.t('startSearch')}" icon="search" on-tap="_search" hidsden="${!this.showSearchIcon}"></paper-icon-button>
         </div>
       </div>
 
-      <template is="dom-if" if="[[noPosts]]" restamp="">
+      <template is="dom-if" if="${this.noPosts}" restamp="">
         <div class="layout horiztonal center-center">
           <paper-material class="noIdeas layout horizontal center-center" elevation="2">
-            <div class="noIdeasText">[[t('noIdeasHere')]]</div>
+            <div class="noIdeasText">${this.t('noIdeasHere')}</div>
           </paper-material>
         </div>
       </template>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[posts]]" as="post" scroll-target="document" grid\$="[[wide]]">
+        <iron-list id="ironList" scroll-offset="${this.scrollOffset}" items="${this.posts}" as="post" scroll-target="document" grid="${this.wide}">
           <template>
-            <div tabindex\$="[[tabIndex]]" wide-padding\$="[[wide]]" class="card layout vertical center-center">
-              <yp-post-card class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            <div tabindex="${this.tabIndex}" wide-padding="${this.wide}" class="card layout vertical center-center">
+              <yp-post-card class="card" post="${this.post}" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
             </div>
           </template>
         </iron-list>

@@ -222,7 +222,7 @@ render() {
         <div class="community-name" archived="${this.archived}" featured="${this.featured}" on-tap="_goToCommunity">
           <yp-magic-text text-type="communityName" content-language="${this.community.language}" disable-translation="${this.community.configuration.disableNameAutoTranslation}" text-only="" content="${this.communityName}" content-id="${this.community.id}">
           </yp-magic-text>
-          <span hidden="" old-hidden="${!this.archived}">- ${this.t('archived')}</span>
+          <span ?hidden="" old-hidden="${!this.archived}">- ${this.t('archived')}</span>
         </div>
         <yp-magic-text id="description" class="description layout vertical withPointer" featured="${this.featured}" on-tap="_goToCommunity" text-type="communityContent" content-language="${this.community.language}" text-only="" content="${this.communityDescription}" content-id="${this.community.id}" truncate="130">
         </yp-magic-text>

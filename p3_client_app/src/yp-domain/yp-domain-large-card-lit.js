@@ -24,9 +24,61 @@ import { YpBaseElement } from '../yp-base-element.js';
 class YpDomainLargeCardLit extends YpBaseElement {
   static get properties() {
     return {
-      
+      domain: {
+        type: Object,
+        notify: true,
+        value: null,
+        observer: '_domainChanged'
+      },
+  
+      elevation: {
+        type: Number
+      },
+  
+      hideImage: {
+        type: Boolean,
+        value: false
+      },
+  
+      hasDomainAccess: {
+        type: Boolean,
+        value: false,
+        computed: '_hasDomainAccess(domain, gotAdminRights)'
+      },
+  
+      showMenuItem: {
+        type: Boolean,
+        value: false,
+        computed: '_showMenuItem(hasDomainAccess, domain)'
+      },
+  
+      domainVideoURL: {
+        type: String,
+        computed: '_domainVideoURL(domain)'
+      },
+  
+      domainVideoPosterURL: {
+        type: String,
+        computed: '_domainVideoPosterURL(domain)'
+      },
+  
+      domainVideoId: Number,
+  
+      flaggedContentCount: {
+        type: Number,
+        value: null
+      },
+  
+      exportLoginsUrl: {
+        type: String,
+        computed: '_exportLoginsUrl(hasDomainAccess, domain)'
+      },
     }
+  }
 
+  static get styles() {
+    return [
+      css`  
 
       :host {
       }
@@ -210,16 +262,20 @@ class YpDomainLargeCardLit extends YpBaseElement {
         text-decoration: none;
         color: inherit;
       }
-    </style>
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-
+    
+    `, YpFlexLayout]
+  }
+   
+  render() {
+    return html`
+    ${this.domain ? html`
     <div class="layout horizontal wrap">
-      <paper-material is-video\$="[[domainVideoURL]]" id="cardImage" elevation="3" animated="" class="large-card imageCard top-card">
-        <template is="dom-if" if="[[domainVideoURL]]" restamp="">
-          <video id="videoPlayer" data-id\$="[[domainVideoId]]" controls="" preload="meta" class="image" src="[[domainVideoURL]]" playsinline="" poster="[[domainVideoPosterURL]]"></video>
+      <paper-material is-video="${this.domainVideoURL}" id="cardImage" elevation="3" animated="" class="large-card imageCard top-card">
+        <template is="dom-if" if="${this.domainVideoURL}" restamp="">
+          <video id="videoPlayer" data-id="${this.domainVideoId}" controls="" preload="meta" class="image" src="${this.domainVideoURL}" playsinline="" poster="${this.domainVideoPosterURL}"></video>
         </template>
-        <template is="dom-if" if="[[!domainVideoURL]]">
-          <iron-image class="image" hidden\$="[[hideImage]]" sizing="cover" src\$="[[_domainLogoImagePath(domain)]]"></iron-image>
+        <template is="dom-if" if="${!this.domainVideoURL}">
+          <iron-image class="image" ?hidden="${this.hideImage}" sizing="cover" src="${this._domainLogoImagePath(domain)}"></iron-image>
         </template>
       </paper-material>
       <paper-material id="card" elevation="4" animated="" class="large-card textBox">
@@ -228,55 +284,56 @@ class YpDomainLargeCardLit extends YpBaseElement {
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
                 <div class="domain-name">
-                  <yp-magic-text text-type="domainName" content-language="[[domain.language]]" disable-translation="[[domain.configuration.disableNameAutoTranslation]]" text-only="" content="[[domain.name]]" content-id="[[domain.id]]">
+                  <yp-magic-text text-type="domainName" content-language="${this.domain.language}" disable-translation="${this.domain.configuration.disableNameAutoTranslation}" text-only="" content="${this.domain.name}" content-id="${this.domain.id}">
                   </yp-magic-text>
                 </div>
-                <template is="dom-if" if="[[domain.id]]">
-                  <yp-magic-text id="description" class="description domainDescription" text-type="domainContent" content-language="[[domain.language]]" content="[[domain.description]]" content-id="[[domain.id]]">
+                <template is="dom-if" if="${this.domain.id}">
+                  <yp-magic-text id="description" class="description domainDescription" text-type="domainContent" content-language="${this.domain.language}" content="${this.domain.description}" content-id="${this.domain.id}">
                   </yp-magic-text>
                 </template>
               </div>
             </div>
           </div>
-          <paper-menu-button vertical-align="top" horizontal-align="[[editMenuAlign]]" class="edit" hidden\$="[[!showMenuItem]]">
-            <paper-icon-button aria-label\$="[[t('openDomainMenu')]]" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+          <paper-menu-button vertical-align="top" horizontal-align="${this.editMenuAlign}" class="edit" ?hidden="${!this.showMenuItem}">
+            <paper-icon-button aria-label="${this.t('openDomainMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="editMenuItem">[[t('domain.edit')]]</paper-item>
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="createOrganizationMenuItem">[[t('domain.createOrganization')]]</paper-item>
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="pagesMenuItem">[[t('pages.managePages')]]</paper-item>
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="usersMenuItem">[[t('domainUsers')]]</paper-item>
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="moderationMenuItem">
-                [[t('flaggedContent')]] <span hidden\$="[[!flaggedContentCount]]">&nbsp; ([[flaggedContentCount]])</span>
+              <paper-item ?hidden="${!this.hasDomainAccess}" id="editMenuItem">${this.t('domain.edit')}</paper-item>
+              <paper-item ?hidden="${!this.hasDomainAccess}" id="createOrganizationMenuItem">${this.t('domain.createOrganization')}</paper-item>
+              <paper-item ?hidden="${!this.hasDomainAccess}" id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>
+              <paper-item ?hidden="${!this.hasDomainAccess}" id="usersMenuItem">${this.t('domainUsers')}</paper-item>
+              <paper-item ?hidden="${!this.hasDomainAccess}" id="moderationMenuItem">
+                ${this.t('flaggedContent')} <span ?hidden="${!this.flaggedContentCount}">&nbsp; (${this.flaggedContentCount})</span>
               </paper-item>
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="moderationAllMenuItem">
-                [[t('manageAllContent')]]
+              <paper-item ?hidden="${!this.hasDomainAccess}" id="moderationAllMenuItem">
+                ${this.t('manageAllContent')}
               </paper-item>
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="adminsMenuItem">[[t('domainAdmins')]]</paper-item>
-              <paper-item hidden\$="[[!hasDomainAccess]]" id="organizationsGridMenuItem">[[t('organizationsAdmin')]]</paper-item>
-              <a hidden\$="[[!hasDomainAccess]]" target="_blank" href\$="[[exportLoginsUrl]]"><paper-item id="exportLogins">[[t('exportLogins')]]</paper-item></a>
+              <paper-item ?hidden="${!this.hasDomainAccess}" id="adminsMenuItem">${this.t('domainAdmins')}</paper-item>
+              <paper-item ?hidden="${!this.thishasDomainAccess}" id="organizationsGridMenuItem">${this.t('organizationsAdmin')}</paper-item>
+              <a ?hidden="${!this.hasDomainAccess}" target="_blank" href="${this.exportLoginsUrl}"><paper-item id="exportLogins">${this.t('exportLogins')}</paper-item></a>
 
-              <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
-              <paper-item id="addCommunityFolderMenuItem" hidden\$="[[!hasDomainAccess]]">[[t('newCommunityFolder')]]</paper-item>
+              <paper-item id="addCommunityMenuItem">${this.t('community.add')}</paper-item>
+              <paper-item id="addCommunityFolderMenuItem" ?hidden="[[!hasDomainAccess]]">${this.t('newCommunityFolder')}</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-domain-stats-lit class="stats" domain="[[domain]]"></yp-domain-stats-lit>
+        <yp-domain-stats-lit class="stats" domain="${this.domain}"></yp-domain-stats-lit>
       </paper-material>
     </div>
 
-    <template is="dom-if" if="[[domain]]" restamp="">
-      <template is="dom-if" if="[[hasDomainAccess]]" restamp="">
-        <yp-ajax method="GET" disable-user-error="" hidden="" url="/api/domains/[[domain.id]]/flagged_content_count" auto="" on-response="_setFlaggedContentCount"></yp-ajax>
+    <template is="dom-if" if="${this.domain}" restamp="">
+      <template is="dom-if" if="${this.hasDomainAccess}" restamp="">
+        <yp-ajax method="GET" disable-user-error="" ?hidden="" url="/api/domains/${this.domain.id}/flagged_content_count" auto="" on-response="_setFlaggedContentCount"></yp-ajax>
       </template>
     </template>
 
-    <iron-media-query query="(max-width: 945px)" query-matches="{{narrowScreen}}"></iron-media-query>
+    <iron-media-query query="(max-width: 945px)" query-matches="${this.narrowScreen}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
-`,
+` : html``}
+`
+  }
 
-  is: 'yp-domain-large-card',
-
+/*
   behaviors: [
     ypLanguageBehavior,
     LargeCardBehaviors,
@@ -285,73 +342,21 @@ class YpDomainLargeCardLit extends YpBaseElement {
     ypMediaFormatsBehavior,
     ypTruncateBehavior
   ],
+*/
 
-  properties: {
-
-    domain: {
-      type: Object,
-      notify: true,
-      value: null,
-      observer: '_domainChanged'
-    },
-
-    elevation: {
-      type: Number
-    },
-
-    hideImage: {
-      type: Boolean,
-      value: false
-    },
-
-    hasDomainAccess: {
-      type: Boolean,
-      value: false,
-      computed: '_hasDomainAccess(domain, gotAdminRights)'
-    },
-
-    showMenuItem: {
-      type: Boolean,
-      value: false,
-      computed: '_showMenuItem(hasDomainAccess, domain)'
-    },
-
-    domainVideoURL: {
-      type: String,
-      computed: '_domainVideoURL(domain)'
-    },
-
-    domainVideoPosterURL: {
-      type: String,
-      computed: '_domainVideoPosterURL(domain)'
-    },
-
-    domainVideoId: Number,
-
-    flaggedContentCount: {
-      type: Number,
-      value: null
-    },
-
-    exportLoginsUrl: {
-      type: String,
-      computed: '_exportLoginsUrl(hasDomainAccess, domain)'
-    },
-  },
-
-  _exportLoginsUrl: function (access, domain) {
+  _exportLoginsUrl(access, domain) {
     if (access && domain) {
       return '/api/domains/'+domain.id+'/export_logins';
     } else {
       return null;
     }
-  },
+  }
 
-  _domainChanged: function (domain, previousDomain) {
+  _domainChanged(domain, previousDomain) {
     this.setupMediaEventListeners(domain, previousDomain);
-  },
+  }
 
-  _domainVideoURL: function (domain) {
+  _domainVideoURL(domain) {
     if (domain && domain.configuration &&
       domain.configuration.useVideoCover &&
       domain.DomainLogoVideos) {
@@ -365,9 +370,9 @@ class YpDomainLargeCardLit extends YpBaseElement {
     } else {
       return null;
     }
-  },
+  }
 
-  _domainVideoPosterURL: function (domain) {
+  _domainVideoPosterURL(domain) {
     if (domain && domain.configuration &&
       domain.configuration.useVideoCover &&
       domain.DomainLogoVideos) {
@@ -380,13 +385,13 @@ class YpDomainLargeCardLit extends YpBaseElement {
     } else {
       return null;
     }
-  },
+  }
 
-  _showMenuItem: function (hasDomainAccess, domain) {
+  _showMenuItem(hasDomainAccess, domain) {
     return hasDomainAccess || (domain && !domain.only_admins_can_create_communities)
-  },
+  }
 
-  _hasDomainAccess: function(domain, gotAdminRights) {
+  _hasDomainAccess(domain, gotAdminRights) {
     if (domain && gotAdminRights) {
       if (this.checkDomainAccess(domain)!=null) {
         return true
@@ -396,9 +401,9 @@ class YpDomainLargeCardLit extends YpBaseElement {
     } else {
       return false;
     }
-  },
+  }
 
-  _menuSelection: function (event, detail) {
+  _menuSelection(event, detail) {
     if (detail.item.id==="editMenuItem")
       this._openEdit();
     else if (detail.item.id==="createOrganizationMenuItem")
@@ -420,95 +425,97 @@ class YpDomainLargeCardLit extends YpBaseElement {
     else if (detail.item.id==="addCommunityFolderMenuItem")
       this.fire('yp-new-community-folder');
     this.$$("paper-listbox").select(null);
-  },
+  }
 
-  _openUsersDialog: function () {
+  _openUsersDialog() {
     window.appGlobals.activity('open', 'domainUsers');
     dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
       dialog.setup(null, null, this.domain.id, false);
       dialog.open(this.domain.name);
     }.bind(this));
-  },
+  }
 
-  _openAdminsDialog: function () {
+  _openAdminsDialog() {
     window.appGlobals.activity('open', 'domainAdmins');
     dom(document).querySelector('yp-app').getUsersGridAsync(function (dialog) {
       dialog.setup(null, null, this.domain.id, true);
       dialog.open(this.domain.name);
     }.bind(this));
-  },
+  }
 
-  _openOrganizationsGrid: function () {
+  _openOrganizationsGrid() {
     window.appGlobals.activity('open', 'domain.organizationsGrid');
     dom(document).querySelector('yp-app').getDialogAsync("organizationsGrid", function (dialog) {
       dialog.open();
     }.bind(this));
-  },
+  }
 
-  _openPagesDialog: function () {
+  _openPagesDialog() {
     window.appGlobals.activity('open', 'domain.pagesAdmin');
     dom(document).querySelector('yp-app').getDialogAsync("pagesGrid", function (dialog) {
       dialog.setup(null, null, this.domain.id, false);
       dialog.open();
     }.bind(this));
-  },
+  }
 
-  _openEdit: function () {
+  _openEdit() {
     window.appGlobals.activity('open', 'domainEdit');
     dom(document).querySelector('yp-app').getDialogAsync("domainEdit", function (dialog) {
       dialog.setup(this.domain, false, this._refresh.bind(this));
       dialog.open('edit', {domainId: this.domain.id});
     }.bind(this));
-  },
+  }
 
-  _openContentModeration: function () {
+  _openContentModeration() {
     window.appGlobals.activity('open', 'domainContentModeration');
     dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
       dialog.setup(null, null, this.domain.id, false);
       dialog.open(this.domain.name);
     }.bind(this));
-  },
+  }
 
-  _openAllContentModeration: function () {
+  _openAllContentModeration() {
     window.appGlobals.activity('open', 'domainAllContentModeration');
     dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
       dialog.setup(null, null, this.domain.id, '/moderate_all_content');
       dialog.open(this.domain.name);
     }.bind(this));
-  },
+  }
 
-  _newOrganization: function () {
+  _newOrganization() {
     window.appGlobals.activity('open', 'organizationEdit');
     dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
       dialog.setup(null, true, this._refresh.bind(this));
       dialog.open('new', {domainId: this.domain.id});
     }.bind(this));
-  },
+  }
 
-  _refresh: function (domain) {
+  _refresh(domain) {
     if (domain) {
       this.set('domain', domain);
     }
     this.fire("update-domain");
-  },
+  }
 
-  _domainName: function (domain) {
+  _domainName(domain) {
     if (domain && domain.name) {
       return this.truncate(this.trim(domain.name), 200);
     } else if (domain) {
       return domain.short_name;
     }
-  },
+  }
 
-  _domainLogoImagePath: function (domain) {
+  _domainLogoImagePath(domain) {
     if (domain) {
       return this.getImageFormatUrl(domain.DomainLogoImages, 0);
     }
-  },
+  }
 
-  _domainHeaderImagePath: function (domain) {
+  _domainHeaderImagePath(domain) {
     if (domain) {
       return this.getImageFormatUrl(domain.DomainHeaderImages, 0);
     }
   }
-});
+}
+
+window.customElements.define('yp-domain-large-card-lit', YpDomainLargeCardLit)

@@ -77,7 +77,7 @@ class YpPointCommentEditLit extends YpBaseElement {
 render() {
   return html`
     ${this.point ? html`
-    <div class="layout vertical center-center" hidden="${!this.loggedInUser}">
+    <div class="layout vertical center-center" ?hidden="${!this.loggedInUser}">
       <div class="layout horizontal">
         <yp-user-image class="userImage" user="${this.loggedInUser}"></yp-user-image>
         <div class="layout vertical">

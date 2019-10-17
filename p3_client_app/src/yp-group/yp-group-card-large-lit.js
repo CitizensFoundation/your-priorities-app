@@ -283,30 +283,30 @@ class YpGroupCardLargeLit extends YpBaseElement {
                   <yp-magic-text id="groupName" text-type="groupName" content-language="${this.group.language}" disable-translation="${this.group.configuration.disableNameAutoTranslation}" text-only="" content="${this.groupName}" content-id="${this.group.id}">
                   </yp-magic-text>
               </div>
-              <div hidden="" class="groupAccess">${this.groupAccessText}</div>
+              <div ?hidden="" class="groupAccess">${this.groupAccessText}</div>
               <yp-magic-text id="objectives" class="groupDescription" text-type="groupContent" content-language="${this.group.language}" content="${this.group.objectives}" content-id="${this.group.id}">
 
               </yp-magic-text>
           </div>
           </div>
-          <paper-menu-button class="edit" horizontal-align="${this.editMenuAlign}" hidden="${!this.showMenuItem}">
+          <paper-menu-button class="edit" horizontal-align="${this.editMenuAlign}" ?hidden="${!this.showMenuItem}">
           <paper-icon-button aria-label="${this.t('openGroupMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
           <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-              <paper-item hidden="${!this.hasGroupAccess}" id="editMenuItem">${this.t('group.edit')}</paper-item>
-              <paper-item hidden="${!this.hasGroupAccess}" id="newCategoryMenuItem">${this.t('category.new')}</paper-item>
-              <paper-item hidden="${!this.hasGroupAccess}" id="usersMenuItem">${this.t('group.users')}</paper-item>
-              <paper-item hidden="${!this.hasGroupAccess}" id="adminsMenuItem">${this.t('group.admins')}</paper-item>
-              <paper-item hidden="${!this.hasGroupAccess}" id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>
-              <paper-item hidden="${!this.hasGroupAccess}" id="moderationMenuItem">
-              ${this.t('flaggedContent')} <span hidden="${!this.flaggedContentCount}">&nbsp; (${this.flaggedContentCount})</span>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="editMenuItem">${this.t('group.edit')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="newCategoryMenuItem">${this.t('category.new')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="usersMenuItem">${this.t('group.users')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="adminsMenuItem">${this.t('group.admins')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="moderationMenuItem">
+              ${this.t('flaggedContent')} <span ?hidden="${!this.flaggedContentCount}">&nbsp; (${this.flaggedContentCount})</span>
               </paper-item>
-              <paper-item hidden\$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
+              <paper-item ?hidden\$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
               ${this.t('manageAllContent')}
               </paper-item>
-              <a hidden="${!this.hasGroupAccess}" target="_blank" href="${this.exportUrl}"><paper-item id="exportMenuItem">${this.t('exportGroup')}</paper-item></a>
-              <paper-item hidden="${!this.hasGroupAccess}" id="deleteMenuItem">${this.t('group.delete')}</paper-item>
-              <paper-item hidden="${!this.hasGroupAccess}" id="anonymizeMenuItem">${this.t('anonymizeGroupContent')}</paper-item>
-              <paper-item hidden="${!this.hasGroupAccess}" id="deleteContentMenuItem">${this.t('deleteGroupContent')}</paper-item>
+              <a ?hidden="${!this.hasGroupAccess}" target="_blank" href="${this.exportUrl}"><paper-item id="exportMenuItem">${this.t('exportGroup')}</paper-item></a>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="deleteMenuItem">${this.t('group.delete')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="anonymizeMenuItem">${this.t('anonymizeGroupContent')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="deleteContentMenuItem">${this.t('deleteGroupContent')}</paper-item>
               <paper-item id="addPostMenuItem">${this.t('post.new')}</paper-item>
           </paper-listbox>
           </paper-menu-button>
@@ -317,7 +317,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
 
       <template is="dom-if" if="${this.group}" restamp="">
         <template is="dom-if" if="${this.hasGroupAccess}" restamp="">
-          <yp-ajax hidden="" disable-user-error="" method="GET" url="/api/groups/${this.group.id}/flagged_content_count" auto="" on-response="_setFlaggedContentCount"></yp-ajax>
+          <yp-ajax ?hidden="" disable-user-error="" method="GET" url="/api/groups/${this.group.id}/flagged_content_count" auto="" on-response="_setFlaggedContentCount"></yp-ajax>
         </template>
       </template>
 

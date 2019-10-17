@@ -280,8 +280,8 @@ render() {
         <div class="subHeaders exteraTopMargin">${this.t('access')}</div>
 
         <paper-radio-group id="access" name="access" class="access" selected="${this.groupAccess}">
-          <paper-radio-button name="public" hidden="${!this.publicCommunity}">${this.t('group.public')}</paper-radio-button>
-          <paper-radio-button name="open_to_community" hidden="${this.publicCommunity}">${this.t('group.openToCommunity')}
+          <paper-radio-button name="public" ?hidden="${!this.publicCommunity}">${this.t('group.public')}</paper-radio-button>
+          <paper-radio-button name="open_to_community" ?hidden="${this.publicCommunity}">${this.t('group.openToCommunity')}
           </paper-radio-button>
           <paper-radio-button name="closed">${this.t('group.closed')}</paper-radio-button>
           <paper-radio-button name="secret">${this.t('group.secret')}</paper-radio-button>
@@ -507,7 +507,7 @@ render() {
         <input type="hidden" name="allowPostAudioUploads" value="${this.allowPostAudioUploads}">
         <input type="hidden" name="allowPointAudioUploads" value="${this.allowPointAudioUploads}">
 
-        <div class="layout vertical config" hidden="${!this.group.Categories}">
+        <div class="layout vertical config" ?hidden="${!this.group.Categories}">
           <div class="subHeaders">${this.t('categories.the_all')}</div>
           <template is="dom-repeat" items="${this.group.Categories}" as="category">
             <paper-item data-category="${this.category}" data-category-name="${this.category.name}" on-tap="_openCategoryEdit">

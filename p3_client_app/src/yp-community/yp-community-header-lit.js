@@ -177,6 +177,7 @@ class YpCommunityHeaderLit extends YpBaseElement {
 
 render() {
   return html`
+    ${this.community ? html`
     <template is="dom-if" if="${this.community}">
         <div class="layout vertical center-center">
           <iron-image class="image rounded-even-more" sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
@@ -207,6 +208,7 @@ render() {
     </template>
     <iron-media-query query="(max-width: 800px)" query-matches="${this.narrowScreen}"></iron-media-query>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+` : html``}
 `
 }
 

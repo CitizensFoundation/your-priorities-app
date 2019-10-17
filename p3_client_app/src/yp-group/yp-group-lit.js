@@ -292,11 +292,11 @@ render() {
   return html`  
     ${this.group ? html`
       <div id="topContainer">
-        <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" hidden="${this.group.configuration.hideGroupHeader}">
+        <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" ?hidden="${this.group.configuration.hideGroupHeader}">
         <yp-group-card-large id="groupCard" class="largeCard" group="${this.group}" on-update-group="_refreshAjax"></yp-group-card-large>
       </div>
 
-      <div class="largeAddButton layout horizontal center-center" is-apple="${this.isOldiOs}" is-ipad="${this.isIpad}" hidden="${this.group.configuration.hideNewPost}">
+      <div class="largeAddButton layout horizontal center-center" is-apple="${this.isOldiOs}" is-ipad="${this.isIpad}" ?hidden="${this.group.configuration.hideNewPost}">
         <yp-post-card-add disabled="${this.disableNewPosts}" on-new-post="_newPost" elevation="2"></yp-post-card-add>
       </div>
 
@@ -304,10 +304,10 @@ render() {
         <paper-tabs scrollable="${this.shouldScrollTabs}" id="paperTabs" has-non-open-posts="${this.hasNonOpenPosts}" class="tabs" selected="${this.selectedTab}" attr-for-selected="name" focused="">
           <paper-tab id="tab1" name="open">
             <div class="layout vertical center-center tabCounterContainer">
-              <div hidden="${this.isTabOpen}">
+              <div ?hidden="${this.isTabOpen}">
                 ${this.t('posts.open')}
               </div>
-              <div hidden="${!this.isTabOpen}" class="tabSubTitsle">
+              <div ?hidden="${!this.isTabOpen}" class="tabSubTitsle">
                 ${this.tabOpenSubTitle}
               </div>
               <div class="counterInfo" has-non-open-posts="${this.hasNonOpenPosts}" id="tabCountOpen"></div>
@@ -319,10 +319,10 @@ render() {
                 <div>
                   ${this.t('posts.inProgress')}
                 </div>
-                <div hidden="${!this.isTabInProgress}" class="tabSubTitle">
+                <div ?hidden="${!this.isTabInProgress}" class="tabSubTitle">
                   ${this.tabInProgressSubTitle}
                 </div>
-                <div hidden="${this.isTabInProgress}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountInProgress"></div>
+                <div ?hidden="${this.isTabInProgress}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountInProgress"></div>
               </div>
             </paper-tab>
             <paper-tab name="successful">
@@ -330,10 +330,10 @@ render() {
                 <div>
                   ${this.t('posts.successful')}
                 </div>
-                <div hidden="${!this.isTabSuccessful}" class="tabSubTitle">
+                <div ?hidden="${!this.isTabSuccessful}" class="tabSubTitle">
                   ${this.tabSuccessfulSubTitle}
                 </div>
-                <div hidden="${this.isTabSuccessful}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountSuccessful"></div>
+                <div ?hidden="${this.isTabSuccessful}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountSuccessful"></div>
               </div>
             </paper-tab>
             <paper-tab name="failed">
@@ -341,15 +341,15 @@ render() {
                 <div>
                   ${this.t('posts.failed')}
                 </div>
-                <div hidden="${!this.isTabFailed}" class="tabSubTitle">
+                <div ?hidden="${!this.isTabFailed}" class="tabSubTitle">
                   ${tabFailedSubTitle}
                 </div>
-                <div hidden="${this.isTabFailed}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountFailed"></div>
+                <div ?hidden="${this.isTabFailed}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountFailed"></div>
               </div>
             </paper-tab>
           </template>
           <paper-tab name="news">${this.t('news')}</paper-tab>
-          <paper-tab name="map" hidden="${this.locationHidden}">${this.t('posts.map')}</paper-tab>
+          <paper-tab name="map" ?hidden="${this.locationHidden}">${this.t('posts.map')}</paper-tab>
         </paper-tabs>
       </div>
 
@@ -381,7 +381,7 @@ render() {
             </div>
           </section>
         </template>
-        <section name="map" hidden="${this.locationHidden}" class="minHeightSection">
+        <section name="map" ?hidden="${this.locationHidden}" class="minHeightSection">
           <template is="dom-if" if="${this.mapActive}" restamp="">
             <yp-post-map group-id="${this.group.id}"></yp-post-map>
           </template>
@@ -390,7 +390,7 @@ render() {
     </div>
 
     <template is="dom-if" if="${!this.disableNewPosts}" restamp="">
-      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden="${this.disableNewPosts}">
+      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.disableNewPosts}">
           <paper-fab class="createFab" icon="${this.createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_newPost"></paper-fab>
       </div>
     </template>

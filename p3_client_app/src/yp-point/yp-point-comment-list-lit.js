@@ -117,17 +117,17 @@ render() {
   return html`
     ${this.point ? html`
     <div class="container layout vertical">
-      <div class="layout horizontal start-justified" hidden="${this.disableOpenClose}">
-        <div class="layout horizontal center-center" hidden="${!this.commentsCount}">
+      <div class="layout horizontal start-justified" ?hidden="${this.disableOpenClose}">
+        <div class="layout horizontal center-center" ?hidden="${!this.commentsCount}">
           <div class="commentText">${this.t('point.comments')}</div>
           <div id="commentCount">${this.commentsCount}</div>
         </div>
-        <div class="layout horizontal center-center" hidden="${this._noComments(commentsCount)}">
+        <div class="layout horizontal center-center" ?hidden="${this._noComments(commentsCount)}">
           <div class="commentText">${this.t('noComments')}</div>
         </div>
         <div class="layout horizontal">
-          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden="${this.open}"></paper-icon-button>
-          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden="${!this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" ?hidden="${this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" ?hidden="${!this.open}"></paper-icon-button>
         </div>
       </div>
       <template is="dom-if" if="${this.open}" restamp="">

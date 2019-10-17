@@ -148,7 +148,7 @@ render() {
         </div>
 
         <div class="layout horizontal center-center">
-          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" hidden="${this.point.embed_detail}" on-response="_urlPreviewResponse"></yp-ajax>
+          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" ?hidden="${this.point.embed_detail}" on-response="_urlPreviewResponse"></yp-ajax>
           <yp-ajax id="postNewsStoryAjax" method="POST" on-error="_clearButtonState" on-response="_newsStoryResponse"></yp-ajax>
         </div>
 

@@ -76,7 +76,7 @@ class YpCommunityFolderLit extends YpBaseElement {
   static get styles() {
     return [
       css`    
-  }
+      
     .card {
         padding: 16px;
     }
