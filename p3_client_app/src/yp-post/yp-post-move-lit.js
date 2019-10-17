@@ -108,4 +108,4 @@ class YpPostMoveLit extends YpBaseElement {
 }
 
 
-window.customElements.define('yp-post-moves-lit', YpPostMoveLit)
+window.customElements.define('yp-post-move-lit', YpPostMoveLit)

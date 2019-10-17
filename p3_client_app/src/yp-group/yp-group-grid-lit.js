@@ -64,21 +64,24 @@ class YpGroupGridLit extends YpBaseElement {
     `, YpFlexLayout]
   }
 render() {
-    return html `    
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
+    return html`
+      ${this.group ? html`
+      <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+      <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
 
-    <div class="layout horizontal center-center">
-      <iron-list id="ironList" scroll-offset="${this.scrollOffset}" items="${this.activeGroups}" as="group" scroll-target="document" grid="${this.wide}">
-        <template>
-          <div class="groupCard layout vertical center-center" tabindex="${this.tabIndex}" wide-padding="${this.wide}">
-            <yp-group-card-lit wide-padding="${this.wide}" group="${this.group}" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-lit>
-          </div>
-        </template>
-      </iron-list>
-    </div>
-`
-}
+      <div class="layout horizontal center-center">
+        <iron-list id="ironList" scroll-offset="${this.scrollOffset}" items="${this.activeGroups}" as="group" scroll-target="document" grid="${this.wide}">
+          <template>
+            <div class="groupCard layout vertical center-center" tabindex="${this.tabIndex}" wide-padding="${this.wide}">
+              <yp-group-card-lit wide-padding="${this.wide}" group="${this.group}" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-lit>
+            </div>
+          </template>
+        </iron-list>
+      </div>
+` : html``}
+`  
+  }
+
 _newGroup() {
     this.fire('add-new-group');
   }
