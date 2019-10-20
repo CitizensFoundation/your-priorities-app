@@ -290,19 +290,19 @@ class YpPostActionsLit extends YpBaseElement {
       <paper-material elevation="${this.elevationPlusOne}" title="${this.disabledTitle}" floating="${this.floating}" animated="" class="action-bar layout horizontal">
         <div id="actionUp" class="action-up layout horizontal layout start justified">
           <paper-icon-button id="iconUpButton" smaller-icons="${this.smallerIcons}" disabled="${this.allDisabled}" title="${this.customVoteUpHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'up')}" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
-          <div class="action-text up-text" hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedUpCount}</div>
+          <div class="action-text up-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedUpCount}</div>
         </div>
 
-        <div class="action-debate layout horizontal layout center justified " hidden="${this.hideDebate}">
+        <div class="action-debate layout horizontal layout center justified " ?hidden="${this.hideDebate}">
           <paper-icon-button disabled="${this.allDisabled}" title="${this.t('post.debate')}" icon="chat-bubble-outline" class="action-icon debate-icon largeButton" on-tap="_goToPostIfNotHeader"></paper-icon-button>
           <div class="action-text debate-text">${this.formattedPointCount}</div>
         </div>
 
-        <div class="" hidden="${!this.hideDebate}"></div>
+        <div class="" ?hidden="${!this.hideDebate}"></div>
 
-        <div id="actionDown" class="action-down layout horizontal layout center justified" hidden="${this.post.Group.configuration.hideDownVoteForPost}">
+        <div id="actionDown" class="action-down layout horizontal layout center justified" ?hidden="${this.post.Group.configuration.hideDownVoteForPost}">
           <paper-icon-button smaller-icons="${this.smallerIcons}" disabled="${this.allDisabled}" title="${this.customVoteDownHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'down')}" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
-          <div class="action-text down-text" hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedDownCount}</div>
+          <div class="action-text down-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedDownCount}</div>
         </div>
         <div class="share">
           <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin="${this.post.Group.configuration.hideDownVoteForPost}" endorsed="${this.isEndorsed}" horizontal-align="right" id="shareButton" title="${this.t('post.shareInfo')}" facebook="" google="" twitter="" popup="" url="${this.postUrl}"></paper-share-button>

@@ -12,14 +12,68 @@ import '../yp-ajax/yp-ajax.js';
 import { WordWrap } from '../yp-behaviors/word-wrap.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment">
-      #dialog {
-        width: 90%;
-        max-height: 90%;
-        background-color: #FFF;
+import { YpBaseElement } from '../yp-base-element.js';
+
+class YpPagesGridLit extends YpBaseElement {
+  static get properties() {
+    return {
+      pages: {
+        type: Array,
+        notify: true
+      },
+  
+      headerText: {
+        type: String
+      },
+  
+      groupId: {
+        type: Number,
+        observer: '_groupIdChanged'
+      },
+  
+      domainId: {
+        type: Number,
+        observer: '_domainIdChanged'
+      },
+  
+      communityId: {
+        type: Number,
+        observer: '_communityIdChanged'
+      },
+  
+      selected: {
+        type: Object
+      },
+  
+      modelType: {
+        type: String
+      },
+  
+      newLocaleValue: {
+        type: String
+      },
+  
+      currentlyEditingLocale: {
+        type: String
+      },
+  
+      currentlyEditingPage: {
+        type: Object
+      },
+  
+      currentlyEditingTitle: {
+        type: String
+      },
+  
+      currentlyEditingContent: {
+        type: String
       }
+    }
+  }
+
+  static get styles() {
+    return [
+      css` 
 
       iron-list {
         color: #000;
@@ -69,61 +123,64 @@ Polymer({
       [hidden] {
         display: none !important;
       }
-    </style>
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    `, YpFlexLayout]
+  }
 
+  render() {
+    return html` 
+    ${this.pages ? html` 
     <paper-dialog id="editPageLocale" modal="" class="layout vertical">
-      <h2>[[t('pages.editPageLocale')]]</h2>
+      <h2>${this.t('pages.editPageLocale')}</h2>
 
       <paper-dialog-scrollable>
-        <paper-input id="title" name="title" type="text" label="[[t('pages.title')]]" value="{{currentlyEditingTitle}}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input id="title" name="title" type="text" label="${this.t('pages.title')}" value="${this.currentlyEditingTitle}" maxlength="60" char-counter="" class="mainInput">
         </paper-input>
 
-        <paper-textarea id="content" name="content" value="{{currentlyEditingContent}}" always-float-label="[[currentlyEditingContent]]" label="[[t('pages.content')]]" rows="7" max-rows="10">
+        <paper-textarea id="content" name="content" value="${this.currentlyEditingContent}" always-float-label="${this.currentlyEditingContent}" label="${this.t('pages.content')}" rows="7" max-rows="10">
         </paper-textarea>
       </paper-dialog-scrollable>
 
 
       <div class="buttons">
-        <paper-button on-tap="_closePageLocale" dialog-dismiss="">[[t('close')]]</paper-button>
-        <paper-button on-tap="_updatePageLocale" dialog-dismiss="">[[t('save')]]</paper-button>
+        <paper-button on-tap="_closePageLocale" dialog-dismiss="">${this.t('close')}</paper-button>
+        <paper-button on-tap="_updatePageLocale" dialog-dismiss="">${this.t('save')}</paper-button>
       </div>
     </paper-dialog>
 
     <paper-dialog id="dialog">
-      <h2>[[headerText]]</h2>
-      <iron-list items="[[pages]]" as="page">
+      <h2>${this.headerText}</h2>
+      <iron-list items="${this.pages}" as="page">
         <template>
           <div class="layout horizontal">
             <div class="pageItem id">
-              [[page.id]]
+              ${this.page.id}
             </div>
             <div class="pageItem title">
-              [[page.title.en]]
+              ${this.page.title.en}
             </div>
-            <template is="dom-repeat" items="[[_toLocaleArray(page.title)]]" class="pageItem">
+            <template is="dom-repeat" items="${this._toLocaleArray(page.title)}" class="pageItem">
               <div class="layout vertical center-center">
-                <a class="locale" data-args-page\$="[[page]]" data-args-locale\$="[[item.locale]]" on-tap="_editPageLocale">[[item.locale]]</a>
+                <a class="locale" data-args-page="${this.page}" data-args-locale="${this.item.locale}" on-tap="_editPageLocale">${this.item.locale}</a>
               </div>
             </template>
-            <paper-input no-label-float="" class="localeInput" length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
-            <paper-button data-args\$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
-            <div hidden\$="[[page.publaished]]">
-              <paper-button data-args\$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
+            <paper-input no-label-float="" class="localeInput" length="2" maxlength="2" value="${this.newLocaleValue}"></paper-input>
+            <paper-button data-args="${this.page.id}" on-tap="_addLocale">${this.t('pages.addLocale')}</paper-button>
+            <div ?hidden="${this.page.publaished}">
+              <paper-button data-args="${this.page.id}" on-tap="_publishPage">${this.t('pages.publish')}</paper-button>
             </div>
-            <div hidden\$="[[!page.published]]">
-              <paper-button data-args\$="[[page.id]]" on-tap="_unPublishPage">[[t('pages.unPublish')]]</paper-button>
+            <div ?hidden="${!this.page.published}">
+              <paper-button data-args="${this.page.id}" on-tap="_unPublishPage">${this.t('pages.unPublish')}</paper-button>
             </div>
-            <paper-button data-args\$="[[page.id]]" on-tap="_deletePage">[[t('pages.deletePage')]]</paper-button>
+            <paper-button data-args="${this.page.id}" on-tap="_deletePage">${this.t('pages.deletePage')}</paper-button>
           </div>
         </template>
       </iron-list>
       <div class="layout horizontal">
-        <paper-button id="addPageButton" on-tap="_addPage">[[t('pages.addPage')]]</paper-button>
+        <paper-button id="addPageButton" on-tap="_addPage">${this.t('pages.addPage')}</paper-button>
       </div>
 
       <div class="buttons">
-        <paper-button dialog-dismiss="">[[t('close')]]</paper-button>
+        <paper-button dialog-dismiss="">${this.t('close')}</paper-button>
       </div>
     </paper-dialog>
 
@@ -135,96 +192,46 @@ Polymer({
       <yp-ajax method="PUT" id="publishPageAjax" on-response="_publishPageResponse"></yp-ajax>
       <yp-ajax method="PUT" id="unPublishPageAjax" on-response="_unPublishPageResponse"></yp-ajax>
     </div>
-`,
+` : html``}
+` 
+  } 
 
-  is: 'yp-pages-grid',
-
+  
+/*
   behaviors: [
     ypLanguageBehavior,
     WordWrap
   ],
+*/
 
-  properties: {
-    pages: {
-      type: Array,
-      notify: true
-    },
 
-    headerText: {
-      type: String
-    },
-
-    groupId: {
-      type: Number,
-      observer: '_groupIdChanged'
-    },
-
-    domainId: {
-      type: Number,
-      observer: '_domainIdChanged'
-    },
-
-    communityId: {
-      type: Number,
-      observer: '_communityIdChanged'
-    },
-
-    selected: {
-      type: Object
-    },
-
-    modelType: {
-      type: String
-    },
-
-    newLocaleValue: {
-      type: String
-    },
-
-    currentlyEditingLocale: {
-      type: String
-    },
-
-    currentlyEditingPage: {
-      type: Object
-    },
-
-    currentlyEditingTitle: {
-      type: String
-    },
-
-    currentlyEditingContent: {
-      type: String
-    }
-  },
-
-  _toLocaleArray: function(obj) {
+  _toLocaleArray(obj) {
     var array = Object.keys(obj).map(function(key) {
       return {
         locale: key,
         value: obj[key]
-      };
-    });
+      }; 
+    }); 
 
     return __.sortBy(array, function(o) { return o.item; });
-  },
+  }
 
-  _editPageLocale: function (event) {
+  _editPageLocale(event) {
     this.set('currentlyEditingPage', JSON.parse(event.target.getAttribute('data-args-page')));
     this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
     this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]));
     this.set('currentlyEditingTitle',this.currentlyEditingPage["title"][this.currentlyEditingLocale]);
     this.$.editPageLocale.open();
-  },
+  }
 
-  _closePageLocale: function () {
+  _closePageLocale() {
     this.set('currentlyEditingPage', null);
     this.set('currentlyEditingLocale', null);
     this.set('currentlyEditingContent', null);
     this.set('currentlyEditingTitle', null);
-  },
+  }
 
-  _dispatchAjax: function(ajax, pageId, path) {
+  _dispatchAjax(ajax, pageId, path) {
     var pageIdPath;
     if (pageId) {
       pageIdPath = "/" + pageId + "/" + path;
@@ -243,9 +250,9 @@ Polymer({
     } else {
       console.warn("Can't find model type or ids");
     }
-  },
+  }
 
-  _updatePageLocale: function () {
+  _updatePageLocale() {
     this.$.updatePageAjax.body = {
       locale: this.currentlyEditingLocale,
       content: this.currentlyEditingContent,
@@ -253,42 +260,42 @@ Polymer({
     };
     this._dispatchAjax(this.$.updatePageAjax, this.currentlyEditingPage.id, "update_page_locale")
     this._closePageLocale();
-  },
+  }
 
-  _publishPage: function (event) {
+  _publishPage(event) {
     this.$.updatePageAjax.body = {};
     var pageId = event.target.getAttribute('data-args');
     this._dispatchAjax(this.$.updatePageAjax, pageId, "publish_page")
-  },
+  }
 
-  _publishPageResponse: function () {
+  _publishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pagePublished'));
     this.$.ajax.generateRequest();
-  },
+  }
 
-  _unPublishPage: function (event) {
+  _unPublishPage(event) {
     this.$.updatePageAjax.body = {};
     var pageId = event.target.getAttribute('data-args');
     this._dispatchAjax(this.$.updatePageAjax, pageId, "un_publish_page")
-  },
+  }
 
-  _unPublishPageResponse: function () {
+  _unPublishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageUnPublished'));
     this.$.ajax.generateRequest();
-  },
+  }
 
-  _deletePage: function (event) {
+  _deletePage(event) {
     this.$.deletePageAjax.body = {};
     var pageId = event.target.getAttribute('data-args');
     this._dispatchAjax(this.$.deletePageAjax, pageId, "delete_page")
-  },
+  }
 
-  _deletePageResponse: function () {
+  _deletePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageDeleted'));
     this.$.ajax.generateRequest();
-  },
+  }
 
-  _addLocale: function (event) {
+  _addLocale(event) {
     if (this.newLocaleValue && this.newLocaleValue.length>1) {
       var pageId = event.target.getAttribute('data-args');
       this.$.updatePageAjax.body = {
@@ -299,56 +306,56 @@ Polymer({
       this._dispatchAjax(this.$.updatePageAjax, pageId, "update_page_locale")
       this.set('newLocaleValue', null);
     }
-  },
+  }
 
-  _addPage: function (event) {
+  _addPage(event) {
     this.$.newPageAjax.body = {};
     this.$.addPageButton.disabled = true;
     this._dispatchAjax(this.$.newPageAjax, null, "add_page")
-  },
+  }
 
-  _newPageResponse: function () {
+  _newPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.newPageCreated'));
     this.$.ajax.generateRequest();
     this.$.addPageButton.disabled = false;
-  },
+  }
 
-  _updatePageResponse: function () {
+  _updatePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
     this.$.ajax.generateRequest();
-  },
+  }
 
-  _domainIdChanged: function (newGroupId) {
+  _domainIdChanged(newGroupId) {
     if (newGroupId) {
       this.set('modelType', 'domains');
       this._generateRequest(newGroupId);
     }
-  },
+  }
 
-  _groupIdChanged: function (newGroupId) {
+  _groupIdChanged(newGroupId) {
     if (newGroupId) {
       this.set('modelType', 'groups');
       this._generateRequest(newGroupId);
     }
-  },
+  }
 
-  _communityIdChanged: function (newCommunityId) {
+  _communityIdChanged(newCommunityId) {
     if (newCommunityId) {
       this.set('modelType', 'communities');
       this._generateRequest(newCommunityId);
     }
-  },
+  }
 
-  _generateRequest: function (id) {
+  _generateRequest(id) {
     this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/pages_for_admin";
     this.$.ajax.generateRequest();
-  },
+  }
 
-  _pagesResponse: function (event, detail) {
+  _pagesResponse(event, detail) {
     this.set('pages', detail.response);
-  },
+  }
 
-  setup: function (groupId, communityId, domainId, adminUsers) {
+  setup(groupId, communityId, domainId, adminUsers) {
     this.set('groupId', null);
     this.set('communityId', null);
     this.set('domainId', null);
@@ -364,13 +371,13 @@ Polymer({
       this.set('domainId', domainId);
 
     this._setupHeaderText();
-  },
+  }
 
-  open: function () {
+  open() {
     this.$.dialog.open();
-  },
+  }
 
-  _setupHeaderText: function () {
+  _setupHeaderText() {
     if (this.groupId) {
       this.set('headerText', this.t('group.pages'));
     } else if (this.communityId) {
@@ -379,4 +386,6 @@ Polymer({
       this.set('headerText', this.t('domain.pages'));
     }
   }
-});
+}
+
+window.customElements.define('yp-pages-grid-lit', YpPagesGridLit)

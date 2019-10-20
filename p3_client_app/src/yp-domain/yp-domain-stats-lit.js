@@ -61,12 +61,12 @@ class YpDomainStatsLit extends YpBaseElement {
             <iron-icon title="${this.t('stats.discussions')}" icon="chat-bubble-outline" class="stats-icon"></iron-icon>
             <div title="${this.t('stats.discussions')}" class="stats-text">${this.formatNumber(this.domain.counter_points)}</div>
 
-            <iron-icon hidden="${!this.wide}" title="${this.t('stats.communities')}" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
-            <div hidden="${!this.wide}" title="${this.t('stats.communities')}" class="stats-text hideIfMobile" style="">${this.formatNumber(this.domain.counter_communities)}</div>
+            <iron-icon ?hidden="${!this.wide}" title="${this.t('stats.communities')}" icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
+            <div ?hidden="${!this.wide}" title="${this.t('stats.communities')}" class="stats-text hideIfMobile" style="">${this.formatNumber(this.domain.counter_communities)}</div>
           </div>
           <div class="layout horizontal">
-            <iron-icon hidden="" title="${this.t('stats.groups')}" icon="people" class="stats-icon hideIfMobile"></iron-icon>
-            <div hidden="" title="${this.t('stats.groups')}" class="stats-text hideIfMobile" style="">${this.formatNumber(this.domain.counter_groups)}</div>
+            <iron-icon ?hidden="" title="${this.t('stats.groups')}" icon="people" class="stats-icon hideIfMobile"></iron-icon>
+            <div ?hidden="" title="${this.t('stats.groups')}" class="stats-text hideIfMobile" style="">${this.formatNumber(this.domain.counter_groups)}</div>
 
             <iron-icon title="${this.t('stats.users')}" icon="face" class="stats-icon"></iron-icon>
             <div title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.domain.counter_users)}</div>

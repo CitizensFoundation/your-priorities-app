@@ -10,7 +10,7 @@ import { YpBaseElement } from '../yp-base-element.js';
 import { styles } from 'chalk';
 import { YpFlexLayout } from '../yp-flex-layout.js';
 
-class YpPage extends YpBaseElement {
+class YpPageLit extends YpBaseElement {
   static get properties() {
     return {
       wideWidth: {
@@ -189,6 +189,7 @@ class YpPage extends YpBaseElement {
 
   render() {
     return html`
+    ${this.page ? html`
       <div class="layout vertical mainArea">
         <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
           <slot name="largeCard"></slot>
@@ -211,7 +212,8 @@ class YpPage extends YpBaseElement {
         </template>
       </div>
       <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
-     `
+` : html``}
+`
   }
 
   ready() {
