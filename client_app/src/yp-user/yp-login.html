@@ -657,6 +657,8 @@
         name = '_blank';
       if (this._isInApp()) {
         localStorage.setItem("yp-in-app-return-url", window.location.href);
+        alert(localStorage.getItem("yp-in-app-return-url"));
+
         setTimeout(function () {
           window.location = url;
         });

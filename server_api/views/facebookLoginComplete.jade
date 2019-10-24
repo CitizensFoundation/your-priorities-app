@@ -15,6 +15,7 @@ html(lang='en')
               setTimeout(function () {
                 localStorage.setItem("yp-in-app-return-url", null);
               });
+              alert(redirectUrl)
               window.location = redirectUrl;
             } else {
               window.location = "/";
