@@ -10,7 +10,9 @@ html(lang='en')
         script(type='text/javascript').
           var iInApp = /iPad|iPhone|Android|android|iPod/.test(navigator.userAgent) && !window.MSStream && (/FBAN/.test(navigator.userAgent) || /FBAV/.test(navigator.userAgent) || /Instagram/.test(navigator.userAgent));
           if (iInApp) {
+            alert("INapp");
             var redirectUrl = localStorage.getItem("yp-in-app-return-url");
+            alert(redirectUrl);
             if (redirectUrl) {
               alert(redirectUrl)
               window.location = redirectUrl;

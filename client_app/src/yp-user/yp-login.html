@@ -644,6 +644,10 @@
 
       if (domainName.indexOf("forbrukerradet") > -1) {
         hostName = "mineideer";
+      } else if (domainName.indexOf("parliament.scot") > -1) {
+        hostName = "engage";
+      } else if (domainName.indexOf("smarter.nj.gov") > -1) {
+        hostName = "enjine";
       } else {
         hostName = "login";
       }
@@ -690,10 +694,8 @@
         left = (window.outerWidth - width) / 2,
         name = '_blank';
       if (this._isInApp()) {
-        localStorage.setItem("yp-in-app-return-url", window.location.href);
-        setTimeout(function () {
-          window.location = url;
-        });
+        localStorage.setItem("yp-in-app-return-url", window.location.href.slice());
+        window.location = url;
       } else {
         window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
       }
