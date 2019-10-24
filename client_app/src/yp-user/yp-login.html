@@ -625,6 +625,14 @@
       }
     },
 
+    base64EncodeUnicode: function(str) {
+      var utf8Bytes = encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+      });
+
+      return btoa(utf8Bytes);
+    },
+
     _showSignupTerms: function (signupTermsId, registerMode) {
       return signupTermsId && registerMode == 1;
     },
@@ -652,8 +660,7 @@
         hostName = "login";
       }
 
-//      var url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
-      var url = '/api/users/auth/facebook';
+      var url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
 
       var width = 1000,
         height = 650,
@@ -661,8 +668,8 @@
         left = (window.outerWidth - width) / 2,
         name = '_blank';
       if (this._isInApp()) {
-        localStorage.setItem("yp-in-app-return-url", window.location.href.slice());
-        alert(localStorage.getItem("yp-in-app-return-url"));
+        document.cookie = "ypRedirectCookie=" + this.base64EncodeUnicode(window.location.href) + ";domain=."+domainName+";path=/";
+        alert(localStorage.getItem(document.cookie));
         window.location = url;
       } else {
         window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);

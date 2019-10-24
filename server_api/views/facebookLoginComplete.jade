@@ -11,7 +11,14 @@ html(lang='en')
           var iInApp = /iPad|iPhone|Android|android|iPod/.test(navigator.userAgent) && !window.MSStream && (/FBAN/.test(navigator.userAgent) || /FBAV/.test(navigator.userAgent) || /Instagram/.test(navigator.userAgent));
           if (iInApp) {
             alert("INapp");
-            var redirectUrl = localStorage.getItem("yp-in-app-return-url");
+            var cookieValue = document.cookie.match('(^|[^;]+)\\s*' + "ypRedirectCookie" + '\\s*=\\s*([^;]+)');
+            var redirectUrl = null;
+            if (cookieValue) {
+              cookieValue = cookieValue.pop();
+              redirectUrl = atob(cookieValue).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+              }).join('');
+            }
             alert(redirectUrl);
             if (redirectUrl!=null && redirectUrl!=="null") {
               alert(redirectUrl)

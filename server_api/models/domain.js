@@ -173,7 +173,7 @@ module.exports = function(sequelize, DataTypes) {
               if (domain.domain_name=='forbrukerradet.no') {
                 callbackDomainName = 'mineideer.'+domain.domain_name;
               } else {
-                callbackDomainName = req.hostname;
+                callbackDomainName = 'login.'+domain.domain_name;
               }
             }
             
