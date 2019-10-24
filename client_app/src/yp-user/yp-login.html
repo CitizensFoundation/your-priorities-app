@@ -669,7 +669,6 @@
         name = '_blank';
       if (this._isInApp()) {
         document.cookie = "ypRedirectCookie=" + encodeURI(window.location.href) + ";domain=."+domainName+";path=/";
-        alert(document.cookie);
         window.location = url;
       } else {
         window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
@@ -695,6 +694,9 @@
           window.appUser.logout();
         });
       }
+
+      var domainName = window.location.hostname.split('.').slice(-2).join('.');
+
       var url = '/api/users/auth/saml',
         width = 1200,
         height = 650,
@@ -702,7 +704,7 @@
         left = (window.outerWidth - width) / 2,
         name = '_blank';
       if (this._isInApp()) {
-        localStorage.setItem("yp-in-app-return-url", window.location.href.slice());
+        document.cookie = "ypRedirectCookie=" + encodeURI(window.location.href) + ";domain=."+domainName+";path=/";
         window.location = url;
       } else {
         window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);

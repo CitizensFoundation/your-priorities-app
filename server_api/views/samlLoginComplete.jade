@@ -10,8 +10,13 @@ html(lang='en')
         script(type='text/javascript').
           var iInApp = /iPad|iPhone|Android|android|iPod/.test(navigator.userAgent) && !window.MSStream && (/FBAN/.test(navigator.userAgent) || /FBAV/.test(navigator.userAgent) || /Instagram/.test(navigator.userAgent));
           if (iInApp) {
-            var redirectUrl = localStorage.getItem("yp-in-app-return-url");
-            if (redirectUrl) {
+            var cookieValue = document.cookie.match('(^|[^;]+)\\s*' + "ypRedirectCookie" + '\\s*=\\s*([^;]+)');
+            var redirectUrl = null;
+            if (cookieValue) {
+              cookieValue = cookieValue.pop();
+              redirectUrl = decodeURI(cookieValue);
+            }
+            if (redirectUrl != null && redirectUrl !== "null") {
               window.location = redirectUrl;
             } else {
               window.location = "/";

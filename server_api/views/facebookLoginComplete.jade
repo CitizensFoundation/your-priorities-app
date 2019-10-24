@@ -10,21 +10,13 @@ html(lang='en')
         script(type='text/javascript').
           var iInApp = /iPad|iPhone|Android|android|iPod/.test(navigator.userAgent) && !window.MSStream && (/FBAN/.test(navigator.userAgent) || /FBAV/.test(navigator.userAgent) || /Instagram/.test(navigator.userAgent));
           if (iInApp) {
-            alert("INapp");
             var cookieValue = document.cookie.match('(^|[^;]+)\\s*' + "ypRedirectCookie" + '\\s*=\\s*([^;]+)');
             var redirectUrl = null;
             if (cookieValue) {
-              alert(cookieValue);
               cookieValue = cookieValue.pop();
-              alert(cookieValue);
-              //redirectUrl = atob(cookieValue).split('').map(function (c) {
-              //  return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-              //}).join('');
               redirectUrl = decodeURI(cookieValue);
             }
-            alert(redirectUrl);
             if (redirectUrl!=null && redirectUrl!=="null") {
-              alert(redirectUrl)
               window.location = redirectUrl;
             } else {
               window.location = "/";
