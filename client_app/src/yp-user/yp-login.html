@@ -668,7 +668,7 @@
         left = (window.outerWidth - width) / 2,
         name = '_blank';
       if (this._isInApp()) {
-        document.cookie = "ypRedirectCookie=" + this.base64EncodeUnicode(window.location.href) + ";domain=."+domainName+";path=/";
+        document.cookie = "ypRedirectCookie=" + encodeURI(window.location.href) + ";domain=."+domainName+";path=/";
         alert(document.cookie);
         window.location = url;
       } else {
