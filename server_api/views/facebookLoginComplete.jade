@@ -13,7 +13,7 @@ html(lang='en')
             alert("INapp");
             var redirectUrl = localStorage.getItem("yp-in-app-return-url");
             alert(redirectUrl);
-            if (redirectUrl) {
+            if (redirectUrl!=null && redirectUrl!=="null") {
               alert(redirectUrl)
               window.location = redirectUrl;
             } else {
