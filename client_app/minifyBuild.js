@@ -1,3 +1,4 @@
+// USE uglify-es
 const fs = require('fs').promises
 const path = require('path')
 const {execSync} = require('child_process');
@@ -24,12 +25,14 @@ walk('build/').then((results) => {
       console.log(commandString);
       output = execSync(commandString);
     } else if (file.endsWith(".js")) {
-      commandString = "uglifyjs --compress --mangle -- "+file+" > /tmp/minify.js"
-      console.log(commandString);
-      output = execSync(commandString);
-      commandString = "mv /tmp/minify.js "+file
-      console.log(commandString);
-      output = execSync(commandString);
+      if (file!='build/bundled/bower_components/webcomponentsjs/custom-elements-es5-adapter.js') {
+        commandString = "uglifyjs --compress --mangle -- "+file+" > /tmp/minify.js"
+        console.log(commandString);
+        output = execSync(commandString);
+        commandString = "mv /tmp/minify.js "+file
+        console.log(commandString);
+        output = execSync(commandString);
+      }
     }
   })
 }).catch((error)=>{
