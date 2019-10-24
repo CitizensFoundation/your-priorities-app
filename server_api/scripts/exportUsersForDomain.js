@@ -16,9 +16,9 @@ models.Domain.find({
   ]
 }).then(function (domain) {
   console.log(domain.DomainUsers.length);
-  console.log("email, Name");
+  console.log("email,name,kt");
   async.eachSeries(domain.DomainUsers, function (user, seriesCallback) {
-    console.log('"'+user.email+'","'+user.name+'"');
+    console.log('"'+user.email+'","'+user.name+'"'+(user.ssn ? ','+user.ssn :''));
     seriesCallback();
   }, function () {
     process.exit();

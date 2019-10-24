@@ -629,8 +629,8 @@
       return signupTermsId && registerMode == 1;
     },
 
-    _isiOsInApp: function () {
-      return /iPad|iPhone|Android|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
+    _isInApp: function () {
+      return /iPad|iPhone|Android|android|iPod/.test(navigator.userAgent) && !window.MSStream && (/FBAN/.test(navigator.userAgent) || /FBAV/.test(navigator.userAgent) || /Instagram/.test(navigator.userAgent));
     },
 
     _openTerms: function () {
@@ -655,7 +655,8 @@
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
         name = '_blank';
-      if (this._isiOsInApp()) {
+      if (this._isInApp()) {
+        localStorage.setItem("yp-in-app-return-url", window.location);
         window.location = url;
       } else {
         window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
@@ -687,7 +688,8 @@
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
         name = '_blank';
-      if (this._isiOsInApp()) {
+      if (this._isInApp()) {
+        localStorage.setItem("yp-in-app-return-url", window.location);
         window.location = url;
       } else {
         window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
