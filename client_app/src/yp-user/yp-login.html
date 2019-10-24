@@ -656,12 +656,9 @@
         left = (window.outerWidth - width) / 2,
         name = '_blank';
       if (this._isInApp()) {
-        localStorage.setItem("yp-in-app-return-url", window.location.href);
+        localStorage.setItem("yp-in-app-return-url", window.location.href.slice());
         alert(localStorage.getItem("yp-in-app-return-url"));
-
-        setTimeout(function () {
-          window.location = url;
-        });
+        window.location = url;
       } else {
         window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
       }

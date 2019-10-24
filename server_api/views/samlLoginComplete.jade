@@ -12,9 +12,6 @@ html(lang='en')
           if (iInApp) {
             var redirectUrl = localStorage.getItem("yp-in-app-return-url");
             if (redirectUrl) {
-              setTimeout(function () {
-                localStorage.setItem("yp-in-app-return-url", null);
-              });
               window.location = redirectUrl;
             } else {
               window.location = "/";
