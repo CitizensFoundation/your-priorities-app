@@ -14,7 +14,9 @@ html(lang='en')
             var cookieValue = document.cookie.match('(^|[^;]+)\\s*' + "ypRedirectCookie" + '\\s*=\\s*([^;]+)');
             var redirectUrl = null;
             if (cookieValue) {
+              alert(cookieValue);
               cookieValue = cookieValue.pop();
+              alert(cookieValue);
               redirectUrl = atob(cookieValue).split('').map(function (c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
               }).join('');

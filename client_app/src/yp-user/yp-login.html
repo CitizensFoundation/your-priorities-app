@@ -669,7 +669,7 @@
         name = '_blank';
       if (this._isInApp()) {
         document.cookie = "ypRedirectCookie=" + this.base64EncodeUnicode(window.location.href) + ";domain=."+domainName+";path=/";
-        alert(localStorage.getItem(document.cookie));
+        alert(document.cookie);
         window.location = url;
       } else {
         window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
