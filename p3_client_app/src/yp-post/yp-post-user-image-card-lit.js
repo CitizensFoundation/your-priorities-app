@@ -134,7 +134,7 @@ class YpPostUserImageCardLit extends YpBaseElement {
   _openEdit() {
     window.appGlobals.activity('open', 'userImage.edit');
     dom(document).querySelector('yp-app').getDialogAsync("userImageEdit", function (dialog) {
-      dialog.setup(this.post, this.ima{ge, false, this._refresh.bind(this));
+      dialog.setup(this.post, this.image, false, this._refresh.bind(this));
       dialog.open('edit', { postId: this.post.id, userImages: true });
     }.bind(this));
   }
