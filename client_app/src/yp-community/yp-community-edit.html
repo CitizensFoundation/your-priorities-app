@@ -614,7 +614,7 @@
         this.set('hasSamlLoginProvider', false);
       }
 
-      if (this.community.configuration && this.community.configuration.ssnLoginListDataId) {
+      if (this.community && this.community.configuration && this.community.configuration.ssnLoginListDataId) {
         this.set('ssnLoginListDataId', this.community.configuration.ssnLoginListDataId)
         this._getSsnListCount();
       }
