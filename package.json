@@ -44,7 +44,7 @@
     "jslint": "^0.12.0",
     "knuth-shuffle-seeded": "^1.0.6",
     "kue": "^0.11.6",
-    "lodash": "^4.6.1",
+    "lodash": "^4.17.13",
     "moment": "^2.13.0",
     "morgan": "~1.5.0",
     "multer": "^1.3.0",
