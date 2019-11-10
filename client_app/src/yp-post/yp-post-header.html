@@ -392,6 +392,7 @@
                     </div>
                     <div id="postContentTranscript" hidden$="[[isEditing]]">
                       <yp-magic-text text-type="postTranscriptContent" content-language="[[post.public_data.transcript.language]]"
+                                     simple-format="[[transcriptSimpleFormat]]"
                                      content="[[post.public_data.transcript.text]]" content-id="[[post.id]]">
                       </yp-magic-text>
                     </div>
@@ -425,7 +426,8 @@
                                content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
                                structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
                                has-custom-ratings$="[[post.Group.configuration.customRatings]]"
-                               content-id="[[post.id]]" class="description" truncate="500"
+                               simple-format="[[descriptionSimpleFormat]]"
+                               content-id="[[post.id]]" class="description" truncate="[[descriptionTruncateAmount]]"
                                more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
                 </yp-magic-text>
               </div>
@@ -481,6 +483,21 @@
       ],
 
       properties: {
+
+        descriptionTruncateAmount: {
+          type: Number,
+          value: 500
+        },
+
+        descriptionSimpleFormat: {
+          type: Boolean,
+          value: false
+        },
+
+        transcriptSimpleFormat: {
+          type: Boolean,
+          value: false
+        },
 
         selectedMenuItem: {
           type: String
@@ -643,6 +660,20 @@
               console.error("Can't find description element");
             }
           });
+
+          if (post.Group.configuration) {
+            if (post.Group.configuration.descriptionTruncateAmount) {
+              this.descriptionTruncateAmount = post.Group.configuration.descriptionTruncateAmount;
+            }
+
+            if (post.Group.configuration.descriptionSimpleFormat) {
+              this.descriptionSimpleFormat = post.Group.configuration.descriptionSimpleFormat;
+            }
+
+            if (post.Group.configuration.transcriptSimpleFormat) {
+              this.transcriptSimpleFormat = post.Group.configuration.transcriptSimpleFormat;
+            }
+          }
 
           if (this.hasPostAccess && window.appGlobals.hasTranscriptSupport===true) {
             if (post.public_data && post.public_data.transcript && post.public_data.transcript.inProgress) {

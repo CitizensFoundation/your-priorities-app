@@ -220,6 +220,10 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
 
+  group.set('configuration.descriptionTruncateAmount', (req.body.descriptionTruncateAmount && req.body.descriptionTruncateAmount!="") ? req.body.descriptionTruncateAmount : null);
+  group.set('configuration.descriptionSimpleFormat', truthValueFromBody(req.body.descriptionSimpleFormat));
+  group.set('configuration.transcriptSimpleFormat', truthValueFromBody(req.body.transcriptSimpleFormat));
+
   group.set('configuration.allowPostAudioUploads', truthValueFromBody(req.body.allowPostAudioUploads));
   group.set('configuration.allowPointAudioUploads', truthValueFromBody(req.body.allowPointAudioUploads));
   group.set('configuration.useAudioCover', truthValueFromBody(req.body.useAudioCover));

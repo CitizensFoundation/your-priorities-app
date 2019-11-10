@@ -147,7 +147,7 @@
       }
 
       _showMoreText(moreText, content) {
-        return moreText && content && content.length>500;
+        return moreText && content && content.length>(this.truncate ? this.truncate : 500);
       }
 
       _openFullScreen() {
@@ -303,7 +303,7 @@
         }
 
         if (this.simpleFormat) {
-          this.processedContent = this.processedContent.replace(/(\n)/g,"<br>");
+          this.processedContent = this.processedContent.trim().replace(/(\n)/g,"<br>");
         }
 
         this._setupStructuredQuestions();
@@ -371,7 +371,7 @@
       }
 
       static trim(input){
-        return input.replace(/^\s*|\s*$/g, '');
+        return input.replace(/^\s*|\s*$/g, '').trim();
       }
 
       ready () {

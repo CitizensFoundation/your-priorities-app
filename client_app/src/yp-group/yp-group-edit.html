@@ -331,6 +331,22 @@
           [[t('disablePostPageLink')]]
         </paper-checkbox>
 
+        <paper-input id="descriptionTruncateAmount"
+                     name="descriptionTruncateAmount"
+                     type="text"
+                     label="[[t('descriptionTruncateAmount')]]"
+                     value="{{group.configuration.descriptionTruncateAmount}}"
+                     maxlength="4">
+        </paper-input>
+
+        <paper-checkbox name="descriptionSimpleFormat" checked$="{{group.configuration.descriptionSimpleFormat}}">
+          [[t('descriptionSimpleFormat')]]
+        </paper-checkbox>
+
+        <paper-checkbox name="transcriptSimpleFormat" checked$="{{group.configuration.transcriptSimpleFormat}}">
+          [[t('transcriptSimpleFormat')]]
+        </paper-checkbox>
+
         <paper-input id="defaultLocationLongLat"
                      name="defaultLocationLongLat"
                      type="text"

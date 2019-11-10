@@ -1,4 +1,7 @@
 {
+  "descriptionTruncateAmount": "Description character truncate amount",
+  "transcriptSimpleFormat": "Format transcript text",
+  "descriptionSimpleFormat": "Format description on post page",
   "exportUsers": "Export users",
   "ssn": "Social security number",
   "hideRecommendationOnNewsFeed": "Hide recommendations on news feed",

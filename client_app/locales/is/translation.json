@@ -1,4 +1,7 @@
 {
+  "descriptionTruncateAmount": "Stytta lýsingu um stafabil",
+  "descriptionSimpleFormat": "Nota línubil í lýsingu á hugmyndasíðu",
+  "transcriptSimpleFormat": "Nota línubil í texta frá mynd/hljóði",
   "exportUsers": "Flytja út notendur",
   "ssn": "Kennitala",
   "hideRecommendationOnNewsFeed": "Fela mælt með hugmyndum í fréttaveitu",
