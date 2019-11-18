@@ -5,52 +5,57 @@ var toJson = require('./utils/to_json');
 
 var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
   var isCorrectLoginProviderAndAgency = true;
-  if ((group.configuration && group.configuration.forceSecureSamlLogin) ||
-       group.Community && group.Community.configuration && group.Community.configuration.forceSecureSamlLogin) {
-    if (req.user) {
-      group.hasGroupAdmins(req.user).then(function (result) {
-        if (!result) {
-          if (req.user.loginProvider!=="saml")
-            isCorrectLoginProviderAndAgency = false;
+  if (group) {
+    if ((group.configuration && group.configuration.forceSecureSamlLogin) ||
+      group.Community && group.Community.configuration && group.Community.configuration.forceSecureSamlLogin) {
+      if (req.user) {
+        group.hasGroupAdmins(req.user).then(function (result) {
+          if (!result) {
+            if (req.user.loginProvider!=="saml")
+              isCorrectLoginProviderAndAgency = false;
 
-          if (group.configuration.forceSecureSamlEmployeeLogin &&
-            (!req.user.private_profile_data || !req.user.private_profile_data.saml_agency)) {
-            isCorrectLoginProviderAndAgency = false;
-          }
+            if (group.configuration.forceSecureSamlEmployeeLogin &&
+              (!req.user.private_profile_data || !req.user.private_profile_data.saml_agency)) {
+              isCorrectLoginProviderAndAgency = false;
+            }
 
-          if (group.Community.configuration && group.Community.configuration.ssnLoginListDataId && req.user.ssn) {
-            models.GeneralDataStore.findOne({
-              where: {
-                id: group.Community.configuration.ssnLoginListDataId,
-                'data.ssns::jsonb': {
-                  $contains: '["'+req.user.ssn+'"]'
+            if (group.Community.configuration && group.Community.configuration.ssnLoginListDataId && req.user.ssn) {
+              models.GeneralDataStore.findOne({
+                where: {
+                  id: group.Community.configuration.ssnLoginListDataId,
+                  'data.ssns::jsonb': {
+                    $contains: '["'+req.user.ssn+'"]'
+                  }
+                },
+                attributes: ['id']
+              }).then((item)=> {
+                if (item) {
+                  isCorrectLoginProviderAndAgency = true;
+                } else {
+                  isCorrectLoginProviderAndAgency = false;
                 }
-              },
-              attributes: ['id']
-            }).then((item)=> {
-              if (item) {
-                isCorrectLoginProviderAndAgency = true;
-              } else {
-                isCorrectLoginProviderAndAgency = false;
-              }
-              done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
-            }).catch((error)=>{
-              log.error("Error in isAuthenticatedAndCorrectLoginProvider", { error });
-              done(group && auth.isAuthenticated(req, group) && false);
-            });
+                done(auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+              }).catch((error)=>{
+                log.error("Error in isAuthenticatedAndCorrectLoginProvider", { error });
+                done(auth.isAuthenticated(req, group) && false);
+              });
+            } else {
+              done(auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+            }
           } else {
-            done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+            done(auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
           }
-        } else {
-          done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
-        }
-      });
+        });
+      } else {
+        isCorrectLoginProviderAndAgency = false;
+        done(auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+      }
     } else {
-      isCorrectLoginProviderAndAgency = false;
-      done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+      done(auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
     }
   } else {
-    done(group && auth.isAuthenticated(req, group) && isCorrectLoginProviderAndAgency);
+    log.error("Error no group for isAuthenticatedAndCorrectLoginProvider");
+    done(false);
   }
 };
 
@@ -955,7 +960,7 @@ auth.role('point.viewUser', function (point, req, done) {
 
     if (point && point.Post) {
       group = point.Post.Group;
-    } else {
+    } else if (point) {
       group = point.Group;
     }
 
@@ -1013,7 +1018,7 @@ auth.role('point.addTo', function (point, req, done) {
 
     if (point && point.Post) {
       group = point.Post.Group;
-    } else {
+    } else if (point) {
       group = point.Group;
     }
 

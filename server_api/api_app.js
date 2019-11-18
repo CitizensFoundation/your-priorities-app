@@ -417,7 +417,7 @@ app.post('/saml_assertion', function (req, res) {
 
 app.use(function (err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
-    log.info("Anon debug UnauthorizedError", { user: req && req.user ? req.user : null});
+    log.info("Anon debug UnauthorizedError", { user: req.user });
     log.error("User Unauthorized", {
       context: 'unauthorizedError',
       user: toJson(req.user),
@@ -446,7 +446,7 @@ app.use(function (err, req, res, next) {
   } else {
     log.error("General Error", {
       context: 'generalError',
-      user: req ? toJson(req.user) : null,
+      user: req.user ? toJson(req.user) : null,
       err: err,
       errStack: err.stack,
       errorStatus: status
