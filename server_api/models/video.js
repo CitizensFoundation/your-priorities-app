@@ -265,7 +265,7 @@ module.exports = function(sequelize, DataTypes) {
                 }
               })
             } else if (jobStatus.status==="Error") {
-              if (data.Job && data.Job.Outputs && data.Job.Outputs.length>1 &&
+              if (data.Job.Outputs && data.Job.Outputs.length>1 &&
                   data.Job.Outputs[0].Status==='Complete' && data.Job.Outputs[1].Status==='Error') {
                 log.info("Transcoding no audio channel found", { data });
                 const duration = data.Job.Output.Duration;

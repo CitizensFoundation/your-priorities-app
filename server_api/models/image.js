@@ -406,7 +406,7 @@ module.exports = function(sequelize, DataTypes) {
             });
           });
         } else {
-          log.info("User already has an image", {user: user, facebook_id: user ? user.facebook_id : null});
+          log.info("User already has an image", {user: user });
           done()
         }
       }
