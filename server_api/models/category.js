@@ -1,6 +1,6 @@
-var async = require("async");
-
 "use strict";
+
+var async = require("async");
 
 module.exports = function(sequelize, DataTypes) {
   var Category = sequelize.define("Category", {

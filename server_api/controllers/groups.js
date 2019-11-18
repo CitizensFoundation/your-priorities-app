@@ -1195,7 +1195,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     var totalPostsCount = posts.length;
     var rows = [];
     var postRows = posts;
-    if (req.params.filter==="random" && req.query.randomSeed && postRows && postRows.length>0) {
+    if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
       postRows = seededShuffle(postRows, req.query.randomSeed);
     }
     if (offset<postRows.length) {

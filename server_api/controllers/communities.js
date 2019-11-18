@@ -676,11 +676,11 @@ router.delete('/:communityId/:activityId/delete_activity', auth.can('edit commun
 router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
-      log.error('Could not remove user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: req.user ? toJson(req.user.simple()) : null });
+      log.error('Could not remove user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else if (user && community) {
       community.removeCommunityUsers(user).then(function (results) {
-        log.info('User removed', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: req.user ? toJson(req.user.simple()) : null });
+        log.info('User removed', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
         res.send({ membershipValue: false, name: community.name });
       });
     } else {
@@ -692,11 +692,11 @@ router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view c
 router.post('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
-      log.error('Could not add user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: req.user ? toJson(req.user.simple()) : null });
+      log.error('Could not add user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple())});
       res.sendStatus(500);
     } else if (user && community) {
       community.addCommunityUsers(user).then(function (results) {
-        log.info('User Added', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: req.user ? toJson(req.user.simple()) : null });
+        log.info('User Added', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
         res.send({ membershipValue: true, name: community.name });
       });
     } else {

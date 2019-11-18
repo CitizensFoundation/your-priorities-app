@@ -1,9 +1,9 @@
+"use strict";
+
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
-
-"use strict";
 
 var bcrypt = require('bcrypt');
 

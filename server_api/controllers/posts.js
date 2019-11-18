@@ -15,14 +15,19 @@ var changePostCounter = function (req, postId, column, upDown, next) {
   models.Post.find({
     where: { id: postId }
   }).then(function(post) {
-    if (post && upDown === 1) {
-      post.increment(column);
-    } else if (post && upDown === -1) {
-      post.decrement(column);
-    }
-    models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
+    if (post) {
+      if (upDown === 1) {
+        post.increment(column);
+      } else if (upDown === -1) {
+        post.decrement(column);
+      }
+      models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
+        next();
+      });
+    } else {
+      log.error("No post for changePostCounter");
       next();
-    });
+    }
   });
 };
 

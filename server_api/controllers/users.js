@@ -116,7 +116,7 @@ router.post('/login', function (req, res) {
     log.info('User Login', {context: 'view', userId: req.user ? req.user.id : null});
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
-        log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});
+        log.error("User Login Error", {context: 'login', user: user ? user.id : null, err: error, errorStatus: 500});
         res.sendStatus(500);
       } else {
         if (user.email) {

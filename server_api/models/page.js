@@ -1,7 +1,7 @@
+"use strict";
+
 var async = require('async');
 var _ = require('lodash');
-
-"use strict";
 
 module.exports = function(sequelize, DataTypes) {
   var Page = sequelize.define("Page", {

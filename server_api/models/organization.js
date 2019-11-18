@@ -1,8 +1,8 @@
+"use strict";
+
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
-
-"use strict";
 
 // https://www.npmjs.org/package/enum for state of posts
 

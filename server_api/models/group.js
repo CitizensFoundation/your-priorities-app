@@ -1,6 +1,6 @@
-var async = require("async");
-
 "use strict";
+
+var async = require("async");
 
 // https://www.npmjs.org/package/enum for state of posts
 

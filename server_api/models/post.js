@@ -1,8 +1,8 @@
+"use strict";
+
 var async = require("async");
 var queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
-
-"use strict";
 
 module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define("Post", {

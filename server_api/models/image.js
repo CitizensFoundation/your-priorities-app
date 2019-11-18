@@ -1,11 +1,11 @@
+"use strict";
+
 var async = require("async");
 var request = require('request').defaults({ encoding: null });
 var fs = require('fs');
 var randomstring = require("randomstring");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
-
-"use strict";
 
 var Upload = require('s3-uploader');
 

@@ -1,3 +1,5 @@
+"use strict";
+
 var async = require("async");
 var request = require('request').defaults({ encoding: null });
 var fs = require('fs');
@@ -7,8 +9,6 @@ var toJson = require('../utils/to_json');
 const aws = require('aws-sdk');
 const _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
-
-"use strict";
 
 module.exports = function(sequelize, DataTypes) {
   var Video = sequelize.define("Video", {
@@ -278,7 +278,7 @@ module.exports = function(sequelize, DataTypes) {
                   }
                 })
               } else {
-                log.error("Could not transcode video image and video", { jobStatus: jobStatus, data: data, dataJob: data ? data.Job : null });
+                log.error("Could not transcode video image and video", { jobStatus: jobStatus, data: data, dataJob: data.Job });
                 res.sendStatus(500);
               }
             } else {

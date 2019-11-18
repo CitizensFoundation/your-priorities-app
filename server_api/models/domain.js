@@ -1,9 +1,9 @@
+"use strict";
+
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var parseDomain = require('parse-domain');
-
-"use strict";
 
 var Community = require('./community');
 // https://www.npmjs.org/package/enum for state of posts

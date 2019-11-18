@@ -1,3 +1,5 @@
+"use strict";
+
 var async = require("async");
 var request = require('request').defaults({ encoding: null });
 var fs = require('fs');
@@ -7,8 +9,6 @@ var toJson = require('../utils/to_json');
 const aws = require('aws-sdk');
 const _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
-
-"use strict";
 
 module.exports = function(sequelize, DataTypes) {
   var Audio = sequelize.define("Audio", {
