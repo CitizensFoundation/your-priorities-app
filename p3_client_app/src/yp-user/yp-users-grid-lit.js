@@ -1,0 +1,889 @@
+import '@polymer/polymer/polymer-legacy.js';
+import '@polymer/iron-image/iron-image.js';
+import 'lite-signal/lite-signal.js';
+import '@polymer/iron-list/iron-list.js';
+import '@polymer/paper-fab/paper-fab.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-dialog/paper-dialog.js';
+import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
+import '../yp-ajax/yp-ajax.js';
+import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
+import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import './yp-user-image.js';
+import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
+import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { YpBaseElement } from '../yp-base-element.js';
+
+class YpUsersGridLit extends YpBaseElement {
+  static get properties() {
+    return {
+      addAdminEmail: {
+        type: String
+      },
+  
+      inviteUserEmail: {
+        type: String
+      },
+  
+      users: {
+        type: Array,
+        notify: true,
+        value: null
+      },
+  
+      headerText: {
+        type: String
+      },
+  
+      groupId: {
+        type: Number,
+        observer: '_groupIdChanged'
+      },
+  
+      domainId: {
+        type: Number,
+        observer: '_domainIdChanged'
+      },
+  
+      communityId: {
+        type: Number,
+        observer: '_communityIdChanged'
+      },
+  
+      adminUsers: {
+        type: Boolean,
+        value: false
+      },
+  
+      selected: {
+        type: Object
+      },
+  
+      modelType: {
+        type: String
+      },
+  
+      opened: {
+        type: Boolean,
+        value: false
+      },
+  
+      availableOrganizations: {
+        type: Array
+      },
+  
+      userIdForSelectingOrganization: Number,
+  
+      selectedUsers: {
+        type: Array,
+        notify: true
+      },
+  
+      selectedUsersCount: {
+        type: Number,
+        value: 0
+      },
+  
+      selectedUsersEmpty: {
+        type: Boolean,
+        value: true
+      },
+  
+      selectedUserIds: {
+        type: Array
+      },
+  
+      selectedUserId: {
+        type: String
+      },
+  
+      totalUserCount: {
+        type: String,
+        computed: '_totalUserCount(users)'
+      },
+  
+      collectionName: String,
+  
+      usersCountText: String,
+  
+      showReload: {
+        type: Boolean,
+        value: false
+      },
+  
+      forceSpinner: {
+        type: Boolean,
+        value: false
+      },
+  
+      spinnerActive: {
+        type: Boolean,
+        computed: '_spinnerActive(totalUserCount, forceSpinner)'
+      }
+    }
+  }
+
+  static get styles() {
+    return [
+      css`
+  
+      #dialog {
+        width: 90%;
+        max-width: 1024px;
+        background-color: #FFF;
+      }
+
+      iron-list {
+        color: #000;
+        height: 500px;
+        width: 100%;
+      }
+
+      .userItem {
+        padding-right: 16px;
+      }
+
+      .id {
+        width: 40px;
+      }
+
+      .name {
+        width: 200px;
+      }
+
+      .email {
+        width: 190px;
+        overflow-wrap: break-word;
+      }
+
+      .organization {
+        width: 150px;
+      }
+
+      .addRemoveButtons {
+        width: 150px;
+      }
+
+      #selectOrganizationDialog {
+        background-color: #FFF;
+
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      paper-listbox {
+        margin-right: 8px !important;
+      }
+
+      .headerBox {
+        background-color: var(--accent-color);
+        color: #FFF;
+        margin: 0;
+        padding: 0 0;
+        padding-top: 12px;
+        padding-bottom: 10px;
+      }
+
+      paper-button {
+        margin-left: 24px;
+      }
+
+      .inputBox {
+        margin-left: 16px;
+        padding-left: 8px;
+        padding-right: 8px;
+        padding-bottom: 4px;
+        margin-bottom: 4px;
+        align-self: flex-start;
+        background-color: #FFF;
+        color: #000;
+        margin-top: 2px;
+        margin-right: 12px;
+      }
+
+      #grid {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .headerText {
+        padding: 0 0 !important;
+      }
+
+      .collectionName {
+        font-size: 22px;
+        margin-bottom: 1px;
+        margin-top: 4px;
+      }
+
+      .innerHeader {
+        font-size: 17px;
+        color: #F5F5F5;
+      }
+
+      .closeButton {
+        width: 50px;
+        height: 50px;
+        margin-left: 4px;
+        margin-right: 4px;
+      }
+
+      @media (max-width: 600px) {
+        .closeButton {
+          width: 45px;
+          height: 45px;
+        }
+
+        .inputBox {
+          margin-top: 6px;
+        }
+
+        paper-listbox {
+          margin-right: 8px;
+        }
+
+        #dialog {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+        }
+
+        .headerText {
+          font-size: 20px;
+          line-height: 1.2em;
+          text-align: center;
+        }
+      }
+
+      paper-spinner {
+        margin-left: 16px;
+        margin-top: 8px;
+        --paper-spinner-layer-1-color: #FFF;
+        --paper-spinner-layer-2-color: #FFF;
+        --paper-spinner-layer-3-color: #FFF;
+        --paper-spinner-layer-4-color: #FFF;
+      }
+
+      .inviteButton {
+        margin-top: 5px;
+      }
+    `, YpFlexLayout]
+  }
+  
+  render() {
+    return html`
+    ${this.users ? html`
+    <paper-dialog id="selectOrganizationDialog" modal="">
+      <h2>${this.t('users.selectOrganization')}</h2>
+      <paper-dialog-scrollable>
+        <paper-listbox>
+          <template is="dom-repeat" items="${this.availableOrganizations}">
+            <paper-item on-tap="_selectOrganization" id="${this.item.id}">${this.item.name}</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss="">${this.t('Close')}</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialog" modal="">
+      <div class="layout horizontal headerBox wrap">
+
+        <div>
+          <paper-icon-button ariaLabel="${this.t('close')}" id="dismissBtn" icon="close" class="closeButton" dialog-dismiss=""></paper-icon-button>
+        </div>
+
+        <div class="headerText layout vertical">
+          <div class="layout horizontal">
+            <div class="collectionName">${this.collectionName}</div>
+          </div>
+          <div class="innerHeader">${this.headerText}
+            <span ?hidden="${!this.totalUserCount}">(${this.totalUserCount})</span>
+          </div>
+        </div>
+        <div ?hidden="${!this.spinnerActive}"><paper-spinner active=""></paper-spinner></div>
+
+        <div class="flex"></div>
+        <div ?hidden="${!this.showReload}">
+          <paper-icon-button aria-label\$="${this.t('reload')}" icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+        </div>
+        <div ?hidden="${this.domainId}">
+          <paper-material ?hidden="${this.adminUsers}" class="layout horizontal wrap inputBox">
+            <paper-input .label="${this.t('email')}" .value="${this.inviteUserEmail}"></paper-input>
+            <paper-button class="inviteButton" @tap="${this._inviteUser}">${this.t('users.inviteUser')}</paper-button>
+          </paper-material>
+        </div>
+
+        <paper-material ?hidden="${!this.adminUsers}" class="layout horizontal wrap inputBox">
+          <paper-input .label="${this.t('email')}" value="${this.addAdminEmail}"></paper-input>
+          <paper-button class="inviteButton" @tap="${this._addAdmin}">${this.t('users.addAdmin')}</paper-button>
+        </paper-material>
+      </div>
+
+      <vaadin-grid id="grid" .ariaLabel="${this.headerText}" items="${this.users}" selected-items="${this.selectedUsers}">
+        <vaadin-grid-selection-column auto-select="">
+        </vaadin-grid-selection-column>
+
+        <vaadin-grid-column width="60px" flex-grow="0">
+          <template class="header">#</template>
+          <template>${this.item.id}</template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-filter-column .flexGrow="2" width="140px" .path="name" .header="${this.t('name')}">
+          <template>${this.item.name}</template>
+        </vaadin-grid-filter-column>
+
+        <vaadin-grid-filter-column .path="email" .flexGrow="1" width="150px" .header="${this.t('email')}">
+          <template>${this.item.email}</template>
+        </vaadin-grid-filter-column>
+
+        <vaadin-grid-column .flexGrow="1" width="150px">
+          <template class="header">${this.t('organization')}</template>
+          <template>
+            <div class="organization" ?hidden="${!this._userOrganizationName(item)}">
+              <div class="organizationName">
+                ${this._userOrganizationName(item)}
+              </div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="70px" flex-grow="0">
+          <template class="header">
+            <paper-menu-button horizontal-align="right" class="helpButton" ?disabled="${this.selectedUsersEmpty}">
+              <paper-icon-button .ariaLabel="${this.t('openSelectedItemsMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+                <template is="dom-if" if="${!this.selectedUsersEmpty}" restamp="">
+                  <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" on-tap="_removeAndDeleteContentSelectedUsers">
+                    ${this.t('removeSelectedAndDeleteContent')} ${this.selectedUsersCount}
+                  </paper-item>
+                  <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" on-tap="_removeSelectedUsersFromCollection">
+                    <div ?hidden="${!this.groupId}">
+                      ${this.t('removeSelectedFromGroup')} ${this.selectedUsersCount}
+                    </div>
+                    <div ?hidden="${!thiscommunityId}">
+                      ${this.t('removeSelectedFromCommunity')} ${this.selectedUsersCount}
+                    </div>
+                    <div ?hidden="${!this.domainId}">
+                      ${this.t('removeSelectedFromDomain')} ${this.selectedUsersCount}
+                    </div>
+                  </paper-item>
+                  <paper-item data-args="${this.item.id}" ?hidden="${!this.adminUsers}" on-tap="_removeSelectedAdmins">${this.t('removeSelectedAdmins')} ${this.selectedUsersCount}</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-menu-button>
+          </template>
+          <template>
+            <paper-menu-button horizontal-align="right" class="helpButton">
+              <paper-icon-button aria-label\$="${this.t('openOneItemMenu')]]" icon="more-vert" data-args\$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+                <paper-item data-args\$="[[item.id]]" hidden\$="[[adminUsers]]" on-tap="_removeUserFromCollection">
+                  <div hidden\$="[[!groupId]]">
+                    [[t('removeFromGroup')]]
+                  </div>
+                  <div hidden\$="[[!communityId]]">
+                    [[t('removeFromCommunity')]]
+                  </div>
+                  <div hidden\$="[[!domainId]]">
+                    [[t('removeFromDomain')]]
+                  </div>
+                </paper-item>
+                <paper-item data-args\$="[[item.id]]" hidden\$="[[adminUsers]]" on-tap="_removeAndDeleteUserContent">
+                  <div hidden\$="[[!groupId]]">
+                    [[t('removeFromGroupDeleteContent')]]
+                  </div>
+                  <div hidden\$="[[!communityId]]">
+                    [[t('removeFromCommunityDeleteContent')]]
+                  </div>
+                  <div hidden\$="[[!domainId]]">
+                    [[t('removeFromDomainDeleteContent')]]
+                  </div>
+                </paper-item>
+                <paper-item data-args\$="[[item.id]]" hidden\$="[[!adminUsers]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-item>
+
+                <paper-item data-args\$="[[item.id]]" hidden\$="[[_userOrganizationName(item)]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-item>
+                <paper-item data-args\$="[[item.id]]" hidden\$="[[!_userOrganizationName(item)]]" data-args-org\$="[[_userOrganizationId(item)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-item>
+              </paper-listbox>
+            </paper-menu-button>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
+   </paper-dialog>
+
+    <div class="layout horizontal center-center">
+      <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteAjax" on-response="_removeAndDeleteCompleted"></yp-ajax>
+      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
+      <yp-ajax method="POST" on-error="_ajaxError" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
+    </div>
+` : html``}
+` 
+  }
+
+/*
+  behaviors: [
+    ypLanguageBehavior,
+    ypNumberFormatBehavior
+  ],
+
+  observers: [
+    '_selectedUsersChanged(selectedUsers.splices)'
+  ],
+*/
+  _spinnerActive(count, force) {
+    return !count || force
+  }
+
+  _ajaxError() {
+    this.set('forceSpinner', false);
+  }
+
+  ready() {
+    this._setGridSize();
+    window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+  }
+
+  _reload() {
+    this.$.ajax.generateRequest();
+    this.set('forceSpinner', true);
+  }
+
+  _resizeThrottler() {
+    if ( !this.resizeTimeout ) {
+      this.resizeTimeout = setTimeout(function() {
+        this.resizeTimeout = null;
+        this._setGridSize();
+      }.bind(this), 66);
+    }
+  }
+
+  _setGridSize() {
+    if (window.innerWidth<=600) {
+      this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
+    } else {
+      this.$.grid.style.height = (window.innerHeight*0.8).toFixed()+'px';
+    }
+  }
+
+  _menuSelection(event, detail) {
+    var allMenus = this.$.grid.querySelectorAll("paper-listbox");
+    allMenus.forEach(function (item) {
+      item.select(null);
+    });
+  }
+
+  _totalUserCount(users) {
+    if (users) {
+      return this.formatNumber(users.length);
+    } else {
+      return null;
+    }
+  }
+
+  _selectedUsersChanged() {
+    if (this.selectedUsers && this.selectedUsers.length>0) {
+      this.set('selectedUsersEmpty', false);
+      this.set('selectedUsersCount', this.selectedUsers.length);
+    } else {
+      this.set('selectedUsersEmpty', true);
+      this.set('selectedUsersCount', 0);
+    }
+    this.selectedUserIds = this.selectedUsers.map(function (user) { return user.id });
+  }
+
+  _userOrganizationId(user) {
+    if (user && user.OrganizationUsers && user.OrganizationUsers.length>0) {
+      return user.OrganizationUsers[0].id;
+    } else {
+      return null;
+    }
+  }
+
+  _userOrganizationName(user) {
+    if (user && user.OrganizationUsers && user.OrganizationUsers.length>0) {
+      return user.OrganizationUsers[0].name;
+    } else {
+      return null;
+    }
+  }
+
+  _availableOrganizations() {
+    if (window.appUser.adminRights && window.appUser.adminRights.OrganizationAdmins) {
+      return  window.appUser.adminRights.OrganizationAdmins;
+    } else {
+      return [];
+    }
+  }
+
+  _addToOrganization(event) {
+    this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
+    this.set('availableOrganizations', this._availableOrganizations());
+    this.$.selectOrganizationDialog.open();
+  }
+
+  _removeFromOrganization(event) {
+    var userId = event.target.getAttribute('data-args');
+    var organizationId = event.target.getAttribute('data-args-org');
+    this.$.removeOrganizationAjax.body = {};
+    this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
+    this.$.removeOrganizationAjax.generateRequest();
+  }
+
+  _selectOrganization(event, detail) {
+    this.$.addOrganizationAjax.body = {};
+    this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+    this.$.addOrganizationAjax.generateRequest();
+    this.$.selectOrganizationDialog.close();
+  }
+
+  _removeAdmin(event) {
+    var userId = event.target.getAttribute('data-args');
+    this.$.removeAdminAjax.body = {};
+    if (this.modelType=="groups" && this.groupId) {
+      this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_admin";
+      this.$.removeAdminAjax.generateRequest();
+    } else if (this.modelType=="communities" && this.communityId) {
+      this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_admin";
+      this.$.removeAdminAjax.generateRequest();
+    } else if (this.modelType=="domains" && this.domainId) {
+      this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_admin";
+      this.$.removeAdminAjax.generateRequest();
+    } else {
+      console.warn("Can't find model type or ids");
+    }
+  }
+
+  _removeSelectedAdmins(event) {
+    this._setupUserIdFromEvent(event);
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('areYouSureYouWantToRemoveAdmins'), this._reallyRemoveSelectedAdmins.bind(this), true, false);
+    }.bind(this));
+  }
+
+  _removeAndDeleteContentSelectedUsers(event) {
+    this._setupUserIdFromEvent(event);
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('areYouSureRemoveAndDeleteSelectedUserContent'), this._reallyRemoveAndDeleteContentSelectedUsers.bind(this), true, true);
+    }.bind(this));
+  }
+
+  _removeSelectedUsersFromCollection(event) {
+    this._setupUserIdFromEvent(event);
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('areYouSureRemoveSelectedUsers'), this._reallyRemoveSelectedUsersFromCollection.bind(this), true, true);
+    }.bind(this));
+  }
+
+  _removeUserFromCollection(event) {
+    this._setupUserIdFromEvent(event);
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('areYouSureRemoveUser'), this._reallyRemoveUserFromCollection.bind(this), true, false);
+    }.bind(this));
+  }
+
+  _removeAndDeleteUserContent(event) {
+    this._setupUserIdFromEvent(event);
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('areYouSureRemoveAndDeleteUser'), this._reallyRemoveAndDeleteUserContent.bind(this), true, true);
+    }.bind(this));
+  }
+
+  _reallyRemoveSelectedAdmins() {
+    this._removeMaster(this.$.removeManyAdminAjax, 'remove_many_admins', this.selectedUserIds);
+  }
+
+  _reallyRemoveAndDeleteContentSelectedUsers() {
+    this._removeMaster(this.$.removeAndDeleteManyAjax, 'remove_many_users_and_delete_content', this.selectedUserIds);
+  }
+
+  _reallyRemoveSelectedUsersFromCollection() {
+    this._removeMaster(this.$.removeManyUsersAjax, 'remove_many_users', this.selectedUserIds);
+  }
+
+  _reallyRemoveUserFromCollection() {
+    this._removeMaster(this.$.removeUserAjax, 'remove_user');
+  }
+
+  _reallyRemoveAndDeleteUserContent() {
+    this._removeMaster(this.$.removeAndDeleteAjax, 'remove_and_delete_user_content');
+  }
+
+  _setupUserIdFromEvent(event) {
+    var userId = event.target.parentElement.getAttribute('data-args');
+    if (!userId)
+      userId = event.target.getAttribute('data-args');
+    this.set('selectedUserId', userId);
+  }
+
+  _removeMaster(ajax, type, userIds) {
+    var url, collectionId;
+    if (this.modelType==="groups" && this.groupId) {
+      collectionId = this.groupId;
+    } else if (this.modelType==="communities" && this.communityId) {
+      collectionId = this.communityId;
+    } else if (this.modelType==="domains" && this.domainId) {
+      collectionId = this.domainId;
+    } else {
+      console.error("Can't find model type or ids");
+      return;
+    }
+    if (userIds && userIds.length>0) {
+      url = "/api/" + this.modelType + "/" + collectionId + "/" +type;
+      ajax.body = { userIds: userIds };
+    } else if (this.selectedUserId) {
+      url = "/api/" + this.modelType + "/" + collectionId + "/" + this.selectedUserId + "/"+type;
+      ajax.body = {};
+    } else {
+      console.error("No user ids to remove");
+      return;
+    }
+    if (this.modelType==="groups" && this.groupId) {
+      ajax.url = url;
+      ajax.generateRequest();
+      this.set('forceSpinner', true);
+    } else if (this.modelType==="communities" && this.communityId) {
+      ajax.url = url;
+      ajax.generateRequest();
+      this.set('forceSpinner', true);
+    } else if (this.modelType==="domains" && this.domainId) {
+      ajax.url = url;
+      ajax.generateRequest();
+      this.set('forceSpinner', true);
+    } else {
+      console.warn("Can't find model type or ids");
+    }
+    if (this.selectedUserId) {
+      var user = this._findUserFromId(this.selectedUserId);
+      if (user)
+        this.$.grid.deselectItem(user);
+    }
+  }
+
+  _setSelected(event) {
+    var user = this._findUserFromId(event.target.getAttribute('data-args'));
+    if (user)
+      this.$.grid.selectItem(user);
+  }
+
+  _findUserFromId(id) {
+    var foundUser;
+    this.users.forEach(function (user) {
+      if (user.id==id) {
+        foundUser = user;
+      }
+    }.bind(this));
+    return foundUser;
+  }
+
+  _addAdmin(event) {
+    this.$.addAdminAjax.body = {};
+    if (this.modelType==="groups" && this.groupId) {
+      this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addAdminEmail + "/add_admin";
+      this.$.addAdminAjax.generateRequest();
+    } else if (this.modelType==="communities" && this.communityId) {
+      this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
+      this.$.addAdminAjax.generateRequest();
+    } else if (this.modelType==="domains" && this.domainId) {
+      this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + this.addAdminEmail + "/add_admin";
+      this.$.addAdminAjax.generateRequest();
+    } else {
+      console.warn("Can't find model type or ids");
+    }
+  }
+
+  _inviteUser(event) {
+    this.$.inviteUserAjax.body = {};
+    if (this.modelType==="groups" && this.groupId) {
+      this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
+      this.$.inviteUserAjax.generateRequest();
+    } else if (this.modelType==="communities" && this.communityId) {
+      this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
+      this.$.inviteUserAjax.generateRequest();
+    } else {
+      console.warn("Can't find model type or ids");
+    }
+  }
+
+  _manyItemsResponse(showToast) {
+    this.set('forceSpinner', false);
+    debugger;
+    this.set('showReload', true);
+    if (showToast)
+      window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
+  }
+
+  _removeAdminResponse() {
+    window.appGlobals.notifyUserViaToast(this.t('adminRemoved'));
+    this._reload();
+  }
+
+  _removeManyAdminResponse() {
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('removalsInProgress'), null, true, false, true);
+    }.bind(this));
+    this._manyItemsResponse();
+  }
+
+  _removeManyUsersResponse() {
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('removalsInProgress'), null, true, false, true);
+    }.bind(this));
+    this._manyItemsResponse();
+  }
+
+  _removeAndDeleteCompleted() {
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('removalAndDeletionInProgress'), null, true, false, true);
+    }.bind(this));
+    this._manyItemsResponse();
+  }
+
+  _removeAndDeleteManyCompleted() {
+    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+      dialog.open(this.t('removalsAndDeletionsInProgress'), null, true, false, true);
+    }.bind(this));
+    this._manyItemsResponse();
+  }
+
+  _removeUserResponse() {
+    window.appGlobals.notifyUserViaToast(this.t('userRemoved'));
+    this._reload();
+  }
+
+  _addAdminResponse() {
+    window.appGlobals.notifyUserViaToast(this.t('adminAdded')+' '+this.addAdminEmail);
+    this.set('addAdminEmail', null);
+    this._reload();
+  }
+
+  _addOrganizationResponse(event, detail) {
+    window.appGlobals.notifyUserViaToast(this.t('organizationUserAdded')+' '+ detail.response.email);
+    this._reload();
+  }
+
+  _removeOrganizationResponse(event, detail) {
+    window.appGlobals.notifyUserViaToast(this.t('organizationUserRemoved')+' '+ detail.response.email);
+    this._reload();
+  }
+
+  _inviteUserResponse() {
+    window.appGlobals.notifyUserViaToast(this.t('users.userInvited')+' '+this.inviteUserEmail);
+    this.set('inviteUserEmail', null);
+    this._reload();
+  }
+
+  _domainIdChanged(newGroupId) {
+    if (newGroupId) {
+      this._reset();
+      this.set('modelType', 'domains');
+      this._generateRequest(newGroupId);
+    }
+  }
+
+  _groupIdChanged(newGroupId) {
+    if (newGroupId) {
+      this._reset();
+      this.set('modelType', 'groups');
+      this._generateRequest(newGroupId);
+    }
+  }
+
+  _communityIdChanged(newCommunityId) {
+    if (newCommunityId) {
+      this._reset();
+      this.set('modelType', 'communities');
+      this._generateRequest(newCommunityId);
+    }
+  }
+
+  _generateRequest(id) {
+    var adminsOrUsers = this.adminUsers ? "admin_users" : "users";
+    this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/"+adminsOrUsers;
+    this.$.ajax.generateRequest();
+  }
+
+  _usersResponse(event, detail) {
+    this.set('forceSpinner', false);
+    this.set('users', detail.response);
+    this._resetSelectedAndClearCache();
+  }
+
+  setup(groupId, communityId, domainId, adminUsers) {
+    this.set('groupId', null);
+    this.set('communityId', null);
+    this.set('domainId', null);
+    this.set('users', null);
+    this.set('adminUsers', adminUsers);
+
+    if (groupId)
+      this.set('groupId', groupId);
+
+    if (communityId)
+      this.set('communityId', communityId);
+
+    if (domainId)
+      this.set('domainId', domainId);
+
+    this._setupHeaderText();
+  }
+
+  open(name) {
+    this.set('opened', true);
+    this.set('collectionName', name);
+    this.$.dialog.open();
+  }
+
+  _reset() {
+    this.set('users', null);
+    this._resetSelectedAndClearCache();
+  }
+
+  _resetSelectedAndClearCache() {
+    this.set('selectedUsers', []);
+    this.set('selectedUsersCount', 0);
+    this.set('selectedUsersEmpty', true);
+    this.$.grid.clearCache();
+  }
+
+  _setupHeaderText() {
+    if (this.adminUsers) {
+      this.set('usersCountText', this.t('adminsCount'));
+    } else {
+      this.set('usersCountText', this.t('usersCount'));
+    }
+    if (this.groupId) {
+      if (this.adminUsers) {
+        this.set('headerText', this.t('group.admins'));
+      } else {
+        this.set('headerText', this.t('group.users'));
+      }
+    } else if (this.communityId) {
+      if (this.adminUsers) {
+        this.set('headerText', this.t('community.admins'));
+      } else {
+        this.set('headerText', this.t('community.users'));
+      }
+    } else if (this.domainId) {
+      if (this.adminUsers) {
+        this.set('headerText', this.t('domainAdmins'));
+      } else {
+        this.set('headerText', this.t('domainUsers'));
+      }
+    }
+  }
+}
+
+window.customElements.define('yp-users-grid-lit', YpUsersGridLit)
