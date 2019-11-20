@@ -112,10 +112,10 @@ class YpUserEditLit extends YpBaseElement {
     <yp-edit-dialog name="userEdit" id="editDialog" title="${this.editHeaderText}" double-width="" icon="face" action="${this.action}" on-iron-form-response="_editResponse" method="${this.method}" params="${this.params}" save-text="${this.saveText}" toast-text="${this.toastText}">
       <div class="container">
         <div class="layout vertical wrap container">
-          <paper-input id="name" name="name" type="text" label="${this.t('Name')}" value="${this.user.name}" maxlength="50" char-counter="">
+          <paper-input id="name" name="name" type="text" .label="${this.t('Name')}" value="${this.user.name}" maxlength="50" char-counter="">
           </paper-input>
 
-          <paper-input id="email" name="email" type="text" label="${this.t('Email')}" value="${this.user.email}">
+          <paper-input id="email" name="email" type="text" .label="${this.t('Email')}" value="${this.user.email}">
           </paper-input>
 
           <div class="layout horizontal wrap">
@@ -136,9 +136,9 @@ class YpUserEditLit extends YpBaseElement {
 
           <yp-language-selector name="defaultLocale" auto-translate-option-disabled="" selected-locale="${this.user.default_locale}"></yp-language-selector>
 
-          <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised="" on-tap="_disconnectFromFacebookLogin">${this.t('disconnectFromFacebookLogin')}</paper-button>
+          <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised="" @tap="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</paper-button>
 
-          <paper-button ?hidden="${!this.user.ssn}" raised="" class="disconnectButtons" on-tap="_disconnectFromSamlLogin">${this.t('disconnectFromSamlLogin')}</paper-button>
+          <paper-button ?hidden="${!this.user.ssn}" raised="" class="disconnectButtons" @tap="${this._disconnectFromSamlLogin}">${this.t('disconnectFromSamlLogin')}</paper-button>
 
           <paper-button id="deleteUser" raised="" on-tap="_deleteOrAnonymizeUser">${this.t('deleteOrAnonymizeUser')}</paper-button>
 

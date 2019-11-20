@@ -85,7 +85,7 @@ class YpForgotPasswordLit extends YpBaseElement {
         <div class="buttons" hidden\$="[[emailHasBeenSent]]">
           <yp-ajax id="forgotPasswordAjax" method="POST" url="/api/users/forgot_password" on-error="_forgotPasswordError" on-response="_forgotPasswordResponse"></yp-ajax>
           <paper-button dialog-dismiss="">${this.t('cancel')}</paper-button>
-          <paper-button autofocus="" on-tap="_validateAndSend">${this.t('user.forgotPassword')}</paper-button>
+          <paper-button autofocus="" @tap="${this._validateAndSend}">${this.t('user.forgotPassword')}</paper-button>
         </div>
 
         <div class="buttons" ?hidden="${!this.emailHasBeenSent}">

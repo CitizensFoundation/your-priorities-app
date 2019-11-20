@@ -281,8 +281,8 @@ class YpUsersGridLit extends YpBaseElement {
       <h2>${this.t('users.selectOrganization')}</h2>
       <paper-dialog-scrollable>
         <paper-listbox>
-          <template is="dom-repeat" items="${this.availableOrganizations}">
-            <paper-item on-tap="_selectOrganization" id="${this.item.id}">${this.item.name}</paper-item>
+          <template is="dom-repeat" .items="${this.availableOrganizations}">
+            <paper-item @tap="${this._selectOrganization}" id="${this.item.id}">${this.item.name}</paper-item>
           </template>
         </paper-listbox>
       </paper-dialog-scrollable>
@@ -311,7 +311,7 @@ class YpUsersGridLit extends YpBaseElement {
 
         <div class="flex"></div>
         <div ?hidden="${!this.showReload}">
-          <paper-icon-button aria-label\$="${this.t('reload')}" icon="autorenew" class="closeButton" on-tap="_reload"></paper-icon-button>
+          <paper-icon-button .ariaLabel="${this.t('reload')}" icon="autorenew" class="closeButton" @tap="${this._reload}"></paper-icon-button>
         </div>
         <div ?hidden="${this.domainId}">
           <paper-material ?hidden="${this.adminUsers}" class="layout horizontal wrap inputBox">
@@ -381,34 +381,34 @@ class YpUsersGridLit extends YpBaseElement {
           </template>
           <template>
             <paper-menu-button horizontal-align="right" class="helpButton">
-              <paper-icon-button aria-label\$="${this.t('openOneItemMenu')]]" icon="more-vert" data-args\$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
+              <paper-icon-button .ariaLabel="${this.t('openOneItemMenu')}" icon="more-vert" data-args="${this.item.id}" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <paper-item data-args\$="[[item.id]]" hidden\$="[[adminUsers]]" on-tap="_removeUserFromCollection">
-                  <div hidden\$="[[!groupId]]">
-                    [[t('removeFromGroup')]]
+                <paper-item data-args="${this.item.i}" ?hidden="${this.adminUsers}" @tap="${_removeUserFromCollection}">
+                  <div ?hidden="${!this.groupId}">
+                    ${this.t('removeFromGroup')}
                   </div>
-                  <div hidden\$="[[!communityId]]">
-                    [[t('removeFromCommunity')]]
+                  <div ?hidden="${!this.communityId}">
+                    ${this.t('removeFromCommunity')}
                   </div>
-                  <div hidden\$="[[!domainId]]">
-                    [[t('removeFromDomain')]]
-                  </div>
-                </paper-item>
-                <paper-item data-args\$="[[item.id]]" hidden\$="[[adminUsers]]" on-tap="_removeAndDeleteUserContent">
-                  <div hidden\$="[[!groupId]]">
-                    [[t('removeFromGroupDeleteContent')]]
-                  </div>
-                  <div hidden\$="[[!communityId]]">
-                    [[t('removeFromCommunityDeleteContent')]]
-                  </div>
-                  <div hidden\$="[[!domainId]]">
-                    [[t('removeFromDomainDeleteContent')]]
+                  <div ?hidden="${!this.domainId}">
+                    ${this.t('removeFromDomain')}
                   </div>
                 </paper-item>
-                <paper-item data-args\$="[[item.id]]" hidden\$="[[!adminUsers]]" on-tap="_removeAdmin">[[t('users.removeAdmin')]]</paper-item>
+                <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" @tap="${this._removeAndDeleteUserContent}">
+                  <div ?hidden="${!this.groupId}">
+                    ${t('removeFromGroupDeleteContent')}
+                  </div>
+                  <div ?hidden="${!this.communityId}">
+                    ${this.t('removeFromCommunityDeleteContent')}
+                  </div>
+                  <div ?hidden="${!this.domainId}">
+                    ${this.t('removeFromDomainDeleteContent')}
+                  </div>
+                </paper-item>
+                <paper-item data-args="${this.item.id}" ?hidden="${!this.adminUsers}" @tap="${this._removeAdmin}">${this.t('users.removeAdmin')}</paper-item>
 
-                <paper-item data-args\$="[[item.id]]" hidden\$="[[_userOrganizationName(item)]]" on-tap="_addToOrganization">[[t('users.addToOrganization')]]</paper-item>
-                <paper-item data-args\$="[[item.id]]" hidden\$="[[!_userOrganizationName(item)]]" data-args-org\$="[[_userOrganizationId(item)]]" on-tap="_removeFromOrganization">[[t('users.removeFromOrganization')]]</paper-item>
+                <paper-item data-args="${this.item.id}" ?hidden="${this._userOrganizationName(item)}" @tap="${this._addToOrganization}">${this('users.addToOrganization')}</paper-item>
+                <paper-item data-args="${this.item.id}" ?hidden="${!this._userOrganizationName(item)}" data-args-org="${this._userOrganizationId(item)}" @tap="${_removeFromOrganization}">${this.t('users.removeFromOrganization')}</paper-item>
               </paper-listbox>
             </paper-menu-button>
           </template>

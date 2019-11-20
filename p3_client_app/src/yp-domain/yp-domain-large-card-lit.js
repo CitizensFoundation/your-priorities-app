@@ -295,8 +295,8 @@ class YpDomainLargeCardLit extends YpBaseElement {
             </div>
           </div>
           <paper-menu-button vertical-align="top" horizontal-align="${this.editMenuAlign}" class="edit" ?hidden="${!this.showMenuItem}">
-            <paper-icon-button aria-label="${this.t('openDomainMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+            <paper-icon-button ariaLabel="${this.t('openDomainMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
               <paper-item ?hidden="${!this.hasDomainAccess}" id="editMenuItem">${this.t('domain.edit')}</paper-item>
               <paper-item ?hidden="${!this.hasDomainAccess}" id="createOrganizationMenuItem">${this.t('domain.createOrganization')}</paper-item>
               <paper-item ?hidden="${!this.hasDomainAccess}" id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>

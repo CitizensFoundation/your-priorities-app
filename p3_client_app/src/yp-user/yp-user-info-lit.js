@@ -73,15 +73,15 @@ class YpUserInfoLit extends YpBaseElement {
     <template restamp="" is="dom-if" if="${this.user}">
       <div class="mainContainer">
         <div class="avatar-container">
-          <yp-user-image class="hasPointer" large="" user="${this.user}" on-tap="_openEdit"></yp-user-image>
+          <yp-user-image class="hasPointer" large="" user="${this.user}" @tap="${this._openEdit}"></yp-user-image>
         </div>
         <div class="contact-info">
           <div class="name">${this.user.name}</div>
           <div class="email">${this.user.email}</div>
           <div class="layout vertical center-justified buttons">
-            <paper-button raised="" icon="create" title="${this.t('user.edit')}" on-tap="_openEdit">${this.t('user.edit')}</paper-button>
-            <paper-button raised="" icon="create" title="${this.t('myContent')}" on-tap="_openAllContentModeration">${this.t('myContent')}</paper-button>
-            <paper-button raised="" icon="input" title="${this.t('user.logout')}" on-tap="_logout">${this.t('user.logout')}</paper-button>
+            <paper-button raised="" icon="create" title="${this.t('user.edit')}" @tap="${this._openEdit}">${this.t('user.edit')}</paper-button>
+            <paper-button raised="" icon="create" title="${this.t('myContent')}" @tap="${this._openAllContentModeration}">${this.t('myContent')}</paper-button>
+            <paper-button raised="" icon="input" title="${this.t('user.logout')}" @tap="${this._logout}">${this.t('user.logout')}</paper-button>
           </div>
         </div>
       </div>

@@ -47,15 +47,15 @@ class YpPostUserImagesLit extends YpBaseElement {
     ${this.post ? html`
     <div class="layout vertical center-center">
       <template is="dom-if" if="${this.post}">
-        <paper-button raised="" on-tap="_newImage">${this.t('posts.newUserImage')}</paper-button>
+        <paper-button raised="" @tap="${this._newImage}">${this.t('posts.newUserImage')}</paper-button>
         <template is="dom-if" if="${this.images}">
           <template is="dom-repeat" items="${this.images}" as="image">
-            <yp-post-user-image-card post="${this.post}" image="${this.image}" on-refresh="_refresh"></yp-post-user-image-card>
+            <yp-post-user-image-card post="${this.post}" image="${this.image}" @refresh="${this._refresh}"></yp-post-user-image-card>
           </template>
         </template>
       </template>
       <div class="layout horizontal center-center">
-        <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+        <yp-ajax id="ajax" @response="${this._response}"></yp-ajax>
       </div>
     </div>
 ` : html``}

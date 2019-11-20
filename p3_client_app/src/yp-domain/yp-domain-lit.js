@@ -153,7 +153,7 @@ class YpDomainLit extends YpBaseElement {
           <iron-pages class="tabPages" fullbleed="" slot="tabPages" selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
             <section name="communities" class="layout vertical">
               <div class="card-container layout center-center wrap layout-horizontal ">
-                <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" archived-communities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" on-add-new-community="_newCommunity">
+                <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" archived-communities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
                 </yp-community-grid>
               </div>
             </section>

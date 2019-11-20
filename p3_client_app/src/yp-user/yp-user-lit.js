@@ -125,9 +125,9 @@ class YpUserLit extends YpBaseElement {
     <app-route route="${this.statusUpdateRoute}" pattern="/:statusUpdateId" data="${this.statusUpdateRouteData}">
     </app-route>
 
-    <yp-user-large-card hidden="" id="userCard" class="largeCard card" user="${this.user}" on-update-domain="_refresh"></yp-user-large-card>
+    <yp-user-large-card ?hidden="" id="userCard" class="largeCard card" user="${this.user}" on-update-domain="_refresh"></yp-user-large-card>
 
-    <paper-tabs hidden="" id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+    <paper-tabs ?hidden="" id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
       <paper-tab class="tab">${this.t('news')}</paper-tab>
       <paper-tab class="tab"><span>${this.t('communities')}</span> &nbsp; (<span>${this.communitiesLength}</span>)</paper-tab>
       <paper-tab class="tab"><span>${this.t('groups')}</span> &nbsp; (<span>${this.groupsLength}</span>)</paper-tab>
