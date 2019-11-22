@@ -116,18 +116,18 @@ class YpUserLit extends YpBaseElement {
 
   render() {
     return html`
-    <app-route route="${this.idRoute}" pattern="/:id" data="${this.idRouteData}" tail="${this.tabRoute}">
+    <app-route route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
-    <app-route route="${this.tabRoute}" pattern="/:tabName" data="${this.tabRouteData}" tail="${statusUpdateRoute}">
+    <app-route route="${this.tabRoute}" .pattern="/:tabName" .data="${this.tabRouteData}" .tail="${statusUpdateRoute}">
     </app-route>
 
-    <app-route route="${this.statusUpdateRoute}" pattern="/:statusUpdateId" data="${this.statusUpdateRouteData}">
+    <app-route route="${this.statusUpdateRoute}" .pattern="/:statusUpdateId" .data="${this.statusUpdateRouteData}">
     </app-route>
 
-    <yp-user-large-card ?hidden="" id="userCard" class="largeCard card" user="${this.user}" on-update-domain="_refresh"></yp-user-large-card>
+    <yp-user-large-card ?hidden="" id="userCard" .class="largeCard card" .user="${this.user}" @update-domain="${this._refresh}"></yp-user-large-card>
 
-    <paper-tabs ?hidden="" id="paper_tabs" class="tabs" selected="{{selected}}" focused="">
+    <paper-tabs ?hidden="" id="paper_tabs" class="tabs" .selected="${this.selected}" focused="">
       <paper-tab class="tab">${this.t('news')}</paper-tab>
       <paper-tab class="tab"><span>${this.t('communities')}</span> &nbsp; (<span>${this.communitiesLength}</span>)</paper-tab>
       <paper-tab class="tab"><span>${this.t('groups')}</span> &nbsp; (<span>${this.groupsLength}</span>)</paper-tab>
@@ -138,28 +138,28 @@ class YpUserLit extends YpBaseElement {
       </paper-tab>
     </paper-tabs>
 
-    <iron-pages class="tabPages" selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-      <section name="status_updates">
-        <yp-bulk-status-display user-id\$="${this.userId}" status-update-id\$="${this.statusUpdateId}"></yp-bulk-status-display>
+    <iron-pages class="tabPages" .selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+      <section .name="status_updates">
+        <yp-bulk-status-display user-id="${this.userId}" .statusUpdateId="${this.statusUpdateId}"></yp-bulk-status-display>
       </section>
       <section name="status_updates_templates">
-        <yp-bulk-status-display by-template="" user-id\$="${this.userId}" status-update-id\$="${this.statusUpdateId}"></yp-bulk-status-display>
+        <yp-bulk-status-display .by-template user-id="${this.userId}" .statusUpdateId="${this.statusUpdateId}"></yp-bulk-status-display>
       </section>
       <section>
-        <ac-activities selected-tab="${this.selectedTab}" user-id="${this.user.id}"></ac-activities>
+        <ac-activities .selectedTab="${this.selectedTab}" .userId="${this.user.id}"></ac-activities>
       </section>
       <section>
         <template>
           <div class="layout horizontal center-center">
-            <yp-post-list id="postList" selected-tab="${this.selected}" status-filter="open" tab-counter-id="tabCount" searching-for="${this.searchingFor}" group="${this.group}" group-id="${this.groupId}"></yp-post-list>
+            <yp-post-list id="postList" .selectedTab="${this.selected}" .status-filter="open" tab-counter-id="tabCount" .searchingFor="${this.searchingFor}" .group="${this.group}" .group-id="${this.groupId}"></yp-post-list>
           </div>
 
         </template>
       </section>
     </iron-pages>
 
-    <yp-ajax id="ajax" url="${this.url}" on-response="_response"></yp-ajax>
-    <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    <yp-ajax id="ajax" url="${this.url}" @response="${this._response}"></yp-ajax>
+    <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
 ` 
   }
 

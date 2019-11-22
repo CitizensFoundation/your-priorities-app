@@ -137,17 +137,17 @@ class YpUserImageLit extends YpBaseElement {
     ${this.user ? html`
     <template restamp="" is="dom-if" if="${this.user}">
       <template is="dom-if" if="${this.profileImageUrl}">
-        <iron-image sizing="cover" title="${this.userTitle}" preload="" src="${this.profileImageUrl}" class\$="${this.computeClass(small)}"></iron-image>
+        <iron-image .sizing="cover" .title="${this.userTitle}" preload="" src="${this.profileImageUrl}" class\$="${this.computeClass(small)}"></iron-image>
       </template>
 
       <template is="dom-if" if="${this.noProfileImage}" restamp="">
         <template is="dom-if" if="${this.user.facebook_id}">
-          <iron-image sizing="cover" ?hidden="${this.profileImageUrl}" title="${this.userTitle}" preload="" src\$="${this.computeFacebookSrc}" class\$="${this.computeClass(small)}"></iron-image>
+          <iron-image .sizing="cover" ?hidden="${this.profileImageUrl}" .title="${this.userTitle}" .preload="" src="${this.computeFacebookSrc}" class\$="${this.computeClass(small)}"></iron-image>
         </template>
 
         <template is="dom-if" if="${!this.noDefault}">
           <template is="dom-if" if="${!this.user.facebook_id}">
-            <iron-image sizing="cover" title="${this.userTitle}" preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class\$="${this.computeClass(small)}"></iron-image>
+            <iron-image .sizing="cover" .title="${this.userTitle}" .preload="" src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class\$="${this.computeClass(small)}"></iron-image>
           </template>
         </template>
 

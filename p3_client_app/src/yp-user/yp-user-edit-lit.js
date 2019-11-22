@@ -109,26 +109,26 @@ class YpUserEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <yp-edit-dialog name="userEdit" id="editDialog" title="${this.editHeaderText}" double-width="" icon="face" action="${this.action}" on-iron-form-response="_editResponse" method="${this.method}" params="${this.params}" save-text="${this.saveText}" toast-text="${this.toastText}">
+    <yp-edit-dialog .name="userEdit" id="editDialog" .title="${this.editHeaderText}" double-width="" .icon="face" .action="${this.action}" @iron-form-response="${this._editResponse}" .method="${this.method}" .params="${this.params}" .save-text="${this.saveText}" .toast-text="${this.toastText}">
       <div class="container">
         <div class="layout vertical wrap container">
-          <paper-input id="name" name="name" type="text" .label="${this.t('Name')}" value="${this.user.name}" maxlength="50" char-counter="">
+          <paper-input id="name" .name="name" .type="text" .label="${this.t('Name')}" .value="${this.user.name}" maxlength="50" char-counter="">
           </paper-input>
 
-          <paper-input id="email" name="email" type="text" .label="${this.t('Email')}" value="${this.user.email}">
+          <paper-input id="email" .name="email" .type="text" .label="${this.t('Email')}" .value="${this.user.email}">
           </paper-input>
 
           <div class="layout horizontal wrap">
             <div class="layout vertical additionalSettings">
-              <yp-file-upload id="profileImageUpload" raised="true" multi="false" target="/api/images?itemType=user-profile" method="POST" on-success="_profileImageUploaded">
-                <iron-icon class="icon" icon="photo-camera"></iron-icon>
+              <yp-file-upload id="profileImageUpload" raised .target="/api/images?itemType=user-profile" .method="POST" @success="${this._profileImageUploaded}">
+                <iron-icon class="icon" .icon="photo-camera"></iron-icon>
                 <span>${this.t('image.profile.upload')}</span>
               </yp-file-upload>
             </div>
 
             <div class="layout vertical additionalSettings" hidden="">
-              <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=user-header" method="POST" on-success="_headerImageUploaded">
-                <iron-icon class="icon" icon="photo-camera"></iron-icon>
+              <yp-file-upload id="headerImageUpload" raised .target="/api/images?itemType=user-header" .method="POST" @success="${this._headerImageUploaded}">
+                <iron-icon class="icon" .icon="photo-camera"></iron-icon>
                 <span>${this.t('image.header.upload')}</span>
               </yp-file-upload>
             </div>
@@ -136,22 +136,22 @@ class YpUserEditLit extends YpBaseElement {
 
           <yp-language-selector name="defaultLocale" auto-translate-option-disabled="" selected-locale="${this.user.default_locale}"></yp-language-selector>
 
-          <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised="" @tap="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</paper-button>
+          <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised @tap="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</paper-button>
 
-          <paper-button ?hidden="${!this.user.ssn}" raised="" class="disconnectButtons" @tap="${this._disconnectFromSamlLogin}">${this.t('disconnectFromSamlLogin')}</paper-button>
+          <paper-button ?hidden="${!this.user.ssn}" raised class="disconnectButtons" @tap="${this._disconnectFromSamlLogin}">${this.t('disconnectFromSamlLogin')}</paper-button>
 
-          <paper-button id="deleteUser" raised="" on-tap="_deleteOrAnonymizeUser">${this.t('deleteOrAnonymizeUser')}</paper-button>
+          <paper-button id="deleteUser" raised @tap="${this._deleteOrAnonymizeUser}">${this.t('deleteOrAnonymizeUser')}</paper-button>
 
-          <input type="hidden" name="uploadedProfileImageId" value="${this.uploadedProfileImageId}">
-          <input type="hidden" name="uploadedHeaderImageId" value="${this.uploadedHeaderImageId}">
+          <input .type="hidden" .name="uploadedProfileImageId" .value="${this.uploadedProfileImageId}">
+          <input .type="hidden" .name="uploadedHeaderImageId" .value="${this.uploadedHeaderImageId}">
 
           <h2>${this.t('user.notifications')}</h2>
 
           <ac-notification-settings notifications-settings="${this.notificationSettings}"></ac-notification-settings>
-          <input type="hidden" name="notifications_settings" value="${this.encodedUserNotificationSettings}">
+          <input .type="hidden" .name="notifications_settings" .value="${this.encodedUserNotificationSettings}">
 
-          <yp-ajax id="disconnectFacebookLoginAjax" method="DELETE" url="/api/users/disconnectFacebookLogin" on-response="_disconnectFacebookLoginResponse"></yp-ajax>
-          <yp-ajax id="disconnectSamlLoginAjax" method="DELETE" url="/api/users/disconnectSamlLogin" on-response="_disconnectSamlLoginResponse"></yp-ajax>
+          <yp-ajax id="disconnectFacebookLoginAjax" method="DELETE" url="/api/users/disconnectFacebookLogin" @response="${this._disconnectFacebookLoginResponse}"></yp-ajax>
+          <yp-ajax id="disconnectSamlLoginAjax" method="DELETE" url="/api/users/disconnectSamlLogin" @response="${this._disconnectSamlLoginResponse}"></yp-ajax>
         </div>
       </div>
     </yp-edit-dialog>

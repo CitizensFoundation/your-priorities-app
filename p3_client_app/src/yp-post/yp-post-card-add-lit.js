@@ -144,9 +144,9 @@ class YpPostCardAddLit extends YpBaseElement {
     return html`
       ${this.post ? html`  
         <div class="layout vertical center-center container">
-          <paper-card disabled="${this.disabled}" elevation="${this.elevation}" class="postCard" on-tap="_newPost">
+          <paper-card ?disabled="${this.disabled}" .elevation="${this.elevation}" class="postCard" @tap="${this._newPost}">
             <div class="layout horizontal center-center addNewIdeaText">
-              <iron-icon disabled="${this.disabled}" icon="lightbulb-outline"></iron-icon>
+              <iron-icon ?disabled="${this.disabled}" icon="lightbulb-outline"></iron-icon>
               <div class="flex addText" ?hidden="${this.disabled}">
                 ${this.t('post.add_new')}
               </div>

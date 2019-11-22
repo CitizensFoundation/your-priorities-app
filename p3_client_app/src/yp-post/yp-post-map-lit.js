@@ -133,27 +133,27 @@ class YpPostMapLit extends YpBaseElement {
     ${this.post ? html`
     <div class="layout vertical center-center">
       <template is="dom-if" if="${this.posts}">
-        <paper-material id="mapContainer" elevation="2" class="mapContainer">
-          <google-map additional-map-options="{'keyboardShortcuts':false}" id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers="">
-            <template is="dom-repeat" items="${this.posts}" as="post">
-              <google-map-marker slot="markers" latitude="${this.post.location.latitude}" longitude="${this.post.location.longitude}" click-events="" class="marker" on-google-map-marker-click="markerClick">
+        <paper-material id="mapContainer" .elevation="2" class="mapContainer">
+          <google-map .AdditionalMapOptions="{'keyboardShortcuts':false}" id="map" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers="">
+            <template is="dom-repeat" .items="${this.posts}" as="post">
+              <google-map-marker slot="markers" .latitude="${this.post.location.latitude}" .longitude="${this.post.location.longitude}" .click-events="" class="marker" @google-map-marker-click="${this.markerClick}">
               </google-map-marker>
             </template>
-            <yp-post-map-info id="myInfoCard" fade-in="">
-              <yp-post-card mini="" post="${this.selectedPost}"></yp-post-card>
+            <yp-post-map-info id="myInfoCard" .fade-in>
+              <yp-post-card .mini .post="${this.selectedPost}"></yp-post-card>
             </yp-post-map-info>
           </google-map>
         </paper-material>
       </template>
 
       <template is="dom-if" if="${this.noPosts}">
-        <paper-material elevation="1" class="noMapContainer">
+        <paper-material .elevation="1" class="noMapContainer">
           <div>${this.t('posts.noMapPosts')}</div>
         </paper-material>
       </template>
 
       <div class="layout horizontal center-center">
-        <yp-ajax id="ajax" on-response="_response"></yp-ajax>
+        <yp-ajax id="ajax" @response="${this._response}"></yp-ajax>
       </div>
     </div>
 ` : html``}

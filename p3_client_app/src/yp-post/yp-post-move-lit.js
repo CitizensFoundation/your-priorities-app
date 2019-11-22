@@ -46,14 +46,14 @@ class YpPostMoveLit extends YpBaseElement {
   render() {
     return html`
       ${this.post ? html`
-        <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" icon="language" confirmation-text="${this.t('post.statusChangeConfirmText')}" action="${this.action}" method="${this.method}" params="${this.params}" save-text="${this.saveText}" toast-text="${this.toastText}">
-          <template is="dom-repeat" items="${this.availableGroups}" as="group">
-            <div class="groupName" on-tap="_selectGroup" data-args="${this.group.id}" data-args-name="${this.group.name}">${this.group.name}</div>
+        <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" .icon="language" confirmation-text="${this.t('post.statusChangeConfirmText')}" action="${this.action}" method="${this.method}" params="${this.params}" save-text="${this.saveText}" toast-text="${this.toastText}">
+          <template is="dom-repeat" .items="${this.availableGroups}" as="group">
+            <div class="groupName" @tap="${this._selectGroup}" data-args="${this.group.id}" data-args-name="${this.group.name}">${this.group.name}</div>
           </template>
 
           <div class="layout horizontal center-center">
-            <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
-            <yp-ajax method="PUT" id="movePostAjax" on-response="_movePostResponse"></yp-ajax>
+            <yp-ajax .method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" @response="${this._getGroupsResponse}"></yp-ajax>
+            <yp-ajax .method="PUT" id="movePostAjax" @response="${this._movePostResponse}"></yp-ajax>
           </div>
         </yp-edit-dialog>
 ` : html``}

@@ -121,25 +121,25 @@ class YpMissingEmailLit extends YpBaseElement {
           <span ?hidden="${this.onlyConfirmingEmail}">${this.t('user.setEmailInfo')}</span>
         </div>
         <form is="iron-form" id="form">
-          <paper-input id="email" type="text" label="${this.t('user.email')}" value="${this.email}" pattern="${this.emailValidationPattern}" error-message="${this.emailErrorMessage}">
+          <paper-input id="email" .type="text" .label="${this.t('user.email')}" .value="${this.email}" .pattern="${this.emailValidationPattern}" .error-message="${this.emailErrorMessage}">
           </paper-input>
 
           <template is="dom-if" if="${this.needPassword}">
             <div class="linkAccounts">
               ${this.t('user.existsLinkAccountInfo')}
             </div>
-            <paper-input id="password" type="password" label="${this.t('user.password')}" value="${this.password}" autocomplete="off" error-message="${this.passwordErrorMessage}">
+            <paper-input id="password" .type="password" .label="${this.t('user.password')}" .value="${this.password}" .autocomplete="off" .error-message="${this.passwordErrorMessage}">
             </paper-input>
           </template>
         </form>
         <div class="buttons">
-          <yp-ajax id="setEmailAjax" dispatch-error="" method="PUT" url="/api/users/missingEmail/setEmail" on-response="_setEmailResponse"></yp-ajax>
-          <yp-ajax id="linkAccountsAjax" method="PUT" dispatch-error="" on-error="_registerError" url="/api/users/missingEmail/linkAccounts" on-response="_linkAccountsResponse"></yp-ajax>
-          <yp-ajax id="confirmEmailShownAjax" dispatch-error="" method="PUT" url="/api/users/missingEmail/emailConfirmationShown"></yp-ajax>
-          <paper-button on-tap="_logout" ?hidden="${this.onlyConfirmingEmail}">${this.t('user.logout')}</paper-button>
-          <paper-button on-tap="_forgotPassword" ?hidden="${!this.needPassword}">${this.t('user.newPassword')}</paper-button>
-          <paper-button raised="" on-tap="_notNow" ?hidden="${this.onlyConfirmingEmail}">${this.t('later')}</paper-button>
-          <paper-button raised="" id="sendButton" autofocus="" on-tap="_validateAndSend">
+          <yp-ajax id="setEmailAjax" .dispatch-error="" .method="PUT" url="/api/users/missingEmail/setEmail" @response="${this._setEmailResponse}"></yp-ajax>
+          <yp-ajax id="linkAccountsAjax" .method="PUT" .dispatch-error="" @error="${this._registerError}" url="/api/users/missingEmail/linkAccounts" @response="${this._linkAccountsResponse}"></yp-ajax>
+          <yp-ajax id="confirmEmailShownAjax" .dispatch-error="" .method="PUT" url="/api/users/missingEmail/emailConfirmationShown"></yp-ajax>
+          <paper-button @tap="${this._logout}" ?hidden="${this.onlyConfirmingEmail}">${this.t('user.logout')}</paper-button>
+          <paper-button @tap="${this._forgotPassword}" ?hidden="${!this.needPassword}">${this.t('user.newPassword')}</paper-button>
+          <paper-button raised @tap="${this._notNow}" ?hidden="${this.onlyConfirmingEmail}">${this.t('later')}</paper-button>
+          <paper-button raised id="sendButton" .autofocus="" @tap="${this._validateAndSend}">
             <span ?hidden="${this.linkAccountText}">
               <span ?hidden="${this.onlyConfirmingEmail}">
                 ${this.t('user.setEmail')}
@@ -155,7 +155,7 @@ class YpMissingEmailLit extends YpBaseElement {
         </div>
       </paper-dialog>
 
-      <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+      <iron-a11y-keys id="a11y" .keys="enter" @keys-pressed="${this.onEnter}"></iron-a11y-keys>
     </div>
 ` : html``}
 `

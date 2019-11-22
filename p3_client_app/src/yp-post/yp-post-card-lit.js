@@ -274,21 +274,21 @@ class YpPostCardLit extends YpBaseElement {
   render() {
     return html`
     ${this.post ? html`
-    <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
+    <iron-media-query .query="(min-width: 600px)" .query-matches="${this.wide}"></iron-media-query>
 
-    <paper-material mini="${this.mini}" hide-post-cover="${this.post.Group.configuration.hidePostCover}" hide-description="${this.post.Group.configuration.hidePostDescription}" hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}" audio-cover="${this.isAudioCover}" class="card postCard layout vertical" elevation="${this.elevation}" animated="">
+    <paper-material .mini="${this.mini}" .hide-post-cover="${this.post.Group.configuration.hidePostCover}" .hide-description="${this.post.Group.configuration.hidePostDescription}" hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}" audio-cover="${this.isAudioCover}" class="card postCard layout vertical" elevation="${this.elevation}" animated="">
       <div class="layout vertical">
-        <yp-post-cover-media mini="${this.mini}" audio-cover="${this.isAudioCover}" post="${this.post}" ?hidden="${this.post.Group.configuration.hidePostCover}"></yp-post-cover-media>
+        <yp-post-cover-media mini="${this.mini}" audio-cover="${this.isAudioCover}" .post="${this.post}" ?hidden="${this.post.Group.configuration.hidePostCover}"></yp-post-cover-media>
         <div class="postNameContainer">
-          <div class="post-name" mini="${this.mini}" id="postName" @tap="${this.goToPostIfNotHeader}">
-            <yp-magic-text id="postNameMagicText" text-type="postName" content-language="${this.post.language}" text-only="" content="${this.postName}" content-id="${this.post.id}">
+          <div class="post-name" .mini="${this.mini}" id="postName" @tap="${this.goToPostIfNotHeader}">
+            <yp-magic-text id="postNameMagicText" .text-type="postName" .content-language="${this.post.language}" .text-only="" .content="${this.postName}" .content-id="${this.post.id}">
             </yp-magic-text>
           </div>
         </div>
-        <yp-magic-text class="description layout horizontal" @tap="${this.goToPostIfNotHeader}" ?hidden="${this.hideDescription}" text-type="postContent" content-language="${this.post.language}" text-only="" content="${this.post.description}" content-id="${this.post.id}" truncate="100">
+        <yp-magic-text class="description layout horizontal" @tap="${this.goToPostIfNotHeader}" ?hidden="${this.hideDescription}" .text-type="postContent" .content-language="${this.post.language}" text-only="" content="${this.post.description}" content-id="${this.post.id}" truncate="100">
         </yp-magic-text>
         <div ?hidden="${this.post.Group.configuration.hidePostActionsInGrid}">
-          <yp-post-actions floating="" class="postActions" elevation="-1" endorse-mode="${this.endorseMode}" post="${this.post}" ?hidden="${this.mini}"></yp-post-actions>
+          <yp-post-actions floating class="postActions" .elevation="-1" .endorse-mode="${this.endorseMode}" .post="${this.post}" ?hidden="${this.mini}"></yp-post-actions>
         </div>
       </div>
     </paper-material>

@@ -353,57 +353,57 @@ class YpPostCoverMediaLit extends YpBaseElement {
     ${this.post ? html`
     <div class="mapCanvas">
       <template is="dom-if" if="${this.noneActive}">
-        <iron-image header-mode="${this.headerMode}" sizing="cover" ?hidden="${this.defaultPostImageEnabled}" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToPost}"></iron-image>
+        <iron-image .header-mode="${this.headerMode}" .sizing="cover" ?hidden="${this.defaultPostImageEnabled}" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToPost}"></iron-image>
 
         <template is="dom-if" if="${this.activeDefaultImageUrl}" restamp="">
-          <iron-image header-mode="${this.headerMode}" sizing="cover" class="main-image pointer" src="${this.activeDefaultImageUrl}" @tap="${this._goToPost}"></iron-image>
+          <iron-image .header-mode="${this.headerMode}" .sizing="cover" class="main-image pointer" src="${this.activeDefaultImageUrl}" @tap="${this._goToPost}"></iron-image>
         </template>
       </template>
 
       <template is="dom-if" if="${this.categoryActive}">
         <div id="categoryImageId" class="layout horizontal center-center">
-          <iron-image header-mode="${this.headerMode}" tiny="${this.tiny}" on-tap="_goToPost" class="category-icon pointer" title="${this.post.Category.name}" sizing="contain" src="${this.getCategoryImagePath}"></iron-image>
+          <iron-image .header-mode="${this.headerMode}" .tiny="${this.tiny}" @tap="${this._goToPost}" class="category-icon pointer" .title="${this.post.Category.name}" .sizing="contain" src="${this.getCategoryImagePath}"></iron-image>
         </div>
       </template>
 
       <template is="dom-if" if="${this.categoryLargeActive}">
-        <iron-image header-mode="${this.headerMode}" large="" on-tap="_goToPost" class="category-icon pointer" title="${this.post.Category.name}" sizing="cover" src="${this.getCategoryImagePath}"></iron-image>
+        <iron-image .header-mode="${this.headerMode}" .large="" @tap="${this._goToPost}" class="category-icon pointer" .title="${this.post.Category.name}" .sizing="cover" src="${this.getCategoryImagePath}"></iron-image>
       </template>
 
       <template is="dom-if" if="${this.imageActive}">
-        <iron-image header-mode="${this.headerMode}" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="${this.postImagePath}"></iron-image>
+        <iron-image .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postImagePath}"></iron-image>
       </template>
 
       <template is="dom-if" if="${this.videoActive}" restamp="">
         <template is="dom-if" if="${this.showVideo}" restamp="">
-          <video id="videoPlayer" portrait="${this.portraitVideo}" data-id="${this.postVideoId}" header-mode="${this.headerMode}" controls="" on-tap="_goToPost" preload="meta" class="pointer" src="${this.postVideoPath}" playsinline="" poster="${this.postVideoPosterPath}"></video>
+          <video id="videoPlayer" portrait="${this.portraitVideo}" .data-id="${this.postVideoId}" .header-mode="${this.headerMode}" .controls="" @tap="${this._goToPost}" .preload="meta" class="pointer" src="${this.postVideoPath}" .playsinline="" .poster="${this.postVideoPosterPath}"></video>
         </template>
         <template is="dom-if" if="${!this.showVideo}">
-          <div class="layout vertical center-center videoPreviewContainer" portrait="${this.portraitVideo}">
-            <iron-image id="videoPreviewImage layout-self-center" portrait="${this.portraitVideo}" header-mode="${this.headerMode}" @tap="${this._goToPost}" sizing="cover" class="main-image pointer" src="${this.postVideoPosterPath}"></iron-image>
+          <div class="layout vertical center-center videoPreviewContainer" .portrait="${this.portraitVideo}">
+            <iron-image id="videoPreviewImage layout-self-center" .portrait="${this.portraitVideo}" .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postVideoPosterPath}"></iron-image>
           </div>
-          <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
+          <iron-icon .icon="videocam" class="videoCamStatic"></iron-icon>
         </template>
       </template>
 
       <template is="dom-if" if="${this.audioActive}" restamp="">
         <template is="dom-if" if="${this.showAudio}">
           <div class="layout vertical center-center">
-            <audio id="audioPlayer" data-id="${this.postAudioId}" header-mode="${this.headerMode}" controls="" preload="meta" class="pointer" src="${this.postAudioPath}" ?hidden="${!this.postAudioPath}" playsinline=""></audio>
+            <audio id="audioPlayer" .data-id="${this.postAudioId}" .header-mode="${this.headerMode}" .controls="" .preload="meta" class="pointer" src="${this.postAudioPath}" ?hidden="${!this.postAudioPath}" .playsinline=""></audio>
           </div>
         </template>
         <div ?hidden="${this.showAudio}" class="layout horizontal center-center pointer" @tap="${this._goToPost}">
-          <iron-icon icon="keyboard-voice" class="voiceIcon"></iron-icon>
+          <iron-icon .icon="keyboard-voice" class="voiceIcon"></iron-icon>
         </div>
       </template>
 
       <template is="dom-if" if="${!this.disableMaps}">
 
         <template is="dom-if" if="${this.streetViewActive}">
-          <iron-image @tap="${this._goToPost}" class="main-image pointer" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" ?hidden="${this.streetViewActivated}"></iron-image>
+          <iron-image @tap="${this._goToPost}" class="main-image pointer" .sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" ?hidden="${this.streetViewActivated}"></iron-image>
 
           <template is="dom-if" if="${this.streetViewActivated}">
-            <google-streetview-pano position="${this.mapPosition}" heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" pitch="2" zoom="0.8" disable-default-ui="">
+            <google-streetview-pano .position="${this.mapPosition}" .heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .pitch="2" .zoom="0.8" disable-default-ui="">
             </google-streetview-pano>
           </template>
 
@@ -413,8 +413,8 @@ class YpPostCoverMediaLit extends YpBaseElement {
           <iron-image @tap="${this._goToPost}" class="main-image pointer" ?hidden="${this.mapActivated}" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"></iron-image>
 
           <template is="dom-if" if="${this.mapActivated}">
-            <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" libraries="places" fit-to-markers="" zoom="${this.zoomLevel}" map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-              <google-map-marker slot="markers" latitude="${this.latitude}" longitude="${this.longitude}"></google-map-marker>
+            <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" .libraries="places" .fit-to-markers="" .zoom="${this.zoomLevel}" .map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+              <google-map-marker slot="markers" .latitude="${this.latitude}" .longitude="${this.longitude}"></google-map-marker>
             </google-map>
           </template>
         </template>

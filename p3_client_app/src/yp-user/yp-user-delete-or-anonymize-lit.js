@@ -63,13 +63,13 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
 
       <div class="buttons layout vertical center-center">
         <div class="layout horizontal ajaxElements">
-          <yp-ajax id="deleteUserAjax" use-spinner="" on-response="_completed" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
-          <yp-ajax id="anonymizeAjax" use-spinner="" on-response="_completed" method="DELETE" url="/api/users/anonymize_current_user"></yp-ajax>
+          <yp-ajax id="deleteUserAjax" use-spinner="" @response="${this._completed}" .method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
+          <yp-ajax id="anonymizeAjax" use-spinner="" @response="${this._completed}" .method="DELETE" url="/api/users/anonymize_current_user"></yp-ajax>
         </div>
         <div class="layout horizontal center-center">
           <paper-button dialog-dismiss="">${this.t('cancel')}</paper-button>
-          <paper-button raised="" class="boldButton" on-tap="_deleteUser">${this.t('deleteAccount')}</paper-button>
-          <paper-button raised="" class="boldButton" on-tap="_anonymizeUser">${this.t('anonymizeAccount')}</paper-button>
+          <paper-button raised class="boldButton" @tap="${this._deleteUser}">${this.t('deleteAccount')}</paper-button>
+          <paper-button raised class="boldButton" @tap="${this._anonymizeUser}">${this.t('anonymizeAccount')}</paper-button>
         </div>
       </div>
     </paper-dialog>

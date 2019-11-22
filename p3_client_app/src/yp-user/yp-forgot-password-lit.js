@@ -77,23 +77,23 @@ class YpForgotPasswordLit extends YpBaseElement {
 
         <form is="iron-form" id="form">
 
-          <paper-input id="email" type="text" label="${this.t('email')}" value="${this.email}" pattern="${this.emailValidationPattern}" ?hidden="${this.emailHasBeenSent}" error-message="${this.emailErrorMessage}">
+          <paper-input id="email" .type="text" .label="${this.t('email')}" .value="${this.email}" .pattern="${this.emailValidationPattern}" ?hidden="${this.emailHasBeenSent}" .error-message="${this.emailErrorMessage}">
           </paper-input>
 
         </form>
 
-        <div class="buttons" hidden\$="[[emailHasBeenSent]]">
-          <yp-ajax id="forgotPasswordAjax" method="POST" url="/api/users/forgot_password" on-error="_forgotPasswordError" on-response="_forgotPasswordResponse"></yp-ajax>
+        <div class="buttons" ?hidden="${this.emailHasBeenSent}">
+          <yp-ajax id="forgotPasswordAjax" method="POST" url="/api/users/forgot_password" @error="${this._forgotPasswordError}" @response="${this._forgotPasswordResponse}"></yp-ajax>
           <paper-button dialog-dismiss="">${this.t('cancel')}</paper-button>
           <paper-button autofocus="" @tap="${this._validateAndSend}">${this.t('user.forgotPassword')}</paper-button>
         </div>
 
         <div class="buttons" ?hidden="${!this.emailHasBeenSent}">
-          <paper-button dialog-dismiss="">${this.t('ok')}</paper-button>
+          <paper-button .dialog-dismiss="">${this.t('ok')}</paper-button>
         </div>
       </paper-dialog>
 
-      <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+      <iron-a11y-keys id="a11y" .keys="enter" @keys-pressed="${this.onEnter}"></iron-a11y-keys>
 `
   }
 

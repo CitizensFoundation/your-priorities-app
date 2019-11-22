@@ -365,20 +365,20 @@ class YpPostLit extends YpBaseElement {
   render() {
     return html`
     ${this.post ? html`
-    <div class="topContainer layout vertical center-center" is-post="" create-fab-title="${this.t('point.add')}" on-yp-create-fab-tap="_newPoint">
+    <div class="topContainer layout vertical center-center" is-post .createFabTitle="${this.t('point.add')}" .on-yp-create-fab-tap="_newPoint">
 
-      <yp-post-header id="postCard" class="largeCard" post="${this.post}" on-refresh="_refreshAjax" header-mode=""></yp-post-header>
+      <yp-post-header id="postCard" class="largeCard" .post="${this.post}" .on-refresh="_refreshAjax" .header-mode></yp-post-header>
 
       <div class="layout horizontal center-center" ?hidden="${this.post.Group.configuration.hideAllTabs}">
-        <paper-tabs id="paper_tabs" class="tabs" selected="${this.selectedTab}" attr-for-selected="name" focused="">
-          <paper-tab name="debate">
+        <paper-tabs id="paper_tabs" class="tabs" .selected="${this.selectedTab}" .attr-for-selected="name" .focused="">
+          <paper-tab .name="debate">
             <div class="layout vertical center-center tabCounterContainer">
               <span>${this.t('post.tabs.debate')} (<span id="tabCountDebate"></span>)</span>
             </div>
           </paper-tab>
-          <paper-tab name="news">${this.t('post.tabs.news')}</paper-tab>
-          <paper-tab name="location" ?hidden="${this.locationHidden}">${this.t('post.tabs.location')}</paper-tab>
-          <paper-tab name="photos">
+          <paper-tab .name="news">${this.t('post.tabs.news')}</paper-tab>
+          <paper-tab .name="location" ?hidden="${this.locationHidden}">${this.t('post.tabs.location')}</paper-tab>
+          <paper-tab .name="photos">
             <div class="layout vertical center-center tabCounterContainer">
               <span>${this.t('post.tabs.photos')} (<span id="tabCountPhotos"></span>)</span>
             </div>
@@ -386,21 +386,21 @@ class YpPostLit extends YpBaseElement {
         </paper-tabs>
       </div>
 
-      <iron-pages id="pages" class="tabPages" selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <div name="debate" class="layout horizontal center-center">
-          <yp-post-points host="${this.host}" id="pointsSection" post="${this.post}" scroll-to-id="${this.scrollToPointId}"></yp-post-points>
+      <iron-pages id="pages" class="tabPages" .selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+        <div .name="debate" class="layout horizontal center-center">
+          <yp-post-points .host="${this.host}" id="pointsSection" .post="${this.post}" .scrollToId="${this.scrollToPointId}"></yp-post-points>
         </div>
-        <section name="news" class="minHeightSection">
+        <section .name="news" class="minHeightSection">
           <template is="dom-if" if="${this.newsTabSelected}">
-            <ac-activities id="postNews" selected-tab="${this.selectedTab}" disable-new-posts="${this.disableNewPosts}" post-group-id="${this.post.group_id}" post-id="${this.post.id}"></ac-activities>
+            <ac-activities id="postNews" .selectedTab="${this.selectedTab}" .disableNewPosts="${this.disableNewPosts}" .postGroupId="${this.post.group_id}" .postId="${this.post.id}"></ac-activities>
           </template>
         </section>
-        <section name="location" class="minHeightSection">
+        <section .name="location" class="minHeightSection">
           <div class="layout horizontal center-center">
             <template is="dom-if" if="${this.post.location}" restamp="">
               <template is="dom-if" if="${this.mapActive}" restamp="">
-                <paper-material class="mapContainer" elevation="3">
-                  <google-map additional-map-options="{'keyboardShortcuts':false}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" libraries="places" class="map" map-type="${this.post.location.mapType}" zoom="${this.post.location.map_zoom}" fit-to-markers="">
+                <paper-material class="mapContainer" .elevation="3">
+                  <google-map .additionalMapOptions="{'keyboardShortcuts':false}" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" .libraries="places" class="map" .mapType="${this.post.location.mapType}" .zoom="${this.post.location.map_zoom}" fitToMarkers="">
                     <google-map-marker slot="markers" latitude="${this.post.location.latitude}" longitude="${this.post.location.longitude}" id="marker"></google-map-marker>
                   </google-map>
                 </paper-material>
@@ -408,15 +408,15 @@ class YpPostLit extends YpBaseElement {
             </template>
             <template is="dom-if" if="${this.post}">
               <template is="dom-if" if="${!this.post.location}">
-                <h1 style="padding-top: 16px">${this.t('post.noLocation')}</h1>
+                <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
               </template>
             </template>
           </div>
         </section>
-        <section name="photos" class="minHeightSection">
+        <section .name="photos" class="minHeightSection">
           <div class="layout vertical flex">
             <div class="layout horizontal center-center">
-              <yp-post-user-images post="${this.post}"></yp-post-user-images>
+              <yp-post-user-images .post="${this.post}"></yp-post-user-images>
             </div>
           </div>
         </section>
@@ -425,23 +425,23 @@ class YpPostLit extends YpBaseElement {
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <app-route route="${this.idRoute}" pattern="/:id" data="${this.idRouteData}" tail="${this.tabRoute}">
+    <app-route .route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
-    <app-route route="${this.tabRoute}" pattern="/:tabName" data="${this.tabRouteData}">
+    <app-route .route="${this.tabRoute}" .pattern="/:tabName" .data="${this.tabRouteData}">
     </app-route>
 
-    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
+    <iron-media-query .query="(min-width: 1024px)" queryMatches="${this.wideWidth}"></iron-media-query>
 
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.post.Group.configuration.hideNewPostOnPostPage}">
       <template is="dom-if" if="${!this.disableNewPosts}">
-        <paper-fab class="createFab" icon="${this.createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_newPost"></paper-fab>
+        <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" .wideLayout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
       </template>
     </div>
 
     <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_handleIncomingPostResponse"></yp-ajax>
-      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+      <yp-ajax id="ajax" @response="${this._handleIncomingPostResponse}"></yp-ajax>
+      <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
     </div>
 `: html``}
 `

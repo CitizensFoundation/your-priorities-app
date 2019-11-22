@@ -274,10 +274,10 @@ class YpPostEditLit extends YpBaseElement {
   render() {
     return html`
     ${this.post ? html`
-    <yp-edit-dialog name="postEdit" double-width="" id="editDialog" icon="lightbulb-outline" action="${this.action}" use-next-tab-action="${this.newPost}" on-next-tab-action="_nextTab" method="${this.method}" title="${this.editHeaderText}" save-text="${this.saveText}" class="container" custom-submit="" next-action-text="${this.t('next')}" toast-text="${this.toastText}" params="${this.params}">
-      <paper-tabs selected="${this.selected}" id="paperTabs" focused="">
+    <yp-edit-dialog .name="postEdit" double-width id="editDialog" .icon="lightbulb-outline" .action="${this.action}" .use-next-tab-action="${this.newPost}" @next-tab-action="${this._nextTab}" .method="${this.method}" .title="${this.editHeaderText}" .saveText="${this.saveText}" class="container" custom-submit .next-action-text="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
+      <paper-tabs .selected="${this.selected}" id="paperTabs" .focused="">
         <paper-tab><span>${this.t('post.yourPost')}</span></paper-tab>
-        <template is="dom-if" restamp="" if="${this.newPointShown}">
+        <template is="dom-if" .restamp="" if="${this.newPointShown}">
           <paper-tab>
             <div class="layout vertical center-center">
               <div>
@@ -296,26 +296,26 @@ class YpPostEditLit extends YpBaseElement {
       </paper-tabs>
 
       <div class="layout vertical wrap">
-        <iron-pages id="pages" class="layout horizontal" selected="${this.selected}">
+        <iron-pages id="pages" class="layout horizontal" .selected="${this.selected}">
           <section>
             <div class="layout vertical flex">
 
-              <paper-input id="name" required="" minlength="3" name="name" type="text" label="${this.t('title')}" value="${this.post.name}" maxlength="60" char-counter="">
+              <paper-input id="name" .required="" .minlength="3" .name="name" .type="text" .label="${this.t('title')}" .value="${this.post.name}" .maxlength="60" .char-counter="">
               </paper-input>
 
               <template is="dom-if" if="${this._showCategories(group)}" restamp="">
-                <paper-dropdown-menu label="${this.t('category.select')}">
-                  <paper-listbox slot="dropdown-content" selected="${this.selectedCategoryArrayId}">
-                    <template is="dom-repeat" items="${this.group.Categories}" as="category">
-                      <paper-item data-category-id="${this.category.id}">${this.category.name}</paper-item>
+                <paper-dropdown-menu .label="${this.t('category.select')}">
+                  <paper-listbox slot="dropdown-content" .selected="${this.selectedCategoryArrayId}">
+                    <template is="dom-repeat" .items="${this.group.Categories}" as="category">
+                      <paper-item .data-category-id="${this.category.id}">${this.category.name}</paper-item>
                     </template>
                   </paper-listbox>
                 </paper-dropdown-menu>
-                <input type="hidden" name="categoryId" value="${this.selectedCategoryId}">
+                <input .type="hidden" .name="categoryId" .value="${this.selectedCategoryId}">
               </template>
 
               <template is="dom-if" if="${this.postDescriptionLimit}">
-                <paper-textarea id="description" ?hidden="${this.structuredQuestions}" required="${!this.structuredQuestions}" minlength="3" name="description" value="${this.post.description}" always-float-label="${this._floatIfValueOrIE(post.description)}" label="${this.t('post.description')}" on-value-changed="_resizeScrollerIfNeeded" char-counter="" rows="2" max-rows="5" maxrows="5" maxlength="${this.postDescriptionLimit}">
+                <paper-textarea id="description" ?hidden="${this.structuredQuestions}" .required="${!this.structuredQuestions}" .minlength="3" .name="description" .value="${this.post.description}" .always-float-label="${this._floatIfValueOrIE(post.description)}" .label="${this.t('post.description')}" .on-value-changed="_resizeScrollerIfNeeded" .char-counter="" .rows="2" .max-rows="5" .maxrows="5" .maxlength="${this.postDescriptionLimit}">
                 </paper-textarea>
 
                 <div class="horizontal end-justified layout postEmoji" ?hidden="${this.group.configuration.hideEmoji}">
@@ -324,28 +324,28 @@ class YpPostEditLit extends YpBaseElement {
               </template>
 
               <template is="dom-if" if="${this.structuredQuestions}">
-                <template is="dom-repeat" items="${this.structuredQuestions}">
-                  <paper-textarea id="structuredQuestion_${this.index}" value="${this.item.value}" always-float-label="${this._floatIfValueOrIE(item.value)}" label="${this.item.translatedQuestion}" char-counter="" minlength="2" on-value-changed="_resizeScrollerIfNeeded" rows="2" max-rows="3" maxrows="3" required="" maxlength="${this.item.maxLength}">
+                <template is="dom-repeat" .items="${this.structuredQuestions}">
+                  <paper-textarea id="structuredQuestion_${this.index}" .value="${this.item.value}" always-float-label="${this._floatIfValueOrIE(item.value)}" .label="${this.item.translatedQuestion}" char-counter .minlength="2" @value-changed="${this._resizeScrollerIfNeeded}" .rows="2" .max-rows="3" .maxrows="3" .required="" .maxlength="${this.item.maxLength}">
                   </paper-textarea>
                 </template>
               </template>
 
               <template is="dom-if" if="${this.group.configuration.attachmentsEnabled}">
-                <yp-file-upload id="attachmentFileUpload" raised="true" multi="false" accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*" target="/api/groups/${this.group.id}/upload_document" method="POST" on-success="_documentUploaded">
-                  <iron-icon class="icon" icon="attach-file"></iron-icon>
+                <yp-file-upload id="attachmentFileUpload" raised .accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*" .target="/api/groups/${this.group.id}/upload_document" .method="POST" @success="${this._documentUploaded}">
+                  <iron-icon class="icon" .icon="attach-file"></iron-icon>
                   <span>${this.t('uploadAttachment')}</span>
                 </yp-file-upload>
                 <template is="dom-if" if="${this.post.data.attachment.url}">
-                  <paper-checkbox name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
+                  <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
                 </template>
               </template>
               <template is="dom-if" if="${this.group.configuration.moreContactInformation}">
                 <h2 class="contactInfo">${this.t('contactInformation')}</h2>
-                <paper-input id="contactName" name="contactName" type="text" label="${this.t('user.name')}" value="${this.post.data.contact.name}" char-counter="">
+                <paper-input id="contactName" .name="contactName" .type="text" .label="${this.t('user.name')}" .value="${this.post.data.contact.name}" char-counter>
                 </paper-input>
-                <paper-input id="contactEmail" name="contactEmail" type="text" label="${this.t('user.email')}" value="${this.post.data.contact.email}" char-counter="">
+                <paper-input id="contactEmail" .name="contactEmail" .type="text" .label="${this.t('user.email')}" .value="${this.post.data.contact.email}" char-counter>
                 </paper-input>
-                <paper-input id="contactTelephone" name="contacTelephone" type="text" label="${this.t('contactTelephone')}" value="${this.post.data.contact.telephone}" maxlength="20" char-counter="">
+                <paper-input id="contactTelephone" .name="contacTelephone" .type="text" .label="${this.t('contactTelephone')}" .value="${this.post.data.contact.telephone}" .maxlength="20" char-counter>
                 </paper-input>
               </template>
             </div>
@@ -353,7 +353,7 @@ class YpPostEditLit extends YpBaseElement {
 
           <template is="dom-if" restamp="" if="${this.newPointShown}">
             <section class="subContainer">
-              <paper-textarea id="pointFor" required="${!this.group.configuration.newPointOptional}" minlength="3" name="pointFor" value="${this.post.pointFor}" always-float-label="${this._floatIfValueOrIE(post.pointFor)}" label="${this.t('point.for')}" char-counter="" rows="2" max-rows="5" maxlength="500">
+              <paper-textarea id="pointFor" .required="${!this.group.configuration.newPointOptional}" .minlength="3" .name="pointFor" .value="${this.post.pointFor}" always-float-label="${this._floatIfValueOrIE(post.pointFor)}" .label="${this.t('point.for')}" char-counter .rows="2" .max-rows="5" .maxlength="500">
               </paper-textarea>
               <div class="horizontal end-justified layout" ?hidden="${this.group.configuration.hideEmoji}">
                 <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
@@ -364,7 +364,7 @@ class YpPostEditLit extends YpBaseElement {
           <template is="dom-if" if="${!this.locationHidden}" restamp="">
             <section>
               <template is="dom-if" if="${this.mapActive}" restamp="">
-                <yp-post-location encoded-location="${this.encodedLocation}" location="${this.location}" group="${this.group}" post="${this.post}"></yp-post-location>
+                <yp-post-location .encodedLocation="${this.encodedLocation}" .location="${this.location}" .group="${this.group}" .post="${this.post}"></yp-post-location>
               </template>
             </section>
           </template>
@@ -373,7 +373,7 @@ class YpPostEditLit extends YpBaseElement {
             <div class="layout vertical center-center">
               <div class="layout horizontal center-center wrap">
                 <div class="layout vertical center-center self-start uploadSection" ?hidden="${this.group.configuration.hidePostImageUploads}">
-                  <yp-file-upload id="imageFileUpload" raised="true" multi="false" target="/api/images?itemType=post-header" method="POST" on-success="_imageUploaded">
+                  <yp-file-upload id="imageFileUpload" raised .target="/api/images?itemType=post-header" .method="POST" @success="${this._imageUploaded}">
                     <iron-icon class="icon" icon="photo-camera"></iron-icon>
                     <span>${this.t('image.upload')}</span>
                   </yp-file-upload>
@@ -384,7 +384,7 @@ class YpPostEditLit extends YpBaseElement {
                 </div>
                 <template is="dom-if" if="${this.group.configuration.allowPostVideoUploads}">
                   <div class="layout vertical center-center self-start uploadSection">
-                    <yp-file-upload id="videoFileUpload" container-type="posts" group="${this.group}" raised="true" upload-limit-seconds="${this.group.configuration.videoPostUploadLimitSec}" multi="false" video-upload="" method="POST" on-success="_videoUploaded">
+                    <yp-file-upload id="videoFileUpload" container-type="posts" .group="${this.group}" .raised="true" .uploadLimitSeconds="${this.group.configuration.videoPostUploadLimitSec}" .multi="false" .video-upload="" .method="POST" @success="${this._videoUploaded}">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span>${this.t('uploadVideo')}</span>
                     </yp-file-upload>
@@ -392,8 +392,8 @@ class YpPostEditLit extends YpBaseElement {
                 </template>
                 <template is="dom-if" if="${this.group.configuration.allowPostAudioUploads}">
                   <div class="layout vertical center-center self-start uploadSection">
-                    <yp-file-upload id="audioFileUpload" container-type="posts" group="${this.group}" raised="true" upload-limit-seconds="${this.group.configuration.audioPostUploadLimitSec}" multi="false" audio-upload="" method="POST" on-success="_audioUploaded">
-                      <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                    <yp-file-upload id="audioFileUpload" container-type="posts" group="${this.group}" raised="true" upload-limit-seconds="${this.group.configuration.audioPostUploadLimitSec}" .multi="false" .audio-upload="" .method="POST" @success="${this._audioUploaded}">
+                      <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
                       <span>${this.t('uploadAudio')}</span>
                     </yp-file-upload>
                   </div>
@@ -401,25 +401,25 @@ class YpPostEditLit extends YpBaseElement {
               </div>
               <br>
               <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
-              <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" selected="${this.selectedCoverMediaType}">
-                <paper-radio-button name="none">${this.t('post.cover.none')}</paper-radio-button>
-                <paper-radio-button name="image" ?hidden="${!this.uploadedHeaderImageId}">${this.t('post.cover.image')}</paper-radio-button>
-                <paper-radio-button name="video" ?hidden="${!this.showVideoCover}">${this.t('postCoverVideo')}</paper-radio-button>
-                <paper-radio-button name="audio" ?hidden="${!this.showAudioCover}">${this.t('postCoverAudio')}</paper-radio-button>
+              <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" .selected="${this.selectedCoverMediaType}">
+                <paper-radio-button .name="none">${this.t('post.cover.none')}</paper-radio-button>
+                <paper-radio-button .name="image" ?hidden="${!this.uploadedHeaderImageId}">${this.t('post.cover.image')}</paper-radio-button>
+                <paper-radio-button .name="video" ?hidden="${!this.showVideoCover}">${this.t('postCoverVideo')}</paper-radio-button>
+                <paper-radio-button .name="audio" ?hidden="${!this.showAudioCover}">${this.t('postCoverAudio')}</paper-radio-button>
                 <template is="dom-if" if="${this.location}">
-                  <paper-radio-button name="map">${this.t('post.cover.map')}</paper-radio-button>
-                  <paper-radio-button name="streetView">${this.t('post.cover.streetview')}</paper-radio-button>
+                  <paper-radio-button .name="map">${this.t('post.cover.map')}</paper-radio-button>
+                  <paper-radio-button .name="streetView">${this.t('post.cover.streetview')}</paper-radio-button>
                 </template>
               </paper-radio-group>
             </div>
           </section>
         </iron-pages>
-        <input type="hidden" name="location" value="${this.encodedLocation}">
-        <input type="hidden" name="coverMediaType" value="${this.selectedCoverMediaType}">
-        <input type="hidden" name="uploadedHeaderImageId" value="${this.uploadedHeaderImageId}">
-        <input type="hidden" name="uploadedDocumentUrl" value="${this.uploadedDocumentUrl}">
-        <input type="hidden" name="uploadedDocumentFilename" value="${this.uploadedDocumentFilename}">
-        <input type="hidden" name="structuredAnswers" value="${this.structuredAnswers}">
+        <input type="hidden" .name="location" .value="${this.encodedLocation}">
+        <input type="hidden" .name="coverMediaType" .value="${this.selectedCoverMediaType}">
+        <input type="hidden" .name="uploadedHeaderImageId" .value="${this.uploadedHeaderImageId}">
+        <input type="hidden" .name="uploadedDocumentUrl" .value="${this.uploadedDocumentUrl}">
+        <input type="hidden" .name="uploadedDocumentFilename" .value="${this.uploadedDocumentFilename}">
+        <input type="hidden" .name="structuredAnswers" .value="${this.structuredAnswers}">
       </div>
     </yp-edit-dialog>
 ` : html``}

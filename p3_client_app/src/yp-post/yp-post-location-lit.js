@@ -139,18 +139,18 @@ class YpPostLocationLit extends YpBaseElement {
     return html`
       ${this.post ? html`
 
-    <iron-media-query query="(max-width: 1024px)" query-matches="${this.narrowPad}"></iron-media-query>
+    <iron-media-query .query="(max-width: 1024px)" .queryMatches="${this.narrowPad}"></iron-media-query>
 
-    <google-map-search id="mapSearch" map="${this.map}" on-google-map-search-results="_mapSearchResults"></google-map-search>
+    <google-map-search id="mapSearch" .map="${this.map}" .on-google-map-search-results="_mapSearchResults"></google-map-search>
 
-    <google-map additional-map-options="{'keyboardShortcuts':false}" id="map" zoom="${this.mapZoom}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" map="${this.map}" libraries="places" on-map-type-changed="_mapTypeChanged" class="map" click-events="" on-zoom-changed="_zoomChanged" on-google-map-click="_setLocation" fit-to-markers="">
-      <google-map-marker slot="markers" latitude="${this.defaultLatitude}" longitude="${this.defaultLongitude}" id="marker"></google-map-marker>
+    <google-map .additional-map-options="{'keyboardShortcuts':false}" id="map" .zoom="${this.mapZoom}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .map="${this.map}" .libraries="places" .on-map-type-changed="_mapTypeChanged" class="map" .click-events="" @zoom-changed="${this._zoomChanged}" @google-map-click="${this_setLocation}" .fit-to-markers="">
+      <google-map-marker slot="markers" .latitude="${this.defaultLatitude}" .longitude="${this.defaultLongitude}" id="marker"></google-map-marker>
     </google-map>
 
     <div class="mapSearchInput layout vertical center-center">
       <div class="layout horizontal center-center wrap">
-        <paper-input max-length="60" label="${this.t('maps.searchInput')}" value="${this.mapSearchString}" on-keydown="_submitOnEnter"></paper-input>
-        <paper-button on-tap="_searchMap">${this.t('maps.search')}</paper-button>
+        <paper-input .max-length="60" .label="${this.t('maps.searchInput')}" .value="${this.mapSearchString}" @keydown="${this._submitOnEnter}"></paper-input>
+        <paper-button @tap="${this._searchMap}">${this.t('maps.search')}</paper-button>
       </div>
       <div class="searchResultText layout horizontal center-center">
         ${this.mapSearchResultAddress}

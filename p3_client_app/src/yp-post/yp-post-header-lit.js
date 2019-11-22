@@ -383,27 +383,27 @@ class YpPostHeaderLit extends YpBaseElement {
     return html`
     ${this.post ? html`  
     <div class="layout horizontal center-center">
-      <paper-material class="postCard layout-wrap layout-horizontal" elevation="${this.elevation}" animated="">
+      <paper-material class="postCard layout-wrap layout-horizontal" elevation="${this.elevation}" .animated="">
         <div class="layout vertical headerTopLevel">
-          <div class="post-name layout vertical" on-tap="goToPostIfNotHeader" logged-in="${this.loggedInUser}">
+          <div class="post-name layout vertical" @tap="${this.goToPostIfNotHeader}" .loggedIn="${this.loggedInUser}">
             <div>
-              <yp-magic-text text-type="postName" content-language="${this.post.language}" content="${this.postName}" content-id="${this.post.id}">
+              <yp-magic-text text-type="postName" .contentLanguage="${this.post.language}" .content="${this.postName}" content-id="${this.post.id}">
               </yp-magic-text>
             </div>
             <template is="dom-if" if="${this.post.Group.configuration.showWhoPostedPosts}">
               <div class="layout horizontal userInfo">
-                <yp-user-with-organization class="userWithOrg" hide-image="" title-date="${this.post.user.name}" user="${this.post.User}"></yp-user-with-organization>
+                <yp-user-with-organization class="userWithOrg" .hideImage="" .titleDate="${this.post.user.name}" .user="${this.post.User}"></yp-user-with-organization>
               </div>
             </template>
           </div>
           <div class="layout horizontal wrap mediaAndInfoContainer layout-center-center">
             <div class="layout vertical center-center self-start coverContainer">
-              <yp-post-cover-media show-video="" show-audio="" has-transcript="${this.post.public_data.transcript.text}" audio-cover="${this.isAudioCover}" header-mode="${this.headerMode}" post="${this.post}"></yp-post-cover-media>
+              <yp-post-cover-media .show-video .show-audio .hasTranscript="${this.post.public_data.transcript.text}" .audioCover="${this.isAudioCover}" .headerMode="${this.headerMode}" .post="${this.post}"></yp-post-cover-media>
               <div class="transcriptContainer">
                 <template is="dom-if" if="${this.checkingTranscript}">
                   <div class="layout vertical center-center checkTranscript">
                     <div>${this.t('checkingForTranscript')}</div>
-                    <paper-spinner active=""></paper-spinner>
+                    <paper-spinner .active ></paper-spinner>
                   </div>
                 </template>
                 <div class="transcriptError layout horizontal center-center" ?hidden="${!this.checkTranscriptError}">
@@ -417,47 +417,47 @@ class YpPostHeaderLit extends YpBaseElement {
                       </span>
                     </div>
                     <div id="postContentTranscript" ?hidden="${this.isEditing}">
-                      <yp-magic-text text-type="postTranscriptContent" content-language="${this.post.public_data.transcript.language}" content="${this.post.public_data.transcript.text}" content-id="${this.post.id}">
+                      <yp-magic-text text-type="postTranscriptContent" .contentLanguage="${this.post.public_data.transcript.language}" .content="${this.post.public_data.transcript.text}" .contentId="${this.post.id}">
                       </yp-magic-text>
                     </div>
                     <template is="dom-if" if="${this.hasPostAccess}">
                       <div class="layout horizontal" ?hidden="${this.isEditing}">
                         <div class="flex"></div>
-                        <yp-ajax id="editPostTranscriptAjax" method="PUT" on-response="_editPostTranscriptResponse"></yp-ajax>
-                        <paper-icon-button class="editIcon" title="${this.t('edit')}" icon="create" on-tap="_editPostTranscript"></paper-icon-button>
+                        <yp-ajax id="editPostTranscriptAjax" .method="PUT" @response="${this._editPostTranscriptResponse}"></yp-ajax>
+                        <paper-icon-button class="editIcon" .title="${this.t('edit')}" .icon="create" @tap="${this._editPostTranscript}"></paper-icon-button>
                       </div>
                     </template>
                   </div>
                 </template>
                 <template is="dom-if" if="${this.isEditing}" restamp="">
                   <div class="layout vertical" ?hidden="${!this.hasPostAccess}">
-                    <paper-textarea id="postTranscriptionEditor" char-counter="" maxlength="500" value="${this.editText}"></paper-textarea>
+                    <paper-textarea id="postTranscriptionEditor" .charCounter maxlength="500" .value="${this.editText}"></paper-textarea>
                     <div class="horizontal end-justified layout">
                       <emoji-selector id="postTranscriptEmojiSelector"></emoji-selector>
                     </div>
                     <div class="layout horizontal self-end">
-                      <paper-button on-tap="_cancelEdit">${this.t('cancel')}</paper-button>
-                      <paper-button on-tap="_saveEdit">${this.t('update')}</paper-button>
+                      <paper-button @tap="${this._cancelEdit}">${this.t('cancel')}</paper-button>
+                      <paper-button @tap="${this._saveEdit}">${this.t('update')}</paper-button>
                     </div>
                   </div>
                 </template>
-                <yp-ajax ?hidden="" id="checkTranscriptStatusAjax" on-response="_transcriptStatusResponse"></yp-ajax>
+                <yp-ajax ?hidden="" id="checkTranscriptStatusAjax" @response="${this._transcriptStatusResponse}"></yp-ajax>
               </div>
             </div>
             <div class="layout vertical">
               <div class="infoContainer layout-vertical">
-                <yp-magic-text id="description" text-type="postContent" content-language="${this.post.language}" content="${this.post.description}" no-user-info="${!this.post.Group.configuration.showWhoPostedPosts}" structured-questions-config="${this.post.Group.configuration.structuredQuestions}" content-id="${this.post.id}" class="description" truncate="500" more-text="${this.t('readMore')}" close-dialog-text="${this.t('close')}">
+                <yp-magic-text id="description" .text-type="postContent" .contentLanguage="${this.post.language}" .content="${this.post.description}" noUserInfo="${!this.post.Group.configuration.showWhoPostedPosts}" .structuredQuestionsConfig="${this.post.Group.configuration.structuredQuestions}" contentId="${this.post.id}" class="description" .truncate="500" .moreText="${this.t('readMore')}" .closDialogText="${this.t('close')}">
                 </yp-magic-text>
               </div>
               <div class="card-actions">
-                <yp-post-actions ?hidden="${this.hideActions}" floating="" header-mode="${this.headerMode}" elevation="-1" endorse-mode="${this.endorseMode}" class="voting layout-horizontal layout-center" post="${this.post}"></yp-post-actions>
+                <yp-post-actions ?hidden="${this.hideActions}" .floating="" .headerMode="${this.headerMode}" .elevation="-1" .endorseMode="${this.endorseMode}" class="voting layout-horizontal layout-center" .post="${this.post}"></yp-post-actions>
               </div>
             </div>
             <template is="dom-if" if="${this.headerMode}">
               <template is="dom-if" if="${this.loggedInUser}">
-                <paper-menu-button vertical-align="top" horizontal-align="right" class="edit" ?hidden="${this.hideActions}">
-                  <paper-icon-button aria-label="${this.t('openPostMenu')}" class="moreVert" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-                  <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+                <paper-menu-button .vertical-align="top" .horizontal-align="right" class="edit" ?hidden="${this.hideActions}">
+                  <paper-icon-button .ariaLabel="${this.t('openPostMenu')}" class="moreVert" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                  <paper-listbox slot="dropdown-content" @iron-select="${this_menuSelection}">
                     <template is="dom-if" if="${this.hasPostAccess}">
                       <paper-item id="editMenuItem">${this.t('post.edit')}</paper-item>
                       <paper-item id="moveMenuItem">${this.t('post.move')}</paper-item>

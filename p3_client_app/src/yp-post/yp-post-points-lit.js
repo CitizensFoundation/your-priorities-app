@@ -507,10 +507,10 @@ class YpPostPointsLit extends YpBaseElement {
   render() {
     return html`
     ${this.post ? html`
-    <iron-media-query query="(min-width: 985px)" query-matches="${this.largeMode}"></iron-media-query>
+    <iron-media-query query="(min-width: 985px)" .queryMatches="${this.largeMode}"></iron-media-query>
 
     <div class="layout horizontal center-center" ?hidden="${this.ajaxActive}">
-      <yp-ajax id="ajax" large-spinner="" active="${this.ajaxActive}" on-response="_response"></yp-ajax>
+      <yp-ajax id="ajax" .large-spinner="" .active="${this.ajaxActive}" @response="${this._response}"></yp-ajax>
     </div>
 
     <template is="dom-if" if="${this.largeMode}" restamp="">
@@ -529,9 +529,9 @@ class YpPostPointsLit extends YpBaseElement {
               </div>
             </template>
 
-            <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
+            <paper-material id="pointUpMaterial" .elevation="1" class="pointInputMaterial layout vertical" .animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
 
-              <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea" value="${this.textValueUp}" label="${this.labelUp}" always-float-label="${this._floatIfValueOrIE()}" char-counter="" rows="2" ?hidden="${this.hideUpText}" max-rows="3" maxlength="500">
+              <paper-textarea id="up_point" @tap="${this.focusUpPoint}" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueUp}" .label="${this.labelUp}" alwaysFloatLabel="${this._floatIfValueOrIE()}" .charCounter .rows="2" ?hidden="${this.hideUpText}" .max-rows="3" .maxlength="500">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" ?hidden="${this.post.Group.configuration.hideEmoji}">
@@ -542,13 +542,13 @@ class YpPostPointsLit extends YpBaseElement {
                 <template is="dom-if" if="${this.post.Group.configuration.allowPointVideoUploads}">
                   <div ?hidden="${this.hideUpVideo}" class="uploadSection">
                     <div class="layout vertical center-center self-start" ?hidden="${!this.loggedInUser}">
-                      <yp-file-upload id="videoFileUploadUp" upload-limit-seconds="${this.post.Group.configuration.videoPointUploadLimitSec}" current-file="${this.hasCurrentUpVideo}" container-type="points" group="${this.post.Group}" raised="true" multi="false" video-upload="" method="POST" on-success="_videoUpUploaded">
+                      <yp-file-upload id="videoFileUploadUp" .uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" .currentFile="${this.hasCurrentUpVideo}" .container-type="points" .group="${this.post.Group}" raised .video-upload .method="POST" @success="${this._videoUpUploaded}">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         <span>${this.t('uploadVideoPointFor')}</span>
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised="" ?hidden="${this.loggedInUser}" on-tap="_openLogin">
+                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         ${this.t('uploadVideoPointFor')}
                       </paper-button>
@@ -559,14 +559,14 @@ class YpPostPointsLit extends YpBaseElement {
                 <template is="dom-if" if="${this.post.Group.configuration.allowPointAudioUploads}">
                   <div ?hidden="${this.hideUpAudio}" class="uploadSection">
                     <div class="layout vertical center-center" ?hidden="${!this.loggedInUser}">
-                      <yp-file-upload id="audioFileUploadUp" current-file="${this.hasCurrentUpAudio}" container-type="points" upload-limit-seconds="${this.post.Group.configuration.audioPointUploadLimitSec}" group="${this.post.Group}" raised="true" multi="false" audio-upload="" method="POST" on-success="_audioUpUploaded">
-                        <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                      <yp-file-upload id="audioFileUploadUp" current-file="${this.hasCurrentUpAudio}" .container-type="points" uploadlimitSeconds="${this.post.Group.configuration.audioPointUploadLimitSec}" group="${this.post.Group}" .raised audio-upload="" .method="POST" @success="${this._audioUpUploaded}">
+                        <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
                         <span>${this.t('uploadAudioPointFor')}</span>
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised="" ?hidden="${this.loggedInUser}" on-tap="_openLogin">
-                        <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
+                        <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
                         ${this.t('uploadAudioPointFor')}
                       </paper-button>
                     </div>
@@ -576,16 +576,16 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthUpIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised="" class="submitButton" disabled="${this.addPointDisabled}" icon="add" mini="" elevation="3" on-tap="addPointUp" title="${this.t('point.add_up')}">${this.t('postPoint')}</paper-button>
+                  <paper-button raised class="submitButton" ?disabled="${this.addPointDisabled}" .icon="add" .mini="" .elevation="3" @tap="${this.addPointUp}" .title="${this.t('point.add_up')}">${this.t('postPoint')}</paper-button>
                 </div>
               </div>
             </paper-material>
 
             <div id="allUpPoints">
-              <iron-list id="ironListUp" items="${this.upPoints}" as="point" scroll-target="document" scroll-offset="550">
+              <iron-list id="ironListUp" .items="${this.upPoints}" as="point" .scrollTarget="document" .scrollOffset="550">
                 <template>
                   <div class="item layout-horizontal" tabindex="${this.tabIndex}">
-                    <paper-material id="point${this.point.id}" elevation="1" animated="" class="pointMaterial">
+                    <paper-material id="point${this.point.id}" .elevation="1" .animated .class="pointMaterial">
                       <yp-point point="${this.point}"></yp-point>
                     </paper-material>
                   </div>
@@ -608,9 +608,9 @@ class YpPostPointsLit extends YpBaseElement {
             </template>
 
 
-            <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
+            <paper-material id="pointDownMaterial" .elevation="1" class="pointInputMaterial layout vertical" .animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
 
-              <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" value="${this.textValueDown}" label="${this.labelDown}" char-counter="" rows="2" ?hidden="${this.hideDownText}" always-float-label="${this._floatIfValueOrIE()}" max-rows="5" maxlength="500">
+              <paper-textarea id="down_point" @tap="${this.focusDownPoint}" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueDown}" .label="${this.labelDown}" .charCounter .rows="2" ?hidden="${this.hideDownText}" alwaysFloatLabel="${this._floatIfValueOrIE()}" .max-rows="5" .maxlength="500">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" ?hidden="${this.post.Group.configuration.hideEmoji}">
@@ -621,13 +621,13 @@ class YpPostPointsLit extends YpBaseElement {
                 <template is="dom-if" if="${this.post.Group.configuration.allowPointVideoUploads}">
                   <div ?hidden="${this.hideDownVideo}" class="uploadSection">
                     <div class="layout vertical center-center self-start" ?hidden=${!this.loggedInUser}">
-                      <yp-file-upload id="videoFileUploadDown" current-file="${this.hasCurrentDownVideo}" container-type="points" upload-limit-seconds="${this.post.Group.configuration.videoPointUploadLimitSec}" group="${this.post.Group}" raised="true" multi="false" video-upload="" method="POST" on-success="_videoDownUploaded">
-                        <iron-icon class="icon" icon="videocam"></iron-icon>
+                      <yp-file-upload id="videoFileUploadDown" currentFile="${this.hasCurrentDownVideo}" .containerType="points" uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" .group="${this.post.Group}" .raised="true" .multi="false" .videoUpload="" .method="POST" @success="${this._videoDownUploaded}">
+                        <iron-icon class="icon" .icon="videocam"></iron-icon>
                         <span>${this.t('uploadVideoPointAgainst')}</span>
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised="" ?hidden="${this.loggedInUser}" on-tap="_openLogin">
+                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         ${this.t('uploadVideoPointAgainst')}
                       </paper-button>
@@ -638,13 +638,13 @@ class YpPostPointsLit extends YpBaseElement {
                 <template is="dom-if" if="${this.post.Group.configuration.allowPointAudioUploads}">
                   <div ?hidden="${this.hideDownAudio}" class="uploadSection">
                     <div class="layout vertical center-center" ?hidden="${!this.loggedInUser}">
-                      <yp-file-upload id="audioFileUploadDown" current-file="${this.hasCurrentDownAudio}" container-type="points" upload-limit-seconds="${this.post.Group.configuration.audioPointUploadLimitSec}" group="${this.post.Group}" raised="true" multi="false" audio-upload="" method="POST" on-success="_audioDownUploaded">
-                        <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                      <yp-file-upload id="audioFileUploadDown" .currentFile="${this.hasCurrentDownAudio}" .containerType="points" uploadLimitSeconds="${this.post.Group.configuration.audioPointUploadLimitSec}" group="${this.post.Group}" .raised="true" .multi="false" .audio-upload="" .method="POST" @success="${this._audioDownUploaded}">
+                        <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
                         <span>${this.t('uploadAudioPointAgainst')}</span>
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised="" ?hidden="${this.loggedInUser}" on-tap="_openLogin">
+                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
                         <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                         ${this.t('uploadAudioPointAgainst')}
                       </paper-button>
@@ -655,17 +655,17 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthDownIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised="" disabled="${this.addPointDisabled}" icon="add" elevation="3" on-tap="addPointDown" title="${this.t('point.add_down')}">${this.t('postPoint')}</paper-button>
+                  <paper-button raised ?disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @tap="${this.addPointDown}" .title="${this.t('point.add_down')}">${this.t('postPoint')}</paper-button>
                 </div>
               </div>
             </paper-material>
 
             <div id="allDownPoints">
-              <iron-list id="ironListDown" items="${this.downPoints}" as="point" scroll-target="document" scroll-offset="550">
+              <iron-list id="ironListDown" .items="${this.downPoints}" .as="point" .scroll-target="document" .scroll-offset="550">
                 <template>
-                  <div class="item" tabindex="${this.tabIndex}">
-                    <paper-material id="point${this.point.id}" elevation="1" animated="" class="pointMaterial">
-                      <yp-point point="${this.point}"></yp-point>
+                  <div class="item" .tabindex="${this.tabIndex}">
+                    <paper-material id="point${this.point.id}" .elevation="1" .animated="" class="pointMaterial">
+                      <yp-point .point="${this.point}"></yp-point>
                     </paper-material>
                   </div>
                 </template>
@@ -678,13 +678,13 @@ class YpPostPointsLit extends YpBaseElement {
 
     <template is="dom-if" if="${!this.largeMode}" restamp="">
       <div class="layout vertical center-center">
-        <paper-material id="pointUpOrDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
-          <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea" value="${this.textValueMobileUpOrDown}" label="${this.labelMobileUpOrDown}" char-counter="" rows="2" ?hidden="${this.hideMobileText}" max-rows="3" maxlength="500"></paper-textarea>
+        <paper-material id="pointUpOrDownMaterial" .elevation="1" class="pointInputMaterial layout vertical" .animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
+          <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueMobileUpOrDown}" .label="${this.labelMobileUpOrDown}" charCounter .rows="2" ?hidden="${this.hideMobileText}" .max-rows="3" .maxlength="500"></paper-textarea>
           <div class="layout vertical end-justified">
             <div class="layout horizontal center-center pointButtons">
-              <paper-radio-group id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="${this.pointUpOrDownSelected}">
-                <paper-radio-button name="pointFor">${this.t('pointForShort')}</paper-radio-button>
-                <paper-radio-button name="pointAgainst">${this.t('pointAgainstShort')}</paper-radio-button>
+              <paper-radio-group id="upOrDown" .attributeForSelected="name" class="layout horizontal" .selected="${this.pointUpOrDownSelected}">
+                <paper-radio-button .name="pointFor">${this.t('pointForShort')}</paper-radio-button>
+                <paper-radio-button .name="pointAgainst">${this.t('pointAgainstShort')}</paper-radio-button>
               </paper-radio-group>
               <div class="flex"></div>
               <div ?hidden="${this.hideMobileText}">
@@ -696,15 +696,15 @@ class YpPostPointsLit extends YpBaseElement {
               <template is="dom-if" if="${this.post.Group.configuration.allowPointVideoUploads}">
                 <div ?hidden="${this.hideMobileVideo}" class="uploadSection">
                   <div class="layout vertical center-center self-start" ?hidden="${!this.loggedInUser}">
-                    <yp-file-upload id="videoFileUploadMobile" current-file="${this.hasCurrentMobileVideo}" container-type="points" upload-limit-seconds="${this.post.Group.configuration.videoPointUploadLimitSec}" group="${this.post.Group}" raised="true" multi="false" video-upload="" method="POST" on-success="_videoMobileUploaded">
-                      <iron-icon class="icon" icon="videocam"></iron-icon>
+                    <yp-file-upload id="videoFileUploadMobile" currentFile="${this.hasCurrentMobileVideo}" containerType="points" .uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" group="${this.post.Group}" raised .video-upload="" .method="POST" @success="${this._videoMobileUploaded}">
+                      <iron-icon class="icon" .icon="videocam"></iron-icon>
 
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadVideoPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadVideoPointAgainst')}</span>
                     </yp-file-upload>
                   </div>
                   <div class="layout horizontal center-center">
-                    <paper-button class="uploadNotLoggedIn" raised="" ?hidden="${this.loggedInUser}" on-tap="_openLogin">
+                    <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadVideoPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadVideoPointAgainst')}</span>
@@ -715,15 +715,15 @@ class YpPostPointsLit extends YpBaseElement {
               <template is="dom-if" if="${this.post.Group.configuration.allowPointAudioUploads}">
                 <div ?hidden="${this.hideMobileAudio}" class="uploadSection">
                   <div class="layout vertical center-center  self-start" ?hidden="${!this.loggedInUser}">
-                    <yp-file-upload id="audioFileUploadMobile" current-file="${this.hasCurrentMobileAudio}" container-type="points" upload-limit-seconds="${this.post.Group.configuration.audioPointUploadLimitSec}" group="${this.post.Group}" raised="true" multi="false" audio-upload="" method="POST" on-success="_audioMobileUploaded">
-                      <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
+                    <yp-file-upload id="audioFileUploadMobile" .currentFile="${this.hasCurrentMobileAudio}" .containerType="points" upload-limit-seconds="${this.post.Group.configuration.audioPointUploadLimitSec}" group="${this.post.Group}" raised .audioUpload .method="POST" @success="${this._audioMobileUploaded}">
+                      <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
 
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadAudioPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadAudioPointAgainst')}</span>
                     </yp-file-upload>
                   </div>
                   <div class="layout horizontal center-center">
-                    <paper-button class="uploadNotLoggedIn" raised="" ?hidden="${this.loggedInUser}" on-tap="_openLogin">
+                    <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
                       <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadAudioPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadAudioPointAgainst')}</span>
@@ -736,7 +736,7 @@ class YpPostPointsLit extends YpBaseElement {
           </div>
           <div ?hidden="${!this.ifLengthMobileRight}">
             <div class="addPointFab layout horizontal center-center mobileFab">
-              <paper-button raised="" disabled="${this.addPointDisabled}" icon="add" elevation="3" on-tap="addMobilePointUpOrDown" title="${this.t('postPoint')}">
+              <paper-button raised="" disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @tap="${this.addMobilePointUpOrDown}" .title="${this.t('postPoint')}">
                 <span ?hidden="${!this.selectedPointForMobile}">${this.t('postPointFor')}</span>
                 <span ?hidden="${this.selectedPointForMobile}">${this.t('postPointAgainst')}</span>
               </paper-button>
@@ -745,11 +745,11 @@ class YpPostPointsLit extends YpBaseElement {
         </paper-material>
       </div>
       <div class="layout vertical center-center">
-        <iron-list id="ironListMobile" debate-disabled="${this.post.Group.configuration.disableDebate}" items="${this.points}" as="point" scroll-target="document" scroll-offset="${this.mobileScrollOffset}">
+        <iron-list id="ironListMobile" debateDisabled="${this.post.Group.configuration.disableDebate}" .items="${this.points}" .as="point" .scrollTarget="document" .scrollOffset="${this.mobileScrollOffset}">
           <template>
             <div class="item layout vertical center-center" tabindex="${this.tabIndex}">
-              <paper-material id="point${this.point.id}" elevation="1" animated="" class="pointMaterial">
-                <yp-point point="${this.point}"></yp-point>
+              <paper-material id="point${this.point.id}" .elevation="1" .animated="" class="pointMaterial">
+                <yp-point .point="${this.point}"></yp-point>
               </paper-material>
             </div>
           </template>
@@ -758,11 +758,11 @@ class YpPostPointsLit extends YpBaseElement {
     </template>
 
     <div class="layout vertical center-center">
-      <yp-ajax id="newPointsAjax" on-response="_newPointsResponse"></yp-ajax>
-      <yp-ajax id="newPointAjax" on-error="_newPointError" method="POST" url="/api/points" on-response="_newPointResponse"></yp-ajax>
+      <yp-ajax id="newPointsAjax" @response="${this._newPointsResponse}"></yp-ajax>
+      <yp-ajax id="newPointAjax" @error="${this._newPointError}" .method="POST" url="/api/points" @response="${this._newPointResponse}"></yp-ajax>
     </div>
 
-    <paper-toast id="newPointToast" text="${this.newPointTextCombined}"></paper-toast>
+    <paper-toast id="newPointToast" .text="${this.newPointTextCombined}"></paper-toast>
 ` : html``}
 `
   }

@@ -60,18 +60,18 @@ class YpResetPasswordLit extends YpBaseElement {
       <p>${this.t('user.resetPasswordInstructions')}</p>
 
       <form is="iron-form" id="form">
-        <paper-input id="password" type="password" label="${this.t('password')}" value="${this.password}" autocomplete="off" error-message="${this.passwordErrorMessage}">
+        <paper-input id="password" .type="password" .label="${this.t('password')}" .value="${this.password}" .autocomplete="off" .error-message="${this.passwordErrorMessage}">
         </paper-input>
 
       </form>
       <div class="buttons">
-        <yp-ajax id="resetPasswordAjax" method="POST" on-response="_resetPasswordResponse"></yp-ajax>
-        <paper-button on-tap="_cancel" dialog-dismiss="">${this.t('cancel')}</paper-button>
-        <paper-button autofocus="" on-tap="_validateAndSend">${this.t('user.resetPassword')}</paper-button>
+        <yp-ajax id="resetPasswordAjax" .method="POST" @response="${this._resetPasswordResponse}"></yp-ajax>
+        <paper-button @tap="${this._cancel}" dialog-dismiss="">${this.t('cancel')}</paper-button>
+        <paper-button .autofocus="" @tap="${this._validateAndSend}">${this.t('user.resetPassword')}</paper-button>
       </div>
     </paper-dialog>
 
-    <iron-a11y-keys id="a11y" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+    <iron-a11y-keys id="a11y" .keys="enter" @keys-pressed="${this.onEnter}"></iron-a11y-keys>
 `
   
   }
