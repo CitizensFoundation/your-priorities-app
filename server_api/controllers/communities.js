@@ -388,11 +388,10 @@ const masterGroupIncludes = [
 var getCommunity = function(req, done) {
   var community;
 
-  log.info("getCommunity 1");
+  log.info("getCommunity");
 
   async.series([
     function (seriesCallback) {
-      log.info("getCommunity 1a");
       models.Community.find({
         where: { id: req.params.id },
         order: [
@@ -441,7 +440,6 @@ var getCommunity = function(req, done) {
           }
         ]
       }).then(function(communityIn) {
-        log.info("getCommunity 2");
         community = communityIn;
         if (community) {
           log.info('Community Viewed', { community: toJson(community.simple()), context: 'view', user: toJson(req.user) });
@@ -455,7 +453,6 @@ var getCommunity = function(req, done) {
       });
     },
     function (seriesCallback) {
-      log.info("getCommunity 2a");
       models.Group.findAll({
         where: {
           community_id: community.id,
@@ -475,7 +472,6 @@ var getCommunity = function(req, done) {
         ],
         include: masterGroupIncludes
       }).then(function (groups) {
-        log.info("getCommunity 2b");
         community.dataValues.Groups = groups;
         seriesCallback();
       }).catch(error => {
@@ -483,7 +479,6 @@ var getCommunity = function(req, done) {
       });
     },
     function (seriesCallback) {
-      log.info("getCommunity 3");
       if (req.user && community) {
         var adminGroups, userGroups;
 
@@ -513,7 +508,6 @@ var getCommunity = function(req, done) {
                 }
               ].concat(masterGroupIncludes)
             }).then(function (groups) {
-              log.info("getCommunity 4");
               adminGroups = groups;
               parallelCallback(null, "admin");
             }).catch(function (error) {
@@ -522,7 +516,6 @@ var getCommunity = function(req, done) {
           },
 
           function (parallelCallback) {
-            log.info("getCommunity 5");
             models.Group.findAll({
               where: {
                 community_id: community.id
@@ -546,7 +539,6 @@ var getCommunity = function(req, done) {
                 }
               ].concat(masterGroupIncludes)
             }).then(function (groups) {
-              log.info("getCommunity 6");
               userGroups = groups;
               parallelCallback(null, "users");
             }).catch(function (error) {
@@ -554,7 +546,6 @@ var getCommunity = function(req, done) {
             });
           }
         ], function (error) {
-            log.info("getCommunity 7");
           var combinedGroups = _.concat(userGroups, community.dataValues.Groups);
           if (adminGroups) {
             combinedGroups = _.concat(adminGroups, combinedGroups);
@@ -577,7 +568,6 @@ var getCommunity = function(req, done) {
       }
     }
   ], function (error) {
-    log.info("getCommunity 8");
     done(error, community);
   });
 };
