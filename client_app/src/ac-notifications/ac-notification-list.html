@@ -157,7 +157,7 @@
 
         notificationGetTTL: {
           type: Number,
-          value: 6500
+          value: 10000
         },
 
         oldestProcessedNotificationAt: {
@@ -377,6 +377,7 @@
         if (this.user) {
           this.timer = this.async(function () {
             this.loadNewData();
+            this.lastFetchStartedAt = Date.now();
           }.bind(this), this.notificationGetTTL);
         }
       },
@@ -426,6 +427,17 @@
         this._handleUnViewedCount(detail.response.unViewedCount);
         if (this.$$("#list"))
           this.$$("#list").fire("iron-resize");
+
+        if (this.lastFetchStartedAt) {
+          var duration = Date.now() - this.lastFetchStartedAt;
+          if (duration>1000) {
+            console.warn("Setting notificationGetTTL = 60000");
+            this.notificationGetTTL = 60000;
+          } else if (duration>10000) {
+            console.warn("Setting notificationGetTTL = 60000*5");
+            this.notificationGetTTL = 60000*5;
+          }
+        }
       },
 
       _removeOldIfExists: function (notification) {
