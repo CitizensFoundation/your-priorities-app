@@ -656,23 +656,32 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
+  log.info("translatedText 1", { query: req.query });
   if (req.query.textType.indexOf("domain") > -1) {
+    log.info("translatedText 2");
     models.Domain.find({
       where: {
         id: req.params.id
       },
       attributes: ['id','name','description']
     }).then(function(domain) {
+      log.info("translatedText 3");
       if (domain) {
         models.AcTranslationCache.getTranslation(req, domain, function (error, translation) {
+          log.info("translatedText 4");
           if (error) {
+            log.info("translatedText 5");
             sendDomainOrError(res, req.params.id, 'translated', req.user, error, 500);
           } else {
+            log.info("translatedText 6");
             res.send(translation);
           }
         });
+        log.info("translatedText 7");
         log.info('Domain translatedTitle', {  context: 'translated' });
+        log.info("translatedText 8");
       } else {
+        log.info("translatedText 9");
         sendDomainOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
       }
     }).catch(function(error) {
