@@ -1030,26 +1030,29 @@ router.get('/reset/:token', function(req, res) {
 });
 
 router.post('/createActivityFromApp', function(req, res) {
-  models.AcActivity.createActivity({
-    type: 'activity.fromApp',
-    sub_type: req.body.type,
-    actor: { appActor: req.body.actor },
-    object: { name: req.body.object, target: req.body.target ? JSON.parse(req.body.target) : null },
-    context: { pathName: req.body.path_name, name: req.body.context, eventTime: req.body.event_time,
-               sessionId: req.body.sessionId, userAgent: req.body.user_agent },
+  const workData = {
+    body: {
+      actor: req.body.actor,
+      type: req.body.type,
+      object: req.body.object,
+      target: req.body.target,
+      path_name: req.body.path_name,
+      context: req.body.context,
+      event_time: req.body.event_time,
+      sessionId: req.body.sessionId,
+      user_agent: req.body.user_agent,
+      server_timestamp: Date.now()
+    },
+
     userId: req.user ? req.user.id : null,
     domainId: req.ypDomain.id,
+    communityId: req.ypCommunity ? req.ypCommunity.id : null,
     groupId: req.params.groupId,
-//    communityId: req.ypCommunity ? req.ypCommunity.id : null,
     postId: req.body.object ? req.body.object.postId : null
-  }, function (error) {
-    if (error) {
-      log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: req.user ? toJson(req.user) : null, err: error, errorStatus: 500 });
-      res.sendStatus(500);
-    } else {
-      res.sendStatus(200);
-    }
-  });
+  };
+
+  queue.create('delayed-job', { type: 'create-activity-from-app', workData }).priority('low').removeOnComplete(true).save();
+  res.sendStatus(200);
 });
 
 router.post('/reset/:token', function(req, res) {
