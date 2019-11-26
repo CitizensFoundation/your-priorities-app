@@ -32,7 +32,7 @@
     "express-generator": "^4.16.1",
     "express-session": "git+https://github.com/rbjarnason/session.git",
     "express-useragent": "^0.2.4",
-    "farmhash": "^3.0.0",
+    "farmhash": "2.1.0",
     "flickrapi": "~0.3.28",
     "gulp": "gulpjs/gulp#4.0",
     "heroku-node-settings": "^1.0.2",
