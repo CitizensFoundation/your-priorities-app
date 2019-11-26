@@ -371,7 +371,7 @@
                      type="text"
                      label="[[t('alternativeTextForNewIdeaButton')]]"
                      value="{{group.configuration.alternativeTextForNewIdeaButton}}"
-                     maxlength="32"
+                     maxlength="30"
                      char-counter>
         </paper-input>
 
@@ -380,7 +380,16 @@
                      type="text"
                      label="[[t('alternativeTextForNewIdeaButtonClosed')]]"
                      value="{{group.configuration.alternativeTextForNewIdeaButtonClosed}}"
-                     maxlength="32"
+                     maxlength="30"
+                     char-counter>
+        </paper-input>
+
+        <paper-input id="alternativeTextForNewIdeaButtonHeader"
+                     name="alternativeTextForNewIdeaButtonHeader"
+                     type="text"
+                     label="[[t('alternativeTextForNewIdeaButtonHeader')]]"
+                     value="{{group.configuration.alternativeTextForNewIdeaButtonHeader}}"
+                     maxlength="20"
                      char-counter>
         </paper-input>
 

@@ -942,7 +942,11 @@
       this.async(function () {
         if (this.t) {
           if (this.newPost) {
-            this.editHeaderText = this.t('post.new');
+            if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaButtonHeader) {
+              this.editHeaderText = this.group.configuration.alternativeTextForNewIdeaButtonHeader;
+            } else {
+              this.editHeaderText = this.t('post.new');
+            }
             this.toastText = this.t('postCreated');
             this.set('saveText', this.t('create'));
           } else {

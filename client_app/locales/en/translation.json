@@ -1,6 +1,7 @@
 {
   "alternativeTextForNewIdeaButton": "Alternative text for 'New idea' button",
   "alternativeTextForNewIdeaButtonClosed": "Alternative text for closed 'New idea' button",
+  "alternativeTextForNewIdeaButtonHeader": "Alternative text for 'New idea' header",
   "descriptionTruncateAmount": "Description character truncate amount",
   "transcriptSimpleFormat": "Format transcript text",
   "descriptionSimpleFormat": "Format description on post page",
