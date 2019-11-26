@@ -1,4 +1,7 @@
 {
+  "alternativeTextForNewIdeaButton": "Annar texti fyrir 'Ný hugmynd' hnapp",
+  "alternativeTextForNewIdeaButtonClosed": "Annar texti fyrir lokaðan 'Ný hugmynd' hnapp",
+
   "descriptionTruncateAmount": "Stytta lýsingu um stafabil",
   "descriptionSimpleFormat": "Nota línubil í lýsingu á hugmyndasíðu",
   "transcriptSimpleFormat": "Nota línubil í texta frá mynd/hljóði",
