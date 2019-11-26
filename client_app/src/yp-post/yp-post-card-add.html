@@ -139,10 +139,20 @@
         <div class="layout horizontal center-center addNewIdeaText">
           <iron-icon disabled$="[[disabled]]" icon="lightbulb-outline"></iron-icon>
           <div class="flex addText" hidden$="[[disabled]]">
-            [[t('post.add_new')]]
+            <template is="dom-if" if="[[!group.configuration.alternativeTextForNewIdeaButton]]">
+              [[t('post.add_new')]]
+            </template>
+            <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButton]]">
+              [[group.configuration.alternativeTextForNewIdeaButton]]
+            </template>
           </div>
           <div class="flex addText closed" hidden$="[[!disabled]]">
-            [[t('closedForNewPosts')]]
+            <template is="dom-if" if="[[!group.configuration.alternativeTextForNewIdeaButtonClosed]]">
+              [[t('closedForNewPosts')]]
+            </template>
+            <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButtonClosed]]">
+              [[group.configuration.alternativeTextForNewIdeaButtonClosed]]
+            </template>
           </div>
         </div>
       </paper-card>
@@ -160,7 +170,9 @@
 
         disabled: {
           type: Boolean
-        }
+        },
+
+        group: Object
       },
 
       _newPost: function () {

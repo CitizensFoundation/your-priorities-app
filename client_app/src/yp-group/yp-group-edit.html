@@ -366,6 +366,24 @@
         </paper-textarea>
         <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
 
+        <paper-input id="alternativeTextForNewIdeaButton"
+                     name="alternativeTextForNewIdeaButton"
+                     type="text"
+                     label="[[t('alternativeTextForNewIdeaButton')]]"
+                     value="{{group.configuration.alternativeTextForNewIdeaButton}}"
+                     maxlength="32"
+                     char-counter>
+        </paper-input>
+
+        <paper-input id="alternativeTextForNewIdeaButtonClosed"
+                     name="alternativeTextForNewIdeaButtonClosed"
+                     type="text"
+                     label="[[t('alternativeTextForNewIdeaButtonClosed')]]"
+                     value="{{group.configuration.alternativeTextForNewIdeaButtonClosed}}"
+                     maxlength="32"
+                     char-counter>
+        </paper-input>
+
         <div class="layout vertical additionalSettings defaultPostImage">
           <yp-file-upload id="defaultPostImageUpload" raised="true" multi="false"
                           target="/api/images?itemType=group-logo" method="POST" on-success="_defaultPostImageUploaded">

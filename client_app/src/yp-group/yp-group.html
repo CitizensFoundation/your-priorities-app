@@ -183,7 +183,7 @@
       </div>
 
       <div class="largeAddButton layout horizontal center-center" is-apple$="[[isOldiOs]]" is-ipad$="[[isIpad]]" hidden$="[[group.configuration.hideNewPost]]">
-        <yp-post-card-add disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2"></yp-post-card-add>
+        <yp-post-card-add group="[[group]]" disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2"></yp-post-card-add>
       </div>
 
       <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
