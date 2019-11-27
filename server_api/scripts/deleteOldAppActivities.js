@@ -8,7 +8,7 @@ let currentId = fromId;
 
 async.whilst(() => { return  currentId<=toId }, (callback)=>{
   let currentFrom = currentId;
-  let currentTo = Math.min(currentId+10, toId);
+  let currentTo = Math.min(currentId+200, toId);
   console.log("Deleting ids from "+currentFrom+" to "+currentTo);
   models.AcActivity.destroy({
     where: {
@@ -28,7 +28,7 @@ async.whilst(() => { return  currentId<=toId }, (callback)=>{
     }
   }).then((results)=>{
     console.log(results);
-    currentId+=10;
+    currentId+=200;
     callback();
   })},
   (error) => {
