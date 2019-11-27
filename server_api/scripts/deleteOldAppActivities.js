@@ -1,8 +1,8 @@
 const models = require('../models');
 const async = require('async');
 
-const fromId = process.argv[2];
-const toId = process.argv[3];
+const fromId = parseInt(process.argv[2]);
+const toId = parseInt(process.argv[3]);
 
 let currentId = fromId;
 
