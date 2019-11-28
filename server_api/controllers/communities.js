@@ -259,7 +259,9 @@ var getCommunityFolder = function (req, communityFolderId, done) {
       }
     }
   ], function (error) {
-    communityFolder.dataValues.Communities = combinedCommunities;
+    if (communityFolder) {
+      communityFolder.dataValues.Communities = combinedCommunities;
+    }
     done(error, communityFolder);
   });
 };
