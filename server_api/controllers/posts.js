@@ -581,6 +581,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
   }).then(function(points) {
     if (points) {
       log.info('Points Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
+      //TODO: Fix after sequelize upgrade and use limit
       points = _.slice(points, 0, 750);
       res.send(points);
     } else {

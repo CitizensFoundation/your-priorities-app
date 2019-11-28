@@ -1204,6 +1204,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     }
     if (offset<postRows.length) {
       var toValue = offset+20;
+      //TODO: Fix after sequelize upgrade and use limit
       rows = _.slice(postRows, offset, toValue);
     }
     //TODO: Remove this hack by finding way to let sequelize work with offsets... (maybe in seq 4.0)
