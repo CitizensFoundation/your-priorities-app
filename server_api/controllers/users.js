@@ -810,7 +810,7 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
     const user = { notLoggedIn: true };
     setSAMLSettingsOnUser(req, user, (error) => {
       if (error) {
-        log.error("User IsLoggedIn Error", {context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500});
+        log.error("User IsLoggedIn Error", {context: 'isloggedin', user: req.user ? req.user.id : -1, err: error, errorStatus: 500});
         res.sendStatus(500);
       } else {
         res.send(user);
