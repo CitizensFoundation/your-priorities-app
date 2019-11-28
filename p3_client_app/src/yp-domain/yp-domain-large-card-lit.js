@@ -270,31 +270,31 @@ class YpDomainLargeCardLit extends YpBaseElement {
     return html`
     ${this.domain ? html`
     <div class="layout horizontal wrap">
-      <paper-material is-video="${this.domainVideoURL}" id="cardImage" elevation="3" animated="" class="large-card imageCard top-card">
+      <paper-material is-video="${this.domainVideoURL}" id="cardImage" .elevation="3" .animated="" class="large-card imageCard top-card">
         <template is="dom-if" if="${this.domainVideoURL}" restamp="">
-          <video id="videoPlayer" data-id="${this.domainVideoId}" controls="" preload="meta" class="image" src="${this.domainVideoURL}" playsinline="" poster="${this.domainVideoPosterURL}"></video>
+          <video id="videoPlayer" data-id="${this.domainVideoId}" .controls="" .preload="meta" class="image" src="${this.domainVideoURL}" playsinline .poster="${this.domainVideoPosterURL}"></video>
         </template>
         <template is="dom-if" if="${!this.domainVideoURL}">
-          <iron-image class="image" ?hidden="${this.hideImage}" sizing="cover" src="${this._domainLogoImagePath(domain)}"></iron-image>
+          <iron-image class="image" ?hidden="${this.hideImage}" .sizing="cover" src="${this._domainLogoImagePath(domain)}"></iron-image>
         </template>
       </paper-material>
-      <paper-material id="card" elevation="4" animated="" class="large-card textBox">
+      <paper-material id="card" .elevation="4" .animated="" class="large-card textBox">
         <div class="layout vertical">
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
                 <div class="domain-name">
-                  <yp-magic-text text-type="domainName" content-language="${this.domain.language}" disable-translation="${this.domain.configuration.disableNameAutoTranslation}" text-only="" content="${this.domain.name}" content-id="${this.domain.id}">
+                  <yp-magic-text .textType="domainName" .contentLanguage="${this.domain.language}" .disableTranslation="${this.domain.configuration.disableNameAutoTranslation}" text-only="" content="${this.domain.name}" content-id="${this.domain.id}">
                   </yp-magic-text>
                 </div>
                 <template is="dom-if" if="${this.domain.id}">
-                  <yp-magic-text id="description" class="description domainDescription" text-type="domainContent" content-language="${this.domain.language}" content="${this.domain.description}" content-id="${this.domain.id}">
+                  <yp-magic-text id="description" class="description domainDescription" .textType="domainContent" .contentLanguage="${this.domain.language}" .content="${this.domain.description}" content-id="${this.domain.id}">
                   </yp-magic-text>
                 </template>
               </div>
             </div>
           </div>
-          <paper-menu-button vertical-align="top" horizontal-align="${this.editMenuAlign}" class="edit" ?hidden="${!this.showMenuItem}">
+          <paper-menu-button .verticalAlign="top" .horizontalAlign="${this.editMenuAlign}" class="edit" ?hidden="${!this.showMenuItem}">
             <paper-icon-button ariaLabel="${this.t('openDomainMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
               <paper-item ?hidden="${!this.hasDomainAccess}" id="editMenuItem">${this.t('domain.edit')}</paper-item>
@@ -316,13 +316,13 @@ class YpDomainLargeCardLit extends YpBaseElement {
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-domain-stats-lit class="stats" domain="${this.domain}"></yp-domain-stats-lit>
+        <yp-domain-stats-lit class="stats" .domain="${this.domain}"></yp-domain-stats-lit>
       </paper-material>
     </div>
 
-    <template is="dom-if" if="${this.domain}" restamp="">
-      <template is="dom-if" if="${this.hasDomainAccess}" restamp="">
-        <yp-ajax method="GET" disable-user-error="" ?hidden="" url="/api/domains/${this.domain.id}/flagged_content_count" auto="" on-response="_setFlaggedContentCount"></yp-ajax>
+    <template is="dom-if" if="${this.domain}" .restamp="">
+      <template is="dom-if" if="${this.hasDomainAccess}" .restamp="">
+        <yp-ajax method="GET" disable-user-error="" ?hidden="" url="/api/domains/${this.domain.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
       </template>
     </template>
 

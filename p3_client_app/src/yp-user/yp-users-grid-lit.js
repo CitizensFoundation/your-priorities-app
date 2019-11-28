@@ -354,16 +354,16 @@ class YpUsersGridLit extends YpBaseElement {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="70px" flex-grow="0">
+        <vaadin-grid-column width="70px" .flexGrow="0">
           <template class="header">
             <paper-menu-button horizontal-align="right" class="helpButton" ?disabled="${this.selectedUsersEmpty}">
-              <paper-icon-button .ariaLabel="${this.t('openSelectedItemsMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-                <template is="dom-if" if="${!this.selectedUsersEmpty}" restamp="">
-                  <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" on-tap="_removeAndDeleteContentSelectedUsers">
+              <paper-icon-button .ariaLabel="${this.t('openSelectedItemsMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
+                <template is="dom-if" if="${!this.selectedUsersEmpty}" restamp>
+                  <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" @tap="${this._removeAndDeleteContentSelectedUsers}">
                     ${this.t('removeSelectedAndDeleteContent')} ${this.selectedUsersCount}
                   </paper-item>
-                  <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" on-tap="_removeSelectedUsersFromCollection">
+                  <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" @tap="${this._removeSelectedUsersFromCollection}">
                     <div ?hidden="${!this.groupId}">
                       ${this.t('removeSelectedFromGroup')} ${this.selectedUsersCount}
                     </div>
@@ -374,15 +374,15 @@ class YpUsersGridLit extends YpBaseElement {
                       ${this.t('removeSelectedFromDomain')} ${this.selectedUsersCount}
                     </div>
                   </paper-item>
-                  <paper-item data-args="${this.item.id}" ?hidden="${!this.adminUsers}" on-tap="_removeSelectedAdmins">${this.t('removeSelectedAdmins')} ${this.selectedUsersCount}</paper-item>
+                  <paper-item data-args="${this.item.id}" ?hidden="${!this.adminUsers}" @tap="${this._removeSelectedAdmins}">${this.t('removeSelectedAdmins')} ${this.selectedUsersCount}</paper-item>
                 </template>
               </paper-listbox>
             </paper-menu-button>
           </template>
           <template>
             <paper-menu-button horizontal-align="right" class="helpButton">
-              <paper-icon-button .ariaLabel="${this.t('openOneItemMenu')}" icon="more-vert" data-args="${this.item.id}" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
-              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+              <paper-icon-button .ariaLabel="${this.t('openOneItemMenu')}" .icon="more-vert" data-args="${this.item.id}" @tap="${this._setSelected}" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
                 <paper-item data-args="${this.item.i}" ?hidden="${this.adminUsers}" @tap="${_removeUserFromCollection}">
                   <div ?hidden="${!this.groupId}">
                     ${this.t('removeFromGroup')}
@@ -417,17 +417,17 @@ class YpUsersGridLit extends YpBaseElement {
    </paper-dialog>
 
     <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_usersResponse"></yp-ajax>
-      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAdminAjax" on-response="_removeAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyAdminAjax" on-response="_removeManyAdminResponse"></yp-ajax>
-      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeUserAjax" on-response="_removeUserResponse"></yp-ajax>
-      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeManyUsersAjax" on-response="_removeManyUsersResponse"></yp-ajax>
-      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeOrganizationAjax" on-response="_removeOrganizationResponse"></yp-ajax>
-      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteAjax" on-response="_removeAndDeleteCompleted"></yp-ajax>
-      <yp-ajax method="DELETE" on-error="_ajaxError" id="removeAndDeleteManyAjax" on-response="_removeAndDeleteManyCompleted"></yp-ajax>
-      <yp-ajax method="POST" on-error="_ajaxError" id="inviteUserAjax" on-response="_inviteUserResponse"></yp-ajax>
-      <yp-ajax method="POST" on-error="_ajaxError" id="addAdminAjax" on-response="_addAdminResponse"></yp-ajax>
-      <yp-ajax method="POST" on-error="_ajaxError" id="addOrganizationAjax" on-response="_addOrganizationResponse"></yp-ajax>
+      <yp-ajax id="ajax" @response="${this._usersResponse}"></yp-ajax>
+      <yp-ajax method="DELETE" @error="${this._ajaxError}" id="removeAdminAjax" @response="${this._removeAdminResponse}"></yp-ajax>
+      <yp-ajax method="DELETE" @error="${this._ajaxError}" id="removeManyAdminAjax" @response="${this._removeManyAdminResponse}"></yp-ajax>
+      <yp-ajax method="DELETE" @error="${this._ajaxError}" id="removeUserAjax" @response="${this._removeUserResponse}"></yp-ajax>
+      <yp-ajax method="DELETE" @error="${this._ajaxError}" id="removeManyUsersAjax" @response="${this._removeManyUsersResponse}"></yp-ajax>
+      <yp-ajax method="DELETE" @error="${this._ajaxError}" id="removeOrganizationAjax" @response="${this._removeOrganizationResponse}"></yp-ajax>
+      <yp-ajax method="DELETE" @error="${this._ajaxError}" id="removeAndDeleteAjax" @response="${this._removeAndDeleteCompleted}"></yp-ajax>
+      <yp-ajax method="DELETE" @error="${this._ajaxError}" id="removeAndDeleteManyAjax" @response="${this._removeAndDeleteManyCompleted}"></yp-ajax>
+      <yp-ajax method="POST" @error="${this._ajaxError}" id="inviteUserAjax" @response="${this._inviteUserResponse}"></yp-ajax>
+      <yp-ajax method="POST" @error="${this._ajaxError}" id="addAdminAjax" @response="${this._addAdminResponse}"></yp-ajax>
+      <yp-ajax method="POST" @error="${this._ajaxError}" id="addOrganizationAjax" @response="${this._addOrganizationResponse}"></yp-ajax>
     </div>
 ` : html``}
 ` 

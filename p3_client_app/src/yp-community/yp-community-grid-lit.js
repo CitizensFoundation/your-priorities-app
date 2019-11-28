@@ -78,13 +78,12 @@ class YpCommunityGridLit extends YpBaseElement {
   render() {
     return html`
       ${this.community ? html`
-        <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-        <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
+        <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
-          <iron-list id="ironList" scroll-offset="${this.scrollOffset}" items="${this.activeCommunities}" as="community" scroll-target="document" grid\$="${this.wide}">
+          <iron-list id="ironList" .scrollOffset="${this.scrollOffset}" .items="${this.activeCommunities}" as="community" scroll-target="document" grid\$="${this.wide}">
             <template>
-              <div class="card layout vertical center-center" tabindex="${this.tabIndex}" wide-padding="${this.wide}">
-                <yp-community-card wide="${this.wide}" community="${this.community}" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+              <div class="card layout vertical center-center" .tabIndex="${this.tabIndex}" .widePadding="${this.wide}">
+                <yp-community-card .wide="${this.wide}" .community="${this.community}" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
               </div>
             </template>
           </iron-list>

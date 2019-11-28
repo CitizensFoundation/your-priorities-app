@@ -1,6 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
 //TODO: import 'google-map/google-map.js';
 //TODO: import 'google-map/google-map-marker.js';

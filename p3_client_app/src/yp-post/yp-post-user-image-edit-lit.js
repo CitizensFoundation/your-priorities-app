@@ -67,27 +67,26 @@ class YpPostUserImageEditLit extends YpBaseElement {
   
   render() {
     return html`
-    ${this.post ? html`
-      <yp-edit-dialog double-width="" id="editDialog" icon="photo-camera" action="${this.action}" title="${this.editHeaderText}" method="${this.method}" save-text="${this.saveText}" next-action-text="${this.t('next')}" toast-text="${this.toastText}" params="${this.params}">
+      <yp-edit-dialog double-width id="editDialog" .icon="photo-camera" .action="${this.action}" .title="${this.editHeaderText}" method="${this.method}" save-text="${this.saveText}" next-action-text="${this.t('next')}" toast-text="${this.toastText}" params="${this.params}">
         <div class="layout vertical center-center">
-          <yp-file-upload id="imageFileUpload" raised="true" multi="false" method="POST" on-success="_imageUploaded">
-            <iron-icon class="icon" icon="photo-camera"></iron-icon>
+          <yp-file-upload id="imageFileUpload" raised method="POST" @success="${this._imageUploaded}">
+            <iron-icon class="icon" .icon="photo-camera"></iron-icon>
             <span>${this.t('image.upload')}</span>
           </yp-file-upload>
         </div>
 
-      <paper-input id="photographerName" name="photographerName" type="text" label="${this.t('post.photographerName')}" value="${this.image.photographer_name}" maxlength="60" char-counter="">
+      <paper-input id="photographerName" .name="photographerName" .type="text" .label="${this.t('post.photographerName')}" value="${this.image.photographer_name}" maxlength="60" char-counter="">
       </paper-input>
 
-      <paper-textarea id="description" required="" minlength="1" name="description" value="${this.image.description}" always-float-label="${this.image.description}" label="${this.t('post.description')}" char-counter="" rows="2" max-rows="5" maxlength="200">
+      <paper-textarea id="description" required .minlength="1" .name="description" .value="${this.image.description}" always-float-label="${this.image.description}" label="${this.t('post.description')}" charCounter .rows="2" .max-rows="5" .maxlength="200">
       </paper-textarea>
 
-      <input type="hidden" name="uploadedPostUserImageId" value="${this.uploadedPostUserImageId}">
-      <input type="hidden" name="oldUploadedPostUserImageId" value="${this.oldUploadedPostUserImageId}">
+      <input .type="hidden" .name="uploadedPostUserImageId" .value="${this.uploadedPostUserImageId}">
+      <input .type="hidden" .name="oldUploadedPostUserImageId" .value="${this.oldUploadedPostUserImageId}">
 
     </yp-edit-dialog>
-` : html``}
-`
+` 
+
   }
 
   

@@ -274,7 +274,6 @@ class YpPostCardLit extends YpBaseElement {
   render() {
     return html`
     ${this.post ? html`
-    <iron-media-query .query="(min-width: 600px)" .query-matches="${this.wide}"></iron-media-query>
 
     <paper-material .mini="${this.mini}" .hide-post-cover="${this.post.Group.configuration.hidePostCover}" .hide-description="${this.post.Group.configuration.hidePostDescription}" hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}" audio-cover="${this.isAudioCover}" class="card postCard layout vertical" elevation="${this.elevation}" animated="">
       <div class="layout vertical">

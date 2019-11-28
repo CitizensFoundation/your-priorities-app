@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-list/iron-list.js';
-import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '../yp-app-globals/yp-app-icons.js';
@@ -291,8 +290,6 @@ static get styles() {
   render() {
     return html`
       ${this.post ? html`
-    
-    <iron-media-query .query="(min-width: 1024px)" .queryMatches="${this.wide}"></iron-media-query>
 
     <iron-a11y-keys id="a11y" .target="${this.searchTarget}" .keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
 

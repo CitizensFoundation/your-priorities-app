@@ -108,12 +108,12 @@ class YpCommunityFolderLit extends YpBaseElement {
   
   render() {
     return html`
-    <yp-page id="page" create-fab-icon="${this.createFabIcon}" hide-all-tabs="" create-fab-title="${t(this.group.add)}" on-yp-create-fab-tap="_newGroup">
+    <yp-page id="page" .createFabIcon="${this.createFabIcon}" .hideAllTabs="" .createFabTitle="${t(this.group.add)}" @yp-create-fab-tap="${this._newGroup}">
 
-      <yp-community-large-card id="communityCard" slot="largeCard" class="largeCard card" community="${this.communityFolder}" on-update-community="_refreshAjax"></yp-community-large-card>
+      <yp-community-large-card id="communityCard" slot="largeCard" class="largeCard card" .community="${this.communityFolder}" @update-community="${this._refreshAjax}"></yp-community-large-card>
 
       <div class="layout horizontal center-center wrap" slot="tabPages">
-        <yp-community-grid featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" archived-communities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" on-add-new-community="_newCommunity">
+        <yp-community-grid featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" archived-communities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
         </yp-community-grid>
       </div>
     </yp-page>
@@ -122,14 +122,14 @@ class YpCommunityFolderLit extends YpBaseElement {
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
 
-    <app-route route="${this.idRoute}" pattern="/:id" data="${this.idRouteData}" tail="${this.tabRoute}">
+    <app-route .route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
-    <app-route route="${this.tabRoute}" pattern="/:tabName" data="${this.tabRouteData}">
+    <app-route .route="${this.tabRoute}" .pattern="/:tabName" .data="${this.tabRouteData}">
     </app-route>
 
-    <yp-ajax id="ajax" url="/api/domains" on-response="_response"></yp-ajax>
-    <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+    <yp-ajax id="ajax" url="/api/domains" @response="${this._response}"></yp-ajax>
+    <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
 `
 }
 

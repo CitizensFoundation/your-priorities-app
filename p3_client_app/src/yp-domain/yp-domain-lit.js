@@ -141,11 +141,11 @@ class YpDomainLit extends YpBaseElement {
   render() {
     return html`
       ${this.group ? html`
-        <yp-page id="page" create-fab-icon="${this.createFabIcon}" create-fab-title="${this.t('community.add')}" on-yp-create-fab-tap="_newCommunity">
+        <yp-page id="page" .createFabIcon="${this.createFabIcon}" createFabTitle="${this.t('community.add')}" @yp-create-fab-tap="${this._newCommunity}">
 
-          <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" domain="${this.domain}" on-update-domain="_refreshAjax"></yp-domain-large-card>
+          <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" .domain="${this.domain}" @update-domain="${this._refreshAjax}"></yp-domain-large-card>
 
-          <paper-tabs id="paper_tabs" apple="${this.isOldiOs}" slot="tabs" class="tabs" selected="${this.selectedTab}" attr-for-selected="name" focused="">
+          <paper-tabs id="paper_tabs" .apple="${this.isOldiOs}" slot="tabs" class="tabs" .selected="${this.selectedTab}" attr-for-selected="name" .focused>
             <paper-tab name="communities" class="tab"><span>${this.t('communities')}</span> &nbsp; (<span>${this.communitiesLength}</span>)</paper-tab>
             <paper-tab name="news" class="tab" ?hidden="${this.domain.configuration.hideDomainNews}">${this.t('news')}</paper-tab>
           </paper-tabs>
@@ -157,9 +157,9 @@ class YpDomainLit extends YpBaseElement {
                 </yp-community-grid>
               </div>
             </section>
-            <section name="news" class="minHeightSection">
+            <section .name="news" class="minHeightSection">
               <template is="dom-if" if="${this.newsTabSelected}">
-                <ac-activities id="domainNews" selected-tab="${this.selectedTab}" domain-id="${this.domain.id}"></ac-activities>
+                <ac-activities id="domainNews" .selectedTab="${this.selectedTab}" .domainId="${this.domain.id}"></ac-activities>
               </template>
             </section>
           </iron-pages>
@@ -168,15 +168,15 @@ class YpDomainLit extends YpBaseElement {
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
 
-    <app-route route="${this.idRoute}" pattern="/:id" data="${this.idRouteData}" tail="${this.tabRoute}">
+    <app-route route="${this.idRoute}" .pattern="/:id" data="${this.idRouteData}" tail="${this.tabRoute}">
     </app-route>
 
-    <app-route route="${this.tabRoute}" pattern="/:tabName" data="${this.tabRouteData}">
+    <app-route route="${this.tabRoute}" .pattern="/:tabName" data="${this.tabRouteData}">
     </app-route>
 
     <div class="ypBottomContainer layout-horizontal layout-center-center">
-      <yp-ajax id="ajax" url="${this.url}" on-response="_response"></yp-ajax>
-      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+      <yp-ajax id="ajax" url="${this.url}" @response="${this._response}"></yp-ajax>
+      <yp-ajax id="pagesAjax"1 @response="${this._pagesResponse}"></yp-ajax>
     </div>
   ` : html``}
   `

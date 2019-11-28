@@ -67,7 +67,6 @@ render() {
     return html`
       ${this.group ? html`
       <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-      <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
 
       <div class="layout horizontal center-center">
         <iron-list id="ironList" scroll-offset="${this.scrollOffset}" items="${this.activeGroups}" as="group" scroll-target="document" grid="${this.wide}">

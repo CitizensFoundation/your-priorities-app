@@ -189,7 +189,7 @@ class YpPostsFilterLit extends YpBaseElement {
 
       .categoriesDropdownMenu {
         padding-left: 16px;
-        parring-right: 16px;
+        padding-right: 16px;
       }
 
 
@@ -221,9 +221,9 @@ class YpPostsFilterLit extends YpBaseElement {
     <template is="dom-if" if="${this.group}">
       <div class="layout horizontal center-center mainContainer wrap">
         <template is="dom-if" if="${this.showFilter}">
-          <paper-menu-button id="filterDropdown" class="selected-items" icon="sort" vertical-align="auto" horizontal-align="right">
-            <paper-button raised="" title="${this.t('filterIdeas')}" id="dropDownTrigger" icon="sort" slot="dropdown-trigger">
-              <iron-icon icon="sort" class="dropdownIcon"></iron-icon>
+          <paper-menu-button id="filterDropdown" class="selected-items" .icon="sort" vertical-align="auto" horizontal-align="right">
+            <paper-button raised .title="${this.t('filterIdeas')}" id="dropDownTrigger" .icon="sort" slot="dropdown-trigger">
+              <iron-icon .icon="sort" class="dropdownIcon"></iron-icon>
               <div class="filterText">${this.t('filterIdeas')}</div>
             </paper-button>
 
@@ -235,12 +235,12 @@ class YpPostsFilterLit extends YpBaseElement {
                 <template is="dom-if" if="${this.categoriesWithCount}" restamp="">
                   <div class="layout vertical">
                     <paper-dropdown-menu class="dropdown-content wrap categoriesDropdownMenu">
-                      <paper-listbox slot="dropdown-content" id="categoryMenu" class="catDropDown" attr-for-selected="data-category-id" on-iron-select="_changeCategory">
-                        <paper-item data-category-id="-1" name="-1">
-                          <iron-icon icon="select-all" class="filterIcon"></iron-icon>
+                      <paper-listbox slot="dropdown-content" id="categoryMenu" class="catDropDown" attr-for-selected="data-category-id" @iron-select="${this._changeCategory}">
+                        <paper-item data-category-id="-1" .name="-1">
+                          <iron-icon .icon="select-all" class="filterIcon"></iron-icon>
                           <span>${this.t('categories.the_all')} (${this.allPostCount})</span>
                         </paper-item>
-                        <template is="dom-repeat" items="${this.categoriesWithCount}" as="category">
+                        <template is="dom-repeat" .items="${this.categoriesWithCount}" as="category">
                           <paper-item data-category-id="${this.category.id}" data-category-name="${this.category.name}">
                             <iron-image sizing="cover" class="catImage" height="24" width="24" src="${this._categoryImageSrc(category)}"></iron-image>
                             ${this.category.name} (${this.category.count})
@@ -251,23 +251,23 @@ class YpPostsFilterLit extends YpBaseElement {
                   </div>
                 </template>
                 <div class="layout horizontal center-center">
-                  <yp-ajax id="categoriesWithCountAjax" on-response="_categoriesCountResponse"></yp-ajax>
+                  <yp-ajax id="categoriesWithCountAjax" @response="${this._categoriesCountResponse}"></yp-ajax>
                 </div>
-                <paper-listbox slot="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
+                <paper-listbox slot="dropdown-content" id="mainListMenu" @iron-select="${this._changeFilter}">
                   <paper-item data-filter="top">
-                    <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
+                    <iron-icon .icon="trending-up" class="filterIcon"></iron-icon>
                     <span>${this.t('post.top')}</span>
                   </paper-item>
                   <paper-item data-filter="newest">
-                    <iron-icon icon="new-releases" class="filterIcon"></iron-icon>
+                    <iron-icon .icon="new-releases" class="filterIcon"></iron-icon>
                     <span>${this.t('post.newest')}</span>
                   </paper-item>
                   <paper-item data-filter="most_debated">
-                    <iron-icon icon="chat-bubble-outline" class="filterIcon"></iron-icon>
+                    <iron-icon .icon="chat-bubble-outline" class="filterIcon"></iron-icon>
                     <span>${this.t('post.most_debated')}</span>
                   </paper-item>
                   <paper-item data-filter="random">
-                    <iron-icon icon="cached" class="filterIcon"></iron-icon>
+                    <iron-icon .icon="cached" class="filterIcon"></iron-icon>
                     <span>${this.t('post.random')}</span>
                   </paper-item>
                 </paper-listbox>
@@ -276,7 +276,7 @@ class YpPostsFilterLit extends YpBaseElement {
           </paper-menu-button>
         </template>
         <template is="dom-if" if="${this.searchingFor}">
-          <paper-icon-button aria-label="${this.t('clearSearchInput')}" icon="clear" on-tap="_clearSearch" class="clear-search-trigger"></paper-icon-button>
+          <paper-icon-button .ariaLabel="${this.t('clearSearchInput')}" .icon="clear" @tap="${this._clearSearch}" class="clear-search-trigger"></paper-icon-button>
         </template>
       </div>
     </template>

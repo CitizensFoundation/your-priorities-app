@@ -103,21 +103,21 @@ class YpPostUserImageCardLit extends YpBaseElement {
   render() {
     return html`
     ${this.post ? html`
-    <paper-material elevation="2" class="layout vertical">
-      <iron-image title="${this.image.description}" sizing="cover" src="${this._imageUrl(image)}"></iron-image>
+    <paper-material .elevation="2" class="layout vertical">
+      <iron-image .title="${this.image.description}" .sizing="cover" src="${this._imageUrl(image)}"></iron-image>
       <div class="description">
         ${this.image.description}
       </div>
-      <div class="layout horizontal" style="width: 100%;">
+      <div class="layout horizontal" .style="width: 100%;">
         <div class="photographer">
           ${this.image.photographer_name}
         </div>
         <div class="editMenu layout horizontal flex end-justified" ?hidden="${!this.hasImageAccess(image, post)}">
-          <paper-icon-button aria-label="${this.t('edit')}" icon="create" on-tap="_openEdit"></paper-icon-button>
-          <paper-icon-button aria-label="${this.t('delete')}" icon="clear" on-tap="_openDelete"></paper-icon-button>
+          <paper-icon-button ariaLabel="${this.t('edit')}" .icon="create" @tap="${this._openEdit}"></paper-icon-button>
+          <paper-icon-button ariaLabel="${this.t('delete')}" .icon="clear" @tap="${this._openDelete}"></paper-icon-button>
         </div>
       </div>
-      <yp-point-comment-list class="commentsList" image="${this.image}"></yp-point-comment-list>
+      <yp-point-comment-list class="commentsList" .image="${this.image}"></yp-point-comment-list>
     </paper-material>
 ` : html``}
 `
