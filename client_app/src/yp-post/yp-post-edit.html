@@ -871,9 +871,11 @@
         this.set('uploadedAudioId', null);
         this.set('currentVideoId', null);
         this.set('currentAudioId', null);
-        this.$$("#imageFileUpload").clear();
         this.set('selectedCoverMediaType', 'none');
         this.async(function () { this.fire('iron-resize'); });
+        if (this.$$("#imageFileUpload")) {
+          this.$$("#imageFileUpload").clear();
+        }
       }
     },
 
