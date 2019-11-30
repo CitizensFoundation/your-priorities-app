@@ -288,7 +288,7 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
 router.get('/:id', auth.can('edit user'), function (req, res) {
   if (true) {
     log.error("In Get User - Should not be called error", { context: 'user_get' });
-    res.sendStatus(500);
+    res.sendStatus(401);
   } else {
     var groupsInclude, communitiesInclude;
 
@@ -1449,7 +1449,7 @@ router.get('/has/AutoTranslation', function(req, res) {
 
 router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
   if (true) {
-    log.error("In Get User - Should not be called error", { context: 'user_get' });
+    log.error("In status_update status_update - Should not be called error", { context: 'user_get' });
     res.sendStatus(500);
   } else {
     var statusUpdate;
