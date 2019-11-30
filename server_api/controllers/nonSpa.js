@@ -96,7 +96,10 @@ var sendCommunity = function (id, req, res) {
         attributes: ['id','name'],
         model: models.Group,
         where: {
-          access: models.Group.ACCESS_PUBLIC
+          $or: [
+            { access: models.Group.ACCESS_PUBLIC },
+            { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+          ],
         },
         required: false
       }
@@ -163,6 +166,7 @@ var sendGroup = function (id, req, res) {
         where: {
           access: models.Community.ACCESS_PUBLIC
         },
+        attributes: ['id'],
         required: true,
         include: [
           {
@@ -237,6 +241,7 @@ var sendPost = function (id, req, res) {
             { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
           ]
         },
+        attributes: ['id'],
         required: true,
         include: [
           {
@@ -246,6 +251,7 @@ var sendPost = function (id, req, res) {
           },
           {
             model: models.Community,
+            attributes: ['id'],
             where: {
               access: models.Community.ACCESS_PUBLIC
             },
