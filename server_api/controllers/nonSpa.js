@@ -321,6 +321,7 @@ var sendUser = function (id, req, res) {
       }
     ]
   }).then(function(user) {
+    user = null;
     if (user) {
       log.info('User Viewed From Bot', { userId: id, context: 'view', bot: true });
       var imageUrl = '';

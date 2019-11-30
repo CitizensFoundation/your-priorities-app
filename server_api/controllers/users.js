@@ -285,93 +285,98 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
   });
 });
 
-router.get('/:id', function (req, res) {
-  var groupsInclude, communitiesInclude;
-
-  var where = {
-    id: req.params.id
-  };
-
-  groupsInclude = {
-    model: models.Group,
-    as: 'GroupUsers',
-    attributes: ['id','name','objectives'],
-    include: [
-      {
-        model: models.Image, as: 'GroupLogoImages',
-        attributes: ['id','formats'],
-        required: false
-      }
-    ]
-  };
-
-  communitiesInclude = {
-    model: models.Community,
-    as: 'CommunityUsers',
-    attributes: ['id','name','description'],
-    include: [
-      {
-        model: models.Image, as: 'CommunityLogoImages',
-        attributes: ['id','formats'],
-        required: false
-      }
-    ]
-  };
-
-  var attributes = ['id','name','description'];
-
-  if (req.user && req.user.id==req.params.id) {
-    attributes = _.concat(attributes, ['email'])
-  }
-
-  if (req.user && req.user.id == parseInt(req.params.id)) {
-  } else {
-    _.merge(communitiesInclude, {
-      where: {
-        access: models.Community.ACCESS_PUBLIC
-      }
-    });
-
-    _.merge(groupsInclude, {
-      where: {
-        access: models.Group.ACCESS_PUBLIC
-      }
-    });
-  }
-
-  models.User.find({
-    where: where,
-    order: [
-      [ { model: models.Community, as: "CommunityUsers" }, 'counter_users', 'desc' ],
-      [ { model: models.Community, as: "CommunityUsers" }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Group, as: "GroupUsers" }, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ],
-      [ { model: models.Group, as: "GroupUsers" }, 'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
-    ],
-
-    attributes: attributes,
-
-    include: [
-      communitiesInclude,
-      groupsInclude,
-      {
-        model: models.Image, as: 'UserProfileImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserHeaderImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      }
-    ]
-  }).then(function (user) {
-    res.send(user);
-  }).catch(function (error) {
-    log.error("User Get Error", { context: 'user_get', err: error, errorStatus: 500 });
+router.get('/:id', auth.can('edit user'), function (req, res) {
+  log.error("In Get User - Should not be called error", { context: 'user_edit' });
+  if (true) {
     res.sendStatus(500);
-  });
+  } else {
+    var groupsInclude, communitiesInclude;
+
+    var where = {
+      id: req.params.id
+    };
+
+    groupsInclude = {
+      model: models.Group,
+      as: 'GroupUsers',
+      attributes: ['id','name','objectives'],
+      include: [
+        {
+          model: models.Image, as: 'GroupLogoImages',
+          attributes: ['id','formats'],
+          required: false
+        }
+      ]
+    };
+
+    communitiesInclude = {
+      model: models.Community,
+      as: 'CommunityUsers',
+      attributes: ['id','name','description'],
+      include: [
+        {
+          model: models.Image, as: 'CommunityLogoImages',
+          attributes: ['id','formats'],
+          required: false
+        }
+      ]
+    };
+
+    var attributes = ['id','name','description'];
+
+    if (req.user && req.user.id==req.params.id) {
+      attributes = _.concat(attributes, ['email'])
+    }
+
+    if (req.user && req.user.id == parseInt(req.params.id)) {
+    } else {
+      _.merge(communitiesInclude, {
+        where: {
+          access: models.Community.ACCESS_PUBLIC
+        }
+      });
+
+      _.merge(groupsInclude, {
+        where: {
+          access: models.Group.ACCESS_PUBLIC
+        }
+      });
+    }
+
+    models.User.find({
+      where: where,
+      order: [
+        [ { model: models.Community, as: "CommunityUsers" }, 'counter_users', 'desc' ],
+        [ { model: models.Community, as: "CommunityUsers" }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+        [ { model: models.Group, as: "GroupUsers" }, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ],
+        [ { model: models.Group, as: "GroupUsers" }, 'counter_users', 'desc' ],
+        [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
+        [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
+      ],
+
+      attributes: attributes,
+
+      include: [
+        communitiesInclude,
+        groupsInclude,
+        {
+          model: models.Image, as: 'UserProfileImages',
+          attributes: ['id', 'created_at', 'formats'],
+          required: false
+        },
+        {
+          model: models.Image, as: 'UserHeaderImages',
+          attributes: ['id', 'created_at', 'formats'],
+          required: false
+        }
+      ]
+    }).then(function (user) {
+      res.send(user);
+    }).catch(function (error) {
+      log.error("User Get Error", { context: 'user_get', err: error, errorStatus: 500 });
+      res.sendStatus(500);
+    });
+  }
 });
 
 router.get('/loggedInUser/adminRights', function (req, res) {
