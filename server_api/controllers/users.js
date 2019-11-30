@@ -286,8 +286,8 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
 });
 
 router.get('/:id', auth.can('edit user'), function (req, res) {
-  log.error("In Get User - Should not be called error", { context: 'user_edit' });
   if (true) {
+    log.error("In Get User - Should not be called error", { context: 'user_get' });
     res.sendStatus(500);
   } else {
     var groupsInclude, communitiesInclude;
@@ -1448,109 +1448,114 @@ router.get('/has/AutoTranslation', function(req, res) {
 });
 
 router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
-  var statusUpdate;
-  var allUserEndorsementsPostId = [];
-  var config;
+  if (true) {
+    log.error("In Get User - Should not be called error", { context: 'user_get' });
+    res.sendStatus(500);
+  } else {
+    var statusUpdate;
+    var allUserEndorsementsPostId = [];
+    var config;
 
-  async.series([
-    function (seriesCallback) {
-      models.BulkStatusUpdate.find({
-        where: { id: req.params.bulkStatusUpdateId },
-        order: [
-          [ models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
-          [ models.Community, {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
-        ],
-        include: [
-          {
-            model: models.Community,
-            required: true,
-            include: [
-              {
-                model: models.Image, as: 'CommunityLogoImages',
-                required: false
-              },
-              {
-                model: models.Image, as: 'CommunityHeaderImages',
-                required: false
-              }
-            ]
-          },
-          {
-            model: models.User,
-            required: true,
-            attributes: models.User.defaultAttributesWithSocialMediaPublic
+    async.series([
+      function (seriesCallback) {
+        models.BulkStatusUpdate.find({
+          where: { id: req.params.bulkStatusUpdateId },
+          order: [
+            [ models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
+            [ models.Community, {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
+          ],
+          include: [
+            {
+              model: models.Community,
+              required: true,
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages',
+                  required: false
+                }
+              ]
+            },
+            {
+              model: models.User,
+              required: true,
+              attributes: models.User.defaultAttributesWithSocialMediaPublic
+            }
+          ]
+        }).then(function(statusUpdateIn) {
+          if (statusUpdateIn) {
+            statusUpdate = statusUpdateIn;
+            seriesCallback();
+          } else {
+            seriesCallback("Bulk status update not found");
           }
-        ]
-      }).then(function(statusUpdateIn) {
-        if (statusUpdateIn) {
-          statusUpdate = statusUpdateIn;
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.Endorsement.findAll({
+          where: {
+            user_id: req.params.id
+          },
+          attributes: ['id','post_id']
+        }).then(function (endorsements) {
+          _.each(endorsements, function (endorsement) {
+            allUserEndorsementsPostId.push(endorsement.post_id);
+          });
           seriesCallback();
-        } else {
-          seriesCallback("Bulk status update not found");
-        }
-      }).catch(function(error) {
-        seriesCallback(error);
-      });
-    },
-    function (seriesCallback) {
-      models.Endorsement.findAll({
-        where: {
-          user_id: req.params.id
-        },
-        attributes: ['id','post_id']
-      }).then(function (endorsements) {
-        _.each(endorsements, function (endorsement) {
-          allUserEndorsementsPostId.push(endorsement.post_id);
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        config = JSON.parse(JSON.stringify(statusUpdate.config));
+        _.each(config.groups, function (group, groupsIndex) {
+          log.info("Before posts reject count "+config.groups[groupsIndex].posts.length);
+          /*config.groups[groupsIndex].posts = _.reject(config.groups[groupsIndex].posts, function (post) {
+            return !_.includes(allUserEndorsementsPostId, post.id)
+          });*/
+          log.info("After posts reject count "+config.groups[groupsIndex].posts.length);
+          config.groups[groupsIndex]["statuses"] = [];
+          var gotStatus = {};
+          _.each(config.groups[groupsIndex].posts, function (post) {
+            if (!post.newOfficialStatus)
+              post.newOfficialStatus = 0;
+            if (!gotStatus[post.newOfficialStatus]) {
+              gotStatus[post.newOfficialStatus] = true;
+              if (post.newOfficialStatus) {
+                config.groups[groupsIndex]["statuses"].push({official_status: post.newOfficialStatus, posts: []});
+              }
+            }
+            _.each(config.groups[groupsIndex]["statuses"], function (status, index) {
+              if (status.official_status == post.newOfficialStatus) {
+                config.groups[groupsIndex]["statuses"][index].posts.push(post);
+              }
+            });
+            config.groups[groupsIndex].posts = null;
+          });
+        });
+        config.groups = _.reject(config.groups, function (group) {
+          var totalCount = 0;
+          _.each(group.statuses, function (status) {
+            totalCount += status.posts.length;
+          });
+          return totalCount == 0;
         });
         seriesCallback();
-      }).catch(function (error) {
-        seriesCallback(error);
-      });
-    },
-    function (seriesCallback) {
-       config = JSON.parse(JSON.stringify(statusUpdate.config));
-      _.each(config.groups, function (group, groupsIndex) {
-        log.info("Before posts reject count "+config.groups[groupsIndex].posts.length);
-        /*config.groups[groupsIndex].posts = _.reject(config.groups[groupsIndex].posts, function (post) {
-          return !_.includes(allUserEndorsementsPostId, post.id)
-        });*/
-        log.info("After posts reject count "+config.groups[groupsIndex].posts.length);
-        config.groups[groupsIndex]["statuses"] = [];
-        var gotStatus = {};
-        _.each(config.groups[groupsIndex].posts, function (post) {
-          if (!post.newOfficialStatus)
-            post.newOfficialStatus = 0;
-          if (!gotStatus[post.newOfficialStatus]) {
-            gotStatus[post.newOfficialStatus] = true;
-            if (post.newOfficialStatus) {
-              config.groups[groupsIndex]["statuses"].push({official_status: post.newOfficialStatus, posts: []});
-            }
-          }
-          _.each(config.groups[groupsIndex]["statuses"], function (status, index) {
-            if (status.official_status == post.newOfficialStatus) {
-              config.groups[groupsIndex]["statuses"][index].posts.push(post);
-            }
-          });
-          config.groups[groupsIndex].posts = null;
-        });
-      });
-      config.groups = _.reject(config.groups, function (group) {
-        var totalCount = 0;
-        _.each(group.statuses, function (status) {
-          totalCount += status.posts.length;
-        });
-        return totalCount == 0;
-      });
-      seriesCallback();
-    }
-  ], function (error) {
-    if (error) {
-      log.error("Error from status_update", { err: error });
-      res.sendStatus(500);
-    } else {
-     res.send({ config: config, templates: statusUpdate.templates, community: statusUpdate.Community });
-    }
-  });
+      }
+    ], function (error) {
+      if (error) {
+        log.error("Error from status_update", { err: error });
+        res.sendStatus(500);
+      } else {
+        res.send({ config: config, templates: statusUpdate.templates, community: statusUpdate.Community });
+      }
+    });
+  }
 });
 
 // Facebook Authentication
