@@ -126,23 +126,23 @@ render() {
           <div class="commentText">${this.t('noComments')}</div>
         </div>
         <div class="layout horizontal">
-          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" ?hidden="${this.open}"></paper-icon-button>
-          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" ?hidden="${!this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-right" on-tap="_setOpen" ?hidden="${this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-down" on-tap="_setClosed" ?hidden="${!this.open}"></paper-icon-button>
         </div>
       </div>
-      <template is="dom-if" if="${this.open}" restamp="">
+      <template is="dom-if" if="${this.open}" restamp>
         <div class="layout vertical listContainer">
-          <iron-list id="list" items="${this.comments}" as="point">
+          <iron-list id="list" .items="${this.comments}" .as="point">
             <template>
-              <yp-point-comment point="${this.point}" tabindex="${this.tabIndex}"></yp-point-comment>
+              <yp-point-comment .point="${this.point}" .tabindex="${this.tabIndex}"></yp-point-comment>
             </template>
           </iron-list>
-          <yp-point-comment-edit on-refresh="_refresh" point="${this.point}" image="${this.image}"></yp-point-comment-edit>
+          <yp-point-comment-edit @refresh="${this._refresh}" .point="${this.point}" .image="${this.image}"></yp-point-comment-edit>
         </div>
       </template>
       <div class="layout horizontal center-center">
-        <yp-ajax id="commentsListAjax" method="GET" on-response="_commentsResponse"></yp-ajax>
-        <yp-ajax id="commentsCountListAjax" method="GET" on-response="_countResponse"></yp-ajax>
+        <yp-ajax id="commentsListAjax" .method="GET" @response="${this._commentsResponse}"></yp-ajax>
+        <yp-ajax id="commentsCountListAjax" .method="GET" @response="${this._countResponse}"></yp-ajax>
       </div>
     </div>
 ` : html``}

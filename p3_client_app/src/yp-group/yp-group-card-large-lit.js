@@ -266,25 +266,25 @@ class YpGroupCardLargeLit extends YpBaseElement {
     return html`
       ${this.group ? html`
         <div class="layout horizontal center-center wrap">
-          <paper-material id="cardImage" elevation="3" is-video="${this.groupVideoURL}" animated="" class="groupCard imageCard top-card">
-          <template is="dom-if" if="${this.groupVideoURL}" restamp="">
-            <video id="videoPlayer" data-id="${this.groupVideoId}" controls="" preload="meta" class="logo" src="${this.groupVideoURL}" playsinline="" poster="${this.groupVideoPosterURL}"></video>
+          <paper-material id="cardImage" .elevation="3" is-video="${this.groupVideoURL}" .animated="" class="groupCard imageCard top-card">
+          <template is="dom-if" if="${this.groupVideoURL}" restamp>
+            <video id="videoPlayer" data-id="${this.groupVideoId}" .controls="" .preload="meta" class="logo" src="${this.groupVideoURL}" playsinline .poster="${this.groupVideoPosterURL}"></video>
         </template>
         <template is="dom-if" if="${!this.groupVideoURL}" restamp="">
-          <iron-image class="logo" sizing="cover" preload="" src="${this.groupLogoImagePath}"></iron-image>
+          <iron-image class="logo" .sizing="cover" .preload="" src="${this.groupLogoImagePath}"></iron-image>
         </template>
         </paper-material>
-        <paper-material id="card" elevation="3" animated-shadow="" class="groupCard textBox">
+        <paper-material id="card" .elevation="3" animated-shadow class="groupCard textBox">
         <div class="layout vertical">
           <div class="layout horizontal wrap">
           <div class="layout vertical description-and-stats">
               <div class="description">
               <div class="group-name" admin="${this.hasGroupAccess}">
-                  <yp-magic-text id="groupName" text-type="groupName" content-language="${this.group.language}" disable-translation="${this.group.configuration.disableNameAutoTranslation}" text-only="" content="${this.groupName}" content-id="${this.group.id}">
+                  <yp-magic-text id="groupName" text-type="groupName" .contentLanguage="${this.group.language}" disable-translation="${this.group.configuration.disableNameAutoTranslation}" .textOnly .content="${this.groupName}" content-id="${this.group.id}">
                   </yp-magic-text>
               </div>
               <div ?hidden="" class="groupAccess">${this.groupAccessText}</div>
-              <yp-magic-text id="objectives" class="groupDescription" text-type="groupContent" content-language="${this.group.language}" content="${this.group.objectives}" content-id="${this.group.id}">
+              <yp-magic-text id="objectives" class="groupDescription" .textType="groupContent" .contentLanguage="${this.group.language}" .content="${this.group.objectives}" .content-id="${this.group.id}">
 
               </yp-magic-text>
           </div>
@@ -300,10 +300,10 @@ class YpGroupCardLargeLit extends YpBaseElement {
               <paper-item ?hidden="${!this.hasGroupAccess}" id="moderationMenuItem">
               ${this.t('flaggedContent')} <span ?hidden="${!this.flaggedContentCount}">&nbsp; (${this.flaggedContentCount})</span>
               </paper-item>
-              <paper-item ?hidden\$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="moderationAllMenuItem">
               ${this.t('manageAllContent')}
               </paper-item>
-              <a ?hidden="${!this.hasGroupAccess}" target="_blank" href="${this.exportUrl}"><paper-item id="exportMenuItem">${this.t('exportGroup')}</paper-item></a>
+              <a ?hidden="${!this.hasGroupAccess}" .target="_blank" href="${this.exportUrl}"><paper-item id="exportMenuItem">${this.t('exportGroup')}</paper-item></a>
               <paper-item ?hidden="${!this.hasGroupAccess}" id="deleteMenuItem">${this.t('group.delete')}</paper-item>
               <paper-item ?hidden="${!this.hasGroupAccess}" id="anonymizeMenuItem">${this.t('anonymizeGroupContent')}</paper-item>
               <paper-item ?hidden="${!this.hasGroupAccess}" id="deleteContentMenuItem">${this.t('deleteGroupContent')}</paper-item>
@@ -311,18 +311,18 @@ class YpGroupCardLargeLit extends YpBaseElement {
           </paper-listbox>
           </paper-menu-button>
       </div>
-      <yp-group-stats-lit class="stats" group="${this.group}"></yp-group-stats-lit>
+      <yp-group-stats-lit class="stats" .group="${this.group}"></yp-group-stats-lit>
 
       </div>
 
-      <template is="dom-if" if="${this.group}" restamp="">
-        <template is="dom-if" if="${this.hasGroupAccess}" restamp="">
-          <yp-ajax ?hidden="" disable-user-error="" method="GET" url="/api/groups/${this.group.id}/flagged_content_count" auto="" on-response="_setFlaggedContentCount"></yp-ajax>
+      <template is="dom-if" if="${this.group}" restamp>
+        <template is="dom-if" if="${this.hasGroupAccess}" restamp>
+          <yp-ajax ?hidden="" disable-user-error="" .method="GET" url="/api/groups/${this.group.id}/flagged_content_count" .auto="" @response="${this_setFlaggedContentCount}"></yp-ajax>
         </template>
       </template>
 
-      <iron-media-query query="(max-width: 800px)" query-matches="${this.narrowScreen}"></iron-media-query>
-      <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+      <iron-media-query .query="(max-width: 800px)" .query-matches="${this.narrowScreen}"></iron-media-query>
+      <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
     </paper-material>
     </div>
     ` : html``}

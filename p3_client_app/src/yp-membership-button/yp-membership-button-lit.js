@@ -6,10 +6,43 @@ import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypRemoveClassBehavior } from '../yp-behaviors/yp-remove-class-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment">
+import { YpBaseElement } from '../yp-base-element.js';
+import { YpFlexLayout } from '../yp-flex-layout.js';
 
+class YpMembershipButtonLit extends YpBaseElement {
+  static get properties() {
+    return {
+      community: {
+        type: Object,
+        observer: "_communityChanged"
+      },
+  
+      group: {
+        type: Object,
+        observer: "_groupChanged"
+      },
+  
+      membershipValue: {
+        type: Boolean,
+        value: false
+      },
+  
+      disabled: {
+        type: Boolean,
+        value: false
+      },
+  
+      large: {
+        type: Boolean,
+        value: false
+      }
+    }
+  }
+
+  static get styles() {
+    return [
+      css`
+  
       :host {
         background-color: transparent;
       }
@@ -36,65 +69,43 @@ Polymer({
       [hidden] {
         display: none !important;
       }
-    </style>
+    `, YpFlexLayout]
+  }
 
-    <paper-fab mini="" elevation="5" id="button" title\$="[[t('toggleMembership')]]" on-tap="_toggleMembership" disabled="[[disabled]]" class="heartButton" icon="favorite"></paper-fab>
-    <yp-ajax class="ajax" id="membershipAjax" hidden\$="[[!disabled]]" method="POST" on-response="_membershipResponse"></yp-ajax>
+  render() {
+    return html`
+    <paper-fab .mini="" .elevation="5" id="button" .title="${this.t('toggleMembership')}" @tap="${this._toggleMembership}" ?disabled="${this.disabled}" class="heartButton" .icon="favorite"></paper-fab>
+    <yp-ajax class="ajax" id="membershipAjax" ?hidden="${this.disabled}" .method="POST" @response="${this._membershipResponse}"></yp-ajax>
 
-    <lite-signal on-lite-signal-got-memberships="_updateMembershipFromSignal"></lite-signal>
-`,
-
-  is: 'yp-membership-button',
-
+    <lite-signal @lite-signal-got-memberships="${this._updateMembershipFromSignal}"></lite-signal>
+`
+  
+  }
+ 
+/*
   behaviors: [
     ypLanguageBehavior,
     ypRemoveClassBehavior
   ],
+*/
 
-  properties: {
-    community: {
-      type: Object,
-      observer: "_communityChanged"
-    },
-
-    group: {
-      type: Object,
-      observer: "_groupChanged"
-    },
-
-    membershipValue: {
-      type: Boolean,
-      value: false
-    },
-
-    disabled: {
-      type: Boolean,
-      value: false
-    },
-
-    large: {
-      type: Boolean,
-      value: false
-    }
-  },
-
-  _communityChanged: function (community) {
+  _communityChanged(community) {
     if (community) {
       this._updateMembership();
     }
-  },
+  }
 
-  _groupChanged: function (group) {
+  _groupChanged(group) {
     if (group) {
       this._updateMembership();
     }
-  },
+  }
 
-  _updateMembershipFromSignal: function () {
+  _updateMembershipFromSignal() {
     this._updateMembership();type
-  },
+  }
 
-  _updateMembership: function () {
+  _updateMembership() {
     if (window.appUser && window.appUser.loggedIn() && window.appUser.membershipsIndex) {
       if (this.community) {
         this.set('membershipValue',  window.appUser.membershipsIndex.communities[this.community.id]);
@@ -107,17 +118,17 @@ Polymer({
       this.set('membershipValue', false);
     }
     this._resetClasses();
-  },
+  }
 
-  _resetClasses: function () {
+  _resetClasses() {
     if (this.membershipValue) {
       this.$.button.className += " " + "member";
     } else {
       this.removeClass(this.$.button, "member");
     }
-  },
+  }
 
-  _membershipResponse: function (event, detail) {
+  _membershipResponse(event, detail) {
     this.set('disabled', false);
     this.set('membershipValue', detail.response.membershipValue);
     if (this.membershipValue) {
@@ -139,9 +150,9 @@ Polymer({
         window.appUser.membershipsIndex.groups[this.group.id] = null;
       }
     }
-  },
+  }
 
-  generateMembershipFromLogin: function (value) {
+  generateMembershipFromLogin(value) {
     if (this.community) {
       if (!window.appUser.membershipsIndex.communities[this.community.id]) {
         this.generateMembership(value);
@@ -151,18 +162,18 @@ Polymer({
         this.generateMembership(value);
       }
     }
-  },
+  }
 
-  _toggleMembership: function () {
+  _toggleMembership() {
     if (this.community) {
       window.appGlobals.activity('clicked', 'toggleCommunityMembership', this.community.id);
     } else if (this.group) {
       window.appGlobals.activity('clicked', 'toggleGroupMembership', this.group.id);
     }
     this.generateMembership(!this.membershipValue)
-  },
+  }
 
-  generateMembership: function (value) {
+  generateMembership(value) {
     this.set('disabled', true);
     if (window.appUser.loggedIn()===true) {
       if (this.community) {
@@ -183,4 +194,6 @@ Polymer({
       window.appUser.loginForMembership(this, { value: value } );
     }
   }
-});
+}
+
+window.customElements.define('yp-membership-button-lit', YpMembershipButtonLit)

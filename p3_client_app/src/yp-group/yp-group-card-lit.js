@@ -205,18 +205,18 @@ class YpGroupCardLit extends YpBaseElement {
   render() {
     return html`
       ${this.group ? html`
-        <paper-card class="groupCard" animated="" elevation="${this.elevation}">
-        <iron-image ?hidden="${!this.noImage}" header-mode\$="${this.headerMode}" archived="${this.archived}" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
-        <iron-image ?hidden="${this.noImage}" archived="${this.archived}" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload="" src="${this.groupLogoImagePath}"></iron-image>
+        <paper-card class="groupCard" .animated="" .elevation="${this.elevation}">
+        <iron-image ?hidden="${!this.noImage}" .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToGroup}"></iron-image>
+        <iron-image ?hidden="${this.noImage}" .archived="${this.archived}" class="logo withPointer" .sizing="cover" @tap="_goToGroup" .preload="" src="${this.groupLogoImagePath}"></iron-image>
           <div id="groupName" class="group-name" archived="${this.archived}" featured="${this.featured}" on-tap="_goToGroup">
-            <yp-magic-text text-type="groupName" content-language="${this.group.language}" disable-translation="${this.group.configuration.disableNameAutoTranslation}" text-only="" content="${this.groupName}" content-id="${this.group.id}">
+            <yp-magic-text .textType="groupName" .contentLanguage="${this.group.language}" .disableTranslation="${this.group.configuration.disableNameAutoTranslation}" textOnly .content="${this.groupName}" .content-id="${this.group.id}">
             </yp-magic-text>
             <span ?hidden="${!this.archived}">-${this.t('archived')}</span>
           </div>
-        <yp-magic-text id="objectives" class="objectives vertical withPointer" on-tap="_goToGroup" text-type="groupContent" content-language="${this.group.language}" text-only="" content="${this.groupObjectives}" content-id="${this.group.id}" truncate="200">
+        <yp-magic-text id="objectives" class="objectives vertical withPointer" @tap="${this._goToGroup}" .textType="groupContent" .contentLanguage="${this.group.language}" textOnly .content="${this.groupObjectives}" .content-id="${this.group.id}" .truncate="200">
         </yp-magic-text>
-        <yp-group-card-lit class="stats" group="${this.group}"></yp-group-card-lit>
-        <yp-membership-button archived="${this.archived}" group="${this.group}"></yp-membership-button>
+        <yp-group-card-lit class="stats" .group="${this.group}"></yp-group-card-lit>
+        <yp-membership-button .archived="${this.archived}" .group="${this.group}"></yp-membership-button>
         </paper-card>
 ` : html``}
 `

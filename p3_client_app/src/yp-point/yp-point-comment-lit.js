@@ -93,18 +93,18 @@ render() {
     ${this.point ? html`
     <div class="layout horizontal">
       <div class="layout horizontal">
-        <yp-user-image user="${this.user}"></yp-user-image>
+        <yp-user-image .user="${this.user}"></yp-user-image>
       </div>
       <div class="layout vertical">
         <div class="comment">
           ${this.point.content}
           <div class="layout horizontal" ?hidden="${!this.point}">
-            <yp-point-actions point="${this.point}" hide-sharing=""></yp-point-actions>
-            <paper-icon-button ?hidden="" ?hidden="${!this.loggedInUser}" title="${this.t('point.report')}" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
+            <yp-point-actions .point="${this.point}" .hide-sharing></yp-point-actions>
+            <paper-icon-button ?hidden="" ?hidden="${!this.loggedInUser}" title="${this.t('point.report')}" id="reportPointIconButton" .icon="warning" @tap="${this._reportPoint}"></paper-icon-button>
             <template is="dom-if" if="${this.hasPointAccess}">
               <div class="layout horizontal self-end" ?hidden="">
-                <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
-                <paper-icon-button id="deleteButton" title="${this.t('delete')}" icon="clear" on-tap="_deletePoint"></paper-icon-button>
+                <yp-ajax id="deletePointAjax" .method="DELETE" @response="${this._deleteResponse}"></yp-ajax>
+                <paper-icon-button id="deleteButton" .title="${this.t('delete')}" .icon="clear" @tap="${this._deletePoint}"></paper-icon-button>
               </div>
             </template>
           </div>

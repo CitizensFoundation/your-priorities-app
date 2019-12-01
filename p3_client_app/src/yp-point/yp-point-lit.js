@@ -279,26 +279,26 @@ class YpPointLit extends YpBaseElement {
     return html`
     ${this.point ? html`
       <div class="layout vertical">
-        <div class="userInfoContainer layout horizontal" up-vote="${this.upVote(point)}" down-vote="${this.downVote(point)}" ?hidden="${this.hideUser}">
-          <iron-icon icon="thumb-up" class="thumbsIcon thumbsIconUp" ?hidden="${!this.pointValueUp}"></iron-icon>
-          <iron-icon icon="thumb-down" class="thumbsIcon thumbsIconDown" ?hidden="${this.pointValueUp}"></iron-icon>
+        <div class="userInfoContainer layout horizontal" .upVote="${this.upVote(point)}" .downVote="${this.downVote(point)}" ?hidden="${this.hideUser}">
+          <iron-icon .icon="thumb-up" class="thumbsIcon thumbsIconUp" ?hidden="${!this.pointValueUp}"></iron-icon>
+          <iron-icon .icon="thumb-down" class="thumbsIcon thumbsIconDown" ?hidden="${this.pointValueUp}"></iron-icon>
           <div class="layout horizontal" ?hidden="${this.point.Post.Group.configuration.hidePointAuthor}">
-            <yp-user-with-organization title-date="${this.point.created_at}" inverted="" user="${this.user}"></yp-user-with-organization>
+            <yp-user-with-organization .titleDate="${this.point.created_at}" inverted .user="${this.user}"></yp-user-with-organization>
           </div>
         </div>
 
         <div class="layout vertical">
-          <div class="topContainer" portrait="${this.portraitVideo}">
-            <template is="dom-if" if="${this.videoActive}" restamp="">
+          <div class="topContainer" .portrait="${this.portraitVideo}">
+            <template is="dom-if" if="${this.videoActive}" restamp>
               <div class="layout horizontal center-center">
-                <video id="videoPlayer" portrait="${this.portraitVideo}" data-id="${this.pointVideoId}" controls="" preload="none" class="video" src="${this.pointVideoPath}" playsinline="" poster="${this.pointImageVideoPath}"></video>
+                <video id="videoPlayer" portrait="${this.portraitVideo}" data-id="${this.pointVideoId}" .controls="" .preload="none" class="video" src="${this.pointVideoPath}" .playsinline="" .poster="${this.pointImageVideoPath}"></video>
               </div>
             </template>
           </div>
 
-          <template is="dom-if" if="${this.audioActive}" restamp="">
+          <template is="dom-if" if="${this.audioActive}" restamp>
             <div class="layout vertical center-center">
-              <audio id="audioPlayer" data-id="${this.pointAudioId}" controls="" preload="meta" class="audio" src="${this.pointAudioPath}" playsinline=""></audio>
+              <audio id="audioPlayer" data-id="${this.pointAudioId}" .controls="" .preload="meta" class="audio" src="${this.pointAudioPath}" playsinline=""></audio>
             </div>
           </template>
 
@@ -306,7 +306,7 @@ class YpPointLit extends YpBaseElement {
             <template is="dom-if" if="${checkingTranscript}">
               <div class="layout vertical center-center checkTranscript">
                 <div>${this.t('checkingForTranscript')}</div>
-                <paper-spinner active=""></paper-spinner>
+                <paper-spinner .active=""></paper-spinner>
               </div>
             </template>
             <div class="transcriptError layout horizontal center-center" ?hidden="${!this.checkTranscriptError}">
@@ -315,8 +315,8 @@ class YpPointLit extends YpBaseElement {
             <template is="dom-if" if="${this.point.latestContent}">
               <div class="transcriptText layout vertical center-center">
                 <div class="transcriptHeader">${this.t('automaticTranscript')}</div>
-                <div id="pointContentTranscript" link-point="${this.linkPoint}" ?hidden="${this.isEditing}" on-tap="_linkIfNeeded">
-                  <yp-magic-text simple-format="" text-type="pointContent" content-language="${this.point.language}" content="${this.point.latestContent}" content-id="${this.point.id}">
+                <div id="pointContentTranscript" .linkPoint="${this.linkPoint}" ?hidden="${this.isEditing}" @tap="${this._linkIfNeeded}">
+                  <yp-magic-text simple-format .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" content-id="${this.point.id}">
                   </yp-magic-text>
                 </div>
               </div>
@@ -328,37 +328,37 @@ class YpPointLit extends YpBaseElement {
               <span ?hidden="${!this.point.name}">
                 <span>${this.point.name}</span>.
               </span>
-              <div id="pointContent" link-point="${this.linkPoint}" ?hidden="${this.isEditing}" on-tap="_linkIfNeeded">
-                <yp-magic-text simple-format="" text-type="pointContent" content-language="${this.point.language}" content="${this.point.latestContent}" content-id="${this.point.id}">
+              <div id="pointContent" .linkPoint="${this.linkPoint}" ?hidden="${this.isEditing}" @tap="${this._linkIfNeeded}">
+                <yp-magic-text simple-format .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" content-id="${this.point.id}">
                 </yp-magic-text>
               </div>
             </div>
           </template>
-          <template is="dom-if" if="${this.isEditing}" restamp="">
+          <template is="dom-if" if="${this.isEditing}" restamp>
             <div class="layout vertical">
-              <paper-textarea id="pointContentEditor" char-counter="" maxlength="500" value="${this.editText}"></paper-textarea>
+              <paper-textarea id="pointContentEditor" char-counter .maxlength="500" .value="${this.editText}"></paper-textarea>
               <div class="horizontal end-justified layout">
                 <emoji-selector id="pointEmojiSelector"></emoji-selector>
               </div>
               <div class="layout horizontal self-end">
-                <paper-button on-tap="_cancelEdit">${this.t('cancel')}</paper-button>
-                <paper-button on-tap="_saveEdit">${this.t('update')}</paper-button>
+                <paper-button @tap="${this._cancelEdit}">${this.t('cancel')}</paper-button>
+                <paper-button @tap="${this._saveEdit}">${this.t('update')}</paper-button>
               </div>
             </div>
           </template>
           <div class="layout horizontal actionContainer" ?hidden="${this.hideActions}">
-            <yp-point-actions point="${this.point}" point-url="${this.pointUrl}"></yp-point-actions>
-            <paper-icon-button title="${this.t('point.report')}" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
+            <yp-point-actions .point="${this.point}" .pointUrl="${this.pointUrl}"></yp-point-actions>
+            <paper-icon-button .title="${this.t('point.report')}" id="reportPointIconButton" .icon="warning" @tap="${this._reportPoint}"></paper-icon-button>
             <div class="flex"></div>
             <template is="dom-if" if="${this.hasPointAccess}">
               <div class="layout horizontal self-end" ?hidden="">
-                <yp-ajax id="editPointAjax" method="PUT" on-response="_editResponse"></yp-ajax>
-                <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
-                <paper-icon-button title="${this.t('edit')}" ?hidden="${!this.canEditPoint}" icon="create" on-tap="_editPoint"></paper-icon-button>
-                <paper-icon-button title="${this.t('delete')}" icon="clear" on-tap="_deletePoint"></paper-icon-button>
+                <yp-ajax id="editPointAjax" .method="PUT" @response="${this._editResponse}"></yp-ajax>
+                <yp-ajax id="deletePointAjax" .method="DELETE" @response="${this._deleteResponse}"></yp-ajax>
+                <paper-icon-button .title="${this.t('edit')}" ?hidden="${!this.canEditPoint}" .icon="create" @tap="${this._editPoint}"></paper-icon-button>
+                <paper-icon-button .title="${this.t('delete')}" .icon="clear" @tap="${this._deletePoint}"></paper-icon-button>
               </div>
             </template>
-            <yp-ajax ?hidden="" id="checkTranscriptStatusAjax" on-response="_transcriptStatusResponse"></yp-ajax>
+            <yp-ajax ?hidden="" id="checkTranscriptStatusAjax" @response="${this._transcriptStatusResponse}"></yp-ajax>
           </div>
         </div>
       </div>

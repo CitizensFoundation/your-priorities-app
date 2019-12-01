@@ -112,7 +112,7 @@ class YpUserEditLit extends YpBaseElement {
     <yp-edit-dialog .name="userEdit" id="editDialog" .title="${this.editHeaderText}" double-width="" .icon="face" .action="${this.action}" @iron-form-response="${this._editResponse}" .method="${this.method}" .params="${this.params}" .save-text="${this.saveText}" .toast-text="${this.toastText}">
       <div class="container">
         <div class="layout vertical wrap container">
-          <paper-input id="name" .name="name" .type="text" .label="${this.t('Name')}" .value="${this.user.name}" maxlength="50" char-counter="">
+          <paper-input id="name" .name="name" .type="text" .label="${this.t('Name')}" .value="${this.user.name}" maxlength="50" char-counter>
           </paper-input>
 
           <paper-input id="email" .name="email" .type="text" .label="${this.t('Email')}" .value="${this.user.email}">
@@ -134,7 +134,7 @@ class YpUserEditLit extends YpBaseElement {
             </div>
           </div>
 
-          <yp-language-selector name="defaultLocale" auto-translate-option-disabled="" selected-locale="${this.user.default_locale}"></yp-language-selector>
+          <yp-language-selector .name="defaultLocale" auto-translate-option-disabled="" selected-locale="${this.user.default_locale}"></yp-language-selector>
 
           <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised @tap="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</paper-button>
 
@@ -150,8 +150,8 @@ class YpUserEditLit extends YpBaseElement {
           <ac-notification-settings notifications-settings="${this.notificationSettings}"></ac-notification-settings>
           <input .type="hidden" .name="notifications_settings" .value="${this.encodedUserNotificationSettings}">
 
-          <yp-ajax id="disconnectFacebookLoginAjax" method="DELETE" url="/api/users/disconnectFacebookLogin" @response="${this._disconnectFacebookLoginResponse}"></yp-ajax>
-          <yp-ajax id="disconnectSamlLoginAjax" method="DELETE" url="/api/users/disconnectSamlLogin" @response="${this._disconnectSamlLoginResponse}"></yp-ajax>
+          <yp-ajax id="disconnectFacebookLoginAjax" .method="DELETE" url="/api/users/disconnectFacebookLogin" @response="${this._disconnectFacebookLoginResponse}"></yp-ajax>
+          <yp-ajax id="disconnectSamlLoginAjax" .method="DELETE" url="/api/users/disconnectSamlLogin" @response="${this._disconnectSamlLoginResponse}"></yp-ajax>
         </div>
       </div>
     </yp-edit-dialog>

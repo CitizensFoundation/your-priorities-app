@@ -111,18 +111,18 @@ class YpUserWithOrganizationLit extends YpBaseElement {
     return html`
     ${this.user ? html`
     <template is="dom-if" if="${this.user}">
-      <div class="layout horizontal mainArea" title="${this.userTitle}">
-        <yp-user-image titlefromuser="${this.userTitle}" user="${this.user}" ?hidden="${this.hideImage}"></yp-user-image>
+      <div class="layout horizontal mainArea" .title="${this.userTitle}">
+        <yp-user-image .titlefromuser="${this.userTitle}" user="${this.user}" ?hidden="${this.hideImage}"></yp-user-image>
         <div class="layout vertical">
-          <div class="name" inverted\$="${this.inverted}">
+          <div class="name" .inverted="${this.inverted}">
             ${this.user.name}
           </div>
-          <div class="organizationName" inverted\$="${this.inverted}" ?hidden="${!this.organizationName}">
+          <div class="organizationName" .inverted="${this.inverted}" ?hidden="${!this.organizationName}">
             ${this.organizationName}
           </div>
         </div>
         <template is="dom-if" if="${this.organizationImageUrl}">
-          <img width="48" height="48" sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src\$="${this.organizationImageUrl}">
+          <img width="48" height="48" .sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
         </template>
       </div>
     </template>

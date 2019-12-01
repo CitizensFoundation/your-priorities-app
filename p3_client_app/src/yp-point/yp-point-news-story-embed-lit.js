@@ -62,9 +62,9 @@ class YpPointNewsStoryEmbedLit extends YpBaseElement {
       ${this.point ? html` 
       <div ?hidden="${!this.embedData}">
         <div class="layout vertical embedContainer">
-          <a href="${this.embedData.url}" class="container" target="_blank">
+          <a href="${this.embedData.url}" class="container" .target="_blank">
             <div class="layout vertical center-center">
-              <iron-image sizing="contain" src="${this.embedData.thumbnail_url}" ?hidden="${this.embedData.html}"></iron-image>
+              <iron-image .sizing="contain" src="${this.embedData.thumbnail_url}" ?hidden="${this.embedData.html}"></iron-image>
               <div id="embedHtml" ?hidden="${!this.embedData.html}">
                 <div inner-h-t-m-l="${this.embedData}"></div>
               </div>

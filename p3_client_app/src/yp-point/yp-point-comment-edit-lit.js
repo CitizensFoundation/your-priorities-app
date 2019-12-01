@@ -79,22 +79,22 @@ render() {
     ${this.point ? html`
     <div class="layout vertical center-center" ?hidden="${!this.loggedInUser}">
       <div class="layout horizontal">
-        <yp-user-image class="userImage" user="${this.loggedInUser}"></yp-user-image>
+        <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
         <div class="layout vertical">
-          <paper-textarea id="pointComment" required="" minlength="15" name="pointComment" value="${this.comment.content}" always-float-label="${this.comment.content}" label="${t(this.point.addComment)}" char-counter="" rows="2" max-rows="2" on-keydown="_keyDown" maxlength="200">
+          <paper-textarea id="pointComment" required .minlength="15" .name="pointComment" .value="${this.comment.content}" always-float-label="${this.comment.content}" .label="${t(this.point.addComment)}" char-counter .rows="2" .max-rows="2" @keydown="${this_keyDown}" .maxlength="200">
           </paper-textarea>
           <div class="layout horizontal">
-            <paper-button id="submitButton" raised="" on-tap="_sendComment">${this.t(point.postComment)}</paper-button>
+            <paper-button id="submitButton" raised @tap="${this._sendComment}">${this.t(point.postComment)}</paper-button>
           </div>  
         </div>
       </div>
 
       <div class="layout horizontal center-center">
-        <yp-ajax id="postCommentAjax" method="POST" on-error="_responseError" on-response="_newsCommentResponse"></yp-ajax>
+        <yp-ajax id="postCommentAjax" .method="POST" @error="${this._responseError}" @response="${this._newsCommentResponse}"></yp-ajax>
       </div>
 
     </div>
-    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 ` : html``}
 `  
 }  

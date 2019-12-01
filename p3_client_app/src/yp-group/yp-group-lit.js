@@ -150,7 +150,6 @@ static get styles() {
   return [
     css`
 
-
       .description {
         padding: 12px;
       }
@@ -293,16 +292,16 @@ render() {
     ${this.group ? html`
       <div id="topContainer">
         <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" ?hidden="${this.group.configuration.hideGroupHeader}">
-        <yp-group-card-large id="groupCard" class="largeCard" group="${this.group}" on-update-group="_refreshAjax"></yp-group-card-large>
+        <yp-group-card-large id="groupCard" class="largeCard" .group="${this.group}" @update-group="${this._refreshAjax}"></yp-group-card-large>
       </div>
 
       <div class="largeAddButton layout horizontal center-center" is-apple="${this.isOldiOs}" is-ipad="${this.isIpad}" ?hidden="${this.group.configuration.hideNewPost}">
-        <yp-post-card-add disabled="${this.disableNewPosts}" on-new-post="_newPost" elevation="2"></yp-post-card-add>
+        <yp-post-card-add .disabled="${this.disableNewPosts}" @new-post="${this._newPost}" .elevation="2"></yp-post-card-add>
       </div>
 
-      <div class="layout horizontal center-center tabContainer" hide="${this.group.configuration.hideAllTabs}">
-        <paper-tabs scrollable="${this.shouldScrollTabs}" id="paperTabs" has-non-open-posts="${this.hasNonOpenPosts}" class="tabs" selected="${this.selectedTab}" attr-for-selected="name" focused="">
-          <paper-tab id="tab1" name="open">
+      <div class="layout horizontal center-center tabContainer" .hide="${this.group.configuration.hideAllTabs}">
+        <paper-tabs .scrollable="${this.shouldScrollTabs}" id="paperTabs" has-non-open-posts="${this.hasNonOpenPosts}" class="tabs" .selected="${this.selectedTab}" attr-for-selected="name" focused>
+          <paper-tab id="tab1" .name="open">
             <div class="layout vertical center-center tabCounterContainer">
               <div ?hidden="${this.isTabOpen}">
                 ${this.t('posts.open')}
@@ -314,7 +313,7 @@ render() {
             </div>
           </paper-tab>
           <template is="dom-if" if="${this.hasNonOpenPosts}">
-            <paper-tab name="in_progress">
+            <paper-tab .name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
                 <div>
                   ${this.t('posts.inProgress')}
@@ -325,7 +324,7 @@ render() {
                 <div ?hidden="${this.isTabInProgress}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountInProgress"></div>
               </div>
             </paper-tab>
-            <paper-tab name="successful">
+            <paper-tab .name="successful">
               <div class="layout vertical center-center tabCounterContainer">
                 <div>
                   ${this.t('posts.successful')}
@@ -336,7 +335,7 @@ render() {
                 <div ?hidden="${this.isTabSuccessful}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountSuccessful"></div>
               </div>
             </paper-tab>
-            <paper-tab name="failed">
+            <paper-tab .name="failed">
               <div class="layout vertical center-center tabCounterContainer">
                 <div>
                   ${this.t('posts.failed')}
@@ -348,73 +347,73 @@ render() {
               </div>
             </paper-tab>
           </template>
-          <paper-tab name="news">${this.t('news')}</paper-tab>
-          <paper-tab name="map" ?hidden="${this.locationHidden}">${this.t('posts.map')}</paper-tab>
+          <paper-tab .name="news">${this.t('news')}</paper-tab>
+          <paper-tab .name="map" ?hidden="${this.locationHidden}">${this.t('posts.map')}</paper-tab>
         </paper-tabs>
       </div>
 
-      <iron-pages id="tabPages" class="tabPages" selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section name="open">
+      <iron-pages id="tabPages" class="tabPages" .selected="${this.selectedTab}" attr-for-selected="name" .entryaAnimation="fade-in-animation" .exitAnimation="fade-out-animation">
+        <section .name="open">
           <div class="layout horizontal center-center">
-            <yp-post-list id="openPostList" sub-title="${this.tabOpenSubTitle}" selected-tab="${this.selectedTab}" list-route="${this.listRoute}" status-filter="open" tab-counter-id="tabCountOpen" searching-for="${this.searchingFor}" group="${this.group}" group-id="${this.lastValidGroupId}"></yp-post-list>
+            <yp-post-list id="openPostList" sub-title="${this.tabOpenSubTitle}" selected-tab="${this.selectedTab}" .listRoute="${this.listRoute}" .statusFilter="open" .tabCounterId="tabCountOpen" .searchingFor="${this.searchingFor}" .group="${this.group}" .groupId="${this.lastValidGroupId}"></yp-post-list>
           </div>
         </section>
-        <section name="news" class="minHeightSection">
+        <section .name="news" class="minHeightSection">
           <template is="dom-if" if="${this.newsTabSelected}">
-            <ac-activities id="groupActivities" disable-new-posts="${this.disableNewPosts}" selected-tab="${this.selectedTab}" list-route="${this.listRoute}" group-id="${this.group.id}"></ac-activities>
+            <ac-activities id="groupActivities" ?disableNewPosts="${this.disableNewPosts}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .groupId="${this.group.id}"></ac-activities>
           </template>
         </section>
         <template is="dom-if" if="${this.hasNonOpenPosts}">
-          <section name="in_progress">
+          <section .name="in_progress">
             <div class="layout horizontal center-center">
-              <yp-post-list id="inProgressPostList" sub-title="${this.tabInProgressSubTitle}" selected-tab="${this.selectedTab}" list-route="${this.listRoute}" status-filter="in_progress" tab-counter-id="tabCountInProgress" searching-for="${this.searchingFor}" group="${this.group}" group-id="${this.lastValidGroupId}"></yp-post-list>
+              <yp-post-list id="inProgressPostList" .subTitle="${this.tabInProgressSubTitle}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .statusFilter="in_progress" .tabCounterId="tabCountInProgress" .searchingFor="${this.searchingFor}" .group="${this.group}" .groupId="${this.lastValidGroupId}"></yp-post-list>
             </div>
           </section>
-          <section name="successful">
+          <section .name="successful">
             <div class="layout horizontal center-center">
-              <yp-post-list id="successfulPostList" sub-title="${this.tabSuccessfulSubTitle}" selected-tab="${this.selectedTab}" list-route="${this.listRoute}" status-filter="successful" tab-counter-id="tabCountSuccessful" searching-for="${this.searchingFor}" group="${this.group}" group-id="${this.lastValidGroupId}"></yp-post-list>
+              <yp-post-list id="successfulPostList" .subTitle="${this.tabSuccessfulSubTitle}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .statusFilter="successful" .tabCounterId="tabCountSuccessful" .searchingFor="${this.searchingFor}" .group="${this.group}" .groupId="${this.lastValidGroupId}"></yp-post-list>
             </div>
           </section>
-          <section name="failed">
+          <section .name="failed">
             <div class="layout horizontal center-center">
-              <yp-post-list id="failedPostList" sub-title="${this.tabFailedSubTitle}" selected-tab="${this.selectedTab}" list-route="${this.listRoute}" status-filter="failed" tab-counter-id="tabCountFailed" searching-for="${this.searchingFor}" group="${this.group}" group-id="${this.lastValidGroupId}"></yp-post-list>
+              <yp-post-list id="failedPostList" .subTitle="${this.tabFailedSubTitle}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .statusFilter="failed" tabCounterId="tabCountFailed" .searchingFor="${this.searchingFor}" .group="${this.group}" .groupId="${this.lastValidGroupId}"></yp-post-list>
             </div>
           </section>
         </template>
         <section name="map" ?hidden="${this.locationHidden}" class="minHeightSection">
-          <template is="dom-if" if="${this.mapActive}" restamp="">
-            <yp-post-map group-id="${this.group.id}"></yp-post-map>
+          <template is="dom-if" if="${this.mapActive}" restamp=>
+            <yp-post-map .groupId="${this.group.id}"></yp-post-map>
           </template>
         </section>
       </iron-pages>
     </div>
 
-    <template is="dom-if" if="${!this.disableNewPosts}" restamp="">
+    <template is="dom-if" if="${!this.disableNewPosts}" restamp>
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.disableNewPosts}">
-          <paper-fab class="createFab" icon="${this.createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_newPost"></paper-fab>
+          <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
       </div>
     </template>
 
-    <iron-scroll-threshold id="scrollTheshold" lower-threshold="550" on-lower-threshold="_loadMoreData" scroll-target="document">
+    <iron-scroll-threshold id="scrollTheshold" .lowerThreshold="550" @lower-threshold="${this._loadMoreData}" .scrollTarget="document">
     </iron-scroll-threshold>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-yp-refresh-group-posts="_refreshGroupPosts"></lite-signal>
-    <lite-signal on-lite-signal-yp-refresh-activities-scroll-threshold="_clearScrollThreshold"></lite-signal>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-yp-refresh-group-posts="${this._refreshGroupPosts}"></lite-signal>
+    <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
 
-    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
-    <iron-media-query query="(max-width: 700px)" query-matches="${this.phoneWidth}"></iron-media-query>
+    <iron-media-query .query="(min-width: 1024px)" .querMatches="${this.wideWidth}"></iron-media-query>
+    <iron-media-query .query="(max-width: 700px)" .queryMatches="${this.phoneWidth}"></iron-media-query>
 
-    <app-route route="${this.idRoute}" pattern="/:id" data="${this.idRouteData}" tail="${this.tabRoute}">
+    <app-route .route="${this.idRoute}" pattern="/:id" data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
-    <app-route route="${this.tabRoute}" pattern="/:tabName" data="${this.tabRouteData}" tail="${this.listRoute}">
+    <app-route .route="${this.tabRoute}" pattern="/:tabName" data="${this.tabRouteData}" .tail="${this.listRoute}">
     </app-route>
 
     <div class="layout horizontal center-center">
-      <yp-ajax large-spinner="" id="ajax" on-response="_groupResponse"></yp-ajax>
-      <yp-ajax id="ajaxCheckNonOpenPosts" on-response="_nonOpenPosts"></yp-ajax>
-      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+      <yp-ajax large-spinner="" id="ajax" @response="${this._groupResponse}"></yp-ajax>
+      <yp-ajax id="ajaxCheckNonOpenPosts" @response="${this._nonOpenPosts}"></yp-ajax>
+      <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
     </div>
   ` : html``}
   `

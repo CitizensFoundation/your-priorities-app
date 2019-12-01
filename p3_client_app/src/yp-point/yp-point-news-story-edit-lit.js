@@ -128,12 +128,12 @@ render() {
     ${this.point ? html`
       <div class="layout vertical container">
         <div class="layout horizontal">
-          <yp-user-image class="userImage" user="${this.loggedInUser}"></yp-user-image>
+          <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
           <div class="layout vertical">
-            <paper-textarea id="pointNewsStory" required="" minlength="15" name="pointNewsStory" value="{{point.content}}" always-float-label="[[point.content]]" label="[[t('point.addNewsStory')]]" char-counter="" rows="2" max-rows="5" on-keydown="_keyDown" maxlength="500">
+            <paper-textarea id="pointNewsStory" required .minlength="15" .name="pointNewsStory" .value="${this.point.content}" always-float-label="${this.point.content}" .label="${this.t('point.addNewsStory')}" char-counter .rows="2" .max-rows="5" @keydown="${this._keyDown}" .maxlength="500">
             </paper-textarea>
             <div class="layout horizontal end-justified">
-              <paper-button id="storySubmitButton" raised="" on-tap="_sendStory">${this.t('point.postNewsStory')}</paper-button>
+              <paper-button id="storySubmitButton" raised @tap="${this._sendStory}">${this.t('point.postNewsStory')}</paper-button>
             </div>
           </div>
         </div>
@@ -142,14 +142,14 @@ render() {
           <template is="dom-if" if="${this.point.embed_data}">
             <div class="embedData layout vertical center-center">
               <yp-point-news-story-embed embed-data="${this.point.embed_data}"></yp-point-news-story-embed>
-              <paper-icon-button aria-label="${this.t('clearEmbededMedia')}" icon="clear" on-tap="_clearEmbed"></paper-icon-button>
+              <paper-icon-button .ariaLabel="${this.t('clearEmbededMedia')}" .icon="clear" @tap="${this._clearEmbed}"></paper-icon-button>
             </div>
           </template>
         </div>
 
         <div class="layout horizontal center-center">
-          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" ?hidden="${this.point.embed_detail}" on-response="_urlPreviewResponse"></yp-ajax>
-          <yp-ajax id="postNewsStoryAjax" method="POST" on-error="_clearButtonState" on-response="_newsStoryResponse"></yp-ajax>
+          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" ?hidden="${this.point.embed_detail}" @response="${this._urlPreviewResponse}"></yp-ajax>
+          <yp-ajax id="postNewsStoryAjax" .method="POST" @error="${this._clearButtonState}" @response="${this_newsStoryResponse}"></yp-ajax>
         </div>
 
       </div>

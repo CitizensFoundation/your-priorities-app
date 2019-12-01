@@ -242,7 +242,7 @@ class YpPostsFilterLit extends YpBaseElement {
                         </paper-item>
                         <template is="dom-repeat" .items="${this.categoriesWithCount}" as="category">
                           <paper-item data-category-id="${this.category.id}" data-category-name="${this.category.name}">
-                            <iron-image sizing="cover" class="catImage" height="24" width="24" src="${this._categoryImageSrc(category)}"></iron-image>
+                            <iron-image .sizing="cover" class="catImage" height="24" width="24" src="${this._categoryImageSrc(category)}"></iron-image>
                             ${this.category.name} (${this.category.count})
                           </paper-item>
                         </template>

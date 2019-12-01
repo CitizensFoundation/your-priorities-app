@@ -79,7 +79,7 @@ class YpAcceptInviteLit extends YpBaseElement {
 
       <div class="buttons">
         <yp-ajax id="acceptInviteAjax" .method="POST" dispatch-error="" @error="${this._inviteError}" @response="${this._acceptInviteResponse}"></yp-ajax>
-        <yp-ajax id="getInviteSenderAjax" .dispatch-error="" method="GET" @error="${this._inviteError}" @response="${this._getInviteSenderResponse}"></yp-ajax>
+        <yp-ajax id="getInviteSenderAjax" .dispatch-error="" .method="GET" @error="${this._inviteError}" @response="${this._getInviteSenderResponse}"></yp-ajax>
         <paper-button @tap="${this._cancel}" .dialog-dismiss="">${this.t('cancel')}</paper-button>
         <paper-button .autofocus="" @tap="${this._acceptInvite}">${this.t('user.acceptInvite')}</paper-button>
       </div>

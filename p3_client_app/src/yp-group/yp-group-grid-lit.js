@@ -66,13 +66,13 @@ class YpGroupGridLit extends YpBaseElement {
 render() {
     return html`
       ${this.group ? html`
-      <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+      <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" scroll-offset="${this.scrollOffset}" items="${this.activeGroups}" as="group" scroll-target="document" grid="${this.wide}">
+        <iron-list id="ironList" .scrollOffset="${this.scrollOffset}" .items="${this.activeGroups}" as="group" scroll-target="document" grid="${this.wide}">
           <template>
             <div class="groupCard layout vertical center-center" tabindex="${this.tabIndex}" wide-padding="${this.wide}">
-              <yp-group-card-lit wide-padding="${this.wide}" group="${this.group}" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card-lit>
+              <yp-group-card-lit wide-padding="${this.wide}" .group="${this.group}" @mouseover="${this.cardMouseOver}" @mouseout="${this.cardMouseOut}"></yp-group-card-lit>
             </div>
           </template>
         </iron-list>
