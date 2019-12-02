@@ -111,10 +111,12 @@ var getUserWithAll = function (userId, callback) {
 
 // Login
 router.post('/login', function (req, res) {
+  const startTime = new Date();
+  log.info('User Login start', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
-    console.log(user);
-    log.info('User Login', {context: 'view', userId: req.user ? req.user.id : null});
+    log.info('User Login before get', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
     getUserWithAll(req.user.id, function (error, user) {
+      log.info('User Login completed', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
       if (error || !user) {
         log.error("User Login Error", {context: 'login', user: user ? user.id : null, err: error, errorStatus: 500});
         res.sendStatus(500);
