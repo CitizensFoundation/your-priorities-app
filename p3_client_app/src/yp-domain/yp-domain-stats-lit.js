@@ -55,11 +55,11 @@ class YpDomainStatsLit extends YpBaseElement {
       <div class="stats layout horizontal end-justified">
         <div class="layout horizontal wrap">
           <div class="layout horizontal">
-            <iron-icon title="${this.t('stats.posts')}".icon="lightbulb-outline" class="stats-icon"></iron-icon>
-            <div title="${this.t('stats.posts')}" class="stats-text" .style >${this.formatNumber(this.domain.counter_posts)}</div>
+            <iron-icon .title="${this.t('stats.posts')}".icon="lightbulb-outline" class="stats-icon"></iron-icon>
+            <div .title="${this.t('stats.posts')}" class="stats-text">${this.formatNumber(this.domain.counter_posts)}</div>
 
-            <iron-icon title="${this.t('stats.discussions')}" .icon="chat-bubble-outline" class="stats-icon"></iron-icon>
-            <div title="${this.t('stats.discussions')}" class="stats-text">${this.formatNumber(this.domain.counter_points)}</div>
+            <iron-icon .title="${this.t('stats.discussions')}" .icon="chat-bubble-outline" class="stats-icon"></iron-icon>
+            <div .title="${this.t('stats.discussions')}" class="stats-text">${this.formatNumber(this.domain.counter_points)}</div>
 
             <iron-icon ?hidden="${!this.wide}" .title="${this.t('stats.communities')}" .icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
             <div ?hidden="${!this.wide}" .title="${this.t('stats.communities')}" class="stats-text hideIfMobile" .style>${this.formatNumber(this.domain.counter_communities)}</div>

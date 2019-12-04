@@ -284,11 +284,11 @@ class YpDomainLargeCardLit extends YpBaseElement {
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
                 <div class="domain-name">
-                  <yp-magic-text .textType="domainName" .contentLanguage="${this.domain.language}" .disableTranslation="${this.domain.configuration.disableNameAutoTranslation}" text-only="" content="${this.domain.name}" content-id="${this.domain.id}">
+                  <yp-magic-text .textType="domainName" .contentLanguage="${this.domain.language}" .disableTranslation="${this.domain.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.domain.name}" .contentId="${this.domain.id}">
                   </yp-magic-text>
                 </div>
                 <template is="dom-if" if="${this.domain.id}">
-                  <yp-magic-text id="description" class="description domainDescription" .textType="domainContent" .contentLanguage="${this.domain.language}" .content="${this.domain.description}" content-id="${this.domain.id}">
+                  <yp-magic-text id="description" class="description domainDescription" .textType="domainContent" .contentLanguage="${this.domain.language}" .content="${this.domain.description}" .contentId="${this.domain.id}">
                   </yp-magic-text>
                 </template>
               </div>

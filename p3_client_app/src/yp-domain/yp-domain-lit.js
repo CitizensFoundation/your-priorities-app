@@ -150,10 +150,10 @@ class YpDomainLit extends YpBaseElement {
             <paper-tab name="news" class="tab" ?hidden="${this.domain.configuration.hideDomainNews}">${this.t('news')}</paper-tab>
           </paper-tabs>
 
-          <iron-pages class="tabPages" fullbleed="" slot="tabPages" selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+          <iron-pages class="tabPages" fullbleed="" slot="tabPages" selected="${this.selectedTab}" attr-for-selected="name" .entryAnimation="fade-in-animation" .exitAnimation="fade-out-animation">
             <section name="communities" class="layout vertical">
               <div class="card-container layout center-center wrap layout-horizontal ">
-                <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" archived-communities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
+                <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" .archivedCommunities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
                 </yp-community-grid>
               </div>
             </section>
