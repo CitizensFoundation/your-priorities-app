@@ -23,6 +23,14 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         fields: ['id', 'deleted']
+      },
+      {
+        name: 'categories_idx_deleted_group_id',
+        fields: ['deleted','group_id']
+      },
+      {
+        name: 'categories_idx_deleted',
+        fields: ['deleted']
       }
     ],
 
@@ -78,7 +86,9 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Category.hasMany(models.Post);
         Category.belongsTo(models.Group);
-        Category.belongsToMany(models.Image, { as: 'CategoryIconImages', through: 'CategoryIconImage' });
+        Category.belongsToMany(models.Image, {
+          as: 'CategoryIconImages',
+          through: 'CategoryIconImage'});
         Category.belongsToMany(models.Image, { as: 'CategoryHeaderImages', through: 'CategoryHeaderImage' });
       }
     }

@@ -42,6 +42,14 @@ module.exports = function(sequelize, DataTypes) {
 
     indexes: [
       {
+        name: 'posts_idx_deleted_status_id',
+        fields: ['deleted', 'status','id']
+      },
+      {
+        name: 'posts_idx_deleted_status',
+        fields: ['deleted', 'status']
+      },
+      {
         name: 'published_by_official_status',
         fields: ['group_id', 'official_status', 'deleted'],
         where: {

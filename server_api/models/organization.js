@@ -33,6 +33,17 @@ module.exports = function(sequelize, DataTypes) {
 
     underscored: true,
 
+    indexes: [
+      {
+        name: 'organizations_idx_id_deleted',
+        fields: ['id', 'deleted']
+      },
+      {
+        name: 'organizations_idx_deleted',
+        fields: ['deleted']
+      }
+    ],
+
     tableName: 'organizations',
 
     instanceMethods: {

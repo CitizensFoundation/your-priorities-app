@@ -12,6 +12,19 @@ module.exports = function(sequelize, DataTypes) {
         deleted: false
       }
     },
+    indexes: [
+      {
+        fields: ['user_id', 'deleted']
+      },
+      {
+        name: 'post_revisions_idx_deleted',
+        fields: ['deleted']
+      },
+      {
+        name: 'post_revisions_idx_post_id_deleted',
+        fields: ['deleted','post_id']
+      }
+    ],
     timestamps: true,
     underscored: true,
     tableName: 'post_revisions',

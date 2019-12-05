@@ -35,7 +35,10 @@ var generateSitemap = function(req, res) {
       models.Group.findAll({
         attributes: ['id'],
         where: {
-          access: models.Group.ACCESS_PUBLIC
+          $or: [
+            { access: models.Group.ACCESS_PUBLIC },
+            { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+          ]
         },
         include: [
           {
@@ -64,7 +67,12 @@ var generateSitemap = function(req, res) {
           {
             model: models.Group,
             attributes: ['id'],
-            access: models.Group.ACCESS_PUBLIC,
+            where: {
+              $or: [
+                { access: models.Group.ACCESS_PUBLIC },
+                { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+              ]
+            },
             required: true,
             include: [
               {

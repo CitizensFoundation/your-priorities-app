@@ -44,6 +44,10 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         fields: ['id', 'deleted']
+      },
+      {
+        name: 'images_idx_deleted',
+        fields: ['deleted']
       }
     ],
 

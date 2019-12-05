@@ -62,6 +62,9 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['id', 'deleted']
+      },
+      { name: 'audios_idx_deleted',
+        fields: ['deleted']
       }
     ],
 

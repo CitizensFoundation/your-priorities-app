@@ -64,6 +64,10 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['email']
       },
       {
+        name: 'users_idx_deleted_status',
+        fields: ['deleted', 'status']
+      },
+      {
         fields: ['interaction_profile'],
         using: 'gin',
         operator: 'jsonb_path_ops'

@@ -48,6 +48,10 @@ module.exports = function(sequelize, DataTypes) {
         operator: 'jsonb_path_ops'
       },
       {
+        name: 'videos_idx_deleted',
+        fields: ['deleted']
+      },
+      {
         fields: ['public_meta'],
         using: 'gin',
         operator: 'jsonb_path_ops'

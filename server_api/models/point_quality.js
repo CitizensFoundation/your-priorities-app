@@ -24,6 +24,13 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         fields: ['user_id', 'deleted']
+      },
+      {
+        fields: ['id', 'deleted']
+      },
+      {
+        name: 'point_qualities_idx_deleted',
+        fields: ['deleted']
       }
     ],
 
