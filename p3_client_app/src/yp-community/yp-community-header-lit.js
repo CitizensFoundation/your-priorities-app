@@ -180,20 +180,20 @@ render() {
     ${this.community ? html`
     <template is="dom-if" if="${this.community}">
         <div class="layout vertical center-center">
-          <iron-image class="image rounded-even-more" sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
+          <iron-image class="image rounded-even-more" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
           <div class="community-name rounded-even-more">
             ${this.communityNameFull}
           </div>
           <div class="layout horizontal center-center">
-            <yp-community-stats class="stats" community="${this.community}"></yp-community-stats>
+            <yp-community-stats class="stats" .community="${this.community}"></yp-community-stats>
           </div>
           <div class="description layout horizontal center-center rounded-even-more ">
             <div id="description" class="communityDescription">
             </div>
             <div>
-              <paper-menu-button class="edit" vertical-align="top" horizontal-align="${this.editMenuAlign}" hidden="${!this.hasCommunityAccess}">
-                <paper-icon-button aria-label="${this.t('openCommunityMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-                <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection" selected="${this.selectedMenuItem}">
+              <paper-menu-button class="edit" .verticalAlign="top" .horizontalAlign="${this.editMenuAlign}" ?hidden="${!this.hasCommunityAccess}">
+                <paper-icon-button .ariaLabel="${this.t('openCommunityMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}" .selected="${this.selectedMenuItem}">
                   <paper-item id="editMenuItem">${this.t('community.edit')}</paper-item>
                   <paper-item id="usersMenuItem">${this.t('community.users')}</paper-item>
                   <paper-item id="adminsMenuItem">${this.t('community.admins')}</paper-item>
@@ -206,8 +206,8 @@ render() {
           </div>
         </div>
     </template>
-    <iron-media-query query="(max-width: 800px)" query-matches="${this.narrowScreen}"></iron-media-query>
-    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <iron-media-query query="(max-width: 800px)" .queryMatches="${this.narrowScreen}"></iron-media-query>
+    <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
 ` : html``}
 `
 }

@@ -45,14 +45,14 @@ class YpCommunityStatsLit extends YpBaseElement {
       ${this.community ? html`
         <div class="stats layout horizontal end-justified">
           <div class="layout horizontal">
-            <iron-icon title="${this.t('stats.posts')}" icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
-            <div title="${this.t('stats.posts')}" class="stats-text" style="">${this.formatNumber(this.community.counter_posts)}</div>
+            <iron-icon .title="${this.t('stats.posts')}" .icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
+            <div .title="${this.t('stats.posts')}" class="stats-text">${this.formatNumber(this.community.counter_posts)}</div>
 
-            <iron-icon title="${this.t('stats.groups')}" icon="people" class="stats-icon"></iron-icon>
-            <div title="${this.t('stats.groups')}" class="stats-text" style="">${this.formatNumber(this.community.counter_groups)}</div>
+            <iron-icon .title="${this.t('stats.groups')}" .icon="people" class="stats-icon"></iron-icon>
+            <div .title="${this.t('stats.groups')}" class="stats-text">${this.formatNumber(this.community.counter_groups)}</div>
 
-            <iron-icon title="${this.t('stats.users')}" icon="face" class="stats-icon"></iron-icon>
-            <div title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.community.counter_users)}</div>
+            <iron-icon .title="${this.t('stats.users')}" .icon="face" class="stats-icon"></iron-icon>
+            <div .title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.community.counter_users)}</div>
           </div>
         </div>      
       ` : html``

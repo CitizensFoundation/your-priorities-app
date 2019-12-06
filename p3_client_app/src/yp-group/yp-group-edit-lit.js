@@ -496,16 +496,16 @@ render() {
         <paper-input id="customBackName" .name="customBackName" .type="text" .maxlength="20" .label="${this.t('customBackName')}" .value="${this.group.configuration.customBackName}">
         </paper-input>
 
-        <input type="hidden" .name="hideAllTabs" .value="${this.hideAllTabs}">
-        <input type="hidden" .name="hideNewPostOnPostPage" .value="${this.hideNewPostOnPostPage}">
-        <input type="hidden" .name="newPointOptional" .value="${this.newPointOptional}">
-        <input type="hidden" .name="hideHelpIcon" .value="${this.hideHelpIcon}">
-        <input type="hidden" .name="hideEmoji" .value="${this.hideEmoji}">
-        <input type="hidden" .name="hideGroupHeader" .value="${this.hideGroupHeader}">
-        <input type="hidden" .name="allowPostVideoUploads" .value="${this.allowPostVideoUploads}">
-        <input type="hidden" .name="allowPointVideoUploads" .value="${this.allowPointVideoUploads}">
-        <input type="hidden" .name="allowPostAudioUploads" .value="${this.allowPostAudioUploads}">
-        <input type="hidden" .name="allowPointAudioUploads" .value="${this.allowPointAudioUploads}">
+        <input .type="hidden" .name="hideAllTabs" .value="${this.hideAllTabs}">
+        <input .type="hidden" .name="hideNewPostOnPostPage" .value="${this.hideNewPostOnPostPage}">
+        <input .type="hidden" .name="newPointOptional" .value="${this.newPointOptional}">
+        <input .type="hidden" .name="hideHelpIcon" .value="${this.hideHelpIcon}">
+        <input .type="hidden" .name="hideEmoji" .value="${this.hideEmoji}">
+        <input .type="hidden" .name="hideGroupHeader" .value="${this.hideGroupHeader}">
+        <input .type="hidden" .name="allowPostVideoUploads" .value="${this.allowPostVideoUploads}">
+        <input .type="hidden" .name="allowPointVideoUploads" .value="${this.allowPointVideoUploads}">
+        <input .type="hidden" .name="allowPostAudioUploads" .value="${this.allowPostAudioUploads}">
+        <input .type="hidden" .name="allowPointAudioUploads" .value="${this.allowPointAudioUploads}">
 
         <div class="layout vertical config" ?hidden="${!this.group.Categories}">
           <div class="subHeaders">${this.t('categories.the_all')}</div>

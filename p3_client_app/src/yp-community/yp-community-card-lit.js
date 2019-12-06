@@ -227,7 +227,7 @@ render() {
         <yp-magic-text id="description" class="description layout vertical withPointer" .featured="${this.featured}" @tap="${this._goToCommunity}" .textType="communityContent" .contentLanguage="${this.community.language}" .textOnly="" .content="${this.communityDescription}" .contentId="${this.community.id}" .truncate="130">
         </yp-magic-text>
       </div>
-      <yp-community-stats class="stats" community="${thiscommunity}"></yp-community-stats>
+      <yp-community-stats class="stats" .community="${thiscommunity}"></yp-community-stats>
       <template is="dom-if" if="${!this.community.is_community_folder}">
         <yp-membership-button .archived="${this.archived}" featured="${this.featured}" .community="${this.community}"></yp-membership-button>
       </template>

@@ -72,7 +72,7 @@ class YpDomainLit extends YpBaseElement {
       disableRefreshOnce: {
         type: Boolean,
         value: false
-      },
+      }
     }
   }
 
@@ -146,14 +146,14 @@ class YpDomainLit extends YpBaseElement {
           <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" .domain="${this.domain}" @update-domain="${this._refreshAjax}"></yp-domain-large-card>
 
           <paper-tabs id="paper_tabs" .apple="${this.isOldiOs}" slot="tabs" class="tabs" .selected="${this.selectedTab}" attr-for-selected="name" .focused>
-            <paper-tab name="communities" class="tab"><span>${this.t('communities')}</span> &nbsp; (<span>${this.communitiesLength}</span>)</paper-tab>
-            <paper-tab name="news" class="tab" ?hidden="${this.domain.configuration.hideDomainNews}">${this.t('news')}</paper-tab>
+            <paper-tab .name="communities" class="tab"><span>${this.t('communities')}</span> &nbsp; (<span>${this.communitiesLength}</span>)</paper-tab>
+            <paper-tab .name="news" class="tab" ?hidden="${this.domain.configuration.hideDomainNews}">${this.t('news')}</paper-tab>
           </paper-tabs>
 
-          <iron-pages class="tabPages" fullbleed="" slot="tabPages" selected="${this.selectedTab}" attr-for-selected="name" .entryAnimation="fade-in-animation" .exitAnimation="fade-out-animation">
+          <iron-pages class="tabPages" fullbleed slot="tabPages" .selected="${this.selectedTab}" .attrForSelected="name" .entryAnimation="fade-in-animation" .exitAnimation="fade-out-animation">
             <section name="communities" class="layout vertical">
               <div class="card-container layout center-center wrap layout-horizontal ">
-                <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" .archivedCommunities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
+                <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" .archivedCommunities="${this.archivedCommunities}" .hideAdd="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
                 </yp-community-grid>
               </div>
             </section>
@@ -165,13 +165,13 @@ class YpDomainLit extends YpBaseElement {
           </iron-pages>
         </yp-page>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 
-    <app-route route="${this.idRoute}" .pattern="/:id" data="${this.idRouteData}" tail="${this.tabRoute}">
+    <app-route .route="${this.idRoute}" .pattern="/:id" data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
-    <app-route route="${this.tabRoute}" .pattern="/:tabName" data="${this.tabRouteData}">
+    <app-route .route="${this.tabRoute}" .pattern="/:tabName" data="${this.tabRouteData}">
     </app-route>
 
     <div class="ypBottomContainer layout-horizontal layout-center-center">

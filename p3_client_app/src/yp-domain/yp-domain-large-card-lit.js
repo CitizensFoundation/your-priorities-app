@@ -295,7 +295,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
             </div>
           </div>
           <paper-menu-button .verticalAlign="top" .horizontalAlign="${this.editMenuAlign}" class="edit" ?hidden="${!this.showMenuItem}">
-            <paper-icon-button ariaLabel="${this.t('openDomainMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+            <paper-icon-button ariaLabel="${this.t('openDomainMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
             <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
               <paper-item ?hidden="${!this.hasDomainAccess}" id="editMenuItem">${this.t('domain.edit')}</paper-item>
               <paper-item ?hidden="${!this.hasDomainAccess}" id="createOrganizationMenuItem">${this.t('domain.createOrganization')}</paper-item>
@@ -320,15 +320,15 @@ class YpDomainLargeCardLit extends YpBaseElement {
       </paper-material>
     </div>
 
-    <template is="dom-if" if="${this.domain}" .restamp="">
-      <template is="dom-if" if="${this.hasDomainAccess}" .restamp="">
-        <yp-ajax method="GET" disable-user-error="" ?hidden="" url="/api/domains/${this.domain.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
+    <template is="dom-if" if="${this.domain}" restamp>
+      <template is="dom-if" if="${this.hasDomainAccess}" restamp>
+        <yp-ajax .method="GET" disable-user-error="" ?hidden="" url="/api/domains/${this.domain.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
       </template>
     </template>
 
     <iron-media-query query="(max-width: 945px)" query-matches="${this.narrowScreen}"></iron-media-query>
-    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
-    <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
+    <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
+    <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
 ` : html``}
 `
   }

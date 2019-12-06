@@ -50,10 +50,10 @@ class YpAutoTranslateDialogLit extends YpBaseElement {
         <div class="infoText">${this.t('shouldAutoTranslateInfo')}</div>
       </div>
       <div class="buttons">
-        <paper-button @tap="${this._dontAskAgain}" dialog-dismiss="">${this.t('never')}</paper-button>
-        <paper-button dialog-dismiss="" on-tap="_no">[[t('no')]]</paper-button>
-        <paper-button dialog-confirm="" on-tap="_startAutoTranslate">[[t('yes')]]</paper-button>
-        <paper-button dialog-confirm="" on-tap="_startAutoTranslateAndDoSoAlways">[[t('always')]]</paper-button>
+        <paper-button @tap="${this._dontAskAgain}" dialog-dismiss>${this.t('never')}</paper-button>
+        <paper-button dialog-dismiss="" @tap="_no">${this.t('no')}</paper-button>
+        <paper-button dialog-confirm="" @tap="_startAutoTranslate">${this.t('yes')}</paper-button>
+        <paper-button dialog-confirm="" @tap="${this._startAutoTranslateAndDoSoAlways}">${this.t('always')}</paper-button>
       </div>
     </paper-dialog>
 `

@@ -11,7 +11,6 @@ class YpGroupStatsLit extends YpBaseElement {
     }
   }
   
-
   static get styles() {
     return [
       css`

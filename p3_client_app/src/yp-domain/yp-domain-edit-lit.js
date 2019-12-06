@@ -181,7 +181,7 @@ class YpDomainEditLit extends YpBaseElement {
 
         <div class="layout vertical additionalSettings half">
           <yp-file-upload id="appHomeScreenIconImageUpload" raised target="/api/images?itemType=app-home-screen-icon" .method="POST" @success="${this._appHomeScreenIconImageUploaded}">
-            <iron-icon class="icon" icon="photo-camera"></iron-icon>
+            <iron-icon class="icon" .icon="photo-camera"></iron-icon>
             <span>${this.t('appHomeScreenIconImageUpload')}</span>
           </yp-file-upload>
         </div>

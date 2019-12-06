@@ -80,10 +80,10 @@ class YpCommunityGridLit extends YpBaseElement {
       ${this.community ? html`
         <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
-          <iron-list id="ironList" .scrollOffset="${this.scrollOffset}" .items="${this.activeCommunities}" as="community" scroll-target="document" grid\$="${this.wide}">
+          <iron-list id="ironList" .scrollOffset="${this.scrollOffset}" .items="${this.activeCommunities}" as="community" .scrollTarget="document" grid="${this.wide}">
             <template>
               <div class="card layout vertical center-center" .tabIndex="${this.tabIndex}" .widePadding="${this.wide}">
-                <yp-community-card .wide="${this.wide}" .community="${this.community}" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card>
+                <yp-community-card .wide="${this.wide}" .community="${this.community}" @mouseover="${this.cardMouseOver}" @mouseout="${this.cardMouseOut}"></yp-community-card>
               </div>
             </template>
           </iron-list>

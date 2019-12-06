@@ -23,6 +23,7 @@ import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+
 class YpCommunityFolderLit extends YpBaseElement {
   static get properties() {
     return {
@@ -113,14 +114,14 @@ class YpCommunityFolderLit extends YpBaseElement {
       <yp-community-large-card id="communityCard" slot="largeCard" class="largeCard card" .community="${this.communityFolder}" @update-community="${this._refreshAjax}"></yp-community-large-card>
 
       <div class="layout horizontal center-center wrap" slot="tabPages">
-        <yp-community-grid featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" archived-communities="${this.archivedCommunities}" hide-add="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
+        <yp-community-grid .featuredCommunities="${this.featuredCommunities}" .activeCommunities="${this.activeCommunities}" .archivedCommunities="${this.archivedCommunities}" .hideAdd="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
         </yp-community-grid>
       </div>
     </yp-page>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
-    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
+    <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
 
     <app-route .route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>

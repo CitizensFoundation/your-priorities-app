@@ -404,10 +404,10 @@ render() {
     <iron-media-query .query="(min-width: 1024px)" .querMatches="${this.wideWidth}"></iron-media-query>
     <iron-media-query .query="(max-width: 700px)" .queryMatches="${this.phoneWidth}"></iron-media-query>
 
-    <app-route .route="${this.idRoute}" pattern="/:id" data="${this.idRouteData}" .tail="${this.tabRoute}">
+    <app-route .route="${this.idRoute}" .pattern="/:id" data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
-    <app-route .route="${this.tabRoute}" pattern="/:tabName" data="${this.tabRouteData}" .tail="${this.listRoute}">
+    <app-route .route="${this.tabRoute}" .pattern="/:tabName" data="${this.tabRouteData}" .tail="${this.listRoute}">
     </app-route>
 
     <div class="layout horizontal center-center">
