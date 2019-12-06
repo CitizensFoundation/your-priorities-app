@@ -108,6 +108,11 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX postaudio_idx_post_id ON "PostAudio" (post_id);
+    // CREATE INDEX postvideo_idx_post_id ON "PostVideo" (post_id);
+    // CREATE INDEX postheaderimage_idx_post_id ON "PostHeaderImage" (post_id);
+
     scopes: {
       open: {
         where: {

@@ -91,6 +91,9 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX userprofileimage_idx_user_id ON "UserProfileImage" (user_id);
+
     classMethods: {
 
       serializeSamlUser: function (profile, req, callback) {

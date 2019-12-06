@@ -69,6 +69,8 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
+    // Add following index manually for high throughput sites
+    // CREATE INDEX videoimage_idx_video_id ON "VideoImage" (video_id);
 
     classMethods: {
 

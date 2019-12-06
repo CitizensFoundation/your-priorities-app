@@ -78,6 +78,10 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX communitylogoimage_idx_community_id ON "CommunityLogoImage" (community_id);
+    // CREATE INDEX communitylogovideo_idx_community_id ON "CommunityLogoVideo" (community_id);
+
     timestamps: true,
 
     underscored: true,

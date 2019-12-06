@@ -34,6 +34,10 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX categoryiconimage_idx_category_id ON "CategoryIconImage" (category_id);
+    // CREATE INDEX communityheaderimage_idx_community_id ON "CommunityHeaderImage" (community_id);
+
     timestamps: true,
 
     instanceMethods: {

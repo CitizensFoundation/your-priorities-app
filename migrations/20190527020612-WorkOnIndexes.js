@@ -31,6 +31,24 @@ module.exports = {
         CREATE INDEX posts_idx_deleted_status ON posts (deleted,status);
         CREATE INDEX users_idx_deleted_status ON users (deleted,status);
         CREATE INDEX videos_idx_deleted ON videos (deleted);
+        
+        CREATE INDEX categoryiconimage_idx_category_id ON "CategoryIconImage" (category_id);
+        CREATE INDEX communityheaderimage_idx_community_id ON "CommunityHeaderImage" (community_id);
+        CREATE INDEX notification_activit_idx_ac_id ON notification_activities (ac_notification_id);
+        CREATE INDEX communitylogoimage_idx_community_id ON "CommunityLogoImage" (community_id);
+        CREATE INDEX communitylogovideo_idx_community_id ON "CommunityLogoVideo" (community_id);
+        CREATE INDEX groupheaderimage_idx_group_id ON "GroupHeaderImage" (group_id);
+        CREATE INDEX grouplogoimage_idx_group_id ON "GroupLogoImage" (group_id);
+        CREATE INDEX grouplogovideo_idx_group_id ON "GroupLogoVideo" (group_id);
+        CREATE INDEX organizationlogoimag_idx_organization_id ON "OrganizationLogoImage" (organization_id);
+        CREATE INDEX organizationuser_idx_user_id ON "OrganizationUser" (user_id);
+        CREATE INDEX pointaudio_idx_point_id ON "PointAudio" (point_id);
+        CREATE INDEX pointvideo_idx_point_id ON "PointVideo" (point_id);
+        CREATE INDEX postaudio_idx_post_id ON "PostAudio" (post_id);
+        CREATE INDEX postvideo_idx_post_id ON "PostVideo" (post_id);
+        CREATE INDEX userprofileimage_idx_user_id ON "UserProfileImage" (user_id);
+        CREATE INDEX postheaderimage_idx_post_id ON "PostHeaderImage" (post_id);
+        CREATE INDEX videoimage_idx_video_id ON "VideoImage" (video_id);
       `),
     ]
   },

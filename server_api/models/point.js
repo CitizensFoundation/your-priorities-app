@@ -244,6 +244,10 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX pointaudio_idx_point_id ON "PointAudio" (point_id);
+    // CREATE INDEX pointvideo_idx_point_id ON "PointVideo" (point_id);
+
     underscored: true,
 
     timestamps: true,

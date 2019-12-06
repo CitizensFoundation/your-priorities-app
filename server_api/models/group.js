@@ -84,6 +84,11 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX groupheaderimage_idx_group_id ON "GroupHeaderImage" (group_id);
+    // CREATE INDEX grouplogoimage_idx_group_id ON "GroupLogoImage" (group_id);
+    // CREATE INDEX grouplogovideo_idx_group_id ON "GroupLogoVideo" (group_id);
+
     instanceMethods: {
 
       simple: function() {
