@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('newrelic');
 
 FORCE_PRODUCTION = false;
 

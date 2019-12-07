@@ -397,7 +397,7 @@
                 <template is="dom-if" if="[[registerMode]]" restamp>
                   <paper-input id="fullname"
                                type="text"
-                               label="[[t('user.name')]]"
+                               label="[[userNameText]]"
                                value="{{name}}"
                                maxlength="50"
                                minlength="2"
@@ -584,6 +584,11 @@
         computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, disableFacebookLoginForGroup)'
       },
 
+      userNameText: {
+        type: String,
+        computed: '_userNameText(domain)'
+      },
+
       disableFacebookLoginForGroup: {
         type: Boolean,
         value: false
@@ -622,6 +627,14 @@
       customSamlLoginText: {
         type: String,
         value: null
+      }
+    },
+
+    _userNameText: function () {
+      if (window.appGlobals.currentGroup && window.appGlobals.currentGroup.configuration && window.appGlobals.currentGroup.configuration.customUserNamePrompt) {
+        return window.appGlobals.currentGroup.configuration.customUserNamePrompt;
+      } else {
+        return this.t('user.name');
       }
     },
 
