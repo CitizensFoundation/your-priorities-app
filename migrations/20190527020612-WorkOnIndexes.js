@@ -52,6 +52,9 @@ module.exports = {
         
         CREATE INDEX domains_idx_deleted_domain_name ON domains (deleted,domain_name);
         CREATE INDEX communities_idx_deleted_hostname ON communities (deleted,hostname);
+        
+        CREATE INDEX pages_idx_domain_id_community_group_id_deleted ON pages (deleted,domain_id,community_id,group_id);
+        CREATE INDEX pages_idx_domain_id_community_deleted ON pages (deleted,domain_id,community_id);
       `),
     ]
   },

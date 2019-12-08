@@ -64,6 +64,14 @@ module.exports = function(sequelize, DataTypes) {
         where: {
           deleted: false
         }
+      },
+      {
+        name: 'pages_idx_domain_id_community_group_id_deleted',
+        fields: ['domain_id','community_id','group_id','deleted']
+      },
+      {
+        name: 'pages_idx_domain_id_community_deleted',
+        fields: ['domain_id','community_id','deleted']
       }
     ],
 
