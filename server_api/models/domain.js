@@ -141,7 +141,7 @@ module.exports = function(sequelize, DataTypes) {
         'counter_organizations','only_admins_can_create_communities','theme_id','other_social_media_info',
         'public_api_keys','info_texts','configuration'],
 
-      getLoginProviders: function (req, callback) {
+      getLoginProviders: function (req, domainIn, callback) {
         var providers = [];
 
         providers.push(
@@ -159,101 +159,91 @@ module.exports = function(sequelize, DataTypes) {
           }
         );
 
-        sequelize.models.Domain.findAll().then(function(domains) {
-          async.eachSeries(domains, function (domain, seriesCallback) {
+        async.eachSeries([domainIn], function (domain, seriesCallback) {
 
-            var callbackDomainName;
-            if (process.env.STAGING_SETUP) {
-              if (domain.domain_name=='betrireykjavik.is') {
-                callbackDomainName = 'betri.'+domain.domain_name;
-              } else if (domain.domain_name=='betraisland.is') {
-                callbackDomainName = 'betra.'+domain.domain_name;
-              } else if (domain.domain_name=='yrpri.org') {
-                callbackDomainName = 'beta.'+domain.domain_name;
-              } else {
-                callbackDomainName = domain.domain_name;
-              }
+          var callbackDomainName;
+          if (process.env.STAGING_SETUP) {
+            if (domain.domain_name=='betrireykjavik.is') {
+              callbackDomainName = 'betri.'+domain.domain_name;
+            } else if (domain.domain_name=='betraisland.is') {
+              callbackDomainName = 'betra.'+domain.domain_name;
+            } else if (domain.domain_name=='yrpri.org') {
+              callbackDomainName = 'beta.'+domain.domain_name;
             } else {
-              if (domain.domain_name=='forbrukerradet.no') {
-                callbackDomainName = 'mineideer.'+domain.domain_name;
-              } else {
-                callbackDomainName = 'login.'+domain.domain_name;
-              }
+              callbackDomainName = domain.domain_name;
             }
-            
-            if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
-              providers.push({
-                name            : 'google-strategy-'+domain.id,
-                provider        : 'google',
-                protocol        : 'oauth2',
-                strategyObject  : 'Strategy',
-                strategyPackage : 'passport-google-oauth',
-                clientID        : domain.secret_api_keys.google.client_id,
-                clientSecret    : domain.secret_api_keys.google.client_secret,
-                scope           : ['email', 'profile'],
-                fields          : null,
-                urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/google/callback'
-              });
+          } else {
+            if (domain.domain_name=='forbrukerradet.no') {
+              callbackDomainName = 'mineideer.'+domain.domain_name;
+            } else {
+              callbackDomainName = 'login.'+domain.domain_name;
             }
+          }
 
-            if (domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.facebook)) {
-              providers.push({
-                name            : 'facebook-strategy-'+domain.id,
-                provider        : 'facebook',
-                protocol        : 'oauth2',
-                strategyObject  : 'Strategy',
-                strategyPackage : 'passport-facebook',
-                clientID        : domain.secret_api_keys.facebook.client_id,
-                clientSecret    : domain.secret_api_keys.facebook.client_secret,
-                scope           : ['email'],
-                fields          : ['id', 'displayName', 'email'],
-                // urlCallback     : 'http://fbtest.betrireykjavik.is:4242/api/users/auth/facebook/callback'
-                urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/facebook/callback'
-              });
-            }
+          if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
+            providers.push({
+              name            : 'google-strategy-'+domain.id,
+              provider        : 'google',
+              protocol        : 'oauth2',
+              strategyObject  : 'Strategy',
+              strategyPackage : 'passport-google-oauth',
+              clientID        : domain.secret_api_keys.google.client_id,
+              clientSecret    : domain.secret_api_keys.google.client_secret,
+              scope           : ['email', 'profile'],
+              fields          : null,
+              urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/google/callback'
+            });
+          }
 
-            if (domain.secret_api_keys && domain.secret_api_keys.saml &&
-                domain.secret_api_keys.saml.entryPoint && domain.secret_api_keys.saml.entryPoint!='' &&
-                domain.secret_api_keys.saml.entryPoint.length>6) {
-              providers.push({
-                name             : 'saml-strategy-'+domain.id,
-                provider         : 'saml',
-                protocol         : 'saml',
-                strategyObject   : 'Strategy',
-                strategyPackage  : 'passport-saml',
-                certInPemFormat  : true,
-                issuer           : domain.secret_api_keys.saml.issuer ? domain.secret_api_keys.saml.issuer : null,
-                entryPoint       : domain.secret_api_keys.saml.entryPoint,
-                identifierFormat : domain.secret_api_keys.saml.identifierFormat ? domain.secret_api_keys.saml.identifierFormat : undefined,
-                cert             : domain.secret_api_keys.saml.cert ? domain.secret_api_keys.saml.cert : null,
-                callbackUrl      : (domain.secret_api_keys.saml.callbackUrl && domain.secret_api_keys.saml.callbackUrl!="") ? domain.secret_api_keys.saml.callbackUrl : null
-              });
-            }
-            seriesCallback();
-          }, function (error) {
-            callback(error, providers);
-          });
-          return null;
-        }).catch(function (error) {
-          callback(error);
+          if (domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.facebook)) {
+            providers.push({
+              name            : 'facebook-strategy-'+domain.id,
+              provider        : 'facebook',
+              protocol        : 'oauth2',
+              strategyObject  : 'Strategy',
+              strategyPackage : 'passport-facebook',
+              clientID        : domain.secret_api_keys.facebook.client_id,
+              clientSecret    : domain.secret_api_keys.facebook.client_secret,
+              scope           : ['email'],
+              fields          : ['id', 'displayName', 'email'],
+              // urlCallback     : 'http://fbtest.betrireykjavik.is:4242/api/users/auth/facebook/callback'
+              urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/facebook/callback'
+            });
+          }
+
+          if (domain.secret_api_keys && domain.secret_api_keys.saml &&
+              domain.secret_api_keys.saml.entryPoint && domain.secret_api_keys.saml.entryPoint!='' &&
+              domain.secret_api_keys.saml.entryPoint.length>6) {
+            providers.push({
+              name             : 'saml-strategy-'+domain.id,
+              provider         : 'saml',
+              protocol         : 'saml',
+              strategyObject   : 'Strategy',
+              strategyPackage  : 'passport-saml',
+              certInPemFormat  : true,
+              issuer           : domain.secret_api_keys.saml.issuer ? domain.secret_api_keys.saml.issuer : null,
+              entryPoint       : domain.secret_api_keys.saml.entryPoint,
+              identifierFormat : domain.secret_api_keys.saml.identifierFormat ? domain.secret_api_keys.saml.identifierFormat : undefined,
+              cert             : domain.secret_api_keys.saml.cert ? domain.secret_api_keys.saml.cert : null,
+              callbackUrl      : (domain.secret_api_keys.saml.callbackUrl && domain.secret_api_keys.saml.callbackUrl!="") ? domain.secret_api_keys.saml.callbackUrl : null
+            });
+          }
+          seriesCallback();
+        }, function (error) {
+          callback(error, providers);
         });
       },
 
-      getLoginHosts: function (callback) {
+      getLoginHosts: function (domainIn, callback) {
         var hosts = [];
         hosts.push('127.0.0.1');
         hosts.push('localhost');
 
-        sequelize.models.Domain.findAll().then(function(domains) {
-          async.eachSeries(domains, function (domain, seriesCallback) {
-            hosts.push(domain.domain_name);
-            seriesCallback();
-          }, function (error) {
-            callback(error, hosts);
-          });
-          return null;
-        }).catch(function (error) {
-          callback(error);
+        async.eachSeries([domainIn], function (domain, seriesCallback) {
+          hosts.push(domain.domain_name);
+          seriesCallback();
+        }, function (error) {
+          callback(error, hosts);
         });
       },
 
@@ -289,9 +279,9 @@ module.exports = function(sequelize, DataTypes) {
           }
           req.ypDomain = domain;
           if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/login') > -1 || req.url.indexOf('saml_assertion') > -1) {
-            sequelize.models.Domain.getLoginProviders(req, function (error, providers) {
+            sequelize.models.Domain.getLoginProviders(req, domain, function (error, providers) {
               req.ypDomain.loginProviders = providers;
-              sequelize.models.Domain.getLoginHosts(function (error, hosts) {
+              sequelize.models.Domain.getLoginHosts(domain, function (error, hosts) {
                 req.ypDomain.loginHosts = hosts;
                 return next();
               });
