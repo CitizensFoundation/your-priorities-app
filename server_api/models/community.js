@@ -3,7 +3,7 @@
 var async = require("async");
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
-var parseDomain = require('parse-domain');
+const parseDomain = require('../utils/parse_domain');
 
 // https://www.npmjs.org/package/enum for state of posts
 
@@ -75,6 +75,10 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['deleted', 'in_community_folder_id']
+      },
+      {
+        name: 'communities_idx_deleted_hostname',
+        fields: ['hostname','deleted']
       }
     ],
 

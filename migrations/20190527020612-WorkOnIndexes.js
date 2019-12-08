@@ -31,7 +31,7 @@ module.exports = {
         CREATE INDEX posts_idx_deleted_status ON posts (deleted,status);
         CREATE INDEX users_idx_deleted_status ON users (deleted,status);
         CREATE INDEX videos_idx_deleted ON videos (deleted);
-        
+                
         CREATE INDEX categoryiconimage_idx_category_id ON "CategoryIconImage" (category_id);
         CREATE INDEX communityheaderimage_idx_community_id ON "CommunityHeaderImage" (community_id);
         CREATE INDEX notification_activit_idx_ac_id ON notification_activities (ac_notification_id);
@@ -49,6 +49,9 @@ module.exports = {
         CREATE INDEX userprofileimage_idx_user_id ON "UserProfileImage" (user_id);
         CREATE INDEX postheaderimage_idx_post_id ON "PostHeaderImage" (post_id);
         CREATE INDEX videoimage_idx_video_id ON "VideoImage" (video_id);
+        
+        CREATE INDEX domains_idx_deleted_domain_name ON domains (deleted,domain_name);
+        CREATE INDEX communities_idx_deleted_hostname ON communities (deleted,hostname);
       `),
     ]
   },
