@@ -288,7 +288,7 @@ module.exports = function(sequelize, DataTypes) {
             //log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
           }
           req.ypDomain = domain;
-          if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/users/') > -1 || req.url.indexOf('saml_assertion') > -1) {
+          if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/login') > -1 || req.url.indexOf('saml_assertion') > -1) {
             sequelize.models.Domain.getLoginProviders(req, function (error, providers) {
               req.ypDomain.loginProviders = providers;
               sequelize.models.Domain.getLoginHosts(function (error, hosts) {

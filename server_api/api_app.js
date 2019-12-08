@@ -78,7 +78,7 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
 }
 
 if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
-  app.use(function (req, res, next) {
+  app.use( function checkProtocol (req, res, next) {
     if (!/https/.test(req.protocol)) {
       res.redirect("https://" + req.headers.host + req.url);
     } else {
@@ -132,7 +132,7 @@ app.use(session(sessionConfig));
 // Setup the current domain from the host
 app.use(function setupDomain(req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", {context: 'setYpDomain', domain: req.ypDomain ? toJson(req.ypDomain.simple()) : null});
+    log.info("Setup Domain Completed", {context: 'setYpDomain', domainId: req.ypDomain ? req.ypDomain.id : null});
     next();
   });
 });
