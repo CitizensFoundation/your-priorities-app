@@ -130,7 +130,7 @@ if (!FORCE_PRODUCTION && app.get('env') === 'development') {
 app.use(session(sessionConfig));
 
 // Setup the current domain from the host
-app.use(function (req, res, next) {
+app.use(function setupDomain(req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
     log.info("Setup Domain Completed", {context: 'setYpDomain', domain: req.ypDomain ? toJson(req.ypDomain.simple()) : null});
     next();
@@ -138,7 +138,7 @@ app.use(function (req, res, next) {
 });
 
 // Setup the current community from the host
-app.use(function (req, res, next) {
+app.use(function setupCommunity(req, res, next) {
   models.Community.setYpCommunity(req, res, function () {
     log.info("Setup Community Completed", {context: 'setYpCommunity', community: req.ypCommunity.hostname});
     next();
@@ -148,7 +148,7 @@ app.use(function (req, res, next) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function (req, res, next) {
+app.use(function checkForBOT(req, res, next) {
   var ua = req.headers['user-agent'];
   if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
     console.log(ua, ' is a bot');
@@ -158,11 +158,11 @@ app.use(function (req, res, next) {
   }
 });
 
-app.get('/sitemap.xml', function (req, res) {
+app.get('/sitemap.xml', function getSitemap(req, res) {
   generateSitemap(req, res);
 });
 
-app.get('/manifest.json', function (req, res) {
+app.get('/manifest.json', function getManifest(req, res) {
   generateManifest(req, res);
 });
 
@@ -170,7 +170,7 @@ var bearerCallback = function (req, token) {
   return console.log('The user has tried to authenticate with a bearer token');
 };
 
-app.use(function (req, res, next) {
+app.use(function checkAuthForSsoInit(req, res, next) {
   if (req.url.indexOf('/auth') > -1 || req.url.indexOf('/login') > -1 || req.url.indexOf('saml_assertion') > -1) {
     sso.init(req.ypDomain.loginHosts, req.ypDomain.loginProviders, {
       authorize: bearerCallback,
@@ -229,7 +229,7 @@ const registerUserLogin = (user, userId, loginProvider, req, done) => {
   }
 };
 
-passport.serializeUser(function (req, profile, done) {
+passport.serializeUser(function userSerialize(req, profile, done) {
   log.info("User Serialized", { logionProvider: profile.provider });
   if (profile.provider && profile.provider === 'facebook') {
     models.User.serializeFacebookUser(profile, req.ypDomain, function (error, user) {
@@ -267,7 +267,7 @@ passport.serializeUser(function (req, profile, done) {
   }
 });
 
-passport.deserializeUser(function (sessionUser, done) {
+passport.deserializeUser(function deserializeUser(sessionUser, done) {
   log.info("Debug passport.deserializeUser", { sessionUser });
   models.User.find({
     where: {id: sessionUser.userId},
@@ -329,7 +329,7 @@ passport.deserializeUser(function (sessionUser, done) {
 app.use('/', index);
 
 // Set caching for IE so it wont cache the json queries
-app.use(function (req, res, next) {
+app.use(function cacheControlHeaders(req, res, next) {
   var ua = req.headers['user-agent'];
   if (/Trident/gi.test(ua)) {
     res.set("Cache-Control", "no-cache,no-store");
@@ -416,7 +416,7 @@ app.post('/saml_assertion', function (req, res) {
   })
 });
 
-app.use(function (err, req, res, next) {
+app.use(function check401errors(err, req, res, next) {
   if (err instanceof auth.UnauthorizedError) {
     log.info("Anon debug UnauthorizedError", { user: req.user });
     log.error("User Unauthorized", {
@@ -432,7 +432,7 @@ app.use(function (err, req, res, next) {
 });
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function check4040errors(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   log.warn("Not Found", {context: 'notFound', user: toJson(req.user), err: 'Not Found', errorStatus: 404});
@@ -440,7 +440,7 @@ app.use(function (req, res, next) {
 });
 
 // Error handlers
-app.use(function (err, req, res, next) {
+app.use(function generalErrorHandler(err, req, res, next) {
   var status = err.status || 500;
   if (status == 404) {
     log.warn("Not found", {context: 'notFound', errorStatus: status, url: req.url});
