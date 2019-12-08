@@ -1,4 +1,5 @@
 {
+  "customUserNamePrompt": "Sértækur texti fyrir Full nafn í innskráningu",
   "alternativeTextForNewIdeaButton": "Annar texti fyrir 'Ný hugmynd' hnapp",
   "alternativeTextForNewIdeaButtonClosed": "Annar texti fyrir lokaðan 'Ný hugmynd' hnapp",
   "alternativeTextForNewIdeaButtonHeader": "Annar texti fyrir 'Ný hugmynd' haus",
