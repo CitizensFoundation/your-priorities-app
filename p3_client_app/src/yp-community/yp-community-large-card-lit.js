@@ -364,7 +364,7 @@ static get styles() {
             <div class="layout vertical description-and-stats">
               <div class="description">
                 <div class="community-name">
-                  <yp-magic-text .textType="communityName" .contentLanguage="${this.community.language}" .disableTranslation="${this.community.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.communityNameFul}" contentId="${this.community.id}">
+                  <yp-magic-text .textType="communityName" .contentLanguage="${this.community.language}" .disableTranslation="${this.community.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.communityNameFul}" .contentId="${this.community.id}">
                   </yp-magic-text>
                 </div>
                 <div hidden="" class="communityAccess">${this._communityAccessText(community.access)}</div>

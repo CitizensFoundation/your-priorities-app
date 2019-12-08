@@ -151,7 +151,7 @@ class YpDomainLit extends YpBaseElement {
           </paper-tabs>
 
           <iron-pages class="tabPages" fullbleed slot="tabPages" .selected="${this.selectedTab}" .attrForSelected="name" .entryAnimation="fade-in-animation" .exitAnimation="fade-out-animation">
-            <section name="communities" class="layout vertical">
+            <section .name="communities" class="layout vertical">
               <div class="card-container layout center-center wrap layout-horizontal ">
                 <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" .archivedCommunities="${this.archivedCommunities}" .hideAdd="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
                 </yp-community-grid>

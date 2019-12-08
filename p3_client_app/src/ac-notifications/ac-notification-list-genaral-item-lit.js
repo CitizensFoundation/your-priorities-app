@@ -10,14 +10,44 @@ import './ac-notification-truncated-name-list.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { YpBaseElement } from '../yp-base-element.js';
 
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment">
-      :host {
-        text-align: left;
-        margin-bottom: 24px;
+class AcNotificationListGenaralItemLit extends YpBaseElement {
+  static get properties() {
+    return {
+      notification: {
+        type: Object,
+        observer: '_notificationChanged'
+      },
+  
+      user: {
+        type: Object,
+        value: null
+      },
+  
+      nameTruncated: {
+        type: String,
+        computed: '_nameTruncated(notification)'
+      },
+  
+      icon: {
+        type: String
+      },
+  
+      shortText: {
+        type: String
+      },
+  
+      shortTextTruncated: {
+        type: String,
+        computed: '_shortTextTruncated(shortText)'
       }
+    }
+  }
+
+  static get styles() {
+    return [
+      css`
 
       .pointerCursor {
         cursor: pointer;
@@ -53,25 +83,29 @@ Polymer({
       [hidden] {
         display: none !important;
       }
-    </style>
-    <div class="layout vertical pointerCursor" on-tap="_goTo">
+    `, YpFlexLayout]
+  }
+
+  render() {
+    return html`
+    <div class="layout vertical pointerCursor" @tap="${this._goTo}">
       <div class="layout horizontal">
         <div class="layout vertical center-center self-start leftContainer">
-          <yp-user-image small="" user="[[user]]"></yp-user-image>
-          <iron-icon icon\$="[[icon]]" class="icon"></iron-icon>
+          <yp-user-image .small="" .user="${this.user}"></yp-user-image>
+          <iron-icon .icon="${this.icon}" class="icon"></iron-icon>
         </div>
         <div class="layout vertical">
-          <div class="name">[[nameTruncated]]</div>
-          <div hidden\$="[[!shortText]]" class="shortText">[[shortTextTruncated]]</div>
+          <div class="name">${this.nameTruncated}</div>
+          <div ?hidden="${!this.shortText}" class="shortText">${this.shortTextTruncated}</div>
         </div>
       </div>
     </div>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-`,
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+`
+  }
 
-  is: 'ac-notification-list-general-item',
-
+/*
   behaviors: [
     ypLanguageBehavior,
     YpPostBehavior,
@@ -79,38 +113,9 @@ Polymer({
     ypTruncateBehavior,
     ypMediaFormatsBehavior
   ],
+*/
 
-  properties: {
-    notification: {
-      type: Object,
-      observer: '_notificationChanged'
-    },
-
-    user: {
-      type: Object,
-      value: null
-    },
-
-    nameTruncated: {
-      type: String,
-      computed: '_nameTruncated(notification)'
-    },
-
-    icon: {
-      type: String
-    },
-
-    shortText: {
-      type: String
-    },
-
-    shortTextTruncated: {
-      type: String,
-      computed: '_shortTextTruncated(shortText)'
-    }
-  },
-
-  _goTo: function () {
+  _goTo() {
     var gotoLocation;
     if (this.post) {
       this.goToPost(this.post.id)
@@ -126,9 +131,9 @@ Polymer({
         this.redirectTo(gotoLocation);
       }
     }
-  },
+  }
 
-  _nameTruncated: function (notification) {
+  _nameTruncated(notification) {
     if (notification.AcActivities[0].Post) {
       return this.truncate(notification.AcActivities[0].Post.name, 42);
     } else if (notification.AcActivities[0].Group && notification.AcActivities[0].Group.name!="hidden_public_group_for_domain_level_points") {
@@ -138,17 +143,17 @@ Polymer({
     } else if (notification.AcActivities[0].Domain) {
       return this.truncate(notification.AcActivities[0].Domain.name, 42);
     }
-  },
+  }
 
-  _shortTextTruncated: function (shortText) {
+  _shortTextTruncated(shortText) {
     if (shortText) {
       return this.truncate(shortText, 60);
     } else {
       return "";
     }
-  },
+  }
 
-  goToPost: function () {
+  goToPost() {
     if (this.post) {
       var postUrl = '/post/' + this.post.id + '/news';
       window.appGlobals.activity('open', 'post', postUrl);
@@ -157,17 +162,17 @@ Polymer({
         this.fire('yp-close-right-drawer');
       });
     }
-  },
+  }
 
-  _notificationChanged: function (notification) {
+  _notificationChanged(notification) {
     if (notification) {
       this.set('post', notification.AcActivities[0].Post);
       this.set('user', notification.AcActivities[0].User);
     } else {
     }
-  },
+  }
 
-  _addWithComma: function (text, toAdd) {
+  _addWithComma(text, toAdd) {
     var returnText = "";
     if (text!='') {
       returnText += text+",";
@@ -175,4 +180,6 @@ Polymer({
     return returnText+toAdd;
 
   }
-});
+}
+
+window.customElements.define('ac-notifcation-list-genaral-item-lit', AcNotificationListGenaralItemLit)

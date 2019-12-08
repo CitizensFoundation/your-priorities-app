@@ -264,7 +264,7 @@ class YpDialogContainerLit extends YpBaseElement {
     </div>
 
     <paper-dialog id="loadingDialog">
-      <paper-spinner active=""></paper-spinner>
+      <paper-spinner .active></paper-spinner>
     </paper-dialog>
 ` : html``}
 `

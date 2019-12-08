@@ -197,15 +197,15 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
       <h2>${this.t('bulkStatusUdateConfig')}</h2>
       <paper-dialog-scrollable>
         <div class="layout horizontal wrap">
-          <paper-tabs selected="${this.selectedGroup}" attrForSelected="name">
+          <paper-tabs .selected="${this.selectedGroup}" .attrForSelected="name">
             <template is="dom-repeat" .items="${this.config.groups}" as="group">
-              <paper-tab name="${this.group.name}">${this._getHeadGroupName(group.name)}</paper-tab>
+              <paper-tab .name="${this.group.name}">${this._getHeadGroupName(group.name)}</paper-tab>
             </template>
           </paper-tabs>
         </div>
         <iron-pages .attrForSelected="name" .selected="${this.selectedGroup}">
           <template is="dom-repeat" items="${this.config.groups}" as="group">
-            <section name="${this.group.name}">
+            <section .name="${this.group.name}">
               <div class="layout vertical postsList">
                 <template is="dom-if" if="${this._selectedGroup(selectedGroup, group.name)}">
                   <template is="dom-repeat" .items="${this._orderPosts(group.posts)}" as="post">

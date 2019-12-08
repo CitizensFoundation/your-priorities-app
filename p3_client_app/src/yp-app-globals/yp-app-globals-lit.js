@@ -125,21 +125,21 @@ class YpAppGlobalsLit extends YpBaseElement {
   render() {
     return html`
     <paper-dialog id="dialog">
-      <div class="dialogText">[[notifyDialogText]]</div>
+      <div class="dialogText">${this.notifyDialogText}</div>
       <div class="buttons">
-        <paper-button dialog-confirm="" autofocus="" on-tap="_resetNotifyDialogText">OK</paper-button>
+        <paper-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}">OK</paper-button>
       </div>
     </paper-dialog>
 
     <yp-session id="session"></yp-session>
 
-    <yp-ajax id="boot" url="/api/domains" on-response="_bootResponse"></yp-ajax>
-    <yp-ajax hidden="" auto="" url="/api/videos/hasVideoUploadSupport" on-response="_hasVideoUploadSupport"></yp-ajax>
-    <yp-ajax hidden="" auto="" url="/api/audios/hasAudioUploadSupport" on-response="_hasAudioUploadSupport"></yp-ajax>
-    <yp-ajax id="videoViewsAjax" hidden="" method="PUT" url="/api/videos/videoView"></yp-ajax>
-    <yp-ajax id="audioListenAjax" hidden="" method="PUT" url="/api/audios/audioListen"></yp-ajax>
-    <yp-ajax id="recommendationsForGroupAjax" dispatch-error="" hidden="" method="PUT" on-response="_recommendationsForGroupResponse"></yp-ajax>
-    <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
+    <yp-ajax id="boot" url="/api/domains" @response="${this._bootResponse}"></yp-ajax>
+    <yp-ajax ?hidden="" auto url="/api/videos/hasVideoUploadSupport" @response="${this._hasVideoUploadSupport}"></yp-ajax>
+    <yp-ajax ?hidden="" auto url="/api/audios/hasAudioUploadSupport" @response="${this._hasAudioUploadSupport}"></yp-ajax>
+    <yp-ajax id="videoViewsAjax" ?hidden="" .method="PUT" url="/api/videos/videoView"></yp-ajax>
+    <yp-ajax id="audioListenAjax" ?hidden="" .method="PUT" url="/api/audios/audioListen"></yp-ajax>
+    <yp-ajax id="recommendationsForGroupAjax" .dispatchError="" ?hidden="" .method="PUT" @response="${this._recommendationsForGroupResponse}"></yp-ajax>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 `
   }
 /* 

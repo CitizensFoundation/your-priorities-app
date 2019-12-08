@@ -15,7 +15,7 @@ import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
 
-class YgGroupCard extends YpBaseElement {
+class YpCommunityCardLit extends YpBaseElement {
   static get properties() {
     return {
       community: {
@@ -27,8 +27,6 @@ class YgGroupCard extends YpBaseElement {
   static get styles() {
     return [
       css`
-        :host {
-        }
 
       .description {
         color: var(--primary-color-more-darker, #424242);
@@ -215,21 +213,21 @@ render() {
           <iron-image .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToCommunity}"></iron-image>
         </template>
         <template is="dom-if" if="${!this.noImage}">
-          <iron-image sizing="cover" .archived="${this.archived}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
+          <iron-image .sizing="cover" .archived="${this.archived}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
         </template>
       </div>
       <div class="informationText">
-        <div class="community-name" archived="${this.archived}" .featured="${this.featured}" on-tap="_goToCommunity">
-          <yp-magic-text text-type="communityName" content-language="${this.community.language}" disable-translation="${this.community.configuration.disableNameAutoTranslation}" text-only="" .content="${this.communityName}" .contentId="${this.community.id}">
+        <div class="community-name" .archived="${this.archived}" .featured="${this.featured}" @tap="${this._goToCommunity}">
+          <yp-magic-text .textType="communityName" .contentLanguage="${this.community.language}" disable-translation="${this.community.configuration.disableNameAutoTranslation}" text-only="" .content="${this.communityName}" .contentId="${this.community.id}">
           </yp-magic-text>
-          <span ?hidden="" old-hidden="${!this.archived}">- ${this.t('archived')}</span>
+          <span ?hidden="" .oldHidden="${!this.archived}">- ${this.t('archived')}</span>
         </div>
         <yp-magic-text id="description" class="description layout vertical withPointer" .featured="${this.featured}" @tap="${this._goToCommunity}" .textType="communityContent" .contentLanguage="${this.community.language}" .textOnly="" .content="${this.communityDescription}" .contentId="${this.community.id}" .truncate="130">
         </yp-magic-text>
       </div>
       <yp-community-stats class="stats" .community="${thiscommunity}"></yp-community-stats>
       <template is="dom-if" if="${!this.community.is_community_folder}">
-        <yp-membership-button .archived="${this.archived}" featured="${this.featured}" .community="${this.community}"></yp-membership-button>
+        <yp-membership-button .archived="${this.archived}" .featured="${this.featured}" .community="${this.community}"></yp-membership-button>
       </template>
     </paper-card>
 `

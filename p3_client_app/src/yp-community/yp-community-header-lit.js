@@ -206,7 +206,7 @@ render() {
           </div>
         </div>
     </template>
-    <iron-media-query query="(max-width: 800px)" .queryMatches="${this.narrowScreen}"></iron-media-query>
+    <iron-media-query query="(max-width: 800px)" query-matches="${this.narrowScreen}"></iron-media-query>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
 ` : html``}
 `

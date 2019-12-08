@@ -123,7 +123,7 @@ class YpAppNavDrawerLit extends YpBaseElement {
       <div class="layout vertical" ?hidden="${!this.user}">
         <div ?hidden="">
           <div class="header">${this.t('myDomains')}</div>
-          <template is="dom-repeat" items="${this.myDomains}" as="domain">
+          <template is="dom-repeat" .items="${this.myDomains}" as="domain">
             <paper-item data-args="${this.domain.id}" @tap="${this._goToDomain}">${this.domain.name}</paper-item>
           </template>
         </div>
@@ -145,7 +145,7 @@ class YpAppNavDrawerLit extends YpBaseElement {
         </div>
 
         <div class="header">${this.t('myCommunities')}</div>
-        <template is="dom-repeat" items="${this.myCommunities}" as="community">
+        <template is="dom-repeat" .items="${this.myCommunities}" as="community">
           <div class="layout horizontal">
             <paper-item data-args="${this.community.id}" @tap="${this._goToCommunity}">${this.community.name}</paper-item>
           </div>
@@ -157,8 +157,8 @@ class YpAppNavDrawerLit extends YpBaseElement {
         </template>
       </div>
     </paper-material>
-    <lite-signal on-lite-signal-got-memberships="_userMembershipsReady"></lite-signal>
-    <lite-signal on-lite-signal-got-admin-rights="_reset"></lite-signal>
+    <lite-signal @lite-signal-got-memberships="${this._userMembershipsReady}"></lite-signal>
+    <lite-signal @lite-signal-got-admin-rights="${this._reset}"></lite-signal>
 ` : html``}
 `  
   }

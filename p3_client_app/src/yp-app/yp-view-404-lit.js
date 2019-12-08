@@ -25,6 +25,8 @@ class YpView404Lit extends YpBaseElement {
    
   render() {
     return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+
     <div class="layout vertical center-center">
       <h1 class="errorMesage">${this.t('pageNotFound')}</h1>
     </div>

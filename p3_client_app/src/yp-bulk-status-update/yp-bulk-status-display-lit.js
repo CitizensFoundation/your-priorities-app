@@ -151,36 +151,36 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
     return html`
     ${this.bulk ? html`
     <div class="layout vertical center-center topArea">
-      <paper-material elevation="5" class="headerMaterial layout vertical center-center">
-        <h2 class="mainHeader">[[t('bulkStatusUdateFor')]]: [[community.name]]</h2>
-        <div class="infoText">[[t('bulkStatusUdateForInfo')]]</div>
+      <paper-material .elevation="5" class="headerMaterial layout vertical center-center">
+        <h2 class="mainHeader">${this.t('bulkStatusUdateFor')}: ${this.community.name}</h2>
+        <div class="infoText">${this.t('bulkStatusUdateForInfo')}</div>
       </paper-material>
     </div>
 
-    <template is="dom-if" if="[[!byTemplate]]">
-      <template is="dom-repeat" items="[[config.groups]]" as="group">
-        <paper-material elevation="2" class="statusMaterial layout horizontal center-center wrap">
-          <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
+    <template is="dom-if" if="${!this.byTemplate}">
+      <template is="dom-repeat" .items="${this.config.groups}" as="group">
+        <paper-material .elevation="2" class="statusMaterial layout horizontal center-center wrap">
+          <template is="dom-repeat" .items="${this._orderGroupStatuses(group.statuses)}" as="status">
             <div class="layout vertical self-start">
-              <h1 hidden\$="[[hideGroupName]]">[[group.name]]</h1>
-              <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
-              <template is="dom-repeat" items="[[status.posts]]" as="post">
+              <h1 ?hidden="${this.hideGroupName}">${this.group.name}</h1>
+              <h2>${this._officialStatusOptionsNamePlural(status.official_status)}</h2>
+              <template is="dom-repeat" .items="[[status.posts]]" as="post">
                 <div class="layout vertical">
                   <div class="layout horizontal">
-                    <iron-icon class="openCloseButton" data-args\$="[[post.id]]" icon="keyboard-arrow-right" on-tap="_setOpen"></iron-icon>
+                    <iron-icon class="openCloseButton" data-args="${this.post.id}" .icon="keyboard-arrow-right" @tap="${this._setOpen}"></iron-icon>
                     <div class="postName">
-                      <div class="ideaLink" data-args\$="[[post.id]]" on-tap="_setOpen">[[post.name]]</div>
+                      <div class="ideaLink" data-args="${this.post.id}" @tap="${this._setOpen}">${this.post.name}</div>
                     </div>
                   </div>
-                  <div id="detail_[[post.id]]" class="detail" hidden="">
-                    <div class="reason" hidden\$="[[post.uniqueStatusMessage]]">
-                      [[_getTemplate(post.selectedTemplateName)]]
+                  <div id="detail_${this.post.id}" class="detail" ?hidden="">
+                    <div class="reason" ?hidden="${this.post.uniqueStatusMessage}">
+                      ${this._getTemplate(post.selectedTemplateName)}
                     </div>
-                    <div class="reason" hidden\$="[[!post.uniqueStatusMessage]]">
-                      [[post.uniqueStatusMessage]]
+                    <div class="reason" ?hidden="${!this.post.uniqueStatusMessage}">
+                      ${this.post.uniqueStatusMessage}
                     </div>
                     <div class="postName">
-                      [[t('urlLink')]]: <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+                      ${this.t('urlLink')}: <a target="_blank" href="/post/${this.post.id}">${this.post.name}</a>
                     </div>
                   </div>
                 </div>
@@ -191,19 +191,19 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
       </template>
     </template>
 
-    <template is="dom-if" if="[[gotModifiedTemplates]]" restamp="">
+    <template is="dom-if" if="${this.gotModifiedTemplates}" restamp>
       <div class="templateList">
-        <template is="dom-repeat" items="[[_toArray(templates)]]" as="template">
-          <h2>[[template.title]]</h2>
-          <template is="dom-repeat" items="[[template.posts]]" as="post">
+        <template is="dom-repeat" items="${this._toArray(templates)}" as="template">
+          <h2>${this.template.title}</h2>
+          <template is="dom-repeat" .items="${this.template.posts}" as="post">
             <div class="postName">
-              <a target="_blank" href="/post/[[post.id]]">[[post.name]]</a>
+              <a target="_blank" href="/post/${this.post.id}">${this.post.name}</a>
             </div>
           </template>
         </template>
       </div>
     </template>
-    <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/[[statusUpdateId]]" on-response="_response"></yp-ajax>
+    <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/${this.statusUpdateId}" @response="${this._response}"></yp-ajax>
 ` : html``}
 `
   }
