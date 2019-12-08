@@ -3,7 +3,7 @@ var PrettyStream = require('bunyan-prettystream');
 
 var logger;
 
-if (process.env.NODE_ENV != 'production') {
+if (false && process.env.NODE_ENV != 'production') {
   var prettyStdOut = new PrettyStream();
   prettyStdOut.pipe(process.stdout);
 
@@ -16,7 +16,8 @@ if (process.env.NODE_ENV != 'production') {
     }]
   });
 } else {
-  logger = bunyan.createLogger({name: "your-priorities"});
+  logger = console;
+  //  logger = bunyan.createLogger({name: "your-priorities"});
 }
 
 module.exports = logger;
