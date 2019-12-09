@@ -17,6 +17,7 @@ const useragent = require('express-useragent');
 const requestIp = require('request-ip');
 const compression = require('compression');
 const isBot = require("isbot");
+const redis = require('redis');
 
 const passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
@@ -149,6 +150,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function checkForBOT(req, res, next) {
+  req.redisClient = redis.createClient(process.env.REDIS_URL);
+  next();
+});
+
+app.use(function setupRedis(req, res, next) {
   var ua = req.headers['user-agent'];
   if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
     console.log(ua, ' is a bot');

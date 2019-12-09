@@ -490,108 +490,117 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/points', auth.can('view post'), function(req, res) {
-  models.Point.findAll({
-    where: {
-      post_id: req.params.id
-    },
-    attributes: ['id','name','content','user_id','value','counter_quality_up','counter_quality_down','embed_data','language','created_at'],
-    order: [
-      models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
-      [ models.PointRevision, 'created_at', 'asc' ],
-      [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
-      [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
-      [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
-      [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
-      [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
-    ],
-    include: [
-      { model: models.User,
-        attributes: ["id", "name", "facebook_id", "twitter_id", "google_id", "github_id"],
-        required: true,
+  const redisKey = "cache:post_points:"+req.params.id;
+  req.redisClient.get(redisKey, (error, points) => {
+    if (error) {
+      sendPostOrError(res, null, 'viewPoints', req.user, error);
+    } else if (points) {
+      res.send(JSON.parse(points));
+    } else {
+      models.Point.findAll({
+        where: {
+          post_id: req.params.id
+        },
+        attributes: ['id','name','content','user_id','value','counter_quality_up','counter_quality_down','embed_data','language','created_at'],
+        order: [
+          models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
+          [ models.PointRevision, 'created_at', 'asc' ],
+          [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+          [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
+          [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
+          [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+          [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
+        ],
         include: [
-          {
-            model: models.Image, as: 'UserProfileImages',
-            attributes: ['id', 'formats'],
-            required: false
+          { model: models.User,
+            attributes: ["id", "name", "facebook_id", "twitter_id", "google_id", "github_id"],
+            required: true,
+            include: [
+              {
+                model: models.Image, as: 'UserProfileImages',
+                attributes: ['id', 'formats'],
+                required: false
+              },
+              {
+                model: models.Organization,
+                as: 'OrganizationUsers',
+                required: false,
+                attributes: ['id', 'name'],
+                include: [
+                  {
+                    model: models.Image,
+                    as: 'OrganizationLogoImages',
+                    attributes: ['id', 'formats'],
+                    required: false
+                  }
+                ]
+              }
+            ]
           },
           {
-            model: models.Organization,
-            as: 'OrganizationUsers',
+            model: models.PointRevision,
+            attributes: ['content','value','embed_data','created_at'],
+            required: false
+          },
+          { model: models.PointQuality,
+            attributes: ['value'],
             required: false,
-            attributes: ['id', 'name'],
+            include: [
+              { model: models.User,
+                attributes: ["id"],
+                required: false
+              }
+            ]
+          },
+          {
+            model: models.Video,
+            required: false,
+            attributes: ['id','formats','updated_at','viewable','public_meta'],
+            as: 'PointVideos',
             include: [
               {
                 model: models.Image,
-                as: 'OrganizationLogoImages',
-                attributes: ['id', 'formats'],
+                as: 'VideoImages',
+                attributes:["formats",'updated_at'],
+                required: false
+              },
+            ]
+          },
+          {
+            model: models.Audio,
+            required: false,
+            attributes: ['id','formats','updated_at','listenable'],
+            as: 'PointAudios'
+          },
+          {
+            model: models.Post,
+            attributes: ['id','group_id'],
+            required: false,
+            include: [
+              {
+                model: models.Group,
+                attributes: ['id','configuration'],
                 required: false
               }
             ]
           }
         ]
-      },
-      {
-        model: models.PointRevision,
-        attributes: ['content','value','embed_data','created_at'],
-        required: false
-      },
-      { model: models.PointQuality,
-        attributes: ['value'],
-        required: false,
-        include: [
-          { model: models.User,
-            attributes: ["id"],
-            required: false
-          }
-        ]
-      },
-      {
-        model: models.Video,
-        required: false,
-        attributes: ['id','formats','updated_at','viewable','public_meta'],
-        as: 'PointVideos',
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats",'updated_at'],
-            required: false
-          },
-        ]
-      },
-      {
-        model: models.Audio,
-        required: false,
-        attributes: ['id','formats','updated_at','listenable'],
-        as: 'PointAudios'
-      },
-      {
-        model: models.Post,
-        attributes: ['id','group_id'],
-        required: false,
-        include: [
-          {
-            model: models.Group,
-            attributes: ['id','configuration'],
-            required: false
-          }
-        ]
-      }
-    ]
-  }).then(function(points) {
-    if (points) {
-      log.info('Points Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
-      //TODO: Fix after sequelize upgrade and use limit
-      points = _.slice(points, 0, 750);
-      res.send(points);
-    } else {
-      sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
+      }).then(function(points) {
+        if (points) {
+          log.info('Points Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
+          //TODO: Fix after sequelize upgrade and use limit
+          points = _.slice(points, 0, 750);
+          req.redisClient.setex(redisKey, 5, JSON.stringify(points));
+          res.send(points);
+        } else {
+          sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
+        }
+      }).catch(function(error) {
+        sendPostOrError(res, null, 'view', req.user, error);
+      });
     }
-  }).catch(function(error) {
-    sendPostOrError(res, null, 'view', req.user, error);
   });
 });
-
 
 var truthValueFromBody = function(bodyParameter) {
   if (bodyParameter && bodyParameter!="") {
