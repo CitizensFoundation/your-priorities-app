@@ -497,6 +497,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     } else if (points) {
       res.send(JSON.parse(points));
     } else {
+      //TODO: Get equal amount of points for and against
       models.Point.findAll({
         where: {
           post_id: req.params.id
