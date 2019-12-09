@@ -1189,27 +1189,23 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
   }
 
   var PostsByStatus = models.Post.scope(req.params.status);
-  PostsByStatus.findAll({
+  PostsByStatus.findAndCountAll({
     where: where,
     attributes: ['id','status','official_status','language','counter_endorsements_up',
                  'counter_endorsements_down','created_at'],
     order: [
       models.sequelize.literal(postOrder)
-    ]
-  }).then(function(posts) {
-    var totalPostsCount = posts.length;
-    var rows = [];
+    ],
+    limit: 20,
+    offset: offset
+  }).then(function(postResults) {
+    const posts = postResults.rows;
+    var totalPostsCount = postResults.count;
     var postRows = posts;
     if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
       postRows = seededShuffle(postRows, req.query.randomSeed);
     }
-    if (offset<postRows.length) {
-      var toValue = offset+20;
-      //TODO: Fix after sequelize upgrade and use limit
-      rows = _.slice(postRows, offset, toValue);
-    }
-    //TODO: Remove this hack by finding way to let sequelize work with offsets... (maybe in seq 4.0)
-    getPostsWithAllFromIds(rows, postOrder, function (error, finalRows) {
+    getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
       if (error) {
         log.error("Error getting group", { err: error });
         res.sendStatus(500);

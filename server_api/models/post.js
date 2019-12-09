@@ -271,15 +271,19 @@ module.exports = function(sequelize, DataTypes) {
           order: "created_at DESC",
           where: [where, []],
           limit: 1024,
+          attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
+            'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
           include: [
             {
               model: sequelize.models.Category,
+              attributes: { exclude: ['ip_address', 'user_agent'] },
               required: false,
               include: [
                 {
                   model: sequelize.models.Image,
                   required: false,
                   as: 'CategoryIconImages',
+                  attributes: ['id','formats'],
                   order: [
                     [ { model: sequelize.models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
                   ]
@@ -297,11 +301,13 @@ module.exports = function(sequelize, DataTypes) {
             },
             { model: sequelize.models.Image,
               as: 'PostHeaderImages',
+              attributes: ['id','formats','updated_at'],
               required: false
             },
             {
               model: sequelize.models.Group,
               required: true,
+              attributes: ['id','configuration','name','theme_id','access'],
               where: {
                 id: groupId
               }
