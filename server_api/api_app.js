@@ -150,7 +150,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function checkForBOT(req, res, next) {
-  req.redisClient = redis.createClient(process.env.REDIS_URL);
+  req.redisClient = sessionConfig.store.client;
   next();
 });
 
