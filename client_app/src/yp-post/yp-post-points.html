@@ -279,6 +279,10 @@
       <yp-ajax id="ajax" large-spinner active$="{{ajaxActive}}" on-response="_response"></yp-ajax>
     </div>
 
+    <div class="layout horizontal center-center" hidden>
+      <yp-ajax id="moreAjax" hidden on-response="_morePointsResponse"></yp-ajax>
+    </div>
+
     <template is="dom-if" if="[[largeMode]]" restamp>
       <div class="layout vertical topContainer">
         <div class="main-container">
@@ -365,15 +369,17 @@
             </paper-material>
 
             <div id="allUpPoints">
-              <iron-list id="ironListUp" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
-                <template>
-                  <div class="item" tabindex$="[[tabIndex]]">
-                    <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                      <yp-point point="[[point]]"></yp-point>
-                    </paper-material>
-                  </div>
-                </template>
-              </iron-list>
+              <iron-scroll-threshold id="ironScrollThesholdUp" scroll-target="document"  on-lower-threshold="_loadMorePoints">
+                <iron-list id="ironListUp" items="[[upPoints]]" as="point" scroll-target="ironScrollThesholdUp" scroll-offset="550">
+                  <template>
+                    <div class="item" tabindex$="[[tabIndex]]">
+                      <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
+                        <yp-point point="[[point]]"></yp-point>
+                      </paper-material>
+                    </div>
+                  </template>
+                </iron-list>
+              </iron-scroll-threshold>
             </div>
           </div>
 
@@ -462,15 +468,17 @@
             </paper-material>
 
             <div id="allDownPoints">
-              <iron-list id="ironListDown" items="[[downPoints]]" as="point" scroll-target="document" scroll-offset="550">
-                <template>
-                  <div class="item" tabindex$="[[tabIndex]]">
-                    <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
-                      <yp-point point="[[point]]"></yp-point>
-                    </paper-material>
-                  </div>
-                </template>
-              </iron-list>
+              <iron-scroll-threshold id="ironScrollThesholdDown"  scroll-target="document" on-lower-threshold="_loadMorePoints">
+                <iron-list id="ironListDown" items="[[downPoints]]" as="point" scroll-target="ironScrollThesholdDown" scroll-offset="550">
+                  <template>
+                    <div class="item" tabindex$="[[tabIndex]]">
+                      <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
+                        <yp-point point="[[point]]"></yp-point>
+                      </paper-material>
+                    </div>
+                  </template>
+                </iron-list>
+              </iron-scroll-threshold>
             </div>
           </div>
         </div>
@@ -561,15 +569,17 @@
         </paper-material>
       </div>
       <div class="layout vertical center-center">
-        <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
-          <template>
-            <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
-              <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
-                <yp-point point="[[point]]"></yp-point>
-              </paper-material>
-            </div>
-          </template>
-        </iron-list>
+        <iron-scroll-threshold id="ironScrollThesholdDown"  scroll-target="document" on-lower-threshold="_loadMorePoints">
+          <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+            <template>
+              <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
+                <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
+                  <yp-point point="[[point]]"></yp-point>
+                </paper-material>
+              </div>
+            </template>
+          </iron-list>
+        </iron-scroll-threshold>
       </div>
     </template>
 
@@ -945,6 +955,50 @@
           }
         },
 
+        _loadMorePoints: function () {
+          if (!this.loadMoreInProgress && !this.noMorePoints) {
+            this.loadMoreInProgress = true;
+            if (this.post && this.storedPoints && this.storedPoints.length>0) {
+              if (this.host) {
+                this.$.moreAjax.url = this.host+'/api/posts/' + this.post.id + '/points';
+              } else {
+                this.$.moreAjax.url = '/api/posts/' + this.post.id + '/points';
+              }
+              this.$.moreAjax.params = { offset: this.storedPoints ? this.storedPoints.length : 0};
+              this.$.moreAjax.generateRequest();
+            } else {
+              console.warn("Trying to load more points early");
+              this.loadMoreInProgress = false;
+            }
+          }
+        },
+
+        _morePointsResponse: function (event, detail) {
+          this.loadMoreInProgress = false;
+          var points = this._preProcessPoints(detail.response);
+          if (points.length===0) {
+            this.noMorePoints = true;
+          }
+          points.forEach(function (point) {
+            this._addMorePoint(point);
+          }.bind(this));
+          this.async(function () {
+            if (this.$$("#ironListUp"))
+              this.$$("#ironListUp").fire("iron-resize");
+            if (this.$$("#ironListDown"))
+              this.$$("#ironListDown").fire("iron-resize");
+            if (this.$$("#ironListMobile"))
+              this.$$("#ironListMobile").fire("iron-resize");
+
+            if (this.$$("#ironScrollThesholdUp"))
+              this.$$("#ironScrollThesholdUp").clearTriggers();
+            if (this.$$("#ironScrollThesholdDown"))
+              this.$$("#ironScrollThesholdDown").clearTriggers();
+            if (this.$$("#ironScrollThesholdDown"))
+              this.$$("#ironScrollThesholdDown").clearTriggers();
+          }, 5);
+        },
+
         _newPointsResponse: function (event, detail) {
           var points = this._preProcessPoints(detail.response);
           points.forEach(function (point) {
@@ -1294,6 +1348,20 @@
               this.$$("#ironListMobile").fire("iron-resize");
             }, 700);
           }
+          this.unshift('storedPoints', point);
+        },
+
+        _addMorePoint: function (point) {
+          if (this.largeMode) {
+            if (point.value > 0) {
+              this.push('upPoints', point);
+            } else if (point.value < 0) {
+              this.push('downPoints', point);
+            }
+          } else {
+            this.push('points', point);
+          }
+          this.push('storedPoints', point);
         },
 
         _newPointResponse: function (inEvent, inDetail) {
