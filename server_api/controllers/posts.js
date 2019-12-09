@@ -505,7 +505,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
         order: [
           models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
         ],
-        limit: 20,
+        limit: 100,
         offset: req.query.offset ? req.query.offset : 0
       }).then((pointsIn)=>{
         models.Point.findAll({
