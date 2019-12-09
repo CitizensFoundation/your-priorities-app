@@ -1450,7 +1450,7 @@ router.get('/has/AutoTranslation', function(req, res) {
 });
 
 router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
-  if (true) {
+  if (false) {
     log.error("In status_update status_update - Should not be called error", { context: 'user_get' });
     res.sendStatus(500);
   } else {
@@ -1470,13 +1470,16 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
             {
               model: models.Community,
               required: true,
+              attributes: models.Community.defaultAttributesPublic,
               include: [
                 {
                   model: models.Image, as: 'CommunityLogoImages',
+                  attributes: ['id','formats'],
                   required: false
                 },
                 {
                   model: models.Image, as: 'CommunityHeaderImages',
+                  attributes: ['id','formats'],
                   required: false
                 }
               ]
@@ -1484,7 +1487,7 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
             {
               model: models.User,
               required: true,
-              attributes: models.User.defaultAttributesWithSocialMediaPublic
+              attributes: ['id']
             }
           ]
         }).then(function(statusUpdateIn) {
