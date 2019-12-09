@@ -107,14 +107,6 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['user_id','deleted','status']
       },
       {
-        name: 'points_idx_counter_sum_post_id_deleted',
-        fields: ['(counter_quality_up-counter_quality_down)','group_id','deleted']
-      },
-      {
-        name: 'posts_idx_counter_sum_group_id_category_id_deleted',
-        fields: ['(counter_endorsements_up-counter_endorsements_down)','group_id','category_id','deleted']
-      },
-      {
         name: 'posts_idx_counter_points_group_id_deleted',
         fields: ['counter_points','group_id','deleted']
       },
@@ -128,6 +120,8 @@ module.exports = function(sequelize, DataTypes) {
     // CREATE INDEX postaudio_idx_post_id ON "PostAudio" (post_id);
     // CREATE INDEX postvideo_idx_post_id ON "PostVideo" (post_id);
     // CREATE INDEX postheaderimage_idx_post_id ON "PostHeaderImage" (post_id);
+    // CREATE INDEX posts_idx_counter_sum_group_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,deleted);
+    // CREATE INDEX posts_idx_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted);
 
     scopes: {
       open: {
