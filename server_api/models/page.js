@@ -66,12 +66,16 @@ module.exports = function(sequelize, DataTypes) {
         }
       },
       {
-        name: 'pages_idx_domain_id_community_group_id_deleted',
-        fields: ['domain_id','community_id','group_id','deleted']
+        name: 'pages_idx_domain_id_published_deleted',
+        fields: ['domain_id','published','deleted']
       },
       {
-        name: 'pages_idx_domain_id_community_deleted',
-        fields: ['domain_id','community_id','deleted']
+        name: 'pages_idx_community_id_published_deleted',
+        fields: ['community_id','published','deleted']
+      },
+      {
+        name: 'pages_idx_group_id_published_deleted',
+        fields: ['group_id','published','deleted']
       }
     ],
 

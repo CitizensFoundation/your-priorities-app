@@ -53,8 +53,9 @@ module.exports = {
         CREATE INDEX domains_idx_deleted_domain_name ON domains (deleted,domain_name);
         CREATE INDEX communities_idx_deleted_hostname ON communities (deleted,hostname);
         
-        CREATE INDEX pages_idx_domain_id_community_group_id_deleted ON pages (deleted,domain_id,community_id,group_id);
-        CREATE INDEX pages_idx_domain_id_community_deleted ON pages (deleted,domain_id,community_id);
+        CREATE INDEX pages_idx_domain_id_published_deleted ON pages (domain_id,published,deleted);
+        CREATE INDEX pages_idx_community_id_published_deleted ON pages (community_id,published,deleted);
+        CREATE INDEX pages_idx_group_id_published_deleted ON pages (group_id,published,deleted);
         
         CREATE INDEX points_idx_counter_sum_post_id_deleted ON points ((counter_quality_up-counter_quality_down),post_id,deleted);
         CREATE INDEX posts_idx_counter_sum_group_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,deleted);
