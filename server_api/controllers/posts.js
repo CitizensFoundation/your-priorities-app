@@ -590,7 +590,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
           log.info('Points Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
           //TODO: Fix after sequelize upgrade and use limit
           points = _.slice(points, 0, 750);
-          req.redisClient.setex(redisKey, 5, JSON.stringify(points));
+          //req.redisClient.setex(redisKey, 5, JSON.stringify(points));
           res.send(points);
         } else {
           sendPostOrError(res, null, 'view', req.user, 'Not found', 404);

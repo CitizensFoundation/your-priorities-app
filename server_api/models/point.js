@@ -241,6 +241,10 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['post_id','deleted','status']
+      },
+      {
+        name: 'points_idx_counter_sum_post_id_deleted',
+        fields: ['(counter_quality_up-counter_quality_down)','post_id','deleted']
       }
     ],
 

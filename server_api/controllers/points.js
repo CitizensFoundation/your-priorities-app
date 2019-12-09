@@ -38,7 +38,7 @@ var decrementOldPointQualityCountersIfNeeded = function (oldPointQualityValue, p
         next();
       })
     } else {
-      console.error("Strange state of pointQualities");
+      log.error("Strange state of pointQualities");
       next();
     }
   } else {
