@@ -149,12 +149,12 @@ app.use(function setupCommunity(req, res, next) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function checkForBOT(req, res, next) {
+app.use(function setupRedis(req, res, next) {
   req.redisClient = sessionConfig.store.client;
   next();
 });
 
-app.use(function setupRedis(req, res, next) {
+app.use(function checkForBOT(req, res, next) {
   var ua = req.headers['user-agent'];
   if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
     console.log(ua, ' is a bot');
