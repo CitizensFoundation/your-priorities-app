@@ -73,7 +73,7 @@ if (process.env.REDISTOGO_URL) {
 
 let airbrake = null;
 
-if (process.env.AIRBRAKE_PROJECT_ID) {
+if (process.env.AIRBRAKE_PROJECT_IDX) {
   airbrake = new Airbrake.Notifier({
     projectId: process.env.AIRBRAKE_PROJECT_ID,
     projectKey: process.env.AIRBRAKE_API_KEY,
@@ -82,7 +82,7 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
 
 const app = express();
 
-if (process.env.AIRBRAKE_PROJECT_ID) {
+if (process.env.AIRBRAKE_PROJECT_IDX) {
   app.use(airbrakeExpress.makeMiddleware(airbrake));
 }
 
