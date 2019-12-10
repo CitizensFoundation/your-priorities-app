@@ -481,22 +481,13 @@ app.use(function generalErrorHandler(err, req, res, next) {
             errorStatus: 500
           });
         }
-        res.status(status).send({
-          message: err.message,
-          error: err
-        });
+        res.sendStatus(status);
       });
     } else {
-      res.status(status).send({
-        message: err.message,
-        error: err
-      });
+      res.sendStatus(status);
     }
   } else {
-    res.status(status).send({
-      message: err.message,
-      error: err
-    });
+    res.sendStatus(status);
   }
 });
 
