@@ -63,22 +63,30 @@ const toJson = require('./utils/to_json');
 const sso = require('passport-sso');
 const cors = require('cors');
 
+const Airbrake = require('@airbrake/node');
+const airbrakeExpress = require('@airbrake/node/dist/instrumentation/express');
+const airbrakePG = require('@airbrake/node/dist/instrumentation/pg');
+
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;
 }
 
-const app = express();
-app.set('port', process.env.PORT || 4242);
-
 let airbrake = null;
 
 if (process.env.AIRBRAKE_PROJECT_ID) {
-  airbrake = require('airbrake').createClient(process.env.AIRBRAKE_PROJECT_ID, process.env.AIRBRAKE_API_KEY);
-  airbrake.handleExceptions();
-  app.use(airbrake.expressHandler());
+  airbrake = new Airbrake.Notifier({
+    projectId: process.env.AIRBRAKE_PROJECT_ID,
+    projectKey: process.env.AIRBRAKE_API_KEY,
+  });
 }
 
-if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
+const app = express();
+
+if (process.env.AIRBRAKE_PROJECT_ID) {
+  app.use(airbrakeExpress.makeMiddleware(airbrake));
+}
+
+if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   app.use( function checkProtocol (req, res, next) {
     if (!/https/.test(req.protocol)) {
       res.redirect("https://" + req.headers.host + req.url);
@@ -88,6 +96,7 @@ if (app.get('env') != 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   });
 }
 
+app.set('port', process.env.PORT || 4242);
 app.use(compression());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
@@ -490,6 +499,10 @@ app.use(function generalErrorHandler(err, req, res, next) {
     });
   }
 });
+
+if (airbrake) {
+  app.use(airbrakeExpress.makeErrorHandler(airbrake));
+}
 
 var server = app.listen(app.get('port'), function () {
   log.info('Your Priorities server listening on port ' + server.address().port);
