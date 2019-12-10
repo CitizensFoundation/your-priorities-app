@@ -79,6 +79,10 @@ module.exports = function(sequelize, DataTypes) {
       {
         name: 'communities_idx_deleted_hostname',
         fields: ['hostname','deleted']
+      },
+      {
+        name: 'communities_idx_domain_id_in_id_deleted_access',
+        fields: ['domain_id','in_community_folder_id','deleted','access']
       }
     ],
 

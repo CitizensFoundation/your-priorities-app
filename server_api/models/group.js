@@ -52,6 +52,10 @@ module.exports = function(sequelize, DataTypes) {
         fields: ['counter_users']
       },
       {
+        name: 'groups_idx_counter_users_community_id_access_deleted',
+        fields:['counter_users','community_id','access','deleted']
+      },
+      {
         fields: ['community_id', 'deleted', 'in_group_folder_id']
       },
       {

@@ -455,30 +455,43 @@ var getCommunity = function(req, done) {
       });
     },
     function (seriesCallback) {
-      models.Group.findAll({
-        where: {
-          community_id: community.id,
-          access: {
-            $ne: models.Group.ACCESS_SECRET
-          }
-        },
-        limit: 500,
-        attributes: ['id','configuration','access','objectives','name','theme_id','community_id',
-          'access','status','counter_points','counter_posts','counter_users','language'],
-        required: false,
-        order: [
-          [ 'counter_users', 'desc' ],
-          [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ],
-          [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-          [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
-          [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
-        ],
-        include: masterGroupIncludes
-      }).then(function (groups) {
-        community.dataValues.Groups = groups;
-        seriesCallback();
-      }).catch(error => {
-        seriesCallback(error);
+      const redisKey = "cache:community_groups:"+community.id+":"+models.Group.ACCESS_SECRET;
+      req.redisClient.get(redisKey, (error, groups) => {
+        if (error) {
+          seriesCallback(error);
+        } else if (groups) {
+          community.dataValues.Groups = JSON.parse(groups);
+          seriesCallback();
+        } else {
+          models.Group.findAll({
+            where: {
+              community_id: community.id,
+              access: {
+                $ne: models.Group.ACCESS_SECRET
+              }
+            },
+            attributes: ['id', 'configuration', 'access', 'objectives', 'name', 'theme_id', 'community_id',
+              'access', 'status', 'counter_points', 'counter_posts', 'counter_users', 'language'],
+            required: false,
+            order: [
+              ['counter_users', 'desc'],
+              [{model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc'],
+              [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
+              [{model: models.Video, as: "GroupLogoVideos"}, 'updated_at', 'desc'],
+              [{model: models.Video, as: "GroupLogoVideos"}, {
+                model: models.Image,
+                as: 'VideoImages'
+              }, 'updated_at', 'asc'],
+            ],
+            include: masterGroupIncludes
+          }).then(function (groups) {
+            community.dataValues.Groups = groups;
+            req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
+            seriesCallback();
+          }).catch(error => {
+            seriesCallback(error);
+          });
+        }
       });
     },
     function (seriesCallback) {

@@ -17,6 +17,9 @@ module.exports = {
         
         CREATE INDEX ac_activities_idx_post_id_user_id_type_delete_status ON ac_activities (post_id,user_id,type,deleted,status);
         CREATE INDEX ac_notifications_idx_user_id_type_deleted_created_at ON ac_notifications (user_id,type,deleted,created_at);
+        CREATE INDEX ac_activities_idx_deleted_status ON ac_activities (deleted,status);
+        CREATE INDEX ac_notifications_idx_deleted_id ON ac_notifications (deleted,id);
+
         CREATE INDEX audios_idx_deleted ON audios (deleted);
         CREATE INDEX categories_idx_deleted_group_id ON categories (deleted,group_id);
         CREATE INDEX categories_idx_deleted ON categories (deleted);
@@ -52,6 +55,8 @@ module.exports = {
         
         CREATE INDEX domains_idx_deleted_domain_name ON domains (deleted,domain_name);
         CREATE INDEX communities_idx_deleted_hostname ON communities (deleted,hostname);
+                
+        CREATE INDEX groups_idx_counter_users_community_id_access_deleted ON groups (counter_users,community_id,access,deleted);
         
         CREATE INDEX pages_idx_domain_id_published_deleted ON pages (domain_id,published,deleted);
         CREATE INDEX pages_idx_community_id_published_deleted ON pages (community_id,published,deleted);
@@ -59,11 +64,15 @@ module.exports = {
         
         CREATE INDEX points_idx_counter_sum_post_id_status_value_deleted ON points ((counter_quality_up-counter_quality_down),post_id,value,status,deleted);
         CREATE INDEX points_idx_created_at_post_id_status_deleted ON points (created_at,post_id,status,deleted);
+        CREATE INDEX points_idx_deleted_status_id ON points (deleted,status,id);
+        CREATE INDEX points_idx_deleted_status ON points (deleted,status);
         
         CREATE INDEX posts_idx_counter_sum_group_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,deleted);
         CREATE INDEX posts_idx_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted);
         CREATE INDEX posts_idx_counter_points_group_id_deleted ON posts (counter_points,group_id,deleted);
         CREATE INDEX posts_idx_created_at_group_id_deleted ON posts (created_at,group_id,deleted);
+        
+        CREATE INDEX communities_idx_domain_id_in_id_deleted_access ON communities (domain_id,in_community_folder_id,deleted,access);
       `),
     ]
   },

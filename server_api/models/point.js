@@ -244,7 +244,16 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['post_id','deleted','status','created_at']
-      }
+      },
+      {
+        name: 'points_idx_deleted_status_id',
+        fields: ['deleted','status','id']
+      },
+
+      {
+        name: 'points_idx_deleted_status',
+        fields: ['deleted','status']
+      },
     ],
 
     // Add following indexes manually for high throughput sites
