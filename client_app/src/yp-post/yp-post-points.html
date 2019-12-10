@@ -370,7 +370,7 @@
 
             <div id="allUpPoints">
               <iron-scroll-threshold id="ironScrollThesholdUp" scroll-target="document"  on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListUp" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
+                <iron-list id="ironListUp" lower-threshold="200" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
@@ -469,7 +469,7 @@
 
             <div id="allDownPoints">
               <iron-scroll-threshold id="ironScrollThesholdDown"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListDown" items="[[downPoints]]" as="point" scroll-target="document" scroll-offset="550">
+                <iron-list id="ironListDown" lower-threshold="200" items="[[downPoints]]" as="point" scroll-target="document" scroll-offset="550">
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
@@ -570,7 +570,7 @@
       </div>
       <div class="layout vertical center-center">
         <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-          <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
                 <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
