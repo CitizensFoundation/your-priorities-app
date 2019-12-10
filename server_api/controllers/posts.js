@@ -396,7 +396,8 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
         post_id: req.params.id,
         created_at: {
           $gt: req.query.latestPointCreatedAt
-        }
+        },
+        status: 'published'
       },
       attributes: { exclude: ['ip_address', 'user_agent'] },
       order: [
@@ -490,131 +491,179 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/points', auth.can('view post'), function(req, res) {
-  const redisKey = "cache:post_points:"+req.params.id+(req.params.offset ? ":offset:"+req.params.offset : "");
+  const redisKey = "cache:post_points:"+req.params.id+(req.params.offsetUp ? ":offset:"+req.params.offsetUp : "")+":"+(req.params.offsetDown ? ":offset:"+req.params.offsetDown : "");
+  log.info(redisKey);
   req.redisClient.get(redisKey, (error, points) => {
     if (error) {
       sendPostOrError(res, null, 'viewPoints', req.user, error);
     } else if (points) {
       res.send(JSON.parse(points));
     } else {
-      //TODO: Get equal amount of points for and against
-      models.Point.findAll({
-        where: {
-          post_id: req.params.id
+      let upPointsIn, downPointsIn;
+      async.parallel([
+        (parallelCallback) => {
+          models.Point.findAll({
+            where: {
+              post_id: req.params.id,
+              value: 1,
+              status: 'published'
+            },
+            attributes: ['id'],
+            order: [
+              models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
+            ],
+            limit: 10,
+            offset: req.query.offsetUp ? req.query.offsetUp : 0
+          }).then((pointsIn) => {
+            upPointsIn = pointsIn;
+            parallelCallback();
+          }).catch((error) => {
+            parallelCallback(error);
+          });
         },
-        attributes: ['id'],
-        order: [
-          models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
-        ],
-        limit: 100,
-        offset: req.query.offset ? req.query.offset : 0
-      }).then((pointsIn)=>{
-        models.Point.findAll({
-          where: {
-            id: {
-              $in: _.map(pointsIn, (pointIn)=>{ return pointIn.id })
+        (parallelCallback) => {
+          models.Point.findAll({
+            where: {
+              post_id: req.params.id,
+              value: -1,
+              status: 'published'
+            },
+            attributes: ['id'],
+            order: [
+              models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
+            ],
+            limit: 10,
+            offset: req.query.offsetDown ? req.query.offsetDown : 0
+          }).then((pointsIn) => {
+            downPointsIn = pointsIn;
+            parallelCallback();
+          }).catch((error) => {
+            parallelCallback(error);
+          });
+        },
+      ],
+      (error) => {
+        if (error) {
+          sendPostOrError(res, null, 'postPoints', req.user, error);
+        } else {
+          models.Point.findAll({
+            where: {
+              id: {
+                $in: _.map(upPointsIn, (pointIn) => {
+                  return pointIn.id
+                }).concat(_.map(downPointsIn, (pointIn) => {
+                  return pointIn.id
+                }))
+              }
+            },
+            attributes: ['id', 'name', 'content', 'user_id', 'value', 'counter_quality_up', 'counter_quality_down', 'embed_data', 'language', 'created_at'],
+            order: [
+              models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
+              [models.PointRevision, 'created_at', 'asc'],
+              [models.User, {model: models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
+              [{model: models.Video, as: "PointVideos"}, 'updated_at', 'desc'],
+              [{model: models.Audio, as: "PointAudios"}, 'updated_at', 'desc'],
+              [{model: models.Video, as: "PointVideos"}, {
+                model: models.Image,
+                as: 'VideoImages'
+              }, 'updated_at', 'asc'],
+              [models.User, {model: models.Organization, as: 'OrganizationUsers'}, {
+                model: models.Image,
+                as: 'OrganizationLogoImages'
+              }, 'created_at', 'asc']
+            ],
+            include: [
+              {
+                model: models.User,
+                attributes: ["id", "name", "facebook_id", "twitter_id", "google_id", "github_id"],
+                required: true,
+                include: [
+                  {
+                    model: models.Image, as: 'UserProfileImages',
+                    attributes: ['id', 'formats'],
+                    required: false
+                  },
+                  {
+                    model: models.Organization,
+                    as: 'OrganizationUsers',
+                    required: false,
+                    attributes: ['id', 'name'],
+                    include: [
+                      {
+                        model: models.Image,
+                        as: 'OrganizationLogoImages',
+                        attributes: ['id', 'formats'],
+                        required: false
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                model: models.PointRevision,
+                attributes: ['content', 'value', 'embed_data', 'created_at'],
+                required: false
+              },
+              {
+                model: models.PointQuality,
+                attributes: ['value'],
+                required: false,
+                include: [
+                  {
+                    model: models.User,
+                    attributes: ["id"],
+                    required: false
+                  }
+                ]
+              },
+              {
+                model: models.Video,
+                required: false,
+                attributes: ['id', 'formats', 'updated_at', 'viewable', 'public_meta'],
+                as: 'PointVideos',
+                include: [
+                  {
+                    model: models.Image,
+                    as: 'VideoImages',
+                    attributes: ["formats", 'updated_at'],
+                    required: false
+                  },
+                ]
+              },
+              {
+                model: models.Audio,
+                required: false,
+                attributes: ['id', 'formats', 'updated_at', 'listenable'],
+                as: 'PointAudios'
+              },
+              {
+                model: models.Post,
+                attributes: ['id', 'group_id'],
+                required: false,
+                include: [
+                  {
+                    model: models.Group,
+                    attributes: ['id', 'configuration'],
+                    required: false
+                  }
+                ]
+              }
+            ]
+          }).then(function (points) {
+            if (points) {
+              log.info('Points Viewed', {postId: req.params.id, context: 'view', user: toJson(req.user)});
+              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(points));
+              res.send(points);
+            } else {
+              sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
             }
-          },
-          attributes: ['id','name','content','user_id','value','counter_quality_up','counter_quality_down','embed_data','language','created_at'],
-          order: [
-            models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
-            [ models.PointRevision, 'created_at', 'asc' ],
-            [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
-            [ { model: models.Video, as: "PointVideos" }, 'updated_at', 'desc' ],
-            [ { model: models.Audio, as: "PointAudios" }, 'updated_at', 'desc' ],
-            [ { model: models.Video, as: "PointVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
-            [ models.User, { model: models.Organization, as: 'OrganizationUsers' }, { model: models.Image, as: 'OrganizationLogoImages' }, 'created_at', 'asc' ]
-          ],
-          include: [
-            { model: models.User,
-              attributes: ["id", "name", "facebook_id", "twitter_id", "google_id", "github_id"],
-              required: true,
-              include: [
-                {
-                  model: models.Image, as: 'UserProfileImages',
-                  attributes: ['id', 'formats'],
-                  required: false
-                },
-                {
-                  model: models.Organization,
-                  as: 'OrganizationUsers',
-                  required: false,
-                  attributes: ['id', 'name'],
-                  include: [
-                    {
-                      model: models.Image,
-                      as: 'OrganizationLogoImages',
-                      attributes: ['id', 'formats'],
-                      required: false
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              model: models.PointRevision,
-              attributes: ['content','value','embed_data','created_at'],
-              required: false
-            },
-            { model: models.PointQuality,
-              attributes: ['value'],
-              required: false,
-              include: [
-                { model: models.User,
-                  attributes: ["id"],
-                  required: false
-                }
-              ]
-            },
-            {
-              model: models.Video,
-              required: false,
-              attributes: ['id','formats','updated_at','viewable','public_meta'],
-              as: 'PointVideos',
-              include: [
-                {
-                  model: models.Image,
-                  as: 'VideoImages',
-                  attributes:["formats",'updated_at'],
-                  required: false
-                },
-              ]
-            },
-            {
-              model: models.Audio,
-              required: false,
-              attributes: ['id','formats','updated_at','listenable'],
-              as: 'PointAudios'
-            },
-            {
-              model: models.Post,
-              attributes: ['id','group_id'],
-              required: false,
-              include: [
-                {
-                  model: models.Group,
-                  attributes: ['id','configuration'],
-                  required: false
-                }
-              ]
-            }
-          ]
-        }).then(function(points) {
-          if (points) {
-            log.info('Points Viewed', { postId: req.params.id, context: 'view', user: toJson(req.user) });
-            req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 1, JSON.stringify(points));
-            res.send(points);
-          } else {
-            sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
-          }
-        }).catch(function(error) {
-          sendPostOrError(res, null, 'view', req.user, error);
-        });
-      }).catch((error)=>{
-        sendPostOrError(res, null, 'viewPoints', req.user, error);
-      });
+          }).catch(function (error) {
+            sendPostOrError(res, null, 'view', req.user, error);
+          });
+        }
+      })
     }
-  });
+  })
 });
 
 var truthValueFromBody = function(bodyParameter) {
@@ -942,7 +991,8 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
     function (callback) {
       models.Point.findAll({
         where: {
-          post_id: post.id
+          post_id: post.id,
+          status: 'published'
         }
       }).then(function (pointsIn) {
         async.eachSeries(pointsIn, function (point, innerSeriesCallback) {

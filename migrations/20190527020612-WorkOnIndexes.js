@@ -57,7 +57,9 @@ module.exports = {
         CREATE INDEX pages_idx_community_id_published_deleted ON pages (community_id,published,deleted);
         CREATE INDEX pages_idx_group_id_published_deleted ON pages (group_id,published,deleted);
         
-        CREATE INDEX points_idx_counter_sum_post_id_deleted ON points ((counter_quality_up-counter_quality_down),post_id,deleted);
+        CREATE INDEX points_idx_counter_sum_post_id_status_value_deleted ON points ((counter_quality_up-counter_quality_down),post_id,value,status,deleted);
+        CREATE INDEX points_idx_created_at_post_id_status_deleted ON points (created_at,post_id,status,deleted);
+        
         CREATE INDEX posts_idx_counter_sum_group_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,deleted);
         CREATE INDEX posts_idx_counter_sum_group_id_category_id_deleted ON posts ((counter_endorsements_up-counter_endorsements_down),group_id,category_id,deleted);
         CREATE INDEX posts_idx_counter_points_group_id_deleted ON posts (counter_points,group_id,deleted);

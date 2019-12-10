@@ -241,13 +241,16 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['post_id','deleted','status']
+      },
+      {
+        fields: ['post_id','deleted','status','created_at']
       }
     ],
 
     // Add following indexes manually for high throughput sites
     // CREATE INDEX pointaudio_idx_point_id ON "PointAudio" (point_id);
     // CREATE INDEX pointvideo_idx_point_id ON "PointVideo" (point_id);
-    // CREATE INDEX points_idx_counter_sum_post_id_deleted ON points ((counter_quality_up-counter_quality_down),post_id,deleted);
+    // CREATE INDEX points_idx_counter_sum_post_id_status_value_deleted ON points ((counter_quality_up-counter_quality_down),post_id,value,status,deleted);
 
     underscored: true,
 

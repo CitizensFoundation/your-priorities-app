@@ -964,7 +964,10 @@
               } else {
                 this.$.moreAjax.url = '/api/posts/' + this.post.id + '/points';
               }
-              this.$.moreAjax.params = { offset: this.storedPoints ? this.storedPoints.length : 0};
+              this.$.moreAjax.params = {
+                 offsetUp: this.storedUpPointsCount ? this.storedUpPointsCount : 0,
+                 offsetDown: this.storedDownPointsCount ? this.storedDownPointsCount : 0,
+              };
               this.$.moreAjax.generateRequest();
             } else {
               console.warn("Trying to load more points early");
@@ -1103,6 +1106,9 @@
           this._clearVideo();
           this._clearAudio();
 
+          this.storedUpPointsCount = null;
+          this.storedDownPointsCount = null;
+
           if (newPost) {
             if (this.host) {
               this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
@@ -1162,6 +1168,16 @@
 
         _response: function (event, detail) {
           this.set('storedPoints', this._preProcessPoints(detail.response));
+          this.storedUpPointsCount = 0;
+          this.storedDownPointsCount = 0;
+
+          for (var i = 0; i < this.storedPoints.length; i++) {
+            if (this.storedPoints[i].value>0) {
+              this.storedUpPointsCount += 1;
+            } else if (this.storedPoints[i].value<0) {
+              this.storedDownPointsCount += 1;
+            }
+          }
           this._processStoredPoints();
           this.removeElementsByClass(this, 'inserted-outside-list');
           this._updateCounterInfo();
@@ -1361,7 +1377,14 @@
           } else {
             this.push('points', point);
           }
+
           this.push('storedPoints', point);
+
+          if (point.value > 0) {
+            this.storedUpPointsCount += 1;
+          } else if (point.value < 0) {
+            this.storedDownPointsCount += 1;
+          }
         },
 
         _newPointResponse: function (inEvent, inDetail) {

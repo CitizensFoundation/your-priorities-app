@@ -1223,7 +1223,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
               posts: finalRows,
               totalPostsCount: totalPostsCount
             };
-            req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 1, JSON.stringify(postsOut));
+            req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
             res.send(postsOut);
           }
         });
