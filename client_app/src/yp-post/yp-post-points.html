@@ -370,7 +370,7 @@
 
             <div id="allUpPoints">
               <iron-scroll-threshold id="ironScrollThesholdUp" scroll-target="document"  on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListUp" items="[[upPoints]]" as="point" scroll-target="ironScrollThesholdUp" scroll-offset="550">
+                <iron-list id="ironListUp" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
@@ -469,7 +469,7 @@
 
             <div id="allDownPoints">
               <iron-scroll-threshold id="ironScrollThesholdDown"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListDown" items="[[downPoints]]" as="point" scroll-target="ironScrollThesholdDown" scroll-offset="550">
+                <iron-list id="ironListDown" items="[[downPoints]]" as="point" scroll-target="document" scroll-offset="550">
                   <template>
                     <div class="item" tabindex$="[[tabIndex]]">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
@@ -569,7 +569,7 @@
         </paper-material>
       </div>
       <div class="layout vertical center-center">
-        <iron-scroll-threshold id="ironScrollThesholdDown"  scroll-target="document" on-lower-threshold="_loadMorePoints">
+        <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
           <iron-list id="ironListMobile" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
@@ -976,12 +976,29 @@
           }
         },
 
+        _interleaveMorePoints: function (points) {
+          var upPoints = [];
+          var downPoints = [];
+
+          for (var i = 0; i < points.length; i++) {
+            if (points[i].value>0) {
+              upPoints.push(points[i]);
+            } else if (points[i].value<0) {
+              downPoints.push(points[i]);
+            }
+          }
+
+          return this.interleaveArrays(upPoints, downPoints);
+        },
+
         _morePointsResponse: function (event, detail) {
           this.loadMoreInProgress = false;
           var points = this._preProcessPoints(detail.response);
           if (points.length===0) {
             this.noMorePoints = true;
           }
+
+          points = this._interleaveMorePoints(points);
           points.forEach(function (point) {
             this._addMorePoint(point);
           }.bind(this));
@@ -992,14 +1009,18 @@
               this.$$("#ironListDown").fire("iron-resize");
             if (this.$$("#ironListMobile"))
               this.$$("#ironListMobile").fire("iron-resize");
-
-            if (this.$$("#ironScrollThesholdUp"))
-              this.$$("#ironScrollThesholdUp").clearTriggers();
-            if (this.$$("#ironScrollThesholdDown"))
-              this.$$("#ironScrollThesholdDown").clearTriggers();
-            if (this.$$("#ironScrollThesholdDown"))
-              this.$$("#ironScrollThesholdDown").clearTriggers();
           }, 5);
+
+          this._clearScrollTrigger();
+        },
+
+        _clearScrollTrigger: function () {
+          if (this.$$("#ironScrollThesholdUp"))
+            this.$$("#ironScrollThesholdUp").clearTriggers();
+          if (this.$$("#ironScrollThesholdDown"))
+            this.$$("#ironScrollThesholdDown").clearTriggers();
+          if (this.$$("#ironScrollThesholdMobile"))
+            this.$$("#ironScrollThesholdMobile").clearTriggers();
         },
 
         _newPointsResponse: function (event, detail) {
@@ -1164,6 +1185,8 @@
           if (!this.largeMode && !this.points) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
+
+          this._clearScrollTrigger();
         },
 
         _response: function (event, detail) {

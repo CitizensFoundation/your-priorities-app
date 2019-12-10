@@ -491,8 +491,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/points', auth.can('view post'), function(req, res) {
-  const redisKey = "cache:post_points:"+req.params.id+(req.params.offsetUp ? ":offset:"+req.params.offsetUp : "")+":"+(req.params.offsetDown ? ":offset:"+req.params.offsetDown : "");
-  log.info(redisKey);
+  const redisKey = "cache:post_points:"+req.params.id+(req.query.offsetUp ? ":offsetup:"+req.query.offsetUp : "")+":"+(req.query.offsetDown ? ":offsetdown:"+req.query.offsetDown : "");
   req.redisClient.get(redisKey, (error, points) => {
     if (error) {
       sendPostOrError(res, null, 'viewPoints', req.user, error);
