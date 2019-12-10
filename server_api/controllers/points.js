@@ -76,6 +76,8 @@ var loadPointWithAll = function (pointId, callback) {
     where: {
       id: pointId
     },
+    attributes: ['id','name','content','status','value','counter_quality_up','counter_quality_down',
+      'counter_flags','embed_data','data','public_data','language','group_id','post_id','user_id'],
     order: [
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
@@ -538,6 +540,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       }, function (error) {
         models.Point.find({
           where: { id: point.id },
+          attributes: ['id','content','group_id','post_id'],
           include: [
             { model: models.PointRevision ,
               include: [
@@ -547,7 +550,8 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
           ]
         }).then(function(point) {
           models.Post.find({
-            where: { id: point.post_id }
+            where: { id: point.post_id },
+            attributes: ['id','counter_points','group_id']
           }).then(function(post) {
             post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
               post.increment('counter_points');
