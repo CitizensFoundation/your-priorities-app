@@ -500,7 +500,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       //TODO: Get equal amount of points for and against
       models.Point.findAll({
         where: {
-          post_id: req.params.id
+          post_id: req.params.id.errorerror
         },
         attributes: ['id'],
         order: [
