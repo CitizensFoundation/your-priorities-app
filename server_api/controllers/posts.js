@@ -498,10 +498,10 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
     } else if (points) {
       res.send(JSON.parse(points));
     } else {
-      let upPointsIn, downPointsIn;
+      let upPointsIn, downPointsIn, upCount, downCount;
       async.parallel([
         (parallelCallback) => {
-          models.Point.findAll({
+          models.Point.findAndCountAll({
             where: {
               post_id: req.params.id,
               value: 1,
@@ -514,14 +514,15 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
             limit: 10,
             offset: req.query.offsetUp ? req.query.offsetUp : 0
           }).then((pointsIn) => {
-            upPointsIn = pointsIn;
+            upPointsIn = pointsIn.rows;
+            upCount = pointsIn.count;
             parallelCallback();
           }).catch((error) => {
             parallelCallback(error);
           });
         },
         (parallelCallback) => {
-          models.Point.findAll({
+          models.Point.findAndCountAll({
             where: {
               post_id: req.params.id,
               value: -1,
@@ -534,7 +535,8 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
             limit: 10,
             offset: req.query.offsetDown ? req.query.offsetDown : 0
           }).then((pointsIn) => {
-            downPointsIn = pointsIn;
+            downPointsIn = pointsIn.rows;
+            downCount = pointsIn.count;
             parallelCallback();
           }).catch((error) => {
             parallelCallback(error);
@@ -650,9 +652,10 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
             ]
           }).then(function (points) {
             if (points) {
+              const pointsInfo = { points: points, count: upCount+downCount };
               log.info('Points Viewed', {postId: req.params.id, context: 'view', user: toJson(req.user)});
-              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(points));
-              res.send(points);
+              req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
+              res.send(pointsInfo);
             } else {
               sendPostOrError(res, null, 'view', req.user, 'Not found', 404);
             }

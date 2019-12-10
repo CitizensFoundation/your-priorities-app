@@ -993,7 +993,7 @@
 
         _morePointsResponse: function (event, detail) {
           this.loadMoreInProgress = false;
-          var points = this._preProcessPoints(detail.response);
+          var points = this._preProcessPoints(detail.response.points);
           if (points.length===0) {
             this.noMorePoints = true;
           }
@@ -1190,7 +1190,8 @@
         },
 
         _response: function (event, detail) {
-          this.set('storedPoints', this._preProcessPoints(detail.response));
+          this.set('storedPoints', this._preProcessPoints(detail.response.points));
+          this.totalCount = detail.response.count;
           this.storedUpPointsCount = 0;
           this.storedDownPointsCount = 0;
 
@@ -1357,12 +1358,12 @@
         _updateCounterInfo: function () {
           if (this.largeMode) {
             this.fire('yp-debate-info', {
-              count: this.upPoints.length + this.downPoints.length,
+              count: this.totalCount,
               firstPoint: this.upPoints[0]
             });
           } else {
             this.fire('yp-debate-info', {
-              count: this.points.length,
+              count: this.totalCount,
               firstPoint: this.points[0]
             });
           }
