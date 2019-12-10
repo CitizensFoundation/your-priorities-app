@@ -505,35 +505,62 @@ router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, 
 });
 
 router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
-  models.Group.find({
-    where: { id: req.params.groupId },
-    attributes: ['id'],
-    include: [
-      {
-        model: models.Community,
+  const redisKey = "cache:groupPages:"+req.params.groupId;
+  req.redisClient.get(redisKey, (error, pages) => {
+    if (error) {
+      log.error('Could not get pages for group from redis', {
+        err: error,
+        context: 'pages',
+        userId: req.user ? req.user.id : null
+      });
+      res.sendStatus(500);
+    } else if (pages) {
+      res.send(JSON.parse(pages));
+    } else {
+      models.Group.find({
+        where: {id: req.params.groupId},
         attributes: ['id'],
         include: [
           {
-            model: models.Domain,
-            attributes: ['id']
+            model: models.Community,
+            attributes: ['id'],
+            include: [
+              {
+                model: models.Domain,
+                attributes: ['id']
+              }
+            ]
           }
         ]
-      }
-    ]
-  }).then(function (group) {
-    models.Page.getPages(req, { group_id: req.params.groupId , community_id: group.Community.id, domain_id: group.Community.Domain.id }, function (error, pages) {
-      if (error) {
-        log.error('Could not get pages for group', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
+      }).then(function (group) {
+        models.Page.getPages(req, {
+          group_id: req.params.groupId,
+          community_id: group.Community.id,
+          domain_id: group.Community.Domain.id
+        }, function (error, pages) {
+          if (error) {
+            log.error('Could not get pages for group', {
+              err: error,
+              context: 'pages',
+              user: req.user ? toJson(req.user.simple()) : null
+            });
+            res.sendStatus(500);
+          } else {
+            log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null});
+            req.redisClient.setex(redisKey, process.env.PAGES_CACHE_TTL ? parseInt(process.env.PAGES_CACHE_TTL) : 3, JSON.stringify(pages));
+            res.send(pages);
+          }
+        });
+        return null;
+      }).catch(function (error) {
+        log.error('Could not get pages for group', {
+          err: error,
+          context: 'pages',
+          user: req.user ? toJson(req.user.simple()) : null
+        });
         res.sendStatus(500);
-      } else {
-        log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
-        res.send(pages);
-      }
-    });
-    return null;
-  }).catch(function (error) {
-    log.error('Could not get pages for group', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null});
-    res.sendStatus(500);
+      });
+    }
   });
 });
 
