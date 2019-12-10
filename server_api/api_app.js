@@ -73,7 +73,7 @@ if (process.env.REDISTOGO_URL) {
 
 let airbrake = null;
 
-if (process.env.AIRBRAKE_PROJECT_IDX) {
+if (process.env.AIRBRAKE_PROJECT_ID) {
   airbrake = new Airbrake.Notifier({
     projectId: process.env.AIRBRAKE_PROJECT_ID,
     projectKey: process.env.AIRBRAKE_API_KEY,
@@ -82,7 +82,7 @@ if (process.env.AIRBRAKE_PROJECT_IDX) {
 
 const app = express();
 
-if (process.env.AIRBRAKE_PROJECT_IDX) {
+if (process.env.AIRBRAKE_PROJECT_ID) {
   app.use(airbrakeExpress.makeMiddleware(airbrake));
 }
 
@@ -310,12 +310,12 @@ passport.deserializeUser(function deserializeUser(sessionUser, done) {
     } else {
       log.error("User Deserialized Not found", {context: 'deserializeUser'});
       if (airbrake) {
-        airbrake.notify("User Deserialized Not found", function (airbrakeErr, url) {
-          if (airbrakeErr) {
+        airbrake.notify("User Deserialized Not found").then((airbrakeErr) => {
+          if (airbrakeErr.error) {
             log.error("AirBrake Error", {
               context: 'airbrake',
               user: toJson(req.user),
-              err: airbrakeErr,
+              err: airbrakeErr.error,
               errorStatus: 500
             });
           }
@@ -326,12 +326,12 @@ passport.deserializeUser(function deserializeUser(sessionUser, done) {
   }).catch(function (error) {
     log.error("User Deserialize Error", {context: 'deserializeUser', user: sessionUser.userId, err: error, errorStatus: 500});
     if (airbrake) {
-      airbrake.notify(error, function (airbrakeErr, url) {
-        if (airbrakeErr) {
+      airbrake.notify(error).then((airbrakeErr) => {
+        if (airbrakeErr.error) {
           log.error("AirBrake Error", {
             context: 'airbrake',
             user: null,
-            err: airbrakeErr,
+            err: airbrakeErr.error,
             errorStatus: 500
           });
         }
@@ -386,9 +386,9 @@ app.post('/authenticate_from_island_is', function (req, res) {
       log.error("Error from SAML login", {err: error});
       error.url = req.url;
       if (airbrake) {
-        airbrake.notify(error, function (airbrakeErr, url) {
-          if (airbrakeErr) {
-            log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr, errorStatus: 500});
+        airbrake.notify(error).then((airbrakeErr) => {
+          if (airbrakeErr.error) {
+            log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr.error, errorStatus: 500});
           }
           res.sendStatus(500);
         });
@@ -414,9 +414,9 @@ app.post('/saml_assertion', function (req, res) {
       } else {
         error.url = req.url;
         if (airbrake) {
-          airbrake.notify(error, function (airbrakeErr, url) {
-            if (airbrakeErr) {
-              log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr, errorStatus: 500});
+          airbrake.notify(error).then((airbrakeErr) => {
+            if (airbrakeErr.error) {
+              log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr.error, errorStatus: 500});
             }
             res.sendStatus(500);
           });
@@ -472,12 +472,12 @@ app.use(function generalErrorHandler(err, req, res, next) {
   err.params = req.params;
   if (status != 404 && status != 401) {
     if (airbrake) {
-      airbrake.notify(err, function (airbrakeErr, url) {
-        if (airbrakeErr) {
+      airbrake.notify(err).then((airbrakeErr)=> {
+        if (airbrakeErr.error) {
           log.error("AirBrake Error", {
             context: 'airbrake',
             user: toJson(req.user),
-            err: airbrakeErr,
+            err: airbrakeErr.error,
             errorStatus: 500
           });
         }
