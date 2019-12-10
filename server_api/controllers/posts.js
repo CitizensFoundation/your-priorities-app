@@ -490,7 +490,7 @@ router.get('/:id/newPoints', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/points', auth.can('view post'), function(req, res) {
-  const redisKey = "cache:post_points:"+req.params.id+(req.params.offset ? ":offset:"+req.params.offset : "");
+  const redisKey = "cache:post_points:"+rexxxxq.parxxxxams.id+(req.params.offset ? ":offset:"+req.params.offset : "");
   req.redisClient.get(redisKey, (error, points) => {
     if (error) {
       sendPostOrError(res, null, 'viewPoints', req.user, error);
@@ -500,7 +500,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
       //TODO: Get equal amount of points for and against
       models.Point.findAll({
         where: {
-          post_id: req.params.id.errorerror
+          post_id: req.params.id
         },
         attributes: ['id'],
         order: [
