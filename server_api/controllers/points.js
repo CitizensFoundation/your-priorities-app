@@ -540,14 +540,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       }, function (error) {
         models.Point.find({
           where: { id: point.id },
-          attributes: ['id','content','group_id','post_id'],
-          include: [
-            { model: models.PointRevision ,
-              include: [
-                { model: models.User, attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"] }
-              ]
-            }
-          ]
+          attributes: ['id','content','group_id','post_id']
         }).then(function(point) {
           models.Post.find({
             where: { id: point.post_id },

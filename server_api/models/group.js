@@ -194,7 +194,8 @@ module.exports = function(sequelize, DataTypes) {
 
       addUserToGroupIfNeeded: function (groupId, req, done) {
         sequelize.models.Group.find({
-          where: { id: groupId }
+          where: { id: groupId },
+          attributes: ['id','community_id','counter_users']
         }).then(function (group) {
           if (group) {
             group.hasGroupUser(req.user).then(function(result) {
@@ -208,7 +209,8 @@ module.exports = function(sequelize, DataTypes) {
                   },
                   function(callback) {
                     sequelize.models.Community.find({
-                      where: {id: group.community_id}
+                      where: {id: group.community_id},
+                      attributes: ['id']
                     }).then(function (community) {
                       if (community) {
                         community.hasCommunityUser(req.user).then(function(result) {
