@@ -511,7 +511,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
             order: [
               models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
             ],
-            limit: 10,
+            limit: 100,
             offset: req.query.offsetUp ? req.query.offsetUp : 0
           }).then((pointsIn) => {
             upPointsIn = pointsIn.rows;
@@ -532,7 +532,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
             order: [
               models.sequelize.literal('(counter_quality_up-counter_quality_down) desc')
             ],
-            limit: 10,
+            limit: 100,
             offset: req.query.offsetDown ? req.query.offsetDown : 0
           }).then((pointsIn) => {
             downPointsIn = pointsIn.rows;
