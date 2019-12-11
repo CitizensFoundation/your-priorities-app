@@ -250,6 +250,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   group.set('configuration.customUserNamePrompt', (req.body.customUserNamePrompt && req.body.customUserNamePrompt!="") ? req.body.customUserNamePrompt : null);
+  group.set('configuration.customTermsIntroText', (req.body.customTermsIntroText && req.body.customTermsIntroText!="") ? req.body.customTermsIntroText : null);
 
   const customRatingsText = (req.body.customRatingsText && req.body.customRatingsText!="") ? req.body.customRatingsText : null;
   group.set('configuration.customRatingsText', customRatingsText);

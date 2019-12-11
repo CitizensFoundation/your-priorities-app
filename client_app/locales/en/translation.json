@@ -1,4 +1,5 @@
 {
+  "customTermsIntroText": "Custom terms introduction text",
   "customUserNamePrompt": "Custom user name registration prompt",
   "alternativeTextForNewIdeaButton": "Alternative text for 'New idea' button",
   "alternativeTextForNewIdeaButtonClosed": "Alternative text for closed 'New idea' button",

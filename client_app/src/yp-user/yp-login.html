@@ -425,7 +425,7 @@
                 </paper-input>
               </div>
             </div>
-            <div class="signupTerms" hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms"
+            <div class="signupTerms" hidden$="[[!showSignupTerms]]">[[customTermsIntroText]] - <span on-tap="_openTerms"
                                                                                                      class="openTerms">{{t('signupTermsOpen')}}</span>
             </div>
             <div class="buttons layout vertical center-center">
@@ -589,6 +589,11 @@
         computed: '_userNameText(domain)'
       },
 
+      customTermsIntroText: {
+        type: String,
+        computed: '_customTermsIntroText(domain)'
+      },
+
       disableFacebookLoginForGroup: {
         type: Boolean,
         value: false
@@ -627,6 +632,14 @@
       customSamlLoginText: {
         type: String,
         value: null
+      }
+    },
+
+    _customTermsIntroText: function () {
+      if (window.appGlobals.currentGroup && window.appGlobals.currentGroup.configuration && window.appGlobals.currentGroup.configuration.customTermsIntroText) {
+        return window.appGlobals.currentGroup.configuration.customTermsIntroText;
+      } else {
+        return this.t('signupTermsInfo');
       }
     },
 
