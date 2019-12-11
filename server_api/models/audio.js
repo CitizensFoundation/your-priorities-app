@@ -343,7 +343,7 @@ module.exports = function(sequelize, DataTypes) {
         s3.getSignedUrl('putObject', s3Params, (error, url) => {
           if (error) {
             log.error('Error getting presigned url from AWS S3', { error });
-            callback(err);
+            callback(error);
           }
           else {
             let meta = { bucketName, publicBucket, endPoint, accelEndPoint,
