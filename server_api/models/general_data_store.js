@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var GeneralDataStore = sequelize.define("GeneralDataStore", {
+  const GeneralDataStore = sequelize.define("GeneralDataStore", {
     data: DataTypes.JSONB
   }, {
     indexes: [

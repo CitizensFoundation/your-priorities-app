@@ -1,11 +1,6 @@
 "use strict";
 
-const async = require("async");
-const request = require('request').defaults({ encoding: null });
-const fs = require('fs');
-const randomstring = require("randomstring");
 const log = require('../utils/logger');
-const toJson = require('../utils/to_json');
 const aws = require('aws-sdk');
 const _ = require('lodash');
 const queue = require('../active-citizen/workers/queue');

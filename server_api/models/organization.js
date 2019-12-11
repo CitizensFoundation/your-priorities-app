@@ -1,13 +1,9 @@
 "use strict";
 
-var async = require("async");
-var log = require('../utils/logger');
-var toJson = require('../utils/to_json');
-
-// https://www.npmjs.org/package/enum for state of posts
+const async = require("async");
 
 module.exports = function(sequelize, DataTypes) {
-  var Organization = sequelize.define("Organization", {
+  const Organization = sequelize.define("Organization", {
     name: { type: DataTypes.STRING, allowNull: false },
     description: DataTypes.TEXT,
     address: DataTypes.TEXT,
@@ -106,37 +102,34 @@ module.exports = function(sequelize, DataTypes) {
           done(err);
         });
       }
-    },
-
-    classMethods: {
-
-      ACCESS_PUBLIC: 0,
-      ACCESS_CLOSED: 1,
-      ACCESS_SECRET: 2,
-
-      convertAccessFromRadioButtons: function(body) {
-        var access = 0;
-        if (body.public) {
-          access = 0;
-        } else if (body.closed) {
-          access = 1;
-        } else if (body.secret) {
-          access = 2;
-        }
-        return access;
-      },
-
-      associate: function(models) {
-        Organization.belongsTo(models.Domain);
-        Organization.belongsTo(models.Community);
-        Organization.belongsTo(models.User);
-        Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
-        Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
-        Organization.belongsToMany(models.User, { as: 'OrganizationUsers', through: 'OrganizationUser' });
-        Organization.belongsToMany(models.User, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
-      }
     }
   });
+
+  Organization.associate = (models) => {
+    Organization.belongsTo(models.Domain);
+    Organization.belongsTo(models.Community);
+    Organization.belongsTo(models.User);
+    Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
+    Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
+    Organization.belongsToMany(models.User, { as: 'OrganizationUsers', through: 'OrganizationUser' });
+    Organization.belongsToMany(models.User, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
+  };
+
+  Organization.ACCESS_PUBLIC = 0;
+  Organization.ACCESS_CLOSED = 1;
+  Organization.ACCESS_SECRET = 2;
+
+  Organization.convertAccessFromRadioButtons = (body) => {
+    let access = 0;
+    if (body.public) {
+      access = 0;
+    } else if (body.closed) {
+      access = 1;
+    } else if (body.secret) {
+      access = 2;
+    }
+    return access;
+  };
 
   return Organization;
 };

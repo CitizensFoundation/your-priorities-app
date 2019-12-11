@@ -39,11 +39,6 @@ module.exports = (sequelize, DataTypes) => {
     // CREATE INDEX communityheaderimage_idx_community_id ON "CommunityHeaderImage" (community_id);
 
     timestamps: true,
-
-    instanceMethods: {
-
-
-    },
   });
 
   Category.associate = (models) => {
