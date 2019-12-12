@@ -1,14 +1,14 @@
 "use strict";
 
-var async = require("async");
-var log = require('../utils/logger');
-var toJson = require('../utils/to_json');
-var _ = require('lodash');
+const async = require("async");
+const log = require('../utils/logger');
+const toJson = require('../utils/to_json');
+const _ = require('lodash');
 
-var bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
-module.exports = function(sequelize, DataTypes) {
-  var User = sequelize.define("User", {
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define("User", {
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: true },
     status: { type: DataTypes.STRING, allowNull: false },
@@ -93,465 +93,459 @@ module.exports = function(sequelize, DataTypes) {
 
     // Add following indexes manually for high throughput sites
     // CREATE INDEX userprofileimage_idx_user_id ON "UserProfileImage" (user_id);
+  });
 
-    classMethods: {
+  User.associate = (models) => {
+    User.hasMany(models.Post);
+    User.hasMany(models.Point);
+    User.hasMany(models.Endorsement);
+    User.hasMany(models.PointQuality);
+    User.hasMany(models.UserLegacyPassword);
+    User.belongsToMany(models.Group, { as: 'GroupUsers', through: 'GroupUser' });
+    User.belongsToMany(models.Community, { as: 'CommunityUsers', through: 'CommunityUser' });
+    User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
+    User.belongsToMany(models.Image, { as: 'UserProfileImages', through: 'UserProfileImage' });
+    User.belongsToMany(models.Image, { as: 'UserHeaderImages', through: 'UserHeaderImage' });
+    User.belongsToMany(models.Domain, { as: 'DomainAdmins', through: 'DomainAdmin' });
+    User.belongsToMany(models.Community, { as: 'CommunityAdmins', through: 'CommunityAdmin' });
+    User.belongsToMany(models.Group, { as: 'GroupAdmins', through: 'GroupAdmin' });
+    User.belongsToMany(models.Organization, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
+    User.belongsToMany(models.Organization, { as: 'OrganizationUsers', through: 'OrganizationUser' });
+    User.belongsToMany(models.Video, { as: 'UserProfileVideos', through: 'UserProfileVideo'});
+  };
 
-      serializeSamlUser: function (profile, req, callback) {
-        log.info("Serialize SAML user", { context: 'serializeSamlUser', profile: profile });
-        if (profile.UserSSN) {
-          this.serializeIslandIsSamlUser(profile, callback);
-        } else if (profile["urn:mynj:userCode"] || profile.issuer === 'https://my.state.nj.us/idp/shibboleth') {
-          this.serializeMyNJSamlUser(profile, req, callback);
+  User.defaultAttributesWithSocialMedia = ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'default_locale','legacy_passwords_disabled'];
+
+  User.defaultAttributesWithSocialMediaPubli = ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'];
+
+  User.defaultAttributesWithSocialMediaPublicAndEmail = ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'];
+
+  User.serializeSamlUser = (profile, req, callback) => {
+    log.info("Serialize SAML user", { context: 'serializeSamlUser', profile: profile });
+    if (profile.UserSSN) {
+      this.serializeIslandIsSamlUser(profile, callback);
+    } else if (profile["urn:mynj:userCode"] || profile.issuer === 'https://my.state.nj.us/idp/shibboleth') {
+      this.serializeMyNJSamlUser(profile, req, callback);
+    } else {
+      callback("Can't find SAML serialize handler");
+    }
+  };
+
+  User.serializeMyNJSamlUser = (profile, req, callback) => {
+    log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
+    let email = null;
+    let user;
+    async.series([
+      (seriesCallback) => {
+        if (!profile["urn:mynj:userCode"] ||
+          (req.ypDomain.configuration &&
+            req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
+            !profile["urn:mynj:pubEmpAgency"])) {
+          log.info("User not allowed access through MyNJ", {context: 'serializeSamlUser', profile: profile});
+          seriesCallback("customError");
         } else {
-          callback("Can't find SAML serialize handler");
+          seriesCallback();
         }
       },
-
-      serializeMyNJSamlUser: function (profile, req, callback) {
-        log.info("User Serialized In Serialize MyNJ SAML User", {context: 'serializeSamlUser', profile: profile});
-        var email = null;
-        var user;
-        async.series([
-          function (seriesCallback) {
-            if (!profile["urn:mynj:userCode"] ||
-                (req.ypDomain.configuration &&
-                req.ypDomain.configuration.forceSecureSamlEmployeeLogin &&
-                !profile["urn:mynj:pubEmpAgency"])) {
-              log.info("User not allowed access through MyNJ", {context: 'serializeSamlUser', profile: profile});
-              seriesCallback("customError");
-            } else {
-              seriesCallback();
-            }
+      (seriesCallback) => {
+        sequelize.models.User.find({
+          where: {
+            ssn: profile["urn:mynj:userCode"]
           },
-          function (seriesCallback) {
-            sequelize.models.User.find({
-              where: {
-                ssn: profile["urn:mynj:userCode"]
-              },
-              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn', 'legacy_passwords_disabled']
-            }).then(function (userIn) {
-              if (userIn) {
-                user = userIn;
-                log.info("User Serialized Found MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
-                seriesCallback();
-              } else {
-                seriesCallback();
-              }
-            }).catch(function (error) {
-              seriesCallback(error);
-            })
-          },
-          function (seriesCallback) {
-            if (!user) {
-              email = profile["urn:mynj:pubEmpEmail"];
-              if (email) {
-                email = email.toLowerCase();
-                sequelize.models.User.find({
-                  where: {
-                    email: email
-                  },
-                  attributes: ['id','email']
-                }).then(function (userByEmail) {
-                  if (userByEmail) {
-                    email = 'my-nj-' + Math.floor(Math.random() * 999) + '.'+email;
-                  }
-                  seriesCallback();
-                }).catch(function (error) {
-                  seriesCallback(error);
-                });
-              } else {
-                seriesCallback();
-              }
-            } else {
-              seriesCallback();
-            }
-          },
-          function (seriesCallback) {
-            if (!user) {
-              sequelize.models.User.create(
-                {
-                  ssn: profile["urn:mynj:userCode"],
-                  name: profile.FirstName + ' ' + profile.LastName,
-                  email: email,
-                  profile_data: {
-                    saml_show_confirm_email_completed: email ? false : true,
-                  },
-                  private_profile_data: {
-                    saml_agency: profile["urn:mynj:pubEmpAgency"],
-                    saml_provider: 'MyNJ'
-                  },
-                  notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
-                  status: 'active'
-                }).then(function (userIn) {
-                  if (userIn) {
-                    user = userIn;
-                    log.info("User Serialized Created MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
-                    seriesCallback();
-                  } else {
-                    seriesCallback("Could not create user from SAML");
-                  }
-              }).catch(function (error) {
-                seriesCallback(error);
-              })
-            } else {
-              seriesCallback();
-            }
-          }
-        ], function (error) {
-          if (error) {
-            callback(error);
+          attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn', 'legacy_passwords_disabled']
+        }).then((userIn) => {
+          if (userIn) {
+            user = userIn;
+            log.info("User Serialized Found MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
+            seriesCallback();
           } else {
-            callback(null, user);
+            seriesCallback();
           }
-        });
+        }).catch((error) => {
+          seriesCallback(error);
+        })
       },
-
-      serializeIslandIsSamlUser: function (profile, callback) {
-        log.info("User Serialized In Serialize IslandIs SAML User", { context: 'serializeSamlUser', profile: profile });
-        var user;
-        async.series([
-          function (seriesCallback) {
+      (seriesCallback) => {
+        if (!user) {
+          email = profile["urn:mynj:pubEmpEmail"];
+          if (email) {
+            email = email.toLowerCase();
             sequelize.models.User.find({
               where: {
-                ssn: profile.UserSSN
+                email: email
               },
-              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn','legacy_passwords_disabled']
-            }).then (function (userIn) {
-              if (userIn) {
-                user = userIn;
-                log.info("User Serialized Found IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
-                seriesCallback();
-              } else {
-                seriesCallback();
+              attributes: ['id','email']
+            }).then((userByEmail) => {
+              if (userByEmail) {
+                email = 'my-nj-' + Math.floor(Math.random() * 999) + '.'+email;
               }
-            }).catch (function (error) {
-              seriesCallback(error);
-            })
-          },
-          function (seriesCallback) {
-            if (!user) {
-              sequelize.models.User.create(
-                {
-                  ssn: profile.UserSSN,
-                  name: profile.Name,
-                  private_profile_data: { saml_provider: 'island.is' },
-                  notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
-                  status: 'active'
-                }).then (function (userIn) {
-                if (userIn) {
-                  user = userIn;
-                  log.info("User Serialized Created IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
-                  seriesCallback();
-                } else {
-                  seriesCallback("Could not create user from SAML");
-                }
-              }).catch (function (error) {
-                seriesCallback(error);
-              })
-            } else {
               seriesCallback();
-            }
-          }
-        ], function (error) {
-          if (error) {
-            callback(error);
+            }).catch((error) => {
+              seriesCallback(error);
+            });
           } else {
-            callback(null, user);
+            seriesCallback();
           }
-        });
+        } else {
+          seriesCallback();
+        }
       },
-
-      serializeFacebookUser: function (profile, domain, callback) {
-        var user;
-        async.series([
-          function (seriesCallback) {
-            sequelize.models.User.find({
-              where: {
-                facebook_id: profile.identifier
+      (seriesCallback) => {
+        if (!user) {
+          sequelize.models.User.create(
+            {
+              ssn: profile["urn:mynj:userCode"],
+              name: profile.FirstName + ' ' + profile.LastName,
+              email: email,
+              profile_data: {
+                saml_show_confirm_email_completed: email ? false : true,
               },
-              attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled']
-            }).then (function (userIn) {
-              if (userIn) {
+              private_profile_data: {
+                saml_agency: profile["urn:mynj:pubEmpAgency"],
+                saml_provider: 'MyNJ'
+              },
+              notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+              status: 'active'
+            }).then((userIn) => {
+            if (userIn) {
+              user = userIn;
+              log.info("User Serialized Created MyNJ SAML User", {context: 'serializeSamlUser', userSsn: user.ssn});
+              seriesCallback();
+            } else {
+              seriesCallback("Could not create user from SAML");
+            }
+          }).catch((error) => {
+            seriesCallback(error);
+          })
+        } else {
+          seriesCallback();
+        }
+      }
+    ],  (error) => {
+      if (error) {
+        callback(error);
+      } else {
+        callback(null, user);
+      }
+    });
+  };
+
+  User.serializeIslandIsSamlUser = (profile, callback) => {
+    log.info("User Serialized In Serialize IslandIs SAML User", { context: 'serializeSamlUser', profile: profile });
+    let user;
+    async.series([
+      (seriesCallback) => {
+        sequelize.models.User.find({
+          where: {
+            ssn: profile.UserSSN
+          },
+          attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'profile_data', 'github_id', 'twitter_id', 'ssn','legacy_passwords_disabled']
+        }).then ((userIn) => {
+          if (userIn) {
+            user = userIn;
+            log.info("User Serialized Found IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
+            seriesCallback();
+          } else {
+            seriesCallback();
+          }
+        }).catch ((error) => {
+          seriesCallback(error);
+        })
+      },
+      (seriesCallback) => {
+        if (!user) {
+          sequelize.models.User.create(
+            {
+              ssn: profile.UserSSN,
+              name: profile.Name,
+              private_profile_data: { saml_provider: 'island.is' },
+              notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+              status: 'active'
+            }).then ((userIn) => {
+            if (userIn) {
+              user = userIn;
+              log.info("User Serialized Created IslandIs SAML User", { context: 'serializeSamlUser', userSsn: user.ssn});
+              seriesCallback();
+            } else {
+              seriesCallback("Could not create user from SAML");
+            }
+          }).catch ((error) => {
+            seriesCallback(error);
+          })
+        } else {
+          seriesCallback();
+        }
+      }
+    ], (error) => {
+      if (error) {
+        callback(error);
+      } else {
+        callback(null, user);
+      }
+    });
+  };
+
+  User.serializeFacebookUser = (profile, domain, callback) => {
+    let user;
+    async.series([
+      (seriesCallback) => {
+        sequelize.models.User.find({
+          where: {
+            facebook_id: profile.identifier
+          },
+          attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled']
+        }).then ((userIn) => {
+          if (userIn) {
+            user = userIn;
+            seriesCallback();
+          } else {
+            seriesCallback();
+          }
+        }).catch ((error) => {
+          seriesCallback(error);
+        })
+      },
+      (seriesCallback) => {
+        if (!user) {
+          sequelize.models.User.find({
+            where: {
+              email: profile.email
+            },
+            attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled']
+          }).then ((userIn) => {
+            if (userIn) {
+              userIn.facebook_id = profile.identifier;
+              userIn.save().then((results) => {
                 user = userIn;
                 seriesCallback();
-              } else {
-                seriesCallback();
-              }
-            }).catch (function (error) {
-              seriesCallback(error);
-            })
-          },
-          function (seriesCallback) {
-            if (!user) {
-              sequelize.models.User.find({
-                where: {
-                  email: profile.email
-                },
-                attributes: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled']
-              }).then (function (userIn) {
-                if (userIn) {
-                  userIn.facebook_id = profile.identifier;
-                  userIn.save().then(function (results) {
-                    user = userIn;
-                    seriesCallback();
-                  });
-                } else {
-                  seriesCallback();
-                }
-              }).catch (function (error) {
-                seriesCallback(error);
-              })
-            } else {
-              seriesCallback();
-            }
-          },
-          function (seriesCallback) {
-            if (!user) {
-              sequelize.models.User.create(
-                {
-                  email: profile.email,
-                  facebook_id: profile.identifier,
-                  name: profile.nameDisplay,
-                  notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
-                  status: 'active'
-              }).then (function (userIn) {
-                if (userIn) {
-                  user = userIn;
-                  seriesCallback();
-                } else {
-                  seriesCallback("Could not create user");
-                }
-              }).catch (function (error) {
-                seriesCallback(error);
-              })
-            } else {
-              seriesCallback();
-            }
-          },
-          function (seriesCallback) {
-            if (domain && domain.configuration && domain.configuration.downloadFacebookImagesForUser===true) {
-              sequelize.models.Image.downloadFacebookImagesForUser(user, function (error, newUser) {
-                user = newUser;
-                seriesCallback(error);
               });
             } else {
               seriesCallback();
             }
-          }
-        ], function (error) {
-          if (error) {
-            callback(error);
-          } else {
-            callback(null, user);
-          }
-        });
+          }).catch ((error) => {
+            seriesCallback(error);
+          })
+        } else {
+          seriesCallback();
+        }
       },
-
-      localCallback: function (req, email, password, done) {
-        sequelize.models.User.find({
-          where: { email: email },
-          attributes: ['id', 'encrypted_password','legacy_passwords_disabled']
-        }).then(function(user) {
-          if (user) {
-            user.validatePassword(password, done);
-          } else {
-            log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
-            return done(null, false, { message: 'Incorrect username.' });
-          }
-          return null;
-        }).catch(function(error) {
-          log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
-          done(error);
-        });
-      },
-
-      defaultAttributesWithSocialMedia: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'default_locale','legacy_passwords_disabled'],
-
-      defaultAttributesWithSocialMediaPublic: ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'],
-
-      defaultAttributesWithSocialMediaPublicAndEmail: ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'],
-
-      associate: function(models) {
-        User.hasMany(models.Post);
-        User.hasMany(models.Point);
-        User.hasMany(models.Endorsement);
-        User.hasMany(models.PointQuality);
-        User.hasMany(models.UserLegacyPassword);
-        User.belongsToMany(models.Group, { as: 'GroupUsers', through: 'GroupUser' });
-        User.belongsToMany(models.Community, { as: 'CommunityUsers', through: 'CommunityUser' });
-        User.belongsToMany(models.Domain, { as: 'DomainUsers', through: 'DomainUser' });
-        User.belongsToMany(models.Image, { as: 'UserProfileImages', through: 'UserProfileImage' });
-        User.belongsToMany(models.Image, { as: 'UserHeaderImages', through: 'UserHeaderImage' });
-        User.belongsToMany(models.Domain, { as: 'DomainAdmins', through: 'DomainAdmin' });
-        User.belongsToMany(models.Community, { as: 'CommunityAdmins', through: 'CommunityAdmin' });
-        User.belongsToMany(models.Group, { as: 'GroupAdmins', through: 'GroupAdmin' });
-        User.belongsToMany(models.Organization, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
-        User.belongsToMany(models.Organization, { as: 'OrganizationUsers', through: 'OrganizationUser' });
-        User.belongsToMany(models.Video, { as: 'UserProfileVideos', through: 'UserProfileVideo'});
-      },
-
-      getUserWithAll: function (userId, callback) {
-        var user, endorsements, pointQualities;
-
-        async.parallel([
-          function (seriesCallback) {
-           sequelize.models.User.find({
-              where: {id: userId},
-              attributes: _.concat(sequelize.models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','default_locale']),
-              order: [
-                [ { model:sequelize.models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
-                [ { model:sequelize.models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
-              ],
-              include: [
-                {
-                  model:sequelize.models.Image, as: 'UserProfileImages',
-                  attributes: ['id', 'created_at', 'formats'],
-                  required: false
-                },
-                {
-                  model:sequelize.models.Image, as: 'UserHeaderImages',
-                  attributes: ['id', 'created_at', 'formats'],
-                  required: false
-                }
-              ]
-            }).then(function(userIn) {
+      (seriesCallback) => {
+        if (!user) {
+          sequelize.models.User.create(
+            {
+              email: profile.email,
+              facebook_id: profile.identifier,
+              name: profile.nameDisplay,
+              notifications_settings: sequelize.models.AcNotification.defaultNotificationSettings,
+              status: 'active'
+            }).then ((userIn) => {
+            if (userIn) {
               user = userIn;
               seriesCallback();
-            }).catch(function(error) {
-              seriesCallback(error);
-            });
-          },
-          function (seriesCallback) {
-            sequelize.models.Endorsement.findAll({
-              where: {user_id: userId},
-              attributes: ['id', 'value', 'post_id']
-            }).then(function(endorsementsIn) {
-              endorsements = endorsementsIn;
-              seriesCallback();
-            }).catch(function(error) {
-              seriesCallback(error);
-            });
-          },
-          function (seriesCallback) {
-            sequelize.models.PointQuality.findAll({
-              where: {user_id: userId},
-              attributes: ['id', 'value', 'point_id']
-            }).then(function (pointQualitiesIn) {
-              pointQualities = pointQualitiesIn;
-              seriesCallback();
-            }).catch(function (error) {
-              seriesCallback(error);
-            });
-          }
-        ], function (error) {
-          if (user) {
-            user.dataValues.Endorsements = endorsements;
-            user.dataValues.PointQualities = pointQualities;
-          }
-          callback(error, user);
-        })
-      }
-    },
-
-    instanceMethods: {
-
-      simple: function () {
-        return { id: this.id, name: this.name, email: this.email };
-      },
-
-      setLocale: function (i18n, domain, community, done) {
-        if (this.default_locale && this.default_locale != "") {
-          i18n.changeLanguage(this.default_locale, function (err, t) {
-            done();
-          });
-        } else if (community && community.default_locale && community.default_locale != "") {
-          i18n.changeLanguage(community.default_locale, function (err, t) {
-            done();
-          });
+            } else {
+              seriesCallback("Could not create user");
+            }
+          }).catch ((error) => {
+            seriesCallback(error);
+          })
         } else {
-          i18n.changeLanguage(domain.default_locale, function (err, t) {
-            done();
-          });
+          seriesCallback();
         }
       },
+      (seriesCallback) => {
+        if (domain && domain.configuration && domain.configuration.downloadFacebookImagesForUser===true) {
+          sequelize.models.Image.downloadFacebookImagesForUser(user, (error, newUser) => {
+            user = newUser;
+            seriesCallback(error);
+          });
+        } else {
+          seriesCallback();
+        }
+      }
+    ], (error) =>{
+      if (error) {
+        callback(error);
+      } else {
+        callback(null, user);
+      }
+    });
+  };
 
-      setupProfileImage: function(body, done) {
-        if (body.uploadedProfileImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedProfileImageId}
-          }).then(function (image) {
-            if (image)
-              this.addUserProfileImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
+  User.localCallback = (req, email, password, done) => {
+    sequelize.models.User.find({
+      where: { email: email },
+      attributes: ['id', 'encrypted_password','legacy_passwords_disabled']
+    }).then((user) => {
+      if (user) {
+        user.validatePassword(password, done);
+      } else {
+        log.warn("User LocalStrategy Incorrect username", { context: 'localStrategy', user: toJson(user), err: 'Incorrect username', errorStatus: 401 });
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      return null;
+    }).catch((error) => {
+      log.error("User LocalStrategy Error", { context: 'localStrategy', err: error, errorStatus: 500 });
+      done(error);
+    });
+  };
 
-      setupHeaderImage: function(body, done) {
-        if (body.uploadedHeaderImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedHeaderImageId}
-          }).then(function (image) {
-            if (image)
-              this.addUserHeaderImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
+  User.getUserWithAll = (userId, callback) => {
+    let user, endorsements, pointQualities;
 
-      setupImages: function(body, done) {
-        async.parallel([
-          function(callback) {
-            this.setupProfileImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this),
-          function(callback) {
-            this.setupHeaderImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this)
-        ], function(err) {
-          done(err);
+    async.parallel([
+      (seriesCallback) => {
+        sequelize.models.User.find({
+          where: {id: userId},
+          attributes: _.concat(sequelize.models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings', 'profile_data', 'email', 'default_locale']),
+          order: [
+            [{model: sequelize.models.Image, as: 'UserProfileImages'}, 'created_at', 'asc'],
+            [{model: sequelize.models.Image, as: 'UserHeaderImages'}, 'created_at', 'asc']
+          ],
+          include: [
+            {
+              model: sequelize.models.Image, as: 'UserProfileImages',
+              attributes: ['id', 'created_at', 'formats'],
+              required: false
+            },
+            {
+              model: sequelize.models.Image, as: 'UserHeaderImages',
+              attributes: ['id', 'created_at', 'formats'],
+              required: false
+            }
+          ]
+        }).then((userIn) => {
+          user = userIn;
+          seriesCallback();
+        }).catch((error) => {
+          seriesCallback(error);
         });
       },
-
-      createPasswordHash: function (password) {
-        var salt = bcrypt.genSaltSync(10);
-        this.encrypted_password = bcrypt.hashSync(password, salt);
+      (seriesCallback) => {
+        sequelize.models.Endorsement.findAll({
+          where: {user_id: userId},
+          attributes: ['id', 'value', 'post_id']
+        }).then((endorsementsIn) => {
+          endorsements = endorsementsIn;
+          seriesCallback();
+        }).catch((error) => {
+          seriesCallback(error);
+        });
       },
+      (seriesCallback) => {
+        sequelize.models.PointQuality.findAll({
+          where: {user_id: userId},
+          attributes: ['id', 'value', 'point_id']
+        }).then((pointQualitiesIn) => {
+          pointQualities = pointQualitiesIn;
+          seriesCallback();
+        }).catch((error) => {
+          seriesCallback(error);
+        });
+      }
+    ], (error) => {
+      if (user) {
+        user.dataValues.Endorsements = endorsements;
+        user.dataValues.PointQualities = pointQualities;
+      }
+      callback(error, user);
+    })
+  };
 
-      validatePassword: function(password, done) {
-        var verified = this.encrypted_password ? bcrypt.compareSync(password, this.encrypted_password) : null;
-        if (verified) {
-          done(null, this);
-        } else {
-          if (this.legacy_passwords_disabled) {
-            done(null, false, { message: 'Incorrect password.' });
+  User.prototype.simple = () => {
+    return { id: this.id, name: this.name, email: this.email };
+  };
+
+  User.prototype.setLocale = (i18n, domain, community, done) => {
+    if (this.default_locale && this.default_locale !== "") {
+      i18n.changeLanguage(this.default_locale, (err, t) => {
+        done();
+      });
+    } else if (community && community.default_locale && community.default_locale !== "") {
+      i18n.changeLanguage(community.default_locale, (err, t) => {
+        done();
+      });
+    } else {
+      i18n.changeLanguage(domain.default_locale, (err, t) => {
+        done();
+      });
+    }
+  };
+
+  User.prototype.setupProfileImage = (body, done) => {
+    if (body.uploadedProfileImageId) {
+      sequelize.models.Image.find({
+        where: {id: body.uploadedProfileImageId}
+      }).then((image) => {
+        if (image)
+          this.addUserProfileImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  User.prototype.setupHeaderImage = (body, done) => {
+    if (body.uploadedHeaderImageId) {
+      sequelize.models.Image.find({
+        where: {id: body.uploadedHeaderImageId}
+      }).then((image) => {
+        if (image)
+          this.addUserHeaderImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  User.prototype.setupImages = (body, done) => {
+    async.parallel([
+      (callback) => {
+        this.setupProfileImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
+        });
+      },
+      (callback) => {
+        this.setupHeaderImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
+        });
+      }
+    ], (err) => {
+      done(err);
+    });
+  };
+
+  User.prototype.createPasswordHash = (password) => {
+    const salt = bcrypt.genSaltSync(10);
+    this.encrypted_password = bcrypt.hashSync(password, salt);
+  };
+
+  User.prototype.validatePassword = (password, done) => {
+    let verified = this.encrypted_password ? bcrypt.compareSync(password, this.encrypted_password) : null;
+    if (verified) {
+      done(null, this);
+    } else {
+      if (this.legacy_passwords_disabled) {
+        done(null, false, { message: 'Incorrect password.' });
+      } else {
+        log.warn("Looking for legacy passwords");
+        sequelize.models.User.find({
+          where: { id: this.id },
+          include: [ sequelize.models.UserLegacyPassword ]
+        }).then((user) => {
+          user.UserLegacyPasswords.map((legacyPassword) => {
+            if (bcrypt.compareSync(password, legacyPassword.encrypted_password)) {
+              verified = true;
+            }
+          });
+          if (verified) {
+            done(null, this);
           } else {
-            log.warn("Looking for legacy passwords");
-            sequelize.models.User.find({
-              where: { id: this.id },
-              include: [ sequelize.models.UserLegacyPassword ]
-            }).then(function(user) {
-              user.UserLegacyPasswords.map( function(legacyPassword) {
-                if (bcrypt.compareSync(password, legacyPassword.encrypted_password)) {
-                  verified = true;
-                }
-              });
-              if (verified) {
-                done(null, this);
-              } else {
-                done(null, false, { message: 'Incorrect password.' });
-              }
-            }.bind(this));
+            done(null, false, { message: 'Incorrect password.' });
           }
-        }
+        });
       }
     }
-  });
+  };
 
   return User;
 };

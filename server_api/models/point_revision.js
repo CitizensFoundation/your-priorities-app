@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var PointRevision = sequelize.define("PointRevision", {
+  const PointRevision = sequelize.define("PointRevision", {
     name: { type: DataTypes.STRING, allowNull: true },
     content: { type: DataTypes.TEXT, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
@@ -35,14 +35,13 @@ module.exports = function(sequelize, DataTypes) {
     ],
 
     underscored: true,
-    tableName: 'point_revisions',
-    classMethods: {
-      associate: function(models) {
-        PointRevision.belongsTo(models.Point);
-        PointRevision.belongsTo(models.User);
-      }
-    }
+    tableName: 'point_revisions'
   });
+
+  PointRevision.associate = (models) => {
+    PointRevision.belongsTo(models.Point);
+    PointRevision.belongsTo(models.User);
+  };
 
   return PointRevision;
 };

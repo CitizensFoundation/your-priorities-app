@@ -1,11 +1,11 @@
 "use strict";
 
-var async = require("async");
-var queue = require('../active-citizen/workers/queue');
+const async = require("async");
+const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
 
-module.exports = function(sequelize, DataTypes) {
-  var Post = sequelize.define("Post", {
+module.exports = (sequelize, DataTypes) => {
+  const Post = sequelize.define("Post", {
     content_type: { type: DataTypes.INTEGER, allowNull: false },
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
@@ -187,329 +187,324 @@ module.exports = function(sequelize, DataTypes) {
 
     timestamps: true,
 
-    tableName: 'posts',
+    tableName: 'posts'
+  });
 
-    classMethods: {
+  Post.associate = (models) => {
+    Post.hasMany(models.Point);
+    Post.hasMany(models.Endorsement);
+    Post.hasMany(models.PostRevision);
+    Post.belongsTo(models.Category);
+    Post.belongsTo(models.User);
+    Post.belongsTo(models.Group, {foreignKey: "group_id"});
+    Post.belongsToMany(models.Image, { as: 'PostImages', through: 'PostImage' });
+    Post.belongsToMany(models.Image, { as: 'PostHeaderImages', through: 'PostHeaderImage' });
+    Post.belongsToMany(models.Image, { as: 'PostUserImages', through: 'PostUserImage' });
+    Post.belongsToMany(models.Video, { as: 'PostVideos', through: 'PostVideo' });
+    Post.belongsToMany(models.Audio, { as: 'PostAudios', through: 'PostAudio' });
+  };
 
-      CONTENT_IDEA: 0,
-      CONTENT_STORY: 1,
-      CONTENT_NEWSFEED: 2,
-      CONTENT_PERSON: 3,
-      CONTENT_BLOG: 4,
-      CONTENT_QUESTION: 5,
+  Post.CONTENT_IDEA = 0;
+  Post.CONTENT_STORY = 1;
+  Post.CONTENT_NEWSFEED = 2;
+  Post.CONTENT_PERSON = 3;
+  Post.CONTENT_BLOG = 4;
+  Post.CONTENT_QUESTION = 5;
 
-      associate: function(models) {
-        Post.hasMany(models.Point);
-        Post.hasMany(models.Endorsement);
-        Post.hasMany(models.PostRevision);
-        Post.belongsTo(models.Category);
-        Post.belongsTo(models.User);
-        Post.belongsTo(models.Group, {foreignKey: "group_id"});
-        Post.belongsToMany(models.Image, { as: 'PostImages', through: 'PostImage' });
-        Post.belongsToMany(models.Image, { as: 'PostHeaderImages', through: 'PostHeaderImage' });
-        Post.belongsToMany(models.Image, { as: 'PostUserImages', through: 'PostUserImage' });
-        Post.belongsToMany(models.Video, { as: 'PostVideos', through: 'PostVideo' });
-        Post.belongsToMany(models.Audio, { as: 'PostAudios', through: 'PostAudio' });
-      },
+  Post.getSearchVector = () => {
+    return 'PostText';
+  };
 
-      getSearchVector: function() {
-        return 'PostText';
-      },
+  Post.addFullTextIndex = () => {
 
-      addFullTextIndex: function() {
+    if(sequelize.options.dialect !== 'postgres') {
+      console.log('Not creating search index, must be using POSTGRES to do this');
+      return;
+    }
 
-        if(sequelize.options.dialect !== 'postgres') {
-          console.log('Not creating search index, must be using POSTGRES to do this');
-          return;
-        }
+    console.log("Adding full text index");
 
-        console.log("Adding full text index");
+    const searchFields = ['name', 'description'];
+    const Post = this;
 
-        var searchFields = ['name', 'description'];
-        var Post = this;
+    const vectorName = Post.getSearchVector();
+    sequelize.queryInterface.describeTable("posts").then( (data) => {
+      if (!data.PostText) {
+        sequelize
+          .query('ALTER TABLE "' + Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
+          .then(() => {
+            return sequelize
+              .query('UPDATE "' + Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
+              .error(console.log);
+          }).then(() => {
+          return sequelize
+            .query('CREATE INDEX post_search_idx ON "' + Post.tableName + '" USING gin("' + vectorName + '");')
+            .error(console.log);
+        }).then(() => {
+          return sequelize
+            .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
+            .error(console.log);
+        }).error(console.log);
+      } else {
+        log.info("PostText search index is already setup");
+      }
+    });
+  };
 
-        var vectorName = Post.getSearchVector();
-        sequelize.queryInterface.describeTable("posts").then( (data) => {
-          if (!data.PostText) {
-            sequelize
-              .query('ALTER TABLE "' + Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
-              .then(function() {
-                return sequelize
-                  .query('UPDATE "' + Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
-                  .error(console.log);
-              }).then(function() {
-              return sequelize
-                .query('CREATE INDEX post_search_idx ON "' + Post.tableName + '" USING gin("' + vectorName + '");')
-                .error(console.log);
-            }).then(function() {
-              return sequelize
-                .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
-                .error(console.log);
-            }).error(console.log);
-          } else {
-            log.info("PostText search index is already setup");
-          }
-        });
-      },
+  Post.search = (query, groupId, modelCategory) => {
+    console.log("In search for " + query);
 
-      search: function(query, groupId, modelCategory) {
-        console.log("In search for " + query);
+    if(sequelize.options.dialect !== 'postgres') {
+      console.log('Search is only implemented on POSTGRES database');
+      return;
+    }
 
-        if(sequelize.options.dialect !== 'postgres') {
-          console.log('Search is only implemented on POSTGRES database');
-          return;
-        }
+    const Post = this;
 
-        var Post = this;
+    query = sequelize.getQueryInterface().escape(query);
+    console.log(query);
 
-        query = sequelize.getQueryInterface().escape(query);
-        console.log(query);
+    const where = '"'+Post.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')';
 
-        var where = '"'+Post.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')';
-
-        return Post.findAll({
-          order: "created_at DESC",
-          where: [where, []],
-          limit: 1024,
-          attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
-            'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
+    return Post.findAll({
+      order: "created_at DESC",
+      where: [where, []],
+      limit: 1024,
+      attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
+        'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
+      include: [
+        {
+          model: sequelize.models.Category,
+          attributes: { exclude: ['ip_address', 'user_agent'] },
+          required: false,
           include: [
             {
-              model: sequelize.models.Category,
-              attributes: { exclude: ['ip_address', 'user_agent'] },
+              model: sequelize.models.Image,
               required: false,
-              include: [
-                {
-                  model: sequelize.models.Image,
-                  required: false,
-                  as: 'CategoryIconImages',
-                  attributes: ['id','formats'],
-                  order: [
-                    [ { model: sequelize.models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
-                  ]
-                }
+              as: 'CategoryIconImages',
+              attributes: ['id','formats'],
+              order: [
+                [ { model: sequelize.models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]
               ]
-            },
-            {
-              model: sequelize.models.PostRevision,
-              required: false
-            },
-            {
-              model: sequelize.models.Point,
-              attributes: ['id','content'],
-              required: false
-            },
-            { model: sequelize.models.Image,
-              as: 'PostHeaderImages',
-              attributes: ['id','formats','updated_at'],
-              required: false
-            },
-            {
-              model: sequelize.models.Group,
-              required: true,
-              attributes: ['id','configuration','name','theme_id','access'],
-              where: {
-                id: groupId
-              }
             }
           ]
+        },
+        {
+          model: sequelize.models.PostRevision,
+          required: false
+        },
+        {
+          model: sequelize.models.Point,
+          attributes: ['id','content'],
+          required: false
+        },
+        { model: sequelize.models.Image,
+          as: 'PostHeaderImages',
+          attributes: ['id','formats','updated_at'],
+          required: false
+        },
+        {
+          model: sequelize.models.Group,
+          required: true,
+          attributes: ['id','configuration','name','theme_id','access'],
+          where: {
+            id: groupId
+          }
+        }
+      ]
+    });
+  };
+
+  Post.prototype.setupModerationData = () => {
+    if (!this.data) {
+      this.set('data', {});
+    }
+    if (!this.data.moderation) {
+      this.set('data.moderation', {});
+    }
+  };
+
+  Post.prototype.report = (req, source, callback) => {
+    this.setupModerationData();
+    async.series([
+      (seriesCallback) => {
+        if (!this.data.moderation.lastReportedBy) {
+          this.set('data.moderation.lastReportedBy', []);
+          if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
+            log.info("process-moderation post toxicity on manual report");
+            queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
+          }
+        }
+        this.set('data.moderation.lastReportedBy',
+          [{ date: new Date(), source: source, userId: (req && req.user) ? req.user.id : null, userEmail: (req && req.user) ? req.user.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
+        );
+        this.save().then(() => {
+          seriesCallback();
+        }).catch((error) => {
+          seriesCallback(error);
+        });
+      },
+      (seriesCallback) => {
+        if (req && req.disableNotification===true) {
+          seriesCallback();
+        } else {
+          sequelize.models.AcActivity.createActivity({
+            type: 'activity.report.content',
+            userId: (req && req.user) ? req.user.id : null,
+            postId: this.id,
+            groupId: this.group_id,
+            communityId: (this.Group && this.Group.Community) ? this.Group.Community.id : null,
+            domainId:  (this.Group && this.Group.Community && this.Group.Community.Domain) ? this.Group.Community.Domain.id : null
+          }, (error) => {
+            seriesCallback(error);
+          });
+        }
+      }
+    ], (error) => {
+      this.increment('counter_flags');
+      callback(error);
+    });
+  };
+
+  Post.prototype.simple = () => {
+    return { id: this.id, name: this.name };
+  };
+
+  Post.prototype.updateAllExternalCounters = (req, direction, column, done) => {
+    async.parallel([
+      (callback) => {
+        sequelize.models.Group.find({
+          where: {id: this.group_id}
+        }).then((group) => {
+          if (direction==='up')
+            group.increment(column);
+          else if (direction==='down') {
+            const groupColumnValue = group[column];
+            if (groupColumnValue && groupColumnValue>0) {
+              group.decrement(column);
+            }
+          }
+          group.updateAllExternalCounters(req, direction, column, callback);
+        })
+      }
+    ], (err) => {
+      done(err);
+    });
+  };
+
+  Post.prototype.updateAllExternalCountersBy = (req, direction, column, updateBy, done) => {
+    if (updateBy && updateBy>0) {
+      async.parallel([
+        (callback) => {
+          sequelize.models.Group.find({
+            where: {id: this.group_id}
+          }).then((group) => {
+            if (direction==='up')
+              group.increment(column, {by: updateBy});
+            else if (direction==='down') {
+              const groupColumnValue = group[column];
+              if (groupColumnValue && (groupColumnValue-updateBy)>=0) {
+                group.decrement(column, {by: updateBy});
+              } else if (groupColumnValue) {
+                group.decrement(column, {by: groupColumnValue});
+              }
+            }
+            group.updateAllExternalCounters(req, direction, column, callback);
+          })
+        }
+      ], (err) => {
+        done(err);
+      });
+    } else {
+      done();
+    }
+  };
+
+  Post.prototype.setupHeaderImage = (body, done) => {
+    if (body.uploadedHeaderImageId) {
+      sequelize.models.Image.find({
+        where: {id: body.uploadedHeaderImageId}
+      }).then((image) => {
+        if (image)
+          this.addPostHeaderImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  Post.prototype.getImageFormatUrl = (formatId) => {
+    if (this.PostHeaderImages && this.PostHeaderImages.length>0) {
+      const formats = JSON.parse(this.PostHeaderImages[this.PostHeaderImages.length-1].formats);
+      if (formats && formats.length>0)
+        return formats[formatId];
+    } else {
+      return "";
+    }
+  };
+
+  Post.prototype.setupImages = (body, done) => {
+    async.parallel([
+      (callback) => {
+        this.setupHeaderImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
         });
       }
-    },
+    ], (err) => {
+      done(err);
+    });
+  };
 
-    instanceMethods: {
-      setupModerationData: function () {
-        if (!this.data) {
-          this.set('data', {});
-        }
-        if (!this.data.moderation) {
-          this.set('data.moderation', {});
-        }
-      },
-
-      report: function (req, source, callback) {
-        this.setupModerationData();
-        async.series([
-          function (seriesCallback) {
-            if (!this.data.moderation.lastReportedBy) {
-              this.set('data.moderation.lastReportedBy', []);
-              if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
-                log.info("process-moderation post toxicity on manual report");
-                queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
-              }
-            }
-            this.set('data.moderation.lastReportedBy',
-              [{ date: new Date(), source: source, userId: (req && req.user) ? req.user.id : null, userEmail: (req && req.user) ? req.user.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
-            );
-            this.save().then(function () {
-              seriesCallback();
-            }).catch(function (error) {
-              seriesCallback(error);
-            });
-          }.bind(this),
-          function (seriesCallback) {
-            if (req && req.disableNotification===true) {
-              seriesCallback();
-            } else {
-              sequelize.models.AcActivity.createActivity({
-                type: 'activity.report.content',
-                userId: (req && req.user) ? req.user.id : null,
-                postId: this.id,
-                groupId: this.group_id,
-                communityId: (this.Group && this.Group.Community) ? this.Group.Community.id : null,
-                domainId:  (this.Group && this.Group.Community && this.Group.Community.Domain) ? this.Group.Community.Domain.id : null
-              }, function (error) {
-                seriesCallback(error);
-              });
-            }
-          }.bind(this)
-        ], function (error) {
-          this.increment('counter_flags');
-          callback(error);
-        }.bind(this));
-      },
-
-      simple: function() {
-        return { id: this.id, name: this.name };
-      },
-
-      updateAllExternalCounters: function(req, direction, column, done) {
-        async.parallel([
-          function(callback) {
-            sequelize.models.Group.find({
-              where: {id: this.group_id}
-            }).then(function (group) {
-              if (direction=='up')
-                group.increment(column);
-              else if (direction=='down') {
-                var groupColumnValue = group[column];
-                if (groupColumnValue && groupColumnValue>0) {
-                  group.decrement(column);
-                }
-              }
-              group.updateAllExternalCounters(req, direction, column, callback);
-            }.bind(this))
-          }.bind(this)
-        ], function(err) {
-          done(err);
-        });
-      },
-
-      updateAllExternalCountersBy: function(req, direction, column, updateBy, done) {
-        if (updateBy && updateBy>0) {
-          async.parallel([
-            function(callback) {
-              sequelize.models.Group.find({
-                where: {id: this.group_id}
-              }).then(function (group) {
-                if (direction=='up')
-                  group.increment(column, {by: updateBy});
-                else if (direction=='down') {
-                  var groupColumnValue = group[column];
-                  if (groupColumnValue && (groupColumnValue-updateBy)>=0) {
-                    group.decrement(column, {by: updateBy});
-                  } else if (groupColumnValue) {
-                    group.decrement(column, {by: groupColumnValue});
-                  }
-                }
-                group.updateAllExternalCounters(req, direction, column, callback);
-              }.bind(this))
-            }.bind(this)
-          ], function(err) {
-            done(err);
-          });
-        } else {
-          done();
-        }
-      },
-
-      setupHeaderImage: function(body, done) {
-        if (body.uploadedHeaderImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedHeaderImageId}
-          }).then(function (image) {
-            if (image)
-              this.addPostHeaderImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
-
-      getImageFormatUrl: function(formatId) {
-        if (this.PostHeaderImages && this.PostHeaderImages.length>0) {
-          var formats = JSON.parse(this.PostHeaderImages[this.PostHeaderImages.length-1].formats);
-          if (formats && formats.length>0)
-            return formats[formatId];
-        } else {
-          return "";
-        }
-      },
-
-      setupImages: function(body, done) {
-        async.parallel([
-          function(callback) {
-            this.setupHeaderImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this)
-        ], function(err) {
-          done(err);
-        });
-      },
-
-      setupAfterSave: function(req, res, done) {
-        var post = this;
-        var thisRevision = sequelize.models.PostRevision.build({
-          name: post.name,
-          description: post.description,
+  Post.prototype.setupAfterSave = (req, res, done) => {
+    const post = this;
+    const thisRevision = sequelize.models.PostRevision.build({
+      name: post.name,
+      description: post.description,
+      group_id: post.group_id,
+      user_id: req.user.id,
+      this_id: post.id,
+      status: post.status,
+      user_agent: req.useragent.source,
+      ip_address: req.clientIp
+    });
+    thisRevision.save().then(() => {
+      if (req.body.pointFor && req.body.pointFor!=="") {
+        const point = sequelize.models.Point.build({
           group_id: post.group_id,
+          post_id: post.id,
+          content: req.body.pointFor,
+          value: 1,
           user_id: req.user.id,
-          this_id: post.id,
           status: post.status,
           user_agent: req.useragent.source,
           ip_address: req.clientIp
         });
-        thisRevision.save().then(function() {
-          if (req.body.pointFor && req.body.pointFor!="") {
-            var point = sequelize.models.Point.build({
-              group_id: post.group_id,
-              post_id: post.id,
-              content: req.body.pointFor,
-              value: 1,
-              user_id: req.user.id,
-              status: post.status,
-              user_agent: req.useragent.source,
-              ip_address: req.clientIp
+        point.save().then(() => {
+          const pointRevision = sequelize.models.PointRevision.build({
+            group_id: point.group_id,
+            post_id: post.id,
+            content: point.content,
+            value: point.value,
+            user_id: req.user.id,
+            point_id: point.id,
+            status: post.status,
+            user_agent: req.useragent.source,
+            ip_address: req.clientIp
+          });
+          pointRevision.save().then(() => {
+            log.info("process-moderation point toxicity after post and point has been saved");
+            queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+            post.updateAllExternalCounters(req, 'up', 'counter_points', () => {
+              post.increment('counter_points');
+              done();
             });
-            point.save().then(function() {
-              var pointRevision = sequelize.models.PointRevision.build({
-                group_id: point.group_id,
-                post_id: post.id,
-                content: point.content,
-                value: point.value,
-                user_id: req.user.id,
-                point_id: point.id,
-                status: post.status,
-                user_agent: req.useragent.source,
-                ip_address: req.clientIp
-              });
-              pointRevision.save().then(function () {
-                log.info("process-moderation point toxicity after post and point has been saved");
-                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
-                post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
-                  post.increment('counter_points');
-                  done();
-                });
-              });
-            });
-          } else {
-            done();
-          }
+          });
         });
+      } else {
+        done();
       }
-    }
-  });
+    });
+  };
 
   return Post;
 };

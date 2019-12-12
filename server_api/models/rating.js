@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   const Rating = sequelize.define("Rating", {
     value: { type: DataTypes.INTEGER, allowNull: false },
     type_index: { type: DataTypes.INTEGER, allowNull: false },
@@ -43,16 +43,14 @@ module.exports = function(sequelize, DataTypes) {
       {
         fields: ['user_id', 'deleted']
       }
-    ],
-
-    classMethods: {
-      associate: function(models) {
-        Rating.belongsTo(models.Post);
-        Rating.belongsTo(models.Point);
-        Rating.belongsTo(models.User);
-      }
-    }
+    ]
   });
+
+  Rating.associate = (models) => {
+    Rating.belongsTo(models.Post);
+    Rating.belongsTo(models.Point);
+    Rating.belongsTo(models.User);
+  };
 
   return Rating;
 };

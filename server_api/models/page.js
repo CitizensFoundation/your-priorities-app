@@ -1,10 +1,10 @@
 "use strict";
 
-var async = require('async');
-var _ = require('lodash');
+const async = require('async');
+const _ = require('lodash');
 
-module.exports = function(sequelize, DataTypes) {
-  var Page = sequelize.define("Page", {
+module.exports = (sequelize, DataTypes) => {
+  const Page = sequelize.define("Page", {
     title: { type: DataTypes.JSONB, allowNull: false },
     content: { type: DataTypes.JSONB, allowNull: false },
     weight: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -81,177 +81,176 @@ module.exports = function(sequelize, DataTypes) {
 
     underscored: true,
 
-    tableName: 'pages',
-
-    classMethods: {
-
-      getPagesForAdmin: function (req, options, callback)  {
-        sequelize.models.Page.findAll( {
-          where: options,
-          order: "created_at ASC"
-        }).then( function (pages) {
-          callback(null, pages);
-        }).catch( function (error) {
-          callback(error);
-        });
-      },
-
-      newPage: function (req, options, callback)  {
-        sequelize.models.Page.create(options).then(function (results) {
-          callback();
-        }).catch(function (error) {
-          callback(error);
-        });
-      },
-
-      updatePageLocale: function (req, options, callback)  {
-        sequelize.models.Page.find({ where: options }).then(function (page) {
-          if (page) {
-            var content = {};
-            if (!page.content) {
-              page.content = {};
-            }
-            if (!page.title) {
-              page.title = {};
-            }
-            page.set('content.'+req.body.locale, req.body.content);
-            page.set('title.'+req.body.locale, req.body.title);
-            page.save({fields: ['title','content']}).then(function (results) {
-              callback();
-            }).catch(function (error) {
-              callback(error);
-            });
-          } else {
-            callback("Not found");
-          }
-        }).catch(function (error) {
-          callback(error);
-        });
-      },
-
-      publishPage: function (req, options, callback)  {
-        sequelize.models.Page.find({ where: options }).then(function (page) {
-          if (page) {
-            page.published = true;
-            page.save().then(function (results) {
-              callback();
-            });
-          } else {
-            callback("Not found");
-          }
-        }).catch(function (error) {
-          callback(error);
-        });
-      },
-
-      unPublishPage: function (req, options, callback)  {
-        sequelize.models.Page.find({ where: options }).then(function (page) {
-          if (page) {
-            page.published = false;
-            page.save().then(function (results) {
-              callback();
-            });
-          } else {
-            callback("Not found");
-          }
-        }).catch(function (error) {
-          callback(error);
-        });
-      },
-
-      deletePage: function (req, options, callback)  {
-        sequelize.models.Page.find({ where: options }).then(function (page) {
-          if (page) {
-            page.deleted = true;
-            page.save().then(function (results) {
-              callback();
-            });
-          } else {
-            callback("Not found");
-          }
-        }).catch(function (error) {
-          callback(error);
-        });
-      },
-
-      getPages: function (req, options, callback)  {
-        var groupPages = [];
-        var communityPages = [];
-        var domainPages = [];
-
-        async.parallel([
-          function (seriesCallback) {
-            if (options.group_id) {
-              sequelize.models.Page.findAll( {
-                where: {
-                  group_id: options.group_id,
-                  published: true
-                }
-              }).then( function (pages) {
-                if (pages) {
-                  groupPages = groupPages.concat(pages);
-                }
-                seriesCallback();
-              }).catch( function (error) {
-                seriesCallback(error);
-              });
-
-            } else {
-              seriesCallback();
-            }
-          },
-          function (seriesCallback) {
-            if (options.community_id) {
-              sequelize.models.Page.findAll( {
-                where: {
-                  community_id: options.community_id,
-                  published: true
-                }
-              }).then( function (pages) {
-                if (pages) {
-                  communityPages = communityPages.concat(pages);
-                }
-                seriesCallback();
-              }).catch( function (error) {
-                seriesCallback(error);
-              });
-
-            } else {
-              seriesCallback();
-            }
-          },
-          function (seriesCallback) {
-            if (options.domain_id) {
-              sequelize.models.Page.findAll( {
-                where: {
-                  domain_id: options.domain_id,
-                  published: true
-                }
-              }).then( function (pages) {
-                if (pages) {
-                  domainPages = domainPages.concat(pages);
-                }
-                seriesCallback();
-              }).catch( function (error) {
-                seriesCallback(error);
-              });
-
-            } else {
-              seriesCallback();
-            }
-          }
-        ], function (error) {
-          callback(error, groupPages.concat(communityPages,domainPages));
-        })
-      },
-
-      associate: function(models) {
-        Page.belongsTo(models.Domain);
-        Page.belongsTo(models.Community);
-        Page.belongsTo(models.Group);
-        Page.belongsTo(models.User);
-      }
-    }
+    tableName: 'pages'
   });
+
+
+  Page.associate = (models) => {
+    Page.belongsTo(models.Domain);
+    Page.belongsTo(models.Community);
+    Page.belongsTo(models.Group);
+    Page.belongsTo(models.User);
+  };
+
+  Page.getPagesForAdmin = (req, options, callback) => {
+    sequelize.models.Page.findAll( {
+      where: options,
+      order: "created_at ASC"
+    }).then((pages) => {
+      callback(null, pages);
+    }).catch( (error) => {
+      callback(error);
+    });
+  };
+
+  Page.newPage = (req, options, callback) => {
+    sequelize.models.Page.create(options).then((results) => {
+      callback();
+    }).catch((error) => {
+      callback(error);
+    });
+  };
+
+  Page.updatePageLocale = (req, options, callback) =>  {
+    sequelize.models.Page.find({ where: options }).then((page) => {
+      if (page) {
+        const content = {};
+        if (!page.content) {
+          page.content = {};
+        }
+        if (!page.title) {
+          page.title = {};
+        }
+        page.set('content.'+req.body.locale, req.body.content);
+        page.set('title.'+req.body.locale, req.body.title);
+        page.save({fields: ['title','content']}).then((results) => {
+          callback();
+        }).catch((error) => {
+          callback(error);
+        });
+      } else {
+        callback("Not found");
+      }
+    }).catch((error) => {
+      callback(error);
+    });
+  };
+
+  Page.publishPage = (req, options, callback) =>  {
+    sequelize.models.Page.find({ where: options }).then((page) => {
+      if (page) {
+        page.published = true;
+        page.save().then((results) => {
+          callback();
+        });
+      } else {
+        callback("Not found");
+      }
+    }).catch((error) => {
+      callback(error);
+    });
+  };
+
+  Page.unPublishPage = (req, options, callback) =>  {
+    sequelize.models.Page.find({ where: options }).then((page) => {
+      if (page) {
+        page.published = false;
+        page.save().then((results) => {
+          callback();
+        });
+      } else {
+        callback("Not found");
+      }
+    }).catch((error) => {
+      callback(error);
+    });
+  };
+
+  Page.deletePage = (req, options, callback) =>  {
+    sequelize.models.Page.find({ where: options }).then((page) => {
+      if (page) {
+        page.deleted = true;
+        page.save().then((results) => {
+          callback();
+        });
+      } else {
+        callback("Not found");
+      }
+    }).catch((error) => {
+      callback(error);
+    });
+  };
+
+  Page.getPages = (req, options, callback) =>  {
+    let groupPages = [];
+    let communityPages = [];
+    let domainPages = [];
+
+    async.parallel([
+      (seriesCallback) => {
+        if (options.group_id) {
+          sequelize.models.Page.findAll( {
+            where: {
+              group_id: options.group_id,
+              published: true
+            }
+          }).then((pages) => {
+            if (pages) {
+              groupPages = groupPages.concat(pages);
+            }
+            seriesCallback();
+          }).catch((error) => {
+            seriesCallback(error);
+          });
+
+        } else {
+          seriesCallback();
+        }
+      },
+      (seriesCallback) => {
+        if (options.community_id) {
+          sequelize.models.Page.findAll( {
+            where: {
+              community_id: options.community_id,
+              published: true
+            }
+          }).then((pages) => {
+            if (pages) {
+              communityPages = communityPages.concat(pages);
+            }
+            seriesCallback();
+          }).catch((error) => {
+            seriesCallback(error);
+          });
+
+        } else {
+          seriesCallback();
+        }
+      },
+      (seriesCallback) => {
+        if (options.domain_id) {
+          sequelize.models.Page.findAll( {
+            where: {
+              domain_id: options.domain_id,
+              published: true
+            }
+          }).then((pages) => {
+            if (pages) {
+              domainPages = domainPages.concat(pages);
+            }
+            seriesCallback();
+          }).catch( (error) => {
+            seriesCallback(error);
+          });
+
+        } else {
+          seriesCallback();
+        }
+      }
+    ], (error) => {
+      callback(error, groupPages.concat(communityPages,domainPages));
+    })
+  };
+
   return Page;
 };

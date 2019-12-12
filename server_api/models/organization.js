@@ -2,7 +2,7 @@
 
 const async = require("async");
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   const Organization = sequelize.define("Organization", {
     name: { type: DataTypes.STRING, allowNull: false },
     description: DataTypes.TEXT,
@@ -45,64 +45,6 @@ module.exports = function(sequelize, DataTypes) {
     // CREATE INDEX organizationuser_idx_user_id ON "OrganizationUser" (user_id);
 
     tableName: 'organizations',
-
-    instanceMethods: {
-
-      simple: function() {
-        return { id: this.id, name: this.name, hostname: this.hostname };
-      },
-
-      updateAllExternalCounters: function(req, direction, column, done) {
-        if (direction=='up')
-          req.ypDomain.increment(column);
-        else if (direction=='down')
-          req.ypDomain.decrement(column);
-        done();
-      },
-
-      setupLogoImage: function(body, done) {
-        if (body.uploadedLogoImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedLogoImageId}
-          }).then(function (image) {
-            if (image)
-              this.addOrganizationLogoImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
-
-      setupHeaderImage: function(body, done) {
-        if (body.uploadedHeaderImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedHeaderImageId}
-          }).then(function (image) {
-            if (image)
-              this.addOrganizationHeaderImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
-
-      setupImages: function(body, done) {
-        async.parallel([
-          function(callback) {
-            this.setupLogoImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this),
-          function(callback) {
-            this.setupHeaderImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this)
-        ], function(err) {
-          done(err);
-        });
-      }
-    }
   });
 
   Organization.associate = (models) => {
@@ -129,6 +71,62 @@ module.exports = function(sequelize, DataTypes) {
       access = 2;
     }
     return access;
+  };
+
+
+  Organization.prototype.simple = () => {
+    return { id: this.id, name: this.name, hostname: this.hostname };
+  };
+
+  Organization.prototype.updateAllExternalCounters = (req, direction, column, done) => {
+    if (direction==='up')
+      req.ypDomain.increment(column);
+    else if (direction==='down')
+      req.ypDomain.decrement(column);
+    done();
+  };
+
+  Organization.prototype.setupLogoImage = (body, done) => {
+    if (body.uploadedLogoImageId) {
+      sequelize.models.Image.find({
+        where: {id: body.uploadedLogoImageId}
+      }).then((image) => {
+        if (image)
+          this.addOrganizationLogoImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  Organization.prototype.setupHeaderImage = (body, done) => {
+    if (body.uploadedHeaderImageId) {
+      sequelize.models.Image.find({
+        where: {id: body.uploadedHeaderImageId}
+      }).then((image) => {
+        if (image)
+          this.addOrganizationHeaderImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  Organization.prototype.setupImages = (body, done) => {
+    async.parallel([
+      (callback) => {
+        this.setupLogoImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
+        });
+      },
+      (callback) => {
+        this.setupHeaderImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
+        });
+      }
+    ], (err) => {
+      done(err);
+    });
   };
 
   return Organization;
