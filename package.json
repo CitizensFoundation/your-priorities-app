@@ -1,6 +1,6 @@
 {
   "name": "your-priorities-app",
-  "version": "8.5.6",
+  "version": "8.6.1",
   "license": "AGPL-3.0",
   "dependencies": {
     "@airbrake/node": "^1.0.6",
