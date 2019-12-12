@@ -28,9 +28,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Promotion.associate = (models) => {
-    Promotion.belongsTo(models.Group);
-    Promotion.belongsTo(models.Post);
-    Promotion.belongsTo(models.User);
+    Promotion.belongsTo(models.Group, { foreignKey: 'group_id'});
+    Promotion.belongsTo(models.Post, { foreignKey: 'post_id'});
+    Promotion.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   return Promotion;

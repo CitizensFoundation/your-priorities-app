@@ -41,8 +41,8 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Endorsement.associate = (models) => {
-    Endorsement.belongsTo(models.Post);
-    Endorsement.belongsTo(models.User);
+    Endorsement.belongsTo(models.Post, { foreignKey: 'post_id'});
+    Endorsement.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   return Endorsement;

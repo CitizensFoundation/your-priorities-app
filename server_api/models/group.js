@@ -99,9 +99,9 @@ module.exports = (sequelize, DataTypes) => {
     Group.hasMany(models.Point, { foreignKey: "group_id" });
     Group.hasMany(models.Endorsement, { foreignKey: "group_id" });
     Group.hasMany(models.Category, { foreignKey: "group_id" });
-    Group.belongsTo(models.Community);
+    Group.belongsTo(models.Community, { foreignKey: 'community_id'});
     Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
-    Group.belongsTo(models.User);
+    Group.belongsTo(models.User, { foreignKey: 'user_id'});
     Group.hasMany(models.Group, { as: 'GroupFolders', foreignKey: "in_group_folder_id" });
     Group.belongsTo(models.Group, { as: 'GroupFolder', foreignKey: "in_group_folder_id"});
     Group.belongsToMany(models.Image, { through: 'GroupImage' });
@@ -196,11 +196,11 @@ module.exports = (sequelize, DataTypes) => {
     return access;
   };
 
-  Group.prototype.simple = () => {
+  Group.prototype.simple = function () {
     return { id: this.id, name: this.name };
   };
 
-  Group.prototype.updateAllExternalCounters = (req, direction, column, done) => {
+  Group.prototype.updateAllExternalCounters = function (req, direction, column, done) {
     async.parallel([
       (callback) => {
         sequelize.models.Community.findOne({
@@ -229,7 +229,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Group.prototype.setupLogoImage = (body, done) => {
+  Group.prototype.setupLogoImage = function (body, done) {
     if (body.uploadedLogoImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedLogoImageId}
@@ -241,7 +241,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Group.prototype.setupHeaderImage = (body, done) => {
+  Group.prototype.setupHeaderImage = function (body, done) {
     if (body.uploadedHeaderImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
@@ -253,7 +253,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Group.prototype.getImageFormatUrl = (formatId) => {
+  Group.prototype.getImageFormatUrl = function (formatId) {
     if (this.GroupLogoImages && this.GroupLogoImages.length>0) {
       const formats = JSON.parse(this.GroupLogoImages[this.GroupLogoImages.length-1].formats);
       if (formats && formats.length>0)
@@ -263,7 +263,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Group.prototype.setupImages = (body, done) => {
+  Group.prototype.setupImages = function (body, done) {
     async.parallel([
       (callback) => {
         this.setupLogoImage(body, (err) => {

@@ -34,8 +34,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   PostRevision.associate = (models) => {
-    PostRevision.belongsTo(models.Post);
-    PostRevision.belongsTo(models.User);
+    PostRevision.belongsTo(models.Post, { foreignKey: 'post_id'});
+    PostRevision.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   return PostRevision;

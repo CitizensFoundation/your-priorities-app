@@ -196,9 +196,9 @@ module.exports = (sequelize, DataTypes) => {
     Post.hasMany(models.Point);
     Post.hasMany(models.Endorsement);
     Post.hasMany(models.PostRevision);
-    Post.belongsTo(models.Category);
-    Post.belongsTo(models.User);
-    Post.belongsTo(models.Group, {foreignKey: "group_id"});
+    Post.belongsTo(models.Category, { foreignKey: 'category_id'});
+    Post.belongsTo(models.User, { foreignKey: 'user_id'});
+    Post.belongsTo(models.Group, { foreignKey: "group_id"});
     Post.belongsToMany(models.Image, { as: 'PostImages', through: 'PostImage' });
     Post.belongsToMany(models.Image, { as: 'PostHeaderImages', through: 'PostHeaderImage' });
     Post.belongsToMany(models.Image, { as: 'PostUserImages', through: 'PostUserImage' });
@@ -227,24 +227,23 @@ module.exports = (sequelize, DataTypes) => {
     console.log("Adding full text index");
 
     const searchFields = ['name', 'description'];
-    const Post = this;
 
     const vectorName = sequelize.models.Post.getSearchVector();
     sequelize.queryInterface.describeTable("posts").then( (data) => {
       if (!data.PostText) {
         sequelize
-          .query('ALTER TABLE "' + Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
+          .query('ALTER TABLE "' + sequelize.models.Post.tableName + '" ADD COLUMN "' + vectorName + '" TSVECTOR')
           .then(() => {
             return sequelize
-              .query('UPDATE "' + Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
+              .query('UPDATE "' + sequelize.models.Post.tableName + '" SET "' + vectorName + '" = to_tsvector(\'english\', ' + searchFields.join(' || \' \' || ') + ')')
               .error(console.log);
           }).then(() => {
           return sequelize
-            .query('CREATE INDEX post_search_idx ON "' + Post.tableName + '" USING gin("' + vectorName + '");')
+            .query('CREATE INDEX post_search_idx ON "' + sequelize.models.Post.tableName + '" USING gin("' + vectorName + '");')
             .error(console.log);
         }).then(() => {
           return sequelize
-            .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
+            .query('CREATE TRIGGER post_vector_update BEFORE INSERT OR UPDATE ON "' + sequelize.models.Post.tableName + '" FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger("' + vectorName + '", \'pg_catalog.english\', ' + searchFields.join(', ') + ')')
             .error(console.log);
         }).error(console.log);
       } else {
@@ -260,8 +259,6 @@ module.exports = (sequelize, DataTypes) => {
       console.log('Search is only implemented on POSTGRES database');
       return;
     }
-
-    const Post = this;
 
     query = sequelize.getQueryInterface().escape(query);
     console.log(query);
@@ -317,7 +314,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Post.prototype.setupModerationData = () => {
+  Post.prototype.setupModerationData = function () {
     if (!this.data) {
       this.set('data', {});
     }
@@ -326,7 +323,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Post.prototype.report = (req, source, callback) => {
+  Post.prototype.report = function (req, source, callback) {
     this.setupModerationData();
     async.series([
       (seriesCallback) => {
@@ -368,11 +365,11 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Post.prototype.simple = () => {
+  Post.prototype.simple = function () {
     return { id: this.id, name: this.name };
   };
 
-  Post.prototype.updateAllExternalCounters = (req, direction, column, done) => {
+  Post.prototype.updateAllExternalCounters = function (req, direction, column, done) {
     async.parallel([
       (callback) => {
         sequelize.models.Group.findOne({
@@ -394,7 +391,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Post.prototype.updateAllExternalCountersBy = (req, direction, column, updateBy, done) => {
+  Post.prototype.updateAllExternalCountersBy = function (req, direction, column, updateBy, done) {
     if (updateBy && updateBy>0) {
       async.parallel([
         (callback) => {
@@ -422,7 +419,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Post.prototype.setupHeaderImage = (body, done) => {
+  Post.prototype.setupHeaderImage = function (body, done) {
     if (body.uploadedHeaderImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
@@ -434,7 +431,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Post.prototype.getImageFormatUrl = (formatId) => {
+  Post.prototype.getImageFormatUrl = function (formatId) {
     if (this.PostHeaderImages && this.PostHeaderImages.length>0) {
       const formats = JSON.parse(this.PostHeaderImages[this.PostHeaderImages.length-1].formats);
       if (formats && formats.length>0)
@@ -444,7 +441,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Post.prototype.setupImages = (body, done) => {
+  Post.prototype.setupImages = function (body, done) {
     async.parallel([
       (callback) => {
         this.setupHeaderImage(body, (err) => {
@@ -457,7 +454,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Post.prototype.setupAfterSave = (req, res, done) => {
+  Post.prototype.setupAfterSave = function (req, res, done) {
     const post = this;
     const thisRevision = sequelize.models.PostRevision.build({
       name: post.name,

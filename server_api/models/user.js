@@ -453,11 +453,11 @@ module.exports = (sequelize, DataTypes) => {
     })
   };
 
-  User.prototype.simple = () => {
+  User.prototype.simple = function () {
     return { id: this.id, name: this.name, email: this.email };
   };
 
-  User.prototype.setLocale = (i18n, domain, community, done) => {
+  User.prototype.setLocale = function (i18n, domain, community, done) {
     if (this.default_locale && this.default_locale !== "") {
       i18n.changeLanguage(this.default_locale, (err, t) => {
         done();
@@ -473,7 +473,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  User.prototype.setupProfileImage = (body, done) => {
+  User.prototype.setupProfileImage = function (body, done) {
     if (body.uploadedProfileImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedProfileImageId}
@@ -485,7 +485,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  User.prototype.setupHeaderImage = (body, done) => {
+  User.prototype.setupHeaderImage = function (body, done) {
     if (body.uploadedHeaderImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
@@ -497,7 +497,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  User.prototype.setupImages = (body, done) => {
+  User.prototype.setupImages = function (body, done) {
     async.parallel([
       (callback) => {
         this.setupProfileImage(body, (err) => {
@@ -516,7 +516,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  User.prototype.createPasswordHash = (password) => {
+  User.prototype.createPasswordHash = function (password) {
     const salt = bcrypt.genSaltSync(10);
     this.encrypted_password = bcrypt.hashSync(password, salt);
   };

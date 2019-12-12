@@ -26,12 +26,12 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   BulkStatusUpdate.associate = (models) => {
-    BulkStatusUpdate.belongsTo(models.Group);
-    BulkStatusUpdate.belongsTo(models.Community);
-    BulkStatusUpdate.belongsTo(models.User);
+    BulkStatusUpdate.belongsTo(models.Group, { foreignKey: 'group_id'});
+    BulkStatusUpdate.belongsTo(models.Community, { foreignKey: 'community_id'});
+    BulkStatusUpdate.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
-  BulkStatusUpdate.prototype.initializeConfig = (emailHeader, emailFooter, done) => {
+  BulkStatusUpdate.prototype.initializeConfig = function (emailHeader, emailFooter, done) {
     const config = { groups: [], emailHeader: emailHeader, emailFooter: emailFooter };
 
     const self = this;

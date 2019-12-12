@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   UserLegacyPassword.associate = (models) => {
-    UserLegacyPassword.belongsTo(models.User);
+    UserLegacyPassword.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   return UserLegacyPassword;

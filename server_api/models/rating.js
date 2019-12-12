@@ -49,9 +49,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Rating.associate = (models) => {
-    Rating.belongsTo(models.Post);
-    Rating.belongsTo(models.Point);
-    Rating.belongsTo(models.User);
+    Rating.belongsTo(models.Post, { foreignKey: 'post_id'});
+    Rating.belongsTo(models.Point, { foreignKey: 'point_id'});
+    Rating.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   return Rating;

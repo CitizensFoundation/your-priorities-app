@@ -88,10 +88,10 @@ module.exports = (sequelize, DataTypes) => {
 
 
   Page.associate = (models) => {
-    Page.belongsTo(models.Domain);
-    Page.belongsTo(models.Community);
-    Page.belongsTo(models.Group);
-    Page.belongsTo(models.User);
+    Page.belongsTo(models.Domain, { foreignKey: 'domain_id'});
+    Page.belongsTo(models.Community, { foreignKey: 'community_id'});
+    Page.belongsTo(models.Group, { foreignKey: 'group_id'});
+    Page.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   Page.getPagesForAdmin = (req, options, callback) => {

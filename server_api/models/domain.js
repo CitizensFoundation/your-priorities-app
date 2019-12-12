@@ -206,8 +206,8 @@ module.exports = (sequelize, DataTypes) => {
     }
     log.info("Domain name", { domainName: domainName });
 
-    Domain.findOrCreate({where: { domain_name: domainName },
-      defaults: { access: Domain.ACCESS_PUBLIC,
+    sequelize.models.Domain.findOrCreate({where: { domain_name: domainName },
+      defaults: { access: sequelize.models.Domain.ACCESS_PUBLIC,
         default_locale: 'en',
         name: 'New Domain',
         configuration: {},
@@ -272,11 +272,11 @@ module.exports = (sequelize, DataTypes) => {
   };
 
 
-  Domain.prototype.simple = () => {
+  Domain.prototype.simple = function () {
     return { id: this.id, name: this.name, domain_name: this.domain_name };
   };
 
-  Domain.prototype.ensureApiKeySetup = () => {
+  Domain.prototype.ensureApiKeySetup = function () {
     if (!this.secret_api_keys) {
       this.secret_api_keys = {
         facebook: {},
@@ -287,7 +287,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Domain.prototype.setupLogoImage = (body, done) => {
+  Domain.prototype.setupLogoImage = function (body, done) {
     if (body.uploadedLogoImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedLogoImageId}
@@ -299,7 +299,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Domain.prototype.setupHeaderImage = (body, done) => {
+  Domain.prototype.setupHeaderImage = function (body, done) {
     if (body.uploadedHeaderImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
@@ -311,7 +311,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Domain.prototype.getImageFormatUrl = (formatId) => {
+  Domain.prototype.getImageFormatUrl = function (formatId) {
     if (this.DomainLogoImages && this.DomainLogoImages.length>0) {
       const formats = JSON.parse(this.DomainLogoImages[this.DomainLogoImages.length-1].formats);
       if (formats && formats.length>0)
@@ -321,7 +321,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Domain.prototype.setupImages = (body, done) => {
+  Domain.prototype.setupImages = function (body, done) {
     async.parallel([
       (callback) => {
         this.setupLogoImage(body, (err) => {

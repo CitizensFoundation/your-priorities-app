@@ -50,9 +50,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Organization.associate = (models) => {
-    Organization.belongsTo(models.Domain);
-    Organization.belongsTo(models.Community);
-    Organization.belongsTo(models.User);
+    Organization.belongsTo(models.Domain, { foreignKey: 'domain_id'});
+    Organization.belongsTo(models.Community, { foreignKey: 'community_id'});
+    Organization.belongsTo(models.User, { foreignKey: 'user_id'});
     Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
     Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
     Organization.belongsToMany(models.User, { as: 'OrganizationUsers', through: 'OrganizationUser' });
@@ -76,11 +76,11 @@ module.exports = (sequelize, DataTypes) => {
   };
 
 
-  Organization.prototype.simple = () => {
+  Organization.prototype.simple = function () {
     return { id: this.id, name: this.name, hostname: this.hostname };
   };
 
-  Organization.prototype.updateAllExternalCounters = (req, direction, column, done) => {
+  Organization.prototype.updateAllExternalCounters = function  (req, direction, column, done) {
     if (direction==='up')
       req.ypDomain.increment(column);
     else if (direction==='down')
@@ -88,7 +88,7 @@ module.exports = (sequelize, DataTypes) => {
     done();
   };
 
-  Organization.prototype.setupLogoImage = (body, done) => {
+  Organization.prototype.setupLogoImage = function (body, done) {
     if (body.uploadedLogoImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedLogoImageId}
@@ -100,7 +100,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Organization.prototype.setupHeaderImage = (body, done) => {
+  Organization.prototype.setupHeaderImage = function  (body, done) {
     if (body.uploadedHeaderImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
@@ -112,7 +112,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Organization.prototype.setupImages = (body, done) => {
+  Organization.prototype.setupImages = function  (body, done) {
     async.parallel([
       (callback) => {
         this.setupLogoImage(body, (err) => {

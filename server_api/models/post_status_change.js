@@ -27,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   PostStatusChange.associate = (models) => {
-    PostStatusChange.belongsTo(models.Post);
-    PostStatusChange.belongsTo(models.User);
+    PostStatusChange.belongsTo(models.Post, { foreignKey: 'post_id'});
+    PostStatusChange.belongsTo(models.User, { foreignKey: 'user_id'});
     PostStatusChange.hasMany(models.PointRevision);
     PostStatusChange.hasMany(models.PointQuality);
   };

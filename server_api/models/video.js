@@ -72,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Video.associate = (models) => {
-    Video.belongsTo(models.User);
+    Video.belongsTo(models.User, { foreignKey: 'user_id'});
     Video.belongsToMany(models.Post, { as: 'PostVideos', through: 'PostVideo' });
     Video.belongsToMany(models.Image, { as: 'VideoImages', through: 'VideoImage' });
     Video.belongsToMany(models.Point, { as: 'PointVideos', through: 'PointVideo' });
@@ -446,12 +446,12 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Video.prototype.createFormats = (video) => {
+  Video.prototype.createFormats = function (video) {
     this.formats = [];
     this.formats.push(sequelize.models.Video.getFullUrl(video.meta));
   };
 
-  Video.prototype.getPreSignedUploadUrl = (options, callback) => {
+  Video.prototype.getPreSignedUploadUrl = function (options, callback) {
     const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
     const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
     const s3 = new aws.S3({

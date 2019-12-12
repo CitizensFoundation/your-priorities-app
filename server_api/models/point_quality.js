@@ -38,8 +38,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   PointQuality.associate = (models) => {
-    PointQuality.belongsTo(models.Point);
-    PointQuality.belongsTo(models.User);
+    PointQuality.belongsTo(models.Point, { foreignKey: 'point_id'});
+    PointQuality.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   return PointQuality;

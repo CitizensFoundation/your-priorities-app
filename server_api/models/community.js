@@ -102,7 +102,7 @@ module.exports = (sequelize, DataTypes) => {
     Community.hasMany(models.Community, { as: 'CommunityFolders', foreignKey: "in_community_folder_id" });
     Community.belongsTo(models.Community, { as: 'CommunityFolder', foreignKey: "in_community_folder_id"});
     Community.belongsTo(models.Domain, {foreignKey: "domain_id"});
-    Community.belongsTo(models.User);
+    Community.belongsTo(models.User, { foreignKey: 'user_id'});
     Community.belongsToMany(models.Video, { as: 'CommunityLogoVideos', through: 'CommunityLogoVideo'});
     Community.belongsToMany(models.Image, { as: 'CommunityLogoImages', through: 'CommunityLogoImage' });
     Community.belongsToMany(models.Image, { as: 'CommunityHeaderImages', through: 'CommunityHeaderImage' });
@@ -147,7 +147,7 @@ module.exports = (sequelize, DataTypes) => {
       hostname = req.params.communityHostname;
 
     if (hostname && hostname!=="" && hostname!=="www" && hostname!=="new" && hostname!=="app") {
-      Community.findOne({
+      sequelize.models.Community.findOne({
         where: {hostname: hostname}
       }).then((community) => {
         if (community) {
@@ -183,11 +183,11 @@ module.exports = (sequelize, DataTypes) => {
     return access;
   };
 
-  Community.prototype.simple = () => {
+  Community.prototype.simple = function () {
     return { id: this.id, name: this.name, hostname: this.hostname };
   };
 
-  Community.prototype.updateAllExternalCounters = (req, direction, column, done) => {
+  Community.prototype.updateAllExternalCounters = function (req, direction, column, done) {
     if (direction==='up')
       req.ypDomain.increment(column);
     else if (direction==='down')
@@ -195,7 +195,7 @@ module.exports = (sequelize, DataTypes) => {
     done();
   };
 
-  Community.prototype.setupLogoImage = (body, done) => {
+  Community.prototype.setupLogoImage = function (body, done) {
     if (body.uploadedLogoImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedLogoImageId}
@@ -207,7 +207,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Community.prototype.setupHeaderImage = (body, done) => {
+  Community.prototype.setupHeaderImage = function (body, done) {
     if (body.uploadedHeaderImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
@@ -219,7 +219,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Community.prototype.getImageFormatUrl = (formatId) => {
+  Community.prototype.getImageFormatUrl = function (formatId) {
     if (this.CommunityLogoImages && this.CommunityLogoImages.length>0) {
       const formats = JSON.parse(this.CommunityLogoImages[this.CommunityLogoImages.length-1].formats);
       if (formats && formats.length>0)
@@ -229,7 +229,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Community.prototype.setupImages = (body, done) => {
+  Community.prototype.setupImages = function (body, done) {
     async.parallel([
       (callback) => {
         this.setupLogoImage(body, (err) => {

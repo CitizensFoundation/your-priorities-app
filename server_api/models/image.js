@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Image.associate = (models) => {
-    Image.belongsTo(models.User);
+    Image.belongsTo(models.User, { foreignKey: 'user_id'});
     Image.belongsToMany(models.Video, { as: 'VideoImages', through: 'VideoImage' });
     Image.belongsToMany(models.Post, { as: 'PostImages', through: 'PostImage' });
     Image.belongsToMany(models.Post, { as: 'PostHeaderImages', through: 'PostHeaderImage' });

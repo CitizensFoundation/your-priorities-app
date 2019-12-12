@@ -270,14 +270,14 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Point.associate = (models) => {
-    Point.belongsTo(sequelize.models.PostStatusChange);
-    Point.belongsTo(sequelize.models.Post);
-    Point.belongsTo(sequelize.models.Community);
-    Point.belongsTo(sequelize.models.Domain);
-    Point.belongsTo(sequelize.models.User);
-    Point.belongsTo(sequelize.models.Image);
+    Point.belongsTo(sequelize.models.PostStatusChange, { foreignKey: 'post_status_change_id'});
+    Point.belongsTo(sequelize.models.Post, { foreignKey: 'post_id'});
+    Point.belongsTo(sequelize.models.Community, { foreignKey: 'community_id'});
+    Point.belongsTo(sequelize.models.Domain, { foreignKey: 'domain_id'});
+    Point.belongsTo(sequelize.models.User, { foreignKey: 'user_id'});
+    Point.belongsTo(sequelize.models.Image, { foreignKey: 'image_id'});
     Point.belongsTo(sequelize.models.Point, { as: 'ParentPoint' });
-    Point.belongsTo(sequelize.models.Group);
+    Point.belongsTo(sequelize.models.Group, { foreignKey: 'group_id'});
     Point.hasMany(sequelize.models.PointRevision);
     Point.hasMany(sequelize.models.PointQuality);
     Point.belongsToMany(models.Video, { as: 'PointVideos', through: 'PointVideo' });
@@ -438,7 +438,7 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Point.prototype.setupModerationData = () => {
+  Point.prototype.setupModerationData = function () {
     if (!this.data) {
       this.set('data', {});
     }
@@ -447,7 +447,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  Point.prototype.report = (req, source, post, callback) => {
+  Point.prototype.report = function (req, source, post, callback) {
     this.setupModerationData();
     async.series([
       (seriesCallback) => {

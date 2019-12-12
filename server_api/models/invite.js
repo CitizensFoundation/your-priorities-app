@@ -35,9 +35,9 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   Invite.associate = (models) => {
-    Invite.belongsTo(models.Community);
-    Invite.belongsTo(models.Group);
-    Invite.belongsTo(models.Post);
+    Invite.belongsTo(models.Community, { foreignKey: 'community_id'});
+    Invite.belongsTo(models.Group, { foreignKey: 'group_id'});
+    Invite.belongsTo(models.Post,{ foreignKey: 'post_id'});
     Invite.belongsTo(models.User, { as: 'FromUser' });
     Invite.belongsTo(models.User, { as: 'ToUser' });
   };

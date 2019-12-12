@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   RequestToJoin.associate = (models) => {
-    RequestToJoin.belongsTo(models.Community);
-    RequestToJoin.belongsTo(models.Group);
-    RequestToJoin.belongsTo(models.User);
+    RequestToJoin.belongsTo(models.Community, { foreignKey: 'community_id'});
+    RequestToJoin.belongsTo(models.Group, { foreignKey: 'group_id'});
+    RequestToJoin.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   RequestToJoin.JOIN_GROUP = 0;

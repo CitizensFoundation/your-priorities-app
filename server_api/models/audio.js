@@ -303,12 +303,12 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  Audio.prototype.createFormats = (audio) => {
+  Audio.prototype.createFormats = function (audio) {
     this.formats = [];
     this.formats.push(sequelize.models.Audio.getFullUrl(audio.meta));
   };
 
-  Audio.prototype.getPreSignedUploadUrl = (options, callback) => {
+  Audio.prototype.getPreSignedUploadUrl = function (options, callback) {
     const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
     const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
     const s3 = new aws.S3({

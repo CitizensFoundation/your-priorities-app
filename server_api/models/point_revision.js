@@ -41,8 +41,8 @@ module.exports = function(sequelize, DataTypes) {
   });
 
   PointRevision.associate = (models) => {
-    PointRevision.belongsTo(models.Point);
-    PointRevision.belongsTo(models.User);
+    PointRevision.belongsTo(models.Point, { foreignKey: 'point_id'});
+    PointRevision.belongsTo(models.User, { foreignKey: 'user_id'});
   };
 
   return PointRevision;

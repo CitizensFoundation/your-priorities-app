@@ -45,14 +45,14 @@ module.exports = (sequelize, DataTypes) => {
 
   Category.associate = (models) => {
     Category.hasMany(models.Post);
-    Category.belongsTo(models.Group);
+    Category.belongsTo(models.Group, { foreignKey: 'group_id'});
     Category.belongsToMany(models.Image, {
       as: 'CategoryIconImages',
       through: 'CategoryIconImage'});
     Category.belongsToMany(models.Image, { as: 'CategoryHeaderImages', through: 'CategoryHeaderImage' });
   };
 
-  Category.prototype.setupIconImage = (body, done) => {
+  Category.prototype.setupIconImage = function (body, done) {
     if (body.uploadedIconImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedIconImageId}
@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Category.prototype.setupHeaderImage = (body, done) => {
+  Category.prototype.setupHeaderImage = function (body, done) {
     if (body.uploadedHeaderImageId) {
       sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
@@ -76,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
     } else done();
   };
 
-  Category.prototype.setupImages = (body, done) => {
+  Category.prototype.setupImages = function (body, done) {
     async.parallel([
       (callback) => {
         this.setupIconImage(body,  (err) => {
