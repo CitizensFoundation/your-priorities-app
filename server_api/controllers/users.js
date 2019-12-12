@@ -177,7 +177,7 @@ router.post('/register_anonymously', function (req, res) {
         if (existingUser && existingUser.profile_data && existingUser.profile_data.isAnonymousUser) {
           log.info('Found Already Registered Anonymous', { user: toJson(existingUser), context: 'register_anonymous' });
           req.logIn(existingUser, function (error, detail) {
-            log.info("Have logged in Anon 1", { error, user: req.user });
+            log.info("Have logged in Anon 1", { error: error ? error : null, user: req.user });
             sendUserOrError(res, existingUser, 'register_anonymous', error, 401);
           });
         } else {
@@ -194,7 +194,7 @@ router.post('/register_anonymously', function (req, res) {
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {
-              log.info("Have logged in Anon 2", { error, user: req.user });
+              log.info("Have logged in Anon 2", { error: error ? error : null, user: req.user });
               log.info("Anon debug Session 2", { sessionID: req.sessionID, session: req.session });
               sendUserOrError(res, user, 'register_anonymous', error, 401);
             });
