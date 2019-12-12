@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === 'production') {
     dialectOptions: {
       ssl: true
     },
+    minifyAliases: true,
     logging: false,
     operatorsAliases: operatorsAliases
   });
@@ -41,6 +42,7 @@ if (process.env.NODE_ENV === 'production') {
   const config = require(__dirname + '/../config/config.json')[env];
   sequelize = new Sequelize(config.database, config.username, config.password, _.merge(config, {
     dialect: 'postgres',
+    minifyAliases: true,
     dialectOptions: {
       ssl: true
     },
