@@ -547,7 +547,7 @@ router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
             });
             res.sendStatus(500);
           } else {
-            log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null});
+            log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
             req.redisClient.setex(redisKey, process.env.PAGES_CACHE_TTL ? parseInt(process.env.PAGES_CACHE_TTL) : 3, JSON.stringify(pages));
             res.send(pages);
           }
@@ -571,7 +571,7 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
       log.error('Could not get page for admin for group', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -1016,7 +1016,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     ]
   }).then(function(group) {
     if (group) {
-      log.info('Group Viewed', { group: toJson(group.simple()), context: 'view', user: toJson(req.user) });
+      log.info('Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
       var PostsByNotOpen = models.Post.scope('not_open');
       PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
         res.send({group: group, hasNonOpenPosts: count != 0});
@@ -1208,14 +1208,11 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         postOrder = "created_at DESC";
       }
 
-      console.log(req.params.categoryId);
-      console.log(req.params);
-
       if (req.params.categoryId!='null') {
         where['category_id'] = req.params.categoryId;
       }
 
-      log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', user: toJson(req.user) });
+      log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
 
       var offset = 0;
       if (req.query.offset) {

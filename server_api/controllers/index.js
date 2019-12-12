@@ -43,7 +43,7 @@ let replaceFromEnv = function (data) {
 
 let sendIndex = function (req, res) {
   let indexFilePath;
-  log.info('Index Viewed', { context: 'view', user: req.user ? toJson(req.user) : null });
+  log.info('Index Viewed', { context: 'view', userId: req.user ? req.user.id : null });
 
   if (FORCE_PRODUCTION || process.env.NODE_ENV == 'production') {
     indexFilePath = path.resolve(__dirname, '../../client_app/build/bundled/index.html');

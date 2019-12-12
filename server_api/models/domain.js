@@ -188,7 +188,6 @@ module.exports = (sequelize, DataTypes) => {
     } else {
       domainName = 'localhost';
     }
-    log.info("Domain name", { domainName: domainName });
 
     sequelize.models.Domain.findOrCreate({where: { domain_name: domainName },
       defaults: { access: sequelize.models.Domain.ACCESS_PUBLIC,

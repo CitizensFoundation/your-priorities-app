@@ -307,7 +307,7 @@ auth.isGroupMemberOrOpenToCommunityMember = function (group, req, done) {
 
 auth.isLoggedIn = function (req, res, next) {
   if (auth.isAuthenticated(req)) {
-    log.info('User is Logged in', { context: 'isLoggedInAuth', user: toJson(req.user) });
+    log.info('User is Logged in', { context: 'isLoggedInAuth', userId: req.user ? req.user.id : -1 });
     return next();
   } else {
     log.info('User is Not Logged in', { context: 'isLoggedInAuth', user: toJson(req.user), errorStatus: 401});
@@ -317,7 +317,7 @@ auth.isLoggedIn = function (req, res, next) {
 
 auth.isLoggedInNoAnonymousCheck = function (req, res, next) {
   if (auth.isAuthenticatedNoAnonymousCheck(req)) {
-    log.info('User is Logged in', { context: 'isLoggedInNoAnonymousCheck', user: toJson(req.user) });
+    log.info('User is Logged in', { context: 'isLoggedInNoAnonymousCheck', userId: req.user ? req.user.id : -1 });
     return next();
   } else {
     log.info('User is Not Logged in', { context: 'isLoggedInNoAnonymousCheck', user: toJson(req.user), errorStatus: 401});

@@ -139,7 +139,10 @@ app.use(session(sessionConfig));
 // Setup the current domain from the host
 app.use(function setupDomain(req, res, next) {
   models.Domain.setYpDomain(req, res, function () {
-    log.info("Setup Domain Completed", {context: 'setYpDomain', domainId: req.ypDomain ? req.ypDomain.id : null});
+    log.info("Setup Domain Completed", {context: 'setYpDomain',
+      domainId: req.ypDomain ? req.ypDomain.id : null,
+      domainName: req.ypDomain ? req.ypDomain.domain_name : null
+    });
     next();
   });
 });

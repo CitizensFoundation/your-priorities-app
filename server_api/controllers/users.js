@@ -482,7 +482,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
       }
     ], function (error) {
       if (!error) {
-        log.info('User Sent Admin Rights', { user: toJson(req.user.simple()), context: 'adminRights'});
+        log.info('User Sent Admin Rights', { userId: req.user ? req.user.id : -1, context: 'adminRights'});
         res.send(adminAccess);
       } else {
         log.error("User AdminRights Error", { context: 'adminRights', err: error, errorStatus: 500 });
@@ -593,7 +593,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
       }
     ], function (error) {
       if (!error) {
-        log.info('User Sent Memberships', { user: toJson(req.user.simple()), context: 'memberships'});
+        log.info('User Sent Memberships', { userId: req.user ? req.user.id : -1, context: 'memberships'});
         res.send(memberships);
       } else {
         log.error("User Memberships Error", { context: 'memberships', err: error, errorStatus: 500 });
@@ -781,7 +781,7 @@ const setSAMLSettingsOnUser = (req, user, done) => {
 
 router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated()) {
-    log.info('User Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
+    log.info('User Logged in', { userId: req.user ? req.user.id : -1, context: 'isLoggedIn'});
   } else {
     log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
   }

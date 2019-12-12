@@ -323,7 +323,7 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
         ip_address: req.clientIp
       });
       pointRevision.save().then(function() {
-        log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
+        log.info('PointRevision Created', { pointRevisionId: pointRevision ? pointRevision.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
         models.AcActivity.createActivity({
           type:'activity.point.edited',
           userId: point.user_id,
@@ -514,7 +514,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     ip_address: req.clientIp
   });
   point.save().then(function() {
-    log.info('Point Created', { point: toJson(point), context: 'create', user: toJson(req.user) });
+    log.info('Point Created', { pointId: point ? point.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
     var pointRevision = models.PointRevision.build({
       group_id: point.group_id,
       post_id: point.post_id,
@@ -527,7 +527,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       ip_address: req.clientIp
     });
     pointRevision.save().then(function() {
-      log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
+      log.info('PointRevision Created', { pointRevisionId: pointRevision ? pointRevision.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
       models.AcActivity.createActivity({
         type:'activity.point.new',
         userId: point.user_id,
@@ -638,7 +638,7 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
       })
     }
     pointQuality.save().then(function() {
-      log.info('PointQuality Created or Updated', { pointQuality: toJson(pointQuality), context: 'createOrUpdate', user: toJson(req.user) });
+      log.info('PointQuality Created or Updated', { pointQualityId: pointQuality ? pointQuality.id : -1, context: 'createOrUpdate', userId: req.user ? req.user.id : -1 });
       async.series([
         function (seriesCallback) {
           if (point) {

@@ -158,7 +158,7 @@ router.post('/', isAuthenticated, function(req, res) {
             ip_address: req.clientIp
           });
           image.save().then(function() {
-            log.info('Image Created', { image: toJson(image), context: 'create', user: toJson(req.user) });
+            log.info('Image Created', { imageId: image ? image.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
             res.send(image);
           }).catch(function(error) {
             sendError(res, req.file.originalname, 'create', res.user, error);

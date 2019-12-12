@@ -169,7 +169,6 @@ module.exports = (sequelize, DataTypes) => {
                 });
               }
             ], (err) => {
-              console.log(err);
               done(err);
             });
           } else {

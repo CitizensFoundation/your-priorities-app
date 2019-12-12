@@ -386,7 +386,7 @@ module.exports = (sequelize, DataTypes) => {
                 ip_address: "127.0.0.1"
               });
               image.save().then(() => {
-                log.info('Image Created', { image: toJson(image), context: 'create', user: toJson(user) });
+                log.info('Image Created', { imageId: image ? image.id : -1, context: 'create', userId: user ? user.id : -1 });
                 user.setupImages({uploadedProfileImageId: image.id}, (error) => {
                   fs.unlink(filepath, (error) => {
                     if (error) {

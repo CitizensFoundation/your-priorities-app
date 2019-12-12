@@ -444,7 +444,7 @@ var getCommunity = function(req, done) {
       }).then(function(communityIn) {
         community = communityIn;
         if (community) {
-          log.info('Community Viewed', { community: toJson(community.simple()), context: 'view', user: toJson(req.user) });
+          log.info('Community Viewed', { communityId: community.id, context: 'view', userId: req.user ? req.user.id : -1 });
           seriesCallback()
         } else {
           seriesCallback("Not found");
@@ -880,7 +880,7 @@ router.get('/:communityId/pages', auth.can('view community'), function(req, res)
           log.error('Could not get pages for community', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
           res.sendStatus(500);
         } else {
-          log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
+          log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
           res.send(pages);
         }
       });
@@ -897,7 +897,7 @@ router.get('/:communityId/pages_for_admin', auth.can('edit community'), function
       log.error('Could not get page for admin for community', { err: error, context: 'pages_for_admin', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: req.user ? toJson(req.user.simple()) : null });
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });

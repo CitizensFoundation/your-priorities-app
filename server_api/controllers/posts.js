@@ -275,7 +275,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
     ]
   }).then(function(post) {
     if (post) {
-      log.info('Post Viewed', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
+      log.info('Post Viewed', { postId: post ? post.id : -1, context: 'view', userId: req.user ? req.user.id : -1 });
       res.send(post);
     } else {
       sendPostOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
@@ -653,7 +653,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
           }).then(function (points) {
             if (points) {
               const pointsInfo = { points: points, count: upCount+downCount };
-              log.info('Points Viewed', {postId: req.params.id, context: 'view', user: toJson(req.user)});
+              log.info('Points Viewed', {postId: req.params.id, context: 'view', userId: req.user ? req.user.id : -1});
               req.redisClient.setex(redisKey, process.env.POINTS_CACHE_TTL ? parseInt(process.env.POINTS_CACHE_TTL) : 3, JSON.stringify(pointsInfo));
               res.send(pointsInfo);
             } else {

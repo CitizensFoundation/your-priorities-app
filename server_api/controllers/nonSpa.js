@@ -50,7 +50,7 @@ var sendDomain = function (id, req, res) {
     ]
   }).then(function(domain) {
     if (domain) {
-      log.info('Domain Viewed From Bot', { domain: toJson(domain.simple()), context: 'view', bot: true });
+      log.info('Domain Viewed From Bot', { domainId: domain ? domain.id : -1, context: 'view', bot: true });
       var imageUrl = '';
       if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
         var formats = JSON.parse(domain.DomainLogoImages[0].formats);
@@ -106,7 +106,7 @@ var sendCommunity = function (id, req, res) {
     ]
   }).then(function(community) {
     if (community) {
-      log.info('Community Viewed From Bot', { community: toJson(community.simple()), context: 'view', bot: true });
+      log.info('Community Viewed From Bot', { communityId: community.id, context: 'view', bot: true });
       var imageUrl = '';
       if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
         var formats = JSON.parse(community.CommunityLogoImages[0].formats);
@@ -180,7 +180,7 @@ var sendGroup = function (id, req, res) {
   }).then(function(group) {
     var formats;
     if (group) {
-      log.info('Group Viewed From Bot', { group: toJson(group.simple()), context: 'view', bot: true });
+      log.info('Group Viewed From Bot', { groupId: group.id, context: 'view', bot: true });
       var imageUrl = '';
       if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
         formats = JSON.parse(group.GroupLogoImages[0].formats);
@@ -270,7 +270,7 @@ var sendPost = function (id, req, res) {
   }).then(function(post) {
     var formats;
     if (post) {
-      log.info('Post Viewed From Bot', { post: toJson(post.simple()), context: 'view', bot: true });
+      log.info('Post Viewed From Bot', { postId: post ? post.id : -1, context: 'view', bot: true });
       var imageUrl = '';
       if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
         formats = JSON.parse(post.PostHeaderImages[0].formats);

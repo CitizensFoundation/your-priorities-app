@@ -237,7 +237,7 @@ var getDomain = function (req, domainId, done) {
               }
             ]
           }).then(function (communities) {
-            log.info('Domain Viewed', {domain: toJson(domain.simple()), context: 'view', user: toJson(req.user)});
+            log.info('Domain Viewed', {domainId: domain ? domain.id : -1, context: 'view', userId: req.user ? req.user.id : -1 });
             if (req.ypDomain && req.ypDomain.secret_api_keys &&
               req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
               req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
@@ -478,7 +478,7 @@ router.get('/:domainId/pages', auth.can('view domain'), function(req, res) {
       log.error('Could not get pages for domain', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
+      log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -490,7 +490,7 @@ router.get('/:domainId/pages_for_admin', auth.can('edit domain'), function(req, 
       log.error('Could not get page for admin for domain', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -648,7 +648,7 @@ router.get('/', function(req, res) {
         log.info('Domain Lookup Found Community', { community: req.ypCommunity.hostname, context: 'index', user: toJson(req.user) });
         res.send({community: req.ypCommunity, domain: domain});
       } else {
-        log.info('Domain Lookup Found Domain', { domain: toJson(domain.simple()), context: 'index', user: toJson(req.user) });
+        log.info('Domain Lookup Found Domain', { domainId: domain ? domain.id : -1, context: 'index', userId: req.user ? req.user.id : -1 });
         res.send({domain: domain})
       }
     }
@@ -688,7 +688,7 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     if (error) {
       sendDomainOrError(res, null, 'view', req.user, error);
     } else {
-      log.info('Domain Viewed', { domain: toJson(domain.simple()), context: 'index', user: req.user ? req.user.email : null });
+      log.info('Domain Viewed', { domainId: domain ? domain.id : -1, context: 'index', userEmail: req.user ? req.user.email : null });
       res.send(domain);
     }
   });
