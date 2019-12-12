@@ -49,6 +49,8 @@ module.exports = (sequelize, DataTypes) => {
     underscored: true,
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     tableName: 'users',
 
@@ -116,7 +118,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.defaultAttributesWithSocialMedia = ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id', 'default_locale','legacy_passwords_disabled'];
 
-  User.defaultAttributesWithSocialMediaPubli = ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'];
+  User.defaultAttributesWithSocialMediaPublic = ['id', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'];
 
   User.defaultAttributesWithSocialMediaPublicAndEmail = ['id', 'email', 'description', 'name', 'facebook_id', 'google_id', 'github_id', 'twitter_id','legacy_passwords_disabled'];
 
@@ -519,7 +521,7 @@ module.exports = (sequelize, DataTypes) => {
     this.encrypted_password = bcrypt.hashSync(password, salt);
   };
 
-  User.prototype.validatePassword = (password, done) => {
+  User.prototype.validatePassword = function (password, done) {
     let verified = this.encrypted_password ? bcrypt.compareSync(password, this.encrypted_password) : null;
     if (verified) {
       done(null, this);

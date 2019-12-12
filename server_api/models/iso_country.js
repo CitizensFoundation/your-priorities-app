@@ -6,6 +6,8 @@ module.exports = function(sequelize, DataTypes) {
     country_english_name: DataTypes.STRING
   }, {
     underscored: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     tableName: 'tr8n_iso_countries'
   });
 

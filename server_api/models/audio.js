@@ -24,6 +24,9 @@ module.exports = (sequelize, DataTypes) => {
 
     timestamps: true,
 
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+
     tableName: 'audios',
 
     defaultScope: {
@@ -64,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Audio.associate = (models) => {
-    Audio.belongsTo(models.User);
+    Audio.belongsTo(models.User, { foreignKey: 'user_id' });
     Audio.belongsToMany(models.Post, { as: 'PostAudios', through: 'PostAudio' });
     Audio.belongsToMany(models.Point, { as: 'PointAudios', through: 'PointAudio' });
   };

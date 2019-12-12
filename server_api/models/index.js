@@ -7,13 +7,35 @@ const env       = process.env.NODE_ENV || "development";
 const _ = require('lodash');
 
 let sequelize;
+
+const Op = Sequelize.Op;
+const operatorsAliases = {
+  $gt: Op.gt,
+  $gte: Op.gte,
+  $lt: Op.lt,
+  $lte: Op.lte,
+  $in: Op.in,
+  $and: Op.and,
+  $or: Op.or,
+  $eq: Op.eq,
+  $ne: Op.ne,
+  $is: Op.is,
+  $not: Op.not,
+  $between: Op.between,
+  $notBetween: Op.notBetween,
+  $like: Op.like,
+  $contains: Op.contains,
+  $any: Op.any
+};
+
 if (process.env.NODE_ENV === 'production') {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     dialectOptions: {
       ssl: true
     },
-    logging: false
+    logging: false,
+    operatorsAliases: operatorsAliases
   });
 } else {
   const config = require(__dirname + '/../config/config.json')[env];
@@ -23,6 +45,7 @@ if (process.env.NODE_ENV === 'production') {
       ssl: true
     },
     logging: process.env.DISABLE_DEV_DB_LOGGING ? false : true,
+    operatorsAliases: operatorsAliases
   }));
 }
 

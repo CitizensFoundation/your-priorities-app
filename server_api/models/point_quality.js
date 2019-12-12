@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'point_qualities',
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     defaultScope: {
       where: {

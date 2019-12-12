@@ -89,6 +89,8 @@ module.exports = (sequelize, DataTypes) => {
     // CREATE INDEX communitylogovideo_idx_community_id ON "CommunityLogoVideo" (community_id);
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     underscored: true,
 

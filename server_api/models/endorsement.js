@@ -14,6 +14,8 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'endorsements',
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     defaultScope: {
       where: {
