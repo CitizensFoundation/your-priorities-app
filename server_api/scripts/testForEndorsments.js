@@ -6,7 +6,7 @@ var _ = require('lodash');
 var userEmail = process.argv[2];
 var ideaId = process.argv[3];
 
-models.User.find({
+models.User.findOne({
   where: {
     email: userEmail
   },

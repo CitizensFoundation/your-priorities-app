@@ -287,7 +287,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Domain.prototype.setupLogoImage = (body, done) => {
     if (body.uploadedLogoImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedLogoImageId}
       }).then((image) => {
         if (image)
@@ -299,7 +299,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Domain.prototype.setupHeaderImage = (body, done) => {
     if (body.uploadedHeaderImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
       }).then((image) => {
         if (image)

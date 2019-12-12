@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Category.prototype.setupIconImage = (body, done) => {
     if (body.uploadedIconImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedIconImageId}
       }).then((image) => {
         if (image)
@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Category.prototype.setupHeaderImage = (body, done) => {
     if (body.uploadedHeaderImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
       }).then((image) => {
         if (image)

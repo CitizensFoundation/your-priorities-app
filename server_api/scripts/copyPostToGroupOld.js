@@ -78,7 +78,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
 
   async.series([
     function (callback) {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: groupId
         },
@@ -105,7 +105,7 @@ var copyOnePost = function (groupId, postId, categoryId, done) {
       });
     },
     function (callback) {
-      models.Post.find({
+      models.Post.findOne({
         where: {
           id: postId
         },

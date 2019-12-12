@@ -4,7 +4,7 @@ var ip = require('ip');
 
 var groupId = process.argv[2];
 
-models.Group.find({
+models.Group.findOne({
   where: {
     id: groupId
   },

@@ -35,12 +35,12 @@ var sendPostUserImageActivity = function(req, type, post, image, callback) {
 };
 
 var addUserImageToPost = function(postId, imageId, callback) {
-  models.Post.find({
+  models.Post.findOne({
     where: { id: postId },
     attributes: ['id']
   }).then(function (post) {
     if (post) {
-      models.Image.find({
+      models.Image.findOne({
         where: {
           id: imageId
         }
@@ -58,7 +58,7 @@ var addUserImageToPost = function(postId, imageId, callback) {
 };
 
 var deleteImage = function (imageId, callback) {
-  models.Image.find({
+  models.Image.findOne({
     where: { id: imageId },
     attributes: ['id','deleted']
   }).then(function (image) {
@@ -171,7 +171,7 @@ router.post('/', isAuthenticated, function(req, res) {
 
 // Post User Images
 router.get('/:postId/user_images', auth.can('view post'), function(req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.postId
     },
@@ -255,7 +255,7 @@ router.put('/:postId/user_images', auth.can('add post user images'), function(re
       }
     });
   } else {
-    models.Image.find({
+    models.Image.findOne({
       where: {
         id: req.body.oldUploadedPostUserImageId
       },

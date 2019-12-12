@@ -4,7 +4,7 @@ var ip = require('ip');
 
 var communityId = process.argv[2];
 
-models.Community.find({
+models.Community.findOne({
   where: {
     id: communityId
   },

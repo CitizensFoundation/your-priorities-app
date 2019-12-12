@@ -136,7 +136,7 @@ var addPost = function(dbIssue, userId, groupImageId, domain, callback) {
       },
       function (seriesCallback) {
         if (groupImageId) {
-          models.Image.find({
+          models.Image.findOne({
             where: {id: groupImageId}
           }).then(function (image) {
             if (image) {
@@ -160,7 +160,7 @@ var addPost = function(dbIssue, userId, groupImageId, domain, callback) {
 };
 
 var saveIssueIfNeeded = function (dbIssue, userId, callback) {
-  models.Post.find({ where: {
+  models.Post.findOne({ where: {
     $and: [
       {
         "data.sessionId": SESSION_ID
@@ -172,12 +172,12 @@ var saveIssueIfNeeded = function (dbIssue, userId, callback) {
   }
 }).then(function (post) {
   if (!post) {
-    models.Domain.find({
+    models.Domain.findOne({
       where: {
         id: DOMAIN_ID
       }
     }).then(function (domain) {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: dbIssue.groupId
         }

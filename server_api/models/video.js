@@ -122,7 +122,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.addToPost = (video, options, callback) => {
-    sequelize.models.Post.find({
+    sequelize.models.Post.findOne({
       where: {
         id: options.postId
       }
@@ -156,7 +156,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.addToDomain = (video, id, callback) => {
-    sequelize.models.Domain.find({
+    sequelize.models.Domain.findOne({
       where: {
         id: id
       }
@@ -169,7 +169,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.addToCommunity = (video, id, callback) => {
-    sequelize.models.Community.find({
+    sequelize.models.Community.findOne({
       where: {
         id: id
       }
@@ -182,7 +182,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.addToGroup = (video, id, callback) => {
-    sequelize.models.Group.find({
+    sequelize.models.Group.findOne({
       where: {
         id: id
       }
@@ -328,7 +328,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.completeUploadAndAddToPoint = (req, res, options, callback) => {
-    sequelize.models.Video.find({
+    sequelize.models.Video.findOne({
       where: {
         id: options.videoId
       },
@@ -338,7 +338,7 @@ module.exports = (sequelize, DataTypes) => {
         video.viewable = true;
         video.createFormats(video);
         video.save().then(() => {
-          sequelize.models.Point.find({
+          sequelize.models.Point.findOne({
             where: {
               id: options.pointId
             }
@@ -360,7 +360,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Video.completeUploadAndAddToCollection = (req, res, options) => {
-    sequelize.models.Video.find({
+    sequelize.models.Video.findOne({
       where: {
         id: options.videoId
       },

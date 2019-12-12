@@ -5,7 +5,7 @@ console.log("Setting up locales");
 
 async.series([
   function(callback) {
-    models.Domain.find({where: {domain_name: 'betrireykjavik.is'}}).then(function(domain) {
+    models.Domain.findOne({where: {domain_name: 'betrireykjavik.is'}}).then(function(domain) {
       domain.default_locale = 'is';
       domain.save().then(function () {
         callback();
@@ -13,7 +13,7 @@ async.series([
     });
   },
   function(callback) {
-    models.Domain.find({where: {domain_name: 'betraisland.is'}}).then(function(domain) {
+    models.Domain.findOne({where: {domain_name: 'betraisland.is'}}).then(function(domain) {
       domain.default_locale = 'is';
       domain.save().then(function () {
         callback();
@@ -21,7 +21,7 @@ async.series([
     });
   },
   function(callback) {
-    models.Domain.find({where: {domain_name: 'yrpri.org'}}).then(function(domain) {
+    models.Domain.findOne({where: {domain_name: 'yrpri.org'}}).then(function(domain) {
       domain.default_locale = 'en';
       domain.save().then(function () {
         callback();

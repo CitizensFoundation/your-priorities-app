@@ -10,7 +10,7 @@ var queue = require('../active-citizen/workers/queue');
 const _ = require('lodash');
 
 var loadPointWithAll = function (pointId, callback) {
-  models.Point.find({
+  models.Point.findOne({
     where: {
       id: pointId
     },
@@ -118,7 +118,7 @@ router.get('/hasVideoUploadSupport', (req, res) => {
 });
 
 router.put('/videoView', (req, res) => {
-  models.Video.find({
+  models.Video.findOne({
     where: {
       id: req.body.videoId
     }
@@ -198,7 +198,7 @@ const startTranscoding = (req, res) => {
     videoPointUploadLimitSec: req.body.videoPointUploadLimitSec,
     aspect: req.body.aspect
   };
-  models.Video.find({
+  models.Video.findOne({
     where: {
       id: req.params.videoId
     }
@@ -224,7 +224,7 @@ router.post('/:videoId/startTranscodingLoggedIn', auth.isLoggedIn, (req, res) =>
 });
 
 router.get('/:videoId/formatsAndImages', (req, res) => {
-  models.Video.find({
+  models.Video.findOne({
     where: {
       id: req.params.videoId
     },
@@ -259,7 +259,7 @@ router.get('/:videoId/formatsAndImages', (req, res) => {
 });
 
 router.put('/:videoId/setVideoCover', (req, res) => {
-  models.Video.find({
+  models.Video.findOne({
     where: {
       id: req.params.videoId
     }
@@ -285,7 +285,7 @@ router.put('/:videoId/setVideoCover', (req, res) => {
 });
 
 router.put('/:videoId/getTranscodingJobStatus', (req, res) => {
-  models.Video.find({
+  models.Video.findOne({
     where: {
       id: req.params.videoId
     }

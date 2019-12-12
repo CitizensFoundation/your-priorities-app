@@ -32,7 +32,7 @@ var getBulkStatusUpdateAndUser = function (bulkStatusUpdateId, userId, callback)
 
   async.parallel([
     function (seriesCallback) {
-      models.BulkStatusUpdate.find({
+      models.BulkStatusUpdate.findOne({
         where: {
           id: bulkStatusUpdateId
         }
@@ -47,7 +47,7 @@ var getBulkStatusUpdateAndUser = function (bulkStatusUpdateId, userId, callback)
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -114,7 +114,7 @@ router.post('/:communityId', auth.can('create bulkStatusUpdate'), function(req, 
 });
 
 router.put('/:communityId/:id/perform_bulk_status_update', auth.can('edit bulkStatusUpdate'), function(req, res) {
-  models.BulkStatusUpdate.find({
+  models.BulkStatusUpdate.findOne({
     where: { id: req.params.id }
   }).then(function(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
@@ -128,7 +128,7 @@ router.put('/:communityId/:id/perform_bulk_status_update', auth.can('edit bulkSt
 });
 
 router.put('/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
-  models.BulkStatusUpdate.find({
+  models.BulkStatusUpdate.findOne({
     where: { id: req.params.id }
   }).then(function(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
@@ -146,7 +146,7 @@ router.put('/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
 });
 
 router.put('/:id/sendTest', auth.can('edit bulkStatusUpdate'), function(req, res) {
-  models.BulkStatusUpdate.find({
+  models.BulkStatusUpdate.findOne({
     where: { id: req.params.id }
   }).then(function(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
@@ -163,7 +163,7 @@ router.put('/:id/sendTest', auth.can('edit bulkStatusUpdate'), function(req, res
 });
 
 router.put('/:communityId/:id/updateConfig', auth.can('edit bulkStatusUpdate'), function(req, res) {
-  models.BulkStatusUpdate.find({
+  models.BulkStatusUpdate.findOne({
     where: { id: req.params.id, community_id: req.params.communityId }
   }).then(function(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
@@ -181,7 +181,7 @@ router.put('/:communityId/:id/updateConfig', auth.can('edit bulkStatusUpdate'), 
 });
 
 router.delete('/:communityId/:id', auth.can('edit bulkStatusUpdate'), function(req, res) {
-  models.BulkStatusUpdate.find({
+  models.BulkStatusUpdate.findOne({
     where: {id: req.params.id, community_id: req.params.communityId }
   }).then(function (bulkStatusUpdate) {
     if (bulkStatusUpdate) {

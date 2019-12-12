@@ -4,7 +4,7 @@ var ip = require('ip');
 
 var domainId = process.argv[2];
 
-models.Domain.find({
+models.Domain.findOne({
   where: {
     id: domainId
   },

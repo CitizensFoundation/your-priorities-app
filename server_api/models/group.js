@@ -119,7 +119,7 @@ module.exports = (sequelize, DataTypes) => {
     'weight','theme_id','created_at','updated_at','configuration','language'];
 
   Group.addUserToGroupIfNeeded = (groupId, req, done) => {
-    sequelize.models.Group.find({
+    sequelize.models.Group.findOne({
       where: { id: groupId },
       attributes: ['id','community_id','counter_users']
     }).then((group) => {
@@ -134,7 +134,7 @@ module.exports = (sequelize, DataTypes) => {
                 })
               },
               (callback) => {
-                sequelize.models.Community.find({
+                sequelize.models.Community.findOne({
                   where: {id: group.community_id},
                   attributes: ['id']
                 }).then((community) => {
@@ -201,7 +201,7 @@ module.exports = (sequelize, DataTypes) => {
   Group.prototype.updateAllExternalCounters = (req, direction, column, done) => {
     async.parallel([
       (callback) => {
-        sequelize.models.Community.find({
+        sequelize.models.Community.findOne({
           where: {id: this.community_id}
         }).then((community) => {
           if (direction==='up')
@@ -229,7 +229,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Group.prototype.setupLogoImage = (body, done) => {
     if (body.uploadedLogoImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedLogoImageId}
       }).then((image) => {
         if (image)
@@ -241,7 +241,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Group.prototype.setupHeaderImage = (body, done) => {
     if (body.uploadedHeaderImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
       }).then((image) => {
         if (image)

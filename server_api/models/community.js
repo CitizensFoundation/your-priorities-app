@@ -145,7 +145,7 @@ module.exports = (sequelize, DataTypes) => {
       hostname = req.params.communityHostname;
 
     if (hostname && hostname!=="" && hostname!=="www" && hostname!=="new" && hostname!=="app") {
-      Community.find({
+      Community.findOne({
         where: {hostname: hostname}
       }).then((community) => {
         if (community) {
@@ -195,7 +195,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Community.prototype.setupLogoImage = (body, done) => {
     if (body.uploadedLogoImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedLogoImageId}
       }).then((image) => {
         if (image)
@@ -207,7 +207,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Community.prototype.setupHeaderImage = (body, done) => {
     if (body.uploadedHeaderImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
       }).then((image) => {
         if (image)

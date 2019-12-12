@@ -112,7 +112,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Page.updatePageLocale = (req, options, callback) =>  {
-    sequelize.models.Page.find({ where: options }).then((page) => {
+    sequelize.models.Page.findOne({ where: options }).then((page) => {
       if (page) {
         const content = {};
         if (!page.content) {
@@ -137,7 +137,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Page.publishPage = (req, options, callback) =>  {
-    sequelize.models.Page.find({ where: options }).then((page) => {
+    sequelize.models.Page.findOne({ where: options }).then((page) => {
       if (page) {
         page.published = true;
         page.save().then((results) => {
@@ -152,7 +152,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Page.unPublishPage = (req, options, callback) =>  {
-    sequelize.models.Page.find({ where: options }).then((page) => {
+    sequelize.models.Page.findOne({ where: options }).then((page) => {
       if (page) {
         page.published = false;
         page.save().then((results) => {
@@ -167,7 +167,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Page.deletePage = (req, options, callback) =>  {
-    sequelize.models.Page.find({ where: options }).then((page) => {
+    sequelize.models.Page.findOne({ where: options }).then((page) => {
       if (page) {
         page.deleted = true;
         page.save().then((results) => {

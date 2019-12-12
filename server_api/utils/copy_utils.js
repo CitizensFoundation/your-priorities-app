@@ -10,7 +10,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
 
   async.series([
     function (callback) {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: toGroupId
         },
@@ -37,7 +37,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
       });
     },
     function (callback) {
-      models.Post.find({
+      models.Post.findOne({
         where: {
           id: fromPostId
         },
@@ -428,7 +428,7 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
 
   async.series([
     (callback) => {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: toCommunityId,
         },
@@ -447,7 +447,7 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
       })
     },
     (callback) => {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: fromGroupId
         },
@@ -642,7 +642,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
 
   async.series([
     (callback) => {
-      models.Domain.find({
+      models.Domain.findOne({
         where: {
           id: toDomainId,
         },
@@ -655,7 +655,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
       });
     },
     (callback) => {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: fromCommunityId
         },

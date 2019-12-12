@@ -5,7 +5,7 @@ const queue = require('../active-citizen/workers/queue');
 const log = require('../utils/logger');
 
 const findCommunityAndDomainForPointFromGroup = (sequelize, options, callback) => {
-  sequelize.models.Group.find({
+  sequelize.models.Group.findOne({
     where: {
       id: options.group_id
     },
@@ -53,7 +53,7 @@ const attachEmptyGroupIfNeeded = (sequelize, options, callback) => {
 };
 
 const findGroupAndCommunityAndDomainForPointFromPost = (sequelize, options, callback) => {
-  sequelize.models.Post.find({
+  sequelize.models.Post.findOne({
     where: {
       id: options.post_id
     },
@@ -89,7 +89,7 @@ const findGroupAndCommunityAndDomainForPointFromPost = (sequelize, options, call
 };
 
 const findDomainFromCommunity = (sequelize, options, callback) => {
-  sequelize.models.Community.find({
+  sequelize.models.Community.findOne({
     where: {
       id: options.community_id
     },
@@ -300,7 +300,7 @@ module.exports = (sequelize, DataTypes) => {
     async.series([
       (seriesCallback) => {
         if (options.parent_point_id) {
-          sequelize.models.Point.find({
+          sequelize.models.Point.findOne({
             where: {
               id: options.parent_point_id
             },
@@ -323,7 +323,7 @@ module.exports = (sequelize, DataTypes) => {
 
       (seriesCallback) => {
         if (options.image_id) {
-          sequelize.models.Image.find({
+          sequelize.models.Image.findOne({
             where: {
               id: options.image_id
             },

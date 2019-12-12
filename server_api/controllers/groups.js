@@ -51,7 +51,7 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
 
   async.series([
     function (seriesCallback) {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: groupId
         }
@@ -66,7 +66,7 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -85,7 +85,7 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userEmail) {
-        models.User.find({
+        models.User.findOne({
           where: {
             email: userEmail
           },
@@ -293,7 +293,7 @@ router.post('/:id/upload_document',  auth.can('add to group'), upload.single('fi
 });
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: {
       group_id: req.params.groupId,
       id: req.params.activityId
@@ -355,7 +355,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       });
     },
     function(callback) {
-      models.User.find({
+      models.User.findOne({
         where: { email: req.params.userEmail },
         attributes: ['id','email']
       }).then(function (userIn) {
@@ -518,7 +518,7 @@ router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
     } else if (pages) {
       res.send(JSON.parse(pages));
     } else {
-      models.Group.find({
+      models.Group.findOne({
         where: {id: req.params.groupId},
         attributes: ['id'],
         include: [
@@ -578,7 +578,7 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
 });
 
 router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) {
-    models.Group.find({
+    models.Group.findOne({
       where: {
         id: req.params.groupId
       },
@@ -696,7 +696,7 @@ router.post('/:groupId/news_story', auth.isLoggedIn, auth.can('add to group'), f
 });
 
 router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: req.params.groupId
     },
@@ -730,7 +730,7 @@ router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) 
 });
 
 router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: req.params.groupId
     },
@@ -764,7 +764,7 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
 });
 
 router.get('/:groupId/default_post_image/:imageId', auth.can('view group'), function (req, res) {
-  models.Image.find({
+  models.Image.findOne({
     where: {
       id: req.params.imageId
     }
@@ -814,7 +814,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 });
 
 router.put('/:id', auth.can('edit group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id },
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
@@ -879,7 +879,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
@@ -901,7 +901,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
 });
 
 router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
@@ -920,7 +920,7 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
 
 router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, res) {
   const anonymizationDelayMs = 1000*60*60*24*7;
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
@@ -952,7 +952,7 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
 });
 
 router.get('/:id', auth.can('view group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: { id: req.params.id },
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
@@ -1034,7 +1034,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
   if (req.query.textType.indexOf("group") > -1) {
-    models.Group.find({
+    models.Group.findOne({
       where: {
         id: req.params.id
       },
@@ -1381,7 +1381,7 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
       var inGroup, outGroup, post, outCommunityId, outDomainId;
       async.series([
         function (callback) {
-          models.Group.find({
+          models.Group.findOne({
             where: {
               id: req.params.id
             },
@@ -1406,7 +1406,7 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
           });
         },
         function (callback) {
-          models.Group.find({
+          models.Group.findOne({
             where: {
               id: req.params.groupId
             },
@@ -1540,7 +1540,7 @@ router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res)
 });
 
 router.post('/:id/triggerTrackingGoal', auth.can('view group'), (req, res) => {
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: req.params.id
     },

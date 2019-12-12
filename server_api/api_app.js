@@ -225,7 +225,7 @@ const registerUserLogin = (user, userId, loginProvider, req, done) => {
   if (user && user.private_profile_data) {
     completeRegisterUserLogin(user, loginProvider, req, done);
   } else {
-    models.User.find({
+    models.User.findOne({
       where: {
         id: userId
       },
@@ -284,7 +284,7 @@ passport.serializeUser(function userSerialize(req, profile, done) {
 
 passport.deserializeUser(function deserializeUser(sessionUser, done) {
   log.info("Debug passport.deserializeUser", { sessionUser });
-  models.User.find({
+  models.User.findOne({
     where: {id: sessionUser.userId},
     attributes: ["id", "name", "email", "default_locale", "facebook_id", "twitter_id", "google_id", "github_id", "ssn", "profile_data", 'private_profile_data'],
     include: [

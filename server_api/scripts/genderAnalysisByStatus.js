@@ -19,7 +19,7 @@ var translateOfficialStatus = function (status) {
 
 };
 
-models.Domain.find({where: {id: 1}}).then(function(domain) {
+models.Domain.findOne({where: {id: 1}}).then(function(domain) {
   domain.getDomainUsers().then(function (users) {
     async.eachSeries([[0], [-2], [-1, 1], [2]], function (officialStatus, outerSeriesCallback) {
       async.eachSeries(users, function (user, callback) {

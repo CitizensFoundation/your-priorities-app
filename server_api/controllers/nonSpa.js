@@ -27,7 +27,7 @@ var fullUrl = function (req) {
 };
 
 var sendDomain = function (id, req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description'],
     order: [
@@ -80,7 +80,7 @@ var sendDomain = function (id, req, res) {
 };
 
 var sendCommunity = function (id, req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: { id: id, access: models.Community.ACCESS_PUBLIC },
     attributes: ['id', 'name', 'description','domain_id'],
     order: [
@@ -137,7 +137,7 @@ var sendCommunity = function (id, req, res) {
 };
 
 var sendGroup = function (id, req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: id,
       $or: [
@@ -214,7 +214,7 @@ var sendGroup = function (id, req, res) {
 };
 
 var sendPost = function (id, req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description','group_id'],
     order: [
@@ -307,7 +307,7 @@ var sendPost = function (id, req, res) {
 };
 
 var sendUser = function (id, req, res) {
-  models.User.find({
+  models.User.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description'],
     order: [

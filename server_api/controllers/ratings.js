@@ -12,7 +12,7 @@ const moment = require('moment');
 router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
   var post;
 
-  models.Rating.find({
+  models.Rating.findOne({
     where: {
       post_id: req.params.post_id,
       type_index: req.params.type_index,
@@ -47,7 +47,7 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
           if (post) {
             seriesCallback();
           } else {
-            models.Post.find( {
+            models.Post.findOne( {
               where: { id: rating.post_id },
               attributes: ['id','group_id','public_data']
             }).then(function (results) {
@@ -127,7 +127,7 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
 });
 
 router.delete('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
-  models.Rating.find({
+  models.Rating.findOne({
     where: {
       post_id: req.params.post_id,
       type_index: req.params.type_index,
@@ -177,7 +177,7 @@ router.delete('/:post_id/:type_index', auth.can('rate post'), function(req, res)
 
 router.get('/:post_id/:custom_rating_index/translatedText', auth.can('rate post'), function(req, res) {
   if (req.query.textType.indexOf("customRatingName") > -1) {
-    models.Post.find({
+    models.Post.findOne({
       where: {
         id: req.params.post_id
       },

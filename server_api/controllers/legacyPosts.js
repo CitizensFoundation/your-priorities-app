@@ -15,7 +15,7 @@ var hostPartOfUrl = function (req) {
 
 router.get('/:id', function(req, res) {
   var cleanLegacyId = req.params.id.split("-")[0];
-  models.Post.find({
+  models.Post.findOne({
     where: { legacy_post_id: cleanLegacyId },
     include: [
       {

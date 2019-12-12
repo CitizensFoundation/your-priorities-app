@@ -38,7 +38,7 @@ async.series([
     console.error(error);
     process.exit();
   } else {
-    models.Group.find({where: {id: groupId}}).then(function(group) {
+    models.Group.findOne({where: {id: groupId}}).then(function(group) {
       group.counter_posts = postsCount;
       group.counter_points = pointsCount;
       group.save().then(function () {

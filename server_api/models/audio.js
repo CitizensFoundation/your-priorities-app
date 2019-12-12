@@ -105,7 +105,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.addToPost = (audio, options, callback) => {
-    sequelize.models.Post.find({
+    sequelize.models.Post.findOne({
       where: {
         id: options.postId
       }
@@ -198,7 +198,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.completeUploadAndAddToPoint = (req, res, options, callback) => {
-    sequelize.models.Audio.find({
+    sequelize.models.Audio.findOne({
       where: {
         id: options.audioId
       },
@@ -208,7 +208,7 @@ module.exports = (sequelize, DataTypes) => {
         audio.listenable = true;
         audio.createFormats(audio);
         audio.save().then(() => {
-          sequelize.models.Point.find({
+          sequelize.models.Point.findOne({
             where: {
               id: options.pointId
             }
@@ -230,7 +230,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   Audio.completeUploadAndAddToCollection = (req, res, options) => {
-    sequelize.models.Audio.find({
+    sequelize.models.Audio.findOne({
       where: {
         id: options.audioId
       },

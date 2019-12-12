@@ -38,7 +38,7 @@ var getUserWithAll = function (userId, callback) {
 
   async.parallel([
     function (seriesCallback) {
-      models.User.find({
+      models.User.findOne({
         where: {id: userId},
         attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','ssn','default_locale']),
         order: [
@@ -162,14 +162,14 @@ router.post('/register_anonymously', function (req, res) {
   log.info("Anon debug in register_anonymously");
   var groupId = req.body.groupId;
 
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: groupId
     }
   }).then(function (group) {
     if (group && group.configuration && group.configuration.allowAnonymousUsers) {
       var anonEmail = req.sessionID+"_anonymous@citizens.is";
-      models.User.find({
+      models.User.findOne({
         where: {
           email: anonEmail
         }
@@ -256,7 +256,7 @@ router.get('/:userId/moderate_all_content', auth.can('edit user'), (req, res) =>
 
 // Edit User
 router.put('/:id', auth.can('edit user'), function (req, res) {
-  models.User.find({
+  models.User.findOne({
     where: {id: req.params.id},
     attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'notifications_settings'])
   }).then(function (user) {
@@ -345,7 +345,7 @@ router.get('/:id', auth.can('edit user'), function (req, res) {
       });
     }
 
-    models.User.find({
+    models.User.findOne({
       where: where,
       order: [
         [ { model: models.Community, as: "CommunityUsers" }, 'counter_users', 'desc' ],
@@ -386,7 +386,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
     var adminAccess = {};
     async.parallel([
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -408,7 +408,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -430,7 +430,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -459,7 +459,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -500,7 +500,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
     var memberships = {};
     async.parallel([
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -522,7 +522,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -544,7 +544,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -573,7 +573,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           include: [
@@ -648,7 +648,7 @@ const setSAMLSettingsOnUser = (req, user, done) => {
   async.parallel([
     (parallelCallback) => {
       if (id && referrer.indexOf("/community/")>-1) {
-        models.Community.find({
+        models.Community.findOne({
           where: {
             id: id
           },
@@ -665,7 +665,7 @@ const setSAMLSettingsOnUser = (req, user, done) => {
     },
     (parallelCallback) => {
       if (id && referrer.indexOf("/group/")>-1) {
-        models.Group.find({
+        models.Group.findOne({
           where: {
             id: id
           },
@@ -689,7 +689,7 @@ const setSAMLSettingsOnUser = (req, user, done) => {
     },
     (parallelCallback) => {
       if (id && referrer.indexOf("/post/")>-1) {
-        models.Post.find({
+        models.Post.findOne({
           where: {
             id: id
           },
@@ -830,7 +830,7 @@ router.delete('/delete_current_user', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('Deleting user', { user: toJson(req.user), context: 'delete_current_user'});
     var userId = req.user.id;
-    models.User.find({
+    models.User.findOne({
       where: {
         id: userId
       }
@@ -865,7 +865,7 @@ router.delete('/anonymize_current_user', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('Anonymizing user', { user: toJson(req.user), context: 'delete_current_user'});
     var userId = req.user.id;
-    models.User.find({
+    models.User.findOne({
       where: {
         id: userId
       }
@@ -962,7 +962,7 @@ router.post('/forgot_password', function(req, res) {
       });
     },
     function(token, done) {
-      models.User.find({
+      models.User.findOne({
         where: { email: req.body.email },
         attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled']
       }).then(function (user) {
@@ -1002,7 +1002,7 @@ router.post('/forgot_password', function(req, res) {
 
 router.get('/reset/:token', function(req, res) {
   if (req.params.token) {
-    models.User.find({
+    models.User.findOne({
       attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
       where:
         {
@@ -1065,7 +1065,7 @@ router.post('/createActivityFromApp', function(req, res) {
 router.post('/reset/:token', function(req, res) {
   async.waterfall([
     function(done) {
-      models.User.find({
+      models.User.findOne({
         attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
         where:
         {
@@ -1135,7 +1135,7 @@ router.post('/reset/:token', function(req, res) {
 });
 
 router.get('/get_invite_info/:token', function(req, res) {
-  models.Invite.find({
+  models.Invite.findOne({
     where: {
       token: req.params.token,
       joined_at: null
@@ -1180,7 +1180,7 @@ router.get('/get_invite_info/:token', function(req, res) {
 });
 
 router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
-  models.Invite.find({
+  models.Invite.findOne({
     where: {
       token: req.params.token,
       joined_at: null
@@ -1224,7 +1224,7 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
 });
 
 router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
-  models.User.find({
+  models.User.findOne({
     where: {
       email: req.body.email
     }}).then( function (user) {
@@ -1233,7 +1233,7 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
           alreadyRegistered: true
         })
       } else {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: req.user.id
           }}).then( function (user) {
@@ -1251,7 +1251,7 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
 
 router.put('/missingEmail/emailConfirmationShown', auth.isLoggedIn, function(req, res, next) {
   log.info("email_confirmation_shown 1");
-  models.User.find({
+  models.User.findOne({
     attributes: ['id', 'profile_data'],
     where: {
       id: req.user.id
@@ -1281,7 +1281,7 @@ router.put('/missingEmail/emailConfirmationShown', auth.isLoggedIn, function(req
 });
 
 router.delete('/disconnectFacebookLogin', auth.isLoggedIn, function(req, res, next) {
-  models.User.find({
+  models.User.findOne({
     where: {
       id: req.user.id
     }}).then( function (user) {
@@ -1301,7 +1301,7 @@ router.delete('/disconnectFacebookLogin', auth.isLoggedIn, function(req, res, ne
 });
 
 router.delete('/disconnectSamlLogin', auth.isLoggedIn, function(req, res, next) {
-  models.User.find({
+  models.User.findOne({
     where: {
       id: req.user.id
     }}).then( function (user) {
@@ -1322,7 +1322,7 @@ router.delete('/disconnectSamlLogin', auth.isLoggedIn, function(req, res, next) 
 
 router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, next) {
   log.info("User Serialized Link 1", {loginProvider: req.user.loginProvider});
-  models.User.find({
+  models.User.findOne({
     where: {
       email: req.body.email
     }}).then( function (user) {
@@ -1460,7 +1460,7 @@ router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
 
     async.series([
       function (seriesCallback) {
-        models.BulkStatusUpdate.find({
+        models.BulkStatusUpdate.findOne({
           where: { id: req.params.bulkStatusUpdateId },
           order: [
             [ models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],

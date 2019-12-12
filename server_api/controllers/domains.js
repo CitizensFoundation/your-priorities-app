@@ -144,7 +144,7 @@ var getDomain = function (req, domainId, done) {
       });
     },
     function (seriesCallback) {
-      models.Domain.find({
+      models.Domain.findOne({
         where: {id: domainId},
         attributes: attributes,
         order: [
@@ -378,7 +378,7 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
 
   async.series([
     function (seriesCallback) {
-      models.Domain.find({
+      models.Domain.findOne({
         where: {
           id: domainId
         }
@@ -393,7 +393,7 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -412,7 +412,7 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userEmail) {
-        models.User.find({
+        models.User.findOne({
           where: {
             email: userEmail
           },
@@ -452,7 +452,7 @@ router.get('/:domainId/availableCommunityFolders', auth.can('view domain'), func
 });
 
 router.delete('/:domainId/:activityId/delete_activity', auth.can('edit domain'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: {
       domain_id: req.params.domainId,
       id: req.params.activityId
@@ -509,7 +509,7 @@ router.post('/:domainId/add_page', auth.can('edit domain'), function(req, res) {
 });
 
 router.get('/:domainId/users', auth.can('edit domain'), function (req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: {
       id: req.params.domainId
     },
@@ -543,7 +543,7 @@ router.get('/:domainId/users', auth.can('edit domain'), function (req, res) {
 });
 
 router.get('/:domainId/admin_users', auth.can('edit domain'), function (req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: {
       id: req.params.domainId
     },
@@ -657,7 +657,7 @@ router.get('/', function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
   if (req.query.textType.indexOf("domain") > -1) {
-    models.Domain.find({
+    models.Domain.findOne({
       where: {
         id: req.params.id
       },
@@ -695,7 +695,7 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
 });
 
 router.put('/:id', auth.can('edit domain'), function(req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: { id: req.params.id }
   }).then(function(domain) {
     if (domain) {
@@ -773,7 +773,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit domain'), function(req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: {id: req.params.id}
   }).then(function (domain) {
     if (domain) {
@@ -791,7 +791,7 @@ router.delete('/:id', auth.can('edit domain'), function(req, res) {
 });
 
 router.get(':id/news', auth.can('view domain'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: { domain_id: req.params.id },
     order: [
       [ { model: models.Domain } ,'created_at', 'asc' ]
@@ -965,7 +965,7 @@ router.get('/:domainId/export_logins', auth.can('edit domain'), function(req, re
       log.error('Could not export logins for domain', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      models.Domain.find({
+      models.Domain.findOne({
         where: {
           id: req.params.domainId
         },

@@ -122,7 +122,7 @@ var getNumberOfEndorsement = function (csv, headerText, communityId, dateRangeFr
 };
 
 var getNumberOfUsers = function (csv, headerText, communityId, dateRangeFrom, dateRangeTo, done) {
-  models.Community.find({
+  models.Community.findOne({
     where: {
       id: communityId
     },

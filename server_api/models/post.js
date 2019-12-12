@@ -227,7 +227,7 @@ module.exports = (sequelize, DataTypes) => {
     const searchFields = ['name', 'description'];
     const Post = this;
 
-    const vectorName = Post.getSearchVector();
+    const vectorName = sequelize.models.Post.getSearchVector();
     sequelize.queryInterface.describeTable("posts").then( (data) => {
       if (!data.PostText) {
         sequelize
@@ -264,9 +264,9 @@ module.exports = (sequelize, DataTypes) => {
     query = sequelize.getQueryInterface().escape(query);
     console.log(query);
 
-    const where = '"'+Post.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')';
+    const where = '"'+sequelize.models.Post.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')';
 
-    return Post.findAll({
+    return sequelize.models.Post.findAll({
       order: "created_at DESC",
       where: [where, []],
       limit: 1024,
@@ -373,7 +373,7 @@ module.exports = (sequelize, DataTypes) => {
   Post.prototype.updateAllExternalCounters = (req, direction, column, done) => {
     async.parallel([
       (callback) => {
-        sequelize.models.Group.find({
+        sequelize.models.Group.findOne({
           where: {id: this.group_id}
         }).then((group) => {
           if (direction==='up')
@@ -396,7 +396,7 @@ module.exports = (sequelize, DataTypes) => {
     if (updateBy && updateBy>0) {
       async.parallel([
         (callback) => {
-          sequelize.models.Group.find({
+          sequelize.models.Group.findOne({
             where: {id: this.group_id}
           }).then((group) => {
             if (direction==='up')
@@ -422,7 +422,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Post.prototype.setupHeaderImage = (body, done) => {
     if (body.uploadedHeaderImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
       }).then((image) => {
         if (image)

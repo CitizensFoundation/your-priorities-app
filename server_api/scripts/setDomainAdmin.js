@@ -10,7 +10,7 @@ console.log("Adding "+userEmail+" as admin to domain "+domainId);
 
 async.series([
   function(callback) {
-    models.User.find({where: {email: userEmail}}).then(function(incomingUser) {
+    models.User.findOne({where: {email: userEmail}}).then(function(incomingUser) {
       if (incomingUser) {
         user = incomingUser;
         console.log("Found user "+user.name);
@@ -22,7 +22,7 @@ async.series([
     });
   },
   function(callback) {
-    models.Domain.find({
+    models.Domain.findOne({
       where: {
         id: domainId
       }

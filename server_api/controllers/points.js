@@ -10,7 +10,7 @@ var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 
 var changePointCounter = function (pointId, column, upDown, next) {
-  models.Point.find({
+  models.Point.findOne({
     where: { id: pointId }
   }).then(function(point) {
     if (point && upDown===1) {
@@ -72,7 +72,7 @@ var validateEmbedUrl = function(urlIn) {
 };
 
 var loadPointWithAll = function (pointId, callback) {
-  models.Point.find({
+  models.Point.findOne({
     where: {
       id: pointId
     },
@@ -169,13 +169,13 @@ var loadPointWithAll = function (pointId, callback) {
 };
 
 router.put('/:id/report', auth.can('vote on point'), function (req, res) {
-  models.Point.find({
+  models.Point.findOne({
     where: {
       id: req.params.id
     }
   }).then(function (point) {
     if (point) {
-      models.Post.find({
+      models.Post.findOne({
         where: {
           id: point.post_id
         },
@@ -304,7 +304,7 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
   if (!req.body.content) {
     req.body.content="";
   }
-  var point = models.Point.find({
+  var point = models.Point.findOne({
     where: {
       id: req.params.pointId
     }
@@ -355,7 +355,7 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
   if (req.query.textType.indexOf("point") > -1) {
-    models.Point.find({
+    models.Point.findOne({
       where: {
         id: req.params.id
       },
@@ -395,7 +395,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
     if (error) {
       sendPointOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
     } else if (point.PointVideos && point.PointVideos.length>0) {
-      models.Video.find({
+      models.Video.findOne({
         where: {
           id: point.PointVideos[0].id
         }
@@ -449,7 +449,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
     if (error) {
       sendPointOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
     } else if (point.PointAudios && point.PointAudios.length>0) {
-      models.Audio.find({
+      models.Audio.findOne({
         where: {
           id: point.PointAudios[0].id
         }
@@ -538,11 +538,11 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
         pointId: point.id,
         access: models.AcActivity.ACCESS_PUBLIC
       }, function (error) {
-        models.Point.find({
+        models.Point.findOne({
           where: { id: point.id },
           attributes: ['id','content','group_id','post_id']
         }).then(function(point) {
-          models.Post.find({
+          models.Post.findOne({
             where: { id: point.post_id },
             attributes: ['id','counter_points','group_id']
           }).then(function(post) {
@@ -575,7 +575,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('delete point'), function(req, res) {
-  models.Point.find({
+  models.Point.findOne({
     where: { id: req.params.id },
     include: [{
       model: models.Post,
@@ -602,7 +602,7 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
 
 router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
   var point, post;
-  models.PointQuality.find({
+  models.PointQuality.findOne({
     where: { point_id: req.params.id, user_id: req.user.id },
     include: [
       {
@@ -644,7 +644,7 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
           if (point) {
             seriesCallback();
           } else {
-            models.Point.find({
+            models.Point.findOne({
               where: { id: pointQuality.point_id },
               attributes: ['id','post_id','group_id']
             }).then(function (results) {
@@ -707,7 +707,7 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
 });
 
 router.delete('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
-  models.PointQuality.find({
+  models.PointQuality.findOne({
     where: { point_id: req.params.id, user_id: req.user.id }
   }).then(function(pointQuality) {
     if (pointQuality) {

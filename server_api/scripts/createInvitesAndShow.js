@@ -21,7 +21,7 @@ const createOneInvite = (campaignName, inviteEmail, callback) => {
       });
     },
     (seriesCallback) => {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: communityId
         },
@@ -40,7 +40,7 @@ const createOneInvite = (campaignName, inviteEmail, callback) => {
       })
     },
     (seriesCallback) => {
-      models.User.find({
+      models.User.findOne({
         where: { id: senderUserId },
         attributes: ['id','email']
       }).then(function (userIn) {
@@ -54,7 +54,7 @@ const createOneInvite = (campaignName, inviteEmail, callback) => {
     },
     (seriesCallback) => {
       if (inviteEmail) {
-        models.User.find({
+        models.User.findOne({
           where: { email: inviteEmail },
           attributes: ['id','email']
         }).then(function (userIn) {

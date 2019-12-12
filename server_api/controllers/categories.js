@@ -25,7 +25,7 @@ var sendCategoryOrError = function (res, category, context, user, error, errorSt
 };
 
 router.get('/:id', auth.can('view category'), function(req, res) {
-  models.Category.find({
+  models.Category.findOne({
     where: { id: req.params.id },
     include: [
       { model: models.Group,
@@ -52,7 +52,7 @@ router.get('/:id', auth.can('view category'), function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view category'), function(req, res) {
   if (req.query.textType.indexOf("category") > -1) {
-    models.Category.find({
+    models.Category.findOne({
       where: {
         id: req.params.id
       },
@@ -105,7 +105,7 @@ router.post('/:groupId', auth.can('create category'), function(req, res) {
 });
 
 router.put('/:id', auth.can('edit category'), function(req, res) {
-  models.Category.find({
+  models.Category.findOne({
     where: { id: req.params.id },
     order:[[ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]],
     include: [
@@ -124,7 +124,7 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
         log.info('Category Updated', { category: toJson(category), context: 'update', user: toJson(req.user) });
         category.setupImages(req.body, function(error) {
           setTimeout(function () {
-            models.Category.find({
+            models.Category.findOne({
               where: { id: req.params.id },
               order:[[ { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ]],
               include: [
@@ -150,7 +150,7 @@ router.put('/:id', auth.can('edit category'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit category'), function(req, res) {
-  models.Category.find({
+  models.Category.findOne({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (category) {
     if (category) {

@@ -12,7 +12,7 @@ const moment = require('moment');
 
 
 var changePostCounter = function (req, postId, column, upDown, next) {
-  models.Post.find({
+  models.Post.findOne({
     where: { id: postId }
   }).then(function(post) {
     if (post) {
@@ -71,7 +71,7 @@ var sendPostOrError = function (res, post, context, user, error, errorStatus) {
 };
 
 router.delete('/:postId/:activityId/delete_activity', auth.can('edit post'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: {
       post_id: req.params.postId,
       id: req.params.activityId
@@ -92,7 +92,7 @@ router.delete('/:postId/:activityId/delete_activity', auth.can('edit post'), fun
 });
 
 router.post('/:id/status_change', auth.can('send status change'), function(req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.id
     },
@@ -170,7 +170,7 @@ router.post('/:id/status_change', auth.can('send status change'), function(req, 
 });
 
 router.get('/:id', auth.can('view post'), function(req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.id
     },
@@ -287,7 +287,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
   if (req.query.textType.indexOf("post") > -1) {
-    models.Post.find({
+    models.Post.findOne({
       where: {
         id: req.params.id
       },
@@ -315,7 +315,7 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
 
 router.get('/:id/:statusId/translatedStatusText', auth.can('view post'), function(req, res) {
   if (req.query.textType.indexOf("statusChangeContent") > -1) {
-    models.PostStatusChange.find({
+    models.PostStatusChange.findOne({
       where: {
         id: req.params.statusId,
         post_id: req.params.id
@@ -343,7 +343,7 @@ router.get('/:id/:statusId/translatedStatusText', auth.can('view post'), functio
 });
 
 router.put('/:id/report', auth.can('vote on post'), function (req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.id
     },
@@ -707,7 +707,7 @@ var updatePostData = function (req, post) {
 };
 
 router.put('/:id/editTranscript', auth.can('edit post'), function (req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.id
     }
@@ -790,7 +790,7 @@ router.post('/:groupId', auth.can('create post'), function(req, res) {
 });
 
 router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.id
     }
@@ -811,7 +811,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, re
             sendPostOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
           });
         } else {
-          models.Video.find({
+          models.Video.findOne({
             where: {
               id: post.public_data.transcript.videoId
             }
@@ -853,7 +853,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('edit post'), function(req, re
 });
 
 router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.id
     }
@@ -874,7 +874,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, re
         });
       } else {
         if (post.public_data.transcript.inProgress === true && post.public_data.transcript.audioId) {
-          models.Audio.find({
+          models.Audio.findOne({
             where: {
               id: post.public_data.transcript.audioId
             }
@@ -919,7 +919,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('edit post'), function(req, re
 });
 
 router.put('/:id', auth.can('edit post'), function(req, res) {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: req.params.id
     }
@@ -949,7 +949,7 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
   var group, post, communityId, domainId;
   async.series([
     function (callback) {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: req.params.groupId
         },
@@ -975,7 +975,7 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
       });
     },
     function (callback) {
-      models.Post.find({
+      models.Post.findOne({
         where: {
           id: req.params.id
         }
@@ -1044,7 +1044,7 @@ router.put('/:id/:groupId/move', auth.can('edit post'), function(req, res) {
 router.delete('/:id', auth.can('edit post'), function(req, res) {
   var postId = req.params.id;
   log.info('Post Deleted Got Start', { context: 'delete', user: toJson(req.user) });
-  models.Post.find({
+  models.Post.findOne({
     where: {id: postId }
   }).then(function (post) {
     log.info('Post Deleted Got Post', { context: 'delete', user: toJson(req.user) });
@@ -1075,7 +1075,7 @@ router.delete('/:id', auth.can('edit post'), function(req, res) {
 router.delete('/:id/delete_content', auth.can('edit post'), function(req, res) {
   var postId = req.params.id;
   log.info('Post Deleted Got Start', { context: 'delete', user: toJson(req.user) });
-  models.Post.find({
+  models.Post.findOne({
     where: {id: postId }
   }).then(function (post) {
     log.info('Post Deleted Post Content', { context: 'delete', user: toJson(req.user) });
@@ -1093,7 +1093,7 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
   log.info('Post Anonymize Got Start', { context: 'delete', user: toJson(req.user) });
   getAnonymousUser((error, anonUser) => {
     if (anonUser && !error) {
-      models.Post.find({
+      models.Post.findOne({
         where: { id: postId }
       }).then(function (post) {
         log.info('Post Anonymize Got Post', { context: 'delete', user: toJson(req.user) });
@@ -1118,7 +1118,7 @@ router.delete('/:id/anonymize_content', auth.can('edit post'), function(req, res
 router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
   var post;
 
-  models.Endorsement.find({
+  models.Endorsement.findOne({
     where: {
       post_id: req.params.id,
       user_id: req.user.id
@@ -1156,7 +1156,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
           if (post) {
             seriesCallback();
           } else {
-            models.Post.find( {
+            models.Post.findOne( {
               where: { id: endorsement.post_id },
               attributes: ['id','group_id']
             }).then(function (results) {
@@ -1216,7 +1216,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
 
 router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
   console.log("user: "+req.user.id + " post: " + req.params.id);
-  models.Endorsement.find({
+  models.Endorsement.findOne({
     where: { post_id: req.params.id, user_id: req.user.id }
   }).then(function(endorsement) {
     if (endorsement) {

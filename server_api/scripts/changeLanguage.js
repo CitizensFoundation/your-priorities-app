@@ -8,7 +8,7 @@ const modelId = process.argv[3];
 const language = process.argv[4];
 
 if (modelType==="post") {
-  models.Post.find({
+  models.Post.findOne({
     where: {
       id: modelId
     },
@@ -26,7 +26,7 @@ if (modelType==="post") {
     }
   });
 } else if (modelType==="point") {
-  models.Point.find({
+  models.Point.findOne({
     where: {
       id: modelId
     },

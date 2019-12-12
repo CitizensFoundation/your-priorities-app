@@ -353,7 +353,7 @@ const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
 const getUsersForCommunity = (communityId, callback) => {
   let outFileContent = "User id, Name, Email, Ssn\n";
 
-  models.Community.find({
+  models.Community.findOne({
     where: {
       id: communityId
     },

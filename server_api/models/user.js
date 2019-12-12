@@ -148,7 +148,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
       (seriesCallback) => {
-        sequelize.models.User.find({
+        sequelize.models.User.findOne({
           where: {
             ssn: profile["urn:mynj:userCode"]
           },
@@ -170,7 +170,7 @@ module.exports = (sequelize, DataTypes) => {
           email = profile["urn:mynj:pubEmpEmail"];
           if (email) {
             email = email.toLowerCase();
-            sequelize.models.User.find({
+            sequelize.models.User.findOne({
               where: {
                 email: email
               },
@@ -235,7 +235,7 @@ module.exports = (sequelize, DataTypes) => {
     let user;
     async.series([
       (seriesCallback) => {
-        sequelize.models.User.find({
+        sequelize.models.User.findOne({
           where: {
             ssn: profile.UserSSN
           },
@@ -289,7 +289,7 @@ module.exports = (sequelize, DataTypes) => {
     let user;
     async.series([
       (seriesCallback) => {
-        sequelize.models.User.find({
+        sequelize.models.User.findOne({
           where: {
             facebook_id: profile.identifier
           },
@@ -307,7 +307,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       (seriesCallback) => {
         if (!user) {
-          sequelize.models.User.find({
+          sequelize.models.User.findOne({
             where: {
               email: profile.email
             },
@@ -372,7 +372,7 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   User.localCallback = (req, email, password, done) => {
-    sequelize.models.User.find({
+    sequelize.models.User.findOne({
       where: { email: email },
       attributes: ['id', 'encrypted_password','legacy_passwords_disabled']
     }).then((user) => {
@@ -394,7 +394,7 @@ module.exports = (sequelize, DataTypes) => {
 
     async.parallel([
       (seriesCallback) => {
-        sequelize.models.User.find({
+        sequelize.models.User.findOne({
           where: {id: userId},
           attributes: _.concat(sequelize.models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings', 'profile_data', 'email', 'default_locale']),
           order: [
@@ -473,7 +473,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.setupProfileImage = (body, done) => {
     if (body.uploadedProfileImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedProfileImageId}
       }).then((image) => {
         if (image)
@@ -485,7 +485,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.setupHeaderImage = (body, done) => {
     if (body.uploadedHeaderImageId) {
-      sequelize.models.Image.find({
+      sequelize.models.Image.findOne({
         where: {id: body.uploadedHeaderImageId}
       }).then((image) => {
         if (image)
@@ -528,7 +528,7 @@ module.exports = (sequelize, DataTypes) => {
         done(null, false, { message: 'Incorrect password.' });
       } else {
         log.warn("Looking for legacy passwords");
-        sequelize.models.User.find({
+        sequelize.models.User.findOne({
           where: { id: this.id },
           include: [ sequelize.models.UserLegacyPassword ]
         }).then((user) => {

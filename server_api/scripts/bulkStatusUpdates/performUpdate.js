@@ -20,7 +20,7 @@ var getTemplateContent = function (templates, title) {
   return returnContent;
 };
 
-models.BulkStatusUpdate.find({
+models.BulkStatusUpdate.findOne({
   where: {
     id: id
   }
@@ -44,7 +44,7 @@ models.BulkStatusUpdate.find({
                 console.log(post.id+": "+templateContent);
                 async.series([
                   function (doCallback) {
-                    models.User.find({
+                    models.User.findOne({
                       where: {
                         id: userIdToPostNewsStory
                       }
@@ -57,7 +57,7 @@ models.BulkStatusUpdate.find({
                     });
                   },
                   function (doCallback) {
-                    models.Post.find({
+                    models.Post.findOne({
                       where: {
                         id: post.id
                       }

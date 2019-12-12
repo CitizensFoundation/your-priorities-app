@@ -44,7 +44,7 @@ var getCommunityFolder = function (req, communityFolderId, done) {
 
   async.series([
     function (seriesCallback) {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: communityFolderId
         },
@@ -271,7 +271,7 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
 
   async.series([
     function (seriesCallback) {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: communityId
         }
@@ -286,7 +286,7 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -305,7 +305,7 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userEmail) {
-        models.User.find({
+        models.User.findOne({
           where: {
             email: userEmail
           },
@@ -394,7 +394,7 @@ var getCommunity = function(req, done) {
 
   async.series([
     function (seriesCallback) {
-      models.Community.find({
+      models.Community.findOne({
         where: { id: req.params.id },
         order: [
           [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
@@ -659,7 +659,7 @@ router.get('/:communityFolderId/communityFolders', auth.can('view community'), f
 });
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: {
       community_id: req.params.communityId,
       id: req.params.activityId
@@ -721,7 +721,7 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       });
     },
     function(callback) {
-      models.User.find({
+      models.User.findOne({
         where: { email: req.params.userEmail },
         attributes: ['id','email']
       }).then(function (userIn) {
@@ -871,7 +871,7 @@ router.post('/:communityId/:email/add_admin', auth.can('edit community'), functi
 });
 
 router.get('/:communityId/pages', auth.can('view community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
       where: { id: req.params.communityId},
       attributes: ['id', 'domain_id']
     }).then(function (community) {
@@ -976,7 +976,7 @@ router.post('/:communityId/news_story', auth.isLoggedIn, auth.can('view communit
 });
 
 router.get('/:communityId/admin_users', auth.can('edit community'), function (req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {
       id: req.params.communityId
     },
@@ -1010,7 +1010,7 @@ router.get('/:communityId/admin_users', auth.can('edit community'), function (re
 });
 
 router.get('/:communityId/users', auth.can('edit community'), function (req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {
       id: req.params.communityId
     },
@@ -1121,7 +1121,7 @@ router.get('/:id', auth.can('view community'), function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view community'), function(req, res) {
   if (req.query.textType && req.query.textType.indexOf("community") > -1) {
-    models.Community.find({
+    models.Community.findOne({
       where: {
         id: req.params.id
       },
@@ -1185,7 +1185,7 @@ const createNewCommunity = (req, res) => {
 
 router.post('/:domainId', auth.can('create community'), function(req, res) {
   if (req.body.hostname && req.body.hostname!=='') {
-    models.Community.find({
+    models.Community.findOne({
       where: {
         hostname: req.body.hostname
       }
@@ -1203,7 +1203,7 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
 });
 
 router.put('/:id', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: { id: req.params.id }
   }).then(function(community) {
     if (community) {
@@ -1236,7 +1236,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
@@ -1257,7 +1257,7 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
 });
 
 router.delete('/:id/delete_content', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
@@ -1275,7 +1275,7 @@ router.delete('/:id/delete_content', auth.can('edit community'), function(req, r
 });
 
 router.delete('/:id/anonymize_content', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
@@ -1400,7 +1400,7 @@ router.get('/:communityId/export_users', auth.can('edit community'), function(re
       log.error('Could not export users for community', { err: error, context: 'export_users', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: req.params.communityId
         },
@@ -1434,7 +1434,7 @@ router.get('/:communityId/export_logins', auth.can('edit community'), function(r
       log.error('Could not export logins for commnity', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: req.params.communityId
         },
@@ -1532,7 +1532,7 @@ router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), f
           let community;
           async.series([
             (seriesCallback) => {
-              models.Community.find({
+              models.Community.findOne({
                 where: {
                   id: req.params.communityId
                 },

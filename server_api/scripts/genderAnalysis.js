@@ -14,7 +14,7 @@ var femaleEndorsementCount = 0;
 var maleEndorsementCount = 0;
 var unknownEndorsementCount = 0;
 
-models.Domain.find({where: {id: 1}}).then(function(domain) {
+models.Domain.findOne({where: {id: 1}}).then(function(domain) {
   domain.getDomainUsers().then(function (users) {
     async.eachSeries(users, function (user, callback) {
       models.Post.findAll({ where: {user_id: user.id}}).then(function (posts) {
