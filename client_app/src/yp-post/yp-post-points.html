@@ -998,9 +998,12 @@
             this.noMorePoints = true;
           }
 
+          let haveAddedPoint = false;
           points = this._interleaveMorePoints(points);
           points.forEach(function (point) {
-            this._addMorePoint(point);
+            if (this._addMorePoint(point)) {
+              haveAddedPoint = true;
+            }
           }.bind(this));
           this.async(function () {
             if (this.$$("#ironListUp"))
@@ -1011,7 +1014,9 @@
               this.$$("#ironListMobile").fire("iron-resize");
           }, 5);
 
-          this._clearScrollTrigger();
+          if (haveAddedPoint) {
+            this._clearScrollTrigger();
+          }
         },
 
         _clearScrollTrigger: function () {
@@ -1126,6 +1131,7 @@
           this.set('storedPoints', null);
           this._clearVideo();
           this._clearAudio();
+          this.loadedPointIds = {};
 
           this.storedUpPointsCount = null;
           this.storedDownPointsCount = null;
@@ -1201,6 +1207,7 @@
             } else if (this.storedPoints[i].value<0) {
               this.storedDownPointsCount += 1;
             }
+            this.loadedPointIds[this.storedPoints[i].id]=true;
           }
           this._processStoredPoints();
           this.removeElementsByClass(this, 'inserted-outside-list');
@@ -1370,45 +1377,55 @@
         },
 
         _insertNewPoint: function (point) {
-          if (this.largeMode) {
-            if (point.value > 0) {
-              this.unshift('upPoints', point);
+          if (!this.loadedPointIds[point.id]) {
+            this.loadedPointIds[point.id] = true;
+            if (this.largeMode) {
+              if (point.value > 0) {
+                this.unshift('upPoints', point);
+                this.async(function () {
+                  this.$$("#ironListUp").fire("iron-resize");
+                }, 700);
+              } else if (point.value < 0) {
+                this.unshift('downPoints', point);
+                this.async(function () {
+                  this.$$("#ironListDown").fire("iron-resize");
+                }, 700);
+              }
+            } else {
+              this.unshift('points', point);
               this.async(function () {
-                this.$$("#ironListUp").fire("iron-resize");
-              }, 700);
-            } else if (point.value < 0) {
-              this.unshift('downPoints', point);
-              this.async(function () {
-                this.$$("#ironListDown").fire("iron-resize");
+                this.$$("#ironListMobile").fire("iron-resize");
               }, 700);
             }
-          } else {
-            this.unshift('points', point);
-            this.async(function () {
-              this.$$("#ironListMobile").fire("iron-resize");
-            }, 700);
+            this.unshift('storedPoints', point);
           }
-          this.unshift('storedPoints', point);
         },
 
         _addMorePoint: function (point) {
-          if (this.largeMode) {
-            if (point.value > 0) {
-              this.push('upPoints', point);
-            } else if (point.value < 0) {
-              this.push('downPoints', point);
+          let haveAddedPoints = false;
+          if (!this.loadedPointIds[point.id]) {
+            this.loadedPointIds[point.id] = true;
+            haveAddedPoints = true;
+            if (this.largeMode) {
+              if (point.value > 0) {
+                this.push('upPoints', point);
+              } else if (point.value < 0) {
+                this.push('downPoints', point);
+              }
+            } else {
+              this.push('points', point);
             }
-          } else {
-            this.push('points', point);
+
+            this.push('storedPoints', point);
+
+            if (point.value > 0) {
+              this.storedUpPointsCount += 1;
+            } else if (point.value < 0) {
+              this.storedDownPointsCount += 1;
+            }
           }
 
-          this.push('storedPoints', point);
-
-          if (point.value > 0) {
-            this.storedUpPointsCount += 1;
-          } else if (point.value < 0) {
-            this.storedDownPointsCount += 1;
-          }
+          return haveAddedPoints;
         },
 
         _newPointResponse: function (inEvent, inDetail) {
