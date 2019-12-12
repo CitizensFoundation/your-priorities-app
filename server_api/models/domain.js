@@ -102,7 +102,6 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     async.eachSeries([domainIn], (domain, seriesCallback) => {
-
       let callbackDomainName;
       if (process.env.STAGING_SETUP) {
         if (domain.domain_name==='betrireykjavik.is') {
@@ -120,21 +119,6 @@ module.exports = (sequelize, DataTypes) => {
         } else {
           callbackDomainName = 'login.'+domain.domain_name;
         }
-      }
-
-      if (false && domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.google)) {
-        providers.push({
-          name            : 'google-strategy-'+domain.id,
-          provider        : 'google',
-          protocol        : 'oauth2',
-          strategyObject  : 'Strategy',
-          strategyPackage : 'passport-google-oauth',
-          clientID        : domain.secret_api_keys.google.client_id,
-          clientSecret    : domain.secret_api_keys.google.client_secret,
-          scope           : ['email', 'profile'],
-          fields          : null,
-          urlCallback     : 'https://'+callbackDomainName+'/api/users/auth/google/callback'
-        });
       }
 
       if (domain.secret_api_keys && checkValidKeys(domain.secret_api_keys.facebook)) {
@@ -225,13 +209,12 @@ module.exports = (sequelize, DataTypes) => {
             req.ypDomain.loginProviders = providers;
             sequelize.models.Domain.getLoginHosts(domain, (error, hosts) => {
               req.ypDomain.loginHosts = hosts;
-              return next();
+              next();
             });
           });
         } else {
-          return next();
+          next();
         }
-        return null;
       }).catch((error) => {
       next(error);
     });
@@ -325,14 +308,12 @@ module.exports = (sequelize, DataTypes) => {
     async.parallel([
       (callback) => {
         this.setupLogoImage(body, (err) => {
-          if (err) return callback(err);
-          callback();
+          callback(err);
         });
       },
       (callback) => {
         this.setupHeaderImage(body, (err) => {
-          if (err) return callback(err);
-          callback();
+          callback(err);
         });
       }
     ], (err) => {

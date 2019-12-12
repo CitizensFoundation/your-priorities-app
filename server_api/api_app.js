@@ -3,15 +3,12 @@ require('newrelic');
 
 FORCE_PRODUCTION = false;
 
-const debug = require('debug')('your-priorities-app');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const ConnectRoles = require('connect-roles');
 const RedisStore = require('connect-redis')(session);
 const useragent = require('express-useragent');
 const requestIp = require('request-ip');
