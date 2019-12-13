@@ -276,7 +276,7 @@ module.exports = (sequelize, DataTypes) => {
     Point.belongsTo(sequelize.models.Domain, { foreignKey: 'domain_id'});
     Point.belongsTo(sequelize.models.User, { foreignKey: 'user_id'});
     Point.belongsTo(sequelize.models.Image, { foreignKey: 'image_id'});
-    Point.belongsTo(sequelize.models.Point, { as: 'ParentPoint' });
+    Point.belongsTo(sequelize.models.Point, { as: 'ParentPoint', foreignKey: 'parent_point_id' });
     Point.belongsTo(sequelize.models.Group, { foreignKey: 'group_id'});
     Point.hasMany(sequelize.models.PointRevision);
     Point.hasMany(sequelize.models.PointQuality);
