@@ -1,4 +1,7 @@
 {
+  "userImage": {
+    "deleteConfirmation": "Are you sure you want to delete this image?"
+  },
   "customTermsIntroText": "Custom terms introduction text",
   "customUserNamePrompt": "Custom user name registration prompt",
   "alternativeTextForNewIdeaButton": "Alternative text for 'New idea' button",
