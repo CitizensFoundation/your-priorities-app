@@ -348,38 +348,45 @@ var sendUser = function (id, req, res) {
 };
 
 router.get('/*', function(req, res, next) {
-  var url = req.url;
-  var splitPath = 1;
+  let url = req.url;
+  let splitPath = 1;
 
   if (url.startsWith('/?_escaped_fragment_=')) {
     url = req.url.replace(/%2F/g, "/");
     splitPath = 2;
   }
 
-  var splitUrl = url.split('/');
+  let splitUrl = url.split('/');
 
-  var id = splitUrl[splitPath+1];
+  let id = splitUrl[splitPath+1];
   if (id) {
     id = id.split("?")[0];
   }
 
-  if (splitUrl[splitPath]=='domain') {
-    sendDomain(id, req, res)
-  } else if (splitUrl[splitPath]=='community') {
-    sendCommunity(id, req, res)
-  } else if (splitUrl[splitPath]=='group') {
-    sendGroup(id, req, res)
-  } else if (splitUrl[splitPath]=='post') {
-    sendPost(id, req, res)
-  } else if (splitUrl[splitPath]=='user') {
-    sendUser(id, req, res)
-  } else if (req.ypCommunity && req.ypCommunity.id != null) {
-    sendCommunity(req.ypCommunity.id, req, res);
-  } else if (req.ypDomain && req.ypDomain.id != null) {
-    sendDomain(req.ypDomain.id, req, res);
+  if(!isNaN(id)) {
+    if (splitUrl[splitPath]=='domain') {
+      sendDomain(id, req, res)
+    } else if (splitUrl[splitPath]=='community') {
+      sendCommunity(id, req, res)
+    } else if (splitUrl[splitPath]=='group') {
+      sendGroup(id, req, res)
+    } else if (splitUrl[splitPath]=='post') {
+      sendPost(id, req, res)
+    } else if (splitUrl[splitPath]=='user') {
+      sendUser(id, req, res)
+    } else if (req.ypCommunity && req.ypCommunity.id != null) {
+      sendCommunity(req.ypCommunity.id, req, res);
+    } else if (req.ypDomain && req.ypDomain.id != null) {
+      sendDomain(req.ypDomain.id, req, res);
+    } else {
+      log.error("Cant find controller for nonSpa", { id, splitUrl });
+      res.sendStatus(404);
+    }
   } else {
-    next();
+    log.error("Id for nonSpa is not a number", { id: id });
+    res.sendStatus(404);
   }
+
 });
 
 module.exports = router;
