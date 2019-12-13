@@ -307,12 +307,8 @@
 
       _userChanged: function (user) {
         if (user) {
-          if (user.profile_data && user.profile_data.isAnonymousUser) {
-            this.cancelTimer();
-          } else {
-            this.$.loadNotificationsAjax.url = this.url;
-            this.$.loadNotificationsAjax.generateRequest();
-          }
+          this.$.loadNotificationsAjax.url = this.url;
+          this.$.loadNotificationsAjax.generateRequest();
         } else {
           this.cancelTimer();
         }
