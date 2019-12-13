@@ -38,8 +38,8 @@ module.exports = function(sequelize, DataTypes) {
     Invite.belongsTo(models.Community, { foreignKey: 'community_id'});
     Invite.belongsTo(models.Group, { foreignKey: 'group_id'});
     Invite.belongsTo(models.Post,{ foreignKey: 'post_id'});
-    Invite.belongsTo(models.User, { as: 'FromUser' });
-    Invite.belongsTo(models.User, { as: 'ToUser' });
+    Invite.belongsTo(models.User, { as: 'FromUser', foreignKey: "from_user_id" });
+    Invite.belongsTo(models.User, { as: 'ToUser', foreignKey: "to_user_id" });
   };
 
   Invite.INVITE_TO_GROUP = 0;
