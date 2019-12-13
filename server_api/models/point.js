@@ -140,7 +140,7 @@ const setAllActivityGroupingIds = (sequelize, options, callback) => {
 
     (seriesCallback) => {
       if (options.community_id) {
-        findDomainFromCommunity(sequelize, option, (error, optionsIn) => {
+        findDomainFromCommunity(sequelize, options, (error, optionsIn) => {
           if (optionsIn) {
             options = optionsIn;
           }
