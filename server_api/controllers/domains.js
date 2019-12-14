@@ -699,6 +699,7 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
     where: { id: req.params.id }
   }).then(function(domain) {
     if (domain) {
+      queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
       domain.ensureApiKeySetup();
       domain.set('secret_api_keys.facebook.client_id', req.body.facebookClientId);
       domain.set('secret_api_keys.facebook.client_secret', req.body.facebookClientSecret);
@@ -780,6 +781,7 @@ router.delete('/:id', auth.can('edit domain'), function(req, res) {
       domain.deleted = true;
       domain.save().then(function () {
         log.info('Domain Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
         res.sendStatus(200);
       });
     } else {

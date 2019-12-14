@@ -799,6 +799,8 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
   group.save().then(function(group) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
+    queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
+
     group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.addGroupAdmins(req.user).then(function (results) {
@@ -864,6 +866,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       updateGroupConfigParamters(req, group);
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
         group.setupImages(req.body, function(error) {
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
@@ -886,6 +889,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
       group.deleted = true;
       group.save().then(function () {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
         queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
                                            userId: req.user.id, groupId: group.id }).priority('high').removeOnComplete(true).save();
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {

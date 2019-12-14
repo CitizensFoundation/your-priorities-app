@@ -1171,6 +1171,7 @@ const createNewCommunity = (req, res) => {
   updateCommunityConfigParameters(req, community);
   community.save().then(function() {
     log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
+    queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
     community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
       community.setupImages(req.body, function(error) {
         community.addCommunityAdmins(req.user).then(function (results) {
@@ -1223,6 +1224,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
       updateCommunityConfigParameters(req, community);
       community.save().then(function () {
         log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
         community.setupImages(req.body, function(error) {
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
@@ -1243,6 +1245,7 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
       community.deleted = true;
       community.save().then(function () {
         log.info('Community Deleted', { community: toJson(community), user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
         queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name, communityId: community.id, userId: req.user.id }).priority('high').removeOnComplete(true).save();
         community.updateAllExternalCounters(req, 'down', 'counter_communities', function () {
           res.sendStatus(200);

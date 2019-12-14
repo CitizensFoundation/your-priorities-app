@@ -4,6 +4,7 @@ const async = require("async");
 const log = require('../utils/logger');
 const toJson = require('../utils/to_json');
 const parseDomain = require('../utils/parse_domain');
+var queue = require('../active-citizen/workers/queue');
 
 const Community = require('./community');
 
@@ -199,6 +200,7 @@ module.exports = (sequelize, DataTypes) => {
       .spread((domain, created) => {
         if (created) {
           log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
+          queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
         } else {
           //log.info('Domain Loaded', { domain: toJson(domain.simple()), context: 'create' });
         }
