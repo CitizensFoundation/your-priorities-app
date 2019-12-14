@@ -43,6 +43,7 @@
     "bower_components/i18next/i18next.min.js",
     "bower_components/i18next-xhr-backend/i18nextXHRBackend.min.js",
     "bower_components/webcomponentsjs/webcomponents*.js",
-    "bower_components/webcomponentsjs/custom*.js"
+    "bower_components/webcomponentsjs/custom*.js",
+    "robots.txt"
   ]
 }
