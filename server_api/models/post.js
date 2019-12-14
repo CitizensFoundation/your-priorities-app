@@ -264,7 +264,11 @@ module.exports = (sequelize, DataTypes) => {
     console.log(query);
 
     return sequelize.models.Post.findAll({
-      order: [["created_at","DESC"]],
+      order: [
+        ["created_at","DESC"],
+        [ { model: sequelize.models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
+        [ { model: sequelize.models.Video, as: "PostVideos" }, { model: sequelize.models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+      ],
       where: sequelize.literal('"PostText" @@ plainto_tsquery(\'english\', :query)'),
       replacements: {
         query: query
@@ -302,6 +306,20 @@ module.exports = (sequelize, DataTypes) => {
           as: 'PostHeaderImages',
           attributes: ['id','formats','updated_at'],
           required: false
+        },
+        {
+          model: sequelize.models.Video,
+          attributes: ['id','formats','updated_at','viewable','public_meta'],
+          as: 'PostVideos',
+          required: false,
+          include: [
+            {
+              model: sequelize.models.Image,
+              as: 'VideoImages',
+              attributes:["formats","updated_at"],
+              required: false
+            },
+          ]
         },
         {
           model: sequelize.models.Group,
