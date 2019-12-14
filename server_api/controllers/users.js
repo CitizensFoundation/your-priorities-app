@@ -1628,7 +1628,7 @@ router.get('/auth/github/callback',
 router.get('/:id/endorsements', auth.can('view user'), function (req, res) {
   models.Endorsement.findAll({
     where: {user_id: req.params.id, status: 'active'},
-    order: "created_at DESC"
+    order: [['created_at','DESC']],
   }).then(function (endorsements) {
     res.send(endorsements);
   });

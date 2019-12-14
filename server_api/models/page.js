@@ -97,7 +97,7 @@ module.exports = (sequelize, DataTypes) => {
   Page.getPagesForAdmin = (req, options, callback) => {
     sequelize.models.Page.findAll( {
       where: options,
-      order: "created_at ASC"
+      order: [["created_at", "asc"]]
     }).then((pages) => {
       callback(null, pages);
     }).catch( (error) => {

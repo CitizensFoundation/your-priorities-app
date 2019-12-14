@@ -329,7 +329,7 @@ const getLoginsExportDataForCommunity = (communityId, hostName, callback) => {
       type: 'activity.user.login',
       community_id: communityId
     },
-    order: 'created_at DESC',
+    order: [['created_at','DESC']],
     attributes: ['object','created_at'],
     include: [
       {
@@ -390,7 +390,7 @@ const getLoginsExportDataForDomain = (domainId, hostName, callback) => {
       type: 'activity.user.login',
       domain_id: domainId
     },
-    order: 'created_at DESC',
+    order: [['created_at','DESC']],
     attributes: ['object','created_at'],
     include: [
       {

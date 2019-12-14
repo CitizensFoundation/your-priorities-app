@@ -71,7 +71,6 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             model: models.Image,
             as: 'CommunityHeaderImages',
             attributes:  models.Image.defaultAttributesPublic,
-            order: 'created_at asc',
             required: false
           },
           {
@@ -133,7 +132,6 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             model: models.Image,
             as: 'CommunityHeaderImages',
             attributes:  models.Image.defaultAttributesPublic,
-            order: 'created_at asc',
             required: false
           }
         ]
@@ -166,7 +164,7 @@ var getCommunityFolder = function (req, communityFolderId, done) {
                   required: false
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {
@@ -219,7 +217,7 @@ var getCommunityFolder = function (req, communityFolderId, done) {
                   required: false
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {

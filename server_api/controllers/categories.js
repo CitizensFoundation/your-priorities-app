@@ -28,8 +28,9 @@ router.get('/:id', auth.can('view category'), function(req, res) {
   models.Category.findOne({
     where: { id: req.params.id },
     include: [
-      { model: models.Group,
-        order: 'Group.created_at DESC'
+      {
+        model: models.Group,
+        attributes: models.Group.defaultPublicAttributes
       },
       {
         model: models.Image, as: 'CategoryIconImages'

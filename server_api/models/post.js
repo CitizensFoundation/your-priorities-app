@@ -263,11 +263,12 @@ module.exports = (sequelize, DataTypes) => {
     query = sequelize.getQueryInterface().escape(query);
     console.log(query);
 
-    const where = '"'+sequelize.models.Post.getSearchVector() + '" @@ plainto_tsquery(\'english\', ' + query + ')';
-
     return sequelize.models.Post.findAll({
-      order: "created_at DESC",
-      where: [where, []],
+      order: [["created_at","DESC"]],
+      where: sequelize.literal('"PostText" @@ plainto_tsquery(\'english\', :query)'),
+      replacements: {
+        query: query
+      },
       limit: 1024,
       attributes: ['id','name','description','public_data','status','content_type','official_status','counter_endorsements_up','cover_media_type',
         'counter_endorsements_down','group_id','language','counter_points','counter_flags','location','created_at','category_id'],
@@ -493,6 +494,8 @@ module.exports = (sequelize, DataTypes) => {
           pointRevision.save().then(() => {
             log.info("process-moderation point toxicity after post and point has been saved");
             queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
+            queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
+
             post.updateAllExternalCounters(req, 'up', 'counter_points', () => {
               post.increment('counter_points');
               done();

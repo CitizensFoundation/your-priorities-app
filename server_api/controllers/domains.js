@@ -232,7 +232,6 @@ var getDomain = function (req, domainId, done) {
                 model: models.Image,
                 as: 'CommunityHeaderImages',
                 attributes:  models.Image.defaultAttributesPublic,
-                order: 'created_at asc',
                 required: false
               }
             ]
@@ -284,7 +283,7 @@ var getDomain = function (req, domainId, done) {
                   required: false
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {
@@ -333,7 +332,7 @@ var getDomain = function (req, domainId, done) {
                   required: false,
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {
