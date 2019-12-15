@@ -282,19 +282,19 @@ class AcActivitiesLit extends YpBaseElement {
     ${this.activities ? html`
     <div class="layout horizontal topLevelActivitiesContainer layout-center-center" wide="${this.wide}">
       <div class="layout vertical self-start">
-        <template is="dom-if" if="${this.loggedInUser}">
+        
+        ${ this.loggedInUser ?  html`  
           <paper-material .loggedInUser="${this.hasLoggedInUser}" elevation="1" class="layout horizontal addNewsBox">
             <yp-point-news-story-edit .domainId="${this.domainId}" .communityId="${this.communityId}" groupId="${this.groupId}" .postGroupId="${this.postGroupId}" .postId="${this.postId}" @refresh="${this.loadNewData}">
             </yp-point-news-story-edit>
           </paper-material>
-        </template>
-        <template is="dom-if" if="[[!loggedInUser]]">
+        ` : html`
           <div class="layout vertical center-center">
             <paper-button raised class="layout horizontal notLoggedInButton" @tap="${this._openLogin}">
               ${this.t('loginToShareALink')}
             </paper-button>
-          </div>
-        </template>
+          </div>     
+        `}
 
         <div class="layout horizontal center-center topSpinnerContainer" ?hidden="${this.gotInitialData}">
           <yp-ajax id="ajax" large-spinner @response="${this._activitiesResponse}"></yp-ajax>

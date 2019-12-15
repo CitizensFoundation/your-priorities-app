@@ -350,12 +350,11 @@ static get styles() {
         <div id="welcomeHTML" .title="(!community.configuration.welcomeHTML)" class="layout vertical center-center">
         </div>
         <div hidden="${this.community.configuration.welcomeHTML}">
-          <template is="dom-if" if="${this.communityVideoURL}" restamp="">
-            <video id="videoPlayer" .dataId="${this.communityVideoId}" .controls="" .preload="meta" class="image pointer" src="${this.communityVideoURL}" .playsinline="" .poster="${thiscommunityVideoPosterURL}"></video>
-          </template>
-          <template is="dom-if" if="${!this.communityVideoURL}">
-            <iron-image class="image" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
-          </template>
+            ${this.communityVideoURL ? html`  
+              <video id="videoPlayer" .dataId="${this.communityVideoId}" .controls="" .preload="meta" class="image pointer" src="${this.communityVideoURL}" .playsinline="" .poster="${thiscommunityVideoPosterURL}"></video>
+            ` : html`
+              <iron-image class="image" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image> 
+            `} 
         </div>
       </paper-material>
       <paper-material id="card" .elevation="3" .animated="" class="large-card textBox">
@@ -400,14 +399,12 @@ static get styles() {
         <yp-community-stats-lit class="stats" .community="${this.community}"></yp-community-stats-lit>
       </paper-material>
     </div>
+     
+     ${ (this.community && this.hasCommunityAccess) ? html`
+       <yp-ajax ?hidden="" .disableUserError="" .method="GET" url="/api/communities/${this.community.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
+     ` : html``}
 
-    <template is="dom-if" if="${this.community}" restamp>
-      <template is="dom-if" if="${this.hasCommunityAccess}" restamp>
-        <yp-ajax ?hidden="" .disableUserError="" .method="GET" url="/api/communities/${this.community.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
-      </template>
-    </template>
-
-    <iron-media-query .query="(max-width: 800px)" .queryMatches="${this.narrowScreen}"></iron-media-query>
+    <iron-media-query query="(max-width: 800px)" queryMatches="${this.narrowScreen}"></iron-media-query>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
     <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
 `: html``}

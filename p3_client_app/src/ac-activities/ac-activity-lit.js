@@ -168,21 +168,21 @@ class AcActivityLit extends YpBaseElement {
           </div>
         </div>
 
-        <template is="dom-if" if="${this._isActivityType(activity,'activity.post.new')}">
+        ${this._isActivityType(activity,'activity.post.new') ? html` 
           <ac-activity-post .activity="${this.activity}" .postId="${this.postId}" .communityId="${this.communityId}" .groupId="${this.groupId}"></ac-activity-post>
-        </template>
-
-        <template is="dom-if" if="${this._isActivityType(activity,'activity.point.new')}">
+        `  : html``}
+        
+        ${this._isActivityType(activity,'activity.point.new') ? html`
           <ac-activity-point .postId="${this.postId}" .activity="${this.activity}"></ac-activity-point>
-        </template>
-
-        <template is="dom-if" if="${this._isActivityType(activity,'activity.point.newsStory.new')}">
+        ` : html``}
+         
+        ${this._isActivityType(activity,'activity.point.newsStory.new') ? html`  
           <ac-activity-point-news-story .activity="${this.activity}" .postId="${this.postId}" .communityId="${this.communityId}" .groupId="${this.groupId}"></ac-activity-point-news-story>
-        </template>
+        ` : html``}
 
-        <template is="dom-if" if="${this._isActivityType(activity,'activity.post.status.change')}">
+        ${this._isActivityType(activity,'activity.post.status.change') ? html`
           <ac-activity-post-status-update .activity="${this.activity}"></ac-activity-post-status-update>
-        </template>
+        ` : html``}
       </div>
     </paper-material>
 
