@@ -174,7 +174,18 @@ app.use(function checkForBOT(req, res, next) {
 });
 
 app.get('/sitemap.xml', function getSitemap(req, res) {
-  generateSitemap(req, res);
+  const redisKey = "cache:sitemap:" + req.ypDomain.id;
+  req.redisClient.get(redisKey, (error, sitemap) => {
+    if (error) {
+      log.error("Error getting sitemap from redis", {error});
+      generateSitemap(req, res);
+    } else if (sitemap) {
+      res.header('Content-Type', 'application/xml');
+      res.send(sitemap);
+    } else {
+      generateSitemap(req, res);
+    }
+  });
 });
 
 app.get('/manifest.json', function getManifest(req, res) {
