@@ -216,7 +216,7 @@ var sendGroup = function (id, postsOffset, req, res) {
           moreUrl: postsOffset ? "/group/"+group.id+"?postsOffset="+postsOffset : null,
           moreText: "More posts ("+postsLeft+")",
           subItemPoints: [],
-          subItemIds: _.dropRight(group.Posts, group.Posts.length>10000 ? group.Posts.length - 10000 : 0)
+          subItemIds: group.Posts
         };
         res.render('bot', botOptions);
       }).catch((error)=>{
@@ -327,7 +327,7 @@ var sendPost = function (id, pointsOffset, req, res) {
           moreUrl: pointsOffset ? "/post/"+post.id+"?pointsOffset="+pointsOffset : null,
           moreText: "More points ("+pointsLeft+")",
           subItemContainerName: "Points",
-          subItemPoints: _.dropRight(post.Points, post.Points.length>10000 ? post.Points.length - 10000 : 0)
+          subItemPoints: post.Points
         };
         res.render('bot', botOptions);
       }).catch(function(error) {
