@@ -157,11 +157,6 @@ var sendGroup = function (id, req, res) {
         required: false
       },
       {
-        attributes: ['id','name'],
-        model: models.Post,
-        required: false
-      },
-      {
         model: models.Community,
         where: {
           access: models.Community.ACCESS_PUBLIC
@@ -180,29 +175,41 @@ var sendGroup = function (id, req, res) {
   }).then(function(group) {
     var formats;
     if (group) {
-      log.info('Group Viewed From Bot', { groupId: group.id, context: 'view', bot: true });
-      var imageUrl = '';
-      if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
-        formats = JSON.parse(group.GroupLogoImages[0].formats);
-        imageUrl = formats[0];
-      } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
+      models.Post.findAll({
+        where: {
+          group_id: group.id
+        },
+        attributes: ['id','name'],
+        limit: 2500
+      }).then((posts)=>{
+        group.Posts = posts;
+        log.info('Group Viewed From Bot', { groupId: group.id, context: 'view', bot: true });
+        var imageUrl = '';
+        if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
+          formats = JSON.parse(group.GroupLogoImages[0].formats);
+          imageUrl = formats[0];
+        } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
           formats = JSON.parse(group.Community.CommunityLogoImages[0].formats);
           imageUrl = formats[0];
-      }
-      var botOptions = {
-        url       : fullUrl(req),
-        title     :  group.name,
-        descriptionText : group.objectives,
-        imageUrl  : imageUrl,
-        contentType: 'article',
-        subItemsUrlbase: "/post/",
-        subItemContainerName: "Posts",
-        backUrl: "/community/"+group.community_id,
-        backText: "Back to community",
-        subItemPoints: [],
-        subItemIds: _.dropRight(group.Posts, group.Posts.length>10000 ? group.Posts.length - 10000 : 0)
-      };
-      res.render('bot', botOptions);
+        }
+        var botOptions = {
+          url       : fullUrl(req),
+          title     :  group.name,
+          descriptionText : group.objectives,
+          imageUrl  : imageUrl,
+          contentType: 'article',
+          subItemsUrlbase: "/post/",
+          subItemContainerName: "Posts",
+          backUrl: "/community/"+group.community_id,
+          backText: "Back to community",
+          subItemPoints: [],
+          subItemIds: _.dropRight(group.Posts, group.Posts.length>10000 ? group.Posts.length - 10000 : 0)
+        };
+        res.render('bot', botOptions);
+      }).catch((error)=>{
+        log.error('Group Not Found for Bot', { err: error, context: 'view', bot: true });
+        res.sendStatus(500);
+      });
     } else {
       log.warn('Group Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
       res.sendStatus(404);
