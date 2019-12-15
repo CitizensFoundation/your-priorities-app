@@ -26,6 +26,12 @@ html
             each val in subItemPoints
                 div
                     p= val.content
+        if moreUrl
+            p
+                b
+                    a(href != moreUrl)
+                        div
+                            p= moreText
         p
             b
                 a(href != backUrl)

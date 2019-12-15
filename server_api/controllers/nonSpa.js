@@ -136,7 +136,7 @@ var sendCommunity = function (id, req, res) {
   });
 };
 
-var sendGroup = function (id, req, res) {
+var sendGroup = function (id, postsOffset, req, res) {
   models.Group.findOne({
     where: {
       id: id,
@@ -175,14 +175,17 @@ var sendGroup = function (id, req, res) {
   }).then(function(group) {
     var formats;
     if (group) {
-      models.Post.findAll({
+      if (!postsOffset)
+        postsOffset = 0;
+      models.Post.findAndCountAll({
         where: {
           group_id: group.id
         },
         attributes: ['id','name'],
-        limit: 2500
-      }).then((posts)=>{
-        group.Posts = posts;
+        limit: 20,
+        offset: postsOffset
+      }).then((postsInfo)=>{
+        group.Posts = postsInfo.rows;
         log.info('Group Viewed From Bot', { groupId: group.id, context: 'view', bot: true });
         var imageUrl = '';
         if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
@@ -192,6 +195,14 @@ var sendGroup = function (id, req, res) {
           formats = JSON.parse(group.Community.CommunityLogoImages[0].formats);
           imageUrl = formats[0];
         }
+
+        const postsLeft = postsInfo.count-(postsOffset+postsInfo.rows.length);
+        if (postsLeft>0) {
+          postsOffset+=20;
+        } else {
+          postsOffset = null;
+        }
+
         var botOptions = {
           url       : fullUrl(req),
           title     :  group.name,
@@ -202,6 +213,8 @@ var sendGroup = function (id, req, res) {
           subItemContainerName: "Posts",
           backUrl: "/community/"+group.community_id,
           backText: "Back to community",
+          moreUrl: postsOffset ? "/group/"+group.id+"?postsOffset="+postsOffset : null,
+          moreText: "More posts ("+postsLeft+")",
           subItemPoints: [],
           subItemIds: _.dropRight(group.Posts, group.Posts.length>10000 ? group.Posts.length - 10000 : 0)
         };
@@ -220,7 +233,7 @@ var sendGroup = function (id, req, res) {
   });
 };
 
-var sendPost = function (id, req, res) {
+var sendPost = function (id, pointsOffset, req, res) {
   models.Post.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description','group_id'],
@@ -233,11 +246,6 @@ var sendPost = function (id, req, res) {
       {
         attributes: ['id','formats'],
         model: models.Image, as: 'PostHeaderImages',
-        required: false
-      },
-      {
-        attributes: ['id','content'],
-        model: models.Point,
         required: false
       },
       {
@@ -277,32 +285,55 @@ var sendPost = function (id, req, res) {
   }).then(function(post) {
     var formats;
     if (post) {
-      log.info('Post Viewed From Bot', { postId: post ? post.id : -1, context: 'view', bot: true });
-      var imageUrl = '';
-      if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
-        formats = JSON.parse(post.PostHeaderImages[0].formats);
-        imageUrl = formats[0];
-      } else if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
-        formats = JSON.parse(post.Group.GroupLogoImages[0].formats);
-        imageUrl = formats[0];
-      } else if (post.Group.Community.CommunityLogoImages && post.Group.Community.CommunityLogoImages.length>0) {
-        formats = JSON.parse(post.Group.Community.CommunityLogoImages[0].formats);
-        imageUrl = formats[0];
-      }
-      var botOptions = {
-        url       : fullUrl(req),
-        title     :  post.name,
-        descriptionText : post.description,
-        imageUrl  : imageUrl,
-        contentType: 'article',
-        subItemsUrlbase: "",
-        subItemIds: [],
-        backUrl: "/group/"+post.group_id,
-        backText: "Back to group",
-        subItemContainerName: "Points",
-        subItemPoints: _.dropRight(post.Points, post.Points.length>10000 ? post.Points.length - 10000 : 0)
-      };
-      res.render('bot', botOptions);
+      models.Point.findAndCountAll({
+        where: {
+          post_id: post.id
+        },
+        attributes: ['id','content'],
+        limit: 20,
+        offset: pointsOffset
+      }).then((pointsInfo)=>{
+        post.Points = pointsInfo.rows;
+        log.info('Post Viewed From Bot', { postId: post ? post.id : -1, context: 'view', bot: true });
+        var imageUrl = '';
+        if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
+          formats = JSON.parse(post.PostHeaderImages[0].formats);
+          imageUrl = formats[0];
+        } else if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
+          formats = JSON.parse(post.Group.GroupLogoImages[0].formats);
+          imageUrl = formats[0];
+        } else if (post.Group.Community.CommunityLogoImages && post.Group.Community.CommunityLogoImages.length>0) {
+          formats = JSON.parse(post.Group.Community.CommunityLogoImages[0].formats);
+          imageUrl = formats[0];
+        }
+
+        const pointsLeft = pointsInfo.count-(pointsOffset+pointsInfo.rows.length);
+        if (pointsLeft>0) {
+          pointsOffset+=20;
+        } else {
+          pointsOffset = null;
+        }
+
+        var botOptions = {
+          url       : fullUrl(req),
+          title     :  post.name,
+          descriptionText : post.description,
+          imageUrl  : imageUrl,
+          contentType: 'article',
+          subItemsUrlbase: "",
+          subItemIds: [],
+          backUrl: "/group/"+post.group_id,
+          backText: "Back to group",
+          moreUrl: pointsOffset ? "/post/"+post.id+"?pointsOffset="+pointsOffset : null,
+          moreText: "More points ("+pointsLeft+")",
+          subItemContainerName: "Points",
+          subItemPoints: _.dropRight(post.Points, post.Points.length>10000 ? post.Points.length - 10000 : 0)
+        };
+        res.render('bot', botOptions);
+      }).catch(function(error) {
+        log.error('Points Not Found for Bot', { err: error, context: 'view', bot: true });
+        res.sendStatus(500);
+      });
     } else {
       log.warn('Post Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
       res.sendStatus(404);
@@ -370,15 +401,25 @@ router.get('/*', function(req, res, next) {
     id = id.split("?")[0];
   }
 
+  let postsOffset = 0;
+  if (url.indexOf("postsOffset=")>-1) {
+    postsOffset = parseInt(url.split("postsOffset=")[1].trim());
+  }
+
+  let pointsOffset = 0;
+  if (url.indexOf("pointsOffset=")>-1) {
+    pointsOffset = parseInt(url.split("pointsOffset=")[1].trim());
+  }
+
   if(!isNaN(id)) {
     if (splitUrl[splitPath]=='domain') {
       sendDomain(id, req, res)
     } else if (splitUrl[splitPath]=='community') {
       sendCommunity(id, req, res)
     } else if (splitUrl[splitPath]=='group') {
-      sendGroup(id, req, res)
+      sendGroup(id, postsOffset, req, res)
     } else if (splitUrl[splitPath]=='post') {
-      sendPost(id, req, res)
+      sendPost(id, pointsOffset, req, res)
     } else if (splitUrl[splitPath]=='user') {
       sendUser(id, req, res)
     } else if (req.ypCommunity && req.ypCommunity.id != null) {
