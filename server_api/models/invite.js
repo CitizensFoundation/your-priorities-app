@@ -47,7 +47,7 @@ module.exports = function(sequelize, DataTypes) {
   Invite.INVITE_TO_IDEA = 2;
   Invite.INVITE_TO_FRIEND = 3;
 
-  Invite.checkIfColumnExists = (columnName) => {
+  Invite.checkIfColumnExists = function(columnName) {
     const a = this.rawAttributes;
     const b = this.rawAttributes[columnName];
     return this.rawAttributes[columnName]!=null;
