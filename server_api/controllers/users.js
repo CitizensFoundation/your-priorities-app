@@ -643,6 +643,7 @@ const setSAMLSettingsOnUser = (req, user, done) => {
   if (urlComponents && urlComponents.pathname && urlComponents.pathname.split("/").length>1) {
     id = urlComponents.pathname.split("/")[2];
   }
+
   let community, group, isGroupAdmin, isCommunityAdmin;
 
   async.parallel([
@@ -788,7 +789,7 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
-        log.error("User IsLoggedIn Error", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
+        log.error("User IsLoggedIn Error 1", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
         res.sendStatus(500);
       } else {
         if (user.email && user.email!="") {
@@ -805,7 +806,7 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
 
         setSAMLSettingsOnUser(req, user, (error) => {
           if (error) {
-            log.error("User IsLoggedIn Error", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
+            log.error("User IsLoggedIn Error 2", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
             res.sendStatus(500);
           } else {
             res.send(user);
@@ -817,8 +818,8 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
     const user = { notLoggedIn: true };
     setSAMLSettingsOnUser(req, user, (error) => {
       if (error) {
-        log.error("User IsLoggedIn Error", {context: 'isloggedin', user: req.user ? req.user.id : -1, err: error, errorStatus: 500});
-        res.sendStatus(401);
+        log.error("User IsLoggedIn Error 3", {context: 'isloggedin', user: req.user ? req.user.id : -1, err: error, errorStatus: 500});
+        res.sendStatus(500);
       } else {
         res.send(user);
       }
