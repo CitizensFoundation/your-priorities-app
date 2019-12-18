@@ -107,7 +107,7 @@ var generateSitemap = function(req, res) {
           res.status(500).end();
         } else {
           const redisKey = "cache:sitemap:" + req.ypDomain.id;
-          req.redisClient.setex(redisKey, process.env.SITEMAP_CACHE_TTL ? parseInt(process.env.SITEMAP_CACHE_TTL) : 60*10, xml);
+          req.redisClient.setex(redisKey, process.env.SITEMAP_CACHE_TTL ? parseInt(process.env.SITEMAP_CACHE_TTL) : 60*60, xml);
           res.header('Content-Type', 'application/xml');
           res.send( xml );
         }
