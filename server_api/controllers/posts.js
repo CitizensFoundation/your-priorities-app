@@ -1248,8 +1248,7 @@ router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
         }
       });
     } else {
-      log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: toJson(req.user),
-        err: error, errorStatus: 404 });
+      log.error("Endorsement Not found", { context: 'delete', post: req.params.id, user: toJson(req.user), errorStatus: 404 });
       res.sendStatus(404);
     }
   }).catch(function(error) {
