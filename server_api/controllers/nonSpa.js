@@ -26,7 +26,7 @@ var fullUrl = function (req) {
   return formattedUrl;
 };
 
-var sendDomain = function (id, req, res) {
+var sendDomain = function sendDomainForBot(id, req, res) {
   models.Domain.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description'],
@@ -79,7 +79,7 @@ var sendDomain = function (id, req, res) {
   });
 };
 
-var sendCommunity = function (id, req, res) {
+var sendCommunity = function sendCommunityForBot(id, req, res) {
   models.Community.findOne({
     where: { id: id, access: models.Community.ACCESS_PUBLIC },
     attributes: ['id', 'name', 'description','domain_id'],
@@ -136,7 +136,7 @@ var sendCommunity = function (id, req, res) {
   });
 };
 
-var sendGroup = function (id, postsOffset, req, res) {
+var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
   models.Group.findOne({
     where: {
       id: id,
@@ -233,7 +233,7 @@ var sendGroup = function (id, postsOffset, req, res) {
   });
 };
 
-var sendPost = function (id, pointsOffset, req, res) {
+var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
   models.Post.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description','group_id'],
@@ -344,7 +344,7 @@ var sendPost = function (id, pointsOffset, req, res) {
   });
 };
 
-var sendUser = function (id, req, res) {
+var sendUser = function sendUserForBot(id, req, res) {
   models.User.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description'],
@@ -385,7 +385,7 @@ var sendUser = function (id, req, res) {
   });
 };
 
-router.get('/*', function(req, res, next) {
+router.get('/*', function botController(req, res, next) {
   let url = req.url;
   let splitPath = 1;
 
@@ -420,8 +420,6 @@ router.get('/*', function(req, res, next) {
       sendGroup(id, postsOffset, req, res)
     } else if (splitUrl[splitPath]=='post') {
       sendPost(id, pointsOffset, req, res)
-    } else if (splitUrl[splitPath]=='user') {
-      sendUser(id, req, res)
     } else if (req.ypCommunity && req.ypCommunity.id != null) {
       sendCommunity(req.ypCommunity.id, req, res);
     } else if (req.ypDomain && req.ypDomain.id != null) {
