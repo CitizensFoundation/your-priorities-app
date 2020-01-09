@@ -17,7 +17,7 @@ import { LargeCardBehaviors } from '../yp-behaviors/yp-large-card-behaviors.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { CommunityBehaviors } from './yp-community-behaviors.js';
-import './yp-community-stats.js';
+import './yp-community-stats-lit.js';
 import '../yp-magic-text/yp-magic-text.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -294,7 +294,7 @@ Polymer({
 
     <div class="layout horizontal wrap">
       <paper-material is-video\$="[[communityVideoURL]]" id="cardImage" elevation="3" animated="" class="large-card imageCard top-card">
-        <div id="welcomeHTML" hidden\$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
+      <div id="welcomeHTML" hidden\$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
         </div>
         <div hidden\$="[[community.configuration.welcomeHTML]]">
           <template is="dom-if" if="[[communityVideoURL]]" restamp="">
@@ -344,7 +344,7 @@ Polymer({
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-community-stats class="stats" community="[[community]]"></yp-community-stats>
+        <yp-community-stats-lit class="stats" community="[[community]]"></yp-community-stats-lit>
       </paper-material>
     </div>
 

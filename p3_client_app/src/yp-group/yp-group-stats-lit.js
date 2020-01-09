@@ -1,15 +1,20 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import 'lite-signal/lite-signal.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment">
+import { html, css } from 'lit-element';
+import { YpBaseElement } from '../yp-base-element.js';
+import { YpFlexLayout } from '../yp-flex-layout.js';
+class YpGroupStatsLit extends YpBaseElement {
+  static get properties() {
+    return {
+      group: {
+        type: Object
+      }
+    }
+  }
+  
+  static get styles() {
+    return [
+      css`
+      
       :host {
         display: block;
       }
@@ -32,39 +37,48 @@ Polymer({
         padding-left:8px;
         margin-right:4px;
       }
-    </style>
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <div class="stats layout horizontal end-justified">
-      <iron-icon title\$="[[t('stats.posts')]]" icon="lightbulb-outline" class="stats-icon"></iron-icon>
-      <div title\$="[[t('stats.posts')]]" class="stats-text" style="">{{formatNumber(group.counter_posts)}}</div>
+      @media (max-width: 945px) {
+          .hideIfMobile {
+            display: none;
+          }
+        }
 
-      <iron-icon title\$="[[t('stats.discussions')]]" icon="chat-bubble-outline" class="stats-icon"></iron-icon>
-      <div title\$="[[t('stats.discussions')]]" class="stats-text">{{formatNumber(group.counter_points)}}</div>
+        [hidden] {
+          display: none !important;
+        }
 
-      <iron-icon title\$="[[t('stats.users')]]" icon="face" class="stats-icon"></iron-icon>
-      <div title\$="[[t('stats.users')]]" class="stats-text">{{formatNumber(group.counter_users)}}</div>
-    </div>
-`,
-
-  is: 'yp-group-stats',
-
-  behaviors: [
-    ypLanguageBehavior,
-    ypNumberFormatBehavior
-  ],
-
-  properties: {
-    group: {
-      type: Object
-    }
-  },
-
-  ready: function () {
-    // Inaccurate fudge for Your Priorities country pages that mostly have a common user database not connected to
-    // the group
-    if (this.group && this.group.IsoCountry) {
-      this.group.counter_users = this.group.counter_users * 30;
-    }
+      `, YpFlexLayout]
   }
-});
+
+
+  render() {
+    return html`
+      ${this.group ? html`
+      <div class="stats layout horizontal end-justified">
+        <div class="layout horizontal wrap">
+          <div class="layout horizontal">
+            <iron-icon .title="${this.t('stats.posts')}" .icon="lightbulb-outline" class="stats-icon"></iron-icon>
+            <div .title="${this.t('stats.posts')}" class="stats-text">${this.formatNumber(this.group.counter_posts)}</div>
+
+            <iron-icon .title="${this.t('stats.discussions')}" .icon="chat-bubble-outline" class="stats-icon"></iron-icon>
+            <div .title="${this.t('stats.discussions')}" class="stats-text">${this.formatNumber(this.group.counter_points)}</div>
+
+            <iron-icon ?hidden="${!this.wide}" .title="${this.t('stats.communities')}" .icon="group-work" class="stats-icon hideIfMobile"></iron-icon>
+            <div ?hidden="${!this.wide}" .title="${this.t('stats.communities')}" class="stats-text hideIfMobile">${this.formatNumber(this.group.counter_communities)}</div>
+          </div>
+          <div class="layout horizontal">
+            <iron-icon ?hidden="" .title="${this.t('stats.groups')}" .icon="people" class="stats-icon hideIfMobile"></iron-icon>
+            <div ?hidden="" .title="${this.t('stats.groups')}" class="stats-text hideIfMobile" >${this.formatNumber(this.group.counter_groups)}</div>
+
+            <iron-icon .title="${this.t('stats.users')}" .icon="face" class="stats-icon"></iron-icon>
+            <div .title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.group.counter_users)}</div>
+          </div>
+        </div>  
+      </div>
+    ` : html``     
+    }
+    `
+  } 
+}  
+window.customElements.define('yp-group-stats-lit', YpGroupStatsLit);
