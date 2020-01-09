@@ -27,54 +27,54 @@ class YpDomainEditLit extends YpBaseElement {
         type: String,
         value: "/api/domains"
       },
-  
+
       domain: {
         type: Object,
         observer: '_domainChanged',
         notify: true
       },
-  
+
       params: {
         type: String
       },
-  
+
       selected: {
         type: Number,
         value: 0
       },
-  
+
       method: {
         type: String
       },
-  
+
       uploadedLogoImageId: {
         type: String
       },
-  
+
       uploadedHeaderImageId: {
         type: String
       },
-  
+
       themeId: {
         type: String,
         value: null
       },
-  
+
       status: {
         type: String
       },
-  
+
       appHomeScreenIconImageId: String,
-  
+
       hasVideoUpload: {
         type: Boolean,
         value: false
       },
-  
+
       uploadedVideoId: {
         type: Number,
         value: null
-      }  
+      }
     }
   }
   static get styles() {
@@ -161,17 +161,17 @@ class YpDomainEditLit extends YpBaseElement {
               <span> ${this.t('image.header.upload')} - 1920 x 600</span><br>
             </yp-file-upload>
           </div>
-
-          <template is="dom-if" if="${this.hasVideoUpload}">
-            <div class="layout vertical uploadSection">
-              <yp-file-upload id="videoFileUpload" raised video-upload="" .method="POST" @success="${this._videoUploaded}">
-                <iron-icon class="icon" .icon="videocam"></iron-icon>
-                <span>${this.t('uploadVideo')}</span>
-              </yp-file-upload>
-              <paper-checkbox class="useVideoCover" .name="useVideoCover" ?disabled="${!this.uploadedVideoId}" checked="${this.domain.configuration.useVideoCover}">${this.t('useVideoCover')}</paper-checkbox>
-            </div>
-          </template>
         </div>
+
+      ${ this.hasVideoUpload ? html`
+        <div class="layout vertical uploadSection">
+          <yp-file-upload id="videoFileUpload" raised video-upload="" .method="POST" @success="${this._videoUploaded}">
+            <iron-icon class="icon" .icon="videocam"></iron-icon>
+              <span>${this.t('uploadVideo')}</span>
+            </yp-file-upload>
+            <paper-checkbox class="useVideoCover" .name="useVideoCover" ?disabled="${!this.uploadedVideoId}" checked="${this.domain.configuration.useVideoCover}">${this.t('useVideoCover')}</paper-checkbox>
+        </div>
+      ` : html``}
 
         <paper-input id="customUserRegistrationText" .name="customUserRegistrationText" .type="text" .label="${this.t('customUserRegistrationText')}" .value="${this.domain.configuration.customUserRegistrationText}" .maxlength="256" char-counter>
         </paper-input>

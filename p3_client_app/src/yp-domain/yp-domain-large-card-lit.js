@@ -30,45 +30,45 @@ class YpDomainLargeCardLit extends YpBaseElement {
         value: null,
         observer: '_domainChanged'
       },
-  
+
       elevation: {
         type: Number
       },
-  
+
       hideImage: {
         type: Boolean,
         value: false
       },
-  
+
       hasDomainAccess: {
         type: Boolean,
         value: false,
         computed: '_hasDomainAccess(domain, gotAdminRights)'
       },
-  
+
       showMenuItem: {
         type: Boolean,
         value: false,
         computed: '_showMenuItem(hasDomainAccess, domain)'
       },
-  
+
       domainVideoURL: {
         type: String,
         computed: '_domainVideoURL(domain)'
       },
-  
+
       domainVideoPosterURL: {
         type: String,
         computed: '_domainVideoPosterURL(domain)'
       },
-  
+
       domainVideoId: Number,
-  
+
       flaggedContentCount: {
         type: Number,
         value: null
       },
-  
+
       exportLoginsUrl: {
         type: String,
         computed: '_exportLoginsUrl(hasDomainAccess, domain)'
@@ -78,7 +78,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
 
   static get styles() {
     return [
-      css`  
+      css`
 
       :host {
       }
@@ -262,21 +262,24 @@ class YpDomainLargeCardLit extends YpBaseElement {
         text-decoration: none;
         color: inherit;
       }
-    
+
     `, YpFlexLayout]
   }
-   
+
   render() {
     return html`
     ${this.domain ? html`
     <div class="layout horizontal wrap">
       <paper-material is-video="${this.domainVideoURL}" id="cardImage" .elevation="3" .animated="" class="large-card imageCard top-card">
-        <template is="dom-if" if="${this.domainVideoURL}" restamp="">
+
+        ${ this.domainVideoURL ? html`
           <video id="videoPlayer" data-id="${this.domainVideoId}" .controls="" .preload="meta" class="image" src="${this.domainVideoURL}" playsinline .poster="${this.domainVideoPosterURL}"></video>
-        </template>
-        <template is="dom-if" if="${!this.domainVideoURL}">
+        ` : html``}
+
+        ${ !this.domainVideoURL ? html`
           <iron-image class="image" ?hidden="${this.hideImage}" .sizing="cover" src="${this._domainLogoImagePath(domain)}"></iron-image>
-        </template>
+        ` : html``}
+
       </paper-material>
       <paper-material id="card" .elevation="4" .animated="" class="large-card textBox">
         <div class="layout vertical">
@@ -287,10 +290,12 @@ class YpDomainLargeCardLit extends YpBaseElement {
                   <yp-magic-text .textType="domainName" .contentLanguage="${this.domain.language}" .disableTranslation="${this.domain.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.domain.name}" .contentId="${this.domain.id}">
                   </yp-magic-text>
                 </div>
-                <template is="dom-if" if="${this.domain.id}">
+
+                ${ this.domain.id ? html`
                   <yp-magic-text id="description" class="description domainDescription" .textType="domainContent" .contentLanguage="${this.domain.language}" .content="${this.domain.description}" .contentId="${this.domain.id}">
-                  </yp-magic-text>
-                </template>
+                    </yp-magic-text>
+                ` : html``}
+
               </div>
             </div>
           </div>
@@ -320,11 +325,9 @@ class YpDomainLargeCardLit extends YpBaseElement {
       </paper-material>
     </div>
 
-    <template is="dom-if" if="${this.domain}" restamp>
-      <template is="dom-if" if="${this.hasDomainAccess}" restamp>
-        <yp-ajax .method="GET" disable-user-error="" ?hidden="" url="/api/domains/${this.domain.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
-      </template>
-    </template>
+    ${ (this.domain && this.hasDomainAccess) ? html`
+      <yp-ajax .method="GET" disable-user-error="" ?hidden="" url="/api/domains/${this.domain.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
+    ` : html`` }
 
     <iron-media-query query="(max-width: 945px)" query-matches="${this.narrowScreen}"></iron-media-query>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>

@@ -135,14 +135,15 @@ class AcNotificationListLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-   
+
   render() {
     return html`
     ${this.notification ? html`
     <iron-scroll-threshold .lower-threshold="250" @lower-threshold="${this._loadMoreData}" id="threshold">
       <div .elevation="2" id="material" class="oversflowSettings">
-        <template is="dom-if" if="${this.user}">
-          <yp-user-info @open-user-edit="${this._openEdit}" .user="${this.user}"></yp-user-info>
+
+        ${ this.user ? html`
+        <yp-user-info @open-user-edit="${this._openEdit}" .user="${this.user}"></yp-user-info>
           <div class="notificationHeader layout horizontal center-center" ?hidden="${!this.notificationsLength}">
             ${this.t('notifications')}
           </div>
@@ -176,7 +177,8 @@ class AcNotificationListLit extends YpBaseElement {
               </div>
             </template>
           </iron-list>
-        </template>
+        ` : html``}
+
       </div>
     </iron-scroll-threshold>
 

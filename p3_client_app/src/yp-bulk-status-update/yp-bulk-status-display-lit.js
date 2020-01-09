@@ -17,45 +17,45 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
       config: {
         type: Object
       },
-  
+
       templates: {
         type: Object
       },
-  
+
       community: {
         type: Object,
         observer: '_communityChanged'
       },
-  
+
       statusUpdateId: {
         type: Number,
         observer: '_statusUpdateIdChanged'
       },
-  
+
       readToLoad: {
         type: Boolean,
         computed: '_readyToLoad(userId, statusUpdateId)'
       },
-  
+
       userId: Number,
-  
+
       hideGroupName: {
         type: Boolean,
         value: false
       },
-  
+
       byTemplate: {
         type: Boolean,
         value: false
       },
-  
+
       gotModifiedTemplates: {
         type: Boolean,
         value: false
       }
     }
   }
-  
+
   static get styles() {
     return [
       css`
@@ -146,7 +146,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
     ${this.bulk ? html`
@@ -157,14 +157,14 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
       </paper-material>
     </div>
 
-    <template is="dom-if" if="${!this.byTemplate}">
+    ${ !this.byTemplate ? html`
       <template is="dom-repeat" .items="${this.config.groups}" as="group">
         <paper-material .elevation="2" class="statusMaterial layout horizontal center-center wrap">
           <template is="dom-repeat" .items="${this._orderGroupStatuses(group.statuses)}" as="status">
             <div class="layout vertical self-start">
               <h1 ?hidden="${this.hideGroupName}">${this.group.name}</h1>
               <h2>${this._officialStatusOptionsNamePlural(status.official_status)}</h2>
-              <template is="dom-repeat" .items="[[status.posts]]" as="post">
+              <template is="dom-repeat" .items="${thisstatus.posts}" as="post">
                 <div class="layout vertical">
                   <div class="layout horizontal">
                     <iron-icon class="openCloseButton" data-args="${this.post.id}" .icon="keyboard-arrow-right" @tap="${this._setOpen}"></iron-icon>
@@ -189,9 +189,9 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
           </template>
         </paper-material>
       </template>
-    </template>
+    ` : html``}
 
-    <template is="dom-if" if="${this.gotModifiedTemplates}" restamp>
+    ${ this.gotModifiedTemplates ? html`
       <div class="templateList">
         <template is="dom-repeat" items="${this._toArray(templates)}" as="template">
           <h2>${this.template.title}</h2>
@@ -202,13 +202,14 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
           </template>
         </template>
       </div>
-    </template>
-    <yp-ajax id="ajax" url="/api/users/[[userId]]/status_update/${this.statusUpdateId}" @response="${this._response}"></yp-ajax>
+    ` : html``}
+
+    <yp-ajax id="ajax" url="/api/users/${this.userId}/status_update/${this.statusUpdateId}" @response="${this._response}"></yp-ajax>
 ` : html``}
 `
   }
 
- 
+
 /*
   behaviors: [
     ypLanguageBehavior,

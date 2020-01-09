@@ -508,19 +508,19 @@ class YpAppLit extends YpBaseElement {
     ${this.app ? html`
     <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
-    <yp-app-globals id="appGlobals" setup-defaults="" @change-header="${this.onChangeHeader}"></yp-app-globals>
+    <yp-app-globals id="appGlobals" setup-defaults @change-header="${this.onChangeHeader}"></yp-app-globals>
 
-    <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed="">
+    <app-drawer-layout .drawerWidth="360px" .responsiveWidth="16000px" fullbleed>
 
-      <app-drawer id="drawer" .slot="drawer" align="end" position="right" .opened="${this.userDrawerOpened}" swipe-open="">
+      <app-drawer id="drawer" .slot="drawer" .align="end" .position="right" .opened="${this.userDrawerOpened}" swipe-open="">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important; width: 255px;">
           <ac-notification-list id="acNotificationsList" .user="${this.user}" .opened="${this.userDrawerOpened}" .route="${this.route}"></ac-notification-list>
         </div>
       </app-drawer>
 
-      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open="" opened="${this.navDrawOpened}">
+      <app-drawer id="navDrawer" .slot="drawer" .align="start" .position="left" swipe-open="" .opened="${this.navDrawOpened}">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
-          <yp-app-nav-drawer id="ypNavDrawer" .home-link="${this.homeLink}" @yp-toggle-nav-drawer="${this._toggleNavDrawer}" user="${this.user}" route="${this.route}"></yp-app-nav-drawer>
+          <yp-app-nav-drawer id="ypNavDrawer" .home-link="${this.homeLink}" @yp-toggle-nav-drawer="${this._toggleNavDrawer}" .user="${this.user}" .route="${this.route}"></yp-app-nav-drawer>
         </div>
       </app-drawer>
 
@@ -532,20 +532,23 @@ class YpAppLit extends YpBaseElement {
               <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
             </div>
             <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
-            <template is="dom-if" if="${this.closePostHeader}">
-              <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
-            </template>
-            <template is="dom-if" if="${this.goForwardToPostId}">
+
+            ${ this.closePostHeader ? html`
+              <paper-icon-button .ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
+            ` : html``}
+
+            ${ this.goForwardToPostId ? html`
               <div class="layout horizontal">
-                <paper-icon-button .ariaLabel="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
+                <paper-icon-button .ariaLabel="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" .icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
                 <div id="forwardPostName" class="forwardPostName">
                   ${this.goForwardPostName}
                 </div>
               </div>
-            </template>
+            ` : html``}
+
             <span class="flex"></span>
             <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
-              <paper-button raised="" id="translationButton" @tap="${this._stopTranslation}" title="${this.t('stopAutoTranslate')}">
+              <paper-button raised id="translationButton" @tap="${this._stopTranslation}" title="${this.t('stopAutoTranslate')}">
                 <iron-icon icon="translate"></iron-icon>
                 <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
               </paper-button>
@@ -561,42 +564,43 @@ class YpAppLit extends YpBaseElement {
               </paper-listbox>
             </paper-menu-button>
 
-            <template is="dom-if" if="${this.user}">
+            ${ this.user ? html`
               <div class="userImageNotificationContainer layout horizontal" @tap="${this._toggleUserDrawer}">
                 <yp-user-image id="userImage" .small="" .user="${this.user}"></yp-user-image>
                 <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
               </div>
-            </template>
+            ` : html``}
 
-            <template is="dom-if" if="${!this.user}">
+            ${ !this.user ? html`
               <paper-button class="loginButton" @tap="${this._login}">${this.t('user.login')}</paper-button>
-            </template>
+            ` : html``}
+
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="${this.page}" style="height:auto;" attr-for-selected="name" fullbleed="">
+        <iron-pages selected="${this.page}" .style="height:auto;" .attrForSelected="name" fullbleed="">
           <yp-domain id="domainPage" name="domain" id-route="${this.domainSubRoute}" @change-header="${this.onChangeHeader}"></yp-domain>
           <yp-community id="communityPage" name="community" id-route="${this.communitySubRoute}" @change-header="${this.onChangeHeader}"></yp-community>
           <yp-community-folder id="communityFolderPage" name="community_folder" id-route="${this.communityFolderSubRoute}" @change-header="${this.onChangeHeader}"></yp-community-folder>
           <yp-group id="groupPage" name="group" id-route="${this.groupSubRoute}" @change-header="${this.onChangeHeader}"></yp-group>
-          <yp-post id="postPage" name="post" id-route="[[postSubRoute]]" @change-header="${this.onChangeHeader}"></yp-post>
-          <yp-user id="userPage" name="user" id-route\$="[[userSubRoute]]" on-change-header="${this.onChangeHeader}"></yp-user>
+          <yp-post id="postPage" name="post" id-route="${this.postSubRoute}" @change-header="${this.onChangeHeader}"></yp-post>
+          <yp-user id="userPage" name="user" id-route="${this.userSubRoute}" @change-header="${this.onChangeHeader}"></yp-user>
           <yp-view-404 name="view-404"></yp-view-404>
         </iron-pages>
 
       </app-header-layout>
     </app-drawer-layout>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
 
-    <app-location route="${this.route}"></app-location>
+    <app-location .route="${this.route}"></app-location>
 
-    <app-route route="${this.route}" pattern="/:page" data="${this.routeData}" tail="${this.subRoute}"></app-route>
+    <app-route .route="${this.route}" .pattern="/:page" data="${this.routeData}" tail="${this.subRoute}"></app-route>
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
-    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-    <yp-sw-update-toast button-label="${this.t('reload')}" message="${this.t('newVersionAvailable')}"></yp-sw-update-toast>
+    <yp-app-user id="appUser" @user-changed="${this.onUserChanged}"></yp-app-user>
+    <yp-sw-update-toast .buttonLabel="${this.t('reload')}" .message="${this.t('newVersionAvailable')}"></yp-sw-update-toast>
 ` : html``}
 `
   }
@@ -827,7 +831,7 @@ class YpAppLit extends YpBaseElement {
   _refreshGroup() {
     this._refreshByName("#groupPage");
   }
-  
+
   _refreshCommunity() {
     this._refreshByName("#communityPage");
   }

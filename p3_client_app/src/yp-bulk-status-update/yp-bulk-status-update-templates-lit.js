@@ -21,23 +21,23 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
         notify: true,
         observer: '_templatesChanged'
       },
-  
+
       headerText: {
         type: String
       },
-  
+
       selected: {
         type: Object
       },
-  
+
       currentlyEditingTemplate: {
         type: Object
       },
-  
+
       currentlyEditingTitle: {
         type: String
       },
-  
+
       currentlyEditingContent: {
         type: String
       }

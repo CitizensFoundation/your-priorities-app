@@ -23,67 +23,67 @@ class YpDialogContainerLit extends YpBaseElement {
           type: Number,
           value: 0
         },
-    
+
         bulkStatusUpdates: {
           type: Boolean,
           value: false
         },
-    
+
         hideDialogs: {
           type: Boolean,
           value: true
         },
-    
+
         haveLoadedDelayed: {
           type: Boolean,
           value: false
         },
-    
+
         loadingStartedLoggedIn: {
           type: Boolean,
           value: false
         },
-    
+
         loadingStartedAdmin: {
           type: Boolean,
           value: false
         },
-    
+
         selectedDialog: {
           type: String,
           value: null
         },
-    
+
         confirmationDialogOpen: {
           type: String,
           value: false
         },
-    
+
         pageDialogOpen: {
           type: Boolean,
           value: false
         },
-    
+
         gotUsersGrid: {
           type: Boolean,
           value: false
         },
-    
+
         gotContentModeration: {
           type: Boolean,
           value: false
         },
-    
+
         gotMediaRecorder: {
           type: Boolean,
           value: false
         },
-    
+
         needsPixelCookieConfirm: {
           type: Boolean,
           value: false
         },
-    
+
         facebookPixelTrackingId: String
       }
     }
@@ -91,7 +91,7 @@ class YpDialogContainerLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-  
+
       #dialogs {
         background-color: var(--primary-background-color) !important;
       }
@@ -125,148 +125,150 @@ class YpDialogContainerLit extends YpBaseElement {
   render() {
     return html`
     ${this.dialog ? html`
-    <template is="dom-if" if="${this.loggedInUser}" restamp>
-      <ac-notification-toast id="notificationToast"></ac-notification-toast>
-    </template>
+      ${ this.loggedInUser ? html`
+        <ac-notification-toast id="notificationToast"></ac-notification-toast>
+      ` :  html``}
 
-    <template is="dom-if" if="${this.needsPixelCookieConfirm}" restamp>
-      <paper-toast id="pixelTrackingCookieConfirm" .duration="0">
-        <div class="layout vertical">
-          <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
-          <div class="layout horizontal">
-            <div class="flex"></div>
-            <paper-button raised @tap="${this._disableFaceookPixelTracking}">${this.t('disableFacebookTracking')}</paper-button>
-            <paper-button raised @tap="${this._agreeToFacebookPixelTracking}">${this.t('iAgree')}</paper-button>
+      ${ this.needsPixelCookieConfirm ? html`
+         <paper-toast id="pixelTrackingCookieConfirm" .duration="0">
+          <div class="layout vertical">
+            <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
+            <div class="layout horizontal">
+              <div class="flex"></div>
+              <paper-button raised @tap="${this._disableFaceookPixelTracking}">${this.t('disableFacebookTracking')}</paper-button>
+              <paper-button raised @tap="${this._agreeToFacebookPixelTracking}">${this.t('iAgree')}</paper-button>
+            </div>
           </div>
-        </div>
-      </paper-toast>
-    </template>
+        </paper-toast>
+      ` : html``}
 
-    <div id="dialogs" .hide="${this.hideDialogs}">
+      ${ this.hideDialogs ? html`
       <paper-toast id="masterToast"></paper-toast>
-      <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
+        <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
+      ` : html`` }
 
-      <template is="dom-if" if="${this.pageDialogOpen}" restamp=>
-        <yp-page-dialog id="pageDialog"></yp-page-dialog>
-      </template>
+        ${ this.pageDialogOpen ? html`
+          <yp-page-dialog id="pageDialog"></yp-page-dialog>
+        ` : html``}
 
-      <template is="dom-if" if="${this.confirmationDialogOpen}" restamp=>
-        <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
-      </template>
+        ${ this.confirmationDialogOpen ? html`
+          <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
+        ` : html``}
 
-      <iron-lazy-pages selected="${this.selectedDialog}" .attrForSelected="name">
-        <template is="dom-if" .name="userLogin" restamp>
-          <yp-login id="userLogin" @yp-forgot-password="${this._forgotPassword}"></yp-login>
-        </template>
+        <iron-lazy-pages selected="${this.selectedDialog}" .attrForSelected="name">
+          <template is="dom-if" .name="userLogin" restamp>
+            <yp-login id="userLogin" @yp-forgot-password="${this._forgotPassword}"></yp-login>
+          </template>
 
-        <template is="dom-if" .name="forgotPassword" restamp>
-          <yp-forgot-password id="forgotPassword"></yp-forgot-password>
-        </template>
+          <template is="dom-if" .name="forgotPassword" restamp>
+            <yp-forgot-password id="forgotPassword"></yp-forgot-password>
+          </template>
 
-        <template is="dom-if" .name="resetPassword" restamp>
-          <yp-reset-password id="resetPassword"></yp-reset-password>
-        </template>
+          <template is="dom-if" .name="resetPassword" restamp>
+            <yp-reset-password id="resetPassword"></yp-reset-password>
+          </template>
 
-        <template is="dom-if" .name="acceptInvite" restamp>
-          <yp-accept-invite id="acceptInvite"></yp-accept-invite>
-        </template>
+          <template is="dom-if" .name="acceptInvite" restamp>
+            <yp-accept-invite id="acceptInvite"></yp-accept-invite>
+          </template>
 
-        <template is="dom-if" .name="missingEmail" restamp>
-          <yp-missing-email id="missingEmail"></yp-missing-email>
-        </template>
+          <template is="dom-if" .name="missingEmail" restamp>
+            <yp-missing-email id="missingEmail"></yp-missing-email>
+          </template>
 
-        <template is="dom-if" .name="communityEdit" restamp>
-          <yp-community-edit id="communityEdit"></yp-community-edit>
-        </template>
+          <template is="dom-if" .name="communityEdit" restamp>
+            <yp-community-edit id="communityEdit"></yp-community-edit>
+          </template>
 
-        <template is="dom-if" .name="groupEdit" restamp>
-          <yp-group-edit .new="" id="groupEdit"></yp-group-edit>
-        </template>
+          <template is="dom-if" .name="groupEdit" restamp>
+            <yp-group-edit .new="" id="groupEdit"></yp-group-edit>
+          </template>
 
-        <template is="dom-if" .name="postEdit" restamp>
-          <yp-post-edit id="postEdit"></yp-post-edit>
-        </template>
+          <template is="dom-if" .name="postEdit" restamp>
+            <yp-post-edit id="postEdit"></yp-post-edit>
+          </template>
 
-        <template is="dom-if" .name="userImageEdit" restamp>
-          <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
-        </template>
+          <template is="dom-if" .name="userImageEdit" restamp>
+            <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
+          </template>
 
-        <template is="dom-if" .name="magicTextDialog" restamp>
-          <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
-        </template>
+          <template is="dom-if" .name="magicTextDialog" restamp>
+            <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
+          </template>
 
-        <template is="dom-if" .name="apiActionDialog" restamp>
-          <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
-        </template>
+          <template is="dom-if" .name="apiActionDialog" restamp>
+            <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
+          </template>
 
-        <template is="dom-if" .name="autoTranslateDialog" restamp>
-          <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
-        </template>
+          <template is="dom-if" .name="autoTranslateDialog" restamp>
+            <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
+          </template>
 
-        <template is="dom-if" .name="userEdit" restamp>
-          <yp-user-edit id="userEdit" .method="PUT"></yp-user-edit>
-        </template>
+          <template is="dom-if" .name="userEdit" restamp>
+            <yp-user-edit id="userEdit" .method="PUT"></yp-user-edit>
+          </template>
 
-        <template is="dom-if" .name="userDeleteOrAnonymize" restamp>
-          <yp-user-delete-or-anonymize id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
-        </template>
+          <template is="dom-if" .name="userDeleteOrAnonymize" restamp>
+            <yp-user-delete-or-anonymize id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
+          </template>
 
-        <template is="dom-if" .name="categoryEdit" restamp>
-          <yp-category-edit .new="" id="categoryEdit"></yp-category-edit>
-        </template>
+          <template is="dom-if" .name="categoryEdit" restamp>
+            <yp-category-edit .new="" id="categoryEdit"></yp-category-edit>
+          </template>
 
-        <template is="dom-if" .name="pagesGrid" restamp>
-          <yp-pages-grid id="pagesGrid"></yp-pages-grid>
-        </template>
+          <template is="dom-if" .name="pagesGrid" restamp>
+            <yp-pages-grid id="pagesGrid"></yp-pages-grid>
+          </template>
 
-        <template is="dom-if" .name="organizationsGrid" restamp>
-          <yp-organizations-grid id="organizationsGrid"></yp-organizations-grid>
-        </template>
+          <template is="dom-if" .name="organizationsGrid" restamp>
+            <yp-organizations-grid id="organizationsGrid"></yp-organizations-grid>
+          </template>
 
-        <template is="dom-if" .name="organizationEdit" restamp>
-          <yp-organization-edit id="organizationEdit"></yp-organization-edit>
-        </template>
+          <template is="dom-if" .name="organizationEdit" restamp>
+            <yp-organization-edit id="organizationEdit"></yp-organization-edit>
+          </template>
 
-        <template is="dom-if" .name="domainEdit" restamp>
-          <yp-domain-edit id="domainEdit"></yp-domain-edit>
-        </template>
+          <template is="dom-if" .name="domainEdit" restamp>
+            <yp-domain-edit id="domainEdit"></yp-domain-edit>
+          </template>
 
-        <template is="dom-if" .name="postStatusChangeEdit" restamp>
-          <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
-        </template>
+          <template is="dom-if" .name="postStatusChangeEdit" restamp>
+            <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
+          </template>
 
-        <template is="dom-if" .name="postMove" restamp>
-          <yp-post-move id="postMove"></yp-post-move>
-        </template>
+          <template is="dom-if" .name="postMove" restamp>
+            <yp-post-move id="postMove"></yp-post-move>
+          </template>
 
-        <template is="dom-if" .name="none" restamp>
-        </template>
+          <template is="dom-if" .name="none" restamp>
+          </template>
 
-        <template is="dom-if" .name="usersGrid" restamp>
-          <yp-users-grid id="usersGrid"></yp-users-grid>
-        </template>
+          <template is="dom-if" .name="usersGrid" restamp>
+            <yp-users-grid id="usersGrid"></yp-users-grid>
+          </template>
 
-        <template is="dom-if" .name="contentModeration" restamp>
-          <yp-content-moderation id="contentModeration"></yp-content-moderation>
-        </template>
-      </iron-lazy-pages>
+          <template is="dom-if" .name="contentModeration" restamp>
+            <yp-content-moderation id="contentModeration"></yp-content-moderation>
+          </template>
+        </iron-lazy-pages>
 
-      <template is="dom-if" if="${this.bulkStatusUpdates}" restamp>
+      ${ this.bulkStatusUpdates ? html`
         <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
-        <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
-        <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
-        <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
-      </template>
+          <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
+          <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
+          <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
+      ` : html``}
 
-      <template is="dom-if" if="${this.gotMediaRecorder}" restamp>
+      ${ this.gotMediaRecorder ? html`
         <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
-      </template>
-    </div>
+      ` : html``}
 
-    <paper-dialog id="loadingDialog">
-      <paper-spinner .active></paper-spinner>
-    </paper-dialog>
-` : html``}
+      </div>
+
+      <paper-dialog id="loadingDialog">
+        <paper-spinner .active></paper-spinner>
+      </paper-dialog>
+  ` : html``}
 `
   }
 
