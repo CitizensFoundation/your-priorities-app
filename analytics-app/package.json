@@ -1,0 +1,64 @@
+{
+  "scripts": {
+    "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
+    "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
+    "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
+    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "format": "npm run format:eslint && npm run format:prettier",
+    "test": "karma start --coverage",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "test:update-snapshots": "karma start --update-snapshots",
+    "test:prune-snapshots": "karma start --prune-snapshots",
+    "test:bs": "karma start karma.bs.config.js --coverage",
+    "start:build": "cd dist && es-dev-server --open",
+    "build": "rimraf dist && rollup -c rollup.config.js",
+    "start": "es-dev-server --app-index index.html --node-resolve --open --watch",
+    "storybook": "start-storybook --stories \"components/*/stories/*.stories.{js,mdx}\" --node-resolve --watch --open",
+    "storybook:build": "build-storybook --stories \"components/*/stories/*.stories.{js,mdx}\""
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "@open-wc/eslint-config": "^2.0.0",
+    "@open-wc/prettier-config": "^0.1.10",
+    "husky": "^1.0.0",
+    "lint-staged": "^8.0.0",
+    "@open-wc/testing-karma": "^3.0.0",
+    "deepmerge": "^3.2.0",
+    "@open-wc/testing-karma-bs": "^1.0.0",
+    "@open-wc/testing": "^2.0.0",
+    "@open-wc/building-rollup": "^0.15.1",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.15.4",
+    "es-dev-server": "^1.5.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@open-wc/eslint-config",
+      "eslint-config-prettier"
+    ]
+  },
+  "prettier": "@open-wc/prettier-config",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "name": "ac-analytics",
+  "version": "0.0.0",
+  "description": "Webcomponent ac-analytics following open-wc recommendations",
+  "author": "ac-analytics",
+  "license": "MIT",
+  "dependencies": {
+    "3d-force-graph": "^1.56.6",
+    "lit-element": "^2.0.1",
+    "lit-html": "^1.0.0"
+  }
+}
