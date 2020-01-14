@@ -209,6 +209,74 @@ const getPostRatings = (customRatings, postRatings) => {
   return out;
 };
 
+const getDescriptionColumns = (group, post) => {
+  if (group && group.configuration && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
+    var structuredAnswers = [];
+
+    var questionComponents = group.configuration.structuredQuestions.split(",");
+    for (var i=0 ; i<questionComponents.length; i+=2) {
+      var question = questionComponents[i];
+      var maxLength = questionComponents[i+1];
+      structuredAnswers.push({
+        translatedQuestion: question,
+        question: question,
+        maxLength: maxLength, value: ""
+      });
+    }
+
+    if (post.public_data && post.public_data.structuredAnswers && post.public_data.structuredAnswers!=="") {
+      var answers = post.public_data.structuredAnswers.split("%!#x");
+      for (i=0 ; i<answers.length; i+=1) {
+        if (structuredAnswers[i])
+          structuredAnswers[i].value = answers[i];
+      }
+    } else {
+      structuredAnswers[0].value = post.description;
+    }
+
+    let columnsString = '';
+
+    structuredAnswers.forEach((question) => {
+      if (question.value) {
+        columnsString += '"'+question.value+'",'
+      } else {
+        columnsString += '"",'
+      }
+    });
+
+    return columnsString.substring(0, columnsString.length - 1);
+  } else {
+    return '"'+post.description+'"';
+  }
+};
+
+const getDescriptionHeaders = (group) => {
+  if (group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
+    var structuredQuestions = [];
+
+    var questionComponents = group.configuration.structuredQuestions.split(",");
+    for (var i=0 ; i<questionComponents.length; i+=2) {
+      var question = questionComponents[i];
+      var maxLength = questionComponents[i+1];
+      structuredQuestions.push({
+        translatedQuestion: question,
+        question: question,
+        maxLength: maxLength, value: ""
+      });
+    }
+
+    let columnsString = '';
+
+    structuredQuestions.forEach((question) => {
+      columnsString += '"'+question.translatedQuestion+'",'
+    });
+
+    return columnsString.substring(0, columnsString.length - 1);
+
+  } else {
+    return "Description";
+  }
+};
 
 var getExportFileDataForGroup = function(group, hostName, callback) {
   models.Post.unscoped().findAll({
@@ -288,14 +356,14 @@ var getExportFileDataForGroup = function(group, hostName, callback) {
       customRatings = group.configuration.customRatings;
     }
     //console.log(posts.length);
-    outFileContent += "Nr, Post id,email,User Name,Post Name,Description,Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript"+getRatingHeaders(customRatings)+"\n";
+    outFileContent += "Nr, Post id,email,User Name,Post Name,"+getDescriptionHeaders(group)+",Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript"+getRatingHeaders(customRatings)+"\n";
     postCounter = 0;
     async.eachSeries(posts, function (post, seriesCallback) {
       postCounter += 1;
       if (!post.deleted) {
         const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
         outFileContent += postCounter+','+post.id+',"'+getUserEmail(post)+'","'+post.User.name+
-          '","'+clean(post.name)+'","'+cleanDescription(post.description)+'",'+
+          '","'+clean(post.name)+'",'+getDescriptionColumns(group, post)+','+
           '"'+getPostUrl(post)+'",'+'"'+getCategory(post)+'",'+
           getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
           ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
