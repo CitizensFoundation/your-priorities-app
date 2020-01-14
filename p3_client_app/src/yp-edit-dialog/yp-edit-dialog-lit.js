@@ -326,66 +326,71 @@ class YpEditDialogLit extends YpBaseElement {
       <iron-media-query query="(min-height: 830px)" query-matches="${thislargeHeight}"></iron-media-query>
       <iron-media-query query="(min-height: 640px)" query-matches="${this.mediumHeight}"></iron-media-query>
       <iron-media-query query="(max-height: 640px)" query-matches="${this.smallHeight}"></iron-media-query>
-      <template is="dom-if" if="opened" restamp>
-        <template is="dom-if" if="${this.narrow}" restamp>
-          <div class="outerMobile">
-            <div class="layout horizontal smallHeader">
-              <paper-icon-button id="dismissBtn" .ariaLabel="${this.t('close')}" .icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
-              <iron-icon class="smallIcon" .icon="${this.icon}"></iron-icon>
-              <div class="titleHeaderMobile">${this.title}</div>
-              <div class="flex"></div>
-              <template is="dom-if" if="${!this.useNextTabAction}">
-                <template is="dom-if" if="${!this.uploadingState}">
-                  <paper-button id="submit1" @tap="${this._submit}"><span class="smallButtonText">${this.saveText}</span></paper-button>
-                </template>
-                <template is="dom-if" if="${this.uploadingState}">
-                  <paper-button ?disabled="" @tap="${this._nextTab}">${this.t('uploading.inProgress')}</paper-button>
-                </template>
-              </template>
-              <template is="dom-if" if="${this.useNextTabAction}">
-                <paper-button @tap="${this._nextTab}"><span class="smallButtonText">${this.nextActionText}</span></paper-button>
-              </template>
-            </div>
-            <div id="scroller">
-              <iron-form id="form" .contentType="application/json" .method="POST" .action="${this.action}" .ironMethod="${this.method}" .params="${this.params}">
-                <form .name="ypForm" .method="POST" .action="${this.action}">
-                  <slot></slot>
-                </form>
-              </iron-form>
-            </div>
-            <paper-spinner id="spinner"></paper-spinner>
-          </div>
-        </template>
 
-        <template is="dom-if" if="${!this.narrow}" restamp>
-          <div class="layout horizontal bigHeader">
-            <iron-icon class="largeIcon" .icon="${this.icon}"></iron-icon>
-            <div class="titleHeader">${this.title}</div>
-          </div>
-          <paper-dialog-scrollable id="scrollable" .smallHeight="${this.smallHeight}" .mediumHeight="${this.mediumHeight}" .largeHeight="${this.largeHeight}">
-            <iron-form id="form" .ironMethod="${this.method}" .action="${this.action}" params="${this.params}">
-              <form .name="ypForm" .method="POST" .action="${this.action}">
-                <slot></slot>
-              </form>
-            </iron-form>
-            <paper-spinner id="spinner"></paper-spinner>
-          </paper-dialog-scrollable>
-          <div class="buttons">
-            <paper-button id="dismissBtn" dialog-dismiss>${this.t('cancel')}</paper-button>
+
+    ${ this.narrow ? html`
+      <div class="outerMobile">
+        <div class="layout horizontal smallHeader">
+          <paper-icon-button id="dismissBtn" .ariaLabel="${this.t('close')}" .icon="close" class="closeIconNarrow" dialog-dismiss></paper-icon-button>
+          <iron-icon class="smallIcon" .icon="${this.icon}"></iron-icon>
+          <div class="titleHeaderMobile">${this.title}</div>
+          <div class="flex"></div>
+          <template is="dom-if" if="${!this.useNextTabAction}">
+
             <template is="dom-if" if="${!this.uploadingState}">
-              <template is="dom-if" if="${!this.useNextTabAction}">
-                <paper-button raised class="actionButtons" id="submit2" @tap="${this._submit}">${this.saveText}</paper-button>
-              </template>
-              <template is="dom-if" if="${this.useNextTabAction}">
-                <paper-button raised class="actionButtons" @tap="${this._nextTab}">${this.nextActionText}</paper-button>
-              </template>
+              <paper-button id="submit1" @tap="${this._submit}"><span class="smallButtonText">${this.saveText}</span></paper-button>
             </template>
+
             <template is="dom-if" if="${this.uploadingState}">
-              <paper-button ?disabled @tap="${this._nextTab}">${this.t('uploading.inProgress')}</paper-button>
+              <paper-button ?disabled="" @tap="${this._nextTab}">${this.t('uploading.inProgress')}</paper-button>
             </template>
-          </div>
-        </template>
-      </template>
+
+          </template>
+
+          <template is="dom-if" if="${this.useNextTabAction}">
+            <paper-button @tap="${this._nextTab}"><span class="smallButtonText">${this.nextActionText}</span></paper-button>
+          </template>
+        </div>
+        <div id="scroller">
+          <iron-form id="form" .contentType="application/json" .method="POST" .action="${this.action}" .ironMethod="${this.method}" .params="${this.params}">
+            <form .name="ypForm" .method="POST" .action="${this.action}">
+              <slot></slot>
+            </form>
+          </iron-form>
+        </div>
+        <paper-spinner id="spinner"></paper-spinner>
+      </div>
+    ` : html``}
+
+      ${ !this.narrow ? html`
+        <div class="layout horizontal bigHeader">
+          <iron-icon class="largeIcon" .icon="${this.icon}"></iron-icon>
+          <div class="titleHeader">${this.title}</div>
+        </div>
+        <paper-dialog-scrollable id="scrollable" .smallHeight="${this.smallHeight}" .mediumHeight="${this.mediumHeight}" .largeHeight="${this.largeHeight}">
+          <iron-form id="form" .ironMethod="${this.method}" .action="${this.action}" params="${this.params}">
+            <form .name="ypForm" .method="POST" .action="${this.action}">
+              <slot></slot>
+            </form>
+          </iron-form>
+          <paper-spinner id="spinner"></paper-spinner>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <paper-button id="dismissBtn" dialog-dismiss>${this.t('cancel')}</paper-button>
+          <template is="dom-if" if="${!this.uploadingState}">
+            <template is="dom-if" if="${!this.useNextTabAction}">
+              <paper-button raised class="actionButtons" id="submit2" @tap="${this._submit}">${this.saveText}</paper-button>
+            </template>
+            <template is="dom-if" if="${this.useNextTabAction}">
+              <paper-button raised class="actionButtons" @tap="${this._nextTab}">${this.nextActionText}</paper-button>
+            </template>
+          </template>
+          <template is="dom-if" if="${this.uploadingState}">
+            <paper-button ?disabled @tap="${this._nextTab}">${this.t('uploading.inProgress')}</paper-button>
+          </template>
+        </div>
+      ` : html``}
+
     </paper-dialog>
 
     <paper-dialog id="formErrorDialog" modal>
@@ -399,7 +404,7 @@ class YpEditDialogLit extends YpBaseElement {
 `
   }
 
- 
+
 /*
   behaviors: [
     ypLanguageBehavior

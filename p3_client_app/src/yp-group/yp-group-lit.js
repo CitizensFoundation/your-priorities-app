@@ -141,11 +141,11 @@ class YpGroupLit extends YpBaseElement {
     phoneWidth: {
       type: Boolean,
       value: null
-    
+
     },
   }
 }
-  
+
 static get styles() {
   return [
     css`
@@ -288,7 +288,7 @@ static get styles() {
 }
 
 render() {
-  return html`  
+  return html`
     ${this.group ? html`
       <div id="topContainer">
         <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" ?hidden="${this.group.configuration.hideGroupHeader}">
@@ -312,7 +312,8 @@ render() {
               <div class="counterInfo" has-non-open-posts="${this.hasNonOpenPosts}" id="tabCountOpen"></div>
             </div>
           </paper-tab>
-          <template is="dom-if" if="${this.hasNonOpenPosts}">
+
+          ${ this.hasNonOpenPosts ? html`
             <paper-tab .name="in_progress">
               <div class="layout vertical center-center tabCounterContainer">
                 <div>
@@ -346,7 +347,8 @@ render() {
                 <div ?hidden="${this.isTabFailed}" has-non-open-posts="${this.hasNonOpenPosts}" class="counterInfo" id="tabCountFailed"></div>
               </div>
             </paper-tab>
-          </template>
+          ` : html``}
+
           <paper-tab .name="news">${this.t('news')}</paper-tab>
           <paper-tab .name="map" ?hidden="${this.locationHidden}">${this.t('posts.map')}</paper-tab>
         </paper-tabs>
@@ -359,11 +361,12 @@ render() {
           </div>
         </section>
         <section .name="news" class="minHeightSection">
-          <template is="dom-if" if="${this.newsTabSelected}">
-            <ac-activities id="groupActivities" ?disableNewPosts="${this.disableNewPosts}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .groupId="${this.group.id}"></ac-activities>
-          </template>
+          ${ this.newsTabSelected ? html`
+          <ac-activities id="groupActivities" ?disableNewPosts="${this.disableNewPosts}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .groupId="${this.group.id}"></ac-activities>
+          ` : html``}
         </section>
-        <template is="dom-if" if="${this.hasNonOpenPosts}">
+
+        ${ this.hasNonOpenPosts ? html`
           <section .name="in_progress">
             <div class="layout horizontal center-center">
               <yp-post-list id="inProgressPostList" .subTitle="${this.tabInProgressSubTitle}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .statusFilter="in_progress" .tabCounterId="tabCountInProgress" .searchingFor="${this.searchingFor}" .group="${this.group}" .groupId="${this.lastValidGroupId}"></yp-post-list>
@@ -379,20 +382,21 @@ render() {
               <yp-post-list id="failedPostList" .subTitle="${this.tabFailedSubTitle}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .statusFilter="failed" tabCounterId="tabCountFailed" .searchingFor="${this.searchingFor}" .group="${this.group}" .groupId="${this.lastValidGroupId}"></yp-post-list>
             </div>
           </section>
-        </template>
+        ` : html``}
+
         <section name="map" ?hidden="${this.locationHidden}" class="minHeightSection">
-          <template is="dom-if" if="${this.mapActive}" restamp=>
-            <yp-post-map .groupId="${this.group.id}"></yp-post-map>
-          </template>
+          ${ this.mapActive ? html`
+          <yp-post-map .groupId="${this.group.id}"></yp-post-map>
+          ` : html``}
         </section>
       </iron-pages>
     </div>
 
-    <template is="dom-if" if="${!this.disableNewPosts}" restamp>
-      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.disableNewPosts}">
+    ${ !this.disableNewPosts ? html`
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.disableNewPosts}">
           <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
       </div>
-    </template>
+    ` : html``}
 
     <iron-scroll-threshold id="scrollTheshold" .lowerThreshold="550" @lower-threshold="${this._loadMoreData}" .scrollTarget="document">
     </iron-scroll-threshold>
@@ -418,7 +422,7 @@ render() {
   ` : html``}
   `
 }
-  
+
   /*behaviors: [
     ypLanguageBehavior,
     ypThemeBehavior,
@@ -428,16 +432,16 @@ render() {
     ypMediaFormatsBehavior,
     ypNumberFormatBehavior
   ],
-  
-  
+
+
   listeners: {
     'yp-post-count': '_updateTabPostCount',
     'yp-post-new': '_newPost'
   },
 */
-  
 
-    
+
+
 
   _shouldScrollTabs(phoneWidth, hasNonOpenPosts) {
     return phoneWidth && hasNonOpenPosts;
