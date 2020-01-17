@@ -428,6 +428,8 @@ router.get('/*', function botController(req, res, next) {
       log.error("Cant find controller for nonSpa", { id, splitUrl });
       res.sendStatus(404);
     }
+  } else if (req.ypCommunity) {
+    sendCommunity(req.ypCommunity.id, req, res)
   } else if (req.ypDomain) {
     sendDomain(req.ypDomain.id, req, res)
   } else {
