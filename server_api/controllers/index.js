@@ -71,7 +71,7 @@ let sendIndex = function (req, res) {
           res.send(replaceForSmarterNJ(indexFileData));
         } else if (req.hostname.indexOf('parliament.scot') > -1) {
           res.send(replaceForParlScot(indexFileData));
-        } else if (req.hostname.indexOf('yrus.org') > -1) {
+        } else if (req.hostname.indexOf('ypus.org') > -1) {
           res.send(replaceForYrpri(indexFileData));
         } else if (req.hostname.indexOf('yrpri.org') > -1) {
           res.send(replaceForYrpri(indexFileData));
