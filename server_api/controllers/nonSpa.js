@@ -428,9 +428,9 @@ router.get('/*', function botController(req, res, next) {
       log.error("Cant find controller for nonSpa", { id, splitUrl });
       res.sendStatus(404);
     }
-  } else if (req.ypCommunity) {
+  } else if (req.ypCommunity && req.ypCommunity.id != null) {
     sendCommunity(req.ypCommunity.id, req, res)
-  } else if (req.ypDomain) {
+  } else if (req.ypDomain && req.ypDomain.id != null) {
     sendDomain(req.ypDomain.id, req, res)
   } else {
     log.error("Id for nonSpa is not a number", { id: id });
