@@ -86,8 +86,6 @@ let sendIndex = function (req, res) {
   });
 };
 
-
-
 router.get('/', function(req, res) {
   sendIndex(req, res);
 });

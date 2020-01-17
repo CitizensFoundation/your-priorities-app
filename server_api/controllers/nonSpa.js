@@ -428,11 +428,12 @@ router.get('/*', function botController(req, res, next) {
       log.error("Cant find controller for nonSpa", { id, splitUrl });
       res.sendStatus(404);
     }
+  } else if (req.ypDomain) {
+    sendDomain(req.ypDomain.id, req, res)
   } else {
     log.error("Id for nonSpa is not a number", { id: id });
     res.sendStatus(404);
   }
-
 });
 
 module.exports = router;
