@@ -125,22 +125,23 @@ class YpDialogContainerLit extends YpBaseElement {
   render() {
     return html`
     ${this.dialog ? html`
-    <template is="dom-if" if="${this.loggedInUser}" restamp>
-      <ac-notification-toast id="notificationToast"></ac-notification-toast>
-    </template>
+    ${this.loggedInUser ? html`
+    <ac-notification-toast id="notificationToast"></ac-notification-toast>
+      `: html``}
 
-    <template is="dom-if" if="${this.needsPixelCookieConfirm}" restamp>
+    ${this.needsPixelCookieConfirm ? html`
       <paper-toast id="pixelTrackingCookieConfirm" .duration="0">
-        <div class="layout vertical">
-          <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
-          <div class="layout horizontal">
+          <div class="layout vertical">
+            <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
+              <div class="layout horizontal">
             <div class="flex"></div>
-            <paper-button raised @tap="${this._disableFaceookPixelTracking}">${this.t('disableFacebookTracking')}</paper-button>
-            <paper-button raised @tap="${this._agreeToFacebookPixelTracking}">${this.t('iAgree')}</paper-button>
-          </div>
-        </div>
+              <paper-button raised @tap="${this._disableFaceookPixelTracking}">${this.t('disableFacebookTracking')}</paper-button>
+              <paper-button raised @tap="${this._agreeToFacebookPixelTracking}">${this.t('iAgree')}</paper-button>
+              </div>
+            </div>
       </paper-toast>
-    </template>
+    `: html``}
+
 
     <div id="dialogs" .hide="${this.hideDialogs}">
       <paper-toast id="masterToast"></paper-toast>
@@ -150,9 +151,13 @@ class YpDialogContainerLit extends YpBaseElement {
         <yp-page-dialog id="pageDialog"></yp-page-dialog>
       </template>
 
-      <template is="dom-if" if="${this.confirmationDialogOpen}" restamp=>
+      ${this.pageDialogOpen ? html`
+        <yp-page-dialog id="pageDialog"></yp-page-dialog>
+      `: html``}
+
+      ${this.confirmationDialogOpen ? html`
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
-      </template>
+      `: html``}
 
       <iron-lazy-pages selected="${this.selectedDialog}" .attrForSelected="name">
         <template is="dom-if" .name="userLogin" restamp>
@@ -251,16 +256,20 @@ class YpDialogContainerLit extends YpBaseElement {
         </template>
       </iron-lazy-pages>
 
-      <template is="dom-if" if="${this.bulkStatusUpdates}" restamp>
+      ${this.bulkStatusUpdates ? html`
         <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
         <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
         <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
         <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
-      </template>
+      `: html``}
 
       <template is="dom-if" if="${this.gotMediaRecorder}" restamp>
         <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
       </template>
+
+      ${this.gotMediaRecorder ? html`
+        <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
+      `: html``}
     </div>
 
     <paper-dialog id="loadingDialog">

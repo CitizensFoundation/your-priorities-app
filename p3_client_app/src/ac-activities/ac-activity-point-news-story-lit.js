@@ -72,9 +72,11 @@ class AcActivityPointNewsStoryLit extends YpBaseElement {
       <div class="layout vertical center-center newsStoryContainer">
         <yp-point-news-story with-comments ?hideUser class="card" .point="${this.activity.Point}"></yp-point-news-story>
       </div>
-      <template is="dom-if" if="${this.hasGroupHeader}">
+
+      ${this.hasGroupHeader ? html`
         <div class="groupTitle layout horizontal center-center">${this.groupTitle}</div>
-      </template>
+      `: html``}
+
     </div>
 ` : html``}
 `

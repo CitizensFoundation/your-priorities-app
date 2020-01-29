@@ -266,3 +266,5 @@ class YpLanguageSelectorLit extends YpBaseElement {
     this.isOutsideChangeEvent = false;
   }
 }
+
+window.customElements.define('yp-language-selector-lit', YpLanguageSelectorLit)

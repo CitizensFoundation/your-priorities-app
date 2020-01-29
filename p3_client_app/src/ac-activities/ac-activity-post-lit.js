@@ -205,9 +205,11 @@ class AcActivityPostLit extends YpBaseElement {
         <div id="description" class="description mainContainerItem" is-ie11="${this.isIE11}">
           <template is="jucy-html" html="${this.activity.Post.description}"></template>
         </div>
-        <template is="dom-if" if="${this.hasGroupHeader}">
-          <div class="groupTitle layout horizontal center-center">${this.groupTitle}</div>
-        </template>
+
+      ${this.hasGroupHeader ? html`
+        <div class="groupTitle layout horizontal center-center">${this.groupTitle}</div>
+      `: html``}
+
       </div>
     </div>
 ` : html``}

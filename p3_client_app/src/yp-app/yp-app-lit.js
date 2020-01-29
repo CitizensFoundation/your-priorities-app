@@ -512,13 +512,13 @@ class YpAppLit extends YpBaseElement {
 
     <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed="">
 
-      <app-drawer id="drawer" .slot="drawer" align="end" position="right" .opened="${this.userDrawerOpened}" swipe-open="">
+      <app-drawer id="drawer" .slot="drawer" .align="end" position="right" .opened="${this.userDrawerOpened}" swipe-open="">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important; width: 255px;">
           <ac-notification-list id="acNotificationsList" .user="${this.user}" .opened="${this.userDrawerOpened}" .route="${this.route}"></ac-notification-list>
         </div>
       </app-drawer>
 
-      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open="" opened="${this.navDrawOpened}">
+      <app-drawer id="navDrawer" slot="drawer" .align="start" position="left" swipe-open="" opened="${this.navDrawOpened}">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
           <yp-app-nav-drawer id="ypNavDrawer" .home-link="${this.homeLink}" @yp-toggle-nav-drawer="${this._toggleNavDrawer}" user="${this.user}" route="${this.route}"></yp-app-nav-drawer>
         </div>
@@ -532,17 +532,20 @@ class YpAppLit extends YpBaseElement {
               <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
             </div>
             <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
-            <template is="dom-if" if="${this.closePostHeader}">
+
+            ${this.closePostHeader ? html`
               <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
-            </template>
-            <template is="dom-if" if="${this.goForwardToPostId}">
+            `: html``}
+
+            ${this.goForwardToPostId ? html`
               <div class="layout horizontal">
                 <paper-icon-button .ariaLabel="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
                 <div id="forwardPostName" class="forwardPostName">
                   ${this.goForwardPostName}
                 </div>
               </div>
-            </template>
+            `: html``}
+
             <span class="flex"></span>
             <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
               <paper-button raised="" id="translationButton" @tap="${this._stopTranslation}" title="${this.t('stopAutoTranslate')}">
@@ -561,16 +564,15 @@ class YpAppLit extends YpBaseElement {
               </paper-listbox>
             </paper-menu-button>
 
-            <template is="dom-if" if="${this.user}">
+            ${this.user ? html`
               <div class="userImageNotificationContainer layout horizontal" @tap="${this._toggleUserDrawer}">
                 <yp-user-image id="userImage" .small="" .user="${this.user}"></yp-user-image>
                 <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
               </div>
-            </template>
-
-            <template is="dom-if" if="${!this.user}">
+            `: html`
               <paper-button class="loginButton" @tap="${this._login}">${this.t('user.login')}</paper-button>
-            </template>
+            `}
+
           </app-toolbar>
         </app-header>
 

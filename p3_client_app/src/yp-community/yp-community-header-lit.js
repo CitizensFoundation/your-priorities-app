@@ -178,34 +178,35 @@ class YpCommunityHeaderLit extends YpBaseElement {
 render() {
   return html`
     ${this.community ? html`
-    <template is="dom-if" if="${this.community}">
-        <div class="layout vertical center-center">
-          <iron-image class="image rounded-even-more" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
-          <div class="community-name rounded-even-more">
-            ${this.communityNameFull}
+    ${this.community ? html`
+      <div class="layout vertical center-center">
+        <iron-image class="image rounded-even-more" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
+        <div class="community-name rounded-even-more">
+          ${this.communityNameFull}
+        </div>
+        <div class="layout horizontal center-center">
+          <yp-community-stats class="stats" .community="${this.community}"></yp-community-stats>
+        </div>
+        <div class="description layout horizontal center-center rounded-even-more ">
+          <div id="description" class="communityDescription">
           </div>
-          <div class="layout horizontal center-center">
-            <yp-community-stats class="stats" .community="${this.community}"></yp-community-stats>
-          </div>
-          <div class="description layout horizontal center-center rounded-even-more ">
-            <div id="description" class="communityDescription">
-            </div>
-            <div>
-              <paper-menu-button class="edit" .verticalAlign="top" .horizontalAlign="${this.editMenuAlign}" ?hidden="${!this.hasCommunityAccess}">
-                <paper-icon-button .ariaLabel="${this.t('openCommunityMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-                <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}" .selected="${this.selectedMenuItem}">
-                  <paper-item id="editMenuItem">${this.t('community.edit')}</paper-item>
-                  <paper-item id="usersMenuItem">${this.t('community.users')}</paper-item>
-                  <paper-item id="adminsMenuItem">${this.t('community.admins')}</paper-item>
-                  <paper-item id="deleteMenuItem">${this.t('community.delete')}</paper-item>
-                  <paper-item id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>
-                  <paper-item id="bulkStatusUpdateMenuItem">${this.t('bulkStatusUpdate')}</paper-item>
-                </paper-listbox>
-              </paper-menu-button>
-            </div>
+          <div>
+            <paper-menu-button class="edit" .verticalAlign="top" .horizontalAlign="${this.editMenuAlign}" ?hidden="${!this.hasCommunityAccess}">
+              <paper-icon-button .ariaLabel="${this.t('openCommunityMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}" .selected="${this.selectedMenuItem}">
+                <paper-item id="editMenuItem">${this.t('community.edit')}</paper-item>
+                <paper-item id="usersMenuItem">${this.t('community.users')}</paper-item>
+                <paper-item id="adminsMenuItem">${this.t('community.admins')}</paper-item>
+                <paper-item id="deleteMenuItem">${this.t('community.delete')}</paper-item>
+                <paper-item id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>
+                <paper-item id="bulkStatusUpdateMenuItem">${this.t('bulkStatusUpdate')}</paper-item>
+              </paper-listbox>
+            </paper-menu-button>
           </div>
         </div>
-    </template>
+      </div>
+    `: html``}
+
     <iron-media-query query="(max-width: 800px)" query-matches="${this.narrowScreen}"></iron-media-query>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
 ` : html``}
