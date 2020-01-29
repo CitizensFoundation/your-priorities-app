@@ -28,115 +28,115 @@ class YpGroupEditLit extends YpBaseElement {
         type: Boolean,
         value: true
       },
-  
+
       canAddNewPosts: {
         type: Boolean,
         value: true
       },
-  
+
       showWhoPostedPosts: {
         type: Boolean,
         value: false
       },
-  
+
       hideAllTabs: Boolean,
       hideNewPostOnPostPage: Boolean,
       newPointOptional: Boolean,
       hideHelpIcon: Boolean,
       hideEmoji: Boolean,
       hideGroupHeader: Boolean,
-  
+
       action: {
         type: String,
         value: "/api/groups"
       },
-  
+
       group: {
         type: Object,
         observer: "_groupChanged"
       },
-  
+
       community: {
         type: Object
       },
-  
+
       groupAccess: {
         type: String,
         value: "public"
       },
-  
+
       uploadedLogoImageId: {
         type: String
       },
-  
+
       uploadedHeaderImageId: {
         type: String
       },
-  
+
       uploadedDefaultDataImageId: {
         type: String
       },
-  
+
       uploadedDefaultPostImageId: {
         type: String
       },
-  
+
       allowPostVideoUploads: {
         type: Boolean,
         value: null
       },
-  
+
       allowPointVideoUploads: {
         type: Boolean,
         value: null
       },
-  
+
       allowPostAudioUploads: {
         type: Boolean,
         value: null
       },
-  
+
       allowPointAudioUploads: {
         type: Boolean,
         value: null
       },
-  
+
       status: String,
-  
+
       publicCommunity: {
         type: Boolean,
         value: false
       },
-  
+
       themeId: {
         type: String,
         value: null
       },
-  
+
       locationHidden: Boolean,
-  
+
       endorsementButtonsOptions: {
         type: Object,
         computed: '_endorsementButtonsOptions(language)'
       },
-  
+
       endorsementButtons: String,
-  
+
       hasSamlLoginProvider: {
         type: Boolean,
         value: false
       },
-  
+
       hasVideoUpload: {
         type: Boolean,
         value: false
       },
-  
+
       hasAudioUpload: {
         type: Boolean,
         value: false
       },
-  
+
       uploadedVideoId: {
         type: Number,
         value: null
@@ -147,7 +147,7 @@ class YpGroupEditLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-      
+
       .subHeaders {
         color: #333;
         font-weight: normal;
@@ -226,8 +226,8 @@ class YpGroupEditLit extends YpBaseElement {
         margin-top: 16px;
       }
   `, YpFlexLayout]
-}  
-    
+}
+
 render() {
   return html`
     ${this.group ? html`
@@ -262,7 +262,7 @@ render() {
             </yp-file-upload>
           </div>
 
-          <template is="dom-if" if="${this.hasVideoUpload}">
+          ${ this.hasVideoUpload ? html`
             <div class="layout horizontal uploadSection">
               <yp-file-upload id="videoFileUpload" raised video-upload="" .method="POST" @success="${this._videoUploaded}">
                 <iron-icon class="icon" .icon="videocam"></iron-icon>
@@ -271,7 +271,7 @@ render() {
               <paper-checkbox class="useVideoCover" .name="useVideoCover" ?disabled="${!this.uploadedVideoId}" .checked="${this.group.configuration.useVideoCover}">${this.t('useVideoCover')}
               </paper-checkbox>
             </div>
-          </template>
+          ` : html``}
 
           <input .type="hidden" .name="uploadedLogoImageId" .value="${this.uploadedLogoImageId}">
           <input .type="hidden" .name="uploadedHeaderImageId" .value="${this.uploadedHeaderImageId}">
@@ -523,7 +523,7 @@ render() {
 `
 }
   //TODO: Try to eliminate configuration boiler-plate
-  
+
 
   /*behaviors: [
     ypLanguageBehavior,

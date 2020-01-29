@@ -32,39 +32,39 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
         type: Array,
         notify: true
       },
-  
+
       templates: {
         type: Array,
         notify: true
       },
-  
+
       communityId: Number,
-  
+
       headerText: {
         type: String
       },
-  
+
       selected: {
         type: Object
       },
-  
+
       config: {
         type: Object,
         observer: '_configChanged'
       },
-  
+
       haveGotMoveGroups: {
         type: Boolean,
         value: false
       },
-  
+
       selectedGroup: String,
-  
+
       closeAfterSave: {
         type: Boolean,
         value: false
       },
-  
+
       templatesWithNone: {
         type: Array,
         computed: '_templatesWithNone(templates)'
@@ -207,58 +207,60 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
           <template is="dom-repeat" items="${this.config.groups}" as="group">
             <section .name="${this.group.name}">
               <div class="layout vertical postsList">
-                <template is="dom-if" if="${this._selectedGroup(selectedGroup, group.name)}">
-                  <template is="dom-repeat" .items="${this._orderPosts(group.posts)}" as="post">
-                    <div class="layout horizontal postItem">
-                      <paper-material .elevation="2" class="layout horizontal">
-                        <div class="layout vertical">
-                          <div class="layout horizontal">
-                            <div class="id">${this.post.id}</div>
-                            <div class="postName">
-                              <a target="_blank" href="/post/${this.post.id}">${this.post.name}</a>
-                            </div>
-                            <div class="postOfficialStatus">
-                              ${this._officialStatusOptionsName(post.currentOfficialStatus)}
-                            </div>
+
+              ${ this._selectedGroup(selectedGroup, group.name) ? html`
+                <template is="dom-repeat" .items="${this._orderPosts(group.posts)}" as="post">
+                  <div class="layout horizontal postItem">
+                    <paper-material .elevation="2" class="layout horizontal">
+                      <div class="layout vertical">
+                        <div class="layout horizontal">
+                          <div class="id">${this.post.id}</div>
+                          <div class="postName">
+                            <a target="_blank" href="/post/${this.post.id}">${this.post.name}</a>
                           </div>
-                          <div class="layout horizontal">
-                            <div class="postDropdown">
-                              <paper-dropdown-menu .label="${this.t('post.statusChangeSelectNewStatus')}">
-                                <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.newOfficialStatus}" @iron-select="${this._selectNewOfficialStatus}">
-                                  <template is="dom-repeat" .items="${this.officialStatusOptions}" as="statusOption">
-                                    <paper-item .name="${this.statusOption.official_value}">${this.statusOption.translatedName}</paper-item>
-                                  </template>
-                                </paper-listbox>
-                              </paper-dropdown-menu>
-                            </div>
-                            <div class="postDropdown">
-                              <paper-dropdown-menu .label="${this.t('selectStatusTemplate')}">
-                                <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.selectedTemplateName}">
-                                  <template is="dom-repeat" .items="${this.templatesWithNone}" as="templateOption">
-                                    <paper-item .name="${this.templateOption.title}">${this.templateOption.title}</paper-item>
-                                  </template>
-                                </paper-listbox>
-                              </paper-dropdown-menu>
-                            </div>
-                            <div class="postDropdown">
-                              <paper-dropdown-menu .label="${this.t('moveToGroup')}">
-                                <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.moveToGroupId}">
-                                  <template is="dom-repeat" .items="${this.availableGroups}" as="group">
-                                    <paper-item .name="${this.group.id}">${this.group.name}</paper-item>
-                                  </template>
-                                </paper-listbox>
-                              </paper-dropdown-menu>
-                            </div>
-                            <div class="postUniqueMessage">
-                              <paper-textarea id="emailFooter" .name="emailFooter" .alwaysFloatLabel="${this.post.uniqueStatusMessage}" .value="${this.post.uniqueStatusMessage}" .label="${this.t('uniqueStatusMessage')}" .rows="4" .maxRows="4" .maxlength="30000" class="mainInput">
-                              </paper-textarea>
-                            </div>
+                          <div class="postOfficialStatus">
+                            ${this._officialStatusOptionsName(post.currentOfficialStatus)}
                           </div>
                         </div>
-                      </paper-material>
-                    </div>
-                  </template>
+                        <div class="layout horizontal">
+                          <div class="postDropdown">
+                            <paper-dropdown-menu .label="${this.t('post.statusChangeSelectNewStatus')}">
+                              <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.newOfficialStatus}" @iron-select="${this._selectNewOfficialStatus}">
+                                <template is="dom-repeat" .items="${this.officialStatusOptions}" as="statusOption">
+                                  <paper-item .name="${this.statusOption.official_value}">${this.statusOption.translatedName}</paper-item>
+                                </template>
+                              </paper-listbox>
+                            </paper-dropdown-menu>
+                          </div>
+                          <div class="postDropdown">
+                            <paper-dropdown-menu .label="${this.t('selectStatusTemplate')}">
+                              <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.selectedTemplateName}">
+                                <template is="dom-repeat" .items="${this.templatesWithNone}" as="templateOption">
+                                  <paper-item .name="${this.templateOption.title}">${this.templateOption.title}</paper-item>
+                                </template>
+                              </paper-listbox>
+                            </paper-dropdown-menu>
+                          </div>
+                          <div class="postDropdown">
+                            <paper-dropdown-menu .label="${this.t('moveToGroup')}">
+                              <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.moveToGroupId}">
+                                <template is="dom-repeat" .items="${this.availableGroups}" as="group">
+                                  <paper-item .name="${this.group.id}">${this.group.name}</paper-item>
+                                </template>
+                              </paper-listbox>
+                            </paper-dropdown-menu>
+                          </div>
+                          <div class="postUniqueMessage">
+                            <paper-textarea id="emailFooter" .name="emailFooter" .alwaysFloatLabel="${this.post.uniqueStatusMessage}" .value="${this.post.uniqueStatusMessage}" .label="${this.t('uniqueStatusMessage')}" .rows="4" .maxRows="4" .maxlength="30000" class="mainInput">
+                            </paper-textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </paper-material>
+                  </div>
                 </template>
+              ` : html``}
+
               </div>
             </section>
           </template>
@@ -280,7 +282,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 ` : html``}
 `
   }
- 
+
 /*
   behaviors: [
     ypLanguageBehavior,

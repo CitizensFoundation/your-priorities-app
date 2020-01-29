@@ -28,7 +28,7 @@ class YpCommunityHeaderLit extends YpBaseElement {
         type: Object,
         observer: '_communityChanged'
       },
-        
+
       hasCommunityAccess: {
         type: Boolean,
         value: false,
@@ -42,7 +42,7 @@ class YpCommunityHeaderLit extends YpBaseElement {
     return [
       css`
         :host {
-        
+
         }
 
       .communityAccess {
@@ -93,7 +93,7 @@ class YpCommunityHeaderLit extends YpBaseElement {
       }
 
       .contentContainer {
-        
+
       }
 
       .textBox {
@@ -173,12 +173,17 @@ class YpCommunityHeaderLit extends YpBaseElement {
         display: none !important;
       }
     `, YpFlexLayout]
-  }    
+  }
 
 render() {
   return html`
     ${this.community ? html`
+<<<<<<< HEAD
     ${this.community ? html`
+=======
+
+    ${ this.community ? html`
+>>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
       <div class="layout vertical center-center">
         <iron-image class="image rounded-even-more" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
         <div class="community-name rounded-even-more">
@@ -205,7 +210,11 @@ render() {
           </div>
         </div>
       </div>
+<<<<<<< HEAD
     `: html``}
+=======
+    ` : html``}
+>>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
 
     <iron-media-query query="(max-width: 800px)" query-matches="${this.narrowScreen}"></iron-media-query>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
@@ -213,7 +222,7 @@ render() {
 `
 }
 
-  
+
 
   _communityChanged(community) {
   }

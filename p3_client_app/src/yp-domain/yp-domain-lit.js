@@ -79,9 +79,9 @@ class YpDomainLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-    
+
       .card-container {
-       
+
       }
 
       .card {
@@ -116,7 +116,7 @@ class YpDomainLit extends YpBaseElement {
       }
 
       .ypBottomContainer {
-    
+
       }
 
       :host {
@@ -136,7 +136,7 @@ class YpDomainLit extends YpBaseElement {
         display: none !important;
       }
     `, YpFLexLayout]
-  } 
+  }
 
   render() {
     return html`
@@ -158,9 +158,10 @@ class YpDomainLit extends YpBaseElement {
               </div>
             </section>
             <section .name="news" class="minHeightSection">
-              <template is="dom-if" if="${this.newsTabSelected}">
+
+              ${ this.newsTabSelected ? html`
                 <ac-activities id="domainNews" .selectedTab="${this.selectedTab}" .domainId="${this.domain.id}"></ac-activities>
-              </template>
+              ` : html``}
             </section>
           </iron-pages>
         </yp-page>
@@ -195,7 +196,7 @@ class YpDomainLit extends YpBaseElement {
     ypGotoBehavior
   ],
 
-    
+
 
   observers: [
     '_routeIdChanged(idRouteData.id)',

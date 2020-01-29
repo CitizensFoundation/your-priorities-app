@@ -32,46 +32,46 @@ class YpGroupCardLargeLit extends YpBaseElement {
         type: Object,
         observer: '_groupChanged'
       },
-  
+
       hasGroupAccess: {
         type: Boolean,
         value: false,
         computed: '_hasGroupAccess(group, gotAdminRights)'
       },
-  
+
       groupAccessText: {
         type: String,
         computed: '_groupAccessText(group, language)'
       },
-  
+
       showMenuItem: {
         type: Boolean,
         value: false,
         computed: '_showMenuItem(hasGroupAccess, group)'
       },
-  
+
       exportUrl: {
         type: String,
         computed: '_exportUrl(hasGroupAccess, group)'
       },
-  
+
       groupVideoURL: {
         type: String,
         value: null
       },
-  
+
       groupVideoPosterURL: {
         type: String,
         value: null
       },
-  
+
       groupVideoId: Number,
-  
+
       flaggedContentCount: {
         type: Number,
         value: null
       },
-    }      
+    }
   }
 
   static get styles() {
@@ -267,12 +267,13 @@ class YpGroupCardLargeLit extends YpBaseElement {
       ${this.group ? html`
         <div class="layout horizontal center-center wrap">
           <paper-material id="cardImage" .elevation="3" is-video="${this.groupVideoURL}" .animated="" class="groupCard imageCard top-card">
-          <template is="dom-if" if="${this.groupVideoURL}" restamp>
-            <video id="videoPlayer" data-id="${this.groupVideoId}" .controls="" .preload="meta" class="logo" src="${this.groupVideoURL}" playsinline .poster="${this.groupVideoPosterURL}"></video>
-        </template>
-        <template is="dom-if" if="${!this.groupVideoURL}" restamp="">
-          <iron-image class="logo" .sizing="cover" .preload="" src="${this.groupLogoImagePath}"></iron-image>
-        </template>
+
+        ${ this.groupVideoURL ? html`
+          <video id="videoPlayer" data-id="${this.groupVideoId}" .controls="" .preload="meta" class="logo" src="${this.groupVideoURL}" playsinline .poster="${this.groupVideoPosterURL}"></video>
+        ` : html`
+         <iron-image class="logo" .sizing="cover" .preload="" src="${this.groupLogoImagePath}"></iron-image>
+        `  }
+
         </paper-material>
         <paper-material id="card" .elevation="3" animated-shadow class="groupCard textBox">
         <div class="layout vertical">
@@ -315,11 +316,9 @@ class YpGroupCardLargeLit extends YpBaseElement {
 
       </div>
 
-      <template is="dom-if" if="${this.group}" restamp>
-        <template is="dom-if" if="${this.hasGroupAccess}" restamp>
-          <yp-ajax ?hidden="" disable-user-error="" .method="GET" url="/api/groups/${this.group.id}/flagged_content_count" .auto="" @response="${this_setFlaggedContentCount}"></yp-ajax>
-        </template>
-      </template>
+      ${ (this.group && this.hasGroupAccess) ? html`
+        <yp-ajax ?hidden="" disable-user-error="" .method="GET" url="/api/groups/${this.group.id}/flagged_content_count" .auto="" @response="${this_setFlaggedContentCount}"></yp-ajax>
+      ` : html``}
 
       <iron-media-query .query="(max-width: 800px)" .query-matches="${this.narrowScreen}"></iron-media-query>
       <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
