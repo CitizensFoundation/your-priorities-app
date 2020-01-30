@@ -157,7 +157,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
       </paper-material>
     </div>
 
-    ${ !this.byTemplate ? html`
+    ${!this.byTemplate ? html`
       <template is="dom-repeat" .items="${this.config.groups}" as="group">
         <paper-material .elevation="2" class="statusMaterial layout horizontal center-center wrap">
           <template is="dom-repeat" .items="${this._orderGroupStatuses(group.statuses)}" as="status">

@@ -387,7 +387,8 @@ class YpFileUploadLit extends YpBaseElement {
             </div>
           </div>
         </template>
-        <template is="dom-if" if="${this.videoImages}" restamp>
+
+        ${this.videoImages ? html`
           <video ?hidden .controls class="previewVideo" url="${this.previewVideoUrl}"></video>
           <div class="layout horizontal videoImages videoPreviewContainer">
             <div .style="white-space: nowrap">
@@ -396,7 +397,8 @@ class YpFileUploadLit extends YpBaseElement {
               </template>
             </div>
           </div>
-        </template>
+        `: html``}
+
       </div>
       <yp-ajax ?hidden="" id="transcodePollingAjax" .method="PUT" @response="${this._transcodePollingResponse}"></yp-ajax>
       <yp-ajax ?hidden="" id="startTranscodeAjax" .method="POST" @response="${this._startTranscodeResponse}"></yp-ajax>

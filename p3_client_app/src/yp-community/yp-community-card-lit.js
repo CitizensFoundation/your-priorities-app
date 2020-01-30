@@ -210,23 +210,12 @@ render() {
     <paper-card .featured="${this.featured}" class="communityCard" .animated="" .elevation="${this.elevation}">
       <div class="layout horizontal">
 
-<<<<<<< HEAD
         ${this.noImage ? html`
           <iron-image .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToCommunity}"></iron-image>
         `: html`
           <iron-image .sizing="cover" .archived="${this.archived}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
           `}
           
-=======
-        ${ this.noImage ? html`
-          <iron-image .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToCommunity}"></iron-image>
-        ` : html``}
-
-        ${ !this.noImage ? html`
-          <iron-image .sizing="cover" .archived="${this.archived}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
-        ` : html``}
-
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
       </div>
       <div class="informationText">
         <div class="community-name" .archived="${this.archived}" .featured="${this.featured}" @tap="${this._goToCommunity}">
@@ -239,15 +228,9 @@ render() {
       </div>
       <yp-community-stats class="stats" .community="${thiscommunity}"></yp-community-stats>
 
-<<<<<<< HEAD
       ${!this.community.is_community_folder ? html`
         <yp-membership-button .archived="${this.archived}" .featured="${this.featured}" .community="${this.community}"></yp-membership-button>
       `: html``}
-=======
-      ${ !this.community.is_community_folder ? html`
-        <yp-membership-button .archived="${this.archived}" .featured="${this.featured}" .community="${this.community}"></yp-membership-button>
-      ` : html``}
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
 
     </paper-card>
 `

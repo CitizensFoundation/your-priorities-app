@@ -130,7 +130,8 @@ render() {
           <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-down" on-tap="_setClosed" ?hidden="${!this.open}"></paper-icon-button>
         </div>
       </div>
-      <template is="dom-if" if="${this.open}" restamp>
+
+      ${ this.open ? html`
         <div class="layout vertical listContainer">
           <iron-list id="list" .items="${this.comments}" .as="point">
             <template>
@@ -139,7 +140,8 @@ render() {
           </iron-list>
           <yp-point-comment-edit @refresh="${this._refresh}" .point="${this.point}" .image="${this.image}"></yp-point-comment-edit>
         </div>
-      </template>
+      `: html``}
+
       <div class="layout horizontal center-center">
         <yp-ajax id="commentsListAjax" .method="GET" @response="${this._commentsResponse}"></yp-ajax>
         <yp-ajax id="commentsCountListAjax" .method="GET" @response="${this._countResponse}"></yp-ajax>

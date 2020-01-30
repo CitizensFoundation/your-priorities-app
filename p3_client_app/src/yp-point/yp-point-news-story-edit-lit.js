@@ -139,12 +139,14 @@ render() {
         </div>
 
         <div class="layout horizontal center-center">
-          <template is="dom-if" if="${this.point.embed_data}">
+
+          ${ this.point.embed_data ? html`
             <div class="embedData layout vertical center-center">
               <yp-point-news-story-embed embed-data="${this.point.embed_data}"></yp-point-news-story-embed>
               <paper-icon-button .ariaLabel="${this.t('clearEmbededMedia')}" .icon="clear" @tap="${this._clearEmbed}"></paper-icon-button>
             </div>
-          </template>
+          `: html``}
+
         </div>
 
         <div class="layout horizontal center-center">

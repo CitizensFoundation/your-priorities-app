@@ -129,27 +129,27 @@ class YpPagesGridLit extends YpBaseElement {
   render() {
     return html` 
     ${this.pages ? html` 
-    <paper-dialog id="editPageLocale" modal="" class="layout vertical">
+    <paper-dialog id="editPageLocale" .modal class="layout vertical">
       <h2>${this.t('pages.editPageLocale')}</h2>
 
       <paper-dialog-scrollable>
-        <paper-input id="title" name="title" type="text" label="${this.t('pages.title')}" value="${this.currentlyEditingTitle}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input id="title" .name="title" .type="text" .label="${this.t('pages.title')}" .value="${this.currentlyEditingTitle}" .maxlength="60" .charCounter class="mainInput">
         </paper-input>
 
-        <paper-textarea id="content" name="content" value="${this.currentlyEditingContent}" always-float-label="${this.currentlyEditingContent}" label="${this.t('pages.content')}" rows="7" max-rows="10">
+        <paper-textarea id="content" .name="content" .value="${this.currentlyEditingContent}" .alwaysFloatLabel="${this.currentlyEditingContent}" .label="${this.t('pages.content')}" .rows="7" .maxRows="10">
         </paper-textarea>
       </paper-dialog-scrollable>
 
 
       <div class="buttons">
-        <paper-button on-tap="_closePageLocale" dialog-dismiss="">${this.t('close')}</paper-button>
-        <paper-button on-tap="_updatePageLocale" dialog-dismiss="">${this.t('save')}</paper-button>
+        <paper-button @tap="${this._closePageLocale}" .dialogDismiss>${this.t('close')}</paper-button>
+        <paper-button @tap="${this._updatePageLocale}" .dialogDismiss>${this.t('save')}</paper-button>
       </div>
     </paper-dialog>
 
     <paper-dialog id="dialog">
       <h2>${this.headerText}</h2>
-      <iron-list items="${this.pages}" as="page">
+      <iron-list .items="${this.pages}" as="page">
         <template>
           <div class="layout horizontal">
             <div class="pageItem id">
@@ -158,39 +158,39 @@ class YpPagesGridLit extends YpBaseElement {
             <div class="pageItem title">
               ${this.page.title.en}
             </div>
-            <template is="dom-repeat" items="${this._toLocaleArray(page.title)}" class="pageItem">
+            <template is="dom-repeat" .items="${this._toLocaleArray(page.title)}" class="pageItem">
               <div class="layout vertical center-center">
-                <a class="locale" data-args-page="${this.page}" data-args-locale="${this.item.locale}" on-tap="_editPageLocale">${this.item.locale}</a>
+                <a class="locale" data-args-page="${this.page}" data-args-locale="${this.item.locale}" @tap="${this._editPageLocale}">${this.item.locale}</a>
               </div>
             </template>
-            <paper-input no-label-float="" class="localeInput" length="2" maxlength="2" value="${this.newLocaleValue}"></paper-input>
-            <paper-button data-args="${this.page.id}" on-tap="_addLocale">${this.t('pages.addLocale')}</paper-button>
+            <paper-input @label-float class="localeInput" .length="2" .maxlength="2" .value="${this.newLocaleValue}"></paper-input>
+            <paper-button data-args="${this.page.id}" @tap="${this._addLocale}">${this.t('pages.addLocale')}</paper-button>
             <div ?hidden="${this.page.publaished}">
-              <paper-button data-args="${this.page.id}" on-tap="_publishPage">${this.t('pages.publish')}</paper-button>
+              <paper-button data-args="${this.page.id}" @tap="${this._publishPage}">${this.t('pages.publish')}</paper-button>
             </div>
             <div ?hidden="${!this.page.published}">
-              <paper-button data-args="${this.page.id}" on-tap="_unPublishPage">${this.t('pages.unPublish')}</paper-button>
+              <paper-button data-args="${this.page.id}" @tap="${this._unPublishPage}">${this.t('pages.unPublish')}</paper-button>
             </div>
-            <paper-button data-args="${this.page.id}" on-tap="_deletePage">${this.t('pages.deletePage')}</paper-button>
+            <paper-button data-args="${this.page.id}" @tap="${this._deletePage}">${this.t('pages.deletePage')}</paper-button>
           </div>
         </template>
       </iron-list>
       <div class="layout horizontal">
-        <paper-button id="addPageButton" on-tap="_addPage">${this.t('pages.addPage')}</paper-button>
+        <paper-button id="addPageButton" @tap="${this._addPage}">${this.t('pages.addPage')}</paper-button>
       </div>
 
       <div class="buttons">
-        <paper-button dialog-dismiss="">${this.t('close')}</paper-button>
+        <paper-button .dialogDismiss>${this.t('close')}</paper-button>
       </div>
     </paper-dialog>
 
     <div class="layout horizontal center-center">
-      <yp-ajax id="ajax" on-response="_pagesResponse"></yp-ajax>
-      <yp-ajax method="POST" id="newPageAjax" on-response="_newPageResponse"></yp-ajax>
-      <yp-ajax method="DELETE" id="deletePageAjax" on-response="_deletePageResponse"></yp-ajax>
-      <yp-ajax method="PUT" id="updatePageAjax" on-response="_updatePageResponse"></yp-ajax>
-      <yp-ajax method="PUT" id="publishPageAjax" on-response="_publishPageResponse"></yp-ajax>
-      <yp-ajax method="PUT" id="unPublishPageAjax" on-response="_unPublishPageResponse"></yp-ajax>
+      <yp-ajax id="ajax" @response="${this._pagesResponse}"></yp-ajax>
+      <yp-ajax .method="POST" id="newPageAjax" @response="${this._newPageResponse}"></yp-ajax>
+      <yp-ajax .method="DELETE" id="deletePageAjax" @response="${this._deletePageResponse}"></yp-ajax>
+      <yp-ajax .method="PUT" id="updatePageAjax" @response="${this._updatePageResponse}"></yp-ajax>
+      <yp-ajax .method="PUT" id="publishPageAjax" @response="${this._publishPageResponse}"></yp-ajax>
+      <yp-ajax .method="PUT" id="unPublishPageAjax" @response="${this._unPublishPageResponse}"></yp-ajax>
     </div>
 ` : html``}
 ` 

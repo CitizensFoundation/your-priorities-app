@@ -541,30 +541,18 @@ class YpAppLit extends YpBaseElement {
             </div>
             <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
 
-<<<<<<< HEAD
             ${this.closePostHeader ? html`
               <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
             `: html``}
 
             ${this.goForwardToPostId ? html`
-=======
-            ${ this.closePostHeader ? html`
-              <paper-icon-button .ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
-            ` : html``}
-
-            ${ this.goForwardToPostId ? html`
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
               <div class="layout horizontal">
                 <paper-icon-button .ariaLabel="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" .icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
                 <div id="forwardPostName" class="forwardPostName">
                   ${this.goForwardPostName}
                 </div>
               </div>
-<<<<<<< HEAD
             `: html``}
-=======
-            ` : html``}
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
 
             <span class="flex"></span>
             <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
@@ -584,26 +572,16 @@ class YpAppLit extends YpBaseElement {
               </paper-listbox>
             </paper-menu-button>
 
-<<<<<<< HEAD
-            ${this.user ? html`
-=======
             ${ this.user ? html`
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
               <div class="userImageNotificationContainer layout horizontal" @tap="${this._toggleUserDrawer}">
                 <yp-user-image id="userImage" .small="" .user="${this.user}"></yp-user-image>
                 <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
               </div>
-<<<<<<< HEAD
-            `: html`
-              <paper-button class="loginButton" @tap="${this._login}">${this.t('user.login')}</paper-button>
-            `}
-=======
             ` : html``}
 
             ${ !this.user ? html`
               <paper-button class="loginButton" @tap="${this._login}">${this.t('user.login')}</paper-button>
             ` : html``}
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
 
           </app-toolbar>
         </app-header>

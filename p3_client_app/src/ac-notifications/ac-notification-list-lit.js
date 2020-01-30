@@ -155,27 +155,33 @@ class AcNotificationListLit extends YpBaseElement {
           <iron-list id="list" .items="${this.notifications}" .scrollOffset="300" as="notification" .scrollTarget="threshold">
             <template>
               <div tabindex="${this.tabIndex}" class="layout vertical overflowSettings">
-                <template is="dom-if" if="${this._notificationType(notification, 'postNotification')}">
+                ${this._notificationType(notification, 'postNotification') ? html`
                   <ac-notification-list-post class="notificationItem" .notification="${this.notification}"></ac-notification-list-post>
-                </template>
-                <template is="dom-if" if="${this._notificationType(notification, 'pointNotification')}">
+                `: html``}
+
+                ${this._notificationType(notification, 'pointNotification') ? html`
                   <ac-notification-list-point class="notificationItem" .notification="${this.notification}"></ac-notification-list-point>
-                </template>
-                <template is="dom-if" if="${this._notificationType(notification, 'notification.post.status.change')}">
+                `: html``}
+
+                ${this._notificationType(notification, 'notification.post.status.change') ? html`
                   <ac-notification-list-general-item .icon="language" .notification="${this.notification}"></ac-notification-list-general-item>
-                </template>
-                <template is="dom-if" if="${this._notificationType(notification, 'notification.point.newsStory')}">
+                `: html``}
+
+                ${this._notificationType(notification, 'notification.point.newsStory') ? html`
                   <ac-notification-list-general-item .icon="face" .notification="${this.notification}" .shortText="${this.notification.AcActivities[0].Point.content}">
                   </ac-notification-list-general-item>
-                </template>
-                <template is="dom-if" if="${this._notificationType(notification, 'notification.point.comment')}">
+                `: html``}
+
+                ${this._notificationType(notification, 'notification.point.comment') ? html`
                   <ac-notification-list-general-item .icon="chat-bubble-outline" .notification="${this.notification}" .shortText="${this.notification.AcActivities[0].Point.content}"></ac-notification-list-general-item>
-                </template>
-                <template is="dom-if" if="${this._notificationType(notification, 'notification.generalUserNotification')}">
+                `: html``}
+
+                ${this._notificationType(notification, 'notification.generalUserNotification') ? html`
                   <ac-notification-list-general-item icon="language" notification="${this.notification}" .shortText="${this._getNotificationTypeAndName(notification.AcActivities[0].object.type, notification.AcActivities[0].object.name)}"></ac-notification-list-general-item>
-                </template>
+                `: html``}
               </div>
             </template>
+
           </iron-list>
         ` : html``}
 

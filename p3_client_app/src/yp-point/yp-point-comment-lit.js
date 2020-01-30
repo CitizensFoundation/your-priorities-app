@@ -101,12 +101,13 @@ render() {
           <div class="layout horizontal" ?hidden="${!this.point}">
             <yp-point-actions .point="${this.point}" .hide-sharing></yp-point-actions>
             <paper-icon-button ?hidden="" ?hidden="${!this.loggedInUser}" title="${this.t('point.report')}" id="reportPointIconButton" .icon="warning" @tap="${this._reportPoint}"></paper-icon-button>
-            <template is="dom-if" if="${this.hasPointAccess}">
+
+            ${ this.hasPointAccess ? html`
               <div class="layout horizontal self-end" ?hidden="">
                 <yp-ajax id="deletePointAjax" .method="DELETE" @response="${this._deleteResponse}"></yp-ajax>
                 <paper-icon-button id="deleteButton" .title="${this.t('delete')}" .icon="clear" @tap="${this._deletePoint}"></paper-icon-button>
               </div>
-            </template>
+            `: html``}
           </div>
         </div>
       </div>

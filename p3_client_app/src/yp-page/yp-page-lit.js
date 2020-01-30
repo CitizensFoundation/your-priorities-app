@@ -192,24 +192,28 @@ class YpPageLit extends YpBaseElement {
     ${this.page ? html`
       <div class="layout vertical mainArea">
         <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
-          <slot name="largeCard"></slot>
+          <slot .name="largeCard"></slot>
         </div>
-        <template is="dom-if" if="${this.hasLargeButton}">
-          <div class="largeButtonWrapper layout horizontal center-center" hidden="${!this.wideWidth}">
-            <slot name="largeAddButton"></slot>
+
+        ${ this.hasLargeButton ? html`
+          <div class="largeButtonWrapper layout horizontal center-center" ?hidden="${!this.wideWidth}">
+            <slot .name="largeAddButton"></slot>
           </div>
-        </template>
-        <div class="tab-wrapper layout horizontal center-center" hidden="${this.hideAllTabs}">
-          <slot name="tabs"></slot>
+        `: html``}
+
+        <div class="tab-wrapper layout horizontal center-center" ?hidden="${this.hideAllTabs}">
+          <slot .name="tabs"></slot>
         </div>
         <div class="tab-pages-wrapper layout vertical">
-          <slot name="tabPages"></slot>
+          <slot .name="tabPages"></slot>
         </div>
       </div>
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
-        <template is="dom-if" if="${this.createFabIcon}">
-          <paper-fab class="createFab" icon="${this.createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" on-tap="_createTap"></paper-fab>
-        </template>
+
+        ${ this.createFabIcon ? html`
+          <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" .title="${this.createFabTitle}" @tap="${this._createTap}"></paper-fab>
+        `: html``}
+
       </div>
       <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
 ` : html``}

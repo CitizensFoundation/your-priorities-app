@@ -269,18 +269,21 @@ class YpMediaRecorderLit extends YpBaseElement {
 
     <paper-dialog id="dialog" .modal ?audioRecording="${audioRecording}">
       <div class="layout vertical no-padding mainContainer">
-        <template is="dom-if" if="${this.videoRecording}">
+
+        ${this.videoRecording ? html`
           <video id="videoRecorder" class="videoRecorder" ?hidden="${this.previewActive}"></video>
           <video id="videoPreviewer" .preload="auto" class="videoRecorder" ?hidden="${!this.previewActive}"></video>
-        </template>
-        <template is="dom-if" if="${this.audioRecording}">
+        `: html``}
+
+        ${this.audioRecording ? html`
           <div class="layout vertical center-center">
             <div class="layout horizontal center-center header">${this.t('voiceRecorder')}</div>
             <div id="waveform" ?hidden="${this.recordedData}"></div>
             <audio id="audioRecorder" class="audioRecorder" ?hidden=""></audio>
             <audio id="audioPreviewer" .controls="" .preload="auto" class="audioRecorder" ?hidden="${!this.previewActive}"></audio>
           </div>
-        </template>
+        `: html``}
+
         <div class="layout horizontal mainbuttons" ?hidden="${!this.recorder}">
           <paper-icon-button ariaLabel="${this.t('closeRecordingWindow')}" .icon="clear" class="iconButtons" @tap="${this._close}"></paper-icon-button>
           <paper-icon-button ariaLabel="[[t('deleteRecordedMedia')]]" .icon="delete" class="iconButtons" @tap="${this._deleteRecording}" ?hidden="${!this.recordedData}"></paper-icon-button>

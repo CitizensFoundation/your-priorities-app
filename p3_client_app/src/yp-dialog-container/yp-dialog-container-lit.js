@@ -125,12 +125,12 @@ class YpDialogContainerLit extends YpBaseElement {
   render() {
     return html`
     ${this.dialog ? html`
-<<<<<<< HEAD
-    ${this.loggedInUser ? html`
-    <ac-notification-toast id="notificationToast"></ac-notification-toast>
-      `: html``}
-
-    ${this.needsPixelCookieConfirm ? html`
+    
+    ${ this.loggedInUser ? html`
+      <ac-notification-toast id="notificationToast"></ac-notification-toast>
+    `: html``}
+    
+    ${ this.needsPixelCookieConfirm ? html`
       <paper-toast id="pixelTrackingCookieConfirm" .duration="0">
           <div class="layout vertical">
             <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
@@ -143,47 +143,17 @@ class YpDialogContainerLit extends YpBaseElement {
       </paper-toast>
     `: html``}
 
-=======
-      ${ this.loggedInUser ? html`
-        <ac-notification-toast id="notificationToast"></ac-notification-toast>
-      ` :  html``}
-
-      ${ this.needsPixelCookieConfirm ? html`
-         <paper-toast id="pixelTrackingCookieConfirm" .duration="0">
-          <div class="layout vertical">
-            <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
-            <div class="layout horizontal">
-              <div class="flex"></div>
-              <paper-button raised @tap="${this._disableFaceookPixelTracking}">${this.t('disableFacebookTracking')}</paper-button>
-              <paper-button raised @tap="${this._agreeToFacebookPixelTracking}">${this.t('iAgree')}</paper-button>
-            </div>
-          </div>
-        </paper-toast>
-      ` : html``}
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
-
-      ${ this.hideDialogs ? html`
+    <div id="dialogs" .hide="${this.hideDialogs}">
       <paper-toast id="masterToast"></paper-toast>
-        <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
-      ` : html`` }
+      <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
 
-        ${ this.pageDialogOpen ? html`
-          <yp-page-dialog id="pageDialog"></yp-page-dialog>
-        ` : html``}
-
-<<<<<<< HEAD
-      ${this.pageDialogOpen ? html`
+      ${ this.pageDialogOpen ? html`
         <yp-page-dialog id="pageDialog"></yp-page-dialog>
-      `: html``}
+      ` : html``}
 
       ${this.confirmationDialogOpen ? html`
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
       `: html``}
-=======
-        ${ this.confirmationDialogOpen ? html`
-          <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
-        ` : html``}
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
 
         <iron-lazy-pages selected="${this.selectedDialog}" .attrForSelected="name">
           <template is="dom-if" .name="userLogin" restamp>
@@ -282,41 +252,22 @@ class YpDialogContainerLit extends YpBaseElement {
           </template>
         </iron-lazy-pages>
 
-<<<<<<< HEAD
       ${this.bulkStatusUpdates ? html`
         <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
         <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
         <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
         <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
       `: html``}
-=======
-      ${ this.bulkStatusUpdates ? html`
-        <yp-bulk-status-update-config id="bulkStatusUpdateConfig"></yp-bulk-status-update-config>
-          <yp-bulk-status-update-grid id="bulkStatusUpdateGrid"></yp-bulk-status-update-grid>
-          <yp-bulk-status-update-edit id="bulkStatusUpdateEdit"></yp-bulk-status-update-edit>
-          <yp-bulk-status-update-templates id="bulkStatusUpdateEditTemplates"></yp-bulk-status-update-templates>
-      ` : html``}
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
 
       ${ this.gotMediaRecorder ? html`
         <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
-<<<<<<< HEAD
-      </template>
-
-      ${this.gotMediaRecorder ? html`
-        <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
-      `: html``}
+      `: html``}    
     </div>
-=======
-      ` : html``}
-
-      </div>
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
 
       <paper-dialog id="loadingDialog">
         <paper-spinner .active></paper-spinner>
       </paper-dialog>
-  ` : html``}
+`: html``}
 `
   }
 
