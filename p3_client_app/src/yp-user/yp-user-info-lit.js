@@ -70,7 +70,8 @@ class YpUserInfoLit extends YpBaseElement {
   render() {
     return html`
     ${this.user ? html`
-    <template restamp="" is="dom-if" if="${this.user}">
+
+    ${ this.user ? html`
       <div class="mainContainer">
         <div class="avatar-container">
           <yp-user-image class="hasPointer" large .user="${this.user}" @tap="${this._openEdit}"></yp-user-image>
@@ -85,7 +86,7 @@ class YpUserInfoLit extends YpBaseElement {
           </div>
         </div>
       </div>
-    </template>
+    ` : html``}
 ` : html``}
 `
   }

@@ -17,65 +17,65 @@ class YpMissingEmailLit extends YpBaseElement {
         type: String,
         value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
       },
-  
+
       emailErrorMessage: {
         type: String
       },
-  
+
       passwordErrorMessage: {
         type: String
       },
-  
+
       needPassword: {
         type: Boolean,
         value: false
       },
-  
+
       email: {
         type: String,
         value: "" //robert@citizens.is"
       },
-  
+
       password: {
         type: String,
         value: "" //"DksdSodksSokssss"
       },
-  
+
       credentials: {
         type: String,
         notify: true,
         computed: '_computeCredentials(email, password)'
       },
-  
+
       linkAccountText: {
         type: Boolean,
         value: false
       },
-  
+
       heading: {
         type: String
       },
-  
+
       target: {
         type: Object
       },
-  
+
       onlyConfirmingEmail: {
         type: Boolean,
         value: false
       },
-  
+
       originalConfirmationEmail: {
         type: String,
         value: null
       }
     }
   }
- 
+
   static get styles() {
     return [
       css`
-  
+
 
       paper-dialog {
         background-color: #FFF;
@@ -124,13 +124,14 @@ class YpMissingEmailLit extends YpBaseElement {
           <paper-input id="email" .type="text" .label="${this.t('user.email')}" .value="${this.email}" .pattern="${this.emailValidationPattern}" .error-message="${this.emailErrorMessage}">
           </paper-input>
 
-          <template is="dom-if" if="${this.needPassword}">
+          ${ this.needPassword ? html`
             <div class="linkAccounts">
               ${this.t('user.existsLinkAccountInfo')}
             </div>
             <paper-input id="password" .type="password" .label="${this.t('user.password')}" .value="${this.password}" .autocomplete="off" .error-message="${this.passwordErrorMessage}">
             </paper-input>
-          </template>
+          ` : html``}
+
         </form>
         <div class="buttons">
           <yp-ajax id="setEmailAjax" .dispatch-error="" .method="PUT" url="/api/users/missingEmail/setEmail" @response="${this._setEmailResponse}"></yp-ajax>

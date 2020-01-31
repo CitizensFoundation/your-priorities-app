@@ -17,31 +17,31 @@ class YpUserWithOrganizationLit extends YpBaseElement {
       user: {
         type: Object
       },
-  
+
       titleDate: {
         type: Date
       },
-  
+
       hideImage: {
         type: Boolean,
         value: false
       },
-  
+
       userTitle: {
         type: String,
         computed: '_computeUserTitle(user, titleDate)'
       },
-  
+
       inverted: {
         type: Boolean,
         value: false
       },
-  
+
       organizationName: {
         type: String,
         computed: '_organizationName(user)'
       },
-  
+
       organizationImageUrl: {
         type: String,
         computed: '_organizationImageUrl(user)'
@@ -106,26 +106,29 @@ class YpUserWithOrganizationLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
     ${this.user ? html`
-    <template is="dom-if" if="${this.user}">
-      <div class="layout horizontal mainArea" .title="${this.userTitle}">
-        <yp-user-image .titlefromuser="${this.userTitle}" user="${this.user}" ?hidden="${this.hideImage}"></yp-user-image>
-        <div class="layout vertical">
-          <div class="name" .inverted="${this.inverted}">
-            ${this.user.name}
+
+      ${ this.organizationImageUrl ? html`
+      <img width="48" height="48" .sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
+      ` : html``}
+
+      ${ this.user ? html`
+        <div class="layout horizontal mainArea" .title="${this.userTitle}">
+          <yp-user-image .titlefromuser="${this.userTitle}" user="${this.user}" ?hidden="${this.hideImage}"></yp-user-image>
+          <div class="layout vertical">
+            <div class="name" .inverted="${this.inverted}">
+              ${this.user.name}
+            </div>
+            <div class="organizationName" .inverted="${this.inverted}" ?hidden="${!this.organizationName}">
+              ${this.organizationName}
+            </div>
           </div>
-          <div class="organizationName" .inverted="${this.inverted}" ?hidden="${!this.organizationName}">
-            ${this.organizationName}
-          </div>
-        </div>
-        <template is="dom-if" if="${this.organizationImageUrl}">
           <img width="48" height="48" .sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
-        </template>
-      </div>
-    </template>
+        </div>
+      ` : html``}
 ` : html``}
 `
   }

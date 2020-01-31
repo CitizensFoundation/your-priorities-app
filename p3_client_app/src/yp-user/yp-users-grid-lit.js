@@ -22,102 +22,102 @@ class YpUsersGridLit extends YpBaseElement {
       addAdminEmail: {
         type: String
       },
-  
+
       inviteUserEmail: {
         type: String
       },
-  
+
       users: {
         type: Array,
         notify: true,
         value: null
       },
-  
+
       headerText: {
         type: String
       },
-  
+
       groupId: {
         type: Number,
         observer: '_groupIdChanged'
       },
-  
+
       domainId: {
         type: Number,
         observer: '_domainIdChanged'
       },
-  
+
       communityId: {
         type: Number,
         observer: '_communityIdChanged'
       },
-  
+
       adminUsers: {
         type: Boolean,
         value: false
       },
-  
+
       selected: {
         type: Object
       },
-  
+
       modelType: {
         type: String
       },
-  
+
       opened: {
         type: Boolean,
         value: false
       },
-  
+
       availableOrganizations: {
         type: Array
       },
-  
+
       userIdForSelectingOrganization: Number,
-  
+
       selectedUsers: {
         type: Array,
         notify: true
       },
-  
+
       selectedUsersCount: {
         type: Number,
         value: 0
       },
-  
+
       selectedUsersEmpty: {
         type: Boolean,
         value: true
       },
-  
+
       selectedUserIds: {
         type: Array
       },
-  
+
       selectedUserId: {
         type: String
       },
-  
+
       totalUserCount: {
         type: String,
         computed: '_totalUserCount(users)'
       },
-  
+
       collectionName: String,
-  
+
       usersCountText: String,
-  
+
       showReload: {
         type: Boolean,
         value: false
       },
-  
+
       forceSpinner: {
         type: Boolean,
         value: false
       },
-  
+
       spinnerActive: {
         type: Boolean,
         computed: '_spinnerActive(totalUserCount, forceSpinner)'
@@ -128,7 +128,7 @@ class YpUsersGridLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-  
+
       #dialog {
         width: 90%;
         max-width: 1024px;
@@ -273,7 +273,7 @@ class YpUsersGridLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
     ${this.users ? html`
@@ -359,8 +359,9 @@ class YpUsersGridLit extends YpBaseElement {
             <paper-menu-button horizontal-align="right" class="helpButton" ?disabled="${this.selectedUsersEmpty}">
               <paper-icon-button .ariaLabel="${this.t('openSelectedItemsMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
-                <template is="dom-if" if="${!this.selectedUsersEmpty}" restamp>
-                  <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" @tap="${this._removeAndDeleteContentSelectedUsers}">
+
+                ${ !this.selectedUsersEmpty ? html`
+                <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" @tap="${this._removeAndDeleteContentSelectedUsers}">
                     ${this.t('removeSelectedAndDeleteContent')} ${this.selectedUsersCount}
                   </paper-item>
                   <paper-item data-args="${this.item.id}" ?hidden="${this.adminUsers}" @tap="${this._removeSelectedUsersFromCollection}">
@@ -375,7 +376,8 @@ class YpUsersGridLit extends YpBaseElement {
                     </div>
                   </paper-item>
                   <paper-item data-args="${this.item.id}" ?hidden="${!this.adminUsers}" @tap="${this._removeSelectedAdmins}">${this.t('removeSelectedAdmins')} ${this.selectedUsersCount}</paper-item>
-                </template>
+                ` : html``}
+
               </paper-listbox>
             </paper-menu-button>
           </template>
@@ -430,7 +432,7 @@ class YpUsersGridLit extends YpBaseElement {
       <yp-ajax method="POST" @error="${this._ajaxError}" id="addOrganizationAjax" @response="${this._addOrganizationResponse}"></yp-ajax>
     </div>
 ` : html``}
-` 
+`
   }
 
 /*

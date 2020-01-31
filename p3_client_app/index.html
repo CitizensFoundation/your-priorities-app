@@ -144,3 +144,12 @@
   </noscript>
 </body>
 </html>
+
+
+${ this.languages.map(item => html`
+  <paper-item .name="${item.language}">${item.name}</paper-item>
+ `) }
+
+${ this.availableOrganizations.map(item => html`
+  <paper-item @tap="${this._selectOrganization}" id="${this.item.id}">${this.item.name}</paper-item>
+  `)}
