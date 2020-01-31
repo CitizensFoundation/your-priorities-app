@@ -306,14 +306,13 @@ static get styles() {
         </div>
       </div>
 
-      <template is="dom-if" if="${this.noPosts}" restamp="">
+      ${ this.noPosts ? html`
         <div class="layout horiztonal center-center">
           <paper-material class="noIdeas layout horizontal center-center" .elevation="2">
             <div class="noIdeasText">${this.t('noIdeasHere')}</div>
           </paper-material>
         </div>
-      </template>
-
+      `: html``}
       <div class="layout horizontal center-center">
         <iron-list id="ironList" .scroll-offset="${this.scrollOffset}" .items="${this.posts}" as="post" .scroll-target="document" grid="${this.wide}">
           <template>

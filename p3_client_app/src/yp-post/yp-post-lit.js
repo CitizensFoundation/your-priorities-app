@@ -391,26 +391,36 @@ class YpPostLit extends YpBaseElement {
           <yp-post-points .host="${this.host}" id="pointsSection" .post="${this.post}" .scrollToId="${this.scrollToPointId}"></yp-post-points>
         </div>
         <section .name="news" class="minHeightSection">
-          <template is="dom-if" if="${this.newsTabSelected}">
-            <ac-activities id="postNews" .selectedTab="${this.selectedTab}" .disableNewPosts="${this.disableNewPosts}" .postGroupId="${this.post.group_id}" .postId="${this.post.id}"></ac-activities>
-          </template>
+  
+          ${ this.newsTabSelected ? html`
+          <ac-activities id="postNews" .selectedTab="${this.selectedTab}" .disableNewPosts="${this.disableNewPosts}" .postGroupId="${this.post.group_id}" .postId="${this.post.id}"></ac-activities>
+          `: html``}
         </section>
         <section .name="location" class="minHeightSection">
           <div class="layout horizontal center-center">
-            <template is="dom-if" if="${this.post.location}" restamp="">
-              <template is="dom-if" if="${this.mapActive}" restamp="">
+
+              ${ this.mapActive ? html`
                 <paper-material class="mapContainer" .elevation="3">
                   <google-map .additionalMapOptions="{'keyboardShortcuts':false}" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" .libraries="places" class="map" .mapType="${this.post.location.mapType}" .zoom="${this.post.location.map_zoom}" fitToMarkers="">
                     <google-map-marker slot="markers" latitude="${this.post.location.latitude}" longitude="${this.post.location.longitude}" id="marker"></google-map-marker>
                   </google-map>
                 </paper-material>
-              </template>
-            </template>
-            <template is="dom-if" if="${this.post}">
-              <template is="dom-if" if="${!this.post.location}">
-                <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
-              </template>
-            </template>
+              `: html``}
+
+            ${ this.post.location ? html`
+              <paper-material class="mapContainer" .elevation="3">
+                <google-map .additionalMapOptions="{'keyboardShortcuts':false}" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" .libraries="places" class="map" .mapType="${this.post.location.mapType}" .zoom="${this.post.location.map_zoom}" fitToMarkers="">
+                  <google-map-marker slot="markers" latitude="${this.post.location.latitude}" longitude="${this.post.location.longitude}" id="marker"></google-map-marker>
+                </google-map>
+              </paper-material>
+            `: html`
+             <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
+            `}
+
+            ${ this.post ? html`
+              <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
+            `: html``}
+
           </div>
         </section>
         <section .name="photos" class="minHeightSection">
@@ -434,9 +444,10 @@ class YpPostLit extends YpBaseElement {
     <iron-media-query .query="(min-width: 1024px)" queryMatches="${this.wideWidth}"></iron-media-query>
 
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.post.Group.configuration.hideNewPostOnPostPage}">
-      <template is="dom-if" if="${!this.disableNewPosts}">
+      
+      ${ !this.disableNewPosts ? html`
         <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" .wideLayout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
-      </template>
+      `: html``}
     </div>
 
     <div class="layout horizontal center-center">

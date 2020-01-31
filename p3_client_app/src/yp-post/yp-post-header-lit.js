@@ -390,26 +390,36 @@ class YpPostHeaderLit extends YpBaseElement {
               <yp-magic-text text-type="postName" .contentLanguage="${this.post.language}" .content="${this.postName}" content-id="${this.post.id}">
               </yp-magic-text>
             </div>
-            <template is="dom-if" if="${this.post.Group.configuration.showWhoPostedPosts}">
+
+            ${ this.post.Group.configuration.showWhoPostedPosts ? html`
               <div class="layout horizontal userInfo">
                 <yp-user-with-organization class="userWithOrg" .hideImage="" .titleDate="${this.post.user.name}" .user="${this.post.User}"></yp-user-with-organization>
               </div>
-            </template>
+            `: html``}
           </div>
           <div class="layout horizontal wrap mediaAndInfoContainer layout-center-center">
             <div class="layout vertical center-center self-start coverContainer">
               <yp-post-cover-media .show-video .show-audio .hasTranscript="${this.post.public_data.transcript.text}" .audioCover="${this.isAudioCover}" .headerMode="${this.headerMode}" .post="${this.post}"></yp-post-cover-media>
               <div class="transcriptContainer">
-                <template is="dom-if" if="${this.checkingTranscript}">
+
+                ${ this.checkingTranscript ? html`
                   <div class="layout vertical center-center checkTranscript">
                     <div>${this.t('checkingForTranscript')}</div>
                     <paper-spinner .active ></paper-spinner>
                   </div>
-                </template>
+                `: html``}
                 <div class="transcriptError layout horizontal center-center" ?hidden="${!this.checkTranscriptError}">
                   ${this.t('checkTranscriptError')}
                 </div>
-                <template is="dom-if" if="${this.post.public_data.transcript.text}">
+
+                  ${ this.hasPostAccess ? html`
+                    <div class="layout horizontal" ?hidden="${this.isEditing}">
+                      <div class="flex"></div>
+                      <yp-ajax id="editPostTranscriptAjax" .method="PUT" @response="${this._editPostTranscriptResponse}"></yp-ajax>
+                      <paper-icon-button class="editIcon" .title="${this.t('edit')}" .icon="create" @tap="${this._editPostTranscript}"></paper-icon-button>
+                    </div>
+                  `: html``}
+                ${ this.post.public_data.transcript.text ? html`
                   <div class="transcriptText layout vertical center-center">
                     <div class="transcriptHeader" ?hidden="${this.post.public_data.transcript.noMachineTranslation}">${this.t('automaticTranscript')}
                       <span ?hidden="${!this.post.public_data.transcript.userEdited}">
@@ -420,16 +430,14 @@ class YpPostHeaderLit extends YpBaseElement {
                       <yp-magic-text text-type="postTranscriptContent" .contentLanguage="${this.post.public_data.transcript.language}" .content="${this.post.public_data.transcript.text}" .contentId="${this.post.id}">
                       </yp-magic-text>
                     </div>
-                    <template is="dom-if" if="${this.hasPostAccess}">
-                      <div class="layout horizontal" ?hidden="${this.isEditing}">
-                        <div class="flex"></div>
-                        <yp-ajax id="editPostTranscriptAjax" .method="PUT" @response="${this._editPostTranscriptResponse}"></yp-ajax>
-                        <paper-icon-button class="editIcon" .title="${this.t('edit')}" .icon="create" @tap="${this._editPostTranscript}"></paper-icon-button>
-                      </div>
-                    </template>
-                  </div>
-                </template>
-                <template is="dom-if" if="${this.isEditing}" restamp="">
+                    <div class="layout horizontal" ?hidden="${this.isEditing}">
+                      <div class="flex"></div>
+                      <yp-ajax id="editPostTranscriptAjax" .method="PUT" @response="${this._editPostTranscriptResponse}"></yp-ajax>
+                      <paper-icon-button class="editIcon" .title="${this.t('edit')}" .icon="create" @tap="${this._editPostTranscript}"></paper-icon-button>
+                    </div>
+                  </div>    
+                `: html``}
+                ${ this.isEditing ? html`
                   <div class="layout vertical" ?hidden="${!this.hasPostAccess}">
                     <paper-textarea id="postTranscriptionEditor" .charCounter maxlength="500" .value="${this.editText}"></paper-textarea>
                     <div class="horizontal end-justified layout">
@@ -440,7 +448,7 @@ class YpPostHeaderLit extends YpBaseElement {
                       <paper-button @tap="${this._saveEdit}">${this.t('update')}</paper-button>
                     </div>
                   </div>
-                </template>
+                `: html``}
                 <yp-ajax ?hidden="" id="checkTranscriptStatusAjax" @response="${this._transcriptStatusResponse}"></yp-ajax>
               </div>
             </div>
@@ -453,24 +461,44 @@ class YpPostHeaderLit extends YpBaseElement {
                 <yp-post-actions ?hidden="${this.hideActions}" .floating="" .headerMode="${this.headerMode}" .elevation="-1" .endorseMode="${this.endorseMode}" class="voting layout-horizontal layout-center" .post="${this.post}"></yp-post-actions>
               </div>
             </div>
-            <template is="dom-if" if="${this.headerMode}">
-              <template is="dom-if" if="${this.loggedInUser}">
+                ${ this.hasPostAccess ? html`
+                  <paper-item id="editMenuItem">${this.t('post.edit')}</paper-item>
+                  <paper-item id="moveMenuItem">${this.t('post.move')}</paper-item>
+                  <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="statusChangeMenuItem">${this.t('post.statusChange')}</paper-item>
+                  <paper-item id="deleteMenuItem">${this.t('post.delete')}</paper-item>
+                  <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="anonymizeMenuItem">${this.t('anonymizePostAndContent')}</paper-item>
+                  <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="deleteContentMenuItem">${this.t('deletePostContent')}</paper-item>
+                `: html``}
+
+              ${ this.loggedInUser ? html`
                 <paper-menu-button .vertical-align="top" .horizontal-align="right" class="edit" ?hidden="${this.hideActions}">
                   <paper-icon-button .ariaLabel="${this.t('openPostMenu')}" class="moreVert" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
                   <paper-listbox slot="dropdown-content" @iron-select="${this_menuSelection}">
-                    <template is="dom-if" if="${this.hasPostAccess}">
-                      <paper-item id="editMenuItem">${this.t('post.edit')}</paper-item>
-                      <paper-item id="moveMenuItem">${this.t('post.move')}</paper-item>
-                      <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="statusChangeMenuItem">${this.t('post.statusChange')}</paper-item>
-                      <paper-item id="deleteMenuItem">${this.t('post.delete')}</paper-item>
-                      <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="anonymizeMenuItem">${this.t('anonymizePostAndContent')}</paper-item>
-                      <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="deleteContentMenuItem">${this.t('deletePostContent')}</paper-item>
-                    </template>
+                    <paper-item id="editMenuItem">${this.t('post.edit')}</paper-item>
+                    <paper-item id="moveMenuItem">${this.t('post.move')}</paper-item>
+                    <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="statusChangeMenuItem">${this.t('post.statusChange')}</paper-item>
+                    <paper-item id="deleteMenuItem">${this.t('post.delete')}</paper-item>
+                    <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="anonymizeMenuItem">${this.t('anonymizePostAndContent')}</paper-item>
+                    <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="deleteContentMenuItem">${this.t('deletePostContent')}</paper-item>
                     <paper-item id="reportMenuItem">${this.t('post.report')}</paper-item>
                   </paper-listbox>
                 </paper-menu-button>
-              </template>
-            </template>
+              `: html``}
+
+            ${ this.headerMode ? html`
+              <paper-menu-button .vertical-align="top" .horizontal-align="right" class="edit" ?hidden="${this.hideActions}">
+                <paper-icon-button .ariaLabel="${this.t('openPostMenu')}" class="moreVert" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                <paper-listbox slot="dropdown-content" @iron-select="${this_menuSelection}">
+                  <paper-item id="editMenuItem">${this.t('post.edit')}</paper-item>
+                  <paper-item id="moveMenuItem">${this.t('post.move')}</paper-item>
+                  <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="statusChangeMenuItem">${this.t('post.statusChange')}</paper-item>
+                  <paper-item id="deleteMenuItem">${this.t('post.delete')}</paper-item>
+                  <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="anonymizeMenuItem">${this.t('anonymizePostAndContent')}</paper-item>
+                  <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="deleteContentMenuItem">${this.t('deletePostContent')}</paper-item>
+                  <paper-item id="reportMenuItem">${this.t('post.report')}</paper-item>
+                </paper-listbox>
+              </paper-menu-button>
+            `: html``}
           </div>
         </div>
       </paper-material>

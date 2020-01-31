@@ -131,7 +131,8 @@ class YpPostMapLit extends YpBaseElement {
     return html`
     ${this.post ? html`
     <div class="layout vertical center-center">
-      <template is="dom-if" if="${this.posts}">
+
+      ${ this.posts ? html`
         <paper-material id="mapContainer" .elevation="2" class="mapContainer">
           <google-map .AdditionalMapOptions="{'keyboardShortcuts':false}" id="map" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers="">
             <template is="dom-repeat" .items="${this.posts}" as="post">
@@ -143,14 +144,13 @@ class YpPostMapLit extends YpBaseElement {
             </yp-post-map-info>
           </google-map>
         </paper-material>
-      </template>
+      `: html``}
 
-      <template is="dom-if" if="${this.noPosts}">
+      ${ this.noPosts ? html`
         <paper-material .elevation="1" class="noMapContainer">
           <div>${this.t('posts.noMapPosts')}</div>
         </paper-material>
-      </template>
-
+      `: html``}
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" @response="${this._response}"></yp-ajax>
       </div>
