@@ -192,78 +192,76 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.bulk ? html`
     <paper-dialog id="dialog" modal>
       <h2>${this.t('bulkStatusUdateConfig')}</h2>
       <paper-dialog-scrollable>
         <div class="layout horizontal wrap">
           <paper-tabs .selected="${this.selectedGroup}" .attrForSelected="name">
-            <template is="dom-repeat" .items="${this.config.groups}" as="group">
+            ${ this.config.groups .map(group => html`
               <paper-tab .name="${this.group.name}">${this._getHeadGroupName(group.name)}</paper-tab>
-            </template>
+            `)}
           </paper-tabs>
         </div>
         <iron-pages .attrForSelected="name" .selected="${this.selectedGroup}">
-          <template is="dom-repeat" items="${this.config.groups}" as="group">
+
+          ${ this.config.group.map(group => html`
             <section .name="${this.group.name}">
               <div class="layout vertical postsList">
-
-              ${ this._selectedGroup(selectedGroup, group.name) ? html`
-                <template is="dom-repeat" .items="${this._orderPosts(group.posts)}" as="post">
-                  <div class="layout horizontal postItem">
-                    <paper-material .elevation="2" class="layout horizontal">
-                      <div class="layout vertical">
-                        <div class="layout horizontal">
+                ${ this._selectedGroup(selectedGroup, group.name) ? html`
+                  ${ this._orderPosts(group.posts).map(post => html`
+                    <div class="layout horizontal postItem">
+                      <paper-material .elevation="2" class="layout horizontal">
+                        <div class="layout vertical">
+                          <div class="layout horizontal">
                           <div class="id">${this.post.id}</div>
-                          <div class="postName">
-                            <a target="_blank" href="/post/${this.post.id}">${this.post.name}</a>
+                            <div class="postName">
+                              <a target="_blank" href="/post/${this.post.id}">${this.post.name}</a>
+                            </div>
+                            <div class="postOfficialStatus">
+                              ${this._officialStatusOptionsName(post.currentOfficialStatus)}
+                            </div>
                           </div>
-                          <div class="postOfficialStatus">
-                            ${this._officialStatusOptionsName(post.currentOfficialStatus)}
+                          <div class="layout horizontal">
+                            <div class="postDropdown">
+                              <paper-dropdown-menu .label="${this.t('post.statusChangeSelectNewStatus')}">
+                                <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.newOfficialStatus}" @iron-select="${this._selectNewOfficialStatus}">
+                                  ${ this.officialStatusOptions.map(group => html`
+                                    <paper-item .name="${this.statusOption.official_value}">${this.statusOption.translatedName}</paper-item>
+                                  `)}
+                                </paper-listbox>
+                              </paper-dropdown-menu>
+                            </div>
+                            <div class="postDropdown">
+                              <paper-dropdown-menu .label="${this.t('moveToGroup')}">
+                                <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.moveToGroupId}">
+                                  ${ this.templatesWithNone .map(statusOption => html`
+                                    <paper-item .name="${this.templateOption.title}">${this.templateOption.title}</paper-item>
+                                  `)}
+                                </paper-listbox>
+                              </paper-dropdown-menu>
+                            </div>
+                            <div class="postDropdown">
+                              <paper-dropdown-menu .label="${this.t('moveToGroup')}">
+                                <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.moveToGroupId}">
+                                  ${ this.availableGroups.map(group => html`
+                                    <paper-item .name="${this.group.id}">${this.group.name}</paper-item>
+                                  `)}
+                                </paper-listbox>
+                              </paper-dropdown-menu>
+                            </div>
+                            <div class="postUniqueMessage">
+                              <paper-textarea id="emailFooter" .name="emailFooter" .alwaysFloatLabel="${this.post.uniqueStatusMessage}" .value="${this.post.uniqueStatusMessage}" .label="${this.t('uniqueStatusMessage')}" .rows="4" .maxRows="4" .maxlength="30000" class="mainInput">
+                              </paper-textarea>
+                            </div>
                           </div>
                         </div>
-                        <div class="layout horizontal">
-                          <div class="postDropdown">
-                            <paper-dropdown-menu .label="${this.t('post.statusChangeSelectNewStatus')}">
-                              <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.newOfficialStatus}" @iron-select="${this._selectNewOfficialStatus}">
-                                <template is="dom-repeat" .items="${this.officialStatusOptions}" as="statusOption">
-                                  <paper-item .name="${this.statusOption.official_value}">${this.statusOption.translatedName}</paper-item>
-                                </template>
-                              </paper-listbox>
-                            </paper-dropdown-menu>
-                          </div>
-                          <div class="postDropdown">
-                            <paper-dropdown-menu .label="${this.t('selectStatusTemplate')}">
-                              <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.selectedTemplateName}">
-                                <template is="dom-repeat" .items="${this.templatesWithNone}" as="templateOption">
-                                  <paper-item .name="${this.templateOption.title}">${this.templateOption.title}</paper-item>
-                                </template>
-                              </paper-listbox>
-                            </paper-dropdown-menu>
-                          </div>
-                          <div class="postDropdown">
-                            <paper-dropdown-menu .label="${this.t('moveToGroup')}">
-                              <paper-listbox slot="dropdown-content" attrForSelected="name" data-args="${this.post}" .selected="${this.post.moveToGroupId}">
-                                <template is="dom-repeat" .items="${this.availableGroups}" as="group">
-                                  <paper-item .name="${this.group.id}">${this.group.name}</paper-item>
-                                </template>
-                              </paper-listbox>
-                            </paper-dropdown-menu>
-                          </div>
-                          <div class="postUniqueMessage">
-                            <paper-textarea id="emailFooter" .name="emailFooter" .alwaysFloatLabel="${this.post.uniqueStatusMessage}" .value="${this.post.uniqueStatusMessage}" .label="${this.t('uniqueStatusMessage')}" .rows="4" .maxRows="4" .maxlength="30000" class="mainInput">
-                            </paper-textarea>
-                          </div>
-                        </div>
-                      </div>
-                    </paper-material>
-                  </div>
-                </template>
-              ` : html``}
-
+                      </paper-material>
+                    </div>
+                  `)}
+                ` : html``}
               </div>
             </section>
-          </template>
+          `)}
         </iron-pages>
 
         <div class="layout horizontal center-center">
@@ -279,7 +277,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
       </div>
 
     </paper-dialog>
-` : html``}
+
 `
   }
 

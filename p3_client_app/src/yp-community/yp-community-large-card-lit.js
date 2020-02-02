@@ -32,41 +32,41 @@ class YpCommunityLargeCardLit extends YpBaseElement {
         type: Object,
         observer: '_communityChanged'
       },
-  
+
       hasCommunityAccess: {
         type: Boolean,
         value: false,
         computed: '_hasCommunityAccess(community, gotAdminRights)'
       },
-  
+
       showMenuItem: {
         type: Boolean,
         value: false,
         computed: '_showMenuItem(hasCommunityAccess, community)'
       },
-  
+
       communityVideoURL: {
         type: String,
         computed: '_communityVideoURL(community)'
       },
-  
+
       communityVideoPosterURL: {
         type: String,
         computed: '_communityVideoPosterURL(community)'
       },
-  
+
       hasCommunityAccessAndNotFolder: {
         type: Boolean,
         computed: '_hasCommunityAccessAndNotFolder(community, hasCommunityAccess)'
       },
-  
+
       communityVideoId: Number,
-  
+
       flaggedContentCount: {
         type: Number,
         value: null
       },
-  
+
       exportLoginsUrl: {
         type: String,
         computed: '_exportLoginsUrl(hasCommunityAccess, community)'
@@ -136,7 +136,7 @@ static get styles() {
       }
 
       .contentContainer {
-        
+
       }
 
       .description-and-stats {
@@ -344,72 +344,70 @@ static get styles() {
 
   render() {
     return html`
-    ${this.community ? html`
-    <div class="layout horizontal wrap">
-      <paper-material is-video="${this.communityVideoURL}" id="cardImage" .elevation="3" .animated="" class="large-card imageCard top-card">
-        <div id="welcomeHTML" .title="(!community.configuration.welcomeHTML)" class="layout vertical center-center">
-        </div>
-        <div hidden="${this.community.configuration.welcomeHTML}">
-            ${this.communityVideoURL ? html`  
-              <video id="videoPlayer" .dataId="${this.communityVideoId}" .controls="" .preload="meta" class="image pointer" src="${this.communityVideoURL}" .playsinline="" .poster="${thiscommunityVideoPosterURL}"></video>
-            ` : html`
-              <iron-image class="image" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image> 
-            `} 
-        </div>
-      </paper-material>
-      <paper-material id="card" .elevation="3" .animated="" class="large-card textBox">
-        <div class="layout vertical">
-          <div class="layout horizontal wrap">
-            <div class="layout vertical description-and-stats">
-              <div class="description">
-                <div class="community-name">
-                  <yp-magic-text .textType="communityName" .contentLanguage="${this.community.language}" .disableTranslation="${this.community.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.communityNameFul}" .contentId="${this.community.id}">
+      <div class="layout horizontal wrap">
+        <paper-material is-video="${this.communityVideoURL}" id="cardImage" .elevation="3" .animated="" class="large-card imageCard top-card">
+          <div id="welcomeHTML" .title="(!community.configuration.welcomeHTML)" class="layout vertical center-center">
+          </div>
+          <div hidden="${this.community.configuration.welcomeHTML}">
+              ${this.communityVideoURL ? html`
+                <video id="videoPlayer" .dataId="${this.communityVideoId}" .controls="" .preload="meta" class="image pointer" src="${this.communityVideoURL}" .playsinline="" .poster="${thiscommunityVideoPosterURL}"></video>
+              ` : html`
+                <iron-image class="image" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
+              `}
+          </div>
+        </paper-material>
+        <paper-material id="card" .elevation="3" .animated="" class="large-card textBox">
+          <div class="layout vertical">
+            <div class="layout horizontal wrap">
+              <div class="layout vertical description-and-stats">
+                <div class="description">
+                  <div class="community-name">
+                    <yp-magic-text .textType="communityName" .contentLanguage="${this.community.language}" .disableTranslation="${this.community.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.communityNameFul}" .contentId="${this.community.id}">
+                    </yp-magic-text>
+                  </div>
+                  <div hidden="" class="communityAccess">${this._communityAccessText(community.access)}</div>
+                  <yp-magic-text id="description" class="communityDescription" .textType="communityContent" contentLanguage="${this.community.language}" .content="${this.community.description}" .contentId="${this.community.id}">
                   </yp-magic-text>
                 </div>
-                <div hidden="" class="communityAccess">${this._communityAccessText(community.access)}</div>
-                <yp-magic-text id="description" class="communityDescription" .textType="communityContent" contentLanguage="${this.community.language}" .content="${this.community.description}" .contentId="${this.community.id}">
-                </yp-magic-text>
               </div>
             </div>
+            <paper-menu-button class="edit" .verticalAlign="top" .horizontalAlign="${this.editMenuAlign}" ?hidden="${!this.showMenuItem}">
+              <paper-icon-button .ariaLabel="${this.t('openCommunityMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+              <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
+                <paper-item ?hidden="${!this.hasCommunityAccess}" id="editMenuItem">${this.t('community.edit')}</paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccess}" id="usersMenuItem">${this.t('community.users')}</paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccess}" id="adminsMenuItem">${this.t('community.admins')}</paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccess}" id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="moderationMenuItem">
+                  ${this.t('flaggedContent')} <span ?hidden="${!this.flaggedContentCount}">&nbsp; (${flaggedContentCount})</span>
+                </paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="moderationAllMenuItem">
+                  ${this.t('manageAllContent')}
+                </paper-item>
+                <a ?hidden="${!this.hasCommunityAccess}" .target="_blank" href="${this.exportLoginsUrl}"><paper-item id="exportLogins">${this.t('exportLogins')}</paper-item></a>
+
+                <paper-item ?hidden="${!this.hasCommunityAccess}" id="deleteMenuItem">${this.t('community.delete')}</paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="anonymizeMenuItem">${this.t('anonymizeCommunityContent')}</paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="deleteContentMenuItem">${this.t('deleteCommunityContent')}</paper-item>
+                <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="bulkStatusUpdateMenuItem">${this.t('bulkStatusUpdate')}</paper-item>
+                <paper-item id="addGroupMenuItem" hidden="${this.community.is_community_folder}">${this.t('group.new')}</paper-item>
+                <paper-item ?hidden="" id="addCommunityFolderMenuItem">${this.t('newCommunityFolder')}</paper-item>
+              </paper-listbox>
+            </paper-menu-button>
           </div>
-          <paper-menu-button class="edit" .verticalAlign="top" .horizontalAlign="${this.editMenuAlign}" ?hidden="${!this.showMenuItem}">
-            <paper-icon-button .ariaLabel="${this.t('openCommunityMenu')}" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-            <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
-              <paper-item ?hidden="${!this.hasCommunityAccess}" id="editMenuItem">${this.t('community.edit')}</paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccess}" id="usersMenuItem">${this.t('community.users')}</paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccess}" id="adminsMenuItem">${this.t('community.admins')}</paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccess}" id="pagesMenuItem">${this.t('pages.managePages')}</paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="moderationMenuItem">
-                ${this.t('flaggedContent')} <span ?hidden="${!this.flaggedContentCount}">&nbsp; (${flaggedContentCount})</span>
-              </paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="moderationAllMenuItem">
-                ${this.t('manageAllContent')}
-              </paper-item>
-              <a ?hidden="${!this.hasCommunityAccess}" .target="_blank" href="${this.exportLoginsUrl}"><paper-item id="exportLogins">${this.t('exportLogins')}</paper-item></a>
+          <yp-community-stats-lit class="stats" .community="${this.community}"></yp-community-stats-lit>
+        </paper-material>
+      </div>
 
-              <paper-item ?hidden="${!this.hasCommunityAccess}" id="deleteMenuItem">${this.t('community.delete')}</paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="anonymizeMenuItem">${this.t('anonymizeCommunityContent')}</paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="deleteContentMenuItem">${this.t('deleteCommunityContent')}</paper-item>
-              <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="bulkStatusUpdateMenuItem">${this.t('bulkStatusUpdate')}</paper-item>
-              <paper-item id="addGroupMenuItem" hidden="${this.community.is_community_folder}">${this.t('group.new')}</paper-item>
-              <paper-item ?hidden="" id="addCommunityFolderMenuItem">${this.t('newCommunityFolder')}</paper-item>
-            </paper-listbox>
-          </paper-menu-button>
-        </div>
-        <yp-community-stats-lit class="stats" .community="${this.community}"></yp-community-stats-lit>
-      </paper-material>
-    </div>
-     
-     ${ (this.community && this.hasCommunityAccess) ? html`
-       <yp-ajax ?hidden="" .disableUserError="" .method="GET" url="/api/communities/${this.community.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
-     ` : html``}
+      ${ (this.community && this.hasCommunityAccess) ? html`
+        <yp-ajax ?hidden="" .disableUserError="" .method="GET" url="/api/communities/${this.community.id}/flagged_content_count" .auto="" @response="${this._setFlaggedContentCount}"></yp-ajax>
+      ` : html``}
 
-    <iron-media-query query="(max-width: 800px)" queryMatches="${this.narrowScreen}"></iron-media-query>
-    <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
-    <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
-`: html``}
-`
-  }
+      <iron-media-query query="(max-width: 800px)" queryMatches="${this.narrowScreen}"></iron-media-query>
+      <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
+      <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
+  `
+}
 
   _exportLoginsUrl(access, community) {
     if (access && community) {

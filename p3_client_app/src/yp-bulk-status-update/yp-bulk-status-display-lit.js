@@ -149,7 +149,6 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.bulk ? html`
     <div class="layout vertical center-center topArea">
       <paper-material .elevation="5" class="headerMaterial layout vertical center-center">
         <h2 class="mainHeader">${this.t('bulkStatusUdateFor')}: ${this.community.name}</h2>
@@ -158,13 +157,14 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
     </div>
 
     ${!this.byTemplate ? html`
-      <template is="dom-repeat" .items="${this.config.groups}" as="group">
+      ${ this.config.groups.map(group => html`
         <paper-material .elevation="2" class="statusMaterial layout horizontal center-center wrap">
-          <template is="dom-repeat" .items="${this._orderGroupStatuses(group.statuses)}" as="status">
+          ${ this._orderGroupStatuses(group.statuses).map(status => html`
             <div class="layout vertical self-start">
               <h1 ?hidden="${this.hideGroupName}">${this.group.name}</h1>
               <h2>${this._officialStatusOptionsNamePlural(status.official_status)}</h2>
-              <template is="dom-repeat" .items="${thisstatus.posts}" as="post">
+
+              ${ this.status.posts.map(post => html`
                 <div class="layout vertical">
                   <div class="layout horizontal">
                     <iron-icon class="openCloseButton" data-args="${this.post.id}" .icon="keyboard-arrow-right" @tap="${this._setOpen}"></iron-icon>
@@ -184,11 +184,11 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
                     </div>
                   </div>
                 </div>
-              </template>
+              `)}
             </div>
-          </template>
+            `)}
         </paper-material>
-      </template>
+      `)}
     ` : html``}
 
     ${ this.gotModifiedTemplates ? html`
@@ -205,7 +205,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
     ` : html``}
 
     <yp-ajax id="ajax" url="/api/users/${this.userId}/status_update/${this.statusUpdateId}" @response="${this._response}"></yp-ajax>
-` : html``}
+
 `
   }
 

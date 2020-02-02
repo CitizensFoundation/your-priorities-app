@@ -18,24 +18,24 @@ class AcNotificationSelectionLit extends YpBaseElement {
         notify: true,
         observer: '_settingChanged'
       },
-  
+
       frequency:  {
         type: Number,
         notify: true,
         observer: "_frequencyChanged"
       },
-  
+
       method: {
         type: Number,
         notify: true,
         observer: "_methodChanged"
       },
-  
+
       availableFrequencies: {
         type: Array,
         computed: '_getAvailableFrequencies(language, method)'
       },
-  
+
       availableMethods: {
         type: Object,
         computed: '_availableMethods(language)'
@@ -82,9 +82,11 @@ class AcNotificationSelectionLit extends YpBaseElement {
           <div class="notificationSub">${this.t('notification.method')}</div>
           <div class="layout horizontal">
             <paper-radio-group id="notificationMethodGroup" .name="method" class="method" .attrForSelected="enum-value" .selected="${this.method}">
-              <template is="dom-repeat" .items="${this.availableMethods}">
-                <paper-radio-button .enumValue="${this.item.enumValue}">${this.item.name}</paper-radio-button>
-              </template>
+
+              ${ this.availableMethods.map(item => html`
+              <paper-radio-button .enumValue="${this.item.enumValue}">${this.item.name}</paper-radio-button>
+              `)}
+
             </paper-radio-group>
           </div>
         </div>
@@ -92,9 +94,11 @@ class AcNotificationSelectionLit extends YpBaseElement {
           <div class="notificationSub">${this.t('notification.frequency')}</div>
           <div class="layout horizontal">
             <paper-radio-group id="notificationFrequencyGroup" .name="frequency" .attrForSelected="enum-value" class="frequency" .selected="${this.frequency}">
-              <template is="dom-repeat" .items="${this.availableFrequencies}">
-                <paper-radio-button ?disabled="${this._isDelayed(item)}" .enumValue="${this.item.enumValue}">${this.item.name}</paper-radio-button>
-              </template>
+
+              ${ this.availableFrequencies.map(item => html`
+              <paper-radio-button ?disabled="${this._isDelayed(item)}" .enumValue="${this.item.enumValue}">${this.item.name}</paper-radio-button>
+              `)}
+
             </paper-radio-group>
           </div>
         </div>
@@ -104,7 +108,7 @@ class AcNotificationSelectionLit extends YpBaseElement {
 `
   }
 
-/*  
+/*
   behaviors: [
     ypLanguageBehavior
   ],

@@ -18,31 +18,31 @@ class YpCategoryEditLit extends YpBaseElement {
         type: String,
         value: "/api/categories"
       },
-  
+
       category: {
         type: Object
       },
-  
+
       group: {
         type: Object
       },
-  
+
       categoryAccess: {
         type: String
       },
-  
+
       params: {
         type: String
       },
-  
+
       method: {
         type: String
       },
-  
+
       uploadedIconImageId: {
         type: String
       },
-  
+
       uploadedHeaderImageId: {
         type: String
       }
@@ -61,7 +61,7 @@ class YpCategoryEditLit extends YpBaseElement {
       <div class="layout vertical additionalSettings">
         <yp-file-upload id="iconImageUpload" droppable raised .target="/api/images?itemType=category-icon" .method="POST" @success="${this._iconImageUploaded}">
           <iron-icon class="icon" icon="photo-camera"></iron-icon>
-          <span>[[t('image.icon.upload')]]</span>
+          <span>${this.t('image.icon.upload')}</span>
         </yp-file-upload>
       </div>
 
@@ -79,7 +79,7 @@ class YpCategoryEditLit extends YpBaseElement {
 `
 
   }
-  
+
 /*
   behaviors: [
     ypLanguageBehavior,

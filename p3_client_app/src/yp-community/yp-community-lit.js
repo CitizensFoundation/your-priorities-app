@@ -35,49 +35,49 @@ class YpCommunityLit extends YpBaseElement {
       tabRoute: Object,
       idRouteData: Object,
       tabRouteData: Object,
-  
+
       createFabIcon: {
         type: String,
         value: null,
         notify: true
       },
-  
+
       communityId: {
         type: Number,
         value: null,
         observer: "_communityIdChanged"
       },
-  
+
       community: {
         type: Object
       },
-  
+
       selectedTab: {
         type: String,
         value: 'groups',
         observer: '_selectedTabChanged'
       },
-  
+
       mapActive: {
         type: Boolean,
         value: false
       },
-  
+
       locationHidden: {
         type: Boolean,
         value: false
       },
-  
+
       useAlternativeHeader: {
         type: Boolean,
         value: false
       },
-  
+
       isOldiOs: {
         type: Boolean,
         computed: '_isOldiOs(communityId)'
       },
-  
+
       useNormalHeader: {
         type: Boolean,
         value: true
@@ -119,7 +119,6 @@ class YpCommunityLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.community ? html`
     <yp-page id="page" create-fab-icon="${this.createFabIcon}" create-fab-title="${this.t('group.add')}" @yp-create-fab-tap="${this._newGroup}" .hideAllTabs="${this.community.configuration.hideAllTabs}">
       ${this.useAlternativeHeader ? html`
         <yp-community-header id="communityCard" slot="largeCard" class="largeCard card" .community="${this.community}" @update-community="${this._refreshAjax}"></yp-community-header>
@@ -127,7 +126,7 @@ class YpCommunityLit extends YpBaseElement {
 
       ${useNormalHeader ? html`
         <yp-community-large-card id="communityCard" slot="largeCard" class="largeCard card" .community="${this.community}" @update-community="${this._refreshAjax}"></yp-community-large-card>
-      `: html``}      
+      `: html``}
 
       <paper-tabs id="paper_tabs" .apple="${this.isOldiOs}" slot="tabs" class="tabs" .selected="${this.selectedTab}" .attrForSelected="name" .focused ?hidden="${this.community.configuration.hideAllTabs}">
         <paper-tab .name="groups" class="tab"><span>${this.t('groups')}</span> &nbsp; (<span>${this.groupsLength}</span>)</paper-tab>
@@ -169,7 +168,6 @@ class YpCommunityLit extends YpBaseElement {
 
     <yp-ajax id="ajax" url="/api/communities" @response="${this._response}"></yp-ajax>
     <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
-`:html``}
 `
   }
 
@@ -197,7 +195,7 @@ class YpCommunityLit extends YpBaseElement {
     'yp-new-group': '_newGroup'
   },
 
- */ 
+ */
 
   _userLoggedIn(user) {
     if (user) {

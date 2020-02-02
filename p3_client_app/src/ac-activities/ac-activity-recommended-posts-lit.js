@@ -175,7 +175,7 @@ class AcActivityRecommendedPostsLit extends YpBaseElement {
       ${this.t('recommendedPosts')}
     </div>
 
-    <template is="dom-repeat" .items="${this.recommendedPosts}" as="post">
+    ${this.recommendedPosts.map(item => html`
       <div class="postContainer">
         <paper-material .elevation="1" class="postItem">
           <div class="layout vertical postItem" @tap="${this.goToPost}">
@@ -188,7 +188,8 @@ class AcActivityRecommendedPostsLit extends YpBaseElement {
           </div>
         </paper-material>
       </div>
-    </template>
+    `)}
+
 ` : html``}
 `
   }
@@ -207,4 +208,4 @@ class AcActivityRecommendedPostsLit extends YpBaseElement {
   }
 }
 
-window.customElements.define('ac-activity-recommended-posts-lit', AcActivityRecommendedPostsLit) 
+window.customElements.define('ac-activity-recommended-posts-lit', AcActivityRecommendedPostsLit)

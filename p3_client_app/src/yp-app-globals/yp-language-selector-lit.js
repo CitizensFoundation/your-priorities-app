@@ -45,52 +45,52 @@ class YpLanguageSelectorLit extends YpBaseElement {
           sl: 'Slovenian'
         }
       },
-  
+
       noGoogleTranslateLanguages: {
         type: Array,
         value: ['kl','sr_latin']
       },
-  
+
       languages: {
         type: Array,
         computed: '_languages(supportedLanguages)'
       },
-  
+
       selectedLocale: {
         type: String,
         observer: '_selectedLocaleChanged'
       },
-  
+
       noUserEvents: {
         type: Boolean,
         value: false
       },
-  
+
       value: {
         type: String,
         value: ""
       },
-  
+
       canUseAutoTranslate: {
         type: Boolean,
         computed: '_canUseAutoTranslate(language, hasServerAutoTranslation, autoTranslateOptionDisabled)'
       },
-  
+
       autoTranslateOptionDisabled: {
         type: Boolean,
         value: false
       },
-  
+
       autoTranslate: {
         type: Boolean,
         value: false
       },
-  
+
       hasServerAutoTranslation: {
         type: Boolean,
         value: false
       },
-  
+
       isOutsideChangeEvent: {
         type: Boolean,
         value: false
@@ -135,9 +135,11 @@ class YpLanguageSelectorLit extends YpBaseElement {
     <div class="layout vertical">
       <paper-dropdown-menu .label="Select language" .selected="${this.selectedLocale}}" .attrForSelected="name">
         <paper-listbox slot="dropdown-content" .selected="${this.selectedLocale}" .attrForSelected="name">
-          <template is="dom-repeat" .items="${this.languages}">
+
+          ${ this.languages.map(item => html`
             <paper-item .name="${this.item.language}">${this.item.name}</paper-item>
-          </template>
+          `)}
+
         </paper-listbox>
       </paper-dropdown-menu>
       <div ?hidden="${!this.canUseAutoTranslate}">
