@@ -20,7 +20,10 @@ var generateSitemap = function(req, res) {
       models.Community.findAll({
         attributes: ['id'],
         where: {
-          domain_id: domainId
+          domain_id: domainId,
+          status: {
+            $ne: 'hidden'
+          }
         }
       }).then(function (communities) {
         _.forEach(communities, function (community) {
@@ -46,7 +49,10 @@ var generateSitemap = function(req, res) {
             attributes: ['id'],
             where: {
               domain_id: domainId,
-              access: models.Community.ACCESS_PUBLIC
+              access: models.Community.ACCESS_PUBLIC,
+              status: {
+                $ne: 'hidden'
+              }
             },
             required: true
           }
@@ -81,7 +87,10 @@ var generateSitemap = function(req, res) {
                 required: true,
                 where: {
                   domain_id: domainId,
-                  access: models.Community.ACCESS_PUBLIC
+                  access: models.Community.ACCESS_PUBLIC,
+                  status: {
+                    $ne: 'hidden'
+                  }
                 }
               }
             ]
