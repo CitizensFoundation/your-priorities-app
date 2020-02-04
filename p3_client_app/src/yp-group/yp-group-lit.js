@@ -294,11 +294,9 @@ render() {
         <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" ?hidden="${this.group.configuration.hideGroupHeader}">
         <yp-group-card-large id="groupCard" class="largeCard" .group="${this.group}" @update-group="${this._refreshAjax}"></yp-group-card-large>
       </div>
-
       <div class="largeAddButton layout horizontal center-center" is-apple="${this.isOldiOs}" is-ipad="${this.isIpad}" ?hidden="${this.group.configuration.hideNewPost}">
         <yp-post-card-add .disabled="${this.disableNewPosts}" @new-post="${this._newPost}" .elevation="2"></yp-post-card-add>
       </div>
-
       <div class="layout horizontal center-center tabContainer" .hide="${this.group.configuration.hideAllTabs}">
         <paper-tabs .scrollable="${this.shouldScrollTabs}" id="paperTabs" has-non-open-posts="${this.hasNonOpenPosts}" class="tabs" .selected="${this.selectedTab}" attr-for-selected="name" focused>
           <paper-tab id="tab1" .name="open">
@@ -362,7 +360,7 @@ render() {
         </section>
         <section .name="news" class="minHeightSection">
           ${ this.newsTabSelected ? html`
-          <ac-activities id="groupActivities" ?disableNewPosts="${this.disableNewPosts}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .groupId="${this.group.id}"></ac-activities>
+            <ac-activities id="groupActivities" ?disableNewPosts="${this.disableNewPosts}" .selectedTab="${this.selectedTab}" .listRoute="${this.listRoute}" .groupId="${this.group.id}"></ac-activities>
           ` : html``}
         </section>
 
@@ -386,15 +384,15 @@ render() {
 
         <section name="map" ?hidden="${this.locationHidden}" class="minHeightSection">
           ${ this.mapActive ? html`
-          <yp-post-map .groupId="${this.group.id}"></yp-post-map>
+            <yp-post-map .groupId="${this.group.id}"></yp-post-map>
           ` : html``}
         </section>
       </iron-pages>
     </div>
 
     ${ !this.disableNewPosts ? html`
-    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.disableNewPosts}">
-          <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
+      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.disableNewPosts}">
+        <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
       </div>
     ` : html``}
 

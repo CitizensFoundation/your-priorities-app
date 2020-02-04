@@ -23,102 +23,102 @@ class AcActivitiesLit extends YpBaseElement {
         type: Boolean,
         value: false
       },
-  
+
       activities: {
         type: Array,
         notify: true
       },
-  
+
       domainId: {
         type: Number,
         observer: "_domainIdChanged"
       },
-  
+
       communityId: {
         type: Number,
         observer: "_communityIdChanged"
       },
-  
+
       groupId: {
         type: Number,
         observer: "_groupIdChanged"
       },
-  
+
       postId: {
         type: Number,
         observer: "_postIdChanged"
       },
-  
+
       postGroupId: {
         type: Number
       },
-  
+
       // 'activities' and 'news_feed'
       mode: {
         type: String,
         value: "activities"
       },
-  
+
       url: {
         type: String
       },
-  
+
       oldestProcessedActivityAt: {
         type: Date
       },
-  
+
       latestProcessedActivityAt: {
         type: Date
       },
-  
+
       activityIdToDelete: {
         type: Number
       },
-  
+
       wide: {
         type: Boolean,
         value: false
       },
-  
+
       selectedTab: {
         type: String
       },
-  
+
       recommendedPosts: {
         type: Array,
         value: null
       },
-  
+
       noRecommendedPosts: {
         type: Boolean,
         value: true
       },
-  
+
       skipIronListWidth: {
         type: Boolean,
         computed: '_skipIronListWidth(wide)'
       },
-  
+
       ironListResizeScrollThreshold: {
         type: Number,
         computed: '_ironListResizeScrollThreshold(wide)'
       },
-  
+
       ironListPaddingTop: {
         type: Number,
         computed: '_ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab)'
       },
-  
+
       wideListOffset: {
         type: String,
         computed: '_wideListOffset(groupId)'
       },
-  
+
       hasLoggedInUser: {
         type: Boolean,
         computed: '_hasLoggedInUser(loggedInUser)'
       },
-  
+
       gotInitialData: {
         type: Boolean,
         value: false
@@ -279,11 +279,10 @@ class AcActivitiesLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.activities ? html`
     <div class="layout horizontal topLevelActivitiesContainer layout-center-center" wide="${this.wide}">
       <div class="layout vertical self-start">
-        
-        ${ this.loggedInUser ?  html`  
+
+        ${ this.loggedInUser ?  html`
           <paper-material .loggedInUser="${this.hasLoggedInUser}" elevation="1" class="layout horizontal addNewsBox">
             <yp-point-news-story-edit .domainId="${this.domainId}" .communityId="${this.communityId}" groupId="${this.groupId}" .postGroupId="${this.postGroupId}" .postId="${this.postId}" @refresh="${this.loadNewData}">
             </yp-point-news-story-edit>
@@ -293,7 +292,7 @@ class AcActivitiesLit extends YpBaseElement {
             <paper-button raised class="layout horizontal notLoggedInButton" @tap="${this._openLogin}">
               ${this.t('loginToShareALink')}
             </paper-button>
-          </div>     
+          </div>
         `}
 
         <div class="layout horizontal center-center topSpinnerContainer" ?hidden="${this.gotInitialData}">
@@ -327,8 +326,7 @@ class AcActivitiesLit extends YpBaseElement {
 
     <iron-scroll-threshold id="scrollTheshold" .lowerThreshold="450" @lower-threshold="${this._loadMoreData}" .scrollTarget="document">
     </iron-scroll-threshold>
-` : html``}
-`
+    `
   }
 
 /*

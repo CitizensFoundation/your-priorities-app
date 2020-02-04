@@ -109,9 +109,9 @@ class YpMediaRecorderLit extends YpBaseElement {
         type: Object,
         value: null
       }
-    }   
+    }
   }
-  
+
   static get styles() {
     return [
       css`
@@ -131,15 +131,15 @@ class YpMediaRecorderLit extends YpBaseElement {
       }
 
       .horizontal {
-       
+
       }
 
       .center-center {
-      
+
       }
 
       .flex {
-      
+
       }
 
       .recording {
@@ -237,19 +237,20 @@ class YpMediaRecorderLit extends YpBaseElement {
         height: 128px;
       }
   `, YpFlexLayout]
-  
+
   }
 
   render() {
     return html`
-    ${this.media ? html`
     <paper-dialog id="selectDevices" .modal>
       <h2>${this.selectDeviceTitle}</h2>
       <paper-dialog-scrollable>
         <paper-listbox id="deviceListBox">
-          <template is="dom-repeat" .items="${this.allDevices}">
+
+          ${ this.allDevices.map(item => html`
             <paper-item @tap="${this.selectDeviceFunction}" id="${this.item.deviceId}">${this.item.label}</paper-item>
-          </template>
+          `)}
+
         </paper-listbox>
         <div class="layout horizontal rememberBox">
           <div>
@@ -315,7 +316,6 @@ class YpMediaRecorderLit extends YpBaseElement {
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-ajax id="getTranslationAjax" @response="${this._getTranslationResponse}"></iron-ajax>
-` : html``}
 `
   }
 

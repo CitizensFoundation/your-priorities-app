@@ -125,11 +125,11 @@ class YpDialogContainerLit extends YpBaseElement {
   render() {
     return html`
     ${this.dialog ? html`
-    
+
     ${ this.loggedInUser ? html`
       <ac-notification-toast id="notificationToast"></ac-notification-toast>
     `: html``}
-    
+
     ${ this.needsPixelCookieConfirm ? html`
       <paper-toast id="pixelTrackingCookieConfirm" .duration="0">
           <div class="layout vertical">
@@ -261,7 +261,7 @@ class YpDialogContainerLit extends YpBaseElement {
 
       ${ this.gotMediaRecorder ? html`
         <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
-      `: html``}    
+      `: html``}
     </div>
 
       <paper-dialog id="loadingDialog">

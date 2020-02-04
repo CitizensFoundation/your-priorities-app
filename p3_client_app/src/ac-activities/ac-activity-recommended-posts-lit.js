@@ -175,7 +175,7 @@ class AcActivityRecommendedPostsLit extends YpBaseElement {
       ${this.t('recommendedPosts')}
     </div>
 
-    ${this.recommendedPosts.map(item => html`
+    ${this.recommendedPosts.map(post => html`
       <div class="postContainer">
         <paper-material .elevation="1" class="postItem">
           <div class="layout vertical postItem" @tap="${this.goToPost}">

@@ -289,9 +289,11 @@ render() {
 
         <paper-dropdown-menu .label="${this.t('status.select')}">
           <paper-listbox slot="dropdown-content" attr-for-selected="name" .selected="${this.status}">
-            <template is="dom-repeat" .items="${this.collectionStatusOptions}" as="statusOption">
-              <paper-item .name="${this.statusOption.name}">${this.statusOption.translatedName}</paper-item>
-            </template>
+
+            ${ this.collectionStatusOptions.map(statusOption => html`
+            <paper-item .name="${this.statusOption.name}">${this.statusOption.translatedName}</paper-item>
+            `)}
+
           </paper-listbox>
         </paper-dropdown-menu>
 
@@ -426,9 +428,11 @@ render() {
         <div class="layout horizontal">
           <paper-dropdown-menu .label="${this.t('endorsementButtons')}">
             <paper-listbox slot="dropdown-content" attr-for-selected="name" .selected="${this.endorsementButtons}">
-              <template is="dom-repeat" .items="${this.endorsementButtonsOptions}" as="buttonsSelection">
+
+              ${ this.endorsementButtonsOptions.map( buttonsSelection => html`
                 <paper-item .name="${this.buttonsSelection.name}">${this.buttonsSelection.translatedName}</paper-item>
-              </template>
+              `)}
+
             </paper-listbox>
           </paper-dropdown-menu>
           <input .type="hidden" .name="endorsementButtons" .value="${this.endorsementButtons}">
@@ -509,12 +513,14 @@ render() {
 
         <div class="layout vertical config" ?hidden="${!this.group.Categories}">
           <div class="subHeaders">${this.t('categories.the_all')}</div>
-          <template is="dom-repeat" .items="${this.group.Categories}" as="category">
-            <paper-item data-category="${this.category}" data-category-name="${this.category.name}" @tap="${this._openCategoryEdit}">
+
+          ${ this.group.Categories.map(category => html`
+          <paper-item data-category="${this.category}" data-category-name="${this.category.name}" @tap="${this._openCategoryEdit}">
               <img .sizing="cover" height="24" width="24" class="filterIcon" src="${this._categoryImageSrc(category)}">
               <span class="categoryName">${this.category.name}</span>
             </paper-item>
-          </template>
+          `)}
+
         </div>
       </div>
 

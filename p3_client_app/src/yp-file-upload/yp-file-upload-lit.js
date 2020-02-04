@@ -356,7 +356,7 @@ class YpFileUploadLit extends YpBaseElement {
        }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
     ${this.file ? html`
@@ -371,7 +371,8 @@ class YpFileUploadLit extends YpBaseElement {
         <div ?hidden="${!this.uploadLimitSeconds}" class="limitInfo layout horizontal center-center"><em ?hidden="${this.currentFile}">${this.uploadLimitSeconds} ${this.t('seconds')}</em></div>
       </div>
       <div id="UploadBorder">
-        <template is="dom-repeat" .items="${this.files}">
+
+        ${ this.files.map(item => html`
           <div class="file">
             <div class="name">
               <span>${this.uploadStatus}</span>
@@ -386,15 +387,17 @@ class YpFileUploadLit extends YpBaseElement {
               <paper-progress .value="${this.item.progress}" .indeterminate="${this.indeterminateProgress}" .error="${this.item.error}"></paper-progress>
             </div>
           </div>
-        </template>
+        `)}
 
         ${this.videoImages ? html`
           <video ?hidden .controls class="previewVideo" url="${this.previewVideoUrl}"></video>
           <div class="layout horizontal videoImages videoPreviewContainer">
             <div .style="white-space: nowrap">
-              <template is="dom-repeat" .items="${this.videoImages}" as="image">
-                 <img .class="${this._classFromImageIndex(index)}" data-index="${this.index}" @tap="${this._selectVideoCover}" .sizing="cover" class="previewFrame" src="${this.image}">
-              </template>
+
+              ${ this.videoImages.map(image => html`
+                <img .class="${this._classFromImageIndex(index)}" data-index="${this.index}" @tap="${this._selectVideoCover}" .sizing="cover" class="previewFrame" src="${this.image}">
+              `)}
+
             </div>
           </div>
         `: html``}
