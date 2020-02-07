@@ -18,11 +18,11 @@ class YpPostMoveLit extends YpBaseElement {
         type: String,
         value: "/api/posts"
       },
-  
+
       post: {
         type: Object
       },
-  
+
       selectedGroupId: {
       Number
       },
@@ -47,9 +47,10 @@ class YpPostMoveLit extends YpBaseElement {
     return html`
       ${this.post ? html`
         <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" .icon="language" confirmation-text="${this.t('post.statusChangeConfirmText')}" action="${this.action}" method="${this.method}" params="${this.params}" save-text="${this.saveText}" toast-text="${this.toastText}">
-          <template is="dom-repeat" .items="${this.availableGroups}" as="group">
+
+          ${ this.availableGroups.map(group => html`
             <div class="groupName" @tap="${this._selectGroup}" data-args="${this.group.id}" data-args-name="${this.group.name}">${this.group.name}</div>
-          </template>
+          `)}
 
           <div class="layout horizontal center-center">
             <yp-ajax .method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" @response="${this._getGroupsResponse}"></yp-ajax>
@@ -60,7 +61,7 @@ class YpPostMoveLit extends YpBaseElement {
 `
   }
 
-/* 
+/*
   behaviors: [
     ypLanguageBehavior,
     ypEditDialogBehavior,

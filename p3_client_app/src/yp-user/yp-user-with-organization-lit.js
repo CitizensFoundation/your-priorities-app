@@ -111,10 +111,6 @@ class YpUserWithOrganizationLit extends YpBaseElement {
     return html`
     ${this.user ? html`
 
-      ${ this.organizationImageUrl ? html`
-      <img width="48" height="48" .sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
-      ` : html``}
-
       ${ this.user ? html`
         <div class="layout horizontal mainArea" .title="${this.userTitle}">
           <yp-user-image .titlefromuser="${this.userTitle}" user="${this.user}" ?hidden="${this.hideImage}"></yp-user-image>
@@ -126,7 +122,11 @@ class YpUserWithOrganizationLit extends YpBaseElement {
               ${this.organizationName}
             </div>
           </div>
-          <img width="48" height="48" .sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
+
+          ${ this.organizationImageUrl ? html`
+            <img width="48" height="48" .sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
+          ` : html``}
+
         </div>
       ` : html``}
 ` : html``}

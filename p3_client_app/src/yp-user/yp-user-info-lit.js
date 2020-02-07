@@ -69,7 +69,6 @@ class YpUserInfoLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.user ? html`
 
     ${ this.user ? html`
       <div class="mainContainer">
@@ -87,7 +86,6 @@ class YpUserInfoLit extends YpBaseElement {
         </div>
       </div>
     ` : html``}
-` : html``}
 `
   }
 

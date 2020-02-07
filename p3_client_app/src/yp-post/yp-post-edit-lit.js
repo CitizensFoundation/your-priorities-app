@@ -273,9 +273,11 @@ class YpPostEditLit extends YpBaseElement {
 
         <paper-tab>${this.t('media')}</paper-tab>
       </paper-tabs>
+
       <div class="layout vertical wrap">
         <iron-pages id="pages" class="layout horizontal" .selected="${this.selected}">
           <section>
+
             <div class="layout vertical flex">
               <paper-input id="name" .required="" .minlength="3" .name="name" .type="text" .label="${this.t('title')}" .value="${this.post.name}" .maxlength="60" .char-counter="">
               </paper-input>
@@ -283,9 +285,11 @@ class YpPostEditLit extends YpBaseElement {
               ${ this._showCategories(group) ? html`
                 <paper-dropdown-menu .label="${this.t('category.select')}">
                   <paper-listbox slot="dropdown-content" .selected="${this.selectedCategoryArrayId}">
-                    <template is="dom-repeat" .items="${this.group.Categories}" as="category">
-                      <paper-item .data-category-id="${this.category.id}">${this.category.name}</paper-item>
-                    </template>
+
+                    ${ this.group.Categories.map(category => html`
+                    <paper-item .data-category-id="${this.category.id}">${this.category.name}</paper-item>
+                    `)}
+
                   </paper-listbox>
                 </paper-dropdown-menu>
                 <input .type="hidden" .name="categoryId" .value="${this.selectedCategoryId}">
@@ -300,21 +304,23 @@ class YpPostEditLit extends YpBaseElement {
               `: html``}
 
               ${ this.structuredQuestions ? html`
-                <template is="dom-repeat" .items="${this.structuredQuestions}">
+
+                ${ this.structuredQuestions.map(item => html`
                   <paper-textarea id="structuredQuestion_${this.index}" .value="${this.item.value}" always-float-label="${this._floatIfValueOrIE(item.value)}" .label="${this.item.translatedQuestion}" char-counter .minlength="2" @value-changed="${this._resizeScrollerIfNeeded}" .rows="2" .max-rows="3" .maxrows="3" .required="" .maxlength="${this.item.maxLength}">
                   </paper-textarea>
-                </template>
-              `: html``}
+                `)}
 
-                ${ this.post.data.attachment.url ? html`
-                <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
-                `: html``}
+              `: html``}
 
               ${ this.group.configuration.attachmentsEnabled ? html`
                 <yp-file-upload id="attachmentFileUpload" raised .accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*" .target="/api/groups/${this.group.id}/upload_document" .method="POST" @success="${this._documentUploaded}">
                   <iron-icon class="icon" .icon="attach-file"></iron-icon>
                   <span>${this.t('uploadAttachment')}</span>
-                  <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
+
+                  ${ this.post.data.attachment.url ? html`
+                    <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
+                  `: html``}
+
                 </yp-file-upload>
               `: html``}
 
@@ -346,7 +352,11 @@ class YpPostEditLit extends YpBaseElement {
 
           ${ !this.locationHidden ? html`
             <section>
-              <yp-post-location .encodedLocation="${this.encodedLocation}" .location="${this.location}" .group="${this.group}" .post="${this.post}"></yp-post-location>
+
+              ${ this.mapActive ? html`
+                <yp-post-location .encodedLocation="${this.encodedLocation}" .location="${this.location}" .group="${this.group}" .post="${this.post}"></yp-post-location>
+              `: html``}
+
             </section>
           `: html``}
 

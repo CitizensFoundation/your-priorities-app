@@ -17,22 +17,22 @@ class YpPostMapLit extends YpBaseElement {
         type: Array,
         value: null
       },
-  
+
       groupId: {
         type: Number,
         observer: "_groupIdChanged"
       },
-  
+
       communityId: {
         type: Number,
         observer: "_communityIdChanged"
       },
-  
+
       noPosts: {
         type: Boolean,
         value: false
       },
-  
+
       wide: Boolean,
       selectedPost: Object
     }
@@ -40,7 +40,7 @@ class YpPostMapLit extends YpBaseElement {
 
   static get styles() {
     return [
-      css`  
+      css`
 
       .mapContainer {
         margin: 0;
@@ -135,10 +135,12 @@ class YpPostMapLit extends YpBaseElement {
       ${ this.posts ? html`
         <paper-material id="mapContainer" .elevation="2" class="mapContainer">
           <google-map .AdditionalMapOptions="{'keyboardShortcuts':false}" id="map" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers="">
-            <template is="dom-repeat" .items="${this.posts}" as="post">
+
+            ${ this.posts.map(post => html`
               <google-map-marker slot="markers" .latitude="${this.post.location.latitude}" .longitude="${this.post.location.longitude}" .click-events="" class="marker" @google-map-marker-click="${this.markerClick}">
               </google-map-marker>
-            </template>
+            `)}
+
             <yp-post-map-info id="myInfoCard" .fade-in>
               <yp-post-card .mini .post="${this.selectedPost}"></yp-post-card>
             </yp-post-map-info>

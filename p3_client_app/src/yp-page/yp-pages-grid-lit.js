@@ -21,50 +21,50 @@ class YpPagesGridLit extends YpBaseElement {
         type: Array,
         notify: true
       },
-  
+
       headerText: {
         type: String
       },
-  
+
       groupId: {
         type: Number,
         observer: '_groupIdChanged'
       },
-  
+
       domainId: {
         type: Number,
         observer: '_domainIdChanged'
       },
-  
+
       communityId: {
         type: Number,
         observer: '_communityIdChanged'
       },
-  
+
       selected: {
         type: Object
       },
-  
+
       modelType: {
         type: String
       },
-  
+
       newLocaleValue: {
         type: String
       },
-  
+
       currentlyEditingLocale: {
         type: String
       },
-  
+
       currentlyEditingPage: {
         type: Object
       },
-  
+
       currentlyEditingTitle: {
         type: String
       },
-  
+
       currentlyEditingContent: {
         type: String
       }
@@ -73,7 +73,7 @@ class YpPagesGridLit extends YpBaseElement {
 
   static get styles() {
     return [
-      css` 
+      css`
 
       iron-list {
         color: #000;
@@ -127,8 +127,8 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   render() {
-    return html` 
-    ${this.pages ? html` 
+    return html`
+    ${this.pages ? html`
     <paper-dialog id="editPageLocale" .modal class="layout vertical">
       <h2>${this.t('pages.editPageLocale')}</h2>
 
@@ -158,11 +158,13 @@ class YpPagesGridLit extends YpBaseElement {
             <div class="pageItem title">
               ${this.page.title.en}
             </div>
-            <template is="dom-repeat" .items="${this._toLocaleArray(page.title)}" class="pageItem">
+
+            ${ this._toLocaleArray(page.title).map(item => html`
               <div class="layout vertical center-center">
                 <a class="locale" data-args-page="${this.page}" data-args-locale="${this.item.locale}" @tap="${this._editPageLocale}">${this.item.locale}</a>
               </div>
-            </template>
+            `)}
+
             <paper-input @label-float class="localeInput" .length="2" .maxlength="2" .value="${this.newLocaleValue}"></paper-input>
             <paper-button data-args="${this.page.id}" @tap="${this._addLocale}">${this.t('pages.addLocale')}</paper-button>
             <div ?hidden="${this.page.publaished}">
@@ -193,10 +195,10 @@ class YpPagesGridLit extends YpBaseElement {
       <yp-ajax .method="PUT" id="unPublishPageAjax" @response="${this._unPublishPageResponse}"></yp-ajax>
     </div>
 ` : html``}
-` 
-  } 
+`
+  }
 
-  
+
 /*
   behaviors: [
     ypLanguageBehavior,
@@ -210,8 +212,8 @@ class YpPagesGridLit extends YpBaseElement {
       return {
         locale: key,
         value: obj[key]
-      }; 
-    }); 
+      };
+    });
 
     return __.sortBy(array, function(o) { return o.item; });
   }

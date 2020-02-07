@@ -112,7 +112,6 @@ class YpMissingEmailLit extends YpBaseElement {
   }
   render() {
     return html`
-    ${this.user ? html`
     <div id="outer">
       <paper-dialog id="dialog">
         <h2>${this.heading}</h2>
@@ -158,7 +157,6 @@ class YpMissingEmailLit extends YpBaseElement {
 
       <iron-a11y-keys id="a11y" .keys="enter" @keys-pressed="${this.onEnter}"></iron-a11y-keys>
     </div>
-` : html``}
 `
   }
 /*

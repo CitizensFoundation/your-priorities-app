@@ -18,7 +18,7 @@ class YpThemeSelectorLit extends YpBaseElement {
         notify: true,
         observer: '_selectedThemeChanged'
       },
-  
+
       object: {
         type: Object,
         observer: '_objectChanged'
@@ -42,9 +42,11 @@ class YpThemeSelectorLit extends YpBaseElement {
     ${this.theme ? html`
     <paper-dropdown-menu .label="${this.t('theme.choose')}">
       <paper-listbox .slot="dropdown-content" .selected="${this.selectedTheme}">
-        <template is="dom-repeat" .items="${this.themes}" as="theme">
+
+        ${ this.themes.map(theme => html`
           <paper-item name="${this.index}">${this.theme.name}</paper-item>
-        </template>
+        `)}
+
       </paper-listbox>
     </paper-dropdown-menu>
 `: html``}
