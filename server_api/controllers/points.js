@@ -549,25 +549,30 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
             where: { id: point.post_id },
             attributes: ['id','counter_points','group_id']
           }).then(function(post) {
-            post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
-              post.increment('counter_points');
-              if (point.content && point.content!=='') {
-                log.info("process-moderation point toxicity after create point");
-                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
-              } else {
-                log.info("No process-moderation toxicity for empty text on point");
-              }
-              loadPointWithAll(point.id, function (error, loadedPoint) {
-                if (error) {
-                  log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
-                  res.sendStatus(500);
+            if (post) {
+              post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
+                post.increment('counter_points');
+                if (point.content && point.content!=='') {
+                  log.info("process-moderation point toxicity after create point");
+                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
                 } else {
-                  models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
-                    res.send(loadedPoint);
-                  });
+                  log.info("No process-moderation toxicity for empty text on point");
                 }
+                loadPointWithAll(point.id, function (error, loadedPoint) {
+                  if (error) {
+                    log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
+                    res.sendStatus(500);
+                  } else {
+                    models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
+                      res.send(loadedPoint);
+                    });
+                  }
+                });
               });
-            });
+            } else {
+              log.error("Can't find post for posting point", { pointId: point ? point.id : null});
+              res.sendStatus(404);
+            }
           });
         });
       });
