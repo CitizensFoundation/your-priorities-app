@@ -20,97 +20,97 @@ class YpAppGlobalsLit extends YpBaseElement {
         type: String,
         value: ''
       },
-  
+
       seenWelcome: {
         type: Boolean,
         value: false,
         notify: true
       },
-  
+
       activityHost: {
         type: String,
         value: ""
       },
-  
+
       resetSeenWelcome: {
         type: Boolean,
         value: false
       },
-  
+
       disableWelcome: {
         type: Boolean,
         value: true
       },
-  
+
       setupDefaults: {
         type: Boolean,
         value: false
       },
-  
+
       domain: {
         type: Object,
         value: null,
         observer: '_domainChanged'
       },
-  
+
       minSplashMs: {
         type: Number,
         value: 1500
       },
-  
+
       requestInProgress: {
        type: Boolean,
        value: false
       },
-  
+
       groupConfigOverrides: {
         type: Object,
         value: {}
       },
-  
+
       currentAnonymousUser: {
         type: Object,
         value: null
       },
-  
+
       currentAnonymousGroup: {
         type: Object,
         value: null
       },
-  
+
       currentGroupForceSaml: {
         type: Boolean,
         value: false
       },
-  
+
       disableFacebookLoginForGroup: {
         type: Boolean,
         value: false
       },
-  
+
       originalQueryParameters: Object,
-  
+
       externalGoalTriggerUrl: String,
-  
+
       externalGoalCounter: {
         type: Number,
         value: 0
       },
-  
+
       goalEvents: {
         type: Array,
         value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
       },
-  
+
       notifyDialogText: String
-      
+
     }
   }
 
   static get styles() {
     return [
       css`
-  
+
       paper-dialog {
         background-color: #FFF;
         max-width: 400px;
@@ -120,8 +120,8 @@ class YpAppGlobalsLit extends YpBaseElement {
         margin-bottom: 0;
       }
     `, YpFLexLayout]
-  }  
-  
+  }
+
   render() {
     return html`
     <paper-dialog id="dialog">
@@ -142,7 +142,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 `
   }
-/* 
+/*
   behaviors: [
     ypLanguageBehavior,
     ypGotoBehavior,
@@ -512,3 +512,5 @@ class YpAppGlobalsLit extends YpBaseElement {
     return this.t('');
   }
 }
+
+window.customElements.define('yp-app-globals-lit', YpAppGlobalsLit)

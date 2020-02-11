@@ -15,38 +15,38 @@ class YpAppNavDrawerLit extends YpBaseElement {
       homeLink: {
         type: Object
       },
-  
+
       user: {
         type: Object,
         observer: '_userChanged'
       },
-  
+
       opened: {
         type: Boolean
       },
-  
+
       route: {
         type: String
       },
-  
+
       myAdminGroups: {
         type: Array,
         value: null
       },
-  
+
       myAdminCommunities: {
         type: Array,
         value: null
       },
-  
+
       myGroups: {
         type: Array
       },
-  
+
       myCommunities: {
         type: Array
       },
-  
+
       myDomains: {
         type: Array
       }
@@ -56,7 +56,7 @@ class YpAppNavDrawerLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-  
+
       paper-material {
         z-index: 1000;
         background-color: #FFF;
@@ -106,10 +106,9 @@ class YpAppNavDrawerLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
-    ${this.app ? html`
     <paper-material .elevation="0" class="material">
       <div ?hidden="${!this.homeLink}">
         <div class="header layout vertical center-center">
@@ -123,44 +122,51 @@ class YpAppNavDrawerLit extends YpBaseElement {
       <div class="layout vertical" ?hidden="${!this.user}">
         <div ?hidden="">
           <div class="header">${this.t('myDomains')}</div>
-          <template is="dom-repeat" .items="${this.myDomains}" as="domain">
-            <paper-item data-args="${this.domain.id}" @tap="${this._goToDomain}">${this.domain.name}</paper-item>
-          </template>
-        </div>
 
+          ${ this.myDomains.map(domain => html`
+            <paper-item data-args="${this.domain.id}" @tap="${this._goToDomain}">${this.domain.name}</paper-item>
+          `)}
+
+        </div>
         <div ?hidden="${!this.myAdminCommunities}">
           <div class="header">${this.t('myAdminCommunities')}</div>
-          <template is="dom-repeat" items="${this.myAdminCommunities}" as="community">
-            <div class="layout horizontal">
+
+          ${ this.myAdminCommunities.map(community => html`
+           <div class="layout horizontal">
               <paper-item data-args="${this.community.id}" @tap="${this._goToCommunity}">${this.community.name}</paper-item>
             </div>
-          </template>
+          `)}
+
         </div>
 
         <div ?hidden="${!this.myAdminGroups}">
           <div class="header">${this.t('myAdminGroups')}</div>
-          <template is="dom-repeat" items="${this.myAdminGroups}" as="group">
-            <paper-item data-args="${this.group.id}" @tap="${this._goToGroup}">${this.group.name}</paper-item>
-          </template>
+
+          ${ this.myAdminGroups.map(group => html`
+          <paper-item data-args="${this.group.id}" @tap="${this._goToGroup}">${this.group.name}</paper-item>
+          `)}
+
         </div>
 
         <div class="header">${this.t('myCommunities')}</div>
-        <template is="dom-repeat" .items="${this.myCommunities}" as="community">
+
+        ${ this.myCommunities.map(community => html`
           <div class="layout horizontal">
             <paper-item data-args="${this.community.id}" @tap="${this._goToCommunity}">${this.community.name}</paper-item>
           </div>
-        </template>
+        `)}
 
         <div class="header">${this.t('myGroups')}</div>
-        <template is="dom-repeat" items="${this.myGroups}" as="group">
-          <paper-item data-args="${this.group.id}" @tap="${this._goToGroup}">${this.group.name}</paper-item>
-        </template>
+
+        ${ this.myGroups.map(group => html`
+        <paper-item data-args="${this.group.id}" @tap="${this._goToGroup}">${this.group.name}</paper-item>
+        `)}
+
       </div>
     </paper-material>
     <lite-signal @lite-signal-got-memberships="${this._userMembershipsReady}"></lite-signal>
     <lite-signal @lite-signal-got-admin-rights="${this._reset}"></lite-signal>
-` : html``}
-`  
+`
   }
 
 /*

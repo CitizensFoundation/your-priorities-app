@@ -281,9 +281,12 @@ class YpUsersGridLit extends YpBaseElement {
       <h2>${this.t('users.selectOrganization')}</h2>
       <paper-dialog-scrollable>
         <paper-listbox>
-          <template is="dom-repeat" .items="${this.availableOrganizations}">
-            <paper-item @tap="${this._selectOrganization}" id="${this.item.id}">${this.item.name}</paper-item>
-          </template>
+
+          ${ this.availableOrganizations.map(item => html`
+          <paper-item @tap="${this._selectOrganization}" id="${this.item.id}">${this.item.name}</paper-item>
+
+          `)}
+
         </paper-listbox>
       </paper-dialog-scrollable>
 

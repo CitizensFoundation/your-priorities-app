@@ -22,43 +22,43 @@ class AcActivityLit extends YpBaseElement {
       activity: {
         type: Object
       },
-  
+
       domainId: {
         type: Number
       },
-  
+
       communityId: {
         type: Number
       },
-  
+
       groupId: {
         type: Number
       },
-  
+
       postId: {
         type: Number
       },
-  
+
       postGroupId: {
         type: Number
       },
-  
+
       wide: {
         type: Boolean,
         value: false
       },
-  
+
       isOldSafariOrIe: {
         type: Boolean,
         computed: '_isOldSafariOrIe(wide)'
       },
-  
+
       hasLoggedInUser: {
         type: Boolean
       }
     }
   }
-  
+
   static get styles() {
     return [
       css`
@@ -156,7 +156,6 @@ class AcActivityLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.activity ? html`
     <paper-material is-old-safari-or-ie="${this.isOldSafariOrIe}" .loggedInUser="${this.hasLoggedInUser}" .elevation="${this._elevationForType(activity.type)}" class="layout vertical activity" tabindex="${this.tabIndex}">
       <paper-icon-button .title="${this.t('deleteActivity')}" ?hidden="${!this._hasActivityAccess(activity)}" .icon="delete" data-args="${this.activity.id}" class="deleteIcon" @tap="${this._deleteActivity}"></paper-icon-button>
       <div class="mainActivityContent">
@@ -168,15 +167,15 @@ class AcActivityLit extends YpBaseElement {
           </div>
         </div>
 
-        ${this._isActivityType(activity,'activity.post.new') ? html` 
+        ${this._isActivityType(activity,'activity.post.new') ? html`
           <ac-activity-post .activity="${this.activity}" .postId="${this.postId}" .communityId="${this.communityId}" .groupId="${this.groupId}"></ac-activity-post>
         `  : html``}
-        
+
         ${this._isActivityType(activity,'activity.point.new') ? html`
           <ac-activity-point .postId="${this.postId}" .activity="${this.activity}"></ac-activity-point>
         ` : html``}
-         
-        ${this._isActivityType(activity,'activity.point.newsStory.new') ? html`  
+
+        ${this._isActivityType(activity,'activity.point.newsStory.new') ? html`
           <ac-activity-point-news-story .activity="${this.activity}" .postId="${this.postId}" .communityId="${this.communityId}" .groupId="${this.groupId}"></ac-activity-point-news-story>
         ` : html``}
 
@@ -188,7 +187,6 @@ class AcActivityLit extends YpBaseElement {
 
     <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
     <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-` : html``}
 `
   }
 
@@ -199,7 +197,7 @@ class AcActivityLit extends YpBaseElement {
     AccessHelpers
   ],
 */
-  
+
 
   _hasLoggedInUser(user) {
     if (user) {

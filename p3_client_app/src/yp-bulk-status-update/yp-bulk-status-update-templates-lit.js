@@ -107,7 +107,6 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.bulk ? html`
     <paper-dialog id="editTemplateLocale" modal class="layout vertical">
       <h2>${this.t('editTemplate')}</h2>
 
@@ -149,7 +148,6 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
         <paper-button dialog-dismiss>${this.t('close')}</paper-button>
       </div>
     </paper-dialog>
-` : html``}
 `
   }
 

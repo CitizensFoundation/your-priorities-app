@@ -277,7 +277,6 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
       </div>
 
     </paper-dialog>
-
 `
   }
 

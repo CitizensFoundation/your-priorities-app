@@ -16,7 +16,7 @@ class AcActivityPointNewsStoryLit extends YpBaseElement {
       activity: {
         type: Object
       },
-  
+
       postId: {
         type: Boolean,
         value: null
@@ -65,7 +65,6 @@ class AcActivityPointNewsStoryLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.activity ? html`
     <div class="layout vertical mainContainer">
       <yp-magic-text @tap="${this._goToPost}" class="postName" ?hidden="${!this.activity.Post.name}" .textOnly="" .textType="postName" .contentLanguage="${this.activity.Post.language}" .content="${this.activity.Post.name}" .contentId="${this.activity.Post.id}">
       </yp-magic-text>
@@ -76,9 +75,7 @@ class AcActivityPointNewsStoryLit extends YpBaseElement {
       ${this.hasGroupHeader ? html`
         <div class="groupTitle layout horizontal center-center">${this.groupTitle}</div>
       `: html``}
-
     </div>
-` : html``}
 `
   }
 

@@ -138,7 +138,6 @@ class AcNotificationListLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.notification ? html`
     <iron-scroll-threshold .lower-threshold="250" @lower-threshold="${this._loadMoreData}" id="threshold">
       <div .elevation="2" id="material" class="oversflowSettings">
 
@@ -198,7 +197,6 @@ class AcNotificationListLit extends YpBaseElement {
     <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
     <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
-` : html``}
 `
   }
 

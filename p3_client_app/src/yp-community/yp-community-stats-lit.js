@@ -17,6 +17,7 @@ class YpCommunityStatsLit extends YpBaseElement {
       css`
         :host {
           display: block;
+          width: 100%;
         }
 
       .stats {
@@ -42,20 +43,18 @@ class YpCommunityStatsLit extends YpBaseElement {
 
   render() {
     return html`
-      ${this.community ? html`
-        <div class="stats layout horizontal end-justified">
-          <div class="layout horizontal">
-            <iron-icon .title="${this.t('stats.posts')}" .icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
-            <div .title="${this.t('stats.posts')}" class="stats-text">${this.formatNumber(this.community.counter_posts)}</div>
+      <div class="stats layout horizontal end-justified">
+        <div class="layout horizontal">
+          <iron-icon .title="${this.t('stats.posts')}" .icon="lightbulb-outline" class="stats-icon bulb"></iron-icon>
+          <div .title="${this.t('stats.posts')}" class="stats-text">${this.formatNumber(this.community.counter_posts)}</div>
 
-            <iron-icon .title="${this.t('stats.groups')}" .icon="people" class="stats-icon"></iron-icon>
-            <div .title="${this.t('stats.groups')}" class="stats-text">${this.formatNumber(this.community.counter_groups)}</div>
+          <iron-icon .title="${this.t('stats.groups')}" .icon="people" class="stats-icon"></iron-icon>
+          <div .title="${this.t('stats.groups')}" class="stats-text">${this.formatNumber(this.community.counter_groups)}</div>
 
-            <iron-icon .title="${this.t('stats.users')}" .icon="face" class="stats-icon"></iron-icon>
-            <div .title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.community.counter_users)}</div>
-          </div>
-        </div>      
-      ` : html``
+          <iron-icon .title="${this.t('stats.users')}" .icon="face" class="stats-icon"></iron-icon>
+          <div .title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.community.counter_users)}</div>
+        </div>
+      </div>
     }
     `
 }
@@ -92,7 +91,7 @@ class YpCommunityStatsLit extends YpBaseElement {
       this.community = [...this.community];
      }
     }
-  } 
-} 
+  }
+}
 
 window.customElements.define('yp-community-stats-lit', YpCommunityStatsLit);

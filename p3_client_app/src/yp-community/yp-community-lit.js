@@ -120,6 +120,7 @@ class YpCommunityLit extends YpBaseElement {
   render() {
     return html`
     <yp-page id="page" create-fab-icon="${this.createFabIcon}" create-fab-title="${this.t('group.add')}" @yp-create-fab-tap="${this._newGroup}" .hideAllTabs="${this.community.configuration.hideAllTabs}">
+
       ${this.useAlternativeHeader ? html`
         <yp-community-header id="communityCard" slot="largeCard" class="largeCard card" .community="${this.community}" @update-community="${this._refreshAjax}"></yp-community-header>
       `: html``}

@@ -204,7 +204,6 @@ class YpCommunityCardLit extends YpBaseElement {
     `, YpFlexLayout]
   }
 
-
 render() {
   return html`
     <paper-card .featured="${this.featured}" class="communityCard" .animated="" .elevation="${this.elevation}">
@@ -214,8 +213,8 @@ render() {
           <iron-image .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToCommunity}"></iron-image>
         `: html`
           <iron-image .sizing="cover" .archived="${this.archived}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
-          `}
-          
+        `}
+
       </div>
       <div class="informationText">
         <div class="community-name" .archived="${this.archived}" .featured="${this.featured}" @tap="${this._goToCommunity}">

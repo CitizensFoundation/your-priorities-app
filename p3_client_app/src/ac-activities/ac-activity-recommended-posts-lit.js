@@ -170,7 +170,6 @@ class AcActivityRecommendedPostsLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.activity ? html`
     <div class="headerText layout horizontal center-center">
       ${this.t('recommendedPosts')}
     </div>
@@ -189,8 +188,6 @@ class AcActivityRecommendedPostsLit extends YpBaseElement {
         </paper-material>
       </div>
     `)}
-
-` : html``}
 `
   }
 

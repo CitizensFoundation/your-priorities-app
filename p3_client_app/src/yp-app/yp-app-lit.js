@@ -512,29 +512,21 @@ class YpAppLit extends YpBaseElement {
 
     <app-drawer-layout .drawerWidth="360px" .responsiveWidth="16000px" fullbleed>
 
-<<<<<<< HEAD
-      <app-drawer id="drawer" .slot="drawer" .align="end" position="right" .opened="${this.userDrawerOpened}" swipe-open="">
-=======
-      <app-drawer id="drawer" .slot="drawer" .align="end" .position="right" .opened="${this.userDrawerOpened}" swipe-open="">
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
+      <app-drawer id="drawer" slot="drawer" .align="end" .position="right" .opened="${this.userDrawerOpened}" swipe-open>
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important; width: 255px;">
           <ac-notification-list id="acNotificationsList" .user="${this.user}" .opened="${this.userDrawerOpened}" .route="${this.route}"></ac-notification-list>
         </div>
       </app-drawer>
 
-<<<<<<< HEAD
       <app-drawer id="navDrawer" slot="drawer" .align="start" position="left" swipe-open="" opened="${this.navDrawOpened}">
-=======
-      <app-drawer id="navDrawer" .slot="drawer" .align="start" .position="left" swipe-open="" .opened="${this.navDrawOpened}">
->>>>>>> 63a7fe6a4a510e7d776ca77b069fb36ba1ad55f1
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
           <yp-app-nav-drawer id="ypNavDrawer" .home-link="${this.homeLink}" @yp-toggle-nav-drawer="${this._toggleNavDrawer}" .user="${this.user}" .route="${this.route}"></yp-app-nav-drawer>
         </div>
       </app-drawer>
 
-      <app-header-layout id="mainArea" fullbleed="">
+      <app-header-layout id="mainArea" fullbleed>
 
-        <app-header .slot="header" id="appHeader" effects="waterfall" reveals="" class="main-header">
+        <app-header slot="header" id="appHeader" effects="waterfall" reveals="" class="main-header">
           <app-toolbar>
             <div class="layout horizontal navContainer" ?hidden="${this.closePostHeader}">
               <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
@@ -566,9 +558,11 @@ class YpAppLit extends YpBaseElement {
               <paper-icon-button .ariaLabel="${this.t('menu.help')}" icon="help-outline" .slot="dropdown-trigger"></paper-icon-button>
 
               <paper-listbox .slot="dropdown-content">
-                <template is="dom-repeat" items="${this.translatedPages}" as="page">
-                  <paper-item data-args="${this.index}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(page)}</paper-item>
-                </template>
+
+              ${ this.translatedPages.map(page => html`
+                <paper-item data-args="${this.index}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(page)}</paper-item>
+              `)}
+
               </paper-listbox>
             </paper-menu-button>
 
@@ -577,11 +571,9 @@ class YpAppLit extends YpBaseElement {
                 <yp-user-image id="userImage" .small="" .user="${this.user}"></yp-user-image>
                 <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
               </div>
-            ` : html``}
-
-            ${ !this.user ? html`
+            ` : html`
               <paper-button class="loginButton" @tap="${this._login}">${this.t('user.login')}</paper-button>
-            ` : html``}
+            `}
 
           </app-toolbar>
         </app-header>

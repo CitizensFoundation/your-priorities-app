@@ -176,7 +176,6 @@ class YpCommunityHeaderLit extends YpBaseElement {
 
 render() {
   return html`
-    ${this.community ? html`
       <div class="layout vertical center-center">
         <iron-image class="image rounded-even-more" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
         <div class="community-name rounded-even-more">
@@ -203,7 +202,6 @@ render() {
           </div>
         </div>
       </div>
-    `: html``}
 
     <iron-media-query query="(max-width: 800px)" query-matches="${this.narrowScreen}"></iron-media-query>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>

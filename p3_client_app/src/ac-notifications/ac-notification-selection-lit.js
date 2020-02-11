@@ -74,7 +74,6 @@ class AcNotificationSelectionLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.notiifcation ? html`
     <div class="layout vertical">
       <div class="notificationName">${this.name}</div>
       <div class="layout horizontal wrap">
@@ -104,7 +103,6 @@ class AcNotificationSelectionLit extends YpBaseElement {
         </div>
       </div>
     </div>
-` : html``}
 `
   }
 

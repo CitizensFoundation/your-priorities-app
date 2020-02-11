@@ -77,7 +77,6 @@ class YpCategoryEditLit extends YpBaseElement {
 
     </yp-edit-dialog>
 `
-
   }
 
 /*

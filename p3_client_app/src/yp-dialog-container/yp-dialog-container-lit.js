@@ -92,6 +92,10 @@ class YpDialogContainerLit extends YpBaseElement {
     return [
       css`
 
+      :host {
+        background-color: var(--primary-background-color);
+      }
+
       #dialogs {
         background-color: var(--primary-background-color) !important;
       }
@@ -124,7 +128,10 @@ class YpDialogContainerLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.dialog ? html`
+
+    <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
+    <lite-signal @lite-signal-logged-in="${this._loggedInUser}"></lite-signal>
+    <lite-signal @lite-signal-open-bulk-status-updates="${this._openBulkStatusUpdates}"></lite-signal>
 
     ${ this.loggedInUser ? html`
       <ac-notification-toast id="notificationToast"></ac-notification-toast>
@@ -267,7 +274,6 @@ class YpDialogContainerLit extends YpBaseElement {
       <paper-dialog id="loadingDialog">
         <paper-spinner .active></paper-spinner>
       </paper-dialog>
-`: html``}
 `
   }
 

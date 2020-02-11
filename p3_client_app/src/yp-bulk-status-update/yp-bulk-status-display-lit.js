@@ -193,14 +193,18 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
 
     ${ this.gotModifiedTemplates ? html`
       <div class="templateList">
-        <template is="dom-repeat" items="${this._toArray(templates)}" as="template">
+
+        ${ this._toArray(templates).map(template => html`
           <h2>${this.template.title}</h2>
-          <template is="dom-repeat" .items="${this.template.posts}" as="post">
+
+          ${ this.template.posts.map(post => html`
             <div class="postName">
               <a target="_blank" href="/post/${this.post.id}">${this.post.name}</a>
             </div>
-          </template>
-        </template>
+
+          `)}
+        `)}
+
       </div>
     ` : html``}
 

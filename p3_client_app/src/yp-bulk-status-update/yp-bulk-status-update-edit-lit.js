@@ -17,22 +17,22 @@ class YpBulkStatusUpdateEditLit extends YpBaseElement {
         type: String,
         value: "/api/bulk_status_updates"
       },
-  
+
       bulkStatusUpdate: {
         type: Object,
         observer: "_bulkStatusUpdateChanged"
       },
-  
+
       params: {
         type: String
       },
-  
+
       method: {
         type: String
-      }  
+      }
     }
   }
-  
+
   static get styles() {
     return [
       css`
@@ -48,7 +48,7 @@ class YpBulkStatusUpdateEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <yp-edit-dialog id="editDialog" double-width="" .icon="language" .action="${this.action}" .method="${this.method}" .title="${this.editHeaderText}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
+    <yp-edit-dialog id="editDialog" double-width .icon="language" .action="${this.action}" .method="${this.method}" .title="${this.editHeaderText}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
       <div class="layout vertical">
         <paper-input id="name" .name="name" .type="text" .label="${this.t('name')}" .value="${this.bulkStatusUpdate.name}" .maxlength="60" char-counter class="mainInput">
         </paper-input>
@@ -62,7 +62,7 @@ class YpBulkStatusUpdateEditLit extends YpBaseElement {
       </div>
 
    </yp-edit-dialog>
-` 
+`
   }
 
 /*
@@ -72,7 +72,7 @@ class YpBulkStatusUpdateEditLit extends YpBaseElement {
     ypGotoBehavior
   ],
 */
-  
+
   _customRedirect(bulkStatusUpdate) {
     if (bulkStatusUpdate) {
      // this.redirectTo("/bulkStatusUpdate/"+bulkStatusUpdate.id);

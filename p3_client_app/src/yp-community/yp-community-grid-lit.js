@@ -20,18 +20,18 @@ class YpCommunityGridLit extends YpBaseElement {
           type: Boolean,
           value: false
         },
-        
+
       scrollOffset: {
         type: Number,
         computed: '_scrollOffset(wide, featuredGroups, activeCommunities)'
       }
     }
   }
-  
+
   static get styles() {
     return [
-      css`  
-  
+      css`
+
     .card[wide] {
       padding: 16px;
     }
@@ -77,7 +77,6 @@ class YpCommunityGridLit extends YpBaseElement {
 
   render() {
     return html`
-      ${this.community ? html`
         <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
           <iron-list id="ironList" .scrollOffset="${this.scrollOffset}" .items="${this.activeCommunities}" as="community" .scrollTarget="document" grid="${this.wide}">
@@ -87,8 +86,7 @@ class YpCommunityGridLit extends YpBaseElement {
               </div>
             </template>
           </iron-list>
-` : html``}
-`  
+`
   }
 
 

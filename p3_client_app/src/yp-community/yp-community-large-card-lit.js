@@ -349,11 +349,13 @@ static get styles() {
           <div id="welcomeHTML" .title="(!community.configuration.welcomeHTML)" class="layout vertical center-center">
           </div>
           <div hidden="${this.community.configuration.welcomeHTML}">
-              ${this.communityVideoURL ? html`
-                <video id="videoPlayer" .dataId="${this.communityVideoId}" .controls="" .preload="meta" class="image pointer" src="${this.communityVideoURL}" .playsinline="" .poster="${thiscommunityVideoPosterURL}"></video>
-              ` : html`
-                <iron-image class="image" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
-              `}
+
+           ${this.communityVideoURL ? html`
+              <video id="videoPlayer" .dataId="${this.communityVideoId}" .controls="" .preload="meta" class="image pointer" src="${this.communityVideoURL}" .playsinline="" .poster="${thiscommunityVideoPosterURL}"></video>
+            ` : html`
+              <iron-image class="image" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
+            `}
+
           </div>
         </paper-material>
         <paper-material id="card" .elevation="3" .animated="" class="large-card textBox">
