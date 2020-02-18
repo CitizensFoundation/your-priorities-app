@@ -33,6 +33,10 @@
 * Open source, non profit and built with passion over 10 years
 * Supported by mass amounts of volunteer work, the EU, city of Reykjavik, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
+## Getting Started User Tutorial
+
+https://citizens.is/getting-started/
+
 ## Examples of live servers running Your Priorities
 
 * https://yrpri.org/
