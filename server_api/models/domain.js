@@ -117,6 +117,8 @@ module.exports = (sequelize, DataTypes) => {
       } else {
         if (domain.domain_name==='forbrukerradet.no') {
           callbackDomainName = 'mineideer.'+domain.domain_name;
+        } else if (domain.domain_name==='parliament.scot') {
+          callbackDomainName = 'engage.'+domain.domain_name;
         } else {
           callbackDomainName = 'login.'+domain.domain_name;
         }
