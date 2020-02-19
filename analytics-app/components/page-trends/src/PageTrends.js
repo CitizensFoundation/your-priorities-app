@@ -49,7 +49,7 @@ export class PageTrends extends LitElement {
     super.firstUpdated();
     const lineChartElement = this.shadowRoot.getElementById("line-chart");
     new Chart(lineChartElement, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: DataLabels,
         datasets: Data.map((item) => item.dataSet)

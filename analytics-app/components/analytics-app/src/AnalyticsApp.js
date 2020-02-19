@@ -10,6 +10,7 @@ import '@material/mwc-button';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@material/mwc-icon';
+import { FlexLayout } from './flex-layout.js';
 
 export class AnalyticsApp extends LitElement {
   static get properties() {
@@ -19,7 +20,7 @@ export class AnalyticsApp extends LitElement {
   }
 
   static get styles() {
-    return css`
+    return [css`
       :host {
         min-height: 100vh;
         display: flex;
@@ -89,7 +90,12 @@ export class AnalyticsApp extends LitElement {
         margin-left: 64px;
         margin-bottom: 16px;
       }
-    `;
+
+      .analyticsText {
+        margin-top: 28px;
+        margin-left: 24px;
+      }
+    `, FlexLayout];
   }
 
   constructor() {
@@ -111,12 +117,14 @@ export class AnalyticsApp extends LitElement {
 
   render() {
     return html`
-        <div class="paceImage">
-          <img width="151" height="95" src="https://popandce.files.wordpress.com/2019/07/cropped-pace_logo-24.png"/>
+        <div class="paceImage layout horizontal">
+          <div><img height="100" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
+          <div class="flex"></div>
+          <div class="analyticsText">Group analytics: Community Wellbeing</div>
         </div>
       <header ?hidden="${this.currentGrievance}">
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-          <mwc-tab label="List of grievances" icon="accessibility" stacked></mwc-tab>
+          <mwc-tab label="Stats" icon="accessibility" stacked></mwc-tab>
           <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
           <mwc-tab label="Connections" icon="blur_on" stacked></mwc-tab>
         </mwc-tab-bar>
