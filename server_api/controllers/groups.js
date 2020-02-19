@@ -182,6 +182,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.externalGoalTriggerUrl', (req.body.externalGoalTriggerUrl && req.body.externalGoalTriggerUrl!="") ? req.body.externalGoalTriggerUrl : null);
   group.set('configuration.hideNewPost', truthValueFromBody(req.body.hideNewPost));
 
+  group.set('configuration.makeCategoryRequiredOnNewPost', truthValueFromBody(req.body.makeCategoryRequiredOnNewPost));
+
   group.set('configuration.showVideoUploadDisclaimer', truthValueFromBody(req.body.showVideoUploadDisclaimer));
 
   group.set('configuration.hideVoteCount', truthValueFromBody(req.body.hideVoteCount));

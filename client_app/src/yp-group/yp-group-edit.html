@@ -289,6 +289,9 @@
                      value="{{group.configuration.audioPostUploadLimitSec}}">
         </paper-input>
 
+        <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
+        </paper-checkbox>
+
         <paper-checkbox name="showVideoUploadDisclaimer" checked$="{{group.configuration.showVideoUploadDisclaimer}}">
           [[t('showVideoUploadDisclaimer')]]
         </paper-checkbox>
@@ -310,6 +313,7 @@
 
         <paper-checkbox name="hidePostCover" checked$="{{group.configuration.hidePostCover}}">[[t('hidePostCover')]]
         </paper-checkbox>
+
         <paper-checkbox name="hidePostDescription" checked$="{{group.configuration.hidePostDescription}}">
           [[t('hidePostDescription')]]
         </paper-checkbox>
