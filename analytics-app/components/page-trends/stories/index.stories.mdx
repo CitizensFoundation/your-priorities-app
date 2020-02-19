@@ -1,0 +1,55 @@
+import { Story, Preview, Meta, Props, html } from '@open-wc/demoing-storybook';
+
+import '../page-main.js';
+
+<Meta 
+  title="PageMain"
+  parameters={{
+    component: "page-main",
+    options: { selectedPanel: "storybookjs/knobs/panel" }
+  }}
+/>
+
+# PageMain
+
+A component for...
+
+## Features:
+
+- a
+- b
+- ...
+
+## How to use
+
+### Installation
+
+```bash
+yarn add page-main
+```
+
+```js
+import 'page-main/page-main.js';
+```
+
+<Preview withToolbar>
+  <Story name="Simple">
+    {html`
+      <page-main></page-main>
+    `}
+  </Story>
+</Preview>
+
+## API
+
+<Props of="page-main" />
+
+## Variations
+
+###### Custom Title
+
+<Story name="Custom Title">
+  {html`
+    <page-main .title=${'Hello World'}></page-main>
+  `}
+</Story>
