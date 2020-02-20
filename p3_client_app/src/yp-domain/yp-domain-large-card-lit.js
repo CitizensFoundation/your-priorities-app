@@ -274,11 +274,9 @@ class YpDomainLargeCardLit extends YpBaseElement {
 
         ${ this.domainVideoURL ? html`
           <video id="videoPlayer" data-id="${this.domainVideoId}" .controls="" .preload="meta" class="image" src="${this.domainVideoURL}" playsinline .poster="${this.domainVideoPosterURL}"></video>
-        ` : html``}
-
-        ${ !this.domainVideoURL ? html`
+        ` : html`
           <iron-image class="image" ?hidden="${this.hideImage}" .sizing="cover" src="${this._domainLogoImagePath(domain)}"></iron-image>
-        ` : html``}
+        `}
 
       </paper-material>
       <paper-material id="card" .elevation="4" .animated="" class="large-card textBox">

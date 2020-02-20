@@ -19,9 +19,6 @@ import { YpBaseElement } from '../yp-base-element.js';
 class YpGroupCardLit extends YpBaseElement {
  static get properties() {
    return {
-     group: {
-      type: Object
-     }
    }
  }
 
@@ -197,15 +194,15 @@ class YpGroupCardLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-      
+
     `, YpFlexLayout]
   }
-  
- 
+
+
   render() {
     return html`
-      ${this.group ? html`
-        <paper-card class="groupCard" .animated="" .elevation="${this.elevation}">
+      <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
+      <paper-card class="groupCard" .animated="" .elevation="${this.elevation}">
         <iron-image ?hidden="${!this.noImage}" .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToGroup}"></iron-image>
         <iron-image ?hidden="${this.noImage}" .archived="${this.archived}" class="logo withPointer" .sizing="cover" @tap="_goToGroup" .preload="" src="${this.groupLogoImagePath}"></iron-image>
           <div id="groupName" class="group-name" archived="${this.archived}" featured="${this.featured}" on-tap="_goToGroup">
@@ -217,10 +214,19 @@ class YpGroupCardLit extends YpBaseElement {
         </yp-magic-text>
         <yp-group-card-lit class="stats" .group="${this.group}"></yp-group-card-lit>
         <yp-membership-button .archived="${this.archived}" .group="${this.group}"></yp-membership-button>
-        </paper-card>
-` : html``}
+      </paper-card>
 `
   }
 }
+
+/*
+behaviors: [
+  ypLanguageBehavior,
+  GroupBehaviors,
+  ypTruncateBehavior,
+  ypMediaFormatsBehavior,
+  ypGotoBehavior
+]
+*/
 
 window.customElements.define('yp-group-card-lit', YpGroupCardLit)

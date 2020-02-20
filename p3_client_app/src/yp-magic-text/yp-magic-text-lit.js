@@ -110,6 +110,10 @@ class YpMagicTextLit extends YpBaseElement {
     return [
       css`
 
+      :host {
+        display: block;
+      }
+
       .container[more-text] {
       }
 
@@ -137,9 +141,11 @@ class YpMagicTextLit extends YpBaseElement {
        <!-- add max-width for IE11 -->
       <div ?hidden="${!this.finalContent}" inner-h-t-m-l="${this.finalContent}" .style="max-width:100%"></div>
       <div ?hidden="${this.finalContent}" style="max-width:100%">${this.truncatedContent}</div>
-      <template is="dom-if" if="${this.showMoreText}">
-        <paper-button raised class="moreText" @tap="${this._openFullScreen}">${this.moreText}</paper-button>
-      </template>
+
+      ${ this.showMoreText ? html`
+       <paper-button raised class="moreText" @tap="${this._openFullScreen}">${this.moreText}</paper-button>
+      `: html``}
+
     </div>
     <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
@@ -147,8 +153,6 @@ class YpMagicTextLit extends YpBaseElement {
     <iron-ajax id="getTranslationAjax" @response="${this._getTranslationResponse}"></iron-ajax>
 `
   }
-
-  static get is() { return 'yp-magic-text'; }
 
   static get doubleWidthLanguages() {
     return ['zh_TW']
@@ -393,10 +397,17 @@ class YpMagicTextLit extends YpBaseElement {
 
 customElements.define(YpMagicTextBox.is, YpMagicTextBox);
 
-class YpMagicTextBoxDialog extends YpMagicTextBox {
-  static get template() {
-    return html`
-    <style>
+class YpMagicTextBoxDialog extends YpBaseElement {
+  static get properties() {
+    return {
+
+    }
+  }
+
+  static get styles() {
+    return [
+      css`
+
       :host {
         display: block;
       }
@@ -426,27 +437,27 @@ class YpMagicTextBoxDialog extends YpMagicTextBox {
       .buttons {
         color: var(--accent-color);
       }
-    </style>
-
-    <paper-dialog id="dialog">
-      <h2>[[pageTitle]]</h2>
-      <paper-dialog-scrollable>
-        <div hidden\$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]"></div>
-        <div hidden\$="[[finalContent]]">[[content]]</div>
-      </paper-dialog-scrollable>
-      <div class="buttons">
-        <paper-button raised="" dialog-dismiss="">[[closeDialogText]]</paper-button>
-      </div>
-    </paper-dialog>
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
-
-    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse"></iron-ajax>
-`;
+      `, YpFlexLayout]
   }
 
-  static get is() {
-    return 'yp-magic-text-dialog';
+  render() {
+    return html`
+
+    <paper-dialog id="dialog">
+      <h2>${this.pageTitle}</h2>
+      <paper-dialog-scrollable>
+        <div ?hidden="${!this.finalContent}" inner-h-t-m-l="${this.finalContent}"></div>
+        <div ?hidden="${this.finalContent}">${this.content}</div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button raised dialog-dismiss>${this.closeDialogText}</paper-button>
+      </div>
+    </paper-dialog>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
+
+    <iron-ajax id="getTranslationAjax" on-response="_getTranslationResponse"></iron-ajax>
+`
   }
 
   subClassProcessing() {
@@ -466,3 +477,4 @@ class YpMagicTextBoxDialog extends YpMagicTextBox {
 }
 
 window.customElements.define('yp-magic-text-lit', YpMagicTextLit)
+window.customElements.define('yp-magic-text-lit', YpMagicTextBoxDialog)

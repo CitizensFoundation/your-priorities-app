@@ -8,7 +8,9 @@ class YpDomainStatsLit extends YpBaseElement {
     return {
       domain: {
         type: Object
-      }
+      },
+
+      narrowScreen: Boolean
     }
   }
 
@@ -72,7 +74,7 @@ class YpDomainStatsLit extends YpBaseElement {
             <div .title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.domain.counter_users)}</div>
           </div>
         </div>
-      </div>    
+      </div>
     `
   }
 }

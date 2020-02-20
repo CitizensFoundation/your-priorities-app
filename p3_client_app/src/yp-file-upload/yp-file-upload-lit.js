@@ -231,6 +231,7 @@ class YpFileUploadLit extends YpBaseElement {
       }
     }
   }
+
   static get styles() {
     return [
       css`
@@ -359,7 +360,6 @@ class YpFileUploadLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.file ? html`
     <div class="layout vertical center-center mainContainer">
       <div class="layout vertical center-center">
         <div class="layout horizontal center-center">
@@ -411,7 +411,6 @@ class YpFileUploadLit extends YpBaseElement {
     <input .type="file" id="fileInput" .capture="${this.capture}" @change="${this._fileChange}" .accept="${this.accept}" ?hidden="" .multiple="${this.multi}">
     <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
     <paper-toast id="toastFail" text="Error uploading file!"></paper-toast>-->
-` : html``}
 `
   }
 

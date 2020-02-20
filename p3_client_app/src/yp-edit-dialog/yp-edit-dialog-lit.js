@@ -127,6 +127,10 @@ class YpEditDialogLit extends YpBaseElement {
     return [
       css`
 
+      :host {
+        background-color: #FFF;
+      }
+
       .fullScreenDialog {
         position: absolute;
         display: block;
@@ -319,7 +323,6 @@ class YpEditDialogLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.edit ? html`
     <paper-dialog .name="${this.name}" id="editDialog" class="${this._computeClass(narrow)}" @iron-overlay-closed="${this_dialogClosed}" with-backdrop="${!this.narrowPad}" modal>
       <iron-media-query query="(max-width: 1024px)" query-matches="${this.narrow}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="${this.narrowPad}"></iron-media-query>
@@ -377,13 +380,11 @@ class YpEditDialogLit extends YpBaseElement {
           <paper-button id="dismissBtn" dialog-dismiss>${this.t('cancel')}</paper-button>
 
           ${!this.uploadingState ? html`
-            <paper-button raised class="actionButtons" id="submit2" @tap="${this._submit}">${this.saveText}</paper-button>
-            <paper-button raised class="actionButtons" @tap="${this._nextTab}">${this.nextActionText}</paper-button>
 
-              ${!this.useNextTabAction ? html`
+            ${!this.useNextTabAction ? html`
               <paper-button raised class="actionButtons" id="submit2" @tap="${this._submit}">${this.saveText}</paper-button>
             `: html`
-              <paper-button raised class="actionButtons" @tap="${this._nextTab}">${this.nextActionText}</paper-button>
+                <paper-button raised class="actionButtons" @tap="${this._nextTab}">${this.nextActionText}</paper-button>
             `}
 
           `: html`
@@ -401,7 +402,6 @@ class YpEditDialogLit extends YpBaseElement {
         </div>
       </paper-dialog>
       <paper-toast id="toast" .text="${this.toastTextCombined}"></paper-toast>
-` : html``}
 `
   }
 

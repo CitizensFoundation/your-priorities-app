@@ -264,31 +264,33 @@ class YpGroupCardLargeLit extends YpBaseElement {
 
   render() {
     return html`
-      ${this.group ? html`
-        <div class="layout horizontal center-center wrap">
-          <paper-material id="cardImage" .elevation="3" is-video="${this.groupVideoURL}" .animated="" class="groupCard imageCard top-card">
+      <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+      <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
+
+      <div class="layout horizontal center-center wrap">
+        <paper-material id="cardImage" .elevation="3" is-video="${this.groupVideoURL}" .animated="" class="groupCard imageCard top-card">
 
         ${ this.groupVideoURL ? html`
           <video id="videoPlayer" data-id="${this.groupVideoId}" .controls="" .preload="meta" class="logo" src="${this.groupVideoURL}" playsinline .poster="${this.groupVideoPosterURL}"></video>
         ` : html`
-         <iron-image class="logo" .sizing="cover" .preload="" src="${this.groupLogoImagePath}"></iron-image>
+          <iron-image class="logo" .sizing="cover" .preload="" src="${this.groupLogoImagePath}"></iron-image>
         `  }
 
         </paper-material>
         <paper-material id="card" .elevation="3" animated-shadow class="groupCard textBox">
         <div class="layout vertical">
           <div class="layout horizontal wrap">
-          <div class="layout vertical description-and-stats">
+            <div class="layout vertical description-and-stats">
               <div class="description">
-              <div class="group-name" admin="${this.hasGroupAccess}">
+                <div class="group-name" admin="${this.hasGroupAccess}">
                   <yp-magic-text id="groupName" text-type="groupName" .contentLanguage="${this.group.language}" disable-translation="${this.group.configuration.disableNameAutoTranslation}" .textOnly .content="${this.groupName}" content-id="${this.group.id}">
                   </yp-magic-text>
-              </div>
+                </div>
               <div ?hidden="" class="groupAccess">${this.groupAccessText}</div>
               <yp-magic-text id="objectives" class="groupDescription" .textType="groupContent" .contentLanguage="${this.group.language}" .content="${this.group.objectives}" .content-id="${this.group.id}">
 
               </yp-magic-text>
-          </div>
+            </div>
           </div>
           <paper-menu-button class="edit" horizontal-align="${this.editMenuAlign}" ?hidden="${!this.showMenuItem}">
           <paper-icon-button aria-label="${this.t('openGroupMenu')}" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
@@ -311,22 +313,22 @@ class YpGroupCardLargeLit extends YpBaseElement {
               <paper-item id="addPostMenuItem">${this.t('post.new')}</paper-item>
           </paper-listbox>
           </paper-menu-button>
-      </div>
-      <yp-group-stats-lit class="stats" .group="${this.group}"></yp-group-stats-lit>
+        </div>
+        <yp-group-stats-lit class="stats" .group="${this.group}"></yp-group-stats-lit>
 
       </div>
 
-      ${ (this.group && this.hasGroupAccess) ? html`
-        <yp-ajax ?hidden="" disable-user-error="" .method="GET" url="/api/groups/${this.group.id}/flagged_content_count" .auto="" @response="${this_setFlaggedContentCount}"></yp-ajax>
-      ` : html``}
+        ${ (this.group && this.hasGroupAccess) ? html`
+          <yp-ajax ?hidden="" disable-user-error="" .method="GET" url="/api/groups/${this.group.id}/flagged_content_count" .auto="" @response="${this_setFlaggedContentCount}"></yp-ajax>
+        ` : html``}
 
-      <iron-media-query .query="(max-width: 800px)" .query-matches="${this.narrowScreen}"></iron-media-query>
-      <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
-    </paper-material>
-    </div>
-    ` : html``}
-    `
-  }
+        <iron-media-query .query="(max-width: 800px)" .query-matches="${this.narrowScreen}"></iron-media-query>
+        <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
+      </paper-material>
+      <!--TODO: Fix rougue div-->
+      </div>
+  `
+}
 
   /*behaviors: [
     ypLanguageBehavior,

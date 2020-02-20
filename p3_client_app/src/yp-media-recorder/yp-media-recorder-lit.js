@@ -116,6 +116,10 @@ class YpMediaRecorderLit extends YpBaseElement {
     return [
       css`
 
+      video {
+
+      }
+
       paper-dialog {
         background-color: #FFF;
       }
@@ -287,7 +291,7 @@ class YpMediaRecorderLit extends YpBaseElement {
 
         <div class="layout horizontal mainbuttons" ?hidden="${!this.recorder}">
           <paper-icon-button ariaLabel="${this.t('closeRecordingWindow')}" .icon="clear" class="iconButtons" @tap="${this._close}"></paper-icon-button>
-          <paper-icon-button ariaLabel="[[t('deleteRecordedMedia')]]" .icon="delete" class="iconButtons" @tap="${this._deleteRecording}" ?hidden="${!this.recordedData}"></paper-icon-button>
+          <paper-icon-button ariaLabel="${this.t('deleteRecordedMedia')}" .icon="delete" class="iconButtons" @tap="${this._deleteRecording}" ?hidden="${!this.recordedData}"></paper-icon-button>
           <paper-button @tap="${this._startRecording}" ?hidden="${this.recordedData}">
             <iron-icon id="recordingIcon" .icon="fiber-manual-record"></iron-icon>
             <div class="buttonText">${this.t('record')}</div>

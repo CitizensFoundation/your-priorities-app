@@ -77,6 +77,7 @@ class YpDomainEditLit extends YpBaseElement {
       }
     }
   }
+
   static get styles() {
     return[
       css`

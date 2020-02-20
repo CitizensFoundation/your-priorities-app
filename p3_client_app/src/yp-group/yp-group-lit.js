@@ -36,119 +36,124 @@ class YpGroupLit extends YpBaseElement {
       tabRouteData: Object,
       listRoute: Object,
 
-    createFabIcon: {
-      type: String,
-      value: "lightbulb-outline"
-    },
+      createFabIcon: {
+        type: String,
+        value: "lightbulb-outline"
+      },
 
-    groupId: {
-      type: Number,
-      observer: "_groupIdChanged"
-    },
+      groupId: {
+        type: Number,
+        observer: "_groupIdChanged"
+      },
 
-    group: {
-      type: Object,
-      notify: true,
-      value: null
-    },
+      group: {
+        type: Object,
+        notify: true,
+        value: null
+      },
 
-    searchingFor: {
-      type: String,
-      value: null
-    },
+      searchingFor: {
+        type: String,
+        value: null
+      },
 
-    selectedTab: {
-      type: String,
-      value: 'open',
-      observer: '_selectedTabChanged'
-    },
+      selectedTab: {
+        type: String,
+        value: 'open',
+        observer: '_selectedTabChanged'
+      },
 
-    hasNonOpenPosts: {
-      type: Boolean,
-      value: false,
-      observer: '_refreshTabsAndPages'
-    },
+      hasNonOpenPosts: {
+        type: Boolean,
+        value: false,
+        observer: '_refreshTabsAndPages'
+      },
 
-    mapActive: {
-      type: Boolean,
-      value: false
-    },
+      mapActive: {
+        type: Boolean,
+        value: false
+      },
 
-    lastValidGroupId: {
-      type: String
-    },
+      lastValidGroupId: {
+        type: String
+      },
 
-    disableNewPosts: {
-      type: Boolean,
-      value: false
-    },
+      disableNewPosts: {
+        type: Boolean,
+        value: false
+      },
 
-    locationHidden: {
-      type: Boolean,
-      value: false
-    },
+      locationHidden: {
+        type: Boolean,
+        value: false
+      },
 
-    haveGotTabCountInfoCount: {
-      type: Number,
-      value: 0
-    },
+      haveGotTabCountInfoCount: {
+        type: Number,
+        value: 0
+      },
 
-    tabCounters: {
-      type: Object,
-      value: {}
-    },
+      tabCounters: {
+        type: Object,
+        value: {}
+      },
 
-    tabOpenSubTitle: String,
-    tabInProgressSubTitle: String,
-    tabSuccessfulSubTitle: String,
-    tabFailedSubTitle: String,
+      tabOpenSubTitle: String,
+      tabInProgressSubTitle: String,
+      tabSuccessfulSubTitle: String,
+      tabFailedSubTitle: String,
 
-    isTabOpen: {
-      type: Boolean,
-      computed: '_isTabOpen(selectedTab)'
-    },
+      isTabOpen: {
+        type: Boolean,
+        computed: '_isTabOpen(selectedTab)'
+      },
 
-    isTabInProgress: {
-      type: Boolean,
-      computed: '_isTabInProgress(selectedTab)'
-    },
+      isTabInProgress: {
+        type: Boolean,
+        computed: '_isTabInProgress(selectedTab)'
+      },
 
-    isTabSuccessful: {
-      type: Boolean,
-      computed: '_isTabSuccessful(selectedTab)'
-    },
+      isTabSuccessful: {
+        type: Boolean,
+        computed: '_isTabSuccessful(selectedTab)'
+      },
 
-    isTabFailed: {
-      type: Boolean,
-      computed: '_isTabFailed(selectedTab)'
-    },
+      isTabFailed: {
+        type: Boolean,
+        computed: '_isTabFailed(selectedTab)'
+      },
 
-    isOldiOs: {
-      type: Boolean,
-      computed: '_isOldiOs(groupId)'
-    },
+      isOldiOs: {
+        type: Boolean,
+        computed: '_isOldiOs(groupId)'
+      },
 
-    isIpad: {
-      type: Boolean,
-      computed: '_isIpad(groupId)'
-    },
+      isIpad: {
+        type: Boolean,
+        computed: '_isIpad(groupId)'
+      },
 
-    shouldScrollTabs: {
-      type: Boolean,
-      computed: '_shouldScrollTabs(phoneWidth, hasNonOpenPosts)'
-    },
+      shouldScrollTabs: {
+        type: Boolean,
+        computed: '_shouldScrollTabs(phoneWidth, hasNonOpenPosts)'
+      },
 
-    phoneWidth: {
-      type: Boolean,
-      value: null
+      phoneWidth: {
+        type: Boolean,
+        value: null
 
-    },
+      },
+    }
   }
-}
 
-static get styles() {
-  return [
-    css`
+  static get styles() {
+    return [
+      css`
+
+      .objectives {
+        padding-bottom: 40px;
+        max-width: 432px;
+      }
 
       .description {
         padding: 12px;
@@ -287,16 +292,18 @@ static get styles() {
   `, YpFlexLayout]
 }
 
-render() {
-  return html`
-    ${this.group ? html`
+  render() {
+    return html`
       <div id="topContainer">
+
         <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" ?hidden="${this.group.configuration.hideGroupHeader}">
         <yp-group-card-large id="groupCard" class="largeCard" .group="${this.group}" @update-group="${this._refreshAjax}"></yp-group-card-large>
       </div>
+
       <div class="largeAddButton layout horizontal center-center" is-apple="${this.isOldiOs}" is-ipad="${this.isIpad}" ?hidden="${this.group.configuration.hideNewPost}">
         <yp-post-card-add .disabled="${this.disableNewPosts}" @new-post="${this._newPost}" .elevation="2"></yp-post-card-add>
       </div>
+
       <div class="layout horizontal center-center tabContainer" .hide="${this.group.configuration.hideAllTabs}">
         <paper-tabs .scrollable="${this.shouldScrollTabs}" id="paperTabs" has-non-open-posts="${this.hasNonOpenPosts}" class="tabs" .selected="${this.selectedTab}" attr-for-selected="name" focused>
           <paper-tab id="tab1" .name="open">
@@ -383,9 +390,11 @@ render() {
         ` : html``}
 
         <section name="map" ?hidden="${this.locationHidden}" class="minHeightSection">
+
           ${ this.mapActive ? html`
             <yp-post-map .groupId="${this.group.id}"></yp-post-map>
           ` : html``}
+
         </section>
       </iron-pages>
     </div>
@@ -417,9 +426,8 @@ render() {
       <yp-ajax id="ajaxCheckNonOpenPosts" @response="${this._nonOpenPosts}"></yp-ajax>
       <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
     </div>
-  ` : html``}
-  `
-}
+    `
+  }
 
   /*behaviors: [
     ypLanguageBehavior,
@@ -438,9 +446,6 @@ render() {
   },
 */
 
-
-
-
   _shouldScrollTabs(phoneWidth, hasNonOpenPosts) {
     return phoneWidth && hasNonOpenPosts;
   }
@@ -450,6 +455,7 @@ render() {
     '_routeTabChanged(tabRouteData.tabName)'
   ],
 */
+
   _isTabOpen(selectedTab) {
     return selectedTab==='open';
   }

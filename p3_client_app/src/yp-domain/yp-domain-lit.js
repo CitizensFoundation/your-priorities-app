@@ -80,6 +80,10 @@ class YpDomainLit extends YpBaseElement {
     return [
       css`
 
+      ac-activities {
+
+      }
+
       .card-container {
 
       }

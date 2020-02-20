@@ -31,41 +31,40 @@ class YpGroupGridLit extends YpBaseElement {
       }
     }
   }
-    
+
   static get styles() {
-      return [
-        css`    
-        
-        .groupCard {
-        padding: 0;
-        padding-top: 16px;
-      }
+    return [
+      css`
 
-      .groupCard[wide-padding] {
-        padding: 16px !important;
-      }
+      .groupCard {
+      padding: 0;
+      padding-top: 16px;
+    }
 
-      iron-list {
-        height: 100vh;
-      }
+    .groupCard[wide-padding] {
+      padding: 16px !important;
+    }
 
-      [hidden] {
-        display: none !important;
-      }
+    iron-list {
+      height: 100vh;
+    }
 
-      :focus {
-        outline: none;
-      }
+    [hidden] {
+      display: none !important;
+    }
 
-      @media (max-width: 1199px) {
-        .groupCard {
-        }
+    :focus {
+      outline: none;
+    }
+
+    @media (max-width: 1199px) {
+      .groupCard {
       }
+    }
     `, YpFlexLayout]
   }
-render() {
+  render() {
     return html`
-      ${this.group ? html`
       <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
       <div class="layout horizontal center-center">
@@ -77,12 +76,7 @@ render() {
           </template>
         </iron-list>
       </div>
-` : html``}
-`  
-  }
-
-_newGroup() {
-    this.fire('add-new-group');
+    `
   }
 
   _scrollOffset(wide, featuredGroups) {
@@ -117,6 +111,10 @@ _newGroup() {
         detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
       })
     )
+  }
+
+  _newGroup() {
+    this.fire('add-new-group');
   }
 }
 

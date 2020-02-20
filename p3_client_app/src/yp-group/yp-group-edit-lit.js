@@ -148,6 +148,10 @@ class YpGroupEditLit extends YpBaseElement {
     return [
       css`
 
+      .access {
+
+      }
+
       .subHeaders {
         color: #333;
         font-weight: normal;
@@ -225,12 +229,13 @@ class YpGroupEditLit extends YpBaseElement {
       .defaultPostImage {
         margin-top: 16px;
       }
-  `, YpFlexLayout]
-}
+    `, YpFlexLayout]
+  }
 
 render() {
   return html`
-    ${this.group ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+
     <yp-edit-dialog .name="groupEdit" id="editDialog" .title="${this.editHeaderText}" .icon="people" .action="${this.action}" .method="${this.method}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
 
       <paper-input id="name" .name="name" .type="text" .label="${this.t('name')}" .value="${this.group.name}" .maxlength="50" char-counter>
@@ -515,7 +520,7 @@ render() {
           <div class="subHeaders">${this.t('categories.the_all')}</div>
 
           ${ this.group.Categories.map(category => html`
-          <paper-item data-category="${this.category}" data-category-name="${this.category.name}" @tap="${this._openCategoryEdit}">
+            <paper-item data-category="${this.category}" data-category-name="${this.category.name}" @tap="${this._openCategoryEdit}">
               <img .sizing="cover" height="24" width="24" class="filterIcon" src="${this._categoryImageSrc(category)}">
               <span class="categoryName">${this.category.name}</span>
             </paper-item>
@@ -525,8 +530,7 @@ render() {
       </div>
 
     </yp-edit-dialog>
-` : html``}
-`
+  `
 }
   //TODO: Try to eliminate configuration boiler-plate
 
