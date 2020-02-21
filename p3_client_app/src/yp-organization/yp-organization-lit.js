@@ -82,7 +82,7 @@ class YpOrganizationLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.organization ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-page id="page" .createFabIcon="group" .createFabTitle="${this.t('group.add')}" @yp-create-fab-tap="_newGroup">
 
       <yp-organization-large-card id="organizationCard" .slot="largeCard" class="largeCard card" .organization="${this.organization}" @update-organization="${this._refresh}"></yp-organization-large-card>
@@ -101,15 +101,15 @@ class YpOrganizationLit extends YpBaseElement {
         <section>
 
           ${ this.mapActive ? html`
-          <yp-post-map .organizationId="${this.organization.id}"></yp-post-map>
+            <yp-post-map .organizationId="${this.organization.id}"></yp-post-map>
           ` : html``}
+
         </section>
       </iron-pages>
     </yp-page>
 
     <yp-ajax id="ajax" url="/api/organizations" @response="${this._response}"></yp-ajax>
-`: html``}
-`
+    `
   }
 
   /*

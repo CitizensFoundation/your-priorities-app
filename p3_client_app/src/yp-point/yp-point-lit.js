@@ -28,100 +28,104 @@ class YpPointLit extends YpBaseElement {
         notify: true,
         observer: "_pointChanged"
       },
-  
+
       linkPoint: {
         type: Boolean,
         value: false
       },
-  
+
       hasPointAccess: {
         type: Boolean,
         computed: '_hasPointAccess(point, gotAdminRights, loggedInUser)'
       },
-  
+
       canEditPoint: {
         type: Boolean,
         computed: '_canEditPoint(point, gotAdminRights, loggedInUser)'
       },
-  
+
       user: {
         type: Object,
         value: null
       },
-  
+
       hideUser: {
         type: Boolean,
         value: false
       },
-  
+
       hideActions: {
         type: Boolean,
         value: false
       },
-  
+
       isEditing: {
         type: Boolean,
         value: false,
         observer: '_isEditingChanged'
       },
-  
+
       maxNumberOfPointsBeforeEditFrozen: {
         type: Number,
         value: 5
       },
-  
+
       pointValueUp: {
         type: Boolean,
         computed: 'upVote(point)'
       },
-  
+
       pointUrl: {
         type: String,
         computed: '_pointUrl(point)'
       },
-  
+
       editText: String,
-  
+
       videoActive: {
         type: Boolean,
         value: false
       },
-  
+
       pointVideoPath: String,
-  
+
       pointImageVideoPath: String,
-  
+
       pointVideoId: Number,
-  
+
       audioActive: {
         type: Boolean,
         value: false
       },
-  
+
       pointAudioPath: String,
-  
+
       pointAudioId: Number,
-  
+
       videoOrAudioActive: {
         type: Boolean,
         computed: '_videoOrAudioActive(videoActive, audioActive)'
       },
-  
+
       checkingTranscript: {
         type: Boolean,
         value: false
       },
-  
+
       portraitVideo: {
         type: Boolean,
         value: false
-      },
+      }
     }
   }
 
   static get styles() {
     return [
       css`
+
+      :host {
+        display: block;
+      }
 
       .point-content {
         padding-right: 16px;
@@ -274,11 +278,16 @@ class YpPointLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
-    ${this.point ? html`
-      <div class="layout vertical">
+    <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
+
+    <div class="layout vertical">
+
         <div class="userInfoContainer layout horizontal" .upVote="${this.upVote(point)}" .downVote="${this.downVote(point)}" ?hidden="${this.hideUser}">
           <iron-icon .icon="thumb-up" class="thumbsIcon thumbsIconUp" ?hidden="${!this.pointValueUp}"></iron-icon>
           <iron-icon .icon="thumb-down" class="thumbsIcon thumbsIconDown" ?hidden="${this.pointValueUp}"></iron-icon>
@@ -289,7 +298,7 @@ class YpPointLit extends YpBaseElement {
 
         <div class="layout vertical">
           <div class="topContainer" .portrait="${this.portraitVideo}">
-        
+
             ${ this.videoActive ? html`
               <div class="layout horizontal center-center">
                 <video id="videoPlayer" portrait="${this.portraitVideo}" data-id="${this.pointVideoId}" .controls="" .preload="none" class="video" src="${this.pointVideoPath}" .playsinline="" .poster="${this.pointImageVideoPath}"></video>
@@ -303,6 +312,7 @@ class YpPointLit extends YpBaseElement {
             </div>
           `: html``}
 
+          ${ this.videoOrAudioActive ? html`
             ${ checkingTranscript ? html`
               <div class="layout vertical center-center checkTranscript">
                 <div>${this.t('checkingForTranscript')}</div>
@@ -323,20 +333,8 @@ class YpPointLit extends YpBaseElement {
                 </div>
               </div>
             `: html``}
-          ${ this.videoOrAudioActive ? html`
-            <div class="layout vertical center-center checkTranscript">
-              <div>${this.t('checkingForTranscript')}</div>
-              <paper-spinner .active=""></paper-spinner>
-            </div>
-            <div class="transcriptText layout vertical center-center">
-              <div class="transcriptHeader">${this.t('automaticTranscript')}</div>
-              <div id="pointContentTranscript" .linkPoint="${this.linkPoint}" ?hidden="${this.isEditing}" @tap="${this._linkIfNeeded}">
-                <yp-magic-text simple-format .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" content-id="${this.point.id}">
-                </yp-magic-text>
-              </div>
-            </div>
           `: html`
-          <div class="point-content layout vertical ">
+            <div class="point-content layout vertical ">
               <span ?hidden="${!this.point.name}">
                 <span>${this.point.name}</span>.
               </span>
@@ -378,8 +376,7 @@ class YpPointLit extends YpBaseElement {
           </div>
         </div>
       </div>
-  ` : html``}
-  `
+      `
   }
 
 /*
@@ -392,6 +389,7 @@ class YpPointLit extends YpBaseElement {
     ypMediaFormatsBehavior
   ],
 */
+
   _videoOrAudioActive(videoActive, audioActive) {
     return videoActive || audioActive;
   }

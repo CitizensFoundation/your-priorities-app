@@ -300,11 +300,12 @@ class YpContentModerationLit extends YpBaseElement {
       .linkIcon {
         color: #000;
       }
-  `, YpFlexLayout]
+      `, YpFlexLayout]
   }
 
   render() {
     return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
         <div>

@@ -196,6 +196,10 @@ class YpPostCoverMediaLit extends YpBaseElement {
     return [
       css`
 
+      :host {
+        display: block;
+      }
+
       google-streetview-pano {
         width: 100%;
         height: 100%;
@@ -350,17 +354,15 @@ class YpPostCoverMediaLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.post ? html`
     <div class="mapCanvas">
+
+    ${ this.noneActive ? html`
+        <iron-image .header-mode="${this.headerMode}" .sizing="cover" ?hidden="${this.defaultPostImageEnabled}" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToPost}"></iron-image>
 
       ${ this.activeDefaultImageUrl ? html`
         <iron-image .header-mode="${this.headerMode}" .sizing="cover" class="main-image pointer" src="${this.activeDefaultImageUrl}" @tap="${this._goToPost}"></iron-image>
       ` : html``}
-
-      ${ this.noneActive ? html`
-        <iron-image .header-mode="${this.headerMode}" .sizing="cover" ?hidden="${this.defaultPostImageEnabled}" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToPost}"></iron-image>
-        <iron-image .header-mode="${this.headerMode}" .sizing="cover" class="main-image pointer" src="${this.activeDefaultImageUrl}" @tap="${this._goToPost}"></iron-image>
-      ` : html``}
+    ` : html``}
 
       ${ this.categoryActive ? html`
         <div id="categoryImageId" class="layout horizontal center-center">
@@ -376,23 +378,16 @@ class YpPostCoverMediaLit extends YpBaseElement {
         <iron-image .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postImagePath}"></iron-image>
       ` : html``}
 
-      ${ this.showVideo ? html`
-        <video id="videoPlayer" portrait="${this.portraitVideo}" .data-id="${this.postVideoId}" .header-mode="${this.headerMode}" .controls="" @tap="${this._goToPost}" .preload="meta" class="pointer" src="${this.postVideoPath}" .playsinline="" .poster="${this.postVideoPosterPath}"></video>
-      ` : html``}
-
-      ${ !this.showVideo ? html`
-        <div class="layout vertical center-center videoPreviewContainer" .portrait="${this.portraitVideo}">
-          <iron-image id="videoPreviewImage layout-self-center" .portrait="${this.portraitVideo}" .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postVideoPosterPath}"></iron-image>
-        </div>
-        <iron-icon .icon="videocam" class="videoCamStatic"></iron-icon>
-      ` : html``}
-
       ${ this.videoActive ? html`
-        <video id="videoPlayer" portrait="${this.portraitVideo}" .data-id="${this.postVideoId}" .header-mode="${this.headerMode}" .controls="" @tap="${this._goToPost}" .preload="meta" class="pointer" src="${this.postVideoPath}" .playsinline="" .poster="${this.postVideoPosterPath}"></video>
+
+        ${ this.showVideo ? html`
+          <video id="videoPlayer" portrait="${this.portraitVideo}" .data-id="${this.postVideoId}" .header-mode="${this.headerMode}" .controls="" @tap="${this._goToPost}" .preload="meta" class="pointer" src="${this.postVideoPath}" .playsinline="" .poster="${this.postVideoPosterPath}"></video>
+        ` : html`
           <div class="layout vertical center-center videoPreviewContainer" .portrait="${this.portraitVideo}">
             <iron-image id="videoPreviewImage layout-self-center" .portrait="${this.portraitVideo}" .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postVideoPosterPath}"></iron-image>
           </div>
           <iron-icon .icon="videocam" class="videoCamStatic"></iron-icon>
+        `}
       ` : html``}
 
       ${ this.showAudio ? html`
@@ -410,42 +405,33 @@ class YpPostCoverMediaLit extends YpBaseElement {
         </div>
       ` : html``}
 
-      ${ this.streetViewActivated ? html`
-        <google-streetview-pano .position="${this.mapPosition}" .heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .pitch="2" .zoom="0.8" disable-default-ui=""></google-streetview-pano>
-      ` : html``}
-
-      ${ this.streetViewActive ? html`
-        <iron-image @tap="${this._goToPost}" class="main-image pointer" .sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" ?hidden="${this.streetViewActivated}"></iron-image>
-        <google-streetview-pano .position="${this.mapPosition}" .heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .pitch="2" .zoom="0.8" disable-default-ui=""></google-streetview-pano>
-      ` : html``}
-
-      ${ this.mapActivated ? html`
-        <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" .libraries="places" .fit-to-markers="" .zoom="${this.zoomLevel}" .map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-          <google-map-marker slot="markers" .latitude="${this.latitude}" .longitude="${this.longitude}"></google-map-marker>
-        </google-map>
-      ` : html``}
-
-      ${ this.mapActive ? html`
-        <iron-image @tap="${this._goToPost}" class="main-image pointer" ?hidden="${this.mapActivated}" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"></iron-image>
-        <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" .libraries="places" .fit-to-markers="" .zoom="${this.zoomLevel}" .map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-          <google-map-marker slot="markers" .latitude="${this.latitude}" .longitude="${this.longitude}"></google-map-marker>
-        </google-map>
-      ` : html``}
-
       ${ !this.disableMaps ? html`
-        <iron-image @tap="${this._goToPost}" class="main-image pointer" .sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" ?hidden="${this.streetViewActivated}"></iron-image>
-        <google-streetview-pano .position="${this.mapPosition}" .heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .pitch="2" .zoom="0.8" disable-default-ui=""></google-streetview-pano>
-        <iron-image @tap="${this._goToPost}" class="main-image pointer" ?hidden="${this.mapActivated}" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"></iron-image>
-        <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" .libraries="places" .fit-to-markers="" .zoom="${this.zoomLevel}" .map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-          <google-map-marker slot="markers" .latitude="${this.latitude}" .longitude="${this.longitude}"></google-map-marker>
-        </google-map>
+
+        ${ this.streetViewActive ? html`
+          <iron-image @tap="${this._goToPost}" class="main-image pointer" .sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" ?hidden="${this.streetViewActivated}"></iron-image>
+
+
+          ${ this.streetViewActivated ? html`
+            <google-streetview-pano .position="${this.mapPosition}" .heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .pitch="2" .zoom="0.8" disable-default-ui=""></google-streetview-pano>
+          ` : html``}
+
+        ` : html``}
+
+        ${ this.mapActive ? html`
+          <iron-image @tap="${this._goToPost}" class="main-image pointer" ?hidden="${this.mapActivated}" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"></iron-image>
+
+          ${ this.mapActivated ? html`
+            <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" .libraries="places" .fit-to-markers="" .zoom="${this.zoomLevel}" .map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+              <google-map-marker slot="markers" .latitude="${this.latitude}" .longitude="${this.longitude}"></google-map-marker>
+            </google-map>
+          ` : html``}
+        ` : html``}
       ` : html``}
 
     </div>
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
-` : html``}
-`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
+    `
   }
 
 /*

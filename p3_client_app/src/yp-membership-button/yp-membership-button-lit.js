@@ -16,22 +16,22 @@ class YpMembershipButtonLit extends YpBaseElement {
         type: Object,
         observer: "_communityChanged"
       },
-  
+
       group: {
         type: Object,
         observer: "_groupChanged"
       },
-  
+
       membershipValue: {
         type: Boolean,
         value: false
       },
-  
+
       disabled: {
         type: Boolean,
         value: false
       },
-  
+
       large: {
         type: Boolean,
         value: false
@@ -42,7 +42,7 @@ class YpMembershipButtonLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-  
+
       :host {
         background-color: transparent;
       }
@@ -78,10 +78,9 @@ class YpMembershipButtonLit extends YpBaseElement {
     <yp-ajax class="ajax" id="membershipAjax" ?hidden="${this.disabled}" .method="POST" @response="${this._membershipResponse}"></yp-ajax>
 
     <lite-signal @lite-signal-got-memberships="${this._updateMembershipFromSignal}"></lite-signal>
-`
-  
+    `
   }
- 
+
 /*
   behaviors: [
     ypLanguageBehavior,

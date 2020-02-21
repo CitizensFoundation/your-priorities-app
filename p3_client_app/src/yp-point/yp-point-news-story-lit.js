@@ -22,7 +22,7 @@ class YpPointNewsStoryLit extends YpBaseElement {
       withComments: {
         type: Boolean,
         value: false
-      }, 
+      },
 
       open: {
         type: Boolean,
@@ -48,8 +48,8 @@ class YpPointNewsStoryLit extends YpBaseElement {
 
   static get styles() {
     return [
-      css`   
-    
+      css`
+
       :host {
         width: 100%;
         margin-top: 8px;
@@ -111,36 +111,34 @@ class YpPointNewsStoryLit extends YpBaseElement {
   }
 
   render() {
-      return html`
-        ${this.point ? html`  
-        <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
-        <div class="layout vertical newsContainer">
-          <yp-magic-text id="content" class="story" .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" content-id="${this.point.id}">
-          </yp-magic-text>
+    <div class="layout vertical newsContainer">
+      <yp-magic-text id="content" class="story" .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" .contentId="${this.point.id}">
+      </yp-magic-text>
 
-          <yp-point-news-story-embed embed-data="${this.point.embed_data}"></yp-point-news-story-embed>
-          <div class="layout horizontal">
-            <yp-point-actions point="${this.point}" hide-sharing=></yp-point-actions>
-            <div class="layout horizontal start-justified">
-              <div class="layout horizontal center-center withPointer" ?hidden="${!this.commentsCount}" @tap="${this._setOpenToValue}">
-                <div class="commentText">${this.t(point.comments)}</div>
-                <div id="commentCount">${this.commentsCount}</div>
-              </div>
-              <div class="layout horizontal center-center withPointer" @tap="${this._setOpenToValue}" ?hidden="${this._noComments(commentsCount)}">
-                <div class="commentText">${this.t(noComments)}</div>
-              </div>
-              <div class="layout horizontal">
-                <paper-icon-button aria-label="${this.t(toggleOpenClose)}" class="openCloseButton" .icon="keyboard-arrow-right" @tap="${this._setOpen}" ?hidden="${this.open}"></paper-icon-button>
-                <paper-icon-button aria-label="${this.t(toggleOpenClose)}" class="openCloseButton" .icon="keyboard-arrow-down" @tap="${this._setClosed}" ?hidden="${!this.open}"></paper-icon-button>
-              </div>
-            </div>
+      <yp-point-news-story-embed embed-data="${this.point.embed_data}"></yp-point-news-story-embed>
+      <div class="layout horizontal">
+        <yp-point-actions point="${this.point}" hide-sharing=></yp-point-actions>
+        <div class="layout horizontal start-justified">
+          <div class="layout horizontal center-center withPointer" ?hidden="${!this.commentsCount}" @tap="${this._setOpenToValue}">
+            <div class="commentText">${this.t(point.comments)}</div>
+            <div id="commentCount">${this.commentsCount}</div>
           </div>
-          <yp-point-comment-list id="commentsList" @yp-set-comments-count="${this._setCommentsCount}" disable-open-close .point="${this.point}" ?hidden="${!this.withComments}"></yp-point-comment-list>
+          <div class="layout horizontal center-center withPointer" @tap="${this._setOpenToValue}" ?hidden="${this._noComments(commentsCount)}">
+            <div class="commentText">${this.t(noComments)}</div>
+          </div>
+          <div class="layout horizontal">
+            <paper-icon-button aria-label="${this.t(toggleOpenClose)}" class="openCloseButton" .icon="keyboard-arrow-right" @tap="${this._setOpen}" ?hidden="${this.open}"></paper-icon-button>
+            <paper-icon-button aria-label="${this.t(toggleOpenClose)}" class="openCloseButton" .icon="keyboard-arrow-down" @tap="${this._setClosed}" ?hidden="${!this.open}"></paper-icon-button>
+          </div>
         </div>
-` : html``}
-`
-}
+      </div>
+      <yp-point-comment-list id="commentsList" @yp-set-comments-count="${this._setCommentsCount}" disable-open-close .point="${this.point}" ?hidden="${!this.withComments}"></yp-point-comment-list>
+    </div>
+    `
+  }
 
   _setOpenToValue() {
     if (this.open) {

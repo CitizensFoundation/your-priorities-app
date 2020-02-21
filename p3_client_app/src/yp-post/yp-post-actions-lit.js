@@ -21,113 +21,117 @@ class YpPostActionsLit extends YpBaseElement {
         type: Object,
         observer: '_onPostChanged'
       },
-  
+
       small: {
         type: Boolean,
         value: false
       },
-  
+
       headerMode: {
         type: Boolean,
         value: false
       },
-  
+
       forceSmall: {
         type: Boolean,
         value: false
       },
-  
+
       endorsementButtons: {
         type: String,
         value: 'hearts'
       },
-  
+
       endorseValue: {
         type: Number,
         value: 0
       },
-  
+
       isEndorsed: {
         type: Boolean,
         value: false
       },
-  
+
       elevation: {
         type: Number,
         value: 3
       },
-  
+
       elevationPlusOne: {
         type: Number,
         computed: '_elevationPlusOne(elevation)'
       },
-  
+
       allDisabled: {
         type: Boolean,
         value: false
       },
-  
+
       disabledTitle: {
         type: String,
         value: null
       },
-  
+
       floating: {
         type: Boolean,
         value: false
       },
-  
+
       votingDisabled: {
         type: Boolean,
         value: false
       },
-  
+
       smallerIcons: {
         type: Boolean,
         value: false
       },
-  
+
       formattedPointCount: {
         type: String,
         computed: '_formattedPointCount(post.counter_points)'
       },
-  
+
       formattedDownCount: {
         type: String,
         computed: '_formattedDownCount(post.counter_endorsements_down)'
       },
-  
+
       formattedUpCount: {
         type: String,
         computed: '_formattedUpCount(post.counter_endorsements_up)'
       },
-  
+
       postUrl: {
         type: String,
         computed: '_postUrl(post)'
       },
-  
+
       hideDebate: {
         type: Boolean,
         computed: '_hideDebate(small,forceSmall,post)'
       },
-  
+
       customVoteUpHoverText: {
         type: String,
         computed: '_customVoteUpHoverText(post)'
       },
-  
+
       customVoteDownHoverText: {
         type: String,
         computed: '_customVoteDownHoverText(post)'
-      },
+      }
     }
   }
-  
+
   static get styles() {
     return [
       css`
-  
+
+      :host {
+        display: block;
+      }
+
       .action-bar {
         position: absolute;
         background-color: #FFF;
@@ -280,39 +284,38 @@ class YpPostActionsLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
-      ${this.post ? html`
-      <iron-media-query query="(max-width: 420px)" .query-matches="${this.small}"></iron-media-query>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <iron-media-query query="(max-width: 420px)" .query-matches="${this.small}"></iron-media-query>
 
-      <yp-ajax id="endorseAjax" .method="POST" @response="${this._endorseResponse}"></yp-ajax>
-      <paper-material .elevation="${this.elevationPlusOne}" .title="${this.disabledTitle}" floating="${this.floating}" .animated="" class="action-bar layout horizontal">
-        <div id="actionUp" class="action-up layout horizontal layout start justified">
-          <paper-icon-button id="iconUpButton" .smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" .title="${this.customVoteUpHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'up')}" class="action-icon up-vote-icon largeButton" on-tap="upVote"></paper-icon-button>
-          <div class="action-text up-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedUpCount}</div>
-        </div>
+    <yp-ajax id="endorseAjax" .method="POST" @response="${this._endorseResponse}"></yp-ajax>
+    <paper-material .elevation="${this.elevationPlusOne}" .title="${this.disabledTitle}" floating="${this.floating}" .animated="" class="action-bar layout horizontal">
+      <div id="actionUp" class="action-up layout horizontal layout start justified">
+        <paper-icon-button id="iconUpButton" .smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" .title="${this.customVoteUpHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'up')}" class="action-icon up-vote-icon largeButton" @tap="${thisupVote}"></paper-icon-button>
+        <div class="action-text up-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedUpCount}</div>
+      </div>
 
-        <div class="action-debate layout horizontal layout center justified " ?hidden="${this.hideDebate}">
-          <paper-icon-button ?disabled="${this.allDisabled}" .title="${this.t('post.debate')}" icon="chat-bubble-outline" class="action-icon debate-icon largeButton" @tap="${this._goToPostIfNotHeader}"></paper-icon-button>
-          <div class="action-text debate-text">${this.formattedPointCount}</div>
-        </div>
+      <div class="action-debate layout horizontal layout center justified " ?hidden="${this.hideDebate}">
+        <paper-icon-button ?disabled="${this.allDisabled}" .title="${this.t('post.debate')}" icon="chat-bubble-outline" class="action-icon debate-icon largeButton" @tap="${this._goToPostIfNotHeader}"></paper-icon-button>
+        <div class="action-text debate-text">${this.formattedPointCount}</div>
+      </div>
 
-        <div class="" ?hidden="${!this.hideDebate}"></div>
+      <div class="" ?hidden="${!this.hideDebate}"></div>
 
-        <div id="actionDown" class="action-down layout horizontal layout center justified" ?hidden="${this.post.Group.configuration.hideDownVoteForPost}">
-          <paper-icon-button smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" .title="${this.customVoteDownHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'down')}" class="action-icon down-vote-icon largeButton" on-tap="downVote"></paper-icon-button>
-          <div class="action-text down-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedDownCount}</div>
-        </div>
-        <div class="share">
-          <paper-share-button @share-tap="${this._shareTap}" class="shareIcon" .less-margin="${this.post.Group.configuration.hideDownVoteForPost}" .endorsed="${this.isEndorsed}" horizontal-align="right" id="shareButton" title="${this.t('post.shareInfo')}" facebook google twitter popup url="${this.postUrl}"></paper-share-button>
-        </div>
-      </paper-material>
+      <div id="actionDown" class="action-down layout horizontal layout center justified" ?hidden="${this.post.Group.configuration.hideDownVoteForPost}">
+        <paper-icon-button smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" .title="${this.customVoteDownHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'down')}" class="action-icon down-vote-icon largeButton" @tap="${this.downVote}"></paper-icon-button>
+        <div class="action-text down-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedDownCount}</div>
+      </div>
+      <div class="share">
+        <paper-share-button @share-tap="${this._shareTap}" class="shareIcon" .less-margin="${this.post.Group.configuration.hideDownVoteForPost}" .endorsed="${this.isEndorsed}" horizontal-align="right" id="shareButton" title="${this.t('post.shareInfo')}" facebook google twitter popup url="${this.postUrl}"></paper-share-button>
+      </div>
+    </paper-material>
 
     <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
-` : html``}
-`
-  }  
+    `
+  }
 
 /*
   behaviors: [

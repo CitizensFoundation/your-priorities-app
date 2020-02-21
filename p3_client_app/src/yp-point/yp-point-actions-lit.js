@@ -18,49 +18,57 @@ class YpPointActionsLit extends YpBaseElement {
         type: Object,
         observer: "_onPointChanged"
       },
-  
+
       hideNotHelpful: {
         type: Boolean,
         value: false
       },
-  
+
       pointQualityValue: {
         type: Number,
         value: 0
       },
-  
+
       isUpVoted: {
         type: Boolean,
         value: false
       },
-  
+
       allDisabled: {
         type: Boolean,
         value: false
       },
-  
+
       pointUrl: {
         type: String
       },
-  
+
       hideSharing: {
         type: Boolean,
         value: false
-      },
+      }
     }
   }
 
   static get styles() {
     return [
       css`
-  
+
+      :host {
+        min-width: 125px;
+      }
+
       .action-text {
         font-size: 12px;
         padding-top: 12px;
       }
 
       .action-up {
-    
+
+      }
+
+      .action-down {
+
       }
 
       .up-selected {
@@ -69,6 +77,10 @@ class YpPointActionsLit extends YpBaseElement {
 
       .down-selected {
         color: #444;
+      }
+
+      .middle {
+
       }
 
       .all-actions {
@@ -99,11 +111,11 @@ class YpPointActionsLit extends YpBaseElement {
         display: none !important;
       }
   `, YpFlexLayout0]
-}
+  }
 
-render() {
-  return html`
-    ${this.point ? html`
+  render() {
+    return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="all-actions layout horizontal flex start-justified" ?hidden="${this.hideNotHelpful}">
       <div id="actionUp" class="actionUp layout horizontal">
         <paper-icon-button .title="${this.t('point.helpful')}" ?disabled="${this.allDisabled}" .icon="arrow-upward" class="point-up-vote-icon myButton" @tap="${this.pointHelpful}"></paper-icon-button>
@@ -118,10 +130,9 @@ render() {
 
     <yp-ajax id="pointQualityAjax" .method="POST" @response="${this._pointQualityResponse}"></yp-ajax>
     <lite-signal @lite-signal-got-endorsements-and-qualities="${this._updateQualitiesFromSignal}"></lite-signal>
-` : html``}
-`
-}
- 
+    `
+  }
+
 /*
   behaviors: [
     ypLanguageBehavior,

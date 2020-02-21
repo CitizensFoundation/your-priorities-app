@@ -101,7 +101,6 @@ class YpOrganizationGridLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.organization ? html`
     <paper-dialog id="selectOrganizationDialog" .modal>
       <h2>${this.t('users.selectOrganization')}</h2>
       <paper-dialog-scrollable>
@@ -175,8 +174,7 @@ class YpOrganizationGridLit extends YpBaseElement {
       <yp-ajax .method="DELETE" id="removeOrganizationAjax" @response="_removeOrganizationResponse"></yp-ajax>
       <yp-ajax .method="POST" id="addOrganizationAjax" @response="_addOrganizationResponse"></yp-ajax>
     </div>
-`: html``}
-`
+    `
   }
 
   /*

@@ -18,12 +18,12 @@ class YpPointCommentEditLit extends YpBaseElement {
           type: Object,
           notify: true
         },
-          
+
         point: {
           type: Object,
           notify: true
         },
-        
+
         image: {
           type: Object,
           notify: true
@@ -34,6 +34,13 @@ class YpPointCommentEditLit extends YpBaseElement {
   static get styles() {
     return [
       css`
+
+      :host {
+        display: block;
+        width: 100%;
+        margin-top: 6px;
+        margin-bottom: 64px;
+      }
 
       paper-textarea {
         width: 370px;
@@ -71,12 +78,12 @@ class YpPointCommentEditLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-    `, YpFlexLayout]  
-  } 
+    `, YpFlexLayout]
+  }
 
-render() {
-  return html`
-    ${this.point ? html`
+  render() {
+    return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="layout vertical center-center" ?hidden="${!this.loggedInUser}">
       <div class="layout horizontal">
         <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
@@ -85,7 +92,7 @@ render() {
           </paper-textarea>
           <div class="layout horizontal">
             <paper-button id="submitButton" raised @tap="${this._sendComment}">${this.t(point.postComment)}</paper-button>
-          </div>  
+          </div>
         </div>
       </div>
 
@@ -95,10 +102,9 @@ render() {
 
     </div>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-` : html``}
-`  
-}  
-  
+    `
+  }
+
   updated(changedProps) {
     if (changedProps.has('comment')) {
       if (this.comment.value && this.comment.value.length % 7 === 2) {
@@ -107,12 +113,23 @@ render() {
     }
   }
 
+  /*
+  behaviors: [
+    ypLanguageBehavior,
+    ypLoggedInUserBehavior
+  ],
+
+  observers: [
+    '_commentContentChanged(comment.*)'
+  ],
+  */
+
   ready() {
     this._reset();
   }
 
   _commentContentChanged(change) {
-   
+
   }
 
   _responseError() {

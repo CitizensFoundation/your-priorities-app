@@ -25,33 +25,33 @@ class YpPostCardLit extends YpBaseElement {
         type: Boolean,
         computed: '_hideDescription(mini, post)'
       },
-  
+
       selectedMenuItem: {
         type: String
       },
-  
+
       elevation: {
         type: Number,
         value: 2
       },
-  
+
       post: {
         type: Object,
         observer: '_postChanged'
       },
-  
+
       hasPostAccess: {
         type: Boolean,
         value: false,
         notify: true,
         computed: '_hasPostAccess(post, gotAdminRights)'
       },
-  
+
       mini: {
         type: Boolean,
         value: false
       },
-  
+
       isAudioCover: {
         type: Boolean,
         value: false
@@ -273,9 +273,11 @@ class YpPostCardLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.post ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
+    <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
-    <paper-material .mini="${this.mini}" .hide-post-cover="${this.post.Group.configuration.hidePostCover}" .hide-description="${this.post.Group.configuration.hidePostDescription}" hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}" audio-cover="${this.isAudioCover}" class="card postCard layout vertical" elevation="${this.elevation}" animated="">
+    <paper-material .mini="${this.mini}" .hide-post-cover="${this.post.Group.configuration.hidePostCover}" .hide-description="${this.post.Group.configuration.hidePostDescription}" hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}" audio-cover="${this.isAudioCover}" class="card postCard layout vertical" elevation="${this.elevation}" animated>
       <div class="layout vertical">
         <yp-post-cover-media mini="${this.mini}" audio-cover="${this.isAudioCover}" .post="${this.post}" ?hidden="${this.post.Group.configuration.hidePostCover}"></yp-post-cover-media>
         <div class="postNameContainer">
@@ -284,15 +286,14 @@ class YpPostCardLit extends YpBaseElement {
             </yp-magic-text>
           </div>
         </div>
-        <yp-magic-text class="description layout horizontal" @tap="${this.goToPostIfNotHeader}" ?hidden="${this.hideDescription}" .text-type="postContent" .content-language="${this.post.language}" text-only="" content="${this.post.description}" content-id="${this.post.id}" truncate="100">
+        <yp-magic-text class="description layout horizontal" @tap="${this.goToPostIfNotHeader}" ?hidden="${this.hideDescription}" .text-type="postContent" .content-language="${this.post.language}" text-only="" content="${this.post.description}" .contentId="${this.post.id}" truncate="100">
         </yp-magic-text>
         <div ?hidden="${this.post.Group.configuration.hidePostActionsInGrid}">
           <yp-post-actions floating class="postActions" .elevation="-1" .endorse-mode="${this.endorseMode}" .post="${this.post}" ?hidden="${this.mini}"></yp-post-actions>
         </div>
       </div>
     </paper-material>
-` : html``}
-`
+    `
   }
 /*
   behaviors: [

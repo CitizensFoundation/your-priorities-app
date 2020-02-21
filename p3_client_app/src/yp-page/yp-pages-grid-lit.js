@@ -75,6 +75,12 @@ class YpPagesGridLit extends YpBaseElement {
     return [
       css`
 
+      #dialog {
+        width: 90%;
+        max-height: 90%;
+        background-color: #FFF;
+      }
+
       iron-list {
         color: #000;
         height: 500px;
@@ -128,7 +134,7 @@ class YpPagesGridLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.pages ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="editPageLocale" .modal class="layout vertical">
       <h2>${this.t('pages.editPageLocale')}</h2>
 
@@ -194,8 +200,7 @@ class YpPagesGridLit extends YpBaseElement {
       <yp-ajax .method="PUT" id="publishPageAjax" @response="${this._publishPageResponse}"></yp-ajax>
       <yp-ajax .method="PUT" id="unPublishPageAjax" @response="${this._unPublishPageResponse}"></yp-ajax>
     </div>
-` : html``}
-`
+    `
   }
 
 

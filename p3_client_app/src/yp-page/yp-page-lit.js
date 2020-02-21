@@ -17,26 +17,26 @@ class YpPageLit extends YpBaseElement {
         type: Boolean,
         value: false
       },
-  
+
       createFabIcon: {
         type: String,
         value: null
       },
-  
+
       createFabTitle: {
         type: String
       },
-  
+
       isPost: {
         type: Boolean,
         value: false
       },
-  
+
       hasLargeButton: {
         type: Boolean,
         value: false
       },
-  
+
       hideAllTabs: {
         type: Boolean,
         value: false
@@ -51,7 +51,7 @@ class YpPageLit extends YpBaseElement {
         height: 100%;
         width: 100%;
       }
-      
+
         .mainArea {
           background-color: var(--primary-background-color);
           height: 100%;
@@ -189,35 +189,33 @@ class YpPageLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.page ? html`
-      <div class="layout vertical mainArea">
-        <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
-          <slot .name="largeCard"></slot>
-        </div>
-
-        ${ this.hasLargeButton ? html`
-          <div class="largeButtonWrapper layout horizontal center-center" ?hidden="${!this.wideWidth}">
-            <slot .name="largeAddButton"></slot>
-          </div>
-        `: html``}
-
-        <div class="tab-wrapper layout horizontal center-center" ?hidden="${this.hideAllTabs}">
-          <slot .name="tabs"></slot>
-        </div>
-        <div class="tab-pages-wrapper layout vertical">
-          <slot .name="tabPages"></slot>
-        </div>
+    <div class="layout vertical mainArea">
+      <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" is-post="${this.isPost}">
+        <slot .name="largeCard"></slot>
       </div>
-      <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
 
-        ${ this.createFabIcon ? html`
-          <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" .title="${this.createFabTitle}" @tap="${this._createTap}"></paper-fab>
-        `: html``}
+      ${ this.hasLargeButton ? html`
+        <div class="largeButtonWrapper layout horizontal center-center" ?hidden="${!this.wideWidth}">
+          <slot .name="largeAddButton"></slot>
+        </div>
+      `: html``}
 
+      <div class="tab-wrapper layout horizontal center-center" ?hidden="${this.hideAllTabs}">
+        <slot .name="tabs"></slot>
       </div>
-      <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
-` : html``}
-`
+      <div class="tab-pages-wrapper layout vertical">
+        <slot .name="tabPages"></slot>
+      </div>
+    </div>
+    <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
+
+      ${ this.createFabIcon ? html`
+        <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" .title="${this.createFabTitle}" @tap="${this._createTap}"></paper-fab>
+      `: html``}
+
+    </div>
+    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
+    `
   }
 
   ready() {
@@ -248,6 +246,5 @@ class YpPageLit extends YpBaseElement {
   }
 
 }
-
 
 window.customElements.define('yp-page-lit', YpPageLit);

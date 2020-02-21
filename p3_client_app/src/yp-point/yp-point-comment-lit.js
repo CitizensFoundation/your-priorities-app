@@ -21,27 +21,27 @@ class YpPointCommentLit extends YpBaseElement  {
         notify: true,
         observer: "_pointChanged"
       },
-  
+
       user: {
         type: Object
       },
-  
+
       hideUser: {
         type: Boolean,
         value: false
       },
-  
+
       hasPointAccess: {
         type: Boolean,
         computed: '_hasPointAccess(point, gotAdminRights, loggedInUser)'
-      },
-    } 
+      }
+    }
   }
 
   static get styles() {
     return [
       css`
-     
+
       .userName {
         color: #777;
       }
@@ -85,12 +85,15 @@ class YpPointCommentLit extends YpBaseElement  {
       #deleteButton {
         color: #bbb;
       }
-  `, YpFlexLayout]
-} 
+    `, YpFlexLayout]
+  }
 
-render() {
-  return html`
-    ${this.point ? html`
+  render() {
+    return html`
+    <lite-signal @lite-signal-got-admin-rights="${this_gotAdminRights}"></lite-signal>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+
     <div class="layout horizontal">
       <div class="layout horizontal">
         <yp-user-image .user="${this.user}"></yp-user-image>
@@ -112,8 +115,7 @@ render() {
         </div>
       </div>
     </div>
-` : html``}
-`
+  `
 }
 
 /*

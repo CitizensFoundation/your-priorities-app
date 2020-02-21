@@ -14,40 +14,40 @@ import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
 
-class YpPointNewsStoryEditLit extends YpBaseElement { 
+class YpPointNewsStoryEditLit extends YpBaseElement {
   static get properties() {
-    return {  
+    return {
       loadingUrlPreview: {
         type: Boolean,
         notify: true
       },
-    
+
       loadingPostStory: {
         type: Boolean,
         notify: true
       },
-  
+
       point: {
         type: Object,
         notify: true
       },
-  
+
       postId: {
         type: Number
       },
-  
+
       postGroupId: {
         type: Number
       },
-  
+
       groupId: {
         type: Number
       },
-  
+
       communityId: {
         type: Number
       },
-  
+
       domainId: {
         type: Number
       },
@@ -57,6 +57,11 @@ class YpPointNewsStoryEditLit extends YpBaseElement {
   static get styles() {
     return [
       css`
+
+      :host {
+        padding-top: 16px;
+      }
+
       paper-textarea  {
         width: 460px;
         margin-top: -8px;
@@ -125,47 +130,46 @@ class YpPointNewsStoryEditLit extends YpBaseElement {
 
 render() {
   return html`
-    ${this.point ? html`
-      <div class="layout vertical container">
-        <div class="layout horizontal">
-          <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
-          <div class="layout vertical">
-            <paper-textarea id="pointNewsStory" required .minlength="15" .name="pointNewsStory" .value="${this.point.content}" always-float-label="${this.point.content}" .label="${this.t('point.addNewsStory')}" char-counter .rows="2" .max-rows="5" @keydown="${this._keyDown}" .maxlength="500">
-            </paper-textarea>
-            <div class="layout horizontal end-justified">
-              <paper-button id="storySubmitButton" raised @tap="${this._sendStory}">${this.t('point.postNewsStory')}</paper-button>
-            </div>
+  <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <div class="layout vertical container">
+      <div class="layout horizontal">
+        <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
+        <div class="layout vertical">
+          <paper-textarea id="pointNewsStory" required .minlength="15" .name="pointNewsStory" .value="${this.point.content}" always-float-label="${this.point.content}" .label="${this.t('point.addNewsStory')}" char-counter .rows="2" .max-rows="5" @keydown="${this._keyDown}" .maxlength="500">
+          </paper-textarea>
+          <div class="layout horizontal end-justified">
+            <paper-button id="storySubmitButton" raised @tap="${this._sendStory}">${this.t('point.postNewsStory')}</paper-button>
           </div>
         </div>
+      </div>
 
-        <div class="layout horizontal center-center">
+      <div class="layout horizontal center-center">
 
-          ${ this.point.embed_data ? html`
-            <div class="embedData layout vertical center-center">
-              <yp-point-news-story-embed embed-data="${this.point.embed_data}"></yp-point-news-story-embed>
-              <paper-icon-button .ariaLabel="${this.t('clearEmbededMedia')}" .icon="clear" @tap="${this._clearEmbed}"></paper-icon-button>
-            </div>
-          `: html``}
-
-        </div>
-
-        <div class="layout horizontal center-center">
-          <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" ?hidden="${this.point.embed_detail}" @response="${this._urlPreviewResponse}"></yp-ajax>
-          <yp-ajax id="postNewsStoryAjax" .method="POST" @error="${this._clearButtonState}" @response="${this_newsStoryResponse}"></yp-ajax>
-        </div>
+        ${ this.point.embed_data ? html`
+          <div class="embedData layout vertical center-center">
+            <yp-point-news-story-embed embed-data="${this.point.embed_data}"></yp-point-news-story-embed>
+            <paper-icon-button .ariaLabel="${this.t('clearEmbededMedia')}" .icon="clear" @tap="${this._clearEmbed}"></paper-icon-button>
+          </div>
+        `: html``}
 
       </div>
-      <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
-` : html``}
-`
-}
 
-/* 
+      <div class="layout horizontal center-center">
+        <yp-ajax id="urlPreviewAjax" url="/api/points/url_preview" ?hidden="${this.point.embed_detail}" @response="${this._urlPreviewResponse}"></yp-ajax>
+        <yp-ajax id="postNewsStoryAjax" .method="POST" @error="${this._clearButtonState}" @response="${this_newsStoryResponse}"></yp-ajax>
+      </div>
+
+    </div>
+    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
+    `
+  }
+
+/*
   behaviors: [
     ypLanguageBehavior,
     ypLoggedInUserBehavior
   ],
-*/ 
+*/
   _clearButtonStat() {
     this.$.storySubmitButton.disabled = false;
   }

@@ -79,6 +79,7 @@ class YpOrganizationEditLit extends YpBaseElement {
 
   render() {
     return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-edit-dialog id="editDialog" .title="${this.editHeaderText}" .icon="business-center" .action="${this.action}" .method="${this.method}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
       <h2 .slot="h2">${this.editHeaderText}</h2>
 

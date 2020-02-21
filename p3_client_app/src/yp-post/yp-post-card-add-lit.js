@@ -17,17 +17,23 @@ class YpPostCardAddLit extends YpBaseElement {
       elevation: {
         type: Number
       },
-  
+
       disabled: {
         type: Boolean
       }
-    }     
+    }
   }
 
   static get styles() {
     return [
       css`
-    
+
+      :host {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        width: 100%;
+      }
+
       .postCard {
         width: 100%;
         min-height: 75px;
@@ -136,28 +142,27 @@ class YpPostCardAddLit extends YpBaseElement {
       .container {
         width: 100%;
       }
-    
-    `, YpFlexLayout] 
+
+    `, YpFlexLayout]
   }
 
   render() {
     return html`
-      ${this.post ? html`  
-        <div class="layout vertical center-center container">
-          <paper-card ?disabled="${this.disabled}" .elevation="${this.elevation}" class="postCard" @tap="${this._newPost}">
-            <div class="layout horizontal center-center addNewIdeaText">
-              <iron-icon ?disabled="${this.disabled}" icon="lightbulb-outline"></iron-icon>
-              <div class="flex addText" ?hidden="${this.disabled}">
-                ${this.t('post.add_new')}
-              </div>
-              <div class="flex addText closed" ?hidden="${!this.disabled}">
-                ${this.t('closedForNewPosts')}
-              </div>
-            </div>
-          </paper-card>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <div class="layout vertical center-center container">
+      <paper-card ?disabled="${this.disabled}" .elevation="${this.elevation}" class="postCard" @tap="${this._newPost}">
+        <div class="layout horizontal center-center addNewIdeaText">
+          <iron-icon ?disabled="${this.disabled}" icon="lightbulb-outline"></iron-icon>
+          <div class="flex addText" ?hidden="${this.disabled}">
+            ${this.t('post.add_new')}
+          </div>
+          <div class="flex addText closed" ?hidden="${!this.disabled}">
+            ${this.t('closedForNewPosts')}
+          </div>
         </div>
-` : html``}
-`  
+      </paper-card>
+    </div>
+    `
   }
 
   _newPost() {

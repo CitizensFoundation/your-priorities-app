@@ -56,6 +56,7 @@ class YpPageDialogLit extends YpBaseElement {
 
   render() {
     return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog">
       <h2>${this.pageTitle}</h2>
       <paper-dialog-scrollable>

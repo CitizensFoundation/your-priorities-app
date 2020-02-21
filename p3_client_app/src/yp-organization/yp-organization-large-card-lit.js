@@ -37,6 +37,11 @@ class YpOrganizationLargeCardLit extends YpBaseElement {
     return [
       css`
 
+      :host {
+        display: block;
+        width: 864px;
+      }
+
       .communityAccess {
         padding-bottom: 8px;
       }
@@ -132,45 +137,40 @@ class YpOrganizationLargeCardLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.organization ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(max-width: 480px)" query-matches="${this.phoneSize}"></iron-media-query>
 
-      ${ this.phoneSize ? html`
-        <div>
-          <iron-image class="image" sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
-        </div>
-      ` : html`
-        <iron-image class="image" .sizing="contain" src="${this.communityLogoImagePath}"></iron-image>
-      `}
+    ${ this.community ? html`
+      <paper-material id="card" .elevation="5" .animated class="large-card">
+        <div class="contentContainer layout horizontal wrap">
 
-      ${ this.community ? html`
-        <paper-material id="card" .elevation="5" .animated class="large-card">
-          <div class="contentContainer layout horizontal wrap">
+          ${ this.phoneSize ? html`
             <div>
               <iron-image class="image" sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
             </div>
+          ` : html`
             <iron-image class="image" .sizing="contain" src="${this.communityLogoImagePath}"></iron-image>
-            <div class="layout vertical description-and-stats">
-              <div class="description">
-                <h2 class="community-name">${this.communityNameFull}</h2>
-                <div class="communityAccess">${this._communityAccessText(community.access)}</div>
-                <div>${this.communityDescriptionFull}</div>
-              </div>
-            </div>
-            <yp-community-stats class="stats layout-self-center" .community="${this.community}"></yp-community-stats>
-            <paper-menu-button class="edit" ?hidden="${!this.checkCommunityAccess(community)}">
-              <paper-icon-button .ariaLabel="${this.t('openOrganizationMenu')}" .icon="more-vert" .slot="dropdown-trigger"></paper-icon-button>
-              <paper-listbox .slot="dropdown-content" @iron-select="${this._menuSelection}">
-                <paper-item id="editMenuItem">${this.t('community.edit')}</paper-item>
-                <paper-item id="deleteMenuItem">${this.t('community.delete')}</paper-item>
-              </paper-listbox>
-            </paper-menu-button>
-          </div>
-        </paper-material>
-      ` : html``}
+          `}
 
-`: html``}
-`
+          <div class="layout vertical description-and-stats">
+            <div class="description">
+              <h2 class="community-name">${this.communityNameFull}</h2>
+              <div class="communityAccess">${this._communityAccessText(community.access)}</div>
+              <div>${this.communityDescriptionFull}</div>
+            </div>
+          </div>
+          <yp-community-stats class="stats layout-self-center" .community="${this.community}"></yp-community-stats>
+          <paper-menu-button class="edit" ?hidden="${!this.checkCommunityAccess(community)}">
+            <paper-icon-button .ariaLabel="${this.t('openOrganizationMenu')}" .icon="more-vert" .slot="dropdown-trigger"></paper-icon-button>
+            <paper-listbox .slot="dropdown-content" @iron-select="${this._menuSelection}">
+              <paper-item id="editMenuItem">${this.t('community.edit')}</paper-item>
+              <paper-item id="deleteMenuItem">${this.t('community.delete')}</paper-item>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
+      </paper-material>
+    ` : html``}
+    `
   }
 /*
   behaviors: [

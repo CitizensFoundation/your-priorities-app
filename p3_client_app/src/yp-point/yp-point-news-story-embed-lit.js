@@ -11,13 +11,23 @@ import { YpFlexLayout } from '../yp-flex-layout.js';
 class YpPointNewsStoryEmbedLit extends YpBaseElement {
   static get properties() {
     return {
+
+      embedData: {
+        type: Object,
+        notify: true
+      }
     }
   }
+
 
   static get styles() {
     return[
       css`
-  
+
+      iron-image {
+        width: 550px;
+        height: 309px;
+      }
 
       @media (max-width: 600px) {
         iron-image {
@@ -59,29 +69,27 @@ class YpPointNewsStoryEmbedLit extends YpBaseElement {
   }
   render() {
     return html`
-      ${this.point ? html` 
-      <div ?hidden="${!this.embedData}">
-        <div class="layout vertical embedContainer">
-          <a href="${this.embedData.url}" class="container" .target="_blank">
-            <div class="layout vertical center-center">
-              <iron-image .sizing="contain" src="${this.embedData.thumbnail_url}" ?hidden="${this.embedData.html}"></iron-image>
-              <div id="embedHtml" ?hidden="${!this.embedData.html}">
-                <div inner-h-t-m-l="${this.embedData}"></div>
-              </div>
+    <div ?hidden="${!this.embedData}">
+      <div class="layout vertical embedContainer">
+        <a href="${this.embedData.url}" class="container" .target="_blank">
+          <div class="layout vertical center-center">
+            <iron-image .sizing="contain" src="${this.embedData.thumbnail_url}" ?hidden="${this.embedData.html}"></iron-image>
+            <div id="embedHtml" ?hidden="${!this.embedData.html}">
+              <div inner-h-t-m-l="${this.embedData}"></div>
             </div>
-            <div class="layout vertical">
-              <div class="title">
-                <h2>${this.embedData.title}</h2>
-              </div>
-              <div class="description">
-                ${this.embedData.description}
-              </div>
+          </div>
+          <div class="layout vertical">
+            <div class="title">
+              <h2>${this.embedData.title}</h2>
             </div>
-          </a>
-        </div>
+            <div class="description">
+              ${this.embedData.description}
+            </div>
+          </div>
+        </a>
       </div>
-  ` : html``}
-  `
+    </div>
+    `
   }
 }
 

@@ -18,34 +18,34 @@ class YpPointCommentListLit extends YpBaseElement {
       comments: {
         type: Array
       },
-  
+
       point: {
         type: Object,
         notify: true,
         observer: "_pointChanged"
       },
-  
+
       image: {
         type: Object,
         notify: true,
         observer: "_imageChanged"
       },
-  
+
       open: {
         type: Boolean,
         value: false,
         observer: "_openChanged"
       },
-  
+
       loadingList: {
         type: Boolean
       },
-  
+
       commentsCount: {
         type: Number,
         value: null
       },
-  
+
       disableOpenClose: {
         type: Boolean,
         value: false
@@ -55,6 +55,14 @@ class YpPointCommentListLit extends YpBaseElement {
   static get styles() {
     return [
       css`
+
+      :host {
+        width: 100%;
+      }
+
+      yp-point-comment-edit {
+
+      }
 
       .iron-list {
        max-height: 500px;
@@ -110,12 +118,12 @@ class YpPointCommentListLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-  `, YpFlexLayout]
-}
+    `, YpFlexLayout]
+  }
 
-render() {
-  return html`
-    ${this.point ? html`
+  render() {
+    return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="container layout vertical">
       <div class="layout horizontal start-justified" ?hidden="${this.disableOpenClose}">
         <div class="layout horizontal center-center" ?hidden="${!this.commentsCount}">
@@ -126,8 +134,8 @@ render() {
           <div class="commentText">${this.t('noComments')}</div>
         </div>
         <div class="layout horizontal">
-          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-right" on-tap="_setOpen" ?hidden="${this.open}"></paper-icon-button>
-          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-down" on-tap="_setClosed" ?hidden="${!this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-right" @tap="${this._setOpen}" ?hidden="${this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-down" @tap="${this._setClosed}" ?hidden="${!this.open}"></paper-icon-button>
         </div>
       </div>
 
@@ -147,10 +155,9 @@ render() {
         <yp-ajax id="commentsCountListAjax" .method="GET" @response="${this._countResponse}"></yp-ajax>
       </div>
     </div>
-` : html``}
-`
-}
-/* 
+    `
+  }
+/*
   behaviors: [
     ypLanguageBehavior,
     IronResizableBehavior
@@ -159,7 +166,7 @@ render() {
   listeners: {
     'yp-point-deleted': '_refresh'
   },
-*/ 
+*/
   _openChanged(newOpenValue) {
     if (newOpenValue) {
       this.$.commentsListAjax.generateRequest();
