@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element';
+import { html, css } from 'lit-element';
 import '../../analytics-app/src/shadow-styles.js'
 import { ShadowStyles } from '../../analytics-app/src/shadow-styles.js';
 import { BaseElement } from '../../analytics-app/src/baseElement.js';

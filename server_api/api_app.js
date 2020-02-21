@@ -31,6 +31,7 @@ const news_feeds = require('./active-citizen/controllers/news_feeds');
 const activities = require('./active-citizen/controllers/activities');
 const notifications = require('./active-citizen/controllers/notifications');
 const recommendations = require('./active-citizen/controllers/recommendations');
+const analytics = require('./active-citizen/controllers/analytics');
 
 const posts = require('./controllers/posts');
 const groups = require('./controllers/groups');
@@ -384,6 +385,7 @@ app.use('/api/activities', activities);
 app.use('/api/notifications', notifications);
 app.use('/api/bulk_status_updates', bulkStatusUpdates);
 app.use('/api/recommendations', recommendations);
+app.use('/api/analytics', analytics);
 app.use('/api/ratings', ratings);
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);

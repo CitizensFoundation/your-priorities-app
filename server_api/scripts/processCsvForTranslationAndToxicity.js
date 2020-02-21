@@ -22,7 +22,7 @@ if (process.env.GOOGLE_PERSPECTIVE_API_KEY) {
 
 const getToxicityScoreForText = (text, doNotStore, callback) => {
   console.log("getToxicityScoreForText starting", { text, doNotStore });
-  if (text && text!=="") {
+  if (text) {
     perspectiveApi.analyze(text, { doNotStore, attributes: [
         'TOXICITY', 'SEVERE_TOXICITY','IDENTITY_ATTACK',
         'THREAT','INSULT','PROFANITY','SEXUALLY_EXPLICIT',
@@ -130,7 +130,6 @@ async.forEachSeries(records, (line, eachCallback) => {
         process.exit();
       }
     });
-
   }
 });
 

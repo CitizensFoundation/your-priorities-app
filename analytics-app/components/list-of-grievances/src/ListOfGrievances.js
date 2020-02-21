@@ -1,4 +1,4 @@
-import { html, css, LitElement } from 'lit-element';
+import { html, css } from 'lit-element';
 import { Data } from '../../analytics-app/src/data.js';
 
 import './Grievance.js'
