@@ -2,7 +2,7 @@ import { html, css, LitElement } from 'lit-element';
 
 //const ForceGraph3D = require('3d-force-graph');
 
-export class PageForceGraph extends LitElement {
+export class PageSimilarities extends LitElement {
   static get styles() {
     return css`
       :host {
@@ -28,8 +28,9 @@ export class PageForceGraph extends LitElement {
 
   static get properties() {
     return {
-      title: { type: String },
-      logo: { type: Function },
+      collectionType: { type: String },
+      collectionId: { type: String },
+      dataUrl: { type: String }
     };
   }
 
@@ -46,12 +47,16 @@ export class PageForceGraph extends LitElement {
     this.cameraTime = this.cameraTimeStart;
     this.url = "http://localhost:5000/api/v1/getCommunityPostsWithWeights/984";
   }
+  connectedCallback() {
+    super.connectedCallback();
+    this.dataUrl ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
+  }
 
   firstUpdated() {
     super.firstUpdated();
     this.graph = ForceGraph3D()
      (this.shadowRoot.getElementById('3d-graph'))
-      .jsonUrl(this.url)
+      .jsonUrl(this.dataUrl)
       .nodeAutoColorBy('group')
       .linkDirectionalParticles("value")
       .linkDirectionalParticleSpeed(d => d.value * 0.001)
@@ -107,7 +112,7 @@ export class PageForceGraph extends LitElement {
       });
 
     // Spread nodes a little wider
-    this.graph.d3Force('charge').strength(-250);
+    this.graph.d3Force('charge').strength(-750);
 
     this.maxDistance = Math.pow( 120, 2 );
     const currentPosition = this.graph.cameraPosition();
@@ -144,7 +149,7 @@ export class PageForceGraph extends LitElement {
     return Math.pow( a[ 0 ] - b[ 0 ], 2 ) + Math.pow( a[ 1 ] - b[ 1 ], 2 ) + Math.pow( a[ 2 ] - b[ 2 ], 2 );
   };
 
-  getNearestNodeKtree = function(position) {
+  getNearestNodeKtree (position) {
     const positionsInRange = this.kdtree.nearest( [ position.x, position.y, position.z ], 1, this.maxDistance*10000 );
     const firstObject = positionsInRange[0];
     const firstObjectPoint = new THREE.Vector3().fromArray( firstObject[ 0 ].obj );
@@ -153,7 +158,7 @@ export class PageForceGraph extends LitElement {
     return { node: this.allObjects[objectIndex], pos: objectIndex };
   }
 
-  getNearestNode = function() {
+  getNearestNode () {
     let nearestObject = null;
     let nearestObjectInView = null;
     let nearestObjectDistance = null;
@@ -190,7 +195,7 @@ export class PageForceGraph extends LitElement {
   }
 
 
- hideLetters = () => {
+ hideLetters () {
     for ( var x = 0; x < this.allObjects.length; x ++ ) {
       this.allObjects[x].children[1].material.transparent = true;
       this.allObjects[x].children[1].material.opacity = 0.0;

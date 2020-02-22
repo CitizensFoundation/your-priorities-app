@@ -34,8 +34,8 @@ export class PageTrends extends LitElement {
 
   static get properties() {
     return {
-      title: { type: String },
-      logo: { type: Function },
+      collectionType: { type: String },
+      collectionId: { type: String },
     };
   }
 

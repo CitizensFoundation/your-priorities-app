@@ -2,9 +2,8 @@ import { LitElement, html, css } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map.js';
 
 import '../../page-trends/page-trends.js';
-import '../../list-of-grievances/list-of-grievances.js';
-import '../../list-of-grievances/one-grievance.js';
-import '../../page-force-graph/page-force-graph.js'
+import '../../page-stats/page-stats.js';
+import '../../page-similarities/page-similarities.js'
 
 import '@material/mwc-button';
 import '@material/mwc-tab';
@@ -15,7 +14,8 @@ import { FlexLayout } from './flex-layout.js';
 export class AnalyticsApp extends LitElement {
   static get properties() {
     return {
-      currentGrievance: { type: Object }
+      collectionType: { type: String },
+      collectionId: { type: String },
     };
   }
 
@@ -101,18 +101,12 @@ export class AnalyticsApp extends LitElement {
   constructor() {
     super();
     this.page = '0';
-    this.addEventListener("open-grievance", this._openGrievance);
-    this.addEventListener("close-grievance", this._closeGrievance);
   }
 
-  _openGrievance(event) {
-    this.currentGrievance = event.detail;
-    this.page="grievance";
-  }
-
-  _closeGrievance() {
-    this.currentGrievance = null;
-    this.page="0";
+  connectedCallback() {
+    super.connectedCallback();
+    this.collectionType = "domains";
+    this.collectionId = "422";
   }
 
   render() {
@@ -147,26 +141,22 @@ export class AnalyticsApp extends LitElement {
 
   _renderPage() {
     switch (this.page) {
-      case 'grievance':
-        return html`
-          <one-grievance ?fullView="${true}" .grievanceData="${this.currentGrievance}"></one-grievance>
-        `;
       case '0':
         return html`
-          <list-of-grievances></list-of-grievances>
+          <page-stats .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-stats>
         `;
       case '1':
         return html`
-        <page-trends></page-trends>
+          <page-trends .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-trends>
       `;
       case '2':
-          return html`
-            <page-force-graph></page-force-graph>
-          `;
-        default:
         return html`
-          <p>Page not found try going to <a href="#main">Main</a></p>
+          <page-force-graph .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-force-graph>
         `;
+      default:
+      return html`
+        <p>Page not found try going to <a href="#main">Main</a></p>
+      `;
     }
   }
 

@@ -1,10 +1,9 @@
 import { html, css } from 'lit-element';
 import { Data } from '../../analytics-app/src/data.js';
-
-import './Grievance.js'
 import { BaseElement } from '../../analytics-app/src/baseElement.js';
+import '../../wordcloud/wordcloud.js';
 
-export class ListOfGrievances extends BaseElement {
+export class PageStats extends BaseElement {
   static get styles() {
     return css`
       :host {
@@ -25,6 +24,9 @@ export class ListOfGrievances extends BaseElement {
 
   static get properties() {
     return {
+      collectionType: { type: String },
+      collectionId: { type: String },
+      dataUrl: { type: String }
     };
   }
 
@@ -32,12 +34,15 @@ export class ListOfGrievances extends BaseElement {
     super();
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.dataUrl ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
+  }
+
   render() {
     return html`
     <div class="container">
-      ${ Data.map((item) => html`
-        <one-grievance .grievanceData="${item}"></one-grievance>
-      `)}
+      <ac-wordcloud .dataUrl="${this.dataUrl}"></ac-wordcloud>
     </div>
     `;
   }
