@@ -2,7 +2,7 @@ import { html, css, LitElement } from 'lit-element';
 
 //const ForceGraph3D = require('3d-force-graph');
 
-export class PageSimilarities extends LitElement {
+export class PageConnections extends LitElement {
   static get styles() {
     return css`
       :host {
@@ -30,7 +30,8 @@ export class PageSimilarities extends LitElement {
     return {
       collectionType: { type: String },
       collectionId: { type: String },
-      dataUrl: { type: String }
+      dataUrl: { type: String },
+      graphData: { type: Object }
     };
   }
 
@@ -45,107 +46,132 @@ export class PageSimilarities extends LitElement {
     this.positionsCount = 0;
     this.cameraTimeStart = 800;
     this.cameraTime = this.cameraTimeStart;
-    this.url = "http://localhost:5000/api/v1/getCommunityPostsWithWeights/984";
   }
   connectedCallback() {
     super.connectedCallback();
     this.dataUrl ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
-  }
-
-  firstUpdated() {
-    super.firstUpdated();
-    this.graph = ForceGraph3D()
-     (this.shadowRoot.getElementById('3d-graph'))
-      .jsonUrl(this.dataUrl)
-      .nodeAutoColorBy('group')
-      .linkDirectionalParticles("value")
-      .linkDirectionalParticleSpeed(d => d.value * 0.001)
-      .nodeLabel("lemmatizedContentNOTTT")
-      .d3AlphaDecay(0.0120)
-      .d3VelocityDecay(0.7)
-      .onNodeClick(node => {
-        // Aim at node from outside it
-        const distance = 300;
-        const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
-
-        this.graph.cameraPosition(
-          { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
-          node, // lookAt ({ x, y, z })
-          3000  // ms transition duration
-        );
-      })
-      .nodeThreeObject(node => {
-        // use a sphere as a drag handle
-        let score = node.counter_endorsements_up-node.counter_endorsements_down;
-        score = score/30;
-        score = 0;
-        if (node.linkCount>0) {
-          const obj = new THREE.Mesh(
-          new THREE.SphereGeometry(10*score),
-          new THREE.MeshBasicMaterial({  color: 0xffffff, depthWrite: false, transparent: true, opacity: 0.025 }));
-
-          const loader = new THREE.TextureLoader();
-          loader.setCrossOrigin('anonymous');
-          const spriteMap = loader.load( node.imageUrl );
-          const spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
-          const imageSprite = new THREE.Sprite( spriteMaterial );
-          //TODO: Make image rounded corners or round
-          //TODO: Create glow for text
-          imageSprite.scale.set(24, 14);
-          imageSprite.position.y=17.0;
-          obj.add( imageSprite );
-
-          // add text sprite as child
-          const sprite = new SpriteText(node.name);
-          sprite.color = node.color;
-          sprite.textHeight = 7;
-          obj.add(sprite);
-
-
-          this.allObjects.push(obj);
-          this.allNodes.push(node);
-
-          return obj;
-        } else {
-          return null;
-        }
-      });
-
-    // Spread nodes a little wider
-    this.graph.d3Force('charge').strength(-750);
-
-    this.maxDistance = Math.pow( 120, 2 );
-    const currentPosition = this.graph.cameraPosition();
-
-    const getDistanceFrom = function(object,position) {
-      var objectDistance = new THREE.Vector3();
-      var target = new THREE.Vector3().copy(position);
-      objectDistance.subVectors(object.position, target);
-      return objectDistance.length();
+    this.graphData ={
+      nodes: [],
+      links: []
     };
-
-    const fastFwdButton = document.getElementById("fastFwdButton");
-
-    fastFwdButton.onmousedown = function() {
-      this.cameraTime = 100;
-    }
-
-    fastFwdButton.onmouseup = function () {
-      this.cameraTime = this.cameraTimeStart;
-    }
-
-    document.getElementById("startButton").onclick = function () {
-      makeAllTransparent();
-      startNearestNodeLoop();
-    }
-
-    setTimeout(()=>{
-      this.makeAllTransparent();
-      this.startNearestNodeLoop();
-    }, 30000);
   }
 
- distanceFunction( a, b ) {
+  //TODO: Slider for weight minimums - filter client side and update the data
+  //TODO: Traverse the ktree and build up position values for a position slider
+  //TODO: 2D version also with different weight minimums
+
+  firstUpdated () {
+    super.firstUpdated();
+    debugger;
+    this.setupForce3D();
+    debugger;
+    fetch(this.dataUrl, { credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(response => {
+      this.originalGraphData = response;
+      debugger;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        this.fire('app-error', error);
+      }
+    );
+  }
+
+  setupForce3D() {
+    this.graph = ForceGraph3D()
+    (this.shadowRoot.getElementById('3d-graph'))
+     .graphData(this.graphData)
+     .nodeAutoColorBy('group')
+     .linkDirectionalParticles("value")
+     .linkDirectionalParticleSpeed(d => d.value * 0.001)
+     .nodeLabel("lemmatizedContentNOTTT")
+     .d3AlphaDecay(0.0120)
+     .d3VelocityDecay(0.7)
+     .onNodeClick(node => {
+       // Aim at node from outside it
+       const distance = 300;
+       const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+
+       this.graph.cameraPosition(
+         { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
+         node, // lookAt ({ x, y, z })
+         3000  // ms transition duration
+       );
+     })
+     .nodeThreeObject(node => {
+       // use a sphere as a drag handle
+       let score = node.counter_endorsements_up-node.counter_endorsements_down;
+       score = score/30;
+       score = 0;
+       if (node.linkCount>0) {
+         const obj = new THREE.Mesh(
+         new THREE.SphereGeometry(10*score),
+         new THREE.MeshBasicMaterial({  color: 0xffffff, depthWrite: false, transparent: true, opacity: 0.025 }));
+
+         const loader = new THREE.TextureLoader();
+         loader.setCrossOrigin('anonymous');
+         const spriteMap = loader.load( node.imageUrl );
+         const spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
+         const imageSprite = new THREE.Sprite( spriteMaterial );
+         //TODO: Make image rounded corners or round
+         //TODO: Create glow for text
+         imageSprite.scale.set(24, 14);
+         imageSprite.position.y=17.0;
+         obj.add( imageSprite );
+
+         // add text sprite as child
+         const sprite = new SpriteText(node.name);
+         sprite.color = node.color;
+         sprite.textHeight = 7;
+         obj.add(sprite);
+
+
+         this.allObjects.push(obj);
+         this.allNodes.push(node);
+
+         return obj;
+       } else {
+         return null;
+       }
+    });
+
+        // Spread nodes a little wider
+        this.graph.d3Force('charge').strength(-350);
+/*
+        this.maxDistance = Math.pow( 120, 2 );
+        const currentPosition = this.graph.cameraPosition();
+
+        const getDistanceFrom = function(object,position) {
+          var objectDistance = new THREE.Vector3();
+          var target = new THREE.Vector3().copy(position);
+          objectDistance.subVectors(object.position, target);
+          return objectDistance.length();
+        };
+
+        const fastFwdButton = document.getElementById("fastFwdButton");
+
+        fastFwdButton.onmousedown = function() {
+          this.cameraTime = 100;
+        }
+
+        fastFwdButton.onmouseup = function () {
+          this.cameraTime = this.cameraTimeStart;
+        }
+
+        document.getElementById("startButton").onclick = function () {
+          makeAllTransparent();
+          startNearestNodeLoop();
+        }
+
+        setTimeout(()=>{
+          this.makeAllTransparent();
+          this.startNearestNodeLoop();
+        }, 30000); */
+
+  }
+
+  distanceFunction( a, b ) {
     return Math.pow( a[ 0 ] - b[ 0 ], 2 ) + Math.pow( a[ 1 ] - b[ 1 ], 2 ) + Math.pow( a[ 2 ] - b[ 2 ], 2 );
   };
 

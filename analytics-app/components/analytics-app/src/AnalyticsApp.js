@@ -3,13 +3,15 @@ import { classMap } from 'lit-html/directives/class-map.js';
 
 import '../../page-trends/page-trends.js';
 import '../../page-stats/page-stats.js';
-import '../../page-similarities/page-similarities.js'
+import '../../page-connections/page-connections.js'
+import '../../page-topics/page-topics.js'
 
 import '@material/mwc-button';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@material/mwc-icon';
 import { FlexLayout } from './flex-layout.js';
+import { ShadowStyles } from './shadow-styles.js';
 
 export class AnalyticsApp extends LitElement {
   static get properties() {
@@ -95,7 +97,7 @@ export class AnalyticsApp extends LitElement {
         margin-top: 28px;
         margin-left: 24px;
       }
-    `, FlexLayout];
+    `, FlexLayout, ShadowStyles];
   }
 
   constructor() {
@@ -105,8 +107,8 @@ export class AnalyticsApp extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.collectionType = "domains";
-    this.collectionId = "422";
+    this.collectionType = "communities";
+    this.collectionId = "5";
   }
 
   render() {
@@ -118,9 +120,10 @@ export class AnalyticsApp extends LitElement {
         </div>
       <header ?hidden="${this.currentGrievance}">
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-          <mwc-tab label="Stats" icon="accessibility" stacked></mwc-tab>
+          <mwc-tab label="Stats" icon="calendar_today" stacked></mwc-tab>
           <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
-          <mwc-tab label="Connections" icon="blur_on" stacked></mwc-tab>
+          <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
+          <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
         </mwc-tab-bar>
       </header>
 
@@ -151,7 +154,11 @@ export class AnalyticsApp extends LitElement {
       `;
       case '2':
         return html`
-          <page-force-graph .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-force-graph>
+          <page-topics .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
+        `;
+      case '3':
+        return html`
+          <page-connections .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
         `;
       default:
       return html`
