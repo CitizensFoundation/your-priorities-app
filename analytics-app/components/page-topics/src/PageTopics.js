@@ -28,7 +28,7 @@ export class PageTopics extends LitElement {
       .clusters {
       	columns: 250px;
       	column-gap: 16px;
-        width: 100vw;
+        width: 95vw;
         padding-left: 64px;
         padding-right: 64px;
       }
@@ -122,7 +122,6 @@ export class PageTopics extends LitElement {
       return -1;
     }
 
-    debugger;
     this.originalData.links.forEach(link => {
      if (link.value>this.weightsFilter) {
        const sourceId = parseInt(link.source);
