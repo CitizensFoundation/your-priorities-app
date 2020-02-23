@@ -1,5 +1,6 @@
 import { html, css, LitElement } from 'lit-element';
 
+import '@material/mwc-slider';
 //const ForceGraph3D = require('3d-force-graph');
 
 export class PageConnections extends LitElement {
@@ -31,7 +32,9 @@ export class PageConnections extends LitElement {
       collectionType: { type: String },
       collectionId: { type: String },
       dataUrl: { type: String },
-      graphData: { type: Object }
+      graphData: { type: Object },
+      weightsFilter: { type: Number },
+      originalGraphData: { type: Object }
     };
   }
 
@@ -50,6 +53,7 @@ export class PageConnections extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.dataUrl ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
+    this.weightsFilter = 0.80;
     this.graphData ={
       nodes: [],
       links: []
@@ -60,16 +64,48 @@ export class PageConnections extends LitElement {
   //TODO: Traverse the ktree and build up position values for a position slider
   //TODO: 2D version also with different weight minimums
 
+  setGraphData() {
+    const links = [];
+    const nodesLinkCounts = {};
+    for (let i=0; i<this.originalGraphData.links.length;i++) {
+      const sourceId = parseInt(this.originalGraphData.links[i].source);
+      const targetId = parseInt(this.originalGraphData.links[i].target);
+
+
+      if (!nodesLinkCounts[sourceId]) {
+        nodesLinkCounts[sourceId] = 0;
+      }
+
+      if (!nodesLinkCounts[targetId]) {
+        nodesLinkCounts[targetId] = 0;
+      }
+
+      if (this.originalGraphData.links[i].value>this.weightsFilter) {
+        links.push(this.originalGraphData.links[i])
+        nodesLinkCounts[sourceId] += 1;
+        nodesLinkCounts[targetId] += 1;
+      }
+    }
+
+     for (let i = 0; i < this.originalGraphData.nodes.length; i++) {
+       const id = parseInt(this.originalGraphData.nodes[i].id);
+       this.originalGraphData.nodes[i].linkCount = nodesLinkCounts[id];
+     }
+
+    this.graph.graphData({
+      nodes: this.originalGraphData.nodes,
+      links
+    })
+  }
+
   firstUpdated () {
     super.firstUpdated();
-    debugger;
     this.setupForce3D();
-    debugger;
     fetch(this.dataUrl, { credentials: 'same-origin' })
     .then(res => res.json())
     .then(response => {
-      this.originalGraphData = response;
-      debugger;
+      this.originalGraphData = {...response};
+      this.setGraphData();
     })
     .catch(error => {
         console.error('Error:', error);
@@ -131,8 +167,6 @@ export class PageConnections extends LitElement {
          this.allNodes.push(node);
 
          return obj;
-       } else {
-         return null;
        }
     });
 
@@ -314,9 +348,26 @@ export class PageConnections extends LitElement {
     console.log( 'TIME building kdtree', new Date().getTime() - measureStart );
   }
 
+  sliderChange(event) {
+    const weightsFilter = event.detail.value;
+    if (this.weightsFilter!==weightsFilter) {
+      this.weightsFilter = parseFloat(weightsFilter)/100.0;
+      this.setGraphData();
+    }
+  }
 
   render() {
     return html`
+        <mwc-slider
+            step="2"
+            pin
+            ?disabled="${!this.originalGraphData}"
+            markers
+            @change=${this.sliderChange}
+            max="95"
+            min="55"
+            value="80">
+        </mwc-slider>
       <div id="3d-graph"></div>
     `;
   }

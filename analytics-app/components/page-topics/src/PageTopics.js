@@ -1,14 +1,15 @@
 import { html, css, LitElement } from 'lit-element';
 
 //const ForceGraph3D = require('3d-force-graph');
+import '@material/mwc-slider';
 
 export class PageTopics extends LitElement {
   static get styles() {
     return css`
       :host {
-        display: block;
-        padding: 25px;
-        text-align: center;
+        display: grid;
+        padding: 16px;
+        width: 100%;
       }
 
       svg {
@@ -24,8 +25,36 @@ export class PageTopics extends LitElement {
         }
       }
 
+      .clusters {
+      	columns: 250px;
+      	column-gap: 16px;
+        width: 100vw;
+        padding-left: 64px;
+        padding-right: 64px;
+      }
+
+      .postName {
+        font-size: 12px;
+        color: #000;
+      }
+
+      a {
+        color: #000;
+      }
+
       .cluster {
-        margin: 32px;
+        break-inside: avoid-column;
+      	margin-bottom: 1rem;
+        color: #111;
+        background: white;
+        border-radius: 5px;
+        padding: 1rem;
+        text-decoration: none;
+        box-shadow: 0px 1px 1px 1px #ddd;
+      }
+
+      .cluster:hover {
+        transform: scale(1.007);
       }
     `;
   }
@@ -35,7 +64,7 @@ export class PageTopics extends LitElement {
       collectionType: { type: String },
       collectionId: { type: String },
       dataUrl: { type: String },
-      minimumLinkWeight: { type: Number },
+      weightsFilter: { type: Number },
       nodesHash: { type: Object },
       clusters: { type: Array }
     };
@@ -56,7 +85,7 @@ export class PageTopics extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.minimumLinkWeight = 0.75;
+    this.weightsFilter = 0.70;
     this.clusters = [];
     this.dataUrl ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
   }
@@ -70,7 +99,8 @@ export class PageTopics extends LitElement {
     fetch(this.dataUrl, { credentials: 'same-origin' })
     .then(res => res.json())
     .then(response => {
-      this.buildTopClusters(response);
+      this.originalData = response;
+      this.buildTopClusters();
     })
     .catch(error => {
         console.error('Error:', error);
@@ -79,8 +109,10 @@ export class PageTopics extends LitElement {
     );
   }
 
-  buildTopClusters (data) {
+  buildTopClusters () {
+    console.error("start")
     const clusters = [];
+    const nodesLinkCounts = {}
     const searchClusters = (id) => {
       for (let i = 0; i < clusters.length; i++) {
         if (clusters[i].indexOf(id)>-1) {
@@ -90,23 +122,32 @@ export class PageTopics extends LitElement {
       return -1;
     }
 
-    data.links.forEach(link => {
-     if (link.value>this.minimumLinkWeight) {
+    debugger;
+    this.originalData.links.forEach(link => {
+     if (link.value>this.weightsFilter) {
        const sourceId = parseInt(link.source);
        const targetId = parseInt(link.target);
 
-       const sourceInClusterId = searchClusters(sourceId);
-       const targetInClusterId = searchClusters(targetId);
-        // Check if source is in a cluster
-        // Check if target is in a cluster
+       if (!nodesLinkCounts[sourceId]) {
+         nodesLinkCounts[sourceId] = 0;
+       } else {
+         nodesLinkCounts[sourceId] += 1;
+       }
 
+      if (!nodesLinkCounts[targetId]) {
+        nodesLinkCounts[targetId] = 0;
+      } else {
+        nodesLinkCounts[targetId] += 1;
+      }
+
+      const sourceInClusterId = searchClusters(sourceId);
+       const targetInClusterId = searchClusters(targetId);
         if (sourceInClusterId===-1 && targetInClusterId===-1) {
           clusters.push([sourceId,targetId]);
-        }
-
-        if (sourceInClusterId!==-1) {
+        } else if (sourceInClusterId!==-1 && targetInClusterId!==-1) {
+          // Dont do anything
+        } else if (sourceInClusterId!==-1) {
           clusters[sourceInClusterId].push(targetId);
-
         } else if (targetInClusterId!==-1) {
           clusters[targetInClusterId].push(sourceId);
         }
@@ -116,34 +157,53 @@ export class PageTopics extends LitElement {
     this.nodesHash = {};
     this.clusters = clusters;
 
-    for (let i = 0; i < data.nodes.length; i++) {
-      this.nodesHash[parseInt(data.nodes[i].id)]=data.nodes[i];
+    for (let i = 0; i < this.originalData.nodes.length; i++) {
+      const id = parseInt(this.originalData.nodes[i].id);
+      this.nodesHash[id]=this.originalData.nodes[i];
+      this.nodesHash[id].linkCount = nodesLinkCounts[id];
+    }
+    console.error("end")
+  }
+
+  getPostName(postId) {
+    return this.nodesHash[postId].name;
+  }
+
+  sliderChange(event) {
+    const weightsFilter = event.detail.value;
+    if (this.weightsFilter!==weightsFilter) {
+      this.weightsFilter = parseFloat(weightsFilter)/100.0;
+      this.buildTopClusters();
     }
   }
 
- getPostName(postId) {
-   return this.nodesHash[postId].name;
- }
-
   render() {
     return html`
-      <div id="clusters">
-        ${this.clusters.map(cluster=>{
+     <mwc-slider
+            step="2"
+            pin
+            ?disabled="${!this.clusters || this.clusters.length===0}"
+            markers
+            @change=${this.sliderChange}
+            max="95"
+            min="55"
+            value="70">
+      </mwc-slider>
+      <div id="clusters" class="clusters">
+        ${this.clusters.map(cluster => {
           return html`
-            <div class="cluster">
-              ${cluster.map(postId=>{
+            <div class="cluster" data-span="4">
+              ${cluster.map(postId => {
                 return html`
-                  <div class="post">
-                    <div class="postName">
-                    ${this.getPostName(postId)}
+                    <div class="post postName layout horizontal">
+                      <img width="40" height="22" src="${this.nodesHash[postId].imageUrl}"/>
+                      <a href="/post/${postId}" target="_blank">${this.getPostName(postId)}</a>
                     </div>
-                  </div>
                 `
               })}
             </div>
           `
         })}
-
       </div>
     `;
   }

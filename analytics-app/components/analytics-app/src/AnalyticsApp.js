@@ -108,7 +108,7 @@ export class AnalyticsApp extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.collectionType = "communities";
-    this.collectionId = "5";
+    this.collectionId = "973";
   }
 
   render() {
