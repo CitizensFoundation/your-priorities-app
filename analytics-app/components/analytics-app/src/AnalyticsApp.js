@@ -113,10 +113,10 @@ export class AnalyticsApp extends LitElement {
 
   render() {
     return html`
-        <div class="paceImage layout horizontal">
+        <div class="paceImage layout horizontal" hidden>
           <div><img height="100" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
           <div class="flex"></div>
-          <div class="analyticsText">Group analytics: Community Wellbeing</div>
+          <div class="analyticsText">Community: Hverfið mitt 2019</div>
         </div>
       <header ?hidden="${this.currentGrievance}">
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
