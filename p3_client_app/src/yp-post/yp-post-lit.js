@@ -96,7 +96,7 @@ class YpPostLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-  
+
       .container {
         padding-top: 0;
         margin-top: -70px;
@@ -104,11 +104,11 @@ class YpPostLit extends YpBaseElement {
       }
 
       .flex {
-  
+
       }
 
       .centerContainer {
-        
+
       }
 
       .postHeader {
@@ -186,7 +186,7 @@ class YpPostLit extends YpBaseElement {
       @media (max-width: 360px) {
 
         .centerContainer {
-  
+
         }
 
         .postHeader {
@@ -364,13 +364,12 @@ class YpPostLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.post ? html`
-    <div class="topContainer layout vertical center-center" is-post .createFabTitle="${this.t('point.add')}" .on-yp-create-fab-tap="_newPoint">
+    <div class="topContainer layout vertical center-center" is-post .createFabTitle="${this.t('point.add')}" @yp-create-fab-tap="${this._newPoint}">
 
-      <yp-post-header id="postCard" class="largeCard" .post="${this.post}" .on-refresh="_refreshAjax" .header-mode></yp-post-header>
+      <yp-post-header id="postCard" class="largeCard" .post="${this.post}" @refresh="${this._refreshAjax}" .headermode></yp-post-header>
 
       <div class="layout horizontal center-center" ?hidden="${this.post.Group.configuration.hideAllTabs}">
-        <paper-tabs id="paper_tabs" class="tabs" .selected="${this.selectedTab}" .attr-for-selected="name" .focused="">
+        <paper-tabs id="paper_tabs" class="tabs" .selected="${this.selectedTab}" .attrForSelected="name" .focused="">
           <paper-tab .name="debate">
             <div class="layout vertical center-center tabCounterContainer">
               <span>${this.t('post.tabs.debate')} (<span id="tabCountDebate"></span>)</span>
@@ -391,34 +390,29 @@ class YpPostLit extends YpBaseElement {
           <yp-post-points .host="${this.host}" id="pointsSection" .post="${this.post}" .scrollToId="${this.scrollToPointId}"></yp-post-points>
         </div>
         <section .name="news" class="minHeightSection">
-  
+
           ${ this.newsTabSelected ? html`
           <ac-activities id="postNews" .selectedTab="${this.selectedTab}" .disableNewPosts="${this.disableNewPosts}" .postGroupId="${this.post.group_id}" .postId="${this.post.id}"></ac-activities>
           `: html``}
+
         </section>
         <section .name="location" class="minHeightSection">
           <div class="layout horizontal center-center">
 
+            ${ this.post.location ? html`
               ${ this.mapActive ? html`
                 <paper-material class="mapContainer" .elevation="3">
-                  <google-map .additionalMapOptions="{'keyboardShortcuts':false}" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" .libraries="places" class="map" .mapType="${this.post.location.mapType}" .zoom="${this.post.location.map_zoom}" fitToMarkers="">
+                  <google-map .additionalMapOptions="{'keyboardShortcuts':false}" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" .libraries="places" class="map" .mapType="${this.post.location.mapType}" .zoom="${this.post.location.map_zoom}" ,fitToMarkers="">
                     <google-map-marker slot="markers" latitude="${this.post.location.latitude}" longitude="${this.post.location.longitude}" id="marker"></google-map-marker>
                   </google-map>
                 </paper-material>
               `: html``}
-
-            ${ this.post.location ? html`
-              <paper-material class="mapContainer" .elevation="3">
-                <google-map .additionalMapOptions="{'keyboardShortcuts':false}" .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" id="map" .libraries="places" class="map" .mapType="${this.post.location.mapType}" .zoom="${this.post.location.map_zoom}" fitToMarkers="">
-                  <google-map-marker slot="markers" latitude="${this.post.location.latitude}" longitude="${this.post.location.longitude}" id="marker"></google-map-marker>
-                </google-map>
-              </paper-material>
-            `: html`
-             <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
-            `}
+            `: html``}
 
             ${ this.post ? html`
-              <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
+              ${ !this.post.location ? html`
+                <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
+              `: html``}
             `: html``}
 
           </div>
@@ -433,7 +427,7 @@ class YpPostLit extends YpBaseElement {
       </iron-pages>
     </div>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <app-route .route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
@@ -444,7 +438,7 @@ class YpPostLit extends YpBaseElement {
     <iron-media-query .query="(min-width: 1024px)" queryMatches="${this.wideWidth}"></iron-media-query>
 
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.post.Group.configuration.hideNewPostOnPostPage}">
-      
+
       ${ !this.disableNewPosts ? html`
         <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" .wideLayout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
       `: html``}
@@ -454,11 +448,10 @@ class YpPostLit extends YpBaseElement {
       <yp-ajax id="ajax" @response="${this._handleIncomingPostResponse}"></yp-ajax>
       <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
     </div>
-`: html``}
-`
+    `
   }
 
-  
+
 /*
   behaviors: [
     ypLanguageBehavior,

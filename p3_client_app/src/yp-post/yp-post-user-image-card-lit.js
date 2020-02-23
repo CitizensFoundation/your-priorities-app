@@ -18,17 +18,17 @@ class YpPostUserImageCardLit extends YpBaseElement {
       image: {
         type: Object
       },
-  
+
       post: {
         type: Object
       }
-    } 
+    }
   }
 
   static get styles() {
     return [
       css`
-      
+
       .description {
         padding-left: 16px;
         padding-right: 16px;
@@ -99,10 +99,9 @@ class YpPostUserImageCardLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
-    ${this.post ? html`
     <paper-material .elevation="2" class="layout vertical">
       <iron-image .title="${this.image.description}" .sizing="cover" src="${this._imageUrl(image)}"></iron-image>
       <div class="description">
@@ -119,8 +118,7 @@ class YpPostUserImageCardLit extends YpBaseElement {
       </div>
       <yp-point-comment-list class="commentsList" .image="${this.image}"></yp-point-comment-list>
     </paper-material>
-` : html``}
-`
+    `
   }
 
 /*

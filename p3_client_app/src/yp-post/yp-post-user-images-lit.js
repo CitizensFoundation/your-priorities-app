@@ -44,7 +44,9 @@ class YpPostUserImagesLit extends YpBaseElement {
   }
   render() {
     return html`
-    ${this.post ? html`
+
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+
     <div class="layout vertical center-center">
       ${ this.post ? html`
         <paper-button raised="" @tap="${this._newImage}">${this.t('posts.newUserImage')}</paper-button>

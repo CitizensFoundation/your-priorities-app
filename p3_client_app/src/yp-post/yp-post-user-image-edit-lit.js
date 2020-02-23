@@ -10,86 +10,86 @@ import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
-class YpPostUserImageEditLit extends YpBaseElement { 
+class YpPostUserImageEditLit extends YpBaseElement {
   static get properties() {
     return {
       new: {
         type: Boolean,
         value: false
       },
-  
+
       image: {
         type: Object,
         observer: '_imageChanged'
       },
-  
+
       post: {
         type: Object,
         observer: '_postChange'
       },
-  
+
       action: {
         type: String,
         value: "/api/images"
       },
-  
+
       imageUploadTarget: {
         type: String,
         notify: true
       },
-  
+
       uploadedPostUserImageId: {
         type: String
       },
-  
+
       oldUploadedPostUserImageId: {
         type: String
       },
-  
+
       editHeaderText: {
         type: String
       },
-  
+
       saveText: {
         type: String
       },
-  
+
       method: {
         type: String
       }
     }
   }
-  
+
   static get styles() {
     return [YpFlexLayout]
   }
 
-  
+
   render() {
     return html`
-      <yp-edit-dialog double-width id="editDialog" .icon="photo-camera" .action="${this.action}" .title="${this.editHeaderText}" method="${this.method}" save-text="${this.saveText}" next-action-text="${this.t('next')}" toast-text="${this.toastText}" params="${this.params}">
-        <div class="layout vertical center-center">
-          <yp-file-upload id="imageFileUpload" raised method="POST" @success="${this._imageUploaded}">
-            <iron-icon class="icon" .icon="photo-camera"></iron-icon>
-            <span>${this.t('image.upload')}</span>
-          </yp-file-upload>
-        </div>
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <yp-edit-dialog ?doubleWidth id="editDialog" .icon="photo-camera" .action="${this.action}" .title="${this.editHeaderText}" method="${this.method}" .saveText="${this.saveText}" .nextActionText="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
+      <div class="layout vertical center-center">
+        <yp-file-upload id="imageFileUpload" raised method="POST" @success="${this._imageUploaded}">
+          <iron-icon class="icon" .icon="photo-camera"></iron-icon>
+          <span>${this.t('image.upload')}</span>
+        </yp-file-upload>
+      </div>
 
-      <paper-input id="photographerName" .name="photographerName" .type="text" .label="${this.t('post.photographerName')}" value="${this.image.photographer_name}" maxlength="60" char-counter="">
-      </paper-input>
+    <paper-input id="photographerName" .name="photographerName" .type="text" .label="${this.t('post.photographerName')}" value="${this.image.photographer_name}" maxlength="60" char-counter="">
+    </paper-input>
 
-      <paper-textarea id="description" required .minlength="1" .name="description" .value="${this.image.description}" always-float-label="${this.image.description}" label="${this.t('post.description')}" charCounter .rows="2" .max-rows="5" .maxlength="200">
-      </paper-textarea>
+    <paper-textarea id="description" required .minlength="1" .name="description" .value="${this.image.description}" always-float-label="${this.image.description}" label="${this.t('post.description')}" charCounter .rows="2" .max-rows="5" .maxlength="200">
+    </paper-textarea>
 
-      <input .type="hidden" .name="uploadedPostUserImageId" .value="${this.uploadedPostUserImageId}">
-      <input .type="hidden" .name="oldUploadedPostUserImageId" .value="${this.oldUploadedPostUserImageId}">
+    <input .type="hidden" .name="uploadedPostUserImageId" .value="${this.uploadedPostUserImageId}">
+    <input .type="hidden" .name="oldUploadedPostUserImageId" .value="${this.oldUploadedPostUserImageId}">
 
     </yp-edit-dialog>
-` 
-
+    `
   }
 
-  
+
 /*
   behaviors: [
     ypLanguageBehavior,

@@ -42,6 +42,12 @@ class YpPostMapLit extends YpBaseElement {
     return [
       css`
 
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
       .mapContainer {
         margin: 0;
         padding: 0;
@@ -129,7 +135,8 @@ class YpPostMapLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.post ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <iron-media-query query="(min-width: 1000px)" query-matches="${this.wide}"></iron-media-query>
     <div class="layout vertical center-center">
 
       ${ this.posts ? html`
@@ -153,14 +160,13 @@ class YpPostMapLit extends YpBaseElement {
           <div>${this.t('posts.noMapPosts')}</div>
         </paper-material>
       `: html``}
+
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" @response="${this._response}"></yp-ajax>
       </div>
     </div>
-` : html``}
-`
+    `
   }
-
 
 /*
   behaviors: [

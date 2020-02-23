@@ -23,15 +23,18 @@ class YpPostMoveLit extends YpBaseElement {
         type: Object
       },
 
-      selectedGroupId: {
-      Number
-      },
+      selectedGroupId: Number
+
     }
   }
 
   static get styles() {
     return [
       css`
+
+      .additionalSettings {
+        padding-top: 16px;
+      }
 
       paper-textarea {
         padding-top: 16px;
@@ -45,20 +48,19 @@ class YpPostMoveLit extends YpBaseElement {
 
   render() {
     return html`
-      ${this.post ? html`
-        <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" .icon="language" confirmation-text="${this.t('post.statusChangeConfirmText')}" action="${this.action}" method="${this.method}" params="${this.params}" save-text="${this.saveText}" toast-text="${this.toastText}">
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" .icon="language" confirmation-text="${this.t('post.statusChangeConfirmText')}" action="${this.action}" method="${this.method}" params="${this.params}" save-text="${this.saveText}" .toastText="${this.toastText}">
 
-          ${ this.availableGroups.map(group => html`
-            <div class="groupName" @tap="${this._selectGroup}" data-args="${this.group.id}" data-args-name="${this.group.name}">${this.group.name}</div>
-          `)}
+      ${ this.availableGroups.map(group => html`
+        <div class="groupName" @tap="${this._selectGroup}" data-args="${this.group.id}" data-args-name="${this.group.name}">${this.group.name}</div>
+      `)}
 
-          <div class="layout horizontal center-center">
-            <yp-ajax .method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" @response="${this._getGroupsResponse}"></yp-ajax>
-            <yp-ajax .method="PUT" id="movePostAjax" @response="${this._movePostResponse}"></yp-ajax>
-          </div>
-        </yp-edit-dialog>
-` : html``}
-`
+      <div class="layout horizontal center-center">
+        <yp-ajax .method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" @response="${this._getGroupsResponse}"></yp-ajax>
+        <yp-ajax .method="PUT" id="movePostAjax" @response="${this._movePostResponse}"></yp-ajax>
+      </div>
+    </yp-edit-dialog>
+    `
   }
 
 /*

@@ -16,78 +16,84 @@ import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 class YpPostLocationLit extends YpBaseElement {
   static get properties() {
     return {
-      
+
       map: {
         type: Object
       },
-  
+
       group: {
         type: Object,
         observer: '_groupChanged'
       },
-  
+
       defaultLatitude: {
         type: String,
         value: "64.13897027178841"
       },
-  
+
       defaultLongitude: {
         type: String,
         value: "-21.876912117004395"
       },
-  
+
       mapSearchString: {
         type: String,
         value: ""
       },
-  
+
       mapSearchResultAddress: {
         type: String,
         value: ""
       },
-  
+
       location: {
         type: Object,
         observer: "_locationChanged",
         notify: true
       },
-  
+
       mapZoom: {
         type: Number,
         value: 13,
         computed: '_computeMapZoom(location)'
       },
-  
+
       encodedLocation: {
         type: String,
         notify: true
       },
-  
+
       post: {
         type: Object,
         observer: "_postChanged"
       },
-  
+
       marker: {
         type: Object
       },
-  
+
       active: {
         type: Boolean,
         value: false
       },
-  
+
       narrowPad: Boolean
     }
   }
 
-  
+
   static get styles() {
     return [
       css`
 
+      :host {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
       .location-button {
-  
+
       }
 
       #map {
@@ -137,13 +143,13 @@ class YpPostLocationLit extends YpBaseElement {
 
   render() {
     return html`
-      ${this.post ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
-    <iron-media-query .query="(max-width: 1024px)" .queryMatches="${this.narrowPad}"></iron-media-query>
+    <iron-media-query query="(max-width: 1024px)" queryMatches="${this.narrowPad}"></iron-media-query>
 
-    <google-map-search id="mapSearch" .map="${this.map}" .on-google-map-search-results="_mapSearchResults"></google-map-search>
+    <google-map-search id="mapSearch" .map="${this.map}" @google-map-search-results="${this._mapSearchResults}"></google-map-search>
 
-    <google-map .additional-map-options="{'keyboardShortcuts':false}" id="map" .zoom="${this.mapZoom}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .map="${this.map}" .libraries="places" .on-map-type-changed="_mapTypeChanged" class="map" .click-events="" @zoom-changed="${this._zoomChanged}" @google-map-click="${this_setLocation}" .fit-to-markers="">
+    <google-map .additionalMapOptions="{'keyboardShortcuts':false}" id="map" .zoom="${this.mapZoom}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .map="${this.map}" .libraries="places" @map-type-changed="${this._mapTypeChanged}" class="map" .clickEvents="" @zoom-changed="${this._zoomChanged}" @google-map-click="${this_setLocation}" .fitToMarkers="">
       <google-map-marker slot="markers" .latitude="${this.defaultLatitude}" .longitude="${this.defaultLongitude}" id="marker"></google-map-marker>
     </google-map>
 
@@ -157,8 +163,7 @@ class YpPostLocationLit extends YpBaseElement {
       </div>
       <paper-spinner id="spinner"></paper-spinner>
     </div>
-` : html``}
-`
+    `
   }
 
 /*

@@ -18,122 +18,122 @@ class YpPostListLit extends YpBaseElements {
     return {
 
       wide: Boolean,
-  
+
       categories: {
         type: Array
       },
-  
+
       subTitle: {
         type: String,
         notify: true
       },
-  
+
       defaultCategories: {
         type: Boolean,
         value: false
       },
-  
+
       posts: {
         type: Array,
         value: null,
         notify: true
       },
-  
+
       groupId: {
         type: Number,
         observer: "_groupIdChanged"
       },
-  
+
       userId: {
         type: Number
       },
-  
+
       group: {
         type: Object,
         notify: true,
         observer: "_groupChanged"
       },
-  
+
       filter: {
         type: String,
         value: "newest",
         observer: "_filterChanged"
       },
-  
+
       statusFilter: {
         type: String,
         value: "open",
         notify: true
       },
-  
+
       categoryId: {
         type: String,
         observer: "_categoryIdChanged"
       },
-  
+
       postsCount: {
         type: Number,
         notify: true
       },
-  
+
       searchTarget: {
         type: Object,
         computed: '_searchTarget(noPosts)'
       },
-  
+
       categoryName: {
         type: String
       },
-  
+
       searchingFor: {
         type: String,
         value: null,
         observer: "_searchingForChanged"
       },
-  
+
       selectedCategoryName: {
         type: String
       },
-  
+
       selectedTab: {
         type: String,
         observer: '_selectedTabChanged'
       },
-  
+
       tabCounterId: {
         type: String
       },
-  
+
       oldestPostAt: {
         type: Date
       },
-  
+
       noPosts: {
         type: Boolean,
         value: false
-  
+
       },
-  
+
       wideListOffset: {
         type: Number,
         value: 610
       },
-  
+
       listOffset: {
         type: String,
         value: "500px"
       },
-  
+
       showSearchIcon: {
         type: Boolean,
         value: false
       },
-  
+
       randomSeed: {
         type: Number,
         value: null
       },
-  
+
       scrollOffset: {
         type: Number,
         computed: '_scrollOffset(wide, group, selectedTab)'
@@ -169,7 +169,7 @@ static get styles() {
       }
 
       #outerRegion {
-
+        position: relative;
       }
 
       #scrollableRegion {
@@ -284,12 +284,13 @@ static get styles() {
         position: absolute;
         bottom: 32px;
       }
-    `, YpFlexLayout]  
+    `, YpFlexLayout]
   }
- 
+
   render() {
     return html`
-      ${this.post ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
 
     <iron-a11y-keys id="a11y" .target="${this.searchTarget}" .keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
 
@@ -313,6 +314,7 @@ static get styles() {
           </paper-material>
         </div>
       `: html``}
+
       <div class="layout horizontal center-center">
         <iron-list id="ironList" .scroll-offset="${this.scrollOffset}" .items="${this.posts}" as="post" .scroll-target="document" grid="${this.wide}">
           <template>
@@ -327,8 +329,7 @@ static get styles() {
         <yp-ajax id="ajax" .large-spinner @response="${this._postsResponse}"></yp-ajax>
       </div>
     </div>
-` : html``}
-`
+    `
   }
 
 /*
@@ -337,7 +338,7 @@ static get styles() {
     ypIronListBehavior
   ],
 */
- 
+
 
   _scrollOffset(wide, group) {
     var list = this.$$("iron-list");

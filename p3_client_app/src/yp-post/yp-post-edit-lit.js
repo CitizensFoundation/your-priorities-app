@@ -158,89 +158,116 @@ class YpPostEditLit extends YpBaseElement {
     return [
       css`
 
+      .access {
+
+      }
+
       paper-button {
         background-color: var(--accent-color);
         color: #FFF;
       }
+
       yp-file-upload {
         margin-top: 16px;
       }
+
       .accessHeader {
         color: var(--primary-color,#777);
         font-weight: normal;
         margin-bottom: 0;
       }
+
       paper-radio-button {
         display: block;
       }
+
       .container {
         width: 100%;
         width: 100%;
       }
+
       yp-post-location {
         min-height: 320px;
       }
+
       @media (max-width: 600px) {
         .container {
           padding-right: 16px;
         }
+
         .subContainer {
         }
+
         paper-tab {
           font-size: 12px;
         }
       }
+
       yp-post-location {
       }
+
       section {
         margin-top: 32px;
       }
+
       .imageSizeInfo {
         font-size: 12px;
         padding-bottom: 16px;
         color: #444;
       }
+
       paper-dropdown-menu {
         max-width: 250px;
       }
+
       .optional {
         font-size: 12px;
       }
+
       .icon {
         padding-right: 8px;
       }
+
       [hidden] {
         display: none !important;
       }
+
       paper-checkbox {
         margin-left: 8px;
         margin-top: 4px;
       }
+
       section {
         width: 100%;
       }
+
       .contactInfo {
         margin-top: 16px;
       }
+
       #description {
         --paper-input-container-input: {
           max-height: 125px;
         }
       }
+
       .postEmoji {
         margin-left: 16px;
       }
+
       .uploadSection {
         max-width: 220px;
         vertical-align: top;
         margin-left: 8px;
         margin-right: 8px;
       }
+
       @media (max-width: 600px) {
         .uploadSection {
           max-width: 100%;
         }
       }
+
       .postCoverVideoInfo {
         margin-top: 8px;
       }
@@ -250,8 +277,8 @@ class YpPostEditLit extends YpBaseElement {
   render() {
     return html`
     ${this.post ? html`
-    <yp-edit-dialog .name="postEdit" double-width id="editDialog" .icon="lightbulb-outline" .action="${this.action}" .use-next-tab-action="${this.newPost}" @next-tab-action="${this._nextTab}" .method="${this.method}" .title="${this.editHeaderText}" .saveText="${this.saveText}" class="container" custom-submit .next-action-text="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
-      <paper-tabs .selected="${this.selected}" id="paperTabs" .focused="">
+    <yp-edit-dialog .name="postEdit" double-width id="editDialog" .icon="lightbulb-outline" .action="${this.action}" .use-next-tab-action="${this.newPost}" @next-tab-action="${this._nextTab}" .method="${this.method}" title="${this.editHeaderText}" .saveText="${this.saveText}" class="container" custom-submit .next-action-text="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
+      <paper-tabs .selected="${this.selected}" id="paperTabs" .focused>
         <paper-tab><span>${this.t('post.yourPost')}</span></paper-tab>
 
         ${ this.newPointShown ? html`
@@ -277,10 +304,10 @@ class YpPostEditLit extends YpBaseElement {
       <div class="layout vertical wrap">
         <iron-pages id="pages" class="layout horizontal" .selected="${this.selected}">
           <section>
-
             <div class="layout vertical flex">
-              <paper-input id="name" .required="" .minlength="3" .name="name" .type="text" .label="${this.t('title')}" .value="${this.post.name}" .maxlength="60" .char-counter="">
-              </paper-input>
+
+            <paper-input id="name" .required="" .minlength="3" .name="name" .type="text" .label="${this.t('title')}" .value="${this.post.name}" .maxlength="60" .char-counter="">
+            </paper-input>
 
               ${ this._showCategories(group) ? html`
                 <paper-dropdown-menu .label="${this.t('category.select')}">
@@ -298,6 +325,7 @@ class YpPostEditLit extends YpBaseElement {
               ${ this.postDescriptionLimit ? html`
                 <paper-textarea id="description" ?hidden="${this.structuredQuestions}" .required="${!this.structuredQuestions}" .minlength="3" .name="description" .value="${this.post.description}" .always-float-label="${this._floatIfValueOrIE(post.description)}" .label="${this.t('post.description')}" .on-value-changed="_resizeScrollerIfNeeded" .char-counter="" .rows="2" .max-rows="5" .maxrows="5" .maxlength="${this.postDescriptionLimit}">
                 </paper-textarea>
+
                 <div class="horizontal end-justified layout postEmoji" ?hidden="${this.group.configuration.hideEmoji}">
                   <emoji-selector id="emojiSelectorDescription" ?hidden="${this.structuredQuestions}"></emoji-selector>
                 </div>
@@ -316,12 +344,12 @@ class YpPostEditLit extends YpBaseElement {
                 <yp-file-upload id="attachmentFileUpload" raised .accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*" .target="/api/groups/${this.group.id}/upload_document" .method="POST" @success="${this._documentUploaded}">
                   <iron-icon class="icon" .icon="attach-file"></iron-icon>
                   <span>${this.t('uploadAttachment')}</span>
-
-                  ${ this.post.data.attachment.url ? html`
-                    <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
-                  `: html``}
-
                 </yp-file-upload>
+
+                ${ this.post.data.attachment.url ? html`
+                  <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
+                `: html``}
+
               `: html``}
 
               ${ this.group.configuration.moreContactInformation ? html`
