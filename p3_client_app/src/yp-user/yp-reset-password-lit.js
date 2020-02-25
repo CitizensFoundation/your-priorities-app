@@ -17,11 +17,11 @@ class YpResetPasswordLit extends YpBaseElement {
         type: String,
         value: ""
       },
-  
+
       token: {
         type: String
       },
-  
+
       passwordErrorMessage: {
         type: String
       }
@@ -51,10 +51,11 @@ class YpResetPasswordLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
-    <paper-dialog id="dialog" modal="">
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <paper-dialog id="dialog" modal>
       <h3>${this.t('user.resetPassword')}</h3>
 
       <p>${this.t('user.resetPasswordInstructions')}</p>
@@ -65,7 +66,7 @@ class YpResetPasswordLit extends YpBaseElement {
 
       </form>
       <div class="buttons">
-        <yp-ajax id="resetPasswordAjax" .method="POST" @response="${this._resetPasswordResponse}"></yp-ajax>
+        <yp-ajax id="resetPasswordAjax" method="POST" @response="${this._resetPasswordResponse}"></yp-ajax>
         <paper-button @tap="${this._cancel}" dialog-dismiss="">${this.t('cancel')}</paper-button>
         <paper-button .autofocus="" @tap="${this._validateAndSend}">${this.t('user.resetPassword')}</paper-button>
       </div>
@@ -73,9 +74,9 @@ class YpResetPasswordLit extends YpBaseElement {
 
     <iron-a11y-keys id="a11y" .keys="enter" @keys-pressed="${this.onEnter}"></iron-a11y-keys>
 `
-  
+
   }
-  
+
 /*
   behaviors: [
     ypLanguageBehavior

@@ -14,22 +14,22 @@ class YpAcceptInviteLit extends YpBaseElement {
       token: {
         type: String
       },
-  
+
       errorMessage: {
         type: String
       },
-  
+
       inviteName: {
         type: String
       },
-  
+
       targetName: String,
-  
+
       targetEmail: {
         type: String,
         value: null
       },
-  
+
       collectionConfiguration: {
         type: Object,
         value: null
@@ -63,10 +63,11 @@ class YpAcceptInviteLit extends YpBaseElement {
         margin: 0;
       }
     `, YpFlexLayout]
-  } 
-  
+  }
+
   render() {
-    return html` 
+    return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <h3>${this.t('user.acceptInvite')}</h3>
 
@@ -84,7 +85,7 @@ class YpAcceptInviteLit extends YpBaseElement {
         <paper-button .autofocus="" @tap="${this._acceptInvite}">${this.t('user.acceptInvite')}</paper-button>
       </div>
     </paper-dialog>
-` 
+    `
   }
 /*
   behaviors: [

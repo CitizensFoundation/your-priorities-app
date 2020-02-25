@@ -22,45 +22,45 @@ class YpUserLit extends YpBaseElement {
       idRoute: {
         type: Object
       },
-  
+
       tabRoute: Object,
       statusUpdateRoute: Object,
       idRouteData: Object,
       tabRouteData: Object,
       statusUpdateRouteData: Object,
-  
+
       userId: {
         type: Number,
         value: null,
         observer: "_userIdChanged"
       },
-  
+
       url: {
         type: String
       },
-  
+
       domainEmpty: {
         type: Boolean,
         value: false
       },
-  
+
       selectedTab: {
         type: String,
         value: null
       },
-  
+
       user: {
         type: Object
       },
-  
+
       statusUpdateId: String,
-  
+
       selected: {
         type: Number,
         value: 0,
         observer: '_selectedChanged'
       },
-  
+
       userTabName: {
         type: String,
         value: null,
@@ -68,7 +68,7 @@ class YpUserLit extends YpBaseElement {
       }
     }
   }
-  
+
   static get styles() {
     return [
       css`
@@ -78,7 +78,7 @@ class YpUserLit extends YpBaseElement {
       }
 
       .card-container {
-        
+
       }
 
       @media (max-width: 330px) {
@@ -116,6 +116,8 @@ class YpUserLit extends YpBaseElement {
 
   render() {
     return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+
     <app-route route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
@@ -138,7 +140,7 @@ class YpUserLit extends YpBaseElement {
       </paper-tab>
     </paper-tabs>
 
-    <iron-pages class="tabPages" .selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+    <iron-pages class="tabPages" .selected="${this.selectedTab}" .attrForSelected="name" .entryAnimation="fade-in-animation" .exitAnimation="fade-out-animation">
       <section .name="status_updates">
         <yp-bulk-status-display user-id="${this.userId}" .statusUpdateId="${this.statusUpdateId}"></yp-bulk-status-display>
       </section>
@@ -151,7 +153,7 @@ class YpUserLit extends YpBaseElement {
       <section>
         <template>
           <div class="layout horizontal center-center">
-            <yp-post-list id="postList" .selectedTab="${this.selected}" .status-filter="open" tab-counter-id="tabCount" .searchingFor="${this.searchingFor}" .group="${this.group}" .group-id="${this.groupId}"></yp-post-list>
+            <yp-post-list id="postList" .selectedTab="${this.selected}" .status-filter="open" .tabCounterId="tabCount" .searchingFor="${this.searchingFor}" .group="${this.group}" .groupId="${this.groupId}"></yp-post-list>
           </div>
 
         </template>
@@ -160,7 +162,7 @@ class YpUserLit extends YpBaseElement {
 
     <yp-ajax id="ajax" url="${this.url}" @response="${this._response}"></yp-ajax>
     <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
-` 
+    `
   }
 
 /*

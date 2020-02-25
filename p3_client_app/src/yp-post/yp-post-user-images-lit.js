@@ -48,23 +48,25 @@ class YpPostUserImagesLit extends YpBaseElement {
     <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <div class="layout vertical center-center">
+
       ${ this.post ? html`
         <paper-button raised="" @tap="${this._newImage}">${this.t('posts.newUserImage')}</paper-button>
+
         ${ this.images ? html`
           ${ this.images.map(image => html`
           <yp-post-user-image-card .post="${this.post}" .image="${this.image}" @refresh="${this._refresh}"></yp-post-user-image-card>
         `)}
-        `: html``}
 
+        `: html``}
       `: html``}
 
       <div class="layout horizontal center-center">
         <yp-ajax id="ajax" @response="${this._response}"></yp-ajax>
       </div>
     </div>
-` : html``}
-`
+    `
   }
+
 /*
   behaviors: [
     ypLanguageBehavior

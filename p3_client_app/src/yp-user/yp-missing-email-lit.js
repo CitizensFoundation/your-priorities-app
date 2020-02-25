@@ -76,7 +76,6 @@ class YpMissingEmailLit extends YpBaseElement {
     return [
       css`
 
-
       paper-dialog {
         background-color: #FFF;
         width: 420px;
@@ -112,6 +111,7 @@ class YpMissingEmailLit extends YpBaseElement {
   }
   render() {
     return html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div id="outer">
       <paper-dialog id="dialog">
         <h2>${this.heading}</h2>

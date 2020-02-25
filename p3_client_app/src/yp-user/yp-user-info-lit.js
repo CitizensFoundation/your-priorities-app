@@ -69,7 +69,7 @@ class YpUserInfoLit extends YpBaseElement {
 
   render() {
     return html`
-
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     ${ this.user ? html`
       <div class="mainContainer">
         <div class="avatar-container">
@@ -86,7 +86,7 @@ class YpUserInfoLit extends YpBaseElement {
         </div>
       </div>
     ` : html``}
-`
+    `
   }
 
 

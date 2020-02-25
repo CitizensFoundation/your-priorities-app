@@ -49,10 +49,11 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
       }
     `, YpFlexLayout]
   }
-  
+
   render() {
     return html`
-    <paper-dialog id="dialog" modal="">
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <paper-dialog id="dialog" modal>
       <div class="header layout horizontal center-center">
         <div>${this.t('deleteOrAnonymizeUser')}</div>
       </div>
@@ -63,8 +64,8 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
 
       <div class="buttons layout vertical center-center">
         <div class="layout horizontal ajaxElements">
-          <yp-ajax id="deleteUserAjax" use-spinner="" @response="${this._completed}" .method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
-          <yp-ajax id="anonymizeAjax" use-spinner="" @response="${this._completed}" .method="DELETE" url="/api/users/anonymize_current_user"></yp-ajax>
+          <yp-ajax id="deleteUserAjax" ?useSpinner @response="${this._completed}" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
+          <yp-ajax id="anonymizeAjax" ?useSpinner @response="${this._completed}" method="DELETE" url="/api/users/anonymize_current_user"></yp-ajax>
         </div>
         <div class="layout horizontal center-center">
           <paper-button dialog-dismiss="">${this.t('cancel')}</paper-button>
@@ -75,7 +76,7 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
     </paper-dialog>
 `
   }
-  
+
 /*
   behaviors: [
     ypLanguageBehavior

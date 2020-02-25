@@ -144,7 +144,7 @@ class YpUserImageLit extends YpBaseElement {
       ${ this.noProfileImage ? html`
 
         ${this.user.facebook_id ? html`
-        <iron-image .sizing="cover" ?hidden="${this.profileImageUrl}" .title="${this.userTitle}" .preload="" src="${this.computeFacebookSrc}" class="${this.computeClass(small)}"></iron-image>
+          <iron-image .sizing="cover" ?hidden="${this.profileImageUrl}" .title="${this.userTitle}" .preload="" src="${this.computeFacebookSrc}" class="${this.computeClass(small)}"></iron-image>
         ` : html``}
 
         ${!this.noDefault ? html`
@@ -157,7 +157,7 @@ class YpUserImageLit extends YpBaseElement {
       ` : html``}
 
     ` : html``}
-`
+    `
   }
 
 /*

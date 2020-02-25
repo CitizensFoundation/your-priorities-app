@@ -39,7 +39,7 @@ class YpThemeSelectorLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.theme ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dropdown-menu .label="${this.t('theme.choose')}">
       <paper-listbox .slot="dropdown-content" .selected="${this.selectedTheme}">
 
@@ -49,8 +49,7 @@ class YpThemeSelectorLit extends YpBaseElement {
 
       </paper-listbox>
     </paper-dropdown-menu>
-`: html``}
-`
+    `
   }
 
 /*

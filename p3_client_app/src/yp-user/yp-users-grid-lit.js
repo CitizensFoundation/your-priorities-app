@@ -276,7 +276,7 @@ class YpUsersGridLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.users ? html`
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="selectOrganizationDialog" modal="">
       <h2>${this.t('users.selectOrganization')}</h2>
       <paper-dialog-scrollable>
@@ -295,11 +295,11 @@ class YpUsersGridLit extends YpBaseElement {
       </div>
     </paper-dialog>
 
-    <paper-dialog id="dialog" modal="">
+    <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
 
         <div>
-          <paper-icon-button ariaLabel="${this.t('close')}" id="dismissBtn" icon="close" class="closeButton" dialog-dismiss=""></paper-icon-button>
+          <paper-icon-button ariaLabel="${this.t('close')}" id="dismissBtn" icon="close" class="closeButton" dialog-dismiss></paper-icon-button>
         </div>
 
         <div class="headerText layout vertical">
@@ -329,11 +329,11 @@ class YpUsersGridLit extends YpBaseElement {
         </paper-material>
       </div>
 
-      <vaadin-grid id="grid" .ariaLabel="${this.headerText}" items="${this.users}" selected-items="${this.selectedUsers}">
+      <vaadin-grid id="grid" .ariaLabel="${this.headerText}" .items="${this.users}" selectedItems="${this.selectedUsers}">
         <vaadin-grid-selection-column auto-select="">
         </vaadin-grid-selection-column>
 
-        <vaadin-grid-column width="60px" flex-grow="0">
+        <vaadin-grid-column width="60px" .flexGrow="0">
           <template class="header">#</template>
           <template>${this.item.id}</template>
         </vaadin-grid-column>
@@ -434,8 +434,7 @@ class YpUsersGridLit extends YpBaseElement {
       <yp-ajax method="POST" @error="${this._ajaxError}" id="addAdminAjax" @response="${this._addAdminResponse}"></yp-ajax>
       <yp-ajax method="POST" @error="${this._ajaxError}" id="addOrganizationAjax" @response="${this._addOrganizationResponse}"></yp-ajax>
     </div>
-` : html``}
-`
+    `
   }
 
 /*

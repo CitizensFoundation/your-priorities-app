@@ -25,38 +25,38 @@ class YpUserEditLit extends YpBaseElement {
         type: String,
         value: "/api/users"
       },
-  
+
       user: {
         type: Object,
         observer: '_userChanged'
       },
-  
+
       params: {
         type: String
       },
-  
+
       method: {
         type: String
       },
-  
+
       selected: {
         type: Number,
         value: 0
       },
-  
+
       encodedUserNotificationSettings: {
         type: String,
         observer: '_encodedUserNotificationSettingsChanged'
       },
-  
+
       uploadedProfileImageId: {
         type: String
       },
-  
+
       uploadedHeaderImageId: {
         type: String
       },
-  
+
       notificationSettings: {
         type: Object,
         notify: true,
@@ -64,7 +64,7 @@ class YpUserEditLit extends YpBaseElement {
       }
     }
   }
-      
+
   static get styles() {
     return[
       css`
@@ -109,7 +109,8 @@ class YpUserEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <yp-edit-dialog .name="userEdit" id="editDialog" .title="${this.editHeaderText}" double-width="" .icon="face" .action="${this.action}" @iron-form-response="${this._editResponse}" .method="${this.method}" .params="${this.params}" .save-text="${this.saveText}" .toast-text="${this.toastText}">
+    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    <yp-edit-dialog .name="userEdit" id="editDialog" .title="${this.editHeaderText}" double-width="" .icon="face" .action="${this.action}" @iron-form-response="${this._editResponse}" method="${this.method}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
       <div class="container">
         <div class="layout vertical wrap container">
           <paper-input id="name" .name="name" .type="text" .label="${this.t('Name')}" .value="${this.user.name}" maxlength="50" char-counter>
@@ -120,21 +121,21 @@ class YpUserEditLit extends YpBaseElement {
 
           <div class="layout horizontal wrap">
             <div class="layout vertical additionalSettings">
-              <yp-file-upload id="profileImageUpload" raised .target="/api/images?itemType=user-profile" .method="POST" @success="${this._profileImageUploaded}">
+              <yp-file-upload id="profileImageUpload" raised .target="/api/images?itemType=user-profile" method="POST" @success="${this._profileImageUploaded}">
                 <iron-icon class="icon" .icon="photo-camera"></iron-icon>
                 <span>${this.t('image.profile.upload')}</span>
               </yp-file-upload>
             </div>
 
             <div class="layout vertical additionalSettings" hidden="">
-              <yp-file-upload id="headerImageUpload" raised .target="/api/images?itemType=user-header" .method="POST" @success="${this._headerImageUploaded}">
+              <yp-file-upload id="headerImageUpload" raised .target="/api/images?itemType=user-header" method="POST" @success="${this._headerImageUploaded}">
                 <iron-icon class="icon" .icon="photo-camera"></iron-icon>
                 <span>${this.t('image.header.upload')}</span>
               </yp-file-upload>
             </div>
           </div>
 
-          <yp-language-selector .name="defaultLocale" auto-translate-option-disabled="" selected-locale="${this.user.default_locale}"></yp-language-selector>
+          <yp-language-selector .name="defaultLocale" auto-translate-option-disabled="" .selectedLocale="${this.user.default_locale}"></yp-language-selector>
 
           <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised @tap="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</paper-button>
 
@@ -150,15 +151,15 @@ class YpUserEditLit extends YpBaseElement {
           <ac-notification-settings notifications-settings="${this.notificationSettings}"></ac-notification-settings>
           <input .type="hidden" .name="notifications_settings" .value="${this.encodedUserNotificationSettings}">
 
-          <yp-ajax id="disconnectFacebookLoginAjax" .method="DELETE" url="/api/users/disconnectFacebookLogin" @response="${this._disconnectFacebookLoginResponse}"></yp-ajax>
-          <yp-ajax id="disconnectSamlLoginAjax" .method="DELETE" url="/api/users/disconnectSamlLogin" @response="${this._disconnectSamlLoginResponse}"></yp-ajax>
+          <yp-ajax id="disconnectFacebookLoginAjax" method="DELETE" url="/api/users/disconnectFacebookLogin" @response="${this._disconnectFacebookLoginResponse}"></yp-ajax>
+          <yp-ajax id="disconnectSamlLoginAjax" method="DELETE" url="/api/users/disconnectSamlLogin" @response="${this._disconnectSamlLoginResponse}"></yp-ajax>
         </div>
       </div>
     </yp-edit-dialog>
 `
   }
 
-  
+
 /*
   behaviors: [
     ypLanguageBehavior,
