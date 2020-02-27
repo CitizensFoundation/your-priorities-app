@@ -165,6 +165,7 @@ app.use(function setupRedis(req, res, next) {
 });
 
 app.use(function checkForBOT(req, res, next) {
+  //TODO: Make sure we are caching all Google bots
   var ua = req.headers['user-agent'];
   if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
     console.log(ua, ' is a bot');

@@ -169,11 +169,13 @@ export class PageTopics extends LitElement {
   }
 
   sliderChange(event) {
-    const weightsFilter = event.detail.value;
-    if (this.weightsFilter!==weightsFilter) {
-      this.weightsFilter = parseFloat(weightsFilter)/100.0;
-      this.buildTopClusters();
-    }
+    setTimeout(()=>{
+      const weightsFilter = event.detail.value;
+      if (this.weightsFilter!==weightsFilter) {
+        this.weightsFilter = parseFloat(weightsFilter)/100.0;
+        this.buildTopClusters();
+      }
+    });
   }
 
   render() {
@@ -183,7 +185,7 @@ export class PageTopics extends LitElement {
             pin
             ?disabled="${!this.clusters || this.clusters.length===0}"
             markers
-            @change=${this.sliderChange}
+            @input=${this.sliderChange}
             max="95"
             min="55"
             value="70">

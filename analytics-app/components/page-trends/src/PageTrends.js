@@ -1,6 +1,7 @@
 import { html, css, LitElement } from 'lit-element';
 import { Data, DataLabels } from '../../analytics-app/src/data.js';
 import { ShadowStyles } from '../../analytics-app/src/shadow-styles.js';
+import '../../wordcloud/wordcloud.js';
 
 export class PageTrends extends LitElement {
   static get styles() {
@@ -25,9 +26,12 @@ export class PageTrends extends LitElement {
       }
 
       .container {
-        margin-top: 5px;
+        display: flex;
+        flex-direction: column;
+        flex-basis: auto;
         background-color: #FFF;
-        padding: 32px;
+        padding: 8px;
+        width: 100%;
       }
     `];
   }
@@ -36,37 +40,84 @@ export class PageTrends extends LitElement {
     return {
       collectionType: { type: String },
       collectionId: { type: String },
+      statsPosts: { type: Object },
+      statsPoints: { type: Object },
+      statsVotes: { type: Object},
+      wordCloudURL: { type: String },
+      collection: { type: Object }
     };
+  }
+
+  getStatsData(url, data) {
+    fetch(url, { credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(response => {
+      const lineChartElement = this.shadowRoot.getElementById("line-chart");
+      debugger;
+      new Chart(lineChartElement, {
+        type: 'bar',
+        data: {
+          labels: DataLabels,
+          datasets: response.monthsCount.map(data => {
+            { x: data.date, y: data.count };
+          }) /*Data.map((item) => item.response)*/
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Trends (in millions)'
+          }
+        }
+      })
+
+      data = response;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        this.fire('app-error', error);
+      }
+    );
   }
 
   constructor() {
     super();
-    this.title = 'Hello open-wc world!';
-    this.logo = html``;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.collectionStatsPostsURL = `/api/analytics/${this.collectionType}/${this.collectionId}/stats_posts`;
+    this.collectionStatsPointsURL = `/api/analytics/${this.collectionType}/${this.collectionId}/stats_points`;
+    this.collectionStatsVotesURL = `/api/analytics/${this.collectionType}/${this.collectionId}//stats_votes`;
+    this.getStatsData(this.collectionStatsPostsURL, this.statsPosts);
+    this.getStatsData(this.collectionStatsPointsURL, this.statsPoints);
+    this.getStatsData(this.collectionStatsVotesURL, this.statsVotes);
+    this.wordCloudURL ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
+    this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
+
+    fetch(this.collectionURL, { credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(response => {
+      this.collection = response;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        this.fire('app-error', error);
+      }
+    );
   }
 
   firstUpdated() {
     super.firstUpdated();
-    const lineChartElement = this.shadowRoot.getElementById("line-chart");
-    new Chart(lineChartElement, {
-      type: 'bar',
-      data: {
-        labels: DataLabels,
-        datasets: Data.map((item) => item.dataSet)
-      },
-      options: {
-        title: {
-          display: true,
-          text: 'Trends (in millions)'
-        }
-      }
-    })
   }
 
   render() {
     return html`
     <div class="container shadow-animation shadow-elevation-3dp">
       <canvas id="line-chart" width="800" height="450"></canvas>
+    </div>
+
+    <div class="container shadow-animation shadow-elevation-3dp">
+      <ac-wordcloud .dataUrl="${this.wordCloudURL}"></ac-wordcloud>
     </div>
     `;
   }

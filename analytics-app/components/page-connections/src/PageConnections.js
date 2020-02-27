@@ -168,7 +168,7 @@ export class PageConnections extends LitElement {
        score = 0;
        if (true || node.linkCount>0) {
          const obj = new THREE.Mesh(
-         new THREE.SphereGeometry(10*score),
+         new THREE.SphereGeometry(0.00001*score),
          new THREE.MeshBasicMaterial({  color: 0xffffff, depthWrite: false, transparent: false, opacity: 1 }));
 
          const loader = new THREE.TextureLoader();
@@ -423,7 +423,6 @@ export class PageConnections extends LitElement {
     camera.position.copy( controls.target ).sub(direction);
 
     controls.update();
-
   }
 
   forceValueChange (event) {
@@ -458,9 +457,9 @@ export class PageConnections extends LitElement {
       const distRatio = 1 + distance/Math.hypot(d3Node.x, d3Node.y, d3Node.z);
 
       this.graph.cameraPosition(
-          { x: position.x, y: position.y-75, z: position.z-375}, // new position
+          { x: position.x, y: position.y-75, z: position.z-575}, // new position
           { x: position.x, y: position.y, z: position.z }, // lookAt ({ x, y, z })
-          500  // ms transition duration
+          900  // ms transition duration
       );
 
       console.log(position.x * distRatio);

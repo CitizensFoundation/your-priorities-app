@@ -56,8 +56,7 @@ export class AnalyticsApp extends LitElement {
       header ul li a {
         color: #5a5c5e;
         text-decoration: none;
-        font-size: 18px;
-        line-height: 36px;
+        font-size: 16px;
       }
 
       header ul li a:hover,
@@ -88,14 +87,16 @@ export class AnalyticsApp extends LitElement {
 
       .paceImage {
         margin-right: auto;
-        margin-top: 26px;
-        margin-left: 64px;
-        margin-bottom: 16px;
+        margin-top: 4px;
+        margin-left: 48px;
+        margin-bottom: 2px;
       }
 
       .analyticsText {
-        margin-top: 28px;
-        margin-left: 24px;
+        margin-top: 8px;
+        margin-left: 8px;
+        font-size: 18px;
+        color: #333;
       }
     `, FlexLayout, ShadowStyles];
   }
@@ -108,19 +109,18 @@ export class AnalyticsApp extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.collectionType = "communities";
-    this.collectionId = "973";
+    this.collectionId = "667";
   }
 
   render() {
     return html`
-        <div class="paceImage layout horizontal" hidden>
-          <div><img height="100" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
+        <div class="paceImage layout horizontal">
+          <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
           <div class="flex"></div>
-          <div class="analyticsText">Community: Hverfið mitt 2019</div>
+          <div class="analyticsText">Hverfið mitt 2019</div>
         </div>
       <header ?hidden="${this.currentGrievance}">
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-          <mwc-tab label="Stats" icon="calendar_today" stacked></mwc-tab>
           <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
           <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
           <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
@@ -146,17 +146,13 @@ export class AnalyticsApp extends LitElement {
     switch (this.page) {
       case '0':
         return html`
-          <page-stats .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-stats>
-        `;
-      case '1':
-        return html`
           <page-trends .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-trends>
       `;
-      case '2':
+      case '1':
         return html`
           <page-topics .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
         `;
-      case '3':
+      case '2':
         return html`
           <page-connections .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
         `;
