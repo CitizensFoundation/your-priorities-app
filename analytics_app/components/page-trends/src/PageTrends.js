@@ -53,24 +53,32 @@ export class PageTrends extends LitElement {
     .then(res => res.json())
     .then(response => {
       const lineChartElement = this.shadowRoot.getElementById("line-chart");
-      debugger;
-      new Chart(lineChartElement, {
-        type: 'bar',
-        data: {
-          labels: DataLabels,
-          datasets: response.monthsCount.map(data => {
-            { x: data.date, y: data.count };
-          }) /*Data.map((item) => item.response)*/
-        },
-        options: {
-          title: {
-            display: true,
-            text: 'Trends (in millions)'
-          }
-        }
-      })
+      console.log(JSON.stringify(response));
+      if (!this.haveSetData) {
+        this.chart = new Chart(lineChartElement, {
+          type: 'bar',
+          data:  { datasets: [
+            {
+              label: "By day",
+              backgroundColor: "#F00",
+              fill: false,
+              data: response.finalDays
+            }
+          ] },
+          options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                      unit: 'day'
+                  }
 
-      data = response;
+                }]
+            }
+        }
+        });
+        this.haveSetdata = true;
+      }
     })
     .catch(error => {
         console.error('Error:', error);
@@ -88,8 +96,8 @@ export class PageTrends extends LitElement {
     this.collectionStatsPostsURL = `/api/analytics/${this.collectionType}/${this.collectionId}/stats_posts`;
     this.collectionStatsPointsURL = `/api/analytics/${this.collectionType}/${this.collectionId}/stats_points`;
     this.collectionStatsVotesURL = `/api/analytics/${this.collectionType}/${this.collectionId}//stats_votes`;
-    this.getStatsData(this.collectionStatsPostsURL, this.statsPosts);
-    this.getStatsData(this.collectionStatsPointsURL, this.statsPoints);
+ //   this.getStatsData(this.collectionStatsPostsURL, this.statsPosts);
+  //  this.getStatsData(this.collectionStatsPointsURL, this.statsPoints);
     this.getStatsData(this.collectionStatsVotesURL, this.statsVotes);
     this.wordCloudURL ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
     this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;

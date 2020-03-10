@@ -110,6 +110,8 @@ export class AnalyticsApp extends LitElement {
     super.connectedCallback();
     this.collectionType = "communities";
     this.collectionId = "667";
+    this.collectionId = "973";
+    this.collectionId = "1068";
   }
 
   render() {
@@ -117,7 +119,7 @@ export class AnalyticsApp extends LitElement {
         <div class="paceImage layout horizontal">
           <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
           <div class="flex"></div>
-          <div class="analyticsText">Hverfið mitt 2019</div>
+          <div class="analyticsText">Community Wellbeing</div>
         </div>
       <header ?hidden="${this.currentGrievance}">
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
