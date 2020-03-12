@@ -300,7 +300,7 @@
             </template>
 
             <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical"
-                            animated hidden$="[[post.Group.configuration.disableDebate]]">
+                            animated hidden$="[[disableDebate]]">
 
               <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                               value="{{textValueUp}}" label$="[[labelUp]]"
@@ -398,7 +398,7 @@
 
 
             <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical"
-                            animated hidden$="[[post.Group.configuration.disableDebate]]">
+                            animated hidden$="[[disableDebate]]">
 
               <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                               value="{{textValueDown}}" label$="[[labelDown]]"
@@ -487,7 +487,7 @@
 
     <template is="dom-if" if="[[!largeMode]]" restamp>
       <div class="layout vertical center-center">
-        <paper-material id="pointUpOrDownMaterial" elevation="0" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
+        <paper-material id="pointUpOrDownMaterial" elevation="0" class="pointInputMaterial layout vertical" animated hidden$="[[disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                           value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
                           char-counter rows="2" hidden$="[[hideMobileText]]"
@@ -570,7 +570,7 @@
       </div>
       <div class="layout vertical center-center">
         <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
             <template>
               <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
                 <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
@@ -607,6 +607,17 @@
         properties: {
 
           host: String,
+
+          hasAccess: {
+            type: Boolean,
+            value: false,
+            observer: '_hasAccessChanged'
+          },
+
+          disableDebate: {
+            type: Boolean,
+            value: false
+          },
 
           downPoints: {
             type: Array,
@@ -1122,6 +1133,14 @@
             this.$$("#audioFileUploadMobile").clear();
         },
 
+        _hasAccessChanged: function (hasAccess) {
+          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !hasAccess) {
+            this.set('disableDebate', true);
+          } else {
+            this.set('disableDebate', false);
+          }
+        },
+
         _postChanged: function (newPost) {
           // Remove any manually inserted points when the list is updated
           this.set('points', null);
@@ -1136,7 +1155,14 @@
           this.storedUpPointsCount = null;
           this.storedDownPointsCount = null;
 
+
           if (newPost) {
+            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.hasAccess) {
+              this.set('disableDebate', true);
+            } else {
+              this.set('disableDebate', false);
+            }
+
             if (this.host) {
               this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
             } else {
