@@ -318,7 +318,7 @@
 
       <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div name="debate" class="layout horizontal center-center">
-          <yp-post-points host="[[host]]" id="pointsSection" has-access="[[hasAccess]]" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
+          <yp-post-points host="[[host]]" id="pointsSection" is-admin="[[isAdmin]]" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
@@ -406,7 +406,7 @@
           idRouteData: Object,
           tabRouteData: Object,
 
-          hasAccess: {
+          isAdmin: {
             type: Boolean,
             value: false
           },
@@ -586,9 +586,9 @@
 
         _postChanged: function (post) {
           if (post) {
-            this.set('hasAccess', this.checkPostAccess(post));
+            this.set('isAdmin', this.checkPostAdminOnlyAccess(post));
           } else {
-            this.set('hasAccess', false);
+            this.set('isAdmin', false);
           }
         },
 

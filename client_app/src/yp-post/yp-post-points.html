@@ -608,10 +608,10 @@
 
           host: String,
 
-          hasAccess: {
+          isAdmin: {
             type: Boolean,
             value: false,
-            observer: '_hasAccessChanged'
+            observer: '_isAdminChanged'
           },
 
           disableDebate: {
@@ -1133,8 +1133,8 @@
             this.$$("#audioFileUploadMobile").clear();
         },
 
-        _hasAccessChanged: function (hasAccess) {
-          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !hasAccess) {
+        _isAdminChanged: function (isAdmin) {
+          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !isAdmin) {
             this.set('disableDebate', true);
           } else {
             this.set('disableDebate', false);
@@ -1157,7 +1157,7 @@
 
 
           if (newPost) {
-            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.hasAccess) {
+            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.isAdmin) {
               this.set('disableDebate', true);
             } else {
               this.set('disableDebate', false);
