@@ -43,7 +43,8 @@ https://citizens.is/getting-started/
 * https://betraisland.is/
 * https://betrireykjavik.is/
 * https://mineideer.forbrukerradet.no/
-* https://consultation.parlement-ouvert.fr/group/4
+* https://engage.parliament.scot/
+* https://enjine.smarter.nj.gov/
 
 ## How to run
 
