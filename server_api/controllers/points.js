@@ -746,19 +746,13 @@ router.delete('/:id/pointQuality', auth.can('vote on point'), function(req, res)
 
 router.get('/url_preview', auth.isLoggedIn, function(req, res) {
   if (req.query.url && validateEmbedUrl(req.query.url)) {
-    new embedly({key: process.env.EMBEDLY_KEY},function(err, api) {
+    const api =  new embedly({key: process.env.EMBEDLY_KEY});
+    api.oembed({url: req.query.url, maxwidth: 470, width: 470, secure: true}, function (err, objs) {
       if (!!err) {
         log.error('Embedly not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
         res.sendStatus(500);
       } else {
-        api.oembed({url: req.query.url, maxwidth: 470, width: 470, secure: true}, function (err, objs) {
-          if (!!err) {
-            log.error('Embedly not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
-            res.sendStatus(500);
-          } else {
-            res.send(objs);
-          }
-        });
+        res.send(objs);
       }
     });
   } else {
