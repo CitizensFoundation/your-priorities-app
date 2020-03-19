@@ -135,6 +135,19 @@
         }
       }
 
+      @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
+        paper-dialog > * {
+          padding: 0;
+          margin: 0;
+          background-color: #FFF;
+        }
+
+        :host {
+          max-height: 100% !important;
+          height: 100% !important;
+        }
+      }
+
       .toolbar {
         padding-top: 8px;
       }
