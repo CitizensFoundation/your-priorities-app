@@ -258,13 +258,16 @@ router.get('/:userId/moderate_all_content', auth.can('edit user'), (req, res) =>
 router.put('/:id', auth.can('edit user'), function (req, res) {
   models.User.findOne({
     where: {id: req.params.id},
-    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'notifications_settings'])
+    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'profile_data', 'notifications_settings'])
   }).then(function (user) {
     if (user) {
       user.name = req.body.name;
       user.email = req.body.email;
       user.description = req.body.description;
       user.notifications_settings = JSON.parse(req.body.notifications_settings);
+      if (user.profile_data && user.profile_data.isAnonymousUser) {
+        user.set('profile_data.isAnonymousUser', false);
+      }
       user.save().then(function () {
         log.info('User Updated', { user: toJson(user.simple()), context: 'update', loggedInUser: toJson(req.user.simple()) });
         user.setupImages(req.body, function (error) {
