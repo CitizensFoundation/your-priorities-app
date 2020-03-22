@@ -37,7 +37,7 @@
         @apply --paper-fullscreen-dialog;
       }
 
-      .fullScreenDialog[ipad] {
+      .fullScreenDialog[tablet] {
         max-width: 2024px;
       }
 
@@ -139,7 +139,7 @@
         }
       }
 
-      paper-dialog[ipad] > * {
+      paper-dialog[tablet] > * {
         padding: 0;
         margin: 0;
         background-color: #FFF;
@@ -231,7 +231,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" ipad$="[[ipad]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
+    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" ipad$="[[tablet]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowScreen}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="{{largeHeight}}"></iron-media-query>
@@ -330,7 +330,7 @@
           type: String
         },
 
-        ipad: {
+        tablet: {
           type: Boolean,
           value: false
         },
@@ -382,7 +382,7 @@
 
         narrow: {
           type: Boolean,
-          computed: '_narrow(narrowScreen,ipad)'
+          computed: '_narrow(narrowScreen,tablet)'
         },
 
         params: {
@@ -436,8 +436,8 @@
         }
       },
 
-    _narrow: function(narrowScreen, iPad) {
-      return narrowScreen || iPad;
+    _narrow: function(narrowScreen, tablet) {
+      return narrowScreen || tablet;
     },
 
     scrollResize: function () {
@@ -507,9 +507,11 @@
       ready: function() {
         this.baseAction = this.action;
         if (/iPad/.test(navigator.userAgent)) {
-          this.set('ipad', true);
+          this.set('tablet', true);
+        } else if (/Android/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent)) {
+          this.set('tablet', true);
         } else {
-          this.set('ipad', false);
+          this.set('tablet', false);
         }
       },
 
