@@ -37,10 +37,6 @@
         @apply --paper-fullscreen-dialog;
       }
 
-      .fullScreenDialog[tablet] {
-        max-width: 2024px;
-      }
-
       [main] {
         background-color: #fff;
       }
@@ -147,6 +143,10 @@
         height: 100% !important;
       }
 
+      paper-dialog[tablet] {
+        max-width: 3200px !important;
+      }
+
       .toolbar {
         padding-top: 8px;
       }
@@ -231,7 +231,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" ipad$="[[tablet]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
+    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" tablet$="[[tablet]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowScreen}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="{{largeHeight}}"></iron-media-query>
