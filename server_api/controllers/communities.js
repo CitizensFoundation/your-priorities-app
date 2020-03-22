@@ -49,6 +49,10 @@ var getCommunityFolder = function (req, communityFolderId, done) {
           id: communityFolderId
         },
         attributes: models.Community.defaultAttributesPublic,
+        order: [
+          [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
+          [ {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
+        ],
         include: [
           {
             model: models.Image,
