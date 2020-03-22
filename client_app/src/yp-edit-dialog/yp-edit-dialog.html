@@ -37,6 +37,10 @@
         @apply --paper-fullscreen-dialog;
       }
 
+      .fullScreenDialog[ipad] {
+        max-width: 2024px;
+      }
+
       [main] {
         background-color: #fff;
       }
@@ -135,49 +139,12 @@
         }
       }
 
-      @media only screen and (max-device-width: 1024px) {
-        paper-dialog > * {
-          padding: 0;
-          margin: 0;
-          background-color: #FFF;
-        }
-
-        :host {
-          max-height: 100% !important;
-          height: 100% !important;
-        }
-      }
-
-      @media only screen
-      and (min-device-width: 1024px)
-      and (max-device-width: 1366px)
-      and (-webkit-min-device-pixel-ratio: 2) {
-        paper-dialog > * {
-          padding: 0;
-          margin: 0;
-          background-color: #FFF;
-        }
-
-        :host {
-          max-height: 100% !important;
-          height: 100% !important;
-        }
-      }
-
-      @media only screen
-      and (min-device-width: 768px)
-      and (max-device-width: 1024px)
-      and (-webkit-min-device-pixel-ratio: 2) {
-        paper-dialog > * {
-          padding: 0;
-          margin: 0;
-          background-color: #FFF;
-        }
-
-        :host {
-          max-height: 100% !important;
-          height: 100% !important;
-        }
+      paper-dialog[ipad] > * {
+        padding: 0;
+        margin: 0;
+        background-color: #FFF;
+        max-height: 100% !important;
+        height: 100% !important;
       }
 
       .toolbar {
@@ -264,8 +231,8 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
-      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrow}}"></iron-media-query>
+    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" ipad$="[[ipad]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
+      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowScreen}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="{{largeHeight}}"></iron-media-query>
       <iron-media-query query="(min-height: 1024px)" query-matches="{{mediumHeight}}"></iron-media-query>
@@ -363,6 +330,11 @@
           type: String
         },
 
+        ipad: {
+          type: Boolean,
+          value: false
+        },
+
         baseAction: {
           type: String
         },
@@ -402,10 +374,15 @@
           type: String
         },
 
+        narrowScreen: {
+          type: Boolean,
+          observer: '_narrowScreenChanged',
+          notify: true
+        },
+
         narrow: {
           type: Boolean,
-          observer: '_narrowChanged',
-          notify: true
+          computed: '_narrow(narrowScreen,ipad)'
         },
 
         params: {
@@ -459,6 +436,9 @@
         }
       },
 
+    _narrow: function(narrowScreen, iPad) {
+      return narrowScreen || iPad;
+    },
 
     scrollResize: function () {
       if (this.$$("#scrollable")) {
@@ -484,7 +464,7 @@
         this.fire('next-tab-action')
       },
 
-      _narrowChanged: function() {
+      _narrowScreenChanged: function() {
         this.fire('paper-responsive-change', {narrow: this.narrow});
       },
 
@@ -526,6 +506,11 @@
 
       ready: function() {
         this.baseAction = this.action;
+        if (/iPad/.test(navigator.userAgent)) {
+          this.set('ipad', true);
+        } else {
+          this.set('ipad', false);
+        }
       },
 
       _formResponse: function(response, detail) {
