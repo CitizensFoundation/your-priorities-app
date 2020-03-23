@@ -5,8 +5,8 @@ const _ = require('lodash');
 const fs = require('fs');
 const { Translate }= require('@google-cloud/translate').v2;
 
-const inFile = "/home/robert/Scratch/inFile.csv"; //process.argv[3];
-const outFile = "/home/robert/Scratch/outFileForToxicity.csv"; //process.argv[4];
+const inFile = "/home/robert/Scratch/delpoll.csv"; //process.argv[3];
+const outFile = "/home/robert/Scratch/outFileDelPollForToxicity.csv"; //process.argv[4];
 const fromLang = "is";
 const toLang = "en";
 
