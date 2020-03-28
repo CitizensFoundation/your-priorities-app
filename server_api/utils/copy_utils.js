@@ -84,16 +84,20 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             async.series(
               [
                 (postSeriesCallback) => {
-                  models.AcActivity.createActivity({
-                    type: 'activity.post.copied',
-                    userId: newPost.user_id,
-                    domainId: toDomain.id,
-                    groupId: newPost.group_id,
-                    postId : newPost.id,
-                    access: models.AcActivity.ACCESS_PRIVATE
-                  }, function (error) {
-                    postSeriesCallback(error);
-                  });
+                  if (options && options.createCopyActivities) {
+                    models.AcActivity.createActivity({
+                      type: 'activity.post.copied',
+                      userId: newPost.user_id,
+                      domainId: toDomain.id,
+                      groupId: newPost.group_id,
+                      postId : newPost.id,
+                      access: models.AcActivity.ACCESS_PRIVATE
+                    }, function (error) {
+                      postSeriesCallback(error);
+                    });
+                  } else {
+                    postSeriesCallback();
+                  }
                 },
                 (postSeriesCallback) => {
                   if (oldPost.PostVideos && oldPost.PostVideos.length>0) {
@@ -137,16 +141,20 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       var endorsementModel = models.Endorsement.build(endorsementJson);
                       endorsementModel.set('post_id', newPost.id);
                       endorsementModel.save().then(function () {
-                        models.AcActivity.createActivity({
-                          type: endorsementModel.value>0 ? 'activity.post.endorsement.copied' : 'activity.post.opposition.copied',
-                          userId: endorsementModel.user_id,
-                          domainId: toDomain.id,
-                          groupId: newPost.group_id,
-                          postId : newPost.id,
-                          access: models.AcActivity.ACCESS_PRIVATE
-                        }, function (error) {
-                          endorsementCallback(error);
-                        });
+                        if (options && options.createCopyActivities) {
+                          models.AcActivity.createActivity({
+                            type: endorsementModel.value>0 ? 'activity.post.endorsement.copied' : 'activity.post.opposition.copied',
+                            userId: endorsementModel.user_id,
+                            domainId: toDomain.id,
+                            groupId: newPost.group_id,
+                            postId : newPost.id,
+                            access: models.AcActivity.ACCESS_PRIVATE
+                          }, function (error) {
+                            endorsementCallback(error);
+                          });
+                        } else {
+                          endorsementCallback();
+                        }
                       }).catch((error) => {
                         endorsementCallback(error);
                       });
@@ -167,16 +175,20 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       var ratingModel = models.Endorsement.build(ratingJson);
                       ratingModel.set('post_id', newPost.id);
                       ratingModel.save().then(function () {
-                        models.AcActivity.createActivity({
-                          type: 'activity.post.rating.copied',
-                          userId: ratingModel.user_id,
-                          domainId: toDomain.id,
-                          groupId: newPost.group_id,
-                          postId : newPost.id,
-                          access: models.AcActivity.ACCESS_PRIVATE
-                        }, function (error) {
-                          ratingCallback(error);
-                        });
+                        if (options && options.createCopyActivities) {
+                          models.AcActivity.createActivity({
+                            type: 'activity.post.rating.copied',
+                            userId: ratingModel.user_id,
+                            domainId: toDomain.id,
+                            groupId: newPost.group_id,
+                            postId : newPost.id,
+                            access: models.AcActivity.ACCESS_PRIVATE
+                          }, function (error) {
+                            ratingCallback(error);
+                          });
+                        } else {
+                          ratingCallback();
+                        }
                       }).catch((error) => {
                         ratingCallback(error);
                       });
@@ -279,17 +291,21 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             newPoint.save().then(function () {
               async.series([
                 (pointSeriesCallback) => {
-                  models.AcActivity.createActivity({
-                    type: 'activity.point.copied',
-                    userId: newPost.user_id,
-                    domainId: toDomain.id,
-                    groupId: newPost.group_id,
-                    postId : newPost.id,
-                    pointId: newPoint.id,
-                    access: models.AcActivity.ACCESS_PRIVATE
-                  }, function (error) {
-                    pointSeriesCallback(error);
-                  });
+                  if (options && options.createCopyActivities) {
+                    models.AcActivity.createActivity({
+                      type: 'activity.point.copied',
+                      userId: newPost.user_id,
+                      domainId: toDomain.id,
+                      groupId: newPost.group_id,
+                      postId : newPost.id,
+                      pointId: newPoint.id,
+                      access: models.AcActivity.ACCESS_PRIVATE
+                    }, function (error) {
+                      pointSeriesCallback(error);
+                    });
+                  } else {
+                    pointSeriesCallback();
+                  }
                 },
                 function (pointSeriesCallback) {
                   models.PointQuality.findAll({
@@ -303,6 +319,8 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       var newPointQuality = models.PointQuality.build(pointQualityJson);
                       newPointQuality.set('point_id', newPoint.id);
                       newPointQuality.save().then(function () {
+                        if (options && options.createCopyActivities) {
+
                         models.AcActivity.createActivity({
                           type: newPointQuality.value > 0 ? 'activity.point.helpful.copied' :  'activity.point.unhelpful.copied',
                           userId: newPointQuality.user_id,

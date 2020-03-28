@@ -742,7 +742,7 @@
           }, 2500);
         }
 
-        if (localeFromUrl && localeFromUrl.length == 2) {
+        if (localeFromUrl && (localeFromUrl.length === 2 || localeFromUrl.length === 5)) {
           defaultLocale = localeFromUrl;
           localStorage.setItem('yp-user-locale', localeFromUrl);
         }
