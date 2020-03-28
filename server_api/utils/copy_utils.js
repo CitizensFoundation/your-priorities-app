@@ -320,18 +320,20 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       newPointQuality.set('point_id', newPoint.id);
                       newPointQuality.save().then(function () {
                         if (options && options.createCopyActivities) {
-
-                        models.AcActivity.createActivity({
-                          type: newPointQuality.value > 0 ? 'activity.point.helpful.copied' :  'activity.point.unhelpful.copied',
-                          userId: newPointQuality.user_id,
-                          domainId: toDomain.id,
-                          groupId: newPost.group_id,
-                          postId : newPost.id,
-                          pointId: newPoint.id,
-                          access: models.AcActivity.ACCESS_PRIVATE
-                        }, function (error) {
-                          pointQualityCallback(error);
-                        });
+                          models.AcActivity.createActivity({
+                            type: newPointQuality.value > 0 ? 'activity.point.helpful.copied' : 'activity.point.unhelpful.copied',
+                            userId: newPointQuality.user_id,
+                            domainId: toDomain.id,
+                            groupId: newPost.group_id,
+                            postId: newPost.id,
+                            pointId: newPoint.id,
+                            access: models.AcActivity.ACCESS_PRIVATE
+                          }, function (error) {
+                            pointQualityCallback(error);
+                          });
+                        } else {
+                          pointQualityCallback();
+                        }
                       }).catch((error) => {
                         pointQualityCallback(error);
                       });
