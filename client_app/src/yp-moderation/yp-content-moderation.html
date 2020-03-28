@@ -173,6 +173,10 @@
       .linkIcon {
         color: #000;
       }
+
+      vaadin-grid {
+        font-size: 14px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -248,11 +252,11 @@
           <template>[[_getType(item.type)]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="120px" text-align="start" flex-grow="0" path="status" header="[[t('publishStatus')]]">
+        <vaadin-grid-sort-column width="100px" text-align="start" flex-grow="0" path="status" header="[[t('publishStatus')]]">
           <template>[[item.status]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="80px" text-align="center" flex-grow="0" path="counter_flags" header="[[t('flags')]]" hidden$="[[userId]]">
+        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="counter_flags" header="[[t('flags')]]" hidden$="[[userId]]">
           <template>[[item.counter_flags]]</template>
         </vaadin-grid-sort-column>
 
@@ -260,7 +264,7 @@
           <template>[[item.source]]</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" text-align="center" flex-grow="0" path="toxicityScoreRaw" header="[[t('toxicityScore')]]?" hidden$="[[userId]]">
+        <vaadin-grid-sort-column width="105px" text-align="center" flex-grow="0" path="toxicityScoreRaw" header="[[t('toxicityScore')]]?" hidden$="[[userId]]">
           <template>[[item.toxicityScore]]</template>
         </vaadin-grid-sort-column>
 
