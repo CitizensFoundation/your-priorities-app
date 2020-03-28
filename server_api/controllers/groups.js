@@ -12,6 +12,8 @@ var multer = require('multer');
 var s3multer = require('multer-s3');
 var aws = require('aws-sdk');
 var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDataForGroup;
+const exportGroupToDocx = require('../utils/docx_utils').exportGroupToDocx;
+
 var moment = require('moment');
 var sanitizeFilename = require("sanitize-filename");
 var queue = require('../active-citizen/workers/queue');
@@ -611,6 +613,41 @@ router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) 
       log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     });
+});
+
+router.get('/:groupId/export_group_docx', auth.can('edit group'), function(req, res) {
+  models.Group.findOne({
+    where: {
+      id: req.params.groupId
+    },
+    attributes: ["id", "name","community_id","objectives","configuration"]
+  }).then(function (group) {
+    if (group) {
+      exportGroupToDocx(group, req.ypDomain.domain_name, function (error, fileData) {
+        if (error) {
+          log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+          res.sendStatus(500);
+        } else {
+          log.info('Got Export Admin', {context: 'export_group', user: toJson(req.user.simple()) });
+          var groupName = sanitizeFilename(group.name).replace(/ /g,'');
+          var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
+          var filename = 'ideas_and_points_group_export_'+group.community_id+'_'+req.params.groupId+'_'+
+            groupName+'_'+dateString+'.docx';
+          res.set({ 'content-type': 'application/application/vnd.openxmlformats-officedocument.wordprocessingml.document; charset=utf-8' });
+          res.setHeader('Content-Disposition', 'attachment; filename='+filename);
+          res.charset = 'utf-8';
+          res.attachment(filename);
+          res.send(fileData);
+        }
+      });
+    } else {
+      log.error('Cant find group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      res.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
 });
 
 router.post('/:groupId/add_page', auth.can('edit group'), function(req, res) {

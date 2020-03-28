@@ -19,6 +19,7 @@
     "connect-redis": "^3.4.2",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
+    "docx": "^5.0.2",
     "download-file": "^0.1.5",
     "ejs": "^2.7.4",
     "email-templates": "^2.0.1",

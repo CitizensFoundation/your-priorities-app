@@ -6,7 +6,7 @@ const moment = require('moment');
 var hostName;
 var skipEmail = false;
 
-var getPostUrl = function (post) {
+const getPostUrl = function (post, hostname) {
   if (hostName) {
     return 'https://'+hostName+'/post/'+post.id;
   } else {
@@ -14,7 +14,7 @@ var getPostUrl = function (post) {
   }
 };
 
-var getUserEmail = function (post) {
+const getUserEmail = function (post) {
   if (skipEmail) {
     return "hidden";
   } else {
@@ -22,21 +22,21 @@ var getUserEmail = function (post) {
   }
 };
 
-var clean = function (text) {
+const clean = function (text) {
   //console.log("Before: "+ text);
   var newText = text.replace('"',"'").replace('\n','').replace('\r','').replace(/(\r\n|\n|\r)/gm,"").replace(/"/gm,"'").replace(/,/,';').trim();
   //console.log("After:" + newText);
   return newText.replace(/´/g,'');
 };
 
-var cleanDescription = function (text) {
+const cleanDescription = function (text) {
   //console.log("Before: "+ text);
   var newText = text.replace('"',"'").replace(/"/gm,"'").replace(/,/,';').trim();
   //console.log("After:" + newText);
   return newText.replace(/´/g,'');
 };
 
-var getLocation = function (post) {
+const getLocation = function (post) {
   if (post.location && post.location.latitude && post.location.longitude &&
     post.location.latitude!="" && post.location.longitude!="") {
     return post.location.latitude+','+post.location.longitude;
@@ -45,7 +45,7 @@ var getLocation = function (post) {
   }
 };
 
-var getPoints = function (points) {
+const getPoints = function (points) {
   var totalContent = "";
   _.each(points, function (point) {
     var content = clean(point.content)+"\n\n";
@@ -58,23 +58,23 @@ var getPoints = function (points) {
   return totalContent;
 };
 
-var getContactData = function (post) {
+const getContactData = function (post) {
   if (post.data && post.data.contact && (post.data.contact.name || post.data.contact.email || post.data.contact.telephone)) {
     return `"${post.data.contact.name}","${post.data.contact.email}","${post.data.contact.telephone}"`;
   } else {
     return ",,";
   }
-}
+};
 
-var getAttachmentData = function (post) {
+const getAttachmentData = function (post) {
   if (post.data && post.data.attachment && post.data.attachment.url) {
     return `"${post.data.attachment.url}","${post.data.attachment.filename}"`;
   } else {
     return ",";
   }
-}
+};
 
-var getPointsUpOrDown = function (post, value) {
+const getPointsUpOrDown = function (post, value) {
   var pointsText = '"';
   var points = _.filter(post.Points, function (point) {
     if (value>0) {
@@ -103,7 +103,7 @@ var getNewFromUsers = function (post) {
   return "";
 };
 
-var getImageFormatUrl = function(image, formatId) {
+const getImageFormatUrl = function(image, formatId) {
   var formats = JSON.parse(image.formats);
   if (formats && formats.length>0)
     return formats[formatId];
@@ -111,7 +111,7 @@ var getImageFormatUrl = function(image, formatId) {
     return ""
 };
 
-var getMediaFormatUrl = function (media, formatId) {
+const getMediaFormatUrl = function (media, formatId) {
   var formats = media.formats;
   if (formats && formats.length>0)
     return formats[formatId];
@@ -119,7 +119,7 @@ var getMediaFormatUrl = function (media, formatId) {
     return ""
 };
 
-var getMediaURLs = function (post) {
+const getMediaURLs = function (post) {
   var mediaURLs = "";
 
   if (post.Points && post.Points.length>0) {
@@ -153,7 +153,7 @@ var getMediaURLs = function (post) {
   return '"'+mediaURLs+'"';
 };
 
-var getMediaTranscripts = function (post) {
+const getMediaTranscripts = function (post) {
   if (post.public_data && post.public_data.transcript && post.public_data.transcript.text) {
     return '"'+post.public_data.transcript.text+'"';
   } else {
@@ -161,7 +161,7 @@ var getMediaTranscripts = function (post) {
   }
 };
 
-var getImages = function (post) {
+const getImages = function (post) {
   var imagesText = "";
 
   if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
@@ -179,7 +179,7 @@ var getImages = function (post) {
   return '"'+imagesText.replace(/,/g,"")+'"';
 };
 
-var getCategory = function (post) {
+const getCategory = function (post) {
   if (post.Category) {
     return post.Category.name;
   } else {
@@ -278,7 +278,7 @@ const getDescriptionHeaders = (group) => {
   }
 };
 
-var getExportFileDataForGroup = function(group, hostName, callback) {
+const getGroupPosts = (group, hostName, callback) => {
   models.Post.unscoped().findAll({
     where: {
       group_id: group.id
@@ -350,42 +350,52 @@ var getExportFileDataForGroup = function(group, hostName, callback) {
       }
     ]
   }).then(function (posts) {
-    var outFileContent = "";
-    let customRatings;
-    if (group.configuration && group.configuration.customRatings) {
-      customRatings = group.configuration.customRatings;
-    }
-    //console.log(posts.length);
-    outFileContent += "Nr, Post id,email,User Name,Post Name,"+getDescriptionHeaders(group)+",Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript"+getRatingHeaders(customRatings)+"\n";
-    postCounter = 0;
-    async.eachSeries(posts, function (post, seriesCallback) {
-      postCounter += 1;
-      if (!post.deleted) {
-        const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
-        outFileContent += postCounter+','+post.id+',"'+getUserEmail(post)+'","'+post.User.name+
-          '","'+clean(post.name)+'",'+getDescriptionColumns(group, post)+','+
-          '"'+getPostUrl(post)+'",'+'"'+getCategory(post)+'",'+
-          getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
-          ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
-          getImages(post)+','+
-          getContactData(post)+','+
-          getAttachmentData(post)+','+
-          getMediaURLs(post)+','+
-          getMediaTranscripts(post)+
-          getPostRatings(customRatings, postRatings)+'\n';
-      } else {
-        outFileContent += postCounter+','+post.id+',DELETED,,,,,,,,,,,\n';
-      }
-      seriesCallback();
-    }, function (error) {
-      if(error) {
-        callback(error)
-      } else {
-        callback(null, outFileContent);
-      }
-    });
+    callback(posts);
   }).catch(function (error) {
-    callback(error);
+    callback(null, error);
+  });
+};
+
+var getExportFileDataForGroup = function(group, hostName, callback) {
+  getGroupPosts(group, hostName, (posts, error) => {
+    if (error) {
+      callback(error);
+    } else {
+      var outFileContent = "";
+      let customRatings;
+      if (group.configuration && group.configuration.customRatings) {
+        customRatings = group.configuration.customRatings;
+      }
+      //console.log(posts.length);
+      outFileContent += "Nr, Post id,email,User Name,Post Name,"+getDescriptionHeaders(group)+",Url,Category,Latitude,Longitude,Up Votes,Down Votes,Points Count,Points For,Points Against,Images,Contact Name,Contact Email,Contact telephone,Attachment URL,Attachment filename,Media URLs,Post transcript"+getRatingHeaders(customRatings)+"\n";
+      let postCounter = 0;
+      async.eachSeries(posts, function (post, seriesCallback) {
+        postCounter += 1;
+        if (!post.deleted) {
+          const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
+          outFileContent += postCounter+','+post.id+',"'+getUserEmail(post)+'","'+post.User.name+
+            '","'+clean(post.name)+'",'+getDescriptionColumns(group, post)+','+
+            '"'+getPostUrl(post)+'",'+'"'+getCategory(post)+'",'+
+            getLocation(post)+','+post.counter_endorsements_up+','+post.counter_endorsements_down+
+            ','+post.counter_points+','+getPointsUp(post)+','+getPointsDown(post)+','+
+            getImages(post)+','+
+            getContactData(post)+','+
+            getAttachmentData(post)+','+
+            getMediaURLs(post)+','+
+            getMediaTranscripts(post)+
+            getPostRatings(customRatings, postRatings)+'\n';
+        } else {
+          outFileContent += postCounter+','+post.id+',DELETED,,,,,,,,,,,\n';
+        }
+        seriesCallback();
+      }, function (error) {
+        if(error) {
+          callback(error)
+        } else {
+          callback(null, outFileContent);
+        }
+      });
+    }
   });
 };
 
@@ -483,5 +493,22 @@ module.exports = {
   getExportFileDataForGroup: getExportFileDataForGroup,
   getLoginsExportDataForCommunity: getLoginsExportDataForCommunity,
   getLoginsExportDataForDomain: getLoginsExportDataForDomain,
-  getUsersForCommunity
+  getGroupPosts: getGroupPosts,
+  getUsersForCommunity,
+  getDescriptionHeaders,
+  getPostUrl,
+  getCategory,
+  getImages,
+  clean,
+  getDescriptionColumns,
+  getPointsDown,
+  getPointsUp,
+  getUserEmail,
+  getRatingHeaders,
+  getContactData,
+  getLocation,
+  getAttachmentData,
+  getMediaURLs,
+  getMediaTranscripts,
+  getPostRatings
 };
