@@ -143,7 +143,9 @@
               [[t('post.add_new')]]
             </template>
             <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButton]]">
-              [[group.configuration.alternativeTextForNewIdeaButton]]
+              <yp-magic-text content-id="[[group.id]]" extra-id="[[index]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButton]]"
+                             content-language="[[group.language]]"
+                             class="ratingName" text-type="alternativeTextForNewIdeaButton"></yp-magic-text>
             </template>
           </div>
           <div class="flex addText closed" hidden$="[[!disabled]]">
@@ -151,7 +153,9 @@
               [[t('closedForNewPosts')]]
             </template>
             <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButtonClosed]]">
-              [[group.configuration.alternativeTextForNewIdeaButtonClosed]]
+              <yp-magic-text content-id="[[group.id]]" extra-id="[[index]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButtonClosed]]"
+                             content-language="[[group.language]]"
+                             class="ratingName" text-type="alternativeTextForNewIdeaButtonClosed"></yp-magic-text>
             </template>
           </div>
         </div>

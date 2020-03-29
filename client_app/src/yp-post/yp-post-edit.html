@@ -383,6 +383,11 @@
         <input type="hidden" name="structuredAnswers" value="[[structuredAnswers]]">
       </div>
     </yp-edit-dialog>
+
+    <yp-magic-text id="alternativeTextForNewIdeaButtonHeaderId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButtonHeader]]"
+                   content-language="[[group.language]]" on-new-translation="_alternativeTextForNewIdeaButtonHeaderTranslation"
+                   text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+
   </template>
 
 </dom-module>
@@ -944,12 +949,23 @@
       }.bind(this), 250);
     },
 
+    _alternativeTextForNewIdeaButtonHeaderTranslation: function () {
+      this.async(function () {
+        var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
+        debugger;
+        if (label && label.finalContent) {
+          this.set('editHeaderText', label.finalContent);
+        }
+      });
+    },
+
     _setupTranslation: function () {
       this.async(function () {
         if (this.t) {
           if (this.newPost) {
             if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaButtonHeader) {
-              this.editHeaderText = this.group.configuration.alternativeTextForNewIdeaButtonHeader;
+              var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
+              this.editHeaderText = (label && label.finalContent) ? label.finalContent : this.group.configuration.alternativeTextForNewIdeaButtonHeader;
             } else {
               this.editHeaderText = this.t('post.new');
             }

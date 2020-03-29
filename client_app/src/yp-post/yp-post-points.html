@@ -295,7 +295,11 @@
 
             <template is="dom-if" if="[[post.Group.configuration.alternativePointForHeader]]">
               <div class="pointMainHeader layout horizontal center-center">
-                [[post.Group.configuration.alternativePointForHeader]]
+
+                <yp-magic-text content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointForHeader]]"
+                               content-language="[[post.Group.language]]"
+                               class="ratingName" text-type="alternativePointForHeader"></yp-magic-text>
+
               </div>
             </template>
 
@@ -392,10 +396,23 @@
 
             <template is="dom-if" if="[[post.Group.configuration.alternativePointAgainstHeader]]">
               <div class="pointMainHeader layout horizontal center-center">
-                [[post.Group.configuration.alternativePointAgainstHeader]]
+                <yp-magic-text content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointAgainstHeader]]"
+                               content-language="[[post.Group.language]]"
+                               class="ratingName" text-type="alternativePointAgainstHeader"></yp-magic-text>
               </div>
             </template>
 
+            <template is="dom-if" if="[[post.Group.configuration.alternativePointForLabel]]">
+                <yp-magic-text id="alternativePointForLabelId" hidden content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointForLabel]]"
+                               content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels"
+                               text-type="alternativePointForLabel"></yp-magic-text>
+            </template>
+
+            <template is="dom-if" if="[[post.Group.configuration.alternativePointAgainstLabel]]">
+              <yp-magic-text id="alternativePointAgainstLabelId" hidden content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointAgainstLabel]]"
+                             content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels"
+                             text-type="alternativePointAgainstLabel"></yp-magic-text>
+            </template>
 
             <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical"
                             animated hidden$="[[disableDebate]]">
@@ -1180,6 +1197,10 @@
               this.set('labelDown', this.t('point.against'));
             }
           }
+
+          this.async(function () {
+            this._updatePointLabels();
+          });
         },
 
         removeElementsByClass: function (rootElement, className) {
@@ -1187,6 +1208,19 @@
           while(elements.length > 0){
             elements[0].parentNode.removeChild(elements[0]);
           }
+        },
+
+        _updatePointLabels: function () {
+          this.async(function () {
+            var forLabel = this.$$("#alternativePointForLabelId");
+            var againstLabel = this.$$("#alternativePointAgainstLabelId");
+            if (forLabel && forLabel.finalContent) {
+              this.set('labelUp', forLabel.finalContent);
+            }
+            if (againstLabel && againstLabel.finalContent) {
+              this.set('labelDown', againstLabel.finalContent);
+            }
+          });
         },
 
         _processStoredPoints: function () {

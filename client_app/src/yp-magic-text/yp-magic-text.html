@@ -226,6 +226,13 @@
             case 'communityContent':
               this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedText";
               break;
+            case 'alternativeTextForNewIdeaButton':
+            case 'alternativeTextForNewIdeaButtonClosed':
+            case 'alternativeTextForNewIdeaButtonHeader':
+            case 'alternativePointForHeader':
+            case 'alternativePointAgainstHeader':
+            case 'alternativePointForLabel':
+            case 'alternativePointAgainstLabel':
             case 'groupName':
             case 'groupContent':
               this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedText";
@@ -256,6 +263,7 @@
         } else {
           console.error("No content for magic text");
         }
+        this.dispatchEvent(new CustomEvent('new-translation', { bubbles: true, composed: true }));
         this._finalize();
       }
 

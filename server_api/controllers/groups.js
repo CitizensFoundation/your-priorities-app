@@ -179,6 +179,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.alternativePointForLabel', (req.body.alternativePointForLabel && req.body.alternativePointForLabel!="") ? req.body.alternativePointForLabel : null);
   group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
+
   group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
   group.set('configuration.disableNameAutoTranslation', truthValueFromBody(req.body.disableNameAutoTranslation));
   group.set('configuration.externalGoalTriggerUrl', (req.body.externalGoalTriggerUrl && req.body.externalGoalTriggerUrl!="") ? req.body.externalGoalTriggerUrl : null);
@@ -1075,13 +1076,23 @@ router.get('/:id', auth.can('view group'), function(req, res) {
   });
 });
 
+const allowedTextTypesForGroup = [
+  "alternativeTextForNewIdeaButton",
+  "alternativeTextForNewIdeaButtonClosed",
+  "alternativeTextForNewIdeaButtonHeader",
+  "alternativePointForHeader",
+  "alternativePointAgainstHeader",
+  "alternativePointForLabel",
+  "alternativePointAgainstLabel"
+];
+
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
-  if (req.query.textType.indexOf("group") > -1) {
+  if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {
     models.Group.findOne({
       where: {
         id: req.params.id
       },
-      attributes: ['id','name','objectives']
+      attributes: ['id','name','objectives','configuration']
     }).then(function(group) {
       if (group) {
         models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
