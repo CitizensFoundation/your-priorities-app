@@ -5,23 +5,78 @@ var _ = require('lodash');
 const moment = require('moment');
 
 const getGroupPosts = require('./export_utils').getGroupPosts;
-const getDescriptionHeaders = require('./export_utils').getDescriptionHeaders;
 const getRatingHeaders = require('./export_utils').getRatingHeaders;
 
 const getContactData = require('./export_utils').getContactData;
 const getAttachmentData = require('./export_utils').getAttachmentData;
-const getMediaURLs = require('./export_utils').getMediaURLs;
 const getMediaTranscripts = require('./export_utils').getMediaTranscripts;
 const getPostRatings = require('./export_utils').getPostRatings;
-const getDescriptionColumns = require('./export_utils').getDescriptionColumns;
 const getPostUrl =  require('./export_utils').getPostUrl;
 const getLocation =  require('./export_utils').getLocation;
 const getCategory =  require('./export_utils').getCategory;
 const getUserEmail = require('./export_utils').getUserEmail;
 const clean = require('./export_utils').clean;
 
-const getPointsDown = require('./export_utils').getPointsDown;
-const getPointsUp = require('./export_utils').getPointsUp;
+const getMediaFormatUrl = function (media, formatId) {
+  var formats = media.formats;
+  if (formats && formats.length>0)
+    return formats[formatId];
+  else
+    return ""
+};
+
+const getMediaURLs = function (post) {
+  var mediaURLs = "";
+
+  if (post.Points && post.Points.length>0) {
+    _.forEach(post.Points, function (point) {
+      if (point.PointVideos && point.PointVideos.length>0) {
+        mediaURLs += _.map(point.PointVideos, function (media) {
+          return ""+getMediaFormatUrl(media, 0)+"\n";
+        });
+      }
+
+      if (point.PointAudios && point.PointAudios.length>0) {
+        mediaURLs += _.map(point.PointAudios, function (media) {
+          return ""+getMediaFormatUrl(media, 0)+"\n";
+        });
+      }
+    });
+  }
+
+  if (post.PostVideos && post.PostVideos.length>0) {
+    mediaURLs += _.map(post.PostVideos, function (media) {
+      return ""+getMediaFormatUrl(media, 0)+"\n";
+    });
+  }
+
+  if (post.PostAudios && post.PostAudios.length>0) {
+    mediaURLs += _.map(post.PostAudios, function (media) {
+      return ""+getMediaFormatUrl(media, 0)+"\n";
+    });
+  }
+
+  return ''+mediaURLs+'';
+};
+
+const getPointsUpOrDown = function (post, value) {
+  var points = _.filter(post.Points, function (point) {
+    if (value>0) {
+      return point.value > 0;
+    } else {
+      return point.value < 0;
+    }
+  });
+  return points.map((point) => point.content);
+};
+
+var getPointsUp = function (post) {
+  return getPointsUpOrDown(post, 1);
+};
+
+var getPointsDown = function (post) {
+  return getPointsUpOrDown(post, -1);
+};
 
 const docx = require('docx');
 
@@ -41,14 +96,14 @@ const createDocWithStyles = (title) => {
           next: "Normal",
           quickFormat: true,
           run: {
-            size: 28,
+            size: 32,
             bold: true,
-            italics: true,
-            color: "red",
+            italics: false,
+            color: "black",
           },
           paragraph: {
             spacing: {
-              after: 120,
+              after: 110,
             },
           },
         },
@@ -59,11 +114,29 @@ const createDocWithStyles = (title) => {
           next: "Normal",
           quickFormat: true,
           run: {
-            size: 26,
+            size: 28,
+            bold: true,
+            italics: false,
+            color: "black",
+          },
+          paragraph: {
+            spacing: {
+              after: 100,
+            },
+          },
+        },
+        {
+          id: "Heading3",
+          name: "Heading 3",
+          basedOn: "Normal",
+          next: "Normal",
+          quickFormat: true,
+          run: {
+            size: 22,
             bold: true,
             underline: {
-              type: UnderlineType.DOUBLE,
-              color: "FF0000",
+              type: UnderlineType.SINGLE,
+              color: "#000",
             },
           },
           paragraph: {
@@ -109,146 +182,231 @@ const createDocWithStyles = (title) => {
       ],
     }
   });
-}
+};
+
+const setDescriptions = (group, post, children) => {
+  if (group && group.configuration && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
+    var structuredAnswers = [];
+
+    var questionComponents = group.configuration.structuredQuestions.split(",");
+    for (var i=0 ; i<questionComponents.length; i+=2) {
+      var question = questionComponents[i];
+      var maxLength = questionComponents[i+1];
+      structuredAnswers.push({
+        translatedQuestion: question.trim(),
+        question: question,
+        maxLength: maxLength, value: ""
+      });
+    }
+
+    if (post.public_data && post.public_data.structuredAnswers && post.public_data.structuredAnswers!=="") {
+      var answers = post.public_data.structuredAnswers.split("%!#x");
+      for (i=0 ; i<answers.length; i+=1) {
+        if (structuredAnswers[i])
+          structuredAnswers[i].value = answers[i].trim();
+      }
+    } else {
+      structuredAnswers[0].value = post.description;
+    }
+
+    structuredAnswers.forEach((questionAnswer) => {
+      children.push(
+        new Paragraph({
+          text: questionAnswer.translatedQuestion,
+          heading: HeadingLevel.HEADING_2,
+        }),
+        new Paragraph(questionAnswer.value),
+      )
+    });
+  } else {
+    children.push(
+      new Paragraph(post.description)
+    );
+  }
+};
+
+const getImageFormatUrl = function(image, formatId) {
+  var formats = JSON.parse(image.formats);
+  if (formats && formats.length>0)
+    return formats[formatId];
+  else
+    return ""
+};
+
+const getImages = function (post) {
+  var imagesText = "";
+
+  if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
+    imagesText += _.map(post.PostHeaderImages, function (image) {
+      return getImageFormatUrl(image, 0)+"\n";
+    });
+  }
+
+  if (post.PostUserImages && post.PostUserImages.length>0) {
+    imagesText += _.map(post.PostUserImages, function (image) {
+      return getImageFormatUrl(image, 0)+"\n";
+    });
+  }
+
+  return ''+imagesText.replace(/,/g,"")+'';
+};
+
+const addPostToDoc = (doc, post, group) => {
+  const children = [
+    new Paragraph({
+      text: post.name,
+      heading: HeadingLevel.HEADING_1,
+    })
+  ];
+
+  setDescriptions(group, post.realPost, children);
+
+  children.push(
+    new Paragraph(""),
+
+    new Paragraph("URL: "+ post.url),
+    new Paragraph(""),
+    new Paragraph("User email: "+ post.userEmail),
+    new Paragraph("User name: "+ post.userName),
+    new Paragraph(""),
+    new Paragraph("Endorsements up: "+ post.endorsementsUp),
+    new Paragraph("Endorsements down: "+ post.endorsementsDown),
+    new Paragraph("Counter points: "+ post.counterPoints),
+    new Paragraph("")
+  );
+
+  if (post.images && post.images.length>5) {
+    children.push(
+      new Paragraph("Image URLs: "+ post.images)
+    );
+    children.push(
+      new Paragraph("")
+    );
+  }
+
+  if (post.postRatings) {
+    children.push(
+      new Paragraph("Ratings: "+ post.postRatings)
+    )
+  }
+
+  debugger;
+
+  if (post.mediaURLs && post.mediaURLs.length>4) {
+    children.push(
+      new Paragraph("Media URLs: "+ post.mediaURLs)
+    )
+  }
+
+  if (post.category) {
+    children.push(
+      new Paragraph("Category: "+ post.category)
+    )
+  }
+
+  if (post.location && post.location.length>6) {
+    children.push(
+      new Paragraph("Location: "+ post.location)
+    )
+  }
+
+  if (post.mediaTranscripts && post.mediaTranscripts.length>4) {
+    children.push(
+      new Paragraph("")
+    );
+    children.push(
+      new Paragraph("Media transcripts: \n"+ post.mediaTranscripts)
+    )
+  }
+
+  if (post.contactData && post.contactData.length>4) {
+    children.push(
+      new Paragraph("ContactData: "+ post.contactData)
+    )
+  }
+
+  if (post.attachmentData && post.attachmentData.length>4) {
+    children.push(
+      new Paragraph("Attachment data: "+ post.attachmentData)
+    )
+  }
+
+  const pointsUp = getPointsUp(post);
+
+  children.push(
+    new Paragraph({
+      text: pointsUp.length>0 ? (pointsUp.length===1 ? "Point for" : "Points for") : "No points for",
+      heading: HeadingLevel.HEADING_2,
+    }));
+
+  pointsUp.forEach((pointContent) => {
+    children.push(
+      new Paragraph(pointContent)
+    );
+    children.push(
+      new Paragraph("")
+    );
+  });
+
+  const pointsDown = getPointsDown(post);
+  children.push(
+    new Paragraph({
+      text: pointsDown.length>0 ? (pointsDown.length===1 ? "Point against" : "Points against") : "No points against",
+      heading: HeadingLevel.HEADING_2,
+    }),
+  );
+
+  pointsDown.forEach((pointContent) => {
+    children.push(
+      new Paragraph(pointContent)
+    );
+    children.push(
+      new Paragraph("")
+    );
+  });
+
+  doc.addSection({
+    children: children
+  });
+};
 
 const exportToDocx = (group, posts, customRatings, callback) => {
   const title = "Export for Group Id: "+group.id+" - "+group.name;
 
-  const descriptionHeaders = getDescriptionHeaders(group);
   const ratingsHeaders = getRatingHeaders(customRatings);
 
   const doc = createDocWithStyles(title);
+  const children = [
+    new Paragraph({
+      text: title,
+      heading: HeadingLevel.HEADING_1,
+    }),
 
-  doc.addSection({
-    children: [
+    new Paragraph({
+      text: group.name,
+      heading: HeadingLevel.HEADING_1,
+    }),
+
+    new Paragraph(group.objectives)
+  ];
+
+  if (ratingsHeaders && ratingsHeaders.length>5) {
+    children.push(
       new Paragraph({
-        text: title,
+        text: "Ratings options",
         heading: HeadingLevel.HEADING_1,
       }),
 
-      new Paragraph({
-        text: group.name,
-        heading: HeadingLevel.HEADING_1,
-      }),
-
-      new Paragraph(group.objectives)
-    ]
-  });
-
-  doc.addSection({
-    children: [
-      new Paragraph({
-        text: "Headers",
-        heading: HeadingLevel.HEADING_1,
-      }),
-
-      new Paragraph(descriptionHeaders)
-    ]
-  });
-
-  if (ratingsHeaders) {
-    doc.addSection({
-      children: [
-        new Paragraph({
-          text: "Ratings options",
-          heading: HeadingLevel.HEADING_1,
-        }),
-
-        new Paragraph(ratingsHeaders)
-      ]
-    });
+      new Paragraph(ratingsHeaders)
+    );
   }
 
+  doc.addSection({
+    children: children
+  });
+
   posts.forEach((post) =>{
-    const children = [
-      new Paragraph({
-        text: "Name",
-        heading: HeadingLevel.HEADING_1,
-      }),
-
-      new Paragraph(post.name),
-
-      new Paragraph({
-        text: "Descriptions",
-        heading: HeadingLevel.HEADING_1,
-      }),
-
-      new Paragraph(post.description),
-
-      new Paragraph("URL: "+ post.url),
-      new Paragraph("User email: "+ post.userEmail),
-      new Paragraph("User name: "+ post.userName),
-      new Paragraph("Endorsements up: "+ post.endorsementsUp),
-      new Paragraph("Endorsements down: "+ post.endorsementsDown),
-      new Paragraph("Counter points: "+ post.counterPoints),
-    ];
-
-    if (post.postRatings) {
-      children.push(
-        new Paragraph("Ratings: "+ post.postRatings)
-      )
-    }
-
-    if (post.mediaURLs) {
-      children.push(
-        new Paragraph("Media URLs: "+ post.mediaURLs)
-      )
-    }
-
-    if (post.category) {
-      children.push(
-        new Paragraph("Category: "+ post.category)
-      )
-    }
-
-    if (post.location) {
-      children.push(
-        new Paragraph("Location: "+ post.location)
-      )
-    }
-
-    if (post.mediaTranscripts) {
-      children.push(
-        new Paragraph("Media transcripts: "+ post.mediaTranscripts)
-      )
-    }
-
-    if (post.contactData) {
-      children.push(
-        new Paragraph("ContactData: "+ post.contactData)
-      )
-    }
-
-    if (post.attachmentData) {
-      children.push(
-        new Paragraph("Attachment data: "+ post.attachmentData)
-      )
-    }
-
-   children.push(
-      new Paragraph({
-        text: "Points for",
-        heading: HeadingLevel.HEADING_1,
-    }));
-
-    children.push(
-      new Paragraph(getPointsUp(post))
-    );
-
-    children.push(
-      new Paragraph({
-        text: "Points against",
-        heading: HeadingLevel.HEADING_1,
-      }),
-    );
-
-    children.push(
-      new Paragraph(getPointsDown(post))
-    );
-
-    doc.addSection({
-      children: children
-    });
+    addPostToDoc(doc, post, group);
   });
 
   Packer.toBase64String(doc).then(b64string=>{
@@ -278,7 +436,7 @@ const exportGroupToDocx = (group, hostName, callback) => {
             posts.push({
               id: post.id,
               name: clean(post.name),
-              description: getDescriptionColumns(group, post),
+              realPost: post,
               url: getPostUrl(post, hostName),
               category: getCategory(post),
               userEmail: getUserEmail(post),
@@ -289,6 +447,7 @@ const exportGroupToDocx = (group, hostName, callback) => {
               counterPoints: post.counter_points,
               pointsUp: getPointsUp(post),
               Points: post.Points,
+              images: getImages(post),
               pointsDown: getPointsDown(post),
               contactData: getContactData(post),
               attachmentData: getAttachmentData(post),
