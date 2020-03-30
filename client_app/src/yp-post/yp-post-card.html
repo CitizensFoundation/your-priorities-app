@@ -271,6 +271,10 @@
       [hidden] {
         display: none !important;
       }
+
+      a {
+        text-decoration: none;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-logged-in="_userLoggedIn"></lite-signal>
@@ -282,19 +286,21 @@
                     audio-cover$="[[isAudioCover]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
-        <div class="postNameContainer">
-          <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
-            <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
-                           text-only content="[[postName]]" content-id="[[post.id]]">
-            </yp-magic-text>
+        <a href="/post/[[post.id]]">
+          <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
+          <div class="postNameContainer">
+            <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
+              <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
+                             text-only content="[[postName]]" content-id="[[post.id]]">
+              </yp-magic-text>
+            </div>
           </div>
-        </div>
-        <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
-                       text-type="postContent" content-language="[[post.language]]"
-                       text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
-        </yp-magic-text>
-        <div class="bottomBar"></div>
+          <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
+                         text-type="postContent" content-language="[[post.language]]"
+                         text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
+          </yp-magic-text>
+          <div class="bottomBar"></div>
+        </a>
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]">
           <div class="share" >
             <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"

@@ -40,6 +40,10 @@
         .groupCard {
         }
       }
+
+      a {
+        text-decoration: none;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wide}}"></iron-media-query>
@@ -48,7 +52,7 @@
       <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeGroups]]" as="group" scroll-target="document" grid$="[[wide]]">
         <template>
           <div class="groupCard layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
-            <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+            <a href="/group/[[group.id]]"><yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card></a>
           </div>
         </template>
       </iron-list>
