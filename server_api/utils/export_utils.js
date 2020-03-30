@@ -350,7 +350,14 @@ const getGroupPosts = (group, hostName, callback) => {
       }
     ]
   }).then(function (posts) {
-    callback(posts);
+    let categories = [];
+    posts.forEach((post)=>{
+      if (post.Category) {
+        categories.push(post.Category.name);
+      }
+    });
+    categories = _.uniq(categories);
+    callback(posts, null, categories);
   }).catch(function (error) {
     callback(null, error);
   });
