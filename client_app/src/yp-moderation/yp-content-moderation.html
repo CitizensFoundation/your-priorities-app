@@ -528,6 +528,10 @@
           this.$.grid.closeItemDetails(oldItem);
         }
 
+        this._refreshGridAsync();
+      },
+
+      _refreshGridAsync: function () {
         this.async(function () {
           this.$.grid.fire('iron-resize');
           this.$.grid.notifyResize();
@@ -539,6 +543,7 @@
         allMenus.forEach(function (item) {
           item.select(null);
         });
+        this._refreshGridAsync();
       },
 
       ready: function () {
@@ -590,6 +595,8 @@
           this.set('selectedItemsCount', 0);
         }
         this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.type }});
+
+        this._refreshGridAsync();
       },
 
       _setupItemIdFromEvent(event) {
@@ -601,6 +608,7 @@
         if (!modelClass)
           modelClass = event.target.getAttribute('data-model-class');
         this.set('selectedModelClass', modelClass);
+        this._refreshGridAsync();
       },
 
       _deleteSelected: function (event) {
@@ -720,6 +728,7 @@
         if (item) {
           this.$.grid.selectItem(item);
         }
+        this._refreshGridAsync();
       },
 
       _findItemFromId: function (id) {
