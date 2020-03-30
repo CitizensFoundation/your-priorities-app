@@ -319,10 +319,12 @@
             <div class="layout vertical description-and-stats">
               <div class="description">
                 <div class="community-name">
-                  <yp-magic-text text-type="communityName" content-language="[[community.language]]"
-                                 disable-translation="[[community.configuration.disableNameAutoTranslation]]"
-                                 text-only content="[[communityNameFull]]" content-id="[[community.id]]">
-                  </yp-magic-text>
+                  <template is="dom-if" if="[[community]]">
+                    <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+                                   disable-translation="[[community.configuration.disableNameAutoTranslation]]"
+                                   text-only content="[[communityNameFull]]" content-id="[[community.id]]">
+                    </yp-magic-text>
+                  </template>
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
                 <yp-magic-text id="description" class="communityDescription"
