@@ -127,7 +127,11 @@ var getAvailableCommunityFolders = function (req, domainId, done) {
       }
     }
   ], function (error) {
-    done(error, combinedCommunities);
+    if (!error) {
+      done(error, combinedCommunities.filter(community=>community.user_id!==req.user.id));
+    } else {
+      done(error);
+    }
   });
 };
 
