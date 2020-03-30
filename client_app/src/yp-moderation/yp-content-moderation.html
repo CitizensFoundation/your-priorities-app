@@ -293,7 +293,7 @@
         <vaadin-grid-column width="70px" flex-grow="0">
           <template class="header">
             <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedItemsEmpty]]">
-              <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" ></paper-icon-button>
+              <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" on-tap="_refreshGridAsync"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
                   <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
