@@ -80,7 +80,7 @@ var getPointsDown = function (post) {
 
 const docx = require('docx');
 
-const { Document, Packer, Paragraph, Table, TableCell, UnderlineType, HeadingLevel, TableRow } = docx;
+const { Document, Packer, Paragraph, Table, TableCell, UnderlineType, HeadingLevel, AlignmentType, TableRow } = docx;
 
 const createDocWithStyles = (title) => {
   return new Document({
@@ -114,7 +114,7 @@ const createDocWithStyles = (title) => {
           next: "Normal",
           quickFormat: true,
           run: {
-            size: 28,
+            size: 24,
             bold: true,
             italics: false,
             color: "black",
@@ -132,18 +132,15 @@ const createDocWithStyles = (title) => {
           next: "Normal",
           quickFormat: true,
           run: {
-            size: 22,
-            bold: true,
-            underline: {
-              type: UnderlineType.SINGLE,
-              color: "#000",
-            },
+            size: 65,
+            bold: true
           },
           paragraph: {
             spacing: {
-              before: 240,
+              before: 600,
               after: 120,
             },
+
           },
         },
         {
@@ -370,12 +367,7 @@ const addPostToDoc = (doc, post, group) => {
   });
 };
 
-const exportToDocx = (group, posts, customRatings, callback) => {
-  const title = "Export for Group Id: "+group.id+" - "+group.name;
-
-  const ratingsHeaders = getRatingHeaders(customRatings);
-
-  const doc = createDocWithStyles(title);
+const setupGroup = (doc, group, ratingsHeaders, title) => {
   const children = [
     new Paragraph({
       text: title,
@@ -404,10 +396,66 @@ const exportToDocx = (group, posts, customRatings, callback) => {
   doc.addSection({
     children: children
   });
+};
 
-  posts.forEach((post) =>{
-    addPostToDoc(doc, post, group);
-  });
+const exportToDocx = (group, posts, customRatings, categories, callback) => {
+  const title = "Export for Group Id: "+group.id+" - "+group.name;
+
+  const ratingsHeaders = getRatingHeaders(customRatings);
+
+  const doc = createDocWithStyles(title);
+
+  setupGroup(doc, group, ratingsHeaders, title);
+
+  if (categories.length===0) {
+    posts.forEach((post) =>{
+      addPostToDoc(doc, post, group);
+    });
+  } else {
+    categories = _.orderBy(categories, [category=>category]);
+    categories.forEach((category) => {
+      const children = [
+        new Paragraph({
+          text: category,
+          heading: HeadingLevel.HEADING_3,
+          alignment: AlignmentType.CENTER
+        })
+      ];
+
+      doc.addSection({
+        children: children
+      });
+
+      posts.forEach((post) =>{
+        if (post.category===category) {
+          addPostToDoc(doc, post, group);
+        }
+      });
+    });
+
+    const postsWithoutCategories = [];
+    posts.forEach((post) =>{
+      if (!post.category) {
+        postsWithoutCategories.push(post);
+      }
+    });
+
+    if (postsWithoutCategories.length>0) {
+
+      doc.addSection({
+        children: [
+          new Paragraph({
+            text: "Posts without a category",
+            heading: HeadingLevel.HEADING_1,
+          })
+        ]
+      });
+
+      postsWithoutCategories.forEach((post) =>{
+        addPostToDoc(doc, post, group);
+      });
+    }
+  }
 
   Packer.toBase64String(doc).then(b64string=>{
     callback(null, Buffer.from(b64string, 'base64'));
@@ -420,7 +468,7 @@ const exportGroupToDocx = (group, hostName, callback) => {
     customRatings = group.configuration.customRatings;
   }
 
-  getGroupPosts(group, hostName, (postsIn, error) => {
+  getGroupPosts(group, hostName, (postsIn, error, categories) => {
     if (error) {
       callback(error);
     } else {
@@ -432,7 +480,6 @@ const exportGroupToDocx = (group, hostName, callback) => {
         async.eachSeries(postsIn, function (post, seriesCallback) {
           if (!post.deleted) {
             const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
-
             posts.push({
               id: post.id,
               name: clean(post.name),
@@ -461,7 +508,7 @@ const exportGroupToDocx = (group, hostName, callback) => {
           if(error) {
             callback(error)
           } else {
-            exportToDocx(group, posts, customRatings, callback);
+            exportToDocx(group, posts, customRatings, categories, callback);
           }
         });
       }
