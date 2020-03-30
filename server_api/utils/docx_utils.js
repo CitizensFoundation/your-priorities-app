@@ -96,14 +96,15 @@ const createDocWithStyles = (title) => {
           next: "Normal",
           quickFormat: true,
           run: {
-            size: 32,
+            size: 35,
             bold: true,
             italics: false,
             color: "black",
           },
           paragraph: {
             spacing: {
-              after: 110,
+              after: 250,
+              before: 100,
             },
           },
         },
@@ -114,14 +115,14 @@ const createDocWithStyles = (title) => {
           next: "Normal",
           quickFormat: true,
           run: {
-            size: 24,
+            size: 26,
             bold: true,
             italics: false,
             color: "black",
           },
           paragraph: {
             spacing: {
-              after: 100,
+              after: 140,
             },
           },
         },
@@ -398,6 +399,10 @@ const setupGroup = (doc, group, ratingsHeaders, title) => {
   });
 };
 
+const getOrderedPosts = (posts) => {
+  return _.orderBy(posts,[post=> { return post.endorsementsUp-post.endorsementsDown }], ['desc']);
+}
+
 const exportToDocx = (group, posts, customRatings, categories, callback) => {
   const title = "Export for Group Id: "+group.id+" - "+group.name;
 
@@ -408,7 +413,7 @@ const exportToDocx = (group, posts, customRatings, categories, callback) => {
   setupGroup(doc, group, ratingsHeaders, title);
 
   if (categories.length===0) {
-    posts.forEach((post) =>{
+    getOrderedPosts(posts).forEach((post) =>{
       addPostToDoc(doc, post, group);
     });
   } else {
@@ -426,7 +431,7 @@ const exportToDocx = (group, posts, customRatings, categories, callback) => {
         children: children
       });
 
-      posts.forEach((post) =>{
+      getOrderedPosts(posts).forEach((post) =>{
         if (post.category===category) {
           addPostToDoc(doc, post, group);
         }
@@ -451,7 +456,7 @@ const exportToDocx = (group, posts, customRatings, categories, callback) => {
         ]
       });
 
-      postsWithoutCategories.forEach((post) =>{
+      getOrderedPosts(postsWithoutCategories).forEach((post) =>{
         addPostToDoc(doc, post, group);
       });
     }
