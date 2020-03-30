@@ -527,6 +527,11 @@
         if (oldItem) {
           this.$.grid.closeItemDetails(oldItem);
         }
+
+        this.async(function () {
+          this.$.grid.fire('iron-resize');
+          this.$.grid.notifyResize();
+        });
       },
 
       _menuSelection: function (event, detail) {
