@@ -64,7 +64,7 @@
     <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeCommunities]]" as="community" scroll-target="document" grid$="[[wide]]">
       <template>
         <div class="card layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
-          <a href="/community/[[community.id]]"><yp-community-card wide$="[[wide]]"  community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
+          <a href="/community/[[community.id]]" aria-label="[[community.name]]"><yp-community-card wide$="[[wide]]"  community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
         </div>
       </template>
     </iron-list>

@@ -286,7 +286,7 @@
                     audio-cover$="[[isAudioCover]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <a href="/post/[[post.id]]">
+        <a href="/post/[[post.id]]" aria-label="[[post.name]]">
           <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
           <div class="postNameContainer">
             <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">

@@ -52,7 +52,7 @@
       <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeGroups]]" as="group" scroll-target="document" grid$="[[wide]]">
         <template>
           <div class="groupCard layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
-            <a href="/group/[[group.id]]"><yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card></a>
+            <a href="/group/[[group.id]]" aria-label="[[group.name]]"><yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card></a>
           </div>
         </template>
       </iron-list>
