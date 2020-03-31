@@ -22,6 +22,8 @@ var generateSitemap = function(req, res) {
   const domainName = req.ypDomain.domain_name;
   const community = (req.ypCommunity && req.ypCommunity.id) ? req.ypCommunity : null;
 
+  console.log(`generateSitemap: ${domainName} ${community ? community.hostname : 'noHostname'}`);
+
   var sitemap = sitemapLib.createSitemap ({
     hostname: community ? getCommunityURL(community.hostname, domainName, '') : 'https://'+req.ypDomain.domain_name,
     cacheTime: 1 // 1 hour - cache purge period
