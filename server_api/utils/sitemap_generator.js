@@ -27,6 +27,12 @@ var generateSitemap = function(req, res) {
     cacheTime: 1 // 1 hour - cache purge period
   });
 
+  if (domainName==="parliament.scot") {
+    sitemap.hostname = "https://engage.parliament.scot"
+  }
+
+  console.log(`generateSitemap ${domainName} ${community ? community.hostname : 'noHostname'} `);
+
   async.series([
     function (seriesCallback) {
       if (community && wildCardDomainNames.indexOf(domainName)>-1) {
