@@ -37,7 +37,7 @@ var generateSitemap = function(req, res) {
       seriesCallback();
     },
     function (seriesCallback) {
-      if (!community) {
+      if (!community || !wildCardDomainNames.indexOf(domainName)>-1 ) {
         models.Community.findAll({
           attributes: ['id','hostname'],
           where: {
