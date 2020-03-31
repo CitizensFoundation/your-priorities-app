@@ -29,7 +29,11 @@ var generateSitemap = function(req, res) {
 
   async.series([
     function (seriesCallback) {
-      sitemap.add({ url: '/domain/'+domainId} );
+      if (community && wildCardDomainNames.indexOf(domainName)>-1) {
+        sitemap.add({ url: 'https://'+domainName+'/domain/'+domainId} );
+      } else {
+        sitemap.add({ url: '/domain/'+domainId} );
+      }
       seriesCallback();
     },
     function (seriesCallback) {
