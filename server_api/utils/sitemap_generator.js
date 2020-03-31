@@ -49,7 +49,7 @@ var generateSitemap = function(req, res) {
           _.forEach(communities, function (community) {
             const path = '/community/'+community.id;
             if (community.hostname && wildCardDomainNames.indexOf(domainName)>-1) {
-              sitemap.add({ url: getCommunityURL(community.hostname, domainName, path)} );
+              sitemap.add({ url: getCommunityURL(community.hostname, domainName, '')} );
             } else {
               sitemap.add({ url: path} );
             }
@@ -63,7 +63,6 @@ var generateSitemap = function(req, res) {
       }
     },
     function (seriesCallback) {
-
       let communityWhere;
 
       if (community) {
@@ -77,6 +76,8 @@ var generateSitemap = function(req, res) {
           access: models.Community.ACCESS_PUBLIC
         };
       }
+
+      console.log(`generateSitemap: communityWhere ${JSON.stringify(communityWhere)}`);
 
       models.Group.findAll({
         attributes: ['id'],
