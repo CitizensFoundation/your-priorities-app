@@ -164,7 +164,7 @@ app.use(function setupRedis(req, res, next) {
 });
 
 app.get('/sitemap.xml', function getSitemap(req, res) {
-  const redisKey = "cache:sitemapv13:" + req.ypDomain.id + (req.ypCommunity && req.ypCommunity.id && req.ypCommunity.hostname) ? req.ypCommunity.hostname : '';
+  const redisKey = "cache:sitemapv14:" + req.ypDomain.id + (req.ypCommunity && req.ypCommunity.id && req.ypCommunity.hostname) ? req.ypCommunity.hostname : '';
   req.redisClient.get(redisKey, (error, sitemap) => {
     if (error) {
       log.error("Error getting sitemap from redis", {error});
