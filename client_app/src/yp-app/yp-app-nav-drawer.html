@@ -176,8 +176,7 @@
         if (window.appGlobals &&
             window.appGlobals.originalQueryParameters &&
             window.appGlobals.originalQueryParameters["locale"] &&
-           (window.appGlobals.originalQueryParameters["locale"].length===2 ||
-            window.appGlobals.originalQueryParameters["locale"].length===5)) {
+           (window.appGlobals.originalQueryParameters["locale"].length>1)) {
           return window.appGlobals.originalQueryParameters["locale"];
         } else if (user) {
           return user.default_locale;
