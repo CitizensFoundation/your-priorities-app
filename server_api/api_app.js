@@ -181,6 +181,7 @@ app.get('/sitemap.xml', function getSitemap(req, res) {
       generateSitemap(req, res);
     } else if (sitemap) {
       res.header('Content-Type', 'application/xml');
+      res.set({ 'content-type': 'application/xml' });
       res.send(sitemap);
     } else {
       generateSitemap(req, res);

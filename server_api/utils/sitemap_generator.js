@@ -22,8 +22,6 @@ var generateSitemap = function(req, res) {
   const domainName = req.ypDomain.domain_name;
   const community = (req.ypCommunity && req.ypCommunity.id) ? req.ypCommunity : null;
 
-  console.log(`generateSitemap: ${domainName} ${community ? community.hostname : 'noHostname'}`);
-
   var sitemap = sitemapLib.createSitemap ({
     hostname: community ? getCommunityURL(community.hostname, domainName, '') : 'https://'+req.ypDomain.domain_name,
     cacheTime: 1 // 1 hour - cache purge period
@@ -77,8 +75,6 @@ var generateSitemap = function(req, res) {
           access: models.Community.ACCESS_PUBLIC
         };
       }
-
-      console.log(`generateSitemap: communityWhere ${JSON.stringify(communityWhere)}`);
 
       models.Group.findAll({
         attributes: ['id'],
@@ -163,6 +159,7 @@ var generateSitemap = function(req, res) {
           const redisKey = "cache:sitemap:" + req.ypDomain.id;
           req.redisClient.setex(redisKey, process.env.SITEMAP_CACHE_TTL ? parseInt(process.env.SITEMAP_CACHE_TTL) : 60*60, xml);
           res.header('Content-Type', 'application/xml');
+          res.set({ 'content-type': 'application/xml' });
           res.send( xml );
         }
       });
