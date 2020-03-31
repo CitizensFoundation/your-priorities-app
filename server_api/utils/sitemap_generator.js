@@ -113,7 +113,7 @@ var generateSitemap = function(req, res) {
       });
     },
     function (seriesCallback) {
-      if (community) {
+      if (community || !(wildCardDomainNames.indexOf(domainName)>-1)) {
         models.Post.findAll({
           attributes: ['id'],
           include: [
