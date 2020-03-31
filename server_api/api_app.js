@@ -163,16 +163,6 @@ app.use(function setupRedis(req, res, next) {
   next();
 });
 
-app.use(function checkForBOT(req, res, next) {
-  var ua = req.headers['user-agent'];
-  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-    console.log(ua, ' is a bot');
-    nonSPArouter(req, res, next);
-  } else {
-    next();
-  }
-});
-
 app.get('/sitemap.xml', function getSitemap(req, res) {
   const redisKey = "cache:sitemapv13:" + req.ypDomain.id + (req.ypCommunity && req.ypCommunity.id && req.ypCommunity.hostname) ? req.ypCommunity.hostname : '';
   req.redisClient.get(redisKey, (error, sitemap) => {
@@ -187,6 +177,16 @@ app.get('/sitemap.xml', function getSitemap(req, res) {
       generateSitemap(req, res);
     }
   });
+});
+
+app.use(function checkForBOT(req, res, next) {
+  var ua = req.headers['user-agent'];
+  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
+    console.log(ua, ' is a bot');
+    nonSPArouter(req, res, next);
+  } else {
+    next();
+  }
 });
 
 app.get('/manifest.json', function getManifest(req, res) {
