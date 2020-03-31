@@ -292,8 +292,8 @@
 
         <vaadin-grid-column width="70px" flex-grow="0">
           <template class="header">
-            <paper-menu-button horizontal-align="right" class="helpButton" disabled$="[[selectedItemsEmpty]]">
-              <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" on-tap="_refreshGridAsync"></paper-icon-button>
+            <paper-menu-button horizontal-align="right" on-opened-changed="_refreshGridAsyncDelay" class="helpButton" disabled$="[[selectedItemsEmpty]]">
+              <paper-icon-button aria-label$="[[t('openSelectedItemsMenu')]]" icon="more-vert" slot="dropdown-trigger" on-tap="_menuOpened"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <template is="dom-if" if="[[!selectedItemsEmpty]]" restamp>
                   <paper-item data-args$="[[item.id]]" hidden$="[[userId]]" on-tap="_approveSelected">
@@ -316,7 +316,7 @@
             </paper-menu-button>
           </template>
           <template>
-            <paper-menu-button horizontal-align="right" class="helpButton">
+            <paper-menu-button horizontal-align="right" class="helpButton" on-opened-changed="_refreshGridAsyncDelay">
               <paper-icon-button aria-label$="[[t('openOneItemMenu')]]" icon="more-vert" data-args$="[[item.id]]" on-tap="_setSelected" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" on-iron-select="_menuSelection">
                 <paper-item data-args$="[[item.id]]" data-model-class$="[[item.type]]" hidden$="[[userId]]" on-tap="_approve">
@@ -532,10 +532,20 @@
       },
 
       _refreshGridAsync: function () {
+        this._refreshGridAsyncBase(10);
+      },
+
+      _refreshGridAsyncDelay: function (event, detail) {
+        if (this.allowGridEventsAfterMenuOpen) {
+          this._refreshGridAsyncBase(250);
+        }
+      },
+
+      _refreshGridAsyncBase: function (ms) {
         this.async(function () {
           this.$.grid.fire('iron-resize');
           this.$.grid.notifyResize();
-        });
+        }, ms);
       },
 
       _menuSelection: function (event, detail) {
@@ -655,7 +665,6 @@
         this._ajaxMaster(this.$.singleItemAjax, 'anonymize');
       },
 
-
       _approve: function (event) {
         this._setupItemIdFromEvent(event);
         this._ajaxMaster(this.$.singleItemAjax, 'approve');
@@ -723,11 +732,17 @@
         }
       },
 
+      _menuOpened: function () {
+        this.allowGridEventsAfterMenuOpen = true;
+      },
+
       _setSelected: function (event) {
         var item = this._findItemFromId(event.target.getAttribute('data-args'));
         if (item) {
           this.$.grid.selectItem(item);
         }
+
+        this.allowGridEventsAfterMenuOpen = true;
         this._refreshGridAsync();
       },
 
