@@ -3,23 +3,29 @@ var _ = require("lodash");
 var sitemapLib = require('sitemap');
 var async = require('async');
 
-const getCommunityURL = (req, path) => {
-  if (req.ypCommunity && req.ypCommunity.id && req.ypCommunity.hostname) {
-    const url = 'https://'+req.ypCommunity.hostname+'.'+req.ypDomain.domain_name+path;;
-    return url;
-  } else {
-    return path;
-  }
+const getCommunityURL = (hostname, domainName, path) => {
+  return 'https://'+hostname+'.'+domainName+path;
 };
 
+const wildCardDomainNames = [
+  'betrireykjavik.is',
+  'betraisland.is',
+  'yrpri.org',
+  'ypus.org',
+  'idea-synergy.com',
+  'localhost:4242'
+];
+
 var generateSitemap = function(req, res) {
-  var sitemap = sitemapLib.createSitemap ({
-    hostname: 'https://'+req.ypDomain.domain_name,
-    cacheTime: 0 // 1 hour - cache purge period
-  });
 
   const domainId = req.ypDomain.id;
+  const domainName = req.ypDomain.domain_name;
   const community = (req.ypCommunity && req.ypCommunity.id) ? req.ypCommunity : null;
+
+  var sitemap = sitemapLib.createSitemap ({
+    hostname: community ? getCommunityURL(community.hostname, domainName, '') : 'https://'+req.ypDomain.domain_name,
+    cacheTime: 1 // 1 hour - cache purge period
+  });
 
   async.series([
     function (seriesCallback) {
@@ -27,21 +33,45 @@ var generateSitemap = function(req, res) {
       seriesCallback();
     },
     function (seriesCallback) {
-      models.Community.findAll({
-        attributes: ['id'],
-        where: {
-          domain_id: domainId
-        }
-      }).then(function (communities) {
-        _.forEach(communities, function (community) {
-          sitemap.add({ url: getCommunityURL(req, '/community/'+community.id)} );
+      if (!community) {
+        models.Community.findAll({
+          attributes: ['id','hostname'],
+          where: {
+            domain_id: domainId
+          }
+        }).then(function (communities) {
+          _.forEach(communities, function (community) {
+            const path = '/community/'+community.id;
+            if (community.hostname && wildCardDomainNames.indexOf(domainName)>-1) {
+              sitemap.add({ url: getCommunityURL(community.hostname, domainName, path)} );
+            } else {
+              sitemap.add({ url: path} );
+            }
+          });
+          seriesCallback();
+        }).catch(function (error) {
+          seriesCallback(error);
         });
+      } else {
         seriesCallback();
-      }).catch(function (error) {
-        seriesCallback(error);
-      });
+      }
     },
     function (seriesCallback) {
+
+      let communityWhere;
+
+      if (community) {
+        communityWhere =  {
+          id: community.id,
+          access: models.Community.ACCESS_PUBLIC
+        };
+      } else {
+        communityWhere =  {
+          domain_id: domainId,
+          access: models.Community.ACCESS_PUBLIC
+        };
+      }
+
       models.Group.findAll({
         attributes: ['id'],
         where: {
@@ -53,17 +83,19 @@ var generateSitemap = function(req, res) {
         include: [
           {
             model: models.Community,
-            attributes: ['id'],
-            where: {
-              domain_id: domainId,
-              access: models.Community.ACCESS_PUBLIC
-            },
+            attributes: ['id','hostname'],
+            where: communityWhere,
             required: true
           }
         ]
       }).then(function (groups) {
         _.forEach(groups, function (group) {
-          sitemap.add({ url: getCommunityURL(req, '/group/'+group.id )} );
+          const path = '/group/'+group.id;
+          if (group.Community.hostname && wildCardDomainNames.indexOf(domainName)>-1) {
+            sitemap.add({ url: getCommunityURL(group.Community.hostname, domainName, path)} );
+          } else {
+            sitemap.add({ url: path} );
+          }
         });
         seriesCallback();
       }).catch(function (error) {
