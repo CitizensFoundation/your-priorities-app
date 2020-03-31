@@ -205,7 +205,7 @@
       <div class="layout horizontal center-center">
         <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
           <template>
-            <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
+            <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center" role="heading" aria-level="2">
               <yp-post-card on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
             </div>
           </template>

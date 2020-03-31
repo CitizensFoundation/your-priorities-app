@@ -606,7 +606,7 @@
         }
         this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.type }});
 
-        this._refreshGridAsync();
+        this._refreshGridAsyncDelay();
       },
 
       _setupItemIdFromEvent(event) {
