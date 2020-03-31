@@ -174,7 +174,7 @@ app.use(function checkForBOT(req, res, next) {
 });
 
 app.get('/sitemap.xml', function getSitemap(req, res) {
-  const redisKey = "cache:sitemap:" + req.ypDomain.id;
+  const redisKey = "cache:sitemapv2:" + req.ypDomain.id;
   req.redisClient.get(redisKey, (error, sitemap) => {
     if (error) {
       log.error("Error getting sitemap from redis", {error});
