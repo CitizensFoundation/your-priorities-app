@@ -73,7 +73,7 @@
         </div>
       </div>
       <div class="languageSelector layout vertical self-start">
-        <yp-language-selector class="languageSelector"></yp-language-selector>
+        <yp-language-selector class="languageSelector" selected-locale="{{selectedLocale}}"></yp-language-selector>
       </div>
       <div class="layout vertical" hidden$="[[!user]]">
         <div hidden>
@@ -164,6 +164,25 @@
 
         myDomains: {
           type: Array
+        },
+
+        selectedLocale: {
+          type: String,
+          computed: '_selectedLocale(user)'
+        }
+      },
+
+      _selectedLocale: function (user) {
+        if (window.appGlobals &&
+            window.appGlobals.originalQueryParameters &&
+            window.appGlobals.originalQueryParameters["locale"] &&
+           (window.appGlobals.originalQueryParameters["locale"].length===2 ||
+            window.appGlobals.originalQueryParameters["locale"].length===5)) {
+          return window.appGlobals.originalQueryParameters["locale"];
+        } else if (user) {
+          return user.default_locale;
+        } else {
+          return "en";
         }
       },
 
