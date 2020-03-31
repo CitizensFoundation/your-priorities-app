@@ -43,7 +43,8 @@ var generateSitemap = function(req, res) {
         models.Community.findAll({
           attributes: ['id','hostname'],
           where: {
-            domain_id: domainId
+            domain_id: domainId,
+            access: models.Community.ACCESS_PUBLIC
           }
         }).then(function (communities) {
           _.forEach(communities, function (community) {
