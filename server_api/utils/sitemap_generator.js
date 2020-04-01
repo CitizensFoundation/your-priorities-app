@@ -116,6 +116,42 @@ var generateSitemap = function(req, res) {
     },
     function (seriesCallback) {
       if (community || !(wildCardDomainNames.indexOf(domainName)>-1)) {
+        let mainInclude;
+
+        if (community) {
+          mainInclude =  [
+            {
+              model: models.Community,
+              attributes: ['id'],
+              required: true,
+              where: {
+                id: community.id,
+                access: models.Community.ACCESS_PUBLIC
+              }
+            }
+          ]
+        } else {
+          mainInclude =  [
+            {
+              model: models.Community,
+              attributes: ['id'],
+              required: true,
+              where: {
+                access: models.Community.ACCESS_PUBLIC
+              },
+              include: [
+                {
+                  model: models.Domain,
+                  where: {
+                    id: domainId
+                  },
+                  required: true
+                }
+              ]
+            }
+          ]
+        }
+
         models.Post.findAll({
           attributes: ['id'],
           include: [
@@ -129,17 +165,7 @@ var generateSitemap = function(req, res) {
                 ]
               },
               required: true,
-              include: [
-                {
-                  model: models.Community,
-                  attributes: ['id'],
-                  required: true,
-                  where: {
-                    id: community.id,
-                    access: models.Community.ACCESS_PUBLIC
-                  }
-                }
-              ]
+              include: mainInclude
             }
           ]
         }).then(function (posts) {
