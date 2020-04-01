@@ -22,14 +22,16 @@ var generateSitemap = function(req, res) {
   const domainName = req.ypDomain.domain_name;
   const community = (req.ypCommunity && req.ypCommunity.id) ? req.ypCommunity : null;
 
-  var sitemap = sitemapLib.createSitemap ({
-    hostname: community ? getCommunityURL(community.hostname, domainName, '') : 'https://'+req.ypDomain.domain_name,
-    cacheTime: 1 // 1 hour - cache purge period
-  });
+  let siteHostname = community ? getCommunityURL(community.hostname, domainName, '') : 'https://'+req.ypDomain.domain_name;
 
   if (domainName==="parliament.scot") {
-    sitemap.hostname = "https://engage.parliament.scot"
+    siteHostname = "https://engage.parliament.scot"
   }
+
+  var sitemap = sitemapLib.createSitemap ({
+    hostname: siteHostname,
+    cacheTime: 1 // 1 hour - cache purge period
+  });
 
   console.log(`generateSitemap ${domainName} ${community ? community.hostname : 'noHostname'} `);
 
