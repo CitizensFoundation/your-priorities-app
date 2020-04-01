@@ -138,7 +138,10 @@ var generateSitemap = function(req, res) {
               required: true,
               where: {
                 id: community.id,
-                access: models.Community.ACCESS_PUBLIC
+                access: models.Community.ACCESS_PUBLIC,
+                status: {
+                  $ne: 'hidden'
+                }
               }
             }
           ]
@@ -149,7 +152,10 @@ var generateSitemap = function(req, res) {
               attributes: ['id'],
               required: true,
               where: {
-                access: models.Community.ACCESS_PUBLIC
+                access: models.Community.ACCESS_PUBLIC,
+                status: {
+                  $ne: 'hidden'
+                }
               },
               include: [
                 {
