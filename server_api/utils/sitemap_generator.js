@@ -50,7 +50,10 @@ var generateSitemap = function(req, res) {
           attributes: ['id','hostname'],
           where: {
             domain_id: domainId,
-            access: models.Community.ACCESS_PUBLIC
+            access: models.Community.ACCESS_PUBLIC,
+            status: {
+              $ne: 'hidden'
+            }
           }
         }).then(function (communities) {
           _.forEach(communities, function (community) {
@@ -75,12 +78,18 @@ var generateSitemap = function(req, res) {
       if (community) {
         communityWhere =  {
           id: community.id,
-          access: models.Community.ACCESS_PUBLIC
+          access: models.Community.ACCESS_PUBLIC,
+          status: {
+            $ne: 'hidden'
+          }
         };
       } else {
         communityWhere =  {
           domain_id: domainId,
-          access: models.Community.ACCESS_PUBLIC
+          access: models.Community.ACCESS_PUBLIC,
+          status: {
+            $ne: 'hidden'
+          }
         };
       }
 
@@ -90,7 +99,10 @@ var generateSitemap = function(req, res) {
           $or: [
             { access: models.Group.ACCESS_PUBLIC },
             { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
-          ]
+          ],
+          status: {
+            $ne: 'hidden'
+          }
         },
         include: [
           {
