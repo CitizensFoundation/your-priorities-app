@@ -385,9 +385,14 @@
           computed: '_hasAdminCommentAccess(point)'
         },
 
+        hasAdminComments: {
+          type: Boolean,
+          value: false
+        },
+
         showAdminComments: {
           type: Boolean,
-          computed: '_showAdminComments(point)'
+          computed: '_showAdminComments(point, hasAdminComments)'
         },
 
         maxNumberOfPointsBeforeEditFrozen: {
@@ -458,7 +463,7 @@
         return isEditing || isAdminCommentEditing;
       },
 
-      _showAdminComments: function (point) {
+      _showAdminComments: function (point, hasAdminComments) {
         if (point && point.Post && point.Post.Group && point.public_data &&
             point.public_data.admin_comment &&
             point.public_data.admin_comment.text &&
@@ -584,7 +589,11 @@
 
       _editAdminCommentResponse: function (event, detail) {
         if (detail.response) {
-          this.set('point.public_data.admin_comment.text', detail.response.content);
+          if (!this.point.public_data)
+            this.point.public_data = {};
+          this.point.public_data.admin_comment = { text: detail.response.content };
+          this.set('isAdminCommentEditing', false);
+          this.set('hasAdminComments', true);
         }
         this.set('isAdminCommentEditing', false);
       },
