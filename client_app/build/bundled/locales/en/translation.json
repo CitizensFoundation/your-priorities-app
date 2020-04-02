@@ -1,4 +1,7 @@
 {
+  "editAdminComment": "Edit admin comment",
+  "commentFromAdmin": "Comment from the admin",
+  "allowAdminAnswersToPoints": "Allow admin comments on points",
   "exportGroupDocx": "Export DOCX file",
   "makeCategoryRequiredOnNewPost": "Make category required on new post",
   "userImage": {
