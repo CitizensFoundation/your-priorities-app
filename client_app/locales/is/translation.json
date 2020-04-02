@@ -1,4 +1,7 @@
 {
+  "editAdminComment": "Breyta athugasemd vefstjóra",
+  "commentFromAdmin": "Athugasemd frá vefstjóra",
+  "allowAdminAnswersToPoints": "Leyfa vefstjóra athugsemdir við rök",
   "exportGroupDocx": "Sækja sem DOCX skrá",
   "makeCategoryRequiredOnNewPost": "Krefjast flokks á nýrri hugmyndi",
   "userImage": {

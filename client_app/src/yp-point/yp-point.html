@@ -142,9 +142,22 @@
         background-color: #777;
       }
 
-      #pointContentEditor {
+      #pointContentEditor, #pointAdminCommentEditor {
         padding-left: 8px;
         padding-right: 8px;
+      }
+
+      #pointAdminCommentContent {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .commentFromAdmin {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 8px;
+        font-size: 18px;
+        color: var(--accent-color, #111);
       }
 
       .transcriptError {
@@ -246,11 +259,20 @@
             <span hidden$="[[!point.name]]">
               <span>[[point.name]]</span>.
             </span>
-            <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
+            <div id="pointContent" link-point$="[[linkPoint]]" hidden$="[[isEditingSomething]]" on-tap="_linkIfNeeded">
               <yp-magic-text simple-format text-type="pointContent" content-language="[[point.language]]"
                              content="[[point.latestContent]]" content-id="[[point.id]]">
               </yp-magic-text>
             </div>
+          </div>
+        </template>
+        <template is="dom-if" if="[[showAdminComments]]">
+          <div class="commentFromAdmin" hidden$="[[isEditingSomething]]">[[t('commentFromAdmin')]]</div>
+
+          <div id="pointAdminCommentContent" link-point$="[[linkPoint]]" hidden$="[[isEditingSomething]]" on-tap="_linkIfNeeded">
+            <yp-magic-text simple-format text-type="pointAdminCommentContent" content-language="[[point.language]]"
+                           content="[[point.public_data.admin_comment.text]]" content-id="[[point.id]]">
+            </yp-magic-text>
           </div>
         </template>
         <template is="dom-if" if="[[isEditing]]" restamp>
@@ -265,6 +287,19 @@
             </div>
           </div>
         </template>
+        <template is="dom-if" if="[[isAdminCommentEditing]]" restamp>
+          <div class="layout vertical">
+            <div class="commentFromAdmin">[[t('commentFromAdmin')]]</div>
+            <paper-textarea id="pointAdminCommentEditor" char-counter maxlength="500" value="{{editAdminCommentText}}"></paper-textarea>
+            <div class="horizontal end-justified layout">
+              <emoji-selector id="pointAdminCommentEmojiSelector"></emoji-selector>
+            </div>
+            <div class="layout horizontal self-end">
+              <paper-button on-tap="_cancelAdminCommentEdit">[[t('cancel')]]</paper-button>
+              <paper-button on-tap="_saveAdminCommentEdit">[[t('update')]]</paper-button>
+            </div>
+          </div>
+        </template>
         <div class="layout horizontal actionContainer" hidden$="[[hideActions]]">
           <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]"></yp-point-actions>
           <paper-icon-button title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
@@ -272,7 +307,9 @@
           <template is="dom-if" if="[[hasPointAccess]]">
             <div class="layout horizontal self-end" hidden$="">
               <yp-ajax id="editPointAjax" method="PUT" on-response="_editResponse"></yp-ajax>
+              <yp-ajax id="editAdminCommentPointAjax" method="PUT" on-response="_editAdminCommentResponse"></yp-ajax>
               <yp-ajax id="deletePointAjax" method="DELETE" on-response="_deleteResponse"></yp-ajax>
+              <paper-icon-button title$="[[t('editAdminComment')]]" hidden$="[[!hasAdminCommentAccess]]" icon="comment" on-tap="_editAdminComment"></paper-icon-button>
               <paper-icon-button title$="[[t('edit')]]" hidden$="[[!canEditPoint]]" icon="create" on-tap="_editPoint"></paper-icon-button>
               <paper-icon-button title$="[[t('delete')]]" icon="clear" on-tap="_deletePoint"></paper-icon-button>
             </div>
@@ -332,6 +369,27 @@
           observer: '_isEditingChanged'
         },
 
+        isEditingSomething: {
+          type: Boolean,
+          computed: '_isEditingSomething(isEditing, isAdminCommentEditing)'
+        },
+
+        isAdminCommentEditing: {
+          type: Boolean,
+          value: false,
+          observer: '_isAdminCommentEditingChanged'
+        },
+
+        hasAdminCommentAccess: {
+          type: Boolean,
+          computed: '_hasAdminCommentAccess(point)'
+        },
+
+        showAdminComments: {
+          type: Boolean,
+          computed: '_showAdminComments(point)'
+        },
+
         maxNumberOfPointsBeforeEditFrozen: {
           type: Number,
           value: 5
@@ -348,6 +406,8 @@
         },
 
         editText: String,
+
+        editAdminCommentText: String,
 
         videoActive: {
           type: Boolean,
@@ -394,12 +454,46 @@
         Polymer.ypMediaFormatsBehavior
       ],
 
+      _isEditingSomething: function (isEditing, isAdminCommentEditing) {
+        return isEditing || isAdminCommentEditing;
+      },
+
+      _showAdminComments: function (point) {
+        if (point && point.Post && point.Post.Group && point.public_data &&
+            point.public_data.admin_comment &&
+            point.public_data.admin_comment.text &&
+            point.Post.Group.configuration &&
+            point.Post.Group.configuration.allowAdminAnswersToPoints) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _hasAdminCommentAccess: function (point) {
+        if (point && point.Post && point.Post.Group &&
+          this.checkPostAdminOnlyAccess(point.Post) &&
+          point.Post.Group.configuration &&
+          point.Post.Group.configuration.allowAdminAnswersToPoints) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
       _videoOrAudioActive: function (videoActive, audioActive) {
         return videoActive || audioActive;
       },
 
       _isEditingChanged: function (value) {
         this._updateEmojiBindings(value);
+        this.async(function () {
+          this.fire('iron-resize');
+        });
+      },
+
+      _isAdminCommentEditingChanged: function (value) {
+        this._updateEmojiBindings(null, value);
         this.async(function () {
           this.fire('iron-resize');
         });
@@ -421,11 +515,21 @@
         }
       },
 
-      _updateEmojiBindings: function (isEditing) {
+      _updateEmojiBindings: function (isEditing, isAdminCommentEditing) {
         if (isEditing) {
           this.async(function () {
             var point = this.$$("#pointContentEditor");
             var emoji = this.$$("#pointEmojiSelector");
+            if (point && emoji) {
+              emoji.inputTarget = point;
+            } else {
+              console.error("Wide: Can't bind point edit emojis :(");
+            }
+          }.bind(this), 500);
+        } else if (isAdminCommentEditing) {
+          this.async(function () {
+            var point = this.$$("#pointAdminCommentEditor");
+            var emoji = this.$$("#pointAdminCommentEmojiSelector");
             if (point && emoji) {
               emoji.inputTarget = point;
             } else {
@@ -444,6 +548,17 @@
         this.$$("#editPointAjax").url = "/api/points/"+this.point.id;
         this.$$("#editPointAjax").body = { content: this.editText };
         this.$$("#editPointAjax").generateRequest();
+      },
+
+      _cancelAdminCommentEdit: function () {
+        //this._setlatestContent(this.point);
+        this.set('isAdminCommentEditing', false);
+      },
+
+      _saveAdminCommentEdit: function () {
+        this.$$("#editAdminCommentPointAjax").url = "/api/groups/"+this.point.Post.Group.id+"/"+this.point.id+"/adminComment";
+        this.$$("#editAdminCommentPointAjax").body = { content: this.editAdminCommentText };
+        this.$$("#editAdminCommentPointAjax").generateRequest();
       },
 
       _deletePoint: function () {
@@ -467,10 +582,16 @@
         this.set('isEditing', false);
       },
 
+      _editAdminCommentResponse: function (event, detail) {
+        if (detail.response) {
+          this.set('point.public_data.admin_comment.text', detail.response.content);
+        }
+        this.set('isAdminCommentEditing', false);
+      },
+
       _deleteResponse: function () {
         this.fire("yp-point-deleted", { pointId: this.point.id });
         this.set('point', null);
-
       },
 
       _reportPoint: function () {
@@ -493,6 +614,13 @@
         if (this._hasPointAccess(this.point)) {
           this.set('editText', this.point.PointRevisions[this.point.PointRevisions.length-1].content);
           this.set('isEditing', true);
+        }
+      },
+
+      _editAdminComment: function () {
+        if (this.checkPostAdminOnlyAccess(this.point.Post)) {
+          this.set('editAdminCommentText', (this.point.public_data && this.point.public_data.admin_comment ? this.point.public_data.admin_comment.text : ''));
+          this.set('isAdminCommentEditing', true);
         }
       },
 

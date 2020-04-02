@@ -364,7 +364,7 @@ router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
       order: [
         [ models.PointRevision, 'created_at', 'asc' ],
       ],
-      attributes: ['id'],
+      attributes: ['id','public_data'],
       include: [
         {
           model: models.PointRevision,

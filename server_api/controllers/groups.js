@@ -274,6 +274,8 @@ var updateGroupConfigParamters = function (req, group) {
   } else {
     group.set('configuration.customRatings', null);
   }
+
+  group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
 };
 
 var upload = multer({
@@ -1622,5 +1624,40 @@ router.post('/:id/triggerTrackingGoal', auth.can('view group'), (req, res) => {
     res.sendStatus(404);
   });
 });
+
+router.put('/:id/:pointId/adminComment', auth.can('edit group'), function(req, res) {
+  if (!req.body.content) {
+    req.body.content="";
+  }
+
+  models.Point.findOne({
+    where: {
+      id: req.params.pointId
+    },
+    attributes: ['id','public_data']
+  }).then(function(point) {
+    if (point) {
+      if (!point.public_data) {
+        point.set('public_data', {});
+      }
+      if (!point.public_data.admin_comment) {
+        point.set('public_data.admin_comment', {});
+      }
+      point.set('public_data.admin_comment', { text: req.body.content, userId: req.user.id });
+      point.save().then(()=>{
+        res.send({content: req.body.content });
+      }).catch(function(error) {
+        log.error("Error adminComment", {error});
+        res.sendStatus(500);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error("Error adminComment", {error});
+    res.sendStatus(500);
+  });
+});
+
 
 module.exports = router;

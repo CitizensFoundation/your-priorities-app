@@ -557,7 +557,7 @@ router.get('/:id/points', auth.can('view post'), function(req, res) {
                 }))
               }
             },
-            attributes: ['id', 'name', 'content', 'user_id', 'value', 'counter_quality_up', 'counter_quality_down', 'embed_data', 'language', 'created_at'],
+            attributes: ['id', 'name', 'content', 'user_id', 'value', 'counter_quality_up', 'counter_quality_down', 'embed_data', 'language', 'created_at', 'public_data'],
             order: [
               models.sequelize.literal('(counter_quality_up-counter_quality_down) desc'),
               [models.PointRevision, 'created_at', 'asc'],

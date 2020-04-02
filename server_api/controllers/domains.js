@@ -52,8 +52,7 @@ var getAvailableCommunityFolders = function (req, domainId, done) {
         attributes: ['id','name'],
       }).then(function (communities) {
         openCommunities = communities;
-        seriesCallback(null);
-        return null;
+        seriesCallback();
       }).catch(function (error) {
         seriesCallback(error)
       });
