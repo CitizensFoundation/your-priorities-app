@@ -173,16 +173,7 @@
       },
 
       _selectedLocale: function (user) {
-        if (window.appGlobals &&
-            window.appGlobals.originalQueryParameters &&
-            window.appGlobals.originalQueryParameters["locale"] &&
-           (window.appGlobals.originalQueryParameters["locale"].length>1)) {
-          return window.appGlobals.originalQueryParameters["locale"];
-        } else if (user) {
-          return user.default_locale;
-        } else {
-          return "en";
-        }
+        return this.language;
       },
 
       _goBack: function (event) {
