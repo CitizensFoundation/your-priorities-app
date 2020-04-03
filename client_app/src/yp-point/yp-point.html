@@ -157,8 +157,13 @@
         padding-right: 16px;
         padding-top: 16px;
         font-size: 16px;
+        padding-bottom: 2px;
         font-weight: bold;
         color: var(--accent-color, #111);
+      }
+
+      .commentFromAdminInput {
+        padding: 0;
       }
 
       .transcriptError {
@@ -290,8 +295,7 @@
         </template>
         <template is="dom-if" if="[[isAdminCommentEditing]]" restamp>
           <div class="layout vertical">
-            <div class="commentFromAdmin">[[t('commentFromAdmin')]]</div>
-            <paper-textarea id="pointAdminCommentEditor" char-counter maxlength="500" value="{{editAdminCommentText}}"></paper-textarea>
+            <paper-textarea id="pointAdminCommentEditor" label="[[t('commentFromAdmin')]]" char-counter maxlength="500" value="{{editAdminCommentText}}"></paper-textarea>
             <div class="horizontal end-justified layout">
               <emoji-selector id="pointAdminCommentEmojiSelector"></emoji-selector>
             </div>
