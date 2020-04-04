@@ -609,7 +609,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
   }
 });
 
-router.put('/loggedInUser/setLocale', auth.isLoggedIn, function (req, res) {
+router.put('/loggedInUser/setLocale', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
@@ -831,7 +831,7 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
 });
 
 router.delete('/delete_current_user', function (req, res) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user) {
     log.info('Deleting user', { user: toJson(req.user), context: 'delete_current_user'});
     var userId = req.user.id;
     models.User.findOne({
