@@ -1,4 +1,5 @@
 {
+  "forcePostSortMethodAs": "Sjálfgefin hugmyndaröðun (newest, top, most_debated or random)",
   "editAdminComment": "Breyta athugasemd vefstjóra",
   "commentFromAdmin": "Athugasemd frá vefstjóra",
   "allowAdminAnswersToPoints": "Leyfa vefstjóra athugsemdir við rök",
