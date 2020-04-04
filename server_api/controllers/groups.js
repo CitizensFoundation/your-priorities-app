@@ -276,6 +276,9 @@ var updateGroupConfigParamters = function (req, group) {
   }
 
   group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
+
+  group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
+
 };
 
 var upload = multer({

@@ -328,12 +328,22 @@
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
           [[t('hidePostFilterAndSearch')]]
         </paper-checkbox>
+
         <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]"
                         checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]
         </paper-checkbox>
+
         <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">
           [[t('disablePostPageLink')]]
         </paper-checkbox>
+
+        <paper-input id="forcePostSortMethodAs"
+                     name="forcePostSortMethodAs"
+                     type="text"
+                     label="[[t('forcePostSortMethodAs')]]"
+                     value="{{group.configuration.forcePostSortMethodAs}}"
+                     maxlength="12">
+        </paper-input>
 
         <paper-input id="descriptionTruncateAmount"
                      name="descriptionTruncateAmount"
