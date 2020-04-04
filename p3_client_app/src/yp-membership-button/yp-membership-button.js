@@ -91,7 +91,7 @@ Polymer({
   },
 
   _updateMembershipFromSignal: function () {
-    this._updateMembership();type
+    this._updateMembership();
   },
 
   _updateMembership: function () {

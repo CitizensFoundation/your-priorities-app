@@ -185,7 +185,7 @@ Polymer({
         </div>
     </template>
     <iron-media-query query="(max-width: 800px)" query-matches="{{narrowScreen}}"></iron-media-query>
-    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>   
+    <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
 `,
 
   is: 'yp-community-header',

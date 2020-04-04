@@ -17,7 +17,7 @@ import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import '../yp-magic-text/yp-magic-text.js';
-import './yp-group-stats-lit.js';
+import './yp-group-stats.js';
 import { GroupBehaviors } from './yp-group-behaviors.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -259,7 +259,7 @@ Polymer({
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-group-stats-lit class="stats" group="[[group]]"></yp-group-stats-lit>
+        <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
 
     </div>
 

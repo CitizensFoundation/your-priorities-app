@@ -108,7 +108,7 @@ Polymer({
             </template>
             <paper-input no-label-float="" class="localeInput" length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
             <paper-button data-args\$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
-            <div hidden\$="[[page.publaished]]">
+            <div hidden\$="[[page.published]]">
               <paper-button data-args\$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
             </div>
             <div hidden\$="[[!page.published]]">

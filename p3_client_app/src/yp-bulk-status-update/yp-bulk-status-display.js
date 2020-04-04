@@ -113,15 +113,12 @@ Polymer({
     </div>
 
     <template is="dom-if" if="[[!byTemplate]]">
-
       <template is="dom-repeat" items="[[config.groups]]" as="group">
         <paper-material elevation="2" class="statusMaterial layout horizontal center-center wrap">
-
           <template is="dom-repeat" items="[[_orderGroupStatuses(group.statuses)]]" as="status">
             <div class="layout vertical self-start">
               <h1 hidden\$="[[hideGroupName]]">[[group.name]]</h1>
               <h2>[[_officialStatusOptionsNamePlural(status.official_status)]]</h2>
-
               <template is="dom-repeat" items="[[status.posts]]" as="post">
                 <div class="layout vertical">
                   <div class="layout horizontal">
@@ -143,13 +140,10 @@ Polymer({
                   </div>
                 </div>
               </template>
-
             </div>
           </template>
-
         </paper-material>
       </template>
-
     </template>
 
     <template is="dom-if" if="[[gotModifiedTemplates]]" restamp="">

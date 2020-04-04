@@ -229,19 +229,14 @@ Polymer({
               <iron-icon class="smallIcon" icon="[[icon]]"></iron-icon>
               <div class="titleHeaderMobile">[[title]]</div>
               <div class="flex"></div>
-
               <template is="dom-if" if="[[!useNextTabAction]]">
-
                 <template is="dom-if" if="[[!uploadingState]]">
                   <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
                 </template>
-
                 <template is="dom-if" if="[[uploadingState]]">
                   <paper-button disabled="" on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
                 </template>
-
               </template>
-
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button on-tap="_nextTab"><span class="smallButtonText">[[nextActionText]]</span></paper-button>
               </template>
@@ -272,9 +267,7 @@ Polymer({
           </paper-dialog-scrollable>
           <div class="buttons">
             <paper-button id="dismissBtn" dialog-dismiss="">[[t('cancel')]]</paper-button>
-
             <template is="dom-if" if="[[!uploadingState]]">
-
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <paper-button raised="" class="actionButtons" id="submit2" on-tap="_submit">[[saveText]]</paper-button>
               </template>
@@ -282,11 +275,9 @@ Polymer({
                 <paper-button raised="" class="actionButtons" on-tap="_nextTab">[[nextActionText]]</paper-button>
               </template>
             </template>
-
             <template is="dom-if" if="[[uploadingState]]">
               <paper-button disabled="" on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
             </template>
-
           </div>
         </template>
       </template>
