@@ -1,4 +1,5 @@
 {
+  "forcePostSortMethodAs": "Default post sort (newest, top, most_debated or random)",
   "editAdminComment": "Edit admin comment",
   "commentFromAdmin": "Comment from the admin",
   "allowAdminAnswersToPoints": "Allow admin comments on points",
