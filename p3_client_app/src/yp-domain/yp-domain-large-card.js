@@ -15,10 +15,11 @@ import { LargeCardBehaviors } from '../yp-behaviors/yp-large-card-behaviors.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import '../yp-magic-text/yp-magic-text.js';
-import './yp-domain-stats.js';
+import './yp-domain-stats-lit.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+
 Polymer({
   _template: html`
     <style include="iron-flex iron-flex-alignment">
@@ -254,7 +255,7 @@ Polymer({
             </paper-listbox>
           </paper-menu-button>
         </div>
-        <yp-domain-stats class="stats" domain="[[domain]]"></yp-domain-stats>
+        <yp-domain-stats-lit class="stats" domain="[[domain]]"></yp-domain-stats-lit>
       </paper-material>
     </div>
 
