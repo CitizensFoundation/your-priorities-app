@@ -1,3 +1,4 @@
+const log = require('./logger');
 var models = require('../models/index');
 var async = require('async');
 var ip = require('ip');
@@ -67,7 +68,7 @@ const getPointsUpOrDown = function (post, value) {
       return point.value < 0;
     }
   });
-  return points.map((point) => point.content);
+  return points.map((point) => { return {content: point.content, id: point.id }});
 };
 
 var getPointsUp = function (post) {
@@ -182,7 +183,7 @@ const createDocWithStyles = (title) => {
   });
 };
 
-const setDescriptions = (group, post, children) => {
+const setDescriptions = (group, post, builtPost, children) => {
   if (group && group.configuration && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
     var structuredAnswers = [];
 
@@ -218,7 +219,7 @@ const setDescriptions = (group, post, children) => {
     });
   } else {
     children.push(
-      new Paragraph(post.description)
+      new Paragraph(builtPost.translatedDescription ? builtPost.translatedDescription : post.description)
     );
   }
 };
@@ -249,27 +250,34 @@ const getImages = function (post) {
   return ''+imagesText.replace(/,/g,"")+'';
 };
 
+const addPointTranslationIfNeeded = (post, point, children) => {
+  if (post.translatedPoints && post.translatedPoints[point.id]) {
+    children.push(
+      new Paragraph(post.translatedPoints[point.id])
+    );
+  } else {
+    children.push(
+      new Paragraph(point.content)
+    );
+  }
+  children.push(
+    new Paragraph("")
+  );
+};
+
 const addPostToDoc = (doc, post, group) => {
   const children = [
     new Paragraph({
-      text: post.name,
+      text: post.translatedName ? post.translatedName : post.name,
       heading: HeadingLevel.HEADING_1,
     })
   ];
 
-  if (post.realPost.translatedName) {
-    children.push(new Paragraph(post.realPost.translatedName));
-  }
-
-  setDescriptions(group, post.realPost, children);
-
-  if (post.realPost.translatedDescription) {
-    children.push(new Paragraph(post.realPost.translatedDescription));
-  }
+  setDescriptions(group, post.realPost, post, children);
 
   children.push(
     new Paragraph(""),
-    new Paragraph("Locale: "+post.realPost.language),
+    new Paragraph("Original locale: "+post.realPost.language),
     new Paragraph("URL: "+ post.url),
     new Paragraph(""),
     new Paragraph("User email: "+ post.userEmail),
@@ -295,8 +303,6 @@ const addPostToDoc = (doc, post, group) => {
       new Paragraph("Ratings: "+ post.postRatings)
     )
   }
-
-  debugger;
 
   if (post.mediaURLs && post.mediaURLs.length>4) {
     children.push(
@@ -345,13 +351,8 @@ const addPostToDoc = (doc, post, group) => {
       heading: HeadingLevel.HEADING_2,
     }));
 
-  pointsUp.forEach((pointContent) => {
-    children.push(
-      new Paragraph(pointContent)
-    );
-    children.push(
-      new Paragraph("")
-    );
+  pointsUp.forEach((point) => {
+    addPointTranslationIfNeeded(post, point, children);
   });
 
   const pointsDown = getPointsDown(post);
@@ -362,13 +363,8 @@ const addPostToDoc = (doc, post, group) => {
     }),
   );
 
-  pointsDown.forEach((pointContent) => {
-    children.push(
-      new Paragraph(pointContent)
-    );
-    children.push(
-      new Paragraph("")
-    );
+  pointsDown.forEach((point) => {
+    addPointTranslationIfNeeded(post, point, children);
   });
 
   doc.addSection({
@@ -384,11 +380,11 @@ const setupGroup = (doc, group, ratingsHeaders, title) => {
     }),
 
     new Paragraph({
-      text: group.name,
+      text: group.translatedName ? group.translatedName : group.name,
       heading: HeadingLevel.HEADING_1,
     }),
 
-    new Paragraph(group.objectives)
+    new Paragraph(group.translatedObjectives ? group.translatedObjectives : group.objectives)
   ];
 
   if (ratingsHeaders && ratingsHeaders.length>5) {
@@ -402,6 +398,17 @@ const setupGroup = (doc, group, ratingsHeaders, title) => {
     );
   }
 
+  if (group.targetTranslationLanguage) {
+    children.push(
+      new Paragraph(""),
+      new Paragraph({
+        text: "Automatically machine translated to locale: "+group.targetTranslationLanguage.toUpperCase(),
+        heading: HeadingLevel.HEADING_2,
+      }),
+      new Paragraph("")
+    )
+  }
+
   doc.addSection({
     children: children
   });
@@ -409,10 +416,10 @@ const setupGroup = (doc, group, ratingsHeaders, title) => {
 
 const getOrderedPosts = (posts) => {
   return _.orderBy(posts,[post=> { return post.endorsementsUp-post.endorsementsDown }], ['desc']);
-}
+};
 
 const exportToDocx = (group, posts, customRatings, categories, callback) => {
-  const title = "Export for Group Id: "+group.id+" - "+group.name;
+  const title = "Export for Group Id: "+group.id;
 
   const ratingsHeaders = getRatingHeaders(customRatings);
 
@@ -476,8 +483,8 @@ const exportToDocx = (group, posts, customRatings, categories, callback) => {
 };
 
 async function getTranslation(model, textType, targetLanguage) {
-  await new Promise(resolve => {
-    models.AcTranslationCache.getTranslation({query: {textType, targetLanguage}}, model, function (error, translation) {
+  return await new Promise(resolve => {
+    models.AcTranslationCache.getTranslation({query: {textType, targetLanguage}}, model, async (error, translation) => {
       if (error || !translation) {
         resolve(null);
       } else {
@@ -487,10 +494,34 @@ async function getTranslation(model, textType, targetLanguage) {
   });
 };
 
+async function getTranslatedPoints(points, targetLanguage) {
+  const translatedPoints = {};
+  return await new Promise(resolve => {
+    async.eachSeries(points, (point, seriesCallback) => {
+      models.AcTranslationCache.getTranslation({query: {textType: "pointContent", targetLanguage}}, point, async (error, translation) => {
+        if (!error && translation) {
+          translatedPoints[point.id] = translation.content;
+        } else {
+          log.warn("Docx translation error or no translation", { error: error ? error : null });
+        }
+        seriesCallback();
+      });
+    }, (error) => {
+      resolve(translatedPoints);
+    });
+  });
+}
+
 async function exportGroupToDocx(group, hostName, targetLanguage, callback) {
   let customRatings;
   if (group.configuration && group.configuration.customRatings) {
     customRatings = group.configuration.customRatings;
+  }
+
+  if (targetLanguage) {
+    group.translatedName = await getTranslation(group,'groupName', targetLanguage);
+    group.translatedObjectives = await getTranslation(group,'groupContent', targetLanguage);
+    group.targetTranslationLanguage = targetLanguage;
   }
 
   getGroupPosts(group, hostName, async (postsIn, error, categories) => {
@@ -503,25 +534,15 @@ async function exportGroupToDocx(group, hostName, targetLanguage, callback) {
         var outFileContent = "";
         const posts = [];
 
-        if (targetLanguage) {
-        //  group.set('translatedName',await getTranslation(group,'groupName', targetLanguage));
-        //  group.set('translatedObjective',await getTranslation(group,'groupObjective', targetLanguage));
-        }
-
         async.eachSeries(postsIn, async (post) => {
           if (!post.deleted) {
             const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
 
-            if (targetLanguage) {
-              const translatedName = await getTranslation(post,'postName', targetLanguage);
-              const translatedDecription = await getTranslation(post,'postContent', targetLanguage);
-              post.set('translatedName', translatedName);
-              post.set('translatedDecription', translatedDecription);
-            }
-
             posts.push({
               id: post.id,
               name: clean(post.name),
+              translatedName: targetLanguage ? await getTranslation(post,'postName', targetLanguage) : null,
+              translatedDescription: targetLanguage ? await getTranslation(post,'postContent', targetLanguage) : null,
               realPost: post,
               url: getPostUrl(post, hostName),
               category: getCategory(post),
@@ -533,6 +554,7 @@ async function exportGroupToDocx(group, hostName, targetLanguage, callback) {
               counterPoints: post.counter_points,
               pointsUp: getPointsUp(post),
               Points: post.Points,
+              translatedPoints: targetLanguage ? await getTranslatedPoints(post.Points, targetLanguage) : null,
               images: getImages(post),
               pointsDown: getPointsDown(post),
               contactData: getContactData(post),

@@ -313,6 +313,11 @@ const getGroupPosts = (group, hostName, callback) => {
             required: false
           },
           {
+            model: models.PointRevision,
+            required: true,
+            attributes: ['id','content']
+          },
+          {
             model: models.Video,
             as: 'PointVideos',
             attributes: ['id','public_meta','formats'],
