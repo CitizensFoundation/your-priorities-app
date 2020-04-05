@@ -257,11 +257,19 @@ const addPostToDoc = (doc, post, group) => {
     })
   ];
 
+  if (post.realPost.translatedName) {
+    children.push(new Paragraph(post.realPost.translatedName));
+  }
+
   setDescriptions(group, post.realPost, children);
+
+  if (post.realPost.translatedDescription) {
+    children.push(new Paragraph(post.realPost.translatedDescription));
+  }
 
   children.push(
     new Paragraph(""),
-
+    new Paragraph("Locale: "+post.realPost.language),
     new Paragraph("URL: "+ post.url),
     new Paragraph(""),
     new Paragraph("User email: "+ post.userEmail),
@@ -467,13 +475,25 @@ const exportToDocx = (group, posts, customRatings, categories, callback) => {
   })
 };
 
-const exportGroupToDocx = (group, hostName, callback) => {
+async function getTranslation(model, textType, targetLanguage) {
+  await new Promise(resolve => {
+    models.AcTranslationCache.getTranslation({query: {textType, targetLanguage}}, model, function (error, translation) {
+      if (error || !translation) {
+        resolve(null);
+      } else {
+        resolve(translation.content);
+      }
+    });
+  });
+};
+
+async function exportGroupToDocx(group, hostName, targetLanguage, callback) {
   let customRatings;
   if (group.configuration && group.configuration.customRatings) {
     customRatings = group.configuration.customRatings;
   }
 
-  getGroupPosts(group, hostName, (postsIn, error, categories) => {
+  getGroupPosts(group, hostName, async (postsIn, error, categories) => {
     if (error) {
       callback(error);
     } else {
@@ -482,9 +502,23 @@ const exportGroupToDocx = (group, hostName, callback) => {
       } else {
         var outFileContent = "";
         const posts = [];
-        async.eachSeries(postsIn, function (post, seriesCallback) {
+
+        if (targetLanguage) {
+        //  group.set('translatedName',await getTranslation(group,'groupName', targetLanguage));
+        //  group.set('translatedObjective',await getTranslation(group,'groupObjective', targetLanguage));
+        }
+
+        async.eachSeries(postsIn, async (post) => {
           if (!post.deleted) {
             const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
+
+            if (targetLanguage) {
+              const translatedName = await getTranslation(post,'postName', targetLanguage);
+              const translatedDecription = await getTranslation(post,'postContent', targetLanguage);
+              post.set('translatedName', translatedName);
+              post.set('translatedDecription', translatedDecription);
+            }
+
             posts.push({
               id: post.id,
               name: clean(post.name),
@@ -508,7 +542,7 @@ const exportGroupToDocx = (group, hostName, callback) => {
               postRatings: getPostRatings(customRatings, postRatings)
             });
           }
-          seriesCallback();
+//          seriesCallback();
         }, function (error) {
           if(error) {
             callback(error)

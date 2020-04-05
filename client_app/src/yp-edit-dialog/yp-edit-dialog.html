@@ -226,10 +226,26 @@
           min-height: 350px;
         }
       }
+
+      paper-dialog[rtl] {
+        direction: rtl;
+      }
+
+      paper-dialog, paper-checkbox {
+        --paper-checkbox-label: {
+          padding-right: 6px;
+        }
+      }
+
+      paper-dialog, paper-radio-button {
+        --paper-radio-button-label: {
+          padding-right: 6px;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" tablet$="[[tablet]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
+    <paper-dialog rtl$="[[rtl]]" name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" tablet$="[[tablet]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowScreen}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="{{largeHeight}}"></iron-media-query>
@@ -340,6 +356,11 @@
         method: {
           type: String,
           value: "POST"
+        },
+
+        rtl: {
+          type: Boolean,
+          value: false
         },
 
         buttonText: {

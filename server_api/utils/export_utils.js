@@ -303,7 +303,7 @@ const getGroupPosts = (group, hostName, callback) => {
       },
       {
         model: models.Point,
-        attributes: ['id','content','value'],
+        attributes: ['id','content','value','language','public_data'],
         required: false,
         include: [
           {

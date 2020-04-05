@@ -126,6 +126,11 @@
 
       .postEmoji {
         margin-left: 16px;
+        direction: ltr !important;
+      }
+
+      .pointEmoji {
+        direction: ltr !important;
       }
 
       .uploadSection {
@@ -306,7 +311,7 @@
                               max-rows="5"
                               maxlength="500">
               </paper-textarea>
-              <div class="horizontal end-justified layout" hidden$="[[group.configuration.hideEmoji]]">
+              <div class="horizontal end-justified layout pointEmoji" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
               </div>
             </section>

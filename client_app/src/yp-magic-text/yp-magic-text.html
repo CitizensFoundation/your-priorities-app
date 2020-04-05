@@ -18,6 +18,10 @@
         display: block;
       }
 
+      .container[rtl] {
+        direction: rtl;
+      }
+
       .container[more-text] {
         @apply --layout-vertical;
         @apply --layout-center-center;
@@ -35,7 +39,7 @@
         }
       }
     </style>
-    <div class="container" more-text$="[[showMoreText]]">
+    <div class="container" rtl$="[[rtl]]" more-text$="[[showMoreText]]">
        <!-- add max-width for IE11 -->
       <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]" style="max-width:100%"></div>
       <div hidden$="[[finalContent]]" style="max-width:100%">[[truncatedContent]]</div>
@@ -82,6 +86,11 @@
           processedContent: {
             type: String,
             value: null
+          },
+
+          rtl: {
+            type: Boolean,
+            value: false
           },
 
           finalContent: {
@@ -146,6 +155,10 @@
         return ['zh_TW','hy']
       }
 
+      static get rtlLanguages() {
+        return ['fa','ar']
+      }
+
       _showMoreText(moreText, content) {
         return moreText && content && content.length>(this.truncate ? this.truncate : 500);
       }
@@ -183,11 +196,21 @@
         this._update();
       }
 
+      _setupRtl() {
+        if (YpMagicTextBox.rtlLanguages.indexOf(this.language) >-1 ) {
+          this.set('rtl', true);
+        } else {
+          this.set('rtl', false);
+        }
+      }
+
       _languageEvent (event, detail) {
         if (detail.type === 'language-loaded') {
           this.set('language', detail.language);
           this._update();
         }
+
+        this._setupRtl();
       }
 
       _getIndexKey() {
@@ -387,6 +410,7 @@
         if (window.i18nTranslation) {
           this.set('language', window.locale);
         }
+        this._setupRtl();
         super.ready();
       }
     }

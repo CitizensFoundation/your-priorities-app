@@ -268,6 +268,16 @@
 
       .pointMaterialMobile {
       }
+
+      div[rtl] {
+        direction: rtl;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-label: {
+          padding-right: 6px;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -284,7 +294,7 @@
     </div>
 
     <template is="dom-if" if="[[largeMode]]" restamp>
-      <div class="layout vertical topContainer">
+      <div rtl$="[[rtl]]" class="layout vertical topContainer">
         <div class="main-container">
           <div class="point">
             <template is="dom-if" if="[[!post.Group.configuration.alternativePointForHeader]]">
@@ -503,7 +513,7 @@
     </template>
 
     <template is="dom-if" if="[[!largeMode]]" restamp>
-      <div class="layout vertical center-center">
+      <div rtl$="[[rtl]]" class="layout vertical center-center">
         <paper-material id="pointUpOrDownMaterial" elevation="0" class="pointInputMaterial layout vertical" animated hidden$="[[disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                           value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
@@ -585,7 +595,7 @@
           </div>
         </paper-material>
       </div>
-      <div class="layout vertical center-center">
+      <div rtl$="[[rtl]]" class="layout vertical center-center">
         <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
           <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
             <template>
@@ -671,6 +681,11 @@
             type: Array,
             value: null,
             observer: '_pointsChanged'
+          },
+
+          rtl: {
+            type: Boolean,
+            value: false
           },
 
           largeMode: {

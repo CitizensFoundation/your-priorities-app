@@ -46,7 +46,7 @@
       }
 
       .group-name[admin] {
-        padding-right: 16px;
+        padding-right: 32px;
       }
 
       video {
@@ -115,7 +115,7 @@
         padding-left: 16px;
         padding-top: 16px;
         padding-bottom: 16px;
-        padding-right: 24px !important;
+        padding-right: 32px !important;
         min-height: 28px;
       }
 
@@ -222,6 +222,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" is-video$="[[groupVideoURL]]" animated class="groupCard imageCard top-card">
@@ -333,7 +334,12 @@
 
         exportUrlDocx: {
           type: String,
-          computed: '_exportUrlDocx(hasGroupAccess, group)'
+          computed: '_exportUrlDocx(hasGroupAccess, group, language, autoTranslateActive)'
+        },
+
+        autoTranslateActive: {
+          type: Boolean,
+          value: false
         },
 
         groupVideoURL: {
@@ -354,6 +360,10 @@
         }
       },
 
+      _autoTranslateEvent: function (event, detail) {
+        this.set('autoTranslateActive', detail);
+      },
+
       _exportUrl: function (access, group) {
         if (access && group) {
           return '/api/groups/'+group.id+'/export_group';
@@ -362,9 +372,13 @@
         }
       },
 
-      _exportUrlDocx: function (access, group) {
-        if (access && group) {
-          return '/api/groups/'+group.id+'/export_group_docx';
+      _exportUrlDocx: function (access, group, language, autoTranslate) {
+        if (access && group && language) {
+          var langInfo = "";
+          if (autoTranslate) {
+            langInfo = "?translateLanguage="+language;
+          }
+          return '/api/groups/'+group.id+'/export_group_docx'+langInfo;
         } else {
           return null;
         }

@@ -621,15 +621,15 @@ router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) 
     });
 });
 
-router.get('/:groupId/export_group_docx', auth.can('edit group'), function(req, res) {
+router.get('/:groupId/export_group_docx', auth.can('edit group'), async (req, res) => {
   models.Group.findOne({
     where: {
       id: req.params.groupId
     },
-    attributes: ["id", "name","community_id","objectives","configuration"]
+    attributes: ["id", "name","community_id","objectives","configuration","language"]
   }).then(function (group) {
     if (group) {
-      exportGroupToDocx(group, req.ypDomain.domain_name, function (error, fileData) {
+      exportGroupToDocx(group, req.ypDomain.domain_name, req.query.translateLanguage,function (error, fileData) {
         if (error) {
           log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
           res.sendStatus(500);
