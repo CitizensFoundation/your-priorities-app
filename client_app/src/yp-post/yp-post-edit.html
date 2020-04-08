@@ -25,6 +25,7 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="yp-post-location.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="yp-structured-question-edit.html">
 
 <dom-module id="yp-post-edit">
   <template>
@@ -237,20 +238,16 @@
               </template>
 
               <template is="dom-if" if="[[structuredQuestions]]">
-                <template is="dom-repeat" items="[[structuredQuestions]]">
-                  <paper-textarea id="structuredQuestion_[[index]]"
-                                  value="{{item.value}}"
-                                  minlength="2"
-                                  always-float-label="[[_floatIfValueOrIE(item.value)]]"
-                                  label="[[item.translatedQuestion]]"
-                                  char-counter
-                                  on-value-changed="_resizeScrollerIfNeeded"
-                                  rows="2"
-                                  max-rows="3"
-                                  maxrows="3"
-                                  required
-                                  maxlength="[[item.maxLength]]">
-                  </paper-textarea>
+                <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
+                  <yp-structured-question-edit question="[[question]]"></yp-structured-question-edit>
+
+                  <template is="dom-if" if="[[item.subQuestions]]">
+                    <div id="structuredQuestionSub_[[item.id]]" hidden>
+                      <template is="dom-repeat" items="[[structuredQuestions]]" as="subQuestion">
+                        <yp-structured-question-edit question="[[subQuestion]]"></yp-structured-question-edit>
+                      </template>
+                    </div>
+                  </template>
                 </template>
               </template>
 
@@ -309,7 +306,7 @@
                               char-counter
                               rows="2"
                               max-rows="5"
-                              maxlength="500">
+                              maxlength="[[_pointMaxLength(group)]]">
               </paper-textarea>
               <div class="horizontal end-justified layout pointEmoji" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
@@ -389,9 +386,18 @@
       </div>
     </yp-edit-dialog>
 
-    <yp-magic-text id="alternativeTextForNewIdeaButtonHeaderId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButtonHeader]]"
-                   content-language="[[group.language]]" on-new-translation="_alternativeTextForNewIdeaButtonHeaderTranslation"
-                   text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+    <template is="dom-if" if="group.configuration.alternativeTextForNewIdeaButtonHeader">
+      <yp-magic-text id="alternativeTextForNewIdeaButtonHeaderId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButtonHeader]]"
+                     content-language="[[group.language]]" on-new-translation="_alternativeTextForNewIdeaButtonHeaderTranslation"
+                     text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+    </template>
+
+    <template is="dom-if" if="group.configuration.customThankYouTextNewPosts">
+      <yp-magic-text id="customThankYouTextNewPostsId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customThankYouTextNewPosts]]"
+                     content-language="[[group.language]]"
+                     text-type="customThankYouTextNewPosts"></yp-magic-text>
+    </template>
+
 
   </template>
 
@@ -533,7 +539,12 @@
       },
 
       uploadedDocumentUrl: String,
-      uploadedDocumentFilename: String
+      uploadedDocumentFilename: String,
+
+      pointMaxLength: {
+        type: Number,
+        computed: '_pointMaxLength(group)'
+      }
     },
 
     listeners: {
@@ -544,6 +555,14 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _pointMaxLength: function (group) {
+      if (group && group.configuration && group.configuration.pointCharLimit) {
+        return group.configuration.pointCharLimit;
+      } else {
+        return 500;
+      }
+    },
 
     _floatIfValueOrIE: function (value) {
       var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
@@ -869,8 +888,33 @@
 
     _finishRedirect: function (post) {
       this.fire('yp-reset-keep-open-for-page');
-      this.redirectTo("/post/"+(post ? post.id : this.post.id));
       window.appGlobals.activity('completed', 'newPost');
+
+      var text = text = this.t('thankYouForYourSubmission');
+      var a = this.$$("#customThankYouTextNewPostsId");
+      debugger;
+      if (this.group && this.group.configuration &&
+          this.group.configuration.customThankYouTextNewPosts &&
+          this.$$("#customThankYouTextNewPostsId") &&
+          this.$$("#customThankYouTextNewPostsId").content) {
+        if (this.$$("#customThankYouTextNewPostsId").finalContent) {
+          text = this.$$("#customThankYouTextNewPostsId").finalContent;
+        } else {
+          text = this.$$("#customThankYouTextNewPostsId").content;
+        }
+      }
+
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+        toast.text = text;
+        toast.duration = 5000;
+        toast.show();
+      }.bind(this));
+
+      if (this.group && this.group.configuration && this.group.configuration.allPostsBlockedByDefault) {
+        // Nothing?
+      } else {
+        this.redirectTo("/post/"+(post ? post.id : this.post.id));
+      }
     },
 
     _clear: function () {

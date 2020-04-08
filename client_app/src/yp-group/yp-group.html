@@ -810,7 +810,12 @@
 
           this._refreshTabsAndPages();
 
-          if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
+
+          if (this.group.configuration.useCommunityTopBanner &&
+            this.group.Community.CommunityHeaderImages &&
+            this.group.Community.CommunityHeaderImages.length>0) {
+            this.setupTopHeaderImage(this.group.Community.CommunityHeaderImages);
+          } else if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
             this.setupTopHeaderImage(this.group.GroupHeaderImages);
           } else {
             this.setupTopHeaderImage(null);

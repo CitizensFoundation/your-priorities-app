@@ -293,7 +293,7 @@
       <yp-ajax id="moreAjax" hidden on-response="_morePointsResponse"></yp-ajax>
     </div>
 
-    <template is="dom-if" if="[[largeMode]]" restamp>
+    <template is="dom-if" if="[[largeModeReady]]" restamp>
       <div rtl$="[[rtl]]" class="layout vertical topContainer">
         <div class="main-container">
           <div class="point">
@@ -320,7 +320,7 @@
                               value="{{textValueUp}}" label$="[[labelUp]]"
                               always-float-label="[[_floatIfValueOrIE()]]"
                               char-counter rows="2" hidden$="[[hideUpText]]"
-                              max-rows="3" maxlength="500">
+                              max-rows="3" maxlength="[[pointMaxLength]]">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
@@ -431,7 +431,7 @@
                               value="{{textValueDown}}" label$="[[labelDown]]"
                               char-counter rows="2" hidden$="[[hideDownText]]"
                               always-float-label="[[_floatIfValueOrIE()]]"
-                              max-rows="5" maxlength="500">
+                              max-rows="5" maxlength="[[pointMaxLength]]">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
@@ -512,13 +512,13 @@
       </div>
     </template>
 
-    <template is="dom-if" if="[[!largeMode]]" restamp>
+    <template is="dom-if" if="[[smallModeReady]]" restamp>
       <div rtl$="[[rtl]]" class="layout vertical center-center">
         <paper-material id="pointUpOrDownMaterial" elevation="0" class="pointInputMaterial layout vertical" animated hidden$="[[disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                           value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
                           char-counter rows="2" hidden$="[[hideMobileText]]"
-                          max-rows="3" maxlength="500"></paper-textarea>
+                          max-rows="3" maxlength="[[pointMaxLength]]"></paper-textarea>
           <div class="layout vertical end-justified">
             <div class="layout horizontal center-center pointButtons">
               <paper-radio-group hidden$="[[post.Group.configuration.hidePointAgainst]]" id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
@@ -692,6 +692,16 @@
             type: Boolean,
             value: false,
             observer: '_updateEmojiBindings'
+          },
+
+          largeModeReady: {
+            type: Boolean,
+            computed: '_largeModeReady(largeMode, post)'
+          },
+
+          smallModeReady: {
+            type: Boolean,
+            computed: '_smallModeReady(largeMode, post)'
           },
 
           textValueMobileUpOrDown: String,
@@ -890,6 +900,27 @@
           storedPoints: {
             type: Array,
             value: null
+          },
+
+          pointMaxLength: {
+            type: Number,
+            computed: '_pointMaxLength(post, largeMode)'
+          }
+        },
+
+        _largeModeReady: function (largeMode, post) {
+          return largeMode && post;
+        },
+
+        _smallModeReady: function (largeMode, post) {
+          return !largeMode && post;
+        },
+
+        _pointMaxLength: function (post) {
+          if (post && post.Group && post.Group.configuration && post.Group.configuration.pointCharLimit) {
+            return post.Group.configuration.pointCharLimit;
+          } else {
+            return 500;
           }
         },
 

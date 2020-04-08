@@ -256,6 +256,7 @@
         <paper-input id="postDescriptionLimit"
                      name="postDescriptionLimit"
                      type="text"
+                     allowed-pattern="[0-9]"
                      label="[[t('postDescriptionLimit')]]"
                      value="{{group.configuration.postDescriptionLimit}}"
                      maxlength="4"
@@ -337,6 +338,10 @@
           [[t('disablePostPageLink')]]
         </paper-checkbox>
 
+        <paper-checkbox name="allPostsBlockedByDefault" checked$="{{group.configuration.allPostsBlockedByDefault}}">
+          [[t('allPostsBlockedByDefault')]]
+        </paper-checkbox>
+
         <paper-input id="forcePostSortMethodAs"
                      name="forcePostSortMethodAs"
                      type="text"
@@ -345,9 +350,18 @@
                      maxlength="12">
         </paper-input>
 
+        <paper-input id="customThankYouTextNewPosts"
+                     name="customThankYouTextNewPosts"
+                     type="text"
+                     label="[[t('customThankYouTextNewPosts')]]"
+                     value="{{group.configuration.customThankYouTextNewPosts}}"
+                     maxlength="60">
+        </paper-input>
+
         <paper-input id="descriptionTruncateAmount"
                      name="descriptionTruncateAmount"
                      type="text"
+                     allowed-pattern="[0-9]"
                      label="[[t('descriptionTruncateAmount')]]"
                      value="{{group.configuration.descriptionTruncateAmount}}"
                      maxlength="4">
@@ -372,9 +386,9 @@
         <paper-textarea id="structuredQuestions"
                         name="structuredQuestions"
                         type="text"
-                        rows="2"
+                        rows="3"
                         always-float-label="[[group.configuration.structuredQuestions]]"
-                        maxrows="2"
+                        maxrows="5"
                         label="[[t('structuredQuestions')]]"
                         value="{{group.configuration.structuredQuestions}}">
         </paper-textarea>
@@ -502,6 +516,15 @@
           [[t('hidePointAgainst')]]
         </paper-checkbox>
 
+        <paper-input id="pointCharLimit"
+                     name="pointCharLimit"
+                     type="text"
+                     allowed-pattern="[0-9]"
+                     label="[[t('pointCharLimit')]]"
+                     value="{{group.configuration.pointCharLimit}}"
+                     maxlength="4">
+        </paper-input>
+
         <paper-input id="alternativePointForHeader"
                      name="alternativePointForHeader"
                      type="text"
@@ -568,6 +591,7 @@
         <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
         <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
         <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
+        <paper-checkbox name="useCommunityTopBanner" checked$="{{group.configuration.useCommunityTopBanner}}">[[t('useCommunityTopBanner')]]</paper-checkbox>
 
         <paper-input id="maxDaysBackForRecommendations"
                      name="maxDaysBackForRecommendations"

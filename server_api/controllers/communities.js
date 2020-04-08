@@ -470,6 +470,9 @@ var getCommunity = function(req, done) {
               community_id: community.id,
               access: {
                 $ne: models.Group.ACCESS_SECRET
+              },
+              status: {
+                $ne: 'hidden'
               }
             },
             attributes: ['id', 'configuration', 'access', 'objectives', 'name', 'theme_id', 'community_id',

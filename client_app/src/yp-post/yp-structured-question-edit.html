@@ -1,0 +1,126 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+
+<dom-module id="yp-structured-question-edit">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template is="dom-if" if="[[_isTextfieldQuestion(item)]]">
+      <div class="question">[[question.translatedQuestion]]</div>
+
+      <paper-textarea id="structuredQuestion_[[index]]"
+                      value="{{question.value}}"
+                      minlength="2"
+                      always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                      label="[[question.translatedQuestion]]"
+                      char-counter
+                      on-value-changed="_resizeScrollerIfNeeded"
+                      rows="2"
+                      max-rows="3"
+                      maxrows="3"
+                      required$="[[!question.notRequired]]"
+                      maxlength="[[question.maxLength]]">
+      </paper-textarea>
+    </template>
+
+    <template is="dom-if" if="[[question.isRadio]]">
+      <div class="question">[[question.translatedQuestion]]</div>
+
+      <paper-radio-group required$="[[!question.notRequired]]" on-changed="_radioChanged" id="structuredQuestionRatio_[[index]]" name="structuredQuestionRatio_[[index]]" class="radioYesNo layout horizontal">
+        <paper-radio-button name="yes">[[t('yes')]]</paper-radio-button>
+        <paper-radio-button name="no">[[t('no')]]</paper-radio-button>
+      </paper-radio-group>
+    </template>
+
+    <template is="dom-if" if="[[question.isDropDown]]">
+      <paper-dropdown-menu label="[[question.translatedQuestion]]" required$="[[!question.notRequired]]">
+        <paper-listbox slot="dropdown-content" attr-for-selected="name">
+          <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
+            <paper-item name="[[dropDownOptions.name]]">[[dropDownOptions.translatedName]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+    </template>
+  </template>
+
+  <script>
+
+    class YpStructuredQuestionEdit extends Polymer.Element {
+      static get is() { return 'yp-structured-question-edit'; }
+
+      static get properties() {
+        return {
+
+          question: {
+            type: Object
+          },
+
+          language: {
+            type: String,
+          }
+        }
+      }
+
+      _testJson() {
+        return [
+          {
+            isTextarea: true,
+            translatedQuestion: "Question 1",
+          },
+          {
+            isTextarea: true,
+            translatedQuestion: "Question 2",
+          },
+          {
+            isRadio: true,
+            translatedQuestion: "Question 2",
+          },
+        ]
+      }
+
+      _openSubQuestion() {
+        this.dispatchEvent(new CustomEvent('yp-open-sub-question', { bubbles: true, composed: true, detail: this.question.id }));
+      }
+
+      _closeSubQuestion() {
+        this.dispatchEvent(new CustomEvent('yp-close-sub-question', { bubbles: true, composed: true, detail: this.question.id }));
+      }
+
+      _radioChanged(event, detail) {
+        if (this.question.skipIfNo===true && detail.name==="yes") {
+          this._openSubQuestion();
+        } else if (this.question.skipIfNo===true && detail.name==="no") {
+          this._closeSubQuestion(itemId);
+        }
+
+        if (this.question.skipIfYes===true && detail.name==="no") {
+          this._openSubQuestion();
+        } else if (this.question.skipIfNo===true && detail.name==="yes") {
+          this._closeSubQuestion();
+        }
+      }
+
+      _isTextfieldQuestion (item) {
+        return question.isTextfield || (question.isJson===undefined && question.maxLength>1);
+      }
+
+      ready () {
+        if (window.i18nTranslation) {
+          this.set('language', window.locale);
+        }
+        super.ready();
+      }
+    }
+
+    customElements.define(YpStructuredQuestionEdit.is, YpStructuredQuestionEdit);
+  </script>
+</dom-module>

@@ -730,64 +730,74 @@ router.put('/:id/editTranscript', auth.can('edit post'), function (req, res) {
 });
 
 router.post('/:groupId', auth.can('create post'), function(req, res) {
-  var post = models.Post.build({
-    name: req.body.name,
-    description: req.body.description,
-    group_id: req.params.groupId,
-    category_id: req.body.categoryId != "" ? req.body.categoryId : null,
-    location: req.body.location != "" ? JSON.parse(req.body.location) : null,
-    cover_media_type: req.body.coverMediaType,
-    user_id: req.user.id,
-    status: 'published',
-    counter_endorsements_up: 1,
-    content_type: models.Post.CONTENT_IDEA,
-    user_agent: req.useragent.source,
-    ip_address: req.clientIp
-  });
+  models.Group.findOne({
+    where: {
+      id: req.params.groupId
+    },
+    attributes: ['id','configuration']
+  }).then((group) => {
+    var post = models.Post.build({
+      name: req.body.name,
+      description: req.body.description,
+      group_id: req.params.groupId,
+      category_id: req.body.categoryId != "" ? req.body.categoryId : null,
+      location: req.body.location != "" ? JSON.parse(req.body.location) : null,
+      cover_media_type: req.body.coverMediaType,
+      user_id: req.user.id,
+      status: (group && group.configuration &&
+               group.configuration.allPostsBlockedByDefault===true) ? 'blocked' : 'published',
+      counter_endorsements_up: 1,
+      content_type: models.Post.CONTENT_IDEA,
+      user_agent: req.useragent.source,
+      ip_address: req.clientIp
+    });
 
-  updatePostData(req, post);
+    updatePostData(req, post);
 
-  post.save().then(function() {
-    log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
-    queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
+    post.save().then(function() {
+      log.info('Post Created', { post: toJson(post), context: 'create', user: toJson(req.user) });
+      queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
 
-    post.setupAfterSave(req, res, function () {
-      post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
-        models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
-          post.setupImages(req.body, function (error) {
-            models.Endorsement.build({
-              post_id: post.id,
-              value: 1,
-              user_id: req.user.id,
-              status: 'active',
-              user_agent: req.useragent.source,
-              ip_address: req.clientIp
-            }).save().then(function (endorsement) {
-              models.AcActivity.createActivity({
-                type: 'activity.post.new',
-                userId: post.user_id,
-                domainId: req.ypDomain.id,
-                groupId: post.group_id,
+      post.setupAfterSave(req, res, function () {
+        post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
+          models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
+            post.setupImages(req.body, function (error) {
+              models.Endorsement.build({
+                post_id: post.id,
+                value: 1,
+                user_id: req.user.id,
+                status: 'active',
+                user_agent: req.useragent.source,
+                ip_address: req.clientIp
+              }).save().then(function (endorsement) {
+                models.AcActivity.createActivity({
+                  type: 'activity.post.new',
+                  userId: post.user_id,
+                  domainId: req.ypDomain.id,
+                  groupId: post.group_id,
 //                communityId: req.ypCommunity ?  req.ypCommunity.id : null,
-                postId : post.id,
-                access: models.AcActivity.ACCESS_PUBLIC
-              }, function (error) {
-                if (!error && post) {
-                  post.setDataValue('newEndorsement', endorsement);
-                  log.info("process-moderation post toxicity in post controller");
-                  queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
-                  sendPostOrError(res, post, 'setupImages', req.user, error);
-                } else {
-                  sendPostOrError(res, post, 'setupImages', req.user, error);
-                }
+                  postId : post.id,
+                  access: models.AcActivity.ACCESS_PUBLIC
+                }, function (error) {
+                  if (!error && post) {
+                    post.setDataValue('newEndorsement', endorsement);
+                    log.info("process-moderation post toxicity in post controller");
+                    queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
+                    sendPostOrError(res, post, 'setupImages', req.user, error);
+                  } else {
+                    sendPostOrError(res, post, 'setupImages', req.user, error);
+                  }
+                });
               });
-            });
+            })
           })
         })
-      })
+      });
+    }).catch(function(error) {
+      sendPostOrError(res, null, 'view', req.user, error);
     });
-  }).catch(function(error) {
-    sendPostOrError(res, null, 'view', req.user, error);
+  }).catch((error)=>{
+    sendPostOrError(res, null, 'viewGroupNotFound', req.user, error);
   });
 });
 

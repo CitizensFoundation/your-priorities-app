@@ -279,6 +279,14 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
 
+  group.set('configuration.pointCharLimit', (req.body.pointCharLimit && req.body.pointCharLimit!=="") ? req.body.pointCharLimit : null);
+
+  group.set('configuration.allPostsBlockedByDefault', truthValueFromBody(req.body.allPostsBlockedByDefault));
+
+  group.set('configuration.customThankYouTextNewPosts', (req.body.customThankYouTextNewPosts && req.body.customThankYouTextNewPosts!=="") ? req.body.customThankYouTextNewPosts : null);
+
+  group.set('configuration.useCommunityTopBanner', truthValueFromBody(req.body.useCommunityTopBanner));
+
 };
 
 var upload = multer({
@@ -1018,6 +1026,12 @@ router.get('/:id', auth.can('view group'), function(req, res) {
           {
             model: models.Domain,
             attributes: ['id','theme_id','name']
+          },
+          {
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
           }
         ]
       },
@@ -1086,6 +1100,7 @@ const allowedTextTypesForGroup = [
   "alternativeTextForNewIdeaButtonClosed",
   "alternativeTextForNewIdeaButtonHeader",
   "alternativePointForHeader",
+  "customThankYouTextNewPosts",
   "alternativePointAgainstHeader",
   "alternativePointForLabel",
   "alternativePointAgainstLabel"
