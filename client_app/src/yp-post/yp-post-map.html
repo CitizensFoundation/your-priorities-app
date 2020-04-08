@@ -177,10 +177,11 @@
             height = windowHeight - 448;
             //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
           } else {
-            height = windowHeight/2;
+            height = windowHeight/1.5;
           }
-          map.style.width = Math.min(window.innerWidth, 1920) + 'px';
+          map.style.width = Math.min(window.innerWidth-(this.wide ? 96 : 32), 1920) + 'px';
           map.style.height = height + 'px';
+          map.style.marginBottom = "64px";
           this.async(function () {
             var gMap=this.$$("#map");
             if (gMap) {
