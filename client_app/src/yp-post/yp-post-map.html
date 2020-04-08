@@ -110,7 +110,7 @@
     <div class="layout vertical center-center">
       <template is="dom-if" if="[[posts]]">
         <paper-material id="mapContainer" elevation="2" class="mapContainer">
-          <google-map additional-map-options='{"keyboardShortcuts":false}' id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" fit-to-markers>
+          <google-map additional-map-options='{"keyboardShortcuts":false}' id="map" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
             <template is="dom-repeat" items="[[posts]]" as="post">
               <google-map-marker slot="markers" latitude="[[post.location.latitude]]" longitude="[[post.location.longitude]]"
                                  click-events class="marker" on-google-map-marker-click="markerClick">
@@ -172,14 +172,24 @@
         var map = this.$$("#mapContainer");
         if (map) {
           var windowHeight = window.innerHeight;
-          if (map) {
-            var height;
-            if (this.wide) {
-              height = windowHeight - 448;
-              //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
-              //map.style.width = Math.min(window.innerWidth, 1920) + 'px';
-            }
+          var height;
+          if (this.wide) {
+            height = windowHeight - 448;
+            //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
+          } else {
+            height = windowHeight/2;
           }
+          map.style.width = Math.min(window.innerWidth, 1920) + 'px';
+          map.style.height = height + 'px';
+          this.async(function () {
+            var gMap=this.$$("#map");
+            if (gMap) {
+              gMap.fitToMarkers=true;
+              this.async(function () {
+                gMap.fitToMarkers=false;
+              }, 1000);
+            }
+          });
         }
      },
 
@@ -210,7 +220,9 @@
         } else {
           this.set('noPosts', true);
         }
-        this.resetMapHeight();
+        this.async(function () {
+          this.resetMapHeight();
+        });
       },
 
       markerClick: function(e) {
