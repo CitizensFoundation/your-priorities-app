@@ -1,4 +1,10 @@
 {
+  "makeMapViewDefault": "Make map view default",
+  "thankYouForYourSubmission": "Thank you for adding content",
+  "useCommunityTopBanner": "Use community top banner",
+  "customThankYouTextNewPosts": "Custom thank you for new post",
+  "allPostsBlockedByDefault": "Posts blocked for moderation by default",
+  "pointCharLimit": "Point character limit (default 500)",
   "forcePostSortMethodAs": "Default post sort (newest, top, most_debated or random)",
   "editAdminComment": "Edit admin comment",
   "commentFromAdmin": "Comment from the admin",

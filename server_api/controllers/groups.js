@@ -287,6 +287,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.useCommunityTopBanner', truthValueFromBody(req.body.useCommunityTopBanner));
 
+  group.set('configuration.makeMapViewDefault', truthValueFromBody(req.body.makeMapViewDefault));
 };
 
 var upload = multer({
