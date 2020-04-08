@@ -14,9 +14,7 @@
       }
     </style>
 
-    <template is="dom-if" if="[[_isTextfieldQuestion(item)]]">
-      <div class="question">[[question.translatedQuestion]]</div>
-
+    <template is="dom-if" if="[[_isTextfieldQuestion(question)]]">
       <paper-textarea id="structuredQuestion_[[index]]"
                       value="{{question.value}}"
                       minlength="2"
@@ -109,7 +107,7 @@
         }
       }
 
-      _isTextfieldQuestion (item) {
+      _isTextfieldQuestion (question) {
         return question.isTextfield || (question.isJson===undefined && question.maxLength>1);
       }
 
