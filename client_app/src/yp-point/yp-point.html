@@ -284,7 +284,7 @@
         </template>
         <template is="dom-if" if="[[isEditing]]" restamp>
           <div class="layout vertical">
-            <paper-textarea id="pointContentEditor" char-counter maxlength="500" value="{{editText}}"></paper-textarea>
+            <paper-textarea id="pointContentEditor" char-counter maxlength="1500" value="{{editText}}"></paper-textarea>
             <div class="horizontal end-justified layout">
               <emoji-selector id="pointEmojiSelector"></emoji-selector>
             </div>
@@ -296,7 +296,7 @@
         </template>
         <template is="dom-if" if="[[isAdminCommentEditing]]" restamp>
           <div class="layout vertical">
-            <paper-textarea id="pointAdminCommentEditor" label="[[t('commentFromAdmin')]]" char-counter maxlength="500" value="{{editAdminCommentText}}"></paper-textarea>
+            <paper-textarea id="pointAdminCommentEditor" label="[[t('commentFromAdmin')]]" char-counter maxlength="1500" value="{{editAdminCommentText}}"></paper-textarea>
             <div class="horizontal end-justified layout">
               <emoji-selector id="pointAdminCommentEmojiSelector"></emoji-selector>
             </div>
