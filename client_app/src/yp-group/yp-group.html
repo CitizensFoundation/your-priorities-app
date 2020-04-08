@@ -885,6 +885,9 @@
           } else {
             window.appGlobals.currentForceSaml = false;
           }
+          if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
+            this.set('selectedTab','map');
+          }
         }
       },
 
