@@ -294,10 +294,10 @@ module.exports = (sequelize, DataTypes) => {
   Video.startTranscoding = (video, options, req, res) => {
     if (options.videoPostUploadLimitSec && options.videoPostUploadLimitSec!=="") {
       const postLimitSeconds = parseInt(options.videoPostUploadLimitSec);
-      video.set('meta.maxDuration', Math.min(postLimitSeconds, 150));
+      video.set('meta.maxDuration', Math.min(postLimitSeconds, 600));
     } else if (options.videoPointUploadLimitSec && options.videoPointUploadLimitSec!=="") {
       const pointLimitSeconds = parseInt(options.videoPointUploadLimitSec);
-      video.set('meta.maxDuration', Math.min(pointLimitSeconds, 150));
+      video.set('meta.maxDuration', Math.min(pointLimitSeconds, 600));
     } else {
       video.set('meta.maxDuration', "600");
     }

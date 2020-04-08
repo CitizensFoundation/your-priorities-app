@@ -30,7 +30,19 @@
       </paper-textarea>
     </template>
 
-    <template is="dom-if" if="[[question.isRadio]]">
+    <template is="dom-if" if="[[question.isTextHeader]]">
+
+    </template>
+
+    <template is="dom-if" if="[[question.isTextDescription]]">
+
+    </template>
+
+    <template is="dom-if" if="[[question.isCheckboxes]]">
+
+    </template>
+
+    <template is="dom-if" if="[[question.isRadios]]">
       <div class="question">[[question.translatedQuestion]]</div>
 
       <paper-radio-group required$="[[!question.notRequired]]" on-changed="_radioChanged" id="structuredQuestionRatio_[[index]]" name="structuredQuestionRatio_[[index]]" class="radioYesNo layout horizontal">
