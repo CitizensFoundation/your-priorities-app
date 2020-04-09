@@ -679,7 +679,7 @@
         }, 100);
       },
 
-      _groupIdChanged: function (groupId) {
+      _groupIdChanged: function (groupId, oldGroupId) {
         if (groupId && groupId!=this.lastValidGroupId) {
           this.set('lastValidGroupId', groupId);
           this.set('group', null);
@@ -705,7 +705,7 @@
             this._getGroup();
           }
           this.async(function () {
-            if (!this.selectedTab) {
+            if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
               this.set('selectedTab', 'open');
             }
           });
@@ -887,8 +887,6 @@
           }
           if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
             this.set('selectedTab','map');
-          } else if (this.selectedTab==='map') {
-            this.set('selectedTab','open');
           }
         }
       },

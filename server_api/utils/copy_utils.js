@@ -406,9 +406,6 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
       models.AcActivity.findAll({
         where: {
           post_id: oldPost.id,
-          id: {
-            $notIn: skipPointActivitiesIdsForPostCopy
-          },
           point_id: { $is: null }
         }
       }).then(function (activities) {
@@ -429,6 +426,8 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
         }, function (error) {
           callback(error);
         })
+      }).catch((error) => {
+        callback(error);
       });
     }
   ], function (error) {

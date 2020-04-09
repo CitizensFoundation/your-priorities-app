@@ -1281,6 +1281,8 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         postOrder = "counter_points DESC";
       } else if (req.params.filter=="random") {
         postOrder = "created_at DESC";
+      } else if (req.params.filter=="oldest") {
+        postOrder = "created_at ASC";
       }
 
       if (req.params.categoryId!='null') {
