@@ -7,7 +7,6 @@ const moment = require('moment');
 
 const getGroupPosts = require('./export_utils').getGroupPosts;
 const getRatingHeaders = require('./export_utils').getRatingHeaders;
-
 const getContactData = require('./export_utils').getContactData;
 const getAttachmentData = require('./export_utils').getAttachmentData;
 const getMediaTranscripts = require('./export_utils').getMediaTranscripts;
