@@ -31,10 +31,41 @@
     <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('close')]]"
                     action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
 
+      <paper-input id="name"
+                   name="name"
+                   type="text"
+                   label="[[t('newName')]]"
+                   value="{{community.name}}"
+                   maxlength="60"
+                   minlength="1"
+                   required
+                   char-counter class="mainInput">
+      </paper-input>
+
+      <paper-input id="hostname"
+                   name="hostname"
+                   type="text"
+                   allowed-pattern="[a-z0-9-]"
+                   label="[[t('newHostname')]]"
+                   value="{{community.hostname}}"
+                   maxlength="80"
+                   minlength="1"
+                   required="[[!community.is_community_folder]]"
+                   char-counter class="mainInput">
+      </paper-input>
+
+      <paper-input id="google_analytics_code"
+                   name="google_analytics_code"
+                   type="text"
+                   label="[[t('newAnalyticsTrackerCode')]]"
+                   value="{{community.google_analytics_code}}"
+                   maxlength="40" style="width: 200px;">
+      </paper-input>
+
+      <paper-progress id="progress" hidden></paper-progress>
 
       <div class="layout horizontal center-center">
-        <yp-ajax method="GET" id="getAvailableGroupsAjax" url="/api/users/available/groups" on-response="_getGroupsResponse"></yp-ajax>
-        <yp-ajax method="PUT" id="duplicatCollectionAjax" on-response="_duplicatCollectionResponse"></yp-ajax>
+        <yp-ajax method="PUT" id="duplicatCollectionAjax" on-response="_duplicateCollectionResponse"></yp-ajax>
         <yp-ajax method="PUT" id="duplicatCollectionProgressAjax" on-response="_duplicatCollectionProgressResponse"></yp-ajax>
       </div>
     </yp-edit-dialog>
@@ -61,14 +92,16 @@
 
       action: {
         type: String,
-        value: "/api/posts"
+        value: "/api/communities"
       },
 
-      post: {
+      community: {
         type: Object
       },
 
-      selectedGroupId: Number
+      group: {
+        type: Object,
+      }
     },
 
     _selectGroup: function (event) {
@@ -79,33 +112,34 @@
       }.bind(this));
     },
 
-    _reallyMove: function () {
-      this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+    _reallyDuplicate: function () {
+      this.$.movePostAjax.url="/api/communities/"+this.community.id+'/duplicate';
       this.$.movePostAjax.body = {};
       this.$.movePostAjax.generateRequest();
     },
 
-    _movePostResponse: function () {
-      location.reload();
+    _duplicateCollectionResponse: function () {
+      this.$.progress.hidden = false;
     },
 
     _clear: function () {
-      this.set('selectedGroupId', null);
-      this.set('post', null);
+      this.set('community', null);
+      this.set('group', null);
     },
 
-    setupAndOpen: function (post, refreshFunction) {
-      this.set('post', post);
+    setupAndOpen: function (community, refreshFunction) {
+      this.set('community', community);
+      this.set('community.name', "COPY - "+community.name);
+      this.set('community.hostname', "copy-"+community.hostname);
       this.set('refreshFunction', refreshFunction);
       this._setupTranslation();
-      this.$.getAvailableGroupsAjax.generateRequest();
       this.open();
     },
 
     _setupTranslation: function () {
-      this.set('editHeaderText', this.t('post.move'));
-      this.set('toastText', this.t('post.haveMovedPost'));
-      this.set('saveText', this.t('post.move'));
+      this.set('editHeaderText', this.t('duplicateCommunity'));
+      this.set('toastText', this.t('haveDuplicatedCommunity'));
+      this.set('saveText', this.t('duplicate'));
     }
   });
 </script>

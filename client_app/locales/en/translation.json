@@ -1,4 +1,11 @@
 {
+  "downloadExcelReport": "Download Xls report",
+  "downloadDocxReport": "Download Docx report",
+  "duplicateCommunity": "Duplicate community",
+  "haveDuplicatedCommunity": "Have duplicated community",
+  "newAnalyticsTrackerCode": "New Google Analytics Id",
+  "newHostname": "New hostname",
+  "newName": "New name",
   "makeMapViewDefault": "Make map view default",
   "thankYouForYourSubmission": "Thank you for adding content",
   "useCommunityTopBanner": "Use community top banner",

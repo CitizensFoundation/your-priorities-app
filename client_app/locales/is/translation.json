@@ -1,4 +1,11 @@
 {
+  "downloadExcelReport": "Hlaða niður Xls skýrslu",
+  "downloadDocxReport": "Hlaða niður Docx skýrslu",
+  "duplicateCommunity": "Fjöldfalda svæði",
+  "haveDuplicatedCommunity": "Þú hefur fjölfaldað svæði",
+  "newAnalyticsTrackerCode": "Nýtt Google Analytics Id",
+  "newHostname": "Nýtt hostname",
+  "newName": "Nýtt nafn",
   "makeMapViewDefault": "Kort forvalið",
   "thankYouForYourSubmission": "Takk fyrir að bæta við efni",
   "useCommunityTopBanner": "Nota haus mynd frá svæði",

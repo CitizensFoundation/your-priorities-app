@@ -1,0 +1,145 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+<link rel="import" href="../yp-behaviors/access-helpers.html">
+<link rel="import" href="../yp-ajax/yp-ajax.html" >
+
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog.html">
+<link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
+
+<dom-module id="yp-create-report">
+  <template>
+
+    <style include="iron-flex iron-flex-alignment">
+      .additionalSettings {
+        padding-top: 16px;
+      }
+
+      paper-textarea {
+        padding-top: 16px;
+      }
+
+      .groupName {
+        cursor: pointer;
+      }
+    </style>
+    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+
+    <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('close')]]"
+                    action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+
+      <paper-progress id="progress" progress="[[progress]]"></paper-progress>
+
+      <div class="error" hidden$="[[!error]]">[[error]]</div>
+
+      <paper-button id="downloadReportButton" hidden$="[[!reportUrl]]">[[t('downloadReport')]]</paper-button>
+
+      <div class="layout horizontal center-center">
+        <yp-ajax method="PUT" id="startReportCreationAjax" on-response="_startReportCreationResponse"></yp-ajax>
+        <yp-ajax method="GET" id="reportCreationProgressAjax" on-response="_reportCreationProgressResponse"></yp-ajax>
+      </div>
+    </yp-edit-dialog>
+  </template>
+
+</dom-module>
+
+<script>
+
+  // WORK IN PROGRESS - NOT COMPLETED OR USED AT THE MOMENT
+
+  Polymer({
+
+    is: 'yp-create-report',
+
+    behaviors: [
+      Polymer.ypLanguageBehavior,
+      Polymer.ypEditDialogBehavior,
+      Polymer.AccessHelpers,
+      Polymer.ypPostMoveBehavior
+    ],
+
+    properties: {
+
+      action: {
+        type: String,
+        value: "/api/communities"
+      },
+
+      community: {
+        type: Object
+      },
+
+      group: {
+        type: Object,
+      },
+
+      progress: {
+        type: Number,
+        value: 0
+      },
+
+      error: {
+        type: String,
+        value: null
+      },
+
+      jobId: {
+        type: Number,
+        value: null
+      }
+    },
+
+    _startReportCreationResponse: function (event, detail) {
+      this.jobId = detail.jobId;
+      if (this.group) {
+        this.$.reportCreationProgressAjax.url = "/api/groups/"+this.group.id+"/"+this.jobId+"reportProgress";
+      } else if (this.community) {
+        this.$.reportCreationProgressAjax.url = "/api/communities/"+this.group.id+"/"+this.jobId+"reportProgress";
+      }
+
+      this._pollLaterForProgress();
+    },
+
+    _pollLaterForProgress: function () {
+      this.async(function () {
+        this.$.reportCreationProgressAjax.generateRequest();
+      }, 1500);
+    },
+
+    _reportCreationProgressResponse: function (event, detail) {
+      if (!detail.error && detail.progress && detail.progress<100) {
+        this._pollLaterForProgress();
+      }
+
+      this.set('progress', detail.progress);
+      this.set('reportUrl', detail.reportUrl);
+    },
+
+    _clear: function () {
+      this.set('community', null);
+      this.set('group', null);
+      this.set('jobId', null);
+      this.set('reportUrl', null);
+    },
+
+    setupAndOpen: function (group, community, refreshFunction) {
+      if (group) {
+        this.set('group', group);
+      } else if (community) {
+        this.set('community', community);
+      }
+      this.set('refreshFunction', refreshFunction);
+      this._setupTranslation();
+      this.open();
+    },
+
+    _setupTranslation: function () {
+      this.set('editHeaderText', this.t('duplicateCommunity'));
+      this.set('toastText', this.t('haveDuplicatedCommunity'));
+      this.set('saveText', this.t('duplicate'));
+    }
+  });
+</script>

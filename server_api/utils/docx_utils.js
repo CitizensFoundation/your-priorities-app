@@ -533,7 +533,7 @@ async function exportGroupToDocx(group, hostName, targetLanguage, callback) {
         var outFileContent = "";
         const posts = [];
 
-        async.eachSeries(postsIn, async (post) => {
+        async.each(postsIn, async (post) => {
           if (!post.deleted) {
             const postRatings = (post.public_data && post.public_data.ratings) ? post.public_data.ratings : null;
 
