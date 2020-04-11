@@ -42,13 +42,25 @@
 
     </template>
 
+    <template is="dom-if" if="[[question.isSeperator]]">
+
+    </template>
+
     <template is="dom-if" if="[[question.isRadios]]">
       <div class="question">[[question.translatedQuestion]]</div>
 
-      <paper-radio-group required$="[[!question.notRequired]]" on-changed="_radioChanged" id="structuredQuestionRatio_[[index]]" name="structuredQuestionRatio_[[index]]" class="radioYesNo layout horizontal">
-        <paper-radio-button name="yes">[[t('yes')]]</paper-radio-button>
-        <paper-radio-button name="no">[[t('no')]]</paper-radio-button>
+      <paper-radio-group required$="[[!question.notRequired]]" on-changed="_radioChanged" id="structuredQuestionRatio_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class="radioYesNo layout horizontal">
+        <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
+          <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.translatedOption]]</paper-radio-button>
+        </template>
       </paper-radio-group>
+    </template>
+
+    <template is="dom-if" if="[[question.isCheckboxes]]">
+      <div class="question">[[question.translatedQuestion]]</div>
+      <template is="dom-repeat" items="[[question.radioButtons]]" as="checkbox" index="buttonIndex">
+        <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.translatedOption]]</paper-checkbox>
+      </template>
     </template>
 
     <template is="dom-if" if="[[question.isDropDown]]">
