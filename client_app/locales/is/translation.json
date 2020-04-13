@@ -1,4 +1,6 @@
 {
+  "downloadHasExpired": "Skýrsla er ekki lengur til staðar hér",
+  "reportLinkInfo": "Hægt er að hlaða niður skýrslu með þessu hlekk í eina klukkustund",
   "downloadReport": "Hlaða niður skýrslu",
   "errorDocxReportGeneration": "Villa í docx skýrslu, reyndu aftur síðar",
   "errorXlsReportGeneration": "Villa í xls skýrslu, reyndu aftur síðar",

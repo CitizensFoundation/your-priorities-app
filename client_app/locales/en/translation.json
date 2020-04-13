@@ -1,4 +1,6 @@
 {
+  "downloadHasExpired": "The download link has expired",
+  "reportLinkInfo": "The download will only be available with this link for 1 hour",
   "downloadReport": "Download report",
   "errorDocxReportGeneration": "Error in docx report generation, please try again later",
   "errorXlsReportGeneration": "Error in xls report generation, please try again later",

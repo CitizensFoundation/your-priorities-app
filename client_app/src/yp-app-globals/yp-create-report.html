@@ -41,6 +41,18 @@
       a {
         text-decoration: none;
       }
+
+      .infoText {
+        padding: 8px;
+      }
+
+      .reportText {
+        margin-top: 8px;
+      }
+
+      .expiredText {
+        color: red;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -53,9 +65,13 @@
         <div class="error" hidden$="[[!error]]">[[error]]</div>
 
         <div hidden$="[[!reportUrl]]">
-          <a href="[[reportUrl]]">
-            <paper-button id="downloadReportButton" raised>[[t('downloadReport')]]</paper-button>
+          <a href="[[reportUrl]]" hidden$="[[downloadDisabled]]">
+            <paper-button id="downloadReportButton" disabled$="[[downloadDisabled]]" raised>[[t('downloadReport')]]</paper-button>
           </a>
+        </div>
+        <div class="infoText reportText" hidden$="[[!reportUrl]]">[[t('reportLinkInfo')]]</div>
+        <div class="infoText expiredText" hidden$="[[!downloadDisabled]]">
+          [[t('downloadHasExpired')]]
         </div>
       </div>
 
@@ -115,6 +131,11 @@
       reportUrl: {
         type: String,
         value: null
+      },
+
+      downloadDisabled: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -146,6 +167,9 @@
       }
       if (detail.response.data) {
         this.set('reportUrl', detail.response.data.reportUrl);
+        this.async(function () {
+          this.set('downloadDisabled', true);
+        }, 59*60*1000)
       }
     },
 
@@ -155,6 +179,7 @@
       this.set('jobId', null);
       this.set('error', null);
       this.set('reportUrl', null);
+      this.set('downloadDisabled', false);
       this.set('progress', 0);
     },
 
