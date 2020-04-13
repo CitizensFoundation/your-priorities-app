@@ -25,6 +25,11 @@
       .groupName {
         cursor: pointer;
       }
+
+      .error {
+        padding: 16px;
+        color: red;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -118,8 +123,7 @@
     },
 
     _reportCreationProgressResponse: function (event, detail) {
-      debugger;
-      if (!detail.response.error && detail.response.progress && detail.response.progress<100) {
+      if (!detail.response.error && detail.response.progress!==null && detail.response.progress<100) {
         this._pollLaterForProgress();
       }
 
