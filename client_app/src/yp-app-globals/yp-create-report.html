@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/access-helpers.html">
@@ -30,6 +31,10 @@
         padding: 16px;
         color: red;
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -42,11 +47,11 @@
 
       <div hidden$="[[!reportUrl]]">
         <a href="[[reportUrl]]">
-          <paper-button id="downloadReportButton" hidden$="">[[t('downloadReport')]]</paper-button>
+          <paper-button id="downloadReportButton">[[t('downloadReport')]]</paper-button>
         </a>
       </div>
 
-      <div class="layout horizontal center-center">
+      <div class="layout horizontal center-center" hidden>
         <yp-ajax method="PUT" id="startReportCreationAjax" on-response="_startReportCreationResponse"></yp-ajax>
         <yp-ajax method="GET" id="reportCreationProgressAjax" on-response="_reportCreationProgressResponse"></yp-ajax>
       </div>
