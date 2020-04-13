@@ -1,4 +1,11 @@
 {
+  "downloadReport": "Hlaða niður skýrslu",
+  "errorDocxReportGeneration": "Villa í docx skýrslu, reyndu aftur síðar",
+  "errorXlsReportGeneration": "Villa í xls skýrslu, reyndu aftur síðar",
+  "createDocxReport": "Búa til doc skýrlsu",
+  "createXlsReport": "Búa til xls skýrslu",
+  "haveCreatedDocxReport": "Doc skýrsla tilbúin",
+  "haveCreatedXlsReport": "Xls skýrsla tilbúin",
   "downloadExcelReport": "Hlaða niður Xls skýrslu",
   "downloadDocxReport": "Hlaða niður Docx skýrslu",
   "duplicateCommunity": "Fjöldfalda svæði",

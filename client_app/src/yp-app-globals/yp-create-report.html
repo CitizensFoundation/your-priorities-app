@@ -23,10 +23,6 @@
         padding-top: 16px;
       }
 
-      .groupName {
-        cursor: pointer;
-      }
-
       .error {
         padding: 16px;
         color: red;
@@ -35,25 +31,37 @@
       [hidden] {
         display: none !important;
       }
+
+      paper-button {
+        margin: 24px;
+        color: var(--accent-color);
+        margin-bottom: 0;
+      }
+
+      a {
+        text-decoration: none;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('close')]]"
-                    action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+                    action="[[action]]" method="[[method]]" cancel-text="[[t('close')]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
 
-      <paper-progress id="progress" value="[[progress]]"></paper-progress>
+      <div class="layout vertical center-center">
+        <paper-progress id="progress" value="[[progress]]"></paper-progress>
 
-      <div class="error" hidden$="[[!error]]">[[error]]</div>
+        <div class="error" hidden$="[[!error]]">[[error]]</div>
 
-      <div hidden$="[[!reportUrl]]">
-        <a href="[[reportUrl]]">
-          <paper-button id="downloadReportButton">[[t('downloadReport')]]</paper-button>
-        </a>
+        <div hidden$="[[!reportUrl]]">
+          <a href="[[reportUrl]]">
+            <paper-button id="downloadReportButton" raised>[[t('downloadReport')]]</paper-button>
+          </a>
+        </div>
       </div>
 
       <div class="layout horizontal center-center" hidden>
-        <yp-ajax method="PUT" id="startReportCreationAjax" on-response="_startReportCreationResponse"></yp-ajax>
-        <yp-ajax method="GET" id="reportCreationProgressAjax" on-response="_reportCreationProgressResponse"></yp-ajax>
+        <yp-ajax hidden method="PUT" id="startReportCreationAjax" on-response="_startReportCreationResponse"></yp-ajax>
+        <yp-ajax hidden method="GET" id="reportCreationProgressAjax" on-response="_reportCreationProgressResponse"></yp-ajax>
       </div>
     </yp-edit-dialog>
   </template>
@@ -124,7 +132,7 @@
     _pollLaterForProgress: function () {
       this.async(function () {
         this.$.reportCreationProgressAjax.generateRequest();
-      }, 1500);
+      }, 1000);
     },
 
     _reportCreationProgressResponse: function (event, detail) {
@@ -145,7 +153,9 @@
       this.set('community', null);
       this.set('group', null);
       this.set('jobId', null);
+      this.set('error', null);
       this.set('reportUrl', null);
+      this.set('progress', 0);
     },
 
     setupAndOpen: function (type, group, community, refreshFunction) {

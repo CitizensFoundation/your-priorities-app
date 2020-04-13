@@ -1,4 +1,5 @@
 {
+  "downloadReport": "Download report",
   "errorDocxReportGeneration": "Error in docx report generation, please try again later",
   "errorXlsReportGeneration": "Error in xls report generation, please try again later",
   "createDocxReport": "Create docx report",

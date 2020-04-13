@@ -298,7 +298,8 @@
             <paper-spinner id="spinner"></paper-spinner>
           </paper-dialog-scrollable>
           <div class="buttons">
-            <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
+            <paper-button hidden$="[[!cancelText]]" id="dismissBtn" dialog-dismiss>[[cancelText]]</paper-button>
+            <paper-button hidden$="[[cancelText]]" id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
             <template is="dom-if" if="[[!uploadingState]]">
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <paper-button raised class="actionButtons" hidden$="[[!saveText]]" id="submit2" on-tap="_submit">[[saveText]]</paper-button>
@@ -353,6 +354,11 @@
 
         baseAction: {
           type: String
+        },
+
+        cancelText: {
+          type: String,
+          value: null
         },
 
         method: {
