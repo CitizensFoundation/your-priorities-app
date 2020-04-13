@@ -267,7 +267,7 @@
                 [[t('manageAllContent')]]
               </paper-item>
               <a hidden$="[[!hasGroupAccess]]" target="_blank" href$="[[exportUrl]]"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
-              <a hidden$="[[!hasGroupAccess]]" target="_blank" href$="[[exportUrlDocx]]"><paper-item id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item></a>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
@@ -468,10 +468,13 @@
           this._openContentModeration();
         else if (detail.item.id==="moderationAllMenuItem")
           this._openAllContentModeration();
+        else if (detail.item.id==="exportDocxMenuItem")
+          this._openCreateDocxReport();
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
         this.$$("paper-listbox").select(null);
       },
+
       _openContentModeration: function () {
         window.appGlobals.activity('open', 'groupContentModeration');
         Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
@@ -536,6 +539,13 @@
           console.error("Couldn't refresh grop");
         }.bind(this));
         ajax.generateRequest();
+      },
+
+      _openCreateDocxReport: function () {
+        window.appGlobals.activity('open', 'createReportDocx');
+        Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+          dialog.setupAndOpen("docx",this.group, null);
+        }.bind(this));
       },
 
       _openDelete: function () {

@@ -596,6 +596,43 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
   });
 });
 
+router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.createJob((error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      let type;
+      if (req.params.type==="docx") {
+        queue.create('process-reports', {
+          type: 'start-docx-report-generation',
+          userId: req.user.id,
+          exportType: 'docx',
+          jobId: jobId,
+          groupId: req.params.groupId
+        }).priority('medium').removeOnComplete(true).save();
+      } else if (req.params.type==="xls") {
+
+      }
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:groupId/:jobId/report_creation_progress', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
 router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) {
     models.Group.findOne({
       where: {
