@@ -18,7 +18,7 @@
     <style include="iron-flex iron-flex-alignment">
       #dialog {
         width: 90%;
-        max-height: 90%;
+        max-height: 70%;
         background-color: #FFF;
       }
 
@@ -70,6 +70,12 @@
       [hidden] {
         display: none !important;
       }
+
+      .localeInputContasiner {
+        padding: 2px;
+        margin-bottom: 8px;
+        border: solid 1px #999;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -104,7 +110,13 @@
     </paper-dialog>
 
     <paper-dialog id="dialog">
-      <h2>[[headerText]]</h2>
+      <div class="layout horizontal">
+        <h2>[[headerText]]</h2>
+        <div class="flex"></div>
+        <div class="layout horizontal">
+          <paper-button id="addPageButton" raised on-tap="_addPage">[[t('pages.addPage')]]</paper-button>
+        </div>
+      </div>
       <iron-list items="[[pages]]" as="page">
         <template>
           <div class="layout horizontal">
@@ -131,9 +143,6 @@
           </div>
         </template>
       </iron-list>
-      <div class="layout horizontal">
-        <paper-button id="addPageButton" on-tap="_addPage">[[t('pages.addPage')]]</paper-button>
-      </div>
 
       <div class="buttons">
         <paper-button dialog-dismiss>[[t('close')]]</paper-button>
