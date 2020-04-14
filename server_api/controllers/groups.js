@@ -602,19 +602,22 @@ router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), func
       log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      let type;
-      if (req.params.type==="docx") {
-        queue.create('process-reports', {
-          type: 'start-docx-report-generation',
-          userId: req.user.id,
-          exportType: 'docx',
-          translateLanguage: req.query.translateLanguage,
-          jobId: jobId,
-          groupId: req.params.groupId
-        }).priority('medium').removeOnComplete(true).save();
-      } else if (req.params.type==="xls") {
-
+      let reportType;
+      if (req.params.type==='docx') {
+        reportType = 'start-docx-report-generation';
+      } else if (req.params.type==='xls') {
+        reportType = 'start-xls-report-generation';
       }
+
+      queue.create('process-reports', {
+        type: reportType,
+        userId: req.user.id,
+        exportType: req.params.type,
+        translateLanguage: req.query.translateLanguage,
+        jobId: jobId,
+        groupId: req.params.groupId
+      }).priority('medium').removeOnComplete(true).save();
+
       res.send({ jobId });
     }
   });
@@ -1703,7 +1706,7 @@ router.put('/:id/:pointId/adminComment', auth.can('edit group'), function(req, r
       if (!point.public_data.admin_comment) {
         point.set('public_data.admin_comment', {});
       }
-      point.set('public_data.admin_comment', { text: req.body.content, userId: req.user.id });
+      point.set('public_data.admin_comment', { text: req.body.content, userId: req.user.id, userName: req.user.name, createdAt: new Date() });
       point.save().then(()=>{
         res.send({content: req.body.content });
       }).catch(function(error) {

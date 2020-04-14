@@ -266,7 +266,7 @@
               <paper-item hidden$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>
-              <a hidden$="[[!hasGroupAccess]]" target="_blank" href$="[[exportUrl]]"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="exportXlsMenuItem">[[t('exportGroupXls')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
@@ -472,6 +472,8 @@
           this._openAllContentModeration();
         else if (detail.item.id==="exportDocxMenuItem")
           this._openCreateDocxReport();
+        else if (detail.item.id==="exportXlsMenuItem")
+          this._openCreateXlsReport();
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
         this.$$("paper-listbox").select(null);
@@ -547,6 +549,13 @@
         window.appGlobals.activity('open', 'createReportDocx');
         Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
           dialog.setupAndOpen("docx",this.group, null);
+        }.bind(this));
+      },
+
+      _openCreateXlsReport: function () {
+        window.appGlobals.activity('open', 'createReportXls');
+        Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+          dialog.setupAndOpen("xls",this.group, null);
         }.bind(this));
       },
 
