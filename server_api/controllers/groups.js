@@ -276,18 +276,13 @@ var updateGroupConfigParamters = function (req, group) {
   }
 
   group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
-
   group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
-
   group.set('configuration.pointCharLimit', (req.body.pointCharLimit && req.body.pointCharLimit!=="") ? req.body.pointCharLimit : null);
-
   group.set('configuration.allPostsBlockedByDefault', truthValueFromBody(req.body.allPostsBlockedByDefault));
-
   group.set('configuration.customThankYouTextNewPosts', (req.body.customThankYouTextNewPosts && req.body.customThankYouTextNewPosts!=="") ? req.body.customThankYouTextNewPosts : null);
-
   group.set('configuration.useCommunityTopBanner', truthValueFromBody(req.body.useCommunityTopBanner));
-
   group.set('configuration.makeMapViewDefault', truthValueFromBody(req.body.makeMapViewDefault));
+  group.set('configuration.simpleFormatDescription', truthValueFromBody(req.body.simpleFormatDescription));
 };
 
 var upload = multer({

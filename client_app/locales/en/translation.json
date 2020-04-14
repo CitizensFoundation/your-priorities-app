@@ -1,4 +1,5 @@
 {
+  "simpleFormatDescription": "Simple format for description",
   "exportGroupXls": "Export XLS file",
   "downloadHasExpired": "The download link has expired",
   "reportLinkInfo": "The download will only be available with this link for 1 hour",
