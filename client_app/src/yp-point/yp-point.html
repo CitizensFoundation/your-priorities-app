@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
 <link rel="import" href="../yp-app-globals/yp-app-icons.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
@@ -207,6 +208,15 @@
       #pointContent {
         color: #111;
       }
+
+      paper-icon-button.openCloseButton {
+        width: 54px;
+        height: 54px;
+        margin-top: -16px;
+        padding-left: 0;
+        margin-left: 0;
+        color: #777;
+      }
     </style>
 
     <lite-signal on-lite-signal-got-admin-rights="_gotAdminRights"></lite-signal>
@@ -251,9 +261,16 @@
           </div>
           <template is="dom-if" if="[[point.latestContent]]">
             <div class="transcriptText layout vertical center-center">
-              <div class="transcriptHeader">[[t('automaticTranscript')]]</div>
+              <div class="layout horizontal">
+                <div class="transcriptHeader">[[t('automaticTranscript')]]</div>
+                <div hidden$="[[!point.Post.Group.configuration.collapsableTranscripts]]">
+                  <paper-icon-button title$="[[t('openComments')]]" class="openCloseButton" icon="keyboard-arrow-right" on-tap="_setOpen" hidden$="[[openTranscript]]"></paper-icon-button>
+                  <paper-icon-button title$="[[t('closeComments')]]" class="openCloseButton" icon="keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!openTranscript]]"></paper-icon-button>
+                </div>
+              </div>
+
               <div id="pointContentTranscript" link-point$="[[linkPoint]]" hidden$="[[isEditing]]" on-tap="_linkIfNeeded">
-                <yp-magic-text simple-format text-type="pointContent" content-language="[[point.language]]"
+                <yp-magic-text hidden$="[[!openTranscript]]" simple-format text-type="pointContent" content-language="[[point.language]]"
                                content="[[point.latestContent]]" content-id="[[point.id]]">
                 </yp-magic-text>
               </div>
@@ -357,6 +374,11 @@
         user: {
           type: Object,
           value: null
+        },
+
+        openTranscript: {
+          type: Boolean,
+          value: true
         },
 
         hideUser: {
@@ -464,6 +486,24 @@
         Polymer.ypGotoBehavior,
         Polymer.ypMediaFormatsBehavior
       ],
+
+      _setOpen: function () {
+        this.set('openTranscript', true);
+        this.async(function () {
+          this.fire('yp-iron-resize');
+          this.fire('iron-resize');
+          this.notifyResize();
+        }, 20);
+      },
+
+      _setClosed: function () {
+        this.set('openTranscript', false);
+        this.async(function () {
+          this.fire('yp-iron-resize');
+          this.fire('iron-resize');
+          this.notifyResize();
+        },20);
+      },
 
       _isEditingSomething: function (isEditing, isAdminCommentEditing) {
         return isEditing || isAdminCommentEditing;
@@ -653,6 +693,9 @@
         this.setupMediaEventListeners(point, previousPoint);
         this._resetMedia();
         if (point) {
+          if (point.Post.Group.configuration && point.Post.Group.configuration.collapsableTranscripts) {
+            this.set('openTranscript', false);
+          }
           this.set('user', this.point.User);
           var videoURL = this._getVideoURL(point.PointVideos);
           var videoPosterURL = this._getVideoPosterURL(point.PointVideos);

@@ -284,6 +284,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.makeMapViewDefault', truthValueFromBody(req.body.makeMapViewDefault));
   group.set('configuration.simpleFormatDescription', truthValueFromBody(req.body.simpleFormatDescription));
   group.set('configuration.resourceLibraryLinkMode', truthValueFromBody(req.body.resourceLibraryLinkMode));
+  group.set('configuration.collapsableTranscripts', truthValueFromBody(req.body.collapsableTranscripts));
 };
 
 var upload = multer({

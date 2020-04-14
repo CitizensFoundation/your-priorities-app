@@ -1004,12 +1004,22 @@
 
         listeners: {
           'yp-point-deleted': '_pointDeleted',
-          'yp-update-point-in-list': '_updatePointInLists'
+          'yp-update-point-in-list': '_updatePointInLists',
+          'yp-iron-resize': '_ypIronResize'
         },
 
         observers: [
           '_setupPointTextStartState(pointUpOrDownSelected, post)'
         ],
+
+        _ypIronResize: function () {
+          if (this.$$("#ironListUp"))
+            this.$$("#ironListUp").fire("iron-resize");
+          if (this.$$("#ironListDown"))
+            this.$$("#ironListDown").fire("iron-resize");
+          if (this.$$("#ironListMobile"))
+            this.$$("#ironListMobile").fire("iron-resize");
+        },
 
         _setupPointTextStartState: function(pointUpOrDownSelected, post) {
           if (post) {
