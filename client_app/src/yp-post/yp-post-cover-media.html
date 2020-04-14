@@ -504,14 +504,18 @@
       },
 
       _goToPost: function () {
-        if (this.post) {
-          if (this.headerMode) {
-            this.goToPost(this.post.id)
-          } else {
-            this.goToPost(this.post.id, null, null, this.post);
-          }
+        if (this.post && this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+          // Do nothing
         } else {
-          console.error("No post in post cover media on goToPost");
+          if (this.post) {
+            if (this.headerMode) {
+              this.goToPost(this.post.id)
+            } else {
+              this.goToPost(this.post.id, null, null, this.post);
+            }
+          } else {
+            console.error("No post in post cover media on goToPost");
+          }
         }
       },
 

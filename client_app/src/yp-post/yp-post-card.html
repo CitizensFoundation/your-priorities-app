@@ -96,11 +96,11 @@
       }
 
       .postCard[hide-description][hide-actions] {
-        height: 311px;
+        height: 331px;
       }
 
       .postCard[hide-description][hide-post-cover][hide-actions] {
-        height: 77px;
+        height: 110px;
       }
 
       .postCard[hide-actions] {
@@ -290,17 +290,19 @@
                     audio-cover$="[[isAudioCover]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <a href="/post/[[post.id]]" aria-label="[[post.name]]">
+        <a href="[[_getPostLink(post)]]" aria-label="[[post.name]]">
           <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
           <div class="postNameContainer">
-            <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
+            <div class="post-name" mini$="[[mini]]" id="postName">
               <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
+                             on-tap="goToPostIfNotHeader"
                              text-only content="[[postName]]" content-id="[[post.id]]">
               </yp-magic-text>
             </div>
           </div>
-          <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
+          <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
                          text-type="postContent" content-language="[[post.language]]"
+                         on-tap="goToPostIfNotHeader"
                          text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
           </yp-magic-text>
           <template is="dom-if" if="[[!mini]]">
@@ -378,6 +380,20 @@
         }
       },
 
+      _getPostLink: function (post) {
+        if (post) {
+          if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
+            return "#";
+          } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+            return post.description.trim();
+          } else {
+            return "/post/"+post.id;
+          }
+        } else {
+          console.warn("Trying to get empty post link");
+        }
+      },
+
       _shareTap: function (event, detail) {
         window.appGlobals.activity('postShareCardOpen', detail.brand, this.post ? this.post.id : -1);
       },
@@ -401,6 +417,8 @@
       goToPostIfNotHeader: function () {
         if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
           console.log("goToPostDisabled");
+        } else if (this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+          //
         } else {
           this.goToPost(null, null, null, this.post);
         }
