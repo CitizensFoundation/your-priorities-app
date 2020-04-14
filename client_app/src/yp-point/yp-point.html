@@ -693,7 +693,7 @@
         this.setupMediaEventListeners(point, previousPoint);
         this._resetMedia();
         if (point) {
-          if (point.Post.Group.configuration && point.Post.Group.configuration.collapsableTranscripts) {
+          if (point.Post && point.Post.Group && point.Post.Group.configuration && point.Post.Group.configuration.collapsableTranscripts) {
             this.set('openTranscript', false);
           }
           this.set('user', this.point.User);
