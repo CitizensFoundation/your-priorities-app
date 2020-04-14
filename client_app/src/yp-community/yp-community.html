@@ -387,8 +387,20 @@
         this._refreshTabsAndPages();
       },
 
+      _openHelpPageIfNeeded: function () {
+        if (!localStorage.getItem("yp-welcome-for-comsssmunity-"+this.community.id)) {
+          if (this.community && this.community.configuration && this.community.configuration.welcomePageId) {
+            this.async(function () {
+              this.fire('yp-open-page', {pageId: this.community.configuration.welcomePageId});
+              localStorage.setItem("yp-welcome-for-community-"+this.community.id, true)
+            }, 1200);
+          }
+        }
+      },
+
       refresh: function () {
         if (this.community) {
+          this._openHelpPageIfNeeded();
           this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
 
           window.appGlobals.setCommunityAnalyticsTracker(this.community.google_analytics_code);

@@ -224,6 +224,17 @@
         <input type="hidden" name="signupTermsPageId" value="[[community.configuration.signupTermsPageId]]">
       </div>
 
+      <div class="layout horizontal config" hidden$="[[!pages]]">
+        <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.welcomePageId}}">
+            <template is="dom-repeat" items="[[translatedPages]]" as="page">
+              <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <input type="hidden" name="welcomePageId" value="[[community.configuration.welcomePageId]]">
+      </div>
+
       <paper-input id="google_analytics_code"
                    name="google_analytics_code"
                    type="text"

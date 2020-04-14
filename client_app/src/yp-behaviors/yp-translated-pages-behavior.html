@@ -24,11 +24,15 @@
     },
 
     openPageFromId: function (pageId) {
-      this.pages.forEach(function (page) {
-        if (page.id==pageId) {
-          this._openPage(page)
-        }
-      }.bind(this));
+      if (this.pages) {
+        this.pages.forEach(function (page) {
+          if (page.id==pageId) {
+            this._openPage(page)
+          }
+        }.bind(this));
+      } else {
+        console.warn("Trying to open a page when not loaded");
+      }
     },
 
     openUserInfoPage: function (pageId) {

@@ -643,6 +643,8 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
   community.set('configuration.signupTermsPageId', (req.body.signupTermsPageId && req.body.signupTermsPageId!="") ? req.body.signupTermsPageId : null);
+  community.set('configuration.welcomePageId', (req.body.welcomePageId && req.body.welcomePageId!="") ? req.body.welcomePageId : null);
+
   community.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   community.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
 

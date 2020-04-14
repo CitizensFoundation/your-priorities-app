@@ -1,4 +1,5 @@
 {
+  "welcomeSelectPage": "Optional welcome help page popup",
   "simpleFormatDescription": "Simple format for description",
   "exportGroupXls": "Export XLS file",
   "downloadHasExpired": "The download link has expired",
@@ -14,6 +15,8 @@
   "downloadDocxReport": "Download docx report",
   "duplicateCommunity": "Duplicate community",
   "haveDuplicatedCommunity": "Have duplicated community",
+  "duplicateGroup": "Duplicate community",
+  "haveDuplicatedGroup": "Have duplicated community",
   "newAnalyticsTrackerCode": "New Google Analytics Id",
   "newHostname": "New hostname",
   "newName": "New name",
