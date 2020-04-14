@@ -55,6 +55,7 @@
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('close')]]"
                     action="[[action]]" method="[[method]]" cancel-text="[[t('close')]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
@@ -136,7 +137,16 @@
       downloadDisabled: {
         type: Boolean,
         value: false
+      },
+
+      autoTranslateActive: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _autoTranslateEvent: function (event, detail) {
+      this.set('autoTranslateActive', detail);
     },
 
     _startReportCreationResponse: function (event, detail) {
@@ -184,15 +194,27 @@
     },
 
     setupAndOpen: function (type, group, community, refreshFunction) {
+      if (window.autoTranslate) {
+        this.set('autoTranslateActive', true);
+      } else {
+        this.set('autoTranslateActive', false);
+      }
       this._clear();
       this.set('type', type);
+      var url;
       if (group) {
         this.set('group', group);
-        this.$.startReportCreationAjax.url = "/api/groups/"+this.group.id+"/"+this.type+"/start_report_creation";
+         url = "/api/groups/"+this.group.id+"/"+this.type+"/start_report_creation";
       } else if (community) {
         this.set('community', community);
-        this.$.startReportCreationAjax.url = "/api/communties/"+this.community.id+"/"+this.type+"/start_report_creation";
+        url = "/api/communties/"+this.community.id+"/"+this.type+"/start_report_creation";
       }
+
+      if (this.autoTranslateActive) {
+        url += "?translateLanguage="+this.language;
+      }
+
+      this.$.startReportCreationAjax.url = url;
       this.$.startReportCreationAjax.body = {};
       this.$.startReportCreationAjax.generateRequest();
       this.set('refreshFunction', refreshFunction);

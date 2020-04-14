@@ -608,6 +608,7 @@ router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), func
           type: 'start-docx-report-generation',
           userId: req.user.id,
           exportType: 'docx',
+          translateLanguage: req.query.translateLanguage,
           jobId: jobId,
           groupId: req.params.groupId
         }).priority('medium').removeOnComplete(true).save();
