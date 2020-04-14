@@ -18,7 +18,7 @@ module.exports = {
             type: Sequelize.DATE
           },
           progress: { type: Sequelize.INTEGER, allowNull: true },
-          error: { type: Sequelize.TEXT, allowNull: false },
+          error: { type: Sequelize.TEXT, allowNull: true },
           data: Sequelize.JSONB
         }
       )
