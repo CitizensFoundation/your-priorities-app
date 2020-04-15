@@ -388,11 +388,11 @@
       },
 
       _openHelpPageIfNeeded: function () {
-        if (!localStorage.getItem("yp-welcome-for-comsssmunity-"+this.community.id)) {
+        if (!sessionStorage.getItem("yp-welcome-for-community-"+this.community.id)) {
           if (this.community && this.community.configuration && this.community.configuration.welcomePageId) {
             this.async(function () {
               this.fire('yp-open-page', {pageId: this.community.configuration.welcomePageId});
-              localStorage.setItem("yp-welcome-for-community-"+this.community.id, true)
+              sessionStorage.setItem("yp-welcome-for-community-"+this.community.id, true)
             }, 1200);
           }
         }
