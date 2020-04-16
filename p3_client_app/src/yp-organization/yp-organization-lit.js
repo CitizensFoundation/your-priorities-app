@@ -3,7 +3,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import '../yp-post/yp-post-map.js';
@@ -82,7 +81,6 @@ class YpOrganizationLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-page id="page" .createFabIcon="group" .createFabTitle="${this.t('group.add')}" @yp-create-fab-tap="_newGroup">
 
       <yp-organization-large-card id="organizationCard" .slot="largeCard" class="largeCard card" .organization="${this.organization}" @update-organization="${this._refresh}"></yp-organization-large-card>
@@ -114,7 +112,6 @@ class YpOrganizationLit extends YpBaseElement {
 
   /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     ypGotoBehavior,
     ypMediaFormatsBehavior

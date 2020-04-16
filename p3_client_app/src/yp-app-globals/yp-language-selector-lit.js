@@ -7,7 +7,6 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-button/paper-button.js';
 import '../yp-ajax/yp-ajax.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -131,7 +130,6 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.language ? html`
     <div class="layout vertical">
       <paper-dropdown-menu .label="Select language" .selected="${this.selectedLocale}}" .attrForSelected="name">
         <paper-listbox slot="dropdown-content" .selected="${this.selectedLocale}" .attrForSelected="name">
@@ -154,14 +152,12 @@ class YpLanguageSelectorLit extends YpBaseElement {
       </div>
     </div>
 
-    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" @response="${this._hasAutoTranslationResponse}"></yp-ajax>
-` : html``}
-`
+    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" @response="${this._hasAutoTranslationResponse}"></yp-ajax>  
+    `
   }
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     IronFormElementBehavior
   ],
 */

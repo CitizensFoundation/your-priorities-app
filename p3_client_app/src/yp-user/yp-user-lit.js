@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-tabs/paper-tab.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
@@ -116,8 +115,6 @@ class YpUserLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-
     <app-route route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
@@ -167,7 +164,6 @@ class YpUserLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     CollectionHelpers,
     CommunityCollectionBehaviors,

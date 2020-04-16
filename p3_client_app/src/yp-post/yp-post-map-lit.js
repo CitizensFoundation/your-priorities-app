@@ -3,7 +3,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 //TODO: import 'google-map/google-map.js';
 //TODO: import 'google-map/google-map-marker.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import './yp-post-card.js';
 import './yp-post-map-info.js';
@@ -135,7 +134,6 @@ class YpPostMapLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(min-width: 1000px)" query-matches="${this.wide}"></iron-media-query>
     <div class="layout vertical center-center">
 
@@ -167,12 +165,6 @@ class YpPostMapLit extends YpBaseElement {
     </div>
     `
   }
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   resetMapHeight() {
     var map = this.$$("#mapContainer");

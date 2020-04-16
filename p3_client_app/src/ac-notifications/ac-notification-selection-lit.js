@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -103,14 +102,8 @@ class AcNotificationSelectionLit extends YpBaseElement {
         </div>
       </div>
     </div>
-`
+    `
   }
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   _availableMethods(language) {
     if (language) {

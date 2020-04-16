@@ -1,13 +1,11 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
-import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import { WordWrap } from '../yp-behaviors/word-wrap.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -134,7 +132,6 @@ class YpPagesGridLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="editPageLocale" .modal class="layout vertical">
       <h2>${this.t('pages.editPageLocale')}</h2>
 
@@ -203,10 +200,8 @@ class YpPagesGridLit extends YpBaseElement {
     `
   }
 
-
 /*
   behaviors: [
-    ypLanguageBehavior,
     WordWrap
   ],
 */

@@ -4,7 +4,6 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import '../yp-user/yp-user-image.js';
 import '../yp-ajax/yp-ajax.js';
@@ -115,7 +114,6 @@ class YpPointCommentEditLit extends YpBaseElement {
 
   /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior
   ],
 

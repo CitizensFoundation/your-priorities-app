@@ -9,7 +9,6 @@ import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '../yp-ajax/yp-ajax.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-user-image.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -276,7 +275,6 @@ class YpUsersGridLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="selectOrganizationDialog" modal="">
       <h2>${this.t('users.selectOrganization')}</h2>
       <paper-dialog-scrollable>
@@ -439,7 +437,6 @@ class YpUsersGridLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypNumberFormatBehavior
   ],
 

@@ -16,7 +16,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-checkbox/paper-checkbox.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -318,7 +317,6 @@ class YpMediaRecorderLit extends YpBaseElement {
       </div>
     </paper-dialog>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-ajax id="getTranslationAjax" @response="${this._getTranslationResponse}"></iron-ajax>
 `
   }

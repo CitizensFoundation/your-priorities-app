@@ -11,7 +11,6 @@ import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-listbox/paper-listbox.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypOfficialStatusOptions } from '../yp-behaviors/yp-official-status-options.js';
 import '../yp-ajax/yp-ajax.js';
@@ -282,7 +281,6 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     AccessHelpers,
     WordWrap,
     ypOfficialStatusOptions,

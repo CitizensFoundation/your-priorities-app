@@ -4,7 +4,6 @@ import '@polymer/iron-list/iron-list.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import './yp-post-card.js';
@@ -289,7 +288,6 @@ static get styles() {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
 
     <iron-a11y-keys id="a11y" .target="${this.searchTarget}" .keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
@@ -334,7 +332,6 @@ static get styles() {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypIronListBehavior
   ],
 */

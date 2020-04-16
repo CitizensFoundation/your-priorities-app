@@ -9,7 +9,6 @@ import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/app-route/app-route.js';
 import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
 import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
@@ -430,7 +429,6 @@ class YpGroupLit extends YpBaseElement {
   }
 
   /*behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     YpNewsTabSelected,
     ypDetectOldiOs,

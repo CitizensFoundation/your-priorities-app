@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { ypOfficialStatusOptions } from '../yp-behaviors/yp-official-status-options.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
@@ -216,7 +215,6 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypOfficialStatusOptions,
     ypThemeBehavior,
     ypMediaFormatsBehavior,

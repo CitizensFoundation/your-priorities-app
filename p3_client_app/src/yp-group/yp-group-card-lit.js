@@ -4,7 +4,6 @@ import '@polymer/iron-image/iron-image.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import '@polymer/paper-card/paper-card.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-group-stats.js';
 import { GroupBehaviors } from './yp-group-behaviors.js';
 import '../yp-membership-button/yp-membership-button.js';
@@ -221,7 +220,6 @@ class YpGroupCardLit extends YpBaseElement {
 
 /*
 behaviors: [
-  ypLanguageBehavior,
   GroupBehaviors,
   ypTruncateBehavior,
   ypMediaFormatsBehavior,

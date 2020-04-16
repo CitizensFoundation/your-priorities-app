@@ -8,7 +8,6 @@ import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-behaviors/yp-iron-list-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-behaviors/emoji-selector.js';
 import '../yp-point/yp-point.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
@@ -512,7 +511,6 @@ class YpPostPointsLit extends YpBaseElement {
   render() {
     return html`
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-update-points-for-post="${this._loadNewPointsIfNeeded}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 
@@ -777,7 +775,6 @@ class YpPostPointsLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypTruncateBehavior,
     ypLoggedInUserBehavior
   ],

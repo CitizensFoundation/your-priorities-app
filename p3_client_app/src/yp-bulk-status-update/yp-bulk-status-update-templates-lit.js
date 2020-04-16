@@ -7,7 +7,6 @@ import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import { WordWrap } from '../yp-behaviors/word-wrap.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -154,7 +153,6 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     WordWrap
   ],
 */

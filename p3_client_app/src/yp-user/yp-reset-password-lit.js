@@ -5,7 +5,6 @@ import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -54,7 +53,6 @@ class YpResetPasswordLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <h3>${this.t('user.resetPassword')}</h3>
 
@@ -77,11 +75,6 @@ class YpResetPasswordLit extends YpBaseElement {
 
   }
 
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   onEnter(event) {
     event.stopPropagation();

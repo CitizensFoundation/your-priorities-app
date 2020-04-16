@@ -10,7 +10,6 @@ import '@polymer/paper-spinner/paper-spinner.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -405,12 +404,6 @@ class YpEditDialogLit extends YpBaseElement {
 `
   }
 
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   scrollResize() {
     if (this.$$("#scrollable")) {

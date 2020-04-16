@@ -4,7 +4,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '../yp-file-upload/yp-file-upload.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -67,7 +66,6 @@ class YpPostUserImageEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-edit-dialog ?doubleWidth id="editDialog" .icon="photo-camera" .action="${this.action}" .title="${this.editHeaderText}" method="${this.method}" .saveText="${this.saveText}" .nextActionText="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
       <div class="layout vertical center-center">
         <yp-file-upload id="imageFileUpload" raised method="POST" @success="${this._imageUploaded}">
@@ -92,7 +90,6 @@ class YpPostUserImageEditLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior
   ],
 */

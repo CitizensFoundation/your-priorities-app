@@ -4,7 +4,6 @@ import '@polymer/iron-list/iron-list.js';
 import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-material/paper-material.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
@@ -321,7 +320,6 @@ class AcActivitiesLit extends YpBaseElement {
     <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
 
     <iron-scroll-threshold id="scrollTheshold" .lowerThreshold="450" @lower-threshold="${this._loadMoreData}" .scrollTarget="document">
@@ -331,7 +329,6 @@ class AcActivitiesLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior,
     AccessHelpers,
     ypIronListBehavior

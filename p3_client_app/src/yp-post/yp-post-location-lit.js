@@ -9,7 +9,6 @@ import '@polymer/paper-spinner/paper-spinner.js';
 //TODO: import 'google-map/google-map-marker.js';
 //TODO: import 'google-map/google-map-search.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
@@ -143,7 +142,6 @@ class YpPostLocationLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <iron-media-query query="(max-width: 1024px)" queryMatches="${this.narrowPad}"></iron-media-query>
 
@@ -165,12 +163,6 @@ class YpPostLocationLit extends YpBaseElement {
     </div>
     `
   }
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   _computeMapZoom(location) {
     if (location && location.map_zoom)

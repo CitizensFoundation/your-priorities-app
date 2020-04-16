@@ -5,7 +5,6 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/app-route/app-route.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
@@ -133,6 +132,19 @@ class YpCommunityFolderLit extends YpBaseElement {
     <yp-ajax id="pagesAjax" @response="${this._pagesResponse}"></yp-ajax>
 `
 }
+
+/*
+behaviors: [
+  CommunityCollectionBehaviors,
+  ypThemeBehavior,
+  CollectionHelpers,
+  AccessHelpers,
+  ypLoggedInUserBehavior,
+  ypDetectOldiOs,
+  ypGotoBehavior,
+  ypMediaFormatsBehavior
+],
+*/
 
   _userLoggedIn(user) {
     if (user) {

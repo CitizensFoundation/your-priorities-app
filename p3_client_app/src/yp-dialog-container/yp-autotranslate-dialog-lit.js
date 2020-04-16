@@ -3,7 +3,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-button/paper-button.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-app-globals/yp-language-selector.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -59,12 +58,6 @@ class YpAutoTranslateDialogLit extends YpBaseElement {
 `
   }
 
-  
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
   _no() {
     sessionStorage.setItem("dontPromptForAutoTranslation", true);
   }

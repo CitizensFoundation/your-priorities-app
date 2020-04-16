@@ -9,7 +9,6 @@ import '../yp-ajax/yp-ajax.js';
 import '../yp-post/yp-post-header.js';
 import '../yp-point/yp-point.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -305,7 +304,6 @@ class YpContentModerationLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
         <div>
@@ -484,7 +482,6 @@ class YpContentModerationLit extends YpBaseElement {
 
   /*
     behaviors: [
-      ypLanguageBehavior,
       ypNumberFormatBehavior
     ],
 

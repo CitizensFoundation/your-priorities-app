@@ -8,7 +8,6 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-material/paper-material.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { LargeCardBehaviors } from '../yp-behaviors/yp-large-card-behaviors.js';
@@ -336,7 +335,6 @@ class YpDomainLargeCardLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     LargeCardBehaviors,
     AccessHelpers,
     ypGotAdminRightsBehavior,

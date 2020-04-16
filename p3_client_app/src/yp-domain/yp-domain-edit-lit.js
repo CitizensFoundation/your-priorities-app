@@ -8,7 +8,6 @@ import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/neon-animation/neon-animated-pages.js';
 import '../yp-file-upload/yp-file-upload.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-behaviors/emoji-selector.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
@@ -254,7 +253,6 @@ class YpDomainEditLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior,
     ypGotoBehavior
   ],

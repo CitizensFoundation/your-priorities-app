@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import '@polymer/paper-fab/paper-fab.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js' ;
@@ -217,6 +216,12 @@ class YpPageLit extends YpBaseElement {
     <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
     `
   }
+  
+/*
+  behaviors: [
+    ypMediaFormatsBehavior
+  ], 
+*/
 
   ready() {
     this.addEventListener("yp-setup-header-image", this._setupTopHeaderImageEvent);

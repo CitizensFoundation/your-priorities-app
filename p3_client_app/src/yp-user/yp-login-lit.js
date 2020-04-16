@@ -8,7 +8,6 @@ import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '@polymer/paper-tabs/paper-tabs.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import '../yp-magic-text/yp-magic-text.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -484,7 +483,6 @@ class YpLoginLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-domain-changed="${this_domainEvent}"></lite-signal>
 
     <paper-dialog id="dialog" modal>
@@ -598,7 +596,6 @@ class YpLoginLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior
   ],
 */

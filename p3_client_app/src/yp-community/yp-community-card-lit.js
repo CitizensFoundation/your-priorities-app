@@ -3,7 +3,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
 import '@polymer/paper-card/paper-card.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-community-stats.js';
 import { CommunityBehaviors } from './yp-community-behaviors.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';

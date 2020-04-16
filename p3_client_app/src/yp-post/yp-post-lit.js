@@ -9,7 +9,6 @@ import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/app-route/app-route.js';
 //TODO: import 'google-map/google-map.js';
 //TODO: import 'google-map/google-map-marker.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../ac-activities/ac-activities.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
@@ -427,8 +426,6 @@ class YpPostLit extends YpBaseElement {
       </iron-pages>
     </div>
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-
     <app-route .route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
@@ -454,7 +451,6 @@ class YpPostLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     YpNewsTabSelected,
     ypGotoBehavior,

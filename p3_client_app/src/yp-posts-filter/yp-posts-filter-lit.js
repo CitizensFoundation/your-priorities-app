@@ -10,7 +10,6 @@ import '@polymer/paper-menu-button/paper-menu-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-ajax/yp-ajax.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -224,8 +223,6 @@ class YpPostsFilterLit extends YpBaseElement {
   render() {
     return html`
 
-    <lite-signal on-lite-signal-yp-language="${this_languageEvent}"></lite-signal>
-
     ${ this.group ? html`
       <div class="layout horizontal center-center mainContainer wrap">
 
@@ -299,7 +296,6 @@ class YpPostsFilterLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior,
     ypMediaFormatsBehavior
   ],

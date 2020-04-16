@@ -3,7 +3,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -52,7 +51,6 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <div class="header layout horizontal center-center">
         <div>${this.t('deleteOrAnonymizeUser')}</div>
@@ -76,12 +74,6 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
     </paper-dialog>
 `
   }
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   _deleteUser() {
     dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {

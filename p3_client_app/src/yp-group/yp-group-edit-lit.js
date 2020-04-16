@@ -6,7 +6,6 @@ import '@polymer/paper-radio-button/paper-radio-button.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
 import '@polymer/paper-checkbox/paper-checkbox.js';
 import '../yp-file-upload/yp-file-upload.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypCollectionStatusOptions } from '../yp-behaviors/yp-collection-status-options.js';
 import '../yp-behaviors/emoji-selector.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
@@ -234,8 +233,6 @@ class YpGroupEditLit extends YpBaseElement {
 
 render() {
   return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-
     <yp-edit-dialog .name="groupEdit" id="editDialog" .title="${this.editHeaderText}" .icon="people" .action="${this.action}" .method="${this.method}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
 
       <paper-input id="name" .name="name" .type="text" .label="${this.t('name')}" .value="${this.group.name}" .maxlength="50" char-counter>
@@ -536,7 +533,6 @@ render() {
 
 
   /*behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior,
     ypCollectionStatusOptions,
     ypGotoBehavior,

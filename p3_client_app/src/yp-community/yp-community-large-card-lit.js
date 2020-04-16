@@ -9,7 +9,6 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-material/paper-material.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
@@ -410,6 +409,18 @@ static get styles() {
       <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
   `
 }
+
+/*
+behaviors: [
+  CommunityBehaviors,
+  LargeCardBehaviors,
+  AccessHelpers,
+  ypGotAdminRightsBehavior,
+  ypGotoBehavior,
+  ypTruncateBehavior,
+  ypMediaFormatsBehavior
+],
+*/
 
   _exportLoginsUrl(access, community) {
     if (access && community) {

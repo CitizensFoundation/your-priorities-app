@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-tabs/paper-tab.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -189,7 +188,6 @@ class YpDomainLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     CommunityCollectionBehaviors,
     CollectionHelpers,

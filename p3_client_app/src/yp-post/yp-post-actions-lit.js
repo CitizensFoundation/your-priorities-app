@@ -5,7 +5,6 @@ import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
 //TODO: import 'paper-share-button/paper-share-button.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
 import { ypRemoveClassBehavior } from '../yp-behaviors/yp-remove-class-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
@@ -287,7 +286,6 @@ class YpPostActionsLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(max-width: 420px)" .query-matches="${this.small}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" .method="POST" @response="${this._endorseResponse}"></yp-ajax>
@@ -319,7 +317,6 @@ class YpPostActionsLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypNumberFormatBehavior,
     ypRemoveClassBehavior,
     ypGotoBehavior

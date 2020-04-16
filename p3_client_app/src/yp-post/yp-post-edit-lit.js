@@ -16,7 +16,6 @@ import '@polymer/neon-animation/neon-animated-pages.js';
 import '@polymer/neon-animation/neon-animatable.js';
 import '@polymer/neon-animation/neon-animation.js';
 import '../yp-file-upload/yp-file-upload.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-behaviors/emoji-selector.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
@@ -276,7 +275,6 @@ class YpPostEditLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.post ? html`
     <yp-edit-dialog .name="postEdit" double-width id="editDialog" .icon="lightbulb-outline" .action="${this.action}" .use-next-tab-action="${this.newPost}" @next-tab-action="${this._nextTab}" .method="${this.method}" title="${this.editHeaderText}" .saveText="${this.saveText}" class="container" custom-submit .next-action-text="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
       <paper-tabs .selected="${this.selected}" id="paperTabs" .focused>
         <paper-tab><span>${this.t('post.yourPost')}</span></paper-tab>
@@ -446,14 +444,12 @@ class YpPostEditLit extends YpBaseElement {
         <input type="hidden" .name="structuredAnswers" .value="${this.structuredAnswers}">
       </div>
     </yp-edit-dialog>
-` : html``}
-`
+    `
   }
 
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior,
     ypGotoBehavior
   ],

@@ -4,7 +4,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/iron-image/iron-image.js';
 import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-point-comment.js';
 import './yp-point-comment-edit.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -123,7 +122,6 @@ class YpPointCommentListLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="container layout vertical">
       <div class="layout horizontal start-justified" ?hidden="${this.disableOpenClose}">
         <div class="layout horizontal center-center" ?hidden="${!this.commentsCount}">
@@ -159,7 +157,6 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     IronResizableBehavior
   ],
 

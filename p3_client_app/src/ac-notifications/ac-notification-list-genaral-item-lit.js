@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import 'lite-signal/lite-signal.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import { YpPostBehavior } from '../yp-post/yp-post-behaviors.js';
@@ -100,14 +99,12 @@ class AcNotificationListGenaralItemLit extends YpBaseElement {
         </div>
       </div>
     </div>
-
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-`
+    `
   }
 
 /*
   behaviors: [
-    ypLanguageBehavior,
+    
     YpPostBehavior,
     ypGotoBehavior,
     ypTruncateBehavior,

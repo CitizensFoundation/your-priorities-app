@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypAppRecommendationsBehavior } from './yp-app-recommendations-behavior.js';
 import { ypAppCacheBehavior } from './yp-app-cache-behavior.js';
@@ -144,7 +143,6 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior,
     ypAppRecommendationsBehavior,
     ypAppCacheBehavior,

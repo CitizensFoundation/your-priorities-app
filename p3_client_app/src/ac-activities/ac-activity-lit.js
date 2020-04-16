@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-material/paper-material.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
@@ -192,7 +191,6 @@ class AcActivityLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior,
     AccessHelpers
   ],

@@ -5,7 +5,6 @@ import '@polymer/iron-image/iron-image.js';
 //TODO: import 'google-map/google-map.js';
 //TODO: import 'google-map/google-map-marker.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -429,14 +428,12 @@ class YpPostCoverMediaLit extends YpBaseElement {
       ` : html``}
 
     </div>
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
     `
   }
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypMediaFormatsBehavior,
     ypGotoBehavior
   ],

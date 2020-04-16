@@ -9,7 +9,6 @@ import '@polymer/neon-animation/neon-animatable.js';
 import '@polymer/neon-animation/neon-animation.js';
 import '../yp-file-upload/yp-file-upload.js';
 import '../yp-ajax/yp-ajax.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
 import '../ac-notifications/ac-notification-settings.js';
@@ -109,7 +108,6 @@ class YpUserEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-edit-dialog .name="userEdit" id="editDialog" .title="${this.editHeaderText}" double-width="" .icon="face" .action="${this.action}" @iron-form-response="${this._editResponse}" method="${this.method}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
       <div class="container">
         <div class="layout vertical wrap container">
@@ -162,7 +160,6 @@ class YpUserEditLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior
   ],
 

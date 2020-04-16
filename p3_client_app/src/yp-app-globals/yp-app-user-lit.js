@@ -1,6 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/paper-toast/paper-toast.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-session/yp-session.js';
 import '../yp-ajax/yp-ajax.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
@@ -128,7 +127,6 @@ class YpAppUserLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     AccessHelpers
   ],
 

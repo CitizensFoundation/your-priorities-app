@@ -5,7 +5,6 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/app-route/app-route.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -157,7 +156,6 @@ class YpCommunityLit extends YpBaseElement {
       </iron-pages>
     </yp-page>
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
 
@@ -174,7 +172,6 @@ class YpCommunityLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     GroupCollectionBehaviors,
     ypThemeBehavior,
     CollectionHelpers,

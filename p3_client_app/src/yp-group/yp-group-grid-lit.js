@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
 import { ypCardMouseBehavior } from '../yp-behaviors/yp-card-mouse-behavior.js';
 import './yp-group-card.js';
@@ -78,6 +77,13 @@ class YpGroupGridLit extends YpBaseElement {
       </div>
     `
   }
+  
+  /*
+  behaviors: [
+    ypIronListBehavior,
+    ypCardMouseBehavior
+  ],
+*/
 
   _scrollOffset(wide, featuredGroups) {
     var list = this.$.ironList;

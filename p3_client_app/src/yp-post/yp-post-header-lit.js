@@ -7,7 +7,6 @@ import '@polymer/paper-menu-button/paper-menu-button.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -381,7 +380,6 @@ class YpPostHeaderLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 
     <div class="layout horizontal center-center">
@@ -495,7 +493,6 @@ class YpPostHeaderLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     YpPostBehavior,
     AccessHelpers,
     ypGotAdminRightsBehavior,

@@ -5,7 +5,6 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-input/paper-textarea.js';
 import 'lite-signal/lite-signal.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import '../yp-behaviors/emoji-selector.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
@@ -283,7 +282,6 @@ class YpPointLit extends YpBaseElement {
     return html`
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
 
     <div class="layout vertical">
@@ -381,7 +379,6 @@ class YpPointLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     AccessHelpers,
     ypLoggedInUserBehavior,
     ypGotAdminRightsBehavior,

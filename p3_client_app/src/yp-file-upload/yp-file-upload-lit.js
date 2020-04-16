@@ -23,7 +23,6 @@ import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-progress/paper-progress.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -429,11 +428,6 @@ class YpFileUploadLit extends YpBaseElement {
    *
    * @event before-upload
  */
-/*
-  behaviors: [
-    ypLanguageBehavior,
-  ],
-*/
 
   _classFromImageIndex(index) {
     if (index == this.selectedVideoCoverIndex) {

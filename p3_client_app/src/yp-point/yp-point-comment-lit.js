@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-user/yp-user-image.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
@@ -92,7 +91,6 @@ class YpPointCommentLit extends YpBaseElement  {
     return html`
     <lite-signal @lite-signal-got-admin-rights="${this_gotAdminRights}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <div class="layout horizontal">
       <div class="layout horizontal">
@@ -120,7 +118,6 @@ class YpPointCommentLit extends YpBaseElement  {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     AccessHelpers,
     ypLoggedInUserBehavior,
     ypGotAdminRightsBehavior

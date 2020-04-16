@@ -3,7 +3,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
 import '@polymer/paper-button/paper-button.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import '../yp-user/yp-user-info.js';
@@ -194,7 +193,6 @@ class AcNotificationListLit extends YpBaseElement {
       <yp-ajax id="markAllAsViewedAjax" .method="PUT" url="/api/notifications/markAllViewed" @response="${this._setAsMarkAllViewedResponse}"></yp-ajax>
     </div>
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
     <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
 `
@@ -202,7 +200,6 @@ class AcNotificationListLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior,
     ypTruncateBehavior
   ],

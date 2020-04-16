@@ -16,7 +16,6 @@ import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 import '../yp-behaviors/yp-lodash-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-app-globals/yp-app-globals.js';
 import '../yp-app-globals/yp-app-user.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
@@ -590,8 +589,7 @@ class YpAppLit extends YpBaseElement {
 
       </app-header-layout>
     </app-drawer-layout>
-
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    
     <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
 
     <app-location .route="${this.route}"></app-location>
@@ -607,7 +605,6 @@ class YpAppLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     ypGotoBehavior,
     ypTranslatedPagesBehavior,

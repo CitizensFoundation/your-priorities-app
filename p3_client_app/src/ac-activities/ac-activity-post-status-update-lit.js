@@ -1,6 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import '../yp-magic-text/yp-magic-text.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -69,7 +68,6 @@ class AcActivityPostStatusUpdateLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior
   ],
 */
