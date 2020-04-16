@@ -1,7 +1,7 @@
 {
   "collapsableTranscripts": "Collapsable transcripts",
   "resourceLibraryLinkMode": "Resource library link mode",
-  "welcomeSelectPage": "Optional welcome help page popup",
+  "welcomeSelectPage": "Welcome help page popup",
   "simpleFormatDescription": "Simple format for description",
   "exportGroupXls": "Export XLS file",
   "downloadHasExpired": "The download link has expired",
