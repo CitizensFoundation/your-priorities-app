@@ -285,6 +285,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.simpleFormatDescription', truthValueFromBody(req.body.simpleFormatDescription));
   group.set('configuration.resourceLibraryLinkMode', truthValueFromBody(req.body.resourceLibraryLinkMode));
   group.set('configuration.collapsableTranscripts', truthValueFromBody(req.body.collapsableTranscripts));
+  group.set('configuration.customAdminCommentsTitle', (req.body.customAdminCommentsTitle && req.body.customAdminCommentsTitle!=="") ? req.body.customAdminCommentsTitle : null);
+  group.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
 };
 
 var upload = multer({
@@ -1143,7 +1145,8 @@ const allowedTextTypesForGroup = [
   "customThankYouTextNewPosts",
   "alternativePointAgainstHeader",
   "alternativePointForLabel",
-  "alternativePointAgainstLabel"
+  "alternativePointAgainstLabel",
+  "customAdminCommentsTitle"
 ];
 
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {

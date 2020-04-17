@@ -291,8 +291,19 @@
           </div>
         </template>
         <template is="dom-if" if="[[showAdminComments]]">
-          <div class="commentFromAdmin" hidden$="[[isEditingSomething]]">[[t('commentFromAdmin')]]</div>
+          <div class="commentFromAdmin" hidden$="[[isEditingSomething]]">
 
+            <template is="dom-if" if="[[point.Post.Group.configuration.customAdminCommentsTitle]]">
+              <yp-magic-text text-type="customAdminCommentsTitle" content-language="[[point.Post.Group.language]]"
+                             content="[[point.Post.Group.configuration.customAdminCommentsTitle]]" content-id="[[point.Post.Group.id]]">
+              </yp-magic-text>
+            </template>
+
+            <template is="dom-if" if="[[!point.Post.Group.configuration.customAdminCommentsTitle]]">
+              [[t('commentFromAdmin')]]
+            </template>
+
+          </div>
           <div id="pointAdminCommentContent" link-point$="[[linkPoint]]" hidden$="[[isEditingSomething]]" on-tap="_linkIfNeeded">
             <yp-magic-text simple-format text-type="pointAdminCommentContent" content-language="[[point.public_data.admin_comment.language]]"
                            content="[[point.public_data.admin_comment.text]]" content-id="[[point.id]]">

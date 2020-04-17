@@ -242,6 +242,15 @@
                      value="{{group.configuration.themeOverrideColorAccent}}">
         </paper-input>
 
+        <paper-input id="themeOverrideBackgroundColor"
+                     name="themeOverrideBackgroundColor"
+                     allowed-pattern="[#-#0-9A-Fa-f]"
+                     maxlength="7"
+                     char-counter
+                     label="[[t('themeOverrideBackgroundColor')]]"
+                     value="{{group.configuration.themeOverrideBackgroundColor}}">
+        </paper-input>
+
         <div class="themeOverrideInfo">
           <em>[[t('themeOverrideColorInfo')]]</em>
         </div>
@@ -471,10 +480,6 @@
           [[t('hideDownVoteForPost')]]
         </paper-checkbox>
 
-        <paper-checkbox name="allowAdminAnswersToPoints" checked$="{{group.configuration.allowAdminAnswersToPoints}}">
-          [[t('allowAdminAnswersToPoints')]]
-        </paper-checkbox>
-
         <paper-input id="customVoteUpHoverText"
                      name="customVoteUpHoverText"
                      type="text"
@@ -585,6 +590,19 @@
                      disabled$="[[!hasaudioUpload]]"
                      label="[[t('audioPointUploadLimitSec')]]"
                      value="{{group.configuration.audioPointUploadLimitSec}}">
+        </paper-input>
+
+        <paper-checkbox name="allowAdminAnswersToPoints" checked$="{{group.configuration.allowAdminAnswersToPoints}}">
+          [[t('allowAdminAnswersToPoints')]]
+        </paper-checkbox>
+
+        <paper-input id="customAdminCommentsTitle"
+                     name="customAdminCommentsTitle"
+                     type="text"
+                     label="[[t('customAdminCommentsTitle')]]"
+                     value="{{group.configuration.customAdminCommentsTitle}}"
+                     maxlength="50"
+                     char-counter>
         </paper-input>
 
         <div class="subHeaders">[[t('additionalGroupConfig')]]</div>

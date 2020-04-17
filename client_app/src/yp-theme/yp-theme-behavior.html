@@ -691,10 +691,14 @@
       this.push('fonts', {});
     },
 
-    _setupOverrideTheme: function (primary, accent) {
+    _setupOverrideTheme: function (primary, accent, background) {
+      if (!background) {
+        background =  'var(--paper-blue-grey-100)';
+      }
+
       return {
         name: 'Override theme',
-        '--primary-background-color': 'var(--paper-blue-grey-100)',
+        '--primary-background-color': background,
         '--primary-color': primary,
         '--primary-color-200': primary,
         '--primary-color-300': primary,
@@ -710,7 +714,7 @@
         '--accent-color-400': accent,
         '--middle-color': 'var(--primary-color-200)',
         '--icon-general-color': '#fff',
-        'body': 'var(--primary-background-color)'
+        'body': background
       }
     },
 
@@ -725,7 +729,11 @@
         if (configuration.themeOverrideColorAccent.length===6) {
           configuration.themeOverrideColorAccent = "#"+configuration.themeOverrideColorAccent;
         }
-        Polymer.updateStyles(this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent))
+        if (configuration.themeOverrideBackgroundColor && configuration.themeOverrideBackgroundColor.length===6) {
+          configuration.themeOverrideBackgroundColor = "#"+configuration.themeOverrideBackgroundColor;
+        }
+
+        Polymer.updateStyles(this._setupOverrideTheme(configuration.themeOverrideColorPrimary, configuration.themeOverrideColorAccent, configuration.themeOverrideBackgroundColor))
       } else {
         if (this.themes[number]) {
           Polymer.updateStyles(this.themes[number]);

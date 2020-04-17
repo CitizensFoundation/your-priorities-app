@@ -1,4 +1,6 @@
 {
+  "themeOverrideBackgroundColor": "Theme background color",
+  "customAdminCommentsTitle": "Custom admin comments title",
   "collapsableTranscripts": "Collapsable transcripts",
   "resourceLibraryLinkMode": "Resource library link mode",
   "welcomeSelectPage": "Welcome help page popup",

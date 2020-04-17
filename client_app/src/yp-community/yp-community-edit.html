@@ -179,6 +179,15 @@
                    value="{{community.configuration.themeOverrideColorAccent}}">
       </paper-input>
 
+      <paper-input id="themeOverrideBackgroundColor"
+                   name="themeOverrideBackgroundColor"
+                   allowed-pattern="[#-#0-9A-Fa-f]"
+                   maxlength="7"
+                   char-counter
+                   label="[[t('themeOverrideBackgroundColor')]]"
+                   value="{{community.configuration.themeOverrideBackgroundColor}}">
+      </paper-input>
+
       <div class="themeOverrideInfo">
         <b><em>[[t('themeOverrideColorInfo')]]</em></b>
       </div>

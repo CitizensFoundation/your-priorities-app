@@ -1,4 +1,6 @@
 {
+  "themeOverrideBackgroundColor": "Bakgrunnslitur",
+  "customAdminCommentsTitle": "Titill á athugasemd vefstjóra",
   "collapsableTranscripts": "Transcript texti falin",
   "resourceLibraryLinkMode": "Hópur er fyrir hlekki",
   "welcomeSelectPage": "Opna hjálparsíðu sjálfkrafa",
