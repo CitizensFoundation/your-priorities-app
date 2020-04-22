@@ -1304,17 +1304,17 @@
           this.set('hideHelpIcon', false);
         }
 
-        if (this.showBack && header.disableDomainUpLink===true) {
-          this.set('showBack', false);
-          this.set('headerTitle', '');
-        }
-
         if (this.communityBackOverride && this.backPath && window.location.pathname.indexOf("/community/") > -1) {
           var communityId =  window.location.pathname.split("/community/")[1];
           if (communityId && !isNaN(communityId) && this.communityBackOverride[communityId]) {
             this.set('backPath', this.communityBackOverride[communityId].backPath);
             this.set('headerTitle', this.communityBackOverride[communityId].backName);
           }
+        }
+
+        if (this.showBack && header.disableDomainUpLink===true) {
+          this.set('showBack', false);
+          this.set('headerTitle', '');
         }
       },
 
