@@ -309,16 +309,27 @@
 
       _setupStructuredQuestions() {
         if (this.structuredQuestionsConfig) {
-          var structuredQuestions = [];
-          var questionComponents = this.structuredQuestionsConfig.split(",");
-          if (questionComponents && questionComponents.length>1) {
-            for (var i=0 ; i<questionComponents.length; i+=2) {
-              structuredQuestions.push(questionComponents[i]);
-            }
-            var regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
-            this.processedContent = this.processedContent.replace(regEx, '<b>$1</b>');
+          var structuredQuestionsJson=null;
+          try {
+            structuredQuestionsJson = JSON.parse(this.structuredQuestionsConfig);
+          } catch (error) {
+            structuredQuestionsJson=null
+          }
+
+          if (structuredQuestionsJson) {
+            // TODO: setup json display
           } else {
-            console.warn("Not questions for structuredQuestionsConfig");
+            var structuredQuestions = [];
+            var questionComponents = this.structuredQuestionsConfig.split(",");
+            if (questionComponents && questionComponents.length>1) {
+              for (var i=0 ; i<questionComponents.length; i+=2) {
+                structuredQuestions.push(questionComponents[i]);
+              }
+              var regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
+              this.processedContent = this.processedContent.replace(regEx, '<b>$1</b>');
+            } else {
+              console.warn("Not questions for structuredQuestionsConfig");
+            }
           }
         }
       }
