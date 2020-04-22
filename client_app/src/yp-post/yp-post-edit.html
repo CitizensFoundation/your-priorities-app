@@ -165,6 +165,10 @@
       .topNewPostContainer[no-title] {
         margin-top: -42px;
       }
+
+      paper-tabs[title-disabled] {
+        margin-bottom: 24px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -177,7 +181,7 @@
 
       </template>
 
-      <paper-tabs selected="{{selected}}" id="paperTabs" focused hidden$="[[hasOnlyOneTab]]">
+      <paper-tabs title-disabled$="[[group.configuration.hideNameInputAndReplaceWith]]" selected="{{selected}}" id="paperTabs" focused hidden$="[[hasOnlyOneTab]]">
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp if="[[newPointShown]]">
           <paper-tab>
