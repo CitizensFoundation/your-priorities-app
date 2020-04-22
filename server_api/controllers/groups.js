@@ -252,6 +252,15 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.structuredQuestions', (req.body.structuredQuestions && req.body.structuredQuestions!="") ? req.body.structuredQuestions : null);
 
+  if (group.configuration.structuredQuestions) {
+    try {
+      const cleaned = group.configuration.structuredQuestions.trim().replace(/\n/g,'').replace(/\r/g,'').replace(/"/,'"');
+      group.set('configuration.structuredQuestionsJson', JSON.parse(cleaned));
+    } catch (error) {
+      log.error("Error in parsing structured questions", { error });
+    }
+  }
+
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   group.set('configuration.customUserNamePrompt', (req.body.customUserNamePrompt && req.body.customUserNamePrompt!="") ? req.body.customUserNamePrompt : null);
@@ -287,6 +296,8 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.collapsableTranscripts', truthValueFromBody(req.body.collapsableTranscripts));
   group.set('configuration.customAdminCommentsTitle', (req.body.customAdminCommentsTitle && req.body.customAdminCommentsTitle!=="") ? req.body.customAdminCommentsTitle : null);
   group.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
+  group.set('configuration.hideNameInputAndReplaceWith', (req.body.hideNameInputAndReplaceWith && req.body.hideNameInputAndReplaceWith!="") ? req.body.hideNameInputAndReplaceWith : null);
+  group.set('configuration.hideMediaInput', truthValueFromBody(req.body.hideMediaInput));
 };
 
 var upload = multer({

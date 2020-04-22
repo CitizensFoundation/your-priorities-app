@@ -1,4 +1,6 @@
 {
+  "hideMediaInput": "Fela innsendingu á margmiðlunarefni",
+  "hideNameInputAndReplaceWith": "Fela spurning um nafn og nota í staðin",
   "themeOverrideBackgroundColor": "Bakgrunnslitur",
   "customAdminCommentsTitle": "Titill á athugasemd vefstjóra",
   "collapsableTranscripts": "Transcript texti falin",
