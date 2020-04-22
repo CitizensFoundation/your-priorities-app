@@ -627,6 +627,15 @@
         'yp-add-back-community-override': '_addBackCommunityOverride'
       },
 
+      attached: function () {
+        document.dispatchEvent(
+          new CustomEvent("yp-remove-loading-screen", {
+            bubbles: true,
+            compose: true
+          })
+        );
+      },
+
       _addBackCommunityOverride: function (event, detail) {
         if (!this.communityBackOverride) {
           this.communityBackOverride = {};

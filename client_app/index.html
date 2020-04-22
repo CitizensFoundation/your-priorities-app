@@ -60,13 +60,24 @@
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
     }
+
+    document.addEventListener('yp-remove-loading-screen', function() {
+      var loadingScreen = document.getElementById("loadingScreen");
+      var app = document.getElementById("app");
+      if (loadingScreen) {
+        loadingScreen.style.display = "none";
+      }
+      if (app) {
+        app.style.display = "inline";
+      }
+    });
   </script>
 
-  <link rel="import" href="/src/yp-app/yp-app.html?v=@version@">
+  <link rel="import" href="/src/yp-app/yp-app.html?v=@version@" async>
   <style is="custom-style">
     body {
       font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      color: #252525;
+      color: #FFF;
     }
 
     html {
@@ -145,10 +156,54 @@
     body {
      background-color:  var(--primary-background-color);
     }
+
+    #loadingScreen {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 96px;
+      padding-bottom: 32px;
+    }
+
+    .loader {
+      margin-top: 48px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    #app {
+      display: none;
+    }
   </style>
 </head>
+
 <body class="fullbleed" unresolved>
+  <div id="loadingScreen">
+    <div>
+      <img src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/yplogosmallExSmall.png" width="277" height="137">
+    </div>
+    <div class="loader">
+      <svg  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin:auto;background:#fff;display:block;" width="80px" height="80px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+        <rect x="17.5" y="27.8123" width="15" height="44.3753" fill="#3ca6d0">
+          <animate attributeName="y" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.5;1" values="18;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.2s"></animate>
+          <animate attributeName="height" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.5;1" values="64;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.2s"></animate>
+        </rect>
+        <rect x="42.5" y="26.7553" width="15" height="46.4893" fill="#163a68">
+          <animate attributeName="y" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.1s"></animate>
+          <animate attributeName="height" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.1s"></animate>
+        </rect>
+        <rect x="67.5" y="23.9177" width="15" height="52.1647" fill="#3ca6d0">
+          <animate attributeName="y" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate>
+          <animate attributeName="height" repeatCount="indefinite" dur="1s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate>
+        </rect>
+      </svg>
+    </div>
+  </div>
+
   <yp-app id="app" fullbleed></yp-app>
+
   <noscript>
     You need Javascript enabled in your browser to use this website.
   </noscript>
