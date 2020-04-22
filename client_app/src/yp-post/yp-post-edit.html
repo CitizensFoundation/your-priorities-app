@@ -161,6 +161,10 @@
       .categoryDropDown {
         margin-bottom: 8px;
       }
+
+      .topNewPostContainer[no-title] {
+        margin-top: -42px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -168,7 +172,12 @@
                     use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
                     title="[[editHeaderText]]" save-text="[[saveText]]" class="container" custom-submit
                     next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
-      <paper-tabs selected="{{selected}}" id="paperTabs" focused>
+
+      <template is="dom-if" if="[[group]]">
+
+      </template>
+
+      <paper-tabs selected="{{selected}}" id="paperTabs" focused hidden$="[[hasOnlyOneTab]]">
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp if="[[newPointShown]]">
           <paper-tab>
@@ -185,24 +194,32 @@
         <template is="dom-if" if="[[!locationHidden]]" restamp>
           <paper-tab>[[t('post.location')]]</paper-tab>
         </template>
-        <paper-tab>[[t('media')]]</paper-tab>
+        <template is="dom-if" if="[[!mediaHidden]]" restamp>
+          <paper-tab>[[t('media')]]</paper-tab>
+        </template>
       </paper-tabs>
 
-      <div class="layout vertical wrap">
+      <div class="layout vertical wrap topNewPostContainer" no-title$="[[group.configuration.hideNameInputAndReplaceWith]]">
         <iron-pages id="pages" class="layout horizontal" selected="[[selected]]">
           <section>
             <div class="layout vertical flex">
 
-              <paper-input id="name"
-                           required
-                           minlength="3"
-                           name="name"
-                           type="text"
-                           label="[[t('title')]]"
-                           value="{{post.name}}"
-                           maxlength="60"
-                           char-counter>
-              </paper-input>
+              <template is="dom-if" if="[[group.configuration.hideNameInputAndReplaceWith]]">
+                <input type="hidden" name="name" value="[[replacedName]]">
+              </template>
+
+              <template is="dom-if" if="[[!group.configuration.hideNameInputAndReplaceWith]]">
+                <paper-input id="name"
+                             required
+                             minlength="3"
+                             name="name"
+                             type="text"
+                             label="[[t('title')]]"
+                             value="{{post.name}}"
+                             maxlength="60"
+                             char-counter>
+                </paper-input>
+              </template>
 
               <template is="dom-if" if="[[_showCategories(group)]]" restamp>
                 <paper-dropdown-menu class="categoryDropDown" label="[[t('category.select')]]" required$="[[group.configuration.makeCategoryRequiredOnNewPost]]">
@@ -386,13 +403,13 @@
       </div>
     </yp-edit-dialog>
 
-    <template is="dom-if" if="group.configuration.alternativeTextForNewIdeaButtonHeader">
+    <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButtonHeader]]">
       <yp-magic-text id="alternativeTextForNewIdeaButtonHeaderId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButtonHeader]]"
                      content-language="[[group.language]]" on-new-translation="_alternativeTextForNewIdeaButtonHeaderTranslation"
                      text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
     </template>
 
-    <template is="dom-if" if="group.configuration.customThankYouTextNewPosts">
+    <template is="dom-if" if="[[group.configuration.customThankYouTextNewPosts]]">
       <yp-magic-text id="customThankYouTextNewPostsId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customThankYouTextNewPosts]]"
                      content-language="[[group.language]]"
                      text-type="customThankYouTextNewPosts"></yp-magic-text>
@@ -512,6 +529,12 @@
         computed: '_newPointShown(newPost, group)'
       },
 
+
+      mediaHidden: {
+        type: Boolean,
+        computed: '_mediaHidden(newPost, group)'
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -533,8 +556,18 @@
         computed: '_structuredQuestions(post, group)'
       },
 
+      replacedName: {
+        type: String,
+        computed: '_replacedName(post, group, newPost)'
+      },
+
       sructuredAnswers: {
         type: String,
+        value: null
+      },
+
+      sructuredAnswersJson: {
+        type: Object,
         value: null
       },
 
@@ -544,6 +577,11 @@
       pointMaxLength: {
         type: Number,
         computed: '_pointMaxLength(group)'
+      },
+
+      hasOnlyOneTab: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -556,6 +594,18 @@
       '_setupTranslation(language,t)'
     ],
 
+    _replacedName: function (post, group) {
+      if (post && group && group.configuration.hideNameInputAndReplaceWith) {
+        let text = group.configuration.hideNameInputAndReplaceWith;
+        text = text.replace('<DATESECONDS>', moment(new Date()).format("DD/MM/YYYY hh:mm:ss"));
+        text = text.replace('<DATEMINUTES>', moment(new Date()).format("DD/MM/YYYY hh:mm"));
+        text = text.replace('<DATE>', moment(new Date()).format("DD/MM/YYYY"));
+        return text;
+      } else {
+        return null;
+      }
+    },
+
     _pointMaxLength: function (group) {
       if (group && group.configuration && group.configuration.pointCharLimit) {
         return group.configuration.pointCharLimit;
@@ -567,6 +617,15 @@
     _floatIfValueOrIE: function (value) {
       var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
       return ie11 || value;
+    },
+
+
+    _mediaHidden: function (newPost, group) {
+      if (group && group.configuration && group.configuration.hideMediaInput===true) {
+        return true;
+      } else {
+        return false;
+      }
     },
 
     _newPointShown: function (newPost, group) {
@@ -606,6 +665,10 @@
     },
 
     _structuredQuestions: function (post, group) {
+      if (post && group && group.configuration.structuredQuestionsJson) {
+        return group.configuration.structuredQuestionsJson;
+      }
+
       if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
         var structuredQuestions = [];
 
@@ -614,7 +677,7 @@
           var question = questionComponents[i];
           var maxLength = questionComponents[i+1];
           structuredQuestions.push({
-            translatedQuestion: question,
+            text: question,
             question: question,
             maxLength: maxLength, value: ""
           });
@@ -744,6 +807,11 @@
       if (this.locationHidden) {
         length -= 1;
       }
+
+      if (this.mediaHidden) {
+        length -= 1;
+      }
+
       return length;
     },
 
@@ -756,32 +824,38 @@
     },
 
     _selectedChanged: function (newValue) {
-      if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
-        this.set('mapActive', true);
-      } else {
-        this.set('mapActive', false);
-      }
-
-      var finalTabNumber = this._getTabLength()-1;
-
-      if (newValue==finalTabNumber) {
-        this.$$("#editDialog").useNextTabAction = false;
-      } else {
-        this.$$("#editDialog").useNextTabAction = true;
-      }
-
-      if (newValue==0) {
-        var nameElement = this.$$("#name");
-        if (nameElement) {
-          nameElement.focus();
+      this.async(function () {
+        if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
+          this.set('mapActive', true);
+        } else {
+          this.set('mapActive', false);
         }
-      }
-      if (newValue==1 && this.newPointShown) {
-        var pointFor = this.$$("#pointFor");
-        if (pointFor) {
-          pointFor.focus();
+
+        var finalTabNumber = this._getTabLength()-1;
+
+        if (finalTabNumber===0) {
+          this.set('hasOnlyOneTab', true);
         }
-      }
+
+        if (newValue==finalTabNumber) {
+          this.$$("#editDialog").useNextTabAction = false;
+        } else {
+          this.$$("#editDialog").useNextTabAction = true;
+        }
+
+        if (newValue==0) {
+          var nameElement = this.$$("#name");
+          if (nameElement) {
+            nameElement.focus();
+          }
+        }
+        if (newValue==1 && this.newPointShown) {
+          var pointFor = this.$$("#pointFor");
+          if (pointFor) {
+            pointFor.focus();
+          }
+        }
+      });
     },
 
     _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
@@ -890,9 +964,7 @@
       this.fire('yp-reset-keep-open-for-page');
       window.appGlobals.activity('completed', 'newPost');
 
-      var text = text = this.t('thankYouForYourSubmission');
-      var a = this.$$("#customThankYouTextNewPostsId");
-      debugger;
+      var text = this.t('thankYouForYourSubmission');
       if (this.group && this.group.configuration &&
           this.group.configuration.customThankYouTextNewPosts &&
           this.$$("#customThankYouTextNewPostsId") &&

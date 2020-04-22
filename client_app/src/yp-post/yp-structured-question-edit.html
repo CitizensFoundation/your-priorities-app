@@ -4,6 +4,14 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
 <dom-module id="yp-structured-question-edit">
@@ -12,14 +20,24 @@
       :host {
         display: block;
       }
+
+      :host{
+        --paper-input-container-input:{
+          max-height: 145px;
+        }
+      }
+
+      .question {
+        margin-top: 16px;
+      }
     </style>
 
-    <template is="dom-if" if="[[_isTextfieldQuestion(question)]]">
+    <template is="dom-if" if="[[_isTextfield(question)]]">
       <paper-textarea id="structuredQuestion_[[index]]"
                       value="{{question.value}}"
                       minlength="2"
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
-                      label="[[question.translatedQuestion]]"
+                      label="[[question.text]]"
                       char-counter
                       on-value-changed="_resizeScrollerIfNeeded"
                       rows="2"
@@ -30,44 +48,42 @@
       </paper-textarea>
     </template>
 
-    <template is="dom-if" if="[[question.isTextHeader]]">
-
+    <template is="dom-if" if="[[_isTextHeader(question)]]">
+      <h1>[[question.text]]</h1>
     </template>
 
-    <template is="dom-if" if="[[question.isTextDescription]]">
-
+    <template is="dom-if" if="[[_isTextDescription(question)]]">
+      <p>[[question.text]]</p>
     </template>
 
-    <template is="dom-if" if="[[question.isCheckboxes]]">
-
+    <template is="dom-if" if="[[_isSeparator(question)]]">
+      <div style="margin-top: 48px;margin-bottom: 32px">
+        <hr>
+      </div>
     </template>
 
-    <template is="dom-if" if="[[question.isSeperator]]">
-
-    </template>
-
-    <template is="dom-if" if="[[question.isRadios]]">
-      <div class="question">[[question.translatedQuestion]]</div>
+    <template is="dom-if" if="[[_isRadios(question)]]">
+      <div class="question">[[question.text]]</div>
 
       <paper-radio-group required$="[[!question.notRequired]]" on-changed="_radioChanged" id="structuredQuestionRatio_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class="radioYesNo layout horizontal">
         <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
-          <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.translatedOption]]</paper-radio-button>
+          <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.text]]</paper-radio-button>
         </template>
       </paper-radio-group>
     </template>
 
-    <template is="dom-if" if="[[question.isCheckboxes]]">
-      <div class="question">[[question.translatedQuestion]]</div>
-      <template is="dom-repeat" items="[[question.radioButtons]]" as="checkbox" index="buttonIndex">
-        <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.translatedOption]]</paper-checkbox>
+    <template is="dom-if"  if="[[_isCheckboxes(question)]]">
+      <div class="question">[[question.text]]</div>
+      <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index="buttonIndex">
+        <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.text]]</paper-checkbox>
       </template>
     </template>
 
-    <template is="dom-if" if="[[question.isDropDown]]">
-      <paper-dropdown-menu label="[[question.translatedQuestion]]" required$="[[!question.notRequired]]">
+    <template is="dom-if" if="[[_isDropDown(question)]]">
+      <paper-dropdown-menu label="[[question.text]]" required$="[[!question.notRequired]]">
         <paper-listbox slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
-            <paper-item name="[[dropDownOptions.name]]">[[dropDownOptions.translatedName]]</paper-item>
+            <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
           </template>
         </paper-listbox>
       </paper-dropdown-menu>
@@ -131,8 +147,32 @@
         }
       }
 
-      _isTextfieldQuestion (question) {
-        return question.isTextfield || (question.isJson===undefined && question.maxLength>1);
+      _isTextfield (question) {
+        return (question.type && question.type.toLowerCase()==='textfield') || (question.type===undefined && question.maxLength>1);
+      }
+
+      _isTextHeader (question) {
+        return (question.type && question.type.toLowerCase()==='textheader');
+      }
+
+      _isTextDescription (question) {
+        return (question.type && question.type.toLowerCase()==='textdescription');
+      }
+
+      _isCheckboxes (question) {
+        return (question.type && question.type.toLowerCase()==='checkboxes');
+      }
+
+      _isSeparator (question) {
+        return (question.type && question.type.toLowerCase()==='separator');
+      }
+
+      _isRadios (question) {
+        return (question.type && question.type.toLowerCase()==='radios');
+      }
+
+      _isDropDown (question) {
+        return (question.type && question.type.toLowerCase()==='dropdown');
       }
 
       ready () {

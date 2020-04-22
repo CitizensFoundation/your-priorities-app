@@ -289,6 +289,7 @@
         <paper-checkbox name="allowPostAudioUploads" disabled$="[[!hasAudioUpload]]"
                         checked$="{{allowPostAudioUploads}}">[[t('allowPostAudioUploads')]]
         </paper-checkbox>
+
         <paper-input id="audioPostUploadLimitSec"
                      name="audioPostUploadLimitSec"
                      allowed-pattern="[0-9]"
@@ -297,6 +298,13 @@
                      disabled$="[[!hasaudioUpload]]"
                      label="[[t('audioPostUploadLimitSec')]]"
                      value="{{group.configuration.audioPostUploadLimitSec}}">
+        </paper-input>
+
+        <paper-input id="hideNameInputAndReplaceWith"
+                     name="hideNameInputAndReplaceWith"
+                     maxlength="60"
+                     label="[[t('hideNameInputAndReplaceWith')]]"
+                     value="{{group.configuration.hideNameInputAndReplaceWith}}">
         </paper-input>
 
         <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
@@ -337,6 +345,10 @@
 
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
           [[t('hidePostFilterAndSearch')]]
+        </paper-checkbox>
+
+        <paper-checkbox name="hideMediaInput" checked$="{{group.configuration.hideMediaInput}}">
+          [[t('hideMediaInput')]]
         </paper-checkbox>
 
         <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]"
@@ -395,12 +407,14 @@
         <paper-textarea id="structuredQuestions"
                         name="structuredQuestions"
                         type="text"
-                        rows="3"
+                        rows="4"
                         always-float-label="[[group.configuration.structuredQuestions]]"
-                        maxrows="5"
+                        maxrows="8"
+                        max-rows="8"
                         label="[[t('structuredQuestions')]]"
                         value="{{group.configuration.structuredQuestions}}">
         </paper-textarea>
+
         <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
 
         <paper-input id="alternativeTextForNewIdeaButton"
