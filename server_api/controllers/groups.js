@@ -298,6 +298,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
   group.set('configuration.hideNameInputAndReplaceWith', (req.body.hideNameInputAndReplaceWith && req.body.hideNameInputAndReplaceWith!="") ? req.body.hideNameInputAndReplaceWith : null);
   group.set('configuration.hideMediaInput', truthValueFromBody(req.body.hideMediaInput));
+  group.set('configuration.actAsLinkToCommunityId', (req.body.actAsLinkToCommunityId && req.body.actAsLinkToCommunityId!="") ? req.body.actAsLinkToCommunityId : null);
 };
 
 var upload = multer({
@@ -1328,14 +1329,16 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
       var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
-      if (req.params.filter=="newest") {
+      if (req.params.filter==="newest") {
         postOrder = "created_at DESC";
-      } else if (req.params.filter=="most_debated") {
+      } else if (req.params.filter==="most_debated") {
         postOrder = "counter_points DESC";
-      } else if (req.params.filter=="random") {
+      } else if (req.params.filter==="random") {
         postOrder = "created_at DESC";
-      } else if (req.params.filter=="oldest") {
+      } else if (req.params.filter==="oldest") {
         postOrder = "created_at ASC";
+      } else if (req.params.filter==="alphabetical") {
+        postOrder = "name ASC";
       }
 
       if (req.params.categoryId!='null') {

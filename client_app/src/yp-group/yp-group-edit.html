@@ -629,10 +629,19 @@
         <paper-checkbox name="resourceLibraryLinkMode" checked$="{{group.configuration.resourceLibraryLinkMode}}">[[t('resourceLibraryLinkMode')]]</paper-checkbox>
         <paper-checkbox name="collapsableTranscripts" checked$="{{group.configuration.collapsableTranscripts}}">[[t('collapsableTranscripts')]]</paper-checkbox>
 
+        <paper-input id="actAsLinkToCommunityId"
+                     name="actAsLinkToCommunityId"
+                     type="number"
+                     allowed-pattern="[0-9]"
+                     label="[[t('actAsLinkToCommunityId')]]"
+                     value="{{group.configuration.actAsLinkToCommunityId}}"
+                     maxlength="8">
+        </paper-input>
+
         <paper-input id="maxDaysBackForRecommendations"
                      name="maxDaysBackForRecommendations"
                      type="text"
-                     maxlength="4"
+                     maxlength="5"
                      allowed-pattern="[0-9]"
                      label="[[t('maxDaysBackForRecommendations')]]"
                      value="{{group.configuration.maxDaysBackForRecommendations}}">

@@ -182,7 +182,7 @@ app.get('/sitemap.xml', function getSitemap(req, res) {
 app.use(function checkForBOT(req, res, next) {
   var ua = req.headers['user-agent'];
   if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-    console.log(ua, ' is a bot');
+    log.info('Request is from a bot', { ua });
     nonSPArouter(req, res, next);
   } else {
     next();
