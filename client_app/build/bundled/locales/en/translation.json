@@ -1,4 +1,9 @@
 {
+  "actAsLinkToCommunityId": "Act as link to Community Id",
+  "hideMediaInput": "Hide media input",
+  "hideNameInputAndReplaceWith": "Hide title input and replace with",
+  "themeOverrideBackgroundColor": "Theme background color",
+  "customAdminCommentsTitle": "Custom admin comments title",
   "collapsableTranscripts": "Collapsable transcripts",
   "resourceLibraryLinkMode": "Resource library link mode",
   "welcomeSelectPage": "Welcome help page popup",

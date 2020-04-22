@@ -1,4 +1,9 @@
 {
+  "actAsLinkToCommunityId": "Stilla hóp sem hlekk á svæði nr.",
+  "hideMediaInput": "Fela innsendingu á margmiðlunarefni",
+  "hideNameInputAndReplaceWith": "Fela spurning um nafn og nota í staðin",
+  "themeOverrideBackgroundColor": "Bakgrunnslitur",
+  "customAdminCommentsTitle": "Titill á athugasemd vefstjóra",
   "collapsableTranscripts": "Transcript texti falin",
   "resourceLibraryLinkMode": "Hópur er fyrir hlekki",
   "welcomeSelectPage": "Opna hjálparsíðu sjálfkrafa",
