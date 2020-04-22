@@ -177,10 +177,6 @@
                     title="[[editHeaderText]]" save-text="[[saveText]]" class="container" custom-submit
                     next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
 
-      <template is="dom-if" if="[[group]]">
-
-      </template>
-
       <paper-tabs title-disabled$="[[group.configuration.hideNameInputAndReplaceWith]]" selected="{{selected}}" id="paperTabs" focused hidden$="[[hasOnlyOneTab]]">
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp if="[[newPointShown]]">
