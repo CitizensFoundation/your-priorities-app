@@ -603,9 +603,11 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
               (groupSeriesCallback) => {
                 if (oldGroup.Categories && oldGroup.Categories.length>0) {
                   async.eachSeries(oldGroup.Categories, function (category, categoryCallback) {
-                    delete category.id;
-                    const newCategory = models.Category.build(JSON.parse(JSON.stringify(category.toJSON())));
-                    newCategory.save(()=>{
+                    const newCategoryJson = JSON.parse(JSON.stringify(category.toJSON()));
+                    delete newCategoryJson.id;
+                    const newCategoryModel = models.Category.build(newCategoryJson);
+                    newCategoryModel.set('group_id', newGroup.id);
+                    newCategoryModel.save().then(()=>{
                       categoryCallback();
                     }).catch((error)=>{
                       categoryCallback(error);
