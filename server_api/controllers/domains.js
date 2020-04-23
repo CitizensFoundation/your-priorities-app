@@ -146,7 +146,7 @@ var getDomain = function (req, domainId, done) {
               $or: [
                 {
                   counter_users: {
-                    $gt: 5
+                    $gt: process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW ? parseInt(process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW) : 5
                   },
                 },
                 {
@@ -154,7 +154,7 @@ var getDomain = function (req, domainId, done) {
                 },
                 {
                   is_community_folder: {
-                    $ne: null
+                    $ne: false
                   }
                 }
               ],
