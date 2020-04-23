@@ -3,6 +3,15 @@ require('newrelic');
 
 FORCE_PRODUCTION = false;
 
+const log = require('./utils/logger');
+
+if (!process.env.S3_BUCKET) {
+  process.env.S3_BUCKET="no-bucket-implemented-please-set-S3_BUCKET";
+  const errorText = "No S3_BUCKET is set, image uploads and report downloads will not work";
+  log.error(errorText);
+  console.error(errorText);
+}
+
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
@@ -55,7 +64,6 @@ const nonSPArouter = require('./controllers/nonSpa');
 const generateSitemap = require('./utils/sitemap_generator');
 const generateManifest = require('./utils/manifest_generator');
 
-const log = require('./utils/logger');
 const toJson = require('./utils/to_json');
 const sso = require('passport-sso');
 const cors = require('cors');
