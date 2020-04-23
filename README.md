@@ -202,6 +202,7 @@ to improve their communities.
 
 ## Environmental variables used for a full production environment with all features
 
+Only the S3_BUCKET environmental variable is mandatory to run the platform.
 ```
 AC_ANALYTICS_BASE_URL              
 AC_ANALYTICS_CLUSTER_ID            
@@ -223,7 +224,7 @@ EMBEDLY_KEY
 GOOGLE_APPLICATION_CREDENTIALS_JSON
 GOOGLE_PERSPECTIVE_API_KEY          
 GOOGLE_TRANSCODING_FLAC_BUCKET      
-HEROKU_POSTGRESQL_YELLOW_URL      
+HEROKU_POSTGRESQL_URL      
 NEW_RELIC_APP_NAME                
 NEW_RELIC_LICENSE_KEY              
 NEW_RELIC_LOG                      
