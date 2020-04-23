@@ -1,4 +1,4 @@
-# Your Priorities Version 8.7
+# Your Priorities Version 8.8
 
 ![alt text](https://citizens.is/wp-content/uploads/2018/08/Capture-2.png "Your Priorities screenshot")
 
@@ -13,13 +13,13 @@
 * Custom emoji ratings where admins can configure groups to allow up to 4 different custom emoji ratings per group instead of the voting up and down
 * AI driven recommendation engine that recommends relevant posts to users
 * Highly scalable audio and video processing engine (using Amazon Elastic Transcoder and S3)
-* Automatic Speech to Text conversion in over 20 languages (using Google's TextToSpeech API)
-* Machine translations between over 20 languages (using Google Translate API)
+* Automatic Speech to Text conversion in 28 languages (using Google's TextToSpeech API)
+* Machine translations between 28 languages (using Google Translate API)
 * Simple moderation of all content for community and groups in one place
 * Assigns an automated toxicity score for all incoming content. Uses the open source Perspective API, developed by the New York Times, The Economist, Guardian, Google & others.
 * Users can view and moderate their own submitted content in one place
 * Full GDPR compliance
-* Localized in over 20 languages
+* Localized in 28 languages
 * Post status system where posts can be set to open open, in progress, approved or rejected
 * Admins can easily and automatically email post status update all the people who supported or opposed posts
 * Optional categories system for posts with simple filters
@@ -31,7 +31,7 @@
 * The client app is a progressive web app that can be very easily installed as a native app on mobile phones while also being a website
 * Built with Web Components making the app fast on inexpensive mobile phones
 * Open source, non profit and built with passion over 10 years
-* Supported by mass amounts of volunteer work, the EU, city of Reykjavik, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
+* Supported by mass amounts of volunteer work, the EU, city of Reykjavik, World Bank, city of Kopavogur, Scottish Government and the Norwegian Consumer Authority
 
 ## Getting Started User Tutorial
 
@@ -133,7 +133,6 @@ AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=XXX S3_BUCKET=my-test S3_ENDPOINT=my
 
 You will need to have the ImageMagick package installed otherwise you might get errors like: "Command failed: identify"
 
-
 ## Your Priorities uses Active Citizen
 ```
 Active Citizen is an open source library, API and UI for activity streams and notifications 
@@ -201,6 +200,50 @@ to improve their communities.
 ```
 [http://www.citizens.is/](http://www.citizens.is/)
 
+## Environmental variables used for a full production environment with all features
+
+```
+AC_ANALYTICS_BASE_URL              
+AC_ANALYTICS_CLUSTER_ID            
+AC_ANALYTICS_KEY                  
+ADEPT_SCALE_LICENSE_KE          
+ADEPT_SCALE_URL                    
+AIRBRAKE_API_KEY                    
+AIRBRAKE_PROJECT_ID                
+AWS_ACCESS_KEY_ID                  
+AWS_SECRET_ACCESS_KEY                
+AWS_TRANSCODER_AUDIO_PIPELINE_ID  
+AWS_TRANSCODER_AUDIO_PRESET_ID    
+AWS_TRANSCODER_FLAC_PRESET_ID      
+AWS_TRANSCODER_PIPELINE_ID          
+AWS_TRANSCODER_PORTRAIT_PRESET_ID  
+AWS_TRANSCODER_PRESET_ID          
+DATABASE_URL                      
+EMBEDLY_KEY                        
+GOOGLE_APPLICATION_CREDENTIALS_JSON
+GOOGLE_PERSPECTIVE_API_KEY          
+GOOGLE_TRANSCODING_FLAC_BUCKET      
+HEROKU_POSTGRESQL_YELLOW_URL      
+NEW_RELIC_APP_NAME                
+NEW_RELIC_LICENSE_KEY              
+NEW_RELIC_LOG                      
+NEW_RELIC_NO_CONFIG_FILE            
+PIOAccessKey                        
+PIOEngineUrl                     
+PIOEventUrl                      
+REDIS_URL                          
+S3_ACCELERATED_ENDPOINT            
+S3_AUDIO_PUBLIC_BUCKET              
+S3_AUDIO_UPLOAD_BUCKET            
+S3_BUCKET                          
+S3_REPORTS_BUCKET                  
+S3_VIDEO_PUBLIC_BUCKET            
+S3_VIDEO_THUMBNAIL_BUCKET          
+S3_VIDEO_UPLOAD_BUCKET          
+SENDGRID_PASSWORD                  
+SENDGRID_USERNAME                 
+```
+
 ## The Team
 - Robert Bjarnason
 - Guðný Maren Valsdóttir
@@ -211,7 +254,6 @@ to improve their communities.
 ## With help from
 
 Browser testing enabled by BrowserStack
-
 
 [<img src="https://s3.amazonaws.com/yrpri-direct-asset/bsLogo.svg" width="200">](https://www.browserstack.com/)
 
