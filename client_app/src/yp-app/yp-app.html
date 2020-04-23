@@ -1309,6 +1309,7 @@
           if (communityId && !isNaN(communityId) && this.communityBackOverride[communityId]) {
             this.set('backPath', this.communityBackOverride[communityId].backPath);
             this.set('headerTitle', this.communityBackOverride[communityId].backName);
+            this.set('useHardBack', false);
           }
         }
 

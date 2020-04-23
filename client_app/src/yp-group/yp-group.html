@@ -767,6 +767,22 @@
         }
       },
 
+      _useHardBack: function (configuration) {
+        if (configuration && configuration.customBackURL) {
+          var backUrl = configuration.customBackURL;
+          if (backUrl.startsWith("/community/") ||
+            backUrl.startsWith("/group/") ||
+            backUrl.startsWith("/domain/") ||
+            backUrl.startsWith("/post/")) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
+        }
+      },
+
       refresh: function () {
         if (this.group) {
           this.fire('yp-set-home-link', {
@@ -810,7 +826,6 @@
 
           this._refreshTabsAndPages();
 
-
           if (this.group.configuration.useCommunityTopBanner &&
             this.group.Community.CommunityHeaderImages &&
             this.group.Community.CommunityHeaderImages.length>0) {
@@ -830,7 +845,7 @@
             documentTitle: this.group.name,
             enableSearch: true,
             hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
-            useHardBack: this.group.configuration.customBackURL ? true : false,
+            useHardBack: this._useHardBack(this.group.configuration),
             backPath:  this.group.configuration.customBackURL ?
                          this.group.configuration.customBackURL :
                          "/community/" + this.group.community_id

@@ -398,6 +398,22 @@
         }
       },
 
+      _useHardBack: function (configuration) {
+        if (configuration && configuration.customBackURL) {
+          var backUrl = configuration.customBackURL;
+          if (backUrl.startsWith("/community/") ||
+            backUrl.startsWith("/group/") ||
+            backUrl.startsWith("/domain/") ||
+            backUrl.startsWith("/post/")) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
+        }
+      },
+
       refresh: function () {
         if (this.community) {
           this._openHelpPageIfNeeded();
@@ -452,7 +468,7 @@
                 headerTitle,
               headerDescription: headerDescription,
               headerIcon: "group-work",
-              useHardBack: (this.community.configuration && this.community.configuration.customBackURL) ? true : false,
+              useHardBack: this._useHardBack(this.community.configuration),
               disableDomainUpLink: (this.community.configuration &&
                 this.community.configuration.disableDomainUpLink === true),
               documentTitle: this.community.name,
