@@ -489,7 +489,7 @@ class YpFileUploadLit extends YpBaseElement {
    * A function to set up a drop area for drag-and-drop file uploads
   */
   setupDrop() {
-    var uploadBorder = this.$.UploadBorder;
+    const uploadBorder = this.$.UploadBorder;
     this.toggleClass("enabled", true, uploadBorder);
 
     this.ondragover = function(e) {
@@ -506,9 +506,9 @@ class YpFileUploadLit extends YpBaseElement {
     this.ondrop = function(event) {
       this.toggleClass("hover", false, uploadBorder);
       event.preventDefault();
-      var length = event.dataTransfer.files.length;
-      for (var i = 0; i < length; i++) {
-        var file = event.dataTransfer.files[i];
+      const length = event.dataTransfer.files.length;
+      for (let i = 0; i < length; i++) {
+        const file = event.dataTransfer.files[i];
         file.progress = 0;
         file.error = false;
         file.complete = false;
@@ -519,9 +519,9 @@ class YpFileUploadLit extends YpBaseElement {
   }
 
   _hasRecorderApp() {
-    var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    var isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
-    var isEdge = /Edge/.test(navigator.userAgent);
+    const isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
+    const isEdge = /Edge/.test(navigator.userAgent);
     if (this.videoUpload) {
       if ((isIOs || isAndroid) && !isEdge) {
         return true;
@@ -536,12 +536,12 @@ class YpFileUploadLit extends YpBaseElement {
   }
 
   _fileClick() {
-    var isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
-    var rawChrome = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
-    var chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
-    var isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
-    var isEdge = /Edge/.test(navigator.userAgent);
-    var isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
+    const rawChrome = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+    const chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
+    const isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
+    const isEdge = /Edge/.test(navigator.userAgent);
+    const isIOs = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     if (this._hasRecorderApp()) {
       this._openFileInput();
@@ -555,9 +555,9 @@ class YpFileUploadLit extends YpBaseElement {
   }
 
   _openFileInput() {
-    var elem = this.$.fileInput;
+    const elem = this.$.fileInput;
     if (elem && document.createEvent) { // sanity check
-      var evt = document.createEvent("MouseEvents");
+      const evt = document.createEvent("MouseEvents");
       evt.initEvent("click", true, false);
       elem.dispatchEvent(evt);
     }
@@ -586,9 +586,9 @@ class YpFileUploadLit extends YpBaseElement {
    * Called whenever the list of selected files changes
   */
   _fileChange(e) {
-    var length = e.target.files.length;
-    for (var i = 0; i < length; i++) {
-      var file = e.target.files[i];
+    const length = e.target.files.length;
+    for (let i = 0; i < length; i++) {
+      const file = e.target.files[i];
       file.progress = 0;
       file.error = false;
       file.complete = false;
@@ -628,7 +628,7 @@ class YpFileUploadLit extends YpBaseElement {
     e.model.set("item.error", false);
     e.model.set("item.progress", 0);
     // The async helps give visual feedback of a retry occurring, even though it's less efficient.
-    var self = this;
+    const self = this;
     this.async(function() {
       self.uploadFile(e.model.__data__.item);
     }, 50);
@@ -645,7 +645,7 @@ class YpFileUploadLit extends YpBaseElement {
     if (this.videoUpload || this.audioUpload) {
       this.set('indeterminateProgress', true);
       this.set('currentFile', file);
-      var ajax = document.createElement('iron-ajax');
+      const ajax = document.createElement('iron-ajax');
       ajax.handleAs = 'json';
       ajax.contentType = 'application/json';
 
@@ -712,12 +712,12 @@ class YpFileUploadLit extends YpBaseElement {
   }
 
   _selectVideoCover(event, detail) {
-    var frameIndex = event.target.getAttribute('data-index');
+    const frameIndex = event.target.getAttribute('data-index');
     this.set('selectedVideoCoverIndex', frameIndex);
     this.$.setVideoCoverAjax.url ="/api/videos/"+this.currentVideoId+'/setVideoCover';
     this.$.setVideoCoverAjax.body = { frameIndex: frameIndex };
     this.$.setVideoCoverAjax.generateRequest();
-    var videoImages = this.videoImages;
+    const videoImages = this.videoImages;
     this.set('videoImages', null);
     this.async(function () {
       this.set('videoImages', videoImages);
@@ -725,7 +725,7 @@ class YpFileUploadLit extends YpBaseElement {
   }
 
   _transcodePollingResponse(event, detail) {
-    var prefix = "files." + this.files.indexOf(this.currentFile);
+    const prefix = "files." + this.files.indexOf(this.currentFile);
     if (detail.response.status==="Complete") {
       this.set(prefix + ".complete", true);
       this.set('uploadStatus', this.t('uploadCompleted'));
@@ -768,7 +768,7 @@ class YpFileUploadLit extends YpBaseElement {
       return;
     }
 
-    var aspect;
+    const aspect;
     if (window.innerHeight>window.innerWidth) {
       aspect = "portrait";
     } else {
@@ -777,20 +777,20 @@ class YpFileUploadLit extends YpBaseElement {
 
     this.fire('file-upload-starting');
     this._showDropText();
-    var prefix = "files." + this.files.indexOf(file);
-    var self = this;
+    const prefix = "files." + this.files.indexOf(file);
+    const self = this;
 
-    var formData = new FormData();
+    const formData = new FormData();
     formData.append("file", file, file.name);
 
-    var xhr = file.xhr = new XMLHttpRequest();
+    const xhr = file.xhr = new XMLHttpRequest();
 
     xhr.upload.onprogress = function(e) {
-      var done = e.loaded, total = e.total;
+      const done = e.loaded, total = e.total;
       self.set(prefix + ".progress", Math.floor((done/total)*1000)/10);
     };
 
-    var url = this.target.replace("<name>", file.name);
+    const url = this.target.replace("<name>", file.name);
     xhr.open(this.method, url, true);
     for (key in this.headers) {
       if (this.headers.hasOwnProperty(key)) {

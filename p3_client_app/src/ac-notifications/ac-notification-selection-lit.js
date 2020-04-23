@@ -152,7 +152,7 @@ class AcNotificationSelectionLit extends YpBaseElement {
   }
 
   _getAvailableFrequencies(language, method) {
-    var frequencyArray = [];
+    const frequencyArray = [];
     if (language) {
       if (!method || method==0) {
       } else if (method==1) {

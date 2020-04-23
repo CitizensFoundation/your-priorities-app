@@ -354,7 +354,7 @@ class YpDialogContainerLit extends YpBaseElement {
   }
 
   closeDialog(idName) {
-    var element = this.$$("#"+idName);
+    const element = this.$$("#"+idName);
     if (element) {
       console.info("Closing dialog: "+idName);
       element.close();
@@ -430,7 +430,7 @@ class YpDialogContainerLit extends YpBaseElement {
     }
 
     this.async(function () {
-      var element = this.$$("#"+idName);
+      const element = this.$$("#"+idName);
       if (element && (typeof element.ready === "function")) {
         this.set('waitForUpgradeCounter', 0);
         console.info("Found dialog: "+idName);

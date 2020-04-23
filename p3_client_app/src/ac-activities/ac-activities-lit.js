@@ -344,7 +344,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _pointDeleted(event, detail) {
-    for (var i = 0; i < this.activities.length; i++) {
+    for (let i = 0; i < this.activities.length; i++) {
       if (this.activities[i].Point) {
         if (this.activities[i].Point.id==detail.pointId) {
           this._removeActivityId(this.activities[i].id);
@@ -378,7 +378,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab) {
-    var offset = this.$.ironList.offsetTop;
+    let offset = this.$.ironList.offsetTop;
     offset -= 75;
 
     if (!hasLoggedInUser && !groupId)
@@ -408,7 +408,7 @@ class AcActivitiesLit extends YpBaseElement {
 
   _skipIronListWidth(wide) {
     if (wide) {
-      var list = this.$$("#ironList");
+      const list = this.$$("#ironList");
       list.style.width = '600px';
       list.updateViewportBoundaries();
       this.async(function () {
@@ -423,7 +423,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _removeActivityId(activityId) {
-    for (var i = 0; i < this.activities.length; i++) {
+    for (let i = 0; i < this.activities.length; i++) {
       if (this.activities[i].id == activityId) {
         this.splice('activities', i, 1);
       }
@@ -543,7 +543,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _preProcessActivities(activities) {
-    for (var i = 0; i < activities.length; i++) {
+    for (let i = 0; i < activities.length; i++) {
       if (activities[i].Point) {
         activities[i].Point.latestContent = activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content;
       }
@@ -552,7 +552,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _activitiesResponse(event, detail) {
-    var activities = this._preProcessActivities(detail.response.activities);
+    const activities = this._preProcessActivities(detail.response.activities);
 
     this.set('gotInitialData', true);
 
@@ -562,7 +562,7 @@ class AcActivitiesLit extends YpBaseElement {
       console.warn("Have not set oldestProcessedActivityAt");
     }
 
-    for (var i = 0; i < activities.length; i++) {
+    for (let i = 0; i < activities.length; i++) {
       if (this.$.ajax.url.indexOf('afterDate') > -1) {
         this.unshift('activities', activities[i]);
       } else {

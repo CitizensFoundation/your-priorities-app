@@ -176,7 +176,7 @@ class AcNotificationListPointLit extends YpBaseElement {
 
   goToPost() {
     if (this.post) {
-      var postUrl = '/post/' + this.post.id;
+      const postUrl = '/post/' + this.post.id;
       if (this.point) {
         postUrl += '/' + this.point.id;
       }
@@ -211,8 +211,8 @@ class AcNotificationListPointLit extends YpBaseElement {
   }
 
   _createQualityStrings() {
-    var helpfuls;
-    var unhelpfuls;
+    const helpfuls;
+    const unhelpfuls;
 
     this.notification.AcActivities.forEach(function (activity) {
       if (activity.type=='activity.point.helpful.new') {
@@ -238,7 +238,7 @@ class AcNotificationListPointLit extends YpBaseElement {
   }
 
   _addWithComma(text, toAdd) {
-    var returnText = "";
+    const returnText = "";
     if (text!='') {
       returnText += text+",";
     }

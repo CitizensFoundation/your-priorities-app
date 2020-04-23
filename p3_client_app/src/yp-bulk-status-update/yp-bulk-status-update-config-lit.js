@@ -290,7 +290,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
   _getGroupsResponse(event, detail) {
     if (detail.response) {
-      var groups = [];
+      let groups = [];
       groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
       groups = groups.concat(detail.response.groups);
       groups = this._uniqueInDomain(groups, detail.response.domainId);
@@ -364,9 +364,9 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
   }
 
   _selectNewOfficialStatus(event, detail) {
-    var newOfficialStatus = detail.item.name;
-    var post = JSON.parse(event.target.getAttribute('data-args'));
-    var configCopy = JSON.parse(JSON.stringify(this.config));
+    let newOfficialStatus = detail.item.name;
+    const post = JSON.parse(event.target.getAttribute('data-args'));
+    const configCopy = JSON.parse(JSON.stringify(this.config));
     this.config.groups.forEach(function (group, groupIndex) {
       group.posts.forEach(function (inPost, postIndex) {
         if (post.id == inPost.id) {
@@ -400,7 +400,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
   }
 
   _editBulkStatusUpdate(event) {
-    var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
+    let bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
     dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEdit", function (dialog) {
       dialog._clear();
       dialog.setup(bulkStatusUpdate, false, null);

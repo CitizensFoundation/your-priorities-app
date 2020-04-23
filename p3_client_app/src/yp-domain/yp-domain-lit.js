@@ -213,7 +213,7 @@ class YpDomainLit extends YpBaseElement {
 
   scrollToCommunityItem() {
     if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
-      var list = this.$$("#domainNews");
+      const list = this.$$("#domainNews");
       if (list) {
         list.scrollToItem(window.appGlobals.cachedActivityItem);
         window.appGlobals.cachedActivityItem = null;
@@ -265,7 +265,7 @@ class YpDomainLit extends YpBaseElement {
     }
 
     this.async(function () {
-      var news = this.$$("#domainNews");
+      const news = this.$$("#domainNews");
       if (news) {
         news.fireResize();
       }

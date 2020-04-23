@@ -359,7 +359,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
     if (domain && domain.configuration &&
       domain.configuration.useVideoCover &&
       domain.DomainLogoVideos) {
-      var videoURL = this._getVideoURL(domain.DomainLogoVideos);
+      const videoURL = this._getVideoURL(domain.DomainLogoVideos);
       if (videoURL) {
         this.set('domainVideoId', domain.DomainLogoVideos[0].id);
         return videoURL;
@@ -375,7 +375,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
     if (domain && domain.configuration &&
       domain.configuration.useVideoCover &&
       domain.DomainLogoVideos) {
-      var videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos);
+      const videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos);
       if (videoPosterURL) {
         return videoPosterURL;
       } else {

@@ -371,8 +371,8 @@ class YpGroupCardLargeLit extends YpBaseElement {
     }
 
     if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
-      var videoURL = this._getVideoURL(group.GroupLogoVideos);
-      var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos);
+      const videoURL = this._getVideoURL(group.GroupLogoVideos);
+      const videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos);
       if (videoURL && videoPosterURL) {
         this.set('groupVideoURL', videoURL);
         this.set('groupVideoPosterURL', videoPosterURL);
@@ -488,7 +488,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
   }
 
   _refreshGroup(groupId, callback) {
-    var ajax = document.createElement('iron-ajax');
+    const ajax = document.createElement('iron-ajax');
     ajax.url = '/api/groups/'+groupId;
     ajax.handleAs = 'json';
     ajax.contentType = 'application/json';

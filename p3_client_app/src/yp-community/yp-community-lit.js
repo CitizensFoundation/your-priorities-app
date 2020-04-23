@@ -213,12 +213,12 @@ class YpCommunityLit extends YpBaseElement {
 
   _refreshTabsAndPages() {
     this.async(function () {
-      var pages = this.$$("#tabPages");
+      const pages = this.$$("#tabPages");
       if (pages) {
         pages.forceSynchronousItemUpdate();
       }
 
-      var paperTabs = this.$$("#paper_tabs");
+      const paperTabs = this.$$("#paper_tabs");
       if (paperTabs) {
         paperTabs.forceSynchronousItemUpdate();
         paperTabs.notifyResize();
@@ -228,7 +228,7 @@ class YpCommunityLit extends YpBaseElement {
 
   scrollToGroupItem() {
     if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
-      var list = this.$$("#communityNews");
+      const list = this.$$("#communityNews");
       if (list) {
         list.scrollToItem(window.appGlobals.cachedActivityItem);
         window.appGlobals.cachedActivityItem = null;
@@ -273,7 +273,7 @@ class YpCommunityLit extends YpBaseElement {
     }
 
     this.async(function () {
-      var news = this.$$("#communityNews");
+      const news = this.$$("#communityNews");
       if (news) {
         news.fireResize();
       }
@@ -335,13 +335,13 @@ class YpCommunityLit extends YpBaseElement {
         this.set('createFabIcon', 'add');
       }
 
-      var url = this._communityHeaderUrl(this.community);
+      const url = this._communityHeaderUrl(this.community);
 
       this.setupGroups(this.community.Groups);
       this._setLocationHidden(this.community.Groups);
 
       this.async(function() {
-        var communityCard = this.$$('#communityCard');
+        const communityCard = this.$$('#communityCard');
         if (communityCard) {
           communityCard.setElevation(5);
           communityCard.lowerCardLater();
@@ -359,7 +359,7 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   _setLocationHidden(groups) {
-    var locationHidden = true;
+    let locationHidden = true;  
     groups.forEach(function(group) {
       if (group.configuration && group.configuration.locationHidden) {
         if (group.configuration.locationHidden != true) {
@@ -408,7 +408,7 @@ class YpCommunityLit extends YpBaseElement {
       }
 
       if (window.location.href.indexOf("/community") >-1) {
-        var backPath, headerTitle, headerDescription;
+        let backPath, headerTitle, headerDescription;
         if (this.community.CommunityFolder) {
           backPath = "/community_folder/" + this.community.CommunityFolder.id;
           headerTitle = this.community.CommunityFolder.name;
@@ -452,10 +452,10 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   defaultGroupFirst(items) {
-    var filtered = [];
-    var defaultGroup = null;
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
+    const filtered = [];
+    let defaultGroup = null;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.short_name != 'default') {
         filtered.push(item);
       } else {
@@ -467,9 +467,9 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   noTestGroup(items) {
-    var filtered = [];
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
+    const filtered = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.short_name != 'test' && item.short_name != 'ac-posts' && item.short_name != 'development' && item.short_name.indexOf('2012') == -1 && item.short_name.indexOf('2013') == -1) {
         filtered.push(item);
       }

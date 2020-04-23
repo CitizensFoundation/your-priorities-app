@@ -239,7 +239,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   }
 
   setupTopHeaderImage(image) {
-    var path;
+    let path;
     if (image) {
       path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
     } else {
@@ -249,7 +249,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   }
 
   _orderGroupStatuses(statuses) {
-    var order = {
+    let order = {
       "-1": 3,
       "0": 2,
       "-2": 1,
@@ -283,18 +283,18 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   _setOpen(event, detail) {
     event = event || window.event;
     event = event.target || event.srcElement;
-    var postId = event.getAttribute('data-args');
+    const postId = event.getAttribute('data-args');
     this.$$("#detail_"+postId).hidden = !this.$$("#detail_"+postId).hidden;
   }
 
   _setClosed() {
-    var postId = event.target.getAttribute('data-args');
+    const postId = event.target.getAttribute('data-args');
     this.$$("#detail_"+postId).hidden = true;
   }
 
   _response(event, detail) {
     this.set('config', detail.response.config);
-    var templates = {};
+    const templates = {};
     detail.response.templates.forEach(function (template) {
       templates[template.title] = template;
     });

@@ -149,7 +149,7 @@ class AcNotificationListPostLit extends YpBaseElement {
 
   goToPost() {
     if (this.post) {
-      var postUrl = '/post/' + this.post.id;
+      const postUrl = '/post/' + this.post.id;
       window.appGlobals.activity('open', 'post', postUrl);
       this.async(function () {
         this.redirectTo(postUrl);
@@ -181,8 +181,8 @@ class AcNotificationListPostLit extends YpBaseElement {
   }
 
   _createEndorsementStrings() {
-    var endorsements;
-    var oppositions;
+    const endorsements;
+    const oppositions;
 
     this.notification.AcActivities.forEach(function (activity) {
       if (activity.type=='activity.post.endorsement.new') {
@@ -209,7 +209,7 @@ class AcNotificationListPostLit extends YpBaseElement {
   }
 
   _addWithComma(text, toAdd) {
-    var returnText = "";
+    const returnText = "";
     if (text!='') {
       returnText += text+",";
     }

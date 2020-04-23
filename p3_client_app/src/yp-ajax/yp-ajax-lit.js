@@ -193,7 +193,7 @@ class YpAjaxLit extends YpBaseElement {
   }
 
   showErrorDialog(errorText) {
-    var text;
+    const text;
     if (errorText.message) {
       text = errorText.message;
     } else {

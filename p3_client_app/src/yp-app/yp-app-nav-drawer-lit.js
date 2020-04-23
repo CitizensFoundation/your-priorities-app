@@ -208,7 +208,7 @@ class YpAppNavDrawerLit extends YpBaseElement {
 
   _reset() {
     if (window.appUser && window.appUser.memberships) {
-      var groupUsers = __.reject(window.appUser.memberships.GroupUsers, function (item) {
+      const groupUsers = __.reject(window.appUser.memberships.GroupUsers, function (item) {
         return item.name=="hidden_public_group_for_domain_level_points";
       });
       this.set('myGroups', __.take(groupUsers, 1000));
@@ -229,7 +229,7 @@ class YpAppNavDrawerLit extends YpBaseElement {
 
     if (window.appUser && window.appUser.adminRights &&
       window.appUser.adminRights.GroupAdmins && window.appUser.adminRights.GroupAdmins.length>0) {
-      var groupAdmins = __.reject(window.appUser.adminRights.GroupAdmins, function (item) {
+      const groupAdmins = __.reject(window.appUser.adminRights.GroupAdmins, function (item) {
         return item.name=="hidden_public_group_for_domain_level_points";
       });
       this.set('myAdminGroups', groupAdmins);

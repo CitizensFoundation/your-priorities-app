@@ -257,7 +257,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _markAsViewed(notifications) {
-    var marked = [];
+    const marked = [];
     if (notifications) {
       notifications.forEach(function (notification) {
         if (!notification.viewed) {
@@ -273,7 +273,7 @@ class AcNotificationListLit extends YpBaseElement {
 
   _setAsViewedResponse(event, detail) {
     this._handleUnViewedCount(detail.response.unViewedCount);
-    var viewedIds =  detail.response.viewedIds;
+    const viewedIds =  detail.response.viewedIds;
     if (this.notifications) {
       this.notifications.forEach(function (notification, index, theArray) {
         if (viewedIds.indexOf(notification.id) > -1) {
@@ -344,7 +344,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _loadNotificationsResponse(event, detail) {
-    var notifications = detail.response.notifications;
+    const notifications = detail.response.notifications;
 
     if (detail.response.oldestProcessedNotificationAt) {
       this.set('oldestProcessedNotificationAt', detail.response.oldestProcessedNotificationAt);
@@ -384,7 +384,7 @@ class AcNotificationListLit extends YpBaseElement {
   _sendReloadPointsEvents(notifications) {
     notifications.forEach(function (notification) {
       if (notification.type=='notification.point.new') {
-        var activityUser = notification.AcActivities[0].User;
+        const activityUser = notification.AcActivities[0].User;
         if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
           document.dispatchEvent(
             new CustomEvent("lite-signal", {
@@ -399,7 +399,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _loadNewNotificationsResponse(event, detail) {
-    var notifications = detail.response.notifications;
+    const notifications = detail.response.notifications;
 
     notifications.forEach(function (notification) {
       this._removeOldIfExists(notification);
@@ -437,7 +437,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _getNotificationText(notification) {
-    var ideaName, object;
+    const ideaName, object;
     if (notification.AcActivities[0].Post) {
       ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
     }
@@ -470,14 +470,14 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _displayToast(notifications) {
-    var notMyNotifications = __.reject(notifications, function (notification) {
-      var activityUser = notification.AcActivities[0].User;
+    const notMyNotifications = __.reject(notifications, function (notification) {
+      const activityUser = notification.AcActivities[0].User;
       return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) &&
              !notification.type==='notification.generalUserNotification';
     });
 
     if (notMyNotifications.length>0) {
-      var activityUser = notMyNotifications[0].AcActivities[0].User;
+      const activityUser = notMyNotifications[0].AcActivities[0].User;
       dom(document).querySelector('yp-app').getDialogAsync("notificationToast", function (dialog) {
         dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]), notMyNotifications[0].type==='notification.generalUserNotification');
       }.bind(this));

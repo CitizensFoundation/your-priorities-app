@@ -85,12 +85,12 @@ class YpCategoryEditLit extends YpBaseElement {
 */
 
   _iconImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedIconImageId', image.id);
   }
 
   _headerImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedHeaderImageId', image.id);
   }
 

@@ -558,7 +558,7 @@ render() {
   }
 
   _refreshCategories(newCategory) {
-    var newCategories = [];
+    const newCategories = [];
     __.each(this.group.Categories, function (oldCategory) {
       if (oldCategory.id === newCategory.id) {
         newCategories.push(newCategory)

@@ -113,7 +113,7 @@ class AcNotificationListGenaralItemLit extends YpBaseElement {
 */
 
   _goTo() {
-    var gotoLocation;
+    const gotoLocation;
     if (this.post) {
       this.goToPost(this.post.id)
     } else {
@@ -152,7 +152,7 @@ class AcNotificationListGenaralItemLit extends YpBaseElement {
 
   goToPost() {
     if (this.post) {
-      var postUrl = '/post/' + this.post.id + '/news';
+      const postUrl = '/post/' + this.post.id + '/news';
       window.appGlobals.activity('open', 'post', postUrl);
       this.async(function () {
         this.redirectTo(postUrl);
@@ -170,7 +170,7 @@ class AcNotificationListGenaralItemLit extends YpBaseElement {
   }
 
   _addWithComma(text, toAdd) {
-    var returnText = "";
+    const returnText = "";
     if (text!='') {
       returnText += text+",";
     }

@@ -239,7 +239,7 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   parseQueryString() {
-    var query = (window.location.search || '?').substr(1),
+    let query = (window.location.search || '?').substr(1),
       map   = {};
     query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
       map[key] = value;
@@ -305,7 +305,7 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   _removeSplash() {
-    var splash = document.getElementById('splashCore');
+    let splash = document.getElementById('splashCore');
     console.log("_removeSplashNode");
     if (splash) {
       this._removeSplashNode(splash);
@@ -366,9 +366,9 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   setupGroupConfigOverride(groupId, configOverride) {
-    var configOverrideHash = {};
+    const configOverrideHash = {};
     configOverride.split(";").forEach(function (configItem) {
-      var splitItem = configItem.split("=");
+      const splitItem = configItem.split("=");
       configOverrideHash[splitItem[0]] = splitItem[1];
     });
     this.groupConfigOverrides[groupId]=configOverrideHash;
@@ -382,7 +382,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     if (!configuration) {
       configuration = {};
     }
-    var override = this.groupConfigOverrides[groupId];
+    const override = this.groupConfigOverrides[groupId];
     if (!override) {
       return configuration;
     } else {
@@ -406,7 +406,7 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   activity(type, object, context, target) {
-    var actor;
+    let actor;
 
     if (window.appUser && window.appUser.user) {
       actor = window.appUser.user.id;
@@ -414,7 +414,7 @@ class YpAppGlobalsLit extends YpBaseElement {
       actor = "-1";
     }
 
-    var logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
+    let logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
 
     console.log(logString);
 
@@ -431,8 +431,8 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
 
     //TODO: Use fetch here
-    var activityAjax = document.createElement('iron-ajax');
-    var date = new Date();
+    const activityAjax = document.createElement('iron-ajax');
+    const date = new Date();
     activityAjax.handleAs = 'json';
     activityAjax.contentType = 'application/x-www-form-urlencoded';
     activityAjax.url = '/api/users/createActivityFromApp';
@@ -463,7 +463,7 @@ class YpAppGlobalsLit extends YpBaseElement {
       this.externalGoalCounter += 1;
       if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
         //TODO: Use fetch
-        var goalTriggerAjax = document.createElement('iron-ajax');
+        const goalTriggerAjax = document.createElement('iron-ajax');
         goalTriggerAjax.handleAs = 'json';
         goalTriggerAjax.url = this.externalGoalTriggerUrl;
         goalTriggerAjax.params = this.originalQueryParameters;
@@ -494,12 +494,12 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   getSessionFromCookie() {
-    var strCookies = document.cookie;
-    var cookiearray = strCookies.split(';');
-    var sid = '';
-    for (var i = 0; i < cookiearray.length; i++) {
-      var name = cookiearray[i].split('=')[0];
-      var value = cookiearray[i].split('=')[1];
+    const strCookies = document.cookie;
+    const cookiearray = strCookies.split(';');
+    let sid = '';
+    for (let i = 0; i < cookiearray.length; i++) {
+      let name = cookiearray[i].split('=')[0];
+      let value = cookiearray[i].split('=')[1];
       if (name == ' connect.sid')
         sid = value;
     }

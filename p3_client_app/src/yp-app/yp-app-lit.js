@@ -686,9 +686,9 @@ class YpAppLit extends YpBaseElement {
   }
 
   _setupSamlCallback() {
-    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-    var eventer = window[eventMethod];
-    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+    const eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    const eventer = window[eventMethod];
+    const messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
     console.log("Have created event listener for samlLogin");
 
@@ -702,8 +702,8 @@ class YpAppLit extends YpBaseElement {
 
   _setupTranslationSystem() {
     console.log("Have started _setupTranslationSystem");
-    var hostname = window.location.hostname;
-    var defaultLocale = 'en';
+    const hostname = window.location.hostname;
+    const defaultLocale = 'en';
     if (hostname.indexOf('betrireykjavik') > -1) {
       defaultLocale = 'is';
     } else if (hostname.indexOf('betraisland') > -1) {
@@ -711,8 +711,8 @@ class YpAppLit extends YpBaseElement {
     } else if (hostname.indexOf('forbrukerradet') > -1) {
         defaultLocale = 'no';
     } else {
-      var tld = hostname.substring(hostname.lastIndexOf('.'));
-      var localeByTld = {
+      const tld = hostname.substring(hostname.lastIndexOf('.'));
+      let localeByTld = {
         '.fr': 'fr',
         '.hr': 'hr',
         '.hu': 'hu',
@@ -725,13 +725,13 @@ class YpAppLit extends YpBaseElement {
       defaultLocale = localeByTld[tld] || 'en';
     }
 
-    var language;
-    var storedLocale = localStorage.getItem('yp-user-locale');
+    const language;
+    const storedLocale = localStorage.getItem('yp-user-locale');
     if (storedLocale) {
       defaultLocale = storedLocale;
     }
 
-    var localeFromUrl;
+    const localeFromUrl;
 
     if (window.appGlobals.originalQueryParameters &&
         window.appGlobals.originalQueryParameters["locale"]) {
@@ -838,7 +838,7 @@ class YpAppLit extends YpBaseElement {
   }
 
   _refreshByName(id) {
-    var el = this.$$(id);
+    const el = this.$$(id);
     if (el) {
       el._refreshAjax();
     }
@@ -914,7 +914,7 @@ class YpAppLit extends YpBaseElement {
 
   _routePageChanged(pageData, oldPageData) {
     if (pageData) {
-      var params = this.route.path.split('/');
+      const params = this.route.path.split('/');
 
       if (this.route.path.indexOf('/user/reset_password') > -1 ||
         this.route.path.indexOf('/user/open_notification_settings') > -1 ||
@@ -934,21 +934,21 @@ class YpAppLit extends YpBaseElement {
         }
       } else {
 
-        var map = this._scrollPositionMap;
+        const map = this._scrollPositionMap;
 
         if (oldPageData != null && oldPageData.page != null) {
           map[oldPageData.page] = window.pageYOffset;
           console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
         }
 
-        var delayUntilScrollToPost = null;
+        let delayUntilScrollToPost = null;
 
         if (this.wide) {
           delayUntilScrollToPost = 2;
         }
 
         this.async(function () {
-          var skipMasterScroll = false;
+          const skipMasterScroll = false;
 
           if (oldPageData && oldPageData.page && pageData) {
             // Post -> Group
@@ -1026,7 +1026,7 @@ class YpAppLit extends YpBaseElement {
           }
 
           if (oldPageData && pageData && oldPageData.page===pageData.page) {
-            var testRoute = this.subRoute.path;
+            let testRoute = this.subRoute.path;
             testRoute = testRoute.replace("/","");
             if (isNaN(testRoute)) {
               skipMasterScroll = true;
@@ -1061,7 +1061,7 @@ class YpAppLit extends YpBaseElement {
   _pageChanged(page, oldPage) {
     console.log("Page changed to "+page);
     if (page) {
-      var resolvedPageUrl;
+      const resolvedPageUrl;
       if (page=="view-404") {
         resolvedPageUrl = this.resolveUrl("yp-view-404.html");
       } else if (page==='community_folder') {
@@ -1206,7 +1206,7 @@ class YpAppLit extends YpBaseElement {
   }
 
   scrollPageToTop() {
-    var mainArea = document.getElementById('#mainArea');
+    const mainArea = document.getElementById('#mainArea');
     if (mainArea) {
       mainArea.scroller.scrollTop = 0;
     }
@@ -1227,9 +1227,9 @@ class YpAppLit extends YpBaseElement {
     this.set('headerTitle', document.title = header.headerTitle);
 
     this.async(function () {
-      var headerTitle = this.$$("#headerTitle");
+      const headerTitle = this.$$("#headerTitle");
       if (headerTitle) {
-        var length = headerTitle.innerHTML.length;
+        const length = headerTitle.innerHTML.length;
         if (this.wide) {
           headerTitle.style.fontSize = "20px";
         } else {
@@ -1304,7 +1304,7 @@ class YpAppLit extends YpBaseElement {
   _onSearch(e) {
     this.toggleSearch();
     this.unshift('previousSearches', e.detail.value);
-    var postsFilter = document.querySelector('#postsFilter');
+    const postsFilter = document.querySelector('#postsFilter');
     if (postsFilter) {
       postsFilter.searchFor(e.detail.value);
     }

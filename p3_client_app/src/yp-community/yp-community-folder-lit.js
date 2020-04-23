@@ -223,7 +223,7 @@ behaviors: [
       } else {
       }*/
 
-      var url = this._communityHeaderUrl(this.communityFolder);
+      const url = this._communityHeaderUrl(this.communityFolder);
 
       this.setupCommunities(this.communityFolder.Communities);
     }
@@ -258,7 +258,7 @@ behaviors: [
       }
 
       if (window.location.href.indexOf("/community_folder") > -1) {
-        var backPath, headerTitle, headerDescription;
+        let backPath, headerTitle, headerDescription;
         if (this.communityFolder.CommunityFolder) {
           backPath = "/community_folder/" + this.communityFolder.CommunityFolder.id;
           headerTitle = this.communityFolder.CommunityFolder.name;

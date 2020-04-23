@@ -519,8 +519,8 @@ class YpEditDialogLit extends YpBaseElement {
   }
 
   _setSubmitDisabledStatus(status) {
-    var submit1 = this.$$("#submit1");
-    var submit2 = this.$$("#submit2");
+    const submit1 = this.$$("#submit1");
+    const submit2 = this.$$("#submit2");
     if (submit1)
       submit1.disabled = status;
 
@@ -557,7 +557,7 @@ class YpEditDialogLit extends YpBaseElement {
       this.$$("#spinner").active = true;
     } else {
       this.fire('iron-form-invalid');
-      var error = this.t('form.invalid');
+      const error = this.t('form.invalid');
       this._showErrorDialog(error);
     }
   }

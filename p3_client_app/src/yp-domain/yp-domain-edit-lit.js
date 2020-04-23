@@ -268,14 +268,14 @@ class YpDomainEditLit extends YpBaseElement {
   }
 
   _appHomeScreenIconImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('appHomeScreenIconImageId', image.id);
   }
 
   _updateEmojiBindings() {
     this.async(function () {
-      var description = this.$$("#description");
-      var emojiSelector = this.$$("#emojiSelectorDescription");
+      const description = this.$$("#description");
+      const emojiSelector = this.$$("#emojiSelectorDescription");
       if (description && emojiSelector) {
         emojiSelector.inputTarget = description;
       } else {
@@ -296,7 +296,7 @@ class YpDomainEditLit extends YpBaseElement {
   _customRedirect(domain) {
     if (domain) {
       if (this.uploadedVideoId) {
-        var ajax = document.createElement('iron-ajax');
+        const ajax = document.createElement('iron-ajax');
         ajax.handleAs = 'json';
         ajax.contentType = 'application/json';
         ajax.url = '/api/videos/'+domain.id+'/completeAndAddToDomain';

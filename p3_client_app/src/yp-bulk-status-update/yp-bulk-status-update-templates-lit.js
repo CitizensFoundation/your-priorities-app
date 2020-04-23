@@ -183,7 +183,7 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
   }
 
   _updateTemplate() {
-    var templatesCopy = JSON.parse(JSON.stringify(this.templates));
+    const templatesCopy = JSON.parse(JSON.stringify(this.templates));
     this.templates.forEach(function (template, index) {
       if (index == this.currentlyEditingTemplate) {
         templatesCopy[index] = { title: this.currentlyEditingTitle, content: this.currentlyEditingContent };
@@ -194,8 +194,8 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
   }
 
   _deleteTemplate() {
-    var templateTitle = event.target.getAttribute('data-args');
-    var templatesCopy = this.templates;
+    const templateTitle = event.target.getAttribute('data-args');
+    const templatesCopy = this.templates;
     this.templates.forEach(function (template, index) {
       if (template.title == templateTitle) {
         templatesCopy.splice(index,1);

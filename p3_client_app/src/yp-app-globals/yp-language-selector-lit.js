@@ -215,7 +215,7 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   _canUseAutoTranslate(language, hasServerAutoTranslation, autoTranslateOptionDisabled) {
     if (!autoTranslateOptionDisabled && language && hasServerAutoTranslation && !this.noUserEvents) {
-      var found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
+      let found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
       return !found;
     } else {
       return false;
@@ -232,8 +232,8 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   _languages(supportedLanguages) {
     if (supportedLanguages) {
-      var arr = [];
-      for (var key in supportedLanguages) {
+      const arr = [];
+      for (const key in supportedLanguages) {
         if (supportedLanguages.hasOwnProperty(key)) {
           arr.push({ language: key, name: supportedLanguages[key] });
         }

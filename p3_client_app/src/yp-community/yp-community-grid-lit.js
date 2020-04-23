@@ -100,9 +100,9 @@ class YpCommunityGridLit extends YpBaseElement {
   }
 
   _scrollOffset(wide, communityGrid) {
-    var list = this.$.ironList;
+    const list = this.$.ironList;
     if (list) {
-      var offset = list.offsetTop;
+      let offset = list.offsetTop;
       offset -= 100;
       if (!this.wide)
         offset += 75;

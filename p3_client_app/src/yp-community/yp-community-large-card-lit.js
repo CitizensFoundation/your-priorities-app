@@ -438,7 +438,7 @@ behaviors: [
     if (community && community.configuration &&
       community.configuration.useVideoCover &&
       community.CommunityLogoVideos) {
-      var videoURL = this._getVideoURL(community.CommunityLogoVideos);
+      const videoURL = this._getVideoURL(community.CommunityLogoVideos);
       if (videoURL) {
         this.set('communityVideoId', community.CommunityLogoVideos[0].id);
         return videoURL;
@@ -454,7 +454,7 @@ behaviors: [
     if (community && community.configuration &&
       community.configuration.useVideoCover &&
       community.CommunityLogoVideos) {
-      var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
+      const videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
       if (videoPosterURL) {
         return videoPosterURL;
       } else {
@@ -475,7 +475,7 @@ behaviors: [
         if (community.configuration && community.configuration.welcomeHTML &&
           community.configuration.welcomeHTML !== "" &&
           this.$$("#welcomeHTML")) {
-            var div = document.createElement('div');
+            const div = document.createElement('div');
             div.innerHTML = community.configuration.welcomeHTML;
             this.$$("#welcomeHTML").innerHTML = "";
             dom(this.$$("#welcomeHTML")).appendChild(div);
