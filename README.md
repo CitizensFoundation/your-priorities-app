@@ -80,11 +80,11 @@ Bunyan is used for logging into JSON, which is great for feeding for
 example into Elastic Search for analytic - https://github.com/trentm/node-bunyan 
 The log is piped to STDOUT so you need to pipe it into a file > /var/log/yrpri.log
 
-To build a client_dist production folder with vulcanized web components
+To build a client_app/build production folder with web components
 ```bash
 npm install polymer-cli
 cd client_app
-gulp build
+./createDist
 ```
 
 If you are moving from version 6 to version 7 make sure to clear out the bower_components folder before running bower install
@@ -140,6 +140,12 @@ using machine learning to recommend content to users.
 ```
 [https://github.com/rbjarnason/active-citizen](https://github.com/rbjarnason/active-citizen)
 
+## Running the Active Citizen background workers
+
+The background workers community via the main Redis connection of the app. To start run the following command with all environmental variables needed
+```
+node server_api/active-citizen/workers/main.js
+```
 
 ## Your Priorities user help
 ```
@@ -167,6 +173,51 @@ and Universal Recommendation or as a recipe for building your own non-Docker Ubu
 based predictionIO VM on any cloud or locally.
 ```
 [https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile](https://github.com/rbjarnason/docker-predictionio/blob/master/Dockerfile)
+
+## Environmental variables used for a full production environment with all features
+
+All those configuration variables are optional but some depend on each other.
+```
+AC_ANALYTICS_BASE_URL              
+AC_ANALYTICS_CLUSTER_ID            
+AC_ANALYTICS_KEY                  
+ADEPT_SCALE_LICENSE_KE          
+ADEPT_SCALE_URL                    
+AIRBRAKE_API_KEY                    
+AIRBRAKE_PROJECT_ID                
+AWS_ACCESS_KEY_ID                  
+AWS_SECRET_ACCESS_KEY                
+AWS_TRANSCODER_AUDIO_PIPELINE_ID  
+AWS_TRANSCODER_AUDIO_PRESET_ID    
+AWS_TRANSCODER_FLAC_PRESET_ID      
+AWS_TRANSCODER_PIPELINE_ID          
+AWS_TRANSCODER_PORTRAIT_PRESET_ID  
+AWS_TRANSCODER_PRESET_ID          
+DATABASE_URL                      
+EMBEDLY_KEY                        
+GOOGLE_APPLICATION_CREDENTIALS_JSON
+GOOGLE_PERSPECTIVE_API_KEY          
+GOOGLE_TRANSCODING_FLAC_BUCKET      
+HEROKU_POSTGRESQL_URL      
+NEW_RELIC_APP_NAME                work
+NEW_RELIC_LICENSE_KEY              
+NEW_RELIC_LOG                      
+NEW_RELIC_NO_CONFIG_FILE            
+PIOAccessKey                        
+PIOEngineUrl                     
+PIOEventUrl                      
+REDIS_URL                          
+S3_ACCELERATED_ENDPOINT            
+S3_AUDIO_PUBLIC_BUCKET              
+S3_AUDIO_UPLOAD_BUCKET            
+S3_BUCKET                          
+S3_REPORTS_BUCKET                  
+S3_VIDEO_PUBLIC_BUCKET            
+S3_VIDEO_THUMBNAIL_BUCKET          
+S3_VIDEO_UPLOAD_BUCKET          
+SENDGRID_PASSWORD                  
+SENDGRID_USERNAME                 
+```
 
 
 ## Active Citizen Tensorflow Classifications (experimental)
@@ -200,50 +251,6 @@ to improve their communities.
 ```
 [http://www.citizens.is/](http://www.citizens.is/)
 
-## Environmental variables used for a full production environment with all features
-
-All those configuration variables are optional but some depend on each other.
-```
-AC_ANALYTICS_BASE_URL              
-AC_ANALYTICS_CLUSTER_ID            
-AC_ANALYTICS_KEY                  
-ADEPT_SCALE_LICENSE_KE          
-ADEPT_SCALE_URL                    
-AIRBRAKE_API_KEY                    
-AIRBRAKE_PROJECT_ID                
-AWS_ACCESS_KEY_ID                  
-AWS_SECRET_ACCESS_KEY                
-AWS_TRANSCODER_AUDIO_PIPELINE_ID  
-AWS_TRANSCODER_AUDIO_PRESET_ID    
-AWS_TRANSCODER_FLAC_PRESET_ID      
-AWS_TRANSCODER_PIPELINE_ID          
-AWS_TRANSCODER_PORTRAIT_PRESET_ID  
-AWS_TRANSCODER_PRESET_ID          
-DATABASE_URL                      
-EMBEDLY_KEY                        
-GOOGLE_APPLICATION_CREDENTIALS_JSON
-GOOGLE_PERSPECTIVE_API_KEY          
-GOOGLE_TRANSCODING_FLAC_BUCKET      
-HEROKU_POSTGRESQL_URL      
-NEW_RELIC_APP_NAME                
-NEW_RELIC_LICENSE_KEY              
-NEW_RELIC_LOG                      
-NEW_RELIC_NO_CONFIG_FILE            
-PIOAccessKey                        
-PIOEngineUrl                     
-PIOEventUrl                      
-REDIS_URL                          
-S3_ACCELERATED_ENDPOINT            
-S3_AUDIO_PUBLIC_BUCKET              
-S3_AUDIO_UPLOAD_BUCKET            
-S3_BUCKET                          
-S3_REPORTS_BUCKET                  
-S3_VIDEO_PUBLIC_BUCKET            
-S3_VIDEO_THUMBNAIL_BUCKET          
-S3_VIDEO_UPLOAD_BUCKET          
-SENDGRID_PASSWORD                  
-SENDGRID_USERNAME                 
-```
 
 ## The Team
 - Robert Bjarnason
