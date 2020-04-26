@@ -257,6 +257,7 @@ var updateGroupConfigParamters = function (req, group) {
       const cleaned = group.configuration.structuredQuestions.trim().replace(/\n/g,'').replace(/\r/g,'').replace(/"/,'"');
       group.set('configuration.structuredQuestionsJson', JSON.parse(cleaned));
     } catch (error) {
+      group.set('configuration.structuredQuestionsJson', null);
       log.error("Error in parsing structured questions", { error });
     }
   }
