@@ -29,7 +29,36 @@
 
       .question {
         margin-top: 16px;
+        margin-bottom: 48px;
       }
+
+      hr {
+        border-top: 2px dashed var(--accent-color);
+        margin-top: 48px;
+        margin-bottom: 32px;
+      }
+
+      .general {
+        font-weight:400;
+        height:48px;
+        letter-spacing:normal;
+        line-height:24px;
+        font-size: 18px;
+        color: #212121;
+      }
+
+      .noBottomMargin {
+        margin-bottom: 0;
+      }
+
+      h1[is-not-first] {
+        margin-top: 54px;
+      }
+
+      paper-dropdown-menu {
+        margin-top: 16px;
+      }
+
     </style>
 
     <template is="dom-if" if="[[_isTextfield(question)]]">
@@ -49,21 +78,19 @@
     </template>
 
     <template is="dom-if" if="[[_isTextHeader(question)]]">
-      <h1>[[question.text]]</h1>
+      <h1 is-not-first$="[[index]]">[[question.text]]</h1>
     </template>
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
-      <p>[[question.text]]</p>
+      <div class="question general">[[question.text]]</div>
     </template>
 
     <template is="dom-if" if="[[_isSeparator(question)]]">
-      <div style="margin-top: 48px;margin-bottom: 32px">
-        <hr>
-      </div>
+       <hr>
     </template>
 
     <template is="dom-if" if="[[_isRadios(question)]]">
-      <div class="question">[[question.text]]</div>
+      <div class="question general noBottomMargin">[[question.text]]</div>
 
       <paper-radio-group required$="[[!question.notRequired]]" on-changed="_radioChanged" id="structuredQuestionRatio_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class="radioYesNo layout horizontal">
         <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
@@ -73,7 +100,7 @@
     </template>
 
     <template is="dom-if"  if="[[_isCheckboxes(question)]]">
-      <div class="question">[[question.text]]</div>
+      <div class="question general" style="margin-top: 48px;margin-bottom:0">[[question.text]]</div>
       <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index="buttonIndex">
         <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.text]]</paper-checkbox>
       </template>
