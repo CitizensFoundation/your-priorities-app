@@ -80,7 +80,7 @@
     </template>
 
     <template is="dom-if" if="[[_isDropDown(question)]]">
-      <paper-dropdown-menu label="[[question.text]]" required$="[[!question.notRequired]]">
+      <paper-dropdown-menu  id="structuredQuestionDropdown_[[index]]" label="[[question.text]]" required$="[[!question.notRequired]]">
         <paper-listbox slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
             <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
@@ -92,7 +92,7 @@
 
   <script>
 
-    class YpStructuredQuestionEdit extends Polymer.Element {
+    class YpStructuredQuestionEdit extends Polymer.mixinBehaviors([Polymer.IronFormElementBehavior, Polymer.IronValidatableBehavior], Polymer.Element){
       static get is() { return 'yp-structured-question-edit'; }
 
       static get properties() {
@@ -102,8 +102,46 @@
             type: Object
           },
 
+          index: {
+            type: Number
+          },
+
           language: {
             type: String,
+          }
+        }
+      }
+
+      _getValidationElement () {
+        var validationElement=null;
+        if (this.$$("#structuredQuestion_"+this.index)) {
+          return this.$$("#structuredQuestion_"+this.index);
+        } else {
+          return null;
+        }
+      }
+
+      _resizeScrollerIfNeeded () {
+        this.fire('resize-scroller');
+      }
+
+      _floatIfValueOrIE (value) {
+        var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
+        return ie11 || value;
+      }
+
+      validate() {
+        if (this.$$("#structuredQuestionDropdown_"+this.index)) {
+          return true; // DO something if required
+        }  else if (this.$$("#structuredQuestionRatio_"+this.index)) {
+          return true; // DO something if required
+        } else {
+          var validationElement = this._getValidationElement();
+
+          if (validationElement) {
+            return  validationElement.validate();
+          } else {
+            return true;
           }
         }
       }

@@ -256,12 +256,12 @@
 
               <template is="dom-if" if="[[structuredQuestions]]">
                 <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
-                  <yp-structured-question-edit question="[[question]]"></yp-structured-question-edit>
+                  <yp-structured-question-edit index="[[index]]" on-resize-scroller="_resizeScrollerIfNeeded" question="[[question]]"></yp-structured-question-edit>
 
                   <template is="dom-if" if="[[item.subQuestions]]">
                     <div id="structuredQuestionSub_[[item.id]]" hidden>
-                      <template is="dom-repeat" items="[[structuredQuestions]]" as="subQuestion">
-                        <yp-structured-question-edit question="[[subQuestion]]"></yp-structured-question-edit>
+                      <template is="dom-repeat" items="[[structuredQuestions]]" as="subQuestion" index="subIndex">
+                        <yp-structured-question-edit question="[[subQuestion]]" index="[[index]]" sub-index="[[subIndex]]"></yp-structured-question-edit>
                       </template>
                     </div>
                   </template>
@@ -769,8 +769,10 @@
       } else {
         this.set('selected', 0);
       }
-      this.$$('#name').autoValidate = true;
-      this.$$('#description').autoValidate = true;
+      if (this.$$('#name'))
+        this.$$('#name').autoValidate = true;
+      if (this.$$('#description'))
+        this.$$('#description').autoValidate = true;
       if (this.newPointShown) {
         this.$$('#pointFor').autoValidate = true;
       }

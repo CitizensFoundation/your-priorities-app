@@ -1,4 +1,5 @@
 {
+  "actAsOutsideLink": "Act as link (add URL)",
   "actAsLinkToCommunityId": "Act as link to Community Id",
   "hideMediaInput": "Hide media input",
   "hideNameInputAndReplaceWith": "Hide title input and replace with",
