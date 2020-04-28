@@ -215,7 +215,7 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   _canUseAutoTranslate(language, hasServerAutoTranslation, autoTranslateOptionDisabled) {
     if (!autoTranslateOptionDisabled && language && hasServerAutoTranslation && !this.noUserEvents) {
-      let found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
+      const found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
       return !found;
     } else {
       return false;

@@ -537,7 +537,7 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _menuSelection(event, detail) {
-    var allMenus = this.$.grid.querySelectorAll("paper-listbox");
+    const allMenus = this.$.grid.querySelectorAll("paper-listbox");
     allMenus.forEach(function (item) {
       item.select(null);
     });
@@ -595,11 +595,11 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _setupItemIdFromEvent(event) {
-    var itemId = event.target.parentElement.getAttribute('data-args');
+    const itemId = event.target.parentElement.getAttribute('data-args');
     if (!itemId)
       itemId = event.target.getAttribute('data-args');
     this.set('selectedItemId', itemId);
-    var modelClass = event.target.parentElement.getAttribute('data-model-class');
+    const modelClass = event.target.parentElement.getAttribute('data-model-class');
     if (!modelClass)
       modelClass = event.target.getAttribute('data-model-class');
     this.set('selectedModelClass', modelClass);
@@ -680,7 +680,7 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _ajaxMaster(ajax, action, itemIdsAndType) {
-    var url, collectionId;
+    let url, collectionId;
     if (this.modelType==="groups" && this.groupId) {
       collectionId = this.groupId;
     } else if (this.modelType==="communities" && this.communityId) {
@@ -708,7 +708,7 @@ class YpContentModerationLit extends YpBaseElement {
     this.set('forceSpinner', true);
 
     if (this.selectedItemId) {
-      var item = this._findItemFromId(this.selectedItemId);
+      const item = this._findItemFromId(this.selectedItemId);
       if (item)
         this.$.grid.deselectItem(item);
       this.selectedItemId = null;
@@ -717,14 +717,14 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _setSelected(event) {
-    var item = this._findItemFromId(event.target.getAttribute('data-args'));
+    const item = this._findItemFromId(event.target.getAttribute('data-args'));
     if (item) {
       this.$.grid.selectItem(item);
     }
   }
 
   _findItemFromId(id) {
-    var foundItem;
+    let foundItem;
     this.items.forEach(function (item) {
       if (item.id==id) {
         foundItem = item;

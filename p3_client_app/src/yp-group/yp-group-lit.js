@@ -476,7 +476,7 @@ class YpGroupLit extends YpBaseElement {
   }
 
   _loadDataOnTab(tabId) {
-    var tab = this.$$("#"+tabId);
+    const tab = this.$$("#"+tabId);
     if (tab) {
       tab._loadMoreData();
     } else {
@@ -485,7 +485,7 @@ class YpGroupLit extends YpBaseElement {
   }
 
   _goToPostIdTab(tabId) {
-    var tab = this.$$("#"+tabId);
+    const tab = this.$$("#"+tabId);
     if (tab && window.appGlobals.cachedPostItem!==null) {
       tab.scrollToPost(window.appGlobals.cachedPostItem);
       window.appGlobals.cachedPostItem = null;
@@ -497,7 +497,7 @@ class YpGroupLit extends YpBaseElement {
 
   _retryGoToPostIdTab(tabId) {
     this.async(function () {
-      var tab = this.$$("#"+tabId);
+      const tab = this.$$("#"+tabId);
       if (tab && window.appGlobals.cachedPostItem!==null) {
         tab.scrollToPost(window.appGlobals.cachedPostItem);
         window.appGlobals.cachedPostItem = null;
@@ -521,7 +521,7 @@ class YpGroupLit extends YpBaseElement {
     } else if (this.selectedTab=="failed") {
       this._goToPostIdTab("failedPostList");
     } else if (this.selectedTab=="news" && window.appGlobals.cachedActivityItem!==null) {
-      var list = this.$$("#groupActivities");
+      const list = this.$$("#groupActivities");
       if (list) {
         list.scrollToItem(window.appGlobals.cachedActivityItem);
         window.appGlobals.cachedActivityItem = null;
@@ -564,9 +564,9 @@ class YpGroupLit extends YpBaseElement {
   _selectedTabChanged(tabName) {
     if (tabName=='config') {
       this.async(function () {
-        var configRoute = this.listRoute.path;
-        var groupId = this.idRoute.path.split("/")[1];
-        var configOverride= configRoute.substring(1, configRoute.length);
+        const configRoute = this.listRoute.path;
+        const groupId = this.idRoute.path.split("/")[1];
+        const configOverride= configRoute.substring(1, configRoute.length);
         if (groupId && configOverride && configOverride!="")
         window.appGlobals.setupGroupConfigOverride(groupId, configOverride);
         this.set('selectedTab', 'open');
@@ -588,7 +588,7 @@ class YpGroupLit extends YpBaseElement {
       }
 
       this.async(function () {
-        var news = this.$$("#groupActivities");
+        const news = this.$$("#groupActivities");
         if (news) {
           news.fireResize();
         }
@@ -598,12 +598,12 @@ class YpGroupLit extends YpBaseElement {
 
   _refreshTabsAndPages() {
     this.async(function () {
-      var pages = this.$$("#tabPages");
+      const pages = this.$$("#tabPages");
       if (pages) {
         pages.forceSynchronousItemUpdate();
       }
 
-      var paperTabs = this.$$("#paperTabs");
+      const paperTabs = this.$$("#paperTabs");
       if (paperTabs) {
         paperTabs.forceSynchronousItemUpdate();
         paperTabs.notifyResize();
@@ -622,7 +622,7 @@ class YpGroupLit extends YpBaseElement {
   }
 
   _reallyUpdateTabPostCount(event, tabCounterInfo) {
-    var tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
+    const tabCounter = this.$$('#'+tabCounterInfo.tabCounterId);
     if (tabCounter) {
       tabCounter.innerHTML = this.formatNumber(tabCounterInfo.count);
       this.tabCounters[tabCounterInfo.tabCounterId] = tabCounterInfo.count;
@@ -663,7 +663,7 @@ class YpGroupLit extends YpBaseElement {
   _refreshAjax() {
     this.async(function () {
       this.$.ajax.generateRequest();
-      var groupActivities = this.$$("#groupActivities");
+      const groupActivities = this.$$("#groupActivities");
       if (groupActivities) {
         this.$$("#groupActivities").loadNewData();
       }
@@ -684,7 +684,7 @@ class YpGroupLit extends YpBaseElement {
       this.set('hasNonOpenPosts', false);
       this.set('haveGotTabCountInfoCount', 0);
       this.set('tabCounters', {});
-      var groupIdInt = parseInt(groupId);
+      const groupIdInt = parseInt(groupId);
       if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
         this._groupResponse(null, { response: {
             group: window.appGlobals.groupItemsCache[groupIdInt],
@@ -748,7 +748,7 @@ class YpGroupLit extends YpBaseElement {
 
   setupTopHeaderImage(image) {
     if (this.wideWidth) {
-      var path;
+      let path;
       if (image) {
         path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
       } else {

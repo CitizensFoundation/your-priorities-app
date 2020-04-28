@@ -437,7 +437,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _getNotificationText(notification) {
-    const ideaName, object;
+    let ideaName, object;
     if (notification.AcActivities[0].Post) {
       ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
     }

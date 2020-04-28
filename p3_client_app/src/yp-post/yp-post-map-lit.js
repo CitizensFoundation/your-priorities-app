@@ -167,11 +167,11 @@ class YpPostMapLit extends YpBaseElement {
   }
 
   resetMapHeight() {
-    var map = this.$$("#mapContainer");
+    const map = this.$$("#mapContainer");
     if (map) {
-      var windowHeight = window.innerHeight;
+      const windowHeight = window.innerHeight;
       if (map) {
-        var height;
+        let height;
         if (this.wide) {
           height = windowHeight - 448;
           //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
@@ -214,13 +214,13 @@ class YpPostMapLit extends YpBaseElement {
   markerClick(e) {
     window.appGlobals.activity('clicked', 'marker');
     this.set('selectedPost', e.model.get('post'));
-    var a = this.selectedPost;
+    const a = this.selectedPost;
     if (e.srcElement) {
       this.$$("#myInfoCard").showInfoWindow(e.srcElement.marker);
     } else {
       this.$$("#myInfoCard").showInfoWindow(e.currentTarget.marker);
     }
-    var infocardDiv = this.$$("#myInfoCard").$$("#infocarddiv");
+    const infocardDiv = this.$$("#myInfoCard").$$("#infocarddiv");
     infocardDiv.children[1].style.zIndex = "20";
   }
 }

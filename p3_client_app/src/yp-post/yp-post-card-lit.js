@@ -336,7 +336,7 @@ class YpPostCardLit extends YpBaseElement {
         this.set('isAudioCover', false);
       }
       this.async(function () {
-        var postName = this.$$("#postName");
+        const postName = this.$$("#postName");
         if (postName) {
           if (this.mini) {
             if (post.name.length>200) {

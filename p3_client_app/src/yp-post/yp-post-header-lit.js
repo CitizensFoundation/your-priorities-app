@@ -513,8 +513,8 @@ class YpPostHeaderLit extends YpBaseElement {
   _updateEmojiBindings(isEditing) {
     if (isEditing) {
       this.async(function () {
-        var point = this.$$("#postTranscriptionEditor");
-        var emoji = this.$$("#postTranscriptEmojiSelector");
+        const point = this.$$("#postTranscriptionEditor");
+        const emoji = this.$$("#postTranscriptEmojiSelector");
         if (point && emoji) {
           emoji.inputTarget = point;
         } else {
@@ -594,7 +594,7 @@ class YpPostHeaderLit extends YpBaseElement {
     this.set('checkTranscriptError', false);
     if (post && post.description) {
       this.async(function () {
-        var description = this.$$("#description");
+        const description = this.$$("#description");
         if (description) {
           // Special case for law Issue from a parliement
           if (post.data && post.data.dataType==='lawIssue' && post.data.issueStatus) {

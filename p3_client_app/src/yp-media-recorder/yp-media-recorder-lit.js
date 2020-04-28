@@ -426,7 +426,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         return d.kind === 'videoinput'
       });
 
-      var hasLabels=false;
+      let hasLabels=false;
 
       this.videoDevices.forEach(function (device) {
         if (device.label && device.label!="") {
@@ -453,12 +453,12 @@ class YpMediaRecorderLit extends YpBaseElement {
       this.videoSettings.deviceId = this.selectedVideoDeviceId;
     }
 
-    var constraints = {
+    const constraints = {
       audio: this.selectedAudioDeviceId ? { deviceId: this.selectedAudioDeviceId } : true,
       video: this.videoRecording ? this.videoSettings : null
     };
 
-    var isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
+    const  isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
 
     if (isFirefox) {
       navigator.getUserMedia(constraints, function (stream) {
@@ -503,9 +503,9 @@ class YpMediaRecorderLit extends YpBaseElement {
 
     setTimeout(function () {
       if (this.videoRecording) {
-        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-        var videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
-        var width, height;
+        const videoElement = this.shadowRoot.querySelector('#videoRecorder');
+        const videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
+        const width, height;
 
         if (window.innerHeight>window.innerWidth) {
           this.set('videoSettings', { width: 720, height: 1280 } );
@@ -514,7 +514,7 @@ class YpMediaRecorderLit extends YpBaseElement {
           console.info("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
         } else {
           this.set('videoSettings', { width: 1280, height: 720 });
-          var scaleFactor = 0.8;
+          let scaleFactor = 0.8;
           if (window.innerHeight<700)
             scaleFactor = 0.7;
           if (window.innerHeight<500)
@@ -544,9 +544,9 @@ class YpMediaRecorderLit extends YpBaseElement {
 
   _generateRandomString () {
     if (window.crypto) {
-      var a = window.crypto.getRandomValues(new Uint32Array(3)),
+      const a = window.crypto.getRandomValues(new Uint32Array(3)),
         token = '';
-      for (var i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
+      for (let i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
       return token;
     } else {
       return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
@@ -582,12 +582,12 @@ class YpMediaRecorderLit extends YpBaseElement {
   }
 
   _storeRecordedData () {
-    var blob = this.recorder.getBlob();
-    var fileName;
+    const blob = this.recorder.getBlob();
+    let fileName;
 
     if (this.videoRecording) {
-      var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-      var videoPreviewer = this.shadowRoot.querySelector('#videoPreviewer');
+      const videoElement = this.shadowRoot.querySelector('#videoRecorder');
+      const videoPreviewer = this.shadowRoot.querySelector('#videoPreviewer');
       fileName = this._generateRandomString() + '.webm';
       this.recordedData = new File([blob], fileName, {
         type: 'video/webm'
@@ -598,8 +598,8 @@ class YpMediaRecorderLit extends YpBaseElement {
       videoPreviewer.controls = true;
       this.set('previewActive', true);
     } else if (this.audioRecording) {
-      var audioElement = this.shadowRoot.querySelector('#audioRecorder');
-      var audioPreviewer = this.shadowRoot.querySelector('#audioPreviewer');
+      const audioElement = this.shadowRoot.querySelector('#audioRecorder');
+      const audioPreviewer = this.shadowRoot.querySelector('#audioPreviewer');
       fileName = this._generateRandomString() + '.mp3';
       this.recordedData = new File([blob], fileName, {
         type: 'audio/mp3'
@@ -636,7 +636,7 @@ class YpMediaRecorderLit extends YpBaseElement {
   setupRecorders () {
     this.recordSecondsLeft = this.maxLength;
     if (this.videoRecording) {
-      var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+      const videoElement = this.shadowRoot.querySelector('#videoRecorder');
 
       this.captureUserMedia(function(stream) {
         if (stream) {
@@ -662,7 +662,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       }.bind(this));
 
     } else if (this.audioRecording) {
-      var audioElement = this.shadowRoot.querySelector('#audioRecorder');
+      const audioElement = this.shadowRoot.querySelector('#audioRecorder');
 
       this.captureUserMedia(function(stream) {
         if (stream) {

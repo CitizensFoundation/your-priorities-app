@@ -414,7 +414,7 @@ class YpAppGlobalsLit extends YpBaseElement {
       actor = "-1";
     }
 
-    let logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
+    const logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
 
     console.log(logString);
 
@@ -498,8 +498,8 @@ class YpAppGlobalsLit extends YpBaseElement {
     const cookiearray = strCookies.split(';');
     let sid = '';
     for (let i = 0; i < cookiearray.length; i++) {
-      let name = cookiearray[i].split('=')[0];
-      let value = cookiearray[i].split('=')[1];
+      const name = cookiearray[i].split('=')[0];
+      const value = cookiearray[i].split('=')[1];
       if (name == ' connect.sid')
         sid = value;
     }

@@ -249,7 +249,7 @@ class YpPostLocationLit extends YpBaseElement {
 
   _groupChanged(group) {
     if (group) {
-      var longLat;
+      let longLat;
       if (group.configuration && group.configuration.defaultLocationLongLat &&
         group.configuration.defaultLocationLongLat != "" &&
         group.configuration.defaultLocationLongLat.split(",").length > 1) {

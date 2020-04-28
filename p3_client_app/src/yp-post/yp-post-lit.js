@@ -501,7 +501,7 @@ class YpPostLit extends YpBaseElement {
     }
 
     this.async(function () {
-      var news = this.$$("#postNews");
+      const news = this.$$("#postNews");
       if (news) {
         news.fireResize();
       }
@@ -523,14 +523,14 @@ class YpPostLit extends YpBaseElement {
 */
 
   _updatePostImageCount(event, imageCount) {
-    var tabCounter = this.$$('#tabCountPhotos');
+    const tabCounter = this.$$('#tabCountPhotos');
     if (tabCounter) {
       tabCounter.innerHTML = this.formatNumber(imageCount);
     }
   }
 
   _updateDebateInfo(event, detail) {
-    var tabCounter = this.$$('#tabCountDebate');
+    const tabCounter = this.$$('#tabCountDebate');
     if (tabCounter) {
       tabCounter.innerHTML = this.formatNumber(detail.count);
     }
@@ -579,7 +579,7 @@ class YpPostLit extends YpBaseElement {
   }
 
   _postIdChanged(postId) {
-    var cachedItem = window.appGlobals.cachedPostItem;
+    const cachedItem = window.appGlobals.cachedPostItem;
     if (cachedItem && cachedItem.id==postId) {
       this._setupAjaxUrl();
       this._handleIncomingPostResponse(null, { response: cachedItem });
@@ -638,7 +638,7 @@ class YpPostLit extends YpBaseElement {
 
   _processRecommendation(recommendedPost) {
      if (recommendedPost && this.post) {
-       var postName = recommendedPost.name;
+       const postName = recommendedPost.name;
        if (this.wideWidth) {
          postName = this.truncate(postName, 60);
        } else {
@@ -746,7 +746,7 @@ class YpPostLit extends YpBaseElement {
   }
 
   setupTopHeaderImage(image) {
-    var url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+    const url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
     this.updateStyles({ '--top-area-background-image': url });
   }
 

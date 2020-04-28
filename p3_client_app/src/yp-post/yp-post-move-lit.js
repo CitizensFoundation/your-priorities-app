@@ -71,7 +71,7 @@ class YpPostMoveLit extends YpBaseElement {
 
   _selectGroup(event) {
     this.set('selectedGroupId', event.target.getAttribute('data-args'));
-    var groupName = event.target.getAttribute('data-args-name');
+    const groupName = event.target.getAttribute('data-args-name');
     dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
       dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
     }.bind(this));

@@ -290,7 +290,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
   _getGroupsResponse(event, detail) {
     if (detail.response) {
-      let groups = [];
+      const groups = [];
       groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
       groups = groups.concat(detail.response.groups);
       groups = this._uniqueInDomain(groups, detail.response.domainId);

@@ -768,7 +768,7 @@ class YpFileUploadLit extends YpBaseElement {
       return;
     }
 
-    const aspect;
+    let aspect;
     if (window.innerHeight>window.innerWidth) {
       aspect = "portrait";
     } else {

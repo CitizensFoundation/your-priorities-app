@@ -191,7 +191,7 @@ class YpOrganizationGridLit extends YpBaseElement {
   }
 
   _editOrganization(event) {
-    var organization = JSON.parse(event.target.getAttribute('data-args'));
+    const organization = JSON.parse(event.target.getAttribute('data-args'));
     dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
       dialog._clear();
       dialog.setup(organization, false, null);
@@ -221,8 +221,8 @@ class YpOrganizationGridLit extends YpBaseElement {
   }
 
   _removeFromOrganization(event) {
-    var userId = event.target.getAttribute('data-args');
-    var organizationId = event.target.getAttribute('data-args-org');
+    const userId = event.target.getAttribute('data-args');
+    const organizationId = event.target.getAttribute('data-args-org');
     this.$.removeOrganizationAjax.body = {};
     this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
     this.$.removeOrganizationAjax.generateRequest();

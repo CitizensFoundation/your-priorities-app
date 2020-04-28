@@ -233,7 +233,7 @@ class YpPageLit extends YpBaseElement {
 
   setupTopHeaderImage(image) {
     if (this.wideWidth) {
-      var path;
+      let path;
       if (image) {
         path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
       } else {

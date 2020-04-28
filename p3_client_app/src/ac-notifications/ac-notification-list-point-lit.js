@@ -211,8 +211,8 @@ class AcNotificationListPointLit extends YpBaseElement {
   }
 
   _createQualityStrings() {
-    const helpfuls;
-    const unhelpfuls;
+    let helpfuls;
+    let unhelpfuls;
 
     this.notification.AcActivities.forEach(function (activity) {
       if (activity.type=='activity.point.helpful.new') {
@@ -238,7 +238,7 @@ class AcNotificationListPointLit extends YpBaseElement {
   }
 
   _addWithComma(text, toAdd) {
-    const returnText = "";
+    let returnText = "";
     if (text!='') {
       returnText += text+",";
     }

@@ -9,6 +9,7 @@ import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavio
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { constantCase } from 'change-case';
 
 class YpPostCoverMediaLit extends YpBaseElement {
   static get properties() {
@@ -498,7 +499,7 @@ class YpPostCoverMediaLit extends YpBaseElement {
 
   _isDomainWithOldCategories() {
     // Workaround to support old square category images on Citizens Foundation websites running since 2010
-    var hostname = window.location.hostname;
+    const hostname = window.location.hostname;
     return (hostname.indexOf("betrireykjavik.is") >-1 ||
             hostname.indexOf("betraisland.is") >-1 ||
             hostname.indexOf("yrpri.org") >-1)
@@ -614,7 +615,7 @@ class YpPostCoverMediaLit extends YpBaseElement {
 
   _postVideoPath(post) {
     if (post && post.PostVideos) {
-      var videoURL = this._getVideoURL(post.PostVideos);
+      const videoURL = this._getVideoURL(post.PostVideos);
       this.set('portraitVideo', this._isPortraitVideo(post.PostVideos))
       if (videoURL) {
         this.set('postVideoId', post.PostVideos[0].id);
@@ -629,7 +630,7 @@ class YpPostCoverMediaLit extends YpBaseElement {
 
   _postAudioPath(post) {
     if (post && post.PostAudios) {
-      var audioURL = this._getAudioURL(post.PostAudios);
+      const audioURL = this._getAudioURL(post.PostAudios);
       if (audioURL) {
         this.set('postAudioId', post.PostAudios[0].id);
         return audioURL;
@@ -643,7 +644,7 @@ class YpPostCoverMediaLit extends YpBaseElement {
 
   _postVideoPosterPath(post) {
     if (post && post.PostVideos) {
-      var videoPosterURL = this._getVideoPosterURL(post.PostVideos);
+      const videoPosterURL = this._getVideoPosterURL(post.PostVideos);
       if (videoPosterURL) {
         return videoPosterURL;
       } else {

@@ -703,7 +703,7 @@ class YpAppLit extends YpBaseElement {
   _setupTranslationSystem() {
     console.log("Have started _setupTranslationSystem");
     const hostname = window.location.hostname;
-    const defaultLocale = 'en';
+    let defaultLocale = 'en';
     if (hostname.indexOf('betrireykjavik') > -1) {
       defaultLocale = 'is';
     } else if (hostname.indexOf('betraisland') > -1) {
@@ -725,13 +725,13 @@ class YpAppLit extends YpBaseElement {
       defaultLocale = localeByTld[tld] || 'en';
     }
 
-    const language;
+    let language;
     const storedLocale = localStorage.getItem('yp-user-locale');
     if (storedLocale) {
       defaultLocale = storedLocale;
     }
 
-    const localeFromUrl;
+    let localeFromUrl;
 
     if (window.appGlobals.originalQueryParameters &&
         window.appGlobals.originalQueryParameters["locale"]) {
@@ -1061,7 +1061,7 @@ class YpAppLit extends YpBaseElement {
   _pageChanged(page, oldPage) {
     console.log("Page changed to "+page);
     if (page) {
-      const resolvedPageUrl;
+      let resolvedPageUrl;
       if (page=="view-404") {
         resolvedPageUrl = this.resolveUrl("yp-view-404.html");
       } else if (page==='community_folder') {

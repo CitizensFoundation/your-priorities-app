@@ -72,7 +72,7 @@ class YpCommunityStatsLit extends YpBaseElement {
 
       }
     if (communityFolders) {
-      const counter_posts = 0, counter_groups = 0, counter_users = 0;
+      let counter_posts = 0, counter_groups = 0, counter_users = 0;
       communityFolders.forEach(function (subCommunity) {
         counter_posts += subCommunity.counter_posts;
         counter_groups += subCommunity.counter_groups;

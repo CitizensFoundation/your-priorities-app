@@ -467,7 +467,7 @@ class YpAppUserLit extends YpBaseElement {
 
   updateEndorsementForPost(postId, newEndorsement) {
     if (this.user.Endorsements) {
-      const hasChanged = false;
+      let hasChanged = false;
       for(let i=0; i<this.user.Endorsements.length; i++) {
         if (this.user.Endorsements[i].post_id===postId) {
           if (newEndorsement) {
@@ -497,7 +497,7 @@ class YpAppUserLit extends YpBaseElement {
 
   updatePointQualityForPost(pointId, newPointQuality) {
     if (this.user.PointQualities) {
-      const hasChanged = false;
+      let hasChanged = false;
       for(let i=0; i<this.user.PointQualities.length; i++) {
         if (this.user.PointQualities[i].point_id===pointId) {
           if (newPointQuality) {
@@ -592,7 +592,7 @@ class YpAppUserLit extends YpBaseElement {
     if (detail.response && detail.response!=0) {
       console.debug("_adminRightsResponse 2");
       this.set('adminRights', detail.response);
-      let randomChangeSignal = Math.floor(Math.random() * 10) + 1;
+      const randomChangeSignal = Math.floor(Math.random() * 10) + 1;
       document.dispatchEvent(
         new CustomEvent("lite-signal", {
           bubbles: true,
@@ -624,7 +624,7 @@ class YpAppUserLit extends YpBaseElement {
 
   _updateMembershipsIndex(memberships) {
     if (memberships) {
-      const i;
+      let i;
       this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
       for(i=0; i<memberships.GroupUsers.length; i++){
         this.membershipsIndex.groups[ memberships.GroupUsers[i].id ] = true;

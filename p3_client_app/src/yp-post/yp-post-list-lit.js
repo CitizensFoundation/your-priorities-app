@@ -338,9 +338,9 @@ static get styles() {
 
 
   _scrollOffset(wide, group) {
-    var list = this.$$("iron-list");
+    const list = this.$$("iron-list");
     if (list) {
-      var offset = list.offsetTop;
+      let offset = list.offsetTop;
       offset -= 75;
       if (list.offsetTop>0 && offset>0) {
         console.info("Post list scroll offset: "+offset);
@@ -475,7 +475,7 @@ static get styles() {
 
       this.set('moreToLoad', false);
       this.set('noPosts', false);
-      var objectId, objectType;
+      const objectId, objectType;
 
       if (this.userId) {
         objectId = this.userId + '/posts';
@@ -505,8 +505,8 @@ static get styles() {
   }
 
   _postsResponse(event, detail, sender) {
-    var posts = detail.response.posts;
-    this.set('postsCount', detail.response.totalPostsCount);
+    const posts = detail.response.posts;
+    this .set('postsCount', detail.response.totalPostsCount);
     this.fire('yp-post-count', {
       tabCounterId: this.tabCounterId,
       count: this.postsCount
@@ -515,7 +515,7 @@ static get styles() {
     if (!this.posts) {
       this.set('posts', posts);
     } else {
-      for (var i = 0; i < posts.length; i++) {
+      for (let i = 0; i < posts.length; i++) {
         this.push('posts', posts[i]);
       }
     }
@@ -533,7 +533,7 @@ static get styles() {
     }
 
     this.async(function () {
-      var postFilter = this.$$("#postsFilter");
+      const postFilter = this.$$("#postsFilter");
       if (postFilter) {
         postFilter._updateTitle();
       }
@@ -563,9 +563,9 @@ static get styles() {
   _checkForMultipleLanguages(posts) {
     if (!localStorage.getItem("dontPromptForAutoTranslation") &&
         !sessionStorage.getItem("dontPromptForAutoTranslation")) {
-      var firstLanguage=null;
-      var firstContent=null;
-      var multipleLanguages = false;
+      let firstLanguage=null;
+      let firstContent=null;
+      let multipleLanguages = false;
       posts.forEach(function (post) {
         if (post.language && !multipleLanguages) {
           if (!firstLanguage && post.language!=='??') {
@@ -589,7 +589,7 @@ static get styles() {
 
   _processCategories() {
     if (this.categoryId && this.group) {
-      for (var i = 0; i < this.group.Categories.length; i++) {
+      for (let i = 0; i < this.group.Categories.length; i++) {
         if (this.group.Categories[i].id == this.categoryId) {
           this.selectedCategoryName = this.group.Categories[i].name;
           //this.$.layout.updateFilter();

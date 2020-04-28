@@ -151,7 +151,7 @@ class YpPointCommentLit extends YpBaseElement  {
 
   _reportPoint() {
     window.appGlobals.activity('open', 'point.report');
-    var dialog = dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
+    const dialog = dom(document).querySelector('yp-app').getDialogAsync("apiActionDialog", function (dialog) {
       dialog.setup('/api/points/' + this.point.id + '/report',
         this.t('reportConfirmation'),
         this._onReport.bind(this),

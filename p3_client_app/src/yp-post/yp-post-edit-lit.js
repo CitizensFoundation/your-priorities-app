@@ -463,12 +463,12 @@ class YpPostEditLit extends YpBaseElement {
 */
 
 _floatIfValueOrIE(value) {
-    var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
+    const ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
     return ie11 || value;
   }
 
   _newPointShown(newPost, group) {
-    var hideNewPoint = false;
+    let hideNewPoint = false;
     if (group && group.configuration && group.configuration.hideNewPointOnNewIdea===true) {
       hideNewPoint = true;
     }
@@ -478,7 +478,7 @@ _floatIfValueOrIE(value) {
 
   _customSubmit(value, valueB) {
     if (this.structuredQuestions && this.structuredQuestions.length>0) {
-      var description="", answers="";
+      let description="", answers="";
       for (i=0 ; i<this.structuredQuestions.length; i+=1) {
         description += this.structuredQuestions[i].question;
         if (this.structuredQuestions[i].question && this.structuredQuestions[i].question[this.structuredQuestions[i].question.length-1]!=='?')
@@ -505,12 +505,12 @@ _floatIfValueOrIE(value) {
 
   _structuredQuestions(post, group) {
     if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
-      var structuredQuestions = [];
+      const structuredQuestions = [];
 
-      var questionComponents = group.configuration.structuredQuestions.split(",");
-      for (var i=0 ; i<questionComponents.length; i+=2) {
-        var question = questionComponents[i];
-        var maxLength = questionComponents[i+1];
+      const questionComponents = group.configuration.structuredQuestions.split(",");
+      for (let i=0 ; i<questionComponents.length; i+=2) {
+        const question = questionComponents[i];
+        const maxLength = questionComponents[i+1];
         structuredQuestions.push({
           translatedQuestion: question,
           question: question,
@@ -518,7 +518,7 @@ _floatIfValueOrIE(value) {
         });
       }
       if (!this.newPost && post.public_data.structuredAnswers && post.public_data.structuredAnswers!=="") {
-        var answers = post.public_data.structuredAnswers.split("%!#x");
+        const answers = post.public_data.structuredAnswers.split("%!#x");
         for (i=0 ; i<answers.length; i+=1) {
           if (structuredQuestions[i])
             structuredQuestions[i].value = answers[i];
@@ -551,7 +551,7 @@ _floatIfValueOrIE(value) {
   }
 
   _documentUploaded(event, detail) {
-    var document = JSON.parse(detail.xhr.response);
+    const document = JSON.parse(detail.xhr.response);
     this.set('uploadedDocumentUrl', document.url);
     this.set('uploadedDocumentFilename', document.filename);
   }
@@ -568,15 +568,15 @@ _floatIfValueOrIE(value) {
 
   _updateEmojiBindings() {
     this.async(function () {
-      var description = this.$$("#description");
-      var emojiSelector = this.$$("#emojiSelectorDescription");
+      const description = this.$$("#description");
+      const emojiSelector = this.$$("#emojiSelectorDescription");
       if (description && emojiSelector) {
         emojiSelector.inputTarget = description;
       } else {
         console.warn("Post edit: Can't bind emojis :(");
       }
-      var emojiSelectorPointFor = this.$$("#emojiSelectorPointFor");
-      var pointFor = this.$$("#pointFor");
+      const emojiSelectorPointFor = this.$$("#emojiSelectorPointFor");
+      const pointFor = this.$$("#pointFor");
       if (emojiSelectorPointFor && pointFor) {
         emojiSelectorPointFor.inputTarget = pointFor;
       }
@@ -585,12 +585,12 @@ _floatIfValueOrIE(value) {
 
   _locationHiddenChanged(newValue) {
     this.async(function () {
-      var pages = this.$$("#pages");
+      const pages = this.$$("#pages");
       if (pages) {
         pages.forceSynchronousItemUpdate();
       }
 
-      var paperTabs = this.$$("#paperTabs");
+      const paperTabs = this.$$("#paperTabs");
       if (paperTabs) {
         paperTabs.forceSynchronousItemUpdate();
       }
@@ -633,7 +633,7 @@ _floatIfValueOrIE(value) {
   }
 
   _getTabLength() {
-    var length = 4;
+    let length = 4;
 
     if (!this.newPointShown) {
       length -= 1;
@@ -646,7 +646,7 @@ _floatIfValueOrIE(value) {
   }
 
   _nextTab() {
-    var length = this._getTabLength();
+    const length = this._getTabLength();
 
     if (this.selected<length) {
       this.set('selected', this.selected+1)
@@ -660,7 +660,7 @@ _floatIfValueOrIE(value) {
       this.set('mapActive', false);
     }
 
-    var finalTabNumber = this._getTabLength()-1;
+    const finalTabNumber = this._getTabLength()-1;
 
     if (newValue==finalTabNumber) {
       this.$$("#editDialog").useNextTabAction = false;
@@ -669,13 +669,13 @@ _floatIfValueOrIE(value) {
     }
 
     if (newValue==0) {
-      var nameElement = this.$$("#name");
+      const nameElement = this.$$("#name");
       if (nameElement) {
         nameElement.focus();
       }
     }
     if (newValue==1 && this.newPointShown) {
-      var pointFor = this.$$("#pointFor");
+      const pointFor = this.$$("#pointFor");
       if (pointFor) {
         pointFor.focus();
       }
@@ -696,7 +696,7 @@ _floatIfValueOrIE(value) {
   }
 
   getPositionInArrayFromId(collection, id) {
-    for(var i = 0; i < collection.length; i++) {
+    for(let i = 0; i < collection.length; i++) {
       if (collection[i].id==id) {
         return i;
       }
@@ -724,7 +724,7 @@ _floatIfValueOrIE(value) {
   }
 
   _imageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedHeaderImageId', image.id);
   }
 
@@ -739,7 +739,7 @@ _floatIfValueOrIE(value) {
       if (post.newEndorsement && window.appUser && window.appUser.endorsementPostsIndex) {
         window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
       }
-      var ajax;
+      let ajax;
       if (this.uploadedVideoId) {
         this.post = post;
         ajax = document.createElement('iron-ajax');
@@ -856,7 +856,7 @@ _floatIfValueOrIE(value) {
   setupAfterOpen(params) {
     this._setupGroup(params.group);
     this.async(function () {
-      var nameElement = this.$$("#name");
+      const nameElement = this.$$("#name");
       if (nameElement) {
         nameElement.focus();
       }

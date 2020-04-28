@@ -208,7 +208,7 @@ class YpPagesGridLit extends YpBaseElement {
 
 
   _toLocaleArray(obj) {
-    var array = Object.keys(obj).map(function(key) {
+    const array = Object.keys(obj).map(function(key) {
       return {
         locale: key,
         value: obj[key]
@@ -234,7 +234,7 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _dispatchAjax(ajax, pageId, path) {
-    var pageIdPath;
+    let pageIdPath;
     if (pageId) {
       pageIdPath = "/" + pageId + "/" + path;
     } else {
@@ -266,7 +266,7 @@ class YpPagesGridLit extends YpBaseElement {
 
   _publishPage(event) {
     this.$.updatePageAjax.body = {};
-    var pageId = event.target.getAttribute('data-args');
+    const pageId = event.target.getAttribute('data-args');
     this._dispatchAjax(this.$.updatePageAjax, pageId, "publish_page")
   }
 
@@ -277,7 +277,7 @@ class YpPagesGridLit extends YpBaseElement {
 
   _unPublishPage(event) {
     this.$.updatePageAjax.body = {};
-    var pageId = event.target.getAttribute('data-args');
+    const pageId = event.target.getAttribute('data-args');
     this._dispatchAjax(this.$.updatePageAjax, pageId, "un_publish_page")
   }
 
@@ -288,7 +288,7 @@ class YpPagesGridLit extends YpBaseElement {
 
   _deletePage(event) {
     this.$.deletePageAjax.body = {};
-    var pageId = event.target.getAttribute('data-args');
+    const pageId = event.target.getAttribute('data-args');
     this._dispatchAjax(this.$.deletePageAjax, pageId, "delete_page")
   }
 
@@ -299,7 +299,7 @@ class YpPagesGridLit extends YpBaseElement {
 
   _addLocale(event) {
     if (this.newLocaleValue && this.newLocaleValue.length>1) {
-      var pageId = event.target.getAttribute('data-args');
+      const pageId = event.target.getAttribute('data-args');
       this.$.updatePageAjax.body = {
         locale: this.newLocaleValue.toLowerCase(),
         content: '',

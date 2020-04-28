@@ -223,7 +223,7 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   _commentsResponse(event, detail) {
-    var comment = detail.response;
+    const comment = detail.response;
     this.set('comments', comment);
     if (comment && comment.length>0) {
       this.$$("#list").scrollToIndex(comment.length-1);

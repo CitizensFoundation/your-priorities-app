@@ -435,7 +435,7 @@ class YpPostActionsLit extends YpBaseElement {
   _updateEndorsements(post) {
     this.set('isEndorsed', false);
     if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
-      var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
+      const thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
       if (thisPostsEndorsement)
         this._setEndorsement(thisPostsEndorsement.value);
     }
@@ -514,8 +514,8 @@ class YpPostActionsLit extends YpBaseElement {
 
   _endorseResponse(event, detail) {
     this._enableVoting();
-    var endorsement = detail.response.endorsement;
-    var oldEndorsementValue = detail.response.oldEndorsementValue;
+    const endorsement = detail.response.endorsement;
+    const oldEndorsementValue = detail.response.oldEndorsementValue;
     this._setEndorsement(endorsement.value);
     window.appUser.updateEndorsementForPost(this.post.id, endorsement);
     if (oldEndorsementValue) {

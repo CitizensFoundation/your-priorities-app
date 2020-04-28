@@ -170,7 +170,7 @@ class AcNotificationListGenaralItemLit extends YpBaseElement {
   }
 
   _addWithComma(text, toAdd) {
-    const returnText = "";
+    let returnText = "";
     if (text!='') {
       returnText += text+",";
     }

@@ -155,7 +155,7 @@ class YpPointActionsLit extends YpBaseElement {
 
   _updateQualities() {
     if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
-      var thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
+      const thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
       if (thisPointQuality) {
         this._setPointQuality(thisPointQuality.value);
         if (thisPointQuality.value>0) {
@@ -197,8 +197,8 @@ class YpPointActionsLit extends YpBaseElement {
 
   _pointQualityResponse(event, detail) {
     this.set('allDisabled', false);
-    var pointQuality = detail.response.pointQuality;
-    var oldPointQualityValue = detail.response.oldPointQualityValue;
+    const pointQuality = detail.response.pointQuality;
+    const oldPointQualityValue = detail.response.oldPointQualityValue;
     this._setPointQuality(pointQuality.value);
     window.appUser.updatePointQualityForPost(this.point.id, pointQuality);
     if (oldPointQualityValue) {

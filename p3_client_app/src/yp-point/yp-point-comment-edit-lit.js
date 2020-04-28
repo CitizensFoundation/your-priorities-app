@@ -140,7 +140,7 @@ class YpPointCommentEditLit extends YpBaseElement {
   }
 
   _sendComment() {
-    var body;
+    let body;
     if (this.comment.content && this.comment.content.length>0) {
       if (this.point) {
         body = { point_id: this.point.id };
