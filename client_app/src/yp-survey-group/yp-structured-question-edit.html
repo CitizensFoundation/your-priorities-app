@@ -19,6 +19,7 @@
     <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
+        font-size: 16px;
       }
 
       :host{
@@ -28,9 +29,10 @@
       }
 
       .question {
-        margin-top: 16px;
-        margin-bottom: 16px;
+        margin-top: 32px;
+        margin-bottom: 8px;
         color: #000;
+        font-size: 18px;
       }
 
       hr {
@@ -40,8 +42,7 @@
       }
 
       .general {
-        font-size: 18px;
-        color: #111;
+        color: #000;
       }
 
       .noBottomMargin {
@@ -62,6 +63,41 @@
       paper-checkbox {
         margin-bottom: 16px;
       }
+
+      paper-input, paper-textarea {
+        --paper-input-container-label: {
+          color: #000;
+          font-size: 18px;
+        }
+      }
+
+      paper-input {
+        margin-bottom: 32px;
+      }
+
+      paper-radio-group {
+        margin-top: 16px;
+        margin-bottom: 16px;
+        font-size: 16px;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-label-color: #333;
+        font-size: 16px;
+      }
+
+      .checkBoxesLabel {
+        margin-bottom: 24px;
+      }
+
+      .radiosLabel {
+        margin-bottom: 16px;
+        margin-top: 48px;
+      }
+
+      paper-checkbox {
+        --paper-checkbox-label-color: #333;
+      }
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
@@ -80,7 +116,7 @@
       <paper-input id="structuredQuestion_[[index]]"
                    value="{{question.value}}"
                    class="numberInput"
-                   char-counter
+                   char-counter--paper-radio-button-label-color
                    allowed-pattern="[0-9]"
                    always-float-label="[[_floatIfValueOrIE(question.value)]]"
                    label="[[_getTextWithIndex(question)]]"
@@ -112,7 +148,7 @@
     </template>
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
-      <div class="question general">[[question.text]]</div>
+      <div class="question general" inner-h-t-m-l="[[question.text]]"></div>
     </template>
 
     <template is="dom-if" if="[[_isSeparator(question)]]">
@@ -120,7 +156,7 @@
     </template>
 
     <template is="dom-if" if="[[_isRadios(question)]]">
-      <div class="question general">[[_getTextWithIndex(question)]]</div>
+      <div class="question general radiosLabel" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
       <paper-radio-group required$="[[question.required]]" data-type="radios" on-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
           <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
@@ -130,7 +166,7 @@
     </template>
 
     <template is="dom-if"  if="[[_isCheckboxes(question)]]">
-      <div class="question general">[[_getTextWithIndex(question)]]</div>
+      <div class="question general checkBoxesLabel" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
       <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
         <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index="buttonIndex">
           <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.text]]</paper-checkbox>
