@@ -366,7 +366,7 @@
             }.bind(this));
           } else if (this.question.type.toLowerCase()==="checkboxes") {
             var checkboxValues = value.split(',');
-            for (var i = 0; i < item.children.length; i++) {
+            for (var i = 0; i < item.children.length-1; i++) {
               if (item.children[i]) {
                 var checkboxSubId = item.children[i].id.split("_")[2];
                 var selectedCheckbox = this.question.checkboxes[checkboxSubId];
