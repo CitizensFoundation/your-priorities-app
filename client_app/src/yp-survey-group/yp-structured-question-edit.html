@@ -501,13 +501,19 @@
 
       _structuredAnsweredChanged (structuredAnswers) {
         if (structuredAnswers && this.question.uniqueId) {
-          structuredAnswers.forEach(function (answer) {
-            if (this.question.uniqueId===answer.uniqueId) {
-              this.async(function () {
-                this.setAnswer(answer.value);
-              },100);
-            }
-          }.bind(this));
+          var BreakException = {};
+          try {
+            structuredAnswers.forEach(function (answer) {
+              if (this.question.uniqueId===answer.uniqueId) {
+                this.async(function () {
+                  this.setAnswer(answer.value);
+                },100);
+                throw BreakException;
+              }
+            }.bind(this));
+          } catch (e) {
+            if (e !== BreakException) throw e;
+          }
         }
       }
 
@@ -518,15 +524,9 @@
 
         this.async(function () {
           if (this.question.questionIndex === 1) {
-            var item = this.$$("#structuredQuestion_"+this.index);
-            if (item) {
-              debugger;
-              item.focus();
-            } else {
-              console.warn("Cant find item to focus");
-            }
+            this.focus();
           }
-        }, 5000);
+        }, 500);
 
         super.ready();
       }

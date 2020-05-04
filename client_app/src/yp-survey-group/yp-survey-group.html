@@ -52,6 +52,11 @@
         margin-right: 32px;
         max-width: 800px;
       }
+
+      .surveyCompleted {
+        font-size: 28px;
+        margin: 128px;
+      }
     </style>
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -98,13 +103,14 @@
     </template>
 
     <template is="dom-if" if="[[surveyCompleted]]">
-      <div class="surveyCompleted">
-        <template is="dom-if" if="[[group.configuration.customThankYouTextNewPosts]]">
-          <yp-magic-text id="customThankYouTextNewPostsId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customThankYouTextNewPosts]]"
-                         content-language="[[group.language]]"
+      <div class="surveyCompleted layout vertical center-center">
+        [[t('thankYouForCompletingTheSurvey')]]
+        <template is="dom-if" if="[[surveyGroup.configuration.customThankYouTextNewPosts]]">
+          <yp-magic-text id="customThankYouTextNewPostsId" hidden content-id="[[surveyGroup.id]]" text-only content="[[surveyGroup.configuration.customThankYouTextNewPosts]]"
+                         content-language="[[surveyGroup.language]]"
                          text-type="customThankYouTextNewPosts"></yp-magic-text>
         </template>
-        <template is="dom-if" if="[[group.configuration.customThankYouTextNewPosts]]">
+        <template is="dom-if" if="[[!surveyGroup.configuration.customThankYouTextNewPosts]]">
           [[t('thankYouForCompletingTheSurvey')]]
         </template>
       </div>
