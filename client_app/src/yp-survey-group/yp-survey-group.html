@@ -77,8 +77,9 @@
       <template is="dom-if" if="[[structuredQuestions]]">
         <div class="layout vertical center-center">
           <div class="surveyContainer">
-            <template is="dom-repeat" items="[[structuredQuestions]]" as="question" initial-count="4">
+            <template is="dom-repeat" items="[[structuredQuestions]]" as="question" initial-count="4" on-rendered-item-count-changed="_renderCountChanged">
               <yp-structured-question-edit index="[[index]]"
+                                           id="structuredQuestionContainer_[[index]]"
                                            on-changed="_saveState"
                                            question="[[question]]"
                                            on-hide-to-question="_hideToQuestion">
@@ -169,6 +170,49 @@
         '_routeIdChanged(idRouteData.id)'
       ],
 
+      listeners: {
+        'yp-skip-to-unique-id': '_skipToId',
+        'yp-open-to-unique-id': '_openToId',
+        'yp-goto-next-index': '_goToNextIndex',
+        'yp-answer-content-changed': '_saveState'
+      },
+
+      _openToId: function (event, detail) {
+        debugger;
+        this._skipToId(event, detail, true);
+      },
+
+      _skipToId: function (event, detail, showItems) {
+        var firstElementPos = this.liveUniqueIds.indexOf(detail.fromId);
+
+        if (firstElementPos>-1) {
+          firstElementPos+=1;
+          for (i=firstElementPos; i<this.liveUniqueIds.length; i++) {
+            if (this.liveUniqueIds[i]==detail.toId) {
+              break;
+            } else {
+              var elementIndex = this.uniqueIdsToElementIndexes[this.liveUniqueIds[i]];
+              if (showItems===true) {
+                this.$$("#structuredQuestionContainer_"+elementIndex).show();
+              } else {
+                this.$$("#structuredQuestionContainer_"+elementIndex).hide();
+              }
+            }
+          }
+        } else {
+          console.error("Can't find id to skip to for survey");
+        }
+      },
+
+      _goToNextIndex: function (event, detail) {
+        var currentPos = this.liveQuestionIds.indexOf(detail.currentIndex);
+        if (currentPos<this.liveQuestionIds.length-1) {
+          var item = this.$$("#structuredQuestionContainer_"+this.liveQuestionIds[currentPos+1]);
+          item.scrollIntoView({block: "center", inline: "center", behavior: 'smooth'});
+          item.focus();
+        }
+      },
+
       _serializeAnswers: function () {
         var answers = [];
         this.structuredQuestions.forEach(function (questionData, index) {
@@ -181,7 +225,7 @@
               answers.push(this._getSelectedCheckboxes(questionElement));
             } else if (questions.isDropdown) {
               answers.push(this._getSelectedDropdown(questionElement));
-            } else if (questions.isText) {
+            } else if (questions.isTextField || questions.isTextArea || questions.isNumberField) {
               answers.push({uniqueId: question.uniqueId, value: questionElement.value});
             }
           }
@@ -250,10 +294,6 @@
         }
       },
 
-      _hideToQuestion: function (event, detail) {
-
-      },
-
       _isIpad: function () {
         return /iPad/.test(navigator.userAgent) && !window.MSStream;
       },
@@ -286,8 +326,53 @@
         this.set('structuredQuestions', detail.response.surveyGroup.configuration.structuredQuestionsJson);
         this.set('surveyGroup.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.surveyGroup.id, this.surveyGroup.configuration));
         this.refresh();
+        this.async(function () {
+          this.liveQuestionIds = [];
+          this.liveUniqueIds = [];
+          this.liveUniqueIdsAll = [];
+
+          this.uniqueIdsToElementIndexes = {};
+          this.structuredQuestions.forEach(function (question, index) {
+            if (question.type.toLowerCase()==="textfield" ||
+              question.type.toLowerCase()==="textarea" ||
+              question.type.toLowerCase()==="numberfield" ||
+              question.type.toLowerCase()==="checkboxes" ||
+              question.type.toLowerCase()==="radios" ||
+              question.type.toLowerCase()==="dropdown"
+            ) {
+              this.liveQuestionIds.push(index);
+              this.uniqueIdsToElementIndexes[question.uniqueId] = index;
+              this.liveUniqueIds.push(question.uniqueId);
+              this.liveUniqueIdsAll.push({uniqueId: question.uniqueId, atIndex: index});
+            }
+          }.bind(this));
+        });
       },
 
+      _setFirstQuestionInFocus: function () {
+        var firstQuestion = this.$$("#structuredQuestionContainer_"+this.liveQuestionIds[0]);
+        if (firstQuestion) {
+          firstQuestion.focus();
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _renderCountChanged: function (event, detail) {
+        if (!this.hasStartedRender) {
+          this.hasStartedRender = true;
+          this.async(function () {
+            if (this.liveQuestionIds) {
+              if (!this._setFirstQuestionInFocus()) {
+                this.async(function () {
+                  this._setFirstQuestionInFocus();
+                }, 5000)
+              }
+            }
+          }, 3000)
+        }
+      },
       _useHardBack: function (configuration) {
         if (configuration && configuration.customBackURL) {
           var backUrl = configuration.customBackURL;

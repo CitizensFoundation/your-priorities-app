@@ -116,6 +116,10 @@
           width: 50%;
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
@@ -124,8 +128,9 @@
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
                       label="[[_getTextWithIndex(question)]]"
                       char-counter
+                      on-keypress="_keyPressed"
                       half-width-desktop$="[[question.halfWidthDesktop]]"
-                      on-value-changed="_resizeScrollerIfNeeded"
+                      on-value-changed="_debounceChangeEvent"
                       required$="[[question.required]]"
                       maxlength="[[question.maxLength]]">
       </paper-input>
@@ -138,9 +143,10 @@
                    char-counter--paper-radio-button-label-color
                    allowed-pattern="[0-9]"
                    half-width-desktop$="[[question.halfWidthDesktop]]"
+                   on-keypress="_keyPressed"
                    always-float-label="[[_floatIfValueOrIE(question.value)]]"
                    label="[[_getTextWithIndex(question)]]"
-                   on-value-changed="_resizeScrollerIfNeeded"
+                   on-value-changed="_debounceChangeEvent"
                    required$="[[question.required]]"
                    maxlength="[[question.maxLength]]">
       </paper-input>
@@ -150,11 +156,12 @@
       <paper-textarea id="structuredQuestion_[[index]]"
                       data-type="text"
                       value="{{question.value}}"
+                      on-keypress="_keyPressed"
                       minlength="2"
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
                       label="[[_getTextWithIndex(question)]]"
                       char-counter
-                      on-value-changed="_resizeScrollerIfNeeded"
+                      on-value-changed="_debounceChangeEvent"
                       rows="3"
                       max-rows="5"
                       maxrows="5"
@@ -179,20 +186,20 @@
     </template>
 
     <template is="dom-if" if="[[_isRadios(question)]]">
-      <div class="question general radiosLabel" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+      <div class="question general radiosLabel" id="structuredQuestionIntro_[[index]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
-      <paper-radio-group required$="[[question.required]]" data-type="radios" on-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
-          <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
+      <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
+          <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index-as="buttonIndex">
             <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.text]]</paper-radio-button>
           </template>
       </paper-radio-group>
     </template>
 
     <template is="dom-if"  if="[[_isCheckboxes(question)]]">
-      <div class="question general checkBoxesLabel" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+      <div id="structuredQuestionIntro_[[index]]" class="question general checkBoxesLabel" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
       <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
-        <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index="buttonIndex">
-          <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.text]]</paper-checkbox>
+        <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index-as="buttonIndex">
+          <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-changed="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
         </template>
       </div>
     </template>
@@ -230,6 +237,26 @@
         }
       }
 
+      _keyPressed(event) {
+        if (event.which == 13 || event.keyCode == 13) {
+          this.fire('yp-goto-next-index', { currentIndex: this.index });
+        }
+      }
+
+      _sendDebouncedChange () {
+        if (!this.debunceChangeEventTimer) {
+          this.debunceChangeEventTimer = this.async(function () {
+            this.fire('yp-answer-content-changed');
+            this.debunceChangeEventTimer = null;
+          }, 2000);
+        }
+      }
+
+      _debounceChangeEvent (event, detail) {
+        event.stopPropagation();
+        this._sendDebouncedChange();
+      }
+
       _getTextWithIndex (question) {
         return question.questionIndex+". "+question.text;
       }
@@ -243,7 +270,8 @@
       }
 
       _textWithLinks (question) {
-        return linkifyStr(question.text);
+        var a = linkifyHtml(question.text);
+        return a;
       }
 
       _resizeScrollerIfNeeded () {
@@ -274,6 +302,35 @@
         }
       }
 
+      focus () {
+        if (this.question.type.toLowerCase()==="textfield" ||
+          this.question.type.toLowerCase()==="textarea" ||
+          this.question.type.toLowerCase()==="numberfield"
+        ) {
+          var item = this.$$("#structuredQuestion_"+this.index);
+          item.focus();
+        }
+      }
+
+      hide () {
+        var item = this.$$("#structuredQuestion_"+this.index);
+        item.hidden = true;
+
+        var introItem = this.$$("#structuredQuestionIntro_"+this.index);
+        if (introItem) {
+          introItem.hidden = true;
+        }
+      }
+
+      show () {
+        var item = this.$$("#structuredQuestion_"+this.index);
+        item.hidden = false;
+        var introItem = this.$$("#structuredQuestionIntro_"+this.index);
+        if (introItem) {
+          introItem.hidden = false;
+        }
+      }
+
       _openSubQuestion() {
         this.dispatchEvent(new CustomEvent('yp-open-sub-question', { bubbles: true, composed: true, detail: this.question.id }));
       }
@@ -283,16 +340,28 @@
       }
 
       _radioChanged(event, detail) {
-        if (this.question.skipIfNo===true && detail.name==="yes") {
-          this._openSubQuestion();
-        } else if (this.question.skipIfNo===true && detail.name==="no") {
-          this._closeSubQuestion(itemId);
-        }
+        event.stopPropagation();
+        this._sendDebouncedChange();
 
-        if (this.question.skipIfYes===true && detail.name==="no") {
-          this._openSubQuestion();
-        } else if (this.question.skipIfNo===true && detail.name==="yes") {
-          this._closeSubQuestion();
+        var radioSubId = detail.value.split("_")[2];
+
+        var selectedRadio = this.question.radioButtons[radioSubId];
+
+        if (selectedRadio.skipTo) {
+          this.fire('yp-skip-to-unique-id', { fromId: this.question.uniqueId, toId: selectedRadio.skipTo });
+        } else {
+          this.fire('yp-goto-next-index', { currentIndex: this.index });
+          var hasSkipToId;
+
+          this.question.radioButtons.forEach(function (button) {
+            if (button.skipTo) {
+              hasSkipToId = button.skipTo;
+            }
+          }.bind(this));
+
+          if (hasSkipToId) {
+            this.fire('yp-open-to-unique-id', { fromId: this.question.uniqueId, toId: hasSkipToId });
+          }
         }
       }
 
