@@ -87,7 +87,7 @@
               </yp-structured-question-edit>
             </template>
             <div class="layout horizontal center-center submitSpinnerContainer">
-              <yp-ajax large-spinner id="submitAjax" method="POST" on-response="_surveySubmitResponse"></yp-ajax>
+              <yp-ajax large-spinner id="submitAjax" method="POST" iron-method="POST" on-response="_surveySubmitResponse"></yp-ajax>
             </div>
             <div class="layout horizontal center-center" hidden$="[[submitHidden]]">
               <paper-button id="submitButton" raised on-tap="_submit">[[t('submitSurvey')]]</paper-button>
@@ -246,8 +246,9 @@
       _submit: function () {
         this._serializeAnswers();
         var submitAjax = this.$$("#submitAjax");
-        submitAjax.url = "/group/"+this.surveyGroup.id+"/survey";
-        submitAjax.body = {structuredAnswers: this.structuredAnswers };
+        submitAjax.url = "/api/groups/"+this.surveyGroup.id+"/survey";
+        submitAjax.method = "POST";
+        submitAjax.body = { structuredAnswers: this.structuredAnswers };
         submitAjax.generateRequest();
       },
 
