@@ -56,6 +56,8 @@
 <link rel="import" href="yp-app-swipe-behavior.html">
 
 <link rel="import" href="../yp-app-globals/yp-sw-update-toast.html">
+<link rel="import" href="../yp-survey-group/yp-survey-group.html">
+
 
 <dom-module id="yp-app">
 
@@ -385,6 +387,7 @@
           <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
           <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
           <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
+          <yp-survey-group id="surveyPage" name="survey" id-route$="[[surveySubRoute]]" on-change-header="onChangeHeader"></yp-survey-group>
           <yp-view-404 name="view-404"></yp-view-404>
         </iron-pages>
 
@@ -429,6 +432,7 @@
         groupSubRoute: Object,
         postSubRoute: Object,
         userSubRoute: Object,
+        surveySubRoute: Object,
 
         userDrawerOpened: {
           type: Boolean,
@@ -916,6 +920,11 @@
             this.set('userSubRoute', this.subRoute);
             if (this.$$("#userPage") && typeof this.$$("#userPage").refresh !== "undefined") {
               this.$$("#userPage").refresh();
+            }
+          } else if (route.path.indexOf('survey') > -1) {
+            this.set('surveySubRoute', this.subRoute);
+            if (this.$$("#surveyPage") && typeof this.$$("#surveyPage").refresh !== "undefined") {
+              this.$$("#surveyPage").refresh();
             }
           }
         });

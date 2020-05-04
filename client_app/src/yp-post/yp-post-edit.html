@@ -25,7 +25,7 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="yp-post-location.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
-<link rel="import" href="yp-structured-question-edit.html">
+<link rel="import" href="../yp-survey-group/yp-structured-question-edit.html">
 
 <dom-module id="yp-post-edit">
   <template>
@@ -145,6 +145,11 @@
         .uploadSection {
           max-width: 100%;
         }
+
+        .videoCam {
+          --iron-icon-height: 15px;
+          --iron-icon-width: 15px;
+        }
       }
 
       .postCoverVideoInfo {
@@ -168,6 +173,15 @@
 
       paper-tabs[title-disabled] {
         margin-bottom: 24px;
+      }
+
+      .videoCamIcon {
+        margin-left: 6px;
+        margin-bottom: 2px
+      }
+
+      .mediaTab {
+        vertical-align: center;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -195,7 +209,14 @@
           <paper-tab>[[t('post.location')]]</paper-tab>
         </template>
         <template is="dom-if" if="[[!mediaHidden]]" restamp>
-          <paper-tab>[[t('media')]]</paper-tab>
+          <paper-tab>
+              <div>
+                [[t('media')]]
+              </div>
+              <div class="videoCamIcon">
+                <iron-icon class="videoCam" icon="videocam"></iron-icon>
+              </div>
+          </paper-tab>
         </template>
       </paper-tabs>
 

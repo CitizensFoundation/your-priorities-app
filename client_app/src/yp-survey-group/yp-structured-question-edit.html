@@ -63,6 +63,7 @@
 
     <template is="dom-if" if="[[_isTextfield(question)]]">
       <paper-textarea id="structuredQuestion_[[index]]"
+                      data-type="text"
                       value="{{question.value}}"
                       minlength="2"
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
@@ -92,7 +93,7 @@
     <template is="dom-if" if="[[_isRadios(question)]]">
       <div class="question general noBottomMargin">[[question.text]]</div>
 
-      <paper-radio-group required$="[[!question.notRequired]]" on-changed="_radioChanged" id="structuredQuestionRatio_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class="radioYesNo layout horizontal">
+      <paper-radio-group required$="[[!question.notRequired]]" data-type="radios" on-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class="radioYesNo layout horizontal">
         <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
           <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.text]]</paper-radio-button>
         </template>
@@ -101,13 +102,15 @@
 
     <template is="dom-if"  if="[[_isCheckboxes(question)]]">
       <div class="question general" style="margin-top: 48px;margin-bottom:0">[[question.text]]</div>
-      <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index="buttonIndex">
-        <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.text]]</paper-checkbox>
-      </template>
+      <div id="structuredQuestion_[[index]]" data-type="checkboxes">
+        <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index="buttonIndex">
+          <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.text]]</paper-checkbox>
+        </template>
+      </div>
     </template>
 
     <template is="dom-if" if="[[_isDropDown(question)]]">
-      <paper-dropdown-menu  id="structuredQuestionDropdown_[[index]]" label="[[question.text]]" required$="[[!question.notRequired]]">
+      <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[question.text]]" required$="[[!question.notRequired]]">
         <paper-listbox slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
             <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
@@ -139,15 +142,6 @@
         }
       }
 
-      _getValidationElement () {
-        var validationElement=null;
-        if (this.$$("#structuredQuestion_"+this.index)) {
-          return this.$$("#structuredQuestion_"+this.index);
-        } else {
-          return null;
-        }
-      }
-
       _resizeScrollerIfNeeded () {
         this.fire('resize-scroller');
       }
@@ -158,17 +152,20 @@
       }
 
       validate() {
-        if (this.$$("#structuredQuestionDropdown_"+this.index)) {
-          return true; // DO something if required
-        }  else if (this.$$("#structuredQuestionRatio_"+this.index)) {
-          return true; // DO something if required
-        } else {
-          var validationElement = this._getValidationElement();
-
-          if (validationElement) {
-            return  validationElement.validate();
+        var liveQuestion = this.$$("#structuredQuestion_"+this.index);
+        if (liveQuestion) {
+          if (liveQuestion.dataset.type==="dropdown") {
+            return true; // DO something if required
+          }  else if (liveQuestion.dataset.type==="radios") {
+            return true; // DO something if required
+          } else if (liveQuestion.dataset.type==="checkboxes") {
+            return true; // DO something if required
           } else {
-            return true;
+            if (liveQuestion) {
+              return liveQuestion.validate();
+            } else {
+              return true;
+            }
           }
         }
       }
