@@ -47,10 +47,26 @@
         height: 90px;
       }
 
+
       .surveyContainer {
         margin-left: 32px;
         margin-right: 32px;
         max-width: 800px;
+      }
+
+      @media (max-width: 800px) {
+         yp-structured-question-edit {
+           margin-left: 16px;
+           padding-left: 0;
+           padding-right: 0;
+           margin-right: 16px;
+         }
+
+        .surveyContainer {
+          margin-left: 0;
+          margin-right: 0;
+          max-width: 100%;
+        }
       }
 
       .surveyCompleted {
