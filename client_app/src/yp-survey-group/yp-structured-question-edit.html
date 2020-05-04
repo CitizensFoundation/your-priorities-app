@@ -31,6 +31,7 @@
         margin-bottom: 8px;
         color: #000;
         font-size: 18px;
+        line-height: 1.5;
       }
 
       hr {
@@ -95,7 +96,7 @@
 
       paper-checkbox {
         --paper-checkbox-label-color: #333;
-        margin-left: 12px;
+        margin-left: 42px;
         margin-bottom: 24px;
       }
 
@@ -125,6 +126,17 @@
         font-size: 26px;
         font-weight: bold;
         line-height: 1.5;
+      }
+
+      .header[is-first] {
+        background-color: var(--accent-color);
+        color: #FFF;
+        font-size: 32px;
+        padding: 24px;
+      }
+
+      paper-radio-button {
+        margin-left: 24px;
       }
     </style>
 
@@ -177,7 +189,7 @@
     </template>
 
     <template is="dom-if" if="[[_isTextHeader(question)]]">
-      <div class="header" is-not-first$="[[index]]">[[question.text]]</div>
+      <div class="header" is-not-first$="[[index]]" is-first$="[[!index]]">[[question.text]]</div>
     </template>
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
