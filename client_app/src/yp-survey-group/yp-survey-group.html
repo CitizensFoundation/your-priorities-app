@@ -77,7 +77,7 @@
       <template is="dom-if" if="[[structuredQuestions]]">
         <div class="layout vertical center-center">
           <div class="surveyContainer">
-            <template is="dom-repeat" items="[[structuredQuestions]]" as="question" initial-count="4" on-dom-change='_handleDomChangeEvent'>
+            <template is="dom-repeat" items="[[structuredQuestions]]" as="question" initial-count="5">
               <yp-structured-question-edit index="[[index]]"
                                            id="structuredQuestionContainer_[[index]]"
                                            structured-answers="[[initiallyLoadedAnswers]]"
