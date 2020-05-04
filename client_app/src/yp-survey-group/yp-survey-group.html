@@ -88,7 +88,7 @@
             <div class="layout horizontal center-center submitSpinnerContainer">
               <yp-ajax large-spinner id="submitAjax" method="POST" on-response="_surveySubmitResponse"></yp-ajax>
             </div>
-            <div class="layout horizontal center-center">
+            <div class="layout horizontal center-center" hidden$="[[submitHidden]]">
               <paper-button id="submitButton" raised on-tap="_submit">[[t('submitSurvey')]]</paper-button>
             </div>
           </div>
@@ -163,6 +163,11 @@
         structuredAnswers: {
           type: Array,
           value: null
+        },
+
+        submitHidden: {
+          type: Boolean,
+          value: true
         }
       },
 
@@ -178,7 +183,6 @@
       },
 
       _openToId: function (event, detail) {
-        debugger;
         this._skipToId(event, detail, true);
       },
 
@@ -215,19 +219,10 @@
 
       _serializeAnswers: function () {
         var answers = [];
-        this.structuredQuestions.forEach(function (questionData, index) {
-          var questionElement = this.$$("#structuredQuestion_"+index);
+        this.liveQuestionIds.forEach(function (liveIndex) {
+          var questionElement = this.$$("#structuredQuestionContainer_"+liveIndex);
           if (questionElement) {
-            var question = questionElement.question;
-            if (question.isRadios) {
-              answers.push(this._getSelectedRadios(questionElement));
-            } else if (questions.isCheckboxes) {
-              answers.push(this._getSelectedCheckboxes(questionElement));
-            } else if (questions.isDropdown) {
-              answers.push(this._getSelectedDropdown(questionElement));
-            } else if (questions.isTextField || questions.isTextArea || questions.isNumberField) {
-              answers.push({uniqueId: question.uniqueId, value: questionElement.value});
-            }
+            answers.push(questionElement.getAnswer());
           }
         }.bind(this));
         this.structuredAnswers = answers;
@@ -236,27 +231,12 @@
       _deserializeAnswers: function () {
         var answersHash = {};
         this.structuredAnswers.forEach(function (answer) {
-          answersHash[answer.uniqueId]=answer;
-        }).bind(this);
-
-        this.structuredQuestions.forEach(function (questionData, index) {
-          var questionElement = this.$$("#structuredQuestion_"+index);
+          var elementIndex = this.uniqueIdsToElementIndexes[answer.uniqueId];
+          var questionElement = this.$$("#structuredQuestionContainer_"+elementIndex);
           if (questionElement) {
-            var question = questionElement.question;
-            var answer = answersHash[question.uniqueId];
-            if (answer) {
-              if (question.isRadios) {
-                this._setSelectedRadios(questionElement, answer);
-              } else if (questions.isCheckboxes) {
-                this._setSelectedCheckboxes(questionElement, answer);
-              } else if (questions.isDropdown) {
-                this._setSelectedDropdown(questionElement, answer);
-              } else if (questions.isText) {
-                questionElement.value = answer.value;
-              }
-            } else {
-              console.warn("No answer for question, maybe questions have been updated");
-            }
+            questionElement.setAnswer(answer.value);
+          } else {
+            console.warn("Can't find question to answer");
           }
         }.bind(this));
       },
@@ -277,9 +257,12 @@
         submitAjax.generateRequest();
       },
 
-      _saveState: function () {
-        this._serializeAnswers();
-        localStorage.setItem("yp-survey-response-for-"+this.surveyGroup.id, JSON.stringify(this.structuredAnswers));
+      _saveState: function (event, detail) {
+        if (detail && detail.value && (detail.value!=="" || detail.value>1)) {
+          this.set('submitHidden', false);
+          this._serializeAnswers();
+          localStorage.setItem("yp-survey-response-for-"+this.surveyGroup.id, JSON.stringify(this.structuredAnswers));
+        }
       },
 
       _clearState: function () {
@@ -346,6 +329,9 @@
               this.liveUniqueIdsAll.push({uniqueId: question.uniqueId, atIndex: index});
             }
           }.bind(this));
+          this.async(function () {
+            this._checkAndLoadState();
+          }, 5000);
         });
       },
 

@@ -190,7 +190,7 @@
 
       <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
           <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index-as="buttonIndex">
-            <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.text]]</paper-radio-button>
+            <paper-radio-button id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
           </template>
       </paper-radio-group>
     </template>
@@ -199,7 +199,7 @@
       <div id="structuredQuestionIntro_[[index]]" class="question general checkBoxesLabel" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
       <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
         <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index-as="buttonIndex">
-          <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-changed="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
+          <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
         </template>
       </div>
     </template>
@@ -243,10 +243,10 @@
         }
       }
 
-      _sendDebouncedChange () {
+      _sendDebouncedChange (detail) {
         if (!this.debunceChangeEventTimer) {
           this.debunceChangeEventTimer = this.async(function () {
-            this.fire('yp-answer-content-changed');
+            this.fire('yp-answer-content-changed', detail);
             this.debunceChangeEventTimer = null;
           }, 2000);
         }
@@ -254,7 +254,7 @@
 
       _debounceChangeEvent (event, detail) {
         event.stopPropagation();
-        this._sendDebouncedChange();
+        this._sendDebouncedChange(detail);
       }
 
       _getTextWithIndex (question) {
@@ -312,6 +312,74 @@
         }
       }
 
+      getAnswer () {
+        var item = this.$$("#structuredQuestion_"+this.index);
+        var value = null;
+
+        if (this.question.type.toLowerCase()==="textfield" ||
+          this.question.type.toLowerCase()==="textarea" ||
+          this.question.type.toLowerCase()==="numberfield"
+        ) {
+          value = item.value;
+        } else if (this.question.type.toLowerCase()==="radios") {
+          if (item.selected) {
+            var selectedRadio = null;
+            this.question.radioButtons.forEach(function (button) {
+              if (button.text===item.selected) {
+                selectedRadio = button;
+              }
+            }.bind(this.validate()));
+            value = selectedRadio.text
+          }
+        } else if (this.question.type.toLowerCase()==="checkboxes") {
+          var selectedCheckboxes = "";
+          for (var i = 0; i < item.children.length; i++) {
+            if (item.children[i].checked) {
+              var checkboxSubId = item.children[i].id.split("_")[2];
+              var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+              selectedCheckboxes += selectedCheckbox.text+",";
+            }
+          }
+
+          if (selectedCheckboxes!=="") {
+            value = selectedCheckboxes.substring(0, selectedCheckboxes.length - 1);
+          }
+        }
+
+        return  { uniqueId: this.question.uniqueId, value: value }
+      }
+
+      setAnswer (value) {
+        if (value) {
+          var item = this.$$("#structuredQuestion_"+this.index);
+
+          if (this.question.type.toLowerCase()==="textfield" ||
+            this.question.type.toLowerCase()==="textarea" ||
+            this.question.type.toLowerCase()==="numberfield"
+          ) {
+            item.value = value;
+          } else if (this.question.type.toLowerCase()==="radios") {
+            this.question.radioButtons.forEach(function (button, index) {
+              if (button.text===value) {
+                item.select(value);
+              }
+            }.bind(this));
+          } else if (this.question.type.toLowerCase()==="checkboxes") {
+            var checkboxValues = value.split(',');
+            for (var i = 0; i < item.children.length; i++) {
+              if (item.children[i]) {
+                var checkboxSubId = item.children[i].id.split("_")[2];
+                var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+                if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
+                  item.children[i].checked = true;
+                }
+              }
+            }
+          }
+
+        }
+      }
+
       hide () {
         var item = this.$$("#structuredQuestion_"+this.index);
         item.hidden = true;
@@ -339,13 +407,22 @@
         this.dispatchEvent(new CustomEvent('yp-close-sub-question', { bubbles: true, composed: true, detail: this.question.id }));
       }
 
+      _checkboxChanged(event, detail) {
+        event.stopPropagation();
+        this._sendDebouncedChange({value: 1});
+      }
+
       _radioChanged(event, detail) {
         event.stopPropagation();
-        this._sendDebouncedChange();
+        this._sendDebouncedChange({value: 1});
 
-        var radioSubId = detail.value.split("_")[2];
+        var selectedRadio = null;
 
-        var selectedRadio = this.question.radioButtons[radioSubId];
+        this.question.radioButtons.forEach(function (button) {
+          if (button.text===detail.value) {
+            selectedRadio = button;
+          }
+        }.bind(this.validate()));
 
         if (selectedRadio.skipTo) {
           this.fire('yp-skip-to-unique-id', { fromId: this.question.uniqueId, toId: selectedRadio.skipTo });
