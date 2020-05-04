@@ -437,6 +437,7 @@
                   <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
                                  content="[[structuredAnswersFormatted]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
                                  simple-format
+                                 skip-sanitize
                                  content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
                                  more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
                   </yp-magic-text>
@@ -570,7 +571,7 @@
             if (answer.value) {
               var question = questionHash[answer.uniqueId];
               if (question) {
-                outText+=question.text+"\n";
+                outText+="<b>"+question.text+"</b>\n";
                 outText+=answer.value+"\n\n";
               }
             }
