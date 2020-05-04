@@ -22,7 +22,8 @@
         font-size: 16px;
       }
 
-      :host{
+      a {
+        color: #000;
       }
 
       .question {
@@ -109,6 +110,12 @@
       .lessBottomMargin {
         margin-bottom: -32px;
       }
+
+      @media (min-width: 800px) {
+        paper-input[half-width-desktop] {
+          width: 50%;
+        }
+      }
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
@@ -117,6 +124,7 @@
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
                       label="[[_getTextWithIndex(question)]]"
                       char-counter
+                      half-width-desktop$="[[question.halfWidthDesktop]]"
                       on-value-changed="_resizeScrollerIfNeeded"
                       required$="[[question.required]]"
                       maxlength="[[question.maxLength]]">
@@ -129,6 +137,7 @@
                    class="numberInput"
                    char-counter--paper-radio-button-label-color
                    allowed-pattern="[0-9]"
+                   half-width-desktop$="[[question.halfWidthDesktop]]"
                    always-float-label="[[_floatIfValueOrIE(question.value)]]"
                    label="[[_getTextWithIndex(question)]]"
                    on-value-changed="_resizeScrollerIfNeeded"
@@ -160,7 +169,7 @@
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
       <div class="question general"
-           inner-h-t-m-l="[[question.text]]"
+           inner-h-t-m-l="[[_textWithLinks(question)]]"
            extra-top-margin$="[[question.extraTopMargin]]"
            less-bottom-margin$="[[question.lessBottomMargin]]"></div>
     </template>
@@ -231,6 +240,10 @@
         } else {
           return "layout vertical";
         }
+      }
+
+      _textWithLinks (question) {
+        return linkifyStr(question.text);
       }
 
       _resizeScrollerIfNeeded () {
