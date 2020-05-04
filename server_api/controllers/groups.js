@@ -1832,7 +1832,7 @@ router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
         const anonSurveyEmail = "survey_group_"+surveyGroup.id+"_user_anonymous@citizens.is";
         models.User.findOne({
           where: {
-            email: anonEmail
+            email: anonSurveyEmail
           }
         }).then(function (existingUser) {
           if (existingUser) {
@@ -1840,7 +1840,7 @@ router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
             seriesCallback();
           } else {
             var user = models.User.build({
-              email: anonEmail,
+              email: anonSurveyEmail,
               name: "Anonymous Survey User",
               notifications_settings: models.AcNotification.anonymousNotificationSettings,
               status: 'active'
