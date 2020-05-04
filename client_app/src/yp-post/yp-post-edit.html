@@ -149,7 +149,7 @@
         .videoCam {
           --iron-icon-height: 15px;
           --iron-icon-width: 15px;
-          --iron-icon-fill-color: #F00;
+          --iron-icon-fill-color: #555;
         }
       }
 
@@ -606,7 +606,49 @@
 
     listeners: {
       'iron-form-invalid': '_formInvalid',
-      'yp-custom-form-submit': '_customSubmit'
+      'yp-custom-form-submit': '_customSubmit',
+      'yp-skip-to-unique-id': '_skipToId',
+      'yp-open-to-unique-id': '_openToId',
+      'yp-goto-next-index': '_goToNextIndex'
+    },
+
+    _openToId: function (event, detail) {
+      this._skipToId(event, detail, true);
+    },
+
+    _goToNextIndex: function (event, detail) {
+      var currentPos = this.liveQuestionIds.indexOf(detail.currentIndex);
+      if (currentPos<this.liveQuestionIds.length-1) {
+        var item = this.$$("#structuredQuestionContainer_"+this.liveQuestionIds[currentPos+1]);
+        item.scrollIntoView({block: "center", inline: "center", behavior: 'smooth'});
+        item.focus();
+      }
+    },
+
+    _skipToId: function (event, detail, showItems) {
+      var firstElementPos = this.liveUniqueIds.indexOf(detail.fromId);
+
+      if (firstElementPos>-1) {
+        firstElementPos+=1;
+        for (i=firstElementPos; i<this.liveUniqueIds.length; i++) {
+          if (this.liveUniqueIds[i]==detail.toId) {
+            break;
+          } else {
+            var elementIndex = this.uniqueIdsToElementIndexes[this.liveUniqueIds[i]];
+            if (this.$$("#structuredQuestionContainer_"+elementIndex)) {
+              if (showItems===true) {
+                this.$$("#structuredQuestionContainer_"+elementIndex).show();
+              } else {
+                this.$$("#structuredQuestionContainer_"+elementIndex).hide();
+              }
+            } else {
+              console.error("Can't find container")
+            }
+          }
+        }
+      } else {
+        console.error("Can't find id to skip to for survey");
+      }
     },
 
     observers: [
@@ -665,7 +707,6 @@
             answers.push(questionElement.getAnswer());
           }
         }.bind(this));
-        debugger;
         this.set('structuredAnswersJson', JSON.stringify(answers));
         this.$.editDialog._reallySubmit();
       } else if (this.structuredQuestions && this.structuredQuestions.length>0) {
@@ -1082,6 +1123,9 @@
           if (group.configuration.structuredQuestionsJson) {
             this.async(function () {
               this.liveQuestionIds = [];
+              this.uniqueIdsToElementIndexes = {};
+              this.liveUniqueIds = [];
+
               group.configuration.structuredQuestionsJson.forEach(function (question, index) {
                 if (question.type.toLowerCase()==="textfield" ||
                   question.type.toLowerCase()==="textarea" ||
@@ -1091,6 +1135,8 @@
                   question.type.toLowerCase()==="dropdown"
                 ) {
                   this.liveQuestionIds.push(index);
+                  this.uniqueIdsToElementIndexes[question.uniqueId] = index;
+                  this.liveUniqueIds.push(question.uniqueId);
                 }
               }.bind(this));
             });
