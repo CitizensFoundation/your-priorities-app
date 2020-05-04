@@ -1876,7 +1876,7 @@ router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
       post.set('public_data', {});
 
       if (req.body.structuredAnswers) {
-        post.set('public_data.structuredAnswers',req.body.structuredAnswers);
+        post.set('public_data.structuredAnswersJson', req.body.structuredAnswers);
       }
 
       post.save().then(() => {

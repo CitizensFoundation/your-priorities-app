@@ -47,7 +47,7 @@
         margin-bottom: 0;
       }
 
-      h1[is-not-first] {
+      .header[is-not-first] {
         margin-top: 54px;
       }
 
@@ -120,6 +120,12 @@
       [hidden] {
         display: none !important;
       }
+
+      .header {
+        font-size: 26px;
+        font-weight: bold;
+        line-height: 1.5;
+      }
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
@@ -171,7 +177,7 @@
     </template>
 
     <template is="dom-if" if="[[_isTextHeader(question)]]">
-      <h1 is-not-first$="[[index]]">[[question.text]]</h1>
+      <div class="header" is-not-first$="[[index]]">[[question.text]]</div>
     </template>
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
@@ -205,7 +211,7 @@
     </template>
 
     <template is="dom-if" if="[[_isDropDown(question)]]">
-      <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[_getTextWithIndex(question)]]" required$="[[!question.notRequired]]">
+      <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[_getTextWithIndex(question)]]" required$="[[question.required]]">
         <paper-listbox slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
             <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
@@ -263,7 +269,11 @@
       }
 
       _getTextWithIndex (question) {
-        return question.questionIndex+". "+question.text;
+        if (question.questionIndex) {
+          return question.questionIndex+". "+question.text;
+        } else {
+          return question.text;
+        }
       }
 
       _getRadioClass (question) {
@@ -289,6 +299,7 @@
       }
 
       validate() {
+        return true;
         var liveQuestion = this.$$("#structuredQuestion_"+this.index);
         if (liveQuestion) {
           if (liveQuestion.dataset.type==="dropdown") {

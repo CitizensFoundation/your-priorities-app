@@ -149,6 +149,7 @@
         .videoCam {
           --iron-icon-height: 15px;
           --iron-icon-width: 15px;
+          --iron-icon-fill-color: #F00;
         }
       }
 
@@ -214,7 +215,7 @@
                 [[t('media')]]
               </div>
               <div class="videoCamIcon">
-                <iron-icon class="videoCam" icon="videocam"></iron-icon>
+                <iron-icon class="videoCam" icon="videocam" style="color: #555"></iron-icon>
               </div>
           </paper-tab>
         </template>
@@ -277,15 +278,11 @@
 
               <template is="dom-if" if="[[structuredQuestions]]">
                 <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
-                  <yp-structured-question-edit index="[[index]]" on-resize-scroller="_resizeScrollerIfNeeded" question="[[question]]"></yp-structured-question-edit>
+                  <yp-structured-question-edit index="[[index]]"
+                                               id="structuredQuestionContainer_[[index]]"
+                                               on-resize-scroller="_resizeScrollerIfNeeded"
+                                               question="[[question]]"></yp-structured-question-edit>
 
-                  <template is="dom-if" if="[[item.subQuestions]]">
-                    <div id="structuredQuestionSub_[[item.id]]" hidden>
-                      <template is="dom-repeat" items="[[structuredQuestions]]" as="subQuestion" index="subIndex">
-                        <yp-structured-question-edit question="[[subQuestion]]" index="[[index]]" sub-index="[[subIndex]]"></yp-structured-question-edit>
-                      </template>
-                    </div>
-                  </template>
                 </template>
               </template>
 
@@ -421,6 +418,7 @@
         <input type="hidden" name="uploadedDocumentUrl" value="[[uploadedDocumentUrl]]">
         <input type="hidden" name="uploadedDocumentFilename" value="[[uploadedDocumentFilename]]">
         <input type="hidden" name="structuredAnswers" value="[[structuredAnswers]]">
+        <input type="hidden" name="structuredAnswersJson" value="[[structuredAnswersJson]]">
       </div>
     </yp-edit-dialog>
 
@@ -659,7 +657,18 @@
     },
 
     _customSubmit: function (value, valueB) {
-      if (this.structuredQuestions && this.structuredQuestions.length>0) {
+      if (this.group.configuration && this.group.configuration.structuredQuestionsJson) {
+        var answers = [];
+        this.liveQuestionIds.forEach(function (liveIndex) {
+          var questionElement = this.$$("#structuredQuestionContainer_"+liveIndex);
+          if (questionElement) {
+            answers.push(questionElement.getAnswer());
+          }
+        }.bind(this));
+        debugger;
+        this.set('structuredAnswersJson', JSON.stringify(answers));
+        this.$.editDialog._reallySubmit();
+      } else if (this.structuredQuestions && this.structuredQuestions.length>0) {
         var description="", answers="";
         for (i=0 ; i<this.structuredQuestions.length; i+=1) {
           description += this.structuredQuestions[i].question;
@@ -688,9 +697,7 @@
     _structuredQuestions: function (post, group) {
       if (post && group && group.configuration.structuredQuestionsJson) {
         return group.configuration.structuredQuestionsJson;
-      }
-
-      if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
+      } else if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
         var structuredQuestions = [];
 
         var questionComponents = group.configuration.structuredQuestions.split(",");
@@ -904,7 +911,7 @@
     },
 
     _postChanged: function(newPost, oldPost) {
-      if (newPost){
+      if (newPost) {
         if (newPost.location) {
           this.set('location', newPost.location);
           this.set('encodedLocation', JSON.stringify(this.location));
@@ -1071,6 +1078,24 @@
           } else {
             this.set('postDescriptionLimit', 500);
           }
+
+          if (group.configuration.structuredQuestionsJson) {
+            this.async(function () {
+              this.liveQuestionIds = [];
+              group.configuration.structuredQuestionsJson.forEach(function (question, index) {
+                if (question.type.toLowerCase()==="textfield" ||
+                  question.type.toLowerCase()==="textarea" ||
+                  question.type.toLowerCase()==="numberfield" ||
+                  question.type.toLowerCase()==="checkboxes" ||
+                  question.type.toLowerCase()==="radios" ||
+                  question.type.toLowerCase()==="dropdown"
+                ) {
+                  this.liveQuestionIds.push(index);
+                }
+              }.bind(this));
+            });
+          }
+
         } else {
           this.set('postDescriptionLimit', 500);
         }
@@ -1096,7 +1121,6 @@
     _alternativeTextForNewIdeaButtonHeaderTranslation: function () {
       this.async(function () {
         var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
-        debugger;
         if (label && label.finalContent) {
           this.set('editHeaderText', label.finalContent);
         }

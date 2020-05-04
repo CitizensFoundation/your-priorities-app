@@ -704,6 +704,14 @@ var updatePostData = function (req, post) {
   if (req.body.structuredAnswers && req.body.structuredAnswers!="") {
     post.set('public_data.structuredAnswers',req.body.structuredAnswers);
   }
+
+  if (req.body.structuredAnswersJson && req.body.structuredAnswersJson!="") {
+    try {
+      post.set('public_data.structuredAnswersJson', JSON.parse(req.body.structuredAnswersJson));
+    } catch (e) {
+      log.error("JSON error", { error: e })
+    }
+  }
 };
 
 router.put('/:id/editTranscript', auth.can('edit post'), function (req, res) {

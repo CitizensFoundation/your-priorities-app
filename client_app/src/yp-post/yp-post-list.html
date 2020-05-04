@@ -196,7 +196,7 @@
 
       <template is="dom-if" if="[[noPosts]]" restamp>
         <div class="layout horiztonal center-center">
-          <paper-material class="noIdeas layout horizontal center-center" elevation="2">
+          <paper-material class="noIdeas layout horizontal center-center" elevation="2" hidden$="[[group.configuration.allPostsBlockedByDefault]]">
             <div class="noIdeasText">[[t('noIdeasHere')]]</div>
           </paper-material>
         </div>
