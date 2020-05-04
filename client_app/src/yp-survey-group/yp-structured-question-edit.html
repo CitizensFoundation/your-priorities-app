@@ -233,6 +233,11 @@
 
           language: {
             type: String,
+          },
+
+          structuredAnswers: {
+            type: Array,
+            observer: '_structuredAnsweredChanged'
           }
         }
       }
@@ -353,30 +358,33 @@
         if (value) {
           var item = this.$$("#structuredQuestion_"+this.index);
 
-          if (this.question.type.toLowerCase()==="textfield" ||
-            this.question.type.toLowerCase()==="textarea" ||
-            this.question.type.toLowerCase()==="numberfield"
-          ) {
-            item.value = value;
-          } else if (this.question.type.toLowerCase()==="radios") {
-            this.question.radioButtons.forEach(function (button, index) {
-              if (button.text===value) {
-                item.select(value);
-              }
-            }.bind(this));
-          } else if (this.question.type.toLowerCase()==="checkboxes") {
-            var checkboxValues = value.split(',');
-            for (var i = 0; i < item.children.length-1; i++) {
-              if (item.children[i]) {
-                var checkboxSubId = item.children[i].id.split("_")[2];
-                var selectedCheckbox = this.question.checkboxes[checkboxSubId];
-                if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
-                  item.children[i].checked = true;
+          if (item) {
+            if (this.question.type.toLowerCase()==="textfield" ||
+              this.question.type.toLowerCase()==="textarea" ||
+              this.question.type.toLowerCase()==="numberfield"
+            ) {
+              item.value = value;
+            } else if (this.question.type.toLowerCase()==="radios") {
+              this.question.radioButtons.forEach(function (button, index) {
+                if (button.text===value) {
+                  item.select(value);
+                }
+              }.bind(this));
+            } else if (this.question.type.toLowerCase()==="checkboxes") {
+              var checkboxValues = value.split(',');
+              for (var i = 0; i < item.children.length-1; i++) {
+                if (item.children[i]) {
+                  var checkboxSubId = item.children[i].id.split("_")[2];
+                  var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+                  if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
+                    item.children[i].checked = true;
+                  }
                 }
               }
             }
+          } else {
+            console.error("cant find item");
           }
-
         }
       }
 
@@ -478,10 +486,28 @@
         return (question.type && question.type.toLowerCase()==='dropdown');
       }
 
+      _structuredAnsweredChanged (structuredAnswers) {
+        if (structuredAnswers && this.question.uniqueId) {
+          structuredAnswers.forEach(function (answer) {
+            if (this.question.uniqueId===answer.uniqueId) {
+              this.async(function () {
+                this.setAnswer(answer.value);
+              },100);
+            }
+          }.bind(this));
+        }
+      }
+
       ready () {
         if (window.i18nTranslation) {
           this.set('language', window.locale);
         }
+
+        if (this.question.questionCount === 1) {
+          var item = this.$$("#structuredQuestion_"+this.index);
+          item.focus();
+        }
+
         super.ready();
       }
     }
