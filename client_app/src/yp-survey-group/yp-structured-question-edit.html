@@ -16,7 +16,7 @@
 
 <dom-module id="yp-structured-question-edit">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       :host {
         display: block;
       }
@@ -29,7 +29,8 @@
 
       .question {
         margin-top: 16px;
-        margin-bottom: 48px;
+        margin-bottom: 16px;
+        color: #000;
       }
 
       hr {
@@ -39,12 +40,8 @@
       }
 
       .general {
-        font-weight:400;
-        height:48px;
-        letter-spacing:normal;
-        line-height:24px;
         font-size: 18px;
-        color: #212121;
+        color: #111;
       }
 
       .noBottomMargin {
@@ -59,21 +56,53 @@
         margin-top: 16px;
       }
 
+      .numberInput {
+      }
+
+      paper-checkbox {
+        margin-bottom: 16px;
+      }
     </style>
 
-    <template is="dom-if" if="[[_isTextfield(question)]]">
+    <template is="dom-if" if="[[_isTextField(question)]]">
+      <paper-input id="structuredQuestion_[[index]]"
+                      value="{{question.value}}"
+                      always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                      label="[[_getTextWithIndex(question)]]"
+                      char-counter
+                      on-value-changed="_resizeScrollerIfNeeded"
+                      required$="[[question.required]]"
+                      maxlength="[[question.maxLength]]">
+      </paper-input>
+    </template>
+
+    <template is="dom-if" if="[[_isNumberField(question)]]">
+      <paper-input id="structuredQuestion_[[index]]"
+                   value="{{question.value}}"
+                   class="numberInput"
+                   char-counter
+                   allowed-pattern="[0-9]"
+                   always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                   label="[[_getTextWithIndex(question)]]"
+                   on-value-changed="_resizeScrollerIfNeeded"
+                   required$="[[question.required]]"
+                   maxlength="[[question.maxLength]]">
+      </paper-input>
+    </template>
+
+    <template is="dom-if" if="[[_isTextarea(question)]]">
       <paper-textarea id="structuredQuestion_[[index]]"
                       data-type="text"
                       value="{{question.value}}"
                       minlength="2"
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
-                      label="[[question.text]]"
+                      label="[[_getTextWithIndex(question)]]"
                       char-counter
                       on-value-changed="_resizeScrollerIfNeeded"
                       rows="2"
                       max-rows="3"
                       maxrows="3"
-                      required$="[[!question.notRequired]]"
+                      required$="[[question.required]]"
                       maxlength="[[question.maxLength]]">
       </paper-textarea>
     </template>
@@ -91,18 +120,18 @@
     </template>
 
     <template is="dom-if" if="[[_isRadios(question)]]">
-      <div class="question general noBottomMargin">[[question.text]]</div>
+      <div class="question general">[[_getTextWithIndex(question)]]</div>
 
-      <paper-radio-group required$="[[!question.notRequired]]" data-type="radios" on-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class="radioYesNo layout horizontal">
-        <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
-          <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.text]]</paper-radio-button>
-        </template>
+      <paper-radio-group required$="[[question.required]]" data-type="radios" on-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
+          <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index="buttonIndex">
+            <paper-radio-button name="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]">[[radioButton.text]]</paper-radio-button>
+          </template>
       </paper-radio-group>
     </template>
 
     <template is="dom-if"  if="[[_isCheckboxes(question)]]">
-      <div class="question general" style="margin-top: 48px;margin-bottom:0">[[question.text]]</div>
-      <div id="structuredQuestion_[[index]]" data-type="checkboxes">
+      <div class="question general">[[_getTextWithIndex(question)]]</div>
+      <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
         <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index="buttonIndex">
           <paper-checkbox name="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]">[[checkbox.text]]</paper-checkbox>
         </template>
@@ -110,7 +139,7 @@
     </template>
 
     <template is="dom-if" if="[[_isDropDown(question)]]">
-      <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[question.text]]" required$="[[!question.notRequired]]">
+      <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[_getTextWithIndex(question)]]" required$="[[!question.notRequired]]">
         <paper-listbox slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
             <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
@@ -142,6 +171,18 @@
         }
       }
 
+      _getTextWithIndex (question) {
+        return question.questionIndex+". "+question.text;
+      }
+
+      _getRadioClass (question) {
+        if (question.subType && question.subType==="rating") {
+          return "layout horizontal";
+        } else {
+          return "layout vertical";
+        }
+      }
+
       _resizeScrollerIfNeeded () {
         this.fire('resize-scroller');
       }
@@ -170,23 +211,6 @@
         }
       }
 
-      _testJson() {
-        return [
-          {
-            isTextarea: true,
-            translatedQuestion: "Question 1",
-          },
-          {
-            isTextarea: true,
-            translatedQuestion: "Question 2",
-          },
-          {
-            isRadio: true,
-            translatedQuestion: "Question 2",
-          },
-        ]
-      }
-
       _openSubQuestion() {
         this.dispatchEvent(new CustomEvent('yp-open-sub-question', { bubbles: true, composed: true, detail: this.question.id }));
       }
@@ -209,8 +233,16 @@
         }
       }
 
-      _isTextfield (question) {
-        return (question.type && question.type.toLowerCase()==='textfield') || (question.type===undefined && question.maxLength>1);
+      _isTextarea (question) {
+        return (question.type && question.type.toLowerCase()==='textarea') || (question.type===undefined && question.maxLength>1);
+      }
+
+      _isTextField (question) {
+        return (question.type && question.type.toLowerCase()==='textfield');
+      }
+
+      _isNumberField (question) {
+        return (question.type && question.type.toLowerCase()==='numberfield');
       }
 
       _isTextHeader (question) {

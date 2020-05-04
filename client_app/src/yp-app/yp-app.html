@@ -1078,7 +1078,7 @@
 
       _pageChanged: function(page, oldPage) {
         console.log("Page changed to "+page);
-        if (page) {
+        if (page && page!=="survey") {
           var resolvedPageUrl;
           if (page=="view-404") {
             resolvedPageUrl = this.resolveUrl("yp-view-404.html");
@@ -1093,6 +1093,12 @@
 
         if (page) {
           window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+        }
+
+        if (page && page==='survey') {
+          this.$.appHeader.hidden = true;
+        } else {
+          this.$.appHeader.hidden = false;
         }
       },
 

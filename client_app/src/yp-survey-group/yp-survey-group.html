@@ -23,9 +23,14 @@
 
 <dom-module id="yp-survey-group">
   <template>
-    <style>
+    <style include="iron-flex iron-flex-alignment">
       [hidden] {
         display: none !important;
+      }
+
+      :host {
+        display: block;
+        width: 100%;
       }
 
       #submitButton {
@@ -34,6 +39,12 @@
 
       .submitSpinnerContainer {
         height: 90px;
+      }
+
+      .surveyContainer {
+        margin-left: 32px;
+        margin-right: 32px;
+        max-width: 800px;
       }
     </style>
 
@@ -58,19 +69,22 @@
 
     <template is="dom-if" if="[[!surveyCompleted]]">
       <template is="dom-if" if="[[structuredQuestions]]">
-        <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
-          <yp-structured-question-edit index="[[index]]"
-                                       on-changed="_saveState"
-                                       question="[[question]]"
-                                       on-hide-to-question="_hideToQuestion">
-          </yp-structured-question-edit>
-        </template>
-
-        <div class="layout horizontal center-center submitSpinnerContainer">
-          <yp-ajax large-spinner id="submitAjax" method="POST" on-response="_surveySubmitResponse"></yp-ajax>
-        </div>
-        <div class="layout horizontal center-center">
-          <paper-button id="submitButton" raised on-tap="_submit">[[t('submitSurvey')]]</paper-button>
+        <div class="layout vertical center-center">
+          <div class="surveyContainer">
+            <template is="dom-repeat" items="[[structuredQuestions]]" as="question" initial-count="4">
+              <yp-structured-question-edit index="[[index]]"
+                                           on-changed="_saveState"
+                                           question="[[question]]"
+                                           on-hide-to-question="_hideToQuestion">
+              </yp-structured-question-edit>
+            </template>
+            <div class="layout horizontal center-center submitSpinnerContainer">
+              <yp-ajax large-spinner id="submitAjax" method="POST" on-response="_surveySubmitResponse"></yp-ajax>
+            </div>
+            <div class="layout horizontal center-center">
+              <paper-button id="submitButton" raised on-tap="_submit">[[t('submitSurvey')]]</paper-button>
+            </div>
+          </div>
         </div>
       </template>
     </template>
@@ -90,6 +104,7 @@
 
     <div class="layout horizontal center-center">
       <yp-ajax large-spinner id="ajax" on-response="_surveyGroupResponse"></yp-ajax>
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
     </div>
 
   </template>
@@ -135,7 +150,7 @@
 
         structuredQuestions: {
           type: Array,
-          value: []
+          value: null
         },
 
         structuredAnswers: {
@@ -164,7 +179,7 @@
               answers.push({uniqueId: question.uniqueId, value: questionElement.value});
             }
           }
-        }).bind(this);
+        }.bind(this));
         this.structuredAnswers = answers;
       },
 
@@ -193,7 +208,7 @@
               console.warn("No answer for question, maybe questions have been updated");
             }
           }
-        }).bind(this);
+        }.bind(this));
       },
 
       _surveySubmitResponse: function (event, detail) {
@@ -208,7 +223,7 @@
         this._serializeAnswers();
         var submitAjax = this.$$("#submitAjax");
         submitAjax.url = "/group/"+this.surveyGroup.id+"/survey";
-        submitAjax.body = this.structuredAnswers;
+        submitAjax.body = {structuredAnswers: this.structuredAnswers };
         submitAjax.generateRequest();
       },
 
@@ -262,7 +277,7 @@
 
       _surveyGroupResponse: function (event, detail) {
         this.set('surveyGroup', detail.response.surveyGroup);
-        this.set('structuredQuestions', detail.response.surveyGroup.structuredQuestions);
+        this.set('structuredQuestions', detail.response.surveyGroup.configuration.structuredQuestionsJson);
         this.set('surveyGroup.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.surveyGroup.id, this.surveyGroup.configuration));
         this.refresh();
       },
@@ -308,16 +323,6 @@
             this.setTheme(this.surveyGroup.Community.Domain.theme_id);
           } else {
             this.setTheme(1);
-          }
-
-          if (this.surveyGroup.configuration.useCommunityTopBanner &&
-            this.surveyGroup.Community.CommunityHeaderImages &&
-            this.surveyGroup.Community.CommunityHeaderImages.length>0) {
-            this.setupTopHeaderImage(this.surveyGroup.Community.CommunityHeaderImages);
-          } else if (this.surveyGroup.GroupHeaderImages && this.surveyGroup.GroupHeaderImages.length>0) {
-            this.setupTopHeaderImage(this.surveyGroup.GroupHeaderImages);
-          } else {
-            this.setupTopHeaderImage(null);
           }
 
           this.fire("change-header", {

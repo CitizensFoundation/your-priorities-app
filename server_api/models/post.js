@@ -212,6 +212,7 @@ module.exports = (sequelize, DataTypes) => {
   Post.CONTENT_PERSON = 3;
   Post.CONTENT_BLOG = 4;
   Post.CONTENT_QUESTION = 5;
+  Post.CONTENT_SURVEY = 6;
 
   Post.getSearchVector = () => {
     return 'PostText';

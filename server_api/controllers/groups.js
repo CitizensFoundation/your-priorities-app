@@ -255,7 +255,22 @@ var updateGroupConfigParamters = function (req, group) {
   if (group.configuration.structuredQuestions) {
     try {
       const cleaned = group.configuration.structuredQuestions.trim().replace(/\n/g,'').replace(/\r/g,'').replace(/"/,'"');
-      group.set('configuration.structuredQuestionsJson', JSON.parse(cleaned));
+      const jsonArray = JSON.parse(cleaned);
+      const updatedJsonArray = [];
+      let questionIndex = 0;
+      jsonArray.forEach((question, index) =>{
+        if (question.type.toLowerCase()==="textfield" ||
+          question.type.toLowerCase()==="textarea" ||
+          question.type.toLowerCase()==="numberfield" ||
+          question.type.toLowerCase()==="checkboxes" ||
+          question.type.toLowerCase()==="radios" ||
+          question.type.toLowerCase()==="dropdown"
+        ) {
+          question.questionIndex = questionIndex+=1;
+        }
+        updatedJsonArray.push(question);
+      });
+      group.set('configuration.structuredQuestionsJson', updatedJsonArray);
     } catch (error) {
       group.set('configuration.structuredQuestionsJson', null);
       log.error("Error in parsing structured questions", { error });
@@ -1734,6 +1749,151 @@ router.put('/:id/:pointId/adminComment', auth.can('edit group'), function(req, r
   }).catch(function(error) {
     log.error("Error adminComment", {error});
     res.sendStatus(500);
+  });
+});
+
+router.get('/:groupId/survey', auth.can('view group'), (req, res) => {
+  models.Group.findOne({
+    where: { id: req.params.groupId },
+    order: [
+      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+    ],
+    attributes: ['id','name','configuration','objectives'],
+    include: [
+      {
+        model: models.Community,
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id','theme_id','name']
+          }
+        ]
+      },
+      {
+        model: models.Image,
+        as: 'GroupLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Video,
+        as: 'GroupLogoVideos',
+        attributes:  ['id','formats','viewable','public_meta'],
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      }
+    ]
+  }).then(function(group) {
+    if (group) {
+      log.info('Survey Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
+      res.send({ surveyGroup: group });
+    } else {
+      res.send({ error: 'notFound' });
+    }
+  }).catch(function(error) {
+    sendGroupOrError(res, null, 'view survey', req.user, error);
+  });
+});
+
+router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
+  let surveyGroup;
+  let loggedInUser = req.user;
+
+  async.series([
+    (seriesCallback) => {
+      models.Group.findOne({
+        where: { id: req.params.groupId },
+        attributes: ['id','configuration']
+      }).then(group => {
+        if (group) {
+          surveyGroup = group;
+          seriesCallback();
+        } else {
+          seriesCallback("Group not found");
+        }
+      }).catch(error => {
+        seriesCallback(error)
+      });
+    },
+    (seriesCallback) => {
+      if (loggedInUser) {
+        seriesCallback();
+      } else {
+        const anonSurveyEmail = "survey_group_"+surveyGroup.id+"_user_anonymous@citizens.is";
+        models.User.findOne({
+          where: {
+            email: anonEmail
+          }
+        }).then(function (existingUser) {
+          if (existingUser) {
+            loggedInUser = existingUser;
+            seriesCallback();
+          } else {
+            var user = models.User.build({
+              email: anonEmail,
+              name: "Anonymous Survey User",
+              notifications_settings: models.AcNotification.anonymousNotificationSettings,
+              status: 'active'
+            });
+            user.set('profile_data', {});
+            user.set('profile_data.isAnonymousUser', true);
+            user.save().then(() =>  {
+              loggedInUser = user;
+              seriesCallback();
+            }).catch(error => {
+              seriesCallback(error);
+            });
+          }
+        }).catch(error => {
+          seriesCallback(error);
+        });
+      }
+    },
+    (seriesCallback) => {
+      const post = models.Post.build({
+        name: "Survey Response -"+moment(new Date()).format("DD/MM/YYYY hh:mm:ss"),
+        description: "",
+        group_id: surveyGroup.id,
+        cover_media_type: "none",
+        user_id: loggedInUser.id,
+        status: 'blocked',
+        counter_endorsements_up: 0,
+        content_type: models.Post.CONTENT_SURVEY,
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
+      });
+
+      post.set('public_data', {});
+
+      if (req.body.structuredAnswers) {
+        post.set('public_data.structuredAnswers',req.body.structuredAnswers);
+      }
+
+      post.save().then(() => {
+        log.info('Survey Post Created', { postId: post.id, context: 'create' });
+        post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
+          seriesCallback();
+        });
+      }).catch(error => {
+        seriesCallback(error)
+      });
+    }
+  ], (error) => {
+    if (error) {
+      sendGroupOrError(res, null, 'post survey', req.user, error);
+    } else {
+      res.sendStatus(200);
+    }
   });
 });
 
