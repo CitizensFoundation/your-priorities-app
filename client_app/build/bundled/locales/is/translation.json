@@ -1,4 +1,5 @@
 {
+  "submitSurvey": "Senda inn skoðanakönnun",
   "structuredQuestionsJsonFormatNotValid": "Snið á JSON er ekki rétt",
   "actAsOutsideLink": "Svæði er hlekkur í URL",
   "actAsLinkToCommunityId": "Stilla hóp sem hlekk á svæði nr.",
