@@ -422,14 +422,25 @@
             </div>
             <div class="layout vertical">
               <div class="infoContainer">
-                <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
-                               content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
-                               structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
-                               has-custom-ratings$="[[post.Group.configuration.customRatings]]"
-                               simple-format="[[post.Group.configuration.descriptionSimpleFormat]]"
-                               content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
-                               more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
-                </yp-magic-text>
+                <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
+                                 content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
+                                 structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
+                                 has-custom-ratings$="[[post.Group.configuration.customRatings]]"
+                                 simple-format="[[post.Group.configuration.descriptionSimpleFormat]]"
+                                 content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
+                                 more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
+                  </yp-magic-text>
+                </template>
+
+                <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
+                                 content="[[structuredAnswersFormatted]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
+                                 simple-format
+                                 content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
+                                 more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
+                  </yp-magic-text>
+                </template>
               </div>
 
               <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
@@ -510,6 +521,11 @@
           computed: '_hasPostAccess(post, gotAdminRights)'
         },
 
+        structuredAnswersFormatted: {
+          type: String,
+          computed: '_structuredAnswersFormatted(post)'
+        },
+
         isEditing: {
           type: Boolean,
           value: false,
@@ -536,6 +552,33 @@
         hideActions: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _structuredAnswersFormatted: function (post) {
+        if (post && post.public_data && post.public_data.structuredAnswersJson &&
+          post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
+          var questionHash = {};
+          var outText = "";
+          post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
+            if (question.uniqueId) {
+              questionHash[question.uniqueId] = question;
+            }
+          }.bind(this));
+
+          post.public_data.structuredAnswersJson.forEach(function (answer) {
+            if (answer.value) {
+              var question = questionHash[answer.uniqueId];
+              if (question) {
+                outText+=question.text+"\n";
+                outText+=answer.value+"\n\n";
+              }
+            }
+          }.bind(this));
+
+          return outText;
+        } else {
+          return null;
         }
       },
 
