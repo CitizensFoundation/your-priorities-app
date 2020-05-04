@@ -202,10 +202,14 @@
               break;
             } else {
               var elementIndex = this.uniqueIdsToElementIndexes[this.liveUniqueIds[i]];
-              if (showItems===true) {
-                this.$$("#structuredQuestionContainer_"+elementIndex).show();
+              if (this.$$("#structuredQuestionContainer_"+elementIndex)) {
+                if (showItems===true) {
+                  this.$$("#structuredQuestionContainer_"+elementIndex).show();
+                } else {
+                  this.$$("#structuredQuestionContainer_"+elementIndex).hide();
+                }
               } else {
-                this.$$("#structuredQuestionContainer_"+elementIndex).hide();
+                console.error("Can't find container")
               }
             }
           }

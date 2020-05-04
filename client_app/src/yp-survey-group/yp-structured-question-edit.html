@@ -324,7 +324,9 @@
           this.question.type.toLowerCase()==="numberfield"
         ) {
           var item = this.$$("#structuredQuestion_"+this.index);
-          item.focus();
+          this.async(function () {
+            item.focus();
+          }, 250);
         }
       }
 
@@ -514,10 +516,17 @@
           this.set('language', window.locale);
         }
 
-        if (this.question.questionCount === 1) {
-          var item = this.$$("#structuredQuestion_"+this.index);
-          item.focus();
-        }
+        this.async(function () {
+          if (this.question.questionIndex === 1) {
+            var item = this.$$("#structuredQuestion_"+this.index);
+            if (item) {
+              debugger;
+              item.focus();
+            } else {
+              console.warn("Cant find item to focus");
+            }
+          }
+        }, 5000);
 
         super.ready();
       }

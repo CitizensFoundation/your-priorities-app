@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 require('newrelic');
 
-FORCE_PRODUCTION = true;
+FORCE_PRODUCTION = false;
 
 const log = require('./utils/logger');
 
