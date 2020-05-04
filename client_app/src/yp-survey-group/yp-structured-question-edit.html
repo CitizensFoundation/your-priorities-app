@@ -23,9 +23,6 @@
       }
 
       :host{
-        --paper-input-container-input:{
-          max-height: 145px;
-        }
       }
 
       .question {
@@ -87,7 +84,7 @@
       }
 
       .checkBoxesLabel {
-        margin-bottom: 24px;
+        margin-bottom: 36px;
       }
 
       .radiosLabel {
@@ -97,6 +94,20 @@
 
       paper-checkbox {
         --paper-checkbox-label-color: #333;
+        margin-left: 12px;
+        margin-bottom: 24px;
+      }
+
+      .general[less-bottom-margin] {
+        margin-bottom: -32px;
+      }
+
+      .general[extra-top-margin] {
+        margin-top: 32px;
+      }
+
+      .lessBottomMargin {
+        margin-bottom: -32px;
       }
     </style>
 
@@ -135,9 +146,9 @@
                       label="[[_getTextWithIndex(question)]]"
                       char-counter
                       on-value-changed="_resizeScrollerIfNeeded"
-                      rows="2"
-                      max-rows="3"
-                      maxrows="3"
+                      rows="3"
+                      max-rows="5"
+                      maxrows="5"
                       required$="[[question.required]]"
                       maxlength="[[question.maxLength]]">
       </paper-textarea>
@@ -148,7 +159,10 @@
     </template>
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
-      <div class="question general" inner-h-t-m-l="[[question.text]]"></div>
+      <div class="question general"
+           inner-h-t-m-l="[[question.text]]"
+           extra-top-margin$="[[question.extraTopMargin]]"
+           less-bottom-margin$="[[question.lessBottomMargin]]"></div>
     </template>
 
     <template is="dom-if" if="[[_isSeparator(question)]]">
@@ -213,7 +227,7 @@
 
       _getRadioClass (question) {
         if (question.subType && question.subType==="rating") {
-          return "layout horizontal";
+          return "layout horizontal lessBottomMargin";
         } else {
           return "layout vertical";
         }
