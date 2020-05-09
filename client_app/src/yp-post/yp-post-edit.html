@@ -280,7 +280,9 @@
                 <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
                   <yp-structured-question-edit index="[[index]]"
                                                id="structuredQuestionContainer_[[index]]"
+                                               dont-focus-first-question="[[!group.configuration.hideNameInputAndReplaceWith]]"
                                                on-resize-scroller="_resizeScrollerIfNeeded"
+                                               hide-question-index="[[group.configuration.hideQuestionIndexOnNewPost]]"
                                                question="[[question]]"></yp-structured-question-edit>
 
                 </template>

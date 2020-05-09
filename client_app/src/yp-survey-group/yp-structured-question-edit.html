@@ -253,6 +253,16 @@
             type: String,
           },
 
+          hideQuestionIndex: {
+            type: Boolean,
+            value: false
+          },
+
+          dontFocusFirstQuestion: {
+            type: Boolean,
+            value: false
+          },
+
           structuredAnswers: {
             type: Array,
             observer: '_structuredAnsweredChanged'
@@ -271,6 +281,7 @@
           this.debunceChangeEventTimer = this.async(function () {
             this.fire('yp-answer-content-changed', detail);
             this.debunceChangeEventTimer = null;
+            this._resizeScrollerIfNeeded();
           }, 2000);
         }
       }
@@ -281,7 +292,7 @@
       }
 
       _getTextWithIndex (question) {
-        if (question.questionIndex) {
+        if (question.questionIndex  && !this.hideQuestionIndex) {
           return question.questionIndex+". "+question.text;
         } else {
           return question.text;
@@ -535,7 +546,7 @@
         }
 
         this.async(function () {
-          if (this.question.questionIndex === 1) {
+          if (this.question.questionIndex === 1 && !this.dontFocusFirstQuestion) {
             this.focus();
           }
         }, 500);
