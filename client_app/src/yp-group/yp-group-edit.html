@@ -366,13 +366,13 @@
           [[t('disablePostPageLink')]]
         </paper-checkbox>
 
-        <paper-checkbox name="allPostsBlockedByDefault" checked$="{{group.configuration.allPostsBlockedByDefault}}">
-          [[t('allPostsBlockedByDefault')]]
-        </paper-checkbox>
-
-        <paper-checkbox name="hideQuestionIndexOnNewPost" checked$="{{group.configuration.hideQuestionIndexOnNewPost}}">
-          [[t('hideQuestionIndexOnNewPost')]]
-        </paper-checkbox>
+        <paper-input id="defaultLocationLongLat"
+                     name="defaultLocationLongLat"
+                     type="text"
+                     label="[[t('defaultLocationLongLat')]]"
+                     value="{{group.configuration.defaultLocationLongLat}}"
+                     maxlength="100" style="width: 300px;">
+        </paper-input>
 
         <paper-input id="forcePostSortMethodAs"
                      name="forcePostSortMethodAs"
@@ -407,14 +407,14 @@
           [[t('transcriptSimpleFormat')]]
         </paper-checkbox>
 
-        <paper-input id="defaultLocationLongLat"
-                     name="defaultLocationLongLat"
-                     type="text"
-                     label="[[t('defaultLocationLongLat')]]"
-                     value="{{group.configuration.defaultLocationLongLat}}"
-                     maxlength="100" style="width: 300px;">
-        </paper-input>
+        <paper-checkbox name="allPostsBlockedByDefault" checked$="{{group.configuration.allPostsBlockedByDefault}}">
+          [[t('allPostsBlockedByDefault')]]
+        </paper-checkbox>
 
+        <paper-checkbox name="hideQuestionIndexOnNewPost" checked$="{{group.configuration.hideQuestionIndexOnNewPost}}">
+          [[t('hideQuestionIndexOnNewPost')]]
+        </paper-checkbox>
+        
         <paper-textarea id="structuredQuestions"
                         name="structuredQuestions"
                         type="text"
