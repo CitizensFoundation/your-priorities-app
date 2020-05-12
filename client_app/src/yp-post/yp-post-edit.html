@@ -279,6 +279,7 @@
               <template is="dom-if" if="[[structuredQuestions]]">
                 <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
                   <yp-structured-question-edit index="[[index]]"
+                                               use-small-font
                                                id="structuredQuestionContainer_[[index]]"
                                                dont-focus-first-question="[[!group.configuration.hideNameInputAndReplaceWith]]"
                                                on-resize-scroller="_resizeScrollerIfNeeded"
@@ -937,6 +938,9 @@
             pointFor.focus();
           }
         }
+        this.async(function() {
+          this._resizeScrollerIfNeeded();
+        }, 50);
       });
     },
 

@@ -317,6 +317,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideMediaInput', truthValueFromBody(req.body.hideMediaInput));
   group.set('configuration.actAsLinkToCommunityId', (req.body.actAsLinkToCommunityId && req.body.actAsLinkToCommunityId!="") ? req.body.actAsLinkToCommunityId : null);
   group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
+  group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
 };
 
 var upload = multer({

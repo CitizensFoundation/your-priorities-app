@@ -34,6 +34,10 @@
         line-height: 1.5;
       }
 
+      .question[use-small-font] {
+        font-size: 16px;
+      }
+
       hr {
         border-top: 2px dashed var(--accent-color);
         margin-top: 48px;
@@ -67,6 +71,12 @@
         --paper-input-container-label: {
           color: #000;
           font-size: 18px;
+        }
+      }
+
+      paper-input[use-small-font], paper-textarea[use-small-font] {
+        --paper-input-container-label: {
+          font-size: 16px;
         }
       }
 
@@ -146,6 +156,7 @@
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
                       label="[[_getTextWithIndex(question)]]"
                       char-counter
+                      use-small-font$="[[useSmallFont]]"
                       on-keypress="_keyPressed"
                       half-width-desktop$="[[question.halfWidthDesktop]]"
                       on-value-changed="_debounceChangeEvent"
@@ -158,6 +169,7 @@
       <paper-input id="structuredQuestion_[[index]]"
                    value="{{question.value}}"
                    class="numberInput"
+                   use-small-font$="[[useSmallFont]]"
                    char-counter--paper-radio-button-label-color
                    allowed-pattern="[0-9]"
                    half-width-desktop$="[[question.halfWidthDesktop]]"
@@ -179,6 +191,7 @@
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
                       label="[[_getTextWithIndex(question)]]"
                       char-counter
+                      use-small-font$="[[useSmallFont]]"
                       on-value-changed="_debounceChangeEvent"
                       rows="3"
                       max-rows="5"
@@ -194,6 +207,7 @@
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
       <div class="question general"
+           use-small-font$="[[useSmallFont]]"
            inner-h-t-m-l="[[_textWithLinks(question)]]"
            extra-top-margin$="[[question.extraTopMargin]]"
            less-bottom-margin$="[[question.lessBottomMargin]]"></div>
@@ -204,17 +218,17 @@
     </template>
 
     <template is="dom-if" if="[[_isRadios(question)]]">
-      <div class="question general radiosLabel" id="structuredQuestionIntro_[[index]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+      <div class="question general radiosLabel" use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
       <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
           <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index-as="buttonIndex">
-            <paper-radio-button id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
+            <paper-radio-button use-small-font$="[[useSmallFont]]" id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
           </template>
       </paper-radio-group>
     </template>
 
     <template is="dom-if"  if="[[_isCheckboxes(question)]]">
-      <div id="structuredQuestionIntro_[[index]]" class="question general checkBoxesLabel" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+      <div id="structuredQuestionIntro_[[index]]" class="question general checkBoxesLabel" use-small-font$="[[useSmallFont]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
       <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
         <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index-as="buttonIndex">
           <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
@@ -259,6 +273,11 @@
           },
 
           dontFocusFirstQuestion: {
+            type: Boolean,
+            value: false
+          },
+
+          useSmallFont: {
             type: Boolean,
             value: false
           },
