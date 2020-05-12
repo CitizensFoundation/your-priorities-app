@@ -145,6 +145,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.attachmentsEnabled', truthValueFromBody(req.body.attachmentsEnabled));
   group.set('configuration.moreContactInformation', truthValueFromBody(req.body.moreContactInformation));
+  group.set('configuration.moreContactInformationAddress', truthValueFromBody(req.body.moreContactInformationAddress));
 
   group.set('configuration.useContainImageMode', truthValueFromBody(req.body.useContainImageMode));
 

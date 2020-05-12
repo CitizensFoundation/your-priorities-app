@@ -689,6 +689,7 @@ var updatePostData = function (req, post) {
   post.set('data.contact.name', (req.body.contactName && req.body.contactName!="") ? req.body.contactName : null);
   post.set('data.contact.email', (req.body.contactEmail && req.body.contactEmail!="") ? req.body.contactEmail : null);
   post.set('data.contact.telephone', (req.body.contacTelephone && req.body.contacTelephone!="") ? req.body.contacTelephone : null);
+  post.set('data.contact.address', (req.body.contactAddress && req.body.contactAddress!="") ? req.body.contactAddress : null);
 
   post.set('data.attachment.url', (req.body.uploadedDocumentUrl && req.body.uploadedDocumentUrl!="") ? req.body.uploadedDocumentUrl : null);
   post.set('data.attachment.filename', (req.body.uploadedDocumentFilename && req.body.uploadedDocumentFilename!="") ? req.body.uploadedDocumentFilename : null);

@@ -327,6 +327,15 @@
                              maxlength="20"
                              char-counter>
                 </paper-input>
+                <paper-input id="contactAddress"
+                             name="contactAddress"
+                             type="text"
+                             hidden$="[[!group.configuration.moreContactInformationAddress]]"
+                             label="[[t('contactAddress')]]"
+                             value="{{post.data.contact.address}}"
+                             maxlength="300"
+                             char-counter>
+                </paper-input>
               </template>
             </div>
           </section>
