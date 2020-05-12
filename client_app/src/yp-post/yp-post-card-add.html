@@ -122,8 +122,6 @@
 
       }
 
-
-
       [hidden] {
         display: none !important;
       }
@@ -135,7 +133,10 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical center-center container">
-      <paper-card disabled$="[[disabled]]" elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
+      <paper-card disabled$="[[disabled]]" elevation="[[elevation]]"
+                  aria-disabled="[[disabled]]" role="button" aria-label="[[t('post.add_new')]]"
+                  tabindex="0" on-keydown="_keyDown"
+                  class="postCard" on-tap="_newPost">
         <div class="layout horizontal center-center addNewIdeaText">
           <iron-icon disabled$="[[disabled]]" icon="lightbulb-outline"></iron-icon>
           <div class="flex addText" hidden$="[[disabled]]">
@@ -177,6 +178,12 @@
         },
 
         group: Object
+      },
+
+      _keyDown: function (event) {
+        if (event.keyCode===13) {
+          this._newPost();
+        }
       },
 
       _newPost: function () {
