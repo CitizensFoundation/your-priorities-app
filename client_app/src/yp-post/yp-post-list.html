@@ -159,7 +159,7 @@
       }
 
       :focus {
-        outline: none;
+
       }
 
       .largeAjax {
@@ -203,10 +203,10 @@
       </template>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
+        <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
           <template>
-            <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center" role="heading" aria-level="2">
-              <yp-post-card on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            <div wide-padding$="[[wide]]" class="card layout vertical center-center"  aria-label="[[post.name]]" role="heading" aria-level="2" tabindex$="[[tabIndex]]">
+              <yp-post-card id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
             </div>
           </template>
         </iron-list>
@@ -354,6 +354,15 @@
         }
       },
 
+      _selectedItemChanged: function (event, detail) {
+        if (detail && detail.value) {
+          var selectedCard = this.$$("#postCard"+detail.value.id);
+          if (selectedCard) {
+            selectedCard.clickOnA();
+          }
+        }
+      },
+
       _refreshPost: function (event, detail) {
         this.$.refreshPost.url="/api/posts/"+detail.id;
         this.$.refreshPost.generateRequest();
@@ -372,7 +381,21 @@
           }
         }
       },
-      
+
+      _getPostLink: function (post) {
+        if (post) {
+          if (post.Group.configuration && post.Group.configuration.disablePostPageLink) {
+            return "#";
+          } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+            return post.description.trim();
+          } else {
+            return "/post/"+post.id;
+          }
+        } else {
+          console.warn("Trying to get empty post link");
+        }
+      },
+
       _scrollOffset: function (wide, group) {
         var list = this.$$("iron-list");
         if (list) {

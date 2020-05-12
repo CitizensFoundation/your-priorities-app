@@ -48,7 +48,7 @@
       }
 
       :focus {
-        outline: none;
+
       }
 
       @media (max-width: 960px) {
@@ -64,8 +64,8 @@
 
     <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeCommunities]]" as="community" scroll-target="document" grid$="[[wide]]">
       <template>
-        <div class="card layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" role="heading" aria-level="2">
-          <a href="/[[_communityPath(community)]]/[[community.id]]" class="layout vertical center-center" aria-label="[[community.name]]"><yp-community-card wide$="[[wide]]"  community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
+        <div class="card layout vertical center-center" wide-padding$="[[wide]]">
+          <a href="/[[_communityPath(community)]]/[[community.id]]" tabindex$="[[tabIndex]]" aria-level="2" role="heading" class="layout vertical center-center" aria-label="[[community.name]]"><yp-community-card wide$="[[wide]]"  community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
         </div>
       </template>
     </iron-list>
