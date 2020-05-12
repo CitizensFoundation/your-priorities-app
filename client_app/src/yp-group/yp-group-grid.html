@@ -50,10 +50,10 @@
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wide}}"></iron-media-query>
 
     <div class="layout horizontal center-center">
-      <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeGroups]]" as="group" scroll-target="document" grid$="[[wide]]">
+      <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeGroups]]" as="group" scroll-target="document" role="list" grid$="[[wide]]">
         <template>
           <div class="groupCard layout vertical center-center" wide-padding$="[[wide]]">
-            <a href="[[_getGroupUrl(group)]]" class="layout vertical center-center" tabindex$="[[tabIndex]]" role="heading" aria-level="2" aria-label="[[group.name]]"><yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card></a>
+            <a href="[[_getGroupUrl(group)]]" class="layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="2" aria-label="[[group.name]]"><yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card></a>
           </div>
         </template>
       </iron-list>

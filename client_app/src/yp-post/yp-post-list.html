@@ -203,9 +203,9 @@
       </template>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
+        <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]" role="list">
           <template>
-            <div wide-padding$="[[wide]]" class="card layout vertical center-center"  aria-label="[[post.name]]" role="heading" aria-level="2" tabindex$="[[tabIndex]]">
+            <div wide-padding$="[[wide]]" class="card layout vertical center-center" aria-label="[[post.name]]" role="listitem" aria-level="2" tabindex$="[[tabIndex]]">
               <yp-post-card id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
             </div>
           </template>

@@ -298,7 +298,7 @@
         <div class="main-container">
           <div class="point">
             <template is="dom-if" if="[[!post.Group.configuration.alternativePointForHeader]]">
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" role="heading">
                 [[t('pointsFor')]]
               </div>
             </template>
@@ -307,7 +307,7 @@
               <div class="pointMainHeader layout horizontal center-center">
 
                 <yp-magic-text content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointForHeader]]"
-                               content-language="[[post.Group.language]]"
+                               content-language="[[post.Group.language]]" role="heading"
                                class="ratingName" text-type="alternativePointForHeader"></yp-magic-text>
 
               </div>
@@ -384,9 +384,9 @@
 
             <div id="allUpPoints">
               <iron-scroll-threshold id="ironScrollThesholdUp" scroll-target="document"  on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListUp" lower-threshold="200" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
+                <iron-list id="ironListUp" lower-threshold="200" items="[[upPoints]]" role="list" as="point" scroll-target="document" scroll-offset="550">
                   <template>
-                    <div class="item" tabindex$="[[tabIndex]]">
+                    <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="2">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                         <yp-point point="[[point]]"></yp-point>
                       </paper-material>
@@ -399,7 +399,7 @@
 
           <div class="point" hidden$="[[post.Group.configuration.hidePointAgainst]]">
             <template is="dom-if" if="[[!post.Group.configuration.alternativePointAgainstHeader]]">
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" role="heading">
                 [[t('pointsAgainst')]]
               </div>
             </template>
@@ -407,20 +407,20 @@
             <template is="dom-if" if="[[post.Group.configuration.alternativePointAgainstHeader]]">
               <div class="pointMainHeader layout horizontal center-center">
                 <yp-magic-text content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointAgainstHeader]]"
-                               content-language="[[post.Group.language]]"
+                               content-language="[[post.Group.language]]" role="heading"
                                class="ratingName" text-type="alternativePointAgainstHeader"></yp-magic-text>
               </div>
             </template>
 
             <template is="dom-if" if="[[post.Group.configuration.alternativePointForLabel]]">
                 <yp-magic-text id="alternativePointForLabelId" hidden content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointForLabel]]"
-                               content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels"
+                               content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels" role="heading"
                                text-type="alternativePointForLabel"></yp-magic-text>
             </template>
 
             <template is="dom-if" if="[[post.Group.configuration.alternativePointAgainstLabel]]">
               <yp-magic-text id="alternativePointAgainstLabelId" hidden content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointAgainstLabel]]"
-                             content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels"
+                             content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels" role="heading"
                              text-type="alternativePointAgainstLabel"></yp-magic-text>
             </template>
 
@@ -496,9 +496,9 @@
 
             <div id="allDownPoints">
               <iron-scroll-threshold id="ironScrollThesholdDown"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListDown" lower-threshold="200" items="[[downPoints]]" as="point" scroll-target="document" scroll-offset="550">
+                <iron-list id="ironListDown" lower-threshold="200" items="[[downPoints]]" role="list" as="point" scroll-target="document" scroll-offset="550">
                   <template>
-                    <div class="item" tabindex$="[[tabIndex]]">
+                    <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="2">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                         <yp-point point="[[point]]"></yp-point>
                       </paper-material>
@@ -597,9 +597,9 @@
       </div>
       <div rtl$="[[rtl]]" class="layout vertical center-center">
         <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
             <template>
-              <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
+              <div class="item layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="2">
                 <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
                   <yp-point point="[[point]]"></yp-point>
                 </paper-material>
