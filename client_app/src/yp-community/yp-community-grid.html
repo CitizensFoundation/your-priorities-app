@@ -62,10 +62,10 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wide}}"></iron-media-query>
 
-    <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeCommunities]]" as="community" scroll-target="document" grid$="[[wide]]" role="list">
+    <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[activeCommunities]]" as="community" scroll-target="document" grid$="[[wide]]" role="list">
       <template>
-        <div class="card layout vertical center-center" wide-padding$="[[wide]]">
-          <a href="/[[_communityPath(community)]]/[[community.id]]" tabindex$="[[tabIndex]]" role="listitem" aria-level="2"  class="layout vertical center-center" aria-label="[[community.name]]"><yp-community-card wide$="[[wide]]"  community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
+        <div class="card layout vertical center-center" wide-padding$="[[wide]]" tabindex$="[[tabIndex]]" role="listitem" aria-level="2" aria-label="[[community.name]]">
+          <a href="/[[_communityPath(community)]]/[[community.id]]" id="communityCardHref[[community.id]]" class="layout vertical center-center"><yp-community-card wide$="[[wide]]" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
         </div>
       </template>
     </iron-list>
@@ -92,6 +92,15 @@
         scrollOffset: {
           type: Number,
           computed: '_scrollOffset(wide, featuredGroups, activeCommunities)'
+        }
+      },
+
+      _selectedItemChanged: function (event, detail) {
+        if (detail && detail.value) {
+          var selectedCard = this.$$("#communityCardHref"+detail.value.id);
+          if (selectedCard) {
+            selectedCard.click();
+          }
         }
       },
 
