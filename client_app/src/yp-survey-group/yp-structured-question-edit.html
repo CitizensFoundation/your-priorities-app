@@ -126,6 +126,11 @@
         paper-input[half-width-desktop] {
           width: 50%;
         }
+
+        :host {
+          padding: 0;
+          margin: 0;
+        }
       }
 
       [hidden] {
@@ -320,7 +325,7 @@
 
       _getRadioClass (question) {
         if (question.subType && question.subType==="rating") {
-          return "layout horizontal lessBottomMargin";
+          return "layout horizontal wrap lessBottomMargin";
         } else {
           return "layout vertical";
         }

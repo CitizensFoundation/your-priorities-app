@@ -151,6 +151,10 @@
           --iron-icon-width: 15px;
           --iron-icon-fill-color: #555;
         }
+
+        yp-structured-question-edit {
+          max-width: calc(100vw - 64px);
+        }
       }
 
       .postCoverVideoInfo {
@@ -256,8 +260,8 @@
 
               <template is="dom-if" if="[[postDescriptionLimit]]">
                 <paper-textarea id="description"
-                                hidden$="[[structuredQuestions]]"
-                                required$="[[!structuredQuestions]]"
+                                hidden$="[[hasStructuredQuestions]]"
+                                required$="[[!hasStructuredQuestions]]"
                                 minlength="3"
                                 name="description"
                                 value="{{post.description}}"
@@ -272,11 +276,11 @@
                 </paper-textarea>
 
                 <div class="horizontal end-justified layout postEmoji" hidden$="[[group.configuration.hideEmoji]]">
-                  <emoji-selector id="emojiSelectorDescription" hidden$="[[structuredQuestions]]"></emoji-selector>
+                  <emoji-selector id="emojiSelectorDescription" hidden$="[[hasStructuredQuestions]]"></emoji-selector>
                 </div>
               </template>
 
-              <template is="dom-if" if="[[structuredQuestions]]">
+              <template is="dom-if" if="[[hasStructuredQuestions]]">
                 <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
                   <yp-structured-question-edit index="[[index]]"
                                                use-small-font
@@ -587,6 +591,11 @@
         computed: '_structuredQuestions(post, group)'
       },
 
+      hasStructuredQuestions:  {
+        type: Boolean,
+        computed: '_hasStructuredQuestions(structuredQuestions)'
+      },
+
       replacedName: {
         type: String,
         computed: '_replacedName(post, group, newPost)'
@@ -635,6 +644,10 @@
         item.scrollIntoView({block: "center", inline: "center", behavior: 'smooth'});
         item.focus();
       }
+    },
+
+    _hasStructuredQuestions: function (questions) {
+      return questions!=null;
     },
 
     _skipToId: function (event, detail, showItems) {
