@@ -173,7 +173,7 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
     this.set('currentlyEditingTemplate', JSON.parse(event.target.getAttribute('data-args')));
     this.set('currentlyEditingContent',this.wordwrap(120)(this.templates[this.currentlyEditingTemplate]["content"]));
     this.set('currentlyEditingTitle',this.templates[this.currentlyEditingTemplate]["title"]);
-    this.$.editTemplateLocale.open();
+    this.$$("#editTemplateLocale").open();
   }
 
   _clearTemplateEdit() {
@@ -213,7 +213,7 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
 
   open(templates) {
     this.set('templates', templates);
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   _setupHeaderText() {

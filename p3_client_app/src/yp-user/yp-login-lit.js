@@ -807,10 +807,11 @@ class YpLoginLit extends YpBaseElement {
     }
   }
 
-  ready() {
-    if (window.appGlobals && window.appGlobals.domain) {
-      this.set('domain', window.appGlobals.domain)
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (window.appGlobals && window.appGlobals.domain) {
+        this.set('domain', window.appGlobals.domain)
+      }
   }
 
   setup(onLoginFunction, domain) {

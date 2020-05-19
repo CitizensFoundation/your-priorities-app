@@ -214,7 +214,7 @@ class YpMagicTextLit extends YpBaseElement {
       this.set('processedContent', window.appGlobals.autoTranslateCache[indexKey]);
       this._finalize();
     } else {
-      this.$.getTranslationAjax.params = {
+      this.$$("#getTranslationAjax").params = {
         textType: this.textType,
         contentId: this.contentId,
         targetLanguage: this.language
@@ -223,35 +223,35 @@ class YpMagicTextLit extends YpBaseElement {
         case 'postName':
         case 'postContent':
         case 'postTranscriptContent':
-          this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedText";
+          this.$$("#getTranslationAjax").url = "/api/posts/"+this.contentId+"/translatedText";
           break;
         case 'pointContent':
-          this.$.getTranslationAjax.url = "/api/points/"+this.contentId+"/translatedText";
+          this.$$("#getTranslationAjax").url = "/api/points/"+this.contentId+"/translatedText";
           break;
         case 'domainName':
         case 'domainContent':
-          this.$.getTranslationAjax.url = "/api/domains/"+this.contentId+"/translatedText";
+          this.$$("#getTranslationAjax").url = "/api/domains/"+this.contentId+"/translatedText";
           break;
         case 'communityName':
         case 'communityContent':
-          this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedText";
+          this.$$("#getTranslationAjax").url = "/api/communities/"+this.contentId+"/translatedText";
           break;
         case 'groupName':
         case 'groupContent':
-          this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedText";
+          this.$$("#getTranslationAjax").url = "/api/groups/"+this.contentId+"/translatedText";
           break;
         case 'categoryName':
-          this.$.getTranslationAjax.url = "/api/categories/"+this.contentId+"/translatedText";
+          this.$$("#getTranslationAjax").url = "/api/categories/"+this.contentId+"/translatedText";
           break;
         case 'statusChangeContent':
-          this.$.getTranslationAjax.url = "/api/posts/"+this.extraId+"/"+this.contentId+"/translatedStatusText";
+          this.$$("#getTranslationAjax").url = "/api/posts/"+this.extraId+"/"+this.contentId+"/translatedStatusText";
           break;
         default:
           console.error("No valid textType for magic text to translate: "+this.textType);
           return;
       }
       if (this.contentId) {
-        this.$.getTranslationAjax.generateRequest();
+        this.$$("#getTranslationAjax").generateRequest();
       } else {
         console.error("No content id for: "+this.textType);
         this._finalize();
@@ -473,7 +473,7 @@ class YpMagicTextBoxDialog extends YpBaseElement {
     this.structuredQuestionsConfig = structuredQuestionsConfig;
     this.set('content', content);
     this.set('closeDialogText', closeDialogText);
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 }
 

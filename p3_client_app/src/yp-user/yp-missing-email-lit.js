@@ -178,11 +178,12 @@ class YpMissingEmailLit extends YpBaseElement {
     window.appUser.fire("yp-forgot-password", { email: this.email });
   }
 
-  ready() {
-    this.header = this.t('user.setEmail');
-    this.async(function () {
-      this.$$("#a11y").target = this.$$("#form");
-    }.bind(this), 50);
+  connectedCallback() {
+    super.connectedCallback()
+      this.header = this.t('user.setEmail');
+      this.async(function () {
+        this.$$("#a11y").target = this.$$("#form");
+      }.bind(this), 50);
   }
 
   _computeCredentials(email, password) {

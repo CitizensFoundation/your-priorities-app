@@ -86,7 +86,7 @@ class YpGroupGridLit extends YpBaseElement {
 */
 
   _scrollOffset(wide, featuredGroups) {
-    const list = this.$.ironList;
+    const list = this.$$("#ironList");
     if (list) {
       let offset = list.offsetTop;
       offset -= 75;
@@ -109,7 +109,7 @@ class YpGroupGridLit extends YpBaseElement {
 
   scrollToItem(item) {
     console.log("Group grid scrolling to item");
-    this.$.ironList.scrollToItem(item);
+    this.$$("#ironList").scrollToItem(item);
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
         bubbles: true,

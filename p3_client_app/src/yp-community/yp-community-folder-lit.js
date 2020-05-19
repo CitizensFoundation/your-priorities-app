@@ -252,9 +252,9 @@ behaviors: [
       }
 
       if (this.communityFolder.CommunityHeaderImages && this.communityFolder.CommunityHeaderImages.length>0) {
-        this.$.page.setupTopHeaderImage(this.communityFolder.CommunityHeaderImages);
+        this.$$("#page").setupTopHeaderImage(this.communityFolder.CommunityHeaderImages);
       } else {
-        this.$.page.setupTopHeaderImage(null);
+        this.$$("#page").setupTopHeaderImage(null);
       }
 
       if (window.location.href.indexOf("/community_folder") > -1) {
@@ -277,8 +277,8 @@ behaviors: [
           backPath: backPath
         });
       }
-      this.$.pagesAjax.url = "/api/domains/"+this.communityFolder.Domain.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/domains/"+this.communityFolder.Domain.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
       window.appGlobals.setAnonymousGroupStatus(null);
       window.appGlobals.disableFacebookLoginForGroup = false;
       window.appGlobals.externalGoalTriggerUrl = null;

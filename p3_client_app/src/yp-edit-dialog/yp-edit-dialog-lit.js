@@ -471,8 +471,9 @@ class YpEditDialogLit extends YpBaseElement {
   _formSubmitted(event) {
   }
 
-  ready() {
-    this.baseAction = this.action;
+  connectedCallback() {
+    super.connectedCallback()
+      this.baseAction = this.action;
   }
 
   _formResponse(response, detail) {

@@ -150,8 +150,8 @@ class YpOrganizationEditLit extends YpBaseElement {
     this.set('organization', { name: '', description: '', access: 0 });
     this.set('uploadedLogoImageId', null);
     this.set('uploadedHeaderImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.logoImageUpload.clear();
+    this.$("#headerImageUpload").clear();
+    this.$("#logoImageUpload").clear();
   }
 
   setup(organization, newNotEdit, refreshFunction) {

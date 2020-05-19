@@ -238,7 +238,7 @@ class YpCommunityLit extends YpBaseElement {
     } else if (this.selectedTab==="groups") {
       if (window.appGlobals.backToCommunityGroupItems &&
         window.appGlobals.backToCommunityGroupItems[this.community.id]) {
-        this.$.groupGrid.scrollToItem(window.appGlobals.backToCommunityGroupItems[this.community.id]);
+        this.$$("#groupGrid").scrollToItem(window.appGlobals.backToCommunityGroupItems[this.community.id]);
         window.appGlobals.backToCommunityGroupItems[this.community.id] = null;
       }
     }
@@ -402,9 +402,9 @@ class YpCommunityLit extends YpBaseElement {
       }
 
       if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {
-        this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
+        this.$$("#page").setupTopHeaderImage(this.community.CommunityHeaderImages);
       } else {
-        this.$.page.setupTopHeaderImage(null);
+        this.$$("#page").setupTopHeaderImage(null);
       }
 
       if (window.location.href.indexOf("/community") >-1) {
@@ -434,8 +434,8 @@ class YpCommunityLit extends YpBaseElement {
             this.community.configuration.customBackURL : backPath
         });
       }
-      this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/communities/"+this.community.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
       window.appGlobals.setAnonymousGroupStatus(null);
       window.appGlobals.disableFacebookLoginForGroup = false;
       window.appGlobals.externalGoalTriggerUrl = null;
@@ -483,7 +483,8 @@ class YpCommunityLit extends YpBaseElement {
     }, 100);
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
   }
 }
 

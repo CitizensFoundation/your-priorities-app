@@ -528,7 +528,8 @@ Polymer({
     });
   },
 
-  ready: function () {
+  connectedCallback() {
+    super.connectedCallback()
     this._setGridSize();
     window.addEventListener("resize", this._resizeThrottler.bind(this), false);
   },

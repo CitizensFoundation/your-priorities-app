@@ -85,10 +85,10 @@ class YpConfirmationDialogLit extends YpBaseElement {
   _confirm() {
     if (this.useFinalWarning && !this.haveIssuedFinalWarning) {
       this.haveIssuedFinalWarning = true;
-      this.$.confirmationDialog.close();
+      this.$$("#confirmationDialog").close();
       this.set('confirmationText', this.t("finalDeleteWarning"));
       this.async(function () {
-        this.$.confirmationDialog.open();
+        this.$$("#confirmationDialog").open();
       });
     } else {
       if (this.onConfirmedFunction) {

@@ -122,8 +122,9 @@ class YpPointCommentEditLit extends YpBaseElement {
   ],
   */
 
-  ready() {
-    this._reset();
+  connectedCallback() {
+    super.connectedCallback()
+      this._reset();
   }
 
   _commentContentChanged(change) {
@@ -144,19 +145,19 @@ class YpPointCommentEditLit extends YpBaseElement {
     if (this.comment.content && this.comment.content.length>0) {
       if (this.point) {
         body = { point_id: this.point.id };
-        this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/comment';
+        this.$$("#postCommentAjax").url = '/api/points/'+this.point.id+'/comment';
         this.$$("#submitButton").disabled = true;
       } else if (this.image) {
         body = { image_id: this.image.id };
-        this.$.postCommentAjax.url = '/api/images/'+this.image.id+'/comment';
+        this.$$("#postCommentAjax").url = '/api/images/'+this.image.id+'/comment';
         this.$$("#submitButton").disabled = true;
       } else {
         console.error("Can't find send ids");
       }
-      this.$.postCommentAjax.body = __.merge(body, { comment: this.comment } );
-      this.$.postCommentAjax.generateRequest();
+      this.$$("#postCommentAjax").body = __.merge(body, { comment: this.comment } );
+      this.$$("#postCommentAjax").generateRequest();
     } else {
-      this.$.postCommentAjax.showErrorDialog(this.t('point.commentToShort'));
+      this.$$("#postCommentAjax").showErrorDialog(this.t('point.commentToShort'));
     }
   }
 

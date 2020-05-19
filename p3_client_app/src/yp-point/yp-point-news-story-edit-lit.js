@@ -171,7 +171,8 @@ render() {
     this.$.storySubmitButton.disabled = false;
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
     this._reset();
     this.$.pointNewsStory.addEventListener("paste", function () {
       this.async(function () {

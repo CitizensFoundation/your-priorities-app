@@ -166,7 +166,7 @@ class YpPointCommentListLit extends YpBaseElement {
 */
   _openChanged(newOpenValue) {
     if (newOpenValue) {
-      this.$.commentsListAjax.generateRequest();
+      this.$$("#commentsListAjax").generateRequest();
     }
   }
 
@@ -191,29 +191,29 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   generateRequest() {
-    this.$.commentsListAjax.generateRequest();
+    this.$$("#commentsListAjax").generateRequest();
   }
 
   _pointChanged(newPoint) {
     this.set('comments', []);
     this.set('commentsCount', null);
     if (newPoint) {
-      this.$.commentsListAjax.url = '/api/points/'+newPoint.id+'/comments';
-      this.$.commentsCountListAjax.url = '/api/points/'+newPoint.id+'/commentsCount';
-      this.$.commentsCountListAjax.generateRequest();
+      this.$$("#commentsListAjax").url = '/api/points/'+newPoint.id+'/comments';
+      this.$$("#commentsCountListAjax").url = '/api/points/'+newPoint.id+'/commentsCount';
+      this.$$("#commentsCountListAjax").generateRequest();
     }
   }
 
   _refresh() {
-    this.$.commentsListAjax.generateRequest();
-    this.$.commentsCountListAjax.generateRequest();
+    this.$$("#commentsListAjax").generateRequest();
+    this.$$("#commentsCountListAjax").generateRequest();
   }
 
   _imageChanged(newImage) {
     if (newImage) {
-      this.$.commentsListAjax.url = '/api/images/'+newImage.id+'/comments';
-      this.$.commentsCountListAjax.url = '/api/images/'+newImage.id+'/commentsCount';
-      this.$.commentsCountListAjax.generateRequest();
+      this.$$("#commentsListAjax").url = '/api/images/'+newImage.id+'/comments';
+      this.$$("#commentsCountListAjax").url = '/api/images/'+newImage.id+'/commentsCount';
+      this.$$("#commentsCountListAjax").generateRequest();
     }
   }
 

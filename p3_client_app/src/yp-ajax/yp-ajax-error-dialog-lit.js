@@ -42,8 +42,8 @@ class YpAjaxErrorDialogLit extends YpBaseElement {
   }
 
   resetErrorText(event) {
-    this.$.error.close();
-    this.$.errorText="";
+    this.$$("#error").close();
+    this.$$("#errorText")="";
   }
 }
 

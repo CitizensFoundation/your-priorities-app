@@ -194,21 +194,22 @@ class YpPostLocationLit extends YpBaseElement {
     }
   }
 
-  ready() {
-    if (!this.location) {
-      this.async(function () {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            if (!this.location)
-              this.location = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                map_zoom: 13
-              }
-          }.bind(this));
-        }
-      }, 50);
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (!this.location) {
+        this.async(function () {
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              if (!this.location)
+                this.location = {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  map_zoom: 13
+                }
+            }.bind(this));
+          }
+        }, 50);
+      }
   }
 
   _zoomChanged(event, detail) {

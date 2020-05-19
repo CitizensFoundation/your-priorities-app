@@ -109,8 +109,8 @@ class YpCategoryEditLit extends YpBaseElement {
     this.set('category', { name: '', description: '' });
     this.set('uploadedIconImageId', null);
     this.set('uploadedHeaderImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.iconImageUpload.clear();
+    this.$$("#headerImageUpload").clear();
+    this.$$("#iconImageUpload").clear();
   }
 
   _setupTranslation() {

@@ -326,8 +326,8 @@ class YpDomainEditLit extends YpBaseElement {
     this.set('uploadedLogoImageId', null);
     this.set('uploadedHeaderImageId', null);
     this.set('appHomeScreenIconImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.logoImageUpload.clear();
+    this.$$("#headerImageUpload").clear();
+    this.$$("#logoImageUpload").clear();
     if (this.$$("#videoFileUpload"))
       this.$$("#videoFileUpload").clear();
 

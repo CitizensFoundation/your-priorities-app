@@ -272,7 +272,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   _readyToLoad(userId, statusUpdateId) {
     if (userId && statusUpdateId) {
       this.async(function () {
-        this.$.ajax.generateRequest();
+        this.$("#ajax").generateRequest();
       }, 20);
     }
   }

@@ -452,9 +452,10 @@ class YpUsersGridLit extends YpBaseElement {
     this.set('forceSpinner', false);
   }
 
-  ready() {
-    this._setGridSize();
-    window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+  connectedCallback() {
+    super.connectedCallback()
+      this._setGridSize();
+      window.addEventListener("resize", this._resizeThrottler.bind(this), false);
   }
 
   _reload() {

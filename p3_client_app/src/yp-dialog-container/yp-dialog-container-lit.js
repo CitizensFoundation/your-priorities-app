@@ -284,12 +284,13 @@ class YpDialogContainerLit extends YpBaseElement {
   ],
 */
 
-  ready() {
-    this.async(function () {
-      import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-delayed.js")).then(() => {
-        this.set('haveLoadedDelayed', true)
-      });
-    }, 3000);
+  connectedCallback() {
+    super.connectedCallback()
+      this.async(function () {
+        import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-delayed.js")).then(() => {
+          this.set('haveLoadedDelayed', true)
+        });
+      }, 3000);
   }
 
   openPixelCookieConfirm(facebookPixelTrackingId) {
@@ -344,10 +345,10 @@ class YpDialogContainerLit extends YpBaseElement {
   }
 
   _openBulkStatusUpdates() {
-    this.$.loadingDialog.open();
+    this.$$("#loadingDialog").open();
 
     import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-bulk-status-updates.js")).then(() => {
-      this.$.loadingDialog.close();
+      this.$$("#loadingDialog").close();
       console.info("Have loaded bulk status container");
       this.set('bulkStatusUpdates', true);
     });
@@ -374,10 +375,10 @@ class YpDialogContainerLit extends YpBaseElement {
     if (this.gotUsersGrid) {
       this.getDialogAsync("usersGrid", callback);
     } else {
-      this.$.loadingDialog.open();
+      this.$$("#loadingDialog").open();
       import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js")).then(() => {
         import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-users-grid.js")).then(() => {
-          this.$.loadingDialog.close();
+          this.$$("#loadingDialog").close();
           console.info("Have loaded users grid container");
           this.set('gotUsersGrid', true);
           this.getDialogAsync("usersGrid", callback);
@@ -390,10 +391,10 @@ class YpDialogContainerLit extends YpBaseElement {
     if (this.gotContentModeration) {
       this.getDialogAsync("contentModeration", callback);
     } else {
-      this.$.loadingDialog.open();
+      this.$$("#loadingDialog").open();
       import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js")).then(() => {
         import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-moderation.js")).then(() => {
-          this.$.loadingDialog.close();
+          this.$$("#loadingDialog").close();
           console.info("Have loaded contentModeration");
           this.set('gotContentModeration', true);
           this.getDialogAsync("contentModeration", callback);
@@ -406,9 +407,9 @@ class YpDialogContainerLit extends YpBaseElement {
     if (this.gotMediaRecorder) {
       this.getDialogAsync("mediaRecorder", callback);
     } else {
-      this.$.loadingDialog.open();
+      this.$$("#loadingDialog").open();
       import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-media-recorder.js")).then(() => {
-        this.$.loadingDialog.close();
+        this.$$("#loadingDialog").close();
         console.info("Have loaded media recorder container");
         this.set('gotMediaRecorder', true);
         this.getDialogAsync("mediaRecorder", callback);

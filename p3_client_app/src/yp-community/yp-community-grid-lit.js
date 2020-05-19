@@ -100,7 +100,7 @@ class YpCommunityGridLit extends YpBaseElement {
   }
 
   _scrollOffset(wide, communityGrid) {
-    const list = this.$.ironList;
+    const list = this.$$("#ironList");
     if (list) {
       let offset = list.offsetTop;
       offset -= 100;
@@ -125,7 +125,7 @@ class YpCommunityGridLit extends YpBaseElement {
 
   scrollToItem(item) {
     console.log("Community grid scrolling to item");
-    this.$.ironList.scrollToItem(item);
+    this.$$("#ironList").scrollToItem(item);
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
         bubbles: true,

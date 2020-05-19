@@ -220,7 +220,8 @@ class YpUserImageLit extends YpBaseElement {
     (this.profileImageUrl==null && user.facebook_id==null)
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
   }
 }
 

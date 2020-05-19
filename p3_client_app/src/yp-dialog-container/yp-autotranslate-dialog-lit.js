@@ -72,18 +72,18 @@ class YpAutoTranslateDialogLit extends YpBaseElement {
   }
 
   _startAutoTranslate() {
-    this.$.languageSelector._startTranslation();
+    this.$$("#languageSelector")._startTranslation();
   }
 
   openLaterIfAutoTranslationEnabled() {
     this.async(function () {
-      if (this.$.dialog.opened===false) {
-        if (this.$.languageSelector.canUseAutoTranslate === true &&
+      if (this.$$("#dialog").opened===false) {
+        if (this.$$("#languageSelector").canUseAutoTranslate === true &&
           window.autoTranslate !== true) {
           if (localStorage.getItem("alwaysStartAutoTranslation")!=null) {
             this._startAutoTranslate();
           } else {
-            this.$.dialog.open();
+            this.$$("#dialog").open();
           }
         }
       }

@@ -584,11 +584,12 @@ class YpPostActionsLit extends YpBaseElement {
     return small ? 'action-bar' : 'action-bar';
   }
 
-  ready() {
-    if (this.endorsementButtons) {
-      this.$.actionDown.className += ' ' + 'default-buttons-color';
-      this.$.actionUp.className += ' ' + 'default-buttons-color';
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (this.endorsementButtons) {
+        this.$.actionDown.className += ' ' + 'default-buttons-color';
+        this.$.actionUp.className += ' ' + 'default-buttons-color';
+      }
   }
 }
 

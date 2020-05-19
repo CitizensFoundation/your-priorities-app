@@ -378,7 +378,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab) {
-    let offset = this.$.ironList.offsetTop;
+    let offset = this.$$("#ironList").offsetTop;
     offset -= 75;
 
     if (!hasLoggedInUser && !groupId)
@@ -440,17 +440,17 @@ class AcActivitiesLit extends YpBaseElement {
 
   _reallyDelete() {
     if (this.domainId) {
-      this.$.deleteActivityAjax.url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
     } else if (this.communityId) {
-      this.$.deleteActivityAjax.url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
     } else if (this.groupId) {
-      this.$.deleteActivityAjax.url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
     } else if (this.postId) {
-      this.$.deleteActivityAjax.url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
     }
-    this.$.deleteActivityAjax.body = {};
-    this.$.deleteActivityAjax.generateRequest();
-    this.set('activityIdToDelete', null);
+    this.$$("#deleteActivityAjax").body = {};
+    this.$$("#deleteActivityAjax").generateRequest();
+    this.set('activityIdToDelete  ', null);
   }
 
   _generateRequest(typeId, typeName) {
@@ -467,11 +467,11 @@ class AcActivitiesLit extends YpBaseElement {
       }
 
       this.set('url', '/api/'+this.mode+'/' + typeName + '/' + typeId);
-      this.$.ajax.url = this.url;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = this.url;
+      this.$$("#ajax").generateRequest();
       if (typeName!='posts') {
-        this.$.recommendationAjax.url = '/api/recommendations/' + typeName + '/' + typeId;
-        this.$.recommendationAjax.generateRequest();
+        this.$$("#recommendationAjax").url = '/api/recommendations/' + typeName + '/' + typeId;
+        this.$$("#recommendationAjax").generateRequest();
       }
     }
   }
@@ -485,8 +485,8 @@ class AcActivitiesLit extends YpBaseElement {
           console.log("_loadMoreData for scroll 3");
           this.set('moreToLoad', false);
           console.info("_loadMoreData for scroll for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
-          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
-          this.$.ajax.generateRequest();
+          this.$$("#ajax").url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
+          this.$$("#ajax").generateRequest();
         }
       } else {
         console.warn("NOT VISIBLE for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
@@ -496,11 +496,11 @@ class AcActivitiesLit extends YpBaseElement {
 
   loadNewData() {
     if (this.url!='' && this.latestProcessedActivityAt) {
-      this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = this.url + '?afterDate='+this.latestProcessedActivityAt;
+      this.$$("#ajax").generateRequest();
     } else if (!this.latestProcessedActivityAt) {
-      this.$.ajax.url = this.url;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = this.url;
+      this.$$("#ajax").generateRequest();
     }
   }
 
@@ -563,7 +563,7 @@ class AcActivitiesLit extends YpBaseElement {
     }
 
     for (let i = 0; i < activities.length; i++) {
-      if (this.$.ajax.url.indexOf('afterDate') > -1) {
+      if (this.$$("#ajax").url.indexOf('afterDate') > -1) {
         this.unshift('activities', activities[i]);
       } else {
         this.push('activities', activities[i]);
@@ -595,13 +595,13 @@ class AcActivitiesLit extends YpBaseElement {
     );
 
     this.async(function () {
-      this.$.ironList.fire('iron-resize');
+      this.$$("#ironList").fire('iron-resize');
     });
   }
 
   scrollToItem(item) {
     console.log("Activity scrolling to item");
-    this.$.ironList.scrollToItem(item);
+    this.$$("#ironList").scrollToItem(item);
     this.async(function () {
       this._clearScrollThreshold();
     });
@@ -609,7 +609,7 @@ class AcActivitiesLit extends YpBaseElement {
 
   fireResize() {
     console.log("fireResize");
-    this.$.ironList.fire('iron-resize');
+    this.$$("#ironList").fire('iron-resize');
   }
 }
 

@@ -461,28 +461,29 @@ class YpFileUploadLit extends YpBaseElement {
       this.fire("success", { detail: null, audioId: null });
   }
 
-  ready() {
-    if (this.raised) {
-      this.toggleAttribute("raised", true, this.$.button);
-    }
-    if (this.noink) {
-      this.toggleAttribute("noink", true, this.$.button);
-    }
-    if (this.droppable) {
-      this._showDropText();
-      this.setupDrop();
-    }
-    if (this.videoUpload) {
-      this.set('accept','video/*');
-      this.set('capture', true);
-    } else if (this.audioUpload) {
-      this.set('accept','audio/*');
-      this.set('capture', true);
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (this.raised) {
+        this.toggleAttribute("raised", true, this.$.button);
+      }
+      if (this.noink) {
+        this.toggleAttribute("noink", true, this.$.button);
+      }
+      if (this.droppable) {
+        this._showDropText();
+        this.setupDrop();
+      }
+      if (this.videoUpload) {
+        this.set('accept','video/*');
+        this.set('capture', true);
+      } else if (this.audioUpload) {
+        this.set('accept','audio/*');
+        this.set('capture', true);
+      }
 
-    if (!this.uploadLimitSeconds && (this.videoUpload || this.audioUpload)) {
-      this.set('uploadLimitSeconds', 600);
-    }
+      if (!this.uploadLimitSeconds && (this.videoUpload || this.audioUpload)) {
+        this.set('uploadLimitSeconds', 600);
+      }
   }
 
   /**

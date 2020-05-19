@@ -223,8 +223,9 @@ class YpPageLit extends YpBaseElement {
   ], 
 */
 
-  ready() {
-    this.addEventListener("yp-setup-header-image", this._setupTopHeaderImageEvent);
+  connectedCallback() {
+    super.connectedCallback()
+      this.addEventListener("yp-setup-header-image", this._setupTopHeaderImageEvent);
   }
 
   _setupTopHeaderImageEvent( _event, image) {

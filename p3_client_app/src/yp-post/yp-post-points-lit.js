@@ -844,7 +844,8 @@ class YpPostPointsLit extends YpBaseElement {
     }
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
     const ua = navigator.userAgent.toLowerCase();
     const isAndroid = ua.indexOf("android") > -1;
     if (isAndroid) {

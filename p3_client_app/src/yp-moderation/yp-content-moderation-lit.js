@@ -543,9 +543,10 @@ class YpContentModerationLit extends YpBaseElement {
     });
   }
 
-  ready() {
-    this._setGridSize();
-    window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+  connectedCallback() {
+    super.connectedCallback()
+      this._setGridSize();
+      window.addEventListener("resize", this._resizeThrottler.bind(this), false);
   }
 
   _toPercent(number) {

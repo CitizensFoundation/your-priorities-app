@@ -330,7 +330,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       localStorage.setItem("selectedAudioDeviceId", this.selectedAudioDeviceId);
     }
 
-    this.$.selectDevices.close();
+    this.$$("#selectDevices").close();
     this._openMediaSession(this.captureCallback);
   }
 
@@ -343,7 +343,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       localStorage.setItem("selectedVideoDeviceId", this.selectedVideoDeviceId);
     }
 
-    this.$.selectDevices.close();
+    this.$$("#selectDevices").close();
     this._checkAudioDevices();
   }
 
@@ -358,7 +358,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         this.selectDeviceFunction = this._selectAudioDevice.bind(this);
         this.set('allDevices', this.audioDevices);
         this.$$("#deviceListBox").selected = null;
-        this.$.selectDevices.open();
+        this.$$("#selectDevices").open();
       }
     } else {
       this._openMediaSession(this.captureCallback);
@@ -377,7 +377,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         this.selectDeviceFunction = this._selectVideoDevice.bind(this);
         this.set('allDevices', this.videoDevices);
         this.$$("#deviceListBox").selected = null;
-        this.$.selectDevices.open();
+        this.$$("#selectDevices").open();
       }
     } else {
       this._checkAudioDevices();
@@ -395,7 +395,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       this.surfer.destroy();
     }
     this.set('previewActive', false);
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 
   _uploadFile () {
@@ -528,11 +528,11 @@ class YpMediaRecorderLit extends YpBaseElement {
         videoPreviewElement.style.height = (height*0.8).toFixed() + 'px';
         videoPreviewElement.style.width = (width*0.8).toFixed() + 'px';
         setTimeout(function () {
-          this.$.dialog.open();
+          this.$$("#dialog").open();
         }.bind(this));
       } else if (this.audioRecording) {
         setTimeout(function () {
-          this.$.dialog.open();
+          this.$$("#dialog").open();
         }.bind(this));
       }
     }.bind(this));
@@ -656,7 +656,7 @@ class YpMediaRecorderLit extends YpBaseElement {
           });
         } else {
           console.error("Can't find stream");
-          this.$.noDevices.open();
+          this.$$("#noDevices").open();
           this.$$("#uploadFileButton").style.color = "#F00";
         }
       }.bind(this));
@@ -693,14 +693,14 @@ class YpMediaRecorderLit extends YpBaseElement {
           });
         } else {
           console.error("Can't find stream");
-          this.$.noDevices.open();
+          this.$$("#noDevices").open();
           this.$$("#uploadFileButton").style.color = "#F00";
         }
       }.bind(this));
 
     }
     setTimeout(function () {
-      this.$.dialog.center();
+      this.$$("#dialog").center();
     }.bind(this));
   }
 

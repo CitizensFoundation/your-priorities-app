@@ -177,7 +177,7 @@ class YpOrganizationLit extends YpBaseElement {
   _response(event, detail, sender) {
     this.set('organization', detail.response);
     if (this.organization.OrganizationHeaderImages && this.organization.OrganizationHeaderImages.length>0) {
-      this.$.page.setupTopHeaderImage(this.organization.OrganizationHeaderImages);
+      this.$("#page").setupTopHeaderImage(this.organization.OrganizationHeaderImages);
     }
 
     const randomTheme = Math.floor(Math.random() * 3) + 1;
@@ -238,7 +238,8 @@ class YpOrganizationLit extends YpBaseElement {
     this.$$('#ajax').generateRequest();
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
   }
 }
 

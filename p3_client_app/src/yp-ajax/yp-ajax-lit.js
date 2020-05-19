@@ -130,13 +130,13 @@ class YpAjaxLit extends YpBaseElement {
         this._setActive(true);
       }
       if (this.largeSpinner) {
-        this.$.spinner.toggleClass('large',true);
+        this.$$("#spinner").toggleClass('large',true);
       }
   }
 
   _setActive(active) {
     this.set('active', active);
-    this.$.spinner.active = active;
+    this.$$("#spinner").active = active;
   }
 
   _error(event) {
@@ -167,11 +167,11 @@ class YpAjaxLit extends YpBaseElement {
 
   generateRequest() {
     this._setActive(true);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   setBody(body) {
-    this.$.ajax.body = body;
+    this.$$("#ajax").body = body;
   }
 
   _transformErrorText(errorText) {

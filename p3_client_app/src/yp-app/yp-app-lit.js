@@ -1169,12 +1169,13 @@ class YpAppLit extends YpBaseElement {
     this.$$("#navDrawer").toggle();
   }
 
-  ready() {
-    console.info("yp-app is ready");
-    window.app = this;
-    this._setupTranslationSystem();
-    this.setTheme(16);
-    this._setupSamlCallback();
+  connectedCallback() {
+    super.connectedCallback()
+      console.info("yp-app is ready");
+      window.app = this;
+      this._setupTranslationSystem();
+      this.setTheme(16);
+      this._setupSamlCallback();
   }
 
   getDialogAsync(idName, callback) {

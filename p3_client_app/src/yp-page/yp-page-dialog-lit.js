@@ -76,15 +76,15 @@ class YpPageDialogLit extends YpBaseElement {
 
   open(title, content) {
     this.set('title', title);
-    this.$.content.innerHTML = content;
-    this.$.dialog.fit();
-    this.$.dialog.notifyResize();
-    this.$.dialog.open();
+    this.$$("#content").innerHTML = content;
+    this.$$("#dialog").fit();
+    this.$$("#dialog").notifyResize();
+    this.$$("#dialog").open();
   }
 
   _close() {
     this.set('title', null);
-    this.$.content.innerHTML = '';
+    this.$$("#content").innerHTML = '';
   }
 }
 
