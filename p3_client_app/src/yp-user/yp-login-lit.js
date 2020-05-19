@@ -613,9 +613,9 @@ class YpLoginLit extends YpBaseElement {
   }
 
   _facebookLogin() {
-    var domainName = window.location.hostname.split('.').slice(-2).join('.');
+    const domainName = window.location.hostname.split('.').slice(-2).join('.');
 
-    var hostName;
+    let hostName;
 
     if (domainName.indexOf("forbrukerradet") > -1) {
       hostName = "mineideer";
@@ -623,9 +623,9 @@ class YpLoginLit extends YpBaseElement {
       hostName = "login";
     }
 
-    var url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
+    const url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
 
-    var width = 1000,
+    let width = 1000,
       height = 650,
       top = (window.outerHeight - height) / 2,
       left = (window.outerWidth - width) / 2,
@@ -656,7 +656,7 @@ class YpLoginLit extends YpBaseElement {
         window.appUser.logout();
       });
     }
-    var url = '/api/users/auth/saml',
+    const url = '/api/users/auth/saml',
       width = 1200,
       height = 650,
       top = (window.outerHeight - height) / 2,
@@ -800,7 +800,7 @@ class YpLoginLit extends YpBaseElement {
     this._setTexts();
     this.$.dialog.fire('iron-resize');
     if (newValue == 1) {
-      var nameElement = this.$$("#name");
+      const nameElement = this.$$("#name");
       if (nameElement) {
         nameElement.focus();
       }
@@ -898,7 +898,7 @@ class YpLoginLit extends YpBaseElement {
 
   _loginCompleted(user) {
     if (window.PasswordCredential && this.email && this.password) {
-      var c = new PasswordCredential({ name: this.email, id: this.email, password: this.password });
+      const c = new PasswordCredential({ name: this.email, id: this.email, password: this.password });
       navigator.credentials.store(c).then(function (message) {
         this._loginAfterSavePassword(user);
       }.bind(this)).catch(function (error) {
@@ -954,7 +954,7 @@ class YpLoginLit extends YpBaseElement {
   }
 
   close() {
-    var dialog = this.$$("#dialog");
+    const dialog = this.$$("#dialog");
     if (dialog) {
       dialog.close();
     }

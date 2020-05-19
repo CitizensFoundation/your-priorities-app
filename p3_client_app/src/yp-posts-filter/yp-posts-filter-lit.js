@@ -307,7 +307,7 @@ class YpPostsFilterLit extends YpBaseElement {
 */
 
   _getCategoryCount(id, categoryCounts) {
-    var foundCategory = __.find(categoryCounts, function (categoryCount) {
+    const foundCategory = __.find(categoryCounts, function (categoryCount) {
       return (categoryCount.category_id==id);
     });
     if (foundCategory) {
@@ -326,9 +326,9 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _categoriesCountResponse(event, detail) {
-    var categoryCounts = detail.response.categoriesCount;
+    const categoryCounts = detail.response.categoriesCount;
     this.set('allPostCount', detail.response.allPostCount);
-    var categoriesWithCount = [];
+    const categoriesWithCount = [];
     //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
     __.each(this.group.Categories, function (category) {
       category.count = this._getCategoryCount(category.id, categoryCounts);
@@ -339,7 +339,7 @@ class YpPostsFilterLit extends YpBaseElement {
     if (categoriesWithCount.length>1) {
       this.set('categoriesWithCount', categoriesWithCount);
       this.async(function () {
-        var categoryMenu = this.$$("#categoryMenu");
+        const categoryMenu = this.$$("#categoryMenu");
         if (categoryMenu) {
           categoryMenu.selected = "-1";
         } else {
@@ -352,7 +352,7 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _openDropDown() {
-    var trigger = this.$$("#dropDownTrigger");
+    const trigger = this.$$("#dropDownTrigger");
     if (trigger) {
       trigger.click();
     }
@@ -397,7 +397,7 @@ class YpPostsFilterLit extends YpBaseElement {
 
   searchFor(value) {
     this.set('searchingFor', value);
-    var newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
+    const newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
     window.appGlobals.activity('change', 'filter', newLocation);
     this.redirectTo(newLocation);
     this.fire("refresh-group");
@@ -407,14 +407,14 @@ class YpPostsFilterLit extends YpBaseElement {
     if (this.searchingFor) {
       this.set('subTitle', this.t('post.searchingFor') + this.searchingFor);
     } else {
-      var translatedFilterName = this.t(this.filterName);
-      var translatedCategoryName;
+      const translatedFilterName = this.t(this.filterName);
+      let translatedCategoryName;
       if (this.categoryName) {
         translatedCategoryName = this.categoryName;
       } else {
         translatedCategoryName = this.t('categories.the_all');
       }
-      var inWord = this.t('short_word.in');
+      const inWord = this.t('short_word.in');
       if (this._ifCategories()) {
         this.set('subTitle', translatedFilterName + ' - ' + translatedCategoryName);
       } else {
@@ -429,8 +429,8 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _changeCategory(e, detail) {
-    var oldCategoryId = this.categoryId;
-    var categoryId = detail.item.dataset.categoryId;
+    const oldCategoryId = this.categoryId;
+    const categoryId = detail.item.dataset.categoryId;
     if (categoryId != '-1') {
       this.set('categoryId',categoryId);
       this.categoryName = detail.item.dataset.categoryName;
@@ -446,7 +446,7 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   buildPostsUrlPath() {
-    var newLocation = '/group/' + this.group.id + '/' + this.tabName;
+    const newLocation = '/group/' + this.group.id + '/' + this.tabName;
     if (this.filter) {
       newLocation += '/posts/' + this.filter;
     }
@@ -459,7 +459,7 @@ class YpPostsFilterLit extends YpBaseElement {
   _updateAfterFiltering() {
     if (!this.filter)
       this.set('filter','newest');
-    var newLocation = this.buildPostsUrlPath();
+    const newLocation = this.buildPostsUrlPath();
     window.appGlobals.activity('change', 'filter', newLocation);
  //   this.redirectTo(newLocation);
     this.fire("refresh-group");
@@ -475,11 +475,11 @@ class YpPostsFilterLit extends YpBaseElement {
 
   resetSelection() {
     this.async(function () {
-      var categoryMenu = this.$$("#categoryMenu");
+      const categoryMenu = this.$$("#categoryMenu");
       if (categoryMenu) {
         this.$$("#categoryMenu").selected = null;
       }
-      var mainListMenu = this.$$("#mainListMenu");
+      const mainListMenu = this.$$("#mainListMenu");
       if (mainListMenu) {
         this.$$("#mainListMenu").selected = null;
       } else {
@@ -497,7 +497,7 @@ class YpPostsFilterLit extends YpBaseElement {
   _setupCategories(group, tabName) {
     this.set('categoriesWithCount', null);
     this.async(function () {
-      var categoriesWithCountAjax = this.$$("#categoriesWithCountAjax");
+      const categoriesWithCountAjax = this.$$("#categoriesWithCountAjax");
       if (categoriesWithCountAjax) {
         categoriesWithCountAjax.url = "/api/groups/" + group.id + "/categories_count/"+tabName;
         categoriesWithCountAjax.generateRequest();

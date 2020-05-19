@@ -369,7 +369,8 @@ class YpAppUserLit extends YpBaseElement {
     this.$.setLocaleAjax.generateRequest();
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
     window.appUser = this;
     this.checkLogin();
   }

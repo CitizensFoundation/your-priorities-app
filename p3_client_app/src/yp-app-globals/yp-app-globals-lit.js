@@ -473,7 +473,8 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
     window.appStartTime = new Date();
     window.appGlobals = this;
 

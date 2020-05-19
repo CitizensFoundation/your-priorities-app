@@ -244,12 +244,12 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _profileImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedProfileImageId', image.id);
   }
 
   _headerImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedHeaderImageId', image.id);
   }
 

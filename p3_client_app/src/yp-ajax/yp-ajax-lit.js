@@ -124,13 +124,14 @@ class YpAjaxLit extends YpBaseElement {
     this._setActive(false);
   }
 
-  ready() {
-    if (this.auto) {
-      this._setActive(true);
-    }
-    if (this.largeSpinner) {
-      this.$.spinner.toggleClass('large',true);
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (this.auto) {
+        this._setActive(true);
+      }
+      if (this.largeSpinner) {
+        this.$.spinner.toggleClass('large',true);
+      }
   }
 
   _setActive(active) {

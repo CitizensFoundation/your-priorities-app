@@ -117,7 +117,7 @@ class YpPostUserImageEditLit extends YpBaseElement {
   }
 
   _imageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedPostUserImageId', image.id);
   }
 

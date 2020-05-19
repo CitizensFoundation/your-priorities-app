@@ -179,7 +179,7 @@ class YpUserImageLit extends YpBaseElement {
 
   _profileImageUrl(user) {
     if (user && user.UserProfileImages && user.UserProfileImages.length > 0) {
-      var formatUrl = this.getImageFormatUrl(user.UserProfileImages, 0);
+      const formatUrl = this.getImageFormatUrl(user.UserProfileImages, 0);
       if (formatUrl && formatUrl!=="") {
         this.set('noProfileImage', false);
         return formatUrl;

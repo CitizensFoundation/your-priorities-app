@@ -480,7 +480,7 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _menuSelection(event, detail) {
-    var allMenus = this.$.grid.querySelectorAll("paper-listbox");
+    const allMenus = this.$.grid.querySelectorAll("paper-listbox");
     allMenus.forEach(function (item) {
       item.select(null);
     });
@@ -536,8 +536,8 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _removeFromOrganization(event) {
-    var userId = event.target.getAttribute('data-args');
-    var organizationId = event.target.getAttribute('data-args-org');
+    const userId = event.target.getAttribute('data-args');
+    const organizationId = event.target.getAttribute('data-args-org');
     this.$.removeOrganizationAjax.body = {};
     this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
     this.$.removeOrganizationAjax.generateRequest();
@@ -551,8 +551,8 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _removeAdmin(event) {
-    var userId = event.target.getAttribute('data-args');
-    this.$.removeAdminAjax.body = {};
+    const userId = event.target.getAttribute('data-args');
+    this .$.removeAdminAjax.body = {};
     if (this.modelType=="groups" && this.groupId) {
       this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_admin";
       this.$.removeAdminAjax.generateRequest();
@@ -623,14 +623,14 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _setupUserIdFromEvent(event) {
-    var userId = event.target.parentElement.getAttribute('data-args');
+    const userId = event.target.parentElement.getAttribute('data-args');
     if (!userId)
       userId = event.target.getAttribute('data-args');
     this.set('selectedUserId', userId);
   }
 
   _removeMaster(ajax, type, userIds) {
-    var url, collectionId;
+    let url, collectionId;
     if (this.modelType==="groups" && this.groupId) {
       collectionId = this.groupId;
     } else if (this.modelType==="communities" && this.communityId) {
@@ -667,20 +667,20 @@ class YpUsersGridLit extends YpBaseElement {
       console.warn("Can't find model type or ids");
     }
     if (this.selectedUserId) {
-      var user = this._findUserFromId(this.selectedUserId);
+      const user = this._findUserFromId(this.selectedUserId);
       if (user)
         this.$.grid.deselectItem(user);
     }
   }
 
   _setSelected(event) {
-    var user = this._findUserFromId(event.target.getAttribute('data-args'));
+    const user = this._findUserFromId(event.target.getAttribute('data-args'));
     if (user)
       this.$.grid.selectItem(user);
   }
 
   _findUserFromId(id) {
-    var foundUser;
+    let foundUser;
     this.users.forEach(function (user) {
       if (user.id==id) {
         foundUser = user;
@@ -811,7 +811,7 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _generateRequest(id) {
-    var adminsOrUsers = this.adminUsers ? "admin_users" : "users";
+    const adminsOrUsers = this.adminUsers ? "admin_users" : "users";
     this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/"+adminsOrUsers;
     this.$.ajax.generateRequest();
   }

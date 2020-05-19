@@ -162,7 +162,8 @@ class YpLanguageSelectorLit extends YpBaseElement {
   ],
 */
 
-  ready() {
+connectedCallback() {
+  super.connectedCallback()
     if (!this.noUserEvents) {
       this.$.hasAutoTranslationAjax.generateRequest();
       // Update dropdown language after it has been loaded from defaults

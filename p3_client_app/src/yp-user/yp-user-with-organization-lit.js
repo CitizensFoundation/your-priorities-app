@@ -141,7 +141,7 @@ class YpUserWithOrganizationLit extends YpBaseElement {
   _computeUserTitle(user, titleDate) {
     if (user && titleDate) {
       const dateParsed = parseISO(titleDate);
-      var dateSince = formatDistance(dateParsed, new Date(),  {
+      const dateSince = formatDistance(dateParsed, new Date(),  {
         locale: enUS//this.language
       });
       return user.name + ' ' + dateSince;
