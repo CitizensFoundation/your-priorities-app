@@ -183,6 +183,14 @@
         <template is="dom-if" name="contentModeration" restamp>
           <yp-content-moderation id="contentModeration"></yp-content-moderation>
         </template>
+
+        <template is="dom-if" name="createReport" restamp>
+          <yp-create-report id="createReport"></yp-create-report>
+        </template>
+
+        <template is="dom-if" name="duplicateCollection" restamp>
+          <yp-duplicate-collection id="duplicateCollection"></yp-duplicate-collection>
+        </template>
       </iron-lazy-pages>
 
       <template is="dom-if" if="[[bulkStatusUpdates]]" restamp>
@@ -264,6 +272,16 @@
         },
 
         gotContentModeration: {
+          type: Boolean,
+          value: false
+        },
+
+        gotCreateReport: {
+          type: Boolean,
+          value: false
+        },
+
+        gotDuplicateCollection: {
           type: Boolean,
           value: false
         },
@@ -416,6 +434,35 @@
           }.bind(this), null, true);
         }
       },
+
+      getCreateReportAsync: function (callback) {
+        if (this.gotCreateReport) {
+          this.getDialogAsync("createReport", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-create-report.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded createReport");
+            this.set('gotCreateReport', true);
+            this.getDialogAsync("createReport", callback);
+          }.bind(this), null, true);
+        }
+      },
+
+      getDuplicateCollectionAsync: function (callback) {
+        if (this.gotDuplicateCollection) {
+          this.getDialogAsync("duplicateCollection", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-duplicate-collection.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded duplicateCollection");
+            this.set('gotDuplicateCollection', true);
+            this.getDialogAsync("duplicateCollection", callback);
+          }.bind(this), null, true);
+        }
+      },
+
 
       getMediaRecorderAsync: function (callback) {
         if (this.gotMediaRecorder) {

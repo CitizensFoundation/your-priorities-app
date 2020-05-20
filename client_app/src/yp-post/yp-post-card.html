@@ -42,19 +42,6 @@
         letter-spacing: .0125em;
       }
 
-      .bottomBar {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        padding: 0;
-        margin: 0;
-        height: 52px;
-        width: 100%;
-        border-bottom-right-radius: 4px;
-        border-bottom-left-radius: 4px;
-        background-color: #FFF;
-      }
-
       .postNameContainer {
         width: 100%;
       }
@@ -96,11 +83,11 @@
       }
 
       .postCard[hide-description][hide-actions] {
-        height: 311px;
+        height: 331px;
       }
 
       .postCard[hide-description][hide-post-cover][hide-actions] {
-        height: 77px;
+        height: 110px;
       }
 
       .postCard[hide-actions] {
@@ -112,6 +99,7 @@
         height: 100%;
         margin: 0;
         padding-top: 0;
+        padding-bottom: 0;
       }
 
       yp-post-cover-media {
@@ -267,9 +255,16 @@
         }
       }
 
-
       [hidden] {
         display: none !important;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .share[mini] {
+        display: none;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -282,29 +277,37 @@
                     audio-cover$="[[isAudioCover]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
-        <div class="postNameContainer">
-          <div class="post-name" mini$="[[mini]]" id="postName" on-tap="goToPostIfNotHeader">
-            <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
-                           text-only content="[[postName]]" content-id="[[post.id]]">
-            </yp-magic-text>
+        <a href="[[_getPostLink(post)]]" id="theMainA">
+          <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
+          <div class="postNameContainer">
+            <div class="post-name" mini$="[[mini]]" id="postName">
+              <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"
+                             on-tap="goToPostIfNotHeader"
+                             text-only content="[[postName]]" content-id="[[post.id]]">
+              </yp-magic-text>
+            </div>
           </div>
-        </div>
-        <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" on-tap="goToPostIfNotHeader" hidden$="[[hideDescription]]"
-                       text-type="postContent" content-language="[[post.language]]"
-                       text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
-        </yp-magic-text>
-        <div class="bottomBar"></div>
-        <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]">
-          <div class="share" >
-            <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                                horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" email="" twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
-          </div>
-          <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
-            <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
-          </template>
-          <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
-            <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+          <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
+                         text-type="postContent" content-language="[[post.language]]"
+                         on-tap="goToPostIfNotHeader"
+                         text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
+          </yp-magic-text>
+        </a>
+        <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]" on-tap="_onBottomClick">
+          <template is="dom-if" if="[[!mini]]">
+            <div class="share">
+              <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
+                                  horizontal-align="right" id="shareButton"
+                                  whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
+                                  title$="[[t('post.shareInfo')]]" facebook="" email=""
+                                  twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
+            </div>
+            <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
+              <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
+            </template>
+            <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
+              <yp-post-actions floating class="postActions" elevation="-1" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]" hidden$="[[mini]]"></yp-post-actions>
+            </template>
           </template>
         </div>
       </div>
@@ -364,6 +367,32 @@
         }
       },
 
+      _onBottomClick: function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+      },
+
+      clickOnA: function () {
+        if (this.$.theMainA) {
+          this.$.theMainA.click();
+        }
+      },
+
+      _getPostLink: function (post) {
+        if (post) {
+          if (post.Group.configuration && post.Group.configuration.disablePostPageLink) {
+            return "#";
+          } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+            return post.description.trim();
+          } else {
+            return "/post/"+post.id;
+          }
+        } else {
+          console.warn("Trying to get empty post link");
+        }
+      },
+
       _shareTap: function (event, detail) {
         window.appGlobals.activity('postShareCardOpen', detail.brand, this.post ? this.post.id : -1);
       },
@@ -387,6 +416,8 @@
       goToPostIfNotHeader: function () {
         if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
           console.log("goToPostDisabled");
+        } else if (this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+          // Do nothing
         } else {
           this.goToPost(null, null, null, this.post);
         }

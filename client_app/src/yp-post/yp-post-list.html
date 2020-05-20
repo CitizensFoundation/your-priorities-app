@@ -159,12 +159,16 @@
       }
 
       :focus {
-        outline: none;
+
       }
 
       .largeAjax {
         position: absolute;
         bottom: 32px;
+      }
+
+      a {
+        text-decoration: none;
       }
     </style>
 
@@ -174,7 +178,7 @@
     <iron-a11y-keys id="a11y" target="[[searchTarget]]" keys="enter"
                     on-keys-pressed="_search"></iron-a11y-keys>
 
-    <div class="layout vertical center-center">
+    <div class="layout vertical center-center topMost">
       <div class="searchContainer layout horizontal center-center wrap" hidden$="[[group.configuration.hidePostFilterAndSearch]]">
         <div class="layout horizontal center-center">
           <yp-posts-filter on-tap="_tapOnFilter"
@@ -192,17 +196,17 @@
 
       <template is="dom-if" if="[[noPosts]]" restamp>
         <div class="layout horiztonal center-center">
-          <paper-material class="noIdeas layout horizontal center-center" elevation="2">
+          <paper-material class="noIdeas layout horizontal center-center" elevation="2" hidden$="[[group.configuration.allPostsBlockedByDefault]]">
             <div class="noIdeasText">[[t('noIdeasHere')]]</div>
           </paper-material>
         </div>
       </template>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]">
+        <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[posts]]" as="post" scroll-target="document" grid$="[[wide]]" role="list">
           <template>
-            <div tabindex$="[[tabIndex]]" wide-padding$="[[wide]]" class="card layout vertical center-center">
-              <yp-post-card on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
+            <div wide-padding$="[[wide]]" class="card layout vertical center-center" aria-label="[[post.name]]" role="listitem" aria-level="2" tabindex$="[[tabIndex]]">
+              <yp-post-card id="postCard[[post.id]]" on-refresh="_refreshPost" class="card" post="[[post]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-post-card>
             </div>
           </template>
         </iron-list>
@@ -350,6 +354,15 @@
         }
       },
 
+      _selectedItemChanged: function (event, detail) {
+        if (detail && detail.value) {
+          var selectedCard = this.$$("#postCard"+detail.value.id);
+          if (selectedCard) {
+            selectedCard.clickOnA();
+          }
+        }
+      },
+
       _refreshPost: function (event, detail) {
         this.$.refreshPost.url="/api/posts/"+detail.id;
         this.$.refreshPost.generateRequest();
@@ -368,7 +381,21 @@
           }
         }
       },
-      
+
+      _getPostLink: function (post) {
+        if (post) {
+          if (post.Group.configuration && post.Group.configuration.disablePostPageLink) {
+            return "#";
+          } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+            return post.description.trim();
+          } else {
+            return "/post/"+post.id;
+          }
+        } else {
+          console.warn("Trying to get empty post link");
+        }
+      },
+
       _scrollOffset: function (wide, group) {
         var list = this.$$("iron-list");
         if (list) {
@@ -475,25 +502,31 @@
       },
 
       _groupChanged: function (group) {
+        var allowedForceByValues = ["oldest","newest","top","most_debated","random","alphabetical"];
+
         this.set("posts", null);
         this.set('noPosts', false);
         this.set('randomSeed', Math.random());
         if (group) {
           this.set('moreToLoad', true);
-          if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
-            if (group.configuration.canAddNewPosts===true) {
-              this.set('filter','newest');
-            } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
-              if (group.configuration.customRatings) {
+          if (group.configuration && group.configuration.forcePostSortMethodAs && allowedForceByValues.indexOf(group.configuration.forcePostSortMethodAs) > -1) {
+            this.set('filter', group.configuration.forcePostSortMethodAs);
+          } else {
+            if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
+              if (group.configuration.canAddNewPosts===true) {
+                this.set('filter','newest');
+              } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
+                if (group.configuration.customRatings) {
                   this.set('filter','random');
-              } else {
+                } else {
                   this.set('filter','top');
+                }
+              } else {
+                this.set('filter','random');
               }
-            } else {
-              this.set('filter','random');
+            } else if (!this.filter) {
+              this.set('filter','newest');
             }
-          } else if (!this.filter) {
-            this.set('filter','newest');
           }
           this._loadMoreData();
         }
@@ -610,7 +643,7 @@
               } else if (firstLanguage && firstLanguage!==post.language && post.language!=='??') {
                 multipleLanguages = true;
                 console.info("Multiple post languages: "+firstLanguage+" and "+post.language);
-                console.info("A: "+firstContent+" B: "+post.description);
+                //console.info("A: "+firstContent+" B: "+post.description);
               }
             }
           });

@@ -10,12 +10,17 @@
 <script type="text/javascript" src="sanitize-html.min.js"></script>
 <script src="../../bower_components/linkifyjs/linkify.js"></script>
 <script src="../../bower_components/linkifyjs/linkify-string.js"></script>
+<script src="../../bower_components/linkifyjs/linkify-html.js"></script>
 
 <dom-module id="yp-magic-text">
   <template>
     <style>
       :host {
         display: block;
+      }
+
+      .container[rtl] {
+        direction: rtl;
       }
 
       .container[more-text] {
@@ -35,7 +40,7 @@
         }
       }
     </style>
-    <div class="container" more-text$="[[showMoreText]]">
+    <div class="container" rtl$="[[rtl]]" more-text$="[[showMoreText]]">
        <!-- add max-width for IE11 -->
       <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]" style="max-width:100%"></div>
       <div hidden$="[[finalContent]]" style="max-width:100%">[[truncatedContent]]</div>
@@ -84,6 +89,11 @@
             value: null
           },
 
+          rtl: {
+            type: Boolean,
+            value: false
+          },
+
           finalContent: {
             type: String,
             value: null
@@ -130,6 +140,11 @@
             value: false
           },
 
+          skipSanitize: {
+            type: Boolean,
+            value: false
+          },
+
           structuredQuestionsConfig: {
             type: String,
             value: null
@@ -146,6 +161,10 @@
         return ['zh_TW','hy']
       }
 
+      static get rtlLanguages() {
+        return ['fa','ar']
+      }
+
       _showMoreText(moreText, content) {
         return moreText && content && content.length>(this.truncate ? this.truncate : 500);
       }
@@ -154,7 +173,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("magicTextDialog", function (dialog) {
           dialog.open(this.content, this.contentId, this.extraId,
                       this.textType, this.contentLanguage, this.closeDialogText,
-                      this.structuredQuestionsConfig);
+                      this.structuredQuestionsConfig, this.skipSanitize);
         }.bind(this));
       }
 
@@ -183,11 +202,21 @@
         this._update();
       }
 
+      _setupRtl() {
+        if (YpMagicTextBox.rtlLanguages.indexOf(this.language) >-1 ) {
+          this.set('rtl', true);
+        } else {
+          this.set('rtl', false);
+        }
+      }
+
       _languageEvent (event, detail) {
         if (detail.type === 'language-loaded') {
           this.set('language', detail.language);
           this._update();
         }
+
+        this._setupRtl();
       }
 
       _getIndexKey() {
@@ -213,6 +242,7 @@
               this.$.getTranslationAjax.url = "/api/posts/"+this.contentId+"/translatedText";
               break;
             case 'pointContent':
+            case 'pointAdminCommentContent':
               this.$.getTranslationAjax.url = "/api/points/"+this.contentId+"/translatedText";
               break;
             case 'domainName':
@@ -226,6 +256,15 @@
             case 'communityContent':
               this.$.getTranslationAjax.url = "/api/communities/"+this.contentId+"/translatedText";
               break;
+            case 'alternativeTextForNewIdeaButton':
+            case 'alternativeTextForNewIdeaButtonClosed':
+            case 'alternativeTextForNewIdeaButtonHeader':
+            case 'customThankYouTextNewPosts':
+            case 'alternativePointForHeader':
+            case 'customAdminCommentsTitle':
+            case 'alternativePointAgainstHeader':
+            case 'alternativePointForLabel':
+            case 'alternativePointAgainstLabel':
             case 'groupName':
             case 'groupContent':
               this.$.getTranslationAjax.url = "/api/groups/"+this.contentId+"/translatedText";
@@ -256,6 +295,7 @@
         } else {
           console.error("No content for magic text");
         }
+        this.dispatchEvent(new CustomEvent('new-translation', { bubbles: true, composed: true }));
         this._finalize();
       }
 
@@ -275,16 +315,27 @@
 
       _setupStructuredQuestions() {
         if (this.structuredQuestionsConfig) {
-          var structuredQuestions = [];
-          var questionComponents = this.structuredQuestionsConfig.split(",");
-          if (questionComponents && questionComponents.length>1) {
-            for (var i=0 ; i<questionComponents.length; i+=2) {
-              structuredQuestions.push(questionComponents[i]);
-            }
-            var regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
-            this.processedContent = this.processedContent.replace(regEx, '<b>$1</b>');
+          var structuredQuestionsJson=null;
+          try {
+            structuredQuestionsJson = JSON.parse(this.structuredQuestionsConfig);
+          } catch (error) {
+            structuredQuestionsJson=null
+          }
+
+          if (structuredQuestionsJson) {
+            // TODO: setup json display
           } else {
-            console.warn("Not questions for structuredQuestionsConfig");
+            var structuredQuestions = [];
+            var questionComponents = this.structuredQuestionsConfig.split(",");
+            if (questionComponents && questionComponents.length>1) {
+              for (var i=0 ; i<questionComponents.length; i+=2) {
+                structuredQuestions.push(questionComponents[i]);
+              }
+              var regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
+              this.processedContent = this.processedContent.replace(regEx, '<b>$1</b>');
+            } else {
+              console.warn("Not questions for structuredQuestionsConfig");
+            }
           }
         }
       }
@@ -327,26 +378,26 @@
       }
 
       _linksAndEmojis () {
-        this.processedContent = sanitizeHtml(this.processedContent, { allowedTags: [ 'b', 'i', 'em', 'strong'] });
-        this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
-        this.processedContent = linkifyStr(this.processedContent, {
-          format: function (value, type) {
-            if (type === 'url' && value.length > this.linkifyCutoff-1) {
-              value = value.slice(0, this.linkifyCutoff) + '…';
-            }
-            return value;
-          }.bind(this),
-          ignoreTags: [
-            'b',
-            'i',
-            'em',
-            'strong'
-          ]
-        });
-        this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
-        this.processedContent = twemoji.parse(this.processedContent).
-        replace(/&amp\;quot\;/g,"\"").
-        replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
+        if (!this.skipSanitize) {
+          this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
+          this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
+          this.processedContent = linkifyStr(this.processedContent, {
+            format: function (value, type) {
+              if (type === 'url' && value.length > this.linkifyCutoff - 1) {
+                value = value.slice(0, this.linkifyCutoff) + '…';
+              }
+              return value;
+            }.bind(this),
+            ignoreTags: [
+              'b',
+              'i',
+              'em',
+              'strong'
+            ]
+          });
+          this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
+          this.processedContent = twemoji.parse(this.processedContent).replace(/&amp\;quot\;/g, "\"").replace(/class=\"emoji\" /g, 'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
+        }
       }
 
       static truncate(input, length, killwords, end) {
@@ -378,6 +429,7 @@
         if (window.i18nTranslation) {
           this.set('language', window.locale);
         }
+        this._setupRtl();
         super.ready();
       }
     }

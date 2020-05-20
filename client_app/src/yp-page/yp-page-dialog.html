@@ -34,11 +34,17 @@
           margin: 0;
         }
       }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <paper-dialog id="dialog">
-      <h2>[[pageTitle]]</h2>
+      <div hidden$="[[!pageTitle]]">
+        <h2>[[pageTitle]]</h2>
+      </div>
       <paper-dialog-scrollable>
         <div id="content"></div>
       </paper-dialog-scrollable>

@@ -126,8 +126,8 @@
         height: 72px;
         --paper-fab-iron-icon: {
           color: var(--icon-general-color, #FFF);
-          width: 72px;
-          height: 72px;
+          width: 50px;
+          height: 50px;
         }
       }
 
@@ -318,7 +318,7 @@
 
       <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div name="debate" class="layout horizontal center-center">
-          <yp-post-points host="[[host]]" id="pointsSection" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
+          <yp-post-points host="[[host]]" id="pointsSection" is-admin="[[isAdmin]]" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news" class="minHeightSection">
           <template is="dom-if" if="[[newsTabSelected]]">
@@ -405,6 +405,11 @@
           tabRoute: Object,
           idRouteData: Object,
           tabRouteData: Object,
+
+          isAdmin: {
+            type: Boolean,
+            value: false
+          },
 
           postId: {
             type: Number,
@@ -579,7 +584,12 @@
           this.$.ajax.generateRequest();
         },
 
-        _postChanged: function (newValue, oldValue) {
+        _postChanged: function (post) {
+          if (post) {
+            this.set('isAdmin', this.checkPostAdminOnlyAccess(post));
+          } else {
+            this.set('isAdmin', false);
+          }
         },
 
         _postIdChanged: function (postId) {

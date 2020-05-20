@@ -210,8 +210,8 @@
                      text-type="groupContent" content-language="[[group.language]]"
                      text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
       </yp-magic-text>
-      <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-      <yp-membership-button archived$="[[archived]]" group="[[group]]"></yp-membership-button>
+      <yp-group-stats hidden$="[[group.configuration.actAsLinkToCommunityId]]" class="stats" group="[[group]]"></yp-group-stats>
+      <yp-membership-button hidden$="[[group.configuration.actAsLinkToCommunityId]]" archived$="[[archived]]" group="[[group]]"></yp-membership-button>
     </paper-card>
   </template>
 

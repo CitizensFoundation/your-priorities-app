@@ -75,8 +75,8 @@
         height: 72px;
         --paper-fab-iron-icon: {
           color: var(--icon-general-color, #FFF);
-          width: 72px;
-          height: 72px;
+          width: 50px;
+          height: 50px;
         }
       }
 
@@ -679,7 +679,7 @@
         }, 100);
       },
 
-      _groupIdChanged: function (groupId) {
+      _groupIdChanged: function (groupId, oldGroupId) {
         if (groupId && groupId!=this.lastValidGroupId) {
           this.set('lastValidGroupId', groupId);
           this.set('group', null);
@@ -705,7 +705,7 @@
             this._getGroup();
           }
           this.async(function () {
-            if (!this.selectedTab) {
+            if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
               this.set('selectedTab', 'open');
             }
           });
@@ -767,6 +767,22 @@
         }
       },
 
+      _useHardBack: function (configuration) {
+        if (configuration && configuration.customBackURL) {
+          var backUrl = configuration.customBackURL;
+          if (backUrl.startsWith("/community/") ||
+            backUrl.startsWith("/group/") ||
+            backUrl.startsWith("/domain/") ||
+            backUrl.startsWith("/post/")) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
+        }
+      },
+
       refresh: function () {
         if (this.group) {
           this.fire('yp-set-home-link', {
@@ -810,7 +826,11 @@
 
           this._refreshTabsAndPages();
 
-          if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
+          if (this.group.configuration.useCommunityTopBanner &&
+            this.group.Community.CommunityHeaderImages &&
+            this.group.Community.CommunityHeaderImages.length>0) {
+            this.setupTopHeaderImage(this.group.Community.CommunityHeaderImages);
+          } else if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
             this.setupTopHeaderImage(this.group.GroupHeaderImages);
           } else {
             this.setupTopHeaderImage(null);
@@ -825,7 +845,7 @@
             documentTitle: this.group.name,
             enableSearch: true,
             hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
-            useHardBack: this.group.configuration.customBackURL ? true : false,
+            useHardBack: this._useHardBack(this.group.configuration),
             backPath:  this.group.configuration.customBackURL ?
                          this.group.configuration.customBackURL :
                          "/community/" + this.group.community_id
@@ -879,6 +899,9 @@
             window.appGlobals.currentForceSaml = true;
           } else {
             window.appGlobals.currentForceSaml = false;
+          }
+          if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
+            this.set('selectedTab','map');
           }
         }
       },

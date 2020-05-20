@@ -179,6 +179,15 @@
                    value="{{community.configuration.themeOverrideColorAccent}}">
       </paper-input>
 
+      <paper-input id="themeOverrideBackgroundColor"
+                   name="themeOverrideBackgroundColor"
+                   allowed-pattern="[#-#0-9A-Fa-f]"
+                   maxlength="7"
+                   char-counter
+                   label="[[t('themeOverrideBackgroundColor')]]"
+                   value="{{community.configuration.themeOverrideBackgroundColor}}">
+      </paper-input>
+
       <div class="themeOverrideInfo">
         <b><em>[[t('themeOverrideColorInfo')]]</em></b>
       </div>
@@ -222,6 +231,17 @@
           </paper-listbox>
         </paper-dropdown-menu>
         <input type="hidden" name="signupTermsPageId" value="[[community.configuration.signupTermsPageId]]">
+      </div>
+
+      <div class="layout horizontal config" hidden$="[[!pages]]">
+        <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.welcomePageId}}">
+            <template is="dom-repeat" items="[[translatedPages]]" as="page">
+              <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <input type="hidden" name="welcomePageId" value="[[community.configuration.welcomePageId]]">
       </div>
 
       <paper-input id="google_analytics_code"

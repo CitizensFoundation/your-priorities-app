@@ -368,7 +368,7 @@
 
     <div class="layout horizontal center-center">
       <paper-material class="postCard" elevation="[[elevation]]" animated>
-        <div class="layout vertical headerTopLevel">
+        <div class="layout vertical headerTopLevel" role="heading" aria-level="1" aria-label="[[post.name]]">
           <yp-post-name-with-author top-left-radius class="mobileName" post="[[post]]" isLoggedIn="[[isLoggedIn]]"></yp-post-name-with-author>
           <div class="layout horizontal wrap mediaAndInfoContainer">
             <div class="layout vertical center-center self-start coverContainer">
@@ -422,14 +422,26 @@
             </div>
             <div class="layout vertical">
               <div class="infoContainer">
-                <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
-                               content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
-                               structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
-                               has-custom-ratings$="[[post.Group.configuration.customRatings]]"
-                               simple-format="[[post.Group.configuration.descriptionSimpleFormat]]"
-                               content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
-                               more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
-                </yp-magic-text>
+                <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
+                                 content="[[post.description]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
+                                 structured-questions-config="[[post.Group.configuration.structuredQuestions]]"
+                                 has-custom-ratings$="[[post.Group.configuration.customRatings]]"
+                                 simple-format="[[post.Group.configuration.descriptionSimpleFormat]]"
+                                 content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
+                                 more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
+                  </yp-magic-text>
+                </template>
+
+                <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
+                  <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
+                                 content="[[structuredAnswersFormatted]]" no-user-info$="[[!post.Group.configuration.showWhoPostedPosts]]"
+                                 simple-format
+                                 skip-sanitize
+                                 content-id="[[post.id]]" class="description" truncate="[[post.Group.configuration.descriptionTruncateAmount]]"
+                                 more-text="{{t('readMore')}}" close-dialog-text="[[t('close')]]">
+                  </yp-magic-text>
+                </template>
               </div>
 
               <template is="dom-if" if="[[post.Group.configuration.customRatings]]">
@@ -442,7 +454,9 @@
 
               <div class="share" >
                 <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
-                                    horizontal-align="right" id="shareButton" title$="[[t('post.shareInfo')]]" facebook="" email="" twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
+                                    horizontal-align="right" id="shareButton"
+                                    whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
+                                    title$="[[t('post.shareInfo')]]" facebook="" email="" twitter="" popup="" url="[[fullPostUrl]]"></paper-share-button>
               </div>
               <paper-menu-button vertical-align="top" horizontal-align="right" class="moreVert" class="edit" hidden$="[[hideActions]]">
                 <paper-icon-button aria-label$="[[t('openPostMenu')]]" class="moreVertButton" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
@@ -510,6 +524,11 @@
           computed: '_hasPostAccess(post, gotAdminRights)'
         },
 
+        structuredAnswersFormatted: {
+          type: String,
+          computed: '_structuredAnswersFormatted(post)'
+        },
+
         isEditing: {
           type: Boolean,
           value: false,
@@ -536,6 +555,33 @@
         hideActions: {
           type: Boolean,
           value: false
+        }
+      },
+
+      _structuredAnswersFormatted: function (post) {
+        if (post && post.public_data && post.public_data.structuredAnswersJson &&
+          post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
+          var questionHash = {};
+          var outText = "";
+          post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
+            if (question.uniqueId) {
+              questionHash[question.uniqueId] = question;
+            }
+          }.bind(this));
+
+          post.public_data.structuredAnswersJson.forEach(function (answer) {
+            if (answer.value) {
+              var question = questionHash[answer.uniqueId];
+              if (question) {
+                outText+="<b>"+question.text+"</b>\n";
+                outText+=answer.value+"\n\n";
+              }
+            }
+          }.bind(this));
+
+          return outText;
+        } else {
+          return null;
         }
       },
 

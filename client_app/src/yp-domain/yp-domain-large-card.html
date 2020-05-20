@@ -112,7 +112,9 @@
         padding-left: 16px;
         vertical-align: middle;
         margin: 0;
-        padding-right: 24px;
+        padding-right: 32px;
+        padding-bottom: 6px;
+        padding-top: 14px;
       }
 
       @media (max-width: 960px) {
@@ -150,7 +152,7 @@
 
         .domain-name {
           font-size: 22px;
-          padding-bottom: 12px;
+          padding-bottom: 9px;
           min-height: 28px;
         }
 
@@ -231,7 +233,7 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
-                <div class="domain-name">
+                <div class="domain-name" role="heading" aria-level="1" aria-label="[[domain.name]]">
                   <yp-magic-text text-type="domainName" content-language="[[domain.language]]"
                                  disable-translation="[[domain.configuration.disableNameAutoTranslation]]"
                                  text-only content="[[domain.name]]" content-id="[[domain.id]]">

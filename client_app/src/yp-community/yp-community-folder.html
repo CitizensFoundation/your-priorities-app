@@ -267,8 +267,8 @@
         if (this.communityFolder) {
           this.fire('yp-set-home-link', { type: 'communityFolder', id: this.communityFolder.id, name: this.communityFolder.name });
 
-          if (this.communityFolder.theme_id!=null) {
-            this.setTheme(this.communityFolder.theme_id);
+          if (this.communityFolder.theme_id!=null || (this.communityFolder.configuration && this.communityFolder.configuration.themeOverrideColorPrimary!=null)) {
+            this.setTheme(this.communityFolder.theme_id, this.communityFolder.configuration);
           } else if (this.communityFolder.Domain.theme_id!=null) {
             this.setTheme(this.communityFolder.Domain.theme_id);
           }

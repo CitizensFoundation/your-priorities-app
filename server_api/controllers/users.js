@@ -258,13 +258,16 @@ router.get('/:userId/moderate_all_content', auth.can('edit user'), (req, res) =>
 router.put('/:id', auth.can('edit user'), function (req, res) {
   models.User.findOne({
     where: {id: req.params.id},
-    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'notifications_settings'])
+    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'profile_data', 'notifications_settings'])
   }).then(function (user) {
     if (user) {
       user.name = req.body.name;
       user.email = req.body.email;
       user.description = req.body.description;
       user.notifications_settings = JSON.parse(req.body.notifications_settings);
+      if (user.profile_data && user.profile_data.isAnonymousUser) {
+        user.set('profile_data.isAnonymousUser', false);
+      }
       user.save().then(function () {
         log.info('User Updated', { user: toJson(user.simple()), context: 'update', loggedInUser: toJson(req.user.simple()) });
         user.setupImages(req.body, function (error) {
@@ -606,7 +609,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
   }
 });
 
-router.put('/loggedInUser/setLocale', auth.isLoggedIn, function (req, res) {
+router.put('/loggedInUser/setLocale', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
@@ -828,7 +831,7 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
 });
 
 router.delete('/delete_current_user', function (req, res) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user) {
     log.info('Deleting user', { user: toJson(req.user), context: 'delete_current_user'});
     var userId = req.user.id;
     models.User.findOne({

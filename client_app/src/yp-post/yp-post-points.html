@@ -217,7 +217,7 @@
       }
 
       :focus {
-        outline: none;
+
       }
 
       #ironListMobile[debate-disabled] {
@@ -268,6 +268,16 @@
 
       .pointMaterialMobile {
       }
+
+      div[rtl] {
+        direction: rtl;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-label: {
+          padding-right: 6px;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-update-points-for-post="_loadNewPointsIfNeeded"></lite-signal>
@@ -283,30 +293,34 @@
       <yp-ajax id="moreAjax" hidden on-response="_morePointsResponse"></yp-ajax>
     </div>
 
-    <template is="dom-if" if="[[largeMode]]" restamp>
-      <div class="layout vertical topContainer">
+    <template is="dom-if" if="[[largeModeReady]]" restamp>
+      <div rtl$="[[rtl]]" class="layout vertical topContainer">
         <div class="main-container">
           <div class="point">
             <template is="dom-if" if="[[!post.Group.configuration.alternativePointForHeader]]">
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" role="heading">
                 [[t('pointsFor')]]
               </div>
             </template>
 
             <template is="dom-if" if="[[post.Group.configuration.alternativePointForHeader]]">
               <div class="pointMainHeader layout horizontal center-center">
-                [[post.Group.configuration.alternativePointForHeader]]
+
+                <yp-magic-text content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointForHeader]]"
+                               content-language="[[post.Group.language]]" role="heading"
+                               class="ratingName" text-type="alternativePointForHeader"></yp-magic-text>
+
               </div>
             </template>
 
             <paper-material id="pointUpMaterial" elevation="1" class="pointInputMaterial layout vertical"
-                            animated hidden$="[[post.Group.configuration.disableDebate]]">
+                            animated hidden$="[[disableDebate]]">
 
               <paper-textarea id="up_point" on-tap="focusUpPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                               value="{{textValueUp}}" label$="[[labelUp]]"
                               always-float-label="[[_floatIfValueOrIE()]]"
                               char-counter rows="2" hidden$="[[hideUpText]]"
-                              max-rows="3" maxlength="500">
+                              max-rows="3" maxlength="[[pointMaxLength]]">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
@@ -363,16 +377,16 @@
               <div hidden="[[!ifLengthUpIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
                   <paper-button raised class="submitButton" disabled$="[[addPointDisabled]]" icon="add" mini="" elevation="3" on-tap="addPointUp"
-                                title="[[t('point.add_up')]]">[[t('postPoint')]]</paper-button>
+                                title="[[t('postPoint')]]">[[t('postPoint')]]</paper-button>
                 </div>
               </div>
             </paper-material>
 
             <div id="allUpPoints">
               <iron-scroll-threshold id="ironScrollThesholdUp" scroll-target="document"  on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListUp" lower-threshold="200" items="[[upPoints]]" as="point" scroll-target="document" scroll-offset="550">
+                <iron-list id="ironListUp" lower-threshold="200" items="[[upPoints]]" role="list" as="point" scroll-target="document" scroll-offset="550">
                   <template>
-                    <div class="item" tabindex$="[[tabIndex]]">
+                    <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="2">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                         <yp-point point="[[point]]"></yp-point>
                       </paper-material>
@@ -385,26 +399,39 @@
 
           <div class="point" hidden$="[[post.Group.configuration.hidePointAgainst]]">
             <template is="dom-if" if="[[!post.Group.configuration.alternativePointAgainstHeader]]">
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" role="heading">
                 [[t('pointsAgainst')]]
               </div>
             </template>
 
             <template is="dom-if" if="[[post.Group.configuration.alternativePointAgainstHeader]]">
               <div class="pointMainHeader layout horizontal center-center">
-                [[post.Group.configuration.alternativePointAgainstHeader]]
+                <yp-magic-text content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointAgainstHeader]]"
+                               content-language="[[post.Group.language]]" role="heading"
+                               class="ratingName" text-type="alternativePointAgainstHeader"></yp-magic-text>
               </div>
             </template>
 
+            <template is="dom-if" if="[[post.Group.configuration.alternativePointForLabel]]">
+                <yp-magic-text id="alternativePointForLabelId" hidden content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointForLabel]]"
+                               content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels" role="heading"
+                               text-type="alternativePointForLabel"></yp-magic-text>
+            </template>
+
+            <template is="dom-if" if="[[post.Group.configuration.alternativePointAgainstLabel]]">
+              <yp-magic-text id="alternativePointAgainstLabelId" hidden content-id="[[post.Group.id]]" text-only content="[[post.Group.configuration.alternativePointAgainstLabel]]"
+                             content-language="[[post.Group.language]]" on-new-translation="_updatePointLabels" role="heading"
+                             text-type="alternativePointAgainstLabel"></yp-magic-text>
+            </template>
 
             <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical"
-                            animated hidden$="[[post.Group.configuration.disableDebate]]">
+                            animated hidden$="[[disableDebate]]">
 
               <paper-textarea id="down_point" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                               value="{{textValueDown}}" label$="[[labelDown]]"
                               char-counter rows="2" hidden$="[[hideDownText]]"
                               always-float-label="[[_floatIfValueOrIE()]]"
-                              max-rows="5" maxlength="500">
+                              max-rows="5" maxlength="[[pointMaxLength]]">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" hidden$="[[post.Group.configuration.hideEmoji]]">
@@ -462,16 +489,16 @@
               <div hidden="[[!ifLengthDownIsRight]]">
                 <div class="addPointFab layout horizontal center-center">
                   <paper-button raised disabled$="[[addPointDisabled]]" icon="add" elevation="3" on-tap="addPointDown"
-                                title="[[t('point.add_down')]]">[[t('postPoint')]]</paper-button>
+                                title="[[t('postPoint')]]">[[t('postPoint')]]</paper-button>
                 </div>
               </div>
             </paper-material>
 
             <div id="allDownPoints">
               <iron-scroll-threshold id="ironScrollThesholdDown"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-                <iron-list id="ironListDown" lower-threshold="200" items="[[downPoints]]" as="point" scroll-target="document" scroll-offset="550">
+                <iron-list id="ironListDown" lower-threshold="200" items="[[downPoints]]" role="list" as="point" scroll-target="document" scroll-offset="550">
                   <template>
-                    <div class="item" tabindex$="[[tabIndex]]">
+                    <div class="item" tabindex$="[[tabIndex]]" role="listitem" aria-level="2">
                       <paper-material id="point[[point.id]]" elevation="1" animated class="pointMaterial">
                         <yp-point point="[[point]]"></yp-point>
                       </paper-material>
@@ -485,13 +512,13 @@
       </div>
     </template>
 
-    <template is="dom-if" if="[[!largeMode]]" restamp>
-      <div class="layout vertical center-center">
-        <paper-material id="pointUpOrDownMaterial" elevation="0" class="pointInputMaterial layout vertical" animated hidden$="[[post.Group.configuration.disableDebate]]">
+    <template is="dom-if" if="[[smallModeReady]]" restamp>
+      <div rtl$="[[rtl]]" class="layout vertical center-center">
+        <paper-material id="pointUpOrDownMaterial" elevation="0" class="pointInputMaterial layout vertical" animated hidden$="[[disableDebate]]">
           <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" on-focus="focusTextArea" on-blur="blurTextArea"
                           value="{{textValueMobileUpOrDown}}" label="[[labelMobileUpOrDown]]"
                           char-counter rows="2" hidden$="[[hideMobileText]]"
-                          max-rows="3" maxlength="500"></paper-textarea>
+                          max-rows="3" maxlength="[[pointMaxLength]]"></paper-textarea>
           <div class="layout vertical end-justified">
             <div class="layout horizontal center-center pointButtons">
               <paper-radio-group hidden$="[[post.Group.configuration.hidePointAgainst]]" id="upOrDown" attribute-for-selected="name" class="layout horizontal" selected="{{pointUpOrDownSelected}}">
@@ -568,11 +595,11 @@
           </div>
         </paper-material>
       </div>
-      <div class="layout vertical center-center">
+      <div rtl$="[[rtl]]" class="layout vertical center-center">
         <iron-scroll-threshold id="ironScrollThesholdMobile"  scroll-target="document" on-lower-threshold="_loadMorePoints">
-          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[post.Group.configuration.disableDebate]]" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
+          <iron-list id="ironListMobile" lower-threshold="150" debate-disabled$="[[disableDebate]]" role="list" items="[[points]]" as="point" scroll-target="document" scroll-offset="[[mobileScrollOffset]]">
             <template>
-              <div class="item layout vertical center-center" tabindex$="[[tabIndex]]">
+              <div class="item layout vertical center-center" tabindex$="[[tabIndex]]" role="listitem" aria-level="2">
                 <paper-material id="point[[point.id]]" elevation="0" animated class="pointMaterial pointMaterialMobile">
                   <yp-point point="[[point]]"></yp-point>
                 </paper-material>
@@ -607,6 +634,17 @@
         properties: {
 
           host: String,
+
+          isAdmin: {
+            type: Boolean,
+            value: false,
+            observer: '_isAdminChanged'
+          },
+
+          disableDebate: {
+            type: Boolean,
+            value: false
+          },
 
           downPoints: {
             type: Array,
@@ -645,10 +683,25 @@
             observer: '_pointsChanged'
           },
 
+          rtl: {
+            type: Boolean,
+            value: false
+          },
+
           largeMode: {
             type: Boolean,
             value: false,
             observer: '_updateEmojiBindings'
+          },
+
+          largeModeReady: {
+            type: Boolean,
+            computed: '_largeModeReady(largeMode, post)'
+          },
+
+          smallModeReady: {
+            type: Boolean,
+            computed: '_smallModeReady(largeMode, post)'
           },
 
           textValueMobileUpOrDown: String,
@@ -847,6 +900,27 @@
           storedPoints: {
             type: Array,
             value: null
+          },
+
+          pointMaxLength: {
+            type: Number,
+            computed: '_pointMaxLength(post, largeMode)'
+          }
+        },
+
+        _largeModeReady: function (largeMode, post) {
+          return largeMode && post;
+        },
+
+        _smallModeReady: function (largeMode, post) {
+          return !largeMode && post;
+        },
+
+        _pointMaxLength: function (post) {
+          if (post && post.Group && post.Group.configuration && post.Group.configuration.pointCharLimit) {
+            return post.Group.configuration.pointCharLimit;
+          } else {
+            return 500;
           }
         },
 
@@ -930,12 +1004,22 @@
 
         listeners: {
           'yp-point-deleted': '_pointDeleted',
-          'yp-update-point-in-list': '_updatePointInLists'
+          'yp-update-point-in-list': '_updatePointInLists',
+          'yp-iron-resize': '_ypIronResize'
         },
 
         observers: [
           '_setupPointTextStartState(pointUpOrDownSelected, post)'
         ],
+
+        _ypIronResize: function () {
+          if (this.$$("#ironListUp"))
+            this.$$("#ironListUp").fire("iron-resize");
+          if (this.$$("#ironListDown"))
+            this.$$("#ironListDown").fire("iron-resize");
+          if (this.$$("#ironListMobile"))
+            this.$$("#ironListMobile").fire("iron-resize");
+        },
 
         _setupPointTextStartState: function(pointUpOrDownSelected, post) {
           if (post) {
@@ -1122,6 +1206,14 @@
             this.$$("#audioFileUploadMobile").clear();
         },
 
+        _isAdminChanged: function (isAdmin) {
+          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !isAdmin) {
+            this.set('disableDebate', true);
+          } else {
+            this.set('disableDebate', false);
+          }
+        },
+
         _postChanged: function (newPost) {
           // Remove any manually inserted points when the list is updated
           this.set('points', null);
@@ -1136,7 +1228,14 @@
           this.storedUpPointsCount = null;
           this.storedDownPointsCount = null;
 
+
           if (newPost) {
+            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.isAdmin) {
+              this.set('disableDebate', true);
+            } else {
+              this.set('disableDebate', false);
+            }
+
             if (this.host) {
               this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
             } else {
@@ -1154,6 +1253,10 @@
               this.set('labelDown', this.t('point.against'));
             }
           }
+
+          this.async(function () {
+            this._updatePointLabels();
+          });
         },
 
         removeElementsByClass: function (rootElement, className) {
@@ -1161,6 +1264,19 @@
           while(elements.length > 0){
             elements[0].parentNode.removeChild(elements[0]);
           }
+        },
+
+        _updatePointLabels: function () {
+          this.async(function () {
+            var forLabel = this.$$("#alternativePointForLabelId");
+            var againstLabel = this.$$("#alternativePointAgainstLabelId");
+            if (forLabel && forLabel.finalContent) {
+              this.set('labelUp', forLabel.finalContent);
+            }
+            if (againstLabel && againstLabel.finalContent) {
+              this.set('labelDown', againstLabel.finalContent);
+            }
+          });
         },
 
         _processStoredPoints: function () {

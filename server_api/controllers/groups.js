@@ -12,6 +12,8 @@ var multer = require('multer');
 var s3multer = require('multer-s3');
 var aws = require('aws-sdk');
 var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDataForGroup;
+const exportGroupToDocx = require('../utils/docx_utils').exportGroupToDocx;
+
 var moment = require('moment');
 var sanitizeFilename = require("sanitize-filename");
 var queue = require('../active-citizen/workers/queue');
@@ -143,6 +145,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.attachmentsEnabled', truthValueFromBody(req.body.attachmentsEnabled));
   group.set('configuration.moreContactInformation', truthValueFromBody(req.body.moreContactInformation));
+  group.set('configuration.moreContactInformationAddress', truthValueFromBody(req.body.moreContactInformationAddress));
 
   group.set('configuration.useContainImageMode', truthValueFromBody(req.body.useContainImageMode));
 
@@ -177,6 +180,7 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.alternativePointForLabel', (req.body.alternativePointForLabel && req.body.alternativePointForLabel!="") ? req.body.alternativePointForLabel : null);
   group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
+
   group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
   group.set('configuration.disableNameAutoTranslation', truthValueFromBody(req.body.disableNameAutoTranslation));
   group.set('configuration.externalGoalTriggerUrl', (req.body.externalGoalTriggerUrl && req.body.externalGoalTriggerUrl!="") ? req.body.externalGoalTriggerUrl : null);
@@ -249,6 +253,31 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.structuredQuestions', (req.body.structuredQuestions && req.body.structuredQuestions!="") ? req.body.structuredQuestions : null);
 
+  if (group.configuration.structuredQuestions) {
+    try {
+      const cleaned = group.configuration.structuredQuestions.trim().replace(/\n/g,'').replace(/\r/g,'').replace(/"/,'"');
+      const jsonArray = JSON.parse(cleaned);
+      const updatedJsonArray = [];
+      let questionIndex = 0;
+      jsonArray.forEach((question, index) =>{
+        if (question.type.toLowerCase()==="textfield" ||
+          question.type.toLowerCase()==="textarea" ||
+          question.type.toLowerCase()==="numberfield" ||
+          question.type.toLowerCase()==="checkboxes" ||
+          question.type.toLowerCase()==="radios" ||
+          question.type.toLowerCase()==="dropdown"
+        ) {
+          question.questionIndex = questionIndex+=1;
+        }
+        updatedJsonArray.push(question);
+      });
+      group.set('configuration.structuredQuestionsJson', updatedJsonArray);
+    } catch (error) {
+      group.set('configuration.structuredQuestionsJson', null);
+      log.error("Error in parsing structured questions", { error });
+    }
+  }
+
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   group.set('configuration.customUserNamePrompt', (req.body.customUserNamePrompt && req.body.customUserNamePrompt!="") ? req.body.customUserNamePrompt : null);
@@ -271,6 +300,24 @@ var updateGroupConfigParamters = function (req, group) {
   } else {
     group.set('configuration.customRatings', null);
   }
+
+  group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
+  group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
+  group.set('configuration.pointCharLimit', (req.body.pointCharLimit && req.body.pointCharLimit!=="") ? req.body.pointCharLimit : null);
+  group.set('configuration.allPostsBlockedByDefault', truthValueFromBody(req.body.allPostsBlockedByDefault));
+  group.set('configuration.customThankYouTextNewPosts', (req.body.customThankYouTextNewPosts && req.body.customThankYouTextNewPosts!=="") ? req.body.customThankYouTextNewPosts : null);
+  group.set('configuration.useCommunityTopBanner', truthValueFromBody(req.body.useCommunityTopBanner));
+  group.set('configuration.makeMapViewDefault', truthValueFromBody(req.body.makeMapViewDefault));
+  group.set('configuration.simpleFormatDescription', truthValueFromBody(req.body.simpleFormatDescription));
+  group.set('configuration.resourceLibraryLinkMode', truthValueFromBody(req.body.resourceLibraryLinkMode));
+  group.set('configuration.collapsableTranscripts', truthValueFromBody(req.body.collapsableTranscripts));
+  group.set('configuration.customAdminCommentsTitle', (req.body.customAdminCommentsTitle && req.body.customAdminCommentsTitle!=="") ? req.body.customAdminCommentsTitle : null);
+  group.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
+  group.set('configuration.hideNameInputAndReplaceWith', (req.body.hideNameInputAndReplaceWith && req.body.hideNameInputAndReplaceWith!="") ? req.body.hideNameInputAndReplaceWith : null);
+  group.set('configuration.hideMediaInput', truthValueFromBody(req.body.hideMediaInput));
+  group.set('configuration.actAsLinkToCommunityId', (req.body.actAsLinkToCommunityId && req.body.actAsLinkToCommunityId!="") ? req.body.actAsLinkToCommunityId : null);
+  group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
+  group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
 };
 
 var upload = multer({
@@ -579,6 +626,47 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
   });
 });
 
+router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.createJob((error, jobId) => {
+    if (error) {
+      log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      let reportType;
+      if (req.params.type==='docx') {
+        reportType = 'start-docx-report-generation';
+      } else if (req.params.type==='xls') {
+        reportType = 'start-xls-report-generation';
+      }
+
+      queue.create('process-reports', {
+        type: reportType,
+        userId: req.user.id,
+        exportType: req.params.type,
+        translateLanguage: req.query.translateLanguage,
+        jobId: jobId,
+        groupId: req.params.groupId
+      }).priority('medium').removeOnComplete(true).save();
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:groupId/:jobId/report_creation_progress', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
 router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) {
     models.Group.findOne({
       where: {
@@ -611,6 +699,41 @@ router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) 
       log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     });
+});
+
+router.get('/:groupId/export_group_docx', auth.can('edit group'), async (req, res) => {
+  models.Group.findOne({
+    where: {
+      id: req.params.groupId
+    },
+    attributes: ["id", "name","community_id","objectives","configuration","language"]
+  }).then(function (group) {
+    if (group) {
+      exportGroupToDocx(group, req.ypDomain.domain_name, req.query.translateLanguage,function (error, fileData) {
+        if (error) {
+          log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+          res.sendStatus(500);
+        } else {
+          log.info('Got Export Admin', {context: 'export_group', user: toJson(req.user.simple()) });
+          var groupName = sanitizeFilename(group.name).replace(/ /g,'');
+          var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
+          var filename = 'ideas_and_points_group_export_'+group.community_id+'_'+req.params.groupId+'_'+
+            groupName+'_'+dateString+'.docx';
+          res.set({ 'content-type': 'application/application/vnd.openxmlformats-officedocument.wordprocessingml.document; charset=utf-8' });
+          res.setHeader('Content-Disposition', 'attachment; filename='+filename);
+          res.charset = 'utf-8';
+          res.attachment(filename);
+          res.send(fileData);
+        }
+      });
+    } else {
+      log.error('Cant find group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      res.sendStatus(404);
+    }
+  }).catch(function (error) {
+    log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
 });
 
 router.post('/:groupId/add_page', auth.can('edit group'), function(req, res) {
@@ -963,6 +1086,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
       [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Category }, 'name', 'asc' ],
       [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
@@ -975,6 +1099,12 @@ router.get('/:id', auth.can('view group'), function(req, res) {
           {
             model: models.Domain,
             attributes: ['id','theme_id','name']
+          },
+          {
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
           }
         ]
       },
@@ -1038,13 +1168,25 @@ router.get('/:id', auth.can('view group'), function(req, res) {
   });
 });
 
+const allowedTextTypesForGroup = [
+  "alternativeTextForNewIdeaButton",
+  "alternativeTextForNewIdeaButtonClosed",
+  "alternativeTextForNewIdeaButtonHeader",
+  "alternativePointForHeader",
+  "customThankYouTextNewPosts",
+  "alternativePointAgainstHeader",
+  "alternativePointForLabel",
+  "alternativePointAgainstLabel",
+  "customAdminCommentsTitle"
+];
+
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
-  if (req.query.textType.indexOf("group") > -1) {
+  if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {
     models.Group.findOne({
       where: {
         id: req.params.id
       },
-      attributes: ['id','name','objectives']
+      attributes: ['id','name','objectives','configuration']
     }).then(function(group) {
       if (group) {
         models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
@@ -1206,12 +1348,16 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
       var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
-      if (req.params.filter=="newest") {
+      if (req.params.filter==="newest") {
         postOrder = "created_at DESC";
-      } else if (req.params.filter=="most_debated") {
+      } else if (req.params.filter==="most_debated") {
         postOrder = "counter_points DESC";
-      } else if (req.params.filter=="random") {
+      } else if (req.params.filter==="random") {
         postOrder = "created_at DESC";
+      } else if (req.params.filter==="oldest") {
+        postOrder = "created_at ASC";
+      } else if (req.params.filter==="alphabetical") {
+        postOrder = "name ASC";
       }
 
       if (req.params.categoryId!='null') {
@@ -1574,5 +1720,185 @@ router.post('/:id/triggerTrackingGoal', auth.can('view group'), (req, res) => {
     res.sendStatus(404);
   });
 });
+
+router.put('/:id/:pointId/adminComment', auth.can('edit group'), function(req, res) {
+  if (!req.body.content) {
+    req.body.content="";
+  }
+
+  models.Point.findOne({
+    where: {
+      id: req.params.pointId
+    },
+    attributes: ['id','public_data']
+  }).then(function(point) {
+    if (point) {
+      if (!point.public_data) {
+        point.set('public_data', {});
+      }
+      if (!point.public_data.admin_comment) {
+        point.set('public_data.admin_comment', {});
+      }
+      point.set('public_data.admin_comment', { text: req.body.content, userId: req.user.id, userName: req.user.name, createdAt: new Date() });
+      point.save().then(()=>{
+        res.send({content: req.body.content });
+      }).catch(function(error) {
+        log.error("Error adminComment", {error});
+        res.sendStatus(500);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error("Error adminComment", {error});
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:groupId/survey', auth.can('view group'), (req, res) => {
+  models.Group.findOne({
+    where: { id: req.params.groupId },
+    order: [
+      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+    ],
+    attributes: ['id','name','configuration','objectives'],
+    include: [
+      {
+        model: models.Community,
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id','theme_id','name']
+          }
+        ]
+      },
+      {
+        model: models.Image,
+        as: 'GroupLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Video,
+        as: 'GroupLogoVideos',
+        attributes:  ['id','formats','viewable','public_meta'],
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      }
+    ]
+  }).then(function(group) {
+    if (group) {
+      log.info('Survey Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
+      res.send({ surveyGroup: group });
+    } else {
+      res.send({ error: 'notFound' });
+    }
+  }).catch(function(error) {
+    sendGroupOrError(res, null, 'view survey', req.user, error);
+  });
+});
+
+router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
+  let surveyGroup;
+  let loggedInUser = req.user;
+
+  async.series([
+    (seriesCallback) => {
+      models.Group.findOne({
+        where: { id: req.params.groupId },
+        attributes: ['id','configuration']
+      }).then(group => {
+        if (group) {
+          surveyGroup = group;
+          seriesCallback();
+        } else {
+          seriesCallback("Group not found");
+        }
+      }).catch(error => {
+        seriesCallback(error)
+      });
+    },
+    (seriesCallback) => {
+      if (loggedInUser) {
+        seriesCallback();
+      } else {
+        const anonSurveyEmail = "survey_group_"+surveyGroup.id+"_user_anonymous@citizens.is";
+        models.User.findOne({
+          where: {
+            email: anonSurveyEmail
+          }
+        }).then(function (existingUser) {
+          if (existingUser) {
+            loggedInUser = existingUser;
+            seriesCallback();
+          } else {
+            var user = models.User.build({
+              email: anonSurveyEmail,
+              name: "Anonymous Survey User",
+              notifications_settings: models.AcNotification.anonymousNotificationSettings,
+              status: 'active'
+            });
+            user.set('profile_data', {});
+            user.set('profile_data.isAnonymousUser', true);
+            user.save().then(() =>  {
+              loggedInUser = user;
+              seriesCallback();
+            }).catch(error => {
+              seriesCallback(error);
+            });
+          }
+        }).catch(error => {
+          seriesCallback(error);
+        });
+      }
+    },
+    (seriesCallback) => {
+      const post = models.Post.build({
+        name: "Survey Response -"+moment(new Date()).format("DD/MM/YYYY hh:mm:ss"),
+        description: "",
+        group_id: surveyGroup.id,
+        cover_media_type: "none",
+        user_id: loggedInUser.id,
+        status: 'blocked',
+        counter_endorsements_up: 0,
+        content_type: models.Post.CONTENT_SURVEY,
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
+      });
+
+      post.set('public_data', {});
+
+      if (req.body.structuredAnswers) {
+        post.set('public_data.structuredAnswersJson', req.body.structuredAnswers);
+      }
+
+      post.save().then(() => {
+        log.info('Survey Post Created', { postId: post.id, context: 'create' });
+        post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
+          seriesCallback();
+        });
+      }).catch(error => {
+        seriesCallback(error)
+      });
+    }
+  ], (error) => {
+    if (error) {
+      sendGroupOrError(res, null, 'post survey', req.user, error);
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 
 module.exports = router;

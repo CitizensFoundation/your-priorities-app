@@ -1,0 +1,584 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/lite-signal/lite-signal.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+
+<dom-module id="yp-structured-question-edit">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: block;
+        font-size: 16px;
+      }
+
+      a {
+        color: #000;
+      }
+
+      .question {
+        margin-top: 32px;
+        margin-bottom: 8px;
+        color: #000;
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+      .question[use-small-font] {
+        font-size: 16px;
+      }
+
+      hr {
+        border-top: 2px dashed var(--accent-color);
+        margin-top: 48px;
+        margin-bottom: 32px;
+      }
+
+      .general {
+        color: #000;
+      }
+
+      .noBottomMargin {
+        margin-bottom: 0;
+      }
+
+      .header[is-not-first] {
+        margin-top: 54px;
+      }
+
+      paper-dropdown-menu {
+        margin-top: 16px;
+      }
+
+      .numberInput {
+      }
+
+      paper-checkbox {
+        margin-bottom: 16px;
+      }
+
+      paper-input, paper-textarea {
+        --paper-input-container-label: {
+          color: #000;
+          font-size: 18px;
+        }
+      }
+
+      paper-input[use-small-font], paper-textarea[use-small-font] {
+        --paper-input-container-label: {
+          font-size: 16px;
+        }
+      }
+
+      paper-input {
+        margin-bottom: 32px;
+      }
+
+      paper-radio-group {
+        margin-top: 16px;
+        margin-bottom: 16px;
+        font-size: 16px;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-label-color: #333;
+        font-size: 16px;
+      }
+
+      .checkBoxesLabel {
+        margin-bottom: 36px;
+      }
+
+      .radiosLabel {
+        margin-bottom: 16px;
+        margin-top: 48px;
+      }
+
+      paper-checkbox {
+        --paper-checkbox-label-color: #333;
+        margin-left: 42px;
+        margin-bottom: 24px;
+      }
+
+      .general[less-bottom-margin] {
+        margin-bottom: -32px;
+      }
+
+      .general[extra-top-margin] {
+        margin-top: 32px;
+      }
+
+      .lessBottomMargin {
+        margin-bottom: -32px;
+      }
+
+      @media (min-width: 800px) {
+        paper-input[half-width-desktop] {
+          width: 50%;
+        }
+
+        :host {
+          padding: 0;
+          margin: 0;
+        }
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      .header {
+        font-size: 26px;
+        font-weight: bold;
+        line-height: 1.5;
+      }
+
+      .header[is-first] {
+        background-color: var(--accent-color);
+        color: #FFF;
+        font-size: 32px;
+        padding: 24px;
+      }
+
+      paper-radio-button {
+        margin-left: 24px;
+      }
+    </style>
+
+    <template is="dom-if" if="[[_isTextField(question)]]">
+      <paper-input id="structuredQuestion_[[index]]"
+                      value="{{question.value}}"
+                      always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                      label="[[_getTextWithIndex(question)]]"
+                      char-counter
+                      use-small-font$="[[useSmallFont]]"
+                      on-keypress="_keyPressed"
+                      half-width-desktop$="[[question.halfWidthDesktop]]"
+                      on-value-changed="_debounceChangeEvent"
+                      required$="[[question.required]]"
+                      maxlength="[[question.maxLength]]">
+      </paper-input>
+    </template>
+
+    <template is="dom-if" if="[[_isNumberField(question)]]">
+      <paper-input id="structuredQuestion_[[index]]"
+                   value="{{question.value}}"
+                   class="numberInput"
+                   use-small-font$="[[useSmallFont]]"
+                   char-counter--paper-radio-button-label-color
+                   allowed-pattern="[0-9]"
+                   half-width-desktop$="[[question.halfWidthDesktop]]"
+                   on-keypress="_keyPressed"
+                   always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                   label="[[_getTextWithIndex(question)]]"
+                   on-value-changed="_debounceChangeEvent"
+                   required$="[[question.required]]"
+                   maxlength="[[question.maxLength]]">
+      </paper-input>
+    </template>
+
+    <template is="dom-if" if="[[_isTextarea(question)]]">
+      <paper-textarea id="structuredQuestion_[[index]]"
+                      data-type="text"
+                      value="{{question.value}}"
+                      on-keypress="_keyPressed"
+                      minlength="2"
+                      always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                      label="[[_getTextWithIndex(question)]]"
+                      char-counter
+                      use-small-font$="[[useSmallFont]]"
+                      on-value-changed="_debounceChangeEvent"
+                      rows="3"
+                      max-rows="5"
+                      maxrows="5"
+                      required$="[[question.required]]"
+                      maxlength="[[question.maxLength]]">
+      </paper-textarea>
+    </template>
+
+    <template is="dom-if" if="[[_isTextHeader(question)]]">
+      <div class="header" is-not-first$="[[index]]" is-first$="[[!index]]">[[question.text]]</div>
+    </template>
+
+    <template is="dom-if" if="[[_isTextDescription(question)]]">
+      <div class="question general"
+           use-small-font$="[[useSmallFont]]"
+           inner-h-t-m-l="[[_textWithLinks(question)]]"
+           extra-top-margin$="[[question.extraTopMargin]]"
+           less-bottom-margin$="[[question.lessBottomMargin]]"></div>
+    </template>
+
+    <template is="dom-if" if="[[_isSeparator(question)]]">
+       <hr>
+    </template>
+
+    <template is="dom-if" if="[[_isRadios(question)]]">
+      <div class="question general radiosLabel" use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+
+      <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
+          <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index-as="buttonIndex">
+            <paper-radio-button use-small-font$="[[useSmallFont]]" id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
+          </template>
+      </paper-radio-group>
+    </template>
+
+    <template is="dom-if"  if="[[_isCheckboxes(question)]]">
+      <div id="structuredQuestionIntro_[[index]]" class="question general checkBoxesLabel" use-small-font$="[[useSmallFont]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+      <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
+        <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index-as="buttonIndex">
+          <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
+        </template>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_isDropDown(question)]]">
+      <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[_getTextWithIndex(question)]]" required$="[[question.required]]">
+        <paper-listbox slot="dropdown-content" attr-for-selected="name">
+          <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
+            <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
+          </template>
+        </paper-listbox>
+      </paper-dropdown-menu>
+    </template>
+  </template>
+
+  <script>
+
+    class YpStructuredQuestionEdit extends Polymer.mixinBehaviors([Polymer.IronFormElementBehavior, Polymer.IronValidatableBehavior], Polymer.Element){
+      static get is() { return 'yp-structured-question-edit'; }
+
+      static get properties() {
+        return {
+
+          question: {
+            type: Object
+          },
+
+          index: {
+            type: Number
+          },
+
+          language: {
+            type: String,
+          },
+
+          hideQuestionIndex: {
+            type: Boolean,
+            value: false
+          },
+
+          dontFocusFirstQuestion: {
+            type: Boolean,
+            value: false
+          },
+
+          useSmallFont: {
+            type: Boolean,
+            value: false
+          },
+
+          structuredAnswers: {
+            type: Array,
+            observer: '_structuredAnsweredChanged'
+          }
+        }
+      }
+
+      _keyPressed(event) {
+        if (event.which == 13 || event.keyCode == 13) {
+          this.fire('yp-goto-next-index', { currentIndex: this.index });
+        }
+      }
+
+      _sendDebouncedChange (detail) {
+        if (!this.debunceChangeEventTimer) {
+          this.debunceChangeEventTimer = this.async(function () {
+            this.fire('yp-answer-content-changed', detail);
+            this.debunceChangeEventTimer = null;
+            this._resizeScrollerIfNeeded();
+          }, 2000);
+        }
+      }
+
+      _debounceChangeEvent (event, detail) {
+        event.stopPropagation();
+        this._sendDebouncedChange(detail);
+      }
+
+      _getTextWithIndex (question) {
+        if (question.questionIndex  && !this.hideQuestionIndex) {
+          return question.questionIndex+". "+question.text;
+        } else {
+          return question.text;
+        }
+      }
+
+      _getRadioClass (question) {
+        if (question.subType && question.subType==="rating") {
+          return "layout horizontal wrap lessBottomMargin";
+        } else {
+          return "layout vertical";
+        }
+      }
+
+      _textWithLinks (question) {
+        var a = linkifyHtml(question.text);
+        return a;
+      }
+
+      _resizeScrollerIfNeeded () {
+        this.fire('resize-scroller');
+      }
+
+      _floatIfValueOrIE (value) {
+        var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
+        return ie11 || value;
+      }
+
+      validate() {
+        return true;
+        var liveQuestion = this.$$("#structuredQuestion_"+this.index);
+        if (liveQuestion) {
+          if (liveQuestion.dataset.type==="dropdown") {
+            return true; // DO something if required
+          }  else if (liveQuestion.dataset.type==="radios") {
+            return true; // DO something if required
+          } else if (liveQuestion.dataset.type==="checkboxes") {
+            return true; // DO something if required
+          } else {
+            if (liveQuestion) {
+              return liveQuestion.validate();
+            } else {
+              return true;
+            }
+          }
+        }
+      }
+
+      focus () {
+        if (this.question.type.toLowerCase()==="textfield" ||
+          this.question.type.toLowerCase()==="textarea" ||
+          this.question.type.toLowerCase()==="numberfield"
+        ) {
+          var item = this.$$("#structuredQuestion_"+this.index);
+          this.async(function () {
+            item.focus();
+          }, 250);
+        }
+      }
+
+      getAnswer () {
+        var item = this.$$("#structuredQuestion_"+this.index);
+        var value = null;
+
+        if (this.question.type.toLowerCase()==="textfield" ||
+          this.question.type.toLowerCase()==="textarea" ||
+          this.question.type.toLowerCase()==="numberfield"
+        ) {
+          value = item.value;
+        } else if (this.question.type.toLowerCase()==="radios") {
+          if (item.selected) {
+            var selectedRadio = null;
+            this.question.radioButtons.forEach(function (button) {
+              if (button.text===item.selected) {
+                selectedRadio = button;
+              }
+            }.bind(this.validate()));
+            value = selectedRadio.text
+          }
+        } else if (this.question.type.toLowerCase()==="checkboxes") {
+          var selectedCheckboxes = "";
+          for (var i = 0; i < item.children.length; i++) {
+            if (item.children[i].checked) {
+              var checkboxSubId = item.children[i].id.split("_")[2];
+              var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+              selectedCheckboxes += selectedCheckbox.text+",";
+            }
+          }
+
+          if (selectedCheckboxes!=="") {
+            value = selectedCheckboxes.substring(0, selectedCheckboxes.length - 1);
+          }
+        }
+
+        return  { uniqueId: this.question.uniqueId, value: value }
+      }
+
+      setAnswer (value) {
+        if (value) {
+          var item = this.$$("#structuredQuestion_"+this.index);
+
+          if (item) {
+            if (this.question.type.toLowerCase()==="textfield" ||
+              this.question.type.toLowerCase()==="textarea" ||
+              this.question.type.toLowerCase()==="numberfield"
+            ) {
+              item.value = value;
+            } else if (this.question.type.toLowerCase()==="radios") {
+              this.question.radioButtons.forEach(function (button, index) {
+                if (button.text===value) {
+                  item.select(value);
+                }
+              }.bind(this));
+            } else if (this.question.type.toLowerCase()==="checkboxes") {
+              var checkboxValues = value.split(',');
+              for (var i = 0; i < item.children.length-1; i++) {
+                if (item.children[i]) {
+                  var checkboxSubId = item.children[i].id.split("_")[2];
+                  var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+                  if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
+                    item.children[i].checked = true;
+                  }
+                }
+              }
+            }
+          } else {
+            console.error("cant find item");
+          }
+        }
+      }
+
+      hide () {
+        var item = this.$$("#structuredQuestion_"+this.index);
+        item.hidden = true;
+
+        var introItem = this.$$("#structuredQuestionIntro_"+this.index);
+        if (introItem) {
+          introItem.hidden = true;
+        }
+      }
+
+      show () {
+        var item = this.$$("#structuredQuestion_"+this.index);
+        item.hidden = false;
+        var introItem = this.$$("#structuredQuestionIntro_"+this.index);
+        if (introItem) {
+          introItem.hidden = false;
+        }
+      }
+
+      _openSubQuestion() {
+        this.dispatchEvent(new CustomEvent('yp-open-sub-question', { bubbles: true, composed: true, detail: this.question.id }));
+      }
+
+      _closeSubQuestion() {
+        this.dispatchEvent(new CustomEvent('yp-close-sub-question', { bubbles: true, composed: true, detail: this.question.id }));
+      }
+
+      _checkboxChanged(event, detail) {
+        event.stopPropagation();
+        this._sendDebouncedChange({value: 1});
+      }
+
+      _radioChanged(event, detail) {
+        event.stopPropagation();
+        this._sendDebouncedChange({value: 1});
+
+        var selectedRadio = null;
+
+        this.question.radioButtons.forEach(function (button) {
+          if (button.text===detail.value) {
+            selectedRadio = button;
+          }
+        }.bind(this.validate()));
+
+        if (selectedRadio.skipTo) {
+          this.fire('yp-skip-to-unique-id', { fromId: this.question.uniqueId, toId: selectedRadio.skipTo });
+        } else {
+          this.fire('yp-goto-next-index', { currentIndex: this.index });
+          var hasSkipToId;
+
+          this.question.radioButtons.forEach(function (button) {
+            if (button.skipTo) {
+              hasSkipToId = button.skipTo;
+            }
+          }.bind(this));
+
+          if (hasSkipToId) {
+            this.fire('yp-open-to-unique-id', { fromId: this.question.uniqueId, toId: hasSkipToId });
+          }
+        }
+      }
+
+      _isTextarea (question) {
+        return (question.type && question.type.toLowerCase()==='textarea') || (question.type===undefined && question.maxLength>1);
+      }
+
+      _isTextField (question) {
+        return (question.type && question.type.toLowerCase()==='textfield');
+      }
+
+      _isNumberField (question) {
+        return (question.type && question.type.toLowerCase()==='numberfield');
+      }
+
+      _isTextHeader (question) {
+        return (question.type && question.type.toLowerCase()==='textheader');
+      }
+
+      _isTextDescription (question) {
+        return (question.type && question.type.toLowerCase()==='textdescription');
+      }
+
+      _isCheckboxes (question) {
+        return (question.type && question.type.toLowerCase()==='checkboxes');
+      }
+
+      _isSeparator (question) {
+        return (question.type && question.type.toLowerCase()==='separator');
+      }
+
+      _isRadios (question) {
+        return (question.type && question.type.toLowerCase()==='radios');
+      }
+
+      _isDropDown (question) {
+        return (question.type && question.type.toLowerCase()==='dropdown');
+      }
+
+      _structuredAnsweredChanged (structuredAnswers) {
+        if (structuredAnswers && this.question.uniqueId) {
+          var BreakException = {};
+          try {
+            structuredAnswers.forEach(function (answer) {
+              if (this.question.uniqueId===answer.uniqueId) {
+                this.async(function () {
+                  this.setAnswer(answer.value);
+                },100);
+                throw BreakException;
+              }
+            }.bind(this));
+          } catch (e) {
+            if (e !== BreakException) throw e;
+          }
+        }
+      }
+
+      ready () {
+        if (window.i18nTranslation) {
+          this.set('language', window.locale);
+        }
+
+        this.async(function () {
+          if (this.question.questionIndex === 1 && !this.dontFocusFirstQuestion) {
+            this.focus();
+          }
+        }, 500);
+
+        super.ready();
+      }
+    }
+
+    customElements.define(YpStructuredQuestionEdit.is, YpStructuredQuestionEdit);
+  </script>
+</dom-module>

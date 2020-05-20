@@ -106,6 +106,13 @@
       .defaultPostImage {
         margin-top: 16px;
       }
+
+      #structuredQuestionsJsonErrorInfo {
+        margin-top: 0px;
+        margin-bottom: 8px;
+        color: #F00;
+        font-weight: bold;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -242,6 +249,15 @@
                      value="{{group.configuration.themeOverrideColorAccent}}">
         </paper-input>
 
+        <paper-input id="themeOverrideBackgroundColor"
+                     name="themeOverrideBackgroundColor"
+                     allowed-pattern="[#-#0-9A-Fa-f]"
+                     maxlength="7"
+                     char-counter
+                     label="[[t('themeOverrideBackgroundColor')]]"
+                     value="{{group.configuration.themeOverrideBackgroundColor}}">
+        </paper-input>
+
         <div class="themeOverrideInfo">
           <em>[[t('themeOverrideColorInfo')]]</em>
         </div>
@@ -256,6 +272,7 @@
         <paper-input id="postDescriptionLimit"
                      name="postDescriptionLimit"
                      type="text"
+                     allowed-pattern="[0-9]"
                      label="[[t('postDescriptionLimit')]]"
                      value="{{group.configuration.postDescriptionLimit}}"
                      maxlength="4"
@@ -279,6 +296,7 @@
         <paper-checkbox name="allowPostAudioUploads" disabled$="[[!hasAudioUpload]]"
                         checked$="{{allowPostAudioUploads}}">[[t('allowPostAudioUploads')]]
         </paper-checkbox>
+
         <paper-input id="audioPostUploadLimitSec"
                      name="audioPostUploadLimitSec"
                      allowed-pattern="[0-9]"
@@ -287,6 +305,13 @@
                      disabled$="[[!hasaudioUpload]]"
                      label="[[t('audioPostUploadLimitSec')]]"
                      value="{{group.configuration.audioPostUploadLimitSec}}">
+        </paper-input>
+
+        <paper-input id="hideNameInputAndReplaceWith"
+                     name="hideNameInputAndReplaceWith"
+                     maxlength="60"
+                     label="[[t('hideNameInputAndReplaceWith')]]"
+                     value="{{group.configuration.hideNameInputAndReplaceWith}}">
         </paper-input>
 
         <paper-checkbox name="makeCategoryRequiredOnNewPost" checked$="{{group.configuration.makeCategoryRequiredOnNewPost}}">[[t('makeCategoryRequiredOnNewPost')]]
@@ -299,6 +324,11 @@
         <paper-checkbox name="moreContactInformation" checked$="{{group.configuration.moreContactInformation}}">
           [[t('moreContactInformation')]]
         </paper-checkbox>
+
+        <paper-checkbox name="moreContactInformationAddress" checked$="{{group.configuration.moreContactInformationAddress}}">
+          [[t('moreContactInformationAddress')]]
+        </paper-checkbox>
+
         <paper-checkbox name="attachmentsEnabled" checked$="{{group.configuration.attachmentsEnabled}}">
           [[t('attachmentsEnabled')]]
         </paper-checkbox>
@@ -328,16 +358,47 @@
         <paper-checkbox name="hidePostFilterAndSearch" checked$="{{group.configuration.hidePostFilterAndSearch}}">
           [[t('hidePostFilterAndSearch')]]
         </paper-checkbox>
+
+        <paper-checkbox name="hideMediaInput" checked$="{{group.configuration.hideMediaInput}}">
+          [[t('hideMediaInput')]]
+        </paper-checkbox>
+
         <paper-checkbox name="hidePostImageUploads" disabled$="[[!hasVideoUpload]]"
                         checked$="{{group.configuration.hidePostImageUploads}}">[[t('hidePostImageUploads')]]
         </paper-checkbox>
+
         <paper-checkbox name="disablePostPageLink" checked$="{{group.configuration.disablePostPageLink}}">
           [[t('disablePostPageLink')]]
         </paper-checkbox>
 
+        <paper-input id="defaultLocationLongLat"
+                     name="defaultLocationLongLat"
+                     type="text"
+                     label="[[t('defaultLocationLongLat')]]"
+                     value="{{group.configuration.defaultLocationLongLat}}"
+                     maxlength="100" style="width: 300px;">
+        </paper-input>
+
+        <paper-input id="forcePostSortMethodAs"
+                     name="forcePostSortMethodAs"
+                     type="text"
+                     label="[[t('forcePostSortMethodAs')]]"
+                     value="{{group.configuration.forcePostSortMethodAs}}"
+                     maxlength="12">
+        </paper-input>
+
+        <paper-input id="customThankYouTextNewPosts"
+                     name="customThankYouTextNewPosts"
+                     type="text"
+                     label="[[t('customThankYouTextNewPosts')]]"
+                     value="{{group.configuration.customThankYouTextNewPosts}}"
+                     maxlength="60">
+        </paper-input>
+
         <paper-input id="descriptionTruncateAmount"
                      name="descriptionTruncateAmount"
                      type="text"
+                     allowed-pattern="[0-9]"
                      label="[[t('descriptionTruncateAmount')]]"
                      value="{{group.configuration.descriptionTruncateAmount}}"
                      maxlength="4">
@@ -351,23 +412,28 @@
           [[t('transcriptSimpleFormat')]]
         </paper-checkbox>
 
-        <paper-input id="defaultLocationLongLat"
-                     name="defaultLocationLongLat"
-                     type="text"
-                     label="[[t('defaultLocationLongLat')]]"
-                     value="{{group.defaultLocationLongLat}}"
-                     maxlength="100" style="width: 300px;">
-        </paper-input>
+        <paper-checkbox name="allPostsBlockedByDefault" checked$="{{group.configuration.allPostsBlockedByDefault}}">
+          [[t('allPostsBlockedByDefault')]]
+        </paper-checkbox>
 
+        <paper-checkbox name="hideQuestionIndexOnNewPost" checked$="{{group.configuration.hideQuestionIndexOnNewPost}}">
+          [[t('hideQuestionIndexOnNewPost')]]
+        </paper-checkbox>
+        
         <paper-textarea id="structuredQuestions"
                         name="structuredQuestions"
                         type="text"
-                        rows="2"
+                        rows="4"
                         always-float-label="[[group.configuration.structuredQuestions]]"
-                        maxrows="2"
+                        maxrows="8"
+                        on-value-changed="_structuredQuestionsChanged"
+                        max-rows="8"
                         label="[[t('structuredQuestions')]]"
                         value="{{group.configuration.structuredQuestions}}">
         </paper-textarea>
+
+        <div id="structuredQuestionsJsonErrorInfo" hidden$="[[!structuredQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+
         <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
 
         <paper-input id="alternativeTextForNewIdeaButton"
@@ -488,6 +554,15 @@
           [[t('hidePointAgainst')]]
         </paper-checkbox>
 
+        <paper-input id="pointCharLimit"
+                     name="pointCharLimit"
+                     type="text"
+                     allowed-pattern="[0-9]"
+                     label="[[t('pointCharLimit')]]"
+                     value="{{group.configuration.pointCharLimit}}"
+                     maxlength="4">
+        </paper-input>
+
         <paper-input id="alternativePointForHeader"
                      name="alternativePointForHeader"
                      type="text"
@@ -550,15 +625,42 @@
                      value="{{group.configuration.audioPointUploadLimitSec}}">
         </paper-input>
 
+        <paper-checkbox name="allowAdminAnswersToPoints" checked$="{{group.configuration.allowAdminAnswersToPoints}}">
+          [[t('allowAdminAnswersToPoints')]]
+        </paper-checkbox>
+
+        <paper-input id="customAdminCommentsTitle"
+                     name="customAdminCommentsTitle"
+                     type="text"
+                     label="[[t('customAdminCommentsTitle')]]"
+                     value="{{group.configuration.customAdminCommentsTitle}}"
+                     maxlength="50"
+                     char-counter>
+        </paper-input>
+
         <div class="subHeaders">[[t('additionalGroupConfig')]]</div>
         <paper-checkbox name="hideAllTabs" checked$="{{hideAllTabs}}">[[t('hideAllTabs')]]</paper-checkbox>
         <paper-checkbox name="hideHelpIcon" checked$="{{hideHelpIcon}}">[[t('hideHelpIcon')]]</paper-checkbox>
-        <paper-checkbox name="hideGroupHeader" checked$="{{hideGroupHeader}}">[[t('hideGroupHeader')]]</paper-checkbox>
+        <paper-checkbox name="useCommunityTopBanner" checked$="{{group.configuration.useCommunityTopBanner}}">[[t('useCommunityTopBanner')]]</paper-checkbox>
+        <paper-checkbox name="makeMapViewDefault" checked$="{{group.configuration.makeMapViewDefault}}">[[t('makeMapViewDefault')]]</paper-checkbox>
+        <paper-checkbox name="simpleFormatDescription" checked$="{{group.configuration.simpleFormatDescription}}">[[t('simpleFormatDescription')]]</paper-checkbox>
+        <paper-checkbox name="resourceLibraryLinkMode" checked$="{{group.configuration.resourceLibraryLinkMode}}">[[t('resourceLibraryLinkMode')]]</paper-checkbox>
+        <paper-checkbox name="collapsableTranscripts" checked$="{{group.configuration.collapsableTranscripts}}">[[t('collapsableTranscripts')]]</paper-checkbox>
+        <paper-checkbox name="allowWhatsAppSharing" checked$="{{group.configuration.allowWhatsAppSharing}}">[[t('allowWhatsAppSharing')]]</paper-checkbox>
+
+        <paper-input id="actAsLinkToCommunityId"
+                     name="actAsLinkToCommunityId"
+                     type="number"
+                     allowed-pattern="[0-9]"
+                     label="[[t('actAsLinkToCommunityId')]]"
+                     value="{{group.configuration.actAsLinkToCommunityId}}"
+                     maxlength="8">
+        </paper-input>
 
         <paper-input id="maxDaysBackForRecommendations"
                      name="maxDaysBackForRecommendations"
                      type="text"
-                     maxlength="4"
+                     maxlength="5"
                      allowed-pattern="[0-9]"
                      label="[[t('maxDaysBackForRecommendations')]]"
                      value="{{group.configuration.maxDaysBackForRecommendations}}">
@@ -770,6 +872,30 @@
       uploadedVideoId: {
         type: Number,
         value: null
+      },
+
+      structuredQuestionsJsonError: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    _structuredQuestionsChanged: function (event, detail) {
+      if (detail && detail.value) {
+        var questions = detail.value.trim();
+        if (questions.startsWith("[") || questions.startsWith("{")) {
+          var jsonError = false;
+          try {
+            JSON.parse(questions);
+          } catch (e) {
+            jsonError = true;
+          }
+          this.set('structuredQuestionsJsonError', jsonError);
+        } else {
+          this.set('structuredQuestionsJsonError', false);
+        }
+      } else {
+        this.set('structuredQuestionsJsonError', false);
       }
     },
 
@@ -965,6 +1091,10 @@
           this.set('hasAudioUpload', true);
         } else {
           this.set('hasAudioUpload', false);
+        }
+
+        if (group.configuration && group.configuration.structuredQuestions) {
+          this._structuredQuestionsChanged(null, { value: group.configuration.structuredQuestions })
         }
       }
 

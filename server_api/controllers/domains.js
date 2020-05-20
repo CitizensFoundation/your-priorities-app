@@ -37,31 +37,11 @@ var truthValueFromBody = function(bodyParameter) {
 };
 
 var getAvailableCommunityFolders = function (req, domainId, done) {
-  var openCommunities, combinedCommunities;
+  let adminCommunities = [];
 
   async.series([
     function (seriesCallback) {
-      models.Community.findAll({
-        where: {
-          access: {
-            $ne: models.Community.ACCESS_SECRET
-          },
-          domain_id: domainId,
-          is_community_folder: true
-        },
-        attributes: ['id','name'],
-      }).then(function (communities) {
-        openCommunities = communities;
-        seriesCallback(null);
-        return null;
-      }).catch(function (error) {
-        seriesCallback(error)
-      });
-    },
-    function (seriesCallback) {
       if (req.user) {
-        var adminCommunities, userCommunities;
-
         async.parallel([
           function (parallelCallback) {
             models.Community.findAll({
@@ -87,47 +67,20 @@ var getAvailableCommunityFolders = function (req, domainId, done) {
             }).catch(function (error) {
               parallelCallback(error)
             });
-          },
-          function (parallelCallback) {
-            models.Community.findAll({
-              where: {
-                is_community_folder: true,
-                domain_id: domainId
-              },
-              attributes: ['id','name'],
-              include: [
-                {
-                  model: models.User,
-                  as: 'CommunityUsers',
-                  attributes: ['id'],
-                  required: true,
-                  where: {
-                    id: req.user.id
-                  }
-                }
-              ]
-            }).then(function (communities) {
-              userCommunities = communities;
-              parallelCallback();
-            }).catch(function (error) {
-              parallelCallback(error)
-            });
           }
         ], function (error) {
-          combinedCommunities = _.concat(userCommunities, openCommunities);
-          combinedCommunities = _.concat(adminCommunities, combinedCommunities);
-          combinedCommunities = _.uniqBy(combinedCommunities, function (community) {
-            return community.id;
-          });
           seriesCallback(error);
         });
       } else {
-        combinedCommunities = openCommunities;
         seriesCallback();
       }
     }
   ], function (error) {
-    done(error, combinedCommunities);
+    if (!error) {
+      done(error, adminCommunities);
+    } else {
+      done(error);
+    }
   });
 };
 
@@ -193,7 +146,7 @@ var getDomain = function (req, domainId, done) {
               $or: [
                 {
                   counter_users: {
-                    $gt: 5
+                    $gt: process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW ? parseInt(process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW) : 5
                   },
                 },
                 {
@@ -201,7 +154,7 @@ var getDomain = function (req, domainId, done) {
                 },
                 {
                   is_community_folder: {
-                    $ne: null
+                    $ne: false
                   }
                 }
               ],

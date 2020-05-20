@@ -49,6 +49,10 @@ var getCommunityFolder = function (req, communityFolderId, done) {
           id: communityFolderId
         },
         attributes: models.Community.defaultAttributesPublic,
+        order: [
+          [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
+          [ {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
+        ],
         include: [
           {
             model: models.Image,
@@ -466,6 +470,9 @@ var getCommunity = function(req, done) {
               community_id: community.id,
               access: {
                 $ne: models.Group.ACCESS_SECRET
+              },
+              status: {
+                $ne: 'hidden'
               }
             },
             attributes: ['id', 'configuration', 'access', 'objectives', 'name', 'theme_id', 'community_id',
@@ -636,11 +643,14 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
   community.set('configuration.signupTermsPageId', (req.body.signupTermsPageId && req.body.signupTermsPageId!="") ? req.body.signupTermsPageId : null);
+  community.set('configuration.welcomePageId', (req.body.welcomePageId && req.body.welcomePageId!="") ? req.body.welcomePageId : null);
+
   community.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   community.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
 
   community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
+  community.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
 };
 
 router.get('/:communityFolderId/communityFolders', auth.can('view community'), function(req, res) {

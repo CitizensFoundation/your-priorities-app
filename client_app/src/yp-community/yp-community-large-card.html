@@ -119,7 +119,7 @@
         padding-top: 16px;
         padding-bottom: 16px;
         min-height: 31px;
-        padding-right: 24px;
+        padding-right: 32px;
       }
 
       .textBox {
@@ -318,11 +318,13 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="description">
-                <div class="community-name">
-                  <yp-magic-text text-type="communityName" content-language="[[community.language]]"
-                                 disable-translation="[[community.configuration.disableNameAutoTranslation]]"
-                                 text-only content="[[communityNameFull]]" content-id="[[community.id]]">
-                  </yp-magic-text>
+                <div class="community-name" role="heading" aria-level="1" aria-label="[[community.name]]">
+                  <template is="dom-if" if="[[community]]">
+                    <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+                                   disable-translation="[[community.configuration.disableNameAutoTranslation]]"
+                                   text-only content="[[communityNameFull]]" content-id="[[community.id]]">
+                    </yp-magic-text>
+                  </template>
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
                 <yp-magic-text id="description" class="communityDescription"
