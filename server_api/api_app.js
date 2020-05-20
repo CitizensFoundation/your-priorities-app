@@ -3,6 +3,15 @@ require('newrelic');
 
 FORCE_PRODUCTION = false;
 
+const log = require('./utils/logger');
+
+if (!process.env.S3_BUCKET) {
+  process.env.S3_BUCKET="no-bucket-implemented-please-set-S3_BUCKET";
+  const errorText = "No S3_BUCKET is set, image uploads and report downloads will not work";
+  log.error(errorText);
+  console.error(errorText);
+}
+
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
@@ -31,7 +40,6 @@ const news_feeds = require('./active-citizen/controllers/news_feeds');
 const activities = require('./active-citizen/controllers/activities');
 const notifications = require('./active-citizen/controllers/notifications');
 const recommendations = require('./active-citizen/controllers/recommendations');
-const analytics = require('./active-citizen/controllers/analytics');
 
 const posts = require('./controllers/posts');
 const groups = require('./controllers/groups');
@@ -47,6 +55,8 @@ const bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
 const videos = require('./controllers/videos');
 const audios = require('./controllers/audios');
 
+const analytics = require('./active-citizen/controllers/analytics');
+
 const legacyPosts = require('./controllers/legacyPosts');
 const legacyUsers = require('./controllers/legacyUsers');
 const legacyPages = require('./controllers/legacyPages');
@@ -56,7 +66,6 @@ const nonSPArouter = require('./controllers/nonSpa');
 const generateSitemap = require('./utils/sitemap_generator');
 const generateManifest = require('./utils/manifest_generator');
 
-const log = require('./utils/logger');
 const toJson = require('./utils/to_json');
 const sso = require('passport-sso');
 const cors = require('cors');
@@ -75,6 +84,7 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
   airbrake = new Airbrake.Notifier({
     projectId: process.env.AIRBRAKE_PROJECT_ID,
     projectKey: process.env.AIRBRAKE_API_KEY,
+    performanceStats: false
   });
 }
 
@@ -164,30 +174,30 @@ app.use(function setupRedis(req, res, next) {
   next();
 });
 
-app.use(function checkForBOT(req, res, next) {
-  //TODO: Make sure we are caching all Google bots
-  var ua = req.headers['user-agent'];
-  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
-    console.log(ua, ' is a bot');
-    nonSPArouter(req, res, next);
-  } else {
-    next();
-  }
-});
-
 app.get('/sitemap.xml', function getSitemap(req, res) {
-  const redisKey = "cache:sitemap:" + req.ypDomain.id;
+  const redisKey = "cache:sitemapv14:" + req.ypDomain.id + (req.ypCommunity && req.ypCommunity.id && req.ypCommunity.hostname) ? req.ypCommunity.hostname : '';
   req.redisClient.get(redisKey, (error, sitemap) => {
     if (error) {
       log.error("Error getting sitemap from redis", {error});
       generateSitemap(req, res);
     } else if (sitemap) {
       res.header('Content-Type', 'application/xml');
+      res.set({ 'content-type': 'application/xml' });
       res.send(sitemap);
     } else {
       generateSitemap(req, res);
     }
   });
+});
+
+app.use(function checkForBOT(req, res, next) {
+  var ua = req.headers['user-agent'];
+  if (!/Googlebot|AdsBot-Google/.test(ua) && (isBot(ua) || /^(facebookexternalhit)|(web\/snippet)|(Twitterbot)|(Slackbot)|(Embedly)|(LinkedInBot)|(Pinterest)|(XING-contenttabreceiver)/gi.test(ua))) {
+    log.info('Request is from a bot', { ua });
+    nonSPArouter(req, res, next);
+  } else {
+    next();
+  }
 });
 
 app.get('/manifest.json', function getManifest(req, res) {
@@ -370,6 +380,7 @@ app.use('/community', index);
 app.use('/group', index);
 app.use('/post', index);
 app.use('/user', index);
+app.use('/survey*', index);
 app.use('/api/domains', domains);
 app.use('/api/organizations', organizations);
 app.use('/api/communities', communities);
@@ -386,7 +397,6 @@ app.use('/api/activities', activities);
 app.use('/api/notifications', notifications);
 app.use('/api/bulk_status_updates', bulkStatusUpdates);
 app.use('/api/recommendations', recommendations);
-app.use('/api/analytics', analytics);
 app.use('/api/ratings', ratings);
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);
