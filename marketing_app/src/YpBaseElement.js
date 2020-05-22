@@ -1,7 +1,7 @@
 // Locale implementation inspired by https://github.com/PolymerElements/app-localize-behavior
 
 import { IntlMessageFormat } from "intl-messageformat";
-import { LitElement } from 'lit-element';
+import { LitElement, css } from 'lit-element';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import enLocaleData from './locales/en/enTranslations.js';
@@ -31,7 +31,12 @@ export class YpBaseElement extends LitElement {
   }
 
   static get styles() {
-    return [Layouts];
+    return [Layouts,
+      css`
+        [hidden] {
+          display: none !important;
+        }
+      `];
   }
 
   activity(type, object) {

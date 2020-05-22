@@ -60,6 +60,7 @@
     "@material/mwc-fab": "^0.15.0",
     "@material/mwc-tab": "^0.15.0",
     "@material/mwc-tab-bar": "^0.15.0",
+    "@material/mwc-textarea": "^0.15.0",
     "@vaadin/vaadin-grid": "^5.6.1",
     "intl-messageformat": "^8.3.11",
     "lit-element": "^2.0.1",
