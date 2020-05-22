@@ -4,6 +4,8 @@ import '@vaadin/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
 import '@material/mwc-button';
 import '@material/mwc-textarea';
+import '@material/mwc-checkbox';
+import '@material/mwc-formfield';
 
 export class YpMarketingList extends YpBaseElement {
   static get properties() {
@@ -37,24 +39,26 @@ export class YpMarketingList extends YpBaseElement {
         vaadin-grid {
           margin: 24px;
           width: 100vw;
+          max-width: 960px;
+          background-color: transparent;
         }
 
         .mainArea {
-          margin: 48px;
+          margin: 32px;
         }
 
-        .header-cell {
-          font-weight: bold;
-        }
 
         mwc-textarea {
           width: 100%;
           height: 150px;
+          max-width: 960px;
           --mdc-notched-outline-trailing-border-radius: 0 28px 28px 0;
         }
 
         .addTextButton {
           margin-top: 8px;
+          max-width: 960px;
+          margin-bottom: 8px;
         }
     `];
   }
@@ -63,10 +67,10 @@ export class YpMarketingList extends YpBaseElement {
     super();
     this.listUsers = [
       {
-        id: 1,
+        id: 0,
         user_id: 1,
         sms: "+3546944411",
-        email: "na",
+        email: "",
         sentCount: 0,
         openCount: 0,
         postCount: 0,
@@ -76,7 +80,7 @@ export class YpMarketingList extends YpBaseElement {
         id: 1,
         user_id: 1,
         sms: "+3546944411",
-        email: "na",
+        email: "",
         sentCount: 0,
         openCount: 0,
         postCount: 0,
@@ -115,7 +119,7 @@ export class YpMarketingList extends YpBaseElement {
         id: 5,
         user_id: 5,
         sms: "+3546944499",
-        email: "na",
+        email: "",
         sentCount: 0,
         openCount: 0,
         postCount: 0,
@@ -160,14 +164,42 @@ export class YpMarketingList extends YpBaseElement {
   }
 
   newUserTextChanged (event) {
-    this.usersToAddListText = event.data;
+    this.usersToAddListText = event.target.value;
+  }
+
+  addNewUserTextToList () {
+    if (this.usersToAddListText) {
+      const usersTexts = this.usersToAddListText.split("\n");
+      const userObjectsToAdd = [];
+      usersTexts.forEach((userContact) => {
+        if (userContact) {
+          userObjectsToAdd.push(
+            {
+              id: Math.floor(Math.random() * 1420),
+              user_id: 1,
+              sms: userContact,
+              email: "",
+              sentCount: 0,
+              openCount: 0,
+              postCount: 0,
+              pointCount: 0
+            });
+        }
+      });
+
+      this.listUsers = [...userObjectsToAdd.concat(this.listUsers)];
+      const newUsersTextArea = this.$$("#newUsersText");
+      newUsersTextArea.value = null;
+      this.usersToAddListText = null;
+
+    }
   }
 
   render() {
     return html`
       <div class="layout vertical center-center mainArea">
         <mwc-textarea @input="${this.newUserTextChanged}" id="newUsersText" outlined label="${this.t('smsNumbers')}" helper="${this.t('newUserTextHelp')}"></mwc-textarea>
-        <mwc-button class="addTextButton" ?disabled="${!this.usersToAddListText}" fullwidth outlined label="${this.t('addToList')}"></mwc-button>
+        <mwc-button @click="${this.addNewUserTextToList}" class="addTextButton" ?disabled="${!this.usersToAddListText}" fullwidth outlined label="${this.t('addToList')}"></mwc-button>
         <div class="layout horizontal center-center">
           <vaadin-grid .items="${this.listUsers}">
             <vaadin-grid-column path="id" header="${this.t("id")}"></vaadin-grid-column>

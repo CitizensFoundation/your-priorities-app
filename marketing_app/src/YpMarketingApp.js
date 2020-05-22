@@ -13,6 +13,8 @@ export class YpMarketingApp extends YpBaseElement {
     };
   }
 
+  // Yp colors are #103b68 & #1ea7d1 #1c96bd
+
   static get styles() {
     return [
       super.styles,
@@ -20,6 +22,7 @@ export class YpMarketingApp extends YpBaseElement {
         :host {
           max-width: 960px;
           width: 100%;
+          --mdc-theme-primary: #1c96bd;
         }
 
         main {
@@ -33,6 +36,19 @@ export class YpMarketingApp extends YpBaseElement {
 
         .app-footer a {
           margin-left: 5px;
+        }
+
+        .ypHeader {
+          margin-right: auto;
+          margin-top: 4px;
+          margin-left: 48px;
+          margin-bottom: 2px;
+          width: 400px;
+        }
+
+        .headerText {
+          margin-top: 20px;
+          font-size: 24px;
         }
     `];
   }
@@ -68,10 +84,12 @@ export class YpMarketingApp extends YpBaseElement {
 
   render() {
     return html`
-        <div class="layout horizontal">
-          <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
-          <div class="flex"></div>
-          <div class="analyticsText">Marketing</div>
+      <div class="layout horizontal center-center">
+        <div class="ypHeader layout horizontal">
+              <div><img height="64" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
+              <div class="flex"></div>
+              <div class="headerText">Your Priorities Marketing</div>
+            </div>
         </div>
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
           <mwc-tab label="${this.t('list')}" icon="list" stacked></mwc-tab>
