@@ -3,13 +3,17 @@ import { YpBaseElement } from './YpBaseElement.js';
 import '@vaadin/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
 import '@material/mwc-button';
-import '@material/mwc-textarea';
+import '@material/mwc-textfield';
+import '@material/mwc-checkbox';
+import '@material/mwc-formfield';
+import '@material/mwc-fab';
 
-export class YpMarketingList extends YpBaseElement {
+
+export class YpMarketingCampaigns extends YpBaseElement {
   static get properties() {
     return {
       listId: { type: String },
-      listUsers: { type: Array },
+      listCampaigns: { type: Array },
       collectionType: { type: String },
       collectionId: { type: String },
       usersToAddList: { type: Array },
@@ -45,92 +49,40 @@ export class YpMarketingList extends YpBaseElement {
           margin: 32px;
         }
 
-
-        mwc-textarea {
-          width: 100%;
-          height: 150px;
+        .campaignHeader {
+          font-size: 20px;
+          margin-top: 32px;
           max-width: 960px;
-          --mdc-notched-outline-trailing-border-radius: 0 28px 28px 0;
         }
 
-        .addTextButton {
-          margin-top: 8px;
-          max-width: 960px;
-          margin-bottom: 8px;
+        mwc-fab {
+          margin-bottom: 16px;
+        }
+
+        .colSetting {
+          text-align: center;
         }
     `];
   }
 
   constructor () {
     super();
-    this.listUsers = [];
-    this.listUsers2 = [
+    this.listCampaigns2 = [
       {
-        id: 0,
-        user_id: 1,
-        sms: "+3546944411",
-        email: "",
-        sentCount: 0,
-        openCount: 0,
-        postCount: 0,
-        pointCount: 0
-      },
-      {
-        id: 1,
-        user_id: 1,
-        sms: "+3546944411",
-        email: "",
-        sentCount: 0,
-        openCount: 0,
-        postCount: 0,
-      },
-      {
-        id: 2,
-        user_id: 2,
-        sms: "+3546999911",
-        email: "robert@citizens.is",
-        sentCount: 2,
-        openCount: 4,
-        postCount: 1,
-        pointCount: 5
-      },
-      {
-        id: 3,
-        user_id: 3,
-        sms: "+32326944411",
-        email: "gunnar@this.is",
-        sentCount: 1,
-        openCount: 2,
-        postCount: 1,
-        pointCount: 2
-      },
-      {
-        id: 4,
-        user_id: 4,
-        sms: "+3546944400",
-        email: "robert@this.is",
-        sentCount: 0,
-        openCount: 0,
-        postCount: 0,
-        pointCount: 0
-      },
-      {
-        id: 5,
-        user_id: 5,
-        sms: "+3546944499",
-        email: "",
-        sentCount: 0,
-        openCount: 0,
-        postCount: 0,
-        pointCount: 0
+        date: "26/05/2020 21:46",
+        sentCount: "11,413",
+        sendToNewUsers: "x",
+        openCount: "5,132",
+        completedCount: "2,122",
+        text: "This is a test survey and we ask you to complete it before the 15. June 2020. Click on this link to participate: https://yrpri.org/s/2893?ymt=3546944411"
       }
     ];
   }
 
   firstUpdated() {
     super.firstUpdated();
-    const newUsersTextArea = this.$$("#newUsersText");
-    newUsersTextArea.validityTransform = (newValue, nativeValidity) => {
+    const campaignNameArea = this.$$("#campaignName");
+    campaignNameArea.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.tooLong) {
           const hasDog = newValue.includes('dog');
@@ -159,20 +111,23 @@ export class YpMarketingList extends YpBaseElement {
     super.connectedCallback();
     this.collectionType = "community";
     this.collectionId = 974;
-
   }
 
-  newUserTextChanged (event) {
-    this.usersToAddListText = event.target.value;
+  campaignNameChanged (event) {
+    this.campaignName = event.target.value;
   }
 
-  addNewUserTextToList () {
+  campaignText (event) {
+    this.campaignText = event.target.value;
+  }
+
+  addNewCampaign () {
     if (this.usersToAddListText) {
       const usersTexts = this.usersToAddListText.split("\n");
-      const userObjectsToAdd = [];
+      const campaignObjectsToAdd = [];
       usersTexts.forEach((userContact) => {
         if (userContact) {
-          userObjectsToAdd.push(
+          campaignObjectsToAdd.push(
             {
               id: Math.floor(Math.random() * 1420),
               user_id: 1,
@@ -185,29 +140,47 @@ export class YpMarketingList extends YpBaseElement {
         }
       });
 
-      this.listUsers = [...userObjectsToAdd.concat(this.listUsers)];
-      const newUsersTextArea = this.$$("#newUsersText");
-      newUsersTextArea.value = "";
+      this.listCampaigns = [...campaignObjectsToAdd.concat(this.listCampaigns)];
+      const campaignNameArea = this.$$("#campaignName");
+      campaignNameArea.value = null;
       this.usersToAddListText = null;
-
     }
+  }
+
+  newCampaign() {
+    this.fire('open-new-campaign');
   }
 
   render() {
     return html`
       <div class="layout vertical center-center mainArea">
-        <mwc-textarea @input="${this.newUserTextChanged}" id="newUsersText" outlined label="${this.t('smsNumbers')}" helper="${this.t('newUserTextHelp')}"></mwc-textarea>
-        <mwc-button @click="${this.addNewUserTextToList}" class="addTextButton" ?disabled="${!this.usersToAddListText}" fullwidth outlined label="${this.t('addToList')}"></mwc-button>
+        <div class="layout vertical center-center">
+          <mwc-fab @click="${this.newCampaign}" extended icon="create" label="${this.t('sendNewCampaign')}"></mwc-fab>
+        </div>
+
+        <div class="layout verical center-center" hidden>
+          <div class="layout horizontal campaignHeader">
+            ${this.t('sentCampaigns')}
+          </div>
+        </div>
+
         <div class="layout horizontal center-center">
-          <vaadin-grid .items="${this.listUsers}">
-            <vaadin-grid-column path="sms" header="${this.t('sms')}"></vaadin-grid-column>
-            <vaadin-grid-column path="email" hidden header="${this.t("email")}"></vaadin-grid-column>
+          <vaadin-grid .items="${this.listCampaigns}">
+            <vaadin-grid-column path="date" header="${this.t("date")}"></vaadin-grid-column>
+            <vaadin-grid-column-group resizable>
+              <template class="header">${this.t('settings')}</template>
+              <vaadin-grid-column class="colSetting" path="sendToNewUsers" flex-grow="0" header="${this.t("sendToNewUsersShort")}"></vaadin-grid-column>
+              <vaadin-grid-column class="colSetting" path="sendToHaveOpened" flex-grow="0" header="${this.t("sendToHaveOpenedShort")}"></vaadin-grid-column>
+              <vaadin-grid-column class="colSetting" path="sendToHaveCompleted" flex-grow="0" header="${this.t("sendToHaveCompletedShort")}"></vaadin-grid-column>
+            </vaadin-grid-column-group>
             <vaadin-grid-column-group resizable>
               <template class="header">${this.t('counts')}</template>
               <vaadin-grid-column path="sentCount" header="${this.t("sentCount")}" text-align="end" width="120px" flex-grow="0"></vaadin-grid-column>
               <vaadin-grid-column path="openCount" header="${this.t("openCount")}" text-align="end" width="120px" flex-grow="0"></vaadin-grid-column>
               <vaadin-grid-column path="completedCount" header="${this.t("completedCount")}" text-align="end" width="120px" flex-grow="0"></vaadin-grid-column>
             </vaadin-grid-column-group>
+
+            <vaadin-grid-column  path="text" flex-grow="0" header="${this.t("message")}"></vaadin-grid-column>
           </vaadin-grid>
         </div>
       </div>
@@ -215,4 +188,4 @@ export class YpMarketingList extends YpBaseElement {
   }
 }
 
-customElements.define('yp-marketing-list', YpMarketingList);
+customElements.define('yp-marketing-campaigns', YpMarketingCampaigns);

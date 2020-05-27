@@ -1,9 +1,15 @@
 import {  html, css } from 'lit-element';
 import { YpBaseElement } from './YpBaseElement.js';
 import './YpMarketingList.js';
+import './YpMarketingCampaigns.js';
+import './YpEditMarketingCampaign.js';
 
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
+import '@material/mwc-top-app-bar';
+import '@material/mwc-icon-button';
+
+
 
 export class YpMarketingApp extends YpBaseElement {
   static get properties() {
@@ -50,6 +56,16 @@ export class YpMarketingApp extends YpBaseElement {
           margin-top: 20px;
           font-size: 24px;
         }
+
+        mwc-tab-bar {
+          text-align: center;
+          margin-bottom: -7px;
+        }
+
+        mwc-tab {
+          --mdc-theme-on-primary: #FFF;
+          --mdc-theme-primary: #FFF;
+        }
     `];
   }
 
@@ -57,7 +73,12 @@ export class YpMarketingApp extends YpBaseElement {
     super.connectedCallback();
     this.collectionType = "community";
     this.collectionId = 974;
-    this.page = 'lists';
+    this.page = '1';
+    this.addEventListener("open-new-campaign", this._openNewCampaign);
+  }
+
+  _openNewCampaign() {
+    this.$$("#campaignEdit").open(true);
   }
 
   static getPathVariable(name) {
@@ -84,25 +105,25 @@ export class YpMarketingApp extends YpBaseElement {
 
   render() {
     return html`
-      <div class="layout horizontal center-center">
-        <div class="ypHeader layout horizontal">
-              <div><img height="64" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
-              <div class="flex"></div>
-              <div class="headerText">Your Priorities Marketing</div>
-            </div>
+      <yp-edit-marketing-campaign id="campaignEdit"></yp-edit-marketing-campaign>
+
+      <mwc-top-app-bar prominent centerTitle>
+        <div slot="title">
+          Marketing for Kyrgyz Survey 03/06/2020
+          <div class="layout vertical center-center">
+            <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
+              <mwc-tab label="${this.t('list')}" icon="list" stacked></mwc-tab>
+              <mwc-tab label="${this.t('campaigns')}" icon="backup" stacked></mwc-tab>
+            </mwc-tab-bar>
+          </div>
         </div>
-        <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-          <mwc-tab label="${this.t('list')}" icon="list" stacked></mwc-tab>
-          <mwc-tab label="${this.t('campaigns')}" icon="backup" stacked></mwc-tab>
-        </mwc-tab-bar>
-
-      <main>
-        ${this._renderPage()}
-      </main>
-
-      <p class="app-footer">
-
-      </p>
+        <mwc-icon-button icon="more_vert" slot="actionItems"></mwc-icon-button>
+        <div class="layout vertical">
+          <main>
+            ${this._renderPage()}
+          </main>
+        </div>
+      </mwc-top-app-bar>
     `;
   }
 
@@ -119,7 +140,7 @@ export class YpMarketingApp extends YpBaseElement {
       `;
       case '1':
         return html`
-          <yp-marketing-marketings .language="${this.language}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></yp-marketing-marketings>
+          <yp-marketing-campaigns .language="${this.language}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></yp-marketing-campaigns>
         `;
       default:
       return html`
