@@ -104,6 +104,18 @@ if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   });
 }
 
+app.use(function checkShortenedRedirects(req, res, next) {
+  if (req.path.startsWith('/s/')) {
+    res.redirect(req.protocol+"://" + req.headers.host + req.url.replace("/s/","/survey/"));
+  } else if (req.path.startsWith('/g/')) {
+    res.redirect(req.protocol+"://" + req.headers.host + req.url.replace("/g/","/group/"));
+  } else if (req.path.startsWith('/c/')) {
+    res.redirect(req.protocol+"://" + req.headers.host + req.url.replace("/c/","/community/"));
+  } else {
+    return next();
+  }
+});
+
 app.set('port', process.env.PORT || 4242);
 app.use(compression());
 app.set('views', __dirname + '/views');

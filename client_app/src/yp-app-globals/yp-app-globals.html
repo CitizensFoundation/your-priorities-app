@@ -154,7 +154,7 @@
             value: 0
           },
 
-          goalEvents: {
+          goalTriggerEvents: {
             type: Array,
             value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
           },
@@ -311,39 +311,6 @@
           }
         },
 
-        _removeSplashNode: function (splash) {
-          console.log("Found splash");
-          splash.parentNode.removeChild(splash);
-          document.body.classList.remove('loading');
-        },
-
-        _removeSplash: function () {
-          var splash = document.getElementById('splashCore');
-          console.log("_removeSplashNode");
-          if (splash) {
-            this._removeSplashNode(splash);
-          } else {
-            this.async(function () {
-              console.log("_removeSplashNode 2");
-              splash = document.getElementById('splashCore');
-              if (splash) {
-                this._removeSplashNode(splash);
-              } else {
-                this.async(function () {
-                  console.log("_removeSplashNode 3");
-                  splash = document.getElementById('splashCore');
-                  if (splash) {
-                    this._removeSplashNode(splash);
-                  } else {
-
-                  }
-                }, 1500);
-              }
-            }, 100);
-          }
-          console.log("Removing splash");
-        },
-
         _userLoggedIn: function (event, user) {
           if (user) {
             this.async(function () {
@@ -358,7 +325,6 @@
         },
 
         _bootResponse: function (event, detail) {
-          this._removeSplash();
           this.set('requestInProgress', false);
           this.set('domain', detail.response.domain);
 
@@ -418,6 +384,41 @@
           }
         },
 
+        postLoadGroupProcessing: function (group) {
+          if (this.setOriginalQueryParameters['yu']) {
+            var promotionTrackingAjax = document.createElement('iron-ajax');
+            promotionTrackingAjax.handleAs = 'json';
+            promotionTrackingAjax.contentType = 'application/json';
+            promotionTrackingAjax.url = "/api/groups/"+group.id+"/promotionTracking";
+            promotionTrackingAjax.body = this.originalQueryParameters;
+            promotionTrackingAjax.method = 'POST';
+            promotionTrackingAjax.generateRequest();
+
+            this.externalGoalTriggerGroupId = group.id;
+            this.goalTriggerEvents = ['newPost','newPointFor','newPointAgainst'];
+            this.originalQueryParameters['goalThreshold'] = 1;
+          }
+        },
+
+        checkExternalGoalTrigger: function (object) {
+          if (this.externalGoalTriggerGroupId &&
+            this.originalQueryParameters &&
+            this.originalQueryParameters.goalThreshold &&
+            this.goalTriggerEvents.indexOf(object) > -1) {
+              this.externalGoalCounter += 1;
+              if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
+                //TODO: Use fetch
+                var goalTriggerAjax = document.createElement('iron-ajax');
+                goalTriggerAjax.handleAs = 'json';
+                goalTriggerAjax.contentType = 'application/json';
+                goalTriggerAjax.url = "/api/groups/"+this.externalGoalTriggerGroupId+"/triggerTrackingGoal";
+                goalTriggerAjax.body = this.originalQueryParameters;
+                goalTriggerAjax.method = 'POST';
+                goalTriggerAjax.generateRequest();
+              }
+          }
+        },
+
         activity: function (type, object, context, target) {
           var actor;
 
@@ -465,26 +466,6 @@
 
           if (type==='completed' || type==='clicked') {
             this.checkExternalGoalTrigger(object);
-          }
-        },
-
-        checkExternalGoalTrigger: function (object) {
-          if (this.externalGoalTriggerGroupId &&
-              this.originalQueryParameters &&
-              this.originalQueryParameters.goalThreshold &&
-              this.goalEvents.indexOf(object) > -1) {
-            this.externalGoalCounter += 1;
-            if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
-              //TODO: Use fetch
-              var goalTriggerAjax = document.createElement('iron-ajax');
-              debugger;
-              goalTriggerAjax.handleAs = 'json';
-              goalTriggerAjax.contentType = 'application/json';
-              goalTriggerAjax.url = "/api/groups/"+this.externalGoalTriggerGroupId+"/triggerTrackingGoal";
-              goalTriggerAjax.body = this.originalQueryParameters;
-              goalTriggerAjax.method = 'POST';
-              goalTriggerAjax.generateRequest();
-            }
           }
         },
 

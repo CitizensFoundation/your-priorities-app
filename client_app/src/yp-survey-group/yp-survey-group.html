@@ -329,6 +329,7 @@
         this.set('surveyGroup', detail.response.surveyGroup);
         this.set('structuredQuestions', detail.response.surveyGroup.configuration.structuredQuestionsJson);
         this.set('surveyGroup.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.surveyGroup.id, this.surveyGroup.configuration));
+
         this.refresh();
         this.async(function () {
           this.liveQuestionIds = [];
@@ -351,6 +352,8 @@
           }.bind(this));
           this._checkAndLoadState();
         });
+
+        window.appGlobals.postLoadGroupProcessing(this.surveyGroup);
       },
 
       _useHardBack: function (configuration) {
