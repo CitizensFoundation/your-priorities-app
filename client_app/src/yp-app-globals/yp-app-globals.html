@@ -389,7 +389,7 @@
             var promotionTrackingAjax = document.createElement('iron-ajax');
             promotionTrackingAjax.handleAs = 'json';
             promotionTrackingAjax.contentType = 'application/json';
-            promotionTrackingAjax.url = "/api/groups/"+group.id+"/promotionTracking";
+            promotionTrackingAjax.url = "/api/groups/"+group.id+"/marketingTrackingOpen";
             promotionTrackingAjax.body = this.originalQueryParameters;
             promotionTrackingAjax.method = 'POST';
             promotionTrackingAjax.generateRequest();
