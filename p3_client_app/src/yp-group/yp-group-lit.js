@@ -612,7 +612,7 @@ class YpGroupLit extends YpBaseElement {
   }
 
   _updateTabPostCount(event, tabCounterInfo) {
-    if (this.$.ajaxCheckNonOpenPosts.active===true) {
+    if (this.$$("#ajaxCheckNonOpenPosts").active===true) {
       this.async(function () {
         this._reallyUpdateTabPostCount(event, tabCounterInfo);
       }, 200);
@@ -662,7 +662,7 @@ class YpGroupLit extends YpBaseElement {
 
   _refreshAjax() {
     this.async(function () {
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").generateRequest();
       const groupActivities = this.$$("#groupActivities");
       if (groupActivities) {
         this.$$("#groupActivities").loadNewData();
@@ -674,8 +674,8 @@ class YpGroupLit extends YpBaseElement {
     if (groupId && groupId!=this.lastValidGroupId) {
       this.set('lastValidGroupId', groupId);
       this.set('group', null);
-      this.$.groupCard.resetGroup();
-      this.$.tabCountOpen.innerHTML = "";
+      this.$$("#groupCard").resetGroup();
+      this.$$("#tabCountOpen").innerHTML = "";
       if (this.hasNonOpenPosts) {
         this.$$("#tabCountInProgress").innerHTML = "";
         this.$$("#tabCountSuccessful").innerHTML = "";
@@ -704,9 +704,9 @@ class YpGroupLit extends YpBaseElement {
   }
 
   _getGroup() {
-    this.$.ajax.url = '/api/groups/' + this.groupId;
-    this.$.ajax.retryMethodAfter401Login = this._getGroup.bind(this);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").url = '/api/groups/' + this.groupId;
+    this.$$("#ajax").retryMethodAfter401Login = this._getGroup.bind(this);
+    this.$$("#ajax").generateRequest();
   }
 
   _pagesResponse(event, detail) {
@@ -734,8 +734,8 @@ class YpGroupLit extends YpBaseElement {
     }
 
     if (detail.response.checkServerForNonOpenPosts && this.group) {
-      this.$.ajaxCheckNonOpenPosts.url = "/api/groups/"+this.group.id+"/checkNonOpenPosts";
-      this.$.ajaxCheckNonOpenPosts.generateRequest();
+      this.$$("#ajaxCheckNonOpenPosts").url = "/api/groups/"+this.group.id+"/checkNonOpenPosts";
+      this.$$("#ajaxCheckNonOpenPosts").generateRequest();
     } else {
       this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
     }
@@ -822,8 +822,8 @@ class YpGroupLit extends YpBaseElement {
                      "/community/" + this.group.community_id
       });
 
-      this.$.pagesAjax.url = "/api/groups/"+this.group.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/groups/"+this.group.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
 
       window.appGlobals.setAnonymousGroupStatus(this.group);
 

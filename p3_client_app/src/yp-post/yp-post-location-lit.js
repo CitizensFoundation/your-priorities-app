@@ -178,19 +178,19 @@ class YpPostLocationLit extends YpBaseElement {
   }
 
   _searchMap() {
-    this.$.mapSearch.query = this.mapSearchString;
-    this.$.mapSearch.search();
-    this.$.spinner.active = true;
+    this.$$("#mapSearch").query = this.mapSearchString;
+    this.$$("#mapSearch").search();
+    this.$$("#spinner").active = true;
     this.set('mapSearchResultAddress', '');
   }
 
   _mapSearchResults(event, detail) {
-    this.$.spinner.active = false;
+    this.$$("#spinner").active = false;
     if (detail && detail.length > 0) {
       this.set('location', {latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15});
       this.mapSearchResultAddress = detail[0].formatted_address;
-      this.$.map.zoom = 15;
-      this.$.map.resize();
+      this.$$("#map").zoom = 15;
+      this.$$("#map").resize();
     }
   }
 
@@ -228,13 +228,13 @@ class YpPostLocationLit extends YpBaseElement {
 
   _locationChanged(newLocationValue, oldValue) {
     if (newLocationValue) {
-      this.$.marker.setAttribute('latitude', newLocationValue.latitude);
-      this.$.marker.setAttribute('longitude', newLocationValue.longitude);
+      this.$$("#marker").setAttribute('latitude', newLocationValue.latitude);
+      this.$$("#marker").setAttribute('longitude', newLocationValue.longitude);
       if (newLocationValue.map_zoom)
-        this.$.map.zoom = newLocationValue.map_zoom;
+        this.$$("#map").zoom = newLocationValue.map_zoom;
       if (newLocationValue.mapType)
-        this.$.map.mapType = newLocationValue.mapType;
-      this.$.map.resize();
+        this.$$("#map").mapType = newLocationValue.mapType;
+      this.$$("#map").resize();
       this.set('encodedLocation', JSON.stringify(newLocationValue));
     }
   }
@@ -243,8 +243,8 @@ class YpPostLocationLit extends YpBaseElement {
     this.set('location', {
       latitude: detail.latLng.lat(),
       longitude: detail.latLng.lng(),
-      mapType: this.$.map.mapType,
-      map_zoom: this.$.map.zoom
+      mapType: this.$$("#map").mapType,
+      map_zoom: this.$$("#map").zoom
     });
   }
 

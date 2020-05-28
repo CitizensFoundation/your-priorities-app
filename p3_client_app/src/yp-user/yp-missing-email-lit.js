@@ -224,7 +224,7 @@ class YpMissingEmailLit extends YpBaseElement {
       window.appGlobals.notifyUserViaToast(this.t('userHaveSetEmail')+ " " + detail.response.email);
       this.close();
     }
-    this.$.dialog.fire('iron-resize');
+    this.$$("#dialog").fire('iron-resize');
   }
 
   _linkAccountsResponse(event, detail) {
@@ -235,7 +235,7 @@ class YpMissingEmailLit extends YpBaseElement {
     } else {
       this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
     }
-    this.$.dialog.fire('iron-resize');
+    this.$$("#dialog").fire('iron-resize');
   }
 
   open(loginProvider, onlyConfirming, email) {
@@ -246,8 +246,8 @@ class YpMissingEmailLit extends YpBaseElement {
     }
     this.$$("#dialog").open();
     if (this.onlyConfirmingEmail) {
-      this.$.confirmEmailShownAjax.body = {};
-      this.$.confirmEmailShownAjax.generateRequest();
+      this.$$("#confirmEmailShownAjax").body = {};
+      this.$$("#confirmEmailShownAjax").generateRequest();
     }
   }
 

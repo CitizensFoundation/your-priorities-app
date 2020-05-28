@@ -65,13 +65,13 @@ class YpPostUserImagesLit extends YpBaseElement {
   }
 
   _refresh() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _postChanged(newPost) {
     if (newPost) {
-      this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/images/' + newPost.id + '/user_images';
+      this.$$("#ajax").generateRequest();
     }
   }
 

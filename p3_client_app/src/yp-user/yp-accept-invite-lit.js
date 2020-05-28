@@ -92,14 +92,14 @@ class YpAcceptInviteLit extends YpBaseElement {
 */
 
   _inviteError(event, detail) {
-    this.$.acceptInviteAjax.showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
+    this.$$("#acceptInviteAjax").showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
     this.close();
   }
 
   _checkInviteSender(e) {
     if (this.token) {
-      this.$.getInviteSenderAjax.url = '/api/users/get_invite_info/'+this.token;
-      this.$.getInviteSenderAjax.generateRequest();
+      this.$$("#getInviteSenderAjax").url = '/api/users/get_invite_info/'+this.token;
+      this.$$("#getInviteSenderAjax").generateRequest();
     } else {
       console.warn("Can't find token for _checkInviteSender");
     }
@@ -121,9 +121,9 @@ class YpAcceptInviteLit extends YpBaseElement {
   }
 
   _reallyAcceptInvite(e) {
-    this.$.acceptInviteAjax.url = '/api/users/accept_invite/'+this.token;
-    this.$.acceptInviteAjax.body = {};
-    this.$.acceptInviteAjax.generateRequest();
+    this.$$("#acceptInviteAjax").url = '/api/users/accept_invite/'+this.token;
+    this.$$("#acceptInviteAjax").body = {};
+    this.$$("#acceptInviteAjax").generateRequest();
   }
 
   _getInviteSenderResponse(event, detail) {
@@ -149,18 +149,18 @@ class YpAcceptInviteLit extends YpBaseElement {
     if (token)
       this.set('token', token);
     this._checkInviteSender();
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   reOpen(token) {
     console.info("Repened user yp-accept-invite");
     if (token)
       this.set('token', token);
-    this.$.dialog.open();
+    this.$$("dialog").open();
   }
 
   close() {
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 }
 

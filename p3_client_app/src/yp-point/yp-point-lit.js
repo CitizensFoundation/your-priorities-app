@@ -513,8 +513,8 @@ class YpPointLit extends YpBaseElement {
         this.set('pointVideoId', point.PointVideos[0].id);
         this.set('checkTranscriptError', false);
         if (point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
-          this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/videoTranscriptStatus';
-          this.$.checkTranscriptStatusAjax.generateRequest();
+          this.$$("#checkTranscriptStatusAjax").url = "/api/points/"+point.id+'/videoTranscriptStatus';
+          this.$$("#checkTranscriptStatusAjax").generateRequest();
           this.set('checkingTranscript', true);
           point.checkTranscriptFor = null;
         }
@@ -526,8 +526,8 @@ class YpPointLit extends YpBaseElement {
           this.set('pointAudioId', point.PointAudios[0].id);
           this.set('checkTranscriptError', false);
           if (point.checkTranscriptFor==="audio" && window.appGlobals.hasTranscriptSupport===true) {
-            this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/audioTranscriptStatus';
-            this.$.checkTranscriptStatusAjax.generateRequest();
+            this.$$("#checkTranscriptStatusAjax").url = "/api/points/"+point.id+'/audioTranscriptStatus';
+            this.$$("#checkTranscriptStatusAjax").generateRequest();
             this.set('checkingTranscript', true);
             point.checkTranscriptFor = null;
           }
@@ -556,7 +556,7 @@ class YpPointLit extends YpBaseElement {
       });
     } else if (detail && detail.inProgress) {
       this.async(function () {
-        this.$.checkTranscriptStatusAjax.generateRequest();
+        this.$$("#checkTranscriptStatusAjax").generateRequest();
       }, 2000);
     } else if (detail && detail.error) {
       this.set('checkingTranscript', false);

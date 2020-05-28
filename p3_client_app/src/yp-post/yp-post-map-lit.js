@@ -184,8 +184,8 @@ class YpPostMapLit extends YpBaseElement {
   _groupIdChanged(newValue, oldValue) {
     if (newValue) {
       this.set("posts", null);
-      this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/groups/'+newValue+'/post_locations';
+      this.$$("#ajax").generateRequest();
     } else {
       this.set("posts", null);
     }
@@ -194,8 +194,8 @@ class YpPostMapLit extends YpBaseElement {
   _communityIdChanged(newValue, oldValue) {
     if (newValue) {
       this.set("posts", null);
-      this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/communities/'+newValue+'/post_locations';
+      this.$$("#ajax").generateRequest();
     } else {
       this.set("posts", null);
     }

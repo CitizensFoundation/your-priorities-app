@@ -215,10 +215,10 @@ class YpAppUserLit extends YpBaseElement {
     if (user.profile_data && user.profile_data.isAnonymousUser) {
       console.debug("Do not fetch admin or memberships for anonymous users");
     } else {
-      this.$.adminRightsAjax.generateRequest();
-      this.$.membershipsAjax.generateRequest();
+      this.$$("#adminRightsAjax").generateRequest();
+      this.$$("#membershipsAjax").generateRequest();
       this.toastLoginTextCombined = this.t("user.loginCompleteFor")+ " " + this.user.name;
-      this.$.loginToast.show();
+      this.$$("#loginToast").show();
     }
     this.fire("login");
     this._checkLoginForParameters();
@@ -282,11 +282,11 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   getUser() {
-    return this.$.session.get('user');
+    return this.$$("#session").get('user');
   }
 
   setLoggedInUser(user) {
-    this.$.session.set('user', user);
+    this.$$("#session").set('user', user);
     this.set('user', user);
 
     document.dispatchEvent(
@@ -323,7 +323,7 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   removeUserSession() {
-    this.$.session.unset('user');
+    this.$$("#session").unset('user');
     this.set('user', null);
     window.appGlobals.setAnonymousUser(null);
     document.dispatchEvent(
@@ -360,13 +360,13 @@ class YpAppUserLit extends YpBaseElement {
 
   logout() {
     this.hasIssuedLogout = true;
-    this.$.logoutAjax.body = {};
-    this.$.logoutAjax.generateRequest();
+    this.$$("#logoutAjax").body = {};
+    this.$$("#logoutAjax").generateRequest();
   }
 
   setLocale(locale) {
-    this.$.setLocaleAjax.body = { locale: locale };
-    this.$.setLocaleAjax.generateRequest();
+    this.$$("#setLocaleAjax").body = { locale: locale };
+    this.$$("#setLocaleAjax").generateRequest();
   }
 
   connectedCallback() {
@@ -406,7 +406,7 @@ class YpAppUserLit extends YpBaseElement {
         let timeSpent = (new Date() - this.pollingStartedAt);
         if (timeSpent<5*60*1000) {
           this.async(function () {
-            this.$.pollForLoginAjax.generateRequest();
+            this.$$("#pollForLoginAjax").generateRequest();
           }.bind(this), 1200)
         } else {
           this.pollingStartedAt = null;
@@ -431,7 +431,7 @@ class YpAppUserLit extends YpBaseElement {
   startPollingForLogin() {
     this.pollingStartedAt = Date.now();
     this.async(function () {
-      this.$.pollForLoginAjax.generateRequest();
+      this.$$("#pollForLoginAjax").generateRequest();
     }, 1000);
   }
 
@@ -454,16 +454,16 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   checkLogin() {
-    this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
-    this.$.isLoggedInAjax.generateRequest();
-    this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
-    this.$.adminRightsAjax.generateRequest();
-    this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
-    this.$.membershipsAjax.generateRequest();
+    this.$$("#isLoggedInAjax").url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
+    this.$$("#isLoggedInAjax").generateRequest();
+    this.$$("#adminRightsAjax").url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
+    this.$$("#adminRightsAjax").generateRequest();
+    this.$$("#membershipsAjax").url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
+    this.$$("#membershipsAjax").generateRequest();
   }
 
   recheckAdminRights() {
-    this.$.adminRightsAjax.generateRequest();
+    this.$$("#adminRightsAjax").generateRequest();
   }
 
   updateEndorsementForPost(postId, newEndorsement) {
@@ -543,7 +543,7 @@ class YpAppUserLit extends YpBaseElement {
 
   _logoutResponse(event, detail) {
     this.toastLogoutTextCombined = this.t("user.logoutCompleteFor")+ " " + this.user.name;
-    this.$.logoutToast.show();
+    this.$$("#logoutToast").show();
     this.fire('yp-close-right-drawer');
     this.removeUserSession();
     this.recheckAdminRights();

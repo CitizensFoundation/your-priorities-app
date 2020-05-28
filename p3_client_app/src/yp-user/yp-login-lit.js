@@ -675,7 +675,7 @@ class YpLoginLit extends YpBaseElement {
   _startSpinner() {
     this.set('userSpinner', true);
     this.async(function () {
-      this.$.dialog.fire('iron-resize');
+      this.$$("#dialog").fire('iron-resize');
     });
   }
 
@@ -798,7 +798,7 @@ class YpLoginLit extends YpBaseElement {
 
   _onRegisterChanged(newValue, oldValue) {
     this._setTexts();
-    this.$.dialog.fire('iron-resize');
+    this.$$("#dialog").fire('iron-resize');
     if (newValue == 1) {
       const nameElement = this.$$("#name");
       if (nameElement) {

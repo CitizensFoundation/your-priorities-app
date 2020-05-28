@@ -102,13 +102,13 @@ class YpForgotPasswordLit extends YpBaseElement {
   }
 
   _validateAndSend(e) {
-    if (this.$.form.checkValidity() && this.email) {
+    if (this.$$("#form").checkValidity() && this.email) {
       if (!this.isSending) {
         this.set('isSending', true);
-        this.$.forgotPasswordAjax.body = JSON.stringify({
+        this.$$("#forgotPasswordAjax").body = JSON.stringify({
           email: this.email
         });
-        this.$.forgotPasswordAjax.generateRequest();
+        this.$$("#forgotPasswordAjax").generateRequest();
       }
     } else {
       return false;
@@ -134,11 +134,11 @@ class YpForgotPasswordLit extends YpBaseElement {
     if (detail && detail.email) {
       this.set('email', detail.email);
     }
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   close() {
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 }
 

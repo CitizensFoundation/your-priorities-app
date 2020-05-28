@@ -192,8 +192,8 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _reallyDisconnectFromFacebookLogin() {
-    this.$.disconnectFacebookLoginAjax.body = {};
-    this.$.disconnectFacebookLoginAjax.generateRequest();
+    this.$$("#disconnectFacebookLoginAjax").body = {};
+    this.$$("#disconnectFacebookLoginAjax").generateRequest();
   }
 
   _disconnectFromSamlLogin() {
@@ -209,8 +209,8 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _reallyDisconnectFromSamlLogin() {
-    this.$.disconnectSamlLoginAjax.body = {};
-    this.$.disconnectSamlLoginAjax.generateRequest();
+    this.$$("#disconnectSamlLoginAjax").body = {};
+    this.$$("#disconnectSamlLoginAjax").generateRequest();
   }
 
   _disconnectFacebookLoginResponse() {
@@ -261,8 +261,8 @@ class YpUserEditLit extends YpBaseElement {
     this.set('user', { name: '', email: '', access: 2 } );
     this.set('uploadedProfileImageId', null);
     this.set('uploadedHeaderImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.profileImageUpload.clear();
+    this.$$("#headerImageUpload").clear();
+    this.$$("#profileImageUpload").clear();
   }
 
   setup(user, newNotEdit, refreshFunction, openNotificationTab) {

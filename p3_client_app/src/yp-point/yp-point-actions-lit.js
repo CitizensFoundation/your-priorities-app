@@ -179,14 +179,14 @@ class YpPointActionsLit extends YpBaseElement {
 
   _resetClasses() {
     if (this.pointQualityValue && this.pointQualityValue > 0) {
-      this.$.actionUp.className += " " + "up-selected";
-      this.removeClass(this.$.actionDown, "down-selected");
+      this.$$("#actionUp").className += " " + "up-selected";
+      this.removeClass(this.$$("#actionDown"), "down-selected");
     } else if (this.pointQualityValue && this.pointQualityValue < 0) {
-      this.$.actionDown.className += " " + "down-selected";
-      this.removeClass(this.$.actionUp,"up-selected");
+      this.$$("#actionDown").className += " " + "down-selected";
+      this.removeClass(this.$$("#actionUp"),"up-selected");
     } else {
-      this.removeClass(this.$.actionUp,"up-selected");
-      this.removeClass(this.$.actionDown, "down-selected");
+      this.removeClass(this.$$("#actionUp"),"up-selected");
+      this.removeClass(this.$$("#actionDown"), "down-selected");
     }
   }
 
@@ -221,14 +221,14 @@ class YpPointActionsLit extends YpBaseElement {
 
   generatePointQuality(value) {
     if (window.appUser.loggedIn()===true) {
-      this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
-      this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
+      this.$$("#pointQualityAjax").url = "/api/points/" + this.point.id + "/pointQuality";
+      this.$$("#pointQualityAjax").body = { point_id: this.point.id, value: value };
       if (this.pointQualityValue === value) {
-        this.$.pointQualityAjax.method = "DELETE";
+        this.$$("#pointQualityAjax").method = "DELETE";
       } else {
-        this.$.pointQualityAjax.method = "POST";
+        this.$$("#pointQualityAjax").method = "POST";
       }
-      this.$.pointQualityAjax.generateRequest();
+      this.$$("#pointQualityAjax").generateRequest();
     } else {
       this.set('allDisabled', false);
       window.appUser.loginForPointQuality(this, { value: value } );

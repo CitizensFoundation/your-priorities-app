@@ -158,7 +158,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
       localStorage.setItem("ypHaveShownRecommendationInfo", true);
       this.set('notifyDialogText', this.t('recommendationToastInfo'));
-      this.$.dialog.open();
+      this.$$("#dialog").open();
     }
   }
 
@@ -166,7 +166,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     if (window.appGlobals.hasTranscriptSupport && !localStorage.getItem("haveShownTranscriptInfo")) {
       localStorage.setItem("haveShownTranscriptInfo", true);
       this.set('notifyDialogText', this.t('speechToTextInfo'));
-      this.$.dialog.open();
+      this.$$("#dialog").open();
     }
   }
 
@@ -181,14 +181,14 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   sendVideoView(videoId) {
-    this.$.videoViewsAjax.body = { videoId: videoId };
-    this.$.videoViewsAjax.generateRequest();
+    this.$$("#videoViewsAjax").body = { videoId: videoId };
+    this.$$("#videoViewsAjax").generateRequest();
     this.activity('view', 'video', videoId);
   }
 
   sendLongVideoView(videoId) {
-    this.$.videoViewsAjax.body = { videoId: videoId, longPlaytime: true };
-    this.$.videoViewsAjax.generateRequest();
+    this.$$("#videoViewsAjax").body = { videoId: videoId, longPlaytime: true };
+    this.$$("#videoViewsAjax").generateRequest();
   }
 
   _hasAudioUploadSupport(event, detail) {
@@ -198,14 +198,14 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   sendAudioListen(audioId) {
-    this.$.audioListenAjax.body = { audioId: audioId };
-    this.$.audioListenAjax.generateRequest();
+    this.$$("#audioListenAjax").body = { audioId: audioId };
+    this.$$("#audioListenAjax").generateRequest();
     this.activity('view', 'audio', audioId);
   }
 
   sendLongAudioListen(audioId) {
-    this.$.audioListenAjax.body = { audioId: audioId, longPlaytime: true };
-    this.$.audioListenAjax.generateRequest();
+    this.$$("#audioListenAjax").body = { audioId: audioId, longPlaytime: true };
+    this.$$("#audioListenAjax").generateRequest();
   }
 
   changeLocaleIfNeededAfterWait(locale, force) {
@@ -294,7 +294,7 @@ class YpAppGlobalsLit extends YpBaseElement {
 
   reBoot() {
     if (!this.requestInProgress) {
-      this.$.boot.generateRequest();
+      this.$$("#boot").generateRequest();
     }
   }
 
@@ -479,7 +479,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     window.appGlobals = this;
 
     this.fire('app-ready');
-    this.$.boot.generateRequest();
+    this.$$("#boot").generateRequest();
     this.requestInProgress = true;
 
     window.googleMapsApiKey = null; //'AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0';

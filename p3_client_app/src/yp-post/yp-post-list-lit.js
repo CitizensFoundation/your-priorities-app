@@ -403,7 +403,7 @@ static get styles() {
   }
 
   buildPostsUrlPath() {
-    return this.$.postsFilter.buildPostsUrlPath();
+    return this.$$("#postsFilter").buildPostsUrlPath();
   }
 
   _searchingForChanged(newValue, oldValue) {
@@ -426,7 +426,7 @@ static get styles() {
   scrollToPost(post) {
     if (post && this.posts) {
       console.info("Scrolling to post: "+post.id);
-      this.$.ironList.scrollToItem(post);
+      this.$$("#ironList").scrollToItem(post);
       document.dispatchEvent(
         new CustomEvent("lite-signal", {
           bubbles: true,

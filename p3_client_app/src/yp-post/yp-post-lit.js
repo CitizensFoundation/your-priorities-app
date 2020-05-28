@@ -535,7 +535,7 @@ class YpPostLit extends YpBaseElement {
       tabCounter.innerHTML = this.formatNumber(detail.count);
     }
     if (detail.firstPoint) {
-      this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+      this.$$("#postCard").updateDescriptionIfEmpty(detail.firstPoint.content);
     }
   }
 
@@ -572,7 +572,7 @@ class YpPostLit extends YpBaseElement {
   }
 
   _refreshAjax() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _postChanged(newValue, oldValue) {
@@ -600,9 +600,9 @@ class YpPostLit extends YpBaseElement {
 
   _setupAjaxUrl() {
     if (this.host) {
-      this.$.ajax.url = this.host+'/api/posts/' + this.postId;
+      this.$$("#ajax").url = this.host+'/api/posts/' + this.postId;
     } else {
-      this.$.ajax.url = '/api/posts/' + this.postId;
+      this.$$("#ajax").url = '/api/posts/' + this.postId;
     }
   }
 
@@ -613,7 +613,7 @@ class YpPostLit extends YpBaseElement {
   _getPost() {
     this._setupAjaxUrl();
     this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _handleIncomingPostResponse(event, detail) {
@@ -713,8 +713,8 @@ class YpPostLit extends YpBaseElement {
         hideHelpIcon: (this.post.Group.configuration && this.post.Group.configuration.hideHelpIcon) ? true : null,
       });
 
-      this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/groups/"+this.post.Group.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
 
       if (this.post.Group.configuration && this.post.Group.configuration.disableFacebookLoginForGroup===true) {
         window.appGlobals.disableFacebookLoginForGroup = true;

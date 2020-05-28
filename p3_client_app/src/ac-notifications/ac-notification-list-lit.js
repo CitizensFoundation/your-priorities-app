@@ -243,8 +243,8 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _reallyMarkAllAsViewed() {
-    this.$.markAllAsViewedAjax.body = {};
-    this.$.markAllAsViewedAjax.generateRequest();
+    this.$$("#markAllAsViewedAjax").body = {};
+    this.$$("#markAllAsViewedAjax").generateRequest();
   }
 
   _handleUnViewedCount(unViewedCount) {
@@ -266,8 +266,8 @@ class AcNotificationListLit extends YpBaseElement {
       });
     }
     if (marked.length>0) {
-      this.$.setAsViewedAjax.body = { viewedIds: marked };
-      this.$.setAsViewedAjax.generateRequest();
+      this.$$("#setAsViewedAjax").body = { viewedIds: marked };
+      this.$$("#setAsViewedAjax").generateRequest();
     }
   }
 
@@ -310,8 +310,8 @@ class AcNotificationListLit extends YpBaseElement {
       if (user.profile_data && user.profile_data.isAnonymousUser) {
         this.cancelTimer();
       } else {
-        this.$.loadNotificationsAjax.url = this.url;
-        this.$.loadNotificationsAjax.generateRequest();
+        this.$$("#loadNotificationsAjax").url = this.url;
+        this.$$("#loadNotificationsAjax").generateRequest();
       }
     } else {
       this.cancelTimer();
@@ -503,18 +503,18 @@ class AcNotificationListLit extends YpBaseElement {
     this._clearScrollThreshold();
     if (this.oldestProcessedNotificationAt) {
       this.set('moreToLoad', false);
-      this.$.loadNotificationsAjax.url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
-      this.$.loadNotificationsAjax.generateRequest();
+      this.$$("#loadNotificationsAjax").url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
+      this.$$("#loadNotificationsAjax").generateRequest();
     }
   }
 
   loadNewData() {
     if (this.latestProcessedNotificationAt) {
-      this.$.loadNewNotificationsAjax.url = this.url + '?afterDate='+this.latestProcessedNotificationAt;
-      this.$.loadNewNotificationsAjax.generateRequest();
+      this.$$("#loadNewNotificationsAjax").url = this.url + '?afterDate='+this.latestProcessedNotificationAt;
+      this.$$("#loadNewNotificationsAjax").generateRequest();
     } else if (!this.latestProcessedNotificationAt) {
-      this.$.loadNewNotificationsAjax.url = this.url;
-      this.$.loadNewNotificationsAjax.generateRequest();
+      this.$$("#loadNewNotificationsAjax").url = this.url;
+      this.$$("#loadNewNotificationsAjax").generateRequest();
     }
   }
 }

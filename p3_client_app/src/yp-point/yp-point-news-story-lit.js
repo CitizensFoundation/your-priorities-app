@@ -148,7 +148,7 @@ class YpPointNewsStoryLit extends YpBaseElement {
 
   _openChanged(newOpenValue) {
     if (newOpenValue) {
-      this.$.commentsList.generateRequest();
+      this.$$("#commentsList").generateRequest();
     }
   }
 
@@ -158,12 +158,12 @@ class YpPointNewsStoryLit extends YpBaseElement {
 
   _setOpen() {
     this.set('open', true);
-    this.$.commentsList._setOpen();
+    this.$$("#commentsList")._setOpen();
   }
 
   _setClosed() {
     this.set('open', false);
-    this.$.commentsList._setClosed();
+    this.$$("#commentsList")._setClosed();
   }
 
   _setCommentsCount(event, detail) {

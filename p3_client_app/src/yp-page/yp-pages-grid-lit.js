@@ -223,7 +223,7 @@ class YpPagesGridLit extends YpBaseElement {
     this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
     this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]));
     this.set('currentlyEditingTitle',this.currentlyEditingPage["title"][this.currentlyEditingLocale]);
-    this.$.editPageLocale.open();
+    this.$$("#editPageLocale").open();
   }
 
   _closePageLocale() {
@@ -255,76 +255,76 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _updatePageLocale() {
-    this.$.updatePageAjax.body = {
+    this.$$("#updatePageAjax").body = {
       locale: this.currentlyEditingLocale,
       content: this.currentlyEditingContent,
       title: this.currentlyEditingTitle
     };
-    this._dispatchAjax(this.$.updatePageAjax, this.currentlyEditingPage.id, "update_page_locale")
+    this._dispatchAjax(this.$$("#updatePageAjax"), this.currentlyEditingPage.id, "update_page_locale")
     this._closePageLocale();
   }
 
   _publishPage(event) {
-    this.$.updatePageAjax.body = {};
+    this.$$("#updatePageAjax").body = {};
     const pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$.updatePageAjax, pageId, "publish_page")
+    this._dispatchAjax(this.$$("#updatePageAjax"), pageId, "publish_page")
   }
 
   _publishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pagePublished'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _unPublishPage(event) {
-    this.$.updatePageAjax.body = {};
+    this.$$("#updatePageAjax").body = {};
     const pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$.updatePageAjax, pageId, "un_publish_page")
+    this._dispatchAjax(this.$$("#updatePageAjax"), pageId, "un_publish_page")
   }
 
   _unPublishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageUnPublished'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _deletePage(event) {
-    this.$.deletePageAjax.body = {};
+    this.$$("#deletePageAjax").body = {};
     const pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$.deletePageAjax, pageId, "delete_page")
+    this._dispatchAjax(this.$$("#deletePageAjax"), pageId, "delete_page")
   }
 
   _deletePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageDeleted'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _addLocale(event) {
     if (this.newLocaleValue && this.newLocaleValue.length>1) {
       const pageId = event.target.getAttribute('data-args');
-      this.$.updatePageAjax.body = {
+      this.$$("#updatePageAjax").body = {
         locale: this.newLocaleValue.toLowerCase(),
         content: '',
         title: ''
       };
-      this._dispatchAjax(this.$.updatePageAjax, pageId, "update_page_locale")
+      this._dispatchAjax(this.$$("#updatePageAjax"), pageId, "update_page_locale")
       this.set('newLocaleValue', null);
     }
   }
 
   _addPage(event) {
-    this.$.newPageAjax.body = {};
-    this.$.addPageButton.disabled = true;
-    this._dispatchAjax(this.$.newPageAjax, null, "add_page")
+    this.$$("#newPageAjax").body = {};
+    this.$$("#addPageButton").disabled = true;
+    this._dispatchAjax(this.$$("#newPageAjax"), null, "add_page")
   }
 
   _newPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.newPageCreated'));
-    this.$.ajax.generateRequest();
-    this.$.addPageButton.disabled = false;
+    this.$$("#ajax").generateRequest();
+    this.$$("#addPageButton").disabled = false;
   }
 
   _updatePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _domainIdChanged(newGroupId) {
@@ -349,8 +349,8 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _generateRequest(id) {
-    this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/pages_for_admin";
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").url = "/api/"+this.modelType+"/"+id+"/pages_for_admin";
+    this.$$("#ajax").generateRequest();
   }
 
   _pagesResponse(event, detail) {
@@ -376,7 +376,7 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   open() {
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   _setupHeaderText() {

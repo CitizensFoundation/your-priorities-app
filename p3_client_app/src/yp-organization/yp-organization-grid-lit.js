@@ -217,37 +217,37 @@ class YpOrganizationGridLit extends YpBaseElement {
 
   _addToOrganization(event) {
     this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
-    this.$.selectOrganizationDialog.open();
+    this.$$("#selectOrganizationDialog").open();
   }
 
   _removeFromOrganization(event) {
     const userId = event.target.getAttribute('data-args');
     const organizationId = event.target.getAttribute('data-args-org');
-    this.$.removeOrganizationAjax.body = {};
-    this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
-    this.$.removeOrganizationAjax.generateRequest();
+    this.$$("#removeOrganizationAjax").body = {};
+    this.$$("#removeOrganizationAjax").url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
+    this.$$("#removeOrganizationAjax").generateRequest();
   }
 
   _selectOrganization(event, detail) {
-    this.$.addOrganizationAjax.body = {};
-    this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
-    this.$.addOrganizationAjax.generateRequest();
-    this.$.selectOrganizationDialog.close();
+    this.$$("#addOrganizationAjax").body = {};
+    this.$$("#addOrganizationAjax").url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+    this.$$("#addOrganizationAjax").generateRequest();
+    this.$$("#selectOrganizationDialog").close();
   }
 
   _addOrganizationResponse(event, detail) {
     window.appGlobals.notifyUserViaToast(this.t('users.organizationUserAdded')+' '+ detail.response.email);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _removeOrganizationResponse(event, detail) {
     window.appGlobals.notifyUserViaToast(this.t('users.organizationUserRemoved')+' '+ detail.response.email);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   open() {
     this.set('availableOrganizations', this._availableOrganizations());
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 }
 

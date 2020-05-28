@@ -96,7 +96,7 @@ class YpPostUserImageEditLit extends YpBaseElement {
 
   _postChange(newPost) {
     if (newPost) {
-      this.$.imageFileUpload.target = '/api/images?itemType=post-user-image&postId='+newPost.id;
+      this.$$("#imageFileUpload").target = '/api/images?itemType=post-user-image&postId='+newPost.id;
     }
   }
 /*

@@ -223,7 +223,7 @@ class YpDomainLit extends YpBaseElement {
     } else if (this.selectedTab==="communities") {
       if (window.appGlobals.backToDomainCommunityItems &&
         window.appGlobals.backToDomainCommunityItems[this.domain.id]) {
-        this.$.communityGrid.scrollToItem(window.appGlobals.backToDomainCommunityItems[this.domain.id]);
+        this.$$("#communityGrid").scrollToItem(window.appGlobals.backToDomainCommunityItems[this.domain.id]);
         window.appGlobals.backToDomainCommunityItems[this.domain.id] = null;
       }
     }
@@ -232,7 +232,7 @@ class YpDomainLit extends YpBaseElement {
   _userLoggedIn(user) {
     if (user) {
       if (this.domain && window.location.href.indexOf("/domain/") > -1) {
-        this.$.ajax.generateRequest();
+        this.$$("#ajax").generateRequest();
       }
     }
   }
@@ -277,14 +277,14 @@ class YpDomainLit extends YpBaseElement {
       this.set("featuredCommunities",null);
       this.set("activeCommunities",null);
       this.set("archivedCommunities",null);
-      this.$.ajax.url = '/api/domains/' + this.domainId;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/domains/' + this.domainId;
+      this.$$("#ajax").generateRequest();
     }
   }
 
   _refreshAjax() {
     this.async(function () {
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").generateRequest();
     }, 100);
   }
 
@@ -336,8 +336,8 @@ class YpDomainLit extends YpBaseElement {
       this.setupCommunities(__.dropRight(this.domain.Communities, this.domain.Communities.length-500));
     }
 
-    this.$.domainCard.setElevation(5);
-    this.$.domainCard.lowerCardLater();
+    this.$$("#domainCard").setElevation(5);
+    this.$$("#domainCard").lowerCardLater();
   }
 
   refresh() {
@@ -353,13 +353,13 @@ class YpDomainLit extends YpBaseElement {
       this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
                                    headerDescription: this.domain.description});
       if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
-        this.$.page.setupTopHeaderImage(this.domain.DomainHeaderImages);
+        this.$$("#page").setupTopHeaderImage(this.domain.DomainHeaderImages);
       } else {
-        this.$.page.setupTopHeaderImage(null);
+        this.$$("#page").setupTopHeaderImage(null);
       }
 
-      this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/domains/"+this.domain.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
     }
     window.appGlobals.setAnonymousGroupStatus(null);
     window.appGlobals.disableFacebookLoginForGroup = false;

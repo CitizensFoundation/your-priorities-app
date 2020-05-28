@@ -233,13 +233,13 @@ class YpUserLit extends YpBaseElement {
       this.set("featuredGroups",null);
       this.set("activeGroups",null);
       this.set("archivedGroups",null);
-      this.$.ajax.url = '/api/users/' + this.userId;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/users/' + this.userId;
+      this.$$("#ajax").generateRequest();
     }
   }
 
   _refresh() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _response(event, detail, sender) {
@@ -250,7 +250,7 @@ class YpUserLit extends YpBaseElement {
       }
 
       if (this.user.UserHeaderImages && this.user.UserHeaderImages.length>0) {
-        this.$.page.setupTopHeaderImage(this.user.UserHeaderImages);
+        this.$$("#page").setupTopHeaderImage(this.user.UserHeaderImages);
       }
       this.setupCommunities(this.user.CommunityUsers);
       this.setupGroups(this.user.GroupUsers);

@@ -393,10 +393,10 @@ class YpPostActionsLit extends YpBaseElement {
   _onPostChanged(post, oldValue) {
     this.set('isEndorsed', false);
     if (post) {
-      this.removeClass(this.$.actionUp,'hearts-up-selected');
-      this.removeClass(this.$.actionDown, 'hearts-down-selected');
-      this.removeClass(this.$.actionUp,'default-buttons-up-selected');
-      this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+      this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+      this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+      this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+      this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
       this.set('endorseValue', 0);
 
       if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
@@ -480,28 +480,28 @@ class YpPostActionsLit extends YpBaseElement {
 
     if (this.endorsementButtons=='hearts') {
       if (value > 0) {
-        this.$.actionUp.className += ' ' + 'hearts-up-selected';
-        this.removeClass(this.$.actionDown, 'hearts-down-selected');
-        this.$.iconUpButton.icon = "favorite";
+        this.$$("#actionUp").className += ' ' + 'hearts-up-selected';
+        this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+        this.$$("#iconUpButton").icon = "favorite";
       } else if (value < 0) {
-        this.$.actionDown.className += ' ' + 'hearts-down-selected';
-        this.removeClass(this.$.actionUp,'hearts-up-selected');
-        this.$.iconUpButton.icon = "favorite-border";
+        this.$$("#actionDown").className += ' ' + 'hearts-down-selected';
+        this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+        this.$$("#iconUpButton").icon = "favoriate-border";
       } else {
-        this.removeClass(this.$.actionUp,'hearts-up-selected');
-        this.removeClass(this.$.actionDown, 'hearts-down-selected');
-        this.$.iconUpButton.icon = "favorite-border";
+        this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+        this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+        this.$$("#iconUpButton").icon = "favorite-border";
       }
     } else {
       if (value > 0) {
-        this.$.actionUp.className += ' ' + 'default-buttons-up-selected';
-        this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+        this.$$("#actionUp").className += ' ' + 'default-buttons-up-selected';
+        this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
       } else if (value < 0) {
-        this.$.actionDown.className += ' ' + 'default-buttons-down-selected';
-        this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+        this.$$("#actionDown").className += ' ' + 'default-buttons-down-selected';
+        this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
       } else {
-        this.removeClass(this.$.actionUp,'default-buttons-up-selected');
-        this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+        this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+        this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
       }
     }
   }
@@ -538,14 +538,14 @@ class YpPostActionsLit extends YpBaseElement {
 
   generateEndorsement(value) {
     if (window.appUser.loggedIn()===true) {
-      this.$.endorseAjax.url = '/api/posts/' + this.post.id + '/endorse';
-      this.$.endorseAjax.body = { post_id: this.post.id, value: value };
+      this.$$("#endorseAjax").url = '/api/posts/' + this.post.id + '/endorse';
+      this.$$("#endorseAjax").body = { post_id: this.post.id, value: value };
       if (this.endorseValue === value) {
-        this.$.endorseAjax.method = 'DELETE';
+        this.$$("#endorseAjax").method = 'DELETE';
       } else {
-        this.$.endorseAjax.method = 'POST';
+        this.$$("#endorseAjax").method = 'POST';
       }
-      this.$.endorseAjax.generateRequest();
+      this.$$("#endorseAjax").generateRequest();
     } else {
       this._enableVoting();
       window.appUser.loginForEndorse(this, { value: value } );
@@ -587,8 +587,8 @@ class YpPostActionsLit extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback()
       if (this.endorsementButtons) {
-        this.$.actionDown.className += ' ' + 'default-buttons-color';
-        this.$.actionUp.className += ' ' + 'default-buttons-color';
+        this.$$("#actionDown").className += ' ' + 'default-buttons-color';
+        this.$$("#actionUp").className += ' ' + 'default-buttons-color';
       }
   }
 }

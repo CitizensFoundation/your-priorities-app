@@ -82,18 +82,18 @@ class YpResetPasswordLit extends YpBaseElement {
   }
 
   _validateAndSend(e) {
-    if (this.$.form.checkValidity() && this.password){
-      this.$.resetPasswordAjax.url = '/api/users/reset/'+this.token;
-      this.$.resetPasswordAjax.body = JSON.stringify({
+    if (this.$$("#form").checkValidity() && this.password){
+      this.$$("#resetPasswordAjax").url = '/api/users/reset/'+this.token;
+      this.$$("#resetPasswordAjax").body = JSON.stringify({
         password: this.password
       });
-      this.$.resetPasswordAjax.generateRequest();
+      this.$$("#resetPasswordAjax").generateRequest();
     }
   }
 
   _resetPasswordResponse(event, detail) {
     if (detail.response.error && detail.response.error=='not_found') {
-      this.$.resetPasswordAjax.showErrorDialog(this.t('errorResetTokenNotFoundOrUsed'));
+      this.$$("#resetPasswordAjax").showErrorDialog(this.t('errorResetTokenNotFoundOrUsed'));
     } else {
       this.close();
       window.appGlobals.notifyUserViaToast(this.t('notification.passwordResetAndLoggedIn'));
@@ -114,11 +114,11 @@ class YpResetPasswordLit extends YpBaseElement {
   open(token) {
     if (token)
       this.token = token;
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   close() {
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 }
 

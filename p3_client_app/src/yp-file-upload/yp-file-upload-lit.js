@@ -454,7 +454,7 @@ class YpFileUploadLit extends YpBaseElement {
     this.set('videoImages', null);
     this.set('isPollingForTranscoding', false);
 
-    this.$.fileInput.value = null;
+    this.$$("#fileInput").value = null;
     if (this.videoUpload)
       this.fire("success", { detail: null, videoId: null });
     else if (this.audioUpload)
@@ -464,10 +464,10 @@ class YpFileUploadLit extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback()
       if (this.raised) {
-        this.toggleAttribute("raised", true, this.$.button);
+        this.toggleAttribute("raised", true, this.$$("#button"));
       }
       if (this.noink) {
-        this.toggleAttribute("noink", true, this.$.button);
+        this.toggleAttribute("noink", true, this.$$("#button"));
       }
       if (this.droppable) {
         this._showDropText();
@@ -490,7 +490,7 @@ class YpFileUploadLit extends YpBaseElement {
    * A function to set up a drop area for drag-and-drop file uploads
   */
   setupDrop() {
-    const uploadBorder = this.$.UploadBorder;
+    const uploadBorder = this.$$("#UploadBorder");
     this.toggleClass("enabled", true, uploadBorder);
 
     this.ondragover = function(e) {
@@ -556,7 +556,7 @@ class YpFileUploadLit extends YpBaseElement {
   }
 
   _openFileInput() {
-    const elem = this.$.fileInput;
+    const elem = this.$$("#fileInput");
     if (elem && document.createEvent) { // sanity check
       const evt = document.createEvent("MouseEvents");
       evt.initEvent("click", true, false);
@@ -691,7 +691,7 @@ class YpFileUploadLit extends YpBaseElement {
 
   _checkTranscodingJob() {
     this.async(function () {
-      this.$.transcodePollingAjax.generateRequest();
+      this.$$("#transcodePollingAjax").generateRequest();
     }, 1000);
   }
 
@@ -705,8 +705,8 @@ class YpFileUploadLit extends YpBaseElement {
 
   _getVideoMeta() {
     if (this.currentVideoId) {
-      this.$.getVideoMetaAjax.url = "/api/videos/"+this.currentVideoId+"/formatsAndImages";
-      this.$.getVideoMetaAjax.generateRequest();
+      this.$$("#getVideoMetaAjax").url = "/api/videos/"+this.currentVideoId+"/formatsAndImages";
+      this.$$("#getVideoMetaAjax").generateRequest();
     } else {
       console.error("_getVideoImages no video id");
     }
@@ -715,9 +715,9 @@ class YpFileUploadLit extends YpBaseElement {
   _selectVideoCover(event, detail) {
     const frameIndex = event.target.getAttribute('data-index');
     this.set('selectedVideoCoverIndex', frameIndex);
-    this.$.setVideoCoverAjax.url ="/api/videos/"+this.currentVideoId+'/setVideoCover';
-    this.$.setVideoCoverAjax.body = { frameIndex: frameIndex };
-    this.$.setVideoCoverAjax.generateRequest();
+    this.$$("#setVideoCoverAjax").url ="/api/videos/"+this.currentVideoId+'/setVideoCover';
+    this.$$("#setVideoCoverAjax").body = { frameIndex: frameIndex };
+    this.$$("#setVideoCoverAjax").generateRequest();
     const videoImages = this.videoImages;
     this.set('videoImages', null);
     this.async(function () {
@@ -752,10 +752,10 @@ class YpFileUploadLit extends YpBaseElement {
 
   _startTranscodeResponse(event, detail) {
     if (this.videoUpload)
-      this.$.transcodePollingAjax.url = '/api/videos/'+this.currentVideoId+'/getTranscodingJobStatus';
+      this.$$("#transcodePollingAjax").url = '/api/videos/'+this.currentVideoId+'/getTranscodingJobStatus';
     else
-      this.$.transcodePollingAjax.url = '/api/audios/'+this.currentAudioId+'/getTranscodingJobStatus';
-    this.$.transcodePollingAjax.body = { jobId: detail.response.transcodingJobId };
+      this.$$("#transcodePollingAjax").url = '/api/audios/'+this.currentAudioId+'/getTranscodingJobStatus';
+    this.$$("#transcodePollingAjax").body = { jobId: detail.response.transcodingJobId };
     this._checkTranscodingJob();
   }
 
@@ -806,9 +806,9 @@ class YpFileUploadLit extends YpBaseElement {
           this.set('indeterminateProgress', true);
           this.set('uploadStatus', this.t("transcodingVideo"));
           if (this.group) {
-            this.$.startTranscodeAjax.url = '/api/videos/'+this.group.id+'/'+this.currentVideoId+'/startTranscoding';
+            this.$$("#startTranscodeAjax").url = '/api/videos/'+this.group.id+'/'+this.currentVideoId+'/startTranscoding';
           } else {
-            this.$.startTranscodeAjax.url = '/api/videos/'+this.currentVideoId+'/startTranscodingLoggedIn';
+            this.$$("#startTranscodeAjax").url = '/api/videos/'+this.currentVideoId+'/startTranscodingLoggedIn';
           }
           let options;
           if (this.containerType==="posts") {
@@ -825,8 +825,8 @@ class YpFileUploadLit extends YpBaseElement {
 
           options.aspect = aspect;
 
-          this.$.startTranscodeAjax.body = options;
-          this.$.startTranscodeAjax.generateRequest();
+          this.$$("#startTranscodeAjax").body = options;
+          this.$$("#startTranscodeAjax").generateRequest();
           window.appGlobals.activity('complete', 'videoUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
         } else if (this.audioUpload) {
@@ -834,9 +834,9 @@ class YpFileUploadLit extends YpBaseElement {
           this.set('uploadStatus', this.t("transcodingAudio"));
 
           if (this.group) {
-            this.$.startTranscodeAjax.url = '/api/audios/'+this.group.id+'/'+this.currentAudioId+'/startTranscoding';
+            this.$$("#startTranscodeAjax").url = '/api/audios/'+this.group.id+'/'+this.currentAudioId+'/startTranscoding';
           } else {
-            this.$.startTranscodeAjax.url = '/api/audios/'+this.currentAudioId+'/startTranscodingLoggedIn';
+            this.$$("#startTranscodeAjax").url = '/api/audios/'+this.currentAudioId+'/startTranscodingLoggedIn';
           }
 
           let options;
@@ -851,8 +851,8 @@ class YpFileUploadLit extends YpBaseElement {
           } else {
             options = {}
           }
-          this.$.startTranscodeAjax.body = options;
-          this.$.startTranscodeAjax.generateRequest();
+          this.$$("#startTranscodeAjax").body = options;
+          this.$$("#startTranscodeAjax").generateRequest();
           window.appGlobals.activity('complete', 'audioUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
         } else {

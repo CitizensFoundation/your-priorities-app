@@ -876,9 +876,9 @@ class YpPostPointsLit extends YpBaseElement {
   _loadNewPointsIfNeeded(event, detail) {
     if (this.post && this.post.id == detail.postId) {
       if (this.latestPointCreatedAt) {
-        this.$.newPointsAjax.url = '/api/posts/' + this.post.id + '/newPoints';
-        this.$.newPointsAjax.params = { latestPointCreatedAt: this.latestPointCreatedAt };
-        this.$.newPointsAjax.generateRequest();
+        this.$$("#newPointsAjax").url = '/api/posts/' + this.post.id + '/newPoints';
+        this.$$("#newPointsAjax").params = { latestPointCreatedAt: this.latestPointCreatedAt };
+        this.$$("#newPointsAjax").generateRequest();
       } else {
         console.error("Trying to send point without latestPointCreatedAt");
       }
@@ -895,7 +895,7 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _pointDeleted() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _pointsChanged(points) {
@@ -991,11 +991,11 @@ class YpPostPointsLit extends YpBaseElement {
 
     if (newPost) {
       if (this.host) {
-        this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
+        this.$$("#ajax").url = this.host+'/api/posts/' + newPost.id + '/points';
       } else {
-        this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+        this.$$("#ajax").url = '/api/posts/' + newPost.id + '/points';
       }
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").generateRequest();
       if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
         this.set('labelUp', this.post.Group.configuration.alternativePointForLabel);
       } else {
@@ -1292,7 +1292,7 @@ class YpPostPointsLit extends YpBaseElement {
     this.set("textValueMobileUpOrDown", "");
     this._insertNewPoint(point);
     this.set('post.counter_points', this.post.counter_points + 1);
-    this.$.newPointToast.show();
+    this.$$("#newPointToast").show();
     this._updateCounterInfo();
     if (point.value > 0) {
       window.appGlobals.activity('completed', 'newPointFor');
@@ -1325,13 +1325,13 @@ class YpPostPointsLit extends YpBaseElement {
 
   addPoint(content, value, videoId, audioId) {
     if (window.appUser.loggedIn() === true) {
-      this.$.newPointAjax.url = "/api/points/" + this.post.group_id;
-      this.$.newPointAjax.body = {
+      this.$$("#newPointAjax").url = "/api/points/" + this.post.group_id;
+      this.$$("#newPointAjax").body = {
         postId: this.post.id,
         content: content,
         value: value
       };
-      this.$.newPointAjax.generateRequest();
+      this.$$("#newPointAjax").generateRequest();
       this.set('addPointDisabled', true);
       if (videoId)
         this.set('currentVideoId', videoId);

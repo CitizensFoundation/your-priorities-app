@@ -493,14 +493,14 @@ _floatIfValueOrIE(value) {
       }
       this.set('post.description', description);
       this.set('structuredAnswers', answers);
-      this.$.editDialog._reallySubmit();
+      this.$$("#editDialog")._reallySubmit();
     } else {
-      this.$.editDialog._reallySubmit();
+      this.$$("#editDialog")._reallySubmit();
     }
   }
 
   _resizeScrollerIfNeeded() {
-    this.$.editDialog.scrollResize();
+    this.$$("#editDialog").scrollResize();
   }
 
   _structuredQuestions(post, group) {

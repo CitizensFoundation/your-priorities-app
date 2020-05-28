@@ -78,9 +78,9 @@ class YpPostMoveLit extends YpBaseElement {
   }
 
   _reallyMove() {
-    this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
-    this.$.movePostAjax.body = {};
-    this.$.movePostAjax.generateRequest();
+    this.$$("#movePostAjax").url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+    this.$$("#movePostAjax").body = {};
+    this.$$("#movePostAjax").generateRequest();
   }
 
   _movePostResponse() {
@@ -96,7 +96,7 @@ class YpPostMoveLit extends YpBaseElement {
     this.set('post', post);
     this.set('refreshFunction', refreshFunction);
     this._setupTranslation();
-    this.$.getAvailableGroupsAjax.generateRequest();
+    this.$$("#getAvailableGroupsAjax").generateRequest();
     this.open();
   }
 

@@ -104,21 +104,21 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
   }
 
   _deleteUserForReal() {
-    this.$.deleteUserAjax.body = {};
-    this.$.deleteUserAjax.generateRequest();
+    this.$$("#deleteUserAjax").body = {};
+    this.$$("#deleteUserAjax").generateRequest();
   }
 
   _anonymizeUserForReal() {
-    this.$.anonymizeAjax.body = {};
-    this.$.anonymizeAjax.generateRequest();
+    this.$$("#anonymizeAjax").body = {};
+    this.$$("#anonymizeAjax").generateRequest();
   }
 
   open() {
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   _completed() {
-    this.$.dialog.close();
+    this.$$("#dialog").close();
     window.location = "/";
   }
 }
