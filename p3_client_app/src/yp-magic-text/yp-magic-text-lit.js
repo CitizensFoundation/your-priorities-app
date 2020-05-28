@@ -388,11 +388,11 @@ class YpMagicTextLit extends YpBaseElement {
     return input.replace(/^\s*|\s*$/g, '');
   }
 
-  ready () {
+  connectedCallback() {
     if (window.i18nTranslation) {
       this.set('language', window.locale);
     }
-    super.ready();
+    super.connectedCallback()
   }
 }
 

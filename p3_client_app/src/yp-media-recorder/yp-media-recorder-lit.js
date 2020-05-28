@@ -704,11 +704,11 @@ class YpMediaRecorderLit extends YpBaseElement {
     }.bind(this));
   }
 
-  ready () {
+  connectedCallback () { 
     if (window.i18nTranslation) {
       this.set('language', window.locale);
     }
-    super.ready();
+    super.connectedCallback()
   }
 
   _languageEvent (event, detail) {
