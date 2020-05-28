@@ -742,37 +742,45 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       });
     },
     function(callback) {
-      models.Invite.create({
-        token: token,
-        expires_at: Date.now() + (3600000*24*30*365*1000),
-        type: models.Invite.INVITE_TO_COMMUNITY,
-        community_id: req.params.communityId,
-        user_id: user ? user.id : null,
-        from_user_id: req.user.id,
-        metadata:  { toEmail: req.params.userEmail}
-      }).then(function (inviteIn) {
-        if (inviteIn) {
-          invite = inviteIn;
-          callback();
-        } else {
-          callback('Invite not found')
-        }
-      }).catch(function (error) {
-        callback(error);
-      });
+      if (!req.params.addToCommunity) {
+        models.Invite.create({
+          token: token,
+          expires_at: Date.now() + (3600000*24*30*365*1000),
+          type: models.Invite.INVITE_TO_COMMUNITY,
+          community_id: req.params.communityId,
+          user_id: user ? user.id : null,
+          from_user_id: req.user.id,
+          metadata:  { toEmail: req.params.userEmail}
+        }).then(function (inviteIn) {
+          if (inviteIn) {
+            invite = inviteIn;
+            callback();
+          } else {
+            callback('Invite not found')
+          }
+        }).catch(function (error) {
+          callback(error);
+        });
+      } else {
+        callback();
+      }
     },
     function(callback) {
-      models.AcActivity.inviteCreated({
-        email: req.params.userEmail,
-        user_id: user ? user.id : null,
-        sender_user_id: req.user.id,
-        community_id: req.params.communityId,
-        sender_name: req.user.name,
-        domain_id: req.ypDomain.id,
-        invite_id: invite.id,
-        token: token}, function (error) {
-        callback(error);
-      });
+      if (!req.params.addToCommunity) {
+        models.AcActivity.inviteCreated({
+          email: req.params.userEmail,
+          user_id: user ? user.id : null,
+          sender_user_id: req.user.id,
+          community_id: req.params.communityId,
+          sender_name: req.user.name,
+          domain_id: req.ypDomain.id,
+          invite_id: invite.id,
+          token: token}, function (error) {
+          callback(error);
+        });
+      } else {
+        callback();
+      }
     },
     function(callback) {
      if (user && req.params.addToCommunity) {
@@ -803,8 +811,13 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
-      res.sendStatus(200);
+      if (!user && req.params.addToCommunity) {
+        log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(404);
+      } else {
+        log.info('Send Invite Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(200);
+      }
     }
   });
 });
