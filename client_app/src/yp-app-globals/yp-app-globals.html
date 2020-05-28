@@ -385,7 +385,7 @@
         },
 
         postLoadGroupProcessing: function (group) {
-          if (this.setOriginalQueryParameters['yu']) {
+          if (this.originalQueryParameters['yu']) {
             var promotionTrackingAjax = document.createElement('iron-ajax');
             promotionTrackingAjax.handleAs = 'json';
             promotionTrackingAjax.contentType = 'application/json';

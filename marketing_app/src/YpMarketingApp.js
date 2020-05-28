@@ -101,6 +101,14 @@ export class YpMarketingApp extends YpBaseElement {
         this.language = "en";
       }
     }
+    fetch('/api/users/loggedInUser/isLoggedIn')
+    .then(response => response.json())
+    .then(data => {
+      console.error(data);
+      debugger;
+    }).catch(error=>{
+      debugger;
+    });
   }
 
   render() {

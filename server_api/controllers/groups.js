@@ -449,6 +449,30 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
         token: token}, function (error) {
         callback(error);
       });
+    },
+    function(callback) {
+      if (user && req.params.addToGroup) {
+        models.Group.findOne({
+          where: {
+            id: req.params.groupId
+          },
+          attributes: ['id']
+        }).then(group=>{
+          if (group) {
+            group.addGroupUsers(user).then(()=>{
+              callback();
+            }).catch(error=>{
+              callback(error);
+            })
+          } else {
+            callback("Can't find group");
+          }
+        }).catch(error=>{
+          callback(error);
+        });
+      } else {
+        callback();
+      }
     }
   ], function(error) {
     if (error) {

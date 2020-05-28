@@ -74,6 +74,11 @@ const Airbrake = require('@airbrake/node');
 const airbrakeExpress = require('@airbrake/node/dist/instrumentation/express');
 const airbrakePG = require('@airbrake/node/dist/instrumentation/pg');
 
+const ieVersion = (uaString) => {
+  const match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
+  if (match) return parseInt(match[2])
+};
+
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;
 }
@@ -95,7 +100,7 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
 }
 
 if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
-  app.use( function checkProtocol (req, res, next) {
+  app.use(function checkProtocol (req, res, next) {
     if (!/https/.test(req.protocol)) {
       res.redirect("https://" + req.headers.host + req.url);
     } else {
@@ -151,11 +156,34 @@ app.get('/*', function (req, res, next) {
   next();
 });
 
-if (!FORCE_PRODUCTION && app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_app'), { index: false }));
-} else {
-  app.use(express.static(path.join(__dirname, '../client_app/build/bundled'), { index: false, dotfiles:'allow' }));
-}
+
+app.use(function setupStaticPath(req, res, next) {
+  let possibleLegacyIE11Path = "";
+  let staticPath = path.join(__dirname, '../client_app/build/bundled');
+  let staticIndex = false;
+
+  if (ieVersion(req.headers['user-agent'])===11) {
+    possibleLegacyIE11Path = "/legacy";
+  }
+
+  if (req.path.startsWith('/marketing/' || req.headers.referrer.indexOf('/marketing/')>-1)) {
+    staticPath = path.join(__dirname, '../marketing_app/dist'+possibleLegacyIE11Path);
+    staticIndex = "index.html";
+  } else if (req.path.startsWith('/analytics/')) {
+    staticPath = path.join(__dirname, '../analytics_app/dist'+possibleLegacyIE11Path);
+    staticIndex = "index.html";
+  } else {
+    if (!FORCE_PRODUCTION && app.get('env') === 'development') {
+      staticPath = path.join(__dirname, '../client_app');
+    }
+  }
+
+  log.error(staticIndex);
+  log.error(staticPath);
+  log.error(req.path);
+  express.static(staticPath, { index: staticIndex, dotfiles:'allow' })(req,res,next);
+});
+
 
 app.use(session(sessionConfig));
 
@@ -387,6 +415,7 @@ app.use(function cacheControlHeaders(req, res, next) {
   next();
 });
 
+app.use('/marketing/', express.static(path.join(__dirname, '../marketing_app/dist')));
 app.use('/domain', index);
 app.use('/community', index);
 app.use('/group', index);

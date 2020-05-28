@@ -773,6 +773,30 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
         token: token}, function (error) {
         callback(error);
       });
+    },
+    function(callback) {
+     if (user && req.params.addToCommunity) {
+       models.Community.findOne({
+         where: {
+           id: req.params.communityId
+         },
+         attributes: ['id']
+       }).then(community=>{
+         if (community) {
+           community.addCommunityUsers(user).then(()=>{
+             callback();
+           }).catch(error=>{
+             callback(error);
+           })
+         } else {
+           callback("Can't find community");
+         }
+       }).catch(error=>{
+         callback(error);
+       });
+     } else {
+       callback();
+     }
     }
   ], function(error) {
     if (error) {
