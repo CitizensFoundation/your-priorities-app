@@ -230,7 +230,7 @@
           <video id="videoPlayer" data-id$="[[groupVideoId]]" controls preload="meta" class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!groupVideoURL]]" restamp>
-          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+          <iron-image class="logo" sizing="cover" alt$="[[group.name]]" preload src="[[groupLogoImagePath]]"></iron-image>
         </template>
       </paper-material>
       <paper-material id="card" elevation="3" animated-shadow class="groupCard textBox">

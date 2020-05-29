@@ -278,7 +278,7 @@
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
         <a href="[[_getPostLink(post)]]" id="theMainA">
-          <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
+          <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" alt-tag="[[post.name]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
           <div class="postNameContainer">
             <div class="post-name" mini$="[[mini]]" id="postName">
               <yp-magic-text id="postNameMagicText" text-type="postName" content-language="[[post.language]]"

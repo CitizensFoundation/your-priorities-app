@@ -309,7 +309,7 @@
             <video id="videoPlayer" data-id$="[[communityVideoId]]" controls preload="meta" class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">
-            <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+            <iron-image class="image" sizing="cover" alt$="[[community.name]]" src$="[[communityLogoImagePath]]"></iron-image>
           </template>
         </div>
       </paper-material>

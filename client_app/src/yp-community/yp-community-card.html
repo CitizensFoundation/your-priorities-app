@@ -208,7 +208,7 @@
           <iron-image header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToCommunity"></iron-image>
         </template>
         <template is="dom-if" if="[[!noImage]]">
-          <iron-image sizing="cover" archived$="[[archived]]" featured$="[[featured]]" preload src="[[communityLogoImagePath]]" class="post-image withPointer" on-tap="_goToCommunity"></iron-image>
+          <iron-image sizing="cover" archived$="[[archived]]" alt$="[[community.name]]" featured$="[[featured]]" preload src="[[communityLogoImagePath]]" class="post-image withPointer" on-tap="_goToCommunity"></iron-image>
         </template>
       </div>
       <div class="informationText">

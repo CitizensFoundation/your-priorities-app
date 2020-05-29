@@ -178,9 +178,6 @@ app.use(function setupStaticPath(req, res, next) {
     }
   }
 
-  log.error(staticIndex);
-  log.error(staticPath);
-  log.error(req.path);
   express.static(staticPath, { index: staticIndex, dotfiles:'allow' })(req,res,next);
 });
 
