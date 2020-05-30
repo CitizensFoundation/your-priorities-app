@@ -161,10 +161,10 @@ app.use(function setupStaticPath(req, res, next) {
   let staticPath = path.join(__dirname, '../client_app/build/bundled');
   let staticIndex = false;
 
-  if (req.path.startsWith('/marketing/') || req.headers.referrer.indexOf('/marketing/')>-1) {
+  if (req.path.startsWith('/marketing/') || (req.headers.referrer && req.headers.referrer.indexOf('/marketing/')>-1)) {
     staticPath = path.join(__dirname, '../marketing_app/dist');
     staticIndex = "index.html";
-  } else if (req.path.startsWith('/analytics/') || req.headers.referrer.indexOf('/analytics/')>-1) {
+  } else if (req.path.startsWith('/analytics/') || (req.headers.referrer && req.headers.referrer.indexOf('/analytics/'))>-1) {
     staticPath = path.join(__dirname, '../analytics_app/dist');
     staticIndex = "index.html";
   } else {
@@ -408,6 +408,7 @@ app.use(function cacheControlHeaders(req, res, next) {
 });
 
 app.use('/marketing/', express.static(path.join(__dirname, '../marketing_app/dist')));
+app.use('/analytics/', express.static(path.join(__dirname, '../analytics_app/dist')));
 app.use('/domain', index);
 app.use('/community', index);
 app.use('/group', index);
@@ -431,6 +432,9 @@ app.use('/api/notifications', notifications);
 app.use('/api/bulk_status_updates', bulkStatusUpdates);
 app.use('/api/recommendations', recommendations);
 app.use('/api/ratings', ratings);
+
+app.use('/api/analytics', analytics);
+
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);
 app.use('/pages', legacyPages);
