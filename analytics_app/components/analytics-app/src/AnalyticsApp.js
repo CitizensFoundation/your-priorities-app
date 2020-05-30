@@ -104,17 +104,18 @@ export class AnalyticsApp extends LitElement {
   constructor() {
     super();
     this.page = '0';
+    let pathname = window.location.pathname;
+    if (pathname.endsWith('/'))
+      pathname = pathname.substring(0,pathname.length-1);
+    const split = pathname.split('/');
+    this.collectionType = split[split.length-2];
+    this.collectionId = split[split.length-1];
+    console.error(this.collectionType);
+    console.error(this.collectionId);
   }
 
   connectedCallback() {
     super.connectedCallback();
-    const pathname = window.location.pathname;
-    const split = pathname.split('/');
-
-
-    this.collectionType = split[split.length-2];
-    this.collectionId = split[split.length-1];
-    debugger;
   }
 
   render() {
@@ -124,7 +125,7 @@ export class AnalyticsApp extends LitElement {
           <div class="flex"></div>
           <div class="analyticsText">Community Wellbeing</div>
         </div>
-      <header ?hidden="${this.currentGrievance}">
+      <header>
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
           <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
           <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>

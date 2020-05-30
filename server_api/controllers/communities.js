@@ -26,6 +26,7 @@ const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analyt
 const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
 const getCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getCommunityIncludes;
 const getPointCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointCommunityIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -1660,7 +1661,7 @@ router.get('/:id/wordcloud', auth.can('edit community'), function(req, res) {
 // SIMILARITIES
 router.get('/:id/similarities_weights', auth.can('edit community'), function(req, res) {
   getFromAnalyticsApi("similarities_weights", "community", req.params.id, function (error, content) {
-    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', content ? JSON.parse(content.body) : null);
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
   });
 });
 

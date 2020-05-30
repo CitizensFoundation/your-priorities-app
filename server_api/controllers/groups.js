@@ -27,6 +27,7 @@ const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analyt
 const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
 const getGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getGroupIncludes;
 const getPointGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointGroupIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -2062,7 +2063,7 @@ router.get('/:id/wordcloud', auth.can('edit group'), function(req, res) {
 // SIMILARITIES
 router.get('/:id/similarities_weights', auth.can('edit group'), function(req, res) {
   getFromAnalyticsApi("similarities_weights", "group", req.params.id, function (error, content) {
-    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', content ? JSON.parse(content.body) : null);
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
   });
 });
 

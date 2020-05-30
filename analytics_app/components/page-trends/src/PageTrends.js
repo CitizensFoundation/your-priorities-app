@@ -1,3 +1,5 @@
+
+import 'chart.js';
 import { html, css, LitElement } from 'lit-element';
 import { Data, DataLabels } from '../../analytics-app/src/data.js';
 import { ShadowStyles } from '../../analytics-app/src/shadow-styles.js';
@@ -93,9 +95,9 @@ export class PageTrends extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.collectionStatsPostsURL = `/api/analytics/${this.collectionType}/${this.collectionId}/stats_posts`;
-    this.collectionStatsPointsURL = `/api/analytics/${this.collectionType}/${this.collectionId}/stats_points`;
-    this.collectionStatsVotesURL = `/api/analytics/${this.collectionType}/${this.collectionId}//stats_votes`;
+    this.collectionStatsPostsURL = `/api/${this.collectionType}/${this.collectionId}/stats_posts`;
+    this.collectionStatsPointsURL = `/api/${this.collectionType}/${this.collectionId}/stats_points`;
+    this.collectionStatsVotesURL = `/api/${this.collectionType}/${this.collectionId}/stats_votes`;
  //   this.getStatsData(this.collectionStatsPostsURL, this.statsPosts);
   //  this.getStatsData(this.collectionStatsPointsURL, this.statsPoints);
     this.getStatsData(this.collectionStatsVotesURL, this.statsVotes);

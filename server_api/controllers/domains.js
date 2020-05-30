@@ -18,6 +18,7 @@ const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analyt
 const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
 const getDomainIncludes = require('../active-citizen/engine/analytics/statsCalc').getDomainIncludes;
 const getPointDomainIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointDomainIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -963,7 +964,7 @@ router.get('/:id/wordcloud', auth.can('edit domain'), function(req, res) {
 // SIMILARITIES
 router.get('/:id/similarities_weights', auth.can('edit domain'), function(req, res) {
   getFromAnalyticsApi("similarities_weights", "domain", req.params.id, function (error, content) {
-    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', content ? JSON.parse(content.body) : null);
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
   });
 });
 

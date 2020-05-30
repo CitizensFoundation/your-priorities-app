@@ -405,8 +405,11 @@ app.use(function cacheControlHeaders(req, res, next) {
   next();
 });
 
-app.use('/marketing/', express.static(path.join(__dirname, '../marketing_app/dist')));
+app.use('/marketing', express.static(path.join(__dirname, '../marketing_app/dist')));
 app.use('/analytics/', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/domain/*', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/communities/*', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/group/*', express.static(path.join(__dirname, '../analytics_app/dist')));
 app.use('/domain', index);
 app.use('/community', index);
 app.use('/group', index);
@@ -430,9 +433,6 @@ app.use('/api/notifications', notifications);
 app.use('/api/bulk_status_updates', bulkStatusUpdates);
 app.use('/api/recommendations', recommendations);
 app.use('/api/ratings', ratings);
-
-app.use('/api/analytics', analytics);
-
 app.use('/ideas', legacyPosts);
 app.use('/users', legacyUsers);
 app.use('/pages', legacyPages);

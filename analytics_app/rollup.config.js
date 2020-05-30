@@ -1,6 +1,4 @@
 import merge from 'deepmerge';
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
 
 // use createSpaConfig for bundling a Single Page App
 import { createSpaConfig } from '@open-wc/building-rollup';
@@ -31,10 +29,6 @@ export default merge(baseConfig, {
   // if you use createSpaConfig, you can use your index.html as entrypoint,
   // any <script type="module"> inside will be bundled by rollup
   input: './index.html',
-  plugins: [
-    resolve(),
-    commonjs()
-  ],
 
   // alternatively, you can use your JS as entrypoint for rollup and
   // optionally set a HTML template manually
