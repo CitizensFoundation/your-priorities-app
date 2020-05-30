@@ -989,7 +989,7 @@ router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
         "activity.point.helpful.new","activity.point.unhelpful.new"
       ]
     }
-  }, getDomainIncludes(req.params.id), 'day', (error, results) => {
+  }, getDomainIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error,results);
   });
 });
