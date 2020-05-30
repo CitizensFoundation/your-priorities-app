@@ -12,6 +12,12 @@ const getAllModeratedItemsByDomain = require('../active-citizen/engine/moderatio
 const getLoginsExportDataForDomain = require('../utils/export_utils').getLoginsExportDataForDomain;
 var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getDomainIncludes = require('../active-citizen/engine/analytics/statsCalc').getDomainIncludes;
+const getPointDomainIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointDomainIncludes;
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -944,6 +950,46 @@ router.get('/:domainId/export_logins', auth.can('edit domain'), function(req, re
         res.sendStatus(500);
       });
     }
+  });
+});
+
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit domain'), function(req, res) {
+  getFromAnalyticsApi("wordclouds", "domain", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit domain'), function(req, res) {
+  getFromAnalyticsApi("similarities_weights", "domain", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', content ? JSON.parse(content.body) : null);
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit domain'), function(req, res) {
+  countModelRowsByTimePeriod(models.Post, {}, getDomainIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit domain'), function(req, res) {
+  countModelRowsByTimePeriod(models.Point, {}, getPointDomainIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
+  countModelRowsByTimePeriod(models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getDomainIncludes(req.params.id), 'day', (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
   });
 });
 

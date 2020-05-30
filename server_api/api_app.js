@@ -55,8 +55,6 @@ const bulkStatusUpdates = require('./controllers/bulkStatusUpdates');
 const videos = require('./controllers/videos');
 const audios = require('./controllers/audios');
 
-const analytics = require('./active-citizen/controllers/analytics');
-
 const legacyPosts = require('./controllers/legacyPosts');
 const legacyUsers = require('./controllers/legacyUsers');
 const legacyPages = require('./controllers/legacyPages');

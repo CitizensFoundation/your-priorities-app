@@ -20,6 +20,13 @@ const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
 
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getCommunityIncludes;
+const getPointCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointCommunityIncludes;
+
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
     if (errorStatus == 404) {
@@ -1640,6 +1647,47 @@ router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), f
         res.sendStatus(500);
     }
   })
+});
+
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit community'), function(req, res) {
+  triggerSimilaritiesTraining("community", req.params.id, ()=>{});
+  getFromAnalyticsApi("wordclouds", "community", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit community'), function(req, res) {
+  getFromAnalyticsApi("similarities_weights", "community", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', content ? JSON.parse(content.body) : null);
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(models.Post, {}, getCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(models.Point, {}, getPointCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
+  });
 });
 
 module.exports = router;

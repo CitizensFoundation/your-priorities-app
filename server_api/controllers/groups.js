@@ -21,6 +21,13 @@ const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 const request = require('request');
 
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getGroupIncludes;
+const getPointGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointGroupIncludes;
+
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -2045,5 +2052,44 @@ router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
   });
 });
 
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit group'), function(req, res) {
+  getFromAnalyticsApi("wordclouds", "group", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit group'), function(req, res) {
+  getFromAnalyticsApi("similarities_weights", "group", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', content ? JSON.parse(content.body) : null);
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(models.Post, {}, getGroupIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(models.Point, {}, getPointGroupIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getGroupIncludes(req.params.id), 'day', (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
+  });
+});
 
 module.exports = router;
