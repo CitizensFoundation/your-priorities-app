@@ -87,7 +87,7 @@ export class PageTopics extends LitElement {
     super.connectedCallback();
     this.weightsFilter = 0.70;
     this.clusters = [];
-    this.dataUrl ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
+    this.dataUrl ="/api/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
   }
 
   //TODO: Slider for weight minimums - filter client side and update the data

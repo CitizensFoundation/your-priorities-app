@@ -108,10 +108,13 @@ export class AnalyticsApp extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.collectionType = "communities";
-    this.collectionId = "667";
-    this.collectionId = "973";
-    this.collectionId = "1068";
+    const pathname = window.location.pathname;
+    const split = pathname.split('/');
+
+
+    this.collectionType = split[split.length-2];
+    this.collectionId = split[split.length-1];
+    debugger;
   }
 
   render() {

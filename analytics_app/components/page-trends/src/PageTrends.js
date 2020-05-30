@@ -99,7 +99,7 @@ export class PageTrends extends LitElement {
  //   this.getStatsData(this.collectionStatsPostsURL, this.statsPosts);
   //  this.getStatsData(this.collectionStatsPointsURL, this.statsPoints);
     this.getStatsData(this.collectionStatsVotesURL, this.statsVotes);
-    this.wordCloudURL ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
+    this.wordCloudURL ="/api/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
     this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
 
     fetch(this.collectionURL, { credentials: 'same-origin' })

@@ -38,7 +38,7 @@ export class PageStats extends BaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.wordCloudURL ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
+    this.wordCloudURL ="/api/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
     this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
 
     fetch(this.collectionURL, { credentials: 'same-origin' })
