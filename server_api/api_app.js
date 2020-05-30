@@ -158,19 +158,14 @@ app.get('/*', function (req, res, next) {
 
 
 app.use(function setupStaticPath(req, res, next) {
-  let possibleLegacyIE11Path = "";
   let staticPath = path.join(__dirname, '../client_app/build/bundled');
   let staticIndex = false;
 
-  if (ieVersion(req.headers['user-agent'])===11) {
-    possibleLegacyIE11Path = "/legacy";
-  }
-
-  if (req.path.startsWith('/marketing/' || req.headers.referrer.indexOf('/marketing/')>-1)) {
-    staticPath = path.join(__dirname, '../marketing_app/dist'+possibleLegacyIE11Path);
+  if (req.path.startsWith('/marketing/') || req.headers.referrer.indexOf('/marketing/')>-1) {
+    staticPath = path.join(__dirname, '../marketing_app/dist');
     staticIndex = "index.html";
-  } else if (req.path.startsWith('/analytics/')) {
-    staticPath = path.join(__dirname, '../analytics_app/dist'+possibleLegacyIE11Path);
+  } else if (req.path.startsWith('/analytics/') || req.headers.referrer.indexOf('/analytics/')>-1) {
+    staticPath = path.join(__dirname, '../analytics_app/dist');
     staticIndex = "index.html";
   } else {
     if (!FORCE_PRODUCTION && app.get('env') === 'development') {

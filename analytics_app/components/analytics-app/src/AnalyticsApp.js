@@ -85,7 +85,7 @@ export class AnalyticsApp extends LitElement {
         color: #000;
       }
 
-      .paceImage {
+      .mainImage {
         margin-right: auto;
         margin-top: 4px;
         margin-left: 48px;
@@ -116,7 +116,7 @@ export class AnalyticsApp extends LitElement {
 
   render() {
     return html`
-        <div class="paceImage layout horizontal">
+        <div class="mainImage layout horizontal">
           <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
           <div class="flex"></div>
           <div class="analyticsText">Community Wellbeing</div>

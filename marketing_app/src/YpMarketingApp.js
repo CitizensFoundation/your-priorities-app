@@ -6,7 +6,7 @@ import './YpEditMarketingCampaign.js';
 
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
-import '@material/mwc-top-app-bar';
+import '@material/mwc-top-app-bar-fixed';
 import '@material/mwc-icon-button';
 
 
@@ -61,11 +61,6 @@ export class YpMarketingApp extends YpBaseElement {
           text-align: center;
           margin-bottom: -7px;
         }
-
-        mwc-tab {
-          --mdc-theme-on-primary: #FFF;
-          --mdc-theme-primary: #FFF;
-        }
     `];
   }
 
@@ -101,6 +96,7 @@ export class YpMarketingApp extends YpBaseElement {
         this.language = "en";
       }
     }
+
     fetch('/api/users/loggedInUser/isLoggedIn')
     .then(response => response.json())
     .then(data => {
@@ -115,23 +111,21 @@ export class YpMarketingApp extends YpBaseElement {
     return html`
       <yp-edit-marketing-campaign id="campaignEdit"></yp-edit-marketing-campaign>
 
-      <mwc-top-app-bar prominent centerTitle>
+      <mwc-top-app-bar-fixed fixed>
         <div slot="title">
           Marketing for Kyrgyz Survey 03/06/2020
-          <div class="layout vertical center-center">
-            <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-              <mwc-tab label="${this.t('list')}" icon="list" stacked></mwc-tab>
-              <mwc-tab label="${this.t('campaigns')}" icon="backup" stacked></mwc-tab>
-            </mwc-tab-bar>
-          </div>
         </div>
         <mwc-icon-button icon="more_vert" slot="actionItems"></mwc-icon-button>
-        <div class="layout vertical">
+        <div class="layout vertical center-center">
+          <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
+            <mwc-tab label="${this.t('list')}" icon="list" stacked></mwc-tab>
+            <mwc-tab label="${this.t('campaigns')}" icon="backup" stacked></mwc-tab>
+          </mwc-tab-bar>
           <main>
             ${this._renderPage()}
           </main>
         </div>
-      </mwc-top-app-bar>
+      </mwc-top-app-bar-fixed>
     `;
   }
 
