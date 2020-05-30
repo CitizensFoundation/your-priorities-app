@@ -70,6 +70,7 @@
     "@material/mwc-textarea": "^0.15.0",
     "@material/mwc-textfield": "^0.15.0",
     "@material/mwc-top-app-bar": "^0.15.0",
+    "@open-wc/rollup-plugin-html": "^1.1.0",
     "@vaadin/vaadin-grid": "^5.6.1",
     "intl-messageformat": "^8.3.11",
     "lit-element": "^2.0.1",

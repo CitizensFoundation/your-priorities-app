@@ -742,7 +742,7 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       });
     },
     function(callback) {
-      if (!req.params.addToCommunity) {
+      if (!req.query.addToCommunityDirectly) {
         models.Invite.create({
           token: token,
           expires_at: Date.now() + (3600000*24*30*365*1000),
@@ -766,7 +766,7 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       }
     },
     function(callback) {
-      if (!req.params.addToCommunity) {
+      if (!req.query.addToCommunityDirectly) {
         models.AcActivity.inviteCreated({
           email: req.params.userEmail,
           user_id: user ? user.id : null,
@@ -783,7 +783,7 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       }
     },
     function(callback) {
-     if (user && req.params.addToCommunity) {
+     if (user && req.query.addToCommunityDirectly) {
        models.Community.findOne({
          where: {
            id: req.params.communityId
@@ -811,7 +811,7 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      if (!user && req.params.addToCommunity) {
+      if (!user && req.query.addToCommunityDirectly) {
         log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
         res.sendStatus(404);
       } else {

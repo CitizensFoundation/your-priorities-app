@@ -417,7 +417,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       });
     },
     function(callback) {
-      if (!req.params.addToGroup) {
+      if (!req.query.addToGroupDirectly) {
         models.Invite.create({
           token: token,
           expires_at: Date.now() + (3600000*24*30*365*1000),
@@ -442,7 +442,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       }
     },
     function(callback) {
-      if (!req.params.addToGroup) {
+      if (!req.query.addToGroupDirectly) {
         models.AcActivity.inviteCreated({
           email: req.params.userEmail,
           user_id: user ? user.id : null,
@@ -459,7 +459,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       }
     },
     function(callback) {
-      if (user && req.params.addToGroup) {
+      if (user && req.query.addToGroupDirectly) {
         models.Group.findOne({
           where: {
             id: req.params.groupId
@@ -487,7 +487,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      if (!user && req.params.addToGroup) {
+      if (!user && req.query.addToGroupDirectly) {
         log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
         res.sendStatus(404);
       } else {

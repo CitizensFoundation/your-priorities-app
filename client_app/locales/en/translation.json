@@ -1,4 +1,6 @@
 {
+  "sendInviteByEmail": "Send invite by email",
+  "addUserDirectlyIfExist": "Add user if exist",
   "allowWhatsAppSharing": "Allow WhatsApp sharing",
   "moreContactInformationAddress": "Ask for address as well",
   "contactAddress": "Address",

@@ -1,4 +1,6 @@
 import merge from 'deepmerge';
+import html from '@open-wc/rollup-plugin-html';
+
 // use createSpaConfig for bundling a Single Page App
 import { createSpaConfig } from '@open-wc/building-rollup';
 
@@ -16,6 +18,10 @@ const baseConfig = createSpaConfig({
   // development mode creates a non-minified build for debugging or development
   developmentMode: process.env.ROLLUP_WATCH === 'true',
 
+  html: {
+    publicPath: 'marketing'
+  },
+
   // set to true to inject the service worker registration into your index.html
   injectServiceWorker: false,
 });
@@ -24,7 +30,6 @@ export default merge(baseConfig, {
   // if you use createSpaConfig, you can use your index.html as entrypoint,
   // any <script type="module"> inside will be bundled by rollup
   input: './index.html'
-
   // alternatively, you can use your JS as entrypoint for rollup and
   // optionally set a HTML template manually
   // input: './app.js',
