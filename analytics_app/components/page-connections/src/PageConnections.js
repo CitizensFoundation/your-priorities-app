@@ -66,7 +66,7 @@ export class PageConnections extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.dataUrl ="/api/analytics/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
+    this.dataUrl ="/api/"+this.collectionType+"/"+this.collectionId+"/similarities_weights";
     this.weightsFilter = 0.74;
     this.graphData ={
       nodes: [],

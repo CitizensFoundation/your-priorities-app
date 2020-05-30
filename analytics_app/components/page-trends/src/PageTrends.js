@@ -55,7 +55,7 @@ export class PageTrends extends LitElement {
     .then(res => res.json())
     .then(response => {
       const lineChartElement = this.shadowRoot.getElementById("line-chart");
-      console.log(JSON.stringify(response));
+      //console.log(JSON.stringify(response));
       if (!this.haveSetData) {
         this.chart = new Chart(lineChartElement, {
           type: 'bar',
