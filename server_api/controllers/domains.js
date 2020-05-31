@@ -956,33 +956,33 @@ router.get('/:domainId/export_logins', auth.can('edit domain'), function(req, re
 
 // WORD CLOUD
 router.get('/:id/wordcloud', auth.can('edit domain'), function(req, res) {
-  getFromAnalyticsApi("wordclouds", "domain", req.params.id, function (error, content) {
+  getFromAnalyticsApi(req,"wordclouds", "domain", req.params.id, function (error, content) {
     sendBackAnalyticsResultsOrError(req,res,error,content);
   });
 });
 
 // SIMILARITIES
 router.get('/:id/similarities_weights', auth.can('edit domain'), function(req, res) {
-  getFromAnalyticsApi("similarities_weights", "domain", req.params.id, function (error, content) {
+  getFromAnalyticsApi(req,"similarities_weights", "domain", req.params.id, function (error, content) {
     sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
   });
 });
 
 // STATS
 router.get('/:id/stats_posts', auth.can('edit domain'), function(req, res) {
-  countModelRowsByTimePeriod(models.Post, {}, getDomainIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod(req,"stats_posts"+req.params.id+"_domain", models.Post, {}, getDomainIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_points', auth.can('edit domain'), function(req, res) {
-  countModelRowsByTimePeriod(models.Point, {}, getPointDomainIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod(req,"stats_points"+req.params.id+"_domain", models.Point, {}, getPointDomainIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
-  countModelRowsByTimePeriod(models.AcActivity, {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_domain", models.AcActivity, {
     type: {
       $in: [
         "activity.post.opposition.new","activity.post.endorsement.new",

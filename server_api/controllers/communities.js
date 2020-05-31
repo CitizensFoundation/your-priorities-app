@@ -1715,34 +1715,34 @@ router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), f
 
 // WORD CLOUD
 router.get('/:id/wordcloud', auth.can('edit community'), function(req, res) {
-  triggerSimilaritiesTraining("community", req.params.id, ()=>{});
-  getFromAnalyticsApi("wordclouds", "community", req.params.id, function (error, content) {
+  triggerSimilaritiesTraining(req,"community", req.params.id, ()=>{});
+  getFromAnalyticsApi(req,"wordclouds", "community", req.params.id, function (error, content) {
     sendBackAnalyticsResultsOrError(req,res,error,content);
   });
 });
 
 // SIMILARITIES
 router.get('/:id/similarities_weights', auth.can('edit community'), function(req, res) {
-  getFromAnalyticsApi("similarities_weights", "community", req.params.id, function (error, content) {
+  getFromAnalyticsApi(req,"similarities_weights", "community", req.params.id, function (error, content) {
     sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
   });
 });
 
 // STATS
 router.get('/:id/stats_posts', auth.can('edit community'), function(req, res) {
-  countModelRowsByTimePeriod(models.Post, {}, getCommunityIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod(req,"stats_posts_"+req.params.id+"_community", models.Post, {}, getCommunityIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_points', auth.can('edit community'), function(req, res) {
-  countModelRowsByTimePeriod(models.Point, {}, getPointCommunityIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod(req,"stats_points_"+req.params.id+"_community", models.Point, {}, getPointCommunityIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_votes', auth.can('edit community'), function(req, res) {
-  countModelRowsByTimePeriod(models.AcActivity, {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_community", models.AcActivity, {
     type: {
       $in: [
         "activity.post.opposition.new","activity.post.endorsement.new",

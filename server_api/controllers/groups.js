@@ -2055,33 +2055,33 @@ router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
 
 // WORD CLOUD
 router.get('/:id/wordcloud', auth.can('edit group'), function(req, res) {
-  getFromAnalyticsApi("wordclouds", "group", req.params.id, function (error, content) {
+  getFromAnalyticsApi(req,"wordclouds", "group", req.params.id, function (error, content) {
     sendBackAnalyticsResultsOrError(req,res,error,content);
   });
 });
 
 // SIMILARITIES
 router.get('/:id/similarities_weights', auth.can('edit group'), function(req, res) {
-  getFromAnalyticsApi("similarities_weights", "group", req.params.id, function (error, content) {
+  getFromAnalyticsApi(req,"similarities_weights", "group", req.params.id, function (error, content) {
     sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
   });
 });
 
 // STATS
 router.get('/:id/stats_posts', auth.can('edit group'), function(req, res) {
-  countModelRowsByTimePeriod(models.Post, {}, getGroupIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod("stats_posts_"+req.params.id+"_group", models.Post, {}, getGroupIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_points', auth.can('edit group'), function(req, res) {
-  countModelRowsByTimePeriod(models.Point, {}, getPointGroupIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod("stats_points_"+req.params.id+"_group", models.Point, {}, getPointGroupIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_votes', auth.can('edit group'), function(req, res) {
-  countModelRowsByTimePeriod(models.AcActivity, {
+  countModelRowsByTimePeriod("stats_votes_"+req.params.id+"_group", models.AcActivity, {
     type: {
       $in: [
         "activity.post.opposition.new","activity.post.endorsement.new",
