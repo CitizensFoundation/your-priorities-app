@@ -1,5 +1,5 @@
 import { html, css, LitElement } from 'lit-element';
-import { BaseElement } from '../../analytics-app/src/baseElement';
+import { YpBaseElement } from './YpBaseElement';
 //import "core-js";
 
 //const ForceGraph3D = require('3d-force-graph');
@@ -7,7 +7,7 @@ import { BaseElement } from '../../analytics-app/src/baseElement';
 //import * as am4charts from "@amcharts/amcharts4/charts";
 //import * as am4plugins_wordCloud from "@amcharts/amcharts4/plugins/wordCloud";
 
-export class WordCloud extends BaseElement {
+export class YpWordCloud extends YpBaseElement {
   static get styles() {
     return css`
       :host {
@@ -67,3 +67,5 @@ export class WordCloud extends BaseElement {
     `;
   }
 }
+
+window.customElements.define('yp-word-cloud', YpWordCloud);

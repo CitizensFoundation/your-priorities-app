@@ -1,11 +1,14 @@
-import { html, css, LitElement } from 'lit-element';
+import { html, css } from 'lit-element';
+import { YpBaseElement } from './YpBaseElement';
 
 //const ForceGraph3D = require('3d-force-graph');
 import '@material/mwc-slider';
 
-export class PageTopics extends LitElement {
+export class PageTopics extends YpBaseElement {
   static get styles() {
-    return css`
+    return [
+      super.styles,
+      css`
       :host {
         display: grid;
         padding: 16px;
@@ -56,7 +59,7 @@ export class PageTopics extends LitElement {
       .cluster:hover {
         transform: scale(1.007);
       }
-    `;
+    `];
   }
 
   static get properties() {
@@ -209,3 +212,5 @@ export class PageTopics extends LitElement {
     `;
   }
 }
+
+window.customElements.define('page-topics', PageTopics);

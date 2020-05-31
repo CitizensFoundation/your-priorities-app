@@ -1,11 +1,16 @@
-import { html, css, LitElement } from 'lit-element';
+import { html, css } from 'lit-element';
+import { YpBaseElement } from './YpBaseElement';
+import { ShadowStyles } from './ShadowStyles';
 
 import '@material/mwc-slider';
 //const ForceGraph3D = require('3d-force-graph');
 
-export class PageConnections extends LitElement {
+export class PageConnections extends YpBaseElement {
   static get styles() {
-    return css`
+    return [
+      super.styles,
+      ShadowStyles,
+      css`
       :host {
         display: block;
         padding: 25px;
@@ -35,7 +40,7 @@ export class PageConnections extends LitElement {
       [hidden] {
         display: none !important;
       }
-    `;
+    `];
   }
 
   static get properties() {
@@ -510,3 +515,5 @@ export class PageConnections extends LitElement {
 `;
   }
 }
+
+window.customElements.define('page-connections', PageConnections);

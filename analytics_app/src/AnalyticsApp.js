@@ -1,19 +1,18 @@
-import { LitElement, html, css } from 'lit-element';
+import { html, css } from 'lit-element';
 import { classMap } from 'lit-html/directives/class-map.js';
-
-import '../../page-trends/page-trends.js';
-import '../../page-stats/page-stats.js';
-import '../../page-connections/page-connections.js'
-import '../../page-topics/page-topics.js'
+import { YpBaseElement } from './YpBaseElement';
+import { ShadowStyles } from './ShadowStyles';
 
 import '@material/mwc-button';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@material/mwc-icon';
-import { FlexLayout } from './flex-layout.js';
-import { ShadowStyles } from './shadow-styles.js';
 
-export class AnalyticsApp extends LitElement {
+import './PageConnections';
+import './PageTrends';
+import './PageTopics';
+
+export class AnalyticsApp extends YpBaseElement {
   static get properties() {
     return {
       collectionType: { type: String },
@@ -22,7 +21,10 @@ export class AnalyticsApp extends LitElement {
   }
 
   static get styles() {
-    return [css`
+    return [
+      super.styles,
+      ShadowStyles,
+      css`
       :host {
         min-height: 100vh;
         display: flex;
@@ -98,7 +100,7 @@ export class AnalyticsApp extends LitElement {
         font-size: 18px;
         color: #333;
       }
-    `, FlexLayout, ShadowStyles];
+    `];
   }
 
   constructor() {

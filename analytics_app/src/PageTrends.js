@@ -1,13 +1,18 @@
-
 import 'chart.js';
-import { html, css, LitElement } from 'lit-element';
-import { Data, DataLabels } from '../../analytics-app/src/data.js';
-import { ShadowStyles } from '../../analytics-app/src/shadow-styles.js';
-import '../../wordcloud/wordcloud.js';
+import { html, css } from 'lit-element';
+import './YpWordCloud.js';
+import { YpBaseElement } from './YpBaseElement';
+import { ShadowStyles } from './ShadowStyles';
+import '@material/mwc-select';
+import '@material/mwc-button';
+import '@material/mwc-list/mwc-list-item';
 
-export class PageTrends extends LitElement {
+export class PageTrends extends YpBaseElement {
   static get styles() {
-    return [ShadowStyles, css`
+    return [
+      super.styles,
+      ShadowStyles,
+      css`
       :host {
         display: block;
         padding: 25px;
@@ -124,22 +129,25 @@ export class PageTrends extends LitElement {
     return html`
     <div class="container shadow-animation shadow-elevation-3dp">
       <div class="layout vertical center-center">
-        <mwc-select outlined id="cornerSelect" label="${this.t('eventTypes')}">
-          <mwc-list-item value="posts">${this.t('posts')}</mwc-list-item>
+        <mwc-select outlined id="cornerSelect">
+          <mwc-list-item selected value="posts">${this.t('posts')}</mwc-list-item>
           <mwc-list-item value="points">${this.t('points')}</mwc-list-item>
           <mwc-list-item value="votes">${this.t('votes')}</mwc-list-item>
         </mwc-select>
         <canvas id="line-chart" width="800" height="450"></canvas>
         <div class="layout horizontal">
-          <mwc-button .lable="${this.t('day')}"></mwc-button>
-          <mwc-button .lable="${this.t('month')}"></mwc-button>
-          <mwc-button .lable="${this.t('year')}"></mwc-button>
+          <mwc-button .label="${this.t('day')}"></mwc-button>
+          <mwc-button .label="${this.t('month')}"></mwc-button>
+          <mwc-button .label="${this.t('year')}"></mwc-button>
         </div>
       </div>
     </div>
     <div class="container shadow-animation shadow-elevation-3dp">
-      <ac-wordcloud .dataUrl="${this.wordCloudURL}"></ac-wordcloud>
+      <yp-word-cloud .dataUrl="${this.wordCloudURL}"></yp-word-cloud>
     </div>
     `;
   }
 }
+
+window.customElements.define('page-trends', PageTrends);
+

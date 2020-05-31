@@ -1,12 +1,19 @@
 // Locale implementation inspired by https://github.com/PolymerElements/app-localize-behavior
 
-//import IntlMessageFormat from 'intl-messageformat/src/main.js';
-//window.IntlMessageFormat = IntlMessageFormat;
-
-import { LitElement } from 'lit-element';
+import { IntlMessageFormat } from "intl-messageformat";
+import { LitElement, css } from 'lit-element';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
+import { Layouts } from 'lit-flexbox-literals';
+import enLocaleData from './locales/en/enTranslations.js';
 
-export class BaseElement extends LitElement {
+window.IntlMessageFormat = IntlMessageFormat;
+window.localeResources = {};
+window.localeResources.en = enLocaleData;
+window.__localizationCache = {
+  messages: {},
+};
+
+export class YpBaseElement extends LitElement {
 
   static get properties() {
     return {
@@ -20,6 +27,16 @@ export class BaseElement extends LitElement {
 
   constructor() {
     super();
+    this.language = 'en';
+  }
+
+  static get styles() {
+    return [Layouts,
+      css`
+        [hidden] {
+          display: none !important;
+        }
+      `];
   }
 
   activity(type, object) {
@@ -31,7 +48,18 @@ export class BaseElement extends LitElement {
       if (parameterB && parameterC) {
         ga(type,parameterA,parameterB,parameterC);
       } else {
-        ga(type, parameterA);
+        ga(type, parameterA);    setPassiveTouchGestures(true);
+        window.__localizationCache = {
+          messages: {},
+        }
+        this.hideBudget = true;
+        this.disableAutoSave = true;
+        const language = this.getPathVariable('locale');
+        if (language) {
+          this.language = language;
+          localStorage.setItem("languageOverride", language);
+        }
+
       }
     } else {
       console.warn("Google analytics message not sent for type:"+type+" parameterA:"+parameterA+" parameterB:"+parameterB+" parameterC:"+parameterC);
@@ -49,19 +77,30 @@ export class BaseElement extends LitElement {
     }
   }
 
-  localize() {
-    var key = arguments[0];
-    if (!key || !window.localeResources || !(this.language && window.language))
+  localize(token) {
+    return this.t(token);
+  }
+
+
+  t() {
+    const key = arguments[0];
+    if (!key || !window.localeResources || !this.language)
       return key;
 
-    var translatedValue = window.localeResources[key];
+    let usingLocale = this.languagee;
+
+    if (!window.localeResources[usingLocale]) {
+      usingLocale = 'en';
+    }
+
+    const translatedValue = window.localeResources[usingLocale][key];
 
     if (!translatedValue) {
       return key;
     }
 
-    var messageKey = key + translatedValue;
-    var translatedMessage = window.__localizationCache.messages[messageKey];
+    const messageKey = key + translatedValue;
+    let translatedMessage = window.__localizationCache.messages[messageKey];
 
     if (!translatedMessage) {
       translatedMessage =
@@ -69,7 +108,7 @@ export class BaseElement extends LitElement {
       window.__localizationCache.messages[messageKey] = translatedMessage;
     }
 
-    var args = {};
+    const args = {};
     for (var i = 1; i < arguments.length; i += 2) {
       args[arguments[i]] = arguments[i + 1];
     }
