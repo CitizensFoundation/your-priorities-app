@@ -1172,6 +1172,69 @@ router.get('/:id', auth.can('view community'), function(req, res) {
   });
 });
 
+router.get('/:id/basic', auth.can('view community'), function(req, res) {
+  models.Community.findOne({
+    where: {
+      id: req.params.id
+    },
+    order: [
+      [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "CommunityLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+    ],
+    attributes: models.Community.defaultAttributesPublic,
+    include: [
+      {
+        model: models.Domain,
+        attributes: models.Domain.defaultAttributesPublic
+      },
+      {
+        model: models.Image,
+        as: 'CommunityLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Image,
+        as: 'CommunityHeaderImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Community,
+        required: false,
+        as: 'CommunityFolder',
+        attributes: ['id', 'name', 'description']
+      },
+      {
+        model: models.Video,
+        as: 'CommunityLogoVideos',
+        attributes:  ['id','formats','viewable','public_meta'],
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      }
+    ]
+  }).then(community=>{
+    if (community) {
+      res.send(community);
+    } else if (error && error!="Not found") {
+      sendCommunityOrError(res, null, 'view', req.user, error);
+    } else {
+      sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(error=>{
+    sendCommunityOrError(res, null, 'view', req.user, error);
+  })
+});
+
 router.get('/:id/translatedText', auth.can('view community'), function(req, res) {
   if (req.query.textType && req.query.textType.indexOf("community") > -1) {
     models.Community.findOne({
