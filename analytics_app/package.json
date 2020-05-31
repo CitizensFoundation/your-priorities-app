@@ -62,6 +62,7 @@
     "@amcharts/amcharts4": "^4.9.1",
     "@material/mwc-button": "^0.15.0",
     "@material/mwc-icon": "^0.15.0",
+    "@material/mwc-menu": "^0.15.0",
     "@material/mwc-select": "^0.15.0",
     "@material/mwc-slider": "^0.15.0",
     "@material/mwc-tab": "^0.15.0",

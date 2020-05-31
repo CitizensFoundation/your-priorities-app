@@ -4,7 +4,7 @@ import { IntlMessageFormat } from "intl-messageformat";
 import { LitElement, css } from 'lit-element';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
-import enLocaleData from './locales/en/enTranslations.js';
+import enLocaleData from '../../marketing_app/src/locales/en/enTranslations.js';
 
 window.IntlMessageFormat = IntlMessageFormat;
 window.localeResources = {};

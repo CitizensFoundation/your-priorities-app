@@ -123,9 +123,20 @@ export class PageTrends extends LitElement {
   render() {
     return html`
     <div class="container shadow-animation shadow-elevation-3dp">
-      <canvas id="line-chart" width="800" height="450"></canvas>
+      <div class="layout vertical center-center">
+        <mwc-select outlined id="cornerSelect" label="${this.t('eventTypes')}">
+          <mwc-list-item value="posts">${this.t('posts')}</mwc-list-item>
+          <mwc-list-item value="points">${this.t('points')}</mwc-list-item>
+          <mwc-list-item value="votes">${this.t('votes')}</mwc-list-item>
+        </mwc-select>
+        <canvas id="line-chart" width="800" height="450"></canvas>
+        <div class="layout horizontal">
+          <mwc-button .lable="${this.t('day')}"></mwc-button>
+          <mwc-button .lable="${this.t('month')}"></mwc-button>
+          <mwc-button .lable="${this.t('year')}"></mwc-button>
+        </div>
+      </div>
     </div>
-
     <div class="container shadow-animation shadow-elevation-3dp">
       <ac-wordcloud .dataUrl="${this.wordCloudURL}"></ac-wordcloud>
     </div>

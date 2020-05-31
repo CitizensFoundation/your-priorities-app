@@ -1,5 +1,5 @@
 import {  html, css } from 'lit-element';
-import { YpBaseElement } from './YpBaseElement.js';
+import { YpBaseElement } from './../../client_common/yp-base-element/YpBaseElement.js';
 import './YpMarketingList.js';
 import './YpMarketingCampaigns.js';
 import './YpEditMarketingCampaign.js';
@@ -8,8 +8,6 @@ import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@material/mwc-top-app-bar-fixed';
 import '@material/mwc-icon-button';
-
-
 
 export class YpMarketingApp extends YpBaseElement {
   static get properties() {
