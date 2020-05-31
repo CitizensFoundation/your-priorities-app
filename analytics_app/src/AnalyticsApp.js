@@ -17,6 +17,7 @@ export class AnalyticsApp extends YpBaseElement {
     return {
       collectionType: { type: String },
       collectionId: { type: String },
+      collection: { type: Object }
     };
   }
 
@@ -35,6 +36,7 @@ export class AnalyticsApp extends YpBaseElement {
         color: #1a2b42;
         max-width: 960px;
         margin: 0 auto;
+        --mdc-theme-primary: #1c96bd;
       }
 
       header {
@@ -111,13 +113,31 @@ export class AnalyticsApp extends YpBaseElement {
       pathname = pathname.substring(0,pathname.length-1);
     const split = pathname.split('/');
     this.collectionType = split[split.length-2];
+
+    if (this.collectionType==='community')
+      this.collectionType = 'communities';
+    if (this.collectionType==='domain')
+      this.collectionType = 'domains';
+    if (this.collectionType==='group')
+      this.collectionType = 'groups';
+
     this.collectionId = split[split.length-1];
-    console.error(this.collectionType);
-    console.error(this.collectionId);
   }
 
   connectedCallback() {
     super.connectedCallback();
+    this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
+
+    fetch(this.collectionURL, { credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(response => {
+      this.collection = response;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        this.fire('app-error', error);
+      }
+    );
   }
 
   render() {
@@ -125,7 +145,7 @@ export class AnalyticsApp extends YpBaseElement {
         <div class="mainImage layout horizontal">
           <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
           <div class="flex"></div>
-          <div class="analyticsText">Community Wellbeing</div>
+          <div class="analyticsText">${this.collection ? this.collection.name : ''}</div>
         </div>
       <header>
         <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
@@ -140,7 +160,6 @@ export class AnalyticsApp extends YpBaseElement {
       </main>
 
       <p class="app-footer">
-
       </p>
     `;
   }

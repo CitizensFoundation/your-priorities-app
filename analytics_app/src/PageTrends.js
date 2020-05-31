@@ -40,6 +40,12 @@ export class PageTrends extends YpBaseElement {
         padding: 8px;
         width: 100%;
       }
+
+      #mainSelect {
+        text-align: right;
+        margin-right: 22px;
+        margin-top: 8px;
+      }
     `];
   }
 
@@ -51,41 +57,61 @@ export class PageTrends extends YpBaseElement {
       statsPoints: { type: Object },
       statsVotes: { type: Object},
       wordCloudURL: { type: String },
-      collection: { type: Object }
+      collection: { type: Object },
+      statsTimePeriod: { type: String },
+      statsType: { type: String }
     };
   }
 
-  getStatsData(url, data) {
+  updateStatsChart () {
+    if (this.statsResponse) {
+      const lineChartElement = this.shadowRoot.getElementById("line-chart");
+      const chartLabel = this.t('by'+this.statsTimePeriod);
+      let data;
+      if (this.statsTimePeriod==='day')
+        data = this.statsResponse.finalDays;
+      else if (this.statsTimePeriod==='month')
+        data = this.statsResponse.finalMonths;
+      else if (this.statsTimePeriod==='year')
+        data = this.statsResponse.finalYears;
+
+      if (this.chart) {
+        this.chart.destroy();
+      }
+
+      this.chart = new Chart(lineChartElement, {
+        type: 'bar',
+        data:  { datasets: [
+          {
+            label: chartLabel,
+            backgroundColor: "#1c96bd",
+            fill: false,
+            data: data
+          }
+        ] },
+        options: {
+          scales: {
+              xAxes: [{
+                  type: 'time',
+                  time: {
+                    unit: this.statsTimePeriod
+                }
+              }]
+          }
+      }
+      });
+    } else {
+      console.error("Trying to update chart with a response");
+    }
+
+  }
+
+  getStatsData(url) {
     fetch(url, { credentials: 'same-origin' })
     .then(res => res.json())
     .then(response => {
-      const lineChartElement = this.shadowRoot.getElementById("line-chart");
-      //console.log(JSON.stringify(response));
-      if (!this.haveSetData) {
-        this.chart = new Chart(lineChartElement, {
-          type: 'bar',
-          data:  { datasets: [
-            {
-              label: "By day",
-              backgroundColor: "#F00",
-              fill: false,
-              data: response.finalDays
-            }
-          ] },
-          options: {
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    time: {
-                      unit: 'day'
-                  }
-
-                }]
-            }
-        }
-        });
-        this.haveSetdata = true;
-      }
+      this.statsResponse = response;
+      this.updateStatsChart();
     })
     .catch(error => {
         console.error('Error:', error);
@@ -98,47 +124,62 @@ export class PageTrends extends YpBaseElement {
     super();
   }
 
+  getStats() {
+    this.collectionStatsUrl = `/api/${this.collectionType}/${this.collectionId}/${this.statsType}`;
+    this.getStatsData(this.collectionStatsUrl);
+  }
+
   connectedCallback() {
     super.connectedCallback();
-    this.collectionStatsPostsURL = `/api/${this.collectionType}/${this.collectionId}/stats_posts`;
-    this.collectionStatsPointsURL = `/api/${this.collectionType}/${this.collectionId}/stats_points`;
-    this.collectionStatsVotesURL = `/api/${this.collectionType}/${this.collectionId}/stats_votes`;
- //   this.getStatsData(this.collectionStatsPostsURL, this.statsPosts);
-  //  this.getStatsData(this.collectionStatsPointsURL, this.statsPoints);
-    this.getStatsData(this.collectionStatsVotesURL, this.statsVotes);
     this.wordCloudURL ="/api/"+this.collectionType+"/"+this.collectionId+"/wordcloud";
-    this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
 
-    fetch(this.collectionURL, { credentials: 'same-origin' })
-    .then(res => res.json())
-    .then(response => {
-      this.collection = response;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        this.fire('app-error', error);
-      }
-    );
+    this.statsType = "stats_posts";
+    this.statsTimePeriod = "day";
+    this.getStats();
   }
 
   firstUpdated() {
     super.firstUpdated();
   }
 
+  selectStatsType (event) {
+    if (event.target && event.target.value) {
+      this.statsType = event.target.value;
+      this.getStats();
+    }
+  }
+
+  setDay() {
+    this.statsTimePeriod = "day";
+    this.updateStatsChart();
+  }
+
+  setMonth() {
+    this.statsTimePeriod = "month";
+    this.updateStatsChart();
+  }
+
+  setYear() {
+    this.statsTimePeriod = "year";
+    this.updateStatsChart();
+  }
+
   render() {
     return html`
     <div class="container shadow-animation shadow-elevation-3dp">
-      <div class="layout vertical center-center">
-        <mwc-select outlined id="cornerSelect">
-          <mwc-list-item selected value="posts">${this.t('posts')}</mwc-list-item>
-          <mwc-list-item value="points">${this.t('points')}</mwc-list-item>
-          <mwc-list-item value="votes">${this.t('votes')}</mwc-list-item>
+      <div class="layout vertical">
+        <div class="layout vertical endAligned">
+        <mwc-select outlined id="mainSelect" class="layout selfEnd" @selected="${this.selectStatsType}">
+          <mwc-list-item selected value="stats_posts">${this.t('posts')}</mwc-list-item>
+          <mwc-list-item value="stats_points">${this.t('points')}</mwc-list-item>
+          <mwc-list-item value="stats_votes">${this.t('votes')}</mwc-list-item>
         </mwc-select>
+        </div>
         <canvas id="line-chart" width="800" height="450"></canvas>
-        <div class="layout horizontal">
-          <mwc-button .label="${this.t('day')}"></mwc-button>
-          <mwc-button .label="${this.t('month')}"></mwc-button>
-          <mwc-button .label="${this.t('year')}"></mwc-button>
+        <div class="layout horizontal center-center">
+          <mwc-button focused .label="${this.t('day')}" @click="${this.setDay}"></mwc-button>
+          <mwc-button .label="${this.t('month')}" @click="${this.setMonth}"></mwc-button>
+          <mwc-button .label="${this.t('year')}" @click="${this.setYear}"></mwc-button>
         </div>
       </div>
     </div>
