@@ -372,7 +372,7 @@
           <yp-post-name-with-author top-left-radius class="mobileName" post="[[post]]" isLoggedIn="[[isLoggedIn]]"></yp-post-name-with-author>
           <div class="layout horizontal wrap mediaAndInfoContainer">
             <div class="layout vertical center-center self-start coverContainer">
-              <yp-post-cover-media top-left-radius show-video show-audio has-transcript$="[[post.public_data.transcript.text]]" audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
+              <yp-post-cover-media top-left-radius show-video show-audio has-transcript$="[[post.public_data.transcript.text]]" alt-tag="[[post.name]]" audio-cover$="[[isAudioCover]]" header-mode$="[[headerMode]]" post="[[post]]"></yp-post-cover-media>
               <div class="transcriptContainer">
                 <template is="dom-if" if="[[checkingTranscript]]">
                   <div class="layout vertical center-center checkTranscript">

@@ -729,7 +729,6 @@
       _groupResponse: function (event, detail) {
         this.set('group', detail.response.group);
         this.set('group.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
-
         this.refresh();
 
         if (this.group.configuration.canAddNewPosts!=undefined) {
@@ -753,6 +752,8 @@
           this.set('tabName', 'open');
           this.$$("#groupCard")._openEdit();
         }
+
+        window.appGlobals.postLoadGroupProcessing(this.group);
       },
 
       setupTopHeaderImage: function (image) {

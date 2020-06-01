@@ -20,6 +20,14 @@ const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
 
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getCommunityIncludes;
+const getPointCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointCommunityIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
+
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
     if (errorStatus == 404) {
@@ -742,45 +750,82 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       });
     },
     function(callback) {
-      models.Invite.create({
-        token: token,
-        expires_at: Date.now() + (3600000*24*30*365*1000),
-        type: models.Invite.INVITE_TO_COMMUNITY,
-        community_id: req.params.communityId,
-        user_id: user ? user.id : null,
-        from_user_id: req.user.id,
-        metadata:  { toEmail: req.params.userEmail}
-      }).then(function (inviteIn) {
-        if (inviteIn) {
-          invite = inviteIn;
-          callback();
-        } else {
-          callback('Invite not found')
-        }
-      }).catch(function (error) {
-        callback(error);
-      });
+      if (!req.query.addToCommunityDirectly) {
+        models.Invite.create({
+          token: token,
+          expires_at: Date.now() + (3600000*24*30*365*1000),
+          type: models.Invite.INVITE_TO_COMMUNITY,
+          community_id: req.params.communityId,
+          user_id: user ? user.id : null,
+          from_user_id: req.user.id,
+          metadata:  { toEmail: req.params.userEmail}
+        }).then(function (inviteIn) {
+          if (inviteIn) {
+            invite = inviteIn;
+            callback();
+          } else {
+            callback('Invite not found')
+          }
+        }).catch(function (error) {
+          callback(error);
+        });
+      } else {
+        callback();
+      }
     },
     function(callback) {
-      models.AcActivity.inviteCreated({
-        email: req.params.userEmail,
-        user_id: user ? user.id : null,
-        sender_user_id: req.user.id,
-        community_id: req.params.communityId,
-        sender_name: req.user.name,
-        domain_id: req.ypDomain.id,
-        invite_id: invite.id,
-        token: token}, function (error) {
-        callback(error);
-      });
+      if (!req.query.addToCommunityDirectly) {
+        models.AcActivity.inviteCreated({
+          email: req.params.userEmail,
+          user_id: user ? user.id : null,
+          sender_user_id: req.user.id,
+          community_id: req.params.communityId,
+          sender_name: req.user.name,
+          domain_id: req.ypDomain.id,
+          invite_id: invite.id,
+          token: token}, function (error) {
+          callback(error);
+        });
+      } else {
+        callback();
+      }
+    },
+    function(callback) {
+     if (user && req.query.addToCommunityDirectly) {
+       models.Community.findOne({
+         where: {
+           id: req.params.communityId
+         },
+         attributes: ['id']
+       }).then(community=>{
+         if (community) {
+           community.addCommunityUsers(user).then(()=>{
+             callback();
+           }).catch(error=>{
+             callback(error);
+           })
+         } else {
+           callback("Can't find community");
+         }
+       }).catch(error=>{
+         callback(error);
+       });
+     } else {
+       callback();
+     }
     }
   ], function(error) {
     if (error) {
       log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
-      res.sendStatus(200);
+      if (!user && req.query.addToCommunityDirectly) {
+        log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(404);
+      } else {
+        log.info('Send Invite Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(200);
+      }
     }
   });
 });
@@ -1125,6 +1170,69 @@ router.get('/:id', auth.can('view community'), function(req, res) {
       sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
   });
+});
+
+router.get('/:id/basic', auth.can('view community'), function(req, res) {
+  models.Community.findOne({
+    where: {
+      id: req.params.id
+    },
+    order: [
+      [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "CommunityLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+    ],
+    attributes: models.Community.defaultAttributesPublic,
+    include: [
+      {
+        model: models.Domain,
+        attributes: models.Domain.defaultAttributesPublic
+      },
+      {
+        model: models.Image,
+        as: 'CommunityLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Image,
+        as: 'CommunityHeaderImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Community,
+        required: false,
+        as: 'CommunityFolder',
+        attributes: ['id', 'name', 'description']
+      },
+      {
+        model: models.Video,
+        as: 'CommunityLogoVideos',
+        attributes:  ['id','formats','viewable','public_meta'],
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      }
+    ]
+  }).then(community=>{
+    if (community) {
+      res.send(community);
+    } else if (error && error!="Not found") {
+      sendCommunityOrError(res, null, 'view', req.user, error);
+    } else {
+      sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(error=>{
+    sendCommunityOrError(res, null, 'view', req.user, error);
+  })
 });
 
 router.get('/:id/translatedText', auth.can('view community'), function(req, res) {
@@ -1603,6 +1711,47 @@ router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), f
         res.sendStatus(500);
     }
   })
+});
+
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit community'), function(req, res) {
+  triggerSimilaritiesTraining(req,"community", req.params.id, ()=>{});
+  getFromAnalyticsApi(req,"wordclouds", "community", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit community'), function(req, res) {
+  getFromAnalyticsApi(req,"similarities_weights", "community", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_posts_"+req.params.id+"_community", models.Post, {}, getCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_points_"+req.params.id+"_community", models.Point, {}, getPointCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_community", models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
+  });
 });
 
 module.exports = router;

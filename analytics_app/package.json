@@ -1,0 +1,85 @@
+{
+  "scripts": {
+    "lint:eslint": "eslint --ext .js,.html . --ignore-path .gitignore",
+    "format:eslint": "eslint --ext .js,.html . --fix --ignore-path .gitignore",
+    "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
+    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "format": "npm run format:eslint && npm run format:prettier",
+    "test": "karma start --coverage",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "build": "rimraf dist && rollup -c rollup.config.js",
+    "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --open --compatibility none",
+    "start": "es-dev-server --app-index index.html --node-resolve --open --watch"
+  },
+  "devDependencies": {
+    "@open-wc/building-rollup": "^1.0.0",
+    "@open-wc/eslint-config": "^2.0.0",
+    "@open-wc/testing": "^2.0.0",
+    "@open-wc/testing-karma": "^3.0.0",
+    "@rollup/plugin-json": "^4.0.3",
+    "deepmerge": "^3.2.0",
+    "es-dev-server": "^1.5.0",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "husky": "^1.0.0",
+    "lint-staged": "^8.0.0",
+    "prettier": "^2.0.4",
+    "koa-proxies": "^0.11.0",
+    "rimraf": "^2.6.3",
+    "rollup": "^2.3.4",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@open-wc/eslint-config",
+      "eslint-config-prettier"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "name": "analytics-app",
+  "version": "0.0.0",
+  "description": "Webcomponent analytics-app",
+  "author": "analytics-app",
+  "license": "MIT",
+  "dependencies": {
+    "@amcharts/amcharts4": "^4.9.1",
+    "@material/mwc-button": "^0.15.0",
+    "@material/mwc-icon": "^0.15.0",
+    "@material/mwc-linear-progress": "^0.15.0",
+    "@material/mwc-list": "^0.15.0",
+    "@material/mwc-menu": "^0.15.0",
+    "@material/mwc-select": "^0.15.0",
+    "@material/mwc-slider": "^0.15.0",
+    "@material/mwc-tab": "^0.15.0",
+    "@material/mwc-tab-bar": "^0.15.0",
+    "@material/mwc-textarea": "^0.15.0",
+    "@open-wc/rollup-plugin-html": "^1.1.0",
+    "@types/chart.js": "^2.9.21",
+    "@types/core-js": "^2.5.3",
+    "@webcomponents/webcomponentsjs": "^2.4.1",
+    "chart.js": "^2.9.3",
+    "core-js": "^3.6.4",
+    "intl-messageformat": "^8.3.18",
+    "lit-element": "^2.0.1",
+    "lit-flexbox-literals": "0.0.7",
+    "lit-html": "^1.0.0",
+    "pwa-helpers": "^0.9.1"
+  }
+}

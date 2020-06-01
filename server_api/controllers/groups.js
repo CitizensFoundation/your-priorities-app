@@ -21,6 +21,14 @@ const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 const request = require('request');
 
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getGroupIncludes;
+const getPointGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointGroupIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
+
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -417,46 +425,83 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       });
     },
     function(callback) {
-      models.Invite.create({
-        token: token,
-        expires_at: Date.now() + (3600000*24*30*365*1000),
-        type: models.Invite.INVITE_TO_GROUP,
-        group_id: req.params.groupId,
-        domain_id: req.ypDomain.id,
-        user_id: user ? user.id : null,
-        from_user_id: req.user.id,
-        metadata:  { toEmail: req.params.userEmail}
-      }).then(function (inviteIn) {
-        if (inviteIn) {
-          invite = inviteIn;
-          callback();
-        } else {
-          callback('Invite not found')
-        }
-      }).catch(function (error) {
-        callback(error);
-      });
+      if (!req.query.addToGroupDirectly) {
+        models.Invite.create({
+          token: token,
+          expires_at: Date.now() + (3600000*24*30*365*1000),
+          type: models.Invite.INVITE_TO_GROUP,
+          group_id: req.params.groupId,
+          domain_id: req.ypDomain.id,
+          user_id: user ? user.id : null,
+          from_user_id: req.user.id,
+          metadata:  { toEmail: req.params.userEmail}
+        }).then(function (inviteIn) {
+          if (inviteIn) {
+            invite = inviteIn;
+            callback();
+          } else {
+            callback('Invite not found')
+          }
+        }).catch(function (error) {
+          callback(error);
+        });
+      } else {
+        callback()
+      }
     },
     function(callback) {
-      models.AcActivity.inviteCreated({
-        email: req.params.userEmail,
-        user_id: user ? user.id : null,
-        sender_user_id: req.user.id,
-        sender_name: req.user.name,
-        group_id: req.params.groupId,
-        domain_id: req.ypDomain.id,
-        invite_id: invite.id,
-        token: token}, function (error) {
-        callback(error);
-      });
+      if (!req.query.addToGroupDirectly) {
+        models.AcActivity.inviteCreated({
+          email: req.params.userEmail,
+          user_id: user ? user.id : null,
+          sender_user_id: req.user.id,
+          sender_name: req.user.name,
+          group_id: req.params.groupId,
+          domain_id: req.ypDomain.id,
+          invite_id: invite.id,
+          token: token}, function (error) {
+          callback(error);
+        });
+      } else {
+        callback()
+      }
+    },
+    function(callback) {
+      if (user && req.query.addToGroupDirectly) {
+        models.Group.findOne({
+          where: {
+            id: req.params.groupId
+          },
+          attributes: ['id']
+        }).then(group=>{
+          if (group) {
+            group.addGroupUsers(user).then(()=>{
+              callback();
+            }).catch(error=>{
+              callback(error);
+            })
+          } else {
+            callback("Can't find group");
+          }
+        }).catch(error=>{
+          callback(error);
+        });
+      } else {
+        callback();
+      }
     }
   ], function(error) {
     if (error) {
       log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user) });
-      res.sendStatus(200);
+      if (!user && req.query.addToGroupDirectly) {
+        log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(404);
+      } else {
+        log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user) });
+        res.sendStatus(200);
+      }
     }
   });
 });
@@ -1688,37 +1733,145 @@ router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res)
   });
 });
 
-router.post('/:id/triggerTrackingGoal', auth.can('view group'), (req, res) => {
-  models.Group.findOne({
-    where: {
-      id: req.params.id
-    },
-    attributes: ['id','configuration']
-  }).then(function(group) {
-    if (group && group.configuration && group.configuration.externalGoalTriggerUrl) {
-      log.info('Group triggerTrackingGoal starting', { context: 'triggerTrackingGoal', params: req.body, group: group});
-      const options = {
-        url: group.configuration.externalGoalTriggerUrl,
-        qs: req.body
-      };
-      request.get(options, (response, message) => {
-        if ((response && response.errno) || (message && message.statusCode!==200)) {
-          log.info('Group triggerTrackingGoal error', { context: 'triggerTrackingGoal', response: response, message: message, params: req.body, group: group});
-          res.sendStatus(500);
-        } else {
-          log.info('Group triggerTrackingGoal completed', { context: 'triggerTrackingGoal', params: req.body, group: group});
-          res.sendStatus(200);
-        }
-      });
-      //
+// CAMPAIGNS
+
+router.post('/:id/campaignCreateAndStart', auth.can('edit group'), (req, res) => {
+  models.AcCampaign.createAndSendCampaign(req.body, (error) => {
+    if (error) {
+      log.error('Group createCampaign error', { context: 'campaignCreateAndStart',params: req.body, error});
+      res.sendStatus(500);
     } else {
-      log.error("Error getting group for triggerTrackingGoal");
-      res.sendStatus(404);
+      log.info('Group createCampaign completed', { context: 'campaignCreateAndStart' });
+      res.sendStatus(200);
     }
-  }).catch(function(error) {
-    log.error("Error getting group for triggerTrackingGoal", {error});
-    res.sendStatus(404);
   });
+});
+
+router.get('/:groupId/:jobId/getCampaignSendStatus', auth.can('edit group'), function(req, res) {
+  models.AcCampaign.getSendStatus(req.params.jobId, (error, results) => {
+    if (error) {
+      log.error('Group createCampaign error', { context: 'getCampaignSendStatus', error});
+      res.sendStatus(500);
+    } else {
+      log.info('Group getCampaignSendStatus completed', { context: 'getCampaignSendStatus'});
+      res.sendresults;
+    }
+  });
+});
+
+router.get('/:id/getCampaigns', auth.can('edit group'), (req, res) => {
+  models.AcCampaign.find({
+    where: {
+      group_id: req.params.id
+    }
+  }).then(campaigns=>{
+    res.send(campaigns);
+  }).catch(error=>{
+    log.info('Group createCampaign error', { context: 'createCampaign',params: req.body, error});
+    res.sendStatus(500);
+  });
+});
+
+// LISTS
+
+router.get('/:id/getList', auth.can('edit group'), (req, res) => {
+  models.AcList.getList(req.params.id, (error, results) => {
+    if (error) {
+      log.error('Group getList error', { context: 'getList', error});
+      res.sendStatus(500);
+    } else {
+      log.info('Group getList completed', { context: 'getList'});
+      res.send(results);
+    }
+  });
+});
+
+router.put('/:id/:listId/addListUsers', auth.can('edit group'), (req, res) => {
+  models.AcList.addListUsers(req.params.listId, req.body,(error, results) => {
+    if (error) {
+      log.error('Group addListUsers error', { context: 'addListUsers', error});
+      res.sendStatus(500);
+    } else {
+      log.info('Group addListUsers completed', { context: 'addListUsers'});
+      res.send(results);
+    }
+  });
+});
+
+
+router.get('/:id/:listId/getListUsers', auth.can('edit group'), (req, res) => {
+  models.AcListUser.find({
+    where: {
+      ac_list_id: req.params.listId
+    },
+  }).then(listUsers=>{
+    res.send(listUsers);
+  }).catch(error=>{
+    log.error('Group getListUsers error', { context: 'createCampaign', error});
+    res.sendStatus(500);
+  });
+});
+
+router.post('/:id/marketingTrackingOpen', auth.can('view group'), (req, res) => {
+  if (req.body && req.body.originalQueryParameters && req.body.originalQueryParameters.yu) {
+    models.AcCampaign.updateCampaignAndUser(req.body.originalQueryParameters,'openCount', (error) => {
+      if (error) {
+        log.error('Group marketingTracking error', { context: 'marketingTracking',params: req.body, error});
+        res.sendStatus(500);
+      } else {
+        log.info('Group marketingTracking marketing completed', { context: 'marketingTracking', params: req.body});
+        res.sendStatus(200);
+      }
+    });
+  } else {
+    log.warn("Group marketingTracking no tracking parameters");
+    res.sendStatus(200);
+  }
+});
+
+router.post('/:id/triggerTrackingGoal', auth.can('view group'), (req, res) => {
+  if (req.body && req.body.originalQueryParameters && req.body.originalQueryParameters.yu) {
+    models.AcCampaign.updateCampaignAndUser(req.body.originalQueryParameters,'completeCount', (error) => {
+      if (error) {
+        log.error('Group triggerTrackingGoal error', { context: 'marketingTracking',params: req.body, error});
+        res.sendStatus(500);
+      } else {
+        log.info('Group triggerTrackingGoal marketing completed', { context: 'triggerTrackingGoal', params: req.body});
+        res.sendStatus(200);
+      }
+    });
+  } else {
+    models.Group.findOne({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','configuration']
+    }).then(function(group) {
+      if (group && group.configuration && group.configuration.externalGoalTriggerUrl) {
+        log.info('Group triggerTrackingGoal starting', { context: 'triggerTrackingGoal', params: req.body, group: group});
+        const options = {
+          url: group.configuration.externalGoalTriggerUrl,
+          qs: req.body
+        };
+        request.get(options, (response, message) => {
+          if ((response && response.errno) || (message && message.statusCode!==200)) {
+            log.info('Group triggerTrackingGoal error', { context: 'triggerTrackingGoal', response: response, message: message, params: req.body, group: group});
+            res.sendStatus(500);
+          } else {
+            log.info('Group triggerTrackingGoal completed', { context: 'triggerTrackingGoal', params: req.body, group: group});
+            res.sendStatus(200);
+          }
+        });
+        //
+      } else {
+        log.error("Error getting group for triggerTrackingGoal");
+        res.sendStatus(404);
+      }
+    }).catch(function(error) {
+      log.error("Error getting group for triggerTrackingGoal", {error});
+      res.sendStatus(404);
+    });
+  }
 });
 
 router.put('/:id/:pointId/adminComment', auth.can('edit group'), function(req, res) {
@@ -1900,5 +2053,44 @@ router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
   });
 });
 
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit group'), function(req, res) {
+  getFromAnalyticsApi(req,"wordclouds", "group", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit group'), function(req, res) {
+  getFromAnalyticsApi(req,"similarities_weights", "group", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_posts_"+req.params.id+"_group", models.Post, {}, getGroupIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_points_"+req.params.id+"_group", models.Point, {}, getPointGroupIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_group", models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getGroupIncludes(req.params.id),  (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
+  });
+});
 
 module.exports = router;

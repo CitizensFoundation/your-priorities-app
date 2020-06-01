@@ -237,6 +237,13 @@
           }
           this.fire("login");
           this._checkLoginForParameters();
+
+          // Redirect to another local service after login, for example the analytics app
+          this.async(function () {
+            if (window.appGlobals.originalQueryParameters && window.appGlobals.originalQueryParameters['raLogin']) {
+              window.location = window.appGlobals.originalQueryParameters['raLogin'];
+            }
+          });
         },
 
         _checkLoginForParameters: function () {

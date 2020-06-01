@@ -202,13 +202,13 @@
                     class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToPost"></iron-image>
 
         <template is="dom-if" if="[[activeDefaultImageUrl]]" restamp>
-          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="[[activeDefaultImageUrl]]" on-tap="_goToPost"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" sizing="cover" alt$="[[altTag]]" class="main-image pointer" src="[[activeDefaultImageUrl]]" on-tap="_goToPost"></iron-image>
         </template>
       </template>
 
       <template is="dom-if" if="[[categoryActive]]">
         <div id="categoryImageId" class="layout horizontal center-center">
-          <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="_goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="_goToPost" alt$="[[altTag]]" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
         </div>
       </template>
 
@@ -217,7 +217,7 @@
       </template>
 
       <template is="dom-if" if="[[imageActive]]">
-        <iron-image header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="[[sizingMode]]" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" on-tap="_goToPost" alt$="[[altTag]]" sizing="[[sizingMode]]" class="main-image pointer" src="[[postImagePath]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[videoActive]]" restamp>
@@ -351,6 +351,11 @@
           type: Boolean,
           value: false,
           computed: '_isMapActive(post)'
+        },
+
+        altTag: {
+          type: String,
+          value: null
         },
 
         streetViewActive: {

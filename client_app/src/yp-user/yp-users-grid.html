@@ -158,7 +158,29 @@
       }
 
       .inviteButton {
-        margin-top: 5px;
+        margin-top: 24px;
+        height: 48px;
+        margin-right: 8px;
+      }
+
+      @media (max-width: 600px) {
+        .inviteButton {
+          margin-top: 4px;
+          margin-bottom: 12px;
+          height: 48px;
+          margin-right: 8px;
+        }
+      }
+
+      .typeOfInvite {
+        margin-left: 4px;
+        margin-top: 6px;
+        margin-bottom: 6px;
+      }
+
+      .emailClass {
+        margin-left: 6px;
+        margin-right: 6px;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -201,13 +223,17 @@
         </div>
         <div hidden$="[[domainId]]">
           <paper-material hidden$="[[adminUsers]]" class="layout horizontal wrap inputBox">
-            <paper-input label="[[t('email')]]" value="{{inviteUserEmail}}"></paper-input>
-            <paper-button class="inviteButton" on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
+            <paper-input label="[[t('email')]]" class="emailClass" value="{{inviteUserEmail}}"></paper-input>
+            <paper-radio-group id="typeOfInvite" name="typeOfInvite" class="typeOfInvite layout vertical" selected="{{inviteType}}">
+              <paper-radio-button name="sendInviteByEmail">[[t('sendInviteByEmail')]]</paper-radio-button>
+              <paper-radio-button name="addUserDirectly">[[t('addUserDirectlyIfExist')]]</paper-radio-button>
+            </paper-radio-group>
+            <paper-button class="inviteButton" raised on-tap="_inviteUser">[[t('users.inviteUser')]]</paper-button>
           </paper-material>
         </div>
 
         <paper-material hidden$="[[!adminUsers]]" class="layout horizontal wrap inputBox">
-          <paper-input label="[[t('email')]]" value="{{addAdminEmail}}"></paper-input>
+          <paper-input label="[[t('email')]]" class="emailClass" value="{{addAdminEmail}}"></paper-input>
           <paper-button class="inviteButton" on-tap="_addAdmin">[[t('users.addAdmin')]]</paper-button>
         </paper-material>
       </div>
@@ -431,6 +457,11 @@
         spinnerActive: {
           type: Boolean,
           computed: '_spinnerActive(totalUserCount, forceSpinner)'
+        },
+
+        inviteType: {
+          type: String,
+          value: 'sendInviteByEmail'
         }
       },
 
@@ -702,10 +733,10 @@
       _inviteUser: function (event) {
         this.$.inviteUserAjax.body = {};
         if (this.modelType==="groups" && this.groupId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
+          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user"+(this.inviteType==='addUserDirectly' ? '?addToGroupDirectly=1' : '');
           this.$.inviteUserAjax.generateRequest();
         } else if (this.modelType==="communities" && this.communityId) {
-          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
+          this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user"+(this.inviteType==='addUserDirectly' ? '?addToCommunityDirectly=1' : '');
           this.$.inviteUserAjax.generateRequest();
         } else {
           console.warn("Can't find model type or ids");

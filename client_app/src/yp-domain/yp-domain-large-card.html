@@ -225,7 +225,7 @@
           <video id="videoPlayer" data-id$="[[domainVideoId]]" controls preload="meta" class="image" src="[[domainVideoURL]]" playsinline poster="[[domainVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!domainVideoURL]]">
-          <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
+          <iron-image class="image" hidden$="[[hideImage]]" alt$="[[domain.name]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
         </template>
       </paper-material>
       <paper-material id="card" elevation="4" animated class="large-card textBox">
@@ -267,6 +267,7 @@
 
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
               <paper-item id="addCommunityFolderMenuItem" hidden$="[[!hasDomainAccess]]">[[t('newCommunityFolder')]]</paper-item>
+              <paper-item id="openAnalyticsApp" hidden$="[[!hasDomainAccess]]">[[t('openAnalyticsApp')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -431,6 +432,8 @@
           this.fire('yp-new-community');
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
+        else if (detail.item.id==="openAnalyticsApp")
+          window.location = "/analytics/domain/"+this.domain.id;
         this.$$("paper-listbox").select(null);
       },
 

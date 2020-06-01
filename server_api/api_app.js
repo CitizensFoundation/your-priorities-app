@@ -72,6 +72,11 @@ const Airbrake = require('@airbrake/node');
 const airbrakeExpress = require('@airbrake/node/dist/instrumentation/express');
 const airbrakePG = require('@airbrake/node/dist/instrumentation/pg');
 
+const ieVersion = (uaString) => {
+  const match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
+  if (match) return parseInt(match[2])
+};
+
 if (process.env.REDISTOGO_URL) {
   process.env.REDIS_URL = process.env.REDISTOGO_URL;
 }
@@ -93,7 +98,7 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
 }
 
 if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
-  app.use( function checkProtocol (req, res, next) {
+  app.use(function checkProtocol (req, res, next) {
     if (!/https/.test(req.protocol)) {
       res.redirect("https://" + req.headers.host + req.url);
     } else {
@@ -101,6 +106,18 @@ if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
     }
   });
 }
+
+app.use(function checkShortenedRedirects(req, res, next) {
+  if (req.path.startsWith('/s/')) {
+    res.redirect(req.protocol+"://" + req.headers.host + req.url.replace("/s/","/survey/"));
+  } else if (req.path.startsWith('/g/')) {
+    res.redirect(req.protocol+"://" + req.headers.host + req.url.replace("/g/","/group/"));
+  } else if (req.path.startsWith('/c/')) {
+    res.redirect(req.protocol+"://" + req.headers.host + req.url.replace("/c/","/community/"));
+  } else {
+    return next();
+  }
+});
 
 app.set('port', process.env.PORT || 4242);
 app.use(compression());
@@ -137,11 +154,26 @@ app.get('/*', function (req, res, next) {
   next();
 });
 
-if (!FORCE_PRODUCTION && app.get('env') === 'development') {
-  app.use(express.static(path.join(__dirname, '../client_app'), { index: false }));
-} else {
-  app.use(express.static(path.join(__dirname, '../client_app/build/bundled'), { index: false, dotfiles:'allow' }));
-}
+
+app.use(function setupStaticPath(req, res, next) {
+  let staticPath = path.join(__dirname, '../client_app/build/bundled');
+  let staticIndex = false;
+
+  if (req.path.startsWith('/marketing/') || (req.headers.referrer && req.headers.referrer.indexOf('/marketing/')>-1)) {
+    staticPath = path.join(__dirname, '../marketing_app/dist');
+    staticIndex = "index.html";
+  } else if (req.path.startsWith('/analytics/') || (req.headers.referrer && req.headers.referrer.indexOf('/analytics/'))>-1) {
+    staticPath = path.join(__dirname, '../analytics_app/dist');
+    staticIndex = "index.html";
+  } else {
+    if (!FORCE_PRODUCTION && app.get('env') === 'development') {
+      staticPath = path.join(__dirname, '../client_app');
+    }
+  }
+
+  express.static(staticPath, { index: staticIndex, dotfiles:'allow' })(req,res,next);
+});
+
 
 app.use(session(sessionConfig));
 
@@ -373,6 +405,11 @@ app.use(function cacheControlHeaders(req, res, next) {
   next();
 });
 
+app.use('/marketing', express.static(path.join(__dirname, '../marketing_app/dist')));
+app.use('/analytics/', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/domain/*', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/community/*', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/group/*', express.static(path.join(__dirname, '../analytics_app/dist')));
 app.use('/domain', index);
 app.use('/community', index);
 app.use('/group', index);

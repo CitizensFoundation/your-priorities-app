@@ -198,7 +198,7 @@
 
     <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
       <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
-      <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
+      <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
       <div id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
         <yp-magic-text text-type="groupName" content-language="[[group.language]]"
                        disable-translation="[[group.configuration.disableNameAutoTranslation]]"
