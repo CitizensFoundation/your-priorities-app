@@ -158,18 +158,24 @@ app.get('/*', function (req, res, next) {
 app.use(function setupStaticPath(req, res, next) {
   let staticPath = path.join(__dirname, '../client_app/build/bundled');
   let staticIndex = false;
+  log.info("DEBUGR: 1 "+req.headers.referrer);
+  log.info("DEBUGR: 1 "+req.path);
 
   if (req.path.startsWith('/marketing/') || (req.headers.referrer && req.headers.referrer.indexOf('/marketing/')>-1)) {
+    log.info("DEBUGR: 2 "+req.headers.referrer);
     staticPath = path.join(__dirname, '../marketing_app/dist');
     staticIndex = "index.html";
   } else if (req.path.startsWith('/analytics/') || (req.headers.referrer && req.headers.referrer.indexOf('/analytics/'))>-1) {
+    log.info("DEBUGR: 3 "+req.headers.referrer);
     staticPath = path.join(__dirname, '../analytics_app/dist');
     staticIndex = "index.html";
   } else {
+    log.info("DEBUGR: 4 "+req.headers.referrer);
     if (!FORCE_PRODUCTION && app.get('env') === 'development') {
       staticPath = path.join(__dirname, '../client_app');
     }
   }
+
 
   express.static(staticPath, { index: staticIndex, dotfiles:'allow' })(req,res,next);
 });
