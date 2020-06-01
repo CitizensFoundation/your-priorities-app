@@ -2,6 +2,8 @@ import { html, css, LitElement } from 'lit-element';
 import { YpBaseElement } from './YpBaseElement';
 //import "core-js";
 
+import '@material/mwc-linear-progress';
+
 //const ForceGraph3D = require('3d-force-graph');
 //import * as am4core from "@amcharts/amcharts4/core";
 //import * as am4charts from "@amcharts/amcharts4/charts";
@@ -22,18 +24,25 @@ export class YpWordCloud extends YpBaseElement {
         width: 100%;
         height: 100%;
       }
+
+      [hidden] {
+        display: none;
+      }
     `;
   }
 
   static get properties() {
     return {
-      dataUrl: { type: String }
+      dataUrl: { type: String },
+      noData: { type: Boolean },
+      waitingOnData: { type: Boolean }
     };
   }
 
 
   constructor() {
     super();
+    this.waitingOnData = true;
   }
 
   firstUpdated() {
@@ -53,6 +62,7 @@ export class YpWordCloud extends YpBaseElement {
       this.series.data = JSON.parse(response.body).map((item)=>{
         return { word: item[0], value: item[1]}
       });
+      this.waitingOnData=false;
     })
     .catch(error => {
         console.error('Error:', error);
@@ -63,6 +73,7 @@ export class YpWordCloud extends YpBaseElement {
 
   render() {
     return html`
+      <mwc-linear-progress indeterminate ?hidden="${!this.waitingOnData}"></mwc-linear-progress>
       <div id="wordCloud"></div>
     `;
   }

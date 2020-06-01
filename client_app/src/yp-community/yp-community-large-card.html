@@ -356,6 +356,7 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
               <paper-item id="addGroupMenuItem" hidden$="[[community.is_community_folder]]">[[t('group.new')]]</paper-item>
               <paper-item  hidden id="addCommunityFolderMenuItem">[[t('newCommunityFolder')]]</paper-item>
+              <paper-item id="openAnalyticsApp" hidden$="[[!hasCommunityAccess]]">[[t('openAnalyticsApp')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -569,6 +570,8 @@
           this._openDeleteContent();
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
+        else if (detail.item.id==="openAnalyticsApp")
+          window.location = "/analytics/community/"+this.community.id;
         this.$$("paper-listbox").select(null);
       },
 

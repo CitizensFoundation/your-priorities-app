@@ -17,7 +17,8 @@ export class AnalyticsApp extends YpBaseElement {
     return {
       collectionType: { type: String },
       collectionId: { type: String },
-      collection: { type: Object }
+      collection: { type: Object },
+      totalNumberOfPost: { type: Number }
     };
   }
 
@@ -27,15 +28,7 @@ export class AnalyticsApp extends YpBaseElement {
       ShadowStyles,
       css`
       :host {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        font-size: calc(10px + 2vmin);
         color: #1a2b42;
-        max-width: 960px;
-        margin: 0 auto;
         --mdc-theme-primary: #1c96bd;
       }
 
@@ -68,8 +61,8 @@ export class AnalyticsApp extends YpBaseElement {
         color: blue;
       }
 
-      main {
-        flex-grow: 1;
+      .mainPageContainer {
+        margin-top: 24px;
       }
 
       .app-footer {
@@ -97,12 +90,21 @@ export class AnalyticsApp extends YpBaseElement {
       }
 
       .analyticsText {
-        margin-top: 8px;
         margin-left: 8px;
+        margin-bottom: 4px;
         font-size: 18px;
         color: #333;
       }
+
+      header {
+        max-width: 1024px;
+        padding-top: 8px;
+      }
     `];
+  }
+
+  _camelCase (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   constructor() {
@@ -113,6 +115,8 @@ export class AnalyticsApp extends YpBaseElement {
       pathname = pathname.substring(0,pathname.length-1);
     const split = pathname.split('/');
     this.collectionType = split[split.length-2];
+
+    this.originalCollectionType = this.collectionType;
 
     if (this.collectionType==='community')
       this.collectionType = 'communities';
@@ -126,6 +130,7 @@ export class AnalyticsApp extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this._setupEventListeners();
     this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
 
     fetch(this.collectionURL, { credentials: 'same-origin' })
@@ -140,28 +145,49 @@ export class AnalyticsApp extends YpBaseElement {
     );
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._removeEventListeners();
+  }
+
   render() {
     return html`
-        <div class="mainImage layout horizontal">
-          <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
-          <div class="flex"></div>
-          <div class="analyticsText">${this.collection ? this.collection.name : ''}</div>
+        <div class="layout vertical center-center">
+          <header>
+            <div class="mainImageHeader layout horizontal center-center">
+              <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
+              <div class="analyticsText">${this._camelCase(this.originalCollectionType)}: ${this.collection ? this.collection.name : ''}</div>
+            </div>
+            <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
+              <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
+              <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
+              <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
+            </mwc-tab-bar>
+          </header>
         </div>
-      <header>
-        <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-          <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
-          <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
-          <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
-        </mwc-tab-bar>
-      </header>
-
       <main>
-        ${this._renderPage()}
+        <div class="layout vertical center-center">
+          <div class="mainPageContainer">
+          ${this._renderPage()}
+          </div>
+        </div>
       </main>
 
       <p class="app-footer">
       </p>
     `;
+  }
+
+  _setupEventListeners() {
+    this.addEventListener('set-total-posts', this._setTotalPosts);
+  }
+
+  _removeEventListeners() {
+    this.removeEventListener('set-total-posts', this._setTotalPosts);
+  }
+
+  _setTotalPosts(event, numberOfPosts) {
+    this.totalNumberOfPost = numberOfPosts;
   }
 
   _tabSelected(event) {
@@ -177,11 +203,11 @@ export class AnalyticsApp extends YpBaseElement {
       `;
       case '1':
         return html`
-          <page-topics .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
+          <page-topics .totalNumberOfPosts="${this.totalNumberOfPost}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
         `;
       case '2':
         return html`
-          <page-connections .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
+          <page-connections .totalNumberOfPosts="${this.totalNumberOfPost}"  .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
         `;
       default:
       return html`

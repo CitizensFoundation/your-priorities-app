@@ -14,9 +14,8 @@ export class PageTrends extends YpBaseElement {
       ShadowStyles,
       css`
       :host {
-        display: block;
-        padding: 25px;
-        text-align: center;
+        max-width: 960px;
+        width: 960px;
       }
 
       svg {
@@ -33,12 +32,8 @@ export class PageTrends extends YpBaseElement {
       }
 
       .container {
-        display: flex;
-        flex-direction: column;
-        flex-basis: auto;
         background-color: #FFF;
         padding: 8px;
-        width: 100%;
       }
 
       #mainSelect {

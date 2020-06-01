@@ -69,7 +69,8 @@ export class PageTopics extends YpBaseElement {
       dataUrl: { type: String },
       weightsFilter: { type: Number },
       nodesHash: { type: Object },
-      clusters: { type: Array }
+      clusters: { type: Array },
+      totalNumberOfPost: { type: Number }
     };
   }
 
