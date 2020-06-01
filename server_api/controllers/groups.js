@@ -2069,26 +2069,26 @@ router.get('/:id/similarities_weights', auth.can('edit group'), function(req, re
 
 // STATS
 router.get('/:id/stats_posts', auth.can('edit group'), function(req, res) {
-  countModelRowsByTimePeriod("stats_posts_"+req.params.id+"_group", models.Post, {}, getGroupIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod(req,"stats_posts_"+req.params.id+"_group", models.Post, {}, getGroupIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_points', auth.can('edit group'), function(req, res) {
-  countModelRowsByTimePeriod("stats_points_"+req.params.id+"_group", models.Point, {}, getPointGroupIncludes(req.params.id), (error, results) => {
+  countModelRowsByTimePeriod(req,"stats_points_"+req.params.id+"_group", models.Point, {}, getPointGroupIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error, results);
   });
 });
 
 router.get('/:id/stats_votes', auth.can('edit group'), function(req, res) {
-  countModelRowsByTimePeriod("stats_votes_"+req.params.id+"_group", models.AcActivity, {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_group", models.AcActivity, {
     type: {
       $in: [
         "activity.post.opposition.new","activity.post.endorsement.new",
         "activity.point.helpful.new","activity.point.unhelpful.new"
       ]
     }
-  }, getGroupIncludes(req.params.id), 'day', (error, results) => {
+  }, getGroupIncludes(req.params.id),  (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error,results);
   });
 });

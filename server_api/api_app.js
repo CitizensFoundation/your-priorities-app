@@ -407,8 +407,8 @@ app.use(function cacheControlHeaders(req, res, next) {
 
 app.use('/marketing', express.static(path.join(__dirname, '../marketing_app/dist')));
 app.use('/analytics/', express.static(path.join(__dirname, '../analytics_app/dist')));
-app.use('/analytics/domains/*', express.static(path.join(__dirname, '../analytics_app/dist')));
-app.use('/analytics/communities/*', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/domain/*', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/analytics/community/*', express.static(path.join(__dirname, '../analytics_app/dist')));
 app.use('/analytics/group/*', express.static(path.join(__dirname, '../analytics_app/dist')));
 app.use('/domain', index);
 app.use('/community', index);
