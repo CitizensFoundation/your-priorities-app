@@ -1,5 +1,7 @@
 'use strict';
 
+//TODO: Add indexes
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return [
