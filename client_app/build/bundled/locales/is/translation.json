@@ -1,4 +1,7 @@
 {
+  "openAnalyticsApp": "Opna tölfræði app",
+  "sendInviteByEmail": "Senda tölvupóst með boði",
+  "addUserDirectlyIfExist": "Bæta notanda við beint",
   "allowWhatsAppSharing": "Allow WhatsApp sharing",
   "contactAddress": "Heimilisfang",
   "hideQuestionIndexOnNewPost": "Fela númer spurninga í skoðanakönnuna á ný hugmynd",
