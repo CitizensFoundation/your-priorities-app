@@ -18,7 +18,7 @@ const baseConfig = createSpaConfig({
   developmentMode: process.env.ROLLUP_WATCH === 'true',
 
   html: {
-    publicPath: 'analytics'
+    publicPath: '/analytics'
   },
 
   // set to true to inject the service worker registration into your index.html

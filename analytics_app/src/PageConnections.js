@@ -409,8 +409,6 @@ export class PageConnections extends YpBaseElement {
       }
     }
 
-    debugger;
-
     const size = box.getSize( new THREE.Vector3() );
     const center = box.getCenter( new THREE.Vector3() );
 

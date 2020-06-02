@@ -8,6 +8,8 @@ import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@material/mwc-icon';
 import '@material/mwc-dialog';
+import '@material/mwc-top-app-bar';
+import '@material/mwc-icon-button';
 
 import './PageConnections';
 import './PageTrends';
@@ -38,15 +40,8 @@ export class AnalyticsApp extends YpBaseElement {
       header {
         width: 100%;
         background: #fff;
-        border-bottom: 1px solid #ccc;
-      }
-      margin-bottom: 8px;
-
-        display: flex;
-        justify-content: space-around;
-        min-width: 400px;
-        margin: 0 auto;
-        padding: 0;
+        margin-top: 24px;
+        max-width: 1024px;
       }
 
       header ul li {
@@ -96,12 +91,10 @@ export class AnalyticsApp extends YpBaseElement {
         margin-left: 8px;
         margin-bottom: 4px;
         font-size: 18px;
-        color: #333;
       }
 
-      header {
-        max-width: 1024px;
-        padding-top: 8px;
+      mwc-top-app-bar {
+        --mdc-theme-on-primary: white;
       }
     `];
   }
@@ -143,10 +136,8 @@ export class AnalyticsApp extends YpBaseElement {
       this.collection = response;
     })
     .catch(error => {
-        console.error('Error:', error);
-        this.fire('app-error', error);
-      }
-    );
+      this.fire('app-error', error);
+    });
   }
 
   disconnectedCallback() {
@@ -165,29 +156,40 @@ export class AnalyticsApp extends YpBaseElement {
               ${this.t('ok')}
           </mwc-button>
         </mwc-dialog>
-        <div class="layout vertical center-center">
-          <header>
-            <div class="mainImageHeader layout horizontal center-center">
-              <div><img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/></div>
-              <div class="analyticsText">${this._camelCase(this.originalCollectionType)}: ${this.collection ? this.collection.name : ''}</div>
+        <mwc-top-app-bar >
+          <div slot="title">
+            <div class="layout horizontal">
+              <div>
+                <mwc-icon-button icon="exit"></mwc-icon-button>
+              </div>
+              <div>
+                <img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/>
+              </div>
+              <div class="analyticsText">
+                ${this._camelCase(this.originalCollectionType)}: ${this.collection ? this.collection.name : ''}
+              </div>
             </div>
-            <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-              <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
-              <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
-              <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
-            </mwc-tab-bar>
-          </header>
-        </div>
-      <main>
-        <div class="layout vertical center-center">
-          <div class="mainPageContainer">
-          ${this._renderPage()}
           </div>
-        </div>
-      </main>
-
-      <p class="app-footer">
-      </p>
+          <mwc-icon-button icon="favorite" slot="actionItems"></mwc-icon-button>
+          <div>
+            <div class="layout vertical center-center">
+              <header>
+                <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
+                  <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
+                  <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
+                  <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
+                </mwc-tab-bar>
+              </header>
+            </div>
+            <main>
+              <div class="layout vertical center-center">
+                <div class="mainPageContainer">
+                ${this._renderPage()}
+                </div>
+              </div>
+            </main>
+          </div>
+        </mwc-top-app-bar>
     `;
   }
 

@@ -90,7 +90,7 @@ export class PageTrends extends YpBaseElement {
             label: chartLabel,
             backgroundColor: "#1c96bd",
             fill: false,
-            data: data
+            data
           }
         ] },
         options: {
