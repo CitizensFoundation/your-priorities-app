@@ -91,10 +91,15 @@ export class AnalyticsApp extends YpBaseElement {
         margin-left: 8px;
         margin-bottom: 4px;
         font-size: 18px;
+        padding-top: 2px;
       }
 
-      mwc-top-app-bar {
+      mwc-top-app-bar, .exitButton{
         --mdc-theme-on-primary: white;
+      }
+
+      .headerContainer {
+        padding-top: 8px;
       }
     `];
   }
@@ -157,20 +162,17 @@ export class AnalyticsApp extends YpBaseElement {
           </mwc-button>
         </mwc-dialog>
         <mwc-top-app-bar >
+          <mwc-icon-button class="exitButton" .label="${this.t('exitToMainApp')}" slot="navigationIcon" @click="${this.exitToMainApp}" icon="exit_to_app"></mwc-icon-button>
           <div slot="title">
-            <div class="layout horizontal">
+            <div class="layout horizontal headerContainer">
               <div>
-                <mwc-icon-button icon="exit"></mwc-icon-button>
-              </div>
-              <div>
-                <img height="32" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/>
+                <img height="35" alt="Your Priorities Logo" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/>
               </div>
               <div class="analyticsText">
                 ${this._camelCase(this.originalCollectionType)}: ${this.collection ? this.collection.name : ''}
               </div>
             </div>
           </div>
-          <mwc-icon-button icon="favorite" slot="actionItems"></mwc-icon-button>
           <div>
             <div class="layout vertical center-center">
               <header>
@@ -191,6 +193,10 @@ export class AnalyticsApp extends YpBaseElement {
           </div>
         </mwc-top-app-bar>
     `;
+  }
+
+  exitToMainApp() {
+    window.location = `/${this.originalCollectionType}/${this.collectionId}`;
   }
 
   _setupEventListeners() {
