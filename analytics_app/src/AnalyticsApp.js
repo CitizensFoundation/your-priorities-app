@@ -7,6 +7,7 @@ import '@material/mwc-button';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@material/mwc-icon';
+import '@material/mwc-dialog';
 
 import './PageConnections';
 import './PageTrends';
@@ -18,7 +19,9 @@ export class AnalyticsApp extends YpBaseElement {
       collectionType: { type: String },
       collectionId: { type: String },
       collection: { type: Object },
-      totalNumberOfPost: { type: Number }
+      totalNumberOfPost: { type: Number },
+      currentError: { type: String },
+      similaritiesData: { type: Array }
     };
   }
 
@@ -37,8 +40,8 @@ export class AnalyticsApp extends YpBaseElement {
         background: #fff;
         border-bottom: 1px solid #ccc;
       }
+      margin-bottom: 8px;
 
-      header ul {
         display: flex;
         justify-content: space-around;
         min-width: 400px;
@@ -134,6 +137,7 @@ export class AnalyticsApp extends YpBaseElement {
     this.collectionURL ="/api/"+this.collectionType+"/"+this.collectionId;
 
     fetch(this.collectionURL, { credentials: 'same-origin' })
+    .then(res => this.handleNetworkErrors(res))
     .then(res => res.json())
     .then(response => {
       this.collection = response;
@@ -152,6 +156,15 @@ export class AnalyticsApp extends YpBaseElement {
 
   render() {
     return html`
+        <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
+          <div>${this.currentError}</div>
+
+          <mwc-button
+              dialogAction="cancel"
+              slot="secondaryAction">
+              ${this.t('ok')}
+          </mwc-button>
+        </mwc-dialog>
         <div class="layout vertical center-center">
           <header>
             <div class="mainImageHeader layout horizontal center-center">
@@ -180,14 +193,28 @@ export class AnalyticsApp extends YpBaseElement {
 
   _setupEventListeners() {
     this.addEventListener('set-total-posts', this._setTotalPosts);
+    this.addEventListener('set-similarities-data', this._setSimilaritiesData);
+    this.addEventListener('app-error', this._appError);
   }
 
   _removeEventListeners() {
     this.removeEventListener('set-total-posts', this._setTotalPosts);
+    this.removeEventListener('set-similarities-data', this._setSimilaritiesData);
+    this.removeEventListener('app-error', this._appError);
   }
 
-  _setTotalPosts(event, numberOfPosts) {
-    this.totalNumberOfPost = numberOfPosts;
+  _appError(event) {
+    console.error(event.detail.message);
+    this.currentError = event.detail.message;
+    this.$$("#errorDialog").open = true;
+  }
+
+  _setTotalPosts(event) {
+    this.totalNumberOfPost = event.detail;
+  }
+
+  _setSimilaritiesData(event) {
+    this.similaritiesData = event.detail;
   }
 
   _tabSelected(event) {
@@ -203,11 +230,11 @@ export class AnalyticsApp extends YpBaseElement {
       `;
       case '1':
         return html`
-          <page-topics .totalNumberOfPosts="${this.totalNumberOfPost}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
+          <page-topics .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPost}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
         `;
       case '2':
         return html`
-          <page-connections .totalNumberOfPosts="${this.totalNumberOfPost}"  .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
+          <page-connections .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPost}"  .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
         `;
       default:
       return html`

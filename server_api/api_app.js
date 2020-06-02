@@ -170,7 +170,7 @@ app.use(function setupStaticPath(req, res, next) {
       staticPath = path.join(__dirname, '../client_app');
     }
   }
-  
+
   express.static(staticPath, { index: staticIndex, dotfiles:'allow' })(req,res,next);
 });
 

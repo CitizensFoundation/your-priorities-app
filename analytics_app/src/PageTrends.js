@@ -33,13 +33,21 @@ export class PageTrends extends YpBaseElement {
 
       .container {
         background-color: #FFF;
-        padding: 8px;
+        padding: 16px;
       }
 
       #mainSelect {
         text-align: right;
         margin-right: 22px;
         margin-top: 8px;
+      }
+
+      .wordCloudContainer {
+        margin-top: 24px;
+      }
+
+      mwc-linear-progress {
+        margin-bottom: 8px;
       }
     `];
   }
@@ -54,7 +62,8 @@ export class PageTrends extends YpBaseElement {
       wordCloudURL: { type: String },
       collection: { type: Object },
       statsTimePeriod: { type: String },
-      statsType: { type: String }
+      statsType: { type: String },
+      waitingOnData: { type: Boolean }
     };
   }
 
@@ -103,13 +112,14 @@ export class PageTrends extends YpBaseElement {
 
   getStatsData(url) {
     fetch(url, { credentials: 'same-origin' })
+    .then(res => this.handleNetworkErrors(res))
     .then(res => res.json())
     .then(response => {
       this.statsResponse = response;
+      this.waitingOnData = false;
       this.updateStatsChart();
     })
     .catch(error => {
-        console.error('Error:', error);
         this.fire('app-error', error);
       }
     );
@@ -117,6 +127,7 @@ export class PageTrends extends YpBaseElement {
 
   constructor() {
     super();
+    this.waitingOnData = true;
   }
 
   getStats() {
@@ -162,6 +173,7 @@ export class PageTrends extends YpBaseElement {
   render() {
     return html`
     <div class="container shadow-animation shadow-elevation-3dp">
+      <mwc-linear-progress indeterminate ?hidden="${!this.waitingOnData}"></mwc-linear-progress>
       <div class="layout vertical">
         <div class="layout vertical endAligned">
         <mwc-select outlined id="mainSelect" class="layout selfEnd" @selected="${this.selectStatsType}">
@@ -178,7 +190,7 @@ export class PageTrends extends YpBaseElement {
         </div>
       </div>
     </div>
-    <div class="container shadow-animation shadow-elevation-3dp">
+    <div class="container shadow-animation shadow-elevation-3dp wordCloudContainer">
       <yp-word-cloud .dataUrl="${this.wordCloudURL}"></yp-word-cloud>
     </div>
     `;

@@ -14,10 +14,8 @@ export class YpWordCloud extends YpBaseElement {
     return css`
       :host {
         display: block;
-        padding: 25px;
         text-align: center;
-        width:800px;
-        height: 500px;
+        min-height: 500px;
       }
 
       #wordCloud {
@@ -39,7 +37,6 @@ export class YpWordCloud extends YpBaseElement {
     };
   }
 
-
   constructor() {
     super();
     this.waitingOnData = true;
@@ -57,18 +54,17 @@ export class YpWordCloud extends YpBaseElement {
     this.series.colors = new am4core.ColorSet();
     this.series.colors.passOptions = {};
     fetch(this.dataUrl, { credentials: 'same-origin' })
+    .then(res => this.handleNetworkErrors(res))
     .then(res => res.json())
     .then(response => {
       this.series.data = JSON.parse(response.body).map((item)=>{
-        return { word: item[0], value: item[1]}
+        return { word: item[0], value: item[1]};
       });
       this.waitingOnData=false;
     })
     .catch(error => {
-        console.error('Error:', error);
-        this.fire('app-error', error);
-      }
-    );
+      this.fire('app-error', error);
+    });
   }
 
   render() {

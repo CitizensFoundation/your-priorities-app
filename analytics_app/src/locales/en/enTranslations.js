@@ -6,5 +6,6 @@ export default
     "votes": "Votes",
     "byday": "By Day",
     "bymonth": "By Month",
-    "byyear": "By Year"
+    "byyear": "By Year",
+    "error": "Error"
 };

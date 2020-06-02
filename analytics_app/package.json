@@ -61,6 +61,7 @@
   "dependencies": {
     "@amcharts/amcharts4": "^4.9.1",
     "@material/mwc-button": "^0.15.0",
+    "@material/mwc-dialog": "^0.15.0",
     "@material/mwc-icon": "^0.15.0",
     "@material/mwc-linear-progress": "^0.15.0",
     "@material/mwc-list": "^0.15.0",

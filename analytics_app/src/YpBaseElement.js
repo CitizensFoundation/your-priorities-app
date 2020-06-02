@@ -43,6 +43,13 @@ export class YpBaseElement extends LitElement {
     this.sendToGoogleAnalytics('send', 'event', object, type);
   }
 
+  handleNetworkErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+  }
+
   sendToGoogleAnalytics(type, parameterA, parameterB, parameterC) {
     if (typeof ga == 'function') {
       if (parameterB && parameterC) {

@@ -53,7 +53,8 @@ export class PageConnections extends YpBaseElement {
       originalGraphData: { type: Object },
       allObjects: { type: Object },
       allNodes: { type: Object },
-      finalPositions: { type: Array }
+      finalPositions: { type: Array },
+      similaritiesData: { type: Array }
     };
   }
 
@@ -120,17 +121,22 @@ export class PageConnections extends YpBaseElement {
   firstUpdated () {
     super.firstUpdated();
     this.setupForce3D();
-    fetch(this.dataUrl, { credentials: 'same-origin' })
-    .then(res => res.json())
-    .then(response => {
-      this.originalGraphData = {...response};
+    if (this.similaritiesData) {
+      this.originalGraphData = this.similaritiesData;
       this.setGraphData();
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    } else {
+      fetch(this.dataUrl, { credentials: 'same-origin' })
+      .then(res => this.handleNetworkErrors(res))
+      .then(res => res.json())
+      .then(response => {
+        this.originalGraphData = response;
+        this.setGraphData();
+        this.fire('set-similarities-data', this.originalGraphData);
+      })
+      .catch(error => {
         this.fire('app-error', error);
-      }
-    );
+      });
+    }
   }
 
   static setUpObjectOpacity (linkCount, imageSprite) {

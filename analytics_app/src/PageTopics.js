@@ -70,7 +70,8 @@ export class PageTopics extends YpBaseElement {
       weightsFilter: { type: Number },
       nodesHash: { type: Object },
       clusters: { type: Array },
-      totalNumberOfPost: { type: Number }
+      totalNumberOfPost: { type: Number },
+      similaritiesData: { type: Array }
     };
   }
 
@@ -100,17 +101,23 @@ export class PageTopics extends YpBaseElement {
 
   firstUpdated() {
     super.firstUpdated();
-    fetch(this.dataUrl, { credentials: 'same-origin' })
-    .then(res => res.json())
-    .then(response => {
-      this.originalData = response;
+    if (this.similaritiesData) {
+      this.originalData = this.similaritiesData;
       this.buildTopClusters();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        this.fire('app-error', error);
-      }
-    );
+    } else {
+      fetch(this.dataUrl, { credentials: 'same-origin' })
+      .then(res => this.handleNetworkErrors(res))
+      .then(res => res.json())
+      .then(response => {
+        this.originalData = response;
+        this.buildTopClusters();
+        this.fire('set-similarities-data', this.originalData);
+      })
+      .catch(error => {
+          this.fire('app-error', error);
+        }
+      );
+    }
   }
 
   buildTopClusters () {
