@@ -7,5 +7,6 @@ export default
     "byday": "By Day",
     "bymonth": "By Month",
     "byyear": "By Year",
-    "error": "Error"
+    "error": "Error",
+    "exitToMainApp": "Exit to main app"
 };
