@@ -1,6 +1,5 @@
 node_modules
 *node_modules/*
-dist
 server_api/config/config.json
 server_api/test/temp
 server_api/bin/uploads
