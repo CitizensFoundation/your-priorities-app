@@ -183,7 +183,7 @@ export class PageConnections extends YpBaseElement {
          new THREE.MeshBasicMaterial({  color: 0xffffff, depthWrite: false, transparent: false, opacity: 1 }));
 
          const loader = new THREE.TextureLoader();
-         loader.setCrossOrigin('anonymous');
+         loader.setCrossOrigin("anonymous");
          const spriteMap = loader.load( node.imageUrl );
 
          const spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
@@ -319,13 +319,13 @@ export class PageConnections extends YpBaseElement {
 
 
       if (nodeResults.nearestObjectDistance<1000) {
-        console.error("Distance: "+nodeResults.nearestObjectDistance);
+        //console.error("Distance: "+nodeResults.nearestObjectDistance);
         //cameraTime = cameraTimeB;
       } else if (nodeResults.nearestObjectDistance>1400) {
-        console.warn("Distance: "+nodeResults.nearestObjectDistance);
+        //console.warn("Distance: "+nodeResults.nearestObjectDistance);
         //cameraTime = cameraTimeB;
       } else {
-        console.log("Distance: "+nodeResults.nearestObjectDistance);
+        //console.log("Distance: "+nodeResults.nearestObjectDistance);
       }
 
       /*
@@ -447,35 +447,39 @@ export class PageConnections extends YpBaseElement {
   objectViewSliderChange(event) {
     const sliderIndex = event.detail.value;
     const index = sliderIndex-1;
-    const d3Node = this.allDistancePositions[index<0 ? 0 : index].node;
-    const position = this.allDistancePositions[index<0 ? 0 : index].pos;
-    const d3Object =this.allDistancePositions[index<0 ? 0 : index].object;
+    if (this.allDistancePositions[index<0 ? 0 : index]) {
+      const d3Node = this.allDistancePositions[index<0 ? 0 : index].node;
+      const position = this.allDistancePositions[index<0 ? 0 : index].pos;
+      const d3Object =this.allDistancePositions[index<0 ? 0 : index].object;
 
-    const distance = 300;
+      const distance = 300;
 
-    if (sliderIndex===0) {
-      this.graph.cameraPosition(
-        { x: 0, y: 0, z: -7500 }, // new position
-        { x: 0, y: 0, z: 0}, // lookAt ({ x, y, z })
-        this.cameraTime  // ms transition duration
-      );
+      if (sliderIndex===0) {
+        this.graph.cameraPosition(
+          { x: 0, y: 0, z: -7500 }, // new position
+          { x: 0, y: 0, z: 0}, // lookAt ({ x, y, z })
+          this.cameraTime  // ms transition duration
+        );
+      } else {
+        //d3Object.scale.set(2,2,2);
+        //d3Object.children[0].material.opacity = 1.0;
+        //d3Object.children[1].material.opacity = 1.0;
+       // d3Node.children[1].position.y=35.0;
+
+        const distRatio = 1 + distance/Math.hypot(d3Node.x, d3Node.y, d3Node.z);
+
+        this.graph.cameraPosition(
+            { x: position.x, y: position.y-75, z: position.z-575}, // new position
+            { x: position.x, y: position.y, z: position.z }, // lookAt ({ x, y, z })
+            900  // ms transition duration
+        );
+
+        console.log(position.x * distRatio);
+        console.log(position.y * distRatio);
+        console.log(position.x * distRatio);
+      }
     } else {
-      //d3Object.scale.set(2,2,2);
-      //d3Object.children[0].material.opacity = 1.0;
-      //d3Object.children[1].material.opacity = 1.0;
-     // d3Node.children[1].position.y=35.0;
-
-      const distRatio = 1 + distance/Math.hypot(d3Node.x, d3Node.y, d3Node.z);
-
-      this.graph.cameraPosition(
-          { x: position.x, y: position.y-75, z: position.z-575}, // new position
-          { x: position.x, y: position.y, z: position.z }, // lookAt ({ x, y, z })
-          900  // ms transition duration
-      );
-
-      console.log(position.x * distRatio);
-      console.log(position.y * distRatio);
-      console.log(position.x * distRatio);
+      console.warn(`No this.allDistancePositions for index: ${index}`);
     }
   }
 

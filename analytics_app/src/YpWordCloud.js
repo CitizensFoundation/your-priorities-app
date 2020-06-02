@@ -15,12 +15,12 @@ export class YpWordCloud extends YpBaseElement {
       :host {
         display: block;
         text-align: center;
-        min-height: 500px;
       }
 
       #wordCloud {
         width: 100%;
         height: 100%;
+        min-height: 500px;
       }
 
       [hidden] {
