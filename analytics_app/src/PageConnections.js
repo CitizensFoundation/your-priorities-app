@@ -145,22 +145,32 @@ export class PageConnections extends YpBaseElement {
   setGraphData() {
     const links = [];
     this.nodesLinkCounts = {};
+
+    const nodeIds = {};
+    for (let i=0; i<this.originalGraphData.nodes.length;i++) {
+      nodeIds[parseInt(this.originalGraphData.nodes[i].id)] = true;
+    }
+
     for (let i=0; i<this.originalGraphData.links.length;i++) {
       const sourceId = parseInt(this.originalGraphData.links[i].source);
       const targetId = parseInt(this.originalGraphData.links[i].target);
 
-      if (!this.nodesLinkCounts[sourceId]) {
-        this.nodesLinkCounts[sourceId] = 0;
-      }
+      if (nodeIds[sourceId] && nodeIds[targetId]) {
+        if (!this.nodesLinkCounts[sourceId]) {
+          this.nodesLinkCounts[sourceId] = 0;
+        }
 
-      if (!this.nodesLinkCounts[targetId]) {
-        this.nodesLinkCounts[targetId] = 0;
-      }
+        if (!this.nodesLinkCounts[targetId]) {
+          this.nodesLinkCounts[targetId] = 0;
+        }
 
-      if (this.originalGraphData.links[i].value>this.weightsFilter) {
-        links.push({...this.originalGraphData.links[i]});
-        this.nodesLinkCounts[sourceId] += 1;
-        this.nodesLinkCounts[targetId] += 1;
+        if (this.originalGraphData.links[i].value>this.weightsFilter) {
+          links.push({...this.originalGraphData.links[i]});
+          this.nodesLinkCounts[sourceId] += 1;
+          this.nodesLinkCounts[targetId] += 1;
+        }
+      } else {
+        console.warn(`Cant find node id for sourceId: ${sourceId} targetId: ${targetId}`);
       }
     }
 
@@ -369,7 +379,7 @@ export class PageConnections extends YpBaseElement {
     if (this.distanceObjects.length>0) {
       const nodeResults = this.getNearestNode(this.lastDistanceObjectPos ? this.lastDistanceObjectPos : this.graph.cameraPosition());
       const spriteNode = nodeResults.node;
-      console.log("Sprite: "+spriteNode.position.x+" "+spriteNode.position.y+" "+spriteNode.position.z);
+      //console.log("Sprite: "+spriteNode.position.x+" "+spriteNode.position.y+" "+spriteNode.position.z);
 
       const nodeIndex = nodeResults.pos;
 
