@@ -312,12 +312,13 @@ export class PageTopics extends YpBaseElement {
           return html`
             <div class="cluster" data-span="4">
               ${cluster.map(postId => {
-                return html`
+                return this.nodesHash[postId] ?
+                html`
                     <div class="post postName layout horizontal">
                       <img width="40" class="postImage" height="22" src="${this.nodesHash[postId].imageUrl}"/>
                        <a href="/post/${postId}" class="postNameLink" target="_blank">${this.getPostName(postId)}</a>
                     </div>
-                `
+                ` : html``;
               })}
             </div>
           `

@@ -243,7 +243,7 @@ export class PageConnections extends YpBaseElement {
 
          const loader = new THREE.TextureLoader();
          loader.crossOrigin = "anonymous";
-         const spriteMap = loader.load( node.imageUrl );
+         const spriteMap = loader.load( node.imageUrl+"?intoThreeJs=1" );
 
          const spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, color: 0xffffff } );
          const imageSprite = new THREE.Sprite( spriteMaterial );
