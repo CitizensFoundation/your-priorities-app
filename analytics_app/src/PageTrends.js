@@ -191,7 +191,7 @@ export class PageTrends extends YpBaseElement {
             <mwc-list-item value="stats_votes">${this.t('votes')}</mwc-list-item>
           </mwc-select>
           </div>
-          <canvas id="line-chart" width="800" height="400"></canvas>
+          <canvas id="line-chart" width="800" height="410"></canvas>
           <div class="layout horizontal center-center timeButtons">
             <mwc-button focused .label="${this.t('day')}" @click="${this.setDay}"></mwc-button>
             <mwc-button .label="${this.t('month')}" @click="${this.setMonth}"></mwc-button>
