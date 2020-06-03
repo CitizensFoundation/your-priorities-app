@@ -138,7 +138,11 @@ export class AnalyticsApp extends YpBaseElement {
     .then(res => this.handleNetworkErrors(res))
     .then(res => res.json())
     .then(response => {
-      this.collection = response;
+      if (response.group) {
+        this.collection = response.group;
+      } else {
+        this.collection = response;
+      }
     })
     .catch(error => {
       this.fire('app-error', error);
