@@ -1,17 +1,17 @@
 import { html, css } from 'lit-element';
-import { YpBaseElement } from './YpBaseElement';
+import { YpBaseElement } from './YpBaseElement.js';
+import { ShadowStyles } from './ShadowStyles.js';
 
-//const ForceGraph3D = require('3d-force-graph');
 import '@material/mwc-slider';
 
 export class PageTopics extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      ShadowStyles,
       css`
       :host {
         display: grid;
-        padding: 16px;
         width: 100%;
       }
 
@@ -34,6 +34,7 @@ export class PageTopics extends YpBaseElement {
         width: 95vw;
         padding-left: 64px;
         padding-right: 64px;
+        margin-top: 24px;
       }
 
       .postName {
@@ -58,6 +59,51 @@ export class PageTopics extends YpBaseElement {
 
       .cluster:hover {
         transform: scale(1.007);
+      }
+
+      .container {
+        background-color: #FFF;
+        padding: 24px;
+        max-width: 850px;
+        width: 850px;
+      }
+
+      mwc-slider {
+        width: 230px;
+      }
+
+      .similaritiesSlider {
+      }
+
+      .topicsHeader {
+        margin-bottom: 8px;
+        color: var(--mdc-theme-primary);
+        font-weight: bold;
+      }
+
+      .topicsInfo {
+        margin-right: 24px;
+        margin-bottom: 12px;
+      }
+
+      .post {
+        padding: 4px;
+      }
+
+      .postImage {
+        margin-right: 6px;
+      }
+
+      .postNameLink {
+        margin-top: -2px;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      #clusters {
+        margin-bottom: 48px;
       }
     `];
   }
@@ -121,7 +167,7 @@ export class PageTopics extends YpBaseElement {
   }
 
   buildTopClusters () {
-    console.error("start")
+//    console.error("start");
     const clusters = [];
     const nodesLinkCounts = {}
     const searchClusters = (id) => {
@@ -172,7 +218,7 @@ export class PageTopics extends YpBaseElement {
       this.nodesHash[id]=this.originalData.nodes[i];
       this.nodesHash[id].linkCount = nodesLinkCounts[id];
     }
-    console.error("end")
+//    console.error("end");
   }
 
   getPostName(postId) {
@@ -191,16 +237,31 @@ export class PageTopics extends YpBaseElement {
 
   render() {
     return html`
-     <mwc-slider
-            step="2"
-            pin
-            ?disabled="${!this.clusters || this.clusters.length===0}"
-            markers
-            @input=${this.sliderChange}
-            max="95"
-            min="55"
-            value="70">
-      </mwc-slider>
+      <div class="layout vertical center-center">
+        <div class="container shadow-animation shadow-elevation-3dp layout horizontal">
+          <div class="layout vertical self-start wrap">
+            <div class="topicsHeader layout horizontal center-center">${this.t('introduction')}</div>
+            <div class="topicsInfo">${this.t('topicsInfo')}</div>
+            <div class="statsInfo">${this.t('totalNumberOfPosts')}: ${this.totalNumberOfPost}</div>
+          </div>
+          <div class="flex"></div>
+          <div class="layout vertical center-center similaritiesSlider self-start">
+            <div class="topicsHeader start">${this.t('controls')}</div>
+            <div class="layout horizontal self-start">${this.t('similaritiesSlider')}</div>
+            <mwc-slider
+                  step="2"
+                  pin
+                  ?disabled="${!this.clusters || this.clusters.length===0}"
+                  markers
+                  @input=${this.sliderChange}
+                  max="98"
+                  min="42"
+                  value="70">
+            </mwc-slider>
+          </div>
+        </div>
+      </div>
+
       <div id="clusters" class="clusters">
         ${this.clusters.map(cluster => {
           return html`
@@ -208,8 +269,8 @@ export class PageTopics extends YpBaseElement {
               ${cluster.map(postId => {
                 return html`
                     <div class="post postName layout horizontal">
-                      <img width="40" height="22" src="${this.nodesHash[postId].imageUrl}"/>
-                      <a href="/post/${postId}" target="_blank">${this.getPostName(postId)}</a>
+                      <img width="40" class="postImage" height="22" src="${this.nodesHash[postId].imageUrl}"/>
+                       <a href="/post/${postId}" class="postNameLink" target="_blank">${this.getPostName(postId)}</a>
                     </div>
                 `
               })}

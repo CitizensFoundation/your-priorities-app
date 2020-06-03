@@ -104,7 +104,7 @@ export class AnalyticsApp extends YpBaseElement {
     `];
   }
 
-  _camelCase (string) {
+  static _camelCase (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
@@ -154,14 +154,13 @@ export class AnalyticsApp extends YpBaseElement {
     return html`
         <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
           <div>${this.currentError}</div>
-
           <mwc-button
               dialogAction="cancel"
               slot="secondaryAction">
               ${this.t('ok')}
           </mwc-button>
         </mwc-dialog>
-        <mwc-top-app-bar >
+        <mwc-top-app-bar>
           <mwc-icon-button class="exitButton" .label="${this.t('exitToMainApp')}" slot="navigationIcon" @click="${this.exitToMainApp}" icon="exit_to_app"></mwc-icon-button>
           <div slot="title">
             <div class="layout horizontal headerContainer">
@@ -169,7 +168,7 @@ export class AnalyticsApp extends YpBaseElement {
                 <img height="35" alt="Your Priorities Logo" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"/>
               </div>
               <div class="analyticsText">
-                ${this._camelCase(this.originalCollectionType)}: ${this.collection ? this.collection.name : ''}
+                ${this.t('analyticsFor')} ${this.originalCollectionType}: ${this.collection ? this.collection.name : ''}
               </div>
             </div>
           </div>

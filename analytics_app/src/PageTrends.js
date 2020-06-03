@@ -44,6 +44,7 @@ export class PageTrends extends YpBaseElement {
 
       .wordCloudContainer {
         margin-top: 24px;
+        margin-bottom: 64px;
       }
 
       mwc-linear-progress {
@@ -120,9 +121,8 @@ export class PageTrends extends YpBaseElement {
       this.updateStatsChart();
     })
     .catch(error => {
-        this.fire('app-error', error);
-      }
-    );
+      this.fire('app-error', error);
+    });
   }
 
   constructor() {
