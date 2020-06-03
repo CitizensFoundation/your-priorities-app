@@ -507,8 +507,16 @@ export class PageConnections extends YpBaseElement {
   forceValueChange (event) {
     const sliderValue = event.detail.value;
    // this.graph.d3Force('link').strength(sliderValue);
-    //this.graph.d3ReheatSimulation();
     this.graph.d3Force('charge').strength(sliderValue);
+    if (!this.reheatOnceAndWait) {
+      this.graph.d3ReheatSimulation();
+      this.reheatOnceAndWait = true;
+      setTimeout(()=>{
+        this.reheatOnceAndWait = null;
+      }, 10000);
+    }
+
+    console.error(sliderValue);
     //this.graph.d3Force('center').strength(sliderValue);
   }
 
@@ -580,8 +588,8 @@ export class PageConnections extends YpBaseElement {
                 value="74">
               </mwc-slider>
             </div>
-            <div class="layout vertical">
               ${ (this.finalPositions) ? html`
+              <div class="layout vertical">
                 <div class="layout horizontal self-start similaritiesLabel">${this.t('exploreSlider')}</div>
                 <mwc-slider
                   step="1"
@@ -593,19 +601,19 @@ export class PageConnections extends YpBaseElement {
                   min="0"
                   value="0">
                 </mwc-slider>
+              </div>
+              <div class="layout vertical">
+                <div class="layout horizontal self-start similaritiesLabel">${this.t('forceStrength')}</div>
+                <mwc-slider
+                  step="1"
+                  pin
+                  @input=${this.forceValueChange}
+                  max="1500"
+                  min="-5000"
+                  value="-200">
+                </mwc-slider>
+              </div>
             ` : html``}
-            </div>
-
-            <mwc-slider
-              step="1"
-              hidden
-              pin
-              markers
-              @change=${this.forceValueChange}
-              max="400"
-              min="-500"
-              value="-100">
-            </mwc-slider>
         </div>
         </div>
       </div>

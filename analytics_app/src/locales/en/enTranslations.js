@@ -22,6 +22,7 @@ export default
     "numberOfPostsWithHighScore": "Posts shown here",
     "currentNumberOfClusters": "Number of topic clusters",
     "postsNotShownHere": "Posts not shown here",
-    "exploreSlider": "Explore slider"
+    "exploreSlider": "Explore slider",
+    "forceStrength": "Connections strength"
 
 };
