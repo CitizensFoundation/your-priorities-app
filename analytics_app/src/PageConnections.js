@@ -13,7 +13,6 @@ export class PageConnections extends YpBaseElement {
       css`
       :host {
         display: block;
-        padding: 25px;
         text-align: center;
       }
 
@@ -40,6 +39,57 @@ export class PageConnections extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
+
+
+      .container {
+        background-color: #FFF;
+        padding: 24px;
+        max-width: 850px;
+        width: 850px;
+        text-align: left;
+        padding-bottom: 0;
+        margin-bottom: 16px;
+      }
+
+      mwc-slider {
+        width: 230px;
+        margin-top: 16px;
+        margin-right: 64px;
+      }
+
+      .similaritiesSlider {
+        width: 650px;
+      }
+
+      .connectionsHeader {
+        margin-bottom: 8px;
+        color: var(--mdc-theme-primary);
+        font-weight: bold;
+      }
+
+      .connectionsInfo {
+        margin-right: 24px;
+        margin-bottom: 12px;
+      }
+
+      mwc-linear-progress {
+        width: 800px;
+        margin-top: 24px;
+      }
+
+      .similaritiesLabel {
+        margin-top: 16px;
+        font-weight: bold;
+      }
+
+      .infoTableItem {
+        margin: 8px;
+        padding: 8px;
+      }
+
+      .statsInfo {
+        padding-left: 8px;
+      }
     `];
   }
 
@@ -54,7 +104,10 @@ export class PageConnections extends YpBaseElement {
       allObjects: { type: Object },
       allNodes: { type: Object },
       finalPositions: { type: Array },
-      similaritiesData: { type: Array }
+      similaritiesData: { type: Array },
+      totalNumberOfPosts: { type: Number },
+      numberOfSimilarPosts: { type: Number },
+      waitingOnData: { type: Boolean }
     };
   }
 
@@ -349,6 +402,7 @@ export class PageConnections extends YpBaseElement {
     } else {
       this.finalPositions = [... this.allDistancePositions];
       console.log("All items viewed");
+      this.numberOfSimilarPosts = this.finalPositions.length;
     }
   }
 
@@ -482,42 +536,65 @@ export class PageConnections extends YpBaseElement {
 
   render() {
     return html`
-      <div class="layout horizontal sliderContainer">
-        <mwc-slider
-          step="2"
-          pin
-          ?disabled="${!this.originalGraphData}"
-          markers
-          @change=${this.weigthsSliderChange}
-          max="95"
-          min="55"
-          value="74">
-        </mwc-slider>
+     <div class="layout vertical center-center">
+        <div class="container shadow-animation shadow-elevation-3dp layout vertical ">
+          <div class="layout vertical self-start">
+            <div class="connectionsHeader layout horizontal">${this.t('introduction')}</div>
+            <div class="connectionsInfo">${this.t('connectionsInfo')}</div>
+            <div ?hidden="${this.waitingOnData}" class="layout horizontal infoTable">
+              <div class="layout horizontal infoTableItem">
+                <div class="statsInfo">${this.t('totalNumberOfPosts')}: ${this.totalNumberOfPosts}</div>
+                <div class="statsInfo" ?hidden="${!this.finalPositions}">${this.t('numberOfPostsWithHighScore')}: ${this.numberOfSimilarPosts}</div>
+                <div class="statsInfo" ?hidden="${!this.finalPositions}">${this.t('postsNotShownHere')}: ${this.totalNumberOfPosts-this.numberOfSimilarPosts}</div>
+              </div>
+            </div>
+          </div>
+          <div class="layout horizontal similaritiesSlider self-start">
+            <div class="layout vertical">
+              <div class="horizontal self-start similaritiesLabel">${this.t('similaritiesSlider')}</div>
+              <mwc-slider
+                step="2"
+                pin
+                ?disabled="${!this.originalGraphData}"
+                markers
+                @change=${this.weigthsSliderChange}
+                max="95"
+                min="42"
+                value="74">
+              </mwc-slider>
+            </div>
+            <div class="layout vertical">
+              ${ (this.finalPositions) ? html`
+                <div class="layout horizontal self-start similaritiesLabel">${this.t('exploreSlider')}</div>
+                <mwc-slider
+                  step="1"
+                  pin
+                  ?disabled="${!this.originalGraphData}"
+                  markers
+                  @input=${this.objectViewSliderChange}
+                  max="${this.finalPositions.length+1}"
+                  min="0"
+                  value="0">
+                </mwc-slider>
+            ` : html``}
+            </div>
 
-        <mwc-slider
-          step="1"
-          hidden
-          pin
-          markers
-          @change=${this.forceValueChange}
-          max="400"
-          min="-500"
-          value="-100">
-        </mwc-slider>
-
-        ${ (this.finalPositions) ? html`
-          <mwc-slider
-            step="1"
-            pin
-            ?disabled="${!this.originalGraphData}"
-            markers
-            @input=${this.objectViewSliderChange}
-            max="${this.finalPositions.length+1}"
-            min="0"
-            value="0">
-          </mwc-slider>
-      ` : html``}
+            <mwc-slider
+              step="1"
+              hidden
+              pin
+              markers
+              @change=${this.forceValueChange}
+              max="400"
+              min="-500"
+              value="-100">
+            </mwc-slider>
         </div>
+        </div>
+      </div>
+      <div class="layout horizontal center-center">
+        <mwc-linear-progress indeterminate ?hidden="${!this.waitingOnData}"></mwc-linear-progress>
+      </div>
       <div id="3d-graph" class="graph"></div>
 `;
   }

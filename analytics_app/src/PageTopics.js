@@ -71,7 +71,7 @@ export class PageTopics extends YpBaseElement {
 
       mwc-slider {
         width: 230px;
-        margin-top: 12px;
+        margin-top: 40px;
       }
 
       .similaritiesSlider {
@@ -117,6 +117,11 @@ export class PageTopics extends YpBaseElement {
       .similaritiesLabel {
         font-style: italic;
         color: #555;
+      }
+
+      .infoTableItem {
+        margin-left: 8px;
+        color: #333;
       }
     `];
   }
@@ -272,11 +277,15 @@ export class PageTopics extends YpBaseElement {
           <div class="layout vertical self-start">
             <div class="topicsHeader layout horizontal">${this.t('introduction')}</div>
             <div class="topicsInfo">${this.t('topicsInfo')}</div>
-            <div ?hidden="${this.waitingOnData}">
-              <div class="statsInfo">${this.t('totalNumberOfPosts')}: ${this.totalNumberOfPosts}</div>
-              <div class="statsInfo">${this.t('numberOfPostsWithHighScore')}: ${this.numberOfSimilarPosts}</div>
-              <div class="statsInfo">${this.t('currentNumberOfClusters')}: ${this.numberOfClusters}</div>
-              <div class="statsInfo">${this.t('postsNotShownHere')}: ${this.totalNumberOfPosts-this.numberOfSimilarPosts}</div>
+            <div ?hidden="${this.waitingOnData}" class="layout horizontal infoTable">
+              <div class="layout vertical infoTableItem">
+                <div class="statsInfo">${this.t('totalNumberOfPosts')}: ${this.totalNumberOfPosts}</div>
+                <div class="statsInfo">${this.t('numberOfPostsWithHighScore')}: ${this.numberOfSimilarPosts}</div>
+              </div>
+              <div class="layout vertical infoTableItem">
+                <div class="statsInfo">${this.t('currentNumberOfClusters')}: ${this.numberOfClusters}</div>
+                <div class="statsInfo">${this.t('postsNotShownHere')}: ${this.totalNumberOfPosts-this.numberOfSimilarPosts}</div>
+              </div>
             </div>
           </div>
           <div class="layout center-center similaritiesSlider self-start">
