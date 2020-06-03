@@ -3,6 +3,9 @@ import { YpBaseElement } from './YpBaseElement';
 import { ShadowStyles } from './ShadowStyles';
 
 import '@material/mwc-slider';
+import '@material/mwc-linear-progress';
+
+
 //const ForceGraph3D = require('3d-force-graph');
 
 export class PageConnections extends YpBaseElement {
@@ -74,7 +77,8 @@ export class PageConnections extends YpBaseElement {
 
       mwc-linear-progress {
         width: 800px;
-        margin-top: 24px;
+        margin-top: 8px;
+        margin-bottom: 24px;
       }
 
       .similaritiesLabel {
@@ -178,6 +182,7 @@ export class PageConnections extends YpBaseElement {
       this.originalGraphData = this.similaritiesData;
       this.setGraphData();
     } else {
+      this.waitingOnData = true;
       fetch(this.dataUrl, { credentials: 'same-origin' })
       .then(res => this.handleNetworkErrors(res))
       .then(res => res.json())
@@ -185,6 +190,7 @@ export class PageConnections extends YpBaseElement {
         this.originalGraphData = response;
         this.setGraphData();
         this.fire('set-similarities-data', this.originalGraphData);
+        this.waitingOnData = false;
       })
       .catch(error => {
         this.fire('app-error', error);
