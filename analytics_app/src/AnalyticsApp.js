@@ -21,7 +21,7 @@ export class AnalyticsApp extends YpBaseElement {
       collectionType: { type: String },
       collectionId: { type: String },
       collection: { type: Object },
-      totalNumberOfPost: { type: Number },
+      totalNumberOfPosts: { type: Number },
       currentError: { type: String },
       similaritiesData: { type: Array }
     };
@@ -217,7 +217,7 @@ export class AnalyticsApp extends YpBaseElement {
   }
 
   _setTotalPosts(event) {
-    this.totalNumberOfPost = event.detail;
+    this.totalNumberOfPosts = event.detail;
   }
 
   _setSimilaritiesData(event) {
@@ -237,11 +237,11 @@ export class AnalyticsApp extends YpBaseElement {
       `;
       case '1':
         return html`
-          <page-topics .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPost}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
+          <page-topics .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPosts}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
         `;
       case '2':
         return html`
-          <page-connections .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPost}"  .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
+          <page-connections .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPosts}"  .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
         `;
       default:
       return html`

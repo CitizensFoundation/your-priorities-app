@@ -50,6 +50,10 @@ export class PageTrends extends YpBaseElement {
       mwc-linear-progress {
         margin-bottom: 8px;
       }
+
+      .timeButtons {
+        margin-top: 8px;
+      }
     `];
   }
 
@@ -88,7 +92,7 @@ export class PageTrends extends YpBaseElement {
         type: 'bar',
         data:  { datasets: [
           {
-            label: chartLabel,
+            label: `${this.t(this.statsType)} ${chartLabel}`,
             backgroundColor: "#1c96bd",
             fill: false,
             data
@@ -119,6 +123,11 @@ export class PageTrends extends YpBaseElement {
       this.statsResponse = response;
       this.waitingOnData = false;
       this.updateStatsChart();
+      let totalPosts = 0;
+      this.statsResponse.finalYears.forEach(postCount=>{
+        totalPosts+=postCount.y;
+      });
+      this.fire('set-total-posts', totalPosts);
     })
     .catch(error => {
       this.fire('app-error', error);
@@ -172,27 +181,27 @@ export class PageTrends extends YpBaseElement {
 
   render() {
     return html`
-    <div class="container shadow-animation shadow-elevation-3dp">
-      <mwc-linear-progress indeterminate ?hidden="${!this.waitingOnData}"></mwc-linear-progress>
-      <div class="layout vertical">
-        <div class="layout vertical endAligned">
-        <mwc-select outlined id="mainSelect" class="layout selfEnd" @selected="${this.selectStatsType}">
-          <mwc-list-item selected value="stats_posts">${this.t('posts')}</mwc-list-item>
-          <mwc-list-item value="stats_points">${this.t('points')}</mwc-list-item>
-          <mwc-list-item value="stats_votes">${this.t('votes')}</mwc-list-item>
-        </mwc-select>
-        </div>
-        <canvas id="line-chart" width="800" height="450"></canvas>
-        <div class="layout horizontal center-center">
-          <mwc-button focused .label="${this.t('day')}" @click="${this.setDay}"></mwc-button>
-          <mwc-button .label="${this.t('month')}" @click="${this.setMonth}"></mwc-button>
-          <mwc-button .label="${this.t('year')}" @click="${this.setYear}"></mwc-button>
+      <div class="container shadow-animation shadow-elevation-3dp">
+        <mwc-linear-progress indeterminate ?hidden="${!this.waitingOnData}"></mwc-linear-progress>
+        <div class="layout vertical">
+          <div class="layout vertical endAligned">
+          <mwc-select outlined id="mainSelect" class="layout selfEnd" @selected="${this.selectStatsType}">
+            <mwc-list-item selected value="stats_posts">${this.t('posts')}</mwc-list-item>
+            <mwc-list-item value="stats_points">${this.t('points')}</mwc-list-item>
+            <mwc-list-item value="stats_votes">${this.t('votes')}</mwc-list-item>
+          </mwc-select>
+          </div>
+          <canvas id="line-chart" width="800" height="450"></canvas>
+          <div class="layout horizontal center-center timeButtons">
+            <mwc-button focused .label="${this.t('day')}" @click="${this.setDay}"></mwc-button>
+            <mwc-button .label="${this.t('month')}" @click="${this.setMonth}"></mwc-button>
+            <mwc-button .label="${this.t('year')}" @click="${this.setYear}"></mwc-button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="container shadow-animation shadow-elevation-3dp wordCloudContainer">
-      <yp-word-cloud .dataUrl="${this.wordCloudURL}"></yp-word-cloud>
-    </div>
+      <div class="container shadow-animation shadow-elevation-3dp wordCloudContainer">
+        <yp-word-cloud .dataUrl="${this.wordCloudURL}"></yp-word-cloud>
+      </div>
     `;
   }
 }
