@@ -606,7 +606,6 @@ export class PageConnections extends YpBaseElement {
                 <div class="layout horizontal self-start similaritiesLabel">${this.t('forceStrength')}</div>
                 <mwc-slider
                   step="1"
-                  pin
                   @input=${this.forceValueChange}
                   max="1500"
                   min="-5000"

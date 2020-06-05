@@ -105,7 +105,13 @@ export class PageTrends extends YpBaseElement {
                   time: {
                     unit: this.statsTimePeriod
                 }
-              }]
+              }],
+              yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    stepSize: 1
+                }
+            }]
           }
       }
       });
