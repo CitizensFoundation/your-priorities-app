@@ -140,6 +140,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       delete endorsementJson.id;
                       var endorsementModel = models.Endorsement.build(endorsementJson);
                       endorsementModel.set('post_id', newPost.id);
+                      endorsementModel.set('PostId', newPost.id);
                       endorsementModel.save().then(function () {
                         if (options && options.createCopyActivities) {
                           models.AcActivity.createActivity({
@@ -174,6 +175,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       delete rating.id;
                       var ratingModel = models.Endorsement.build(ratingJson);
                       ratingModel.set('post_id', newPost.id);
+                      ratingModel.set('PostId', newPost.id);
                       ratingModel.save().then(function () {
                         if (options && options.createCopyActivities) {
                           models.AcActivity.createActivity({
@@ -208,6 +210,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
                       delete postRevisionJson.id;
                       var newPostRevision = models.PostRevision.build(postRevisionJson);
                       newPostRevision.set('post_id', newPost.id);
+                      newPostRevision.set('PostId', newPost.id);
                       newPostRevision.save().then(function () {
                         postRevisionCallback();
                       }).catch((error) => {
@@ -288,6 +291,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             newPoint.set('community_id', toCommunityId);
             newPoint.set('domain_id', toDomainId);
             newPoint.set('post_id', newPost.id);
+            newPoint.set('PostId', newPost.id);
             newPoint.save().then(function () {
               async.series([
                 (pointSeriesCallback) => {
@@ -417,6 +421,7 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
           newActivity.set('community_id', toCommunityId);
           newActivity.set('domain_id', toDomainId);
           newActivity.set('post_id', newPost.id);
+          newActivity.set('PostId', newPost.id);
           newActivity.save().then(function (results) {
             console.log("Have changed group and all activity: "+newActivity.id);
             innerSeriesCallback();
@@ -853,12 +858,12 @@ const copyCommunityWithEverything = (communityId, toDomainId, done) => {
       console.log(newCommunity.id);
     if (error) {
       console.error(error);
-      done(error);
+      done(error, newCommunity);
     } else {
       //console.log("Done for new community "+ńewCommunity.id);
-      done();
+      done(null, newCommunity);
     }
-  })
+  });
 };
 
 module.exports = {
