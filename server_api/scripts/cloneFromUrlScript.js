@@ -2,7 +2,6 @@ const models = require('../models');
 const async = require('async');
 const ip = require('ip');
 const _ = require('lodash');
-const csvParser = require('csv-parse');
 const fs = require('fs');
 const request = require('request');
 const copyCommunityWithEverything = require('../utils/copy_utils').copyCommunityWithEverything;
