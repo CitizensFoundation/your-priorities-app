@@ -130,9 +130,11 @@ export class PageTrends extends YpBaseElement {
       this.waitingOnData = false;
       this.updateStatsChart();
       let totalPosts = 0;
-      this.statsResponse.finalYears.forEach(postCount=>{
-        totalPosts+=postCount.y;
-      });
+      if (this.statsResponse.finalYears) {
+        this.statsResponse.finalYears.forEach(postCount=>{
+          totalPosts+=postCount.y;
+        });
+      }
       this.fire('set-total-posts', totalPosts);
     })
     .catch(error => {

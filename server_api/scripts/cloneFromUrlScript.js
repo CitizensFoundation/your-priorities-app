@@ -31,7 +31,7 @@ async.series([
   (seriesCallback) => {
     async.forEachSeries(config.split('\r\n'), (configLine, forEachCallback) => {
       if (!configLine || configLine.length<3) {
-        forEachCallback();
+        forEachCallback();u
       } else {
         copyCommunityWithEverything(communityId, domainId, (error, community) => {
           if (error) {
