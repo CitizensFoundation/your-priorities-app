@@ -45,7 +45,8 @@ export class YpBaseElement extends LitElement {
 
   handleNetworkErrors(response) {
     if (!response.ok) {
-        throw Error(response.statusText);
+      debugger;
+      throw Error(response.statusText);
     }
     return response;
   }

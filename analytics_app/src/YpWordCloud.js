@@ -57,9 +57,11 @@ export class YpWordCloud extends YpBaseElement {
     .then(res => this.handleNetworkErrors(res))
     .then(res => res.json())
     .then(response => {
-      this.series.data = JSON.parse(response.body).map((item)=>{
-        return { word: item[0], value: item[1]};
-      });
+      if (!response.nodata) {
+        this.series.data = JSON.parse(response.body).map((item)=>{
+          return { word: item[0], value: item[1]};
+        });
+      }
       this.waitingOnData=false;
     })
     .catch(error => {

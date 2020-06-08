@@ -197,9 +197,11 @@ export class PageConnections extends YpBaseElement {
       .then(res => this.handleNetworkErrors(res))
       .then(res => res.json())
       .then(response => {
-        this.originalGraphData = response;
-        this.setGraphData();
-        this.fire('set-similarities-data', this.originalGraphData);
+        if (!response.nodata) {
+          this.originalGraphData = response;
+          this.setGraphData();
+          this.fire('set-similarities-data', this.originalGraphData);
+        }
         this.waitingOnData = false;
       })
       .catch(error => {

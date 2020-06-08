@@ -177,9 +177,11 @@ export class PageTopics extends YpBaseElement {
       .then(res => this.handleNetworkErrors(res))
       .then(res => res.json())
       .then(response => {
-        this.originalData = response;
-        this.buildTopClusters();
-        this.fire('set-similarities-data', this.originalData);
+        if (!response.nodata) {
+          this.originalData = response;
+          this.buildTopClusters();
+          this.fire('set-similarities-data', this.originalData);
+        }
         this.waitingOnData = false;
       })
       .catch(error => {
