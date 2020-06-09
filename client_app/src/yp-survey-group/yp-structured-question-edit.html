@@ -345,6 +345,15 @@
         return ie11 || value;
       }
 
+      _floatIfValueOrIENew (question) {
+        var label = this._getTextWithIndex(question);
+        var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
+        var longLabel = false;
+        if (label && label.length>2)
+          longLabel = true;
+        return ie11 || longLabel || question.value;
+      }
+
       validate() {
         return true;
         var liveQuestion = this.$$("#structuredQuestion_"+this.index);
