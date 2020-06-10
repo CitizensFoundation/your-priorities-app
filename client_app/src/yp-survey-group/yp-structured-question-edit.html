@@ -104,6 +104,29 @@
         margin-top: 48px;
       }
 
+      paper-textarea.textAreaLong {
+        --paper-input-container: {
+          margin: 0;
+          padding: 0;
+        }
+      }
+
+      .longQuestion {
+        font-size: 16px;
+        font-weight: 400;
+        color: #727272;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+
+      .longQuestion[has-content] {
+        font-size: 12px;
+      }
+
+      .longQuestion[has-focus] {
+        color: var(--accent-color);
+      }
+
       paper-checkbox {
         --paper-checkbox-label-color: #333;
         margin-left: 42px;
@@ -206,6 +229,28 @@
       </paper-textarea>
     </template>
 
+    <template is="dom-if" if="[[_isTextareaLong(question)]]">
+      <div class="question general longQuestion" has-focus$="[[longFocus]]" has-content$="[[question.value]]" use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+
+      <paper-textarea id="structuredQuestion_[[index]]"
+                      data-type="text"
+                      value="{{question.value}}"
+                      on-keypress="_keyPressed"
+                      minlength="2"
+                      char-counter
+                      on-focus="setLongFocus"
+                      on-blur="setLongUnFocus"
+                      no-label-float
+                      use-small-font$="[[useSmallFont]]"
+                      on-value-changed="_debounceChangeEvent"
+                      rows="3"
+                      max-rows="5"
+                      maxrows="5"
+                      required$="[[question.required]]"
+                      maxlength="[[question.maxLength]]">
+      </paper-textarea>
+    </template>
+
     <template is="dom-if" if="[[_isTextHeader(question)]]">
       <div class="header" is-not-first$="[[index]]" is-first$="[[!index]]">[[question.text]]</div>
     </template>
@@ -290,8 +335,21 @@
           structuredAnswers: {
             type: Array,
             observer: '_structuredAnsweredChanged'
+          },
+
+          longFocus: {
+            type: Boolean,
+            value: false
           }
         }
+      }
+
+      setLongUnFocus() {
+        this.set('longFocus', false);
+      }
+
+      setLongFocus() {
+        this.set('longFocus', true);
       }
 
       _keyPressed(event) {
@@ -345,15 +403,6 @@
         return ie11 || value;
       }
 
-      _floatIfValueOrIENew (question) {
-        var label = this._getTextWithIndex(question);
-        var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
-        var longLabel = false;
-        if (label && label.length>2)
-          longLabel = true;
-        return ie11 || longLabel || question.value;
-      }
-
       validate() {
         return true;
         var liveQuestion = this.$$("#structuredQuestion_"+this.index);
@@ -377,6 +426,7 @@
       focus () {
         if (this.question.type.toLowerCase()==="textfield" ||
           this.question.type.toLowerCase()==="textarea" ||
+          this.question.type.toLowerCase()==="textarealong" ||
           this.question.type.toLowerCase()==="numberfield"
         ) {
           var item = this.$$("#structuredQuestion_"+this.index);
@@ -392,6 +442,7 @@
 
         if (this.question.type.toLowerCase()==="textfield" ||
           this.question.type.toLowerCase()==="textarea" ||
+          this.question.type.toLowerCase()==="textarealong" ||
           this.question.type.toLowerCase()==="numberfield"
         ) {
           value = item.value;
@@ -430,6 +481,7 @@
           if (item) {
             if (this.question.type.toLowerCase()==="textfield" ||
               this.question.type.toLowerCase()==="textarea" ||
+              this.question.type.toLowerCase()==="textarealong" ||
               this.question.type.toLowerCase()==="numberfield"
             ) {
               item.value = value;
@@ -521,6 +573,10 @@
 
       _isTextarea (question) {
         return (question.type && question.type.toLowerCase()==='textarea') || (question.type===undefined && question.maxLength>1);
+      }
+
+      _isTextareaLong (question) {
+        return (question.type && question.type.toLowerCase()==='textarealong');
       }
 
       _isTextField (question) {
