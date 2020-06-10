@@ -270,6 +270,7 @@ var updateGroupConfigParamters = function (req, group) {
       jsonArray.forEach((question, index) =>{
         if (question.type.toLowerCase()==="textfield" ||
           question.type.toLowerCase()==="textarea" ||
+          question.type.toLowerCase()==="textarealong" ||
           question.type.toLowerCase()==="numberfield" ||
           question.type.toLowerCase()==="checkboxes" ||
           question.type.toLowerCase()==="radios" ||
