@@ -10,6 +10,7 @@ import '@material/mwc-icon';
 import '@material/mwc-dialog';
 import '@material/mwc-top-app-bar';
 import '@material/mwc-icon-button';
+import '@material/mwc-textarea';
 
 import './PageConnections';
 import './PageTrends';
