@@ -174,6 +174,7 @@
         </template>
 
         <template is="dom-if" name="none" restamp>
+          <div hidden> </div>
         </template>
 
         <template is="dom-if" name="usersGrid" restamp>
@@ -384,7 +385,7 @@
 
       dialogClosed: function  (detail) {
         if (detail.name===this.selectedDialog) {
-          this.set('selectedDialog', 'none');
+          this.set('selectedDialog', "none");
           console.log("Setting selectedDialog to none");
         }
       },
@@ -487,7 +488,7 @@
           this.set('confirmationDialogOpen', true);
         } else if (idName==="autoTranslateDialog") {
           this.set('autoTranslateDialogOpen', true);
-        } else if (idName!=='notificationToast') {
+        } else if (idName!=='notificationToast' && idName!=='masterToast') {
           this.set('pageDialogOpen', false);
           this.set('confirmationDialogOpen', false);
           this.set('autoTranslateDialogOpen', false);
