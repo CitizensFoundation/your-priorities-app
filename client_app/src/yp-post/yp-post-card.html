@@ -295,7 +295,7 @@
             </yp-magic-text>
           </template>
           <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
-            <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]"
+            <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
                            content="[[structuredAnswersFormatted]]"
                            content-id="[[post.id]]" class="description" truncate="120">
             </yp-magic-text>

@@ -76,7 +76,8 @@
     "random-words": "^1.1.1",
     "temp": "^0.9.1",
     "wordwrap": "^1.0.0",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "docx4js": "^3.2.2"
   },
   "scripts": {
     "test": "gulp test:local",

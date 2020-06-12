@@ -277,7 +277,15 @@
 
       <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
           <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index-as="buttonIndex">
-            <paper-radio-button use-small-font$="[[useSmallFont]]" id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
+            <template is="dom-if" if="[[!radioButton.isOther]]">
+              <paper-radio-button use-small-font$="[[useSmallFont]]" id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
+            </template>
+            <template is="dom-if" if="[[radioButton.isOther]]">
+              <paper-radio-button use-small-font$="[[useSmallFont]]" id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
+              <paper-input name="structuredQuestion_[[index]]__radioOther"></paper-input>
+            </template>
+
+
           </template>
       </paper-radio-group>
     </template>
@@ -295,7 +303,13 @@
       <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[_getTextWithIndex(question)]]" required$="[[question.required]]">
         <paper-listbox slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
-            <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
+            <template is="dom-if" if="[[!dropDownOptions.isOther]]">
+              <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
+            </template>
+            <template is="dom-if" if="[[dropDownOptions.isOther]]">
+              <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
+              <paper-input name="structuredQuestion_[[index]]__checkboxOther"></paper-input>
+            </template>
           </template>
         </paper-listbox>
       </paper-dropdown-menu>
