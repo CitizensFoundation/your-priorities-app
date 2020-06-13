@@ -166,7 +166,7 @@
       }
 
       _showMoreText(moreText, content) {
-        return moreText && content && content.length>(this.truncate ? this.truncate : 500);
+        return moreText && content && content.length>((this.truncate ? this.truncate : 500)-1);
       }
 
       _openFullScreen() {
