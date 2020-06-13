@@ -90,16 +90,20 @@ firstCell = True
 
 for block in iter_block_items(document):
     if isinstance(block, Paragraph):
-      appendSurveyItem({'type':'textHeader','text': block.text.strip()})
+      if len(block.text.strip())>0:
+        appendSurveyItem({'type':'textHeader','text': block.text.strip()})
     if isinstance(block, Table):
       table = block
       denseUniqueId = None
       for ri, row in enumerate(table.rows):
+        print(str(ri)+str(len(table.rows)))
+        if len(table.rows)>ri+1:
+          print("HEH: "+table.rows[ri+1].cells[0].text.strip())
         if firstCell==True:
             firstCell=False
             print("Description")
             appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[0].text.strip())})
-        elif row.cells[2] and len(row.cells[2].text)>1:
+        else: #if row.cells[2] and len(row.cells[2].text)>1
           #print("ROWS"+str(len(table.rows))+" ri: "+str(ri))
           if len(table.rows)>ri+1 and table.rows[ri+1].cells[0].text.strip().startswith("a"):
             denseUniqueId = row.cells[0].text.strip()
@@ -109,13 +113,17 @@ for block in iter_block_items(document):
             appendCheckbox(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
           elif row.cells[2].text.startswith("A "):
             appendCheckbox(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
-          elif len(row.cells[0].text.strip())==1:
+          elif len(row.cells[0].text.strip())==1 and len(row.cells)>3 and len(row.cells[3].text)>5:
             appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[3].text).split("\n"), row.cells[1].text.strip())
+          elif len(row.cells[0].text.strip())==1 and len(row.cells)>2 and len(row.cells[2].text)>5:
+            appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[2].text).split("\n"), row.cells[1].text.strip())
           elif len(row.cells)>3 and row.cells[3].text.strip().startswith("1 "):
             appendRatio(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
           elif row.cells[2].text.strip().startswith("1 "):
             appendRatio(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
-            appendSurveyItem({'type':'textField', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 250, 'text': getStringToBracket(row.cells[1].text.strip())})
+            appendSurveyItem({'type':'textAreaLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 250, 'text': getStringToBracket(row.cells[1].text.strip())})
+        #else:
+         # print("NOTHING")
 
 print(json.dumps(survey_items))
