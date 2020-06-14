@@ -66,8 +66,9 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
     if text.find("skip to")>0:
       skipTo = text.split("skip to")[1].strip()
       text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
-    if text.endswith(","):
-      text = text[:-1]
+    text = text.replace(",","")
+    text = text.replace(":",";")
+    text = text.strip()
     radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
   appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
 
@@ -85,8 +86,9 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     if text.find("skip to")>0:
       skipTo = text.split("skip to")[1].strip()
       text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
-    if text.endswith(","):
-      text = text[:-1]
+    text = text.replace(",","")
+    text = text.replace(":",";")
+    text = text.strip()
     checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText)})
 

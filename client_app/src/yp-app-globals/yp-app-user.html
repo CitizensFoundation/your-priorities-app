@@ -397,7 +397,11 @@
 
         ready: function () {
           window.appUser = this;
-          this.checkLogin();
+          if (!window.location.pathname.startsWith("/survey/")) {
+            this.checkLogin();
+          } else {
+            console.log("Not checking login in survey mode");
+          }
         },
 
         cancelLoginPolling: function () {

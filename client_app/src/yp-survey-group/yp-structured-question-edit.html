@@ -485,7 +485,7 @@
             if (selectedRadio.isSpecify) {
               var input = this.$$("#structuredQuestion_"+this.index+"__radioOther");
               if (input) {
-                value = selectedRadio.text+": "+input.value;
+                value = selectedRadio.text+":"+input.value;
               } else {
                 value = selectedRadio.text;
               }
@@ -539,6 +539,14 @@
               }.bind(this));
             } else if (this.question.type.toLowerCase()==="checkboxes") {
               var checkboxValues = value.split(',');
+              var specifyInput = null;
+              for (var i = 0; i < checkboxValues.length-1; i++) {
+                if (checkboxValues[i].indexOf(":") > -1) {
+                  var splitText = checkboxValues[i].split(":");
+                  checkboxValues[i] = splitText[0];
+                  specifyInput = splitText[1];
+                }
+              }
               for (var i = 0; i < item.children.length-1; i++) {
                 if (item.children[i]) {
                   var checkboxSubId = item.children[i].id.split("_")[2];
@@ -546,6 +554,15 @@
                   if (selectedCheckbox) {
                     if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
                       item.children[i].checked = true;
+                      if (specifyInput) {
+                        var input = this.$$("#structuredQuestion_"+this.index+"_"+checkboxSubId+"_checkboxOther");
+                        debugger;
+                        if (input) {
+                          input.value=specifyInput;
+                        } else {
+                          console.error("Can't find checkbox specify value");
+                        }
+                      }
                     }
                   } else {
                     console.debug("No selectedCheckbox");
