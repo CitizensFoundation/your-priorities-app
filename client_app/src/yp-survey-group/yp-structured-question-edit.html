@@ -185,12 +185,15 @@
       .specifyInput {
         max-width: 220px;
         margin-left: 24px;
+        margin-top: -16px;
+        margin-bottom: 0;
       }
 
-      .specifyInputCheckbox {
-        margin-left: 12px;
-        margin-top: -4px;
+      .specifyCheckBox {
+        margin-left: 42px;
+        margin-bottom: 12px;
       }
+
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
@@ -303,7 +306,7 @@
                                 id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">
               [[radioButton.text]]
             </paper-radio-button>
-            <paper-input class="specifyInput" no-label-float
+            <paper-input class="specifyInput" no-label-float  on-value-changed="_debounceChangeEvent"
                          id="structuredQuestion_[[index]]__radioOther"></paper-input>
           </template>
         </template>
@@ -324,7 +327,7 @@
             <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">
               [[checkbox.text]]
             </paper-checkbox>
-            <paper-input class="specifyInput" no-label-float
+            <paper-input class="specifyInput specifyCheckBox" no-label-float on-value-changed="_debounceChangeEvent"
                          id="structuredQuestion_[[index]]_[[buttonIndex]]_checkboxOther"></paper-input>
           </template>
         </template>
@@ -511,9 +514,9 @@
               }
             }.bind(this.validate()));
             if (selectedRadio.isSpecify) {
-              var input = this.$$("#structuredQuestion_" + this.index + "__radioOther");
-              if (input) {
-                value = selectedRadio.text + ":" + input.value;
+              var radioInput = this.$$("#structuredQuestion_" + this.index + "__radioOther");
+              if (radioInput) {
+                value = selectedRadio.text + ":" + radioInput.value;
               } else {
                 value = selectedRadio.text;
               }
@@ -528,9 +531,9 @@
               var checkboxSubId = item.children[i].id.split("_")[2];
               var selectedCheckbox = this.question.checkboxes[checkboxSubId];
               if (selectedCheckbox.isSpecify) {
-                var input = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
-                if (input && input.value !== "") {
-                  selectedCheckboxes += selectedCheckbox.text + ":" + input.value + ",";
+                var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
+                if (checkboxInput && checkboxInput.value !== "") {
+                  selectedCheckboxes += selectedCheckbox.text + ":" + checkboxInput.value + ",";
                 } else {
                   selectedCheckboxes += selectedCheckbox.text + ",";
                 }
@@ -572,7 +575,6 @@
                   item.select(value);
                   if (specifyInput) {
                     var input = this.$$("#structuredQuestion_" + this.index + "__radioOther");
-                    debugger;
                     if (input) {
                       input.value = specifyInput;
                     } else {
@@ -663,6 +665,23 @@
 
     _checkboxChanged(event, detail)
     {
+      if (event.target.checked) {
+        var checkboxSubId = event.target.id.split("_")[2];
+
+        var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+        if (selectedCheckbox.isSpecify) {
+          var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
+          if (checkboxInput) {
+            if (!checkboxInput.value) {
+              checkboxInput.value ="";
+            }
+            checkboxInput.focus();
+          } else {
+            console.error("Can't find checkbox input");
+          }
+        }
+      }
+
       event.stopPropagation();
       this._sendDebouncedChange({value: 1});
     }
@@ -682,6 +701,14 @@
 
       if (selectedRadio.skipTo) {
         this.fire('yp-skip-to-unique-id', {fromId: this.question.uniqueId, toId: selectedRadio.skipTo});
+      } else if (selectedRadio.isSpecify) {
+        var input = this.$$("#structuredQuestion_" + this.index + "__radioOther");
+        if (input) {
+          input.focus();
+        } else {
+          debugger;
+          console.error("Can't find checkbox specify value");
+        }
       } else {
         this.fire('yp-goto-next-index', {currentIndex: this.index});
         var hasSkipToId;
