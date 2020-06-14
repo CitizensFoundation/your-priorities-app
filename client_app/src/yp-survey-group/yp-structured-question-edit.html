@@ -181,6 +181,16 @@
       paper-radio-button {
         margin-left: 24px;
       }
+
+      .specifyInput {
+        max-width:220px;
+        margin-left: 24px;
+      }
+
+      .specifyInputCheckbox {
+        margin-left: 12px;
+        margin-top: -4px;
+      }
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
@@ -277,15 +287,13 @@
 
       <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged" id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]" class$="[[_getRadioClass(question)]]">
           <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index-as="buttonIndex">
-            <template is="dom-if" if="[[!radioButton.isOther]]">
+            <template is="dom-if" if="[[!radioButton.isSpecify]]">
               <paper-radio-button use-small-font$="[[useSmallFont]]" id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
             </template>
-            <template is="dom-if" if="[[radioButton.isOther]]">
+            <template is="dom-if" if="[[radioButton.isSpecify]]" class="layout horizontal">
               <paper-radio-button use-small-font$="[[useSmallFont]]" id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">[[radioButton.text]]</paper-radio-button>
-              <paper-input name="structuredQuestion_[[index]]__radioOther"></paper-input>
+              <paper-input class="specifyInput" no-label-float id="structuredQuestion_[[index]]__radioOther"></paper-input>
             </template>
-
-
           </template>
       </paper-radio-group>
     </template>
@@ -294,7 +302,13 @@
       <div id="structuredQuestionIntro_[[index]]" class="question general checkBoxesLabel" use-small-font$="[[useSmallFont]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
       <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
         <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index-as="buttonIndex">
-          <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
+          <template is="dom-if" if="[[!checkbox.isSpecify]]">
+            <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
+          </template>
+          <template is="dom-if" if="[[checkbox.isSpecify]]">
+            <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">[[checkbox.text]]</paper-checkbox>
+            <paper-input class="specifyInput" no-label-float id="structuredQuestion_[[index]]_[[buttonIndex]]_checkboxOther"></paper-input>
+          </template>
         </template>
       </div>
     </template>
@@ -303,13 +317,7 @@
       <paper-dropdown-menu  id="structuredQuestion_[[index]]" data-type="dropdown" label="[[_getTextWithIndex(question)]]" required$="[[question.required]]">
         <paper-listbox slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
-            <template is="dom-if" if="[[!dropDownOptions.isOther]]">
-              <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
-            </template>
-            <template is="dom-if" if="[[dropDownOptions.isOther]]">
-              <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
-              <paper-input name="structuredQuestion_[[index]]__checkboxOther"></paper-input>
-            </template>
+            <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
           </template>
         </paper-listbox>
       </paper-dropdown-menu>
@@ -474,7 +482,16 @@
                 selectedRadio = button;
               }
             }.bind(this.validate()));
-            value = selectedRadio.text
+            if (selectedRadio.isSpecify) {
+              var input = this.$$("#structuredQuestion_"+this.index+"__radioOther");
+              if (input) {
+                value = selectedRadio.text+": "+input.value;
+              } else {
+                value = selectedRadio.text;
+              }
+            } else {
+              value = selectedRadio.text;
+            }
           }
         } else if (this.question.type.toLowerCase()==="checkboxes") {
           var selectedCheckboxes = "";
@@ -482,7 +499,16 @@
             if (item.children[i].checked) {
               var checkboxSubId = item.children[i].id.split("_")[2];
               var selectedCheckbox = this.question.checkboxes[checkboxSubId];
-              selectedCheckboxes += selectedCheckbox.text+",";
+              if (selectedCheckbox.isSpecify) {
+                var input = this.$$("#structuredQuestion_"+this.index+"_"+checkboxSubId+"_checkboxOther");
+                if (input) {
+                  selectedCheckboxes += selectedCheckbox.text+":"+input.value+",";
+                } else {
+                  selectedCheckboxes += selectedCheckbox.text+",";
+                }
+              } else {
+                selectedCheckboxes += selectedCheckbox.text+",";
+              }
             }
           }
 
@@ -517,8 +543,12 @@
                 if (item.children[i]) {
                   var checkboxSubId = item.children[i].id.split("_")[2];
                   var selectedCheckbox = this.question.checkboxes[checkboxSubId];
-                  if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
-                    item.children[i].checked = true;
+                  if (selectedCheckbox) {
+                    if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
+                      item.children[i].checked = true;
+                    }
+                  } else {
+                    console.debug("No selectedCheckbox");
                   }
                 }
               }

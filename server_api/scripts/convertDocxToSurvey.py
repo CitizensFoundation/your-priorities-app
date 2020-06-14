@@ -35,6 +35,9 @@ def getStringToBracket(inputString):
   return inputString
   #return inputString.split("[")[0].strip()
 
+def reallyGetStringToBracket(inputString):
+  return inputString.split("[")[0].strip()
+
 def appendSurveyItem(item):
   print(item)
   survey_items.append(item)
@@ -57,13 +60,16 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
     #print("Text: "+text)
     isSpecify = False
     skipTo = None
-    if text.find("specify")>0:
+    if text.find("___")>0 or text.find("(specify)")>0:
       isSpecify = True
+      text = text.replace("_","")
     if text.find("skip to")>0:
       skipTo = text.split("skip to")[1].strip()
-      text = getStringToBracket(text.split("skip to")[0]).strip()
-    radios.append({'skipTo': skipTo, 'text': text, 'number': number})
-  appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'isSpecify': isSpecify, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
+      text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
+    if text.endswith(","):
+      text = text[:-1]
+    radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
+  appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
 
 def appendCheckbox(uniqueId, optionsText, questionText):
   print("CHECKBOXES")
@@ -73,12 +79,15 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text = option[2:].strip()
     isSpecify = False
     skipTo = None
-    if text.find("specify")>0:
+    if text.find("___")>0 or text.find("(specify)")>0:
       isSpecify = True
+      text = text.replace("_","")
     if text.find("skip to")>0:
       skipTo = text.split("skip to")[1].strip()
-      text = text.split("skip to")[0].strip()
-    checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number})
+      text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
+    if text.endswith(","):
+      text = text[:-1]
+    checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText)})
 
 def splitByDigit(text):
