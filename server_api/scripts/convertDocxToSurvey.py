@@ -41,9 +41,14 @@ def appendSurveyItem(item):
 def clean(text):
   return text.strip()
 
-def appendRatio(uniqueId, optionsText, questionText):
+def appendRatio(uniqueId, optionsText, questionText, subType=None):
   print("RADIOS")
   radios = []
+  if len(optionsText)<2:
+    print(optionsText)
+    optionsText = splitByDigit("".join(optionsText)).split("\n")
+    print(optionsText)
+
   for option in optionsText:
     number = option[:2].strip().replace(".","")
     #print("Number: "+number)
@@ -57,7 +62,7 @@ def appendRatio(uniqueId, optionsText, questionText):
       skipTo = text.split("skip to")[1].strip()
       text = getStringToBracket(text.split("skip to")[0]).strip()
     radios.append({'skipTo': skipTo, 'text': text, 'number': number})
-  appendSurveyItem({'type':'radios', 'uniqueId': uniqueId, 'isSpecify': isSpecify, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
+  appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'isSpecify': isSpecify, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
 
 def appendCheckbox(uniqueId, optionsText, questionText):
   print("CHECKBOXES")
@@ -86,6 +91,16 @@ def splitByDigit(text):
   print("PART: "+part)
   return part.strip()
 
+def splitByColumns(columns):
+  i = 0
+  options = []
+  for column in columns:
+    if i>1:
+      options.append(column.text+"  "+column.text)
+    i += 1
+  print(options)
+  return options
+
 firstCell = True
 
 for block in iter_block_items(document):
@@ -108,19 +123,28 @@ for block in iter_block_items(document):
           if len(table.rows)>ri+1 and table.rows[ri+1].cells[0].text.strip().startswith("a"):
             denseUniqueId = row.cells[0].text.strip()
             print("DENSE RATIOS: "+denseUniqueId)
-            appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[1].text.strip())+" "})
+            appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[1].text.strip())})
+            if len(row.cells)>2 and row.cells[2].text.strip().startswith("1"):
+              appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[2].text.strip())})
+
           elif len(row.cells)>3 and row.cells[3].text.strip().startswith("A "):
             appendCheckbox(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
           elif row.cells[2].text.startswith("A "):
             appendCheckbox(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
+
+          elif len(row.cells[0].text.strip())==1 and len(row.cells)>5 and row.cells[2].text.strip().startswith("1"):
+            appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByColumns(row.cells), row.cells[1].text.strip(),'rating')
+
           elif len(row.cells[0].text.strip())==1 and len(row.cells)>3 and len(row.cells[3].text)>5:
             appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[3].text).split("\n"), row.cells[1].text.strip())
           elif len(row.cells[0].text.strip())==1 and len(row.cells)>2 and len(row.cells[2].text)>5:
             appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[2].text).split("\n"), row.cells[1].text.strip())
+
           elif len(row.cells)>3 and row.cells[3].text.strip().startswith("1 "):
             appendRatio(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
           elif row.cells[2].text.strip().startswith("1 "):
             appendRatio(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
+
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
             appendSurveyItem({'type':'textAreaLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 250, 'text': getStringToBracket(row.cells[1].text.strip())})
         #else:
