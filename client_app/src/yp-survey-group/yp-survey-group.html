@@ -59,7 +59,7 @@
          yp-structured-question-edit {
            margin-left: 16px;
            padding-left: 0;
-           padding-right: 0;
+           padding-right: 0;index
            margin-right: 16px;
          }
 
@@ -106,6 +106,7 @@
                                            structured-answers="[[initiallyLoadedAnswers]]"
                                            on-changed="_saveState"
                                            question="[[question]]"
+                                           is-last-rating="[[_isLastRating(index)]]"
                                            on-hide-to-question="_hideToQuestion">
               </yp-structured-question-edit>
             </template>
@@ -210,6 +211,12 @@
         'yp-open-to-unique-id': '_openToId',
         'yp-goto-next-index': '_goToNextIndex',
         'yp-answer-content-changed': '_saveState'
+      },
+
+      _isLastRating: function (index) {
+        return (this.structuredQuestions[index].subType==="rating" &&
+          (index+2)<this.structuredQuestions.length &&
+          this.structuredQuestions[index+1].subType!=="rating")
       },
 
       _openToId: function (event, detail) {

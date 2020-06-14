@@ -148,9 +148,9 @@ for block in iter_block_items(document):
             appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByColumns(row.cells), row.cells[1].text.strip(),'rating')
 
           elif len(row.cells[0].text.strip())==1 and len(row.cells)>3 and len(row.cells[3].text)>5:
-            appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[3].text).split("\n"), row.cells[1].text.strip())
+            appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[3].text).split("\n"), row.cells[1].text.strip(), 'rating')
           elif len(row.cells[0].text.strip())==1 and len(row.cells)>2 and len(row.cells[2].text)>5:
-            appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[2].text).split("\n"), row.cells[1].text.strip())
+            appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[2].text).split("\n"), row.cells[1].text.strip(), 'rating')
 
           elif len(row.cells)>3 and row.cells[3].text.strip().startswith("1 "):
             appendRatio(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
