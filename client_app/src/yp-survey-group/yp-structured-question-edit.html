@@ -409,8 +409,9 @@
       }
 
       _textWithLinks (question) {
-        var a = linkifyHtml(question.text);
-        return a;
+        var text = linkifyHtml(question.text);
+        text = text.replace(/\n/g,"<br>")
+        return text;
       }
 
       _resizeScrollerIfNeeded () {

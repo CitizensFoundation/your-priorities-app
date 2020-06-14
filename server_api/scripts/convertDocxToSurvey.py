@@ -32,7 +32,8 @@ def hasBrackets(inputString):
   return any(char=="[" for char in inputString)
 
 def getStringToBracket(inputString):
-  return inputString.split("[")[0].strip()
+  return inputString
+  #return inputString.split("[")[0].strip()
 
 def appendSurveyItem(item):
   print(item)
@@ -128,7 +129,7 @@ for block in iter_block_items(document):
               appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[2].text.strip())})
 
           elif len(row.cells)>3 and row.cells[3].text.strip().startswith("A "):
-            appendCheckbox(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
+            appendCheckbox(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[1].text.strip())
           elif row.cells[2].text.startswith("A "):
             appendCheckbox(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
 
