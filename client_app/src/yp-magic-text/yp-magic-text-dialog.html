@@ -12,6 +12,10 @@
       }
 
       #dialog {
+        direction: rtl;
+      }
+
+      #dialog {
         background-color: #FFF;
         max-width: 50%;
       }
@@ -38,7 +42,7 @@
       }
     </style>
 
-    <paper-dialog id="dialog">
+    <paper-dialog id="dialog" rtl$="[[rtl]]">
       <h2>[[pageTitle]]</h2>
       <paper-dialog-scrollable>
         <div hidden$="[[!finalContent]]" inner-h-t-m-l="[[finalContent]]"></div>
