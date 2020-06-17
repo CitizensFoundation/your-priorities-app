@@ -59,7 +59,7 @@
          yp-structured-question-edit {
            margin-left: 16px;
            padding-left: 0;
-           padding-right: 0;index
+           padding-right: 0;
            margin-right: 16px;
          }
 
@@ -68,6 +68,10 @@
           margin-right: 0;
           max-width: 100%;
           width: 100%;
+        }
+
+        :host {
+          width: 100vw;
         }
       }
 
@@ -347,6 +351,7 @@
           this.uniqueIdsToElementIndexes = {};
           this.structuredQuestions.forEach(function (question, index) {
             if (question.type.toLowerCase()==="textfield" ||
+              question.type.toLowerCase()==="textfieldlong" ||
               question.type.toLowerCase()==="textarea" ||
               question.type.toLowerCase()==="textarealong" ||
               question.type.toLowerCase()==="numberfield" ||

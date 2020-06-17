@@ -21,7 +21,7 @@ def iter_block_items(parent):
         elif isinstance(child, CT_Tbl):
             yield Table(child, parent)
 
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 15 2020_sw2.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 15 2020_sw2.docx")
 
 survey_items = []
@@ -165,7 +165,11 @@ for block in iter_block_items(document):
             appendRatio(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
 
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
-            appendSurveyItem({'type':'textField', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
+            if len(getStringToBracket(row.cells[1].text.strip()))<24:
+              appendSurveyItem({'type':'textField', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
+            else:
+              appendSurveyItem({'type':'textFieldLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
+
         #else:
          # print("NOTHING")
 

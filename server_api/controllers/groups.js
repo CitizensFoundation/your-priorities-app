@@ -269,6 +269,7 @@ var updateGroupConfigParamters = function (req, group) {
       let questionIndex = 0;
       jsonArray.forEach((question, index) =>{
         if (question.type.toLowerCase()==="textfield" ||
+          question.type.toLowerCase()==="textfieldlong" ||
           question.type.toLowerCase()==="textarea" ||
           question.type.toLowerCase()==="textarealong" ||
           question.type.toLowerCase()==="numberfield" ||
