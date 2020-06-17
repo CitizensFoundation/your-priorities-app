@@ -345,7 +345,7 @@
                                 id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">
               [[radioButton.text]]
             </paper-radio-button>
-            <paper-input class="specifyInput" no-label-float  on-value-changed="_debounceChangeEvent"
+            <paper-input class="specifyInput" hidden no-label-float  on-value-changed="_debounceChangeEvent"
                          id="structuredQuestion_[[index]]__radioOther"></paper-input>
           </template>
         </template>
@@ -366,7 +366,7 @@
             <paper-checkbox id="structuredQuestionCheckbox_[[index]]_[[buttonIndex]]" on-change="_checkboxChanged">
               [[checkbox.text]]
             </paper-checkbox>
-            <paper-input class="specifyInput specifyCheckBox" no-label-float on-value-changed="_debounceChangeEvent"
+            <paper-input class="specifyInput specifyCheckBox" hidden no-label-float on-value-changed="_debounceChangeEvent"
                          id="structuredQuestion_[[index]]_[[buttonIndex]]_checkboxOther"></paper-input>
           </template>
         </template>
@@ -618,6 +618,7 @@
                   if (specifyInput) {
                     var input = this.$$("#structuredQuestion_" + this.index + "__radioOther");
                     if (input) {
+                      input.hidden = false;
                       input.value = specifyInput;
                     } else {
                       debugger;
@@ -648,6 +649,7 @@
                     if (hasSpecifyInputs) {
                       var input = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
                       if (input && specifyInputs[selectedCheckbox.text]) {
+                        input.hidden = false;
                         input.value = specifyInputs[selectedCheckbox.text];
                       } else {
                         console.error("Can't find checkbox specify value");
@@ -714,6 +716,7 @@
         if (selectedCheckbox.isSpecify) {
           var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
           if (checkboxInput) {
+            checkboxInput.hidden = false;
             if (!checkboxInput.value) {
               checkboxInput.value ="";
             }
@@ -746,6 +749,7 @@
       } else if (selectedRadio.isSpecify) {
         var input = this.$$("#structuredQuestion_" + this.index + "__radioOther");
         if (input) {
+          input.hidden = false;
           input.focus();
         } else {
           debugger;
