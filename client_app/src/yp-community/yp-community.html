@@ -354,6 +354,10 @@
           this.setupGroups(this.community.Groups);
           this._setLocationHidden(this.community.Groups);
 
+          if (this.community.Groups && this.community.Groups.length>0) {
+            window.appGlobals.setAnonymousGroupStatus(this.community.Groups[0]);
+          }
+
           this.async(function() {
             var communityCard = this.$$('#communityCard');
             if (communityCard) {
