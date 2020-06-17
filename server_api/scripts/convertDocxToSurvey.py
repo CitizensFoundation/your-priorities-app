@@ -21,6 +21,8 @@ def iter_block_items(parent):
         elif isinstance(child, CT_Tbl):
             yield Table(child, parent)
 
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 17 2020.docx")
+
 document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 15 2020_sw2.docx")
 
@@ -49,6 +51,7 @@ def clean(text):
 def appendRatio(uniqueId, optionsText, questionText, subType=None):
   print("RADIOS")
   radios = []
+  uniqueId = uniqueId.replace("]","").replace("]","")
   if len(optionsText)<2:
     print(optionsText)
     optionsText = splitByDigit("".join(optionsText)).split("\n")
@@ -76,9 +79,13 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
       radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
   appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
 
+def isSkipTo(text):
+  return text.find("skip to")>-1 or text.find("перейти к")>-1 or text.find("перейти к")>-1
+
 def appendCheckbox(uniqueId, optionsText, questionText):
   print("CHECKBOXES")
   checkboxes = []
+  uniqueId = uniqueId.replace("]","").replace("]","")
   for option in optionsText:
     number = option[:2].strip().replace(".","")
     text = option[2:].strip()
@@ -140,7 +147,7 @@ for block in iter_block_items(document):
         else: #if row.cells[2] and len(row.cells[2].text)>1
           #print("ROWS"+str(len(table.rows))+" ri: "+str(ri))
           if len(table.rows)>ri+1 and table.rows[ri+1].cells[0].text.strip().startswith("a"):
-            denseUniqueId = row.cells[0].text.strip()
+            denseUniqueId = row.cells[0].text.strip().replace("[","").replace("]","")
             print("DENSE RATIOS: "+denseUniqueId)
             appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[1].text.strip())})
             if len(row.cells)>2 and row.cells[2].text.strip().startswith("1"):
