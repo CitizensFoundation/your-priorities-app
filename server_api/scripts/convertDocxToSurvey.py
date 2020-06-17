@@ -22,9 +22,11 @@ def iter_block_items(parent):
             yield Table(child, parent)
 
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 17 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 17 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 17 2020.docx")
 
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 17 2020.docx")
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 15 2020_sw2.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 17 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 17 2020.docx")
 
 survey_items = []
 
@@ -69,9 +71,7 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
       text = text.replace("_","")
       if len(text)==0:
         text = "?"
-    if text.find("skip to")>-1:
-      skipTo = text.split("skip to")[1].strip().replace("[","").replace("]","")
-      text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
+    text, skipTo = processSkipTo(text)
     text = text.replace(",","")
     text = text.replace(":",";")
     text = text.strip()
@@ -79,8 +79,19 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
       radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
   appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
 
-def isSkipTo(text):
-  return text.find("skip to")>-1 or text.find("перейти к")>-1 or text.find("перейти к")>-1
+def processSkipTo(text):
+  skipTo = None
+  if text.find("skip to")>-1:
+      skipTo = text.split("skip to")[1].strip()
+      text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
+  if text.find("перейти к")>-1:
+      skipTo = text.split("перейти к")[1].strip()
+      text = reallyGetStringToBracket(text.split("перейти к")[0]).strip()
+  if text.find("өтүү")>-1:
+      skipTo = text.split("өтүү")[1].strip()
+      text = reallyGetStringToBracket(text.split("өтүү")[0]).strip()
+
+  return text, skipTo
 
 def appendCheckbox(uniqueId, optionsText, questionText):
   print("CHECKBOXES")
@@ -96,9 +107,7 @@ def appendCheckbox(uniqueId, optionsText, questionText):
       text = text.replace("_","")
       if len(text)==0:
         text = "?"
-    if text.find("skip to")>-1:
-      skipTo = text.split("skip to")[1].strip()
-      text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
+    text, skipTo = processSkipTo(text)
     text = text.replace(",","")
     text = text.replace(":",";")
     text = text.strip()
@@ -118,6 +127,7 @@ def splitByDigit(text):
   return part.strip()
 
 def splitByColumns(columns):
+  print(columns)
   i = 0
   options = []
   for column in columns:
@@ -137,7 +147,6 @@ for block in iter_block_items(document):
       table = block
       denseUniqueId = None
       for ri, row in enumerate(table.rows):
-        print(str(ri)+str(len(table.rows)))
         if len(table.rows)>ri+1:
           print("HEH: "+table.rows[ri+1].cells[0].text.strip())
         if firstCell==True:
@@ -166,9 +175,9 @@ for block in iter_block_items(document):
           elif len(row.cells[0].text.strip())==1 and len(row.cells)>2 and len(row.cells[2].text)>5:
             appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByDigit(row.cells[2].text).split("\n"), row.cells[1].text.strip(), 'rating')
 
-          elif len(row.cells)>3 and row.cells[3].text.strip().startswith("1 "):
+          elif len(row.cells)>3 and (row.cells[3].text.strip().startswith("1 ") or row.cells[3].text.strip().startswith("1. ")):
             appendRatio(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
-          elif row.cells[2].text.strip().startswith("1 ") or row.cells[2].text.strip().startswith("1. "):
+          elif row.cells[2].text.strip().startswith("1") or row.cells[2].text.strip().startswith("1."):
             appendRatio(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
 
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
