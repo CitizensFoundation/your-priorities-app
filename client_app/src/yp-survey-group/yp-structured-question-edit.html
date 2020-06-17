@@ -229,7 +229,7 @@
     </template>
 
     <template is="dom-if" if="[[_isTextFieldLong(question)]]">
-      <div class="question general longQuestion" has-focus$="[[longFocus]]" has-content$="[[question.value]]"
+      <div class="question general longQuestion" has-focus$="[[longFocus]]" has-cosssntent$="[[question.value]]"
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
@@ -315,6 +315,7 @@
 
     <template is="dom-if" if="[[_isTextDescription(question)]]">
       <div class="question general"
+           id="structuredQuestionQuestion_[[index]]"
            use-small-font$="[[useSmallFont]]"
            inner-h-t-m-l="[[_textWithLinks(question)]]"
            extra-top-margin$="[[question.extraTopMargin]]"

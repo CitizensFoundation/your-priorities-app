@@ -67,7 +67,7 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
       if len(text)==0:
         text = "?"
     if text.find("skip to")>-1:
-      skipTo = text.split("skip to")[1].strip()
+      skipTo = text.split("skip to")[1].strip().replace("[","").replace("]","")
       text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
     text = text.replace(",","")
     text = text.replace(":",";")
@@ -166,7 +166,7 @@ for block in iter_block_items(document):
 
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
             if len(getStringToBracket(row.cells[1].text.strip()))<24:
-              appendSurveyItem({'type':'textField', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
+              appendSurveyItem({'type':'textFieldLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
             else:
               appendSurveyItem({'type':'textFieldLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
 

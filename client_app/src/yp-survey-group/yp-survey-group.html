@@ -246,6 +246,18 @@
               } else {
                 console.error("Can't find container")
               }
+
+              var possibleQuestionAboveContainer = "#structuredQuestionContainer_"+(elementIndex-1);
+              var possibleQuestionAboveId = "#structuredQuestionQuestion_"+(elementIndex-1);
+
+              if (this.$$(possibleQuestionAboveContainer)) {
+                var questionTextAbove = this.$$(possibleQuestionAboveContainer).$$(possibleQuestionAboveId);
+                if (questionTextAbove && showItems===true) {
+                  this.$$(possibleQuestionAboveId).show();
+                } else if (questionTextAbove) {
+                  this.$$(possibleQuestionAboveId).hide();
+                }
+              }
             }
           }
         } else {
