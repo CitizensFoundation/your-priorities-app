@@ -70,7 +70,7 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
       isSpecify = True
       text = text.replace("_","")
       if len(text)==0:
-        text = "?"
+        text = "____"
     text, skipTo = processSkipTo(text)
     text = text.replace(",","")
     text = text.replace(":",";")
@@ -106,7 +106,7 @@ def appendCheckbox(uniqueId, optionsText, questionText):
       isSpecify = True
       text = text.replace("_","")
       if len(text)==0:
-        text = "?"
+        text = "____"
     text, skipTo = processSkipTo(text)
     text = text.replace(",","")
     text = text.replace(":",";")
