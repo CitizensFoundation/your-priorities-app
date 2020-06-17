@@ -60,6 +60,15 @@
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
     }
+
+    if (!String.prototype.startsWith) {
+      Object.defineProperty(String.prototype, 'startsWith', {
+        value: function(search, rawPos) {
+          var pos = rawPos > 0 ? rawPos|0 : 0;
+          return this.substring(pos, pos + search.length) === search;
+        }
+      });
+    }
   </script>
 
   <link rel="import" href="/src/yp-app/yp-app.html?v=@version@">

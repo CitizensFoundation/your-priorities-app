@@ -21,7 +21,8 @@ def iter_block_items(parent):
         elif isinstance(child, CT_Tbl):
             yield Table(child, parent)
 
-document = Document("/home/robert/Documents/WorldBank/Surveys/refwforyourinputcovidsocialimpactmonitoringsurve/Comm Rep_Final_ENG_clear_June 9 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 15 2020_sw2.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 15 2020_sw2.docx")
 
 survey_items = []
 
@@ -60,16 +61,19 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
     #print("Text: "+text)
     isSpecify = False
     skipTo = None
-    if text.find("___")>0 or text.find("(specify)")>0:
+    if text.find("___")>-1 or text.find("(specify)")>-1:
       isSpecify = True
       text = text.replace("_","")
-    if text.find("skip to")>0:
+      if len(text)==0:
+        text = "?"
+    if text.find("skip to")>-1:
       skipTo = text.split("skip to")[1].strip()
       text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
     text = text.replace(",","")
     text = text.replace(":",";")
     text = text.strip()
-    radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
+    if len(text)>0 and len(number)>0:
+      radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
   appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
 
 def appendCheckbox(uniqueId, optionsText, questionText):
@@ -80,16 +84,19 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text = option[2:].strip()
     isSpecify = False
     skipTo = None
-    if text.find("___")>0 or text.find("(specify)")>0:
+    if text.find("___")>-1 or text.find("(specify)")>-1:
       isSpecify = True
       text = text.replace("_","")
-    if text.find("skip to")>0:
+      if len(text)==0:
+        text = "?"
+    if text.find("skip to")>-1:
       skipTo = text.split("skip to")[1].strip()
       text = reallyGetStringToBracket(text.split("skip to")[0]).strip()
     text = text.replace(",","")
     text = text.replace(":",";")
     text = text.strip()
-    checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
+    if len(text)>0 and len(number)>0:
+      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText)})
 
 def splitByDigit(text):
@@ -154,11 +161,11 @@ for block in iter_block_items(document):
 
           elif len(row.cells)>3 and row.cells[3].text.strip().startswith("1 "):
             appendRatio(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[2].text.strip())
-          elif row.cells[2].text.strip().startswith("1 "):
+          elif row.cells[2].text.strip().startswith("1 ") or row.cells[2].text.strip().startswith("1. "):
             appendRatio(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
 
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
-            appendSurveyItem({'type':'textAreaLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 250, 'text': getStringToBracket(row.cells[1].text.strip())})
+            appendSurveyItem({'type':'textField', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
         #else:
          # print("NOTHING")
 

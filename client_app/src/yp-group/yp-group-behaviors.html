@@ -100,6 +100,12 @@
               }
             }
 
+            if (group.language && group.language==="ru" && group.objectives && group.objectives.length>140) {
+              this.$$("#objectives").style.fontSize = "15px";
+            } else {
+              this.$$("#objectives").style.fontSize = "16px";
+            }
+
             if (this.archived) {
               var fontSizePixels = groupName.style.fontSize.replace("px", "");
               fontSizePixels = parseInt(fontSizePixels);
