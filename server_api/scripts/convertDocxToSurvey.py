@@ -25,8 +25,9 @@ def iter_block_items(parent):
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 17 2020.docx")
 
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 17 2020.docx")
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 17 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 17 2020.docx")
 
 survey_items = []
 
@@ -149,25 +150,26 @@ for block in iter_block_items(document):
       for ri, row in enumerate(table.rows):
         if len(table.rows)>ri+1:
           print("HEH: "+table.rows[ri+1].cells[0].text.strip())
+          print("TRUE"+str(table.rows[ri+1].cells[0].text.strip().startswith("а")))
         if firstCell==True:
             firstCell=False
             print("Description")
             appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[0].text.strip())})
         else: #if row.cells[2] and len(row.cells[2].text)>1
-          #print("ROWS"+str(len(table.rows))+" ri: "+str(ri))
-          if len(table.rows)>ri+1 and table.rows[ri+1].cells[0].text.strip().startswith("a"):
+          print("ROWS"+str(len(table.rows))+" ri: "+str(ri))
+          if len(table.rows)>ri+1 and (table.rows[ri+1].cells[0].text.strip().startswith("a") or table.rows[ri+1].cells[0].text.strip().startswith("а")):
             denseUniqueId = row.cells[0].text.strip().replace("[","").replace("]","")
             print("DENSE RATIOS: "+denseUniqueId)
             appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[1].text.strip())})
             if len(row.cells)>2 and row.cells[2].text.strip().startswith("1"):
               appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[2].text.strip())})
 
-          elif len(row.cells)>3 and row.cells[3].text.strip().startswith("A "):
+          elif len(row.cells)>3 and (row.cells[3].text.strip().startswith("A ") or row.cells[3].text.strip().startswith("A_") or row.cells[3].text.strip().startswith("А ")):
             appendCheckbox(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[1].text.strip())
-          elif row.cells[2].text.startswith("A "):
+          elif row.cells[2].text.strip().startswith("A") or row.cells[2].text.strip().startswith("A_") or row.cells[2].text.strip().startswith("А "):
             appendCheckbox(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
 
-          elif len(row.cells[0].text.strip())==1 and len(row.cells)>5 and row.cells[2].text.strip().startswith("1"):
+          elif len(row.cells[0].text.strip())==1 and len(row.cells)>4 and row.cells[2].text.strip().startswith("1"):
             appendRatio(denseUniqueId+row.cells[0].text.strip(), splitByColumns(row.cells), row.cells[1].text.strip(),'rating')
 
           elif len(row.cells[0].text.strip())==1 and len(row.cells)>3 and len(row.cells[3].text)>5:
