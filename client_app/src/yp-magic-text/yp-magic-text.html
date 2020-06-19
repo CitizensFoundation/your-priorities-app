@@ -118,7 +118,7 @@
 
           showMoreText: {
             type: Boolean,
-            computed: '_showMoreText(moreText,content)'
+            computed: '_showMoreText(moreText,content,truncate)'
           },
 
           closeDialogText: {
@@ -126,6 +126,11 @@
           },
 
           textOnly: {
+            type: Boolean,
+            value: false
+          },
+
+          isDialog: {
             type: Boolean,
             value: false
           },
@@ -162,11 +167,11 @@
       }
 
       static get rtlLanguages() {
-        return ['fa','ar']
+        return ['fa','ar','ar_EG']
       }
 
-      _showMoreText(moreText, content) {
-        return moreText && content && content.length>((this.truncate ? this.truncate : 500)-1);
+      _showMoreText(moreText, content, truncate) {
+        return moreText && content && (truncate && content.length>truncate);
       }
 
       _openFullScreen() {
@@ -344,6 +349,10 @@
       _finalize() {
         if (!this.textOnly) {
           this._linksAndEmojis()
+        }
+
+        if (!this.isDialog && !this.truncate) {
+          this.truncate = 500;
         }
 
         if (this.truncate && this.content && (this.content.length>this.truncate || this.autoTranslate)) {

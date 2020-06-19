@@ -78,6 +78,7 @@
         this.textType = textType;
         this.contentLanguage = contentLanguage;
         this.structuredQuestionsConfig = structuredQuestionsConfig;
+        this.set('isDialog', true);
         this.set('content', content);
         this.set('closeDialogText', closeDialogText);
         this.$.dialog.open();
