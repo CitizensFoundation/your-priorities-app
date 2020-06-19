@@ -221,6 +221,7 @@
                    char-counter
                    use-small-font$="[[useSmallFont]]"
                    on-keypress="_keyPressed"
+                   type="[[question.subInputType]]"
                    half-width-desktop$="[[question.halfWidthDesktop]]"
                    on-value-changed="_debounceChangeEvent"
                    required$="[[question.required]]"
@@ -240,6 +241,7 @@
                    on-keypress="_keyPressed"
                    on-focus="setLongFocus"
                    on-blur="setLongUnFocus"
+                   type="[[question.subInputType]]"
                    no-label-float
                    half-width-desktop$="[[question.halfWidthDesktop]]"
                    on-value-changed="_debounceChangeEvent"
@@ -249,7 +251,7 @@
     </template>
 
 
-      <template is="dom-if" if="[[_isNumberField(question)]]">
+    <template is="dom-if" if="[[_isNumberField(question)]]">
       <paper-input id="structuredQuestion_[[index]]"
                    value="{{question.value}}"
                    class="numberInput"
