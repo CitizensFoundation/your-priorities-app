@@ -486,7 +486,14 @@ router.get('/loggedInUser/adminRights', function (req, res) {
     ], function (error) {
       if (!error) {
         log.info('User Sent Admin Rights', { userId: req.user ? req.user.id : -1, context: 'adminRights'});
-        res.send(adminAccess);
+        if (adminAccess.OrganizationAdmins.length===0 &&
+            adminAccess.GroupAdmins.length===0 &&
+            adminAccess.CommunityAdmins.length===0 &&
+            adminAccess.DomainAdmins.length===0) {
+          res.send('0');
+        } else {
+          res.send(adminAccess);
+        }
       } else {
         log.error("User AdminRights Error", { context: 'adminRights', err: error, errorStatus: 500 });
         res.sendStatus(500);
