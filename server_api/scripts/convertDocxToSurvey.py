@@ -119,11 +119,11 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text, skipTo = processSkipTo(text)
     text = text.replace(",","")
     text = text.replace(":",";")
-    text, max_length = get_max_length(text)
-
     text = text.strip()
     if len(text)>0 and len(number)>0:
       checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecif, 'maxLength': max_length})
+
+  questionText, max_length = get_max_length(questionText)
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText)})
 
 

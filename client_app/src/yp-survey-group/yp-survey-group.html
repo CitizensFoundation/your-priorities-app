@@ -232,7 +232,7 @@
 
         if (firstElementPos>-1) {
           firstElementPos+=1;
-          for (i=firstElementPos; i<this.liveUniqueIds.length; i++) {
+          for (var i=firstElementPos; i<this.liveUniqueIds.length; i++) {
             if (this.liveUniqueIds[i]==detail.toId) {
               break;
             } else {

@@ -540,7 +540,7 @@
               if (button.text === item.selected) {
                 selectedRadio = button;
               }
-            }.bind(this.validate()));
+            }.bind(this));
             if (selectedRadio.isSpecify) {
               var radioInput = this.$$("#structuredQuestion_" + this.index + "__radioOther");
               if (radioInput) {
@@ -714,6 +714,30 @@
         }
       }
 
+      if (this.question.maxLength) {
+        var checkedCount = 0;
+        var item = event.target;
+        for (var i = 0; i < item.children.length; i++) {
+          if (item.children[i].checked) {
+            checkedCount+=1;
+          }
+        }
+
+        if (checkedCount>=this.question.maxLength) {
+          for (var x = 0; x < item.children.length; x++) {
+            if (!item.children[x].checked) {
+              item.children[x].disabled = true;
+            }
+          }
+        } else {
+          for (var n = 0; n < item.children.length; n++) {
+            if (item.children[n].disabled) {
+              item.children[n].disabled = false;
+            }
+          }
+        }
+      }
+
       event.stopPropagation();
       this._sendDebouncedChange({value: 1});
     }
@@ -729,7 +753,7 @@
         if (button.text === detail.value) {
           selectedRadio = button;
         }
-      }.bind(this.validate()));
+      }.bind(this));
 
       if (selectedRadio.skipTo) {
         this.fire('yp-skip-to-unique-id', {fromId: this.question.uniqueId, toId: selectedRadio.skipTo});
