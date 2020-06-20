@@ -12,6 +12,7 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
+<link rel="import" href="../yp-app-globals/paper-textarea-aria.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 
 <dom-module id="yp-structured-question-edit">
@@ -67,14 +68,14 @@
         margin-bottom: 16px;
       }
 
-      paper-input, paper-textarea {
+      paper-input, paper-textarea-aria {
         --paper-input-container-label: {
           color: #000;
           font-size: 18px;
         }
       }
 
-      paper-input[use-small-font], paper-textarea[use-small-font] {
+      paper-input[use-small-font], paper-textarea-aria[use-small-font] {
         --paper-input-container-label: {
           font-size: 16px;
         }
@@ -104,7 +105,7 @@
         margin-top: 48px;
       }
 
-      paper-textarea.textAreaLong {
+      paper-textarea-aria.textAreaLong {
         --paper-input-container: {
           margin: 0;
           padding: 0;
@@ -269,7 +270,7 @@
     </template>
 
     <template is="dom-if" if="[[_isTextarea(question)]]">
-      <paper-textarea id="structuredQuestion_[[index]]"
+      <paper-textarea-aria id="structuredQuestion_[[index]]"
                       data-type="text"
                       value="{{question.value}}"
                       on-keypress="_keyPressed"
@@ -284,7 +285,7 @@
                       maxrows="5"
                       required$="[[question.required]]"
                       maxlength="[[question.maxLength]]">
-      </paper-textarea>
+      </paper-textarea-aria>
     </template>
 
     <template is="dom-if" if="[[_isTextareaLong(question)]]">
@@ -292,7 +293,7 @@
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
-      <paper-textarea id="structuredQuestion_[[index]]"
+      <paper-textarea-aria id="structuredQuestion_[[index]]"
                       data-type="text"
                       value="{{question.value}}"
                       on-keypress="_keyPressed"
@@ -308,7 +309,7 @@
                       maxrows="5"
                       required$="[[question.required]]"
                       maxlength="[[question.maxLength]]">
-      </paper-textarea>
+      </paper-textarea-aria>
     </template>
 
     <template is="dom-if" if="[[_isTextHeader(question)]]">

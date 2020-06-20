@@ -7,7 +7,6 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -18,6 +17,7 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
+<link rel="import" href="../yp-app-globals/paper-textarea-aria.html">
 <link rel="import" href="../yp-file-upload/yp-file-upload.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
@@ -259,7 +259,7 @@
               </template>
 
               <template is="dom-if" if="[[postDescriptionLimit]]">
-                <paper-textarea id="description"
+                <paper-textarea-aria id="description"
                                 hidden$="[[hasStructuredQuestions]]"
                                 required$="[[!hasStructuredQuestions]]"
                                 minlength="3"
@@ -267,13 +267,14 @@
                                 value="{{post.description}}"
                                 always-float-label="[[_floatIfValueOrIE(post.description)]]"
                                 label="[[t('post.description')]]"
+                                aria-label$="[[t('post.description')]]"
                                 on-value-changed="_resizeScrollerIfNeeded"
                                 char-counter
                                 rows="2"
                                 max-rows="5"
                                 maxrows="5"
                                 maxlength="[[postDescriptionLimit]]">
-                </paper-textarea>
+                </paper-textarea-aria>
 
                 <div class="horizontal end-justified layout postEmoji" hidden$="[[group.configuration.hideEmoji]]">
                   <emoji-selector id="emojiSelectorDescription" hidden$="[[hasStructuredQuestions]]"></emoji-selector>
@@ -347,18 +348,19 @@
 
           <template is="dom-if" restamp if="[[newPointShown]]">
             <section class="subContainer">
-              <paper-textarea id="pointFor"
+              <paper-textarea-aria id="pointFor"
                               required$="[[!group.configuration.newPointOptional]]"
                               minlength="3"
                               name="pointFor"
                               value="{{post.pointFor}}"
                               always-float-label="[[_floatIfValueOrIE(post.pointFor)]]"
                               label="[[t('point.for')]]"
+                              aria-label$="[[t('point.for')]]"
                               char-counter
                               rows="2"
                               max-rows="5"
                               maxlength="[[_pointMaxLength(group)]]">
-              </paper-textarea>
+              </paper-textarea-aria>
               <div class="horizontal end-justified layout pointEmoji" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
               </div>

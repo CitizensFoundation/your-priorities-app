@@ -372,7 +372,7 @@
 
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[post.Group.configuration.hideNewPostOnPostPage]]">
       <template is="dom-if" if="[[!disableNewPosts]]">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title$="[[t('post.new')]]" on-tap="_newPost"></paper-fab>
       </template>
     </div>
 

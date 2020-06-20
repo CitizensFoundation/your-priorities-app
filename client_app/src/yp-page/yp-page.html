@@ -167,7 +167,7 @@
     </div>
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
       <template is="dom-if" if="[[createFabIcon]]">
-        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" class="createCommunity" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
+        <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" class="createCommunity" wide-layout$="{{wideWidth}}" title$="[[createFabTitle]]" on-tap="_createTap"></paper-fab>
       </template>
     </div>
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wideWidth}}"></iron-media-query>
