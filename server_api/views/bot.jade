@@ -15,8 +15,7 @@ html(lang="en")
         img(src= imageUrl alt= title)
         p= descriptionText
         div
-            b
-                h2= subItemContainerName
+            h2= subItemContainerName
             each val in subItemIds
                 div
                     a(href != subItemsUrlbase+val.id)
