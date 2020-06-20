@@ -1,5 +1,6 @@
 from docx.api import Document
 import json
+import re
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
 from docx.table import _Cell, Table
@@ -94,6 +95,13 @@ def processSkipTo(text):
 
   return text, skipTo
 
+def get_max_length(text):
+  max_length = None
+  if text.find("<")>-1 and text.find(">")>-1:
+    max_length = text[text.find("<")+1:text.rfind(">")]
+    text = text.replace("<"+max_length+">")
+  return text,max_length
+
 def appendCheckbox(uniqueId, optionsText, questionText):
   print("CHECKBOXES")
   checkboxes = []
@@ -111,10 +119,13 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text, skipTo = processSkipTo(text)
     text = text.replace(",","")
     text = text.replace(":",";")
+    text, max_length = get_max_length(text)
+
     text = text.strip()
     if len(text)>0 and len(number)>0:
-      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
+      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecif, 'maxLength': max_length})
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText)})
+
 
 def splitByDigit(text):
   text = text.strip()
@@ -139,6 +150,20 @@ def splitByColumns(columns):
   return options
 
 firstCell = True
+
+def get_sub_type(text, descriptionOne, descriptionTwo):
+  sub_type = "text"
+
+  match = re.search(r'.{2}/.{2}/.{4}', text)
+
+  if match:
+    sub_type = "date"
+
+  if descriptionOne.find('─┴─┴─')>-1 or descriptionTwo.find('─┴─┴─')>-1:
+    sub_type = "number"
+
+    return sub_type
+
 
 for block in iter_block_items(document):
     if isinstance(block, Paragraph):
@@ -183,10 +208,16 @@ for block in iter_block_items(document):
             appendRatio(row.cells[0].text.strip(), row.cells[2].text.split("\n"), row.cells[1].text.strip())
 
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
+            text = getStringToBracket(row.cells[1].text.strip())
+            max_length = 100
+            text, max_length = get_max_length(text))
+
+            sub_type = get_sub_type(text, row.cells[1].text.strip(), row.cells[2].text.strip()
+
             if len(getStringToBracket(row.cells[1].text.strip()))<24:
-              appendSurveyItem({'type':'textFieldLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
+              appendSurveyItem({'type':'textFieldLong', 'subType': sub_type, 'uniqueId': row.cells[0].text.strip(), 'maxLength': max_length, 'text': text })
             else:
-              appendSurveyItem({'type':'textFieldLong', 'uniqueId': row.cells[0].text.strip(), 'maxLength': 100, 'text': getStringToBracket(row.cells[1].text.strip())})
+              appendSurveyItem({'type':'textFieldLong', 'subType': sub_type, 'uniqueId': row.cells[0].text.strip(), 'maxLength': max_length, 'text': text })
 
         #else:
          # print("NOTHING")
