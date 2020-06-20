@@ -310,8 +310,7 @@
         if (this.processedContent) {
           if (this.autoTranslate &&
               this.language!==this.contentLanguage &&
-              !this.disableTranslation &&
-              this.contentLanguage!=='??') {
+              !this.disableTranslation) {
             this._startTranslationAndFinalize();
           } else {
             this._finalize();
