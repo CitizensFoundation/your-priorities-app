@@ -570,7 +570,7 @@
           }.bind(this));
 
           post.public_data.structuredAnswersJson.forEach(function (answer) {
-            if (answer.value) {
+            if (answer && answer.value) {
               var question = questionHash[answer.uniqueId];
               if (question) {
                 outText+="<b>"+question.text+"</b>\n";

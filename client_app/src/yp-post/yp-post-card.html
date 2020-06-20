@@ -393,7 +393,7 @@
 
           for (let i=0;i<post.public_data.structuredAnswersJson.length;i++) {
             const answer = post.public_data.structuredAnswersJson[i];
-            if (answer.value) {
+            if (answer && answer.value) {
               var question = questionHash[answer.uniqueId];
               if (question) {
                 outText+=question.text+": ";

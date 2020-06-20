@@ -516,67 +516,74 @@
           this.question.type.toLowerCase() === "numberfield"
         ) {
           var item = this.$$("#structuredQuestion_" + this.index);
-          this.async(function () {
-            item.focus();
-          }, 250);
+          if (item) {
+            this.async(function () {
+              item.focus();
+            }, 250);
+          }
         }
       }
 
       getAnswer() {
         var item = this.$$("#structuredQuestion_" + this.index);
-        var value = null;
 
-        if (this.question.type.toLowerCase() === "textfield" ||
-          this.question.type.toLowerCase() === "textfieldlong" ||
-          this.question.type.toLowerCase() === "textarea" ||
-          this.question.type.toLowerCase() === "textarealong" ||
-          this.question.type.toLowerCase() === "numberfield"
-        ) {
-          value = item.value;
-        } else if (this.question.type.toLowerCase() === "radios") {
-          if (item.selected) {
-            var selectedRadio = null;
-            this.question.radioButtons.forEach(function (button) {
-              if (button.text === item.selected) {
-                selectedRadio = button;
-              }
-            }.bind(this));
-            if (selectedRadio.isSpecify) {
-              var radioInput = this.$$("#structuredQuestion_" + this.index + "__radioOther");
-              if (radioInput) {
-                value = selectedRadio.text + ":" + radioInput.value;
+        if (item) {
+          var value = null;
+
+          if (this.question.type.toLowerCase() === "textfield" ||
+            this.question.type.toLowerCase() === "textfieldlong" ||
+            this.question.type.toLowerCase() === "textarea" ||
+            this.question.type.toLowerCase() === "textarealong" ||
+            this.question.type.toLowerCase() === "numberfield"
+          ) {
+            value = item.value;
+          } else if (this.question.type.toLowerCase() === "radios") {
+            if (item.selected) {
+              var selectedRadio = null;
+              this.question.radioButtons.forEach(function (button) {
+                if (button.text === item.selected) {
+                  selectedRadio = button;
+                }
+              }.bind(this));
+              if (selectedRadio.isSpecify) {
+                var radioInput = this.$$("#structuredQuestion_" + this.index + "__radioOther");
+                if (radioInput) {
+                  value = selectedRadio.text + ":" + radioInput.value;
+                } else {
+                  value = selectedRadio.text;
+                }
               } else {
                 value = selectedRadio.text;
               }
-            } else {
-              value = selectedRadio.text;
             }
-          }
-        } else if (this.question.type.toLowerCase() === "checkboxes") {
-          var selectedCheckboxes = "";
-          for (var i = 0; i < item.children.length; i++) {
-            if (item.children[i].checked) {
-              var checkboxSubId = item.children[i].id.split("_")[2];
-              var selectedCheckbox = this.question.checkboxes[checkboxSubId];
-              if (selectedCheckbox.isSpecify) {
-                var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
-                if (checkboxInput && checkboxInput.value !== "") {
-                  selectedCheckboxes += selectedCheckbox.text + ":" + checkboxInput.value + ",";
+          } else if (this.question.type.toLowerCase() === "checkboxes") {
+            var selectedCheckboxes = "";
+            for (var i = 0; i < item.children.length; i++) {
+              if (item.children[i].checked) {
+                var checkboxSubId = item.children[i].id.split("_")[2];
+                var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+                if (selectedCheckbox.isSpecify) {
+                  var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
+                  if (checkboxInput && checkboxInput.value !== "") {
+                    selectedCheckboxes += selectedCheckbox.text + ":" + checkboxInput.value + ",";
+                  } else {
+                    selectedCheckboxes += selectedCheckbox.text + ",";
+                  }
                 } else {
                   selectedCheckboxes += selectedCheckbox.text + ",";
                 }
-              } else {
-                selectedCheckboxes += selectedCheckbox.text + ",";
               }
+            }
+
+            if (selectedCheckboxes !== "") {
+              value = selectedCheckboxes.substring(0, selectedCheckboxes.length - 1);
             }
           }
 
-          if (selectedCheckboxes !== "") {
-            value = selectedCheckboxes.substring(0, selectedCheckboxes.length - 1);
-          }
+          return {uniqueId: this.question.uniqueId, value: value}
+        } else {
+          console.error("Can't find question item for "+this.question.text);
         }
-
-        return {uniqueId: this.question.uniqueId, value: value}
       }
 
       setAnswer(value) {
@@ -650,7 +657,7 @@
             }
           }
         } else {
-          console.error("cant find item");
+          console.error("cant find answer for item index "+this.index);
         }
       }
     }
@@ -658,21 +665,29 @@
     hide()
     {
       var item = this.$$("#structuredQuestion_" + this.index);
-      item.hidden = true;
+      if (item) {
+        item.hidden = true;
 
-      var introItem = this.$$("#structuredQuestionIntro_" + this.index);
-      if (introItem) {
-        introItem.hidden = true;
+        var introItem = this.$$("#structuredQuestionIntro_" + this.index);
+        if (introItem) {
+          introItem.hidden = true;
+        }
+      } else {
+        console.error("Can't find question index: "+this.index);
       }
     }
 
     show()
     {
       var item = this.$$("#structuredQuestion_" + this.index);
-      item.hidden = false;
-      var introItem = this.$$("#structuredQuestionIntro_" + this.index);
-      if (introItem) {
-        introItem.hidden = false;
+      if (item) {
+        item.hidden = false;
+        var introItem = this.$$("#structuredQuestionIntro_" + this.index);
+        if (introItem) {
+          introItem.hidden = false;
+        }
+      } else {
+        console.error("Can't find question index: "+this.index);
       }
     }
 
@@ -860,6 +875,13 @@
     {
       if (window.i18nTranslation) {
         this.set('language', window.locale);
+      }
+
+      if (this.question) {
+        if (this.question.type==="numberField") {
+          this.question.type="textField";
+          this.question.subType="number"
+        }
       }
 
       this.async(function () {
