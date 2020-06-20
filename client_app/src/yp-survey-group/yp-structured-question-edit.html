@@ -221,6 +221,7 @@
                    label="[[_getTextWithIndex(question)]]"
                    char-counter
                    use-small-font$="[[useSmallFont]]"
+                   title$="[[question.text]]"
                    on-keypress="_keyPressed"
                    type="[[question.subInputType]]"
                    half-width-desktop$="[[question.halfWidthDesktop]]"
@@ -231,7 +232,7 @@
     </template>
 
     <template is="dom-if" if="[[_isTextFieldLong(question)]]">
-      <div class="question general longQuestion" has-focus$="[[longFocus]]" has-cosssntent$="[[question.value]]"
+      <div class="question general longQuestion" has-focus$="[[longFocus]]"
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
@@ -243,26 +244,9 @@
                    on-focus="setLongFocus"
                    on-blur="setLongUnFocus"
                    type="[[question.subInputType]]"
+                   title$="[[question.text]]"
                    no-label-float
                    half-width-desktop$="[[question.halfWidthDesktop]]"
-                   on-value-changed="_debounceChangeEvent"
-                   required$="[[question.required]]"
-                   maxlength="[[question.maxLength]]">
-      </paper-input>
-    </template>
-
-
-    <template is="dom-if" if="[[_isNumberField(question)]]">
-      <paper-input id="structuredQuestion_[[index]]"
-                   value="{{question.value}}"
-                   class="numberInput"
-                   use-small-font$="[[useSmallFont]]"
-                   char-counter--paper-radio-button-label-color
-                   allowed-pattern="[0-9]"
-                   half-width-desktop$="[[question.halfWidthDesktop]]"
-                   on-keypress="_keyPressed"
-                   always-float-label="[[_floatIfValueOrIE(question.value)]]"
-                   label="[[_getTextWithIndex(question)]]"
                    on-value-changed="_debounceChangeEvent"
                    required$="[[question.required]]"
                    maxlength="[[question.maxLength]]">
