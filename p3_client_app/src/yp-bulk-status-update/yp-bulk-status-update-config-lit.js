@@ -5,7 +5,7 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
@@ -270,9 +270,9 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button @tap="${this._saveAndClose}">${this.t('close')}</paper-button>
-        <paper-button @tap="${this._editTemplates}">${this.t('editTemplates')}</paper-button>
-        <paper-button @tap="${this._save}">${this.t('save')}</paper-button>
+        <mwc-button @click="${this._saveAndClose}" .label="${this.t('close')}"></mwc-button>
+        <mwc-button @click="${this._editTemplates}" .label="${this.t('editTemplates')}"></mwc-button>
+        <mwc-button @click="${this._save}" .label="${this.t('save')}"></mwc-button>
       </div>
 
     </paper-dialog>

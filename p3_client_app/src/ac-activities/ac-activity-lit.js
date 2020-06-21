@@ -120,7 +120,7 @@ class AcActivityLit extends YpBaseElement {
       }
 
 
-      paper-button {
+      mwc-button {
         color: var(--accent-color);
       }
 

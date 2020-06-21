@@ -1,5 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -29,7 +29,7 @@ class YpAjaxErrorDialogLit extends YpBaseElement {
     <paper-dialog id="error">
       <p id="errorText">${this.errorText}</p>
       <div class="buttons">
-        <paper-button dialog-confirm .autofocus="" @tap="${this.resetErrorText}">OK</paper-button>
+        <mwc-button dialog-confirm .autofocus="" @click="${this.resetErrorText}" .label="OK" ></mwc-button>
       </div>
     </paper-dialog>
 `

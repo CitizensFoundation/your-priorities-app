@@ -2,7 +2,7 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '../yp-ajax/yp-ajax.js';
@@ -190,7 +190,7 @@ class YpContentModerationLit extends YpBaseElement {
         padding-bottom: 10px;
       }
 
-      paper-button {
+      mwc-button {
         margin-left: 8px;
       }
 
@@ -269,7 +269,7 @@ class YpContentModerationLit extends YpBaseElement {
         margin-bottom: 8px;
       }
 
-      paper-button {
+      mwc-button {
         font-size: 18px;
         margin-top: 16px;
       }
@@ -322,7 +322,7 @@ class YpContentModerationLit extends YpBaseElement {
         <div class="flex"></div>
         <div class="checkBox" ?hidden="${this.narrow}"><paper-checkbox ?checked="${this.multiSortEnabled}">${this.t('multiSortEnabled')}</paper-checkbox></div>
         <div ?hidden="${!this.showReload}">
-          <paper-icon-button .ariaLabel="${this.t('reload')}" .icon="autorenew" class="closeButton" @tap="${this._reload}"></paper-icon-button>
+          <paper-icon-button .ariaLabel="${this.t('reload')}" .icon="autorenew" class="closeButton" @click="${this._reload}"></paper-icon-button>
         </div>
       </div>
 

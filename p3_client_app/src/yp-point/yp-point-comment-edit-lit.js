@@ -46,7 +46,7 @@ class YpPointCommentEditLit extends YpBaseElement {
         max-height: 300px;
       }
 
-      paper-button {
+      mwc-button {
         margin-top: 16px;
         margin-bottom: 16px;
         background-color: var(--accent-color);
@@ -90,7 +90,7 @@ class YpPointCommentEditLit extends YpBaseElement {
           <paper-textarea id="pointComment" required .minlength="15" .name="pointComment" .value="${this.comment.content}" always-float-label="${this.comment.content}" .label="${t(this.point.addComment)}" char-counter .rows="2" .max-rows="2" @keydown="${this_keyDown}" .maxlength="200">
           </paper-textarea>
           <div class="layout horizontal">
-            <paper-button id="submitButton" raised @tap="${this._sendComment}">${this.t(point.postComment)}</paper-button>
+            <mwc-button id="submitButton" raised @click="${this._sendComment}" .label="${this.t(point.postComment)}"></mwc-button>
           </div>
         </div>
       </div>

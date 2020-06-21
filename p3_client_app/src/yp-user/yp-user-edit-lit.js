@@ -100,7 +100,7 @@ class YpUserEditLit extends YpBaseElement {
         margin-bottom: 8px;
       }
 
-      paper-button {
+      mwc-button {
         text-align: center;
       }
     `, YpFlexLayout]
@@ -135,11 +135,11 @@ class YpUserEditLit extends YpBaseElement {
 
           <yp-language-selector .name="defaultLocale" auto-translate-option-disabled="" .selectedLocale="${this.user.default_locale}"></yp-language-selector>
 
-          <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised @tap="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</paper-button>
+          <mwc-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised @click="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</mwc-button>
 
-          <paper-button ?hidden="${!this.user.ssn}" raised class="disconnectButtons" @tap="${this._disconnectFromSamlLogin}">${this.t('disconnectFromSamlLogin')}</paper-button>
+          <mwc-button ?hidden="${!this.user.ssn}" raised class="disconnectButtons" @click="${this._disconnectFromSamlLogin}">${this.t('disconnectFromSamlLogin')}</mwc-button>
 
-          <paper-button id="deleteUser" raised @tap="${this._deleteOrAnonymizeUser}">${this.t('deleteOrAnonymizeUser')}</paper-button>
+          <mwc-button id="deleteUser" raised @click="${this._deleteOrAnonymizeUser}">${this.t('deleteOrAnonymizeUser')}</mwc-button>
 
           <input .type="hidden" .name="uploadedProfileImageId" .value="${this.uploadedProfileImageId}">
           <input .type="hidden" .name="uploadedHeaderImageId" .value="${this.uploadedHeaderImageId}">

@@ -144,7 +144,7 @@ class YpMagicTextLit extends YpBaseElement {
       <div ?hidden="${this.finalContent}" style="max-width:100%">${this.truncatedContent}</div>
 
       ${ this.showMoreText ? html`
-       <paper-button raised class="moreText" @tap="${this._openFullScreen}">${this.moreText}</paper-button>
+       <mwc-button raised class="moreText" @click="${this._openFullScreen}" .label="${this.moreText}"></mwc-button>
       `: html``}
 
     </div>
@@ -451,7 +451,7 @@ class YpMagicTextBoxDialog extends YpBaseElement {
         <div ?hidden="${this.finalContent}">${this.content}</div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button raised dialog-dismiss>${this.closeDialogText}</paper-button>
+        <mwc-button raised dialog-dismiss .label="${this.closeDialogText}"></mwc-button>
       </div>
     </paper-dialog>
     <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>

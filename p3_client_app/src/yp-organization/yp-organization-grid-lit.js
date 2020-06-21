@@ -3,7 +3,7 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
@@ -113,7 +113,7 @@ class YpOrganizationGridLit extends YpBaseElement {
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button .dialogDismiss="">${this.t('Close')}</paper-button>
+        <mwc-button .dialogDismiss .label="${this.t('Close')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -129,7 +129,7 @@ class YpOrganizationGridLit extends YpBaseElement {
               <div class="pageItem title">
                 ${this._organizationImageUrl(organization)}
               </div>
-              <paper-button data-args="${this.organization}" @tap="${this._editOrganization}">${this.t('update')}</paper-button>
+              <mwc-button data-args="${this.organization}" @click="${this._editOrganization}" .label="${this.t('update')}"></mwc-button>
             </div>
           </template>
         </iron-list>
@@ -149,7 +149,7 @@ class YpOrganizationGridLit extends YpBaseElement {
 
               ${ !this._userOrganizationName(user) ? html`
                 <div class="organization">
-                  <paper-button data-args="${this.user.id}" @tap="${this._addToOrganization}">${this.t('users.addToOrganization')}</paper-button>
+                  <mwc-button data-args="${this.user.id}" @click="${this._addToOrganization}" .label="${this.t('users.addToOrganization')}"></mwc-button>
                 </div>
               ` : html``}
 
@@ -157,7 +157,7 @@ class YpOrganizationGridLit extends YpBaseElement {
                 <div class="organizationName">
                   ${this._userOrganizationName(user)}
                 </div>
-                <paper-button data-args="${this.user.id}" data-args-org="${this._userOrganizationId(user)}" @tap="${this._removeFromOrganization}">${this.t('users.removeFromOrganization')}</paper-button>
+                <mwc-button data-args="${this.user.id}" data-args-org="${this._userOrganizationId(user)}" @click="${this._removeFromOrganization}" .label="${this.t('users.removeFromOrganization')}"></mwc-button>
               </div>
             </div>
           </template>
@@ -165,7 +165,7 @@ class YpOrganizationGridLit extends YpBaseElement {
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button .dialogDismiss>${this.t('close')}</paper-button>
+        <mwc-button .dialogDismiss .label="${this.t('close')}"></mwc-button>
       </div>
     </paper-dialog>
 

@@ -5,7 +5,7 @@ import { IronFormElementBehavior } from '@polymer/iron-form-element-behavior/iro
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '../yp-ajax/yp-ajax.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -141,14 +141,12 @@ class YpLanguageSelectorLit extends YpBaseElement {
         </paper-listbox>
       </paper-dropdown-menu>
       <div ?hidden="${!this.canUseAutoTranslate}">
-        <paper-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton" @tap="${this._startTranslation}" .title="${this.t('autoTranslate')}">
-          <iron-icon icon="translate"></iron-icon>
-          <div class="translateText">${this.t('autoTranslate')}</div>
-        </paper-button>
-        <paper-button ?hidden="${!this.autoTranslate}" raised class="layout horizontal stopTranslateButton" @tap="${this._stopTranslation}" .title="${this.t('stopAutoTranslate')}">
-          <iron-icon .icon="translate"></iron-icon>
+        <mwc-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton" 
+                    @click="${this._startTranslation}" .icon="translate" .label="${this.t('autoTranslate')}">
+        </mwc-button>
+        <mwc-button ?hidden="${!this.autoTranslate}" .icon="translate" raised class="layout horizontal stopTranslateButton" @click="${this._stopTranslation}" .title="${this.t('stopAutoTranslate')}">
           <iron-icon class="stopIcon" .icon="do-not-disturb"></iron-icon>
-        </paper-button>
+        </mwc-button>
       </div>
     </div>
 

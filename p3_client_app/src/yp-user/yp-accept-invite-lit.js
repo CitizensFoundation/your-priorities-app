@@ -1,7 +1,7 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-form/iron-form.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -79,8 +79,8 @@ class YpAcceptInviteLit extends YpBaseElement {
       <div class="buttons">
         <yp-ajax id="acceptInviteAjax" .method="POST" dispatch-error="" @error="${this._inviteError}" @response="${this._acceptInviteResponse}"></yp-ajax>
         <yp-ajax id="getInviteSenderAjax" .dispatch-error="" .method="GET" @error="${this._inviteError}" @response="${this._getInviteSenderResponse}"></yp-ajax>
-        <paper-button @tap="${this._cancel}" .dialog-dismiss="">${this.t('cancel')}</paper-button>
-        <paper-button .autofocus="" @tap="${this._acceptInvite}">${this.t('user.acceptInvite')}</paper-button>
+        <mwc-button @click="${this._cancel}" .dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+        <mwc-button .autofocus @click="${this._acceptInvite}" .label="${this.t('user.acceptInvite')}"></mwc-button>
       </div>
     </paper-dialog>
     `

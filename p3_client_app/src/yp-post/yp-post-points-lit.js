@@ -379,7 +379,7 @@ class YpPostPointsLit extends YpBaseElement {
         margin-top: 8px;
       }
 
-      paper-button {
+      mwc-button {
         color: #FFF;
         background-color: var(--accent-color);
       }
@@ -474,7 +474,7 @@ class YpPostPointsLit extends YpBaseElement {
         margin: 32px;
       }
 
-      paper-button[disabled] {
+      mwc-button[disabled] {
         background-color: #333;
         color: #FFF;
       }
@@ -555,10 +555,10 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" icon="videocam"></iron-icon>
-                        ${this.t('uploadVideoPointFor')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${this.loggedInUser}" 
+                                  @click="${this._openLogin}" .label="${this.t('uploadVideoPointFor')}">
+                        <iron-icon class="icon" ></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -572,10 +572,9 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
-                        ${this.t('uploadAudioPointFor')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" .icon="keyboard-voice" raised ?hidden="${this.loggedInUser}" @click="${this._openLogin}" .label="${this.t('uploadAudioPointFor')}">
+                        <iron-icon class="icon" ></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -583,7 +582,7 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthUpIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised class="submitButton" ?disabled="${this.addPointDisabled}" .icon="add" .mini="" .elevation="3" @tap="${this.addPointUp}" .title="${this.t('point.add_up')}">${this.t('postPoint')}</paper-button>
+                  <mwc-button raised class="submitButton" ?disabled="${this.addPointDisabled}" .icon="add" .mini="" .elevation="3" @tap="${this.addPointUp}" .title="${this.t('point.add_up')}" .label="${this.t('postPoint')}"></mwc-button>
                 </div>
               </div>
             </paper-material>
@@ -633,10 +632,9 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" icon="videocam"></iron-icon>
-                        ${this.t('uploadVideoPointAgainst')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${this.loggedInUser}" .label="${this.t('uploadVideoPointAgainst')}" @click="${this._openLogin}">
+                        <iron-icon class="icon"></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -650,10 +648,9 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
-                        ${this.t('uploadAudioPointAgainst')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" icon="keyboard-voice" raised .label="${this.t('uploadAudioPointAgainst')}" ?hidden="${this.loggedInUser}" @click="${this._openLogin}">
+                        <iron-icon class="icon" ></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -661,7 +658,7 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthDownIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised ?disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @tap="${this.addPointDown}" .title="${this.t('point.add_down')}">${this.t('postPoint')}</paper-button>
+                  <mwc-button raised ?disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @click="${this.addPointDown}" .title="${this.t('point.add_down')}" .label="${this.t('postPoint')}"></mwc-button>
                 </div>
               </div>
             </paper-material>
@@ -710,11 +707,11 @@ class YpPostPointsLit extends YpBaseElement {
                     </yp-file-upload>
                   </div>
                   <div class="layout horizontal center-center">
-                    <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
+                    <mwc-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @click="${this._openLogin}">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadVideoPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadVideoPointAgainst')}</span>
-                    </paper-button>
+                    </mwc-button>
                   </div>
                 </div>
               `: html``}
@@ -730,11 +727,11 @@ class YpPostPointsLit extends YpBaseElement {
                     </yp-file-upload>
                   </div>
                   <div class="layout horizontal center-center">
-                    <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
+                    <mwc-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @click="${this._openLogin}">
                       <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadAudioPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadAudioPointAgainst')}</span>
-                    </paper-button>
+                    </mwc-button>
                   </div>
                 </div>
               `: html``}
@@ -743,10 +740,10 @@ class YpPostPointsLit extends YpBaseElement {
           </div>
           <div ?hidden="${!this.ifLengthMobileRight}">
             <div class="addPointFab layout horizontal center-center mobileFab">
-              <paper-button raised="" disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @tap="${this.addMobilePointUpOrDown}" .title="${this.t('postPoint')}">
+              <mwc-button raised="" disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @click="${this.addMobilePointUpOrDown}" .title="${this.t('postPoint')}">
                 <span ?hidden="${!this.selectedPointForMobile}">${this.t('postPointFor')}</span>
                 <span ?hidden="${this.selectedPointForMobile}">${this.t('postPointAgainst')}</span>
-              </paper-button>
+              </mwc-button>
             </div>
           </div>
         </paper-material>

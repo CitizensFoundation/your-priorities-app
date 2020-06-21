@@ -66,7 +66,7 @@ class YpPointNewsStoryEditLit extends YpBaseElement {
         margin-top: -8px;
       }
 
-      paper-button {
+      mwc-button {
         margin-top: 16px;
         background-color: var(--accent-color);
         color: #FFF;
@@ -136,7 +136,7 @@ render() {
           <paper-textarea id="pointNewsStory" required .minlength="15" .name="pointNewsStory" .value="${this.point.content}" always-float-label="${this.point.content}" .label="${this.t('point.addNewsStory')}" char-counter .rows="2" .max-rows="5" @keydown="${this._keyDown}" .maxlength="500">
           </paper-textarea>
           <div class="layout horizontal end-justified">
-            <paper-button id="storySubmitButton" raised @tap="${this._sendStory}">${this.t('point.postNewsStory')}</paper-button>
+            <mwc-button id="storySubmitButton" raised @click="${this._sendStory}" .label="${this.t('point.postNewsStory')}"></mwc-button>
           </div>
         </div>
       </div>

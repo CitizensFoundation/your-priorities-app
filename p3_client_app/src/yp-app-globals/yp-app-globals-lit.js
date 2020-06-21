@@ -126,7 +126,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     <paper-dialog id="dialog">
       <div class="dialogText">${this.notifyDialogText}</div>
       <div class="buttons">
-        <paper-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}">OK</paper-button>
+        <mwc-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}" .label="OK"></mwc-button>
       </div>
     </paper-dialog>
 

@@ -5,7 +5,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-spinner/paper-spinner.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout.js';
@@ -155,13 +155,13 @@ class YpEditDialogLit extends YpBaseElement {
         margin-left: 0;
       }
 
-      paper-button[dialog-confirm] {
+      mwc-button[dialog-confirm] {
         background: none;
         min-width: 44px;
         margin: 6px 0 0 16px;
       }
 
-      paper-button[disabled]{
+      mwc-button[disabled]{
         background-color: #FFF;
       }
 
@@ -340,16 +340,16 @@ class YpEditDialogLit extends YpBaseElement {
             ${!this.useNextTabAction ? html`
 
               ${!this.uploadingState ? html`
-                <paper-button id="submit1" @tap="${this._submit}"><span class="smallButtonText">${this.saveText}</span></paper-button>
+                <mwc-button id="submit1" @click="${this._submit}" .label="${this.saveText}" class="smallButtonText"></mwc-button>
               `: html`
-                <paper-button ?disabled="" @tap="${this._nextTab}">${this.t('uploading.inProgress')}</paper-button>
+                <mwc-button ?disabled="" @click="${this._nextTab}" .label="${this.t('uploading.inProgress')}"></mwc-button>
               `}
 
             `: html``}
 
             ${this.useNextTabAction ? html`
             `: html`
-              <paper-button @tap="${this._nextTab}"><span class="smallButtonText">${this.nextActionText}</span></paper-button>
+              <mwc-button @click="${this._nextTab}" class="smallButtonText" .label="${this.nextActionText}"></mwc-button>
             `}
 
           </div>
@@ -376,18 +376,18 @@ class YpEditDialogLit extends YpBaseElement {
           <paper-spinner id="spinner"></paper-spinner>
         </paper-dialog-scrollable>
         <div class="buttons">
-          <paper-button id="dismissBtn" dialog-dismiss>${this.t('cancel')}</paper-button>
+          <mwc-button id="dismissBtn" dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
 
           ${!this.uploadingState ? html`
 
             ${!this.useNextTabAction ? html`
-              <paper-button raised class="actionButtons" id="submit2" @tap="${this._submit}">${this.saveText}</paper-button>
+              <mwc-button raised class="actionButtons" id="submit2" @click="${this._submit}" .label="${this.saveText}"></mwc-button>
             `: html`
-                <paper-button raised class="actionButtons" @tap="${this._nextTab}">${this.nextActionText}</paper-button>
+                <mwc-button raised class="actionButtons" @click="${this._nextTab}" .label="${this.nextActionText}"></mwc-button>
             `}
 
           `: html`
-            <paper-button ?disabled @tap="${this._nextTab}">${this.t('uploading.inProgress')}</paper-button>
+            <mwc-button ?disabled @click="${this._nextTab}" .label="${this.t('uploading.inProgress')}"></mwc-button>
         </div>
           `}
       `}
@@ -397,7 +397,7 @@ class YpEditDialogLit extends YpBaseElement {
       <paper-dialog id="formErrorDialog" modal>
         <div id="errorText"> ${this.errorText}</div>
         <div class="buttons">
-          <paper-button dialog-confirm autofocus @tap="${this._clearErrorText}">${this.t('ok')}</paper-button>
+          <mwc-button dialog-confirm autofocus @click="${this._clearErrorText}" .label="${this.t('ok')}"></mwc-button>
         </div>
       </paper-dialog>
       <paper-toast id="toast" .text="${this.toastTextCombined}"></paper-toast>

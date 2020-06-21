@@ -117,7 +117,7 @@ class YpDialogContainerLit extends YpBaseElement {
         font-size: 16px;
       }
 
-      paper-button {
+      mwc-button {
         background-color: #555;
         margin-right: 12px;
         text-align: center;
@@ -142,8 +142,8 @@ class YpDialogContainerLit extends YpBaseElement {
             <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
               <div class="layout horizontal">
             <div class="flex"></div>
-              <paper-button raised @tap="${this._disableFaceookPixelTracking}">${this.t('disableFacebookTracking')}</paper-button>
-              <paper-button raised @tap="${this._agreeToFacebookPixelTracking}">${this.t('iAgree')}</paper-button>
+              <mwc-button raised @click="${this._disableFaceookPixelTracking}" .label="${this.t('disableFacebookTracking')}"></mwc-button>
+              <mwc-button raised @click="${this._agreeToFacebookPixelTracking}" .label="${this.t('iAgree')}"></mwc-button>
               </div>
             </div>
       </paper-toast>

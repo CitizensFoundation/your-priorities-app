@@ -1,7 +1,7 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '../yp-app-globals/yp-app-icons.js';
 import './yp-post-user-image-card.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -27,7 +27,7 @@ class YpPostUserImagesLit extends YpBaseElement {
     return [
       css`
 
-      paper-button {
+      mwc-button {
         margin-top: 32px;
         margin-bottom: 8px;
         background-color: var(--accent-color);
@@ -47,7 +47,7 @@ class YpPostUserImagesLit extends YpBaseElement {
     <div class="layout vertical center-center">
 
       ${ this.post ? html`
-        <paper-button raised="" @tap="${this._newImage}">${this.t('posts.newUserImage')}</paper-button>
+        <mwc-button raised="" @click="${this._newImage}" .label="${this.t('posts.newUserImage')}"></mwc-button>
 
         ${ this.images ? html`
           ${ this.images.map(image => html`

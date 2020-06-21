@@ -161,7 +161,7 @@ class YpPostEditLit extends YpBaseElement {
 
       }
 
-      paper-button {
+      mwc-button {
         background-color: var(--accent-color);
         color: #FFF;
       }

@@ -3,7 +3,7 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
@@ -187,7 +187,7 @@ class YpUsersGridLit extends YpBaseElement {
         padding-bottom: 10px;
       }
 
-      paper-button {
+      mwc-button {
         margin-left: 24px;
       }
 
@@ -289,7 +289,7 @@ class YpUsersGridLit extends YpBaseElement {
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button dialog-dismiss="">${this.t('Close')}</paper-button>
+        <mwc-button .label="${this.t('Close')}" dialog-dismiss></mwc-button>
       </div>
     </paper-dialog>
 
@@ -317,13 +317,13 @@ class YpUsersGridLit extends YpBaseElement {
         <div ?hidden="${this.domainId}">
           <paper-material ?hidden="${this.adminUsers}" class="layout horizontal wrap inputBox">
             <paper-input .label="${this.t('email')}" .value="${this.inviteUserEmail}"></paper-input>
-            <paper-button class="inviteButton" @tap="${this._inviteUser}">${this.t('users.inviteUser')}</paper-button>
+            <mwc-button class="inviteButton" .label="${this.t('users.inviteUser')}" @click="${this._inviteUser}"></mwc-button>
           </paper-material>
         </div>
 
         <paper-material ?hidden="${!this.adminUsers}" class="layout horizontal wrap inputBox">
           <paper-input .label="${this.t('email')}" value="${this.addAdminEmail}"></paper-input>
-          <paper-button class="inviteButton" @tap="${this._addAdmin}">${this.t('users.addAdmin')}</paper-button>
+          <mwc-button class="inviteButton" .label="${this.t('users.addAdmin')}" @click="${this._addAdmin}"></mwc-button>
         </paper-material>
       </div>
 

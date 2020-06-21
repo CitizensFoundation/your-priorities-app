@@ -3,7 +3,7 @@ import '@polymer/iron-form/iron-form.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -83,12 +83,12 @@ class YpForgotPasswordLit extends YpBaseElement {
 
       <div class="buttons" ?hidden="${this.emailHasBeenSent}">
         <yp-ajax id="forgotPasswordAjax" method="POST" url="/api/users/forgot_password" @error="${this._forgotPasswordError}" @response="${this._forgotPasswordResponse}"></yp-ajax>
-        <paper-button dialog-dismiss="">${this.t('cancel')}</paper-button>
-        <paper-button autofocus="" @tap="${this._validateAndSend}">${this.t('user.forgotPassword')}</paper-button>
+        <mwc-button dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+        <mwc-button autofocus="" @click="${this._validateAndSend}" .label="${this.t('user.forgotPassword')}"></mwc-button>
       </div>
 
       <div class="buttons" ?hidden="${!this.emailHasBeenSent}">
-        <paper-button .dialog-dismiss="">${this.t('ok')}</paper-button>
+        <mwc-button .dialog-dismiss .label="${this.t('ok')}"></mwc-button>
       </div>
     </paper-dialog>
 

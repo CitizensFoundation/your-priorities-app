@@ -2,7 +2,7 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-spinner/paper-spinner.js';
 //TODO: import 'google-map/google-map.js';
@@ -121,7 +121,7 @@ class YpPostLocationLit extends YpBaseElement {
         padding-top: 8px;
       }
 
-      paper-button {
+      mwc-button {
         font-size: 16px;
         padding-top: 32px;
       }
@@ -154,7 +154,7 @@ class YpPostLocationLit extends YpBaseElement {
     <div class="mapSearchInput layout vertical center-center">
       <div class="layout horizontal center-center wrap">
         <paper-input .max-length="60" .label="${this.t('maps.searchInput')}" .value="${this.mapSearchString}" @keydown="${this._submitOnEnter}"></paper-input>
-        <paper-button @tap="${this._searchMap}">${this.t('maps.search')}</paper-button>
+        <mwc-button @click="${this._searchMap}" .label="${this.t('maps.search')}"></mwc-button>
       </div>
       <div class="searchResultText layout horizontal center-center">
         ${this.mapSearchResultAddress}

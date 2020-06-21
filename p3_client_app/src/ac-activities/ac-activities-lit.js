@@ -205,7 +205,7 @@ class AcActivitiesLit extends YpBaseElement {
         font-size: 24px;
       }
 
-      paper-button {
+      mwc-button {
         color: var(--accent-color);
       }
 
@@ -288,9 +288,8 @@ class AcActivitiesLit extends YpBaseElement {
           </paper-material>
         ` : html`
           <div class="layout vertical center-center">
-            <paper-button raised class="layout horizontal notLoggedInButton" @tap="${this._openLogin}">
-              ${this.t('loginToShareALink')}
-            </paper-button>
+            <mwc-button raised class="layout horizontal notLoggedInButton" .label="${this.t('loginToShareALink')}" @click="${this._openLogin}">
+            </mwc-button>
           </div>
         `}
 

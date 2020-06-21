@@ -2,7 +2,7 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-dialog/paper-dialog.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '../yp-ajax/yp-ajax.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -50,8 +50,8 @@ class YpApiActionDialogLit extends YpBaseElement {
     <paper-dialog id="confirmationDialog">
       <div>${this.confirmationText}</div>
       <div class="buttons">
-        <paper-button dialog-dismiss>${this.t('cancel')}</paper-button>
-        <paper-button dialog-confirm @tap="${this._delete}">${this.confirmButtonText}</paper-button>
+        <mwc-button dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+        <mwc-button dialog-confirm @click="${this._delete}" .label="${this.confirmButtonText}"></mwc-button>
       </div>
     </paper-dialog>
 `

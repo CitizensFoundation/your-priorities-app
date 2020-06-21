@@ -3,7 +3,7 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
@@ -119,8 +119,8 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
 
 
       <div class="buttons">
-        <paper-button @tap="${this._clearTemplateEdit}" dialog-dismiss>${this.t('close')}</paper-button>
-        <paper-button @tap="${this._updateTemplate}" dialog-dismiss>${this.t('save')}</paper-button>
+        <mwc-button @click="${this._clearTemplateEdit}" dialog-dismiss>${this.t('close')}</mwc-button>
+        <mwc-button @click="${this._updateTemplate}" dialog-dismiss>${this.t('save')}</mwc-button>
       </div>
     </paper-dialog>
 
@@ -133,18 +133,18 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
               <div class="templateItem title">
                 ${this.template.title}
               </div>
-              <paper-button data-args="${this.index}" @tap="${this._editTemplate}">${this.t('editTemplate')}</paper-button>
-              <paper-button data-args="${this.template.title}" @tap="${this._deleteTemplate}">${this.t('deleteTemplate')}</paper-button>
+              <mwc-button data-args="${this.index}" @click="${this._editTemplate}">${this.t('editTemplate')}</mwc-button>
+              <mwc-button data-args="${this.template.title}" @click="${this._deleteTemplate}">${this.t('deleteTemplate')}</mwc-button>
             </div>
           </template>
         </iron-list>
       </paper-dialog-scrollable>
       <div class="layout horizontal">
-        <paper-button id="addTemplateButton" @tap="${this._addTemplate}">${this.t('addTemplate')}</paper-button>
+        <mwc-button id="addTemplateButton" @click="${this._addTemplate}">${this.t('addTemplate')}</mwc-button>
       </div>
 
       <div class="buttons">
-        <paper-button dialog-dismiss>${this.t('close')}</paper-button>
+        <mwc-button dialog-dismiss>${this.t('close')}</mwc-button>
       </div>
     </paper-dialog>
 `

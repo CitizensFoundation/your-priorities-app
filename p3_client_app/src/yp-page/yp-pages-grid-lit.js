@@ -2,7 +2,7 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
@@ -145,8 +145,8 @@ class YpPagesGridLit extends YpBaseElement {
 
 
       <div class="buttons">
-        <paper-button @tap="${this._closePageLocale}" .dialogDismiss>${this.t('close')}</paper-button>
-        <paper-button @tap="${this._updatePageLocale}" .dialogDismiss>${this.t('save')}</paper-button>
+        <mwc-button @click="${this._closePageLocale}" .dialogDismiss .label="${this.t('close')}"></mwc-button>
+        <mwc-button @click="${this._updatePageLocale}" .dialogDismiss .label="${this.t('save')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -169,23 +169,23 @@ class YpPagesGridLit extends YpBaseElement {
             `)}
 
             <paper-input @label-float class="localeInput" .length="2" .maxlength="2" .value="${this.newLocaleValue}"></paper-input>
-            <paper-button data-args="${this.page.id}" @tap="${this._addLocale}">${this.t('pages.addLocale')}</paper-button>
+            <mwc-button data-args="${this.page.id}" @click="${this._addLocale}" .label="${this.t('pages.addLocale')}"></mwc-button>
             <div ?hidden="${this.page.publaished}">
-              <paper-button data-args="${this.page.id}" @tap="${this._publishPage}">${this.t('pages.publish')}</paper-button>
+              <mwc-button data-args="${this.page.id}" @click="${this._publishPage}" .label="${this.t('pages.publish')}"></mwc-button>
             </div>
             <div ?hidden="${!this.page.published}">
-              <paper-button data-args="${this.page.id}" @tap="${this._unPublishPage}">${this.t('pages.unPublish')}</paper-button>
+              <mwc-button data-args="${this.page.id}" @click="${this._unPublishPage}" .label="${this.t('pages.unPublish')}"></mwc-button>
             </div>
-            <paper-button data-args="${this.page.id}" @tap="${this._deletePage}">${this.t('pages.deletePage')}</paper-button>
+            <mwc-button data-args="${this.page.id}" @click="${this._deletePage}" .label="${this.t('pages.deletePage')}"></mwc-button>
           </div>
         </template>
       </iron-list>
       <div class="layout horizontal">
-        <paper-button id="addPageButton" @tap="${this._addPage}">${this.t('pages.addPage')}</paper-button>
+        <mwc-button id="addPageButton" @click="${this._addPage}" .label="${this.t('pages.addPage')}"></mwc-button>
       </div>
 
       <div class="buttons">
-        <paper-button .dialogDismiss>${this.t('close')}</paper-button>
+        <mwc-button .dialogDismiss .label="${this.t('close')}"></mwc-button>
       </div>
     </paper-dialog>
 

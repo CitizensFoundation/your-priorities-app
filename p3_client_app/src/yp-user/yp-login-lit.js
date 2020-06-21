@@ -4,7 +4,7 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-spinner/paper-spinner.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '@polymer/paper-tabs/paper-tabs.js';
@@ -514,7 +514,7 @@ class YpLoginLit extends YpBaseElement {
                 <div class="layout vertical center-center">
 
                   ${this.hasAnonymousLogin ? html`
-                    <paper-button raised class="anonLoginButton" @tap="${this.anonymousLogin}">${this.t('participateAnonymously')}</paper-button>
+                    <mwc-button raised class="anonLoginButton" @click="${this.anonymousLogin}">${this.t('participateAnonymously')}</mwc-button>
                   ` : html``}
 
                   <div class="layout horizontal">
@@ -573,9 +573,9 @@ class YpLoginLit extends YpBaseElement {
             </div>
             <div class="buttons layout vertical center-center">
               <div class="layout horizontal center-center">
-                <paper-button .dialogDismiss @tap="${this._cancel}">${this.t('cancel')}</paper-button>
-                <paper-button ?hidden="${this.forceSecureSamlLogin}" @tap="${this._forgotPassword}">${this.t('user.newPassword')}</paper-button>
-                <paper-button ?hidden="${this.forceSecureSamlLogin}" .autofocus raised class="boldButton" @tap="${this._validateAndSend}">${this.submitText}</paper-button>
+                <mwc-button .dialogDismiss @click="${this._cancel}">${this.t('cancel')}</mwc-button>
+                <mwc-button ?hidden="${this.forceSecureSamlLogin}" @click="${this._forgotPassword}">${this.t('user.newPassword')}</mwc-button>
+                <mwc-button ?hidden="${this.forceSecureSamlLogin}" .autofocus raised class="boldButton" @click="${this._validateAndSend}">${this.submitText}</mwc-button>
               </div>
             </div>
           </form>

@@ -1,7 +1,7 @@
 import '@polymer/polymer/polymer-legacy.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -66,9 +66,9 @@ class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
           <yp-ajax id="anonymizeAjax" ?useSpinner @response="${this._completed}" method="DELETE" url="/api/users/anonymize_current_user"></yp-ajax>
         </div>
         <div class="layout horizontal center-center">
-          <paper-button dialog-dismiss="">${this.t('cancel')}</paper-button>
-          <paper-button raised class="boldButton" @tap="${this._deleteUser}">${this.t('deleteAccount')}</paper-button>
-          <paper-button raised class="boldButton" @tap="${this._anonymizeUser}">${this.t('anonymizeAccount')}</paper-button>
+          <mwc-button dialog-dismiss="">${this.t('cancel')}</mwc-button>
+          <mwc-button raised class="boldButton" @click="${this._deleteUser}">${this.t('deleteAccount')}</mwc-button>
+          <mwc-button raised class="boldButton" @click="${this._anonymizeUser}">${this.t('anonymizeAccount')}</mwc-button>
         </div>
       </div>
     </paper-dialog>

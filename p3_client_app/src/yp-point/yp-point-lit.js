@@ -350,8 +350,8 @@ class YpPointLit extends YpBaseElement {
                 <emoji-selector id="pointEmojiSelector"></emoji-selector>
               </div>
               <div class="layout horizontal self-end">
-                <paper-button @tap="${this._cancelEdit}">${this.t('cancel')}</paper-button>
-                <paper-button @tap="${this._saveEdit}">${this.t('update')}</paper-button>
+                <mwc-button @click="${this._cancelEdit}" .label="${this.t('cancel')}"></mwc-button>
+                <mwc-button @click="${this._saveEdit}" .label="${this.t('update')}"></mwc-button>
               </div>
             </div>
           `: html``}

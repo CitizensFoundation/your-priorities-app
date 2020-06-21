@@ -4,7 +4,7 @@ import '@polymer/iron-image/iron-image.js';
 import '@polymer/iron-selector/iron-selector.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-menu-button/paper-menu-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
@@ -169,9 +169,6 @@ class YpPostsFilterLit extends YpBaseElement {
           margin-top: 0;
         }
 
-        paper-button {
-        }
-
         #dropDownTrigger {
           margin-left: 0;
           margin-right: 0;
@@ -228,10 +225,9 @@ class YpPostsFilterLit extends YpBaseElement {
 
         ${ this.showFilter ? html`
           <paper-menu-button id="filterDropdown" class="selected-items" .icon="sort" vertical-align="auto" horizontal-align="right">
-            <paper-button raised .title="${this.t('filterIdeas')}" id="dropDownTrigger" .icon="sort" slot="dropdown-trigger">
+            <mwc-button raised .title="${this.t('filterIdeas')}" id="dropDownTrigger" class="filterText" .label="${this.t('filterIdeas')}" .icon="sort" slot="dropdown-trigger">
               <iron-icon .icon="sort" class="dropdownIcon"></iron-icon>
-              <div class="filterText">${this.t('filterIdeas')}</div>
-            </paper-button>
+            </mwc-button>
 
             <div slot="dropdown-content" class="layout vertical dropDownContent">
               <div>

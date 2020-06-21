@@ -19,7 +19,7 @@ Example:
 */
 import '@polymer/polymer/polymer-legacy.js';
 
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-progress/paper-progress.js';
 import '../yp-app-globals/yp-app-icons.js';
@@ -258,7 +258,7 @@ class YpFileUploadLit extends YpBaseElement {
           text-align: center;
         }
 
-        paper-button {
+        mwc-button {
           margin-bottom: 8px;
         }
 
@@ -351,7 +351,7 @@ class YpFileUploadLit extends YpBaseElement {
          font-size: 14px;
        }
 
-       paper-button {
+       mwc-button {
          min-width: 100px;
        }
     `, YpFlexLayout]
@@ -362,10 +362,10 @@ class YpFileUploadLit extends YpBaseElement {
     <div class="layout vertical center-center mainContainer">
       <div class="layout vertical center-center">
         <div class="layout horizontal center-center">
-          <paper-button id="button" .icon="file-upload" class="blue" @click="${this._fileClick}">
+          <mwc-button id="button" .icon="file-upload" class="blue" @click="${this._fileClick}">
             <slot></slot>
-          </paper-button>
-          <paper-icon-button .ariaLabel="${this.t('deleteFile')}" class="removeButton layout self-start" .icon="delete" @tap="${this.clear}" ?hidden="${!this.currentFile}"></paper-icon-button>
+          </mwc-button>
+          <paper-icon-button .ariaLabel="${this.t('deleteFile')}" class="removeButton layout self-start" .icon="delete" @click="${this.clear}" ?hidden="${!this.currentFile}"></paper-icon-button>
         </div>
         <div ?hidden="${!this.uploadLimitSeconds}" class="limitInfo layout horizontal center-center"><em ?hidden="${this.currentFile}">${this.uploadLimitSeconds} ${this.t('seconds')}</em></div>
       </div>

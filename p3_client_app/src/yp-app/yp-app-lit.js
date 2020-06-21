@@ -439,7 +439,7 @@ class YpAppLit extends YpBaseElement {
           padding: 0;
         }
 
-        paper-button {
+        mwc-button {
           padding:0;
           margin: 0;
         }
@@ -547,10 +547,10 @@ class YpAppLit extends YpBaseElement {
 
             <span class="flex"></span>
             <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
-              <paper-button raised id="translationButton" @tap="${this._stopTranslation}" title="${this.t('stopAutoTranslate')}">
-                <iron-icon icon="translate"></iron-icon>
+              <mwc-button raised id="translationButton" 
+                          @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
                 <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
-              </paper-button>
+              </mwc-button>
             </div>
             <paper-icon-button .ariaLabel="${this.t('openMainMenu')}" id="paperToggleNavMenu" .icon="menu" @tap="${this._toggleNavDrawer}"></paper-icon-button>
             <paper-menu-button horizontal-align="right" hide="${this.hideHelpIcon}" class="helpButton">
@@ -571,7 +571,7 @@ class YpAppLit extends YpBaseElement {
                 <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
               </div>
             ` : html`
-              <paper-button class="loginButton" @tap="${this._login}">${this.t('user.login')}</paper-button>
+              <mwc-button class="loginButton" @click="${this._login}" .label="${this.t('user.login')}"></mwc-button>
             `}
 
           </app-toolbar>

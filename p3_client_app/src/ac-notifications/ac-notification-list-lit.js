@@ -2,7 +2,7 @@ import '@polymer/polymer/polymer-legacy.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '../yp-ajax/yp-ajax.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import '../yp-user/yp-user-info.js';
@@ -147,7 +147,7 @@ class AcNotificationListLit extends YpBaseElement {
           </div>
           <div ?hidden="${!this.unViewedCount}" class="unViewedCount layout vertical center-center">
             <div>${this.unViewedCount} ${this.t('unviewed')}</div>
-            <paper-button @tap="${this._markAllAsViewed}">${this.t('notificationMarkAllViewed')}</paper-button>
+            <mwc-button @click="${this._markAllAsViewed}" .label="${this.t('notificationMarkAllViewed')}" ></mwc-button>
           </div>
 
           <iron-list id="list" .items="${this.notifications}" .scrollOffset="300" as="notification" .scrollTarget="threshold">

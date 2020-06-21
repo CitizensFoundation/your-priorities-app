@@ -1,7 +1,7 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
@@ -60,7 +60,7 @@ class YpPageDialogLit extends YpBaseElement {
         <div id="content"></div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button @tap="${this._close}" .dialogDismiss="">${this.t('close')}</paper-button>
+        <mwc-button @click="${this._close}" .dialogDismiss .label="${this.t('close')}"></mwc-button>
       </div>
     </paper-dialog>
 `

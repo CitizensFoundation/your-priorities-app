@@ -3,7 +3,7 @@ import '@polymer/iron-form/iron-form.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -65,8 +65,8 @@ class YpResetPasswordLit extends YpBaseElement {
       </form>
       <div class="buttons">
         <yp-ajax id="resetPasswordAjax" method="POST" @response="${this._resetPasswordResponse}"></yp-ajax>
-        <paper-button @tap="${this._cancel}" dialog-dismiss="">${this.t('cancel')}</paper-button>
-        <paper-button .autofocus="" @tap="${this._validateAndSend}">${this.t('user.resetPassword')}</paper-button>
+        <mwc-button @click="${this._cancel}" dialog-dismiss="">${this.t('cancel')}</mwc-button>
+        <mwc-button .autofocus="" @click="${this._validateAndSend}">${this.t('user.resetPassword')}</mwc-button>
       </div>
     </paper-dialog>
 

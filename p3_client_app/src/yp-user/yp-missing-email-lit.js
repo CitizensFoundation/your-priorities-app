@@ -3,7 +3,7 @@ import '@polymer/iron-form/iron-form.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -134,10 +134,10 @@ class YpMissingEmailLit extends YpBaseElement {
           <yp-ajax id="setEmailAjax" .dispatch-error="" .method="PUT" url="/api/users/missingEmail/setEmail" @response="${this._setEmailResponse}"></yp-ajax>
           <yp-ajax id="linkAccountsAjax" .method="PUT" .dispatch-error="" @error="${this._registerError}" url="/api/users/missingEmail/linkAccounts" @response="${this._linkAccountsResponse}"></yp-ajax>
           <yp-ajax id="confirmEmailShownAjax" .dispatch-error="" .method="PUT" url="/api/users/missingEmail/emailConfirmationShown"></yp-ajax>
-          <paper-button @tap="${this._logout}" ?hidden="${this.onlyConfirmingEmail}">${this.t('user.logout')}</paper-button>
-          <paper-button @tap="${this._forgotPassword}" ?hidden="${!this.needPassword}">${this.t('user.newPassword')}</paper-button>
-          <paper-button raised @tap="${this._notNow}" ?hidden="${this.onlyConfirmingEmail}">${this.t('later')}</paper-button>
-          <paper-button raised id="sendButton" .autofocus="" @tap="${this._validateAndSend}">
+          <mwc-button @click="${this._logout}" ?hidden="${this.onlyConfirmingEmail}">${this.t('user.logout')}</mwc-button>
+          <mwc-button @click="${this._forgotPassword}" ?hidden="${!this.needPassword}">${this.t('user.newPassword')}</mwc-button>
+          <mwc-button raised @click="${this._notNow}" ?hidden="${this.onlyConfirmingEmail}">${this.t('later')}</mwc-button>
+          <mwc-button raised id="sendButton" .autofocus="" @click="${this._validateAndSend}">
             <span ?hidden="${this.linkAccountText}">
               <span ?hidden="${this.onlyConfirmingEmail}">
                 ${this.t('user.setEmail')}
@@ -149,7 +149,7 @@ class YpMissingEmailLit extends YpBaseElement {
             <span ?hidden="${!this.linkAccountText}">
               ${this.t('user.linkAccount')}
             </span>
-          </paper-button>
+          </mwc-button>
         </div>
       </paper-dialog>
 

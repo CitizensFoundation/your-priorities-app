@@ -251,7 +251,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         <paper-listbox id="deviceListBox">
 
           ${ this.allDevices.map(item => html`
-            <paper-item @tap="${this.selectDeviceFunction}" id="${this.item.deviceId}">${this.item.label}</paper-item>
+            <paper-item @click="${this.selectDeviceFunction}" id="${this.item.deviceId}">${this.item.label}</paper-item>
           `)}
 
         </paper-listbox>
@@ -267,7 +267,7 @@ class YpMediaRecorderLit extends YpBaseElement {
     <paper-dialog id="noDevices">
       <h2>${this.t('noDevicesFound')}</h2>
       <div class="button layout horizontal center-center">
-        <paper-button dialog-dismiss="" raised>${this.t('ok')}</paper-button>
+        <mwc-button dialog-dismiss="" raised .label="${this.t('ok')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -289,27 +289,22 @@ class YpMediaRecorderLit extends YpBaseElement {
         `: html``}
 
         <div class="layout horizontal mainbuttons" ?hidden="${!this.recorder}">
-          <paper-icon-button ariaLabel="${this.t('closeRecordingWindow')}" .icon="clear" class="iconButtons" @tap="${this._close}"></paper-icon-button>
-          <paper-icon-button ariaLabel="${this.t('deleteRecordedMedia')}" .icon="delete" class="iconButtons" @tap="${this._deleteRecording}" ?hidden="${!this.recordedData}"></paper-icon-button>
-          <paper-button @tap="${this._startRecording}" ?hidden="${this.recordedData}">
-            <iron-icon id="recordingIcon" .icon="fiber-manual-record"></iron-icon>
-            <div class="buttonText">${this.t('record')}</div>
-          </paper-button>
+          <paper-icon-button ariaLabel="${this.t('closeRecordingWindow')}" .icon="clear" class="iconButtons" @click="${this._close}"></paper-icon-button>
+          <paper-icon-button ariaLabel="${this.t('deleteRecordedMedia')}" .icon="delete" class="iconButtons" @click="${this._deleteRecording}" ?hidden="${!this.recordedData}"></paper-icon-button>
+          <mwc-button @click="${this._startRecording}" class="buttonText" .label="${this.t('record')}" ?hidden="${this.recordedData}" .icon="fiber-manual-record">
+            <iron-icon id="recordingIcon"></iron-icon>
+          </mwc-button>
           <div id="secondsLeft" ?hidden="${this.recordedData}">${this.recordSecondsLeft} ${this.t('seconds')}</div>
-          <paper-button @tap="${this._stopRecording}" ?hidden="${!this.isRecording}">
-            <iron-icon icon="stop"></iron-icon>
-            <div class="buttonText">${this.t('stop')}</div>
-          </paper-button>
+          <mwc-button @click="${this._stopRecording}" class="buttonText" .label="${this.t('stop')}" ?hidden="${!this.isRecording}" icon="stop">
+          </mwc-button>
           <span ?hidden="${this.isRecording}">
-            <paper-button id="uploadFileButton" class="uploadFileButton" @tap="${this._uploadFile}" ?hidden="${this.recordedData}">
-              <iron-icon ?icon="file-upload"></iron-icon>
-              <div class="buttonText uploadFileText">${this.t('uploadFile')}</div>
-            </paper-button>
+            <mwc-button id="uploadFileButton" icon="file-upload" class="uploadFileButton" .label="${this.t('uploadFile')}" @click="${this._uploadFile}" ?hidden="${this.recordedData}">
+              <div class="buttonText uploadFileText"></div>
+            </mwc-button>
           </span>
-          <paper-button @tap="${this._sendBack}" class="actionButton" ?hidden="${!this.recordedData}">
-            <iron-icon .icon="send"></iron-icon>
-            <div class="buttonText">${this.t('send')}</div>
-          </paper-button>
+          <mwc-button @click="${this._sendBack}" class="buttonText" .label="${this.t('send')}" 
+                      class="actionButton" ?hidden="${!this.recordedData}" .icon="send">
+          </mwc-button>
         </div>
       </div>
       <div ?hidden="${!this.error}">

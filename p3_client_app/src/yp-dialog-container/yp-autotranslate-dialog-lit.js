@@ -2,7 +2,7 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-dialog/paper-dialog.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '../yp-app-globals/yp-language-selector.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -49,10 +49,10 @@ class YpAutoTranslateDialogLit extends YpBaseElement {
         <div class="infoText">${this.t('shouldAutoTranslateInfo')}</div>
       </div>
       <div class="buttons">
-        <paper-button @tap="${this._dontAskAgain}" dialog-dismiss>${this.t('never')}</paper-button>
-        <paper-button dialog-dismiss @tap="_no">${this.t('no')}</paper-button>
-        <paper-button dialog-confirm @tap="_startAutoTranslate">${this.t('yes')}</paper-button>
-        <paper-button dialog-confirm @tap="${this._startAutoTranslateAndDoSoAlways}">${this.t('always')}</paper-button>
+        <mwc-button @click="${this._dontAskAgain}" dialog-dismiss .label="${this.t('never')}"></mwc-button>
+        <mwc-button dialog-dismiss @click="_no" .label="${this.t('no')}"></mwc-button>
+        <mwc-button dialog-confirm @click="_startAutoTranslate".label="${this.t('yes')}"></mwc-button>
+        <mwc-button dialog-confirm @click="${this._startAutoTranslateAndDoSoAlways}".label="${this.t('always')}"></mwc-button>
       </div>
     </paper-dialog>
 `
