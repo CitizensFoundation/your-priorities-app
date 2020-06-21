@@ -659,7 +659,7 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   community.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
-  community.set('configuration.sortGroupsBySortWeight', truthValueFromBody(req.body.sortGroupsBySortWeight));
+  community.set('configuration.sortBySortOrder', truthValueFromBody(req.body.sortBySortOrder));
 };
 
 router.get('/:communityFolderId/communityFolders', auth.can('view community'), function(req, res) {

@@ -327,9 +327,9 @@
         </yp-file-upload>
       </div>
 
-      <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
+      <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
 
-      <paper-checkbox name="sortGroupsBySortWeight" checked$="{{community.configuration.sortGroupsBySortWeight}}">[[t('sortGroupsBySortWeight')]]</paper-checkbox>
+      <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
 
       <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
                       checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
