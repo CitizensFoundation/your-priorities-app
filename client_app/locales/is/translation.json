@@ -1,4 +1,6 @@
 {
+  "optionalSortWeight": "Valkvæm röð á svæði",
+  "sortGroupsBySortWeight": "Raða hópum eftir röð",
   "openAnalyticsApp": "Opna tölfræði app",
   "sendInviteByEmail": "Senda tölvupóst með boði",
   "addUserDirectlyIfExist": "Bæta notanda við beint",

@@ -329,6 +329,8 @@
 
       <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
 
+      <paper-checkbox name="sortGroupsBySortWeight" checked$="{{community.configuration.sortGroupsBySortWeight}}">[[t('sortGroupsBySortWeight')]]</paper-checkbox>
+
       <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
                       checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
       </paper-checkbox>

@@ -1,4 +1,6 @@
 {
+  "optionalSortWeight": "Optional sort weight",
+  "sortGroupsBySortWeight": "Sort groups by sort weight",
   "openAnalyticsApp": "Open Analytics App",
   "sendInviteByEmail": "Send invite by email",
   "addUserDirectlyIfExist": "Add user if exist",

@@ -707,6 +707,15 @@
                      value="{{group.configuration.customBackName}}">
         </paper-input>
 
+        <paper-input id="optionalSortWeight"
+                     name="optionalSortWeight"
+                     type="number"
+                     allowed-pattern="[0-9]"
+                     label="[[t('optionalSortWeight')]]"
+                     value="{{group.configuration.optionalSortWeight}}"
+                     maxlength="4">
+        </paper-input>
+
         <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
         <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
         <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
