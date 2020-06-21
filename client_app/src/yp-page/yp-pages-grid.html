@@ -24,7 +24,6 @@
 
       iron-list {
         color: #000;
-        height: 500px;
         width: 100%;
       }
 
@@ -48,6 +47,10 @@
         width: 80%;
         max-height: 80%;
         background-color: #FFF;
+      }
+
+      #editPageLocale[rtl] {
+        direction: rtl;
       }
 
       .locale {
@@ -76,11 +79,20 @@
         margin-bottom: 8px;
         border: solid 1px #999;
       }
+
+      .buttons {
+        margin-right: 16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog id="editPageLocale" modal class="layout vertical">
+    <paper-dialog id="editPageLocale" modal class="layout vertical" rtl$="[[rtl]]">
       <h2>[[t('pages.editPageLocale')]]</h2>
+
+      <div class="buttons">
+        <paper-button on-tap="_closePageLocale"  dialog-dismiss>[[t('close')]]</paper-button>
+        <paper-button on-tap="_updatePageLocale" raised dialog-dismiss>[[t('save')]]</paper-button>
+      </div>
 
       <paper-dialog-scrollable>
         <paper-input id="title"
@@ -103,13 +115,10 @@
       </paper-dialog-scrollable>
 
 
-      <div class="buttons">
-        <paper-button on-tap="_closePageLocale" dialog-dismiss>[[t('close')]]</paper-button>
-        <paper-button on-tap="_updatePageLocale" dialog-dismiss>[[t('save')]]</paper-button>
-      </div>
     </paper-dialog>
 
     <paper-dialog id="dialog">
+
       <div class="layout horizontal">
         <h2>[[headerText]]</h2>
         <div class="flex"></div>
@@ -117,32 +126,34 @@
           <paper-button id="addPageButton" raised on-tap="_addPage">[[t('pages.addPage')]]</paper-button>
         </div>
       </div>
-      <iron-list items="[[pages]]" as="page">
-        <template>
-          <div class="layout horizontal">
-            <div class="pageItem id">
-              [[page.id]]
-            </div>
-            <div class="pageItem title">
-              [[page.title.en]]
-            </div>
-            <template is="dom-repeat" items="[[_toLocaleArray(page.title)]]" class="pageItem">
-              <div class="layout vertical center-center">
-                <a class="locale" data-args-page$="[[page]]" data-args-locale$="[[item.locale]]" on-tap="_editPageLocale">[[item.locale]]</a>
+      <paper-dialog-scrollable id="scrollable">
+        <iron-list items="[[pages]]" as="page">
+          <template>
+            <div class="layout horizontal">
+              <div class="pageItem id">
+                [[page.id]]
               </div>
-            </template>
-            <paper-input no-label-float class="localeInput" length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
-            <paper-button data-args$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
-            <div hidden$="[[page.published]]">
-              <paper-button data-args$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
+              <div class="pageItem title">
+                [[page.title.en]]
+              </div>
+              <template is="dom-repeat" items="[[_toLocaleArray(page.title)]]" class="pageItem">
+                <div class="layout vertical center-center">
+                  <a class="locale" data-args-page$="[[page]]" data-args-locale$="[[item.locale]]" on-tap="_editPageLocale">[[item.locale]]</a>
+                </div>
+              </template>
+              <paper-input no-label-float class="localeInput" length="2" maxlength="2" value="{{newLocaleValue}}"></paper-input>
+              <paper-button data-args$="[[page.id]]" on-tap="_addLocale">[[t('pages.addLocale')]]</paper-button>
+              <div hidden$="[[page.published]]">
+                <paper-button data-args$="[[page.id]]" on-tap="_publishPage">[[t('pages.publish')]]</paper-button>
+              </div>
+              <div hidden$="[[!page.published]]">
+                <paper-button data-args$="[[page.id]]" on-tap="_unPublishPage">[[t('pages.unPublish')]]</paper-button>
+              </div>
+              <paper-button data-args$="[[page.id]]" on-tap="_deletePage">[[t('pages.deletePage')]]</paper-button>
             </div>
-            <div hidden$="[[!page.published]]">
-              <paper-button data-args$="[[page.id]]" on-tap="_unPublishPage">[[t('pages.unPublish')]]</paper-button>
-            </div>
-            <paper-button data-args$="[[page.id]]" on-tap="_deletePage">[[t('pages.deletePage')]]</paper-button>
-          </div>
-        </template>
-      </iron-list>
+          </template>
+        </iron-list>
+      </paper-dialog-scrollable>
 
       <div class="buttons">
         <paper-button dialog-dismiss>[[t('close')]]</paper-button>
@@ -221,6 +232,11 @@
 
         currentlyEditingContent: {
           type: String
+        },
+
+        rtl: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -394,6 +410,9 @@
 
       open: function () {
         this.$.dialog.open();
+        this.async(function () {
+          this.$$("#scrollable").fire('iron-resize');
+        })
       },
 
       _setupHeaderText: function () {
