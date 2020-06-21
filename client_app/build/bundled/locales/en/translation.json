@@ -1,4 +1,6 @@
 {
+  "optionalSortOrder": "Optional sort order",
+  "sortGroupsBySortOrder": "Sort groups by sort order",
   "openAnalyticsApp": "Open Analytics App",
   "sendInviteByEmail": "Send invite by email",
   "addUserDirectlyIfExist": "Add user if exist",
