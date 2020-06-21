@@ -955,6 +955,7 @@ router.put('/:id', auth.can('edit post'), function(req, res) {
       post.save().then(function () {
         log.info('Post Update', { post: toJson(post), context: 'create', user: toJson(req.user) });
         queue.create('process-similarities', { type: 'update-collection', postId: post.id }).priority('low').removeOnComplete(true).save();
+        queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: post.id }).priority('high').removeOnComplete(true).save();
 
         post.setupImages(req.body, function (error) {
           sendPostOrError(res, post, 'setupImages', req.user, error);

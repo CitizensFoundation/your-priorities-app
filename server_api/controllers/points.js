@@ -232,7 +232,8 @@ router.get('/:parentPointId/comments', auth.can('view point'), function(req, res
     },
     order: [
       ["created_at", "asc"],
-      [ models.PointRevision, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
+      [ models.PointRevision, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ models.PointRevision, 'created_at', 'asc' ],
     ],
     include: [
       {
@@ -341,6 +342,12 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
               log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
               res.sendStatus(500);
             } else {
+              if (loadedPoint.content && loadedPoint.content!=='') {
+                log.info("process-moderation point toxicity after create point");
+                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
+              } else {
+                log.info("No process-moderation toxicity for empty text on point");
+              }
               res.send(loadedPoint);
             }
           });
