@@ -24,9 +24,9 @@ def iter_block_items(parent):
 
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 17 2020.docx")
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 17 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 17 2020.docx")
 
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 17 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 17 2020.docx")
 
@@ -68,7 +68,7 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
     #print("Text: "+text)
     isSpecify = False
     skipTo = None
-    if text.find("___")>-1 or text.find("(specify)")>-1:
+    if text.find("___")>-1 or text.find("(specify)")>-1 or text.find('─┴─┴─')>-1:
       isSpecify = True
       text = text.replace("_","")
       if len(text)==0:
@@ -76,10 +76,13 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
     text, skipTo = processSkipTo(text)
     text = text.replace(",","")
     text = text.replace(":",";")
+    text = text.replace("─┴","")
+    text = text.replace("─┘", "")
     text = text.strip()
     if len(text)>0 and len(number)>0:
       radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
-  appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText)})
+  questionText, max_length = get_max_length(questionText)
+  appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText), 'maxLength': max_length})
 
 def processSkipTo(text):
   skipTo = None
@@ -96,10 +99,10 @@ def processSkipTo(text):
   return text, skipTo
 
 def get_max_length(text):
-  max_length = None
+  max_length = 100
   if text.find("<")>-1 and text.find(">")>-1:
     max_length = text[text.find("<")+1:text.rfind(">")]
-    text = text.replace("<"+max_length+">")
+    text = text.replace("<"+max_length+">","")
   return text,max_length
 
 def appendCheckbox(uniqueId, optionsText, questionText):
@@ -111,7 +114,7 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text = option[2:].strip()
     isSpecify = False
     skipTo = None
-    if text.find("___")>-1 or text.find("(specify)")>-1:
+    if text.find("___")>-1 or text.find("(specify)")>-1 or text.find('─┴─┴─')>-1:
       isSpecify = True
       text = text.replace("_","")
       if len(text)==0:
@@ -121,10 +124,10 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text = text.replace(":",";")
     text = text.strip()
     if len(text)>0 and len(number)>0:
-      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecif, 'maxLength': max_length})
+      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
 
   questionText, max_length = get_max_length(questionText)
-  appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText)})
+  appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText), 'maxLength': max_length})
 
 
 def splitByDigit(text):
@@ -163,7 +166,6 @@ def get_sub_type(text, descriptionOne, descriptionTwo):
     sub_type = "number"
 
     return sub_type
-
 
 for block in iter_block_items(document):
     if isinstance(block, Paragraph):
@@ -210,9 +212,9 @@ for block in iter_block_items(document):
           elif row.cells[0] and len(row.cells[0].text)>3 and len(row.cells[0].text)<6:
             text = getStringToBracket(row.cells[1].text.strip())
             max_length = 100
-            text, max_length = get_max_length(text))
+            text, max_length = get_max_length(text)
 
-            sub_type = get_sub_type(text, row.cells[1].text.strip(), row.cells[2].text.strip()
+            sub_type = get_sub_type(text, row.cells[1].text.strip(), row.cells[2].text.strip())
 
             if len(getStringToBracket(row.cells[1].text.strip()))<24:
               appendSurveyItem({'type':'textFieldLong', 'subType': sub_type, 'uniqueId': row.cells[0].text.strip(), 'maxLength': max_length, 'text': text })
