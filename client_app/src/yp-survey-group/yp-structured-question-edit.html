@@ -322,13 +322,13 @@
                          class$="[[_getRadioClass(question)]]">
         <template is="dom-repeat" items="[[question.radioButtons]]" as="radioButton" index-as="buttonIndex">
           <template is="dom-if" if="[[!radioButton.isSpecify]]">
-            <paper-radio-button use-small-font$="[[useSmallFont]]"
+            <paper-radio-button use-small-font$="[[useSmallFont]]" on-keypress="setRadioEventType"
                                 id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">
               [[radioButton.text]]
             </paper-radio-button>
           </template>
           <template is="dom-if" if="[[radioButton.isSpecify]]" class="layout horizontal">
-            <paper-radio-button use-small-font$="[[useSmallFont]]"
+            <paper-radio-button use-small-font$="[[useSmallFont]]" on-keypress="setRadioEventType"
                                 id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">
               [[radioButton.text]]
             </paper-radio-button>
@@ -438,6 +438,10 @@
         if (event.which == 13 || event.keyCode == 13) {
           this.fire('yp-goto-next-index', {currentIndex: this.index});
         }
+      }
+
+      setRadioEventType (event) {
+        this.radioKeypress = true;
       }
 
       _sendDebouncedChange(detail) {
@@ -757,8 +761,7 @@
       this._sendDebouncedChange({value: 1});
     }
 
-    _radioChanged(event, detail)
-    {
+    _radioChanged(event, detail) {
       event.stopPropagation();
       this._sendDebouncedChange({value: 1});
 
@@ -782,7 +785,12 @@
           console.error("Can't find checkbox specify value");
         }
       } else {
-        this.fire('yp-goto-next-index', {currentIndex: this.index});
+        this.async(function () {
+          if(!this.radioKeypress) {
+            this.fire('yp-goto-next-index', { currentIndex: this.index });
+          }
+        });
+
         var hasSkipToId;
 
         this.question.radioButtons.forEach(function (button) {
