@@ -215,20 +215,42 @@
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
-      <paper-input id="structuredQuestion_[[index]]"
-                   value="{{question.value}}"
-                   always-float-label="[[_floatIfValueOrIE(question.value)]]"
-                   label="[[_getTextWithIndex(question)]]"
-                   char-counter
-                   use-small-font$="[[useSmallFont]]"
-                   title$="[[question.text]]"
-                   on-keypress="_keyPressed"
-                   type="[[question.subInputType]]"
-                   half-width-desktop$="[[question.halfWidthDesktop]]"
-                   on-value-changed="_debounceChangeEvent"
-                   required$="[[question.required]]"
-                   maxlength="[[question.maxLength]]">
-      </paper-input>
+
+      <template is="dom-if" if="[[_isNumberSubType(question)]]">
+        <paper-input id="structuredQuestion_[[index]]"
+                     value="{{question.value}}"
+                     always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                     label="[[_getTextWithIndex(question)]]"
+                     char-counter
+                     use-small-font$="[[useSmallFont]]"
+                     title$="[[question.text]]"
+                     on-keypress="_keyPressed"
+                     type="text"
+                     allowed-pattern="[0-9]"
+                     half-width-desktop$="[[question.halfWidthDesktop]]"
+                     on-value-changed="_debounceChangeEvent"
+                     required$="[[question.required]]"
+                     maxlength="[[question.maxLength]]">
+        </paper-input>
+      </template>
+
+      <template is="dom-if" if="[[!_isNumberSubType(question)]]">
+        <paper-input id="structuredQuestion_[[index]]"
+                     value="{{question.value}}"
+                     always-float-label="[[_floatIfValueOrIE(question.value)]]"
+                     label="[[_getTextWithIndex(question)]]"
+                     char-counter
+                     use-small-font$="[[useSmallFont]]"
+                     title$="[[question.text]]"
+                     on-keypress="_keyPressed"
+                     type="[[question.subType]]"
+                     half-width-desktop$="[[question.halfWidthDesktop]]"
+                     on-value-changed="_debounceChangeEvent"
+                     required$="[[question.required]]"
+                     maxlength="[[question.maxLength]]">
+        </paper-input>
+      </template>
+
     </template>
 
     <template is="dom-if" if="[[_isTextFieldLong(question)]]">
@@ -236,21 +258,43 @@
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
-      <paper-input id="structuredQuestion_[[index]]"
-                   value="{{question.value}}"
-                   char-counter
-                   use-small-font$="[[useSmallFont]]"
-                   on-keypress="_keyPressed"
-                   on-focus="setLongFocus"
-                   on-blur="setLongUnFocus"
-                   type="[[question.subInputType]]"
-                   title$="[[question.text]]"
-                   no-label-float
-                   half-width-desktop$="[[question.halfWidthDesktop]]"
-                   on-value-changed="_debounceChangeEvent"
-                   required$="[[question.required]]"
-                   maxlength="[[question.maxLength]]">
-      </paper-input>
+      <template is="dom-if" if="[[_isNumberSubType(question)]]">
+        <paper-input id="structuredQuestion_[[index]]"
+                     value="{{question.value}}"
+                     char-counter
+                     use-small-font$="[[useSmallFont]]"
+                     on-keypress="_keyPressed"
+                     on-focus="setLongFocus"
+                     on-blur="setLongUnFocus"
+                     allowed-pattern="[0-9]"
+                     type="text"
+                     title$="[[question.text]]"
+                     no-label-float
+                     half-width-desktop$="[[question.halfWidthDesktop]]"
+                     on-value-changed="_debounceChangeEvent"
+                     required$="[[question.required]]"
+                     maxlength="[[question.maxLength]]">
+        </paper-input>
+      </template>
+
+      <template is="dom-if" if="[[!_isNumberSubType(question)]]">
+        <paper-input id="structuredQuestion_[[index]]"
+                     value="{{question.value}}"
+                     char-counter
+                     use-small-font$="[[useSmallFont]]"
+                     on-keypress="_keyPressed"
+                     on-focus="setLongFocus"
+                     on-blur="setLongUnFocus"
+                     type="[[question.subType]]"
+                     title$="[[question.text]]"
+                     no-label-float
+                     half-width-desktop$="[[question.halfWidthDesktop]]"
+                     on-value-changed="_debounceChangeEvent"
+                     required$="[[question.required]]"
+                     maxlength="[[question.maxLength]]">
+        </paper-input>
+      </template>
+
     </template>
 
     <template is="dom-if" if="[[_isTextarea(question)]]">
@@ -332,8 +376,16 @@
                                 id="structuredQuestionRatioGroup_[[index]]_[[buttonIndex]]" name="[[radioButton.text]]">
               [[radioButton.text]]
             </paper-radio-button>
-            <paper-input class="specifyInput" hidden no-label-float  on-value-changed="_debounceChangeEvent"
-                         id="structuredQuestion_[[index]]__radioOther"></paper-input>
+            <template is="dom-if" if="[[_isNumberSubType(radioButton)]]">
+              <paper-input class="specifyInput" hidden no-label-float  on-value-changed="_debounceChangeEvent"
+                           maxlength="[[question.maxLength]]" allowed-pattern="[0-9]" type="text"
+                           id="structuredQuestion_[[index]]__radioOther"></paper-input>
+            </template>
+            <template is="dom-if" if="[[!_isNumberSubType(radioButton)]]">
+              <paper-input class="specifyInput" hidden no-label-float  on-value-changed="_debounceChangeEvent"
+                           maxlength="[[question.maxLength]]" type="[[radioButton.subType]]"
+                           id="structuredQuestion_[[index]]__radioOther"></paper-input>
+            </template>
           </template>
         </template>
       </paper-radio-group>
@@ -354,6 +406,7 @@
               [[checkbox.text]]
             </paper-checkbox>
             <paper-input class="specifyInput specifyCheckBox" hidden no-label-float on-value-changed="_debounceChangeEvent"
+                         maxlength="[[question.maxLength]]" type="[[checkbox.subType]]"
                          id="structuredQuestion_[[index]]_[[buttonIndex]]_checkboxOther"></paper-input>
           </template>
         </template>
@@ -432,6 +485,10 @@
 
       setLongFocus() {
         this.set('longFocus', true);
+      }
+
+      _isNumberSubType (item) {
+        return item && item.subType==="number"
       }
 
       _keyPressed(event) {
@@ -713,8 +770,7 @@
       }));
     }
 
-    _checkboxChanged(event, detail)
-    {
+    _checkboxChanged(event, detail) {
       if (event.target.checked) {
         var checkboxSubId = event.target.id.split("_")[2];
 
@@ -735,14 +791,14 @@
 
       if (this.question.maxLength) {
         var checkedCount = 0;
-        var item = event.target;
+        var item = this.$$("#structuredQuestion_"+this.index);
         for (var i = 0; i < item.children.length; i++) {
           if (item.children[i].checked) {
             checkedCount+=1;
           }
         }
 
-        if (checkedCount>=this.question.maxLength) {
+        if (checkedCount>=parseInt(this.question.maxLength)) {
           for (var x = 0; x < item.children.length; x++) {
             if (!item.children[x].checked) {
               item.children[x].disabled = true;

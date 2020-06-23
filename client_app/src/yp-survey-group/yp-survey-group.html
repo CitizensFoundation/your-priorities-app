@@ -230,12 +230,15 @@
       },
 
       _skipToId: function (event, detail, showItems) {
+        console.log(detail);
         var foundFirst = false;
         var children = this.$$("#surveyContainer").children;
         for (var i=0; i<children.length;i++) {
-          if (children[i].question && detail.fromId && children[i].question.uniqueId===detail.fromId.replace(/]/g,"")) {
+          var toId = detail.toId.replace(/]/g,"");
+          var fromId = detail.fromId.replace(/]/g,"");
+          if (children[i].question && detail.fromId && children[i].question.uniqueId===fromId) {
             foundFirst = true;
-          } else if (children[i].question && detail.toId && children[i].question.uniqueId===detail.toId.replace(/]/g,"")) {
+          } else if (children[i].question && detail.toId && (children[i].question.uniqueId===toId || children[i].question.uniqueId===toId+"a")) {
             break;
           } else {
             if (foundFirst) {

@@ -22,11 +22,11 @@ def iter_block_items(parent):
         elif isinstance(child, CT_Tbl):
             yield Table(child, parent)
 
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 17 2020.docx")
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 17 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 22 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 17 2020.docx")
 
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 17 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 17 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 17 2020.docx")
 
@@ -74,14 +74,17 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
       if len(text)==0:
         text = "____"
     text, skipTo = processSkipTo(text)
+    sub_type = get_sub_type(text, text, text)
     text = text.replace(",","")
     text = text.replace(":",";")
     text = text.replace("─┴","")
     text = text.replace("─┘", "")
     text = text.strip()
+    text = text.replace("└", " ")
     if len(text)>0 and len(number)>0:
-      radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
+      radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'subType': sub_type, 'isSpecify': isSpecify})
   questionText, max_length = get_max_length(questionText)
+  print("MAX:"+str(max_length))
   appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText), 'maxLength': max_length})
 
 def processSkipTo(text):
@@ -103,6 +106,7 @@ def get_max_length(text):
   if text.find("<")>-1 and text.find(">")>-1:
     max_length = text[text.find("<")+1:text.rfind(">")]
     text = text.replace("<"+max_length+">","")
+
   return text,max_length
 
 def appendCheckbox(uniqueId, optionsText, questionText):
@@ -120,11 +124,12 @@ def appendCheckbox(uniqueId, optionsText, questionText):
       if len(text)==0:
         text = "____"
     text, skipTo = processSkipTo(text)
+    sub_type = get_sub_type(text, text, text)
     text = text.replace(",","")
     text = text.replace(":",";")
     text = text.strip()
     if len(text)>0 and len(number)>0:
-      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify})
+      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify,'subType': sub_type})
 
   questionText, max_length = get_max_length(questionText)
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText), 'maxLength': max_length})
@@ -161,11 +166,10 @@ def get_sub_type(text, descriptionOne, descriptionTwo):
 
   if match:
     sub_type = "date"
-
-  if descriptionOne.find('─┴─┴─')>-1 or descriptionTwo.find('─┴─┴─')>-1:
+  elif descriptionOne.find('─┴─┴─')>-1 or descriptionTwo.find('─┴─┴─')>-1:
     sub_type = "number"
 
-    return sub_type
+  return sub_type
 
 for block in iter_block_items(document):
     if isinstance(block, Paragraph):
