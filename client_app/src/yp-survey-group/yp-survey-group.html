@@ -104,16 +104,18 @@
       <template is="dom-if" if="[[structuredQuestions]]">
         <div class="layout vertical center-center">
           <div class="surveyContainer">
-            <template is="dom-repeat" items="[[structuredQuestions]]" as="question" initial-count="5">
-              <yp-structured-question-edit index="[[index]]"
-                                           id="structuredQuestionContainer_[[index]]"
-                                           structured-answers="[[initiallyLoadedAnswers]]"
-                                           on-changed="_saveState"
-                                           question="[[question]]"
-                                           is-last-rating="[[_isLastRating(index)]]"
-                                           on-hide-to-question="_hideToQuestion">
-              </yp-structured-question-edit>
-            </template>
+            <div id="surveyContainer">
+              <template is="dom-repeat" items="[[structuredQuestions]]" as="question" initial-count="5">
+                <yp-structured-question-edit index="[[index]]"
+                                             id="structuredQuestionContainer_[[index]]"
+                                             structured-answers="[[initiallyLoadedAnswers]]"
+                                             on-changed="_saveState"
+                                             question="[[question]]"
+                                             is-last-rating="[[_isLastRating(index)]]"
+                                             on-hide-to-question="_hideToQuestion">
+                </yp-structured-question-edit>
+              </template>
+            </div>
             <div class="layout horizontal center-center submitSpinnerContainer">
               <yp-ajax large-spinner id="submitAjax" method="POST" iron-method="POST" on-response="_surveySubmitResponse"></yp-ajax>
             </div>
@@ -228,40 +230,22 @@
       },
 
       _skipToId: function (event, detail, showItems) {
-        var firstElementPos = this.liveUniqueIds.indexOf(detail.fromId);
-
-        if (firstElementPos>-1) {
-          firstElementPos+=1;
-          for (var i=firstElementPos; i<this.liveUniqueIds.length; i++) {
-            if (this.liveUniqueIds[i]==detail.toId) {
-              break;
-            } else {
-              var elementIndex = this.uniqueIdsToElementIndexes[this.liveUniqueIds[i]];
-              if (this.$$("#structuredQuestionContainer_"+elementIndex)) {
-                if (showItems===true) {
-                  this.$$("#structuredQuestionContainer_"+elementIndex).show();
-                } else {
-                  this.$$("#structuredQuestionContainer_"+elementIndex).hide();
-                }
+        var foundFirst = false;
+        var children = this.$$("#surveyContainer").children;
+        for (var i=0; i<children.length;i++) {
+          if (children[i].question && detail.fromId && children[i].question.uniqueId===detail.fromId.replace(/]/g,"")) {
+            foundFirst = true;
+          } else if (children[i].question && detail.toId && children[i].question.uniqueId===detail.toId.replace(/]/g,"")) {
+            break;
+          } else {
+            if (foundFirst) {
+              if (showItems) {
+                children[i].hidden = false;
               } else {
-                console.error("Can't find container")
-              }
-
-              var possibleQuestionAboveContainer = "#structuredQuestionContainer_"+(elementIndex-1);
-              var possibleQuestionAboveId = "#structuredQuestionQuestion_"+(elementIndex-1);
-
-              if (this.$$(possibleQuestionAboveContainer)) {
-                var questionTextAbove = this.$$(possibleQuestionAboveContainer).$$(possibleQuestionAboveId);
-                if (questionTextAbove && showItems===true) {
-                  this.$$(possibleQuestionAboveId).show();
-                } else if (questionTextAbove) {
-                  this.$$(possibleQuestionAboveId).hide();
-                }
+                children[i].hidden = true;
               }
             }
           }
-        } else {
-          console.error("Can't find id to skip to for survey");
         }
       },
 

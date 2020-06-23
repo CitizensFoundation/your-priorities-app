@@ -282,17 +282,19 @@
               </template>
 
               <template is="dom-if" if="[[hasStructuredQuestions]]">
-                <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
-                  <yp-structured-question-edit index="[[index]]"
-                                               use-small-font
-                                               id="structuredQuestionContainer_[[index]]"
-                                               dont-focus-first-question="[[!group.configuration.hideNameInputAndReplaceWith]]"
-                                               on-resize-scroller="_resizeScrollerIfNeeded"
-                                               structured-answers="[[initialStructuredAnswersJson]]"
-                                               hide-question-index="[[group.configuration.hideQuestionIndexOnNewPost]]"
-                                               question="[[question]]"></yp-structured-question-edit>
+                <div id="surveyContainer">
+                  <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
+                    <yp-structured-question-edit index="[[index]]"
+                                                 use-small-font
+                                                 id="structuredQuestionContainer_[[index]]"
+                                                 dont-focus-first-question="[[!group.configuration.hideNameInputAndReplaceWith]]"
+                                                 on-resize-scroller="_resizeScrollerIfNeeded"
+                                                 structured-answers="[[initialStructuredAnswersJson]]"
+                                                 hide-question-index="[[group.configuration.hideQuestionIndexOnNewPost]]"
+                                                 question="[[question]]"></yp-structured-question-edit>
 
-                </template>
+                  </template>
+                </div>
               </template>
 
               <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">
@@ -659,28 +661,26 @@
     },
 
     _skipToId: function (event, detail, showItems) {
-      var firstElementPos = this.liveUniqueIds.indexOf(detail.fromId);
-
-      if (firstElementPos>-1) {
-        firstElementPos+=1;
-        for (i=firstElementPos; i<this.liveUniqueIds.length; i++) {
-          if (this.liveUniqueIds[i]==detail.toId) {
+      var foundFirst = false;
+      if (this.$$("#surveyContainer")) {
+        var children = this.$$("#surveyContainer").children;
+        for (var i=0; i<children.length;i++) {
+          if (children[i].question && detail.fromId && children[i].question.uniqueId===detail.fromId.replace(/]/g,"")) {
+            foundFirst = true;
+          } else if (children[i].question && detail.toId && children[i].question.uniqueId===detail.toId.replace(/]/g,"")) {
             break;
           } else {
-            var elementIndex = this.uniqueIdsToElementIndexes[this.liveUniqueIds[i]];
-            if (this.$$("#structuredQuestionContainer_"+elementIndex)) {
-              if (showItems===true) {
-                this.$$("#structuredQuestionContainer_"+elementIndex).show();
+            if (foundFirst) {
+              if (showItems) {
+                children[i].hidden = false;
               } else {
-                this.$$("#structuredQuestionContainer_"+elementIndex).hide();
+                children[i].hidden = true;
               }
-            } else {
-              console.error("Can't find container")
             }
           }
         }
       } else {
-        console.error("Can't find id to skip to for survey");
+        console.error("No survey container found")
       }
     },
 
