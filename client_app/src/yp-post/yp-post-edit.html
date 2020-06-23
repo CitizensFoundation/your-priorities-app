@@ -288,6 +288,7 @@
                                                id="structuredQuestionContainer_[[index]]"
                                                dont-focus-first-question="[[!group.configuration.hideNameInputAndReplaceWith]]"
                                                on-resize-scroller="_resizeScrollerIfNeeded"
+                                               structured-answers="[[initialStructuredAnswersJson]]"
                                                hide-question-index="[[group.configuration.hideQuestionIndexOnNewPost]]"
                                                question="[[question]]"></yp-structured-question-edit>
 
@@ -479,6 +480,11 @@
       newPost: {
         type: Boolean,
         value: false
+      },
+
+      initialStructuredAnswersJson: {
+        type: Array,
+        value: null
       },
 
       post: {
@@ -1194,6 +1200,10 @@
           nameElement.focus();
         }
       }.bind(this), 250);
+
+      if (!this.newPost && this.post.public_data && this.post.public_data.structuredAnswersJson) {
+        this.set('initialStructuredAnswersJson', this.post.public_data.structuredAnswersJson);
+      }
     },
 
     _alternativeTextForNewIdeaButtonHeaderTranslation: function () {
