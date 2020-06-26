@@ -290,6 +290,8 @@
                                                  dont-focus-first-question="[[!group.configuration.hideNameInputAndReplaceWith]]"
                                                  on-resize-scroller="_resizeScrollerIfNeeded"
                                                  structured-answers="[[initialStructuredAnswersJson]]"
+                                                 is-last-rating="[[_isLastRating(index)]]"
+                                                 is-first-rating="[[_isFirstRating(index)]]"
                                                  hide-question-index="[[group.configuration.hideQuestionIndexOnNewPost]]"
                                                  question="[[question]]"></yp-structured-question-edit>
 
@@ -643,6 +645,18 @@
       'yp-goto-next-index': '_goToNextIndex'
     },
 
+    _isLastRating: function (index) {
+      return (this.structuredQuestions[index].subType==="rating" &&
+        (index+2)<this.structuredQuestions.length &&
+        this.structuredQuestions[index+1].subType!=="rating")
+    },
+
+    _isFirstRating: function (index) {
+      return (this.structuredQuestions[index].subType==="rating" &&
+        this.structuredQuestions[index-1] &&
+        this.structuredQuestions[index-1].subType!=="rating")
+    },
+
     _openToId: function (event, detail) {
       this._skipToId(event, detail, true);
     },
@@ -665,9 +679,19 @@
       if (this.$$("#surveyContainer")) {
         var children = this.$$("#surveyContainer").children;
         for (var i=0; i<children.length;i++) {
-          if (children[i].question && detail.fromId && children[i].question.uniqueId===detail.fromId.replace(/]/g,"")) {
+          var toId = detail.toId.replace(/]/g,"");
+          var fromId = detail.fromId.replace(/]/g,"");
+          if (children[i+1] &&
+            children[i+1].question &&
+            children[i+1].question.uniqueId &&
+            children[i+1].question.uniqueId.substring(children[i+1].question.uniqueId.length-1)==="a") {
+            console.error(children[i+1].question.uniqueId);
+            children[i].question.uniqueId = children[i+1].question.uniqueId.substring(0, children[i+1].question.uniqueId.length-1);
+            console.error(children[i].question.uniqueId)
+          }
+          if (children[i].question && detail.fromId && children[i].question.uniqueId===fromId) {
             foundFirst = true;
-          } else if (children[i].question && detail.toId && children[i].question.uniqueId===detail.toId.replace(/]/g,"")) {
+          } else if (children[i].question && detail.toId && (children[i].question.uniqueId===toId || children[i].question.uniqueId===toId+"a")) {
             break;
           } else {
             if (foundFirst) {

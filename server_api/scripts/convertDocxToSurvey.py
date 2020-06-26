@@ -22,13 +22,13 @@ def iter_block_items(parent):
         elif isinstance(child, CT_Tbl):
             yield Table(child, parent)
 
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 22 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 22 2020.docx")
 
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 22 2020.docx")
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 22 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 22 2020.docx")
 
 survey_items = []
 
@@ -134,7 +134,6 @@ def appendCheckbox(uniqueId, optionsText, questionText):
   questionText, max_length = get_max_length(questionText)
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText), 'maxLength': max_length})
 
-
 def splitByDigit(text):
   text = text.strip()
   part = ""
@@ -152,7 +151,7 @@ def splitByColumns(columns):
   options = []
   for column in columns:
     if i>1:
-      options.append(column.text+"  "+column.text)
+      options.append(column.text)
     i += 1
   print(options)
   return options
@@ -192,8 +191,8 @@ for block in iter_block_items(document):
             denseUniqueId = row.cells[0].text.strip().replace("[","").replace("]","")
             print("DENSE RATIOS: "+denseUniqueId)
             appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[1].text.strip())})
-            if len(row.cells)>2 and row.cells[2].text.strip().startswith("1"):
-              appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[2].text.strip())})
+            #if len(row.cells)>2 and row.cells[2].text.strip().startswith("1"):
+              #appendSurveyItem({'type':'textDescription','text': getStringToBracket(row.cells[2].text.strip())})
 
           elif len(row.cells)>3 and (row.cells[3].text.strip().startswith("A ") or row.cells[3].text.strip().startswith("A_") or row.cells[3].text.strip().startswith("А ")):
             appendCheckbox(row.cells[0].text.strip(), row.cells[3].text.split("\n"), row.cells[1].text.strip())

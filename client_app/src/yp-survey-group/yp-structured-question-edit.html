@@ -105,6 +105,10 @@
         margin-top: 48px;
       }
 
+      .radiosLabel[is-first-rating] {
+        margin-top: 24px;
+      }
+
       paper-textarea-aria.textAreaLong {
         --paper-input-container: {
           margin: 0;
@@ -214,6 +218,8 @@
 
     </style>
 
+
+    <h3>[[question.uniqueId]]</h3>
     <template is="dom-if" if="[[_isTextField(question)]]">
 
       <template is="dom-if" if="[[_isNumberSubType(question)]]">
@@ -358,7 +364,7 @@
     </template>
 
     <template is="dom-if" if="[[_isRadios(question)]]">
-      <div class="question general radiosLabel" use-small-font$="[[useSmallFont]]"
+      <div class="question general radiosLabel" use-small-font$="[[useSmallFont]]" is-first-rating$="[[isFirstRating]]"
            id="structuredQuestionIntro_[[index]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
       <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged"
@@ -406,7 +412,7 @@
               [[checkbox.text]]
             </paper-checkbox>
             <paper-input class="specifyInput specifyCheckBox" hidden no-label-float on-value-changed="_debounceChangeEvent"
-                         maxlength="[[question.maxLength]]" type="[[checkbox.subType]]"
+                         type="[[checkbox.subType]]"
                          id="structuredQuestion_[[index]]_[[buttonIndex]]_checkboxOther"></paper-input>
           </template>
         </template>
@@ -473,6 +479,11 @@
           },
 
           isLastRating: {
+            type: Boolean,
+            value: false
+          },
+
+          isFirstRating: {
             type: Boolean,
             value: false
           }
@@ -793,20 +804,20 @@
         var checkedCount = 0;
         var item = this.$$("#structuredQuestion_"+this.index);
         for (var i = 0; i < item.children.length; i++) {
-          if (item.children[i].checked) {
+          if (item.children[i].tagName.toLowerCase()==="paper-checkbox" && item.children[i].checked) {
             checkedCount+=1;
           }
         }
 
         if (checkedCount>=parseInt(this.question.maxLength)) {
           for (var x = 0; x < item.children.length; x++) {
-            if (!item.children[x].checked) {
+            if (item.children[x].tagName.toLowerCase()==="paper-checkbox" && !item.children[x].checked) {
               item.children[x].disabled = true;
             }
           }
         } else {
           for (var n = 0; n < item.children.length; n++) {
-            if (item.children[n].disabled) {
+            if (item.children[n].tagName.toLowerCase()==="paper-checkbox" && item.children[n].disabled) {
               item.children[n].disabled = false;
             }
           }

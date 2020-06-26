@@ -112,6 +112,7 @@
                                              on-changed="_saveState"
                                              question="[[question]]"
                                              is-last-rating="[[_isLastRating(index)]]"
+                                             is-first-rating="[[_isFirstRating(index)]]"
                                              on-hide-to-question="_hideToQuestion">
                 </yp-structured-question-edit>
               </template>
@@ -225,6 +226,12 @@
           this.structuredQuestions[index+1].subType!=="rating")
       },
 
+      _isFirstRating: function (index) {
+        return (this.structuredQuestions[index].subType==="rating" &&
+          this.structuredQuestions[index-1] &&
+          this.structuredQuestions[index-1].subType!=="rating")
+      },
+
       _openToId: function (event, detail) {
         this._skipToId(event, detail, true);
       },
@@ -236,6 +243,14 @@
         for (var i=0; i<children.length;i++) {
           var toId = detail.toId.replace(/]/g,"");
           var fromId = detail.fromId.replace(/]/g,"");
+          if (children[i+1] &&
+              children[i+1].question &&
+              children[i+1].question.uniqueId &&
+            children[i+1].question.uniqueId.substring(children[i+1].question.uniqueId.length-1)==="a") {
+            console.error(children[i+1].question.uniqueId);
+            children[i].question.uniqueId = children[i+1].question.uniqueId.substring(0, children[i+1].question.uniqueId.length-1);
+            console.error(children[i].question.uniqueId)
+          }
           if (children[i].question && detail.fromId && children[i].question.uniqueId===fromId) {
             foundFirst = true;
           } else if (children[i].question && detail.toId && (children[i].question.uniqueId===toId || children[i].question.uniqueId===toId+"a")) {
