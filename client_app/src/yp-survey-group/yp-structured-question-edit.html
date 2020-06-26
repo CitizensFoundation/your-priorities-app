@@ -217,7 +217,7 @@
       }
 
     </style>
-    
+
     <template is="dom-if" if="[[_isTextField(question)]]">
 
       <template is="dom-if" if="[[_isNumberSubType(question)]]">
@@ -594,7 +594,16 @@
         }
       }
 
-      getAnswer() {
+      cleanValue (value) {
+        if (value) {
+          return value.replace(/,/g,';').replace(/:/g,';');
+        } else {
+          console.warn("No value for cleanValue");
+          return "";
+        }
+      }
+
+      getAnswer () {
         var item = this.$$("#structuredQuestion_" + this.index);
 
         if (item) {
@@ -616,7 +625,7 @@
                   if (selectedRadio.isSpecify) {
                     var radioInput = this.$$("#structuredQuestion_" + this.index + "_"+buttonIndex+"__radioOther");
                     if (radioInput) {
-                      value = selectedRadio.text + ":" + radioInput.value;
+                      value = selectedRadio.text + ":" + this.cleanValue(radioInput.value);
                     } else {
                       value = selectedRadio.text;
                     }
@@ -635,7 +644,7 @@
                 if (selectedCheckbox.isSpecify) {
                   var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
                   if (checkboxInput && checkboxInput.value !== "") {
-                    selectedCheckboxes += selectedCheckbox.text + ":" + checkboxInput.value + ",";
+                    selectedCheckboxes += selectedCheckbox.text + ":" + this.cleanValue(checkboxInput.value) + ",";
                   } else {
                     selectedCheckboxes += selectedCheckbox.text + ",";
                   }
@@ -767,8 +776,7 @@
       }));
     }
 
-    _closeSubQuestion()
-    {
+    _closeSubQuestion() {
       this.dispatchEvent(new CustomEvent('yp-close-sub-question', {
         bubbles: true,
         composed: true,
@@ -866,28 +874,23 @@
       }.bind(this));
     }
 
-    _isTextarea(question)
-    {
+    _isTextarea(question) {
       return (question.type && question.type.toLowerCase() === 'textarea') || (question.type === undefined && question.maxLength > 1);
     }
 
-    _isTextareaLong(question)
-    {
+    _isTextareaLong(question) {
       return (question.type && question.type.toLowerCase() === 'textarealong');
     }
 
-    _isTextField(question)
-    {
+    _isTextField(question) {
       return (question.type && question.type.toLowerCase() === 'textfield');
     }
 
-    _isTextFieldLong(question)
-    {
+    _isTextFieldLong(question) {
       return (question.type && question.type.toLowerCase() === 'textfieldlong');
     }
 
-    _isNumberField(question)
-    {
+    _isNumberField(question) {
       return (question.type && question.type.toLowerCase() === 'numberfield');
     }
 
@@ -896,33 +899,27 @@
       return (question.type && question.type.toLowerCase() === 'textheader');
     }
 
-    _isTextDescription(question)
-    {
+    _isTextDescription(question) {
       return (question.type && question.type.toLowerCase() === 'textdescription');
     }
 
-    _isCheckboxes(question)
-    {
+    _isCheckboxes(question) {
       return (question.type && question.type.toLowerCase() === 'checkboxes');
     }
 
-    _isSeparator(question)
-    {
+    _isSeparator(question) {
       return (question.type && question.type.toLowerCase() === 'separator');
     }
 
-    _isRadios(question)
-    {
+    _isRadios(question) {
       return (question.type && question.type.toLowerCase() === 'radios');
     }
 
-    _isDropDown(question)
-    {
+    _isDropDown(question) {
       return (question.type && question.type.toLowerCase() === 'dropdown');
     }
 
-    _structuredAnsweredChanged(structuredAnswers)
-    {
+    _structuredAnsweredChanged(structuredAnswers) {
       if (structuredAnswers && this.question.uniqueId) {
         var BreakException = {};
         try {
@@ -940,8 +937,7 @@
       }
     }
 
-    ready()
-    {
+    ready() {
       if (window.i18nTranslation) {
         this.set('language', window.locale);
       }
