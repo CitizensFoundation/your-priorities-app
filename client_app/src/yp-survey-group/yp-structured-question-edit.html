@@ -734,8 +734,7 @@
       }
     }
 
-    hide()
-    {
+    hide() {
       var item = this.$$("#structuredQuestion_" + this.index);
       if (item) {
         item.hidden = true;
@@ -749,8 +748,7 @@
       }
     }
 
-    show()
-    {
+    show() {
       var item = this.$$("#structuredQuestion_" + this.index);
       if (item) {
         item.hidden = false;
@@ -763,8 +761,7 @@
       }
     }
 
-    _openSubQuestion()
-    {
+    _openSubQuestion() {
       this.dispatchEvent(new CustomEvent('yp-open-sub-question', {
         bubbles: true,
         composed: true,

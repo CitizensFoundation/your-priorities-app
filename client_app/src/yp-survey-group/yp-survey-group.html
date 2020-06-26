@@ -247,9 +247,7 @@
               children[i+1].question &&
               children[i+1].question.uniqueId &&
             children[i+1].question.uniqueId.substring(children[i+1].question.uniqueId.length-1)==="a") {
-            console.error(children[i+1].question.uniqueId);
             children[i].question.uniqueId = children[i+1].question.uniqueId.substring(0, children[i+1].question.uniqueId.length-1);
-            console.error(children[i].question.uniqueId)
           }
           if (children[i].question && detail.fromId && children[i].question.uniqueId===fromId) {
             foundFirst = true;

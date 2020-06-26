@@ -23,10 +23,10 @@ def iter_block_items(parent):
             yield Table(child, parent)
 
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 22 2020.docx")
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 22 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 22 2020.docx")
 
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 22 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 22 2020.docx")
 
@@ -88,7 +88,7 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
     text = text.strip()
     text = text.replace("└", " ")
     if len(text)>0 and len(number)>0:
-      radios.append({'skipTo': skipTo, 'text': text, 'number': number, 'subType': sub_type, 'isSpecify': isSpecify})
+      radios.append({'skipTo': skipTo, 'text': text, 'subCode': number, 'subType': sub_type, 'isSpecify': isSpecify})
   questionText, max_length = get_max_length(questionText)
   print("MAX:"+str(max_length))
   appendSurveyItem({'type':'radios', 'subType': subType, 'uniqueId': uniqueId, 'radioButtons': radios, 'text': getStringToBracket(questionText), 'maxLength': max_length})
@@ -135,7 +135,7 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text = text.replace(":",";")
     text = text.strip()
     if len(text)>0 and len(number)>0:
-      checkboxes.append({'skipTo': skipTo, 'text': text, 'number': number, 'isSpecify': isSpecify,'subType': sub_type})
+      checkboxes.append({'skipTo': skipTo, 'text': text, 'subCode': number, 'isSpecify': isSpecify,'subType': sub_type})
 
   questionText, max_length = get_max_length(questionText)
   appendSurveyItem({'type':'checkboxes', 'uniqueId': uniqueId, 'checkboxes': checkboxes, 'text': getStringToBracket(questionText), 'maxLength': max_length})
