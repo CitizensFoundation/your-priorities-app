@@ -22,8 +22,8 @@ def iter_block_items(parent):
         elif isinstance(child, CT_Tbl):
             yield Table(child, parent)
 
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 22 2020.docx")
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 22 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_ENG_clear_June 22 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_RU_clear_June 22 2020.docx")
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 22 2020.docx")
 
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 22 2020.docx")
@@ -52,6 +52,12 @@ def appendSurveyItem(item):
 def clean(text):
   return text.strip()
 
+def has_specify(text):
+  if text.find("___")>-1 or text.find("(specify)")>-1 or text.find('─┴─┴─')>-1 or text.find("(указать)")>-1 or text.find("(белгилоо)")>-1:
+    return True
+  else:
+    return False
+
 def appendRatio(uniqueId, optionsText, questionText, subType=None):
   print("RADIOS")
   radios = []
@@ -68,7 +74,7 @@ def appendRatio(uniqueId, optionsText, questionText, subType=None):
     #print("Text: "+text)
     isSpecify = False
     skipTo = None
-    if text.find("___")>-1 or text.find("(specify)")>-1 or text.find('─┴─┴─')>-1:
+    if has_specify(text):
       isSpecify = True
       text = text.replace("_","")
       if len(text)==0:
@@ -118,7 +124,7 @@ def appendCheckbox(uniqueId, optionsText, questionText):
     text = option[2:].strip()
     isSpecify = False
     skipTo = None
-    if text.find("___")>-1 or text.find("(specify)")>-1 or text.find('─┴─┴─')>-1:
+    if has_specify(text):
       isSpecify = True
       text = text.replace("_","")
       if len(text)==0:
