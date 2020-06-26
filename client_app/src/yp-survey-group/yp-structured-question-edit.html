@@ -385,12 +385,12 @@
             <template is="dom-if" if="[[_isNumberSubType(radioButton)]]">
               <paper-input class="specifyInput" hidden no-label-float  on-value-changed="_debounceChangeEvent"
                            maxlength="[[question.maxLength]]" allowed-pattern="[0-9]" type="text"
-                           id="structuredQuestion_[[index]]__radioOther"></paper-input>
+                           id="structuredQuestion_[[index]]_[[buttonIndex]]__radioOther"></paper-input>
             </template>
             <template is="dom-if" if="[[!_isNumberSubType(radioButton)]]">
               <paper-input class="specifyInput" hidden no-label-float  on-value-changed="_debounceChangeEvent"
                            maxlength="[[question.maxLength]]" type="[[radioButton.subType]]"
-                           id="structuredQuestion_[[index]]__radioOther"></paper-input>
+                           id="structuredQuestion_[[index]]_[[buttonIndex]]__radioOther"></paper-input>
             </template>
           </template>
         </template>
@@ -612,21 +612,21 @@
           } else if (this.question.type.toLowerCase() === "radios") {
             if (item.selected) {
               var selectedRadio = null;
-              this.question.radioButtons.forEach(function (button) {
+              this.question.radioButtons.forEach(function (button, buttonIndex) {
                 if (button.text === item.selected) {
                   selectedRadio = button;
+                  if (selectedRadio.isSpecify) {
+                    var radioInput = this.$$("#structuredQuestion_" + this.index + "_"+buttonIndex+"__radioOther");
+                    if (radioInput) {
+                      value = selectedRadio.text + ":" + radioInput.value;
+                    } else {
+                      value = selectedRadio.text;
+                    }
+                  } else {
+                    value = selectedRadio.text;
+                  }
                 }
               }.bind(this));
-              if (selectedRadio.isSpecify) {
-                var radioInput = this.$$("#structuredQuestion_" + this.index + "__radioOther");
-                if (radioInput) {
-                  value = selectedRadio.text + ":" + radioInput.value;
-                } else {
-                  value = selectedRadio.text;
-                }
-              } else {
-                value = selectedRadio.text;
-              }
             }
           } else if (this.question.type.toLowerCase() === "checkboxes") {
             var selectedCheckboxes = "";
@@ -678,11 +678,11 @@
                 specifyInput = splitText[1];
               }
 
-              this.question.radioButtons.forEach(function (button, index) {
+              this.question.radioButtons.forEach(function (button, buttonIndex) {
                 if (button.text === value) {
                   item.select(value);
                   if (specifyInput) {
-                    var input = this.$$("#structuredQuestion_" + this.index + "__radioOther");
+                    var input = this.$$("#structuredQuestion_" + this.index + "_"+buttonIndex+"__radioOther");
                     if (input) {
                       input.hidden = false;
                       input.value = specifyInput;
@@ -834,42 +834,41 @@
 
       var selectedRadio = null;
 
-      this.question.radioButtons.forEach(function (button) {
+      this.question.radioButtons.forEach(function (button, buttonIndex) {
         if (button.text === detail.value) {
           selectedRadio = button;
+          if (selectedRadio.skipTo) {
+            this.fire('yp-skip-to-unique-id', {fromId: this.question.uniqueId, toId: selectedRadio.skipTo});
+          } else if (selectedRadio.isSpecify) {
+            var input = this.$$("#structuredQuestion_" + this.index + "_"+buttonIndex+"__radioOther");
+            if (input) {
+              input.hidden = false;
+              input.focus();
+            } else {
+              debugger;
+              console.error("Can't find radio specify value");
+            }
+          } else {
+            this.async(function () {
+              if(!this.radioKeypress) {
+                this.fire('yp-goto-next-index', { currentIndex: this.index });
+              }
+            });
+
+            var hasSkipToId;
+
+            this.question.radioButtons.forEach(function (button) {
+              if (button.skipTo) {
+                hasSkipToId = button.skipTo;
+              }
+            }.bind(this));
+
+            if (hasSkipToId) {
+              this.fire('yp-open-to-unique-id', {fromId: this.question.uniqueId, toId: hasSkipToId});
+            }
+          }
         }
       }.bind(this));
-
-      if (selectedRadio.skipTo) {
-        this.fire('yp-skip-to-unique-id', {fromId: this.question.uniqueId, toId: selectedRadio.skipTo});
-      } else if (selectedRadio.isSpecify) {
-        var input = this.$$("#structuredQuestion_" + this.index + "__radioOther");
-        if (input) {
-          input.hidden = false;
-          input.focus();
-        } else {
-          debugger;
-          console.error("Can't find checkbox specify value");
-        }
-      } else {
-        this.async(function () {
-          if(!this.radioKeypress) {
-            this.fire('yp-goto-next-index', { currentIndex: this.index });
-          }
-        });
-
-        var hasSkipToId;
-
-        this.question.radioButtons.forEach(function (button) {
-          if (button.skipTo) {
-            hasSkipToId = button.skipTo;
-          }
-        }.bind(this));
-
-        if (hasSkipToId) {
-          this.fire('yp-open-to-unique-id', {fromId: this.question.uniqueId, toId: hasSkipToId});
-        }
-      }
     }
 
     _isTextarea(question)
