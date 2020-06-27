@@ -27,8 +27,8 @@ def iter_block_items(parent):
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Comm Rep_Final_KGZ_clear_June 22 2020.docx")
 
 #document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_ENG_clear_June 22 2020.docx")
-document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 22 2020.docx")
-#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 22 2020.docx")
+#document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_RU_clear_June 22 2020.docx")
+document = Document("/home/robert/Documents/WorldBank/Surveys/refinalthingstofixfor1_roundofsurveys/Govt Officials_Final_KGZ_clear_June 22 2020.docx")
 
 survey_items = []
 
