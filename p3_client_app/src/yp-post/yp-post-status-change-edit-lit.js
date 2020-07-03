@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypOfficialStatusOptions } from '../yp-behaviors/yp-official-status-options.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
@@ -54,7 +53,6 @@ class YpPostStatusChangeEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" ?doubleWidth .icon="language" .confirmationText="${this.t('post.statusChangeConfirmText')}" .action="${this.action}" method="${this.method}" params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
       <div class="layout horizontal center-center">
@@ -80,7 +78,6 @@ class YpPostStatusChangeEditLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior,
     ypOfficialStatusOptions
   ],

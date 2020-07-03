@@ -477,6 +477,7 @@ Polymer({
     }, 100);
   },
 
-  ready: function () {
+  connectedCallback() {
+    super.connectedCallback()
   }
 });

@@ -5,7 +5,6 @@ import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
 import '../yp-file-upload/yp-file-upload.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
@@ -79,7 +78,6 @@ class YpOrganizationEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-edit-dialog id="editDialog" .title="${this.editHeaderText}" .icon="business-center" .action="${this.action}" .method="${this.method}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
       <h2 .slot="h2">${this.editHeaderText}</h2>
 
@@ -125,7 +123,6 @@ class YpOrganizationEditLit extends YpBaseElement {
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior,
     ypGotoBehavior
   ],
@@ -153,8 +150,8 @@ class YpOrganizationEditLit extends YpBaseElement {
     this.set('organization', { name: '', description: '', access: 0 });
     this.set('uploadedLogoImageId', null);
     this.set('uploadedHeaderImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.logoImageUpload.clear();
+    this.$("#headerImageUpload").clear();
+    this.$("#logoImageUpload").clear();
   }
 
   setup(organization, newNotEdit, refreshFunction) {

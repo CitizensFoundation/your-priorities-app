@@ -9,7 +9,6 @@ import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/app-route/app-route.js';
 //TODO: import 'google-map/google-map.js';
 //TODO: import 'google-map/google-map-marker.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../ac-activities/ac-activities.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
@@ -427,8 +426,6 @@ class YpPostLit extends YpBaseElement {
       </iron-pages>
     </div>
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-
     <app-route .route="${this.idRoute}" .pattern="/:id" .data="${this.idRouteData}" .tail="${this.tabRoute}">
     </app-route>
 
@@ -454,7 +451,6 @@ class YpPostLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     YpNewsTabSelected,
     ypGotoBehavior,
@@ -505,7 +501,7 @@ class YpPostLit extends YpBaseElement {
     }
 
     this.async(function () {
-      var news = this.$$("#postNews");
+      const news = this.$$("#postNews");
       if (news) {
         news.fireResize();
       }
@@ -527,19 +523,19 @@ class YpPostLit extends YpBaseElement {
 */
 
   _updatePostImageCount(event, imageCount) {
-    var tabCounter = this.$$('#tabCountPhotos');
+    const tabCounter = this.$$('#tabCountPhotos');
     if (tabCounter) {
       tabCounter.innerHTML = this.formatNumber(imageCount);
     }
   }
 
   _updateDebateInfo(event, detail) {
-    var tabCounter = this.$$('#tabCountDebate');
+    const tabCounter = this.$$('#tabCountDebate');
     if (tabCounter) {
       tabCounter.innerHTML = this.formatNumber(detail.count);
     }
     if (detail.firstPoint) {
-      this.$.postCard.updateDescriptionIfEmpty(detail.firstPoint.content);
+      this.$$("#postCard").updateDescriptionIfEmpty(detail.firstPoint.content);
     }
   }
 
@@ -576,14 +572,14 @@ class YpPostLit extends YpBaseElement {
   }
 
   _refreshAjax() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _postChanged(newValue, oldValue) {
   }
 
   _postIdChanged(postId) {
-    var cachedItem = window.appGlobals.cachedPostItem;
+    const cachedItem = window.appGlobals.cachedPostItem;
     if (cachedItem && cachedItem.id==postId) {
       this._setupAjaxUrl();
       this._handleIncomingPostResponse(null, { response: cachedItem });
@@ -604,9 +600,9 @@ class YpPostLit extends YpBaseElement {
 
   _setupAjaxUrl() {
     if (this.host) {
-      this.$.ajax.url = this.host+'/api/posts/' + this.postId;
+      this.$$("#ajax").url = this.host+'/api/posts/' + this.postId;
     } else {
-      this.$.ajax.url = '/api/posts/' + this.postId;
+      this.$$("#ajax").url = '/api/posts/' + this.postId;
     }
   }
 
@@ -617,7 +613,7 @@ class YpPostLit extends YpBaseElement {
   _getPost() {
     this._setupAjaxUrl();
     this.$$('#ajax').retryMethodAfter401Login = this._getPost.bind(this);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _handleIncomingPostResponse(event, detail) {
@@ -642,7 +638,7 @@ class YpPostLit extends YpBaseElement {
 
   _processRecommendation(recommendedPost) {
      if (recommendedPost && this.post) {
-       var postName = recommendedPost.name;
+       const postName = recommendedPost.name;
        if (this.wideWidth) {
          postName = this.truncate(postName, 60);
        } else {
@@ -717,8 +713,8 @@ class YpPostLit extends YpBaseElement {
         hideHelpIcon: (this.post.Group.configuration && this.post.Group.configuration.hideHelpIcon) ? true : null,
       });
 
-      this.$.pagesAjax.url = "/api/groups/"+this.post.Group.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/groups/"+this.post.Group.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
 
       if (this.post.Group.configuration && this.post.Group.configuration.disableFacebookLoginForGroup===true) {
         window.appGlobals.disableFacebookLoginForGroup = true;
@@ -750,7 +746,7 @@ class YpPostLit extends YpBaseElement {
   }
 
   setupTopHeaderImage(image) {
-    var url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
+    const url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
     this.updateStyles({ '--top-area-background-image': url });
   }
 

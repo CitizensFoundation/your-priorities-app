@@ -5,7 +5,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import '../yp-user/yp-user-image.js';
 import '../yp-ajax/yp-ajax.js';
@@ -67,7 +66,7 @@ class YpPointNewsStoryEditLit extends YpBaseElement {
         margin-top: -8px;
       }
 
-      paper-button {
+      mwc-button {
         margin-top: 16px;
         background-color: var(--accent-color);
         color: #FFF;
@@ -130,7 +129,6 @@ class YpPointNewsStoryEditLit extends YpBaseElement {
 
 render() {
   return html`
-  <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="layout vertical container">
       <div class="layout horizontal">
         <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
@@ -138,7 +136,7 @@ render() {
           <paper-textarea id="pointNewsStory" required .minlength="15" .name="pointNewsStory" .value="${this.point.content}" always-float-label="${this.point.content}" .label="${this.t('point.addNewsStory')}" char-counter .rows="2" .max-rows="5" @keydown="${this._keyDown}" .maxlength="500">
           </paper-textarea>
           <div class="layout horizontal end-justified">
-            <paper-button id="storySubmitButton" raised @tap="${this._sendStory}">${this.t('point.postNewsStory')}</paper-button>
+            <mwc-button id="storySubmitButton" raised @click="${this._sendStory}" .label="${this.t('point.postNewsStory')}"></mwc-button>
           </div>
         </div>
       </div>
@@ -166,17 +164,17 @@ render() {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior
   ],
 */
   _clearButtonStat() {
-    this.$.storySubmitButton.disabled = false;
+    this.$$("#storySubmitButton").disabled = false;
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
     this._reset();
-    this.$.pointNewsStory.addEventListener("paste", function () {
+    this.$$("#pointNewsStory").addEventListener("paste", function () {
       this.async(function () {
         this._checkForUrl();
       }, 50);
@@ -190,29 +188,29 @@ render() {
   }
 
   _sendStory() {
-    this.$.storySubmitButton.disabled = true;
-    var body = { point: this.point };
+    this.$$("#storySubmitButton").disabled = true;
+    const body = { point: this.point };
     if (this.point.content && this.point.content.length>2) {
       if (this.postId && this.postGroupId) {
         __.merge(body, { post_id: this.postId })
-        this.$.postNewsStoryAjax.url = '/api/groups/'+this.postGroupId+'/post/news_story';
+        this.$$("#postNewsStoryAjax").url = '/api/groups/'+this.postGroupId+'/post/news_story';
       } else if (this.groupId) {
         __.merge(body, { group_id: this.groupId })
-        this.$.postNewsStoryAjax.url = '/api/groups/'+this.groupId+'/news_story';
+        this.$$("#postNewsStoryAjax").url = '/api/groups/'+this.groupId+'/news_story';
       } else if (this.communityId) {
         __.merge(body, { community_id: this.communityId })
-        this.$.postNewsStoryAjax.url = '/api/communities/'+this.communityId+'/news_story';
+        this.$$("#postNewsStoryAjax").url = '/api/communities/'+this.communityId+'/news_story';
       } else if (this.domainId) {
-        this.$.postNewsStoryAjax.url = '/api/domains/'+this.domainId+'/news_story';
+        this.$$("#postNewsStoryAjax").url = '/api/domains/'+this.domainId+'/news_story';
         __.merge(body, { domain_id: this.domainId })
       } else {
         console.error("Can't find send ids");
       }
-      this.$.postNewsStoryAjax.body = body;
-      this.$.postNewsStoryAjax.generateRequest();
+      this.$$("#postNewsStoryAjax").body = body;
+      this.$$postNewsStoryAjax.generateRequest();
     } else {
       this._clearButtonState();
-      this.$.postNewsStoryAjax.showErrorDialog(this.t('point.commentToShort'));
+      this.$$("#postNewsStoryAjax").showErrorDialog(this.t('point.commentToShort'));
     }
   }
 
@@ -238,13 +236,13 @@ render() {
 
   _checkForUrl(event) {
     if (!this.point.embed_data) {
-      var urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-      var urlRegex2 = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
-      var urls1 = urlRegex.exec(this.point.content);
-      var urls2 = urlRegex2.exec(this.point.content);
+      const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+      const urlRegex2 = /((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9][a-zA-Z0-9\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnrwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eouw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agkmsyz]|v[aceginu]|w[fs]|y[etu]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)/gi;
+      const urls1 = urlRegex.exec(this.point.content);
+      const urls2 = urlRegex2.exec(cthis.point.content);
       if (urls2 && urls2.length > 0) {
-        this.$.urlPreviewAjax.params = { url: urls2[0] };
-        this.$.urlPreviewAjax.generateRequest();
+        this.$$("#urlPreviewAjax").params = { url: urls2[0] };
+        this.$$("#urlPreviewAjax").generateRequest();
       }
     }
   }

@@ -3,13 +3,12 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '../yp-ajax/yp-ajax.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-user-image.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -188,7 +187,7 @@ class YpUsersGridLit extends YpBaseElement {
         padding-bottom: 10px;
       }
 
-      paper-button {
+      mwc-button {
         margin-left: 24px;
       }
 
@@ -276,7 +275,6 @@ class YpUsersGridLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="selectOrganizationDialog" modal="">
       <h2>${this.t('users.selectOrganization')}</h2>
       <paper-dialog-scrollable>
@@ -291,7 +289,7 @@ class YpUsersGridLit extends YpBaseElement {
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button dialog-dismiss="">${this.t('Close')}</paper-button>
+        <mwc-button .label="${this.t('Close')}" dialog-dismiss></mwc-button>
       </div>
     </paper-dialog>
 
@@ -319,13 +317,13 @@ class YpUsersGridLit extends YpBaseElement {
         <div ?hidden="${this.domainId}">
           <paper-material ?hidden="${this.adminUsers}" class="layout horizontal wrap inputBox">
             <paper-input .label="${this.t('email')}" .value="${this.inviteUserEmail}"></paper-input>
-            <paper-button class="inviteButton" @tap="${this._inviteUser}">${this.t('users.inviteUser')}</paper-button>
+            <mwc-button class="inviteButton" .label="${this.t('users.inviteUser')}" @click="${this._inviteUser}"></mwc-button>
           </paper-material>
         </div>
 
         <paper-material ?hidden="${!this.adminUsers}" class="layout horizontal wrap inputBox">
           <paper-input .label="${this.t('email')}" value="${this.addAdminEmail}"></paper-input>
-          <paper-button class="inviteButton" @tap="${this._addAdmin}">${this.t('users.addAdmin')}</paper-button>
+          <mwc-button class="inviteButton" .label="${this.t('users.addAdmin')}" @click="${this._addAdmin}"></mwc-button>
         </paper-material>
       </div>
 
@@ -439,7 +437,6 @@ class YpUsersGridLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypNumberFormatBehavior
   ],
 
@@ -455,13 +452,14 @@ class YpUsersGridLit extends YpBaseElement {
     this.set('forceSpinner', false);
   }
 
-  ready() {
-    this._setGridSize();
-    window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+  connectedCallback() {
+    super.connectedCallback()
+      this._setGridSize();
+      window.addEventListener("resize", this._resizeThrottler.bind(this), false);
   }
 
   _reload() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
     this.set('forceSpinner', true);
   }
 
@@ -476,14 +474,14 @@ class YpUsersGridLit extends YpBaseElement {
 
   _setGridSize() {
     if (window.innerWidth<=600) {
-      this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
+      this.$$("#grid").style.height = (window.innerHeight).toFixed()+'px';
     } else {
-      this.$.grid.style.height = (window.innerHeight*0.8).toFixed()+'px';
+      this.$$("#grid").style.height = (window.innerHeight*0.8).toFixed()+'px';
     }
   }
 
   _menuSelection(event, detail) {
-    var allMenus = this.$.grid.querySelectorAll("paper-listbox");
+    const allMenus = this.$$("#grid").querySelectorAll("paper-listbox");
     allMenus.forEach(function (item) {
       item.select(null);
     });
@@ -535,36 +533,36 @@ class YpUsersGridLit extends YpBaseElement {
   _addToOrganization(event) {
     this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
     this.set('availableOrganizations', this._availableOrganizations());
-    this.$.selectOrganizationDialog.open();
+    this.$$("#selectOrganizationDialog").open();
   }
 
   _removeFromOrganization(event) {
-    var userId = event.target.getAttribute('data-args');
-    var organizationId = event.target.getAttribute('data-args-org');
-    this.$.removeOrganizationAjax.body = {};
-    this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
-    this.$.removeOrganizationAjax.generateRequest();
+    const userId = event.target.getAttribute('data-args');
+    const organizationId = event.target.getAttribute('data-args-org');
+    this.$$("#removeOrganizationAjax").body = {};
+    this.$$("#removeOrganizationAjax").url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
+    this.$$("#removeOrganizationAjax").generateRequest();
   }
 
   _selectOrganization(event, detail) {
-    this.$.addOrganizationAjax.body = {};
-    this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
-    this.$.addOrganizationAjax.generateRequest();
-    this.$.selectOrganizationDialog.close();
+    this.$$("#addOrganizationAjax").body = {};
+    this.$$("#addOrganizationAjax").url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+    this.$$("#addOrganizationAjax").generateRequest();
+    this.$$("#selectOrganizationDialog").close();
   }
 
   _removeAdmin(event) {
-    var userId = event.target.getAttribute('data-args');
-    this.$.removeAdminAjax.body = {};
+    const userId = event.target.getAttribute('data-args');
+    this .$.removeAdminAjax.body = {};
     if (this.modelType=="groups" && this.groupId) {
-      this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_admin";
-      this.$.removeAdminAjax.generateRequest();
+      this.$$("#removeAdminAjax").url = "/api/" + this.modelType + "/" + this.groupId + "/" + userId + "/remove_admin";
+      this.$$("#removeAdminAjax").generateRequest();
     } else if (this.modelType=="communities" && this.communityId) {
-      this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_admin";
-      this.$.removeAdminAjax.generateRequest();
+      this.$$("#removeAdminAjax").url = "/api/" + this.modelType + "/" + this.communityId + "/" + userId + "/remove_admin";
+      this.$$("#removeAdminAjax").generateRequest();
     } else if (this.modelType=="domains" && this.domainId) {
-      this.$.removeAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_admin";
-      this.$.removeAdminAjax.generateRequest();
+      this.$$("#removeAdminAjax").url = "/api/" + this.modelType + "/" + this.domainId + "/" + userId + "/remove_admin";
+      this.$$("#removeAdminAjax").generateRequest();
     } else {
       console.warn("Can't find model type or ids");
     }
@@ -606,34 +604,34 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _reallyRemoveSelectedAdmins() {
-    this._removeMaster(this.$.removeManyAdminAjax, 'remove_many_admins', this.selectedUserIds);
+    this._removeMaster(this.$$("#removeManyAdminAjax"), 'remove_many_admins', this.selectedUserIds);
   }
 
   _reallyRemoveAndDeleteContentSelectedUsers() {
-    this._removeMaster(this.$.removeAndDeleteManyAjax, 'remove_many_users_and_delete_content', this.selectedUserIds);
+    this._removeMaster(this.$$("#removeAndDeleteManyAjax"), 'remove_many_users_and_delete_content', this.selectedUserIds);
   }
 
   _reallyRemoveSelectedUsersFromCollection() {
-    this._removeMaster(this.$.removeManyUsersAjax, 'remove_many_users', this.selectedUserIds);
+    this._removeMaster(this.$$("removeManyUsersAjax"), 'remove_many_users', this.selectedUserIds);
   }
 
   _reallyRemoveUserFromCollection() {
-    this._removeMaster(this.$.removeUserAjax, 'remove_user');
+    this._removeMaster(this.$$("#removeUserAjax"), 'remove_user');
   }
 
   _reallyRemoveAndDeleteUserContent() {
-    this._removeMaster(this.$.removeAndDeleteAjax, 'remove_and_delete_user_content');
+    this._removeMaster(this.$$("#removeAndDeleteAjax"), 'remove_and_delete_user_content');
   }
 
   _setupUserIdFromEvent(event) {
-    var userId = event.target.parentElement.getAttribute('data-args');
+    const userId = event.target.parentElement.getAttribute('data-args');
     if (!userId)
       userId = event.target.getAttribute('data-args');
     this.set('selectedUserId', userId);
   }
 
   _removeMaster(ajax, type, userIds) {
-    var url, collectionId;
+    let url, collectionId;
     if (this.modelType==="groups" && this.groupId) {
       collectionId = this.groupId;
     } else if (this.modelType==="communities" && this.communityId) {
@@ -670,20 +668,20 @@ class YpUsersGridLit extends YpBaseElement {
       console.warn("Can't find model type or ids");
     }
     if (this.selectedUserId) {
-      var user = this._findUserFromId(this.selectedUserId);
+      const user = this._findUserFromId(this.selectedUserId);
       if (user)
-        this.$.grid.deselectItem(user);
+        this.$$("#grid").deselectItem(user);
     }
   }
 
   _setSelected(event) {
-    var user = this._findUserFromId(event.target.getAttribute('data-args'));
+    const user = this._findUserFromId(event.target.getAttribute('data-args'));
     if (user)
-      this.$.grid.selectItem(user);
+      this.$$("#grid").selectItem(user);
   }
 
   _findUserFromId(id) {
-    var foundUser;
+    let foundUser;
     this.users.forEach(function (user) {
       if (user.id==id) {
         foundUser = user;
@@ -693,29 +691,29 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _addAdmin(event) {
-    this.$.addAdminAjax.body = {};
+    this.$$("#addAdminAjax").body = {};
     if (this.modelType==="groups" && this.groupId) {
-      this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addAdminEmail + "/add_admin";
-      this.$.addAdminAjax.generateRequest();
+      this.$$("#addAdminAjax").url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.addAdminEmail + "/add_admin";
+      this.$$("#addAdminAjax").generateRequest();
     } else if (this.modelType==="communities" && this.communityId) {
-      this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
-      this.$.addAdminAjax.generateRequest();
+      this.$$("#addAdminAjax").url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.addAdminEmail + "/add_admin";
+      this.$$("#addAdminAjax").generateRequest();
     } else if (this.modelType==="domains" && this.domainId) {
-      this.$.addAdminAjax.url = "/api/" + this.modelType + "/" + this.domainId + "/" + this.addAdminEmail + "/add_admin";
-      this.$.addAdminAjax.generateRequest();
+      this.$$("#addAdminAjax").url = "/api/" + this.modelType + "/" + this.domainId + "/" + this.addAdminEmail + "/add_admin";
+      this.$$("#addAdminAjax").generateRequest();
     } else {
       console.warn("Can't find model type or ids");
     }
   }
 
   _inviteUser(event) {
-    this.$.inviteUserAjax.body = {};
+    this.$$("#inviteUserAjax").body = {};
     if (this.modelType==="groups" && this.groupId) {
-      this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
-      this.$.inviteUserAjax.generateRequest();
+      this.$$("#inviteUserAjax").url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
+      this.$$("#inviteUserAjax").generateRequest();
     } else if (this.modelType==="communities" && this.communityId) {
-      this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
-      this.$.inviteUserAjax.generateRequest();
+      this.$$("#inviteUserAjax").url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
+      this.$$("#inviteUserAjax").generateRequest();
     } else {
       console.warn("Can't find model type or ids");
     }
@@ -814,9 +812,9 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _generateRequest(id) {
-    var adminsOrUsers = this.adminUsers ? "admin_users" : "users";
-    this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/"+adminsOrUsers;
-    this.$.ajax.generateRequest();
+    const adminsOrUsers = this.adminUsers ? "admin_users" : "users";
+    this.$$("#ajax").url = "/api/"+this.modelType+"/"+id+"/"+adminsOrUsers;
+    this.$$("#ajax").generateRequest();
   }
 
   _usersResponse(event, detail) {
@@ -847,7 +845,7 @@ class YpUsersGridLit extends YpBaseElement {
   open(name) {
     this.set('opened', true);
     this.set('collectionName', name);
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   _reset() {
@@ -859,7 +857,7 @@ class YpUsersGridLit extends YpBaseElement {
     this.set('selectedUsers', []);
     this.set('selectedUsersCount', 0);
     this.set('selectedUsersEmpty', true);
-    this.$.grid.clearCache();
+    this.$$("#grid").clearCache();
   }
 
   _setupHeaderText() {

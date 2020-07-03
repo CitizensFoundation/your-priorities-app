@@ -5,7 +5,6 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-input/paper-textarea.js';
 import 'lite-signal/lite-signal.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import '../yp-behaviors/emoji-selector.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
@@ -283,7 +282,6 @@ class YpPointLit extends YpBaseElement {
     return html`
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
 
     <div class="layout vertical">
@@ -352,8 +350,8 @@ class YpPointLit extends YpBaseElement {
                 <emoji-selector id="pointEmojiSelector"></emoji-selector>
               </div>
               <div class="layout horizontal self-end">
-                <paper-button @tap="${this._cancelEdit}">${this.t('cancel')}</paper-button>
-                <paper-button @tap="${this._saveEdit}">${this.t('update')}</paper-button>
+                <mwc-button @click="${this._cancelEdit}" .label="${this.t('cancel')}"></mwc-button>
+                <mwc-button @click="${this._saveEdit}" .label="${this.t('update')}"></mwc-button>
               </div>
             </div>
           `: html``}
@@ -381,7 +379,6 @@ class YpPointLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     AccessHelpers,
     ypLoggedInUserBehavior,
     ypGotAdminRightsBehavior,
@@ -420,8 +417,8 @@ class YpPointLit extends YpBaseElement {
   _updateEmojiBindings(isEditing) {
     if (isEditing) {
       this.async(function () {
-        var point = this.$$("#pointContentEditor");
-        var emoji = this.$$("#pointEmojiSelector");
+        const point = this.$$("#pointContentEditor");
+        const emoji = this.$$("#pointEmojiSelector");
         if (point && emoji) {
           emoji.inputTarget = point;
         } else {
@@ -456,7 +453,7 @@ class YpPointLit extends YpBaseElement {
 
   _editResponse(event, detail) {
     if (detail.response) {
-      var point = detail.response;
+      const point = detail.response;
       point.latestContent = point.PointRevisions[point.PointRevisions.length-1].content;
       this.set('point', point);
     }
@@ -497,7 +494,7 @@ class YpPointLit extends YpBaseElement {
   }
 
   _canEditPoint(point) {
-    var isEligible = (point && (point.counter_quality_up + point.counter_quality_down) <= this.maxNumberOfPointsBeforeEditFrozen);
+    const isEligible = (point && (point.counter_quality_up + point.counter_quality_down) <= this.maxNumberOfPointsBeforeEditFrozen);
     return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
   }
 
@@ -506,8 +503,8 @@ class YpPointLit extends YpBaseElement {
     this._resetMedia();
     if (point) {
       this.set('user', this.point.User);
-      var videoURL = this._getVideoURL(point.PointVideos);
-      var videoPosterURL = this._getVideoPosterURL(point.PointVideos);
+      const videoURL = this._getVideoURL(point.PointVideos);
+      const videoPosterURL = this._getVideoPosterURL(point.PointVideos);
       this.set('portraitVideo', this._isPortraitVideo(point.PointVideos));
       if (videoURL && videoPosterURL) {
         this.set('videoActive', true);
@@ -516,21 +513,21 @@ class YpPointLit extends YpBaseElement {
         this.set('pointVideoId', point.PointVideos[0].id);
         this.set('checkTranscriptError', false);
         if (point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
-          this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/videoTranscriptStatus';
-          this.$.checkTranscriptStatusAjax.generateRequest();
+          this.$$("#checkTranscriptStatusAjax").url = "/api/points/"+point.id+'/videoTranscriptStatus';
+          this.$$("#checkTranscriptStatusAjax").generateRequest();
           this.set('checkingTranscript', true);
           point.checkTranscriptFor = null;
         }
       } else {
-        var audioURL = this._getAudioURL(point.PointAudios);
+        const audioURL = this._getAudioURL(point.PointAudios);
         if (audioURL) {
           this.set('audioActive', true);
           this.set('pointAudioPath', audioURL);
           this.set('pointAudioId', point.PointAudios[0].id);
           this.set('checkTranscriptError', false);
           if (point.checkTranscriptFor==="audio" && window.appGlobals.hasTranscriptSupport===true) {
-            this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/audioTranscriptStatus';
-            this.$.checkTranscriptStatusAjax.generateRequest();
+            this.$$("#checkTranscriptStatusAjax").url = "/api/points/"+point.id+'/audioTranscriptStatus';
+            this.$$("#checkTranscriptStatusAjax").generateRequest();
             this.set('checkingTranscript', true);
             point.checkTranscriptFor = null;
           }
@@ -545,7 +542,7 @@ class YpPointLit extends YpBaseElement {
   _transcriptStatusResponse(event, detail) {
     detail = detail.response;
     if (detail && detail.point) {
-      var point = detail.point;
+      const point = detail.point;
       this.set('checkingTranscript', false);
       point.latestContent = point.PointRevisions[point.PointRevisions.length-1].content;
       this.set('point', point);
@@ -559,7 +556,7 @@ class YpPointLit extends YpBaseElement {
       });
     } else if (detail && detail.inProgress) {
       this.async(function () {
-        this.$.checkTranscriptStatusAjax.generateRequest();
+        this.$$("#checkTranscriptStatusAjax").generateRequest();
       }, 2000);
     } else if (detail && detail.error) {
       this.set('checkingTranscript', false);
@@ -610,7 +607,7 @@ class YpPointLit extends YpBaseElement {
   }
 
   computeClass(point) {
-    var ret = 'description ';
+    let ret = 'description ';
     if (point) {
       if (point.value>0)
         ret += 'for';

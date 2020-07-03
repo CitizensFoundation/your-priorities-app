@@ -3,7 +3,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -273,7 +272,6 @@ class YpPostCardLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
     <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
@@ -297,7 +295,6 @@ class YpPostCardLit extends YpBaseElement {
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     YpPostBehavior,
     AccessHelpers,
     ypLoggedInUserBehavior,
@@ -339,7 +336,7 @@ class YpPostCardLit extends YpBaseElement {
         this.set('isAudioCover', false);
       }
       this.async(function () {
-        var postName = this.$$("#postName");
+        const postName = this.$$("#postName");
         if (postName) {
           if (this.mini) {
             if (post.name.length>200) {

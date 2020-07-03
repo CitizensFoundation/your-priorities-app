@@ -5,7 +5,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/paper-card/paper-card.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -148,7 +147,6 @@ class YpPostCardAddLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="layout vertical center-center container">
       <paper-card ?disabled="${this.disabled}" .elevation="${this.elevation}" class="postCard" @tap="${this._newPost}">
         <div class="layout horizontal center-center addNewIdeaText">
@@ -170,11 +168,6 @@ class YpPostCardAddLit extends YpBaseElement {
       this.fire('new-post');
     }
   }
-/*
-  behaviors: [
-    ypLanguageBehavior
-]
-*/
 }
 
 window.customElements.define('yp-post-card-add-lit', YpPostCardAddLit)

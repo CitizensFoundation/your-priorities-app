@@ -1,6 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/paper-toast/paper-toast.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-session/yp-session.js';
 import '../yp-ajax/yp-ajax.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
@@ -128,7 +127,6 @@ class YpAppUserLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     AccessHelpers
   ],
 
@@ -217,10 +215,10 @@ class YpAppUserLit extends YpBaseElement {
     if (user.profile_data && user.profile_data.isAnonymousUser) {
       console.debug("Do not fetch admin or memberships for anonymous users");
     } else {
-      this.$.adminRightsAjax.generateRequest();
-      this.$.membershipsAjax.generateRequest();
+      this.$$("#adminRightsAjax").generateRequest();
+      this.$$("#membershipsAjax").generateRequest();
       this.toastLoginTextCombined = this.t("user.loginCompleteFor")+ " " + this.user.name;
-      this.$.loginToast.show();
+      this.$$("#loginToast").show();
     }
     this.fire("login");
     this._checkLoginForParameters();
@@ -228,30 +226,30 @@ class YpAppUserLit extends YpBaseElement {
 
   _checkLoginForParameters() {
     if (this.loginForEditParams) {
-      var loginParams = this.loginForEditParams;
+      const loginParams = this.loginForEditParams;
       dom(document).querySelector('yp-app').getDialogAsync(loginParams.editDialog, function (dialog) {
         dialog.setup(null, true, loginParams.refreshFunction);
         dialog.open('new', loginParams.params);
         this.loginForEditParams = null;
       }.bind(this));
     } else if (this.loginForNewPointParams) {
-      var newPointParams = this.loginForNewPointParams;
+      const newPointParams = this.loginForNewPointParams;
       newPointParams.postPointsElement.addPoint(newPointParams.params.content, newPointParams.params.value);
       this.loginForNewPointParams = null;
     } else if (this.loginForEndorseParams) {
-      var endorseParams = this.loginForEndorseParams;
+      const endorseParams = this.loginForEndorseParams;
       endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
       this.loginForEndorseParams = null;
     } else if (this.loginForPointQualityParams) {
-      var pointQualityParams = this.loginForPointQualityParams;
+      const pointQualityParams = this.loginForPointQualityParams;
       pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
       this.loginForPointQualityParams = null;
     } else if (this.loginForMembershipParams) {
-      var membershipParams = this.loginForMembershipParams;
+      const membershipParams = this.loginForMembershipParams;
       membershipParams.membershipActionElement.generateMembershipFromLogin(membershipParams.params.value);
       this.loginForMembershipParams = null;
     } else if (this.loginForAcceptInviteParams) {
-      var acceptInviteParams = this.loginForAcceptInviteParams;
+      const acceptInviteParams = this.loginForAcceptInviteParams;
       dom(document).querySelector('yp-app').getDialogAsync("acceptInvite", function (dialog) {
         dialog.reOpen(acceptInviteParams.token);
         dialog.afterLogin(acceptInviteParams.token);
@@ -284,11 +282,11 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   getUser() {
-    return this.$.session.get('user');
+    return this.$$("#session").get('user');
   }
 
   setLoggedInUser(user) {
-    this.$.session.set('user', user);
+    this.$$("#session").set('user', user);
     this.set('user', user);
 
     document.dispatchEvent(
@@ -325,7 +323,7 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   removeUserSession() {
-    this.$.session.unset('user');
+    this.$$("#session").unset('user');
     this.set('user', null);
     window.appGlobals.setAnonymousUser(null);
     document.dispatchEvent(
@@ -338,7 +336,7 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   loggedIn() {
-    var isCorrectLoginProviderAndAgency = true;
+    const isCorrectLoginProviderAndAgency = true;
     if (window.appGlobals.currentGroupForceSaml) {
       if (!this.checkGroupAccess(window.appGlobals.currentGroup)) {
         if (this.user) {
@@ -362,16 +360,17 @@ class YpAppUserLit extends YpBaseElement {
 
   logout() {
     this.hasIssuedLogout = true;
-    this.$.logoutAjax.body = {};
-    this.$.logoutAjax.generateRequest();
+    this.$$("#logoutAjax").body = {};
+    this.$$("#logoutAjax").generateRequest();
   }
 
   setLocale(locale) {
-    this.$.setLocaleAjax.body = { locale: locale };
-    this.$.setLocaleAjax.generateRequest();
+    this.$$("#setLocaleAjax").body = { locale: locale };
+    this.$$("#setLocaleAjax").generateRequest();
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
     window.appUser = this;
     this.checkLogin();
   }
@@ -404,10 +403,10 @@ class YpAppUserLit extends YpBaseElement {
     console.log("Got polling for login response");
     if (this.pollingStartedAt) {
       if (detail.response===0 && this.pollingStartedAt) {
-        var timeSpent = (new Date() - this.pollingStartedAt);
+        let timeSpent = (new Date() - this.pollingStartedAt);
         if (timeSpent<5*60*1000) {
           this.async(function () {
-            this.$.pollForLoginAjax.generateRequest();
+            this.$$("#pollForLoginAjax").generateRequest();
           }.bind(this), 1200)
         } else {
           this.pollingStartedAt = null;
@@ -432,7 +431,7 @@ class YpAppUserLit extends YpBaseElement {
   startPollingForLogin() {
     this.pollingStartedAt = Date.now();
     this.async(function () {
-      this.$.pollForLoginAjax.generateRequest();
+      this.$$("#pollForLoginAjax").generateRequest();
     }, 1000);
   }
 
@@ -455,22 +454,22 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   checkLogin() {
-    this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
-    this.$.isLoggedInAjax.generateRequest();
-    this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
-    this.$.adminRightsAjax.generateRequest();
-    this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
-    this.$.membershipsAjax.generateRequest();
+    this.$$("#isLoggedInAjax").url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
+    this.$$("#isLoggedInAjax").generateRequest();
+    this.$$("#adminRightsAjax").url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
+    this.$$("#adminRightsAjax").generateRequest();
+    this.$$("#membershipsAjax").url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
+    this.$$("#membershipsAjax").generateRequest();
   }
 
   recheckAdminRights() {
-    this.$.adminRightsAjax.generateRequest();
+    this.$$("#adminRightsAjax").generateRequest();
   }
 
   updateEndorsementForPost(postId, newEndorsement) {
     if (this.user.Endorsements) {
-      var hasChanged = false;
-      for(var i=0; i<this.user.Endorsements.length; i++) {
+      let hasChanged = false;
+      for(let i=0; i<this.user.Endorsements.length; i++) {
         if (this.user.Endorsements[i].post_id===postId) {
           if (newEndorsement) {
             this.user.Endorsements[i] = newEndorsement;
@@ -489,7 +488,7 @@ class YpAppUserLit extends YpBaseElement {
   _updateEndorsementPostsIndex(user) {
     if (user && user.Endorsements && user.Endorsements.length>0) {
       this.endorsementPostsIndex = {};
-      for(var i=0; i<user.Endorsements.length; i++){
+      for(let i=0; i<user.Endorsements.length; i++){
         this.endorsementPostsIndex[ user.Endorsements[i].post_id ] = user.Endorsements[i];
       }
     } else {
@@ -499,8 +498,8 @@ class YpAppUserLit extends YpBaseElement {
 
   updatePointQualityForPost(pointId, newPointQuality) {
     if (this.user.PointQualities) {
-      var hasChanged = false;
-      for(var i=0; i<this.user.PointQualities.length; i++) {
+      let hasChanged = false;
+      for(let i=0; i<this.user.PointQualities.length; i++) {
         if (this.user.PointQualities[i].point_id===pointId) {
           if (newPointQuality) {
             this.user.PointQualities[i] = newPointQuality;
@@ -519,7 +518,7 @@ class YpAppUserLit extends YpBaseElement {
   _updatePointQualitiesIndex(user) {
     if (user && user.PointQualities && user.PointQualities.length>0) {
       this.pointQualitiesIndex = {};
-      for(var i=0; i<user.PointQualities.length; i++){
+      for(let i=0; i<user.PointQualities.length; i++){
         this.pointQualitiesIndex[ user.PointQualities[i].point_id ] = user.PointQualities[i];
       }
     } else {
@@ -544,14 +543,14 @@ class YpAppUserLit extends YpBaseElement {
 
   _logoutResponse(event, detail) {
     this.toastLogoutTextCombined = this.t("user.logoutCompleteFor")+ " " + this.user.name;
-    this.$.logoutToast.show();
+    this.$$("#logoutToast").show();
     this.fire('yp-close-right-drawer');
     this.removeUserSession();
     this.recheckAdminRights();
   }
 
   _isLoggedInResponse(event, detail) {
-    var user = detail.response;
+    const user = detail.response;
 
     if (user===0) {
       console.info("Remove user session");
@@ -594,7 +593,7 @@ class YpAppUserLit extends YpBaseElement {
     if (detail.response && detail.response!=0) {
       console.debug("_adminRightsResponse 2");
       this.set('adminRights', detail.response);
-      var randomChangeSignal = Math.floor(Math.random() * 10) + 1;
+      const randomChangeSignal = Math.floor(Math.random() * 10) + 1;
       document.dispatchEvent(
         new CustomEvent("lite-signal", {
           bubbles: true,
@@ -626,7 +625,7 @@ class YpAppUserLit extends YpBaseElement {
 
   _updateMembershipsIndex(memberships) {
     if (memberships) {
-      var i;
+      let i;
       this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
       for(i=0; i<memberships.GroupUsers.length; i++){
         this.membershipsIndex.groups[ memberships.GroupUsers[i].id ] = true;

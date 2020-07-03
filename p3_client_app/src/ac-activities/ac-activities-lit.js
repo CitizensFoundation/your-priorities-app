@@ -4,7 +4,6 @@ import '@polymer/iron-list/iron-list.js';
 import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-material/paper-material.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
@@ -206,7 +205,7 @@ class AcActivitiesLit extends YpBaseElement {
         font-size: 24px;
       }
 
-      paper-button {
+      mwc-button {
         color: var(--accent-color);
       }
 
@@ -289,9 +288,8 @@ class AcActivitiesLit extends YpBaseElement {
           </paper-material>
         ` : html`
           <div class="layout vertical center-center">
-            <paper-button raised class="layout horizontal notLoggedInButton" @tap="${this._openLogin}">
-              ${this.t('loginToShareALink')}
-            </paper-button>
+            <mwc-button raised class="layout horizontal notLoggedInButton" .label="${this.t('loginToShareALink')}" @click="${this._openLogin}">
+            </mwc-button>
           </div>
         `}
 
@@ -321,7 +319,6 @@ class AcActivitiesLit extends YpBaseElement {
     <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
 
     <iron-scroll-threshold id="scrollTheshold" .lowerThreshold="450" @lower-threshold="${this._loadMoreData}" .scrollTarget="document">
@@ -331,7 +328,6 @@ class AcActivitiesLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior,
     AccessHelpers,
     ypIronListBehavior
@@ -347,7 +343,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _pointDeleted(event, detail) {
-    for (var i = 0; i < this.activities.length; i++) {
+    for (let i = 0; i < this.activities.length; i++) {
       if (this.activities[i].Point) {
         if (this.activities[i].Point.id==detail.pointId) {
           this._removeActivityId(this.activities[i].id);
@@ -381,7 +377,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab) {
-    var offset = this.$.ironList.offsetTop;
+    let offset = this.$$("#ironList").offsetTop;
     offset -= 75;
 
     if (!hasLoggedInUser && !groupId)
@@ -411,7 +407,7 @@ class AcActivitiesLit extends YpBaseElement {
 
   _skipIronListWidth(wide) {
     if (wide) {
-      var list = this.$$("#ironList");
+      const list = this.$$("#ironList");
       list.style.width = '600px';
       list.updateViewportBoundaries();
       this.async(function () {
@@ -426,7 +422,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _removeActivityId(activityId) {
-    for (var i = 0; i < this.activities.length; i++) {
+    for (let i = 0; i < this.activities.length; i++) {
       if (this.activities[i].id == activityId) {
         this.splice('activities', i, 1);
       }
@@ -443,17 +439,17 @@ class AcActivitiesLit extends YpBaseElement {
 
   _reallyDelete() {
     if (this.domainId) {
-      this.$.deleteActivityAjax.url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
     } else if (this.communityId) {
-      this.$.deleteActivityAjax.url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
     } else if (this.groupId) {
-      this.$.deleteActivityAjax.url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
     } else if (this.postId) {
-      this.$.deleteActivityAjax.url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
+      this.$$("#deleteActivityAjax").url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
     }
-    this.$.deleteActivityAjax.body = {};
-    this.$.deleteActivityAjax.generateRequest();
-    this.set('activityIdToDelete', null);
+    this.$$("#deleteActivityAjax").body = {};
+    this.$$("#deleteActivityAjax").generateRequest();
+    this.set('activityIdToDelete  ', null);
   }
 
   _generateRequest(typeId, typeName) {
@@ -470,11 +466,11 @@ class AcActivitiesLit extends YpBaseElement {
       }
 
       this.set('url', '/api/'+this.mode+'/' + typeName + '/' + typeId);
-      this.$.ajax.url = this.url;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = this.url;
+      this.$$("#ajax").generateRequest();
       if (typeName!='posts') {
-        this.$.recommendationAjax.url = '/api/recommendations/' + typeName + '/' + typeId;
-        this.$.recommendationAjax.generateRequest();
+        this.$$("#recommendationAjax").url = '/api/recommendations/' + typeName + '/' + typeId;
+        this.$$("#recommendationAjax").generateRequest();
       }
     }
   }
@@ -488,8 +484,8 @@ class AcActivitiesLit extends YpBaseElement {
           console.log("_loadMoreData for scroll 3");
           this.set('moreToLoad', false);
           console.info("_loadMoreData for scroll for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
-          this.$.ajax.url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
-          this.$.ajax.generateRequest();
+          this.$$("#ajax").url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
+          this.$$("#ajax").generateRequest();
         }
       } else {
         console.warn("NOT VISIBLE for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
@@ -499,11 +495,11 @@ class AcActivitiesLit extends YpBaseElement {
 
   loadNewData() {
     if (this.url!='' && this.latestProcessedActivityAt) {
-      this.$.ajax.url = this.url + '?afterDate='+this.latestProcessedActivityAt;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = this.url + '?afterDate='+this.latestProcessedActivityAt;
+      this.$$("#ajax").generateRequest();
     } else if (!this.latestProcessedActivityAt) {
-      this.$.ajax.url = this.url;
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = this.url;
+      this.$$("#ajax").generateRequest();
     }
   }
 
@@ -546,7 +542,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _preProcessActivities(activities) {
-    for (var i = 0; i < activities.length; i++) {
+    for (let i = 0; i < activities.length; i++) {
       if (activities[i].Point) {
         activities[i].Point.latestContent = activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content;
       }
@@ -555,7 +551,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _activitiesResponse(event, detail) {
-    var activities = this._preProcessActivities(detail.response.activities);
+    const activities = this._preProcessActivities(detail.response.activities);
 
     this.set('gotInitialData', true);
 
@@ -565,8 +561,8 @@ class AcActivitiesLit extends YpBaseElement {
       console.warn("Have not set oldestProcessedActivityAt");
     }
 
-    for (var i = 0; i < activities.length; i++) {
-      if (this.$.ajax.url.indexOf('afterDate') > -1) {
+    for (let i = 0; i < activities.length; i++) {
+      if (this.$$("#ajax").url.indexOf('afterDate') > -1) {
         this.unshift('activities', activities[i]);
       } else {
         this.push('activities', activities[i]);
@@ -598,13 +594,13 @@ class AcActivitiesLit extends YpBaseElement {
     );
 
     this.async(function () {
-      this.$.ironList.fire('iron-resize');
+      this.$$("#ironList").fire('iron-resize');
     });
   }
 
   scrollToItem(item) {
     console.log("Activity scrolling to item");
-    this.$.ironList.scrollToItem(item);
+    this.$$("#ironList").scrollToItem(item);
     this.async(function () {
       this._clearScrollThreshold();
     });
@@ -612,7 +608,7 @@ class AcActivitiesLit extends YpBaseElement {
 
   fireResize() {
     console.log("fireResize");
-    this.$.ironList.fire('iron-resize');
+    this.$$("#ironList").fire('iron-resize');
   }
 }
 

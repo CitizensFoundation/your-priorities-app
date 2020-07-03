@@ -1,6 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-post/yp-post-cover-media.js';
 import { YpPostBehavior } from '../yp-post/yp-post-behaviors.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
@@ -193,7 +192,6 @@ class AcActivityRecommendedPostsLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     YpPostBehavior,
     ypTruncateBehavior,
     ypMediaFormatsBehavior,

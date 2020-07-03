@@ -16,7 +16,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-checkbox/paper-checkbox.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -252,7 +251,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         <paper-listbox id="deviceListBox">
 
           ${ this.allDevices.map(item => html`
-            <paper-item @tap="${this.selectDeviceFunction}" id="${this.item.deviceId}">${this.item.label}</paper-item>
+            <paper-item @click="${this.selectDeviceFunction}" id="${this.item.deviceId}">${this.item.label}</paper-item>
           `)}
 
         </paper-listbox>
@@ -268,7 +267,7 @@ class YpMediaRecorderLit extends YpBaseElement {
     <paper-dialog id="noDevices">
       <h2>${this.t('noDevicesFound')}</h2>
       <div class="button layout horizontal center-center">
-        <paper-button dialog-dismiss="" raised>${this.t('ok')}</paper-button>
+        <mwc-button dialog-dismiss="" raised .label="${this.t('ok')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -290,27 +289,22 @@ class YpMediaRecorderLit extends YpBaseElement {
         `: html``}
 
         <div class="layout horizontal mainbuttons" ?hidden="${!this.recorder}">
-          <paper-icon-button ariaLabel="${this.t('closeRecordingWindow')}" .icon="clear" class="iconButtons" @tap="${this._close}"></paper-icon-button>
-          <paper-icon-button ariaLabel="${this.t('deleteRecordedMedia')}" .icon="delete" class="iconButtons" @tap="${this._deleteRecording}" ?hidden="${!this.recordedData}"></paper-icon-button>
-          <paper-button @tap="${this._startRecording}" ?hidden="${this.recordedData}">
-            <iron-icon id="recordingIcon" .icon="fiber-manual-record"></iron-icon>
-            <div class="buttonText">${this.t('record')}</div>
-          </paper-button>
+          <paper-icon-button ariaLabel="${this.t('closeRecordingWindow')}" .icon="clear" class="iconButtons" @click="${this._close}"></paper-icon-button>
+          <paper-icon-button ariaLabel="${this.t('deleteRecordedMedia')}" .icon="delete" class="iconButtons" @click="${this._deleteRecording}" ?hidden="${!this.recordedData}"></paper-icon-button>
+          <mwc-button @click="${this._startRecording}" class="buttonText" .label="${this.t('record')}" ?hidden="${this.recordedData}" .icon="fiber-manual-record">
+            <iron-icon id="recordingIcon"></iron-icon>
+          </mwc-button>
           <div id="secondsLeft" ?hidden="${this.recordedData}">${this.recordSecondsLeft} ${this.t('seconds')}</div>
-          <paper-button @tap="${this._stopRecording}" ?hidden="${!this.isRecording}">
-            <iron-icon icon="stop"></iron-icon>
-            <div class="buttonText">${this.t('stop')}</div>
-          </paper-button>
+          <mwc-button @click="${this._stopRecording}" class="buttonText" .label="${this.t('stop')}" ?hidden="${!this.isRecording}" icon="stop">
+          </mwc-button>
           <span ?hidden="${this.isRecording}">
-            <paper-button id="uploadFileButton" class="uploadFileButton" @tap="${this._uploadFile}" ?hidden="${this.recordedData}">
-              <iron-icon ?icon="file-upload"></iron-icon>
-              <div class="buttonText uploadFileText">${this.t('uploadFile')}</div>
-            </paper-button>
+            <mwc-button id="uploadFileButton" icon="file-upload" class="uploadFileButton" .label="${this.t('uploadFile')}" @click="${this._uploadFile}" ?hidden="${this.recordedData}">
+              <div class="buttonText uploadFileText"></div>
+            </mwc-button>
           </span>
-          <paper-button @tap="${this._sendBack}" class="actionButton" ?hidden="${!this.recordedData}">
-            <iron-icon .icon="send"></iron-icon>
-            <div class="buttonText">${this.t('send')}</div>
-          </paper-button>
+          <mwc-button @click="${this._sendBack}" class="buttonText" .label="${this.t('send')}" 
+                      class="actionButton" ?hidden="${!this.recordedData}" .icon="send">
+          </mwc-button>
         </div>
       </div>
       <div ?hidden="${!this.error}">
@@ -318,7 +312,6 @@ class YpMediaRecorderLit extends YpBaseElement {
       </div>
     </paper-dialog>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-ajax id="getTranslationAjax" @response="${this._getTranslationResponse}"></iron-ajax>
 `
   }
@@ -332,7 +325,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       localStorage.setItem("selectedAudioDeviceId", this.selectedAudioDeviceId);
     }
 
-    this.$.selectDevices.close();
+    this.$$("#selectDevices").close();
     this._openMediaSession(this.captureCallback);
   }
 
@@ -345,7 +338,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       localStorage.setItem("selectedVideoDeviceId", this.selectedVideoDeviceId);
     }
 
-    this.$.selectDevices.close();
+    this.$$("#selectDevices").close();
     this._checkAudioDevices();
   }
 
@@ -360,7 +353,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         this.selectDeviceFunction = this._selectAudioDevice.bind(this);
         this.set('allDevices', this.audioDevices);
         this.$$("#deviceListBox").selected = null;
-        this.$.selectDevices.open();
+        this.$$("#selectDevices").open();
       }
     } else {
       this._openMediaSession(this.captureCallback);
@@ -379,7 +372,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         this.selectDeviceFunction = this._selectVideoDevice.bind(this);
         this.set('allDevices', this.videoDevices);
         this.$$("#deviceListBox").selected = null;
-        this.$.selectDevices.open();
+        this.$$("#selectDevices").open();
       }
     } else {
       this._checkAudioDevices();
@@ -397,7 +390,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       this.surfer.destroy();
     }
     this.set('previewActive', false);
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 
   _uploadFile () {
@@ -428,7 +421,7 @@ class YpMediaRecorderLit extends YpBaseElement {
         return d.kind === 'videoinput'
       });
 
-      var hasLabels=false;
+      let hasLabels=false;
 
       this.videoDevices.forEach(function (device) {
         if (device.label && device.label!="") {
@@ -455,12 +448,12 @@ class YpMediaRecorderLit extends YpBaseElement {
       this.videoSettings.deviceId = this.selectedVideoDeviceId;
     }
 
-    var constraints = {
+    const constraints = {
       audio: this.selectedAudioDeviceId ? { deviceId: this.selectedAudioDeviceId } : true,
       video: this.videoRecording ? this.videoSettings : null
     };
 
-    var isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
+    const  isFirefox = /firefox/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
 
     if (isFirefox) {
       navigator.getUserMedia(constraints, function (stream) {
@@ -505,9 +498,9 @@ class YpMediaRecorderLit extends YpBaseElement {
 
     setTimeout(function () {
       if (this.videoRecording) {
-        var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-        var videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
-        var width, height;
+        const videoElement = this.shadowRoot.querySelector('#videoRecorder');
+        const videoPreviewElement = this.shadowRoot.querySelector('#videoPreviewer');
+        const width, height;
 
         if (window.innerHeight>window.innerWidth) {
           this.set('videoSettings', { width: 720, height: 1280 } );
@@ -516,7 +509,7 @@ class YpMediaRecorderLit extends YpBaseElement {
           console.info("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
         } else {
           this.set('videoSettings', { width: 1280, height: 720 });
-          var scaleFactor = 0.8;
+          let scaleFactor = 0.8;
           if (window.innerHeight<700)
             scaleFactor = 0.7;
           if (window.innerHeight<500)
@@ -530,11 +523,11 @@ class YpMediaRecorderLit extends YpBaseElement {
         videoPreviewElement.style.height = (height*0.8).toFixed() + 'px';
         videoPreviewElement.style.width = (width*0.8).toFixed() + 'px';
         setTimeout(function () {
-          this.$.dialog.open();
+          this.$$("#dialog").open();
         }.bind(this));
       } else if (this.audioRecording) {
         setTimeout(function () {
-          this.$.dialog.open();
+          this.$$("#dialog").open();
         }.bind(this));
       }
     }.bind(this));
@@ -546,9 +539,9 @@ class YpMediaRecorderLit extends YpBaseElement {
 
   _generateRandomString () {
     if (window.crypto) {
-      var a = window.crypto.getRandomValues(new Uint32Array(3)),
+      const a = window.crypto.getRandomValues(new Uint32Array(3)),
         token = '';
-      for (var i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
+      for (let i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
       return token;
     } else {
       return (Math.random() * new Date().getTime()).toString(36).replace( /\./g , '');
@@ -584,12 +577,12 @@ class YpMediaRecorderLit extends YpBaseElement {
   }
 
   _storeRecordedData () {
-    var blob = this.recorder.getBlob();
-    var fileName;
+    const blob = this.recorder.getBlob();
+    let fileName;
 
     if (this.videoRecording) {
-      var videoElement = this.shadowRoot.querySelector('#videoRecorder');
-      var videoPreviewer = this.shadowRoot.querySelector('#videoPreviewer');
+      const videoElement = this.shadowRoot.querySelector('#videoRecorder');
+      const videoPreviewer = this.shadowRoot.querySelector('#videoPreviewer');
       fileName = this._generateRandomString() + '.webm';
       this.recordedData = new File([blob], fileName, {
         type: 'video/webm'
@@ -600,8 +593,8 @@ class YpMediaRecorderLit extends YpBaseElement {
       videoPreviewer.controls = true;
       this.set('previewActive', true);
     } else if (this.audioRecording) {
-      var audioElement = this.shadowRoot.querySelector('#audioRecorder');
-      var audioPreviewer = this.shadowRoot.querySelector('#audioPreviewer');
+      const audioElement = this.shadowRoot.querySelector('#audioRecorder');
+      const audioPreviewer = this.shadowRoot.querySelector('#audioPreviewer');
       fileName = this._generateRandomString() + '.mp3';
       this.recordedData = new File([blob], fileName, {
         type: 'audio/mp3'
@@ -638,7 +631,7 @@ class YpMediaRecorderLit extends YpBaseElement {
   setupRecorders () {
     this.recordSecondsLeft = this.maxLength;
     if (this.videoRecording) {
-      var videoElement = this.shadowRoot.querySelector('#videoRecorder');
+      const videoElement = this.shadowRoot.querySelector('#videoRecorder');
 
       this.captureUserMedia(function(stream) {
         if (stream) {
@@ -658,13 +651,13 @@ class YpMediaRecorderLit extends YpBaseElement {
           });
         } else {
           console.error("Can't find stream");
-          this.$.noDevices.open();
+          this.$$("#noDevices").open();
           this.$$("#uploadFileButton").style.color = "#F00";
         }
       }.bind(this));
 
     } else if (this.audioRecording) {
-      var audioElement = this.shadowRoot.querySelector('#audioRecorder');
+      const audioElement = this.shadowRoot.querySelector('#audioRecorder');
 
       this.captureUserMedia(function(stream) {
         if (stream) {
@@ -695,22 +688,22 @@ class YpMediaRecorderLit extends YpBaseElement {
           });
         } else {
           console.error("Can't find stream");
-          this.$.noDevices.open();
+          this.$$("#noDevices").open();
           this.$$("#uploadFileButton").style.color = "#F00";
         }
       }.bind(this));
 
     }
     setTimeout(function () {
-      this.$.dialog.center();
+      this.$$("#dialog").center();
     }.bind(this));
   }
 
-  ready () {
+  connectedCallback () { 
     if (window.i18nTranslation) {
       this.set('language', window.locale);
     }
-    super.ready();
+    super.connectedCallback()
   }
 
   _languageEvent (event, detail) {

@@ -11,7 +11,6 @@ import '../yp-user/yp-accept-invite.js';
 import './yp-autotranslate-dialog.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -118,7 +117,7 @@ class YpDialogContainerLit extends YpBaseElement {
         font-size: 16px;
       }
 
-      paper-button {
+      mwc-button {
         background-color: #555;
         margin-right: 12px;
         text-align: center;
@@ -143,8 +142,8 @@ class YpDialogContainerLit extends YpBaseElement {
             <div class="trackingInfo">${this.t('facebookTrackingToastInfo')}</div>
               <div class="layout horizontal">
             <div class="flex"></div>
-              <paper-button raised @tap="${this._disableFaceookPixelTracking}">${this.t('disableFacebookTracking')}</paper-button>
-              <paper-button raised @tap="${this._agreeToFacebookPixelTracking}">${this.t('iAgree')}</paper-button>
+              <mwc-button raised @click="${this._disableFaceookPixelTracking}" .label="${this.t('disableFacebookTracking')}"></mwc-button>
+              <mwc-button raised @click="${this._agreeToFacebookPixelTracking}" .label="${this.t('iAgree')}"></mwc-button>
               </div>
             </div>
       </paper-toast>
@@ -282,16 +281,16 @@ class YpDialogContainerLit extends YpBaseElement {
   behaviors: [
     ypLoggedInUserBehavior,
     ypGotAdminRightsBehavior,
-    ypLanguageBehavior
   ],
 */
 
-  ready() {
-    this.async(function () {
-      import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-delayed.js")).then(() => {
-        this.set('haveLoadedDelayed', true)
-      });
-    }, 3000);
+  connectedCallback() {
+    super.connectedCallback()
+      this.async(function () {
+        import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-delayed.js")).then(() => {
+          this.set('haveLoadedDelayed', true)
+        });
+      }, 3000);
   }
 
   openPixelCookieConfirm(facebookPixelTrackingId) {
@@ -346,17 +345,17 @@ class YpDialogContainerLit extends YpBaseElement {
   }
 
   _openBulkStatusUpdates() {
-    this.$.loadingDialog.open();
+    this.$$("#loadingDialog").open();
 
     import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-bulk-status-updates.js")).then(() => {
-      this.$.loadingDialog.close();
+      this.$$("#loadingDialog").close();
       console.info("Have loaded bulk status container");
       this.set('bulkStatusUpdates', true);
     });
   }
 
   closeDialog(idName) {
-    var element = this.$$("#"+idName);
+    const element = this.$$("#"+idName);
     if (element) {
       console.info("Closing dialog: "+idName);
       element.close();
@@ -376,10 +375,10 @@ class YpDialogContainerLit extends YpBaseElement {
     if (this.gotUsersGrid) {
       this.getDialogAsync("usersGrid", callback);
     } else {
-      this.$.loadingDialog.open();
+      this.$$("#loadingDialog").open();
       import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js")).then(() => {
         import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-users-grid.js")).then(() => {
-          this.$.loadingDialog.close();
+          this.$$("#loadingDialog").close();
           console.info("Have loaded users grid container");
           this.set('gotUsersGrid', true);
           this.getDialogAsync("usersGrid", callback);
@@ -392,10 +391,10 @@ class YpDialogContainerLit extends YpBaseElement {
     if (this.gotContentModeration) {
       this.getDialogAsync("contentModeration", callback);
     } else {
-      this.$.loadingDialog.open();
+      this.$$("#loadingDialog").open();
       import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-vaadin-grid-shared.js")).then(() => {
         import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-moderation.js")).then(() => {
-          this.$.loadingDialog.close();
+          this.$$("#loadingDialog").close();
           console.info("Have loaded contentModeration");
           this.set('gotContentModeration', true);
           this.getDialogAsync("contentModeration", callback);
@@ -408,9 +407,9 @@ class YpDialogContainerLit extends YpBaseElement {
     if (this.gotMediaRecorder) {
       this.getDialogAsync("mediaRecorder", callback);
     } else {
-      this.$.loadingDialog.open();
+      this.$$("#loadingDialog").open();
       import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-media-recorder.js")).then(() => {
-        this.$.loadingDialog.close();
+        this.$$("#loadingDialog").close();
         console.info("Have loaded media recorder container");
         this.set('gotMediaRecorder', true);
         this.getDialogAsync("mediaRecorder", callback);
@@ -432,7 +431,7 @@ class YpDialogContainerLit extends YpBaseElement {
     }
 
     this.async(function () {
-      var element = this.$$("#"+idName);
+      const element = this.$$("#"+idName);
       if (element && (typeof element.ready === "function")) {
         this.set('waitForUpgradeCounter', 0);
         console.info("Found dialog: "+idName);

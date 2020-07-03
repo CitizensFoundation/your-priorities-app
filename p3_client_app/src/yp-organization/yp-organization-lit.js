@@ -3,7 +3,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import '../yp-post/yp-post-map.js';
@@ -82,7 +81,6 @@ class YpOrganizationLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-page id="page" .createFabIcon="group" .createFabTitle="${this.t('group.add')}" @yp-create-fab-tap="_newGroup">
 
       <yp-organization-large-card id="organizationCard" .slot="largeCard" class="largeCard card" .organization="${this.organization}" @update-organization="${this._refresh}"></yp-organization-large-card>
@@ -114,7 +112,6 @@ class YpOrganizationLit extends YpBaseElement {
 
   /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     ypGotoBehavior,
     ypMediaFormatsBehavior
@@ -180,17 +177,17 @@ class YpOrganizationLit extends YpBaseElement {
   _response(event, detail, sender) {
     this.set('organization', detail.response);
     if (this.organization.OrganizationHeaderImages && this.organization.OrganizationHeaderImages.length>0) {
-      this.$.page.setupTopHeaderImage(this.organization.OrganizationHeaderImages);
+      this.$("#page").setupTopHeaderImage(this.organization.OrganizationHeaderImages);
     }
 
-    var randomTheme = Math.floor(Math.random() * 3) + 1;
+    const randomTheme = Math.floor(Math.random() * 3) + 1;
     //this.setTheme(randomTheme-1);
 
-    var url = this._organizationHeaderUrl(this.organization);
+    const url = this._organizationHeaderUrl(this.organization);
     //headerPanel.style.background = "#f5f5f5 url('"+url+"') no-repeat center top";
     this.set("groups", this.organization.Groups);
     this.async(function() {
-      var organizationCard = this.$$('#organizationCard');
+      const organizationCard = this.$$('#organizationCard');
       if (organizationCard) {
         organizationCard.setElevation(5);
         organizationCard.lowerCardLater();
@@ -212,10 +209,10 @@ class YpOrganizationLit extends YpBaseElement {
   }
 
   defaultGroupFirst(items) {
-    var filtered = [];
-    var defaultGroup = null;
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
+    const filtered = [];
+    let defaultGroup = null;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.short_name != 'default') {
         filtered.push(item);
       } else {
@@ -227,9 +224,9 @@ class YpOrganizationLit extends YpBaseElement {
   }
 
   noTestGroup(items) {
-    var filtered = [];
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
+    const filtered = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.short_name != 'test' && item.short_name != 'ac-posts' && item.short_name != 'development' && item.short_name.indexOf('2012') == -1 && item.short_name.indexOf('2013') == -1) {
         filtered.push(item);
       }
@@ -241,7 +238,8 @@ class YpOrganizationLit extends YpBaseElement {
     this.$$('#ajax').generateRequest();
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
   }
 }
 

@@ -5,9 +5,8 @@ import { IronFormElementBehavior } from '@polymer/iron-form-element-behavior/iro
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '../yp-ajax/yp-ajax.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -131,7 +130,6 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.language ? html`
     <div class="layout vertical">
       <paper-dropdown-menu .label="Select language" .selected="${this.selectedLocale}}" .attrForSelected="name">
         <paper-listbox slot="dropdown-content" .selected="${this.selectedLocale}" .attrForSelected="name">
@@ -143,32 +141,29 @@ class YpLanguageSelectorLit extends YpBaseElement {
         </paper-listbox>
       </paper-dropdown-menu>
       <div ?hidden="${!this.canUseAutoTranslate}">
-        <paper-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton" @tap="${this._startTranslation}" .title="${this.t('autoTranslate')}">
-          <iron-icon icon="translate"></iron-icon>
-          <div class="translateText">${this.t('autoTranslate')}</div>
-        </paper-button>
-        <paper-button ?hidden="${!this.autoTranslate}" raised class="layout horizontal stopTranslateButton" @tap="${this._stopTranslation}" .title="${this.t('stopAutoTranslate')}">
-          <iron-icon .icon="translate"></iron-icon>
+        <mwc-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton" 
+                    @click="${this._startTranslation}" .icon="translate" .label="${this.t('autoTranslate')}">
+        </mwc-button>
+        <mwc-button ?hidden="${!this.autoTranslate}" .icon="translate" raised class="layout horizontal stopTranslateButton" @click="${this._stopTranslation}" .title="${this.t('stopAutoTranslate')}">
           <iron-icon class="stopIcon" .icon="do-not-disturb"></iron-icon>
-        </paper-button>
+        </mwc-button>
       </div>
     </div>
 
-    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" @response="${this._hasAutoTranslationResponse}"></yp-ajax>
-` : html``}
-`
+    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" @response="${this._hasAutoTranslationResponse}"></yp-ajax>  
+    `
   }
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     IronFormElementBehavior
   ],
 */
 
-  ready() {
+connectedCallback() {
+  super.connectedCallback()
     if (!this.noUserEvents) {
-      this.$.hasAutoTranslationAjax.generateRequest();
+      this.$$("#hasAutoTranslationAjax").generateRequest();
       // Update dropdown language after it has been loaded from defaults
       this.async(function () {
         this.set('selectedLocale', this.language);
@@ -219,7 +214,7 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   _canUseAutoTranslate(language, hasServerAutoTranslation, autoTranslateOptionDisabled) {
     if (!autoTranslateOptionDisabled && language && hasServerAutoTranslation && !this.noUserEvents) {
-      var found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
+      const found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
       return !found;
     } else {
       return false;
@@ -236,8 +231,8 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   _languages(supportedLanguages) {
     if (supportedLanguages) {
-      var arr = [];
-      for (var key in supportedLanguages) {
+      const arr = [];
+      for (const key in supportedLanguages) {
         if (supportedLanguages.hasOwnProperty(key)) {
           arr.push({ language: key, name: supportedLanguages[key] });
         }

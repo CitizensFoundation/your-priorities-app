@@ -8,7 +8,6 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-material/paper-material.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { LargeCardBehaviors } from '../yp-behaviors/yp-large-card-behaviors.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
@@ -137,7 +136,6 @@ class YpOrganizationLargeCardLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(max-width: 480px)" query-matches="${this.phoneSize}"></iron-media-query>
 
     ${ this.community ? html`
@@ -174,7 +172,6 @@ class YpOrganizationLargeCardLit extends YpBaseElement {
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     CommunityBehaviors,
     LargeCardBehaviors,
     AccessHelpers,

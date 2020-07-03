@@ -8,7 +8,6 @@ import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/neon-animation/neon-animated-pages.js';
 import '../yp-file-upload/yp-file-upload.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-behaviors/emoji-selector.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
@@ -254,7 +253,6 @@ class YpDomainEditLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior,
     ypGotoBehavior
   ],
@@ -270,14 +268,14 @@ class YpDomainEditLit extends YpBaseElement {
   }
 
   _appHomeScreenIconImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('appHomeScreenIconImageId', image.id);
   }
 
   _updateEmojiBindings() {
     this.async(function () {
-      var description = this.$$("#description");
-      var emojiSelector = this.$$("#emojiSelectorDescription");
+      const description = this.$$("#description");
+      const emojiSelector = this.$$("#emojiSelectorDescription");
       if (description && emojiSelector) {
         emojiSelector.inputTarget = description;
       } else {
@@ -298,7 +296,7 @@ class YpDomainEditLit extends YpBaseElement {
   _customRedirect(domain) {
     if (domain) {
       if (this.uploadedVideoId) {
-        var ajax = document.createElement('iron-ajax');
+        const ajax = document.createElement('iron-ajax');
         ajax.handleAs = 'json';
         ajax.contentType = 'application/json';
         ajax.url = '/api/videos/'+domain.id+'/completeAndAddToDomain';
@@ -328,8 +326,8 @@ class YpDomainEditLit extends YpBaseElement {
     this.set('uploadedLogoImageId', null);
     this.set('uploadedHeaderImageId', null);
     this.set('appHomeScreenIconImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.logoImageUpload.clear();
+    this.$$("#headerImageUpload").clear();
+    this.$$("#logoImageUpload").clear();
     if (this.$$("#videoFileUpload"))
       this.$$("#videoFileUpload").clear();
 

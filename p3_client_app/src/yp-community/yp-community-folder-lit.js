@@ -5,7 +5,6 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/app-route/app-route.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
@@ -134,6 +133,19 @@ class YpCommunityFolderLit extends YpBaseElement {
 `
 }
 
+/*
+behaviors: [
+  CommunityCollectionBehaviors,
+  ypThemeBehavior,
+  CollectionHelpers,
+  AccessHelpers,
+  ypLoggedInUserBehavior,
+  ypDetectOldiOs,
+  ypGotoBehavior,
+  ypMediaFormatsBehavior
+],
+*/
+
   _userLoggedIn(user) {
     if (user) {
       if (this.communityFolder && window.location.href.indexOf("/community_folder/") > -1) {
@@ -211,7 +223,7 @@ class YpCommunityFolderLit extends YpBaseElement {
       } else {
       }*/
 
-      var url = this._communityHeaderUrl(this.communityFolder);
+      const url = this._communityHeaderUrl(this.communityFolder);
 
       this.setupCommunities(this.communityFolder.Communities);
     }
@@ -240,13 +252,13 @@ class YpCommunityFolderLit extends YpBaseElement {
       }
 
       if (this.communityFolder.CommunityHeaderImages && this.communityFolder.CommunityHeaderImages.length>0) {
-        this.$.page.setupTopHeaderImage(this.communityFolder.CommunityHeaderImages);
+        this.$$("#page").setupTopHeaderImage(this.communityFolder.CommunityHeaderImages);
       } else {
-        this.$.page.setupTopHeaderImage(null);
+        this.$$("#page").setupTopHeaderImage(null);
       }
 
       if (window.location.href.indexOf("/community_folder") > -1) {
-        var backPath, headerTitle, headerDescription;
+        let backPath, headerTitle, headerDescription;
         if (this.communityFolder.CommunityFolder) {
           backPath = "/community_folder/" + this.communityFolder.CommunityFolder.id;
           headerTitle = this.communityFolder.CommunityFolder.name;
@@ -265,8 +277,8 @@ class YpCommunityFolderLit extends YpBaseElement {
           backPath: backPath
         });
       }
-      this.$.pagesAjax.url = "/api/domains/"+this.communityFolder.Domain.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/domains/"+this.communityFolder.Domain.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
       window.appGlobals.setAnonymousGroupStatus(null);
       window.appGlobals.disableFacebookLoginForGroup = false;
       window.appGlobals.externalGoalTriggerUrl = null;

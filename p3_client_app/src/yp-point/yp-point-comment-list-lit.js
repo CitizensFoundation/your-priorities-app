@@ -4,7 +4,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/iron-image/iron-image.js';
 import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-point-comment.js';
 import './yp-point-comment-edit.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -123,7 +122,6 @@ class YpPointCommentListLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="container layout vertical">
       <div class="layout horizontal start-justified" ?hidden="${this.disableOpenClose}">
         <div class="layout horizontal center-center" ?hidden="${!this.commentsCount}">
@@ -159,7 +157,6 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     IronResizableBehavior
   ],
 
@@ -169,7 +166,7 @@ class YpPointCommentListLit extends YpBaseElement {
 */
   _openChanged(newOpenValue) {
     if (newOpenValue) {
-      this.$.commentsListAjax.generateRequest();
+      this.$$("#commentsListAjax").generateRequest();
     }
   }
 
@@ -194,29 +191,29 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   generateRequest() {
-    this.$.commentsListAjax.generateRequest();
+    this.$$("#commentsListAjax").generateRequest();
   }
 
   _pointChanged(newPoint) {
     this.set('comments', []);
     this.set('commentsCount', null);
     if (newPoint) {
-      this.$.commentsListAjax.url = '/api/points/'+newPoint.id+'/comments';
-      this.$.commentsCountListAjax.url = '/api/points/'+newPoint.id+'/commentsCount';
-      this.$.commentsCountListAjax.generateRequest();
+      this.$$("#commentsListAjax").url = '/api/points/'+newPoint.id+'/comments';
+      this.$$("#commentsCountListAjax").url = '/api/points/'+newPoint.id+'/commentsCount';
+      this.$$("#commentsCountListAjax").generateRequest();
     }
   }
 
   _refresh() {
-    this.$.commentsListAjax.generateRequest();
-    this.$.commentsCountListAjax.generateRequest();
+    this.$$("#commentsListAjax").generateRequest();
+    this.$$("#commentsCountListAjax").generateRequest();
   }
 
   _imageChanged(newImage) {
     if (newImage) {
-      this.$.commentsListAjax.url = '/api/images/'+newImage.id+'/comments';
-      this.$.commentsCountListAjax.url = '/api/images/'+newImage.id+'/commentsCount';
-      this.$.commentsCountListAjax.generateRequest();
+      this.$$("#commentsListAjax").url = '/api/images/'+newImage.id+'/comments';
+      this.$$("#commentsCountListAjax").url = '/api/images/'+newImage.id+'/commentsCount';
+      this.$$("#commentsCountListAjax").generateRequest();
     }
   }
 
@@ -226,7 +223,7 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   _commentsResponse(event, detail) {
-    var comment = detail.response;
+    const comment = detail.response;
     this.set('comments', comment);
     if (comment && comment.length>0) {
       this.$$("#list").scrollToIndex(comment.length-1);

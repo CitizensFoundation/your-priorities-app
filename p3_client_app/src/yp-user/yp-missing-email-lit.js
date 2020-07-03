@@ -3,9 +3,8 @@ import '@polymer/iron-form/iron-form.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -111,7 +110,6 @@ class YpMissingEmailLit extends YpBaseElement {
   }
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div id="outer">
       <paper-dialog id="dialog">
         <h2>${this.heading}</h2>
@@ -136,10 +134,10 @@ class YpMissingEmailLit extends YpBaseElement {
           <yp-ajax id="setEmailAjax" .dispatch-error="" .method="PUT" url="/api/users/missingEmail/setEmail" @response="${this._setEmailResponse}"></yp-ajax>
           <yp-ajax id="linkAccountsAjax" .method="PUT" .dispatch-error="" @error="${this._registerError}" url="/api/users/missingEmail/linkAccounts" @response="${this._linkAccountsResponse}"></yp-ajax>
           <yp-ajax id="confirmEmailShownAjax" .dispatch-error="" .method="PUT" url="/api/users/missingEmail/emailConfirmationShown"></yp-ajax>
-          <paper-button @tap="${this._logout}" ?hidden="${this.onlyConfirmingEmail}">${this.t('user.logout')}</paper-button>
-          <paper-button @tap="${this._forgotPassword}" ?hidden="${!this.needPassword}">${this.t('user.newPassword')}</paper-button>
-          <paper-button raised @tap="${this._notNow}" ?hidden="${this.onlyConfirmingEmail}">${this.t('later')}</paper-button>
-          <paper-button raised id="sendButton" .autofocus="" @tap="${this._validateAndSend}">
+          <mwc-button @click="${this._logout}" ?hidden="${this.onlyConfirmingEmail}">${this.t('user.logout')}</mwc-button>
+          <mwc-button @click="${this._forgotPassword}" ?hidden="${!this.needPassword}">${this.t('user.newPassword')}</mwc-button>
+          <mwc-button raised @click="${this._notNow}" ?hidden="${this.onlyConfirmingEmail}">${this.t('later')}</mwc-button>
+          <mwc-button raised id="sendButton" .autofocus="" @click="${this._validateAndSend}">
             <span ?hidden="${this.linkAccountText}">
               <span ?hidden="${this.onlyConfirmingEmail}">
                 ${this.t('user.setEmail')}
@@ -151,7 +149,7 @@ class YpMissingEmailLit extends YpBaseElement {
             <span ?hidden="${!this.linkAccountText}">
               ${this.t('user.linkAccount')}
             </span>
-          </paper-button>
+          </mwc-button>
         </div>
       </paper-dialog>
 
@@ -159,11 +157,7 @@ class YpMissingEmailLit extends YpBaseElement {
     </div>
 `
   }
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
+
 
   onEnter(event) {
     this._validateAndSend();
@@ -184,11 +178,12 @@ class YpMissingEmailLit extends YpBaseElement {
     window.appUser.fire("yp-forgot-password", { email: this.email });
   }
 
-  ready() {
-    this.header = this.t('user.setEmail');
-    this.async(function () {
-      this.$$("#a11y").target = this.$$("#form");
-    }.bind(this), 50);
+  connectedCallback() {
+    super.connectedCallback()
+      this.header = this.t('user.setEmail');
+      this.async(function () {
+        this.$$("#a11y").target = this.$$("#form");
+      }.bind(this), 50);
   }
 
   _computeCredentials(email, password) {
@@ -229,7 +224,7 @@ class YpMissingEmailLit extends YpBaseElement {
       window.appGlobals.notifyUserViaToast(this.t('userHaveSetEmail')+ " " + detail.response.email);
       this.close();
     }
-    this.$.dialog.fire('iron-resize');
+    this.$$("#dialog").fire('iron-resize');
   }
 
   _linkAccountsResponse(event, detail) {
@@ -240,7 +235,7 @@ class YpMissingEmailLit extends YpBaseElement {
     } else {
       this.$$("#linkAccountsAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
     }
-    this.$.dialog.fire('iron-resize');
+    this.$$("#dialog").fire('iron-resize');
   }
 
   open(loginProvider, onlyConfirming, email) {
@@ -251,8 +246,8 @@ class YpMissingEmailLit extends YpBaseElement {
     }
     this.$$("#dialog").open();
     if (this.onlyConfirmingEmail) {
-      this.$.confirmEmailShownAjax.body = {};
-      this.$.confirmEmailShownAjax.generateRequest();
+      this.$$("#confirmEmailShownAjax").body = {};
+      this.$$("#confirmEmailShownAjax").generateRequest();
     }
   }
 

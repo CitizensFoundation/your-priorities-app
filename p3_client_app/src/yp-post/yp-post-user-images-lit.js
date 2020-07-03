@@ -1,9 +1,8 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-post-user-image-card.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -28,7 +27,7 @@ class YpPostUserImagesLit extends YpBaseElement {
     return [
       css`
 
-      paper-button {
+      mwc-button {
         margin-top: 32px;
         margin-bottom: 8px;
         background-color: var(--accent-color);
@@ -45,12 +44,10 @@ class YpPostUserImagesLit extends YpBaseElement {
   render() {
     return html`
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-
     <div class="layout vertical center-center">
 
       ${ this.post ? html`
-        <paper-button raised="" @tap="${this._newImage}">${this.t('posts.newUserImage')}</paper-button>
+        <mwc-button raised="" @click="${this._newImage}" .label="${this.t('posts.newUserImage')}"></mwc-button>
 
         ${ this.images ? html`
           ${ this.images.map(image => html`
@@ -67,20 +64,14 @@ class YpPostUserImagesLit extends YpBaseElement {
     `
   }
 
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
-
   _refresh() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _postChanged(newPost) {
     if (newPost) {
-      this.$.ajax.url = '/api/images/' + newPost.id + '/user_images';
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/images/' + newPost.id + '/user_images';
+      this.$$("#ajax").generateRequest();
     }
   }
 

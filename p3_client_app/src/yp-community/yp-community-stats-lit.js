@@ -62,7 +62,7 @@ class YpCommunityStatsLit extends YpBaseElement {
   updated(changedProps) {
     super.updated(changedProps);
     if (changedProps.has('community')) {
-      var communityFolders=null;
+      let communityFolders=null;
       if (this.community && this.community.is_community_folder &&
           !this.community.Communities && this.community.CommunityFolders) {
         communityFolders = this.community.CommunityFolders;
@@ -72,14 +72,14 @@ class YpCommunityStatsLit extends YpBaseElement {
 
       }
     if (communityFolders) {
-      var counter_posts = 0, counter_groups = 0, counter_users = 0;
+      let counter_posts = 0, counter_groups = 0, counter_users = 0;
       communityFolders.forEach(function (subCommunity) {
         counter_posts += subCommunity.counter_posts;
         counter_groups += subCommunity.counter_groups;
         counter_users += subCommunity.counter_users;
       });
 
-      var fudgeFactor = 1.0;
+      let fudgeFactor = 1.0;
       if (communityFolders.length>9) {
         fudgeFactor = 0.7;
       } else if (communityFolders.length>1) {

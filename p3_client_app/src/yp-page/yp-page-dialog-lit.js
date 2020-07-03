@@ -1,12 +1,10 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
-import 'lite-signal/lite-signal.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -56,24 +54,17 @@ class YpPageDialogLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog">
       <h2>${this.pageTitle}</h2>
       <paper-dialog-scrollable>
         <div id="content"></div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button @tap="${this._close}" .dialogDismiss="">${this.t('close')}</paper-button>
+        <mwc-button @click="${this._close}" .dialogDismiss .label="${this.t('close')}"></mwc-button>
       </div>
     </paper-dialog>
 `
   }
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   _pageTitle(page, language) {
     if (page) {
@@ -85,15 +76,15 @@ class YpPageDialogLit extends YpBaseElement {
 
   open(title, content) {
     this.set('title', title);
-    this.$.content.innerHTML = content;
-    this.$.dialog.fit();
-    this.$.dialog.notifyResize();
-    this.$.dialog.open();
+    this.$$("#content").innerHTML = content;
+    this.$$("#dialog").fit();
+    this.$$("#dialog").notifyResize();
+    this.$$("#dialog").open();
   }
 
   _close() {
     this.set('title', null);
-    this.$.content.innerHTML = '';
+    this.$$("#content").innerHTML = '';
   }
 }
 

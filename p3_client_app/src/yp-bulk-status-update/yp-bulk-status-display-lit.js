@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { ypOfficialStatusOptions } from '../yp-behaviors/yp-official-status-options.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
@@ -216,7 +215,6 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypOfficialStatusOptions,
     ypThemeBehavior,
     ypMediaFormatsBehavior,
@@ -241,7 +239,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   }
 
   setupTopHeaderImage(image) {
-    var path;
+    let path;
     if (image) {
       path = 'url(' + this.getImageFormatUrl(image, 0) + ')';
     } else {
@@ -251,7 +249,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   }
 
   _orderGroupStatuses(statuses) {
-    var order = {
+    const order = {
       "-1": 3,
       "0": 2,
       "-2": 1,
@@ -274,7 +272,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   _readyToLoad(userId, statusUpdateId) {
     if (userId && statusUpdateId) {
       this.async(function () {
-        this.$.ajax.generateRequest();
+        this.$("#ajax").generateRequest();
       }, 20);
     }
   }
@@ -285,18 +283,18 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   _setOpen(event, detail) {
     event = event || window.event;
     event = event.target || event.srcElement;
-    var postId = event.getAttribute('data-args');
+    const postId = event.getAttribute('data-args');
     this.$$("#detail_"+postId).hidden = !this.$$("#detail_"+postId).hidden;
   }
 
   _setClosed() {
-    var postId = event.target.getAttribute('data-args');
+    const postId = event.target.getAttribute('data-args');
     this.$$("#detail_"+postId).hidden = true;
   }
 
   _response(event, detail) {
     this.set('config', detail.response.config);
-    var templates = {};
+    const templates = {};
     detail.response.templates.forEach(function (template) {
       templates[template.title] = template;
     });
