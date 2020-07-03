@@ -3,7 +3,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 //TODO: import 'google-map/google-map.js';
 //TODO: import 'google-map/google-map-marker.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import './yp-post-card.js';
 import './yp-post-map-info.js';
@@ -135,7 +134,6 @@ class YpPostMapLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(min-width: 1000px)" query-matches="${this.wide}"></iron-media-query>
     <div class="layout vertical center-center">
 
@@ -168,18 +166,12 @@ class YpPostMapLit extends YpBaseElement {
     `
   }
 
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
-
   resetMapHeight() {
-    var map = this.$$("#mapContainer");
+    const map = this.$$("#mapContainer");
     if (map) {
-      var windowHeight = window.innerHeight;
+      const windowHeight = window.innerHeight;
       if (map) {
-        var height;
+        let height;
         if (this.wide) {
           height = windowHeight - 448;
           //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
@@ -192,8 +184,8 @@ class YpPostMapLit extends YpBaseElement {
   _groupIdChanged(newValue, oldValue) {
     if (newValue) {
       this.set("posts", null);
-      this.$.ajax.url = '/api/groups/'+newValue+'/post_locations';
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/groups/'+newValue+'/post_locations';
+      this.$$("#ajax").generateRequest();
     } else {
       this.set("posts", null);
     }
@@ -202,8 +194,8 @@ class YpPostMapLit extends YpBaseElement {
   _communityIdChanged(newValue, oldValue) {
     if (newValue) {
       this.set("posts", null);
-      this.$.ajax.url = '/api/communities/'+newValue+'/post_locations';
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").url = '/api/communities/'+newValue+'/post_locations';
+      this.$$("#ajax").generateRequest();
     } else {
       this.set("posts", null);
     }
@@ -222,13 +214,13 @@ class YpPostMapLit extends YpBaseElement {
   markerClick(e) {
     window.appGlobals.activity('clicked', 'marker');
     this.set('selectedPost', e.model.get('post'));
-    var a = this.selectedPost;
+    const a = this.selectedPost;
     if (e.srcElement) {
       this.$$("#myInfoCard").showInfoWindow(e.srcElement.marker);
     } else {
       this.$$("#myInfoCard").showInfoWindow(e.currentTarget.marker);
     }
-    var infocardDiv = this.$$("#myInfoCard").$$("#infocarddiv");
+    const infocardDiv = this.$$("#myInfoCard").$$("#infocarddiv");
     infocardDiv.children[1].style.zIndex = "20";
   }
 }

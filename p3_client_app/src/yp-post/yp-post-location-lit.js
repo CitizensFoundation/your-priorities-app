@@ -2,14 +2,13 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-spinner/paper-spinner.js';
 //TODO: import 'google-map/google-map.js';
 //TODO: import 'google-map/google-map-marker.js';
 //TODO: import 'google-map/google-map-search.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
@@ -122,7 +121,7 @@ class YpPostLocationLit extends YpBaseElement {
         padding-top: 8px;
       }
 
-      paper-button {
+      mwc-button {
         font-size: 16px;
         padding-top: 32px;
       }
@@ -143,7 +142,6 @@ class YpPostLocationLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <iron-media-query query="(max-width: 1024px)" queryMatches="${this.narrowPad}"></iron-media-query>
 
@@ -156,7 +154,7 @@ class YpPostLocationLit extends YpBaseElement {
     <div class="mapSearchInput layout vertical center-center">
       <div class="layout horizontal center-center wrap">
         <paper-input .max-length="60" .label="${this.t('maps.searchInput')}" .value="${this.mapSearchString}" @keydown="${this._submitOnEnter}"></paper-input>
-        <paper-button @tap="${this._searchMap}">${this.t('maps.search')}</paper-button>
+        <mwc-button @click="${this._searchMap}" .label="${this.t('maps.search')}"></mwc-button>
       </div>
       <div class="searchResultText layout horizontal center-center">
         ${this.mapSearchResultAddress}
@@ -165,12 +163,6 @@ class YpPostLocationLit extends YpBaseElement {
     </div>
     `
   }
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   _computeMapZoom(location) {
     if (location && location.map_zoom)
@@ -186,37 +178,38 @@ class YpPostLocationLit extends YpBaseElement {
   }
 
   _searchMap() {
-    this.$.mapSearch.query = this.mapSearchString;
-    this.$.mapSearch.search();
-    this.$.spinner.active = true;
+    this.$$("#mapSearch").query = this.mapSearchString;
+    this.$$("#mapSearch").search();
+    this.$$("#spinner").active = true;
     this.set('mapSearchResultAddress', '');
   }
 
   _mapSearchResults(event, detail) {
-    this.$.spinner.active = false;
+    this.$$("#spinner").active = false;
     if (detail && detail.length > 0) {
       this.set('location', {latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15});
       this.mapSearchResultAddress = detail[0].formatted_address;
-      this.$.map.zoom = 15;
-      this.$.map.resize();
+      this.$$("#map").zoom = 15;
+      this.$$("#map").resize();
     }
   }
 
-  ready() {
-    if (!this.location) {
-      this.async(function () {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            if (!this.location)
-              this.location = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                map_zoom: 13
-              }
-          }.bind(this));
-        }
-      }, 50);
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (!this.location) {
+        this.async(function () {
+          if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              if (!this.location)
+                this.location = {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  map_zoom: 13
+                }
+            }.bind(this));
+          }
+        }, 50);
+      }
   }
 
   _zoomChanged(event, detail) {
@@ -235,13 +228,13 @@ class YpPostLocationLit extends YpBaseElement {
 
   _locationChanged(newLocationValue, oldValue) {
     if (newLocationValue) {
-      this.$.marker.setAttribute('latitude', newLocationValue.latitude);
-      this.$.marker.setAttribute('longitude', newLocationValue.longitude);
+      this.$$("#marker").setAttribute('latitude', newLocationValue.latitude);
+      this.$$("#marker").setAttribute('longitude', newLocationValue.longitude);
       if (newLocationValue.map_zoom)
-        this.$.map.zoom = newLocationValue.map_zoom;
+        this.$$("#map").zoom = newLocationValue.map_zoom;
       if (newLocationValue.mapType)
-        this.$.map.mapType = newLocationValue.mapType;
-      this.$.map.resize();
+        this.$$("#map").mapType = newLocationValue.mapType;
+      this.$$("#map").resize();
       this.set('encodedLocation', JSON.stringify(newLocationValue));
     }
   }
@@ -250,14 +243,14 @@ class YpPostLocationLit extends YpBaseElement {
     this.set('location', {
       latitude: detail.latLng.lat(),
       longitude: detail.latLng.lng(),
-      mapType: this.$.map.mapType,
-      map_zoom: this.$.map.zoom
+      mapType: this.$$("#map").mapType,
+      map_zoom: this.$$("#map").zoom
     });
   }
 
   _groupChanged(group) {
     if (group) {
-      var longLat;
+      let longLat;
       if (group.configuration && group.configuration.defaultLocationLongLat &&
         group.configuration.defaultLocationLongLat != "" &&
         group.configuration.defaultLocationLongLat.split(",").length > 1) {

@@ -2,8 +2,7 @@ import '@polymer/polymer/polymer-legacy.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '@polymer/paper-button/paper-button.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import '@material/mwc-button';
 import '../yp-ajax/yp-ajax.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import '../yp-user/yp-user-info.js';
@@ -148,7 +147,7 @@ class AcNotificationListLit extends YpBaseElement {
           </div>
           <div ?hidden="${!this.unViewedCount}" class="unViewedCount layout vertical center-center">
             <div>${this.unViewedCount} ${this.t('unviewed')}</div>
-            <paper-button @tap="${this._markAllAsViewed}">${this.t('notificationMarkAllViewed')}</paper-button>
+            <mwc-button @click="${this._markAllAsViewed}" .label="${this.t('notificationMarkAllViewed')}" ></mwc-button>
           </div>
 
           <iron-list id="list" .items="${this.notifications}" .scrollOffset="300" as="notification" .scrollTarget="threshold">
@@ -194,7 +193,6 @@ class AcNotificationListLit extends YpBaseElement {
       <yp-ajax id="markAllAsViewedAjax" .method="PUT" url="/api/notifications/markAllViewed" @response="${this._setAsMarkAllViewedResponse}"></yp-ajax>
     </div>
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
     <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
 `
@@ -202,7 +200,6 @@ class AcNotificationListLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior,
     ypTruncateBehavior
   ],
@@ -246,8 +243,8 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _reallyMarkAllAsViewed() {
-    this.$.markAllAsViewedAjax.body = {};
-    this.$.markAllAsViewedAjax.generateRequest();
+    this.$$("#markAllAsViewedAjax").body = {};
+    this.$$("#markAllAsViewedAjax").generateRequest();
   }
 
   _handleUnViewedCount(unViewedCount) {
@@ -260,7 +257,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _markAsViewed(notifications) {
-    var marked = [];
+    const marked = [];
     if (notifications) {
       notifications.forEach(function (notification) {
         if (!notification.viewed) {
@@ -269,14 +266,14 @@ class AcNotificationListLit extends YpBaseElement {
       });
     }
     if (marked.length>0) {
-      this.$.setAsViewedAjax.body = { viewedIds: marked };
-      this.$.setAsViewedAjax.generateRequest();
+      this.$$("#setAsViewedAjax").body = { viewedIds: marked };
+      this.$$("#setAsViewedAjax").generateRequest();
     }
   }
 
   _setAsViewedResponse(event, detail) {
     this._handleUnViewedCount(detail.response.unViewedCount);
-    var viewedIds =  detail.response.viewedIds;
+    const viewedIds =  detail.response.viewedIds;
     if (this.notifications) {
       this.notifications.forEach(function (notification, index, theArray) {
         if (viewedIds.indexOf(notification.id) > -1) {
@@ -313,8 +310,8 @@ class AcNotificationListLit extends YpBaseElement {
       if (user.profile_data && user.profile_data.isAnonymousUser) {
         this.cancelTimer();
       } else {
-        this.$.loadNotificationsAjax.url = this.url;
-        this.$.loadNotificationsAjax.generateRequest();
+        this.$$("#loadNotificationsAjax").url = this.url;
+        this.$$("#loadNotificationsAjax").generateRequest();
       }
     } else {
       this.cancelTimer();
@@ -347,7 +344,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _loadNotificationsResponse(event, detail) {
-    var notifications = detail.response.notifications;
+    const notifications = detail.response.notifications;
 
     if (detail.response.oldestProcessedNotificationAt) {
       this.set('oldestProcessedNotificationAt', detail.response.oldestProcessedNotificationAt);
@@ -387,7 +384,7 @@ class AcNotificationListLit extends YpBaseElement {
   _sendReloadPointsEvents(notifications) {
     notifications.forEach(function (notification) {
       if (notification.type=='notification.point.new') {
-        var activityUser = notification.AcActivities[0].User;
+        const activityUser = notification.AcActivities[0].User;
         if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
           document.dispatchEvent(
             new CustomEvent("lite-signal", {
@@ -402,7 +399,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _loadNewNotificationsResponse(event, detail) {
-    var notifications = detail.response.notifications;
+    const notifications = detail.response.notifications;
 
     notifications.forEach(function (notification) {
       this._removeOldIfExists(notification);
@@ -440,7 +437,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _getNotificationText(notification) {
-    var ideaName, object;
+    let ideaName, object;
     if (notification.AcActivities[0].Post) {
       ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
     }
@@ -473,14 +470,14 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _displayToast(notifications) {
-    var notMyNotifications = __.reject(notifications, function (notification) {
-      var activityUser = notification.AcActivities[0].User;
+    const notMyNotifications = __.reject(notifications, function (notification) {
+      const activityUser = notification.AcActivities[0].User;
       return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) &&
              !notification.type==='notification.generalUserNotification';
     });
 
     if (notMyNotifications.length>0) {
-      var activityUser = notMyNotifications[0].AcActivities[0].User;
+      const activityUser = notMyNotifications[0].AcActivities[0].User;
       dom(document).querySelector('yp-app').getDialogAsync("notificationToast", function (dialog) {
         dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]), notMyNotifications[0].type==='notification.generalUserNotification');
       }.bind(this));
@@ -506,18 +503,18 @@ class AcNotificationListLit extends YpBaseElement {
     this._clearScrollThreshold();
     if (this.oldestProcessedNotificationAt) {
       this.set('moreToLoad', false);
-      this.$.loadNotificationsAjax.url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
-      this.$.loadNotificationsAjax.generateRequest();
+      this.$$("#loadNotificationsAjax").url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
+      this.$$("#loadNotificationsAjax").generateRequest();
     }
   }
 
   loadNewData() {
     if (this.latestProcessedNotificationAt) {
-      this.$.loadNewNotificationsAjax.url = this.url + '?afterDate='+this.latestProcessedNotificationAt;
-      this.$.loadNewNotificationsAjax.generateRequest();
+      this.$$("#loadNewNotificationsAjax").url = this.url + '?afterDate='+this.latestProcessedNotificationAt;
+      this.$$("#loadNewNotificationsAjax").generateRequest();
     } else if (!this.latestProcessedNotificationAt) {
-      this.$.loadNewNotificationsAjax.url = this.url;
-      this.$.loadNewNotificationsAjax.generateRequest();
+      this.$$("#loadNewNotificationsAjax").url = this.url;
+      this.$$("#loadNewNotificationsAjax").generateRequest();
     }
   }
 }

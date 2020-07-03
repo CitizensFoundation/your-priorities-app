@@ -7,7 +7,6 @@ import '@polymer/paper-menu-button/paper-menu-button.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
@@ -174,8 +173,8 @@ class YpCommunityHeaderLit extends YpBaseElement {
     `, YpFlexLayout]
   }
 
-render() {
-  return html`
+  render() {
+    return html`
       <div class="layout vertical center-center">
         <iron-image class="image rounded-even-more" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
         <div class="community-name rounded-even-more">
@@ -208,7 +207,17 @@ render() {
   `
 }
 
-
+/*
+behaviors: [
+  CommunityBehaviors,
+  LargeCardBehaviors,
+  AccessHelpers,
+  ypGotAdminRightsBehavior,
+  ypGotoBehavior,
+  ypTruncateBehavior,
+  ypMediaFormatsBehavior
+],
+*/
 
   _communityChanged(community) {
   }

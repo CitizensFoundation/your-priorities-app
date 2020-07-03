@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import 'lite-signal/lite-signal.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
 import { YpPostBehavior } from '../yp-post/yp-post-behaviors.js';
@@ -150,14 +149,11 @@ class AcNotificationListPointLit extends YpBaseElement {
         </div>
       </div>
     </div>
-
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-`
+    `
   }
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     YpPostBehavior,
     YpTruncatedNameList,
     ypGotoBehavior,
@@ -180,7 +176,7 @@ class AcNotificationListPointLit extends YpBaseElement {
 
   goToPost() {
     if (this.post) {
-      var postUrl = '/post/' + this.post.id;
+      const postUrl = '/post/' + this.post.id;
       if (this.point) {
         postUrl += '/' + this.point.id;
       }
@@ -215,8 +211,8 @@ class AcNotificationListPointLit extends YpBaseElement {
   }
 
   _createQualityStrings() {
-    var helpfuls;
-    var unhelpfuls;
+    let helpfuls;
+    let unhelpfuls;
 
     this.notification.AcActivities.forEach(function (activity) {
       if (activity.type=='activity.point.helpful.new') {
@@ -242,7 +238,7 @@ class AcNotificationListPointLit extends YpBaseElement {
   }
 
   _addWithComma(text, toAdd) {
-    var returnText = "";
+    let returnText = "";
     if (text!='') {
       returnText += text+",";
     }

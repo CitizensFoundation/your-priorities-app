@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import 'lite-signal/lite-signal.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { YpPostBehavior } from '../yp-post/yp-post-behaviors.js';
 import { YpTruncatedNameList } from './ac-notification-truncated-name-list.js';
@@ -134,15 +133,12 @@ class AcNotificationListPostLit extends YpBaseElement {
         </div>
       </div>
     </div>
-
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-`
+    `
   }
 
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     YpPostBehavior,
     YpTruncatedNameList,
     ypGotoBehavior,
@@ -153,7 +149,7 @@ class AcNotificationListPostLit extends YpBaseElement {
 
   goToPost() {
     if (this.post) {
-      var postUrl = '/post/' + this.post.id;
+      const postUrl = '/post/' + this.post.id;
       window.appGlobals.activity('open', 'post', postUrl);
       this.async(function () {
         this.redirectTo(postUrl);
@@ -185,8 +181,8 @@ class AcNotificationListPostLit extends YpBaseElement {
   }
 
   _createEndorsementStrings() {
-    var endorsements;
-    var oppositions;
+    const endorsements;
+    const oppositions;
 
     this.notification.AcActivities.forEach(function (activity) {
       if (activity.type=='activity.post.endorsement.new') {
@@ -213,7 +209,7 @@ class AcNotificationListPostLit extends YpBaseElement {
   }
 
   _addWithComma(text, toAdd) {
-    var returnText = "";
+    const returnText = "";
     if (text!='') {
       returnText += text+",";
     }

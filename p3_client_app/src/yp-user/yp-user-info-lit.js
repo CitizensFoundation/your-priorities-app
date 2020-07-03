@@ -3,7 +3,6 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-user-image.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -60,7 +59,7 @@ class YpUserInfoLit extends YpBaseElement {
       .hasPointer {
         cursor: pointer;
       }
-      paper-button {
+      mwc-button {
         margin-top: 12px;
         margin-bottom: 8px;
       }
@@ -79,22 +78,15 @@ class YpUserInfoLit extends YpBaseElement {
           <div class="name">${this.user.name}</div>
           <div class="email">${this.user.email}</div>
           <div class="layout vertical center-justified buttons">
-            <paper-button raised .icon="create" .title="${this.t('user.edit')}" @tap="${this._openEdit}">${this.t('user.edit')}</paper-button>
-            <paper-button raised .icon="create" .title="${this.t('myContent')}" @tap="${this._openAllContentModeration}">${this.t('myContent')}</paper-button>
-            <paper-button raised .icon="input" .title="${this.t('user.logout')}" @tap="${this._logout}">${this.t('user.logout')}</paper-button>
+            <mwc-button raised .icon="create" .title="${this.t('user.edit')}" @click="${this._openEdit}">${this.t('user.edit')}</mwc-button>
+            <mwc-button raised .icon="create" .title="${this.t('myContent')}" @click="${this._openAllContentModeration}">${this.t('myContent')}</mwc-button>
+            <mwc-button raised .icon="input" .title="${this.t('user.logout')}" @click="${this._logout}">${this.t('user.logout')}</mwc-button>
           </div>
         </div>
       </div>
     ` : html``}
     `
   }
-
-
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   _openAllContentModeration() {
     window.appGlobals.activity('open', 'userAllContentModeration');

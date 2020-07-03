@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-spinner/paper-spinner.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -121,28 +120,23 @@ class YpAjaxLit extends YpBaseElement {
 `
   }
 
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
-
   _response(event) {
     this._setActive(false);
   }
 
-  ready() {
-    if (this.auto) {
-      this._setActive(true);
-    }
-    if (this.largeSpinner) {
-      this.$.spinner.toggleClass('large',true);
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (this.auto) {
+        this._setActive(true);
+      }
+      if (this.largeSpinner) {
+        this.$$("#spinner").toggleClass('large',true);
+      }
   }
 
   _setActive(active) {
     this.set('active', active);
-    this.$.spinner.active = active;
+    this.$$("#spinner").active = active;
   }
 
   _error(event) {
@@ -173,11 +167,11 @@ class YpAjaxLit extends YpBaseElement {
 
   generateRequest() {
     this._setActive(true);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   setBody(body) {
-    this.$.ajax.body = body;
+    this.$$("#ajax").body = body;
   }
 
   _transformErrorText(errorText) {
@@ -200,7 +194,7 @@ class YpAjaxLit extends YpBaseElement {
   }
 
   showErrorDialog(errorText) {
-    var text;
+    const text;
     if (errorText.message) {
       text = errorText.message;
     } else {

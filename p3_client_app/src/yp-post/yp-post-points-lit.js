@@ -8,7 +8,6 @@ import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-behaviors/yp-iron-list-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-behaviors/emoji-selector.js';
 import '../yp-point/yp-point.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
@@ -380,7 +379,7 @@ class YpPostPointsLit extends YpBaseElement {
         margin-top: 8px;
       }
 
-      paper-button {
+      mwc-button {
         color: #FFF;
         background-color: var(--accent-color);
       }
@@ -475,7 +474,7 @@ class YpPostPointsLit extends YpBaseElement {
         margin: 32px;
       }
 
-      paper-button[disabled] {
+      mwc-button[disabled] {
         background-color: #333;
         color: #FFF;
       }
@@ -512,7 +511,6 @@ class YpPostPointsLit extends YpBaseElement {
   render() {
     return html`
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-update-points-for-post="${this._loadNewPointsIfNeeded}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 
@@ -557,10 +555,10 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" icon="videocam"></iron-icon>
-                        ${this.t('uploadVideoPointFor')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${this.loggedInUser}" 
+                                  @click="${this._openLogin}" .label="${this.t('uploadVideoPointFor')}">
+                        <iron-icon class="icon" ></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -574,10 +572,9 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
-                        ${this.t('uploadAudioPointFor')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" .icon="keyboard-voice" raised ?hidden="${this.loggedInUser}" @click="${this._openLogin}" .label="${this.t('uploadAudioPointFor')}">
+                        <iron-icon class="icon" ></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -585,7 +582,7 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthUpIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised class="submitButton" ?disabled="${this.addPointDisabled}" .icon="add" .mini="" .elevation="3" @tap="${this.addPointUp}" .title="${this.t('point.add_up')}">${this.t('postPoint')}</paper-button>
+                  <mwc-button raised class="submitButton" ?disabled="${this.addPointDisabled}" .icon="add" .mini="" .elevation="3" @tap="${this.addPointUp}" .title="${this.t('point.add_up')}" .label="${this.t('postPoint')}"></mwc-button>
                 </div>
               </div>
             </paper-material>
@@ -635,10 +632,9 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" icon="videocam"></iron-icon>
-                        ${this.t('uploadVideoPointAgainst')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${this.loggedInUser}" .label="${this.t('uploadVideoPointAgainst')}" @click="${this._openLogin}">
+                        <iron-icon class="icon"></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -652,10 +648,9 @@ class YpPostPointsLit extends YpBaseElement {
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
-                      <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
-                        <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
-                        ${this.t('uploadAudioPointAgainst')}
-                      </paper-button>
+                      <mwc-button class="uploadNotLoggedIn" icon="keyboard-voice" raised .label="${this.t('uploadAudioPointAgainst')}" ?hidden="${this.loggedInUser}" @click="${this._openLogin}">
+                        <iron-icon class="icon" ></iron-icon>
+                      </mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -663,7 +658,7 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthDownIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <paper-button raised ?disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @tap="${this.addPointDown}" .title="${this.t('point.add_down')}">${this.t('postPoint')}</paper-button>
+                  <mwc-button raised ?disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @click="${this.addPointDown}" .title="${this.t('point.add_down')}" .label="${this.t('postPoint')}"></mwc-button>
                 </div>
               </div>
             </paper-material>
@@ -712,11 +707,11 @@ class YpPostPointsLit extends YpBaseElement {
                     </yp-file-upload>
                   </div>
                   <div class="layout horizontal center-center">
-                    <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
+                    <mwc-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @click="${this._openLogin}">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadVideoPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadVideoPointAgainst')}</span>
-                    </paper-button>
+                    </mwc-button>
                   </div>
                 </div>
               `: html``}
@@ -732,11 +727,11 @@ class YpPostPointsLit extends YpBaseElement {
                     </yp-file-upload>
                   </div>
                   <div class="layout horizontal center-center">
-                    <paper-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @tap="${this._openLogin}">
+                    <mwc-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @click="${this._openLogin}">
                       <iron-icon class="icon" icon="keyboard-voice"></iron-icon>
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadAudioPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadAudioPointAgainst')}</span>
-                    </paper-button>
+                    </mwc-button>
                   </div>
                 </div>
               `: html``}
@@ -745,10 +740,10 @@ class YpPostPointsLit extends YpBaseElement {
           </div>
           <div ?hidden="${!this.ifLengthMobileRight}">
             <div class="addPointFab layout horizontal center-center mobileFab">
-              <paper-button raised="" disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @tap="${this.addMobilePointUpOrDown}" .title="${this.t('postPoint')}">
+              <mwc-button raised="" disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @click="${this.addMobilePointUpOrDown}" .title="${this.t('postPoint')}">
                 <span ?hidden="${!this.selectedPointForMobile}">${this.t('postPointFor')}</span>
                 <span ?hidden="${this.selectedPointForMobile}">${this.t('postPointAgainst')}</span>
-              </paper-button>
+              </mwc-button>
             </div>
           </div>
         </paper-material>
@@ -777,7 +772,6 @@ class YpPostPointsLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypTruncateBehavior,
     ypLoggedInUserBehavior
   ],
@@ -813,9 +807,9 @@ class YpPostPointsLit extends YpBaseElement {
 
   _mobileScrollOffset(large, post) {
     if (!large && post) {
-      var element = this.$$("#ironListMobile");
+      const element = this.$$("#ironListMobile");
       if (element) {
-        var top = element.getBoundingClientRect().top;
+        const top = element.getBoundingClientRect().top;
         if (top<=0) {
           top = 800;
         }
@@ -847,9 +841,10 @@ class YpPostPointsLit extends YpBaseElement {
     }
   }
 
-  ready() {
-    var ua = navigator.userAgent.toLowerCase();
-    var isAndroid = ua.indexOf("android") > -1;
+  connectedCallback() {
+    super.connectedCallback()
+    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid = ua.indexOf("android") > -1;
     if (isAndroid) {
       this.set('isAndroid', true);
     }
@@ -878,9 +873,9 @@ class YpPostPointsLit extends YpBaseElement {
   _loadNewPointsIfNeeded(event, detail) {
     if (this.post && this.post.id == detail.postId) {
       if (this.latestPointCreatedAt) {
-        this.$.newPointsAjax.url = '/api/posts/' + this.post.id + '/newPoints';
-        this.$.newPointsAjax.params = { latestPointCreatedAt: this.latestPointCreatedAt };
-        this.$.newPointsAjax.generateRequest();
+        this.$$("#newPointsAjax").url = '/api/posts/' + this.post.id + '/newPoints';
+        this.$$("#newPointsAjax").params = { latestPointCreatedAt: this.latestPointCreatedAt };
+        this.$$("#newPointsAjax").generateRequest();
       } else {
         console.error("Trying to send point without latestPointCreatedAt");
       }
@@ -888,7 +883,7 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _newPointsResponse(event, detail) {
-    var points = this._preProcessPoints(detail.response);
+    const points = this._preProcessPoints(detail.response);
     points.forEach(function (point) {
       this._insertNewPoint(point);
     }.bind(this));
@@ -897,7 +892,7 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _pointDeleted() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _pointsChanged(points) {
@@ -909,10 +904,10 @@ class YpPostPointsLit extends YpBaseElement {
   _updateEmojiBindings() {
     this.async(function () {
       if (this.largeMode) {
-        var upPoint = this.$$("#up_point");
-        var downPoint = this.$$("#down_point");
-        var upEmoji = this.$$("#pointUpEmojiSelector");
-        var downEmoji = this.$$("#pointDownEmojiSelector");
+        const upPoint = this.$$("#up_point");
+        const downPoint = this.$$("#down_point");
+        const upEmoji = this.$$("#pointUpEmojiSelector");
+        const downEmoji = this.$$("#pointDownEmojiSelector");
         if (upPoint && downPoint && upEmoji && downEmoji) {
           upEmoji.inputTarget = upPoint;
           downEmoji.inputTarget = downPoint;
@@ -920,8 +915,8 @@ class YpPostPointsLit extends YpBaseElement {
           console.warn("Wide: Can't bind emojis :(");
         }
       } else {
-        var upDownPoint = this.$$("#mobileUpOrDownPoint");
-        var upDownEmoji = this.$$("#pointUpDownEmojiSelector");
+        const upDownPoint = this.$$("#mobileUpOrDownPoint");
+        const upDownEmoji = this.$$("#pointUpDownEmojiSelector");
         if (upDownPoint && upDownEmoji) {
           upDownEmoji.inputTarget = upDownPoint;
         } else {
@@ -993,11 +988,11 @@ class YpPostPointsLit extends YpBaseElement {
 
     if (newPost) {
       if (this.host) {
-        this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
+        this.$$("#ajax").url = this.host+'/api/posts/' + newPost.id + '/points';
       } else {
-        this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+        this.$$("#ajax").url = '/api/posts/' + newPost.id + '/points';
       }
-      this.$.ajax.generateRequest();
+      this.$$("#ajax").generateRequest();
       if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
         this.set('labelUp', this.post.Group.configuration.alternativePointForLabel);
       } else {
@@ -1012,7 +1007,7 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   removeElementsByClass(rootElement, className) {
-    var elements = rootElement.getElementsByClassName(className);
+    const elements = rootElement.getElementsByClassName(className);
     while(elements.length > 0){
       elements[0].parentNode.removeChild(elements[0]);
     }
@@ -1022,10 +1017,10 @@ class YpPostPointsLit extends YpBaseElement {
     console.info("_processStoredPoints");
     if (this.upPoints===null) {
       if (this.storedPoints && this.storedPoints.length > 0) {
-        var upPoints = [];
-        var downPoints = [];
+        const upPoints = [];
+        const downPoints = [];
 
-        for (var i = 0; i < this.storedPoints.length; i++) {
+        for (let i = 0; i < this.storedPoints.length; i++) {
           if (this.storedPoints[i].value>0) {
             upPoints.push(this.storedPoints[i]);
           } else if (this.storedPoints[i].value<0) {
@@ -1082,8 +1077,8 @@ class YpPostPointsLit extends YpBaseElement {
   _checkForMultipleLanguages() {
     if (!localStorage.getItem("dontPromptForAutoTranslation") &&
         !sessionStorage.getItem("dontPromptForAutoTranslation")) {
-      var firstLanguage;
-      var multipleLanguages = false;
+      let firstLanguage;
+      let multipleLanguages = false;
       this.upPoints.forEach(function (point) {
         if (point.language && !multipleLanguages) {
           if (!firstLanguage && point.language!=='??') {
@@ -1117,14 +1112,14 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   interleaveArrays(arrayA, arrayB) {
-    var arrs = [arrayA, arrayB];
-    var maxLength = Math.max.apply(Math, arrs.map(function (arr) {
+    const arrs = [arrayA, arrayB];
+    const maxLength = Math.max.apply(Math, arrs.map(function (arr) {
       return arr.length
     }));
 
-    var result = [];
+    const result = [];
 
-    for (var i = 0; i < maxLength; ++i) {
+    for (let i = 0; i < maxLength; ++i) {
       arrs.forEach(function (arr) {
         if (arr.length > i) {
           result.push(arr[i])
@@ -1138,7 +1133,7 @@ class YpPostPointsLit extends YpBaseElement {
   _scrollPointIntoView() {
     if (this.scrollToId) {
       this.async(function () {
-        var hasFoundIt=false;
+        let hasFoundIt=false;
         if (!this.largeMode) {
           this.points.forEach(function (point) {
             if (!hasFoundIt && point.id == this.scrollToId) {
@@ -1166,7 +1161,7 @@ class YpPostPointsLit extends YpBaseElement {
         if (hasFoundIt) {
           this.async(function () {
             // Change elevation
-            var point = this.$$("#point"+this.scrollToId);
+            const point = this.$$("#point"+this.scrollToId);
             if (point) {
               point.elevation = 5;
               point.elevation = 1;
@@ -1185,12 +1180,12 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _floatIfValueOrIE(value) {
-    var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
+    const ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
     return ie11 || value;
   }
 
   _preProcessPoints(points) {
-    for (var i = 0; i < points.length; i++) {
+    for (let i = 0; i < points.length; i++) {
       if (!this.latestPointCreatedAt || (!this.latestPointCreatedAt || points[i].created_at > this.latestPointCreatedAt)) {
         this.set('latestPointCreatedAt', points[i].created_at);
       }
@@ -1240,8 +1235,8 @@ class YpPostPointsLit extends YpBaseElement {
 
   _newPointResponse(inEvent, inDetail) {
     if (this.currentVideoId) {
-      var point = this._preProcessPoints([inDetail.response])[0];
-      var ajax = document.createElement('iron-ajax');
+      const point = this._preProcessPoints([inDetail.response])[0];
+      const ajax = document.createElement('iron-ajax');
       ajax.handleAs = 'json';
       ajax.contentType = 'application/json';
       ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
@@ -1256,8 +1251,8 @@ class YpPostPointsLit extends YpBaseElement {
       }.bind(this));
       ajax.generateRequest();
     } else if (this.currentAudioId) {
-      var point = this._preProcessPoints([inDetail.response])[0];
-      var ajax = document.createElement('iron-ajax');
+      const point = this._preProcessPoints([inDetail.response])[0];
+      const ajax = document.createElement('iron-ajax');
       ajax.handleAs = 'json';
       ajax.contentType = 'application/json';
       ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
@@ -1278,7 +1273,7 @@ class YpPostPointsLit extends YpBaseElement {
 
   _completeNewPointResponse(event, detail) {
     this.set('addPointDisabled', false);
-    var point = this._preProcessPoints([detail.response])[0];
+    const point = this._preProcessPoints([detail.response])[0];
     if (this.currentVideoId) {
       point.checkTranscriptFor = "video";
     } else if (this.currentAudioId) {
@@ -1294,7 +1289,7 @@ class YpPostPointsLit extends YpBaseElement {
     this.set("textValueMobileUpOrDown", "");
     this._insertNewPoint(point);
     this.set('post.counter_points', this.post.counter_points + 1);
-    this.$.newPointToast.show();
+    this.$$("#newPointToast").show();
     this._updateCounterInfo();
     if (point.value > 0) {
       window.appGlobals.activity('completed', 'newPointFor');
@@ -1327,13 +1322,13 @@ class YpPostPointsLit extends YpBaseElement {
 
   addPoint(content, value, videoId, audioId) {
     if (window.appUser.loggedIn() === true) {
-      this.$.newPointAjax.url = "/api/points/" + this.post.group_id;
-      this.$.newPointAjax.body = {
+      this.$$("#newPointAjax").url = "/api/points/" + this.post.group_id;
+      this.$$("#newPointAjax").body = {
         postId: this.post.id,
         content: content,
         value: value
       };
-      this.$.newPointAjax.generateRequest();
+      this.$$("#newPointAjax").generateRequest();
       this.set('addPointDisabled', true);
       if (videoId)
         this.set('currentVideoId', videoId);

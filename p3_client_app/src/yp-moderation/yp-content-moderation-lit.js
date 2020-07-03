@@ -2,14 +2,13 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '../yp-ajax/yp-ajax.js';
 import '../yp-post/yp-post-header.js';
 import '../yp-point/yp-point.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
@@ -191,7 +190,7 @@ class YpContentModerationLit extends YpBaseElement {
         padding-bottom: 10px;
       }
 
-      paper-button {
+      mwc-button {
         margin-left: 8px;
       }
 
@@ -270,7 +269,7 @@ class YpContentModerationLit extends YpBaseElement {
         margin-bottom: 8px;
       }
 
-      paper-button {
+      mwc-button {
         font-size: 18px;
         margin-top: 16px;
       }
@@ -305,7 +304,6 @@ class YpContentModerationLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <div class="layout horizontal headerBox wrap">
         <div>
@@ -324,7 +322,7 @@ class YpContentModerationLit extends YpBaseElement {
         <div class="flex"></div>
         <div class="checkBox" ?hidden="${this.narrow}"><paper-checkbox ?checked="${this.multiSortEnabled}">${this.t('multiSortEnabled')}</paper-checkbox></div>
         <div ?hidden="${!this.showReload}">
-          <paper-icon-button .ariaLabel="${this.t('reload')}" .icon="autorenew" class="closeButton" @tap="${this._reload}"></paper-icon-button>
+          <paper-icon-button .ariaLabel="${this.t('reload')}" .icon="autorenew" class="closeButton" @click="${this._reload}"></paper-icon-button>
         </div>
       </div>
 
@@ -484,7 +482,6 @@ class YpContentModerationLit extends YpBaseElement {
 
   /*
     behaviors: [
-      ypLanguageBehavior,
       ypNumberFormatBehavior
     ],
 
@@ -504,7 +501,7 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _reload() {
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
     this.set('forceSpinner', true);
   }
 
@@ -531,24 +528,25 @@ class YpContentModerationLit extends YpBaseElement {
 
   _activeItemChanged(item, oldItem) {
     if (item) {
-      this.$.grid.openItemDetails(item);
+      this.$$("#grid").openItemDetails(item);
     }
 
     if (oldItem) {
-      this.$.grid.closeItemDetails(oldItem);
+      this.$$("#grid").closeItemDetails(oldItem);
     }
   }
 
   _menuSelection(event, detail) {
-    var allMenus = this.$.grid.querySelectorAll("paper-listbox");
+    const allMenus = this.$$("#grid").querySelectorAll("paper-listbox");
     allMenus.forEach(function (item) {
       item.select(null);
     });
   }
 
-  ready() {
-    this._setGridSize();
-    window.addEventListener("resize", this._resizeThrottler.bind(this), false);
+  connectedCallback() {
+    super.connectedCallback()
+      this._setGridSize();
+      window.addEventListener("resize", this._resizeThrottler.bind(this), false);
   }
 
   _toPercent(number) {
@@ -570,11 +568,11 @@ class YpContentModerationLit extends YpBaseElement {
 
   _setGridSize() {
     if (window.innerWidth<=600) {
-      this.$.grid.style.width = (window.innerWidth).toFixed()+'px';
-      this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
+      this.$$("#grid").style.width = (window.innerWidth).toFixed()+'px';
+      this.$$("#grid").style.height = (window.innerHeight).toFixed()+'px';
     } else {
-      this.$.grid.style.width = (window.innerWidth-16).toFixed()+'px';
-      this.$.grid.style.height = (window.innerHeight).toFixed()+'px';
+      this.$$("#grid").style.width = (window.innerWidth-16).toFixed()+'px';
+      this.$$("#grid").style.height = (window.innerHeight).toFixed()+'px';
     }
   }
 
@@ -598,11 +596,11 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _setupItemIdFromEvent(event) {
-    var itemId = event.target.parentElement.getAttribute('data-args');
+    const itemId = event.target.parentElement.getAttribute('data-args');
     if (!itemId)
       itemId = event.target.getAttribute('data-args');
     this.set('selectedItemId', itemId);
-    var modelClass = event.target.parentElement.getAttribute('data-model-class');
+    const modelClass = event.target.parentElement.getAttribute('data-model-class');
     if (!modelClass)
       modelClass = event.target.getAttribute('data-model-class');
     this.set('selectedModelClass', modelClass);
@@ -616,7 +614,7 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _reallyDeleteSelected() {
-    this._ajaxMaster(this.$.manyItemsAjax, 'delete', this.selectedItemIdsAndType);
+    this._ajaxMaster(this.$$("#manyItemsAjax"), 'delete', this.selectedItemIdsAndType);
   }
 
   _delete(event) {
@@ -627,7 +625,7 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _reallyDelete() {
-    this._ajaxMaster(this.$.singleItemAjax, 'delete');
+    this._ajaxMaster(this.$$("#singleItemAjax"), 'delete');
   }
 
   _anonymizeSelected(event) {
@@ -638,7 +636,7 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _reallyAnonymizeSelected() {
-    this._ajaxMaster(this.$.manyItemsAjax, 'anonymize', this.selectedItemIdsAndType);
+    this._ajaxMaster(this.$$("#manyItemsAjax"), 'anonymize', this.selectedItemIdsAndType);
   }
 
   _anonymize(event) {
@@ -649,41 +647,41 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _reallyAnonymize() {
-    this._ajaxMaster(this.$.singleItemAjax, 'anonymize');
+    this._ajaxMaster(this.$$("#singleItemAjax"), 'anonymize');
   }
 
   _approve(event) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$.singleItemAjax, 'approve');
+    this._ajaxMaster(this.$$("#singleItemAjax"), 'approve');
   }
 
   _approveSelected(event) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$.manyItemsAjax, 'approve', this.selectedItemIdsAndType);
+    this._ajaxMaster(this.$$("#manyItemsAjax"), 'approve', this.selectedItemIdsAndType);
   }
 
   _block(event) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$.singleItemAjax, 'block');
+    this._ajaxMaster(this.$$("#singleItemAjax"), 'block');
   }
 
   _blockSelected(event) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$.manyItemsAjax, 'block', this.selectedItemIdsAndType);
+    this._ajaxMaster(this.$$("#manyItemsAjax"), 'block', this.selectedItemIdsAndType);
   }
 
   _clearFlags(event) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$.singleItemAjax, 'clearFlags');
+    this._ajaxMaster(this.$$("#singleItemAjax"), 'clearFlags');
   }
 
   _clearSelectedFlags(event) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$.manyItemsAjax, 'clearFlags', this.selectedItemIdsAndType);
+    this._ajaxMaster(this.$$("#manyItemsAjax"), 'clearFlags', this.selectedItemIdsAndType);
   }
 
   _ajaxMaster(ajax, action, itemIdsAndType) {
-    var url, collectionId;
+    let url, collectionId;
     if (this.modelType==="groups" && this.groupId) {
       collectionId = this.groupId;
     } else if (this.modelType==="communities" && this.communityId) {
@@ -711,23 +709,23 @@ class YpContentModerationLit extends YpBaseElement {
     this.set('forceSpinner', true);
 
     if (this.selectedItemId) {
-      var item = this._findItemFromId(this.selectedItemId);
+      const item = this._findItemFromId(this.selectedItemId);
       if (item)
-        this.$.grid.deselectItem(item);
+        this.$$("#grid").deselectItem(item);
       this.selectedItemId = null;
       this.selectedModelClass = null;
     }
   }
 
   _setSelected(event) {
-    var item = this._findItemFromId(event.target.getAttribute('data-args'));
+    const item = this._findItemFromId(event.target.getAttribute('data-args'));
     if (item) {
-      this.$.grid.selectItem(item);
+      this.$$("#grid").selectItem(item);
     }
   }
 
   _findItemFromId(id) {
-    var foundItem;
+    let foundItem;
     this.items.forEach(function (item) {
       if (item.id==id) {
         foundItem = item;
@@ -769,8 +767,8 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _generateRequest(id) {
-    this.$.ajax.url = "/api/"+this.modelType+"/"+id+this.typeOfModeration;
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").url = "/api/"+this.modelType+"/"+id+this.typeOfModeration;
+    this.$$("#ajax").generateRequest();
   }
 
   _itemsResponse(event, detail) {
@@ -810,7 +808,7 @@ class YpContentModerationLit extends YpBaseElement {
   open(name) {
     this.set('collectionName', name);
     this.set('opened', true);
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   _reset() {
@@ -823,7 +821,7 @@ class YpContentModerationLit extends YpBaseElement {
     this.set('selectedItemsEmpty', true);
     this.set('selectedItemIdsAndType', []);
     this.set('selectedItems', []);
-    this.$.grid.clearCache();
+    this.$$("#grid").clearCache();
   }
 
   _setupHeaderText() {

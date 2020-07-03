@@ -4,11 +4,10 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-spinner/paper-spinner.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '@polymer/paper-tabs/paper-tabs.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import '../yp-magic-text/yp-magic-text.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -484,7 +483,6 @@ class YpLoginLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-yp-domain-changed="${this_domainEvent}"></lite-signal>
 
     <paper-dialog id="dialog" modal>
@@ -516,7 +514,7 @@ class YpLoginLit extends YpBaseElement {
                 <div class="layout vertical center-center">
 
                   ${this.hasAnonymousLogin ? html`
-                    <paper-button raised class="anonLoginButton" @tap="${this.anonymousLogin}">${this.t('participateAnonymously')}</paper-button>
+                    <mwc-button raised class="anonLoginButton" @click="${this.anonymousLogin}">${this.t('participateAnonymously')}</mwc-button>
                   ` : html``}
 
                   <div class="layout horizontal">
@@ -575,9 +573,9 @@ class YpLoginLit extends YpBaseElement {
             </div>
             <div class="buttons layout vertical center-center">
               <div class="layout horizontal center-center">
-                <paper-button .dialogDismiss @tap="${this._cancel}">${this.t('cancel')}</paper-button>
-                <paper-button ?hidden="${this.forceSecureSamlLogin}" @tap="${this._forgotPassword}">${this.t('user.newPassword')}</paper-button>
-                <paper-button ?hidden="${this.forceSecureSamlLogin}" .autofocus raised class="boldButton" @tap="${this._validateAndSend}">${this.submitText}</paper-button>
+                <mwc-button .dialogDismiss @click="${this._cancel}">${this.t('cancel')}</mwc-button>
+                <mwc-button ?hidden="${this.forceSecureSamlLogin}" @click="${this._forgotPassword}">${this.t('user.newPassword')}</mwc-button>
+                <mwc-button ?hidden="${this.forceSecureSamlLogin}" .autofocus raised class="boldButton" @click="${this._validateAndSend}">${this.submitText}</mwc-button>
               </div>
             </div>
           </form>
@@ -598,7 +596,6 @@ class YpLoginLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior
   ],
 */
@@ -616,9 +613,9 @@ class YpLoginLit extends YpBaseElement {
   }
 
   _facebookLogin() {
-    var domainName = window.location.hostname.split('.').slice(-2).join('.');
+    const domainName = window.location.hostname.split('.').slice(-2).join('.');
 
-    var hostName;
+    let hostName;
 
     if (domainName.indexOf("forbrukerradet") > -1) {
       hostName = "mineideer";
@@ -626,9 +623,9 @@ class YpLoginLit extends YpBaseElement {
       hostName = "login";
     }
 
-    var url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
+    const url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
 
-    var width = 1000,
+    let width = 1000,
       height = 650,
       top = (window.outerHeight - height) / 2,
       left = (window.outerWidth - width) / 2,
@@ -659,7 +656,7 @@ class YpLoginLit extends YpBaseElement {
         window.appUser.logout();
       });
     }
-    var url = '/api/users/auth/saml',
+    const url = '/api/users/auth/saml',
       width = 1200,
       height = 650,
       top = (window.outerHeight - height) / 2,
@@ -678,7 +675,7 @@ class YpLoginLit extends YpBaseElement {
   _startSpinner() {
     this.set('userSpinner', true);
     this.async(function () {
-      this.$.dialog.fire('iron-resize');
+      this.$$("#dialog").fire('iron-resize');
     });
   }
 
@@ -801,19 +798,20 @@ class YpLoginLit extends YpBaseElement {
 
   _onRegisterChanged(newValue, oldValue) {
     this._setTexts();
-    this.$.dialog.fire('iron-resize');
+    this.$$("#dialog").fire('iron-resize');
     if (newValue == 1) {
-      var nameElement = this.$$("#name");
+      const nameElement = this.$$("#name");
       if (nameElement) {
         nameElement.focus();
       }
     }
   }
 
-  ready() {
-    if (window.appGlobals && window.appGlobals.domain) {
-      this.set('domain', window.appGlobals.domain)
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (window.appGlobals && window.appGlobals.domain) {
+        this.set('domain', window.appGlobals.domain)
+      }
   }
 
   setup(onLoginFunction, domain) {
@@ -901,7 +899,7 @@ class YpLoginLit extends YpBaseElement {
 
   _loginCompleted(user) {
     if (window.PasswordCredential && this.email && this.password) {
-      var c = new PasswordCredential({ name: this.email, id: this.email, password: this.password });
+      const c = new PasswordCredential({ name: this.email, id: this.email, password: this.password });
       navigator.credentials.store(c).then(function (message) {
         this._loginAfterSavePassword(user);
       }.bind(this)).catch(function (error) {
@@ -957,7 +955,7 @@ class YpLoginLit extends YpBaseElement {
   }
 
   close() {
-    var dialog = this.$$("#dialog");
+    const dialog = this.$$("#dialog");
     if (dialog) {
       dialog.close();
     }

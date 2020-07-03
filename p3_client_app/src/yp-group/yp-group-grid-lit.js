@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
 import { ypCardMouseBehavior } from '../yp-behaviors/yp-card-mouse-behavior.js';
 import './yp-group-card.js';
@@ -78,11 +77,18 @@ class YpGroupGridLit extends YpBaseElement {
       </div>
     `
   }
+  
+  /*
+  behaviors: [
+    ypIronListBehavior,
+    ypCardMouseBehavior
+  ],
+*/
 
   _scrollOffset(wide, featuredGroups) {
-    var list = this.$.ironList;
+    const list = this.$$("#ironList");
     if (list) {
-      var offset = list.offsetTop;
+      let offset = list.offsetTop;
       offset -= 75;
       if (list.offsetTop>0 && offset>0) {
         console.info("Group list scroll offset: "+offset);
@@ -103,7 +109,7 @@ class YpGroupGridLit extends YpBaseElement {
 
   scrollToItem(item) {
     console.log("Group grid scrolling to item");
-    this.$.ironList.scrollToItem(item);
+    this.$$("#ironList").scrollToItem(item);
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
         bubbles: true,

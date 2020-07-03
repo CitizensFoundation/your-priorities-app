@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-image/iron-image.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import './yp-point-news-story.js';
 import './yp-point-comment-list.js';
 import '../yp-magic-text/yp-magic-text.js';
@@ -112,7 +111,6 @@ class YpPointNewsStoryLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <div class="layout vertical newsContainer">
       <yp-magic-text id="content" class="story" .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" .contentId="${this.point.id}">
@@ -150,7 +148,7 @@ class YpPointNewsStoryLit extends YpBaseElement {
 
   _openChanged(newOpenValue) {
     if (newOpenValue) {
-      this.$.commentsList.generateRequest();
+      this.$$("#commentsList").generateRequest();
     }
   }
 
@@ -160,12 +158,12 @@ class YpPointNewsStoryLit extends YpBaseElement {
 
   _setOpen() {
     this.set('open', true);
-    this.$.commentsList._setOpen();
+    this.$$("#commentsList")._setOpen();
   }
 
   _setClosed() {
     this.set('open', false);
-    this.$.commentsList._setClosed();
+    this.$$("#commentsList")._setClosed();
   }
 
   _setCommentsCount(event, detail) {

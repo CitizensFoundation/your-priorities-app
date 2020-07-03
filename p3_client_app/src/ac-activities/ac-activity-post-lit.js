@@ -1,6 +1,5 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-post/yp-post-cover-media.js';
 import { YpPostBehavior } from '../yp-post/yp-post-behaviors.js';
 import '../yp-group/yp-group-behaviors.js';
@@ -218,7 +217,6 @@ class AcActivityPostLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     YpPostBehavior,
     ypActivityGroupTitleBehavior,
     ypTruncateBehavior,

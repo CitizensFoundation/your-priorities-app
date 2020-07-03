@@ -9,7 +9,6 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-item/paper-item.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { LargeCardBehaviors } from '../yp-behaviors/yp-large-card-behaviors.js';
@@ -264,7 +263,6 @@ class YpGroupCardLargeLit extends YpBaseElement {
 
   render() {
     return html`
-      <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
       <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
 
       <div class="layout horizontal center-center wrap">
@@ -331,8 +329,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
 }
 
   /*behaviors: [
-    ypLanguageBehavior,
-    GroupBehaviors,
+     GroupBehaviors,
     LargeCardBehaviors,
     AccessHelpers,
     ypGotAdminRightsBehavior,
@@ -374,8 +371,8 @@ class YpGroupCardLargeLit extends YpBaseElement {
     }
 
     if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
-      var videoURL = this._getVideoURL(group.GroupLogoVideos);
-      var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos);
+      const videoURL = this._getVideoURL(group.GroupLogoVideos);
+      const videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos);
       if (videoURL && videoPosterURL) {
         this.set('groupVideoURL', videoURL);
         this.set('groupVideoPosterURL', videoPosterURL);
@@ -491,7 +488,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
   }
 
   _refreshGroup(groupId, callback) {
-    var ajax = document.createElement('iron-ajax');
+    const ajax = document.createElement('iron-ajax');
     ajax.url = '/api/groups/'+groupId;
     ajax.handleAs = 'json';
     ajax.contentType = 'application/json';

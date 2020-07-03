@@ -4,7 +4,6 @@ import 'lite-signal/lite-signal.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-file-upload/yp-file-upload.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -81,18 +80,17 @@ class YpCategoryEditLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior
   ],
 */
 
   _iconImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedIconImageId', image.id);
   }
 
   _headerImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedHeaderImageId', image.id);
   }
 
@@ -111,8 +109,8 @@ class YpCategoryEditLit extends YpBaseElement {
     this.set('category', { name: '', description: '' });
     this.set('uploadedIconImageId', null);
     this.set('uploadedHeaderImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.iconImageUpload.clear();
+    this.$$("#headerImageUpload").clear();
+    this.$$("#iconImageUpload").clear();
   }
 
   _setupTranslation() {

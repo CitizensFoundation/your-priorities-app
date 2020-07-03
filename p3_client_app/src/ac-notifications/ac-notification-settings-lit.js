@@ -1,8 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
-import 'lite-signal/lite-signal.js';
 import './ac-notification-selection.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -20,7 +18,6 @@ class AcNotificationSettingsLit extends YpBaseElement {
  
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
     <ac-notification-selection .name="${this.t('notification.myPosts')}" .setting="${this.notificationsSettings.my_posts}">
     </ac-notification-selection>
@@ -43,12 +40,7 @@ class AcNotificationSettingsLit extends YpBaseElement {
 `
   }
 
-/*  
-  behaviors: [
-    ypLanguageBehavior
-  ],
-
-
+/* 
   observers: [
     'settingsStarChanged(notificationsSettings.*)'
   ],

@@ -164,7 +164,8 @@ Polymer({
     this.$.storySubmitButton.disabled = false;
   },
 
-  ready: function () {
+  connectedCallback() {
+    super.connectedCallback()
     this._reset();
     this.$.pointNewsStory.addEventListener("paste", function () {
       this.async(function () {

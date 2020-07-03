@@ -54,7 +54,6 @@ class YpGroupStatsLit extends YpBaseElement {
 
   render() {
     return html`
-      ${this.group ? html`
       <div class="stats layout horizontal end-justified">
         <div class="layout horizontal wrap">
           <div class="layout horizontal">
@@ -75,9 +74,8 @@ class YpGroupStatsLit extends YpBaseElement {
             <div .title="${this.t('stats.users')}" class="stats-text">${this.formatNumber(this.group.counter_users)}</div>
           </div>
         </div>  
-      </div>
-    ` : html``     
-    }
+      </div>   
+  }
     `
   } 
 }  

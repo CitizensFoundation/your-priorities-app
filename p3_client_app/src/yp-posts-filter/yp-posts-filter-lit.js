@@ -4,13 +4,12 @@ import '@polymer/iron-image/iron-image.js';
 import '@polymer/iron-selector/iron-selector.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-menu-button/paper-menu-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '../yp-app-globals/yp-app-icons.js';
 import '../yp-ajax/yp-ajax.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -170,9 +169,6 @@ class YpPostsFilterLit extends YpBaseElement {
           margin-top: 0;
         }
 
-        paper-button {
-        }
-
         #dropDownTrigger {
           margin-left: 0;
           margin-right: 0;
@@ -224,17 +220,14 @@ class YpPostsFilterLit extends YpBaseElement {
   render() {
     return html`
 
-    <lite-signal on-lite-signal-yp-language="${this_languageEvent}"></lite-signal>
-
     ${ this.group ? html`
       <div class="layout horizontal center-center mainContainer wrap">
 
         ${ this.showFilter ? html`
           <paper-menu-button id="filterDropdown" class="selected-items" .icon="sort" vertical-align="auto" horizontal-align="right">
-            <paper-button raised .title="${this.t('filterIdeas')}" id="dropDownTrigger" .icon="sort" slot="dropdown-trigger">
+            <mwc-button raised .title="${this.t('filterIdeas')}" id="dropDownTrigger" class="filterText" .label="${this.t('filterIdeas')}" .icon="sort" slot="dropdown-trigger">
               <iron-icon .icon="sort" class="dropdownIcon"></iron-icon>
-              <div class="filterText">${this.t('filterIdeas')}</div>
-            </paper-button>
+            </mwc-button>
 
             <div slot="dropdown-content" class="layout vertical dropDownContent">
               <div>
@@ -299,7 +292,6 @@ class YpPostsFilterLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior,
     ypMediaFormatsBehavior
   ],
@@ -311,7 +303,7 @@ class YpPostsFilterLit extends YpBaseElement {
 */
 
   _getCategoryCount(id, categoryCounts) {
-    var foundCategory = __.find(categoryCounts, function (categoryCount) {
+    const foundCategory = __.find(categoryCounts, function (categoryCount) {
       return (categoryCount.category_id==id);
     });
     if (foundCategory) {
@@ -330,9 +322,9 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _categoriesCountResponse(event, detail) {
-    var categoryCounts = detail.response.categoriesCount;
+    const categoryCounts = detail.response.categoriesCount;
     this.set('allPostCount', detail.response.allPostCount);
-    var categoriesWithCount = [];
+    const categoriesWithCount = [];
     //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
     __.each(this.group.Categories, function (category) {
       category.count = this._getCategoryCount(category.id, categoryCounts);
@@ -343,7 +335,7 @@ class YpPostsFilterLit extends YpBaseElement {
     if (categoriesWithCount.length>1) {
       this.set('categoriesWithCount', categoriesWithCount);
       this.async(function () {
-        var categoryMenu = this.$$("#categoryMenu");
+        const categoryMenu = this.$$("#categoryMenu");
         if (categoryMenu) {
           categoryMenu.selected = "-1";
         } else {
@@ -356,7 +348,7 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _openDropDown() {
-    var trigger = this.$$("#dropDownTrigger");
+    const trigger = this.$$("#dropDownTrigger");
     if (trigger) {
       trigger.click();
     }
@@ -401,7 +393,7 @@ class YpPostsFilterLit extends YpBaseElement {
 
   searchFor(value) {
     this.set('searchingFor', value);
-    var newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
+    const newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
     window.appGlobals.activity('change', 'filter', newLocation);
     this.redirectTo(newLocation);
     this.fire("refresh-group");
@@ -411,14 +403,14 @@ class YpPostsFilterLit extends YpBaseElement {
     if (this.searchingFor) {
       this.set('subTitle', this.t('post.searchingFor') + this.searchingFor);
     } else {
-      var translatedFilterName = this.t(this.filterName);
-      var translatedCategoryName;
+      const translatedFilterName = this.t(this.filterName);
+      let translatedCategoryName;
       if (this.categoryName) {
         translatedCategoryName = this.categoryName;
       } else {
         translatedCategoryName = this.t('categories.the_all');
       }
-      var inWord = this.t('short_word.in');
+      const inWord = this.t('short_word.in');
       if (this._ifCategories()) {
         this.set('subTitle', translatedFilterName + ' - ' + translatedCategoryName);
       } else {
@@ -433,8 +425,8 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _changeCategory(e, detail) {
-    var oldCategoryId = this.categoryId;
-    var categoryId = detail.item.dataset.categoryId;
+    const oldCategoryId = this.categoryId;
+    const categoryId = detail.item.dataset.categoryId;
     if (categoryId != '-1') {
       this.set('categoryId',categoryId);
       this.categoryName = detail.item.dataset.categoryName;
@@ -450,7 +442,7 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   buildPostsUrlPath() {
-    var newLocation = '/group/' + this.group.id + '/' + this.tabName;
+    const newLocation = '/group/' + this.group.id + '/' + this.tabName;
     if (this.filter) {
       newLocation += '/posts/' + this.filter;
     }
@@ -463,7 +455,7 @@ class YpPostsFilterLit extends YpBaseElement {
   _updateAfterFiltering() {
     if (!this.filter)
       this.set('filter','newest');
-    var newLocation = this.buildPostsUrlPath();
+    const newLocation = this.buildPostsUrlPath();
     window.appGlobals.activity('change', 'filter', newLocation);
  //   this.redirectTo(newLocation);
     this.fire("refresh-group");
@@ -479,11 +471,11 @@ class YpPostsFilterLit extends YpBaseElement {
 
   resetSelection() {
     this.async(function () {
-      var categoryMenu = this.$$("#categoryMenu");
+      const categoryMenu = this.$$("#categoryMenu");
       if (categoryMenu) {
         this.$$("#categoryMenu").selected = null;
       }
-      var mainListMenu = this.$$("#mainListMenu");
+      const mainListMenu = this.$$("#mainListMenu");
       if (mainListMenu) {
         this.$$("#mainListMenu").selected = null;
       } else {
@@ -501,7 +493,7 @@ class YpPostsFilterLit extends YpBaseElement {
   _setupCategories(group, tabName) {
     this.set('categoriesWithCount', null);
     this.async(function () {
-      var categoriesWithCountAjax = this.$$("#categoriesWithCountAjax");
+      const categoriesWithCountAjax = this.$$("#categoriesWithCountAjax");
       if (categoriesWithCountAjax) {
         categoriesWithCountAjax.url = "/api/groups/" + group.id + "/categories_count/"+tabName;
         categoriesWithCountAjax.generateRequest();

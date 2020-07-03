@@ -3,9 +3,8 @@ import '@polymer/iron-form/iron-form.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -54,7 +53,6 @@ class YpResetPasswordLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <h3>${this.t('user.resetPassword')}</h3>
 
@@ -67,8 +65,8 @@ class YpResetPasswordLit extends YpBaseElement {
       </form>
       <div class="buttons">
         <yp-ajax id="resetPasswordAjax" method="POST" @response="${this._resetPasswordResponse}"></yp-ajax>
-        <paper-button @tap="${this._cancel}" dialog-dismiss="">${this.t('cancel')}</paper-button>
-        <paper-button .autofocus="" @tap="${this._validateAndSend}">${this.t('user.resetPassword')}</paper-button>
+        <mwc-button @click="${this._cancel}" dialog-dismiss="">${this.t('cancel')}</mwc-button>
+        <mwc-button .autofocus="" @click="${this._validateAndSend}">${this.t('user.resetPassword')}</mwc-button>
       </div>
     </paper-dialog>
 
@@ -77,11 +75,6 @@ class YpResetPasswordLit extends YpBaseElement {
 
   }
 
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
 
   onEnter(event) {
     event.stopPropagation();
@@ -89,18 +82,18 @@ class YpResetPasswordLit extends YpBaseElement {
   }
 
   _validateAndSend(e) {
-    if (this.$.form.checkValidity() && this.password){
-      this.$.resetPasswordAjax.url = '/api/users/reset/'+this.token;
-      this.$.resetPasswordAjax.body = JSON.stringify({
+    if (this.$$("#form").checkValidity() && this.password){
+      this.$$("#resetPasswordAjax").url = '/api/users/reset/'+this.token;
+      this.$$("#resetPasswordAjax").body = JSON.stringify({
         password: this.password
       });
-      this.$.resetPasswordAjax.generateRequest();
+      this.$$("#resetPasswordAjax").generateRequest();
     }
   }
 
   _resetPasswordResponse(event, detail) {
     if (detail.response.error && detail.response.error=='not_found') {
-      this.$.resetPasswordAjax.showErrorDialog(this.t('errorResetTokenNotFoundOrUsed'));
+      this.$$("#resetPasswordAjax").showErrorDialog(this.t('errorResetTokenNotFoundOrUsed'));
     } else {
       this.close();
       window.appGlobals.notifyUserViaToast(this.t('notification.passwordResetAndLoggedIn'));
@@ -121,11 +114,11 @@ class YpResetPasswordLit extends YpBaseElement {
   open(token) {
     if (token)
       this.token = token;
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   close() {
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 }
 

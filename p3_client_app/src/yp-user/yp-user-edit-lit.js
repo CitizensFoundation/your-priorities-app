@@ -9,7 +9,6 @@ import '@polymer/neon-animation/neon-animatable.js';
 import '@polymer/neon-animation/neon-animation.js';
 import '../yp-file-upload/yp-file-upload.js';
 import '../yp-ajax/yp-ajax.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
 import '../ac-notifications/ac-notification-settings.js';
@@ -101,7 +100,7 @@ class YpUserEditLit extends YpBaseElement {
         margin-bottom: 8px;
       }
 
-      paper-button {
+      mwc-button {
         text-align: center;
       }
     `, YpFlexLayout]
@@ -109,7 +108,6 @@ class YpUserEditLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-edit-dialog .name="userEdit" id="editDialog" .title="${this.editHeaderText}" double-width="" .icon="face" .action="${this.action}" @iron-form-response="${this._editResponse}" method="${this.method}" .params="${this.params}" .saveText="${this.saveText}" .toastText="${this.toastText}">
       <div class="container">
         <div class="layout vertical wrap container">
@@ -137,11 +135,11 @@ class YpUserEditLit extends YpBaseElement {
 
           <yp-language-selector .name="defaultLocale" auto-translate-option-disabled="" .selectedLocale="${this.user.default_locale}"></yp-language-selector>
 
-          <paper-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised @tap="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</paper-button>
+          <mwc-button ?hidden="${!this.user.facebook_id}" class="disconnectButtons" raised @click="${this._disconnectFromFacebookLogin}">${this.t('disconnectFromFacebookLogin')}</mwc-button>
 
-          <paper-button ?hidden="${!this.user.ssn}" raised class="disconnectButtons" @tap="${this._disconnectFromSamlLogin}">${this.t('disconnectFromSamlLogin')}</paper-button>
+          <mwc-button ?hidden="${!this.user.ssn}" raised class="disconnectButtons" @click="${this._disconnectFromSamlLogin}">${this.t('disconnectFromSamlLogin')}</mwc-button>
 
-          <paper-button id="deleteUser" raised @tap="${this._deleteOrAnonymizeUser}">${this.t('deleteOrAnonymizeUser')}</paper-button>
+          <mwc-button id="deleteUser" raised @click="${this._deleteOrAnonymizeUser}">${this.t('deleteOrAnonymizeUser')}</mwc-button>
 
           <input .type="hidden" .name="uploadedProfileImageId" .value="${this.uploadedProfileImageId}">
           <input .type="hidden" .name="uploadedHeaderImageId" .value="${this.uploadedHeaderImageId}">
@@ -162,7 +160,6 @@ class YpUserEditLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior
   ],
 
@@ -195,8 +192,8 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _reallyDisconnectFromFacebookLogin() {
-    this.$.disconnectFacebookLoginAjax.body = {};
-    this.$.disconnectFacebookLoginAjax.generateRequest();
+    this.$$("#disconnectFacebookLoginAjax").body = {};
+    this.$$("#disconnectFacebookLoginAjax").generateRequest();
   }
 
   _disconnectFromSamlLogin() {
@@ -212,8 +209,8 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _reallyDisconnectFromSamlLogin() {
-    this.$.disconnectSamlLoginAjax.body = {};
-    this.$.disconnectSamlLoginAjax.generateRequest();
+    this.$$("#disconnectSamlLoginAjax").body = {};
+    this.$$("#disconnectSamlLoginAjax").generateRequest();
   }
 
   _disconnectFacebookLoginResponse() {
@@ -247,12 +244,12 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _profileImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedProfileImageId', image.id);
   }
 
   _headerImageUploaded(event, detail) {
-    var image = JSON.parse(detail.xhr.response);
+    const image = JSON.parse(detail.xhr.response);
     this.set('uploadedHeaderImageId', image.id);
   }
 
@@ -264,8 +261,8 @@ class YpUserEditLit extends YpBaseElement {
     this.set('user', { name: '', email: '', access: 2 } );
     this.set('uploadedProfileImageId', null);
     this.set('uploadedHeaderImageId', null);
-    this.$.headerImageUpload.clear();
-    this.$.profileImageUpload.clear();
+    this.$$("#headerImageUpload").clear();
+    this.$$("#profileImageUpload").clear();
   }
 
   setup(user, newNotEdit, refreshFunction, openNotificationTab) {

@@ -4,7 +4,6 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
 import '../yp-user/yp-user-image.js';
 import '../yp-ajax/yp-ajax.js';
@@ -47,7 +46,7 @@ class YpPointCommentEditLit extends YpBaseElement {
         max-height: 300px;
       }
 
-      paper-button {
+      mwc-button {
         margin-top: 16px;
         margin-bottom: 16px;
         background-color: var(--accent-color);
@@ -91,7 +90,7 @@ class YpPointCommentEditLit extends YpBaseElement {
           <paper-textarea id="pointComment" required .minlength="15" .name="pointComment" .value="${this.comment.content}" always-float-label="${this.comment.content}" .label="${t(this.point.addComment)}" char-counter .rows="2" .max-rows="2" @keydown="${this_keyDown}" .maxlength="200">
           </paper-textarea>
           <div class="layout horizontal">
-            <paper-button id="submitButton" raised @tap="${this._sendComment}">${this.t(point.postComment)}</paper-button>
+            <mwc-button id="submitButton" raised @click="${this._sendComment}" .label="${this.t(point.postComment)}"></mwc-button>
           </div>
         </div>
       </div>
@@ -115,7 +114,6 @@ class YpPointCommentEditLit extends YpBaseElement {
 
   /*
   behaviors: [
-    ypLanguageBehavior,
     ypLoggedInUserBehavior
   ],
 
@@ -124,8 +122,9 @@ class YpPointCommentEditLit extends YpBaseElement {
   ],
   */
 
-  ready() {
-    this._reset();
+  connectedCallback() {
+    super.connectedCallback()
+      this._reset();
   }
 
   _commentContentChanged(change) {
@@ -142,23 +141,23 @@ class YpPointCommentEditLit extends YpBaseElement {
   }
 
   _sendComment() {
-    var body;
+    let body;
     if (this.comment.content && this.comment.content.length>0) {
       if (this.point) {
         body = { point_id: this.point.id };
-        this.$.postCommentAjax.url = '/api/points/'+this.point.id+'/comment';
+        this.$$("#postCommentAjax").url = '/api/points/'+this.point.id+'/comment';
         this.$$("#submitButton").disabled = true;
       } else if (this.image) {
         body = { image_id: this.image.id };
-        this.$.postCommentAjax.url = '/api/images/'+this.image.id+'/comment';
+        this.$$("#postCommentAjax").url = '/api/images/'+this.image.id+'/comment';
         this.$$("#submitButton").disabled = true;
       } else {
         console.error("Can't find send ids");
       }
-      this.$.postCommentAjax.body = __.merge(body, { comment: this.comment } );
-      this.$.postCommentAjax.generateRequest();
+      this.$$("#postCommentAjax").body = __.merge(body, { comment: this.comment } );
+      this.$$("#postCommentAjax").generateRequest();
     } else {
-      this.$.postCommentAjax.showErrorDialog(this.t('point.commentToShort'));
+      this.$$("#postCommentAjax").showErrorDialog(this.t('point.commentToShort'));
     }
   }
 

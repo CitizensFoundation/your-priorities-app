@@ -5,13 +5,12 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-tabs/paper-tab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-listbox/paper-listbox.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypOfficialStatusOptions } from '../yp-behaviors/yp-official-status-options.js';
 import '../yp-ajax/yp-ajax.js';
@@ -271,9 +270,9 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button @tap="${this._saveAndClose}">${this.t('close')}</paper-button>
-        <paper-button @tap="${this._editTemplates}">${this.t('editTemplates')}</paper-button>
-        <paper-button @tap="${this._save}">${this.t('save')}</paper-button>
+        <mwc-button @click="${this._saveAndClose}" .label="${this.t('close')}"></mwc-button>
+        <mwc-button @click="${this._editTemplates}" .label="${this.t('editTemplates')}"></mwc-button>
+        <mwc-button @click="${this._save}" .label="${this.t('save')}"></mwc-button>
       </div>
 
     </paper-dialog>
@@ -282,7 +281,6 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     AccessHelpers,
     WordWrap,
     ypOfficialStatusOptions,
@@ -292,7 +290,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
   _getGroupsResponse(event, detail) {
     if (detail.response) {
-      var groups = [];
+      const groups = [];
       groups = groups.concat(window.appUser.adminRights.GroupAdmins, window.appUser.memberships.GroupUsers);
       groups = groups.concat(detail.response.groups);
       groups = this._uniqueInDomain(groups, detail.response.domainId);
@@ -350,8 +348,8 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
   _updatedTemplates(event, detail) {
     this.set('templates', detail);
-    this.$.updateConfigAjax.body = { configValue: this.templates, configName: 'templates' };
-    this.$.updateConfigAjax.generateRequest();
+    this.$$("#updateConfigAjax").body = { configValue: this.templates, configName: 'templates' };
+    this.$$("#updateConfigAjax").generateRequest();
   }
 
   _templatesChanged(change) {
@@ -361,14 +359,14 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
   }
 
   _save() {
-    this.$.updateConfigAjax.body = { configValue: this.config, configName: 'config' };
-    this.$.updateConfigAjax.generateRequest();
+    this.$$("#updateConfigAjax").body = { configValue: this.config, configName: 'config' };
+    this.$$("#updateConfigAjax").generateRequest();
   }
 
   _selectNewOfficialStatus(event, detail) {
-    var newOfficialStatus = detail.item.name;
-    var post = JSON.parse(event.target.getAttribute('data-args'));
-    var configCopy = JSON.parse(JSON.stringify(this.config));
+    let newOfficialStatus = detail.item.name;
+    const post = JSON.parse(event.target.getAttribute('data-args'));
+    const configCopy = JSON.parse(JSON.stringify(this.config));
     this.config.groups.forEach(function (group, groupIndex) {
       group.posts.forEach(function (inPost, postIndex) {
         if (post.id == inPost.id) {
@@ -381,7 +379,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 
   _configChanged(config) {
     if (config && !this.haveGotMoveGroups) {
-      this.$.getAvailableGroupsAjax.generateRequest();
+      this.$$("#getAvailableGroupsAjax").generateRequest();
       this.set('haveGotMoveGroups', true);
     }
   }
@@ -390,7 +388,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
     window.appGlobals.notifyUserViaToast(this.t('saved'));
     if (this.closeAfterSave) {
       this.set('closeAfterSave', false);
-      this.$.dialog.close();
+      this.$$("#dialog").close();
     }
   }
 
@@ -402,7 +400,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
   }
 
   _editBulkStatusUpdate(event) {
-    var bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
+    let bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
     dom(document).querySelector('yp-app').getDialogAsync("bulkStatusUpdateEdit", function (dialog) {
       dialog._clear();
       dialog.setup(bulkStatusUpdate, false, null);
@@ -420,7 +418,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
     this.set('config', bulkStatusUpdate.config);
     this.set('templates', bulkStatusUpdate.templates);
     this.set('bulkStatusUpdate', bulkStatusUpdate);
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 }
 

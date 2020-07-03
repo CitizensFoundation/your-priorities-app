@@ -4,7 +4,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
 //TODO: import 'paper-share-button/paper-share-button.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypRemoveClassBehavior } from '../yp-behaviors/yp-remove-class-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -115,7 +114,6 @@ class YpPointActionsLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <div class="all-actions layout horizontal flex start-justified" ?hidden="${this.hideNotHelpful}">
       <div id="actionUp" class="actionUp layout horizontal">
         <paper-icon-button .title="${this.t('point.helpful')}" ?disabled="${this.allDisabled}" .icon="arrow-upward" class="point-up-vote-icon myButton" @tap="${this.pointHelpful}"></paper-icon-button>
@@ -135,7 +133,6 @@ class YpPointActionsLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypRemoveClassBehavior
   ],
 
@@ -158,7 +155,7 @@ class YpPointActionsLit extends YpBaseElement {
 
   _updateQualities() {
     if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.PointQualities) {
-      var thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
+      const thisPointQuality = window.appUser.pointQualitiesIndex[this.point.id];
       if (thisPointQuality) {
         this._setPointQuality(thisPointQuality.value);
         if (thisPointQuality.value>0) {
@@ -182,14 +179,14 @@ class YpPointActionsLit extends YpBaseElement {
 
   _resetClasses() {
     if (this.pointQualityValue && this.pointQualityValue > 0) {
-      this.$.actionUp.className += " " + "up-selected";
-      this.removeClass(this.$.actionDown, "down-selected");
+      this.$$("#actionUp").className += " " + "up-selected";
+      this.removeClass(this.$$("#actionDown"), "down-selected");
     } else if (this.pointQualityValue && this.pointQualityValue < 0) {
-      this.$.actionDown.className += " " + "down-selected";
-      this.removeClass(this.$.actionUp,"up-selected");
+      this.$$("#actionDown").className += " " + "down-selected";
+      this.removeClass(this.$$("#actionUp"),"up-selected");
     } else {
-      this.removeClass(this.$.actionUp,"up-selected");
-      this.removeClass(this.$.actionDown, "down-selected");
+      this.removeClass(this.$$("#actionUp"),"up-selected");
+      this.removeClass(this.$$("#actionDown"), "down-selected");
     }
   }
 
@@ -200,8 +197,8 @@ class YpPointActionsLit extends YpBaseElement {
 
   _pointQualityResponse(event, detail) {
     this.set('allDisabled', false);
-    var pointQuality = detail.response.pointQuality;
-    var oldPointQualityValue = detail.response.oldPointQualityValue;
+    const pointQuality = detail.response.pointQuality;
+    const oldPointQualityValue = detail.response.oldPointQualityValue;
     this._setPointQuality(pointQuality.value);
     window.appUser.updatePointQualityForPost(this.point.id, pointQuality);
     if (oldPointQualityValue) {
@@ -224,14 +221,14 @@ class YpPointActionsLit extends YpBaseElement {
 
   generatePointQuality(value) {
     if (window.appUser.loggedIn()===true) {
-      this.$.pointQualityAjax.url = "/api/points/" + this.point.id + "/pointQuality";
-      this.$.pointQualityAjax.body = { point_id: this.point.id, value: value };
+      this.$$("#pointQualityAjax").url = "/api/points/" + this.point.id + "/pointQuality";
+      this.$$("#pointQualityAjax").body = { point_id: this.point.id, value: value };
       if (this.pointQualityValue === value) {
-        this.$.pointQualityAjax.method = "DELETE";
+        this.$$("#pointQualityAjax").method = "DELETE";
       } else {
-        this.$.pointQualityAjax.method = "POST";
+        this.$$("#pointQualityAjax").method = "POST";
       }
-      this.$.pointQualityAjax.generateRequest();
+      this.$$("#pointQualityAjax").generateRequest();
     } else {
       this.set('allDisabled', false);
       window.appUser.loginForPointQuality(this, { value: value } );

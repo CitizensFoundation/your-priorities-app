@@ -2,7 +2,6 @@ import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypRemoveClassBehavior } from '../yp-behaviors/yp-remove-class-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -83,7 +82,6 @@ class YpMembershipButtonLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypRemoveClassBehavior
   ],
 */
@@ -121,9 +119,9 @@ class YpMembershipButtonLit extends YpBaseElement {
 
   _resetClasses() {
     if (this.membershipValue) {
-      this.$.button.className += " " + "member";
+      this.$$("#button").className += " " + "member";
     } else {
-      this.removeClass(this.$.button, "member");
+      this.removeClass(this.$$("#button"), "member");
     }
   }
 
@@ -176,18 +174,18 @@ class YpMembershipButtonLit extends YpBaseElement {
     this.set('disabled', true);
     if (window.appUser.loggedIn()===true) {
       if (this.community) {
-        this.$.membershipAjax.url = "/api/communities/" + this.community.id + "/user_membership";
+        this.$$("#membershipAjax").url = "/api/communities/" + this.community.id + "/user_membership";
       } else if (this.group) {
-        this.$.membershipAjax.url = "/api/groups/" + this.group.id + "/user_membership";
+        this.$$("#membershipAjax").url = "/api/groups/" + this.group.id + "/user_membership";
       }
-      this.$.membershipAjax.body = { value: value };
+      this.$$("#membershipAjax").body = { value: value };
 
       if (value) {
-        this.$.membershipAjax.method = "POST";
+        this.$$("#membershipAjax").method = "POST";
       } else {
-        this.$.membershipAjax.method = "DELETE";
+        this.$$("#membershipAjax").method = "DELETE";
       }
-      this.$.membershipAjax.generateRequest();
+      this.$$("#membershipAjax").generateRequest();
     } else {
       this.set('disabled', false);
       window.appUser.loginForMembership(this, { value: value } );

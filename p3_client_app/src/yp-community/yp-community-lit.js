@@ -5,7 +5,6 @@ import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/paper-tabs/paper-tab.js';
 import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/app-route/app-route.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -157,7 +156,6 @@ class YpCommunityLit extends YpBaseElement {
       </iron-pages>
     </yp-page>
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
 
@@ -174,7 +172,6 @@ class YpCommunityLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     GroupCollectionBehaviors,
     ypThemeBehavior,
     CollectionHelpers,
@@ -216,12 +213,12 @@ class YpCommunityLit extends YpBaseElement {
 
   _refreshTabsAndPages() {
     this.async(function () {
-      var pages = this.$$("#tabPages");
+      const pages = this.$$("#tabPages");
       if (pages) {
         pages.forceSynchronousItemUpdate();
       }
 
-      var paperTabs = this.$$("#paper_tabs");
+      const paperTabs = this.$$("#paper_tabs");
       if (paperTabs) {
         paperTabs.forceSynchronousItemUpdate();
         paperTabs.notifyResize();
@@ -231,7 +228,7 @@ class YpCommunityLit extends YpBaseElement {
 
   scrollToGroupItem() {
     if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
-      var list = this.$$("#communityNews");
+      const list = this.$$("#communityNews");
       if (list) {
         list.scrollToItem(window.appGlobals.cachedActivityItem);
         window.appGlobals.cachedActivityItem = null;
@@ -241,7 +238,7 @@ class YpCommunityLit extends YpBaseElement {
     } else if (this.selectedTab==="groups") {
       if (window.appGlobals.backToCommunityGroupItems &&
         window.appGlobals.backToCommunityGroupItems[this.community.id]) {
-        this.$.groupGrid.scrollToItem(window.appGlobals.backToCommunityGroupItems[this.community.id]);
+        this.$$("#groupGrid").scrollToItem(window.appGlobals.backToCommunityGroupItems[this.community.id]);
         window.appGlobals.backToCommunityGroupItems[this.community.id] = null;
       }
     }
@@ -276,7 +273,7 @@ class YpCommunityLit extends YpBaseElement {
     }
 
     this.async(function () {
-      var news = this.$$("#communityNews");
+      const news = this.$$("#communityNews");
       if (news) {
         news.fireResize();
       }
@@ -338,13 +335,13 @@ class YpCommunityLit extends YpBaseElement {
         this.set('createFabIcon', 'add');
       }
 
-      var url = this._communityHeaderUrl(this.community);
+      const url = this._communityHeaderUrl(this.community);
 
       this.setupGroups(this.community.Groups);
       this._setLocationHidden(this.community.Groups);
 
       this.async(function() {
-        var communityCard = this.$$('#communityCard');
+        const communityCard = this.$$('#communityCard');
         if (communityCard) {
           communityCard.setElevation(5);
           communityCard.lowerCardLater();
@@ -362,7 +359,7 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   _setLocationHidden(groups) {
-    var locationHidden = true;
+    let locationHidden = true;  
     groups.forEach(function(group) {
       if (group.configuration && group.configuration.locationHidden) {
         if (group.configuration.locationHidden != true) {
@@ -405,13 +402,13 @@ class YpCommunityLit extends YpBaseElement {
       }
 
       if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {
-        this.$.page.setupTopHeaderImage(this.community.CommunityHeaderImages);
+        this.$$("#page").setupTopHeaderImage(this.community.CommunityHeaderImages);
       } else {
-        this.$.page.setupTopHeaderImage(null);
+        this.$$("#page").setupTopHeaderImage(null);
       }
 
       if (window.location.href.indexOf("/community") >-1) {
-        var backPath, headerTitle, headerDescription;
+        let backPath, headerTitle, headerDescription;
         if (this.community.CommunityFolder) {
           backPath = "/community_folder/" + this.community.CommunityFolder.id;
           headerTitle = this.community.CommunityFolder.name;
@@ -437,8 +434,8 @@ class YpCommunityLit extends YpBaseElement {
             this.community.configuration.customBackURL : backPath
         });
       }
-      this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
-      this.$.pagesAjax.generateRequest();
+      this.$$("#pagesAjax").url = "/api/communities/"+this.community.id+"/pages";
+      this.$$("#pagesAjax").generateRequest();
       window.appGlobals.setAnonymousGroupStatus(null);
       window.appGlobals.disableFacebookLoginForGroup = false;
       window.appGlobals.externalGoalTriggerUrl = null;
@@ -455,10 +452,10 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   defaultGroupFirst(items) {
-    var filtered = [];
-    var defaultGroup = null;
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
+    const filtered = [];
+    let defaultGroup = null;
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.short_name != 'default') {
         filtered.push(item);
       } else {
@@ -470,9 +467,9 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   noTestGroup(items) {
-    var filtered = [];
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
+    const filtered = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
       if (item.short_name != 'test' && item.short_name != 'ac-posts' && item.short_name != 'development' && item.short_name.indexOf('2012') == -1 && item.short_name.indexOf('2013') == -1) {
         filtered.push(item);
       }
@@ -486,7 +483,8 @@ class YpCommunityLit extends YpBaseElement {
     }, 100);
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
   }
 }
 

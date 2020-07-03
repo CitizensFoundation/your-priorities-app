@@ -9,7 +9,6 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-material/paper-material.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
@@ -411,6 +410,18 @@ static get styles() {
   `
 }
 
+/*
+behaviors: [
+  CommunityBehaviors,
+  LargeCardBehaviors,
+  AccessHelpers,
+  ypGotAdminRightsBehavior,
+  ypGotoBehavior,
+  ypTruncateBehavior,
+  ypMediaFormatsBehavior
+],
+*/
+
   _exportLoginsUrl(access, community) {
     if (access && community) {
       return '/api/communities/'+community.id+'/export_logins';
@@ -427,7 +438,7 @@ static get styles() {
     if (community && community.configuration &&
       community.configuration.useVideoCover &&
       community.CommunityLogoVideos) {
-      var videoURL = this._getVideoURL(community.CommunityLogoVideos);
+      const videoURL = this._getVideoURL(community.CommunityLogoVideos);
       if (videoURL) {
         this.set('communityVideoId', community.CommunityLogoVideos[0].id);
         return videoURL;
@@ -443,7 +454,7 @@ static get styles() {
     if (community && community.configuration &&
       community.configuration.useVideoCover &&
       community.CommunityLogoVideos) {
-      var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
+      const videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
       if (videoPosterURL) {
         return videoPosterURL;
       } else {
@@ -464,7 +475,7 @@ static get styles() {
         if (community.configuration && community.configuration.welcomeHTML &&
           community.configuration.welcomeHTML !== "" &&
           this.$$("#welcomeHTML")) {
-            var div = document.createElement('div');
+            const div = document.createElement('div');
             div.innerHTML = community.configuration.welcomeHTML;
             this.$$("#welcomeHTML").innerHTML = "";
             dom(this.$$("#welcomeHTML")).appendChild(div);

@@ -3,11 +3,10 @@ import '@polymer/iron-image/iron-image.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import { WordWrap } from '../yp-behaviors/word-wrap.js';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
@@ -114,7 +113,7 @@ class YpOrganizationGridLit extends YpBaseElement {
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button .dialogDismiss="">${this.t('Close')}</paper-button>
+        <mwc-button .dialogDismiss .label="${this.t('Close')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -130,7 +129,7 @@ class YpOrganizationGridLit extends YpBaseElement {
               <div class="pageItem title">
                 ${this._organizationImageUrl(organization)}
               </div>
-              <paper-button data-args="${this.organization}" @tap="${this._editOrganization}">${this.t('update')}</paper-button>
+              <mwc-button data-args="${this.organization}" @click="${this._editOrganization}" .label="${this.t('update')}"></mwc-button>
             </div>
           </template>
         </iron-list>
@@ -150,7 +149,7 @@ class YpOrganizationGridLit extends YpBaseElement {
 
               ${ !this._userOrganizationName(user) ? html`
                 <div class="organization">
-                  <paper-button data-args="${this.user.id}" @tap="${this._addToOrganization}">${this.t('users.addToOrganization')}</paper-button>
+                  <mwc-button data-args="${this.user.id}" @click="${this._addToOrganization}" .label="${this.t('users.addToOrganization')}"></mwc-button>
                 </div>
               ` : html``}
 
@@ -158,7 +157,7 @@ class YpOrganizationGridLit extends YpBaseElement {
                 <div class="organizationName">
                   ${this._userOrganizationName(user)}
                 </div>
-                <paper-button data-args="${this.user.id}" data-args-org="${this._userOrganizationId(user)}" @tap="${this._removeFromOrganization}">${this.t('users.removeFromOrganization')}</paper-button>
+                <mwc-button data-args="${this.user.id}" data-args-org="${this._userOrganizationId(user)}" @click="${this._removeFromOrganization}" .label="${this.t('users.removeFromOrganization')}"></mwc-button>
               </div>
             </div>
           </template>
@@ -166,7 +165,7 @@ class YpOrganizationGridLit extends YpBaseElement {
       </paper-dialog-scrollable>
 
       <div class="buttons">
-        <paper-button .dialogDismiss>${this.t('close')}</paper-button>
+        <mwc-button .dialogDismiss .label="${this.t('close')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -179,7 +178,6 @@ class YpOrganizationGridLit extends YpBaseElement {
 
   /*
   behaviors: [
-    ypLanguageBehavior,
     WordWrap,
     ypMediaFormatsBehavior
   ],
@@ -193,7 +191,7 @@ class YpOrganizationGridLit extends YpBaseElement {
   }
 
   _editOrganization(event) {
-    var organization = JSON.parse(event.target.getAttribute('data-args'));
+    const organization = JSON.parse(event.target.getAttribute('data-args'));
     dom(document).querySelector('yp-app').getDialogAsync("organizationEdit", function (dialog) {
       dialog._clear();
       dialog.setup(organization, false, null);
@@ -219,37 +217,37 @@ class YpOrganizationGridLit extends YpBaseElement {
 
   _addToOrganization(event) {
     this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
-    this.$.selectOrganizationDialog.open();
+    this.$$("#selectOrganizationDialog").open();
   }
 
   _removeFromOrganization(event) {
-    var userId = event.target.getAttribute('data-args');
-    var organizationId = event.target.getAttribute('data-args-org');
-    this.$.removeOrganizationAjax.body = {};
-    this.$.removeOrganizationAjax.url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
-    this.$.removeOrganizationAjax.generateRequest();
+    const userId = event.target.getAttribute('data-args');
+    const organizationId = event.target.getAttribute('data-args-org');
+    this.$$("#removeOrganizationAjax").body = {};
+    this.$$("#removeOrganizationAjax").url = "/api/organizations/" + organizationId + "/" + userId + "/remove_user";
+    this.$$("#removeOrganizationAjax").generateRequest();
   }
 
   _selectOrganization(event, detail) {
-    this.$.addOrganizationAjax.body = {};
-    this.$.addOrganizationAjax.url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
-    this.$.addOrganizationAjax.generateRequest();
-    this.$.selectOrganizationDialog.close();
+    this.$$("#addOrganizationAjax").body = {};
+    this.$$("#addOrganizationAjax").url = "/api/organizations/" + event.target.id + "/" + this.userIdForSelectingOrganization + "/add_user";
+    this.$$("#addOrganizationAjax").generateRequest();
+    this.$$("#selectOrganizationDialog").close();
   }
 
   _addOrganizationResponse(event, detail) {
     window.appGlobals.notifyUserViaToast(this.t('users.organizationUserAdded')+' '+ detail.response.email);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _removeOrganizationResponse(event, detail) {
     window.appGlobals.notifyUserViaToast(this.t('users.organizationUserRemoved')+' '+ detail.response.email);
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   open() {
     this.set('availableOrganizations', this._availableOrganizations());
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 }
 

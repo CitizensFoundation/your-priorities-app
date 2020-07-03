@@ -16,7 +16,6 @@ import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '@polymer/app-route/app-location.js';
 import '@polymer/app-route/app-route.js';
 import '../yp-behaviors/yp-lodash-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-app-globals/yp-app-globals.js';
 import '../yp-app-globals/yp-app-user.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
@@ -440,7 +439,7 @@ class YpAppLit extends YpBaseElement {
           padding: 0;
         }
 
-        paper-button {
+        mwc-button {
           padding:0;
           margin: 0;
         }
@@ -548,10 +547,10 @@ class YpAppLit extends YpBaseElement {
 
             <span class="flex"></span>
             <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
-              <paper-button raised id="translationButton" @tap="${this._stopTranslation}" title="${this.t('stopAutoTranslate')}">
-                <iron-icon icon="translate"></iron-icon>
+              <mwc-button raised id="translationButton" 
+                          @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
                 <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
-              </paper-button>
+              </mwc-button>
             </div>
             <paper-icon-button .ariaLabel="${this.t('openMainMenu')}" id="paperToggleNavMenu" .icon="menu" @tap="${this._toggleNavDrawer}"></paper-icon-button>
             <paper-menu-button horizontal-align="right" hide="${this.hideHelpIcon}" class="helpButton">
@@ -572,7 +571,7 @@ class YpAppLit extends YpBaseElement {
                 <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
               </div>
             ` : html`
-              <paper-button class="loginButton" @tap="${this._login}">${this.t('user.login')}</paper-button>
+              <mwc-button class="loginButton" @click="${this._login}" .label="${this.t('user.login')}"></mwc-button>
             `}
 
           </app-toolbar>
@@ -590,8 +589,7 @@ class YpAppLit extends YpBaseElement {
 
       </app-header-layout>
     </app-drawer-layout>
-
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+    
     <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
 
     <app-location .route="${this.route}"></app-location>
@@ -607,7 +605,6 @@ class YpAppLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     ypGotoBehavior,
     ypTranslatedPagesBehavior,
@@ -689,9 +686,9 @@ class YpAppLit extends YpBaseElement {
   }
 
   _setupSamlCallback() {
-    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-    var eventer = window[eventMethod];
-    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+    const eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    const eventer = window[eventMethod];
+    const messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
     console.log("Have created event listener for samlLogin");
 
@@ -705,8 +702,8 @@ class YpAppLit extends YpBaseElement {
 
   _setupTranslationSystem() {
     console.log("Have started _setupTranslationSystem");
-    var hostname = window.location.hostname;
-    var defaultLocale = 'en';
+    const hostname = window.location.hostname;
+    let defaultLocale = 'en';
     if (hostname.indexOf('betrireykjavik') > -1) {
       defaultLocale = 'is';
     } else if (hostname.indexOf('betraisland') > -1) {
@@ -714,8 +711,8 @@ class YpAppLit extends YpBaseElement {
     } else if (hostname.indexOf('forbrukerradet') > -1) {
         defaultLocale = 'no';
     } else {
-      var tld = hostname.substring(hostname.lastIndexOf('.'));
-      var localeByTld = {
+      const tld = hostname.substring(hostname.lastIndexOf('.'));
+      let localeByTld = {
         '.fr': 'fr',
         '.hr': 'hr',
         '.hu': 'hu',
@@ -728,13 +725,13 @@ class YpAppLit extends YpBaseElement {
       defaultLocale = localeByTld[tld] || 'en';
     }
 
-    var language;
-    var storedLocale = localStorage.getItem('yp-user-locale');
+    let language;
+    const storedLocale = localStorage.getItem('yp-user-locale');
     if (storedLocale) {
       defaultLocale = storedLocale;
     }
 
-    var localeFromUrl;
+    let localeFromUrl;
 
     if (window.appGlobals.originalQueryParameters &&
         window.appGlobals.originalQueryParameters["locale"]) {
@@ -841,7 +838,7 @@ class YpAppLit extends YpBaseElement {
   }
 
   _refreshByName(id) {
-    var el = this.$$(id);
+    const el = this.$$(id);
     if (el) {
       el._refreshAjax();
     }
@@ -917,7 +914,7 @@ class YpAppLit extends YpBaseElement {
 
   _routePageChanged(pageData, oldPageData) {
     if (pageData) {
-      var params = this.route.path.split('/');
+      const params = this.route.path.split('/');
 
       if (this.route.path.indexOf('/user/reset_password') > -1 ||
         this.route.path.indexOf('/user/open_notification_settings') > -1 ||
@@ -937,21 +934,21 @@ class YpAppLit extends YpBaseElement {
         }
       } else {
 
-        var map = this._scrollPositionMap;
+        const map = this._scrollPositionMap;
 
         if (oldPageData != null && oldPageData.page != null) {
           map[oldPageData.page] = window.pageYOffset;
           console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
         }
 
-        var delayUntilScrollToPost = null;
+        let delayUntilScrollToPost = null;
 
         if (this.wide) {
           delayUntilScrollToPost = 2;
         }
 
         this.async(function () {
-          var skipMasterScroll = false;
+          const skipMasterScroll = false;
 
           if (oldPageData && oldPageData.page && pageData) {
             // Post -> Group
@@ -1029,7 +1026,7 @@ class YpAppLit extends YpBaseElement {
           }
 
           if (oldPageData && pageData && oldPageData.page===pageData.page) {
-            var testRoute = this.subRoute.path;
+            let testRoute = this.subRoute.path;
             testRoute = testRoute.replace("/","");
             if (isNaN(testRoute)) {
               skipMasterScroll = true;
@@ -1064,7 +1061,7 @@ class YpAppLit extends YpBaseElement {
   _pageChanged(page, oldPage) {
     console.log("Page changed to "+page);
     if (page) {
-      var resolvedPageUrl;
+      let resolvedPageUrl;
       if (page=="view-404") {
         resolvedPageUrl = this.resolveUrl("yp-view-404.html");
       } else if (page==='community_folder') {
@@ -1172,12 +1169,13 @@ class YpAppLit extends YpBaseElement {
     this.$$("#navDrawer").toggle();
   }
 
-  ready() {
-    console.info("yp-app is ready");
-    window.app = this;
-    this._setupTranslationSystem();
-    this.setTheme(16);
-    this._setupSamlCallback();
+  connectedCallback() {
+    super.connectedCallback()
+      console.info("yp-app is ready");
+      window.app = this;
+      this._setupTranslationSystem();
+      this.setTheme(16);
+      this._setupSamlCallback();
   }
 
   getDialogAsync(idName, callback) {
@@ -1209,7 +1207,7 @@ class YpAppLit extends YpBaseElement {
   }
 
   scrollPageToTop() {
-    var mainArea = document.getElementById('#mainArea');
+    const mainArea = document.getElementById('#mainArea');
     if (mainArea) {
       mainArea.scroller.scrollTop = 0;
     }
@@ -1230,9 +1228,9 @@ class YpAppLit extends YpBaseElement {
     this.set('headerTitle', document.title = header.headerTitle);
 
     this.async(function () {
-      var headerTitle = this.$$("#headerTitle");
+      const headerTitle = this.$$("#headerTitle");
       if (headerTitle) {
-        var length = headerTitle.innerHTML.length;
+        const length = headerTitle.innerHTML.length;
         if (this.wide) {
           headerTitle.style.fontSize = "20px";
         } else {
@@ -1307,7 +1305,7 @@ class YpAppLit extends YpBaseElement {
   _onSearch(e) {
     this.toggleSearch();
     this.unshift('previousSearches', e.detail.value);
-    var postsFilter = document.querySelector('#postsFilter');
+    const postsFilter = document.querySelector('#postsFilter');
     if (postsFilter) {
       postsFilter.searchFor(e.detail.value);
     }

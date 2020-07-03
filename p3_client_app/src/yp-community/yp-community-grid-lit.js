@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypCardMouseBehavior } from '../yp-behaviors/yp-card-mouse-behavior.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
 import './yp-community-card.js';
@@ -89,15 +88,21 @@ class YpCommunityGridLit extends YpBaseElement {
 `
   }
 
+/*
+  behaviors: [
+    ypIronListBehavior,
+    ypCardMouseBehavior
+  ],
+*/
 
   _newCommunity() {
     this.fire('add-new-community');
   }
 
   _scrollOffset(wide, communityGrid) {
-    var list = this.$.ironList;
+    const list = this.$$("#ironList");
     if (list) {
-      var offset = list.offsetTop;
+      let offset = list.offsetTop;
       offset -= 100;
       if (!this.wide)
         offset += 75;
@@ -120,7 +125,7 @@ class YpCommunityGridLit extends YpBaseElement {
 
   scrollToItem(item) {
     console.log("Community grid scrolling to item");
-    this.$.ironList.scrollToItem(item);
+    this.$$("#ironList").scrollToItem(item);
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
         bubbles: true,

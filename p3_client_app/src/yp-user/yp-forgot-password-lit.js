@@ -3,9 +3,8 @@ import '@polymer/iron-form/iron-form.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 import { YpBaseElement } from '../yp-base-element.js';
@@ -68,7 +67,6 @@ class YpForgotPasswordLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog">
       <h3>${this.t('user.forgotPassword')}</h3>
 
@@ -85,12 +83,12 @@ class YpForgotPasswordLit extends YpBaseElement {
 
       <div class="buttons" ?hidden="${this.emailHasBeenSent}">
         <yp-ajax id="forgotPasswordAjax" method="POST" url="/api/users/forgot_password" @error="${this._forgotPasswordError}" @response="${this._forgotPasswordResponse}"></yp-ajax>
-        <paper-button dialog-dismiss="">${this.t('cancel')}</paper-button>
-        <paper-button autofocus="" @tap="${this._validateAndSend}">${this.t('user.forgotPassword')}</paper-button>
+        <mwc-button dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+        <mwc-button autofocus="" @click="${this._validateAndSend}" .label="${this.t('user.forgotPassword')}"></mwc-button>
       </div>
 
       <div class="buttons" ?hidden="${!this.emailHasBeenSent}">
-        <paper-button .dialog-dismiss="">${this.t('ok')}</paper-button>
+        <mwc-button .dialog-dismiss .label="${this.t('ok')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -98,25 +96,19 @@ class YpForgotPasswordLit extends YpBaseElement {
 `
   }
 
-/*
-  behaviors: [
-    ypLanguageBehavior
-  ],
-*/
-
   onpointerenter(event) {
     event.stopPropagation();
     this._validateAndSend();
   }
 
   _validateAndSend(e) {
-    if (this.$.form.checkValidity() && this.email) {
+    if (this.$$("#form").checkValidity() && this.email) {
       if (!this.isSending) {
         this.set('isSending', true);
-        this.$.forgotPasswordAjax.body = JSON.stringify({
+        this.$$("#forgotPasswordAjax").body = JSON.stringify({
           email: this.email
         });
-        this.$.forgotPasswordAjax.generateRequest();
+        this.$$("#forgotPasswordAjax").generateRequest();
       }
     } else {
       return false;
@@ -142,11 +134,11 @@ class YpForgotPasswordLit extends YpBaseElement {
     if (detail && detail.email) {
       this.set('email', detail.email);
     }
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   close() {
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 }
 

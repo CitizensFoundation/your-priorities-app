@@ -5,7 +5,6 @@ import '@polymer/iron-media-query/iron-media-query.js';
 import 'lite-signal/lite-signal.js';
 //TODO: import 'paper-share-button/paper-share-button.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
 import { ypRemoveClassBehavior } from '../yp-behaviors/yp-remove-class-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
@@ -287,7 +286,6 @@ class YpPostActionsLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(max-width: 420px)" .query-matches="${this.small}"></iron-media-query>
 
     <yp-ajax id="endorseAjax" .method="POST" @response="${this._endorseResponse}"></yp-ajax>
@@ -319,7 +317,6 @@ class YpPostActionsLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypNumberFormatBehavior,
     ypRemoveClassBehavior,
     ypGotoBehavior
@@ -396,10 +393,10 @@ class YpPostActionsLit extends YpBaseElement {
   _onPostChanged(post, oldValue) {
     this.set('isEndorsed', false);
     if (post) {
-      this.removeClass(this.$.actionUp,'hearts-up-selected');
-      this.removeClass(this.$.actionDown, 'hearts-down-selected');
-      this.removeClass(this.$.actionUp,'default-buttons-up-selected');
-      this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+      this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+      this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+      this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+      this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
       this.set('endorseValue', 0);
 
       if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
@@ -438,7 +435,7 @@ class YpPostActionsLit extends YpBaseElement {
   _updateEndorsements(post) {
     this.set('isEndorsed', false);
     if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
-      var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
+      const thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
       if (thisPostsEndorsement)
         this._setEndorsement(thisPostsEndorsement.value);
     }
@@ -483,28 +480,28 @@ class YpPostActionsLit extends YpBaseElement {
 
     if (this.endorsementButtons=='hearts') {
       if (value > 0) {
-        this.$.actionUp.className += ' ' + 'hearts-up-selected';
-        this.removeClass(this.$.actionDown, 'hearts-down-selected');
-        this.$.iconUpButton.icon = "favorite";
+        this.$$("#actionUp").className += ' ' + 'hearts-up-selected';
+        this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+        this.$$("#iconUpButton").icon = "favorite";
       } else if (value < 0) {
-        this.$.actionDown.className += ' ' + 'hearts-down-selected';
-        this.removeClass(this.$.actionUp,'hearts-up-selected');
-        this.$.iconUpButton.icon = "favorite-border";
+        this.$$("#actionDown").className += ' ' + 'hearts-down-selected';
+        this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+        this.$$("#iconUpButton").icon = "favoriate-border";
       } else {
-        this.removeClass(this.$.actionUp,'hearts-up-selected');
-        this.removeClass(this.$.actionDown, 'hearts-down-selected');
-        this.$.iconUpButton.icon = "favorite-border";
+        this.removeClass(this.$$("#actionUp"),'hearts-up-selected');
+        this.removeClass(this.$$("#actionDown"), 'hearts-down-selected');
+        this.$$("#iconUpButton").icon = "favorite-border";
       }
     } else {
       if (value > 0) {
-        this.$.actionUp.className += ' ' + 'default-buttons-up-selected';
-        this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+        this.$$("#actionUp").className += ' ' + 'default-buttons-up-selected';
+        this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
       } else if (value < 0) {
-        this.$.actionDown.className += ' ' + 'default-buttons-down-selected';
-        this.removeClass(this.$.actionUp,'default-buttons-up-selected');
+        this.$$("#actionDown").className += ' ' + 'default-buttons-down-selected';
+        this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
       } else {
-        this.removeClass(this.$.actionUp,'default-buttons-up-selected');
-        this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
+        this.removeClass(this.$$("#actionUp"),'default-buttons-up-selected');
+        this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
       }
     }
   }
@@ -517,8 +514,8 @@ class YpPostActionsLit extends YpBaseElement {
 
   _endorseResponse(event, detail) {
     this._enableVoting();
-    var endorsement = detail.response.endorsement;
-    var oldEndorsementValue = detail.response.oldEndorsementValue;
+    const endorsement = detail.response.endorsement;
+    const oldEndorsementValue = detail.response.oldEndorsementValue;
     this._setEndorsement(endorsement.value);
     window.appUser.updateEndorsementForPost(this.post.id, endorsement);
     if (oldEndorsementValue) {
@@ -541,14 +538,14 @@ class YpPostActionsLit extends YpBaseElement {
 
   generateEndorsement(value) {
     if (window.appUser.loggedIn()===true) {
-      this.$.endorseAjax.url = '/api/posts/' + this.post.id + '/endorse';
-      this.$.endorseAjax.body = { post_id: this.post.id, value: value };
+      this.$$("#endorseAjax").url = '/api/posts/' + this.post.id + '/endorse';
+      this.$$("#endorseAjax").body = { post_id: this.post.id, value: value };
       if (this.endorseValue === value) {
-        this.$.endorseAjax.method = 'DELETE';
+        this.$$("#endorseAjax").method = 'DELETE';
       } else {
-        this.$.endorseAjax.method = 'POST';
+        this.$$("#endorseAjax").method = 'POST';
       }
-      this.$.endorseAjax.generateRequest();
+      this.$$("#endorseAjax").generateRequest();
     } else {
       this._enableVoting();
       window.appUser.loginForEndorse(this, { value: value } );
@@ -587,11 +584,12 @@ class YpPostActionsLit extends YpBaseElement {
     return small ? 'action-bar' : 'action-bar';
   }
 
-  ready() {
-    if (this.endorsementButtons) {
-      this.$.actionDown.className += ' ' + 'default-buttons-color';
-      this.$.actionUp.className += ' ' + 'default-buttons-color';
-    }
+  connectedCallback() {
+    super.connectedCallback()
+      if (this.endorsementButtons) {
+        this.$$("#actionDown").className += ' ' + 'default-buttons-color';
+        this.$$("#actionUp").className += ' ' + 'default-buttons-color';
+      }
   }
 }
 

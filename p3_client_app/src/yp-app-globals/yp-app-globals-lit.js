@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypAppRecommendationsBehavior } from './yp-app-recommendations-behavior.js';
 import { ypAppCacheBehavior } from './yp-app-cache-behavior.js';
@@ -127,7 +126,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     <paper-dialog id="dialog">
       <div class="dialogText">${this.notifyDialogText}</div>
       <div class="buttons">
-        <paper-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}">OK</paper-button>
+        <mwc-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}" .label="OK"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -144,7 +143,6 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior,
     ypAppRecommendationsBehavior,
     ypAppCacheBehavior,
@@ -160,7 +158,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
       localStorage.setItem("ypHaveShownRecommendationInfo", true);
       this.set('notifyDialogText', this.t('recommendationToastInfo'));
-      this.$.dialog.open();
+      this.$$("#dialog").open();
     }
   }
 
@@ -168,7 +166,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     if (window.appGlobals.hasTranscriptSupport && !localStorage.getItem("haveShownTranscriptInfo")) {
       localStorage.setItem("haveShownTranscriptInfo", true);
       this.set('notifyDialogText', this.t('speechToTextInfo'));
-      this.$.dialog.open();
+      this.$$("#dialog").open();
     }
   }
 
@@ -183,14 +181,14 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   sendVideoView(videoId) {
-    this.$.videoViewsAjax.body = { videoId: videoId };
-    this.$.videoViewsAjax.generateRequest();
+    this.$$("#videoViewsAjax").body = { videoId: videoId };
+    this.$$("#videoViewsAjax").generateRequest();
     this.activity('view', 'video', videoId);
   }
 
   sendLongVideoView(videoId) {
-    this.$.videoViewsAjax.body = { videoId: videoId, longPlaytime: true };
-    this.$.videoViewsAjax.generateRequest();
+    this.$$("#videoViewsAjax").body = { videoId: videoId, longPlaytime: true };
+    this.$$("#videoViewsAjax").generateRequest();
   }
 
   _hasAudioUploadSupport(event, detail) {
@@ -200,14 +198,14 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   sendAudioListen(audioId) {
-    this.$.audioListenAjax.body = { audioId: audioId };
-    this.$.audioListenAjax.generateRequest();
+    this.$$("#audioListenAjax").body = { audioId: audioId };
+    this.$$("#audioListenAjax").generateRequest();
     this.activity('view', 'audio', audioId);
   }
 
   sendLongAudioListen(audioId) {
-    this.$.audioListenAjax.body = { audioId: audioId, longPlaytime: true };
-    this.$.audioListenAjax.generateRequest();
+    this.$$("#audioListenAjax").body = { audioId: audioId, longPlaytime: true };
+    this.$$("#audioListenAjax").generateRequest();
   }
 
   changeLocaleIfNeededAfterWait(locale, force) {
@@ -241,7 +239,7 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   parseQueryString() {
-    var query = (window.location.search || '?').substr(1),
+    let query = (window.location.search || '?').substr(1),
       map   = {};
     query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
       map[key] = value;
@@ -296,7 +294,7 @@ class YpAppGlobalsLit extends YpBaseElement {
 
   reBoot() {
     if (!this.requestInProgress) {
-      this.$.boot.generateRequest();
+      this.$$("#boot").generateRequest();
     }
   }
 
@@ -307,7 +305,7 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   _removeSplash() {
-    var splash = document.getElementById('splashCore');
+    let splash = document.getElementById('splashCore');
     console.log("_removeSplashNode");
     if (splash) {
       this._removeSplashNode(splash);
@@ -368,9 +366,9 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   setupGroupConfigOverride(groupId, configOverride) {
-    var configOverrideHash = {};
+    const configOverrideHash = {};
     configOverride.split(";").forEach(function (configItem) {
-      var splitItem = configItem.split("=");
+      const splitItem = configItem.split("=");
       configOverrideHash[splitItem[0]] = splitItem[1];
     });
     this.groupConfigOverrides[groupId]=configOverrideHash;
@@ -384,7 +382,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     if (!configuration) {
       configuration = {};
     }
-    var override = this.groupConfigOverrides[groupId];
+    const override = this.groupConfigOverrides[groupId];
     if (!override) {
       return configuration;
     } else {
@@ -408,7 +406,7 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   activity(type, object, context, target) {
-    var actor;
+    let actor;
 
     if (window.appUser && window.appUser.user) {
       actor = window.appUser.user.id;
@@ -416,7 +414,7 @@ class YpAppGlobalsLit extends YpBaseElement {
       actor = "-1";
     }
 
-    var logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
+    const logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
 
     console.log(logString);
 
@@ -433,8 +431,8 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
 
     //TODO: Use fetch here
-    var activityAjax = document.createElement('iron-ajax');
-    var date = new Date();
+    const activityAjax = document.createElement('iron-ajax');
+    const date = new Date();
     activityAjax.handleAs = 'json';
     activityAjax.contentType = 'application/x-www-form-urlencoded';
     activityAjax.url = '/api/users/createActivityFromApp';
@@ -465,7 +463,7 @@ class YpAppGlobalsLit extends YpBaseElement {
       this.externalGoalCounter += 1;
       if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
         //TODO: Use fetch
-        var goalTriggerAjax = document.createElement('iron-ajax');
+        const goalTriggerAjax = document.createElement('iron-ajax');
         goalTriggerAjax.handleAs = 'json';
         goalTriggerAjax.url = this.externalGoalTriggerUrl;
         goalTriggerAjax.params = this.originalQueryParameters;
@@ -475,12 +473,13 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  ready() {
+  connectedCallback() {
+    super.connectedCallback()
     window.appStartTime = new Date();
     window.appGlobals = this;
 
     this.fire('app-ready');
-    this.$.boot.generateRequest();
+    this.$$("#boot").generateRequest();
     this.requestInProgress = true;
 
     window.googleMapsApiKey = null; //'AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0';
@@ -496,12 +495,12 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   getSessionFromCookie() {
-    var strCookies = document.cookie;
-    var cookiearray = strCookies.split(';');
-    var sid = '';
-    for (var i = 0; i < cookiearray.length; i++) {
-      var name = cookiearray[i].split('=')[0];
-      var value = cookiearray[i].split('=')[1];
+    const strCookies = document.cookie;
+    const cookiearray = strCookies.split(';');
+    let sid = '';
+    for (let i = 0; i < cookiearray.length; i++) {
+      const name = cookiearray[i].split('=')[0];
+      const value = cookiearray[i].split('=')[1];
       if (name == ' connect.sid')
         sid = value;
     }

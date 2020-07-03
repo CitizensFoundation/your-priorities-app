@@ -1,7 +1,6 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import 'lite-signal/lite-signal.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import '../yp-ajax/yp-ajax.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
@@ -48,7 +47,6 @@ class YpPostMoveLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <yp-edit-dialog id="editDialog" title="${this.editHeaderText}" .icon="language" confirmation-text="${this.t('post.statusChangeConfirmText')}" action="${this.action}" method="${this.method}" params="${this.params}" save-text="${this.saveText}" .toastText="${this.toastText}">
 
       ${ this.availableGroups.map(group => html`
@@ -65,7 +63,6 @@ class YpPostMoveLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypEditDialogBehavior,
     AccessHelpers,
     ypPostMoveBehavior
@@ -74,16 +71,16 @@ class YpPostMoveLit extends YpBaseElement {
 
   _selectGroup(event) {
     this.set('selectedGroupId', event.target.getAttribute('data-args'));
-    var groupName = event.target.getAttribute('data-args-name');
+    const groupName = event.target.getAttribute('data-args-name');
     dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
       dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
     }.bind(this));
   }
 
   _reallyMove() {
-    this.$.movePostAjax.url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
-    this.$.movePostAjax.body = {};
-    this.$.movePostAjax.generateRequest();
+    this.$$("#movePostAjax").url="/api/posts/"+this.post.id+'/'+this.selectedGroupId+'/move';
+    this.$$("#movePostAjax").body = {};
+    this.$$("#movePostAjax").generateRequest();
   }
 
   _movePostResponse() {
@@ -99,7 +96,7 @@ class YpPostMoveLit extends YpBaseElement {
     this.set('post', post);
     this.set('refreshFunction', refreshFunction);
     this._setupTranslation();
-    this.$.getAvailableGroupsAjax.generateRequest();
+    this.$$("#getAvailableGroupsAjax").generateRequest();
     this.open();
   }
 

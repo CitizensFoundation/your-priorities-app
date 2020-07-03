@@ -1,8 +1,7 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
+import '@material/mwc-button';
 import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
 import './yp-user-image.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -109,8 +108,6 @@ class YpUserWithOrganizationLit extends YpBaseElement {
 
   render() {
     return html`
-    ${this.user ? html`
-
       ${ this.user ? html`
         <div class="layout horizontal mainArea" .title="${this.userTitle}">
           <yp-user-image .titlefromuser="${this.userTitle}" user="${this.user}" ?hidden="${this.hideImage}"></yp-user-image>
@@ -129,8 +126,7 @@ class YpUserWithOrganizationLit extends YpBaseElement {
 
         </div>
       ` : html``}
-` : html``}
-`
+    `
   }
 
 /*
@@ -145,7 +141,7 @@ class YpUserWithOrganizationLit extends YpBaseElement {
   _computeUserTitle(user, titleDate) {
     if (user && titleDate) {
       const dateParsed = parseISO(titleDate);
-      var dateSince = formatDistance(dateParsed, new Date(),  {
+      const dateSince = formatDistance(dateParsed, new Date(),  {
         locale: enUS//this.language
       });
       return user.name + ' ' + dateSince;

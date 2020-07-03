@@ -1,13 +1,11 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-image/iron-image.js';
-import 'lite-signal/lite-signal.js';
 import '@polymer/iron-list/iron-list.js';
 import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-input/paper-textarea.js';
 import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import { WordWrap } from '../yp-behaviors/word-wrap.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
@@ -134,7 +132,6 @@ class YpPagesGridLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="editPageLocale" .modal class="layout vertical">
       <h2>${this.t('pages.editPageLocale')}</h2>
 
@@ -148,8 +145,8 @@ class YpPagesGridLit extends YpBaseElement {
 
 
       <div class="buttons">
-        <paper-button @tap="${this._closePageLocale}" .dialogDismiss>${this.t('close')}</paper-button>
-        <paper-button @tap="${this._updatePageLocale}" .dialogDismiss>${this.t('save')}</paper-button>
+        <mwc-button @click="${this._closePageLocale}" .dialogDismiss .label="${this.t('close')}"></mwc-button>
+        <mwc-button @click="${this._updatePageLocale}" .dialogDismiss .label="${this.t('save')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -172,23 +169,23 @@ class YpPagesGridLit extends YpBaseElement {
             `)}
 
             <paper-input @label-float class="localeInput" .length="2" .maxlength="2" .value="${this.newLocaleValue}"></paper-input>
-            <paper-button data-args="${this.page.id}" @tap="${this._addLocale}">${this.t('pages.addLocale')}</paper-button>
+            <mwc-button data-args="${this.page.id}" @click="${this._addLocale}" .label="${this.t('pages.addLocale')}"></mwc-button>
             <div ?hidden="${this.page.publaished}">
-              <paper-button data-args="${this.page.id}" @tap="${this._publishPage}">${this.t('pages.publish')}</paper-button>
+              <mwc-button data-args="${this.page.id}" @click="${this._publishPage}" .label="${this.t('pages.publish')}"></mwc-button>
             </div>
             <div ?hidden="${!this.page.published}">
-              <paper-button data-args="${this.page.id}" @tap="${this._unPublishPage}">${this.t('pages.unPublish')}</paper-button>
+              <mwc-button data-args="${this.page.id}" @click="${this._unPublishPage}" .label="${this.t('pages.unPublish')}"></mwc-button>
             </div>
-            <paper-button data-args="${this.page.id}" @tap="${this._deletePage}">${this.t('pages.deletePage')}</paper-button>
+            <mwc-button data-args="${this.page.id}" @click="${this._deletePage}" .label="${this.t('pages.deletePage')}"></mwc-button>
           </div>
         </template>
       </iron-list>
       <div class="layout horizontal">
-        <paper-button id="addPageButton" @tap="${this._addPage}">${this.t('pages.addPage')}</paper-button>
+        <mwc-button id="addPageButton" @click="${this._addPage}" .label="${this.t('pages.addPage')}"></mwc-button>
       </div>
 
       <div class="buttons">
-        <paper-button .dialogDismiss>${this.t('close')}</paper-button>
+        <mwc-button .dialogDismiss .label="${this.t('close')}"></mwc-button>
       </div>
     </paper-dialog>
 
@@ -203,17 +200,15 @@ class YpPagesGridLit extends YpBaseElement {
     `
   }
 
-
 /*
   behaviors: [
-    ypLanguageBehavior,
     WordWrap
   ],
 */
 
 
   _toLocaleArray(obj) {
-    var array = Object.keys(obj).map(function(key) {
+    const array = Object.keys(obj).map(function(key) {
       return {
         locale: key,
         value: obj[key]
@@ -228,7 +223,7 @@ class YpPagesGridLit extends YpBaseElement {
     this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
     this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]));
     this.set('currentlyEditingTitle',this.currentlyEditingPage["title"][this.currentlyEditingLocale]);
-    this.$.editPageLocale.open();
+    this.$$("#editPageLocale").open();
   }
 
   _closePageLocale() {
@@ -239,7 +234,7 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _dispatchAjax(ajax, pageId, path) {
-    var pageIdPath;
+    let pageIdPath;
     if (pageId) {
       pageIdPath = "/" + pageId + "/" + path;
     } else {
@@ -260,76 +255,76 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _updatePageLocale() {
-    this.$.updatePageAjax.body = {
+    this.$$("#updatePageAjax").body = {
       locale: this.currentlyEditingLocale,
       content: this.currentlyEditingContent,
       title: this.currentlyEditingTitle
     };
-    this._dispatchAjax(this.$.updatePageAjax, this.currentlyEditingPage.id, "update_page_locale")
+    this._dispatchAjax(this.$$("#updatePageAjax"), this.currentlyEditingPage.id, "update_page_locale")
     this._closePageLocale();
   }
 
   _publishPage(event) {
-    this.$.updatePageAjax.body = {};
-    var pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$.updatePageAjax, pageId, "publish_page")
+    this.$$("#updatePageAjax").body = {};
+    const pageId = event.target.getAttribute('data-args');
+    this._dispatchAjax(this.$$("#updatePageAjax"), pageId, "publish_page")
   }
 
   _publishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pagePublished'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _unPublishPage(event) {
-    this.$.updatePageAjax.body = {};
-    var pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$.updatePageAjax, pageId, "un_publish_page")
+    this.$$("#updatePageAjax").body = {};
+    const pageId = event.target.getAttribute('data-args');
+    this._dispatchAjax(this.$$("#updatePageAjax"), pageId, "un_publish_page")
   }
 
   _unPublishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageUnPublished'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _deletePage(event) {
-    this.$.deletePageAjax.body = {};
-    var pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$.deletePageAjax, pageId, "delete_page")
+    this.$$("#deletePageAjax").body = {};
+    const pageId = event.target.getAttribute('data-args');
+    this._dispatchAjax(this.$$("#deletePageAjax"), pageId, "delete_page")
   }
 
   _deletePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageDeleted'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _addLocale(event) {
     if (this.newLocaleValue && this.newLocaleValue.length>1) {
-      var pageId = event.target.getAttribute('data-args');
-      this.$.updatePageAjax.body = {
+      const pageId = event.target.getAttribute('data-args');
+      this.$$("#updatePageAjax").body = {
         locale: this.newLocaleValue.toLowerCase(),
         content: '',
         title: ''
       };
-      this._dispatchAjax(this.$.updatePageAjax, pageId, "update_page_locale")
+      this._dispatchAjax(this.$$("#updatePageAjax"), pageId, "update_page_locale")
       this.set('newLocaleValue', null);
     }
   }
 
   _addPage(event) {
-    this.$.newPageAjax.body = {};
-    this.$.addPageButton.disabled = true;
-    this._dispatchAjax(this.$.newPageAjax, null, "add_page")
+    this.$$("#newPageAjax").body = {};
+    this.$$("#addPageButton").disabled = true;
+    this._dispatchAjax(this.$$("#newPageAjax"), null, "add_page")
   }
 
   _newPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.newPageCreated'));
-    this.$.ajax.generateRequest();
-    this.$.addPageButton.disabled = false;
+    this.$$("#ajax").generateRequest();
+    this.$$("#addPageButton").disabled = false;
   }
 
   _updatePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").generateRequest();
   }
 
   _domainIdChanged(newGroupId) {
@@ -354,8 +349,8 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _generateRequest(id) {
-    this.$.ajax.url = "/api/"+this.modelType+"/"+id+"/pages_for_admin";
-    this.$.ajax.generateRequest();
+    this.$$("#ajax").url = "/api/"+this.modelType+"/"+id+"/pages_for_admin";
+    this.$$("#ajax").generateRequest();
   }
 
   _pagesResponse(event, detail) {
@@ -381,7 +376,7 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   open() {
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   _setupHeaderText() {

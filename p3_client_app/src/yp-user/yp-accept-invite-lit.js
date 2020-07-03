@@ -1,9 +1,8 @@
 import '@polymer/polymer/polymer-legacy.js';
 import '@polymer/iron-form/iron-form.js';
 import 'lite-signal/lite-signal.js';
-import '@polymer/paper-button/paper-button.js';
+import '@material/mwc-button';
 import '@polymer/paper-dialog/paper-dialog.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
@@ -67,7 +66,6 @@ class YpAcceptInviteLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <paper-dialog id="dialog" modal>
       <h3>${this.t('user.acceptInvite')}</h3>
 
@@ -81,28 +79,27 @@ class YpAcceptInviteLit extends YpBaseElement {
       <div class="buttons">
         <yp-ajax id="acceptInviteAjax" .method="POST" dispatch-error="" @error="${this._inviteError}" @response="${this._acceptInviteResponse}"></yp-ajax>
         <yp-ajax id="getInviteSenderAjax" .dispatch-error="" .method="GET" @error="${this._inviteError}" @response="${this._getInviteSenderResponse}"></yp-ajax>
-        <paper-button @tap="${this._cancel}" .dialog-dismiss="">${this.t('cancel')}</paper-button>
-        <paper-button .autofocus="" @tap="${this._acceptInvite}">${this.t('user.acceptInvite')}</paper-button>
+        <mwc-button @click="${this._cancel}" .dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+        <mwc-button .autofocus @click="${this._acceptInvite}" .label="${this.t('user.acceptInvite')}"></mwc-button>
       </div>
     </paper-dialog>
     `
   }
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypGotoBehavior
   ],
 */
 
   _inviteError(event, detail) {
-    this.$.acceptInviteAjax.showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
+    this.$$("#acceptInviteAjax").showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
     this.close();
   }
 
   _checkInviteSender(e) {
     if (this.token) {
-      this.$.getInviteSenderAjax.url = '/api/users/get_invite_info/'+this.token;
-      this.$.getInviteSenderAjax.generateRequest();
+      this.$$("#getInviteSenderAjax").url = '/api/users/get_invite_info/'+this.token;
+      this.$$("#getInviteSenderAjax").generateRequest();
     } else {
       console.warn("Can't find token for _checkInviteSender");
     }
@@ -124,9 +121,9 @@ class YpAcceptInviteLit extends YpBaseElement {
   }
 
   _reallyAcceptInvite(e) {
-    this.$.acceptInviteAjax.url = '/api/users/accept_invite/'+this.token;
-    this.$.acceptInviteAjax.body = {};
-    this.$.acceptInviteAjax.generateRequest();
+    this.$$("#acceptInviteAjax").url = '/api/users/accept_invite/'+this.token;
+    this.$$("#acceptInviteAjax").body = {};
+    this.$$("#acceptInviteAjax").generateRequest();
   }
 
   _getInviteSenderResponse(event, detail) {
@@ -152,18 +149,18 @@ class YpAcceptInviteLit extends YpBaseElement {
     if (token)
       this.set('token', token);
     this._checkInviteSender();
-    this.$.dialog.open();
+    this.$$("#dialog").open();
   }
 
   reOpen(token) {
     console.info("Repened user yp-accept-invite");
     if (token)
       this.set('token', token);
-    this.$.dialog.open();
+    this.$$("dialog").open();
   }
 
   close() {
-    this.$.dialog.close();
+    this.$$("#dialog").close();
   }
 }
 

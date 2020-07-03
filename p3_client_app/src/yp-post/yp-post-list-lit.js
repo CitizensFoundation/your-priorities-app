@@ -4,7 +4,6 @@ import '@polymer/iron-list/iron-list.js';
 import 'lite-signal/lite-signal.js';
 import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import './yp-post-card.js';
@@ -289,7 +288,6 @@ static get styles() {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
 
     <iron-a11y-keys id="a11y" .target="${this.searchTarget}" .keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
@@ -334,16 +332,15 @@ static get styles() {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     ypIronListBehavior
   ],
 */
 
 
   _scrollOffset(wide, group) {
-    var list = this.$$("iron-list");
+    const list = this.$$("iron-list");
     if (list) {
-      var offset = list.offsetTop;
+      let offset = list.offsetTop;
       offset -= 75;
       if (list.offsetTop>0 && offset>0) {
         console.info("Post list scroll offset: "+offset);
@@ -406,7 +403,7 @@ static get styles() {
   }
 
   buildPostsUrlPath() {
-    return this.$.postsFilter.buildPostsUrlPath();
+    return this.$$("#postsFilter").buildPostsUrlPath();
   }
 
   _searchingForChanged(newValue, oldValue) {
@@ -429,7 +426,7 @@ static get styles() {
   scrollToPost(post) {
     if (post && this.posts) {
       console.info("Scrolling to post: "+post.id);
-      this.$.ironList.scrollToItem(post);
+      this.$$("#ironList").scrollToItem(post);
       document.dispatchEvent(
         new CustomEvent("lite-signal", {
           bubbles: true,
@@ -478,7 +475,7 @@ static get styles() {
 
       this.set('moreToLoad', false);
       this.set('noPosts', false);
-      var objectId, objectType;
+      const objectId, objectType;
 
       if (this.userId) {
         objectId = this.userId + '/posts';
@@ -508,8 +505,8 @@ static get styles() {
   }
 
   _postsResponse(event, detail, sender) {
-    var posts = detail.response.posts;
-    this.set('postsCount', detail.response.totalPostsCount);
+    const posts = detail.response.posts;
+    this .set('postsCount', detail.response.totalPostsCount);
     this.fire('yp-post-count', {
       tabCounterId: this.tabCounterId,
       count: this.postsCount
@@ -518,7 +515,7 @@ static get styles() {
     if (!this.posts) {
       this.set('posts', posts);
     } else {
-      for (var i = 0; i < posts.length; i++) {
+      for (let i = 0; i < posts.length; i++) {
         this.push('posts', posts[i]);
       }
     }
@@ -536,7 +533,7 @@ static get styles() {
     }
 
     this.async(function () {
-      var postFilter = this.$$("#postsFilter");
+      const postFilter = this.$$("#postsFilter");
       if (postFilter) {
         postFilter._updateTitle();
       }
@@ -566,9 +563,9 @@ static get styles() {
   _checkForMultipleLanguages(posts) {
     if (!localStorage.getItem("dontPromptForAutoTranslation") &&
         !sessionStorage.getItem("dontPromptForAutoTranslation")) {
-      var firstLanguage=null;
-      var firstContent=null;
-      var multipleLanguages = false;
+      let firstLanguage=null;
+      let firstContent=null;
+      let multipleLanguages = false;
       posts.forEach(function (post) {
         if (post.language && !multipleLanguages) {
           if (!firstLanguage && post.language!=='??') {
@@ -592,7 +589,7 @@ static get styles() {
 
   _processCategories() {
     if (this.categoryId && this.group) {
-      for (var i = 0; i < this.group.Categories.length; i++) {
+      for (let i = 0; i < this.group.Categories.length; i++) {
         if (this.group.Categories[i].id == this.categoryId) {
           this.selectedCategoryName = this.group.Categories[i].name;
           //this.$.layout.updateFilter();

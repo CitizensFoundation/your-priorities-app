@@ -7,7 +7,6 @@ import '@polymer/paper-menu-button/paper-menu-button.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypGotAdminRightsBehavior } from '../yp-behaviors/yp-got-admin-rights-behavior.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -381,7 +380,6 @@ class YpPostHeaderLit extends YpBaseElement {
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 
     <div class="layout horizontal center-center">
@@ -445,8 +443,8 @@ class YpPostHeaderLit extends YpBaseElement {
                       <emoji-selector id="postTranscriptEmojiSelector"></emoji-selector>
                     </div>
                     <div class="layout horizontal self-end">
-                      <paper-button @tap="${this._cancelEdit}">${this.t('cancel')}</paper-button>
-                      <paper-button @tap="${this._saveEdit}">${this.t('update')}</paper-button>
+                      <mwc-button @click="${this._cancelEdit}" .label="${this.t('cancel')}"></mwc-button>
+                      <mwc-button @click="${this._saveEdit}" .label="${this.t('update')}"></mwc-button>
                     </div>
                   </div>
                 `: html``}
@@ -495,7 +493,6 @@ class YpPostHeaderLit extends YpBaseElement {
 
 /*
   behaviors: [
-    ypLanguageBehavior,
     YpPostBehavior,
     AccessHelpers,
     ypGotAdminRightsBehavior,
@@ -516,8 +513,8 @@ class YpPostHeaderLit extends YpBaseElement {
   _updateEmojiBindings(isEditing) {
     if (isEditing) {
       this.async(function () {
-        var point = this.$$("#postTranscriptionEditor");
-        var emoji = this.$$("#postTranscriptEmojiSelector");
+        const point = this.$$("#postTranscriptionEditor");
+        const emoji = this.$$("#postTranscriptEmojiSelector");
         if (point && emoji) {
           emoji.inputTarget = point;
         } else {
@@ -597,7 +594,7 @@ class YpPostHeaderLit extends YpBaseElement {
     this.set('checkTranscriptError', false);
     if (post && post.description) {
       this.async(function () {
-        var description = this.$$("#description");
+        const description = this.$$("#description");
         if (description) {
           // Special case for law Issue from a parliement
           if (post.data && post.data.dataType==='lawIssue' && post.data.issueStatus) {
