@@ -24,9 +24,9 @@ export const CommunityCollectionBehaviors = {
     }
   },
 
-  setupCommunities: function (communities) {
+  setupCommunities: function (communities, domainConfig) {
     this.set('communitiesLength', communities.length);
-    var splitCommunities = this.splitByStatus(communities);
+    var splitCommunities = this.splitByStatus(communities, domainConfig);
 //      this.set('featuredCommunities', splitCommunities.featured);
     this.set('activeCommunities', splitCommunities.featured.concat(splitCommunities.active.concat(splitCommunities.archived)));
   }

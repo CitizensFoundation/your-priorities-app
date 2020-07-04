@@ -20,10 +20,22 @@ export const ypLanguageBehavior = {
     }
   },
 
+  _setupRtl: function () {
+    if (YpMagicTextBox.rtlLanguages.indexOf(this.language) >-1 ) {
+      this.set('rtl', true);
+    } else {
+      this.set('rtl', false);
+    }
+  },
+
   ready: function () {
     if (window.i18nTranslation) {
       this.set('loadedLanguage', window.locale);
       this.set('language', window.locale);
+
+      if (this.rtl!==undefined) {
+        this._setupRtl();
+      }
     }
   },
 
@@ -33,6 +45,10 @@ export const ypLanguageBehavior = {
       this.set('loadedLanguage', detail.language);
       this.set('language', detail.language);
       window.locale = detail.language;
+
+      if (this.rtl!==undefined) {
+        this._setupRtl();
+      }
     }
   },
 

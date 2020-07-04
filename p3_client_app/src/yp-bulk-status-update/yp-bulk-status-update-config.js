@@ -140,7 +140,7 @@ Polymer({
     <lite-signal on-lite-signal-bulk-status-updates-templates="_updatedTemplates"></lite-signal>
 
     <paper-dialog id="dialog" modal="">
-      <h2>[[t('bulkStatusUdateConfig')]]</h2>
+      <h2>[[t('bulkStatusUdateConfig')]] - [[bulkStatusUpdate.id]]</h2>
       <paper-dialog-scrollable>
         <div class="layout horizontal wrap">
           <paper-tabs selected="{{selectedGroup}}" attr-for-selected="name">

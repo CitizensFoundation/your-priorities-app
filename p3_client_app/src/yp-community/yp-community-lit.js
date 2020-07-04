@@ -337,7 +337,12 @@ class YpCommunityLit extends YpBaseElement {
 
       const url = this._communityHeaderUrl(this.community);
 
-      this.setupGroups(this.community.Groups);
+      this.setupGroups(this.community.Groups, this.community.configuration);
+      this._setLocationHidden(this.community.Groups);
+
+      if (this.community.Groups && this.community.Groups.length>0) {
+        window.appGlobals.setAnonymousGroupStatus(this.community.Groups[0]);
+      }
       this._setLocationHidden(this.community.Groups);
 
       this.async(function() {
@@ -359,7 +364,7 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   _setLocationHidden(groups) {
-    let locationHidden = true;  
+    let locationHidden = true;
     groups.forEach(function(group) {
       if (group.configuration && group.configuration.locationHidden) {
         if (group.configuration.locationHidden != true) {
@@ -373,8 +378,36 @@ class YpCommunityLit extends YpBaseElement {
     this._refreshTabsAndPages();
   }
 
+  _openHelpPageIfNeeded () {
+    if (!sessionStorage.getItem("yp-welcome-for-community-"+this.community.id)) {
+      if (this.community && this.community.configuration && this.community.configuration.welcomePageId) {
+        this.async(function () {
+          this.fire('yp-open-page', {pageId: this.community.configuration.welcomePageId});
+          sessionStorage.setItem("yp-welcome-for-community-"+this.community.id, true)
+        }, 1200);
+      }
+    }
+  }
+
+  _useHardBack (configuration) {
+    if (configuration && configuration.customBackURL) {
+      var backUrl = configuration.customBackURL;
+      if (backUrl.startsWith("/community/") ||
+        backUrl.startsWith("/group/") ||
+        backUrl.startsWith("/domain/") ||
+        backUrl.startsWith("/post/")) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
   refresh() {
     if (this.community) {
+      this._openHelpPageIfNeeded();
       this.fire('yp-set-home-link', { type: 'community', id: this.community.id, name: this.community.name });
 
       window.appGlobals.setCommunityAnalyticsTracker(this.community.google_analytics_code);
@@ -418,29 +451,45 @@ class YpCommunityLit extends YpBaseElement {
           headerTitle = this.community.Domain.name;
           headerDescription = this.community.Domain.description;
         }
-
-
         this.fire("change-header", {
-          headerTitle: this.community.configuration.customBackName ?
+          headerTitle: this.community.configuration && this.community.configuration.customBackName ?
             this.community.configuration.customBackName :
             headerTitle,
           headerDescription: headerDescription,
           headerIcon: "group-work",
-          useHardBack: this.community.configuration.customBackURL ? true : false,
+          useHardBack: this._useHardBack(this.community.configuration),
           disableDomainUpLink: (this.community.configuration &&
             this.community.configuration.disableDomainUpLink === true),
           documentTitle: this.community.name,
-          backPath:  this.community.configuration.customBackURL ?
+          backPath: this.community.configuration && this.community.configuration.customBackURL ?
             this.community.configuration.customBackURL : backPath
         });
       }
-      this.$$("#pagesAjax").url = "/api/communities/"+this.community.id+"/pages";
-      this.$$("#pagesAjax").generateRequest();
-      window.appGlobals.setAnonymousGroupStatus(null);
+      this.$.pagesAjax.url = "/api/communities/"+this.community.id+"/pages";
+      this.$.pagesAjax.generateRequest();
       window.appGlobals.disableFacebookLoginForGroup = false;
-      window.appGlobals.externalGoalTriggerUrl = null;
-      window.appGlobals.currentGroupForceSaml = false;
+      window.appGlobals.externalGoalTriggerGroupId = null;
       window.appGlobals.currentGroup = null;
+
+      if (this.community.configuration &&
+          this.community.configuration.forceSecureSamlLogin &&
+          !this.checkCommunityAccess(this.community)) {
+        window.appGlobals.currentForceSaml = true;
+      } else {
+        window.appGlobals.currentForceSaml = false;
+      }
+
+      if (this.community.configuration && this.community.configuration.customSamlDeniedMessage) {
+        window.appGlobals.currentSamlDeniedMessage = this.community.configuration.customSamlDeniedMessage;
+      } else {
+        window.appGlobals.currentSamlDeniedMessage = null;
+      }
+
+      if (this.community.configuration && this.community.configuration.customSamlLoginMessage) {
+        window.appGlobals.currentSamlLoginMessage = this.community.configuration.customSamlLoginMessage;
+      } else {
+        window.appGlobals.currentSamlLoginMessage = null;
+      }
 
       if (this.community.configuration && this.community.configuration.signupTermsPageId &&
           this.community.configuration.signupTermsPageId!=-1) {

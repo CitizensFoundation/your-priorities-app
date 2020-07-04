@@ -72,12 +72,17 @@ class YpAppGlobalsLit extends YpBaseElement {
         value: null
       },
 
+      currentGroup: {
+        type: Object,
+        value: null,
+      },
+
       currentAnonymousGroup: {
         type: Object,
         value: null
       },
 
-      currentGroupForceSaml: {
+      currentForceSaml: {
         type: Boolean,
         value: false
       },
@@ -87,16 +92,27 @@ class YpAppGlobalsLit extends YpBaseElement {
         value: false
       },
 
+
+    currentSamlDeniedMessage: {
+      type: String,
+      value: null
+    },
+
+    currentSamlLoginMessage: {
+      type: String,
+      value: null
+    },
+
       originalQueryParameters: Object,
 
-      externalGoalTriggerUrl: String,
+      externalGoalTriggerGroupId: String,
 
       externalGoalCounter: {
         type: Number,
         value: 0
       },
 
-      goalEvents: {
+      goalTriggerEvents: {
         type: Array,
         value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
       },
@@ -214,6 +230,7 @@ class YpAppGlobalsLit extends YpBaseElement {
       if (force || !localStorage.getItem('yp-user-locale')) {
         i18next.changeLanguage(locale, function(loaded) {
           console.log("i18n init loaded "+loaded);
+          moment.locale([locale, 'en']);
           console.log("Changed language to "+locale);
           document.dispatchEvent(
             new CustomEvent("lite-signal", {
@@ -298,39 +315,6 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  _removeSplashNode(splash) {
-    console.log("Found splash");
-    splash.parentNode.removeChild(splash);
-    document.body.classList.remove('loading');
-  }
-
-  _removeSplash() {
-    let splash = document.getElementById('splashCore');
-    console.log("_removeSplashNode");
-    if (splash) {
-      this._removeSplashNode(splash);
-    } else {
-      this.async(function () {
-        console.log("_removeSplashNode 2");
-        splash = document.getElementById('splashCore');
-        if (splash) {
-          this._removeSplashNode(splash);
-        } else {
-          this.async(function () {
-            console.log("_removeSplashNode 3");
-            splash = document.getElementById('splashCore');
-            if (splash) {
-              this._removeSplashNode(splash);
-            } else {
-
-            }
-          }, 1500);
-        }
-      }, 100);
-    }
-    console.log("Removing splash");
-  }
-
   _userLoggedIn(event, user) {
     if (user) {
       this.async(function () {
@@ -405,6 +389,41 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
+  postLoadGroupProcessing(group) {
+    if (this.originalQueryParameters['yu']) {
+      var promotionTrackingAjax = document.createElement('iron-ajax');
+      promotionTrackingAjax.handleAs = 'json';
+      promotionTrackingAjax.contentType = 'application/json';
+      promotionTrackingAjax.url = "/api/groups/"+group.id+"/marketingTrackingOpen";
+      promotionTrackingAjax.body = this.originalQueryParameters;
+      promotionTrackingAjax.method = 'POST';
+      promotionTrackingAjax.generateRequest();
+
+      this.externalGoalTriggerGroupId = group.id;
+      this.goalTriggerEvents = ['newPost','newPointFor','newPointAgainst'];
+      this.originalQueryParameters['goalThreshold'] = 1;
+    }
+  }
+
+  checkExternalGoalTrigger(object) {
+    if (this.externalGoalTriggerGroupId &&
+      this.originalQueryParameters &&
+      this.originalQueryParameters.goalThreshold &&
+      this.goalTriggerEvents.indexOf(object) > -1) {
+        this.externalGoalCounter += 1;
+        if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
+          //TODO: Use fetch
+          var goalTriggerAjax = document.createElement('iron-ajax');
+          goalTriggerAjax.handleAs = 'json';
+          goalTriggerAjax.contentType = 'application/json';
+          goalTriggerAjax.url = "/api/groups/"+this.externalGoalTriggerGroupId+"/triggerTrackingGoal";
+          goalTriggerAjax.body = this.originalQueryParameters;
+          goalTriggerAjax.method = 'POST';
+          goalTriggerAjax.generateRequest();
+        }
+    }
+  }
+
   activity(type, object, context, target) {
     let actor;
 
@@ -455,24 +474,6 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  checkExternalGoalTrigger(object) {
-    if (this.externalGoalTriggerUrl &&
-        this.originalQueryParameters &&
-        this.originalQueryParameters.goalThreshold &&
-        this.goalEvents.indexOf(object) > -1) {
-      this.externalGoalCounter += 1;
-      if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
-        //TODO: Use fetch
-        const goalTriggerAjax = document.createElement('iron-ajax');
-        goalTriggerAjax.handleAs = 'json';
-        goalTriggerAjax.url = this.externalGoalTriggerUrl;
-        goalTriggerAjax.params = this.originalQueryParameters;
-        goalTriggerAjax.method = 'GET';
-        goalTriggerAjax.generateRequest();
-      }
-    }
-  }
-
   connectedCallback() {
     super.connectedCallback()
     window.appStartTime = new Date();
@@ -482,9 +483,9 @@ class YpAppGlobalsLit extends YpBaseElement {
     this.$$("#boot").generateRequest();
     this.requestInProgress = true;
 
-    window.googleMapsApiKey = null; //'AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0';
-    window.instagramAccessToken = '3066250812.cf0499d.4d1d4db0bb8b43b59c057346511161c8';
-    window.instagramClientID = 'd2f248ec764d4b208ab668b7561a89cc';
+    window.googleMapsApiKey = null;
+    window.instagramAccessToken = '';
+    window.instagramClientID = '';
 
     this.parseQueryString();
   }

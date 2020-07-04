@@ -190,7 +190,7 @@ export const ypMediaFormatsBehavior = {
     }
   },
 
-  _getVideoPosterURL: function (videos, selectedImageIndex) {
+  _getVideoPosterURL: function (videos, images, selectedImageIndex) {
     if (videos &&
       videos.length>0 &&
       videos[0].VideoImages &&
@@ -203,7 +203,13 @@ export const ypMediaFormatsBehavior = {
         if (selectedImageIndex>videos[0].VideoImages.length-1) {
           selectedImageIndex = 0;
         }
-        return JSON.parse(videos[0].VideoImages[selectedImageIndex].formats)[0];
+        if (selectedImageIndex===-2 && images) {
+            return this.getImageFormatUrl(images, 0);
+        } else {
+            if (selectedImageIndex<0)
+                selectedImageIndex = 0;
+            return JSON.parse(videos[0].VideoImages[selectedImageIndex].formats)[0];
+        }
     } else {
       return null;
     }

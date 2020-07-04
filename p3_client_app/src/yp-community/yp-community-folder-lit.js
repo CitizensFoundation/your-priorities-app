@@ -35,48 +35,48 @@ class YpCommunityFolderLit extends YpBaseElement {
         value: null,
         notify: true
       },
-  
+
       communityFolderId: {
         type: Number,
         value: null,
         observer: "_communityFolderIdChanged"
       },
-  
+
       communityFolder: {
         type: Object
       },
-  
+
       mapActive: {
         type: Boolean,
         value: false
       },
-  
+
       locationHidden: {
         type: Boolean,
         value: false
       },
-  
+
       useAlternativeHeader: {
         type: Boolean,
         value: false
       },
-  
+
       isOldiOs: {
         type: Boolean,
         computed: '_isOldiOs(communityFolderId)'
       },
-  
+
       useNormalHeader: {
         type: Boolean,
         value: true
       }
-    }          
+    }
   }
-  
+
   static get styles() {
     return [
-      css`    
-      
+      css`
+
     .card {
         padding: 16px;
     }
@@ -102,10 +102,10 @@ class YpCommunityFolderLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-    
+
       `, YpFlexLayout]
     }
-  
+
   render() {
     return html`
     <yp-page id="page" .createFabIcon="${this.createFabIcon}" .hideAllTabs="" .createFabTitle="${t(this.group.add)}" @yp-create-fab-tap="${this._newGroup}">
@@ -241,8 +241,8 @@ behaviors: [
     if (this.communityFolder) {
       this.fire('yp-set-home-link', { type: 'communityFolder', id: this.communityFolder.id, name: this.communityFolder.name });
 
-      if (this.communityFolder.theme_id!=null) {
-        this.setTheme(this.communityFolder.theme_id);
+      if (this.communityFolder.theme_id!=null || (this.communityFolder.configuration && this.communityFolder.configuration.themeOverrideColorPrimary!=null)) {
+        this.setTheme(this.communityFolder.theme_id, this.communityFolder.configuration);
       } else if (this.communityFolder.Domain.theme_id!=null) {
         this.setTheme(this.communityFolder.Domain.theme_id);
       }
@@ -279,11 +279,30 @@ behaviors: [
       }
       this.$$("#pagesAjax").url = "/api/domains/"+this.communityFolder.Domain.id+"/pages";
       this.$$("#pagesAjax").generateRequest();
-      window.appGlobals.setAnonymousGroupStatus(null);
       window.appGlobals.disableFacebookLoginForGroup = false;
-      window.appGlobals.externalGoalTriggerUrl = null;
-      window.appGlobals.currentGroupForceSaml = false;
+      window.appGlobals.externalGoalTriggerGroupId = null;
       window.appGlobals.currentGroup = null;
+
+      if (this.communityFolder.configuration &&
+        this.communityFolder.configuration.forceSecureSamlLogin &&
+        !this.checkCommunityAccess(this.community)) {
+        window.appGlobals.currentForceSaml = true;
+      } else {
+        window.appGlobals.currentForceSaml = false;
+      }
+
+      if (this.communityFolder.configuration && this.communityFolder.configuration.customSamlDeniedMessage) {
+        window.appGlobals.currentSamlDeniedMessage = this.communityFolder.configuration.customSamlDeniedMessage;
+      } else {
+        window.appGlobals.currentSamlDeniedMessage = null;
+      }
+
+      if (this.communityFolder.configuration && this.communityFolder.configuration.customSamlLoginMessage) {
+        window.appGlobals.currentSamlLoginMessage = this.communityFolder.configuration.customSamlLoginMessage;
+      } else {
+        window.appGlobals.currentSamlLoginMessage = null;
+      }
+
 
       if (this.communityFolder.configuration && this.communityFolder.configuration.signupTermsPageId &&
         this.communityFolder.configuration.signupTermsPageId!=-1) {

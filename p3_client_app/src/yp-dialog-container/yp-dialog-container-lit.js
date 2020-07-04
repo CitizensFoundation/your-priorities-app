@@ -73,6 +73,16 @@ class YpDialogContainerLit extends YpBaseElement {
           value: false
         },
 
+        gotCreateReport: {
+          type: Boolean,
+          value: false
+        },
+
+        gotDuplicateCollection: {
+          type: Boolean,
+          value: false
+        },
+
         gotMediaRecorder: {
           type: Boolean,
           value: false
@@ -83,8 +93,13 @@ class YpDialogContainerLit extends YpBaseElement {
           value: false
         },
 
+        autoTranslateDialogOpen: {
+          type: Boolean,
+          value: false
+        },
+
         facebookPixelTrackingId: String
-      }
+      };
     }
 
   static get styles() {
@@ -161,100 +176,118 @@ class YpDialogContainerLit extends YpBaseElement {
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
       `: html``}
 
+      ${this.autoTranslateDialogOpen ? html`
+        <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
+      `: html``}
+
+
         <iron-lazy-pages selected="${this.selectedDialog}" .attrForSelected="name">
-          <template is="dom-if" .name="userLogin" restamp>
+          <template is="dom-if" name="userLogin" restamp>
             <yp-login id="userLogin" @yp-forgot-password="${this._forgotPassword}"></yp-login>
           </template>
 
-          <template is="dom-if" .name="forgotPassword" restamp>
+          <template is="dom-if" name="forgotPassword" restamp>
             <yp-forgot-password id="forgotPassword"></yp-forgot-password>
           </template>
 
-          <template is="dom-if" .name="resetPassword" restamp>
+          <template is="dom-if" name="resetPassword" restamp>
             <yp-reset-password id="resetPassword"></yp-reset-password>
           </template>
 
-          <template is="dom-if" .name="acceptInvite" restamp>
+          <template is="dom-if" name="ratings" restamp="">
+            <yp-dialog-ratings id="ratings"></yp-dialog-ratings>
+          </template>
+
+          <template is="dom-if" name="acceptInvite" restamp>
             <yp-accept-invite id="acceptInvite"></yp-accept-invite>
           </template>
 
-          <template is="dom-if" .name="missingEmail" restamp>
+          <template is="dom-if" name="missingEmail" restamp>
             <yp-missing-email id="missingEmail"></yp-missing-email>
           </template>
 
-          <template is="dom-if" .name="communityEdit" restamp>
+          <template is="dom-if" name="communityEdit" restamp>
             <yp-community-edit id="communityEdit"></yp-community-edit>
           </template>
 
-          <template is="dom-if" .name="groupEdit" restamp>
+          <template is="dom-if" name="groupEdit" restamp>
             <yp-group-edit .new="" id="groupEdit"></yp-group-edit>
           </template>
 
-          <template is="dom-if" .name="postEdit" restamp>
+          <template is="dom-if" name="postEdit" restamp>
             <yp-post-edit id="postEdit"></yp-post-edit>
           </template>
 
-          <template is="dom-if" .name="userImageEdit" restamp>
+          <template is="dom-if" name="userImageEdit" restamp>
             <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
           </template>
 
-          <template is="dom-if" .name="magicTextDialog" restamp>
+          <template is="dom-if" name="magicTextDialog" restamp>
             <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
           </template>
 
-          <template is="dom-if" .name="apiActionDialog" restamp>
+          <template is="dom-if" name="apiActionDialog" restamp>
             <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
           </template>
 
-          <template is="dom-if" .name="autoTranslateDialog" restamp>
+          <template is="dom-if" name="autoTranslateDialog" restamp>
             <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
           </template>
 
-          <template is="dom-if" .name="userEdit" restamp>
+          <template is="dom-if" name="userEdit" restamp>
             <yp-user-edit id="userEdit" .method="PUT"></yp-user-edit>
           </template>
 
-          <template is="dom-if" .name="userDeleteOrAnonymize" restamp>
+          <template is="dom-if" name="userDeleteOrAnonymize" restamp>
             <yp-user-delete-or-anonymize id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
           </template>
 
-          <template is="dom-if" .name="categoryEdit" restamp>
+          <template is="dom-if" name="categoryEdit" restamp>
             <yp-category-edit .new="" id="categoryEdit"></yp-category-edit>
           </template>
 
-          <template is="dom-if" .name="pagesGrid" restamp>
+          <template is="dom-if" name="pagesGrid" restamp>
             <yp-pages-grid id="pagesGrid"></yp-pages-grid>
           </template>
 
-          <template is="dom-if" .name="organizationsGrid" restamp>
+          <template is="dom-if" name="organizationsGrid" restamp>
             <yp-organizations-grid id="organizationsGrid"></yp-organizations-grid>
           </template>
 
-          <template is="dom-if" .name="organizationEdit" restamp>
+          <template is="dom-if" name="organizationEdit" restamp>
             <yp-organization-edit id="organizationEdit"></yp-organization-edit>
           </template>
 
-          <template is="dom-if" .name="domainEdit" restamp>
+          <template is="dom-if" name="domainEdit" restamp>
             <yp-domain-edit id="domainEdit"></yp-domain-edit>
           </template>
 
-          <template is="dom-if" .name="postStatusChangeEdit" restamp>
+          <template is="dom-if" name="postStatusChangeEdit" restamp>
             <yp-post-status-change-edit id="postStatusChangeEdit"></yp-post-status-change-edit>
           </template>
 
-          <template is="dom-if" .name="postMove" restamp>
+          <template is="dom-if" name="postMove" restamp>
             <yp-post-move id="postMove"></yp-post-move>
           </template>
 
-          <template is="dom-if" .name="none" restamp>
+          <template is="dom-if" name="none" restamp>
+             <div hidden> </div>
           </template>
 
-          <template is="dom-if" .name="usersGrid" restamp>
+          <template is="dom-if" name="usersGrid" restamp>
             <yp-users-grid id="usersGrid"></yp-users-grid>
           </template>
 
-          <template is="dom-if" .name="contentModeration" restamp>
+          <template is="dom-if" name="contentModeration" restamp>
             <yp-content-moderation id="contentModeration"></yp-content-moderation>
+          </template>
+
+          <template is="dom-if" name="createReport" restamp="">
+            <yp-create-report id="createReport"></yp-create-report>
+          </template>
+
+          <template is="dom-if" name="duplicateCollection" restamp="">
+            <yp-duplicate-collection id="duplicateCollection"></yp-duplicate-collection>
           </template>
         </iron-lazy-pages>
 
@@ -350,8 +383,9 @@ class YpDialogContainerLit extends YpBaseElement {
     import(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-bulk-status-updates.js")).then(() => {
       this.$$("#loadingDialog").close();
       console.info("Have loaded bulk status container");
-      this.set('bulkStatusUpdates', true);
     });
+    this.set('bulkStatusUpdates', true);
+
   }
 
   closeDialog(idName) {
@@ -366,8 +400,22 @@ class YpDialogContainerLit extends YpBaseElement {
 
   dialogClosed(detail) {
     if (detail.name===this.selectedDialog) {
-      this.set('selectedDialog', 'none');
+      this.set('selectedDialog', "none");
       console.log("Setting selectedDialog to none");
+    }
+  }
+
+  getRatingsDialogAsync(callback) {
+    if (this.gotRatingsDialog) {
+      this.getDialogAsync("ratings", callback);
+    } else {
+      this.$.loadingDialog.open();
+      this.importHref(this.resolveUrl("/src/yp-rating/yp-dialog-ratings.html"), function () {
+        this.$.loadingDialog.close();
+        console.info("Have loaded ratings dialog");
+        this.gotRatingsDialog=true;
+        this.getDialogAsync("ratings", callback);
+      }.bind(this), null, true);
     }
   }
 
@@ -403,6 +451,35 @@ class YpDialogContainerLit extends YpBaseElement {
     }
   }
 
+
+  getCreateReportAsync(callback) {
+    if (this.gotCreateReport) {
+      this.getDialogAsync("createReport", callback);
+    } else {
+      this.$.loadingDialog.open();
+      this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-create-report.html"), function () {
+        this.$.loadingDialog.close();
+        console.info("Have loaded createReport");
+        this.set('gotCreateReport', true);
+        this.getDialogAsync("createReport", callback);
+      }.bind(this), null, true);
+    }
+  }
+
+  getDuplicateCollectionAsync(callback) {
+    if (this.gotDuplicateCollection) {
+      this.getDialogAsync("duplicateCollection", callback);
+    } else {
+      this.$.loadingDialog.open();
+      this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-duplicate-collection.html"), function () {
+        this.$.loadingDialog.close();
+        console.info("Have loaded duplicateCollection");
+        this.set('gotDuplicateCollection', true);
+        this.getDialogAsync("duplicateCollection", callback);
+      }.bind(this), null, true);
+    }
+  }
+
   getMediaRecorderAsync(callback) {
     if (this.gotMediaRecorder) {
       this.getDialogAsync("mediaRecorder", callback);
@@ -424,9 +501,12 @@ class YpDialogContainerLit extends YpBaseElement {
       this.set('pageDialogOpen', true);
     } else if (idName==="confirmationDialog") {
       this.set('confirmationDialogOpen', true);
-    } else if (idName!=='notificationToast') {
+    } else if (idName==="autoTranslateDialog") {
+      this.set('autoTranslateDialogOpen', true);
+    } else if (idName!=='notificationToast' && idName!=='masterToast') {
       this.set('pageDialogOpen', false);
       this.set('confirmationDialogOpen', false);
+      this.set('autoTranslateDialogOpen', false);
       this.set('selectedDialog', idName);
     }
 

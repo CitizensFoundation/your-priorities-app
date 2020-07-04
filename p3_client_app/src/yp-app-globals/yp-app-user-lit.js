@@ -15,81 +15,89 @@ class YpAppUserLit extends YpBaseElement {
       loginForEditParams: {
         type: Object
       },
-  
+
       loginForNewPointParams: {
         type: Object
       },
-  
+
       loginForEndorseParams: {
         type: Object
       },
-  
+
+      loginForRatingsParams: {
+        type: Object
+      },
+
       loginForPointQualityParams: {
         type: Object
       },
-  
+
       loginForMembershipParams: {
         type: Object
       },
-  
+
       loginFor401refreshFunction: {
         type: Function,
         value: null
       },
-  
+
       loginForNotificationSettingsParams: {
         type: Boolean,
         value: false
       },
-  
+
       toastLoginTextCombined: {
         type: String
       },
-  
+
       toastLogoutTextCombined: {
         type: String
       },
-  
+
       user: {
         type: Object,
         observer: "_onUserChanged"
       },
-  
+
       endorsementPostsIndex: {
         type: Object
       },
-  
+
+      ratingPostsIndex: {
+        type: Object
+      },
+
       membershipsIndex: {
         type: Object
       },
-  
+
       pointQualitiesIndex: {
         type: Object
       },
-  
+
       adminRights: {
         type: Object
       },
-  
+
       memberships: {
         type: Object
       },
-  
+
       completeExternalLoginText: {
         type: String,
         value: null
       },
-  
+
       isPollingForLogin: {
         type: Boolean,
         value: false
       },
-  
+
       lastLoginMethod: String,
       facebookPopupWindow: Object,
       samlPopupWindow: Object,
       pollingStartedAt: Date,
-  
+
       hasIssuedLogout: {
         type: Boolean,
         value: false
@@ -104,11 +112,16 @@ class YpAppUserLit extends YpBaseElement {
       paper-toast {
         z-index: 9999;
       }
+
+      yp-ajax {
+        margin-top: 10px;
+        margin-right: 4px;
+      }
     `, YpFlexLayout]
   }
 
   render() {
-    return html` 
+    return html`
     <yp-session id="session"></yp-session>
 
     <div class="layout horizontal center-center">
@@ -154,6 +167,11 @@ class YpAppUserLit extends YpBaseElement {
 
   loginForEndorse(postActionElement, params) {
     this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
+    this.openUserlogin();
+  }
+
+  loginForRatings(postActionElement) {
+    this.loginForRatingsParams = { postActionElement: postActionElement };
     this.openUserlogin();
   }
 
@@ -222,6 +240,13 @@ class YpAppUserLit extends YpBaseElement {
     }
     this.fire("login");
     this._checkLoginForParameters();
+
+    // Redirect to another local service after login, for example the analytics app
+    this.async(function () {
+      if (window.appGlobals.originalQueryParameters && window.appGlobals.originalQueryParameters['raLogin']) {
+        window.location = window.appGlobals.originalQueryParameters['raLogin'];
+      }
+    });
   }
 
   _checkLoginForParameters() {
@@ -240,6 +265,10 @@ class YpAppUserLit extends YpBaseElement {
       const endorseParams = this.loginForEndorseParams;
       endorseParams.postActionElement.generateEndorsementFromLogin(endorseParams.params.value);
       this.loginForEndorseParams = null;
+    } else if (this.loginForRatingsParams) {
+      var ratingsParams = this.loginForRatingsParams;
+      ratingsParams.postActionElement.openRatingsDialog();
+      this.loginForRatingsParams = null;
     } else if (this.loginForPointQualityParams) {
       const pointQualityParams = this.loginForPointQualityParams;
       pointQualityParams.pointActionElement.generatePointQualityFromLogin(pointQualityParams.params.value);
@@ -337,7 +366,7 @@ class YpAppUserLit extends YpBaseElement {
 
   loggedIn() {
     const isCorrectLoginProviderAndAgency = true;
-    if (window.appGlobals.currentGroupForceSaml) {
+    if (window.appGlobals.currentForceSaml) {
       if (!this.checkGroupAccess(window.appGlobals.currentGroup)) {
         if (this.user) {
           if (this.user.loginProvider !== "saml")
@@ -370,9 +399,13 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   connectedCallback() {
-    super.connectedCallback()
+    super.connectedCallback();
     window.appUser = this;
-    this.checkLogin();
+    if (!window.location.pathname.startsWith("/survey/")) {
+      this.checkLogin();
+    } else {
+      console.log("Not checking login in survey mode");
+    }
   }
 
   cancelLoginPolling() {
@@ -402,7 +435,8 @@ class YpAppUserLit extends YpBaseElement {
   _pollForLoginResponse(event, detail) {
     console.log("Got polling for login response");
     if (this.pollingStartedAt) {
-      if (detail.response===0 && this.pollingStartedAt) {
+      const user = detail.response;
+      if (user && user.notLoggedIn===true && this.pollingStartedAt) {
         let timeSpent = (new Date() - this.pollingStartedAt);
         if (timeSpent<5*60*1000) {
           this.async(function () {
@@ -412,7 +446,7 @@ class YpAppUserLit extends YpBaseElement {
           this.pollingStartedAt = null;
           console.error("Timeout in login polling");
         }
-      } else if (detail.response.name) {
+      } else if (user.name) {
         this.cancelLoginPolling();
         if (this.facebookPopupWindow) {
           this.loginFromFacebook();
@@ -467,22 +501,24 @@ class YpAppUserLit extends YpBaseElement {
   }
 
   updateEndorsementForPost(postId, newEndorsement) {
-    if (this.user.Endorsements) {
-      let hasChanged = false;
-      for(let i=0; i<this.user.Endorsements.length; i++) {
-        if (this.user.Endorsements[i].post_id===postId) {
-          if (newEndorsement) {
-            this.user.Endorsements[i] = newEndorsement;
-          } else {
-            this.user.Endorsements[i].splice(i, 1);
-          }
-          hasChanged = true;
-          break;
-        }
-      }
-      if (hasChanged)
-        this._updateEndorsementPostsIndex(this.user);
+    if (!this.user.Endorsements) {
+      this.user.Endorsements = [];
     }
+    var hasChanged = false;
+    for(var i=0; i<this.user.Endorsements.length; i++) {
+      if (this.user.Endorsements[i].post_id===postId) {
+        if (newEndorsement) {
+          this.user.Endorsements[i] = newEndorsement;
+        } else {
+          this.user.Endorsements.splice(i, 1);
+        }
+        hasChanged = true;
+        break;
+      }
+    }
+    if (!hasChanged && newEndorsement)
+      this.user.Endorsements.push(newEndorsement);
+    this._updateEndorsementPostsIndex(this.user);
   }
 
   _updateEndorsementPostsIndex(user) {
@@ -496,6 +532,41 @@ class YpAppUserLit extends YpBaseElement {
     }
   }
 
+  _updateRatingPostsIndex(user) {
+    if (user && user.Ratings && user.Ratings.length>0) {
+      this.ratingPostsIndex = {};
+      for(var i=0; i<user.Ratings.length; i++){
+        if (!this.ratingPostsIndex[ user.Ratings[i].post_id ])
+          this.ratingPostsIndex[ user.Ratings[i].post_id ] = {};
+        this.ratingPostsIndex[ user.Ratings[i].post_id ][user.Ratings[i].type_index] = user.Ratings[i];
+      }
+    } else {
+      this.ratingPostsIndex = {}
+    }
+  }
+
+  updateRatingForPost(postId, typeIndex, newRating) {
+    if (!this.user.Ratings) {
+      this.user.Ratings = [];
+    }
+
+    var hasChanged = false;
+    for(var i=0; i<this.user.Ratings.length; i++) {
+      if (this.user.Ratings[i].post_id===postId && this.user.Ratings[i].type_index===typeIndex) {
+        if (newRating) {
+          this.user.Ratings[i] = newRating;
+        } else {
+          this.user.Ratings.splice(i, 1);
+        }
+        hasChanged = true;
+        break;
+      }
+    }
+    if (!hasChanged && newRating)
+      this.user.Ratings.push(newRating);
+    this._updateRatingPostsIndex(this.user);
+  }
+
   updatePointQualityForPost(pointId, newPointQuality) {
     if (this.user.PointQualities) {
       let hasChanged = false;
@@ -504,7 +575,7 @@ class YpAppUserLit extends YpBaseElement {
           if (newPointQuality) {
             this.user.PointQualities[i] = newPointQuality;
           } else {
-            this.user.PointQualities[i].splice(i, 1);
+            this.user.PointQualities.splice(i, 1);
           }
           hasChanged = true;
           break;
@@ -526,11 +597,12 @@ class YpAppUserLit extends YpBaseElement {
     }
   }
 
-  _onUserChanged(newValue, oldValue) {
-    this.fire("user-changed", newValue);
-    if (newValue) {
-      this._updateEndorsementPostsIndex(newValue);
-      this._updatePointQualitiesIndex(newValue);
+  _onUserChanged(user) {
+    this.fire("user-changed", user);
+    if (user) {
+      this._updateEndorsementPostsIndex(user);
+      this._updatePointQualitiesIndex(user);
+      this._updateRatingPostsIndex(user);
       document.dispatchEvent(
         new CustomEvent("lite-signal", {
           bubbles: true,
@@ -552,10 +624,10 @@ class YpAppUserLit extends YpBaseElement {
   _isLoggedInResponse(event, detail) {
     const user = detail.response;
 
-    if (user===0) {
+    if (user && user.notLoggedIn===true) {
       console.info("Remove user session");
       this.removeUserSession();
-    } else if (user.name && user.profile_data && user.profile_data.isAnonymousUser) {
+    } else if (user && user.name && user.profile_data && user.profile_data.isAnonymousUser) {
       console.info("Logging in anon user");
       this.async(function () {
         console.info("Logging in anon user 2");
@@ -565,19 +637,39 @@ class YpAppUserLit extends YpBaseElement {
           window.appGlobals.setAnonymousUser(user);
         }
       }, 500);
-    } else if (user.name) {
+    } else if (user && user.name) {
       this.setLoggedInUser(user);
     }
 
-    if (user.missingEmail) {
+    if (user && user.missingEmail) {
       dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
         dialog.open(user.loginProvider);
       }.bind(this));
-    } else if (user.profile_data &&
+    } else if (user && user.profile_data &&
                user.profile_data.saml_show_confirm_email_completed===false) {
       dom(document).querySelector('yp-app').getDialogAsync("missingEmail", function (dialog) {
         dialog.open(user.loginProvider, true, user.email);
       }.bind(this));
+    }
+
+    if (user) {
+      if (user.customSamlDeniedMessage) {
+        window.appGlobals.currentSamlDeniedMessage = user.customSamlDeniedMessage;
+      } else {
+        window.appGlobals.currentSamlDeniedMessage = null;
+      }
+
+      if (user.customSamlLoginMessage) {
+        window.appGlobals.currentSamlLoginMessage = user.customSamlLoginMessage;
+      } else {
+        window.appGlobals.currentSamlLoginMessage = null;
+      }
+
+      if (user.forceSecureSamlLogin) {
+        window.appGlobals.currentForceSaml = true;
+      } else {
+        window.appGlobals.currentForceSaml = false;
+      }
     }
 
     if (this.completeExternalLoginText) {

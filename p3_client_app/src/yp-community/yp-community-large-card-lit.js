@@ -70,7 +70,12 @@ class YpCommunityLargeCardLit extends YpBaseElement {
         type: String,
         computed: '_exportLoginsUrl(hasCommunityAccess, community)'
       },
-    }
+
+      exportUsersUrl: {
+        type: String,
+        computed: '_exportUsersUrl(hasCommunityAccess, community)'
+      }
+    };
   }
 static get styles() {
   return [
@@ -84,6 +89,10 @@ static get styles() {
 
       .description {
         line-height: var(--description-line-height, 1.3);
+      }
+
+      video {
+        outline: none !important;
       }
 
       .stats {
@@ -161,7 +170,7 @@ static get styles() {
         padding-top: 16px;
         padding-bottom: 16px;
         min-height: 31px;
-        padding-right: 24px;
+        padding-right: 32px;
       }
 
       .textBox {
@@ -352,7 +361,7 @@ static get styles() {
            ${this.communityVideoURL ? html`
               <video id="videoPlayer" .dataId="${this.communityVideoId}" .controls="" .preload="meta" class="image pointer" src="${this.communityVideoURL}" .playsinline="" .poster="${thiscommunityVideoPosterURL}"></video>
             ` : html`
-              <iron-image class="image" .sizing="cover" src="${this.communityLogoImagePath}"></iron-image>
+              <iron-image class="image" .sizing="cover" alt="${this.community.name}" src="${this.communityLogoImagePath}"></iron-image>
             `}
 
           </div>
@@ -362,9 +371,11 @@ static get styles() {
             <div class="layout horizontal wrap">
               <div class="layout vertical description-and-stats">
                 <div class="description">
-                  <div class="community-name">
-                    <yp-magic-text .textType="communityName" .contentLanguage="${this.community.language}" .disableTranslation="${this.community.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.communityNameFul}" .contentId="${this.community.id}">
-                    </yp-magic-text>
+                  <div class="community-name" role="heading" aria-level="1" aria-label="[[community.name]]">
+                  ${this.communityVideoURL ? html`
+                      <yp-magic-text text-type="communityName" content-language="[[community.language]]" disable-translation="[[community.configuration.disableNameAutoTranslation]]" text-only="" content="[[communityNameFull]]" content-id="[[community.id]]">
+                      </yp-magic-text>
+                  ` : ''}
                   </div>
                   <div hidden="" class="communityAccess">${this._communityAccessText(community.access)}</div>
                   <yp-magic-text id="description" class="communityDescription" .textType="communityContent" contentLanguage="${this.community.language}" .content="${this.community.description}" .contentId="${this.community.id}">
@@ -385,7 +396,8 @@ static get styles() {
                 <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="moderationAllMenuItem">
                   ${this.t('manageAllContent')}
                 </paper-item>
-                <a ?hidden="${!this.hasCommunityAccess}" .target="_blank" href="${this.exportLoginsUrl}"><paper-item id="exportLogins">${this.t('exportLogins')}</paper-item></a>
+                <a ?hidden="${!this.hasCommunityAccess}" target="_blank" href="${this.exportLoginsUrl}"><paper-item id="exportLogins">${this.t('exportLogins')}</paper-item></a>
+                <a ?hidden="${!this.hasCommunityAccess}" target="_blank" href\$="${this.exportUsersUrl}"><paper-item id="exportUsers">[[t('exportUsers')]]</paper-item></a>
 
                 <paper-item ?hidden="${!this.hasCommunityAccess}" id="deleteMenuItem">${this.t('community.delete')}</paper-item>
                 <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="anonymizeMenuItem">${this.t('anonymizeCommunityContent')}</paper-item>
@@ -393,6 +405,8 @@ static get styles() {
                 <paper-item ?hidden="${!this.hasCommunityAccessAndNotFolder}" id="bulkStatusUpdateMenuItem">${this.t('bulkStatusUpdate')}</paper-item>
                 <paper-item id="addGroupMenuItem" hidden="${this.community.is_community_folder}">${this.t('group.new')}</paper-item>
                 <paper-item ?hidden="" id="addCommunityFolderMenuItem">${this.t('newCommunityFolder')}</paper-item>
+                <paper-item id="openAnalyticsApp" hidden?="${!this.hasCommunityAccess}">${this.t('openAnalyticsApp')}</paper-item>
+
               </paper-listbox>
             </paper-menu-button>
           </div>
@@ -430,6 +444,14 @@ behaviors: [
     }
   }
 
+  _exportUsersUrl(access, community) {
+    if (access && community) {
+      return '/api/communities/'+community.id+'/export_users';
+    } else {
+      return null;
+    }
+  }
+
   _hasCommunityAccessAndNotFolder(community, hasCommunityAccess) {
     return (community && !community.is_community_folder && hasCommunityAccess) || false
   }
@@ -454,7 +476,8 @@ behaviors: [
     if (community && community.configuration &&
       community.configuration.useVideoCover &&
       community.CommunityLogoVideos) {
-      const videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
+      const videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos, community.CommunityLogoImages);
+
       if (videoPosterURL) {
         return videoPosterURL;
       } else {
@@ -543,6 +566,8 @@ behaviors: [
       this._openDeleteContent();
     else if (detail.item.id==="addCommunityFolderMenuItem")
       this.fire('yp-new-community-folder');
+    else if (detail.item.id==="openAnalyticsApp")
+      window.location = "/analytics/community/"+this.community.id;
     this.$$("paper-listbox").select(null);
   }
 

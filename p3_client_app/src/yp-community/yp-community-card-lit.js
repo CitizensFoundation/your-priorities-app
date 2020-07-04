@@ -211,7 +211,7 @@ render() {
         ${this.noImage ? html`
           <iron-image .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToCommunity}"></iron-image>
         `: html`
-          <iron-image .sizing="cover" .archived="${this.archived}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
+          <iron-image .sizing="cover" .archived="${this.archived}" alt="${this.community.name}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
         `}
 
       </div>

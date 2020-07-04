@@ -23,11 +23,15 @@ export const ypTranslatedPagesBehavior = {
   },
 
   openPageFromId: function (pageId) {
-    this.pages.forEach(function (page) {
-      if (page.id==pageId) {
-        this._openPage(page)
-      }
-    }.bind(this));
+    if (this.pages) {
+      this.pages.forEach(function (page) {
+        if (page.id==pageId) {
+          this._openPage(page)
+        }
+      }.bind(this));
+    } else {
+      console.warn("Trying to open a page when not loaded");
+    }
   },
 
   openUserInfoPage: function (pageId) {
@@ -35,8 +39,22 @@ export const ypTranslatedPagesBehavior = {
       this._openPage(this.pages[pageId]);
     } else {
       this.async(function () {
-        this._openPage(this.pages[pageId]);
-      }, 1000);
+        if (this.pages && this.pages.length>0) {
+          this._openPage(this.pages[pageId]);
+        } else {
+          this.async(function () {
+            if (this.pages && this.pages.length>0) {
+              this._openPage(this.pages[pageId]);
+            } else {
+              this.async(function () {
+                if (this.pages && this.pages.length>0) {
+                  this._openPage(this.pages[pageId]);
+                }
+              }, 1500);
+            }
+          }, 1000);
+        }
+      }, 1500);
     }
   },
 

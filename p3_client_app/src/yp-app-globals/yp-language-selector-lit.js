@@ -23,12 +23,20 @@ class YpLanguageSelectorLit extends YpBaseElement {
           is: 'Íslenska',
           es: 'Spanish',
           it: 'Italian',
+          ar: 'Arabic',
+          ar_EG: 'Arabic (EG)',
           ca: 'Catalan',
+          ro_MD: 'Moldovan',
           de: 'German',
           da: 'Danish',
+          sv: 'Swedish',
           en_CA: 'English (CA)',
           nl: 'Dutch',
           no: 'Norwegian',
+          uk: 'Ukrainian',
+          sq: 'Albanian',
+          ky: 'Kyrgyz',
+          uz: 'Uzbek',
           tr: 'Turkish',
           fa: 'Persian',
           pl: 'Polish',
@@ -47,7 +55,7 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
       noGoogleTranslateLanguages: {
         type: Array,
-        value: ['kl','sr_latin']
+        value: ['kl']
       },
 
       languages: {
@@ -141,7 +149,7 @@ class YpLanguageSelectorLit extends YpBaseElement {
         </paper-listbox>
       </paper-dropdown-menu>
       <div ?hidden="${!this.canUseAutoTranslate}">
-        <mwc-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton" 
+        <mwc-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton"
                     @click="${this._startTranslation}" .icon="translate" .label="${this.t('autoTranslate')}">
         </mwc-button>
         <mwc-button ?hidden="${!this.autoTranslate}" .icon="translate" raised class="layout horizontal stopTranslateButton" @click="${this._stopTranslation}" .title="${this.t('stopAutoTranslate')}">
@@ -150,7 +158,7 @@ class YpLanguageSelectorLit extends YpBaseElement {
       </div>
     </div>
 
-    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" @response="${this._hasAutoTranslationResponse}"></yp-ajax>  
+    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" @response="${this._hasAutoTranslationResponse}"></yp-ajax>
     `
   }
 

@@ -30,62 +30,64 @@ class YpCommunityGridLit extends YpBaseElement {
   static get styles() {
     return [
       css`
+        .card[wide] {
+          padding: 16px;
+        }
 
-    .card[wide] {
-      padding: 16px;
-    }
+        .card {
+          padding: 0;
+          padding-top: 16px;
+        }
 
-    .card {
-        padding: 0;
-        padding-top: 16px;
-      }
+        .card[wide-padding] {
+          padding: 16px !important;
+        }
 
-      .card[wide-padding] {
-        padding: 16px !important;
-      }
+        .archivedText {
+          font-size: 25px;
+          color: #333;
+        }
 
-      .archivedText {
-        font-size: 25px;
-        color: #333;
-      }
+        .archivedBorder {
+          border-bottom: 1px solid;
+          width: 95%;
+          margin-bottom: 12px;
+          border-color: #444;
+        }
 
-      .archivedBorder {
-        border-bottom: 1px solid;
-        width: 95%;
-        margin-bottom: 12px;
-        border-color: #444;
-      }
+        iron-list {
+          height: 100vh;
+        }
 
-      iron-list {
-        height: 100vh;
-      }
+        [hidden] {
+          display: none !important;
+        }
 
-      [hidden] {
-        display: none !important;
-      }
+        :focus {
+        }
 
-      :focus {
-        outline: none;
-      }
+        @media (max-width: 960px) {
+        }
 
-      @media (max-width: 960px) {
-      }
-
-      `, YpFlexLayout]
+        a {
+          text-decoration: none;
+          width: 100%;
+        }
+      `, YpFlexLayout
+    ];
   }
 
   render() {
     return html`
-        <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-
-          <iron-list id="ironList" .scrollOffset="${this.scrollOffset}" .items="${this.activeCommunities}" as="community" .scrollTarget="document" grid="${this.wide}">
-            <template>
-              <div class="card layout vertical center-center" .tabIndex="${this.tabIndex}" .widePadding="${this.wide}">
-                <yp-community-card .wide="${this.wide}" .community="${this.community}" @mouseover="${this.cardMouseOver}" @mouseout="${this.cardMouseOut}"></yp-community-card>
-              </div>
-            </template>
-          </iron-list>
-`
+      <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
+      <iron-list id="ironList" selection-enabled="" scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[activeCommunities]]" as="community" scroll-target="document" grid\$="[[wide]]" role="list">
+        <template>
+          <div class="card layout vertical center-center" wide-padding\$="[[wide]]" tabindex\$="[[tabIndex]]" role="listitem" aria-level="2" aria-label="[[community.name]]">
+            <a href="/[[_communityPath(community)]]/[[community.id]]" id="communityCardHref[[community.id]]" class="layout vertical center-center"><yp-community-card wide\$="[[wide]]" community="[[community]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-community-card></a>
+          </div>
+        </template>
+      </iron-list>
+    `;
   }
 
 /*
@@ -94,6 +96,23 @@ class YpCommunityGridLit extends YpBaseElement {
     ypCardMouseBehavior
   ],
 */
+
+  _selectedItemChanged (event, detail) {
+    if (detail && detail.value) {
+      var selectedCard = this.$$("#communityCardHref"+detail.value.id);
+      if (selectedCard) {
+        selectedCard.click();
+      }
+    }
+  }
+
+  _communityPath (community) {
+    if (community && community.is_community_folder) {
+      return 'community_folder';
+    } else {
+      return 'community';
+    }
+  }
 
   _newCommunity() {
     this.fire('add-new-community');

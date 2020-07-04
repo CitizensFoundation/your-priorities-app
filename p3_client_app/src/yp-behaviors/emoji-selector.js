@@ -174,24 +174,24 @@ Polymer({
           </paper-tabs>
 
           <iron-pages selected="{{selected}}">
-            <div class="emoji-section">
+            <div class="emoji-section" role="list">
               <p class="section-title">[[t('recentlyUsedEmoji')]]</p>
               <template is="dom-repeat" id="resultList" items="{{recentlyUsedEmojis}}">
-                <div class="emoji-icon" on-tap="_onEmojiClick">{{item}}</div>
+                <div class="emoji-icon" role="button" tabindex\$="[[_tabIndex(index)]]" on-keydown="_keyDown" on-tap="_onEmojiClick">{{item}}</div>
               </template>
             </div>
             <template is="dom-repeat" items="[[emojis]]" as="category">
-              <div class="emoji-section">
+              <div class="emoji-section" role="list">
                 <p class="section-title">[[category.title]]</p>
                 <template is="dom-repeat" items="[[category.items]]">
-                  <div class="emoji-icon" on-tap="_onEmojiClick" title="{{item.keywords}}">{{item.char}}</div>
+                  <div class="emoji-icon" role="button" tabindex\$="[[_tabIndex(index)]]" on-keydown="_keyDown" on-tap="_onEmojiClick" title="{{item.keywords}}">{{item.char}}</div>
                 </template>
               </div>
             </template>
-            <div class="emoji-section">
+            <div class="emoji-section" role="list">
               <p class="section-title">[[t('emojiSearchResults')]]</p>
               <template is="dom-repeat" id="resultList2" items="{{searchResults}}">
-                <div class="emoji-icon" on-tap="_onEmojiClick" title="{{item.keywords}}">{{item.char}}</div>
+                <div class="emoji-icon" role="button" tabindex\$="[[_tabIndex(index)]]" on-keydown="_keyDown" on-tap="_onEmojiClick" title="{{item.keywords}}">{{item.char}}</div>
               </template>
             </div>
           </iron-pages>
@@ -251,6 +251,16 @@ Polymer({
     smallScreen: {
       type: Boolean,
       value: false
+    }
+  },
+
+  _tabIndex: function (index) {
+    return index+1;
+  },
+
+  _keyDown: function (event) {
+    if (event.keyCode===13) {
+      this._onEmojiClick(event);
     }
   },
 

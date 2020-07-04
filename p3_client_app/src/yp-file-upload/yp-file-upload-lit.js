@@ -153,6 +153,11 @@ class YpFileUploadLit extends YpBaseElement {
           value: 'Error uploading file...'
       },
 
+      noDefaultCoverImage: {
+        type: Boolean,
+        value: false
+      },
+
       /**
        * `_shownDropText` indicates whether or not the drop text should be shown
       */
@@ -354,6 +359,11 @@ class YpFileUploadLit extends YpBaseElement {
        mwc-button {
          min-width: 100px;
        }
+
+       .mainPhotoCheckbox {
+         margin-top: 4px;
+         margin-bottom: 4px;
+       }
     `, YpFlexLayout]
   }
 
@@ -397,6 +407,9 @@ class YpFileUploadLit extends YpBaseElement {
                 <img .class="${this._classFromImageIndex(index)}" data-index="${this.index}" @tap="${this._selectVideoCover}" .sizing="cover" class="previewFrame" src="${this.image}">
               `)}
 
+              <div class="layout horizontal mainPhotoCheckbox" ?hidden="${this.noDefaultCoverImage}">
+                <paper-checkbox id="useMainPhotoId" on-tap="_selectVideoCoverMainPhoto">${this.t('useMainPhoto')}</paper-checkbox>
+              </div>
             </div>
           </div>
         `: html``}
@@ -453,6 +466,7 @@ class YpFileUploadLit extends YpBaseElement {
     this.set('previewVideoUrl', null);
     this.set('videoImages', null);
     this.set('isPollingForTranscoding', false);
+    this.set('useMainPhotoForVideoCover', false);
 
     this.$$("#fileInput").value = null;
     if (this.videoUpload)
@@ -722,6 +736,17 @@ class YpFileUploadLit extends YpBaseElement {
     this.set('videoImages', null);
     this.async(function () {
       this.set('videoImages', videoImages);
+    });
+    this.set('useMainPhotoForVideoCover', false);
+  }
+
+  _selectVideoCoverMainPhoto() {
+    this.async(function () {
+      if (this.$$("#useMainPhotoId") && this.$$("#useMainPhotoId").checked) {
+        this.$.setVideoCoverAjax.url ="/api/videos/"+this.currentVideoId+'/setVideoCover';
+        this.$.setVideoCoverAjax.body = { frameIndex: -2 };
+        this.$.setVideoCoverAjax.generateRequest();
+      }
     });
   }
 

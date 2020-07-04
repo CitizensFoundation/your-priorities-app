@@ -327,7 +327,7 @@ class YpDomainLit extends YpBaseElement {
     }
 
     if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
-      this.set('createFabIcon', 'group-work');
+      this.set('createFabIcon', 'add');
     }
 
     window.appGlobals.setupGoogleAnalytics(this.domain);
@@ -363,10 +363,12 @@ class YpDomainLit extends YpBaseElement {
     }
     window.appGlobals.setAnonymousGroupStatus(null);
     window.appGlobals.disableFacebookLoginForGroup = false;
-    window.appGlobals.externalGoalTriggerUrl = null;
-    window.appGlobals.currentGroupForceSaml = false;
+    window.appGlobals.externalGoalTriggerGroupId = null;
+    window.appGlobals.currentForceSaml = false;
+    window.appGlobals.currentSamlDeniedMessage = null;
+    window.appGlobals.currentSamlLoginMessage = null;
     window.appGlobals.currentGroup = null;
   }
 }
 
-window.customElements.define('yp-domain-lit', YpDomainLit)
+window.customElements.define('yp-domain-lit', YpDomainLit);

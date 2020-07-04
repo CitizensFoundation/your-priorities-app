@@ -22,11 +22,21 @@ class YpEditDialogLit extends YpBaseElement {
       mediumHeight: Boolean,
       largeHeight: Boolean,
       action: {
-      type: String
+       type: String
+      },
+
+      tablet: {
+        type: Boolean,
+        value: false
       },
 
       baseAction: {
         type: String
+      },
+
+      cancelText: {
+        type: String,
+        value: null
       },
 
       method: {
@@ -64,10 +74,15 @@ class YpEditDialogLit extends YpBaseElement {
         type: String
       },
 
+      narrowScreen: {
+        type: Boolean,
+        observer: '_narrowScreenChanged',
+        notify: true
+      },
+
       narrow: {
         type: Boolean,
-        observer: '_narrowChanged',
-        notify: true
+        computed: '_narrow(narrowScreen,tablet)'
       },
 
       params: {
@@ -177,7 +192,7 @@ class YpEditDialogLit extends YpBaseElement {
         padding: 24px 24px;
       }
 
-      @media (max-width: 601px) {
+      @media (max-width: 1024px) {
         paper-dialog > * {
           padding: 0 0;
         }
@@ -223,7 +238,7 @@ class YpEditDialogLit extends YpBaseElement {
         height: 100%;
       }
 
-      @media (max-width: 600px) {
+      @media (max-width: 1024px) {
         paper-dialog > * {
           padding: 0;
           margin: 0;
@@ -234,6 +249,16 @@ class YpEditDialogLit extends YpBaseElement {
           max-height: 100% !important;
           height: 100% !important;
         }
+      }
+
+      paper-dialog[tablet] > * {
+        padding: 0;
+        margin: 0;
+        background-color: #FFF;
+      }
+
+      paper-dialog[tablet] {
+        max-width: 3200px !important;
       }
 
       .toolbar {
@@ -251,6 +276,7 @@ class YpEditDialogLit extends YpBaseElement {
       .largeIcon {
         width: 48px;
         height: 48px;
+        margin-left: 8px;
       }
 
       .smallIcon {
@@ -258,6 +284,7 @@ class YpEditDialogLit extends YpBaseElement {
         height: 32px;
         padding-right: 8px;
         margin-top: 7px;
+        margin-left: 8px;
       }
 
       .titleHeader {
@@ -317,17 +344,33 @@ class YpEditDialogLit extends YpBaseElement {
           min-height: 350px;
         }
       }
-  `, YpFlexLayout]
+
+      paper-dialog[rtl] {
+        direction: rtl;
+      }
+
+      paper-dialog, paper-checkbox {
+        --paper-checkbox-label: {
+          padding-right: 6px;
+        }
+      }
+
+      paper-dialog, paper-radio-button {
+        --paper-radio-button-label: {
+          padding-right: 6px;
+        }
+      }
+  `, YpFlexLayout];
   }
 
   render() {
     return html`
-    <paper-dialog .name="${this.name}" id="editDialog" class="${this._computeClass(narrow)}" @iron-overlay-closed="${this_dialogClosed}" with-backdrop="${!this.narrowPad}" modal>
-      <iron-media-query query="(max-width: 1024px)" query-matches="${this.narrow}"></iron-media-query>
+    <paper-dialog ?rtl="${this.rtl}" .name="${this.name}" id="editDialog" class="${this._computeClass(narrow)}" @iron-overlay-closed="${this_dialogClosed}" with-backdrop="${!this.narrowPad}" modal>
+      <iron-media-query query="(max-width: 1024px)" query-matches="${this.narrowScreen}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="${this.narrowPad}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="${thislargeHeight}"></iron-media-query>
-      <iron-media-query query="(min-height: 640px)" query-matches="${this.mediumHeight}"></iron-media-query>
-      <iron-media-query query="(max-height: 640px)" query-matches="${this.smallHeight}"></iron-media-query>
+      <iron-media-query query="(min-height: 1024px)" query-matches="${this.mediumHeight}"></iron-media-query>
+      <iron-media-query query="(max-height: 1024px)" query-matches="${this.smallHeight}"></iron-media-query>
 
       ${ this.narrow ? html`
         <div class="outerMobile">
@@ -340,7 +383,7 @@ class YpEditDialogLit extends YpBaseElement {
             ${!this.useNextTabAction ? html`
 
               ${!this.uploadingState ? html`
-                <mwc-button id="submit1" @click="${this._submit}" .label="${this.saveText}" class="smallButtonText"></mwc-button>
+                <mwc-button id="submit1" ?hidden="${!this.saveText}" @click="${this._submit}" .label="${this.saveText}" class="smallButtonText"></mwc-button>
               `: html`
                 <mwc-button ?disabled="" @click="${this._nextTab}" .label="${this.t('uploading.inProgress')}"></mwc-button>
               `}
@@ -356,7 +399,7 @@ class YpEditDialogLit extends YpBaseElement {
             <div id="scroller">
               <iron-form id="form" .contentType="application/json" .method="POST" .action="${this.action}" .ironMethod="${this.method}" .params="${this.params}">
                 <form .name="ypForm" .method="POST" .action="${this.action}">
-                  <slot></slot>
+                  <slot></slot>action: {
                 </form>
               </iron-form>
             </div>
@@ -376,14 +419,18 @@ class YpEditDialogLit extends YpBaseElement {
           <paper-spinner id="spinner"></paper-spinner>
         </paper-dialog-scrollable>
         <div class="buttons">
-          <mwc-button id="dismissBtn" dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+          ${this.cancelText ? html`
+            <mwc-button id="dismissBtn" dialog-dismiss .label="${this.cancelText}"></mwc-button>
+          ` : html`
+            <mwc-button id="dismissBtn" dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+          `}
 
           ${!this.uploadingState ? html`
 
             ${!this.useNextTabAction ? html`
-              <mwc-button raised class="actionButtons" id="submit2" @click="${this._submit}" .label="${this.saveText}"></mwc-button>
+              <mwc-button raised class="actionButtons" ?hidden="${!this.saveText}" id="submit2" @click="${this._submit}" .label="${this.saveText}"></mwc-button>
             `: html`
-                <mwc-button raised class="actionButtons" @click="${this._nextTab}" .label="${this.nextActionText}"></mwc-button>
+              <mwc-button raised class="actionButtons" @click="${this._nextTab}" .label="${this.nextActionText}"></mwc-button>
             `}
 
           `: html`
@@ -404,6 +451,10 @@ class YpEditDialogLit extends YpBaseElement {
 `
   }
 
+
+  _narrow(narrowScreen, tablet) {
+    return narrowScreen || tablet;
+  }
 
   scrollResize() {
     if (this.$$("#scrollable")) {
@@ -429,7 +480,7 @@ class YpEditDialogLit extends YpBaseElement {
     this.fire('next-tab-action')
   }
 
-  _narrowChanged() {
+  _narrowScreenChanged() {
     this.fire('paper-responsive-change', {narrow: this.narrow});
   }
 
@@ -473,7 +524,14 @@ class YpEditDialogLit extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback()
-      this.baseAction = this.action;
+    this.baseAction = this.action;
+    if (/iPad/.test(navigator.userAgent)) {
+      this.set('tablet', true);
+    } else if (/Android/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent)) {
+      this.set('tablet', true);
+    } else {
+      this.set('tablet', false);
+    }
   }
 
   _formResponse(response, detail) {

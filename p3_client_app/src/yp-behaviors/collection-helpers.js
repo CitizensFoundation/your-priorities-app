@@ -5,7 +5,16 @@ import '@polymer/polymer/polymer-legacy.js';
  */
 export const CollectionHelpers = {
 
-  splitByStatus: function (items) {
+  splitByStatus: function (items, containerConfig) {
+    if (containerConfig && containerConfig.sortBySortOrder) {
+      try {
+        items = __.sortBy(items, function (item) {
+          return item.configuration.optionalSortOrder | "100000";
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
     return {
       active: __.filter(items, function (o) {
         return o.status == 'active' || o.status == 'hidden';

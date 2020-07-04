@@ -146,6 +146,10 @@ class YpDomainLargeCardLit extends YpBaseElement {
         margin: 0;
       }
 
+      video {
+        outline: none !important;
+      }
+
       .domainDescription {
         padding-left: 16px;
         padding-right: 16px;
@@ -159,7 +163,9 @@ class YpDomainLargeCardLit extends YpBaseElement {
         padding-left: 16px;
         vertical-align: middle;
         margin: 0;
-        padding-right: 24px;
+        padding-right: 32px;
+        padding-bottom: 6px;
+        padding-top: 14px;
       }
 
       @media (max-width: 960px) {
@@ -197,7 +203,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
 
         .domain-name {
           font-size: 22px;
-          padding-bottom: 12px;
+          padding-bottom: 9px;
           min-height: 28px;
         }
 
@@ -274,7 +280,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
         ${ this.domainVideoURL ? html`
           <video id="videoPlayer" data-id="${this.domainVideoId}" .controls="" .preload="meta" class="image" src="${this.domainVideoURL}" playsinline .poster="${this.domainVideoPosterURL}"></video>
         ` : html`
-          <iron-image class="image" ?hidden="${this.hideImage}" .sizing="cover" src="${this._domainLogoImagePath(domain)}"></iron-image>
+          <iron-image class="image" ?hidden="${this.hideImage}" alt="${this.domain.name}" .sizing="cover" src="${this._domainLogoImagePath(domain)}"></iron-image>
         `}
 
       </paper-material>
@@ -283,7 +289,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
-                <div class="domain-name">
+                <div class="domain-name" role="heading" aria-level="1" aria-label="${this.domain.name}">>
                   <yp-magic-text .textType="domainName" .contentLanguage="${this.domain.language}" .disableTranslation="${this.domain.configuration.disableNameAutoTranslation}" .textOnly="" .content="${this.domain.name}" .contentId="${this.domain.id}">
                   </yp-magic-text>
                 </div>
@@ -314,7 +320,9 @@ class YpDomainLargeCardLit extends YpBaseElement {
               <a ?hidden="${!this.hasDomainAccess}" target="_blank" href="${this.exportLoginsUrl}"><paper-item id="exportLogins">${this.t('exportLogins')}</paper-item></a>
 
               <paper-item id="addCommunityMenuItem">${this.t('community.add')}</paper-item>
-              <paper-item id="addCommunityFolderMenuItem" ?hidden="[[!hasDomainAccess]]">${this.t('newCommunityFolder')}</paper-item>
+              <paper-item id="addCommunityFolderMenuItem" ?hidden="[[!this.hasDomainAccess]]">${this.t('newCommunityFolder')}</paper-item>
+              <paper-item id="openAnalyticsApp" ?hidden="[[!this.hasDomainAccess]]">[[t('openAnalyticsApp')]]</paper-item>
+
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -375,7 +383,7 @@ class YpDomainLargeCardLit extends YpBaseElement {
     if (domain && domain.configuration &&
       domain.configuration.useVideoCover &&
       domain.DomainLogoVideos) {
-      const videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos);
+      const videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos, domain.DomainLogoImages);
       if (videoPosterURL) {
         return videoPosterURL;
       } else {
@@ -423,6 +431,8 @@ class YpDomainLargeCardLit extends YpBaseElement {
       this.fire('yp-new-community');
     else if (detail.item.id==="addCommunityFolderMenuItem")
       this.fire('yp-new-community-folder');
+    else if (detail.item.id==="openAnalyticsApp")
+      window.location = "/analytics/domain/"+this.domain.id;
     this.$$("paper-listbox").select(null);
   }
 
