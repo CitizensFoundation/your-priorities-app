@@ -13,68 +13,68 @@ class YpAjaxLit extends YpBaseElement {
         type: String,
         value: ""
       },
-  
+
       method: {
         type: String,
         value: "GET"
       },
-  
+
       loading: {
         type: Boolean
       },
-  
+
       params: {
         type: Object,
         value: {}
       },
-  
+
       body: {
         type: Object,
         notify: true
       },
-  
+
       auto: {
         type: Boolean,
         value: false
       },
-  
+
       errorText: {
         type: String,
         value: ""
       },
-  
+
       useDialog: {
         type: Boolean,
         value: true,
         notify: true
       },
-  
+
       useSpinner: {
         type: Boolean,
         value: true
       },
-  
+
       largeSpinner: {
         type: Boolean,
         value: false
       },
-  
+
       dispatchError: {
         type: Boolean,
         value: false
       },
-  
+
       retryMethodAfter401Login: {
         type: Function,
         value: null
       },
-  
+
       active: {
         type: Boolean,
         reflectToAttribute: true,
         notify: true
       },
-  
+
       disableUserError: {
         type: Boolean,
         value: false
@@ -110,7 +110,7 @@ class YpAjaxLit extends YpBaseElement {
       }
     `,YpFlexLayout]
   }
-  
+
   render() {
     return html`
     <paper-spinner id="spinner" ?hidden="${!this.useSpinner}"></paper-spinner>
@@ -182,7 +182,11 @@ class YpAjaxLit extends YpBaseElement {
       } else if (errorText && errorText.indexOf('status code: 500') > -1) {
         return this.t('generalError');
       } else if (errorText && errorText.indexOf('status code: 401') > -1) {
-        return this.t('errorNotAuthorized');
+        let finalErrorText = this.t('errorNotAuthorized');
+        if (window.appGlobals.currentSamlDeniedMessage) {
+          finalErrorText+="\n\n"+window.appGlobals.currentSamlDeniedMessage;
+        }
+        return finalErrorText;
       } else if (errorText && errorText.indexOf('503') > -1) {
         return this.t('errorCantConnect');
       } else {
@@ -194,12 +198,13 @@ class YpAjaxLit extends YpBaseElement {
   }
 
   showErrorDialog(errorText) {
-    const text;
+    let text;
     if (errorText.message) {
       text = errorText.message;
     } else {
       text = errorText;
     }
+
     dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
       dialog.showErrorDialog(this._transformErrorText(text));
     }.bind(this));

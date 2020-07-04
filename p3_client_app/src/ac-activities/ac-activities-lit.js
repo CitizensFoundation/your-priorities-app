@@ -128,157 +128,164 @@ class AcActivitiesLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-
-      iron-list {
-        height: 100vh;
-      }
-
-      .addNewsBox {
-        background-color: #FFF;
-        width: 550px;
-        height: 100%;
-        padding-left: 16px;
-        padding-right: 16px;
-        margin-top: 16px;
-        margin-left: 16px;
-        margin-right: 16px;
-      }
-
-      @media (max-width: 600px) {
-        .addNewsBox {
-          width: 100%;
+        :host {
           height: 100%;
-          margin-bottom: 8px;
-          margin-top: 8px;
-          margin-left: 0;
-          margin-right: 0;
-          width: -webkit-calc(100% - 16px);
-          width:    -moz-calc(100% - 16px);
-          width:         calc(100% - 16px);
         }
-      }
 
-      @media (max-width: 340px) {
+        iron-list {
+          height: 100vh;
+        }
+
         .addNewsBox {
-          width: 100%;
+          background-color: #FFF;
+          width: 550px;
           height: 100%;
-          margin-bottom: 8px;
-          margin-top: 8px;
-          margin-left: 0;
-          margin-right: 0;
-          width: -webkit-calc(100% - 36px);
-          width:    -moz-calc(100% - 36px);
-          width:         calc(100% - 36px);
+          padding-left: 16px;
+          padding-right: 16px;
+          margin-top: 16px;
+          margin-left: 16px;
+          margin-right: 16px;
         }
-      }
 
-      .activityContainer {
-        width: 550px;
-        margin: 0;
-        padding: 0;
-      }
+        @media (max-width: 600px) {
+          .addNewsBox {
+            width: 100%;
+            height: 100%;
+            margin-bottom: 8px;
+            margin-top: 8px;
+            margin-left: 0;
+            margin-right: 0;
+            width: -webkit-calc(100% - 16px);
+            width:    -moz-calc(100% - 16px);
+            width:         calc(100% - 16px);
+          }
+        }
 
-      @media (max-width: 600px) {
+        @media (max-width: 340px) {
+          .addNewsBox {
+            width: 100%;
+            height: 100%;
+            margin-bottom: 8px;
+            margin-top: 8px;
+            margin-left: 0;
+            margin-right: 0;
+            width: -webkit-calc(100% - 36px);
+            width:    -moz-calc(100% - 36px);
+            width:         calc(100% - 36px);
+          }
+        }
+
+        .activityContainer {
+          width: 550px;
+          margin: 0;
+          padding: 0;
+        }
+
+        @media (max-width: 600px) {
+          .activityContainer {
+            width: 100%;
+          }
+        }
+
+        .recommendedPosts[not-active] {
+          display: none;
+        }
+
+        .recommendedPosts[small] {
+          display: none;
+        }
+
+
+        .mainActivityContent {
+          height: 100% !important;
+        }
+
+        .headerUserImage {
+          padding-top: 16px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        mwc-button {
+          color: var(--accent-color);
+        }
+
+        iron-icon {
+          width: 48px;
+          height: 48px;
+          padding-top: 14px;
+        }
+
+
+        .createdAt {
+          color: #777;
+          margin-top: 16px;
+          font-size: 14px;
+        }
+
+        yp-ajax {
+          background-color: var(--primary-background-color);
+        }
+
+        .deleteIcon {
+          position: absolute;
+          right: 8px;
+          bottom: 8px;
+          color: #ddd;
+        }
+
+        .withCursor {
+          cursor: pointer;
+        }
+
         .activityContainer {
           width: 100%;
         }
-      }
 
-      .recommendedPosts[not-active] {
-        display: none;
-      }
+        @media (max-width: 960px) {
+          .recommendedPosts {
+            display: none !important;
+          }
+        }
 
-      .recommendedPosts[small] {
-        display: none;
-      }
+        .topLevelActivitiesContainer[wide] {
+        }
 
-
-      .mainActivityContent {
-        height: 100% !important;
-      }
-
-      .headerUserImage {
-        padding-top: 16px;
-      }
-
-      h1 {
-        font-size: 24px;
-      }
-
-      mwc-button {
-        color: var(--accent-color);
-      }
-
-      iron-icon {
-        width: 48px;
-        height: 48px;
-        padding-top: 14px;
-      }
-
-
-      .createdAt {
-        color: #777;
-        margin-top: 16px;
-        font-size: 14px;
-      }
-
-      yp-ajax {
-        background-color: var(--primary-background-color);
-      }
-
-      .deleteIcon {
-        position: absolute;
-        right: 8px;
-        bottom: 8px;
-        color: #ddd;
-      }
-
-      .withCursor {
-        cursor: pointer;
-      }
-
-      .activityContainer {
-        width: 100%;
-      }
-
-      @media (max-width: 960px) {
-        .recommendedPosts {
+        [hidden] {
           display: none !important;
         }
-      }
 
-      .topLevelActivitiesContainer[wide] {
-      }
+        .spinnerContainer {
+          margin-top: 32px;
+        }
 
-      [hidden] {
-        display: none !important;
-      }
+        .topSpinnerContainer {
+          margin-top: 16px;
+        }
 
-      .spinnerContainer {
-        margin-top: 32px;
-      }
+        :focus {
+          outline: none;
+        }
 
-      .topSpinnerContainer {
-        margin-top: 16px;
-      }
+        .notLoggedInButton {
+          margin-top: 8px;
+          width: 250px;
+          background-color: #FFF;
+          margin-bottom: 8px;
+          text-align: center;
+        }
 
-      :focus {
-        outline: none;
-      }
-
-      .notLoggedInButton {
-        margin-top: 8px;
-        width: 250px;
-        background-color: #FFF;
-        margin-bottom: 8px;
-        text-align: center;
-      }
-    `, YpflexLayout]
+        .topLevelActivitiesContainer[rtl] {
+          direction: rtl;
+        }
+      `, YpflexLayout]
   }
 
   render() {
     return html`
-    <div class="layout horizontal topLevelActivitiesContainer layout-center-center" wide="${this.wide}">
+    <div class="layout horizontal topLevelActivitiesContainer layout-center-center" wide="${this.wide}" rtl?="${this.rtl}">
       <div class="layout vertical self-start">
 
         ${ this.loggedInUser ?  html`
@@ -533,7 +540,20 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _recommendedPostsResponse(event, detail) {
-    if (detail.response && detail.response.length>0) {
+    var allowRecommendations = true;
+    if (this.activities && this.activities.length>0) {
+      if( this.activities[0].Group &&
+        this.activities[0].Group.configuration &&
+        this.activities[0].Group.configuration.hideRecommendationOnNewsFeed) {
+        allowRecommendations = false;
+      }
+      if( this.activities[0].Community &&
+        this.activities[0].Community.configuration &&
+        this.activities[0].Community.configuration.hideRecommendationOnNewsFeed) {
+        allowRecommendations = false;
+      }
+    }
+    if (allowRecommendations && detail.response && detail.response.length>0) {
       this.set('recommendedPosts', detail.response);
       this.set('noRecommendedPosts', false);
     } else {

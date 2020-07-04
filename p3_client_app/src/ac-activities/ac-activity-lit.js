@@ -55,7 +55,7 @@ class AcActivityLit extends YpBaseElement {
       hasLoggedInUser: {
         type: Boolean
       }
-    }
+    };
   }
 
   static get styles() {

@@ -59,6 +59,7 @@ import 'moment/locale/da.js';
 */
 
 setPassiveTouchGestures(true);
+
 class YpAppLit extends YpBaseElement {
   static get properties() {
     return {
@@ -547,7 +548,7 @@ class YpAppLit extends YpBaseElement {
 
             <span class="flex"></span>
             <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
-              <mwc-button raised id="translationButton" 
+              <mwc-button raised id="translationButton"
                           @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
                 <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
               </mwc-button>
@@ -589,7 +590,7 @@ class YpAppLit extends YpBaseElement {
 
       </app-header-layout>
     </app-drawer-layout>
-    
+
     <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
 
     <app-location .route="${this.route}"></app-location>
@@ -625,9 +626,20 @@ class YpAppLit extends YpBaseElement {
     'yp-dialog-closed': '_dialogClosed',
     'yp-open-page': '_openPageFromEvent',
     'yp-open-login': '_login',
-    'yp-reset-keep-open-for-page': '_resetKeepOpenForPage'
+    'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
+    'yp-add-back-community-override': '_addBackCommunityOverride'
   },
 */
+  _addBackCommunityOverride(event, detail) {
+    if (!this.communityBackOverride) {
+      this.communityBackOverride = {};
+    }
+
+    this.communityBackOverride[detail.fromCommunityId] = {
+      backPath: detail.backPath,
+      backName: detail.backName
+    };
+  }
 
   _userDrawerOpened(value) {
     this.async(function() {
@@ -745,7 +757,7 @@ class YpAppLit extends YpBaseElement {
       }, 2500);
     }
 
-    if (localeFromUrl && localeFromUrl.length == 2) {
+    if (localeFromUrl && (localeFromUrl.length>1)) {
       defaultLocale = localeFromUrl;
       localStorage.setItem('yp-user-locale', localeFromUrl);
     }
@@ -1182,6 +1194,10 @@ class YpAppLit extends YpBaseElement {
     this.$$("#dialogContainer").getDialogAsync(idName, callback);
   }
 
+  getRatingsDialogAsync(callback) {
+    this.$$("#dialogContainer").getRatingsDialogAsync(callback);
+  }
+
   getUsersGridAsync(callback) {
     this.$$("#dialogContainer").getUsersGridAsync(callback);
   }
@@ -1192,6 +1208,14 @@ class YpAppLit extends YpBaseElement {
 
   getContentModerationAsync(callback) {
     this.$$("#dialogContainer").getContentModerationAsync(callback);
+  }
+
+  getCreateReportAsync(callback) {
+    this.$$("#dialogContainer").getCreateReportAsync(callback);
+  }
+
+  getDuplicateCollectionAsyncAsync(callback) {
+    this.$$("#dialogContainer").getDuplicateCollectionAsyncAsync(callback);
   }
 
   openPixelCookieConfirm(trackerId) {
@@ -1224,7 +1248,6 @@ class YpAppLit extends YpBaseElement {
   }
 
   onChangeHeader(event, header) {
-    console.info(header);
     this.set('headerTitle', document.title = header.headerTitle);
 
     this.async(function () {
@@ -1283,6 +1306,15 @@ class YpAppLit extends YpBaseElement {
       this.set('hideHelpIcon', true);
     } else {
       this.set('hideHelpIcon', false);
+    }
+
+    if (this.communityBackOverride && this.backPath && window.location.pathname.indexOf("/community/") > -1) {
+      var communityId =  window.location.pathname.split("/community/")[1];
+      if (communityId && !isNaN(communityId) && this.communityBackOverride[communityId]) {
+        this.set('backPath', this.communityBackOverride[communityId].backPath);
+        this.set('headerTitle', this.communityBackOverride[communityId].backName);
+        this.set('useHardBack', false);
+      }
     }
 
     if (this.showBack && header.disableDomainUpLink===true) {

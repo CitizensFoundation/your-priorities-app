@@ -116,7 +116,7 @@ class YpAppNavDrawerLit extends YpBaseElement {
         </div>
       </div>
       <div class="languageSelector layout vertical self-start">
-        <yp-language-selector class="languageSelector"></yp-language-selector>
+        <yp-language-selector class="languageSelector" .selectedLocale="${this.language}"></yp-language-selector>
       </div>
       <div class="layout vertical" ?hidden="${!this.user}">
         <div ?hidden="">
@@ -173,6 +173,7 @@ class YpAppNavDrawerLit extends YpBaseElement {
     ypGotoBehavior
   ],
 */
+
 
   _goBack(event) {
     if (this.homeLink) {

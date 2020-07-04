@@ -27,7 +27,7 @@ class AcNotificationListLit extends YpBaseElement {
 
       notificationGetTTL: {
         type: Number,
-        value: 6500
+        value: 5000
       },
 
       oldestProcessedNotificationAt: {
@@ -122,7 +122,6 @@ class AcNotificationListLit extends YpBaseElement {
       }
 
       :focus {
-        outline: none;
       }
 
       .overflowSettings {
@@ -307,12 +306,8 @@ class AcNotificationListLit extends YpBaseElement {
 
   _userChanged(user) {
     if (user) {
-      if (user.profile_data && user.profile_data.isAnonymousUser) {
-        this.cancelTimer();
-      } else {
-        this.$$("#loadNotificationsAjax").url = this.url;
-        this.$$("#loadNotificationsAjax").generateRequest();
-      }
+      this.$.loadNotificationsAjax.url = this.url;
+      this.$.loadNotificationsAjax.generateRequest();
     } else {
       this.cancelTimer();
     }
@@ -377,6 +372,7 @@ class AcNotificationListLit extends YpBaseElement {
     if (this.user) {
       this.timer = this.async(function () {
         this.loadNewData();
+        this.lastFetchStartedAt = Date.now();
       }.bind(this), this.notificationGetTTL);
     }
   }
@@ -426,6 +422,17 @@ class AcNotificationListLit extends YpBaseElement {
     this._handleUnViewedCount(detail.response.unViewedCount);
     if (this.$$("#list"))
       this.$$("#list").fire("iron-resize");
+
+    if (this.lastFetchStartedAt) {
+      var duration = Date.now() - this.lastFetchStartedAt;
+      if (duration>1000) {
+        console.warn("Setting notificationGetTTL = 60000");
+        this.notificationGetTTL = 60000;
+      } else if (duration>10000) {
+        console.warn("Setting notificationGetTTL = 60000*5");
+        this.notificationGetTTL = 60000*5;
+      }
+    }
   }
 
   _removeOldIfExists(notification) {
