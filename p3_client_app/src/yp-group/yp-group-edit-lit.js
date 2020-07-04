@@ -100,6 +100,11 @@ class YpGroupEditLit extends YpBaseElement {
         value: null
       },
 
+      endorsementButtonsDisabled: {
+        type: Boolean,
+        value: false
+      },
+
       status: String,
 
       publicCommunity: {
@@ -140,6 +145,11 @@ class YpGroupEditLit extends YpBaseElement {
         type: Number,
         value: null
       },
+
+      structuredQuestionsJsonError: {
+        type: Boolean,
+        value: false
+      }
     }
   }
 
@@ -228,6 +238,13 @@ class YpGroupEditLit extends YpBaseElement {
       .defaultPostImage {
         margin-top: 16px;
       }
+
+      #structuredQuestionsJsonErrorInfo {
+        margin-top: 0px;
+        margin-bottom: 8px;
+        color: #F00;
+        font-weight: bold;
+      }
     `, YpFlexLayout]
   }
 
@@ -282,9 +299,8 @@ render() {
         <div class="subHeaders exteraTopMargin">${this.t('access')}</div>
 
         <paper-radio-group id="access" .name="access" class="access" selected="${this.groupAccess}">
-          <paper-radio-button .name="public" ?hidden="${!this.publicCommunity}">${this.t('group.public')}</paper-radio-button>
-          <paper-radio-button .name="open_to_community" ?hidden="${this.publicCommunity}">${this.t('group.openToCommunity')}
-          </paper-radio-button>
+          <paper-radio-button name="open_to_community">${this.t('group.openToCommunity')}</paper-radio-button>
+          <paper-radio-button name="public">${this.t('group.public')}</paper-radio-button>
           <paper-radio-button .name="closed">${this.t('group.closed')}</paper-radio-button>
           <paper-radio-button .name="secret">${this.t('group.secret')}</paper-radio-button>
         </paper-radio-group>
@@ -299,19 +315,19 @@ render() {
           </paper-listbox>
         </paper-dropdown-menu>
 
-        <paper-checkbox .name="allowAnonymousUsers" checked="${this.group.configuration.allowAnonymousUsers}">
+        <paper-checkbox .name="allowAnonymousUsers" .checked="${this.group.configuration.allowAnonymousUsers}">
           ${this.t('allowAnonymousUsers')}
         </paper-checkbox>
-        <paper-checkbox .name="allowAnonymousAutoLogin" checked="${this.group.configuration.allowAnonymousAutoLogin}">
+        <paper-checkbox .name="allowAnonymousAutoLogin" .checked="${this.group.configuration.allowAnonymousAutoLogin}">
           ${this.t('allowAnonymousAutoLogin')}
         </paper-checkbox>
-        <paper-checkbox .name="disableFacebookLoginForGroup" checked="${this.group.configuration.disableFacebookLoginForGroup}">
+        <paper-checkbox .name="disableFacebookLoginForGroup" .checked="${this.group.configuration.disableFacebookLoginForGroup}">
           ${this.t('disableFacebookLoginForGroup')}
         </paper-checkbox>
-        <paper-checkbox .name="forceSecureSamlLogin" ?disabled="${!this.hasSamlLoginProvider}" checked="${this.group.configuration.forceSecureSamlLogin}">${this.t('forceSecureSamlLogin')}
+        <paper-checkbox .name="forceSecureSamlLogin" ?disabled="${!this.hasSamlLoginProvider}" .checked="${this.group.configuration.forceSecureSamlLogin}">${this.t('forceSecureSamlLogin')}
         </paper-checkbox>
 
-        <paper-checkbox .name="forceSecureSamlEmployeeLogin" ?disabled="${!this.hasSamlLoginProvider}" checked="${this.group.configuration.forceSecureSamlEmployeeLogin}">${this.t('forceSecureSamlEmployeeLogin')}
+        <paper-checkbox .name="forceSecureSamlEmployeeLogin" ?disabled="${!this.hasSamlLoginProvider}" .checked="${this.group.configuration.forceSecureSamlEmployeeLogin}">${this.t('forceSecureSamlEmployeeLogin')}
         </paper-checkbox>
 
         <input .type="hidden" .name="status" .value="${this.status}">
@@ -319,7 +335,7 @@ render() {
         <div class="subHeaders">${this.t('languageSettings')}</div>
 
         <yp-language-selector .name="defaultLocale" no-user-events="" .selectedLocale="${this.group.configuration.defaultLocale}"></yp-language-selector>
-        <paper-checkbox .name="disableNameAutoTranslation" checked="${this.group.configuration.disableNameAutoTranslation}">
+        <paper-checkbox .name="disableNameAutoTranslation" .checked="${this.group.configuration.disableNameAutoTranslation}">
           ${this.t('disableNameAutoTranslation')}
         </paper-checkbox>
 
@@ -327,11 +343,14 @@ render() {
 
         <yp-theme-selector object="${this.group}" selected-theme="${this.themeId}"></yp-theme-selector>
 
-        <paper-input id="themeOverrideColorPrimary" .name="themeOverrideColorPrimary" .allowedPattern="[#-#0-9A-Fa-f]" .maxlength="7" char-counter .label="${this.t('themeOverrideColorPrimary')}" .value="${this.group.configuration.themeOverrideColorPrimary}">
+        <paper-input id="themeOverrideColorPrimary" name="themeOverrideColorPrimary" .allowedPattern="[#-#0-9A-Fa-f]" .maxlength="7" char-counter .label="${this.t('themeOverrideColorPrimary')}" .value="${this.group.configuration.themeOverrideColorPrimary}">
           <div prefix="">#</div>
         </paper-input>
 
-        <paper-input id="themeOverrideColorAccent" .name="themeOverrideColorAccent" .allowedPattern="[#-#0-9A-Fa-f]" .maxlength="7" char-counter label="${this.t('themeOverrideColorAccent')}" .value="${this.group.configuration.themeOverrideColorAccent}">
+        <paper-input id="themeOverrideColorAccent" name="themeOverrideColorAccent" .allowedPattern="[#-#0-9A-Fa-f]" .maxlength="7" char-counter label="${this.t('themeOverrideColorAccent')}" .value="${this.group.configuration.themeOverrideColorAccent}">
+        </paper-input>
+
+        <paper-input id="themeOverrideBackgroundColor" name="themeOverrideBackgroundColor" .allowedPattern="[#-#0-9A-Fa-f]" maxlength="7" char-counter label="${this.t('themeOverrideBackgroundColor')}" value="${this.group.configuration.themeOverrideBackgroundColor}">
         </paper-input>
 
         <div class="themeOverrideInfo">
@@ -340,16 +359,16 @@ render() {
 
         <div class="subHeaders">${this.t('postSettings')}</div>
 
-        <paper-checkbox .name="canAddNewPosts" checked="${this.canAddNewPosts}">${this.t('group.canAddNewPosts')}</paper-checkbox>
-        <paper-checkbox .name="locationHidden" checked="${this.locationHidden}">${this.t('group.locationHidden')}</paper-checkbox>
-        <paper-checkbox .name="showWhoPostedPosts" checked="${this.showWhoPostedPosts}">${this.t('group.showWhoPostedPosts')}</paper-checkbox>
-        <paper-checkbox .name="disableDebate" checked="${this.group.configuration.disableDebate}">${this.t('disableDebate')}</paper-checkbox>
+        <paper-checkbox .name="canAddNewPosts" .checked="${this.canAddNewPosts}">${this.t('group.canAddNewPosts')}</paper-checkbox>
+        <paper-checkbox .name="locationHidden" .checked="${this.locationHidden}">${this.t('group.locationHidden')}</paper-checkbox>
+        <paper-checkbox .name="showWhoPostedPosts" .checked="${this.showWhoPostedPosts}">${this.t('group.showWhoPostedPosts')}</paper-checkbox>
+        <paper-checkbox .name="disableDebate" .checked="${this.group.configuration.disableDebate}">${this.t('disableDebate')}</paper-checkbox>
 
 
-        <paper-input id="postDescriptionLimit" .name="postDescriptionLimit" .type="text" .label="${this.t('postDescriptionLimit')}" value="${this.group.configuration.postDescriptionLimit}" maxlength="4" char-counter="">
+        <paper-input id="postDescriptionLimit" .name="postDescriptionLimit" .type="text" allowed-pattern="[0-9]" .label="${this.t('postDescriptionLimit')}" value="${this.group.configuration.postDescriptionLimit}" maxlength="4" char-counter="">
         </paper-input>
 
-        <paper-checkbox .name="allowPostVideoUploads" ?disabled="${!this.hasVideoUpload}" checked="${this.allowPostVideoUploads}">${this.t('allowPostVideoUploads')}
+        <paper-checkbox .name="allowPostVideoUploads" ?disabled="${!this.hasVideoUpload}" .checked="${this.allowPostVideoUploads}">${this.t('allowPostVideoUploads')}
         </paper-checkbox>
 
         <paper-input id="videoPostUploadLimitSec" .name="videoPostUploadLimitSec" allowed-pattern="[0-9]" .maxlength="3" .type="number" ?disabled="${!this.hasVideoUpload}" .label="${this.t('videoPostUploadLimitSec')}" .value="${this.group.configuration.videoPostUploadLimitSec}">
@@ -357,48 +376,119 @@ render() {
 
         <paper-checkbox .name="allowPostAudioUploads" ?disabled="${!this.hasAudioUpload}" .checked="${this.allowPostAudioUploads}">${this.t('allowPostAudioUploads')}
         </paper-checkbox>
+
         <paper-input id="audioPostUploadLimitSec" .name="audioPostUploadLimitSec" allowedPattern="[0-9]" .maxlength="3" .type="number" ?disabled="${!this.hasaudioUpload}" .label="${this.t('audioPostUploadLimitSec')}" .value="${this.group.configuration.audioPostUploadLimitSec}">
         </paper-input>
 
-        <paper-checkbox .name="moreContactInformation" checked="${this.group.configuration.moreContactInformation}">
+        <paper-input id="hideNameInputAndReplaceWith" name="hideNameInputAndReplaceWith" maxlength="60" label="[[t('hideNameInputAndReplaceWith')]]" value="{{group.configuration.hideNameInputAndReplaceWith}}">
+        </paper-input>
+
+        <paper-checkbox name="makeCategoryRequiredOnNewPost" ?checked="${this.group.configuration.makeCategoryRequiredOnNewPost}">${this.t('makeCategoryRequiredOnNewPost')}
+        </paper-checkbox>
+
+        <paper-checkbox name="showVideoUploadDisclaimer" ?checked="${this.group.configuration.showVideoUploadDisclaimer}">
+          ${this.t('showVideoUploadDisclaimer')}
+        </paper-checkbox>
+
+        <paper-checkbox .name="moreContactInformation" .checked="${this.group.configuration.moreContactInformation}">
           ${this.t('moreContactInformation')}
         </paper-checkbox>
-        <paper-checkbox .name="attachmentsEnabled" checked="${this.group.configuration.attachmentsEnabled}">
+
+        <paper-checkbox name="moreContactInformationAddress" ?checked="${this.group.configuration.moreContactInformationAddress}">
+          ${this.t('moreContactInformationAddress')}
+        </paper-checkbox>
+
+        <paper-checkbox .name="attachmentsEnabled" ?checked="${this.group.configuration.attachmentsEnabled}">
           ${this.t('attachmentsEnabled')}
         </paper-checkbox>
-        <paper-checkbox .name="hideNewPost" checked="${this.group.configuration.hideNewPost}">${this.t('hideNewPost')}</paper-checkbox>
-        <paper-checkbox .name="hideNewPostOnPostPage" checked="${this.hideNewPostOnPostPage}">
+
+        <paper-checkbox name="useContainImageMode" ?checked="${this.group.configuration.useContainImageMode}">
+          ${this.t('useContainImageMode')}
+        </paper-checkbox>
+
+        <paper-checkbox .name="hideNewPost" .checked="${this.group.configuration.hideNewPost}">${this.t('hideNewPost')}</paper-checkbox>
+
+        <paper-checkbox name="hideRecommendationOnNewsFeed" ?checked="${this.group.configuration.hideRecommendationOnNewsFeed}">
+          ${this.t('hideRecommendationOnNewsFeed')}
+        </paper-checkbox>
+
+        <paper-checkbox .name="hideNewPostOnPostPage" .checked="${this.hideNewPostOnPostPage}">
           ${this.t('hideNewPostOnPostPage')}
         </paper-checkbox>
 
-        <paper-checkbox .name="hidePostCover" checked="${this.group.configuration.hidePostCover}">${this.t('hidePostCover')}
+        <paper-checkbox .name="hidePostCover" .checked="${this.group.configuration.hidePostCover}">${this.t('hidePostCover')}
         </paper-checkbox>
-        <paper-checkbox .name="hidePostDescription" checked="${this.group.configuration.hidePostDescription}">
+        <paper-checkbox .name="hidePostDescription" .checked="${this.group.configuration.hidePostDescription}">
           ${this.t('hidePostDescription')}
         </paper-checkbox>
-        <paper-checkbox .name="hidePostActionsInGrid" checked="${this.group.configuration.hidePostActionsInGrid}">
+        <paper-checkbox .name="hidePostActionsInGrid" .checked="${this.group.configuration.hidePostActionsInGrid}">
           ${this.t('hidePostActionsInGrid')}
         </paper-checkbox>
-        <paper-checkbox .name="hideDebateIcon" checked="${this.group.configuration.hideDebateIcon}">
+        <paper-checkbox .name="hideDebateIcon" .checked="${this.group.configuration.hideDebateIcon}">
           ${this.t('hideDebateIcon')}
         </paper-checkbox>
-        <paper-checkbox .name="hideEmoji" checked="${thishideEmoji}">${this.t('hideEmoji')}</paper-checkbox>
+        <paper-checkbox .name="hideEmoji" .checked="${thishideEmoji}">${this.t('hideEmoji')}</paper-checkbox>
 
-        <paper-checkbox .name="hidePostFilterAndSearch" checked="${this.group.configuration.hidePostFilterAndSearch}">
+        <paper-checkbox .name="hidePostFilterAndSearch" .checked="${this.group.configuration.hidePostFilterAndSearch}">
           ${this.t('hidePostFilterAndSearch')}
         </paper-checkbox>
-        <paper-checkbox .name="hidePostImageUploads" disabled="${!this.hasVideoUpload}" checked="${this.group.configuration.hidePostImageUploads}">${this.t('hidePostImageUploads')}
+
+        <paper-checkbox name="hideMediaInput" ?checked="${this.group.configuration.hideMediaInput}">
+          ${this.t('hideMediaInput')}
         </paper-checkbox>
-        <paper-checkbox .name="disablePostPageLink" checked="${this.group.configuration.disablePostPageLink}">
+
+        <paper-checkbox .name="hidePostImageUploads" disabled="${!this.hasVideoUpload}" .checked="${this.group.configuration.hidePostImageUploads}">${this.t('hidePostImageUploads')}
+        </paper-checkbox>
+
+        <paper-checkbox .name="disablePostPageLink" .checked="${this.group.configuration.disablePostPageLink}">
           ${this.t('disablePostPageLink')}
         </paper-checkbox>
 
-        <paper-input id="defaultLocationLongLat" .name="defaultLocationLongLat" .type="text" .label="${this.t('defaultLocationLongLat')}" value="${this.group.defaultLocationLongLat}" .maxlength="100" .style="width: 300px;">
+        <paper-input id="defaultLocationLongLat" .name="defaultLocationLongLat" .type="text" .label="${this.t('defaultLocationLongLat')}" value="${this.group.configuration.defaultLocationLongLat}" .maxlength="100" .style="width: 300px;">
         </paper-input>
 
-        <paper-textarea id="structuredQuestions" .name="structuredQuestions" .type="text" .rows="2" always-float-label="${this.group.configuration.structuredQuestions}" .maxrows="2" .label="${this.t('structuredQuestions')}" .value="${this.group.configuration.structuredQuestions}">
+        <paper-input id="forcePostSortMethodAs" name="forcePostSortMethodAs" type="text" label="${this.t('forcePostSortMethodAs')}" value="${this.group.configuration.forcePostSortMethodAs}" maxlength="12">
+        </paper-input>
+
+        <paper-input id="customThankYouTextNewPosts" name="customThankYouTextNewPosts" type="text" label="${this.t('customThankYouTextNewPosts')}" value="${this.group.configuration.customThankYouTextNewPosts}" maxlength="60">
+        </paper-input>
+
+        <paper-input id="descriptionTruncateAmount" name="descriptionTruncateAmount" type="text" .allowedPattern="[0-9]" label="${this.t('descriptionTruncateAmount')}" value="${this.group.configuration.descriptionTruncateAmount}" maxlength="4">
+        </paper-input>
+
+        <paper-checkbox name="descriptionSimpleFormat" ?checked="${this.group.configuration.descriptionSimpleFormat}">
+          ${this.t('descriptionSimpleFormat')}
+        </paper-checkbox>
+
+        <paper-checkbox name="transcriptSimpleFormat" ?checked="${this.group.configuration.transcriptSimpleFormat}">
+          ${this.t('transcriptSimpleFormat')}
+        </paper-checkbox>
+
+        <paper-checkbox name="allPostsBlockedByDefault" ?checked="${this.group.configuration.allPostsBlockedByDefault}">
+          ${this.t('allPostsBlockedByDefault')}
+        </paper-checkbox>
+
+        <paper-checkbox name="hideQuestionIndexOnNewPost" ?checked="${group.configuration.hideQuestionIndexOnNewPost}">
+          ${this.t('hideQuestionIndexOnNewPost')}
+        </paper-checkbox>
+
+        <paper-textarea id="structuredQuestions" .name="structuredQuestions" .type="text" .rows="4" always-float-label="${this.group.configuration.structuredQuestions}" .maxrows="2"
+          .label="${this.t('structuredQuestions')}" .value="${this.group.configuration.structuredQuestions}"
+          on-value-changed="_structuredQuestionsChanged" max-rows="8">
         </paper-textarea>
+
+        <div id="structuredQuestionsJsonErrorInfo" ?hidden="${!this.structuredQuestionsJsonError}">${this.t('structuredQuestionsJsonFormatNotValid')}</div>
+
         <div class="structuredQuestionsInfo">${this.t('structuredQuestionsInfo')}</div>
+
+        <paper-input id="alternativeTextForNewIdeaButton" name="alternativeTextForNewIdeaButton" type="text" label="${this.t('alternativeTextForNewIdeaButton')}" value="${this.group.configuration.alternativeTextForNewIdeaButton}" maxlength="30" char-counter="">
+        </paper-input>
+
+        <paper-input id="alternativeTextForNewIdeaButtonClosed" name="alternativeTextForNewIdeaButtonClosed" type="text" label="${this.t('alternativeTextForNewIdeaButtonClosed')}" value="${this.group.configuration.alternativeTextForNewIdeaButtonClosed}" maxlength="30" char-counter="">
+        </paper-input>
+
+        <paper-input id="alternativeTextForNewIdeaButtonHeader" name="alternativeTextForNewIdeaButtonHeader" type="text" label="${this.t('alternativeTextForNewIdeaButtonHeader')}" value="${this.group.configuration.alternativeTextForNewIdeaButtonHeader}" maxlength="30" char-counter="">
+        </paper-input>
 
         <div class="layout vertical additionalSettings defaultPostImage">
           <yp-file-upload id="defaultPostImageUpload" raised target="/api/images?itemType=group-logo" .method="POST" @success="${this._defaultPostImageUploaded}">
@@ -428,7 +518,7 @@ render() {
         <div class="subHeaders exteraTopMargin">${this.t('voteSettings')}</div>
 
         <div class="layout horizontal">
-          <paper-dropdown-menu .label="${this.t('endorsementButtons')}">
+          <paper-dropdown-menu .label="${this.t('endorsementButtons')}"  ?disabled="${this.endorsementButtonsDisabled}">
             <paper-listbox slot="dropdown-content" attr-for-selected="name" .selected="${this.endorsementButtons}">
 
               ${ this.endorsementButtonsOptions.map( buttonsSelection => html`
@@ -439,8 +529,8 @@ render() {
           </paper-dropdown-menu>
           <input .type="hidden" .name="endorsementButtons" .value="${this.endorsementButtons}">
         </div>
-        <paper-checkbox .name="canVote" checked="${this.canVote}">${this.t('group.canVote')}</paper-checkbox>
-        <paper-checkbox .name="hideVoteCount" checked="${this.group.configuration.hideVoteCount}">${this.t('hideVoteCount')}
+        <paper-checkbox .name="canVote" .checked="${this.canVote}">${this.t('group.canVote')}</paper-checkbox>
+        <paper-checkbox .name="hideVoteCount" .checked="${this.group.configuration.hideVoteCount}">${this.t('hideVoteCount')}
         </paper-checkbox>
         <paper-checkbox .name="hideVoteCountUntilVoteCompleted" .checked="${this.group.configuration.hideVoteCountUntilVoteCompleted}">
           ${this.t('hideVoteCountUntilVoteCompleted')}
@@ -455,13 +545,27 @@ render() {
         <paper-input id="customVoteDownHoverText" .name="customVoteDownHoverText" .type="text" .label="${this.t('customVoteDownHoverText')}" .value="${this.group.configuration.customVoteDownHoverText}" .maxlength="100" char-counter>
         </paper-input>
 
+        <paper-textarea id="customRatingsText" name="customRatingsText" type="text" rows="2"
+          @value-changed="${this._customRatingsTextChanged}" always-float-label="${this.group.configuration.customRatingsText}" maxrows="2" label="${this.t('customRatings')}" value="${this.group.configuration.customRatingsText}">
+        </paper-textarea>
+
+        <div class="structuredQuestionsInfo">${this.t('customRatingsInfo')}</div>
+
         <div class="subHeaders">${this.t('pointSettings')}</div>
 
-        <paper-checkbox .name="newPointOptional" checked="${this.newPointOptional}">${this.t('newPointOptional')}</paper-checkbox>
-        <paper-checkbox .name="hideNewPointOnNewIdea" checked="${this.group.configuration.hideNewPointOnNewIdea}">${this.t('hideNewPointOnNewIdea')}</paper-checkbox>
-        <paper-checkbox .name="hidePointAuthor" checked="${this.group.configuration.hidePointAuthor}">
+        <paper-checkbox .name="newPointOptional" .checked="${this.newPointOptional}">${this.t('newPointOptional')}</paper-checkbox>
+        <paper-checkbox .name="hideNewPointOnNewIdea" .checked="${this.group.configuration.hideNewPointOnNewIdea}">${this.t('hideNewPointOnNewIdea')}</paper-checkbox>
+        <paper-checkbox .name="hidePointAuthor" .checked="${this.group.configuration.hidePointAuthor}">
           ${this.t('hidePointAuthor')}
         </paper-checkbox>
+
+        <paper-checkbox name="hidePointAgainst" ?checked="${this.group.configuration.hidePointAgainst}">
+          ${this.t('hidePointAgainst')}
+        </paper-checkbox>
+
+        <paper-input id="pointCharLimit" name="pointCharLimit" type="text" allowed-pattern="[0-9]" label="[[t('pointCharLimit')]]" value="{{group.configuration.pointCharLimit}}" maxlength="4">
+        </paper-input>
+
 
         <paper-input id="alternativePointForHeader" .name="alternativePointForHeader" .type="text" .label="${this.t('alternativePointForHeader')}" .value="${this.group.configuration.alternativePointForHeader}" .maxlength="100" char-counter>
         </paper-input>
@@ -475,22 +579,46 @@ render() {
         <paper-input id="alternativePointAgainstLabel" .name="alternativePointAgainstLabel" .type="text" .label="${this.t('alternativePointAgainstLabel')}" .value="${this.group.configuration.alternativePointAgainstLabel}" .maxlength="100" char-counter>
         </paper-input>
 
-        <paper-checkbox .name="allowPointVideoUploads" ?disabled="${!this.hasVideoUpload}" checked="${this.allowPointVideoUploads}">${this.t('allowPointVideoUploads')}
+        <paper-checkbox .name="allowPointVideoUploads" ?disabled="${!this.hasVideoUpload}" .checked="${this.allowPointVideoUploads}">${this.t('allowPointVideoUploads')}
         </paper-checkbox>
         <paper-input id="videoPointUploadLimitSec" .name="videoPointUploadLimitSec" .type="text" .maxlength="3" allowed-pattern="[0-9]" disabled="${!this.hasVideoUpload}" .label="${this.t('videoPointUploadLimitSec')}" .value="${this.group.configuration.videoPointUploadLimitSec}">
         </paper-input>
 
-        <paper-checkbox .name="allowPointAudioUploads" ?disabled="${!this.hasAudioUpload}" checked="${this.allowPointAudioUploads}">${this.t('allowPointAudioUploads')}
+        <paper-checkbox .name="allowPointAudioUploads" ?disabled="${!this.hasAudioUpload}" .checked="${this.allowPointAudioUploads}">${this.t('allowPointAudioUploads')}
         </paper-checkbox>
+
         <paper-input id="audioPointUploadLimitSec" .name="audioPointUploadLimitSec" .type="text" .maxlength="3" .allowedPattern="[0-9]" ?disabled="${!this.hasaudioUpload}" .label="${this.t('audioPointUploadLimitSec')}" .value="${this.group.configuration.audioPointUploadLimitSec}">
         </paper-input>
 
-        <div class="subHeaders">${this.t('additionalGroupConfig')}</div>
-        <paper-checkbox .name="hideAllTabs" checked="${this.hideAllTabs}">${this.t('hideAllTabs')}</paper-checkbox>
-        <paper-checkbox .name="hideHelpIcon" checked="${this.hideHelpIcon}">${this.t('hideHelpIcon')}</paper-checkbox>
-        <paper-checkbox .name="hideGroupHeader" checked="{{hideGroupHeader}}">${this.t('hideGroupHeader')}</paper-checkbox>
+        <paper-checkbox name="allowAdminAnswersToPoints" ?checked="${this.group.configuration.allowAdminAnswersToPoints}">
+          ${this.t('allowAdminAnswersToPoints')}
+        </paper-checkbox>
 
-        <paper-input id="maxDaysBackForRecommendations" .name="maxDaysBackForRecommendations" .type="text" .maxlength="4" .allowedPattern="[0-9]" .label="${this.t('maxDaysBackForRecommendations')}" .value="${this.group.configuration.maxDaysBackForRecommendations}">
+        <paper-input id="customAdminCommentsTitle" name="customAdminCommentsTitle" type="text" label="${this.t('customAdminCommentsTitle')}" value="${this.group.configuration.customAdminCommentsTitle}" maxlength="50" char-counter="">
+        </paper-input>
+
+        <div class="subHeaders">${this.t('additionalGroupConfig')}</div>
+
+        <paper-checkbox .name="hideAllTabs" .checked="${this.hideAllTabs}">${this.t('hideAllTabs')}</paper-checkbox>
+        <paper-checkbox .name="hideHelpIcon" .checked="${this.hideHelpIcon}">${this.t('hideHelpIcon')}</paper-checkbox>
+
+        <paper-checkbox name="useCommunityTopBanner" ?checked="${this.group.configuration.useCommunityTopBanner}">${this.t('useCommunityTopBanner')}</paper-checkbox>
+        <paper-checkbox name="makeMapViewDefault" ?checked="${this.group.configuration.makeMapViewDefault}">${this.t('makeMapViewDefault')}</paper-checkbox>
+        <paper-checkbox name="simpleFormatDescription" ?checked="${this.group.configuration.simpleFormatDescription}">${this.t('simpleFormatDescription')}</paper-checkbox>
+        <paper-checkbox name="resourceLibraryLinkMode" ?checked="${this.group.configuration.resourceLibraryLinkMode}">${this.t('resourceLibraryLinkMode')}</paper-checkbox>
+        <paper-checkbox name="collapsableTranscripts" ?checked="${this.group.configuration.collapsableTranscripts}">${this.t('collapsableTranscripts')}</paper-checkbox>
+        <paper-checkbox name="allowWhatsAppSharing" ?checked="${this.group.configuration.allowWhatsAppSharing}">${this.t('allowWhatsAppSharing')}</paper-checkbox>
+
+        <paper-input id="actAsLinkToCommunityId" name="actAsLinkToCommunityId" type="number" allowed-pattern="[0-9]" label="${this.t('actAsLinkToCommunityId')}" value="${this.group.configuration.actAsLinkToCommunityId}" maxlength="8">
+        </paper-input>
+
+        <paper-input id="maxDaysBackForRecommendations" name="maxDaysBackForRecommendations" type="text" maxlength="5" allowed-pattern="[0-9]" label="${this.t('maxDaysBackForRecommendations')}" value="${this.group.configuration.maxDaysBackForRecommendations}">
+        </paper-input>
+
+        <paper-input id="customUserNamePrompt" name="customUserNamePrompt" type="text" label="${this.t('customUserNamePrompt')}" value="${this.group.configuration.customUserNamePrompt}" maxlength="45" char-counter="">
+        </paper-input>
+
+        <paper-input id="customTermsIntroText" name="customTermsIntroText" type="text" label="${this.t('customTermsIntroText')}" value="${this.group.configuration.customTermsIntroText}" maxlength="100" char-counter="">
         </paper-input>
 
         <paper-input id="externalGoalTriggerUrl" .name="externalGoalTriggerUrl" .type="text" .label="${this.t('externalGoalTriggerUrl')}" .value="${this.group.configuration.externalGoalTriggerUrl}">
@@ -500,6 +628,9 @@ render() {
         </paper-input>
 
         <paper-input id="customBackName" .name="customBackName" .type="text" .maxlength="20" .label="${this.t('customBackName')}" .value="${this.group.configuration.customBackName}">
+        </paper-input>
+
+        <paper-input id="optionalSortOrder" name="optionalSortOrder" type="number" .allowedPattern="[0-9]" label="${this.t('optionalSortOrder')}" value="${this.group.configuration.optionalSortOrder}" maxlength="4">
         </paper-input>
 
         <input .type="hidden" .name="hideAllTabs" .value="${this.hideAllTabs}">
@@ -539,6 +670,33 @@ render() {
     ypMediaFormatsBehavior
   ],
 */
+
+  _structuredQuestionsChanged (event, detail) {
+    if (detail && detail.value) {
+      var questions = detail.value.trim();
+      if (questions.startsWith("[") || questions.startsWith("{")) {
+        var jsonError = false;
+        try {
+          JSON.parse(questions);
+        } catch (e) {
+          jsonError = true;
+        }
+        this.set('structuredQuestionsJsonError', jsonError);
+      } else {
+        this.set('structuredQuestionsJsonError', false);
+      }
+    } else {
+      this.set('structuredQuestionsJsonError', false);
+    }
+  }
+
+  _customRatingsTextChanged(event, detail) {
+    if (detail.value && detail.value!=="") {
+      this.set("endorsementButtonsDisabled", true);
+    } else {
+      this.set("endorsementButtonsDisabled", false);
+    }
+  }
 
   _videoUploaded(event, detail) {
     this.set('uploadedVideoId', detail.videoId);
@@ -725,6 +883,10 @@ render() {
       } else {
         this.set('hasAudioUpload', false);
       }
+
+      if (group.configuration && group.configuration.structuredQuestions) {
+        this._structuredQuestionsChanged(null, { value: group.configuration.structuredQuestions })
+      }
     }
 
     this._updateEmojiBindings();
@@ -765,6 +927,14 @@ render() {
     if (!group) {
       this.set('group', {name: '', objectives: '', access: 0, status: 'active'});
     } else {
+      if (group.configuration && group.configuration.customRatings && !group.configuration.customRatingsText) {
+        var customRatingsText = "";
+        group.configuration.customRatings.forEach(function (rating) {
+            customRatingsText += rating.name+","+rating.numberOf+","+rating.emoji+","
+        });
+        customRatingsText = customRatingsText.substring(0, customRatingsText.length - 1);
+        group.configuration.customRatingsText = customRatingsText;
+      }
       this.set('group', group);
       if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
         this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
@@ -772,6 +942,13 @@ render() {
     }
     this.set('new', newNotEdit);
     this.set('refreshFunction', refreshFunction);
+
+    if (this.group.configuration && this.group.configuration.customRatingsText && this.group.configuration.customRatingsText!=="") {
+      this.set("endorsementButtonsDisabled", true);
+    } else {
+      this.set("endorsementButtonsDisabled", false);
+    }
+
     this._setupTranslation();
   }
 

@@ -53,12 +53,16 @@ class YpGroupGridLit extends YpBaseElement {
     }
 
     :focus {
-      outline: none;
     }
 
     @media (max-width: 1199px) {
       .groupCard {
       }
+    }
+
+    a {
+        text-decoration: none;
+        width: 100%;
     }
     `, YpFlexLayout]
   }
@@ -67,23 +71,40 @@ class YpGroupGridLit extends YpBaseElement {
       <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" .scrollOffset="${this.scrollOffset}" .items="${this.activeGroups}" as="group" .scrollTarget="document" .grid="${this.wide}">
+        <iron-list id="ironList" selection-enabled="" .scrollOffset="${this.scrollOffset}" @selected-item-changed="${this._selectedItemChanged}" .items="${this.activeGroups}" as="group" scroll-target="document" role="list" ?grid="${this.wide}">
           <template>
-            <div class="groupCard layout vertical center-center" .tabIndex="${this.tabIndex}" wide-padding="${this.wide}">
-              <yp-group-card-lit wide-padding="${this.wide}" .group="${this.group}" @mouseover="${this.cardMouseOver}" @mouseout="${this.cardMouseOut}"></yp-group-card-lit>
+            <div class="groupCard layout vertical center-center" ?widePadding="${this.wide}" tabindex="${this.tabIndex}" role="listitem" aria-level="2" aria-label="${this.group.name}">
+              <a href="${this._getGroupUrl(group)}" id="groupCardHref${this.group.id}" class="layout vertical center-center"><yp-group-card wide-padding="${this.wide}" group="${this.group}" @mouseover="${this.cardMouseOver}" @mouseout="${this.cardMouseOut}"></yp-group-card></a>
             </div>
           </template>
         </iron-list>
       </div>
     `
   }
-  
+
   /*
   behaviors: [
     ypIronListBehavior,
     ypCardMouseBehavior
   ],
 */
+
+  _selectedItemChanged(event, detail) {
+    if (detail && detail.value) {
+      var selectedCard = this.$$("#groupCardHref"+detail.value.id);
+      if (selectedCard) {
+        selectedCard.click();
+      }
+    }
+  }
+
+  _getGroupUrl (group) {
+    if (group && group.configuration && group.configuration.actAsLinkToCommunityId) {
+      return "/community/"+group.configuration.actAsLinkToCommunityId;
+    } else {
+    return "/group/"+group.id;
+    }
+  }
 
   _scrollOffset(wide, featuredGroups) {
     const list = this.$$("#ironList");

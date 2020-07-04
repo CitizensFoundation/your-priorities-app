@@ -300,7 +300,7 @@ class YpGroupLit extends YpBaseElement {
       </div>
 
       <div class="largeAddButton layout horizontal center-center" is-apple="${this.isOldiOs}" is-ipad="${this.isIpad}" ?hidden="${this.group.configuration.hideNewPost}">
-        <yp-post-card-add .disabled="${this.disableNewPosts}" @new-post="${this._newPost}" .elevation="2"></yp-post-card-add>
+        <yp-post-card-add .group="${this.group}" .disabled="${this.disableNewPosts}" @new-post="${this._newPost}" .elevation="2"></yp-post-card-add>
       </div>
 
       <div class="layout horizontal center-center tabContainer" .hide="${this.group.configuration.hideAllTabs}">
@@ -400,7 +400,7 @@ class YpGroupLit extends YpBaseElement {
 
     ${ !this.disableNewPosts ? html`
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.disableNewPosts}">
-        <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
+        <paper-fab class="createFab" .icon="${this.createFabIcon}" .title="${this.t('post.new')}" .elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
       </div>
     ` : html``}
 
@@ -432,6 +432,7 @@ class YpGroupLit extends YpBaseElement {
     ypThemeBehavior,
     YpNewsTabSelected,
     ypDetectOldiOs,
+    AccessHelpers,
     ypGotoBehavior,
     ypMediaFormatsBehavior,
     ypNumberFormatBehavior
@@ -662,6 +663,7 @@ class YpGroupLit extends YpBaseElement {
 
   _refreshAjax() {
     this.async(function () {
+      this._getGroup();
       this.$$("#ajax").generateRequest();
       const groupActivities = this.$$("#groupActivities");
       if (groupActivities) {
@@ -670,7 +672,7 @@ class YpGroupLit extends YpBaseElement {
     }, 100);
   }
 
-  _groupIdChanged(groupId) {
+  _groupIdChanged(groupId, oldGroupId) {
     if (groupId && groupId!=this.lastValidGroupId) {
       this.set('lastValidGroupId', groupId);
       this.set('group', null);
@@ -696,7 +698,7 @@ class YpGroupLit extends YpBaseElement {
         this._getGroup();
       }
       this.async(function () {
-        if (!this.selectedTab) {
+        if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
           this.set('selectedTab', 'open');
         }
       });
@@ -744,6 +746,8 @@ class YpGroupLit extends YpBaseElement {
       this.set('tabName', 'open');
       this.$$("#groupCard")._openEdit();
     }
+
+    window.appGlobals.postLoadGroupProcessing(this.group);
   }
 
   setupTopHeaderImage(image) {
@@ -755,6 +759,22 @@ class YpGroupLit extends YpBaseElement {
         path = 'none';
       }
       this.updateStyles( {'--top-area-background-image': path });
+    }
+  }
+
+  _useHardBack(configuration) {
+    if (configuration && configuration.customBackURL) {
+      var backUrl = configuration.customBackURL;
+      if (backUrl.startsWith("/community/") ||
+        backUrl.startsWith("/group/") ||
+        backUrl.startsWith("/domain/") ||
+        backUrl.startsWith("/post/")) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
     }
   }
 
@@ -801,7 +821,11 @@ class YpGroupLit extends YpBaseElement {
 
       this._refreshTabsAndPages();
 
-      if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
+      if (this.group.configuration.useCommunityTopBanner &&
+        this.group.Community.CommunityHeaderImages &&
+        this.group.Community.CommunityHeaderImages.length>0) {
+        this.setupTopHeaderImage(this.group.Community.CommunityHeaderImages);
+      } else if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
         this.setupTopHeaderImage(this.group.GroupHeaderImages);
       } else {
         this.setupTopHeaderImage(null);
@@ -816,7 +840,7 @@ class YpGroupLit extends YpBaseElement {
         documentTitle: this.group.name,
         enableSearch: true,
         hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
-        useHardBack: this.group.configuration.customBackURL ? true : false,
+        useHardBack: this._useHardBack(this.group.configuration),
         backPath:  this.group.configuration.customBackURL ?
                      this.group.configuration.customBackURL :
                      "/community/" + this.group.community_id
@@ -834,9 +858,9 @@ class YpGroupLit extends YpBaseElement {
       }
 
       if (this.group.configuration && this.group.configuration.externalGoalTriggerUrl) {
-        window.appGlobals.externalGoalTriggerUrl = this.group.configuration.externalGoalTriggerUrl;
+        window.appGlobals.externalGoalTriggerGroupId = this.group.id;
       } else {
-        window.appGlobals.externalGoalTriggerUrl = null;
+        window.appGlobals.externalGoalTriggerGroupId = null;
       }
 
       if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.signupTermsPageId &&
@@ -846,12 +870,34 @@ class YpGroupLit extends YpBaseElement {
         window.appGlobals.signupTermsPageId = null;
       }
 
+
+      if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.customSamlDeniedMessage) {
+        window.appGlobals.currentSamlDeniedMessage = this.group.Community.configuration.customSamlDeniedMessage;
+      } else {
+        window.appGlobals.currentSamlDeniedMessage = null;
+      }
+
+      if (this.group.Community.configuration && this.group.Community.configuration.customSamlLoginMessage) {
+        window.appGlobals.currentSamlLoginMessage = this.group.Community.configuration.customSamlLoginMessage;
+      } else {
+        window.appGlobals.currentSamlLoginMessage = null;
+      }
+
       window.appGlobals.currentGroup = this.group;
 
-      if (this.group.configuration && this.group.configuration.forceSecureSamlLogin) {
-        window.appGlobals.currentGroupForceSaml = true;
+      if ((this.group.configuration &&
+          this.group.configuration.forceSecureSamlLogin &&
+          !this.checkGroupAccess(this.group)) ||
+          (this.group.Community &&
+          this.group.Community.configuration &&
+          this.group.Community.configuration.forceSecureSamlLogin &&
+          !this.checkCommunityAccess(this.group.Community))) {
+        window.appGlobals.currentForceSaml = true;
       } else {
-        window.appGlobals.currentGroupForceSaml = false;
+        window.appGlobals.currentForceSaml = false;
+      }
+      if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
+        this.set('selectedTab','map');
       }
     }
   }

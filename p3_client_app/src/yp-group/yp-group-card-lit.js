@@ -203,7 +203,7 @@ class YpGroupCardLit extends YpBaseElement {
       <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
       <paper-card class="groupCard" .animated="" .elevation="${this.elevation}">
         <iron-image ?hidden="${!this.noImage}" .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToGroup}"></iron-image>
-        <iron-image ?hidden="${this.noImage}" .archived="${this.archived}" class="logo withPointer" .sizing="cover" @tap="_goToGroup" .preload="" src="${this.groupLogoImagePath}"></iron-image>
+        <iron-image ?hidden="${this.noImage}" .archived="${this.archived}" class="logo withPointer" alt="${this.group.name}" .sizing="cover" @tap="_goToGroup" .preload="" src="${this.groupLogoImagePath}"></iron-image>
           <div id="groupName" class="group-name" archived="${this.archived}" featured="${this.featured}" on-tap="_goToGroup">
             <yp-magic-text .textType="groupName" .contentLanguage="${this.group.language}" .disableTranslation="${this.group.configuration.disableNameAutoTranslation}" textOnly .content="${this.groupName}" .content-id="${this.group.id}">
             </yp-magic-text>
@@ -211,8 +211,8 @@ class YpGroupCardLit extends YpBaseElement {
           </div>
         <yp-magic-text id="objectives" class="objectives vertical withPointer" @tap="${this._goToGroup}" .textType="groupContent" .contentLanguage="${this.group.language}" textOnly .content="${this.groupObjectives}" .content-id="${this.group.id}" .truncate="200">
         </yp-magic-text>
-        <yp-group-card-lit class="stats" .group="${this.group}"></yp-group-card-lit>
-        <yp-membership-button .archived="${this.archived}" .group="${this.group}"></yp-membership-button>
+        <yp-group-card-lit ?hidden="${this.group.configuration.actAsLinkToCommunityId}" class="stats" .group="${this.group}"></yp-group-card-lit>
+        <yp-membership-button ?hidden="${this.group.configuration.actAsLinkToCommunityId}" .archived="${this.archived}" .group="${this.group}"></yp-membership-button>
       </paper-card>
 `
   }

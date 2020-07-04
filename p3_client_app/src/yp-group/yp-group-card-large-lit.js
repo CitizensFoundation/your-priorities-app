@@ -54,6 +54,21 @@ class YpGroupCardLargeLit extends YpBaseElement {
         computed: '_exportUrl(hasGroupAccess, group)'
       },
 
+      exportUrlDocx: {
+        type: String,
+        computed: '_exportUrlDocx(hasGroupAccess, group, language, autoTranslateActive)'
+      },
+
+      autoTranslateActive: {
+        type: Boolean,
+        value: false
+      },
+
+      autoTranslateActive: {
+        type: Boolean,
+        value: false
+      },
+
       groupVideoURL: {
         type: String,
         value: null
@@ -89,7 +104,11 @@ class YpGroupCardLargeLit extends YpBaseElement {
       }
 
       .group-name[admin] {
-        padding-right: 16px;
+        padding-right: 32px;
+      }
+
+      video {
+        outline: none !important;
       }
 
       .objectives {
@@ -154,7 +173,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
         padding-left: 16px;
         padding-top: 16px;
         padding-bottom: 16px;
-        padding-right: 24px !important;
+        padding-right: 32px !important;
         min-height: 28px;
       }
 
@@ -264,6 +283,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
   render() {
     return html`
       <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
+      <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
       <div class="layout horizontal center-center wrap">
         <paper-material id="cardImage" .elevation="3" is-video="${this.groupVideoURL}" .animated="" class="groupCard imageCard top-card">
@@ -271,7 +291,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
         ${ this.groupVideoURL ? html`
           <video id="videoPlayer" data-id="${this.groupVideoId}" .controls="" .preload="meta" class="logo" src="${this.groupVideoURL}" playsinline .poster="${this.groupVideoPosterURL}"></video>
         ` : html`
-          <iron-image class="logo" .sizing="cover" .preload="" src="${this.groupLogoImagePath}"></iron-image>
+          <iron-image class="logo" .sizing="cover" alt="${this.group.name}" preload src="${this.groupLogoImagePath}"></iron-image>
         `  }
 
         </paper-material>
@@ -280,13 +300,12 @@ class YpGroupCardLargeLit extends YpBaseElement {
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="description">
-                <div class="group-name" admin="${this.hasGroupAccess}">
+                <div class="group-name" admin="${this.hasGroupAccess}"  role="heading" aria-level="1" aria-label="${this.group.name}">
                   <yp-magic-text id="groupName" text-type="groupName" .contentLanguage="${this.group.language}" disable-translation="${this.group.configuration.disableNameAutoTranslation}" .textOnly .content="${this.groupName}" content-id="${this.group.id}">
                   </yp-magic-text>
                 </div>
               <div ?hidden="" class="groupAccess">${this.groupAccessText}</div>
-              <yp-magic-text id="objectives" class="groupDescription" .textType="groupContent" .contentLanguage="${this.group.language}" .content="${this.group.objectives}" .content-id="${this.group.id}">
-
+              <yp-magic-text id="objectives" class="groupDescription" ?simpleFormat="${group.configuration.simpleFormatDescription}" .textType="groupContent" .contentLanguage="${this.group.language}" .content="${this.group.objectives}" .content-id="${this.group.id}">
               </yp-magic-text>
             </div>
           </div>
@@ -304,11 +323,13 @@ class YpGroupCardLargeLit extends YpBaseElement {
               <paper-item ?hidden="${!this.hasGroupAccess}" id="moderationAllMenuItem">
               ${this.t('manageAllContent')}
               </paper-item>
-              <a ?hidden="${!this.hasGroupAccess}" .target="_blank" href="${this.exportUrl}"><paper-item id="exportMenuItem">${this.t('exportGroup')}</paper-item></a>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="exportXlsMenuItem">${this.t('exportGroupXls')}</paper-item>
+              <paper-item ?hidden="${!this.hasGroupAccess}" id="exportDocxMenuItem">${this.t('exportGroupDocx')}</paper-item>
               <paper-item ?hidden="${!this.hasGroupAccess}" id="deleteMenuItem">${this.t('group.delete')}</paper-item>
               <paper-item ?hidden="${!this.hasGroupAccess}" id="anonymizeMenuItem">${this.t('anonymizeGroupContent')}</paper-item>
               <paper-item ?hidden="${!this.hasGroupAccess}" id="deleteContentMenuItem">${this.t('deleteGroupContent')}</paper-item>
               <paper-item id="addPostMenuItem">${this.t('post.new')}</paper-item>
+              <paper-item id="openAnalyticsApp"  ?hidden="${!this.hasGroupAccess}">${this.t('openAnalyticsApp')}</paper-item>
           </paper-listbox>
           </paper-menu-button>
         </div>
@@ -339,9 +360,26 @@ class YpGroupCardLargeLit extends YpBaseElement {
   ]
   */
 
+  _autoTranslateEvent(event, detail) {
+    this.set('autoTranslateActive', detail);
+  }
+
+
   _exportUrl(access, group) {
     if (access && group) {
       return '/api/groups/'+group.id+'/export_group';
+    } else {
+      return null;
+    }
+  }
+
+  _exportUrlDocx(access, group, language, autoTranslate) {
+    if (access && group && language) {
+      var langInfo = "";
+      if (autoTranslate) {
+        langInfo = "?translateLanguage="+language;
+      }
+      return '/api/groups/'+group.id+'/export_group_docx'+langInfo;
     } else {
       return null;
     }
@@ -364,7 +402,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
   }
 
   _groupChanged(group, previousGroup) {
-    if (group && group.objectives && group.objectives.length>220) {
+    if (group && group.objectives && group.objectives.length>200) {
       this.$$("#objectives").style.fontSize = "15px";
     } else {
       this.$$("#objectives").style.fontSize = "16px";
@@ -372,7 +410,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
 
     if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
       const videoURL = this._getVideoURL(group.GroupLogoVideos);
-      const videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos);
+      var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos, group.GroupLogoImages);
       if (videoURL && videoPosterURL) {
         this.set('groupVideoURL', videoURL);
         this.set('groupVideoPosterURL', videoPosterURL);
@@ -429,10 +467,16 @@ class YpGroupCardLargeLit extends YpBaseElement {
       this._openDeleteContent();
     else if (detail.item.id==="moderationMenuItem")
       this._openContentModeration();
+    else if (detail.item.id==="exportDocxMenuItem")
+      this._openCreateDocxReport();
+    else if (detail.item.id==="exportXlsMenuItem")
+      this._openCreateXlsReport();
     else if (detail.item.id==="moderationAllMenuItem")
       this._openAllContentModeration();
     else if (detail.item.id==="anonymizeMenuItem")
       this._openAnonymizeContent();
+    else if (detail.item.id==="openAnalyticsApp")
+      window.location = "/analytics/group/"+this.group.id;
     this.$$("paper-listbox").select(null);
   }
 
@@ -500,6 +544,20 @@ class YpGroupCardLargeLit extends YpBaseElement {
       console.error("Couldn't refresh group");
     }.bind(this));
     ajax.generateRequest();
+  }
+
+  _openCreateDocxReport() {
+    window.appGlobals.activity('open', 'createReportDocx');
+    dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+      dialog.setupAndOpen("docx",this.group, null);
+    }.bind(this));
+  }
+
+  _openCreateXlsReport() {
+    window.appGlobals.activity('open', 'createReportXls');
+    dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+      dialog.setupAndOpen("xls",this.group, null);
+    }.bind(this));
   }
 
   _openDelete() {

@@ -22,9 +22,9 @@ export const GroupCollectionBehaviors = {
     }
   },
 
-  setupGroups: function (groups) {
+  setupGroups: function (groups, communityConfig) {
     this.set('groupsLength', groups.length);
-    var splitGroups = this.splitByStatus(groups);
+    var splitGroups = this.splitByStatus(groups, communityConfig);
     this.set('activeGroups', splitGroups.featured.concat(splitGroups.active.concat(splitGroups.archived)));
   }
 };
