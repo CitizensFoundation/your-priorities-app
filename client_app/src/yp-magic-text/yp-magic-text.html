@@ -158,6 +158,11 @@
           linkifyCutoff: {
             type: Number,
             value: 35
+          },
+
+          removeUrls: {
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -364,6 +369,10 @@
 
         if (this.simpleFormat) {
           this.processedContent = this.processedContent.trim().replace(/(\n)/g,"<br>");
+        }
+
+        if (this.removeUrls) {
+          this.processedContent = this.processedContent.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')
         }
 
         this._setupStructuredQuestions();

@@ -208,6 +208,7 @@
       </div>
       <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
                      text-type="groupContent" content-language="[[group.language]]"
+                     remove-urls
                      text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
       </yp-magic-text>
       <yp-group-stats hidden$="[[group.configuration.actAsLinkToCommunityId]]" class="stats" group="[[group]]"></yp-group-stats>
