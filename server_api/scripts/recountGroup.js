@@ -3,7 +3,7 @@ var async = require('async');
 var ip = require('ip');
 var _ = require('lodash');
 
-const groupId = 2923; //process.argv[2];
+const groupId = process.argv[2];
 
 let masterPostCount = 0;
 let masterPointCount = 0;
@@ -159,11 +159,11 @@ const recountGroupPosts = (groupId, done) => {
       group_id: groupId
     },
     attribute: ['id']
-  }).then(function (postIds) {
-    masterPostCount = postIds.length;
-    async.eachSeries(postIds, (postId, forEachCallback) => {
-      recountOnePost(postId, (error) => {
-        recountPostPoints(postId, forEachCallback);
+  }).then(function (posts) {
+    masterPostCount = posts.length;
+    async.eachSeries(posts, (post, forEachCallback) => {
+      recountOnePost(post.id, (error) => {
+        recountPostPoints(post.id, forEachCallback);
       });
     }, error=> {
       done(error);
@@ -177,9 +177,9 @@ const recountPostPoints = (postId, done) => {
       post_id: postId
     },
     attribute: ['id']
-  }).then(function (pointIds) {
-    async.eachSeries(pointIds, (pointId, forEachCallback) => {
-      recountOnePoint(pointId, forEachCallback);
+  }).then(function (points) {
+    async.eachSeries(points, (point, forEachCallback) => {
+      recountOnePoint(point.id, forEachCallback);
     }, error=> {
       done(error);
     });
@@ -195,11 +195,18 @@ recountGroupPosts(groupId, error => {
       where: {
         id: groupId
       },
+      include: [
+        {
+          model: models.User,
+          as: 'GroupUsers',
+          attributes: ['id']
+        }
+      ],
       attributes: ['id', 'counter_posts', 'counter_points', 'counter_users']
     }).then(group=>{
       group.counter_posts = masterPostCount;
       group.counter_points = masterPointCount;
-      group.counter_users = masterPostCount+masterPointCount+masterEndorsementCount;
+      group.counter_users = group.GroupUsers.length;
       group.save().then(()=>{
         console.log(`Done recounting group ${groupId}`);
         process.exit();
