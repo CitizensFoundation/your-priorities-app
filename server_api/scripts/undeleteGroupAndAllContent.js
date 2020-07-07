@@ -148,6 +148,7 @@ async.series([
     console.error(`Error undeleting group ${groupId} - ${error}`);
   else
     console.log(`Done undeleting group ${groupId}`);
+  process.exit();
 });
 
 
