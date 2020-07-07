@@ -658,12 +658,8 @@
       },
 
       _hasPostAccess: function(post, gotAdminRights) {
-        if (post && gotAdminRights) {
-          if (this.checkPostAccess(post)!=null) {
-            return true
-          } else {
-            return false;
-          }
+        if (post) {
+          return this.checkPostAccess(post);
         } else {
           return false;
         }
