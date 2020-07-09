@@ -209,12 +209,14 @@ class YpGroupCardLit extends YpBaseElement {
             </yp-magic-text>
             <span ?hidden="${!this.archived}">-${this.t('archived')}</span>
           </div>
-        <yp-magic-text id="objectives" class="objectives vertical withPointer" @tap="${this._goToGroup}" .textType="groupContent" .contentLanguage="${this.group.language}" textOnly .content="${this.groupObjectives}" .content-id="${this.group.id}" .truncate="200">
+        <yp-magic-text id="objectives" class="objectives vertical withPointer"
+          @tap="${this._goToGroup}" .textType="groupContent" .contentLanguage="${this.group.language}"
+          textOnly .content="${this.groupObjectives}" removeUrls .content-id="${this.group.id}" .truncate="200">
         </yp-magic-text>
         <yp-group-card-lit ?hidden="${this.group.configuration.actAsLinkToCommunityId}" class="stats" .group="${this.group}"></yp-group-card-lit>
         <yp-membership-button ?hidden="${this.group.configuration.actAsLinkToCommunityId}" .archived="${this.archived}" .group="${this.group}"></yp-membership-button>
       </paper-card>
-`
+    `;
   }
 }
 

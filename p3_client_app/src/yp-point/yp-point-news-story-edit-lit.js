@@ -81,6 +81,11 @@ class YpPointNewsStoryEditLit extends YpBaseElement {
         padding-right: 16px;
       }
 
+      .userImage[rtl] {
+        padding-left: 16px;
+        padding-right: 4px;
+      }
+
       paper-icon-button {
         margin-top: 16px;
         padding-bottom: 0;
@@ -131,7 +136,7 @@ render() {
   return html`
     <div class="layout vertical container">
       <div class="layout horizontal">
-        <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
+        <yp-user-image class="userImage" .user="${this.loggedInUser}" ?rtl="${this.rtl}"></yp-user-image>
         <div class="layout vertical">
           <paper-textarea id="pointNewsStory" required .minlength="15" .name="pointNewsStory" .value="${this.point.content}" always-float-label="${this.point.content}" .label="${this.t('point.addNewsStory')}" char-counter .rows="2" .max-rows="5" @keydown="${this._keyDown}" .maxlength="500">
           </paper-textarea>
@@ -159,7 +164,7 @@ render() {
 
     </div>
     <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-    `
+    `;
   }
 
 /*

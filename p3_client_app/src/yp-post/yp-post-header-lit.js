@@ -36,7 +36,7 @@ class YpPostHeaderLit extends YpBaseElement {
 
       elevation: {
         type: Number,
-        value: 2
+        value: 1
       },
 
       post: {
@@ -49,6 +49,11 @@ class YpPostHeaderLit extends YpBaseElement {
         value: false,
         notify: true,
         computed: '_hasPostAccess(post, gotAdminRights)'
+      },
+
+      structuredAnswersFormatted: {
+        type: String,
+        computed: '_structuredAnswersFormatted(post)'
       },
 
       isEditing: {
@@ -84,298 +89,330 @@ class YpPostHeaderLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-
-      .infoContainer {
-        color: var(--primary-color-more-darker, #252525);
-        line-height: var(--description-line-height, 1.3);
-        width: 540px;
-        padding: 0px;
-        padding-bottom: 16px;
-        padding-top: 16px;
-      }
-
-      .voting {
-        text-align: center;
-        padding-left: 16px;
-        padding-right: 24px;
-      }
-
-      .card-actions {
-      }
-
-      yp-post-actions {
-        position: absolute;
-        right: 8px;
-        bottom: 0px;
-      }
-
-      .edit {
-        color: #eee;
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding-right: 0;
-        margin-right: 0;
-      }
-
-      .post-name {
-        margin: 0;
-        font-size: var(--extra-large-heading-size, 28px);
-        background-color: var(--primary-color-600);
-        color: #FFF;
-        padding: 16px;
-        cursor: pointer;
-        font-weight: bold;
-        min-height: 33px;
-      }
-
-      .category-icon {
-        width: 100px;
-        height: 100px;
-      }
-
-      .category-image-container {
-        text-align: right;
-        margin-top: -52px;
-      }
-
-      .postCardCursor {
-        cursor: pointer;
-      }
-
-      yp-post-cover-media {
-        position: relative;
-        width: 420px;
-        height: 236px;
-      }
-
-      yp-post-cover-media[audio-cover] {
-        height: 90px;
-      }
-
-      .transcriptContainer {
-        width: 420px;
-        max-width: 420px;
-      }
-
-      .postCard {
-        width: 960px;
-        background-color: #fff;
-        position: relative;
-      }
-
-      .description {
-        padding-bottom: 2px;
-        padding-left: 8px;
-        padding-right: 8px;
-        margin-bottom: 42px;
-      }
-
-      paper-icon-button.moreVert {
-        position: absolute;
-        top: 0;
-        right: 0;
-      }
-
-      .userInfo {
-        color: #ddd;
-        font-size: 17px;
-      }
-
-      @media (max-width: 960px) {
         :host {
-          max-width: 600px;
-        }
-
-        .postCard {
-          width: 100%;
-        }
-
-        yp-post-cover-media {
-          width: 100% !important;
-        }
-
-        .coverContainer {
-          width: 100%;
-        }
-
-        .transcriptContainer {
-          width: 100%;
-          max-width: 100%;
-        }
-
-        .voting {
-          padding-left: 0;
-          padding-right: 0;
-        }
-
-        .card-actions {
-          left: 24px;
-          right: 0;
-          width: 320px;
-        }
-
-        .card-content {
-          width: 100% !important;
-          padding-bottom: 16px;
+          display: block;
         }
 
         .infoContainer {
-          width: 100%;
+          color: var(--primary-color-more-darker, #111);
+          line-height: var(--description-line-height, 1.3);
+          width: 540px;
+          padding: 0px;
+          padding-bottom: 0;
+          padding-top: 16px;
         }
 
-        .description[no-user-info] {
-          padding-bottom: 32px;
-        }
-
-        .description {
-          margin-bottom: 8px;
-        }
-
-        .userInfo {
-          font-size: 14px;
-        }
-
-        .mediaAndInfoContainer {
-
-        }
-      }
-
-      @media (max-width: 800px) {
-        .post-name {
-          font-size: 22px;
-          min-height: 21px;
-        }
-
-        :host {
-          max-width: 423px;
-          width: 100%;
-        }
-
-        yp-post-cover-media {
-          height: 230px;
-        }
-
-      }
-
-      @media (max-width: 430px) {
-        :host {
-          width: 100%;
-        }
-
-        .postCard {
-          width: 100% !important;
-          margin: 8px;
-          margin-top: 4px;
-        }
-
-        yp-post-cover-media {
-          height: 225px;
-        }
-
-        .card-actions {
-          left: 0;
-          width: 280px;
-        }
-
-        .post-name {
-          font-size: 18px;
-        }
-
-        .post-name[logged-in] {
+        .voting {
+          text-align: center;
+          padding-left: 16px;
           padding-right: 24px;
         }
 
-        .headerTopLevel {
-          width: 100%;
+        .card-actions {
+        }
+
+        .edit {
+          color: #eee;
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding-right: 0;
+          margin-right: 0;
+        }
+
+
+        .category-icon {
+          width: 100px;
+          height: 100px;
+        }
+
+        .category-image-container {
+          text-align: right;
+          margin-top: -52px;
+        }
+
+        .postCardCursor {
+          cursor: pointer;
+        }
+
+        yp-post-cover-media {
+          position: relative;
+          width: 420px;
+          height: 236px;
+        }
+
+        yp-post-cover-media[audio-cover] {
+          height: 90px;
+        }
+
+        .transcriptContainer {
+          width: 420px;
+          max-width: 420px;
+        }
+
+        .postCard {
+          width: 960px;
+          background-color: #fff;
+          position: relative;
+          border-radius: 4px;
         }
 
         .description {
-          padding-bottom: 32px;
+          padding-bottom: 2px;
+          padding-left: 16px;
+          padding-right: 16px;
         }
-      }
 
-      @media (max-width: 375px) {
-        yp-post-cover-media[header-mode] {
-          height: 207px;
+
+        .mobileName {
+          display: none;
         }
-        yp-post-cover-media[audio-cover] {
-          height: 80px;
+
+        .shareIcon {
+          position: absolute;
+          --paper-share-button-icon-color: #656565;
+          --paper-share-button-icon-height: 42px;
+          --paper-share-button-icon-width: 42px;
+          text-align: right;
+          width: 44px;
+          height: 44px;
+          right: 42px;
+          bottom: 3px;
         }
-      }
 
-      @media (max-width: 360px) {
-        yp-post-cover-media[header-mode] {
-          height: 200px;
+        .postActions {
+          position: absolute;
+          right: 92px;
+          bottom: 2px;
         }
-        yp-post-cover-media[audio-cover] {
-          height: 90px;
+
+        .moreVert {
+          position: absolute;
+          bottom: 4px;
+          right: 2px;
+          margin: 0;
+          padding: 0;
         }
-      }
 
-      @media (max-width: 320px) {
-        yp-post-cover-media[header-mode] {
-          height: 180px;
+        .moreVertButton {
+          color: #656565;
+          width: 46px;
+          height: 46px;
         }
-        yp-post-cover-media[audio-cover] {
-          height: 90px;
+
+        .customRatings {
+          position: absolute;
+          bottom: 12px;
+          right: 85px;
         }
-      }
 
-      .userWithOrg {
-        --ak-user-name-color: #555555;
-      }
+        @media (max-width: 960px) {
+          .moreVert {
+            position: absolute;
+            top: 4px;
+            bottom: initial;
+            right: 2px;
+          }
 
-      [hidden] {
-        display: none !important;
-      }
+          .description[has-custom-ratings] {
+            padding-bottom: 18px;
+          }
+
+          .customRatings {
+            right: 46px;
+          }
+
+          .mobileName {
+            margin-right: 38px;
+          }
+
+          .shareIcon {
+            right: 8px;
+            bottom: 2px;
+          }
+
+          .postActions {
+            right: 55px;
+            bottom: 2px;
+          }
 
 
-      #postTranscriptionEditor {
-        padding-left: 8px;
-        padding-right: 8px;
-      }
+          .infoContainer {
+            padding-bottom: 16px;
+            padding-top: 16px;
+          }
 
-      .transcriptError {
-        margin-top: 8px;
-        margin-bottom: 8px;
-        color: #F00;
-      }
+          .mobileName {
+            display: block;
+          }
 
-      paper-spinner {
-        margin-top: 8px;
-      }
+          .desktopName {
+            display: none;
+          }
 
-      .checkTranscript {
-        margin-top: 8px;
-        padding: 8px;
-      }
+          :host {
+            max-width: 600px;
+          }
 
-      .transcriptText {
-        margin-top: 0;
-        padding: 8px;
-        color: #444;
-        padding-bottom: 0;
-        font-style: italic;
-        margin-bottom: 8px;
-      }
+          .postCard {
+            width: 100%;
+          }
 
-      .transcriptHeader {
-        color: #222;
-        margin-bottom: 2px;
-        font-style: normal;
-      }
+          yp-post-cover-media {
+            width: 100% !important;
+          }
 
-      .editIcon {
-        color: #656565;
-      }
+          .coverContainer {
+            width: 100%;
+          }
 
-      @media (min-width: 960px) {
-        yp-post-cover-media[has-transcript][audio-cover] {
-          margin-bottom: 16px;
+          .transcriptContainer {
+            width: 100%;
+            max-width: 100%;
+          }
+
+          .voting {
+            padding-left: 0;
+            padding-right: 0;
+          }
+
+          .card-content {
+            width: 100% !important;
+            padding-bottom: 16px;
+          }
+
+          .infoContainer {
+            width: 100%;
+            margin-bottom: 32px;
+          }
+
+          .description {
+            margin-bottom: 8px;
+            margin-top: 8px;
+          }
+
+          .mediaAndInfoContainer {
+          }
         }
-      }
-  `, YpFlexLayout]
+
+        @media (max-width: 800px) {
+          .post-name {
+          }
+
+          :host {
+            max-width: 423px;
+            width: 100%;
+          }
+
+          yp-post-cover-media {
+            height: 230px;
+          }
+
+        }
+
+        @media (max-width: 430px) {
+          :host {
+            width: 100%;
+          }
+
+          .postCard {
+            width: 100% !important;
+            margin: 8px;
+            margin-top: 4px;
+          }
+
+          yp-post-cover-media {
+            height: 225px;
+          }
+
+          .post-name {
+          }
+
+          .headerTopLevel {
+            width: 100%;
+          }
+
+          .description {
+            padding-bottom: 8px;
+          }
+        }
+
+        @media (max-width: 375px) {
+          yp-post-cover-media[header-mode] {
+            height: 207px;
+          }
+          yp-post-cover-media[audio-cover] {
+            height: 80px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          yp-post-cover-media[header-mode] {
+            height: 200px;
+          }
+          yp-post-cover-media[audio-cover] {
+            height: 90px;
+          }
+        }
+
+        @media (max-width: 320px) {
+          yp-post-cover-media[header-mode] {
+            height: 180px;
+          }
+          yp-post-cover-media[audio-cover] {
+            height: 90px;
+          }
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+
+
+        #postTranscriptionEditor {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+
+        .transcriptError {
+          margin-top: 8px;
+          margin-bottom: 8px;
+          color: #F00;post-name
+        }
+
+        paper-spinner {
+          margin-top: 8px;
+        }
+
+        .checkTranscript {
+          margin-top: 8px;
+          padding: 8px;
+        }
+
+        .transcriptText {
+          margin-top: 0;
+          padding: 8px;
+          color: #444;
+          padding-bottom: 0;
+          font-style: italic;
+          margin-bottom: 8px;
+        }
+
+        .transcriptHeader {
+          color: #222;
+          margin-bottom: 2px;
+          font-style: normal;
+        }
+
+        .editIcon {
+          color: #656565;
+        }
+
+        @media (min-width: 960px) {
+          yp-post-cover-media[has-transcript][audio-cover] {
+            margin-bottom: 16px;
+          }
+        }`, YpFlexLayout];
   }
 
   render() {
@@ -384,23 +421,15 @@ class YpPostHeaderLit extends YpBaseElement {
 
     <div class="layout horizontal center-center">
       <paper-material class="postCard layout-wrap layout-horizontal" elevation="${this.elevation}" .animated="">
-        <div class="layout vertical headerTopLevel">
-          <div class="post-name layout vertical" @tap="${this.goToPostIfNotHeader}" .loggedIn="${this.loggedInUser}">
-            <div>
-              <yp-magic-text text-type="postName" .contentLanguage="${this.post.language}" .content="${this.postName}" .contentId="${this.post.id}">
-              </yp-magic-text>
-            </div>
+        <div class="layout vertical headerTopLevel" role="heading" aria-level="1" aria-label="[[post.name]]">
+          <yp-post-name-with-author top-left-radius class="mobileName" .post="${this.post}" ?isloggedin="${this.isLoggedIn}"></yp-post-name-with-author>
 
-            ${ this.post.Group.configuration.showWhoPostedPosts ? html`
-              <div class="layout horizontal userInfo">
-                <yp-user-with-organization class="userWithOrg" .hideImage="" .titleDate="${this.post.user.name}" .user="${this.post.User}"></yp-user-with-organization>
-              </div>
-            `: html``}
-
-          </div>
           <div class="layout horizontal wrap mediaAndInfoContainer layout-center-center">
             <div class="layout vertical center-center self-start coverContainer">
-              <yp-post-cover-media .show-video .show-audio .hasTranscript="${this.post.public_data.transcript.text}" .audioCover="${this.isAudioCover}" .headerMode="${this.headerMode}" .post="${this.post}"></yp-post-cover-media>
+              <yp-post-cover-media top-left-radius show-video show-audio
+                ?hasTranscript="${this.post.public_data.transcript.text}" .altTag="${this.post.name}"
+                ?audio-cover="${this.isAudioCover}" ?header-mode="${this.headerMode}" .post="${this.post}">
+              </yp-post-cover-media>
               <div class="transcriptContainer">
 
                 ${ this.checkingTranscript ? html`
@@ -449,46 +478,75 @@ class YpPostHeaderLit extends YpBaseElement {
                   </div>
                 `: html``}
 
-                <yp-ajax ?hidden="" id="checkTranscriptStatusAjax" @response="${this._transcriptStatusResponse}"></yp-ajax>
+                <yp-ajax hidden id="checkTranscriptStatusAjax" @response="${this._transcriptStatusResponse}"></yp-ajax>
               </div>
             </div>
             <div class="layout vertical">
-              <div class="infoContainer layout-vertical">
-                <yp-magic-text id="description" .text-type="postContent" .contentLanguage="${this.post.language}" .content="${this.post.description}" noUserInfo="${!this.post.Group.configuration.showWhoPostedPosts}" .structuredQuestionsConfig="${this.post.Group.configuration.structuredQuestions}" .contentId="${this.post.id}" class="description" .truncate="500" .moreText="${this.t('readMore')}" .closDialogText="${this.t('close')}">
-                </yp-magic-text>
+              <div class="infoContainer">
+                ${!this.post.public_data.structuredAnswersJson ? html`
+                  <yp-magic-text id="description" textType="postContent" .contentLanguage="${this.post.language}"
+                    content="${this.post.description}" ?noUserInfo="${!this.post.Group.configuration.showWhoPostedPosts}"
+                    .structuredQuestionsConfig="${this.post.Group.configuration.structuredQuestions}"
+                    ?hasCustomRatings="${this.post.Group.configuration.customRatings}"
+                    ?simpleFormat="${this.post.Group.configuration.descriptionSimpleFormat}"
+                    .contentId="${this.post.id}" class="description"
+                    .truncate="${this.post.Group.configuration.descriptionTruncateAmount}"
+                    .moreText="${this.t('readMore')}" .closeDialogText="${this.t('close')}">
+                  </yp-magic-text>
+                ` : html`
+                  <yp-magic-text id="description" text-type="postContent"
+                  .contentLanguage="${this.post.language}" .content="${this.structuredAnswersFormatted}"
+                    ?noUserInfo="${!this.post.Group.configuration.showWhoPostedPosts}"
+                    simpleFormat skipSanitize
+                    .contentId="${this.post.id}" class="description"
+                    .truncate="${this.post.Group.configuration.descriptionTruncateAmount}"
+                    .moreText="${this.t('readMore')}" .closeDialogText="${this.t('close')}">
+                  </yp-magic-text>
+                ` }
+
               </div>
-              <div class="card-actions">
-                <yp-post-actions ?hidden="${this.hideActions}" .floating="" .headerMode="${this.headerMode}" .elevation="-1" .endorseMode="${this.endorseMode}" class="voting layout-horizontal layout-center" .post="${this.post}"></yp-post-actions>
+
+              ${!this.post.public_data.structuredAnswersJson ? html`
+                <yp-post-ratings-info class="customRatings" .post="${this.post}"></yp-post-ratings-info>
+              ` : html`
+                <yp-post-actions ?hidden="${this.ideActions}" hideDebate elevation="-1" floating ?headerMode="${this.headerMode}"
+                class="postActions" .endorseMode="${this.endorseMode}" .post="${this.post}"></yp-post-actions>
+              `}
+
+              <div class="share">
+                <paper-share-button on-share-tap="_shareTap" class="shareIcon"
+                ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
+                ?endorsed="${this.isEndorsed}" horizontal-align="right" id="shareButton"
+                ?whatsapp="${post.Group.configuration.allowWhatsAppSharing}" title="${this.t('post.shareInfo')}"
+                facebook email twitter popup .url="${this.fullPostUrl}"></paper-share-button>
               </div>
+              <paper-menu-button vertical-align="top" horizontal-align="right" class="moreVert" ?hidden="${this.hideActions}">
+                <paper-icon-button aria-label="${this.t('openPostMenu')}" class="moreVertButton" icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
+                <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}s">
+                  ${ this.hasPostAccess ? html`
+                    <paper-item id="editMenuItem">${this.t('post.edit')}</paper-item>
+                    <paper-item id="moveMenuItem">${this.t('post.move')}</paper-item>
+                    <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(this.post)}" id="statusChangeMenuItem">
+                      ${this.t('post.statusChange')}
+                    </paper-item>
+                    <paper-item id="deleteMenuItem">${this.t('post.delete')}</paper-item>
+                    <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(this.post)}" id="anonymizeMenuItem">
+                      ${this.t('anonymizePostAndContent')}</paper-item>
+                    <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(thios.post)}" id="deleteContentMenuItem">
+                      ${this.t('deletePostContent')}</paper-item>
+                  ` : nothing }
+                  <paper-item id="reportMenuItem">${this.t('post.report')}</paper-item>
+                </paper-listbox>
+              </paper-menu-button>
             </div>
-
-            ${ this.headerMode ? html`
-              ${ this.loggedInUser ? html`
-                <paper-menu-button .vertical-align="top" .horizontal-align="right" class="edit" ?hidden="${this.hideActions}">
-                  <paper-icon-button .ariaLabel="${this.t('openPostMenu')}" class="moreVert" .icon="more-vert" slot="dropdown-trigger"></paper-icon-button>
-                  <paper-listbox slot="dropdown-content" @iron-select="${this_menuSelection}">
-
-                    ${ this.hasPostAccess ? html`
-                      <paper-item id="editMenuItem">${this.t('post.edit')}</paper-item>
-                      <paper-item id="moveMenuItem">${this.t('post.move')}</paper-item>
-                      <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="statusChangeMenuItem">${this.t('post.statusChange')}</paper-item>
-                      <paper-item id="deleteMenuItem">${this.t('post.delete')}</paper-item>
-                      <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="anonymizeMenuItem">${this.t('anonymizePostAndContent')}</paper-item>
-                      <paper-item ?hidden="${!this.checkPostAdminOnlyAccess(post)}" id="deleteContentMenuItem">${this.t('deletePostContent')}</paper-item>
-                    `: html``}
-
-                    <paper-item id="reportMenuItem">${this.t('post.report')}</paper-item>
-                  </paper-listbox>
-                </paper-menu-button>
-              `: html``}
-            `: html``}
-
           </div>
+          <yp-post-name-with-author bottom-left-radius="" desktop="" class="desktopName"
+            .post="${this.post}" ?isloggedin="${this.isLoggedIn}"></yp-post-name-with-author>
         </div>
       </paper-material>
     </div>
     <lite-signal @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
-    `
+    `;
   }
 
 /*
@@ -502,6 +560,37 @@ class YpPostHeaderLit extends YpBaseElement {
     ypMediaFormatsBehavior
   ],
 */
+
+  _structuredAnswersFormatted(post) {
+    if (post && post.public_data && post.public_data.structuredAnswersJson &&
+      post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
+      var questionHash = {};
+      var outText = "";
+      post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
+        if (question.uniqueId) {
+          questionHash[question.uniqueId] = question;
+        }
+      }.bind(this));
+
+      post.public_data.structuredAnswersJson.forEach(function (answer) {
+        if (answer && answer.value) {
+          var question = questionHash[answer.uniqueId];
+          if (question) {
+            outText+="<b>"+question.text+"</b>\n";
+            outText+=answer.value+"\n\n";
+          }
+        }
+      }.bind(this));
+
+      return outText;
+    } else {
+      return "";
+    }
+  }
+
+  _shareTap(event, detail) {
+    window.appGlobals.activity('postShareHeaderOpen', detail.brand, this.post ? this.post.id : -1);
+  }
 
   _isEditingChanged(value) {
     this._updateEmojiBindings(value);
@@ -572,12 +661,8 @@ class YpPostHeaderLit extends YpBaseElement {
   }
 
   _hasPostAccess(post, gotAdminRights) {
-    if (post && gotAdminRights) {
-      if (this.checkPostAccess(post)!=null) {
-        return true
-      } else {
-        return false;
-      }
+    if (post) {
+      return this.checkPostAccess(post);
     } else {
       return false;
     }

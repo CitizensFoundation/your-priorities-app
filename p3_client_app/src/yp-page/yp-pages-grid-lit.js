@@ -107,6 +107,10 @@ class YpPagesGridLit extends YpBaseElement {
         background-color: #FFF;
       }
 
+      #editPageLocale[rtl] {
+        direction: rtl;
+      }
+
       .locale {
         width: 30px;
         cursor: pointer;
@@ -127,13 +131,28 @@ class YpPagesGridLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
+
+      .localeInputContasiner {
+        padding: 2px;
+        margin-bottom: 8px;
+        border: solid 1px #999;
+      }
+
+      .buttons {
+        margin-right: 16px;
+      }
     `, YpFlexLayout]
   }
 
   render() {
     return html`
-    <paper-dialog id="editPageLocale" .modal class="layout vertical">
+    <paper-dialog id="editPageLocale" .modal class="layout vertical" ?rtl="${this.rtl}">
       <h2>${this.t('pages.editPageLocale')}</h2>
+
+      <div class="buttons">
+        <mwc-button @click="${this._closePageLocale}" .dialogDismiss .label="${this.t('close')}"></mwc-button>
+        <mwc-button @click="${this._updatePageLocale}" .dialogDismiss .label="${this.t('save')}"></mwc-button>
+      </div>
 
       <paper-dialog-scrollable>
         <paper-input id="title" .name="title" .type="text" .label="${this.t('pages.title')}" .value="${this.currentlyEditingTitle}" .maxlength="60" .charCounter class="mainInput">
@@ -144,45 +163,45 @@ class YpPagesGridLit extends YpBaseElement {
       </paper-dialog-scrollable>
 
 
-      <div class="buttons">
-        <mwc-button @click="${this._closePageLocale}" .dialogDismiss .label="${this.t('close')}"></mwc-button>
-        <mwc-button @click="${this._updatePageLocale}" .dialogDismiss .label="${this.t('save')}"></mwc-button>
-      </div>
     </paper-dialog>
 
     <paper-dialog id="dialog">
       <h2>${this.headerText}</h2>
-      <iron-list .items="${this.pages}" as="page">
-        <template>
-          <div class="layout horizontal">
-            <div class="pageItem id">
-              ${this.page.id}
-            </div>
-            <div class="pageItem title">
-              ${this.page.title.en}
-            </div>
-
-            ${ this._toLocaleArray(page.title).map(item => html`
-              <div class="layout vertical center-center">
-                <a class="locale" data-args-page="${this.page}" data-args-locale="${this.item.locale}" @tap="${this._editPageLocale}">${this.item.locale}</a>
-              </div>
-            `)}
-
-            <paper-input @label-float class="localeInput" .length="2" .maxlength="2" .value="${this.newLocaleValue}"></paper-input>
-            <mwc-button data-args="${this.page.id}" @click="${this._addLocale}" .label="${this.t('pages.addLocale')}"></mwc-button>
-            <div ?hidden="${this.page.publaished}">
-              <mwc-button data-args="${this.page.id}" @click="${this._publishPage}" .label="${this.t('pages.publish')}"></mwc-button>
-            </div>
-            <div ?hidden="${!this.page.published}">
-              <mwc-button data-args="${this.page.id}" @click="${this._unPublishPage}" .label="${this.t('pages.unPublish')}"></mwc-button>
-            </div>
-            <mwc-button data-args="${this.page.id}" @click="${this._deletePage}" .label="${this.t('pages.deletePage')}"></mwc-button>
-          </div>
-        </template>
-      </iron-list>
-      <div class="layout horizontal">
-        <mwc-button id="addPageButton" @click="${this._addPage}" .label="${this.t('pages.addPage')}"></mwc-button>
+      <div class="flex"></div>
+        <div class="layout horizontal">
+          <mwc-button id="addPageButton" @click="${this._addPage}" .label="${this.t('pages.addPage')}"></mwc-button>
+        </div>
       </div>
+      <paper-dialog-scrollable id="scrollable">
+        <iron-list .items="${this.pages}" as="page">
+          <template>
+            <div class="layout horizontal">
+              <div class="pageItem id">
+                ${this.page.id}
+              </div>
+              <div class="pageItem title">
+                ${this.page.title.en}
+              </div>
+
+              ${ this._toLocaleArray(page.title).map(item => html`
+                <div class="layout vertical center-center">
+                  <a class="locale" data-args-page="${item.page}" data-args-locale="${item.locale}" @tap="${this._editPageLocale}">${item.locale}</a>
+                </div>
+              `)}
+
+              <paper-input @label-float class="localeInput" .length="2" .maxlength="2" .value="${this.newLocaleValue}"></paper-input>
+              <mwc-button data-args="${this.page.id}" @click="${this._addLocale}" .label="${this.t('pages.addLocale')}"></mwc-button>
+              <div ?hidden="${this.page.publaished}">
+                <mwc-button data-args="${this.page.id}" @click="${this._publishPage}" .label="${this.t('pages.publish')}"></mwc-button>
+              </div>
+              <div ?hidden="${!this.page.published}">
+                <mwc-button data-args="${this.page.id}" @click="${this._unPublishPage}" .label="${this.t('pages.unPublish')}"></mwc-button>
+              </div>
+              <mwc-button data-args="${this.page.id}" @click="${this._deletePage}" .label="${this.t('pages.deletePage')}"></mwc-button>
+            </div>
+          </template>
+        </iron-list>
+      </paper-dialog-scrollable>
 
       <div class="buttons">
         <mwc-button .dialogDismiss .label="${this.t('close')}"></mwc-button>
@@ -377,6 +396,9 @@ class YpPagesGridLit extends YpBaseElement {
 
   open() {
     this.$$("#dialog").open();
+    this.async(function () {
+      this.$$("#scrollable").fire('iron-resize');
+    });
   }
 
   _setupHeaderText() {

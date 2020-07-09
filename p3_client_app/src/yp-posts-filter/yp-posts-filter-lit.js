@@ -260,7 +260,7 @@ class YpPostsFilterLit extends YpBaseElement {
                   <yp-ajax id="categoriesWithCountAjax" @response="${this._categoriesCountResponse}"></yp-ajax>
                 </div>
                 <paper-listbox slot="dropdown-content" id="mainListMenu" @iron-select="${this._changeFilter}">
-                  <paper-item data-filter="top">
+                  <paper-item data-filter="top" ?hidden="${this.group.configuration.customRatings}">
                     <iron-icon .icon="trending-up" class="filterIcon"></iron-icon>
                     <span>${this.t('post.top')}</span>
                   </paper-item>

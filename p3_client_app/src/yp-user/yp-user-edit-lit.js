@@ -103,7 +103,13 @@ class YpUserEditLit extends YpBaseElement {
       mwc-button {
         text-align: center;
       }
-    `, YpFlexLayout]
+
+      .ssn {
+        margin-top: 0;
+        margin-bottom: 4px;
+        font-weight: 400;
+      }
+    `, YpFlexLayout];
   }
 
   render() {
@@ -114,7 +120,9 @@ class YpUserEditLit extends YpBaseElement {
           <paper-input id="name" .name="name" .type="text" .label="${this.t('Name')}" .value="${this.user.name}" maxlength="50" char-counter>
           </paper-input>
 
-          <paper-input id="email" .name="email" .type="text" .label="${this.t('Email')}" .value="${this.user.email}">
+          <div class="ssn" ?hidden="${!this.user.ssn}">${this.t('ssn')}: ${this.user.ssn}</div>
+
+          <paper-input id="email" name="email" type="text" .label="${this.t('Email')}" .value="${this.user.email}">
           </paper-input>
 
           <div class="layout horizontal wrap">

@@ -48,6 +48,11 @@ class YpPointLit extends YpBaseElement {
         value: null
       },
 
+      openTranscript: {
+        type: Boolean,
+        value: true
+      },
+
       hideUser: {
         type: Boolean,
         value: false
@@ -62,6 +67,32 @@ class YpPointLit extends YpBaseElement {
         type: Boolean,
         value: false,
         observer: '_isEditingChanged'
+      },
+
+      isEditingSomething: {
+        type: Boolean,
+        computed: '_isEditingSomething(isEditing, isAdminCommentEditing)'
+      },
+
+      isAdminCommentEditing: {
+        type: Boolean,
+        value: false,
+        observer: '_isAdminCommentEditingChanged'
+      },
+
+      hasAdminCommentAccess: {
+        type: Boolean,
+        computed: '_hasAdminCommentAccess(point)'
+      },
+
+      hasAdminComments: {
+        type: Boolean,
+        value: false
+      },
+
+      showAdminComments: {
+        type: Boolean,
+        computed: '_showAdminComments(point, hasAdminComments)'
       },
 
       maxNumberOfPointsBeforeEditFrozen: {
@@ -80,6 +111,8 @@ class YpPointLit extends YpBaseElement {
       },
 
       editText: String,
+
+      editAdminCommentText: String,
 
       videoActive: {
         type: Boolean,
@@ -172,6 +205,7 @@ class YpPointLit extends YpBaseElement {
 
       .thumbsIcon {
         padding-left: 16px;
+        padding-right: 16px;
       }
 
       @media (min-width: 985px) {
@@ -234,9 +268,28 @@ class YpPointLit extends YpBaseElement {
         background-color: #777;
       }
 
-      #pointContentEditor {
+      #pointContentEditor, #pointAdminCommentEditor {
         padding-left: 8px;
         padding-right: 8px;
+      }
+
+      #pointAdminCommentContent {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .commentFromAdmin {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 16px;
+        font-size: 16px;
+        padding-bottom: 2px;
+        font-weight: bold;
+        color: var(--accent-color, #111);
+      }
+
+      .commentFromAdminInput {
+        padding: 0;
       }
 
       .transcriptError {
@@ -256,7 +309,7 @@ class YpPointLit extends YpBaseElement {
       .transcriptText {
         margin-top: 0;
         padding: 8px;
-        color: #444;
+        color: #222;
         padding-bottom: 0;
         font-style: italic;
       }
@@ -274,6 +327,19 @@ class YpPointLit extends YpBaseElement {
 
       video {
         background-color: #777;
+      }
+
+      #pointContent {
+        color: #111;
+      }
+
+      paper-icon-button.openCloseButton {
+        width: 54px;
+        height: 54px;
+        margin-top: -16px;
+        padding-left: 0;
+        margin-left: 0;
+        color: #777;
       }
     `, YpFlexLayout]
   }
@@ -324,9 +390,15 @@ class YpPointLit extends YpBaseElement {
 
             ${ this.point.latestContent ? html`
               <div class="transcriptText layout vertical center-center">
-                <div class="transcriptHeader">${this.t('automaticTranscript')}</div>
+                <div class="layout horizontal">
+                  <div class="transcriptHeader">${this.t('automaticTranscript')}</div>
+                  <div hidden\$="[[!point.Post.Group.configuration.collapsableTranscripts]]">
+                    <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" icon="keyboard-arrow-right" @click="${this._setOpen}" hidden\$="[[openTranscript]]"></paper-icon-button>
+                    <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" icon="keyboard-arrow-down" @click="${this._setClosed}" hidden\$="[[!openTranscript]]"></paper-icon-button>
+                  </div>
+                </div>
                 <div id="pointContentTranscript" .linkPoint="${this.linkPoint}" ?hidden="${this.isEditing}" @tap="${this._linkIfNeeded}">
-                  <yp-magic-text simple-format .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" content-id="${this.point.id}">
+                  <yp-magic-text ?hidden="${!this.openTranscript}" simple-format .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" content-id="${this.point.id}">
                   </yp-magic-text>
                 </div>
               </div>
@@ -336,16 +408,40 @@ class YpPointLit extends YpBaseElement {
               <span ?hidden="${!this.point.name}">
                 <span>${this.point.name}</span>.
               </span>
-              <div id="pointContent" .linkPoint="${this.linkPoint}" ?hidden="${this.isEditing}" @tap="${this._linkIfNeeded}">
+              <div id="pointContent" .linkPoint="${this.linkPoint}" ?hidden="${this.isEditingSomething}" @tap="${this._linkIfNeeded}">
                 <yp-magic-text simple-format .textType="pointContent" .contentLanguage="${this.point.language}" .content="${this.point.latestContent}" content-id="${this.point.id}">
                 </yp-magic-text>
               </div>
             </div>
           `}
 
+          ${this.showAdminComments ? html`
+            <div class="commentFromAdmin" ?hidden="${this.isEditingSomething}">
+
+              ${this.point.Post.Group.configuration.customAdminCommentsTitle ? html`
+                <yp-magic-text .textType="customAdminCommentsTitle" .contentLanguage="${this.point.Post.Group.language}"
+                   .content="${this.point.Post.Group.configuration.customAdminCommentsTitle}" .contentId="${this.point.Post.Group.id}">
+                </yp-magic-text>
+              ` : ``}
+
+
+              ${!this.point.Post.Group.configuration.customAdminCommentsTitle ? html`
+                ${this.t('commentFromAdmin')}
+              ` : ``}
+
+            </div>
+            <div id="pointAdminCommentContent" ?link-point="${this.linkPoint}" ?hidden="${this.isEditingSomething}"
+               @click="${this._linkIfNeeded}">
+              <yp-magic-text simple-format .textType="pointAdminCommentContent"
+                .contentLanguage="${this.point.public_data.admin_comment.language}" .content="${this.point.public_data.admin_comment.text}"
+                .contentId="${this.point.id}">
+              </yp-magic-text>
+            </div>
+          ` : ''}
+
           ${this.isEditing ? html`
             <div class="layout vertical">
-              <paper-textarea id="pointContentEditor" char-counter .maxlength="500" .value="${this.editText}"></paper-textarea>
+              <paper-textarea id="pointContentEditor" char-counter .maxlength="1500" .value="${this.editText}"></paper-textarea>
               <div class="horizontal end-justified layout">
                 <emoji-selector id="pointEmojiSelector"></emoji-selector>
               </div>
@@ -357,16 +453,20 @@ class YpPointLit extends YpBaseElement {
           `: html``}
 
           <div class="layout horizontal actionContainer" ?hidden="${this.hideActions}">
-            <yp-point-actions .point="${this.point}" .pointUrl="${this.pointUrl}"></yp-point-actions>
+            <yp-point-actions .point="${this.point}" .pointUrl="${this.pointUrl}"
+              ?allowWhatsAppSharing="${this.point.Post.Group.configuration.allowWhatsAppSharing}"
+            ></yp-point-actions>
             <paper-icon-button .title="${this.t('point.report')}" id="reportPointIconButton" .icon="warning" @tap="${this._reportPoint}"></paper-icon-button>
             <div class="flex"></div>
 
             ${ this.hasPointAccess ? html`
               <div class="layout horizontal self-end" ?hidden="">
                 <yp-ajax id="editPointAjax" .method="PUT" @response="${this._editResponse}"></yp-ajax>
+                <yp-ajax id="editAdminCommentPointAjax" method="PUT" @response="${this._editAdminCommentResponse}"></yp-ajax>
                 <yp-ajax id="deletePointAjax" .method="DELETE" @response="${this._deleteResponse}"></yp-ajax>
-                <paper-icon-button .title="${this.t('edit')}" ?hidden="${!this.canEditPoint}" .icon="create" @tap="${this._editPoint}"></paper-icon-button>
-                <paper-icon-button .title="${this.t('delete')}" .icon="clear" @tap="${this._deletePoint}"></paper-icon-button>
+                <paper-icon-button title="${this.t('editAdminComment')}" ?hidden="${!this.hasAdminCommentAccess}" icon="comment" @click="${this._editAdminComment}"></paper-icon-button>
+                <paper-icon-button title="${this.t('edit')}" ?hidden="${!this.canEditPoint}" .icon="create" @click="${this._editPoint}"></paper-icon-button>
+                <paper-icon-button title="${this.t('delete')}" .icon="clear" @click="${this._deletePoint}"></paper-icon-button>
               </div>
             `: html``}
 
@@ -387,12 +487,65 @@ class YpPointLit extends YpBaseElement {
   ],
 */
 
+  _setOpen () {
+    this.set('openTranscript', true);
+    this.async(function () {
+      this.fire('yp-iron-resize');
+      this.fire('iron-resize');
+      this.notifyResize();
+    }, 20);
+  }
+
+  _setClosed () {
+    this.set('openTranscript', false);
+    this.async(function () {
+      this.fire('yp-iron-resize');
+      this.fire('iron-resize');
+      this.notifyResize();
+    },20);
+  }
+
+  _isEditingSomething (isEditing, isAdminCommentEditing) {
+    return isEditing || isAdminCommentEditing;
+  }
+
+  _showAdminComments (point, hasAdminComments) {
+    if (point && point.Post && point.Post.Group && point.public_data &&
+        point.public_data.admin_comment &&
+        point.public_data.admin_comment.text &&
+        point.Post.Group.configuration &&
+        point.Post.Group.configuration.allowAdminAnswersToPoints) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  _hasAdminCommentAccess (point) {
+    if (point && point.Post && point.Post.Group &&
+      this.checkPostAdminOnlyAccess(point.Post) &&
+      point.Post.Group.configuration &&
+      point.Post.Group.configuration.allowAdminAnswersToPoints) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
   _videoOrAudioActive(videoActive, audioActive) {
     return videoActive || audioActive;
   }
 
   _isEditingChanged(value) {
     this._updateEmojiBindings(value);
+    this.async(function () {
+      this.fire('iron-resize');
+    });
+  }
+
+  _isAdminCommentEditingChanged(value) {
+    this._updateEmojiBindings(null, value);
     this.async(function () {
       this.fire('iron-resize');
     });
@@ -414,11 +567,21 @@ class YpPointLit extends YpBaseElement {
     }
   }
 
-  _updateEmojiBindings(isEditing) {
+  _updateEmojiBindings(isEditing, isAdminCommentEditing){
     if (isEditing) {
       this.async(function () {
         const point = this.$$("#pointContentEditor");
         const emoji = this.$$("#pointEmojiSelector");
+        if (point && emoji) {
+          emoji.inputTarget = point;
+        } else {
+          console.error("Wide: Can't bind point edit emojis :(");
+        }
+      }.bind(this), 500);
+    } else if (isAdminCommentEditing) {
+      this.async(function () {
+        var point = this.$$("#pointAdminCommentEditor");
+        var emoji = this.$$("#pointAdminCommentEmojiSelector");
         if (point && emoji) {
           emoji.inputTarget = point;
         } else {
@@ -437,6 +600,17 @@ class YpPointLit extends YpBaseElement {
     this.$$("#editPointAjax").url = "/api/points/"+this.point.id;
     this.$$("#editPointAjax").body = { content: this.editText };
     this.$$("#editPointAjax").generateRequest();
+  }
+
+  _cancelAdminCommentEdit () {
+    //this._setlatestContent(this.point);
+    this.set('isAdminCommentEditing', false);
+  }
+
+  _saveAdminCommentEdit () {
+    this.$$("#editAdminCommentPointAjax").url = "/api/groups/"+this.point.Post.Group.id+"/"+this.point.id+"/adminComment";
+    this.$$("#editAdminCommentPointAjax").body = { content: this.editAdminCommentText };
+    this.$$("#editAdminCommentPointAjax").generateRequest();
   }
 
   _deletePoint() {
@@ -458,6 +632,18 @@ class YpPointLit extends YpBaseElement {
       this.set('point', point);
     }
     this.set('isEditing', false);
+  }
+
+  _editAdminCommentResponse(event, detail) {
+    if (detail.response) {
+      if (!this.point.public_data)
+        this.point.public_data = {};
+      this.point.public_data.admin_comment = { text: detail.response.content };
+      this.set('point', JSON.parse(JSON.stringify(this.point)));
+      this.set('isAdminCommentEditing', false);
+      this.set('hasAdminComments', true);
+    }
+    this.set('isAdminCommentEditing', false);
   }
 
   _deleteResponse() {
@@ -489,6 +675,14 @@ class YpPointLit extends YpBaseElement {
     }
   }
 
+
+  _editAdminComment() {
+    if (this.checkPostAdminOnlyAccess(this.point.Post)) {
+      this.set('editAdminCommentText', (this.point.public_data && this.point.public_data.admin_comment ? this.point.public_data.admin_comment.text : ''));
+      this.set('isAdminCommentEditing', true);
+    }
+  }
+
   _hasPointAccess(point) {
     return this.checkPointAccess(point);
   }
@@ -502,6 +696,9 @@ class YpPointLit extends YpBaseElement {
     this.setupMediaEventListeners(point, previousPoint);
     this._resetMedia();
     if (point) {
+      if (point.Post && point.Post.Group && point.Post.Group.configuration && point.Post.Group.configuration.collapsableTranscripts) {
+        this.set('openTranscript', false);
+      }
       this.set('user', this.point.User);
       const videoURL = this._getVideoURL(point.PointVideos);
       const videoPosterURL = this._getVideoPosterURL(point.PointVideos);

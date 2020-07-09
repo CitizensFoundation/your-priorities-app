@@ -29,7 +29,7 @@ class YpLoginLit extends YpBaseElement {
 
       reCaptchaSiteKey: {
         type: String,
-        value: '6Ld9UBsTAAAAAPq059P_AGqo-tVE_T9gPj5ifrmY'
+        value: ''
       },
 
       emailValidationPattern: {
@@ -131,6 +131,16 @@ class YpLoginLit extends YpBaseElement {
       hasAdditionalAuthMethods: {
         type: Boolean,
         computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, disableFacebookLoginForGroup)'
+      },
+
+      userNameText: {
+        type: String,
+        computed: '_userNameText(domain)'
+      },
+
+      customTermsIntroText: {
+        type: String,
+        computed: '_customTermsIntroText(domain)'
       },
 
       disableFacebookLoginForGroup: {
@@ -521,7 +531,7 @@ class YpLoginLit extends YpBaseElement {
 
                     ${ this.hasFacebookLogin ? html`
                       <span ?hidden="${this.forceSecureSamlLogin}">
-                        <div class="btn-auth btn-facebook cursor" @tap="${this._facebookLogin}" ?hidden="${this.disableFacebookLoginForGroup}">
+                        <div class="btn-auth btn-facebook cursor" @tap="${this._facebookLogin}" role="button" tabindex="0" ?hidden="${this.disableFacebookLoginForGroup}">
                           ${this.t('user.facebookLogin')}
                         </div>
                       </span>
@@ -531,14 +541,14 @@ class YpLoginLit extends YpBaseElement {
                       ${this.samlLoginButtonUrl ? html`
                         <div class="islandIs cursor layout horizontal center-center">
                           <img ?hidden="${this.forceSecureSamlLogin}" @tap="${this._openSamlLogin}" width="80" src="${this.samlLoginButtonUrl}">
-                          <div ?hidden="${!this.forceSecureSamlLogin}" class="largeSamlLogo" @tap="${this._openSamlLogin}">
+                          <div ?hidden="${!this.forceSecureSamlLogin}" class="largeSamlLogo" @tap="${this._openSamlLogin}" role="button" tabindex="0">
                             <img width="130" src="${this.samlLoginButtonUrl}">
                           </div>
                         </div>
                       ` : html`
                         <div class="islandIs cursor layout horizontal center-center">
                           <img ?hidden="${this.forceSecureSamlLogin}" @tap="${this._openSamlLogin}" width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png">
-                          <div ?hidden="${!this.forceSecureSamlLogin}" class="largeSamlLogo" @tap="${this._openSamlLogin}">
+                          <div ?hidden="${!this.forceSecureSamlLogin}" class="largeSamlLogo" @tap="${this._openSamlLogin}" role="button" tabindex="0">
                             <img width="130" height="30" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png">
                           </div>
                         </div>
@@ -557,7 +567,7 @@ class YpLoginLit extends YpBaseElement {
               <div ?hidden="${this.forceSecureSamlLogin}">
 
                 ${this.registerMode ? html`
-                  <paper-input id="fullname" .type="text" .label="${this.t('user.name')}" .value="${this.name}" .maxlength="50" .minlength="2" required char-counter>
+                  <paper-input id="fullname" .type="text" .label="${this.userNameText}" .value="${this.name}" .maxlength="50" .minlength="2" required char-counter>
                   </paper-input>
                 ` : html``}
 
@@ -569,7 +579,7 @@ class YpLoginLit extends YpBaseElement {
                 </paper-input>
               </div>
             </div>
-            <div class="signupTerms" ?hidden="${!this.showSignupTerms}">${this.t('signupTermsInfo')} - <span @tap="${this._openTerms}" class="openTerms">${this.t('signupTermsOpen')}</span>
+            <div class="signupTerms" ?hidden="${!this.showSignupTerms}">${this.customTermsIntroText} - <span @tap="${this._openTerms}" class="openTerms">${this.t('signupTermsOpen')}</span>
             </div>
             <div class="buttons layout vertical center-center">
               <div class="layout horizontal center-center">
@@ -600,12 +610,36 @@ class YpLoginLit extends YpBaseElement {
   ],
 */
 
+  _customTermsIntroText() {
+    if (window.appGlobals.currentGroup && window.appGlobals.currentGroup.configuration && window.appGlobals.currentGroup.configuration.customTermsIntroText) {
+      return window.appGlobals.currentGroup.configuration.customTermsIntroText;
+    } else {
+      return this.t('signupTermsInfo');
+    }
+  }
+
+  _userNameText() {
+    if (window.appGlobals.currentGroup && window.appGlobals.currentGroup.configuration && window.appGlobals.currentGroup.configuration.customUserNamePrompt) {
+      return window.appGlobals.currentGroup.configuration.customUserNamePrompt;
+    } else {
+      return this.t('user.name');
+    }
+  }
+
+  base64EncodeUnicode(str) {
+    var utf8Bytes = encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+      return String.fromCharCode('0x' + p1);
+    });
+
+    return btoa(utf8Bytes);
+  }
+
   _showSignupTerms(signupTermsId, registerMode) {
     return signupTermsId && registerMode == 1;
   }
 
   _isiOsInApp() {
-    return /iPad|iPhone|Android|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
+    return /iPad|iPhone|Android|android|iPod/.test(navigator.userAgent) && !window.MSStream && (/FBAN/.test(navigator.userAgent) || /FBAV/.test(navigator.userAgent) || /Instagram/.test(navigator.userAgent));
   }
 
   _openTerms() {
@@ -619,18 +653,23 @@ class YpLoginLit extends YpBaseElement {
 
     if (domainName.indexOf("forbrukerradet") > -1) {
       hostName = "mineideer";
+    } else if (domainName.indexOf("parliament.scot") > -1) {
+      hostName = "engage";
+    } else if (domainName.indexOf("smarter.nj.gov") > -1) {
+      hostName = "enjine";
     } else {
       hostName = "login";
     }
 
-    const url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
+    var url = 'https://' + hostName + '.' + domainName + '/api/users/auth/facebook';
 
-    let width = 1000,
+    var width = 1000,
       height = 650,
       top = (window.outerHeight - height) / 2,
       left = (window.outerWidth - width) / 2,
       name = '_blank';
-    if (this._isiOsInApp()) {
+    if (this._isInApp()) {
+      document.cookie = "ypRedirectCookie=" + encodeURI(window.location.href) + ";domain=."+domainName+";path=/";
       window.location = url;
     } else {
       window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
@@ -656,13 +695,17 @@ class YpLoginLit extends YpBaseElement {
         window.appUser.logout();
       });
     }
-    const url = '/api/users/auth/saml',
+
+    var domainName = window.location.hostname.split('.').slice(-2).join('.');
+
+    var url = '/api/users/auth/saml',
       width = 1200,
       height = 650,
       top = (window.outerHeight - height) / 2,
       left = (window.outerWidth - width) / 2,
       name = '_blank';
-    if (this._isiOsInApp()) {
+    if (this._isInApp()) {
+      document.cookie = "ypRedirectCookie=" + encodeURI(window.location.href) + ";domain=."+domainName+";path=/";
       window.location = url;
     } else {
       window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
@@ -743,6 +786,8 @@ class YpLoginLit extends YpBaseElement {
         window.appGlobals.domain.configuration &&
         window.appGlobals.domain.configuration.customSamlLoginText) {
         this.set('customSamlLoginText', window.appGlobals.domain.configuration.customSamlLoginText);
+      } else if (window.appGlobals.currentSamlLoginMessage) {
+        this.set('customSamlLoginText', window.appGlobals.currentSamlLoginMessage);
       } else {
         this.set('customSamlLoginText', null);
       }
@@ -758,7 +803,7 @@ class YpLoginLit extends YpBaseElement {
         this.signupTermsId = null;
       }
 
-      if (window.appGlobals.currentGroupForceSaml) {
+      if (window.appGlobals.currentForceSaml) {
         this.set('forceSecureSamlLogin', true);
         this.set('registerMode',1);
       } else {

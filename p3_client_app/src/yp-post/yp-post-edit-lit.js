@@ -37,6 +37,11 @@ class YpPostEditLit extends YpBaseElement {
         value: false
       },
 
+      initialStructuredAnswersJson: {
+        type: Array,
+        value: null
+      },
+
       post: {
         type: Object,
         observer: "_postChanged"
@@ -122,6 +127,11 @@ class YpPostEditLit extends YpBaseElement {
         computed: '_newPointShown(newPost, group)'
       },
 
+      mediaHidden: {
+        type: Boolean,
+        computed: '_mediaHidden(newPost, group)'
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -143,15 +153,40 @@ class YpPostEditLit extends YpBaseElement {
         computed: '_structuredQuestions(post, group)'
       },
 
+      hasStructuredQuestions:  {
+        type: Boolean,
+        computed: '_hasStructuredQuestions(structuredQuestions)'
+      },
+
+      replacedName: {
+        type: String,
+        computed: '_replacedName(post, group, newPost)'
+      },
+
       sructuredAnswers: {
         type: String,
         value: null
       },
 
+      sructuredAnswersJson: {
+        type: Object,
+        value: null
+      },
+
       uploadedDocumentUrl: String,
-      uploadedDocumentFilename: String
+      uploadedDocumentFilename: String,
+
+      pointMaxLength: {
+        type: Number,
+        computed: '_pointMaxLength(group)'
+      },
+
+      hasOnlyOneTab: {
+        type: Boolean,
+        value: false
       }
-    }
+    };
+  }
 
   static get styles() {
     return [
@@ -252,6 +287,11 @@ class YpPostEditLit extends YpBaseElement {
 
       .postEmoji {
         margin-left: 16px;
+        direction: ltr !important;
+      }
+
+      .pointEmoji {
+        direction: ltr !important;
       }
 
       .uploadSection {
@@ -265,186 +305,282 @@ class YpPostEditLit extends YpBaseElement {
         .uploadSection {
           max-width: 100%;
         }
+
+        .videoCam {
+          --iron-icon-height: 15px;
+          --iron-icon-width: 15px;
+          --iron-icon-fill-color: #555;
+        }
+
+        yp-structured-question-edit {
+          max-width: calc(100vw - 64px);
+        }
       }
 
       .postCoverVideoInfo {
         margin-top: 8px;
       }
-    `, YpFlexLayout]
+
+      .videoUploadDisclamer {
+        margin-top: 6px;
+        font-size: 12px;
+        padding: 0;
+        max-width: 200px;
+      }
+
+      .categoryDropDown {
+        margin-bottom: 8px;
+      }
+
+      .topNewPostContainer[no-title] {
+        margin-top: -42px;
+      }
+
+      paper-tabs[title-disabled] {
+        margin-bottom: 24px;
+      }
+
+      .videoCamIcon {
+        margin-left: 6px;
+        margin-bottom: 2px
+      }
+
+      .mediaTab {
+        vertical-align: center;
+      }
+    `, YpFlexLayout];
   }
 
   render() {
     return html`
-    <yp-edit-dialog .name="postEdit" double-width id="editDialog" .icon="lightbulb-outline" .action="${this.action}" .use-next-tab-action="${this.newPost}" @next-tab-action="${this._nextTab}" .method="${this.method}" title="${this.editHeaderText}" .saveText="${this.saveText}" class="container" custom-submit .next-action-text="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
-      <paper-tabs .selected="${this.selected}" id="paperTabs" .focused>
-        <paper-tab><span>${this.t('post.yourPost')}</span></paper-tab>
-
-        ${ this.newPointShown ? html`
-          <paper-tab>
-            <div class="layout vertical center-center">
-              <div>
-                ${this.t('post.yourPoint')}
-              </div>
-              <div class="optional" ?hidden="${!this.group.configuration.newPointOptional}">
-                ${this.t('optional')}
-              </div>
-            </div>
-          </paper-tab>
-        `: html``}
-
-        ${ !this.locationHidden ? html`
-          <paper-tab>${this.t('post.location')}</paper-tab>
-        `: html``}
-
-        <paper-tab>${this.t('media')}</paper-tab>
-      </paper-tabs>
-
-      <div class="layout vertical wrap">
-        <iron-pages id="pages" class="layout horizontal" .selected="${this.selected}">
-          <section>
-            <div class="layout vertical flex">
-
-            <paper-input id="name" .required="" .minlength="3" .name="name" .type="text" .label="${this.t('title')}" .value="${this.post.name}" .maxlength="60" .char-counter="">
-            </paper-input>
-
-              ${ this._showCategories(group) ? html`
-                <paper-dropdown-menu .label="${this.t('category.select')}">
-                  <paper-listbox slot="dropdown-content" .selected="${this.selectedCategoryArrayId}">
-
-                    ${ this.group.Categories.map(category => html`
-                    <paper-item .data-category-id="${this.category.id}">${this.category.name}</paper-item>
-                    `)}
-
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <input .type="hidden" .name="categoryId" .value="${this.selectedCategoryId}">
-              `: html``}
-
-              ${ this.postDescriptionLimit ? html`
-                <paper-textarea id="description" ?hidden="${this.structuredQuestions}" .required="${!this.structuredQuestions}" .minlength="3" .name="description" .value="${this.post.description}" .always-float-label="${this._floatIfValueOrIE(post.description)}" .label="${this.t('post.description')}" .on-value-changed="_resizeScrollerIfNeeded" .char-counter="" .rows="2" .max-rows="5" .maxrows="5" .maxlength="${this.postDescriptionLimit}">
-                </paper-textarea>
-
-                <div class="horizontal end-justified layout postEmoji" ?hidden="${this.group.configuration.hideEmoji}">
-                  <emoji-selector id="emojiSelectorDescription" ?hidden="${this.structuredQuestions}"></emoji-selector>
-                </div>
-              `: html``}
-
-              ${ this.structuredQuestions ? html`
-
-                ${ this.structuredQuestions.map(item => html`
-                  <paper-textarea id="structuredQuestion_${this.index}" .value="${this.item.value}" always-float-label="${this._floatIfValueOrIE(item.value)}" .label="${this.item.translatedQuestion}" char-counter .minlength="2" @value-changed="${this._resizeScrollerIfNeeded}" .rows="2" .max-rows="3" .maxrows="3" .required="" .maxlength="${this.item.maxLength}">
-                  </paper-textarea>
-                `)}
-
-              `: html``}
-
-              ${ this.group.configuration.attachmentsEnabled ? html`
-                <yp-file-upload id="attachmentFileUpload" raised .accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*" .target="/api/groups/${this.group.id}/upload_document" .method="POST" @success="${this._documentUploaded}">
-                  <iron-icon class="icon" .icon="attach-file"></iron-icon>
-                  <span>${this.t('uploadAttachment')}</span>
-                </yp-file-upload>
-
-                ${ this.post.data.attachment.url ? html`
-                  <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
-                `: html``}
-
-              `: html``}
-
-              ${ this.group.configuration.moreContactInformation ? html`
-                <h2 class="contactInfo">${this.t('contactInformation')}</h2>
-                <paper-input id="contactName" .name="contactName" .type="text" .label="${this.t('user.name')}" .value="${this.post.data.contact.name}" char-counter>
-                </paper-input>
-                <paper-input id="contactEmail" .name="contactEmail" .type="text" .label="${this.t('user.email')}" .value="${this.post.data.contact.email}" char-counter>
-                </paper-input>
-                <paper-input id="contactTelephone" .name="contacTelephone" .type="text" .label="${this.t('contactTelephone')}" .value="${this.post.data.contact.telephone}" .maxlength="20" char-counter>
-                </paper-input>
-              `: html``}
-            </div>
-          </section>
+      <yp-edit-dialog .name="postEdit" double-width id="editDialog" .icon="lightbulb-outline" .action="${this.action}" .use-next-tab-action="${this.newPost}" @next-tab-action="${this._nextTab}" .method="${this.method}" title="${this.editHeaderText}" .saveText="${this.saveText}" class="container" custom-submit .next-action-text="${this.t('next')}" .toastText="${this.toastText}" .params="${this.params}">
+      <paper-tabs ?title-disabled="${this.group.configuration.hideNameInputAndReplaceWith}" .selected="${this.selected}"
+        id="paperTabs" ?focused hidden="${this.hasOnlyOneTab}">
+          <paper-tab><span>${this.t('post.yourPost')}</span></paper-tab>
 
           ${ this.newPointShown ? html`
-            <section class="subContainer">
-              <paper-textarea id="pointFor" .required="${!this.group.configuration.newPointOptional}" .minlength="3" .name="pointFor" .value="${this.post.pointFor}" always-float-label="${this._floatIfValueOrIE(post.pointFor)}" .label="${this.t('point.for')}" char-counter .rows="2" .max-rows="5" .maxlength="500">
-              </paper-textarea>
-              <div class="horizontal end-justified layout" ?hidden="${this.group.configuration.hideEmoji}">
-                <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
+            <paper-tab>
+              <div class="layout vertical center-center">
+                <div>
+                  ${this.t('post.yourPoint')}
+                </div>
+                <div class="optional" ?hidden="${!this.group.configuration.newPointOptional}">
+                  ${this.t('optional')}
+                </div>
               </div>
-            </section>
-          `: html``}
-
-            ${ this.mapActive ? html`
-            <yp-post-location .encodedLocation="${this.encodedLocation}" .location="${this.location}" .group="${this.group}" .post="${this.post}"></yp-post-location>
-            `: html``}
+            </paper-tab>
+          `: nothing }
 
           ${ !this.locationHidden ? html`
+            <paper-tab>${this.t('post.location')}</paper-tab>
+          `: nothing }
+
+          ${ !this.mediaHidden ? html`
+            <paper-tab>
+              <div>
+                ${this.t('media')}
+              </div>
+              <div class="videoCamIcon">
+                <iron-icon class="videoCam" icon="videocam" style="color: #555"></iron-icon>
+              </div>
+            </paper-tab>
+          `: nothing }
+        </paper-tabs>
+
+        <div class="layout vertical wrap topNewPostContainer" ?no-title="${this.group.configuration.hideNameInputAndReplaceWith}">
+          <iron-pages id="pages" class="layout horizontal" .selected="${this.selected}">
             <section>
+              <div class="layout vertical flex">
+
+                ${ !this.group.configuration.hideNameInputAndReplaceWith ? html`
+                  <input type="hidden" name="name" value="${this.replacedName}">
+                ` : html`
+                  <paper-input id="name" required
+                    minlength="3" name="name" type="text"
+                    .label="${this.t('title')}"
+                    .value="${this.post.name}"
+                    maxlength="60" char-counter>
+                  </paper-input>
+                ` }
+
+                ${ this._showCategories(group) ? html`
+                <paper-dropdown-menu class="categoryDropDown" .label="${this.t('category.select')}"
+                  ?required="${this.group.configuration.makeCategoryRequiredOnNewPost}">
+
+                  <paper-listbox slot="dropdown-content" .selected="${this.selectedCategoryArrayId}">
+
+                      ${ this.group.Categories.map(category => html`
+                      <paper-item .data-category-id="${this.category.id}">${this.category.name}</paper-item>
+                      `)}
+
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+                  <input .type="hidden" .name="categoryId" .value="${this.selectedCategoryId}">
+                `: nothing }
+
+                ${ this.postDescriptionLimit ? html`
+                  <paper-textarea id="description" ?hidden="${this.hasStructuredQuestions}"
+                    ?required="${!this.hasStructuredQuestions}" minlength="3"
+                    name="description" .value="${this.post.description}"
+                    ?always-float-label="${this._floatIfValueOrIE(post.description)}"
+                    .label="${this.t('post.description')}" aria-label="${this.t('post.description')}"
+                    @value-changed="${this._resizeScrollerIfNeeded}"
+                    char-counter
+                    rows="2"
+                    max-rows="5"
+                    maxrows="5"
+                    maxlength="${this.postDescriptionLimit}">
+                  </paper-textarea>
+
+                  <div class="horizontal end-justified layout postEmoji" ?hidden="${this.group.configuration.hideEmoji}">
+                    <emoji-selector id="emojiSelectorDescription" ?hidden="${this.hasStructuredQuestions}"></emoji-selector>
+                  </div>
+                `: nothing }
+
+                ${ this.hasStructuredQuestions ? html`
+                  ${ this.structuredQuestions.map(question => html`
+                    <yp-structured-question-edit .index="${this.index}"
+                      use-small-font id="structuredQuestionContainer_${this.index}"
+                      ?dontFocusFirstQuestion="${!this.group.configuration.hideNameInputAndReplaceWith}"
+                      @resize-scroller="${this._resizeScrollerIfNeeded}" .structuredAnswers="${this.initialStructuredAnswersJson}"
+                      ?isLastRating="${this._isLastRating(this.index)}" isFirstRating="${this._isFirstRating(this.index)}"
+                      ?hideQuestionIndex="${this.group.configuration.hideQuestionIndexOnNewPost}" .question="${this.question}">
+                    </yp-structured-question-edit>
+                  `)}
+                `: nothing }
+
+                ${ this.group.configuration.attachmentsEnabled ? html`
+                  <yp-file-upload id="attachmentFileUpload" raised .accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*" .target="/api/groups/${this.group.id}/upload_document" .method="POST" @success="${this._documentUploaded}">
+                    <iron-icon class="icon" .icon="attach-file"></iron-icon>
+                    <span>${this.t('uploadAttachment')}</span>
+                  </yp-file-upload>
+
+                  ${ this.post.data.attachment.url ? html`
+                    <paper-checkbox .name="deleteAttachment">${this.t('deleteAttachment')}: ${this.post.data.attachment.filename}</paper-checkbox>
+                  `: nothing }
+
+                `: nothing }
+
+                ${ this.group.configuration.moreContactInformation ? html`
+                  <h2 class="contactInfo">${this.t('contactInformation')}</h2>
+                  <paper-input id="contactName" .name="contactName" .type="text" .label="${this.t('user.name')}" .value="${this.post.data.contact.name}" char-counter>
+                  </paper-input>
+                  <paper-input id="contactEmail" .name="contactEmail" .type="text" .label="${this.t('user.email')}" .value="${this.post.data.contact.email}" char-counter>
+                  </paper-input>
+                  <paper-input id="contactTelephone" .name="contacTelephone" .type="text" .label="${this.t('contactTelephone')}" .value="${this.post.data.contact.telephone}" .maxlength="20" char-counter>
+                  </paper-input>
+                  <paper-input id="contactAddress" name="contactAddress" type="text"
+                  ?hidden="${!this.group.configuration.moreContactInformationAddress}" .label="${this.t('contactAddress')}"
+                  .value="${this.post.data.contact.address}" maxlength="300" char-counter>
+                  </paper-input>
+                `: nothing }
+              </div>
+            </section>
+
+            ${ this.newPointShown ? html`
+              <section class="subContainer">
+                <paper-textarea id="pointFor" ?required="${!this.group.configuration.newPointOptional}"
+                  minlength="3" name="pointFor" .value="${live(this.post.pointFor)}"
+                  ?always-float-label="${this._floatIfValueOrIE(post.pointFor)}"
+                  .label="${this.t('point.for')}" aria-label="${this.t('point.for')}" char-counter
+                  rows="2" max-rows="5" maxlength="${this._pointMaxLength(this.group)}">
+                </paper-textarea>
+                <div class="horizontal end-justified layout pointEmoji" ?hidden="${this.group.configuration.hideEmoji}">
+                  <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
+                </div>
+              </section>
+            `: nothing }
 
               ${ this.mapActive ? html`
                 <yp-post-location .encodedLocation="${this.encodedLocation}" .location="${this.location}" .group="${this.group}" .post="${this.post}"></yp-post-location>
-              `: html``}
+              `: nothing }
 
-            </section>
-          `: html``}
+            ${ !this.locationHidden ? html`
+              <section>
 
-          <section>
-            <div class="layout vertical center-center">
-              <div class="layout horizontal center-center wrap">
-                <div class="layout vertical center-center self-start uploadSection" ?hidden="${this.group.configuration.hidePostImageUploads}">
-                  <yp-file-upload id="imageFileUpload" raised .target="/api/images?itemType=post-header" .method="POST" @success="${this._imageUploaded}">
-                    <iron-icon class="icon" icon="photo-camera"></iron-icon>
-                    <span>${this.t('image.upload')}</span>
-                  </yp-file-upload>
-                  <div class="imageSizeInfo layout horizontal">
-                    <div>864 x 486 (16/9 widescreen)</div>
+                ${ this.mapActive ? html`
+                  <yp-post-location .encodedLocation="${this.encodedLocation}" .location="${this.location}" .group="${this.group}" .post="${this.post}"></yp-post-location>
+                `: nothing }
+
+              </section>
+            `: nothing }
+
+            <section>
+              <div class="layout vertical center-center">
+                <div class="layout horizontal center-center wrap">
+                  <div class="layout vertical center-center self-start uploadSection" ?hidden="${this.group.configuration.hidePostImageUploads}">
+                    <yp-file-upload id="imageFileUpload" raised .target="/api/images?itemType=post-header" .method="POST" @success="${this._imageUploaded}">
+                      <iron-icon class="icon" icon="photo-camera"></iron-icon>
+                      <span>${this.t('image.upload')}</span>
+                    </yp-file-upload>
+                    <div class="imageSizeInfo layout horizontal">
+                      <div>864 x 486 (16/9 widescreen)</div>
+                    </div>
+                    <div>${this.t('post.cover.imageInfo')}</div>
                   </div>
-                  <div>${this.t('post.cover.imageInfo')}</div>
+
+                  ${ this.group.configuration.allowPostVideoUploads ? html`
+                    <div class="layout vertical center-center self-start uploadSection">
+                      <yp-file-upload id="videoFileUpload" container-type="posts" .group="${this.group}" .raised="true" .uploadLimitSeconds="${this.group.configuration.videoPostUploadLimitSec}" .multi="false" .video-upload="" .method="POST" @success="${this._videoUploaded}">
+                        <iron-icon class="icon" icon="videocam"></iron-icon>
+                        <span>${this.t('uploadVideo')}</span>
+                      </yp-file-upload>
+                      <div class="videoUploadDisclamer"  ?hidden="${!this.group.configuration.showVideoUploadDisclaimer || !this.uploadedVideoId}">
+                          ${this.t('videoUploadDisclaimer')}
+                      </div>
+                    </div>
+                  `: nothing }
+
+                  ${ this.group.configuration.allowPostAudioUploads ? html`
+                    <div class="layout vertical center-center self-start uploadSection">
+                      <yp-file-upload id="audioFileUpload" container-type="posts" group="${this.group}" raised="true" upload-limit-seconds="${this.group.configuration.audioPostUploadLimitSec}" .multi="false" .audio-upload="" .method="POST" @success="${this._audioUploaded}">
+                        <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
+                        <span>${this.t('uploadAudio')}</span>
+                      </yp-file-upload>
+                    </div>
+                  `: nothing }
+
                 </div>
+                <br>
+                <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
+                <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" .selected="${this.selectedCoverMediaType}">
+                  <paper-radio-button .name="none">${this.t('post.cover.none')}</paper-radio-button>
+                  <paper-radio-button .name="image" ?hidden="${!this.uploadedHeaderImageId}">${this.t('post.cover.image')}</paper-radio-button>
+                  <paper-radio-button .name="video" ?hidden="${!this.showVideoCover}">${this.t('postCoverVideo')}</paper-radio-button>
+                  <paper-radio-button .name="audio" ?hidden="${!this.showAudioCover}">${this.t('postCoverAudio')}</paper-radio-button>
 
-                ${ this.group.configuration.allowPostVideoUploads ? html`
-                  <div class="layout vertical center-center self-start uploadSection">
-                    <yp-file-upload id="videoFileUpload" container-type="posts" .group="${this.group}" .raised="true" .uploadLimitSeconds="${this.group.configuration.videoPostUploadLimitSec}" .multi="false" .video-upload="" .method="POST" @success="${this._videoUploaded}">
-                      <iron-icon class="icon" icon="videocam"></iron-icon>
-                      <span>${this.t('uploadVideo')}</span>
-                    </yp-file-upload>
-                  </div>
-                `: html``}
+                  ${ this.location ? html`
+                    <paper-radio-button .name="map">${this.t('post.cover.map')}</paper-radio-button>
+                    <paper-radio-button .name="streetView">${this.t('post.cover.streetview')}</paper-radio-button>
+                  `: nothing }
 
-                ${ this.group.configuration.allowPostAudioUploads ? html`
-                  <div class="layout vertical center-center self-start uploadSection">
-                    <yp-file-upload id="audioFileUpload" container-type="posts" group="${this.group}" raised="true" upload-limit-seconds="${this.group.configuration.audioPostUploadLimitSec}" .multi="false" .audio-upload="" .method="POST" @success="${this._audioUploaded}">
-                      <iron-icon class="icon" .icon="keyboard-voice"></iron-icon>
-                      <span>${this.t('uploadAudio')}</span>
-                    </yp-file-upload>
-                  </div>
-                `: html``}
-
+                </paper-radio-group>
               </div>
-              <br>
-              <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
-              <paper-radio-group id="coverMediaType" name="coverMediaType" class="coverMediaType layout horizontal wrap" .selected="${this.selectedCoverMediaType}">
-                <paper-radio-button .name="none">${this.t('post.cover.none')}</paper-radio-button>
-                <paper-radio-button .name="image" ?hidden="${!this.uploadedHeaderImageId}">${this.t('post.cover.image')}</paper-radio-button>
-                <paper-radio-button .name="video" ?hidden="${!this.showVideoCover}">${this.t('postCoverVideo')}</paper-radio-button>
-                <paper-radio-button .name="audio" ?hidden="${!this.showAudioCover}">${this.t('postCoverAudio')}</paper-radio-button>
+            </section>
+          </iron-pages>
+          <input type="hidden" name="location" .value="${this.encodedLocation}">
+          <input type="hidden" name="coverMediaType" .value="${this.selectedCoverMediaType}">
+          <input type="hidden" name="uploadedHeaderImageId" .value="${this.uploadedHeaderImageId}">
+          <input type="hidden" name="uploadedDocumentUrl" .value="${this.uploadedDocumentUrl}">
+          <input type="hidden" name="uploadedDocumentFilename" .value="${this.uploadedDocumentFilename}">
+          <input type="hidden" name="structuredAnswers" .value="${this.structuredAnswers}">
+          <input type="hidden" name="structuredAnswersJson" value="${this.structuredAnswersJson}">
+        </div>
+      </yp-edit-dialog>
 
-                ${ this.location ? html`
-                  <paper-radio-button .name="map">${this.t('post.cover.map')}</paper-radio-button>
-                  <paper-radio-button .name="streetView">${this.t('post.cover.streetview')}</paper-radio-button>
-                `: html``}
+      ${ this.group.configuration.alternativeTextForNewIdeaButtonHeader ? html`
+        <yp-magic-text id="alternativeTextForNewIdeaButtonHeaderId" hidden .contentId="${this.group.id}"
+          textOnly .content="${this.group.configuration.alternativeTextForNewIdeaButtonHeader}"
+          .contentLanguage="${this.group.language}" @new-translation="${this._alternativeTextForNewIdeaButtonHeaderTranslation}"
+          text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+      ` : nothing }
 
-              </paper-radio-group>
-            </div>
-          </section>
-        </iron-pages>
-        <input type="hidden" .name="location" .value="${this.encodedLocation}">
-        <input type="hidden" .name="coverMediaType" .value="${this.selectedCoverMediaType}">
-        <input type="hidden" .name="uploadedHeaderImageId" .value="${this.uploadedHeaderImageId}">
-        <input type="hidden" .name="uploadedDocumentUrl" .value="${this.uploadedDocumentUrl}">
-        <input type="hidden" .name="uploadedDocumentFilename" .value="${this.uploadedDocumentFilename}">
-        <input type="hidden" .name="structuredAnswers" .value="${this.structuredAnswers}">
-      </div>
-    </yp-edit-dialog>
-    `
+      ${ this.group.configuration.customThankYouTextNewPosts ? html`
+        <yp-magic-text id="customThankYouTextNewPostsId" hidden .contentId="${this.group.id}"
+          text-only .content="${this.group.configuration.customThankYouTextNewPosts}"
+          .contentLanguage="${this.group.language}" text-type="customThankYouTextNewPosts"></yp-magic-text>
+      ` : nothing }
+    `;
   }
 
 
@@ -455,14 +591,98 @@ class YpPostEditLit extends YpBaseElement {
   ],
   listeners: {
     'iron-form-invalid': '_formInvalid',
-    'yp-custom-form-submit': '_customSubmit'
+    'yp-custom-form-submit': '_customSubmit',
+    'yp-skip-to-unique-id': '_skipToId',
+    'yp-open-to-unique-id': '_openToId',
+    'yp-goto-next-index': '_goToNextIndex'
   },
   observers: [
     '_setupTranslation(language,t)'
   ],
 */
 
-_floatIfValueOrIE(value) {
+  _isLastRating(index) {
+    return (this.structuredQuestions[index].subType==="rating" &&
+      (index+2)<this.structuredQuestions.length &&
+      this.structuredQuestions[index+1].subType!=="rating")
+  }
+
+  _isFirstRating(index) {
+    return (this.structuredQuestions[index].subType==="rating" &&
+      this.structuredQuestions[index-1] &&
+      this.structuredQuestions[index-1].subType!=="rating")
+  }
+
+  _openToId(event, detail) {
+    this._skipToId(event, detail, true);
+  }
+
+  _goToNextIndex(event, detail) {
+    var currentPos = this.liveQuestionIds.indexOf(detail.currentIndex);
+    if (currentPos<this.liveQuestionIds.length-1) {
+      var item = this.$$("#structuredQuestionContainer_"+this.liveQuestionIds[currentPos+1]);
+      item.scrollIntoView({block: "center", inline: "center", behavior: 'smooth'});
+      item.focus();
+    }
+  }
+
+  _hasStructuredQuestions(questions) {
+    return questions!=null;
+  }
+
+  _skipToId(event, detail, showItems) {
+    var foundFirst = false;
+    if (this.$$("#surveyContainer")) {
+      var children = this.$$("#surveyContainer").children;
+      for (var i=0; i<children.length;i++) {
+        var toId = detail.toId.replace(/]/g,"");
+        var fromId = detail.fromId.replace(/]/g,"");
+        if (children[i+1] &&
+          children[i+1].question &&
+          children[i+1].question.uniqueId &&
+          children[i+1].question.uniqueId.substring(children[i+1].question.uniqueId.length-1)==="a") {
+          children[i].question.uniqueId = children[i+1].question.uniqueId.substring(0, children[i+1].question.uniqueId.length-1);
+        }
+        if (children[i].question && detail.fromId && children[i].question.uniqueId===fromId) {
+          foundFirst = true;
+        } else if (children[i].question && detail.toId && (children[i].question.uniqueId===toId || children[i].question.uniqueId===toId+"a")) {
+          break;
+        } else {
+          if (foundFirst) {
+            if (showItems) {
+              children[i].hidden = false;
+            } else {
+              children[i].hidden = true;
+            }
+          }
+        }
+      }
+    } else {
+      console.error("No survey container found")
+    }
+  }
+
+  _replacedName(post, group) {
+    if (post && group && group.configuration.hideNameInputAndReplaceWith) {
+      let text = group.configuration.hideNameInputAndReplaceWith;
+      text = text.replace('<DATESECONDS>', moment(new Date()).format("DD/MM/YYYY hh:mm:ss"));
+      text = text.replace('<DATEMINUTES>', moment(new Date()).format("DD/MM/YYYY hh:mm"));
+      text = text.replace('<DATE>', moment(new Date()).format("DD/MM/YYYY"));
+      return text;
+    } else {
+      return null;
+    }
+  }
+
+  _pointMaxLength(group) {
+    if (group && group.configuration && group.configuration.pointCharLimit) {
+      return group.configuration.pointCharLimit;
+    } else {
+      return 500;
+    }
+  }
+
+  _floatIfValueOrIE(value) {
     const ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
     return ie11 || value;
   }
@@ -477,8 +697,18 @@ _floatIfValueOrIE(value) {
   }
 
   _customSubmit(value, valueB) {
-    if (this.structuredQuestions && this.structuredQuestions.length>0) {
-      let description="", answers="";
+    if (this.group.configuration && this.group.configuration.structuredQuestionsJson) {
+      var answers = [];
+      this.liveQuestionIds.forEach(function (liveIndex) {
+        var questionElement = this.$$("#structuredQuestionContainer_"+liveIndex);
+        if (questionElement) {
+          answers.push(questionElement.getAnswer());
+        }
+      }.bind(this));
+      this.set('structuredAnswersJson', JSON.stringify(answers));
+      this.$.editDialog._reallySubmit();
+    } else if (this.structuredQuestions && this.structuredQuestions.length>0) {
+      var description="", answers="";
       for (i=0 ; i<this.structuredQuestions.length; i+=1) {
         description += this.structuredQuestions[i].question;
         if (this.structuredQuestions[i].question && this.structuredQuestions[i].question[this.structuredQuestions[i].question.length-1]!=='?')
@@ -493,9 +723,9 @@ _floatIfValueOrIE(value) {
       }
       this.set('post.description', description);
       this.set('structuredAnswers', answers);
-      this.$$("#editDialog")._reallySubmit();
+      this.$.editDialog._reallySubmit();
     } else {
-      this.$$("#editDialog")._reallySubmit();
+      this.$.editDialog._reallySubmit();
     }
   }
 
@@ -504,21 +734,23 @@ _floatIfValueOrIE(value) {
   }
 
   _structuredQuestions(post, group) {
-    if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
-      const structuredQuestions = [];
+    if (post && group && group.configuration.structuredQuestionsJson) {
+      return group.configuration.structuredQuestionsJson;
+    } else if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
+      var structuredQuestions = [];
 
-      const questionComponents = group.configuration.structuredQuestions.split(",");
-      for (let i=0 ; i<questionComponents.length; i+=2) {
-        const question = questionComponents[i];
-        const maxLength = questionComponents[i+1];
+      var questionComponents = group.configuration.structuredQuestions.split(",");
+      for (var i=0 ; i<questionComponents.length; i+=2) {
+        var question = questionComponents[i];
+        var maxLength = questionComponents[i+1];
         structuredQuestions.push({
-          translatedQuestion: question,
+          text: question,
           question: question,
           maxLength: maxLength, value: ""
         });
       }
       if (!this.newPost && post.public_data.structuredAnswers && post.public_data.structuredAnswers!=="") {
-        const answers = post.public_data.structuredAnswers.split("%!#x");
+        var answers = post.public_data.structuredAnswers.split("%!#x");
         for (i=0 ; i<answers.length; i+=1) {
           if (structuredQuestions[i])
             structuredQuestions[i].value = answers[i];
@@ -541,7 +773,7 @@ _floatIfValueOrIE(value) {
   _videoUploaded(event, detail) {
     this.set('uploadedVideoId', detail.videoId);
     this.set('selectedCoverMediaType','video');
-    this.async(function () { this.fire('iron-resize'); });
+    this.async(function () { this.fire('iron-resize'); }, 50);
   }
 
   _audioUploaded(event, detail) {
@@ -604,8 +836,10 @@ _floatIfValueOrIE(value) {
     } else {
       this.set('selected', 0);
     }
-    this.$$('#name').autoValidate = true;
-    this.$$('#description').autoValidate = true;
+    if (this.$$('#name'))
+      this.$$('#name').autoValidate = true;
+    if (this.$$('#description'))
+      this.$$('#description').autoValidate = true;
     if (this.newPointShown) {
       this.$$('#pointFor').autoValidate = true;
     }
@@ -642,6 +876,12 @@ _floatIfValueOrIE(value) {
     if (this.locationHidden) {
       length -= 1;
     }
+
+
+    if (this.mediaHidden) {
+      length -= 1;
+    }
+
     return length;
   }
 
@@ -654,32 +894,41 @@ _floatIfValueOrIE(value) {
   }
 
   _selectedChanged(newValue) {
-    if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
-      this.set('mapActive', true);
-    } else {
-      this.set('mapActive', false);
-    }
-
-    const finalTabNumber = this._getTabLength()-1;
-
-    if (newValue==finalTabNumber) {
-      this.$$("#editDialog").useNextTabAction = false;
-    } else {
-      this.$$("#editDialog").useNextTabAction = true;
-    }
-
-    if (newValue==0) {
-      const nameElement = this.$$("#name");
-      if (nameElement) {
-        nameElement.focus();
+    this.async(function () {
+      if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
+        this.set('mapActive', true);
+      } else {
+        this.set('mapActive', false);
       }
-    }
-    if (newValue==1 && this.newPointShown) {
-      const pointFor = this.$$("#pointFor");
-      if (pointFor) {
-        pointFor.focus();
+
+      var finalTabNumber = this._getTabLength()-1;
+
+      if (finalTabNumber===0) {
+        this.set('hasOnlyOneTab', true);
       }
-    }
+
+      if (newValue==finalTabNumber) {
+        this.$$("#editDialog").useNextTabAction = false;
+      } else {
+        this.$$("#editDialog").useNextTabAction = true;
+      }
+
+      if (newValue==0) {
+        var nameElement = this.$$("#name");
+        if (nameElement) {
+          nameElement.focus();
+        }
+      }
+      if (newValue==1 && this.newPointShown) {
+        var pointFor = this.$$("#pointFor");
+        if (pointFor) {
+          pointFor.focus();
+        }
+      }
+      this.async(function() {
+        this._resizeScrollerIfNeeded();
+      }, 50);
+    });
   }
 
   _selectedCategoryChanged(newCategoryArrayId, oldValue) {
@@ -786,8 +1035,31 @@ _floatIfValueOrIE(value) {
 
   _finishRedirect(post) {
     this.fire('yp-reset-keep-open-for-page');
-    this.redirectTo("/post/"+(post ? post.id : this.post.id));
     window.appGlobals.activity('completed', 'newPost');
+
+    var text = this.t('thankYouForYourSubmission');
+    if (this.group && this.group.configuration &&
+        this.group.configuration.customThankYouTextNewPosts &&
+        this.$$("#customThankYouTextNewPostsId") &&
+        this.$$("#customThankYouTextNewPostsId").content) {
+      if (this.$$("#customThankYouTextNewPostsId").finalContent) {
+        text = this.$$("#customThankYouTextNewPostsId").finalContent;
+      } else {
+        text = this.$$("#customThankYouTextNewPostsId").content;
+      }
+    }
+
+    dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+      toast.text = text;
+      toast.duration = 5000;
+      toast.show();
+    }.bind(this));
+
+    if (this.group && this.group.configuration && this.group.configuration.allPostsBlockedByDefault) {
+      // Nothing?
+    } else {
+      this.redirectTo("/post/"+(post ? post.id : this.post.id));
+    }
   }
 
   _clear() {
@@ -802,9 +1074,11 @@ _floatIfValueOrIE(value) {
       this.set('uploadedAudioId', null);
       this.set('currentVideoId', null);
       this.set('currentAudioId', null);
-      this.$$("#imageFileUpload").clear();
       this.set('selectedCoverMediaType', 'none');
       this.async(function () { this.fire('iron-resize'); });
+      if (this.$$("#imageFileUpload")) {
+        this.$$("#imageFileUpload").clear();
+      }
     }
   }
 
@@ -847,9 +1121,40 @@ _floatIfValueOrIE(value) {
         } else {
           this.set('postDescriptionLimit', 500);
         }
+
+        if (group.configuration.structuredQuestionsJson) {
+          this.async(function () {
+            this.liveQuestionIds = [];
+            this.uniqueIdsToElementIndexes = {};
+            this.liveUniqueIds = [];
+
+            group.configuration.structuredQuestionsJson.forEach(function (question, index) {
+              if (question.type.toLowerCase()==="textfield" ||
+                question.type.toLowerCase()==="textfieldlong" ||
+                question.type.toLowerCase()==="textarea" ||
+                question.type.toLowerCase()==="textarealong" ||
+                question.type.toLowerCase()==="numberfield" ||
+                question.type.toLowerCase()==="checkboxes" ||
+                question.type.toLowerCase()==="radios" ||
+                question.type.toLowerCase()==="dropdown"
+              ) {
+                this.liveQuestionIds.push(index);
+                this.uniqueIdsToElementIndexes[question.uniqueId] = index;
+                this.liveUniqueIds.push(question.uniqueId);
+              }
+            }.bind(this));
+          });
+        }
+
       } else {
         this.set('postDescriptionLimit', 500);
       }
+
+      this.async(function () {
+        if (this.structuredQuestions) {
+          this.set('postDescriptionLimit', 9999);
+        }
+      }, 50);
     }
   }
 
@@ -861,13 +1166,31 @@ _floatIfValueOrIE(value) {
         nameElement.focus();
       }
     }.bind(this), 250);
+
+    if (!this.newPost && this.post.public_data && this.post.public_data.structuredAnswersJson) {
+      this.set('initialStructuredAnswersJson', this.post.public_data.structuredAnswersJson);
+    }
+  }
+
+  _alternativeTextForNewIdeaButtonHeaderTranslation() {
+    this.async(function () {
+      var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
+      if (label && label.finalContent) {
+        this.set('editHeaderText', label.finalContent);
+      }
+    });
   }
 
   _setupTranslation() {
     this.async(function () {
       if (this.t) {
         if (this.newPost) {
-          this.editHeaderText = this.t('post.new');
+          if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaButtonHeader) {
+            var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
+            this.editHeaderText = (label && label.finalContent) ? label.finalContent : this.group.configuration.alternativeTextForNewIdeaButtonHeader;
+          } else {
+            this.editHeaderText = this.t('post.new');
+          }
           this.toastText = this.t('postCreated');
           this.set('saveText', this.t('create'));
         } else {

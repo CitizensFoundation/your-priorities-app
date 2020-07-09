@@ -276,14 +276,17 @@ static get styles() {
       }
 
       :focus {
-        outline: none;
       }
 
       .largeAjax {
         position: absolute;
         bottom: 32px;
       }
-    `, YpFlexLayout]
+
+      a {
+        text-decoration: none;
+      }
+    `, YpFlexLayout];
   }
 
   render() {
@@ -292,7 +295,7 @@ static get styles() {
 
     <iron-a11y-keys id="a11y" .target="${this.searchTarget}" .keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
 
-    <div class="layout vertical center-center">
+    <div class="layout vertical center-center topMost">
       <div class="searchContainer layout horizontal center-center wrap" ?hidden="${this.group.configuration.hidePostFilterAndSearch}">
         <div class="layout horizontal center-center">
           <yp-posts-filter @tap="${this._tapOnFilter}" .sub-title="${this.subTitle}" class="filter" id="postsFilter" .tabName="${this.statusFilter}" @refresh-group="${this._refreshGroupFromFilter}" .group="${this.group}" .filter="${this.filter}" .searchingFor="${this.searchingFor}" .categoryId="${this.categoryId}" .categoryName="${this.categoryName}" .postsCount="${this.postsCount}">
@@ -307,17 +310,23 @@ static get styles() {
 
       ${ this.noPosts ? html`
         <div class="layout horiztonal center-center">
-          <paper-material class="noIdeas layout horizontal center-center" .elevation="2">
+          <paper-material class="noIdeas layout horizontal center-center" .elevation="2"
+            ?hidden="${this.group.configuration.allPostsBlockedByDefault}">
             <div class="noIdeasText">${this.t('noIdeasHere')}</div>
           </paper-material>
         </div>
       `: html``}
 
       <div class="layout horizontal center-center">
-        <iron-list id="ironList" .scroll-offset="${this.scrollOffset}" .items="${this.posts}" as="post" .scroll-target="document" grid="${this.wide}">
+      <iron-list id="ironList" selection-enabled="" .scrollOffset="${this.scrollOffset}"
+        @selected-item-changed="${this.._selectedItemChanged}" .items="${this.posts}" as="post"
+        scrollTarget="document" ?grid="${this.wide}" role="list">
           <template>
-            <div .tabindex="${this.tabIndex}" widePadding="${this.wide}" class="card layout vertical center-center">
-              <yp-post-card class="card" .post="${this.post}" .on-mouseover="cardMouseOver" .on-mouseout="cardMouseOut"></yp-post-card>
+            <div ?wide-padding="${this.wide}" class="card layout vertical center-center"
+             aria-label="${this.post.name}" role="listitem" aria-level="2" tabindex="${this.tabIndex}">
+              <yp-post-card id="postCard${this.post.id}" @refresh="${this._refreshPost}" class="card"
+              .post="${this.post}" @mouseover="${this.cardMouseOver}" @mouseout="${this.cardMouseOut}">
+            </yp-post-card>
             </div>
           </template>
         </iron-list>
@@ -325,6 +334,7 @@ static get styles() {
 
       <div class="layout horizontal center-center largeAjax">
         <yp-ajax id="ajax" .large-spinner @response="${this._postsResponse}"></yp-ajax>
+        <yp-ajax id="refreshPost" on-response="_refreshPostResponse"></yp-ajax>
       </div>
     </div>
     `
@@ -336,6 +346,47 @@ static get styles() {
   ],
 */
 
+  _selectedItemChanged (event, detail) {
+    if (detail && detail.value) {
+      var selectedCard = this.$$("#postCard"+detail.value.id);
+      if (selectedCard) {
+        selectedCard.clickOnA();
+      }
+    }
+  }
+
+  _refreshPost(event, detail) {
+    this.$.refreshPost.url="/api/posts/"+detail.id;
+    this.$.refreshPost.generateRequest();
+  }
+
+  _refreshPostResponse (event, detail) {
+    var post = detail.response;
+    for (var i = 0; i < this.posts.length; i++) {
+      if (this.posts[i].id==post.id) {
+        this.set('posts.'+i, post);
+        window.appGlobals.updatePostInCache(post);
+        this.async(function () {
+          this.$$("#ironList").fire('iron-resize');
+        });
+        break;
+      }
+    }
+  }
+
+  _getPostLink (post) {
+    if (post) {
+      if (post.Group.configuration && post.Group.configuration.disablePostPageLink) {
+        return "#";
+      } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+        return post.description.trim();
+      } else {
+        return "/post/"+post.id;
+      }
+    } else {
+      console.warn("Trying to get empty post link");
+    }
+  }
 
   _scrollOffset(wide, group) {
     const list = this.$$("iron-list");
@@ -443,21 +494,31 @@ static get styles() {
   }
 
   _groupChanged(group) {
+    var allowedForceByValues = ["oldest","newest","top","most_debated","random","alphabetical"];
+
     this.set("posts", null);
     this.set('noPosts', false);
     this.set('randomSeed', Math.random());
     if (group) {
       this.set('moreToLoad', true);
-      if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
-        if (group.configuration.canAddNewPosts===true) {
+      if (group.configuration && group.configuration.forcePostSortMethodAs && allowedForceByValues.indexOf(group.configuration.forcePostSortMethodAs) > -1) {
+        this.set('filter', group.configuration.forcePostSortMethodAs);
+      } else {
+        if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
+          if (group.configuration.canAddNewPosts===true) {
+            this.set('filter','newest');
+          } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
+            if (group.configuration.customRatings) {
+              this.set('filter','random');
+            } else {
+              this.set('filter','top');
+            }
+          } else {
+            this.set('filter','random');
+          }
+        } else if (!this.filter) {
           this.set('filter','newest');
-        } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
-          this.set('filter','top');
-        } else {
-          this.set('filter','random');
         }
-      } else if (!this.filter) {
-        this.set('filter','newest');
       }
       this._loadMoreData();
     }
@@ -574,7 +635,7 @@ static get styles() {
           } else if (firstLanguage && firstLanguage!==post.language && post.language!=='??') {
             multipleLanguages = true;
             console.info("Multiple post languages: "+firstLanguage+" and "+post.language);
-            console.info("A: "+firstContent+" B: "+post.description);
+            //console.info("A: "+firstContent+" B: "+post.description);
           }
         }
       });

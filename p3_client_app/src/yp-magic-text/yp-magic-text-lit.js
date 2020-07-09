@@ -73,7 +73,7 @@ class YpMagicTextLit extends YpBaseElement {
 
       showMoreText: {
         type: Boolean,
-        computed: '_showMoreText(moreText,content)'
+        computed: '_showMoreText(moreText,content,truncate)'
       },
 
       closeDialogText: {
@@ -81,6 +81,11 @@ class YpMagicTextLit extends YpBaseElement {
       },
 
       textOnly: {
+        type: Boolean,
+        value: false
+      },
+
+      isDialog: {
         type: Boolean,
         value: false
       },
@@ -95,6 +100,11 @@ class YpMagicTextLit extends YpBaseElement {
         value: false
       },
 
+      skipSanitize: {
+        type: Boolean,
+        value: false
+      },
+
       structuredQuestionsConfig: {
         type: String,
         value: null
@@ -103,6 +113,11 @@ class YpMagicTextLit extends YpBaseElement {
       linkifyCutoff: {
         type: Number,
         value: 35
+      },
+
+      removeUrls: {
+        type: Boolean,
+        value: false
       }
     }
   }
@@ -115,22 +130,22 @@ class YpMagicTextLit extends YpBaseElement {
         display: block;
       }
 
+      .container[rtl] {
+        direction: rtl;
+      }
+
       .container[more-text] {
       }
 
       .moreText {
         color: var(--accent-color);
         background-color: #FFF;
-        margin-top: 6px;
-        margin-bottom: 6px;
-        position: absolute;
-        bottom: 6px;
-        left: 466px;
+        margin-top: 8px;
       }
 
       @media (max-width: 600px) {
         .moreText {
-          position: initial;
+          margin-bottom: 2px;
         }
       }
   `, YpFlexLayout]
@@ -138,7 +153,7 @@ class YpMagicTextLit extends YpBaseElement {
 
   render() {
     return html`
-    <div class="container layout-center-center layout-vertical" .moreText="${this.showMoreText}">
+    <div class="container layout-center-center layout-vertical" rlt="${this.rtl}" more-text="${this.showMoreText}">
        <!-- add max-width for IE11 -->
       <div ?hidden="${!this.finalContent}" inner-h-t-m-l="${this.finalContent}" .style="max-width:100%"></div>
       <div ?hidden="${this.finalContent}" style="max-width:100%">${this.truncatedContent}</div>
@@ -156,18 +171,22 @@ class YpMagicTextLit extends YpBaseElement {
   }
 
   static get doubleWidthLanguages() {
-    return ['zh_TW']
+    return ['zh_TW','hy']
   }
 
-  _showMoreText(moreText, content) {
-    return moreText && content && content.length>500;
+  static get rtlLanguages() {
+    return ['fa','ar','ar_EG']
+  }
+
+  _showMoreText(moreText, content, truncate) {
+    return moreText && content && (truncate && content.length>truncate);
   }
 
   _openFullScreen() {
     dom$0(document).querySelector('yp-app').getDialogAsync("magicTextDialog", function (dialog) {
       dialog.open(this.content, this.contentId, this.extraId,
                   this.textType, this.contentLanguage, this.closeDialogText,
-                  this.structuredQuestionsConfig);
+                  this.structuredQuestionsConfig, this.skipSanitize);
     }.bind(this));
   }
 
@@ -188,6 +207,7 @@ class YpMagicTextLit extends YpBaseElement {
       this._update();
     } else {
       this.set('truncatedContent', null);
+      this.set('finalContent', null);
     }
   }
 
@@ -196,11 +216,21 @@ class YpMagicTextLit extends YpBaseElement {
     this._update();
   }
 
+  setupRtl() {
+    if (YpMagicTextBox.rtlLanguages.indexOf(this.language) >-1 ) {
+      this.set('rtl', true);
+    } else {
+      this.set('rtl', false);
+    }
+  }
+
   _languageEvent (event, detail) {
     if (detail.type === 'language-loaded') {
       this.set('language', detail.language);
       this._update();
     }
+
+    this._setupRtl();
   }
 
   _getIndexKey() {
@@ -226,16 +256,29 @@ class YpMagicTextLit extends YpBaseElement {
           this.$$("#getTranslationAjax").url = "/api/posts/"+this.contentId+"/translatedText";
           break;
         case 'pointContent':
+        case 'pointAdminCommentContent':
           this.$$("#getTranslationAjax").url = "/api/points/"+this.contentId+"/translatedText";
           break;
         case 'domainName':
         case 'domainContent':
           this.$$("#getTranslationAjax").url = "/api/domains/"+this.contentId+"/translatedText";
           break;
+        case 'customRatingName':
+          this.$.getTranslationAjax.url = "/api/ratings/"+this.contentId+"/"+this.extraId+"/translatedText";
+          break;
         case 'communityName':
         case 'communityContent':
           this.$$("#getTranslationAjax").url = "/api/communities/"+this.contentId+"/translatedText";
           break;
+        case 'alternativeTextForNewIdeaButton':
+        case 'alternativeTextForNewIdeaButtonClosed':
+        case 'alternativeTextForNewIdeaButtonHeader':
+        case 'customThankYouTextNewPosts':
+        case 'alternativePointForHeader':
+        case 'customAdminCommentsTitle':
+        case 'alternativePointAgainstHeader':
+        case 'alternativePointForLabel':
+        case 'alternativePointAgainstLabel':
         case 'groupName':
         case 'groupContent':
           this.$$("#getTranslationAjax").url = "/api/groups/"+this.contentId+"/translatedText";
@@ -266,6 +309,7 @@ class YpMagicTextLit extends YpBaseElement {
     } else {
       console.error("No content for magic text");
     }
+    this.dispatchEvent(new CustomEvent('new-translation', { bubbles: true, composed: true }));
     this._finalize();
   }
 
@@ -285,16 +329,27 @@ class YpMagicTextLit extends YpBaseElement {
 
   _setupStructuredQuestions() {
     if (this.structuredQuestionsConfig) {
-      const structuredQuestions = [];
-      const questionComponents = this.structuredQuestionsConfig.split(",");
-      if (questionComponents && questionComponents.length>1) {
-        for (let i=0 ; i<questionComponents.length; i+=2) {
-          structuredQuestions.push(questionComponents[i]);
-        }
-        const regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
-        this.processedContent = this.processedContent.replace(regEx, '<b>$1</b>');
+      var structuredQuestionsJson=null;
+      try {
+        structuredQuestionsJson = JSON.parse(this.structuredQuestionsConfig);
+      } catch (error) {
+        structuredQuestionsJson=null
+      }
+
+      if (structuredQuestionsJson) {
+        // TODO: setup json display
       } else {
-        console.warn("Not questions for structuredQuestionsConfig");
+        var structuredQuestions = [];
+        var questionComponents = this.structuredQuestionsConfig.split(",");
+        if (questionComponents && questionComponents.length>1) {
+          for (var i=0 ; i<questionComponents.length; i+=2) {
+            structuredQuestions.push(questionComponents[i]);
+          }
+          var regEx = new RegExp('(' + structuredQuestions.join('|') + ')', 'ig');
+          this.processedContent = this.processedContent.replace(regEx, '<b>$1</b>');
+        } else {
+          console.warn("Not questions for structuredQuestionsConfig");
+        }
       }
     }
   }
@@ -302,6 +357,10 @@ class YpMagicTextLit extends YpBaseElement {
   _finalize() {
     if (!this.textOnly) {
       this._linksAndEmojis()
+    }
+
+    if (!this.isDialog && !this.truncate) {
+      this.truncate = 500;
     }
 
     if (this.truncate && this.content && (this.content.length>this.truncate || this.autoTranslate)) {
@@ -313,7 +372,11 @@ class YpMagicTextLit extends YpBaseElement {
     }
 
     if (this.simpleFormat) {
-      this.processedContent = this.processedContent.replace(/(\n)/g,"<br>");
+      this.processedContent = this.processedContent.trim().replace(/(\n)/g,"<br>");
+    }
+
+    if (this.removeUrls) {
+      this.processedContent = this.processedContent.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')
     }
 
     this._setupStructuredQuestions();
@@ -341,26 +404,26 @@ class YpMagicTextLit extends YpBaseElement {
   }
 
   _linksAndEmojis () {
-    this.processedContent = sanitizeHtml(this.processedContent, { allowedTags: [ 'b', 'i', 'em', 'strong'] });
-    this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
-    this.processedContent = this.linkifyStr(this.processedContent, {
-      format: function (value, type) {
-        if (type === 'url' && value.length > this.linkifyCutoff-1) {
-          value = value.slice(0, this.linkifyCutoff) + '…';
-        }
-        return value;
-      }.bind(this),
-      ignoreTags: [
-        'b',
-        'i',
-        'em',
-        'strong'
-      ]
-    });
-    this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
-    this.processedContent = twemoji.parse(this.processedContent).
-    replace(/&amp\;quot\;/g,"\"").
-    replace(/class=\"emoji\" /g,'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
+    if (!this.skipSanitize) {
+      this.processedContent = sanitizeHtml(this.processedContent, {allowedTags: ['b', 'i', 'em', 'strong']});
+      this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
+      this.processedContent = linkifyStr(this.processedContent, {
+        format: function (value, type) {
+          if (type === 'url' && value.length > this.linkifyCutoff - 1) {
+            value = value.slice(0, this.linkifyCutoff) + '…';
+          }
+          return value;
+        }.bind(this),
+        ignoreTags: [
+          'b',
+          'i',
+          'em',
+          'strong'
+        ]
+      });
+      this.processedContent = this.processedContent.replace(/&amp\;/g, "&");
+      this.processedContent = twemoji.parse(this.processedContent).replace(/&amp\;quot\;/g, "\"").replace(/class=\"emoji\" /g, 'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" ');
+    }
   }
 
   static truncate(input, length, killwords, end) {
@@ -385,13 +448,14 @@ class YpMagicTextLit extends YpBaseElement {
   }
 
   static trim(input){
-    return input.replace(/^\s*|\s*$/g, '');
+    return input.replace(/^\s*|\s*$/g, '').trim();
   }
 
   connectedCallback() {
     if (window.i18nTranslation) {
       this.set('language', window.locale);
     }
+    this._setupRtl();
     super.connectedCallback()
   }
 }

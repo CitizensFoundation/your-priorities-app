@@ -21,6 +21,16 @@ class YpPostCoverMediaLit extends YpBaseElement {
         observer: "_postChanged"
       },
 
+      topRadius: {
+        type: Boolean,
+          value: false
+      },
+
+      topLeftRadius: {
+        type: Boolean,
+        value: false
+      },
+
       noneActive: {
         type: Boolean,
         value: false,
@@ -61,6 +71,11 @@ class YpPostCoverMediaLit extends YpBaseElement {
         type: Boolean,
         value: false,
         computed: '_isMapActive(post)'
+      },
+
+      altTag: {
+        type: String,
+        value: null
       },
 
       streetViewActive: {
@@ -188,67 +203,75 @@ class YpPostCoverMediaLit extends YpBaseElement {
         type: String,
         computed: '_activeDefaultImageUrl(defaultPostImageEnabled, defaultImageGroupId, uploadedDefaultPostImageId)',
         value: null
+      },
+
+      sizingMode: {
+        type: String,
+        computed: '_sizingMode(post)'
       }
-    }
+    };
   }
 
   static get styles() {
     return [
       css`
+        :host {
+          display: block;
+        }
 
-      :host {
-        display: block;
-      }
+        .topContainer[top-radius] > iron-image, #videoPreviewImage {
+          border-top-right-radius: 4px;
+          border-top-left-radius: 4px;
+        }
 
-      google-streetview-pano {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+        video {
+          outline: none !important;
+        }
 
-      google-map {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+        .topContainer[top-left-radius] > iron-image, #videoPreviewImage, google-streetview-pano, google-map {
+          border-top-left-radius: 4px;
+        }
 
-      .main-image, video {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+        .topContainer[top-left-radius] > video {
+          border-top-left-radius: 4px;
+        }
 
-      .mapCanvas {
-        width: 100%;
-        height: 100%;
-      }
+        google-streetview-pano {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
 
-      .category-icon {
-        width: 200px;
-        height: 200px;
-        padding-top: 32px;
-      }
+        google-map {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
 
-      .category-icon[tiny] {
-        width: 100px;
-        height: 100px;
-        padding-top: 24px;
-      }
+        .main-image, video {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
 
-      .category-icon[large] {
-        width: 100%;
-        height: 100%;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
+        .mapCanvas {
+          width: 100%;
+          height: 100%;
+        }
 
-      @media (max-width: 600px) {
         .category-icon {
-          width: 130px;
-          height: 130px;
+          width: 200px;
+          height: 200px;
+          padding-top: 32px;
+        }
+
+        .category-icon[tiny] {
+          width: 100px;
+          height: 100px;
+          padding-top: 24px;
         }
 
         .category-icon[large] {
@@ -258,179 +281,198 @@ class YpPostCoverMediaLit extends YpBaseElement {
           padding: 0 !important;
         }
 
-        .main-image[header-mode] {
-          height: 100%;
+        @media (max-width: 960px) {
+          .topContainer[top-left-radius] > iron-image {
+            border-top-left-radius: 0;
+          }
         }
 
-        video {
-          height: 100%;
+        @media (max-width: 600px) {
+          .category-icon {
+            width: 130px;
+            height: 130px;
+          }
+
+          .category-icon[large] {
+            width: 100%;
+            height: 100%;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+
+          .main-image[header-mode] {
+            height: 100%;
+          }
+
+          video {
+            height: 100%;
+          }
         }
-      }
 
-      .pointer {
-        cursor: pointer;
-      }
+        .pointer {
+          cursor: pointer;
+        }
 
-      .pointer[header-mode] {
-        cursor: default;
-      }
+        .pointer[header-mode] {
+          cursor: default;
+        }
 
-      [hidden] {
-        display: none !important;
-      }
+        [hidden] {
+          display: none !important;
+        }
 
-      .videoCamStatic {
-        width: 32px;
-        height: 32px;
-        color: var(--primary-background-color);
-        margin-top: -68px;
-        margin-left: 8px;
-      }
+        .videoCamStatic {
+          width: 32px;
+          height: 32px;
+          color: var(--primary-background-color);
+          margin-top: -68px;
+          margin-left: 8px;
+        }
 
-      .voiceIcon {
-        height: 42px;
-        width: 42px;
-        color: #333;
-        margin-top: 96px;
-      }
-
-      @media (max-width: 600px) {
         .voiceIcon {
           height: 42px;
           width: 42px;
           color: #333;
-          margin-top: 35px;
+          margin-top: 96px;
         }
-      }
 
-      audio {
-        margin-top: 16px;
-        margin-bottom: 8px;
-      }
-
-      .playInfo {
-        font-style: italic;
-      }
-
-      @media (max-width: 960px) {
-        .voiceIcon {
-          margin-top: 35px;
+        @media (max-width: 600px) {
+          .voiceIcon {
+            height: 42px;
+            width: 42px;
+            color: #333;
+            margin-top: 35px;
+          }
         }
-      }
 
-      @media (max-width: 430px) {
-        .voiceIcon {
-          margin-top: 28px;
+        audio {
+          margin-top: 16px;
+          margin-bottom: 8px;
         }
-      }
 
-      video {
-        background-color: #777;
-      }
+        .playInfo {
+          font-style: italic;
+        }
 
-      #videoPlayer[portrait] {
-        width: 100% !important;
-        height: 100%;
-      }
+        @media (max-width: 960px) {
+          .voiceIcon {
+            margin-top: 35px;
+          }
+        }
 
-      .mapCanvas[portrait] {
-        background-color: #777;
-      }
+        @media (max-width: 430px) {
+          .voiceIcon {
+            margin-top: 28px;
+          }
+        }
 
-      #videoPreviewImage[portrait] {
-        width: 40%;
-      }
+        video {
+          background-color: #777;
+        }
 
-      .videoPreviewContainer {
-        width: 100%;
-        height: 100%;
-      }
+        #videoPlayer[portrait] {
+          width: 100% !important;
+          height: 100%;
+        }
 
-      .videoPreviewContainer[portrait] {
-        background-color: #777;
-      }
-    `, YpFlexLayout]
-  }
+        .topContainer[portrait] {
+          background-color: #777;
+        }
 
-  render() {
-    return html`
-    <div class="mapCanvas">
+        #videoPreviewImage[portrait] {
+          width: 40%;
+        }
 
-    ${ this.noneActive ? html`
-        <iron-image .header-mode="${this.headerMode}" .sizing="cover" ?hidden="${this.defaultPostImageEnabled}" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToPost}"></iron-image>
+        .videoPreviewContainer {
+          width: 100%;
+          height: 100%;
+        }
 
-      ${ this.activeDefaultImageUrl ? html`
-        <iron-image .header-mode="${this.headerMode}" .sizing="cover" class="main-image pointer" src="${this.activeDefaultImageUrl}" @tap="${this._goToPost}"></iron-image>
+        .videoPreviewContainer[portrait] {
+          background-color: #777;
+        }
+      `, YpFlexLayout];
+    }
+
+    render() {
+      return html`
+      <div class="topContainer" top-radius="${this.topRadius}" top-left-radius="${this.topLeftRadius}">
+
+      ${ this.noneActive ? html`
+          <iron-image .header-mode="${this.headerMode}" .sizing="cover" ?hidden="${this.defaultPostImageEnabled}" class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToPost}"></iron-image>
+
+        ${ this.activeDefaultImageUrl ? html`
+          <iron-image ?headerMode="${this.headerMode}" alt="${this.altTag}" .sizing="cover" class="main-image pointer" src="${this.activeDefaultImageUrl}" @click="${this._goToPost}"></iron-image>
+        ` : html``}
       ` : html``}
-    ` : html``}
 
-      ${ this.categoryActive ? html`
-        <div id="categoryImageId" class="layout horizontal center-center">
-          <iron-image .header-mode="${this.headerMode}" .tiny="${this.tiny}" @tap="${this._goToPost}" class="category-icon pointer" .title="${this.post.Category.name}" .sizing="contain" src="${this.getCategoryImagePath}"></iron-image>
-        </div>
-      ` : html``}
-
-      ${ this.categoryLargeActive ? html`
-        <iron-image .header-mode="${this.headerMode}" .large="" @tap="${this._goToPost}" class="category-icon pointer" .title="${this.post.Category.name}" .sizing="cover" src="${this.getCategoryImagePath}"></iron-image>
-      ` : html``}
-
-      ${ this.imageActive ? html`
-        <iron-image .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postImagePath}"></iron-image>
-      ` : html``}
-
-      ${ this.videoActive ? html`
-
-        ${ this.showVideo ? html`
-          <video id="videoPlayer" portrait="${this.portraitVideo}" .data-id="${this.postVideoId}" .header-mode="${this.headerMode}" .controls="" @tap="${this._goToPost}" .preload="meta" class="pointer" src="${this.postVideoPath}" .playsinline="" .poster="${this.postVideoPosterPath}"></video>
-        ` : html`
-          <div class="layout vertical center-center videoPreviewContainer" .portrait="${this.portraitVideo}">
-            <iron-image id="videoPreviewImage layout-self-center" .portrait="${this.portraitVideo}" .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postVideoPosterPath}"></iron-image>
+        ${ this.categoryActive ? html`
+          <div id="categoryImageId" class="layout horizontal center-center">
+            <iron-image .header-mode="${this.headerMode}" alt="${this.altTag}" .tiny="${this.tiny}" @tap="${this._goToPost}" class="category-icon pointer" .title="${this.post.Category.name}" .sizing="contain" src="${this.getCategoryImagePath}"></iron-image>
           </div>
-          <iron-icon .icon="videocam" class="videoCamStatic"></iron-icon>
-        `}
-      ` : html``}
-
-      ${ this.showAudio ? html`
-        <div class="layout vertical center-center">
-          <audio id="audioPlayer" .data-id="${this.postAudioId}" .header-mode="${this.headerMode}" .controls="" .preload="meta" class="pointer" src="${this.postAudioPath}" ?hidden="${!this.postAudioPath}" .playsinline=""></audio>
-        </div>
-      ` : html``}
-
-      ${ this.audioActive ? html`
-        <div class="layout vertical center-center">
-          <audio id="audioPlayer" .data-id="${this.postAudioId}" .header-mode="${this.headerMode}" .controls="" .preload="meta" class="pointer" src="${this.postAudioPath}" ?hidden="${!this.postAudioPath}" .playsinline=""></audio>
-        </div>
-        <div ?hidden="${this.showAudio}" class="layout horizontal center-center pointer" @tap="${this._goToPost}">
-          <iron-icon .icon="keyboard-voice" class="voiceIcon"></iron-icon>
-        </div>
-      ` : html``}
-
-      ${ !this.disableMaps ? html`
-
-        ${ this.streetViewActive ? html`
-          <iron-image @tap="${this._goToPost}" class="main-image pointer" .sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" ?hidden="${this.streetViewActivated}"></iron-image>
-
-
-          ${ this.streetViewActivated ? html`
-            <google-streetview-pano .position="${this.mapPosition}" .heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .pitch="2" .zoom="0.8" disable-default-ui=""></google-streetview-pano>
-          ` : html``}
-
         ` : html``}
 
-        ${ this.mapActive ? html`
-          <iron-image @tap="${this._goToPost}" class="main-image pointer" ?hidden="${this.mapActivated}" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"></iron-image>
+        ${ this.categoryLargeActive ? html`
+          <iron-image .header-mode="${this.headerMode}" alt="${this.altTag}" large @click="${this._goToPost}" class="category-icon pointer" .title="${this.post.Category.name}" .sizing="cover" src="${this.getCategoryImagePath}"></iron-image>
+        ` : html``}
 
-          ${ this.mapActivated ? html`
-            <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" .libraries="places" .fit-to-markers="" .zoom="${this.zoomLevel}" .map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
-              <google-map-marker slot="markers" .latitude="${this.latitude}" .longitude="${this.longitude}"></google-map-marker>
-            </google-map>
+        ${ this.imageActive ? html`
+          <iron-image .header-mode="${this.headerMode}" @tap="${this._goToPost}" .sizing="${this.sizingMode}" class="main-image pointer" src="${this.postImagePath}"></iron-image>
+        ` : html``}
+
+        ${ this.videoActive ? html`
+
+          ${ this.showVideo ? html`
+            <video id="videoPlayer" portrait="${this.portraitVideo}" .data-id="${this.postVideoId}" .header-mode="${this.headerMode}" .controls="" @tap="${this._goToPost}" .preload="meta" class="pointer" src="${this.postVideoPath}" .playsinline="" .poster="${this.postVideoPosterPath}"></video>
+          ` : html`
+            <div class="layout vertical center-center videoPreviewContainer" .portrait="${this.portraitVideo}">
+              <iron-image id="videoPreviewImage layout-self-center" .portrait="${this.portraitVideo}" ?headerMode="${this.headerMode}" @tap="${this._goToPost}" .sizing="cover" class="main-image pointer" src="${this.postVideoPosterPath}"></iron-image>
+            </div>
+            <iron-icon icon="videocam" class="videoCamStatic"></iron-icon>
+          `}
+        ` : html``}
+
+        ${ this.showAudio ? html`
+          <div class="layout vertical center-center">
+            <audio id="audioPlayer" .data-id="${this.postAudioId}" .header-mode="${this.headerMode}" controls preload="meta" class="pointer" src="${this.postAudioPath}" ?hidden="${!this.postAudioPath}" playsinline></audio>
+          </div>
+        ` : html``}
+
+        ${ this.audioActive ? html`
+          <div class="layout vertical center-center">
+            <audio id="audioPlayer" .data-id="${this.postAudioId}" .header-mode="${this.headerMode}" controls preload="meta" class="pointer" src="${this.postAudioPath}" ?hidden="${!this.postAudioPath}" playsinline></audio>
+          </div>
+          <div ?hidden="${this.showAudio}" class="layout horizontal center-center pointer" @tap="${this._goToPost}">
+            <iron-icon icon="keyboard-voice" class="voiceIcon"></iron-icon>
+          </div>
+        ` : html``}
+
+        ${ !this.disableMaps ? html`
+
+          ${ this.streetViewActive ? html`
+            <iron-image @tap="${this._goToPost}" class="main-image pointer" .sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]" ?hidden="${this.streetViewActivated}"></iron-image>
+
+
+            ${ this.streetViewActivated ? html`
+              <google-streetview-pano .position="${this.mapPosition}" .heading="330" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0" .pitch="2" .zoom="0.8" disable-default-ui=""></google-streetview-pano>
+            ` : html``}
+
+          ` : html``}
+
+          ${ this.mapActive ? html`
+            <iron-image @tap="${this._goToPost}" class="main-image pointer" ?hidden="${this.mapActivated}" sizing="cover" src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"></iron-image>
+
+            ${ this.mapActivated ? html`
+              <google-map additional-map-options="{keyboardShortcuts:false}" id="coverMediaMap" class="map" .libraries="places" .fit-to-markers="" .zoom="${this.zoomLevel}" .map-type="${this.mapType}" api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0">
+                <google-map-marker slot="markers" .latitude="${this.latitude}" .longitude="${this.longitude}"></google-map-marker>
+              </google-map>
+            ` : html``}
           ` : html``}
         ` : html``}
-      ` : html``}
 
-    </div>
-    <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
-    `
+      </div>
+      <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
+    `;
   }
 
 /*
@@ -439,6 +481,14 @@ class YpPostCoverMediaLit extends YpBaseElement {
     ypGotoBehavior
   ],
 */
+
+  _sizingMode(post) {
+    if (post && post.Group && post.Group.configuration && post.Group.configuration.useContainImageMode) {
+      return 'contain';
+    } else {
+      return 'cover';
+    }
+  }
 
   _activeDefaultImageUrl(defaultPostImageEnabled, defaultImageGroupId, uploadedDefaultPostImageId) {
     if (defaultPostImageEnabled && defaultImageGroupId && uploadedDefaultPostImageId) {
@@ -449,14 +499,18 @@ class YpPostCoverMediaLit extends YpBaseElement {
   }
 
   _goToPost() {
-    if (this.post) {
-      if (this.headerMode) {
-        this.goToPost(this.post.id)
-      } else {
-        this.goToPost(this.post.id, null, null, this.post);
-      }
+    if (this.post && this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+      // Do nothing
     } else {
-      console.error("No post in post cover media on goToPost");
+      if (this.post) {
+        if (this.headerMode) {
+          this.goToPost(this.post.id)
+        } else {
+          this.goToPost(this.post.id, null, null, this.post);
+        }
+      } else {
+        console.error("No post in post cover media on goToPost");
+      }
     }
   }
 
@@ -644,7 +698,7 @@ class YpPostCoverMediaLit extends YpBaseElement {
 
   _postVideoPosterPath(post) {
     if (post && post.PostVideos) {
-      const videoPosterURL = this._getVideoPosterURL(post.PostVideos);
+      const videoPosterURL = this._getVideoPosterURL(post.PostVideos, post.PostHeaderImages);
       if (videoPosterURL) {
         return videoPosterURL;
       } else {

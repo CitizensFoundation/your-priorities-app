@@ -120,6 +120,11 @@ class YpUsersGridLit extends YpBaseElement {
       spinnerActive: {
         type: Boolean,
         computed: '_spinnerActive(totalUserCount, forceSpinner)'
+      },
+
+      inviteType: {
+        type: String,
+        value: 'sendInviteByEmail'
       }
     }
   }
@@ -127,150 +132,171 @@ class YpUsersGridLit extends YpBaseElement {
   static get styles() {
     return [
       css`
-
-      #dialog {
-        width: 90%;
-        max-width: 1024px;
-        background-color: #FFF;
-      }
-
-      iron-list {
-        color: #000;
-        height: 500px;
-        width: 100%;
-      }
-
-      .userItem {
-        padding-right: 16px;
-      }
-
-      .id {
-        width: 40px;
-      }
-
-      .name {
-        width: 200px;
-      }
-
-      .email {
-        width: 190px;
-        overflow-wrap: break-word;
-      }
-
-      .organization {
-        width: 150px;
-      }
-
-      .addRemoveButtons {
-        width: 150px;
-      }
-
-      #selectOrganizationDialog {
-        background-color: #FFF;
-
-      }
-
-      [hidden] {
-        display: none !important;
-      }
-
-      paper-listbox {
-        margin-right: 8px !important;
-      }
-
-      .headerBox {
-        background-color: var(--accent-color);
-        color: #FFF;
-        margin: 0;
-        padding: 0 0;
-        padding-top: 12px;
-        padding-bottom: 10px;
-      }
-
-      mwc-button {
-        margin-left: 24px;
-      }
-
-      .inputBox {
-        margin-left: 16px;
-        padding-left: 8px;
-        padding-right: 8px;
-        padding-bottom: 4px;
-        margin-bottom: 4px;
-        align-self: flex-start;
-        background-color: #FFF;
-        color: #000;
-        margin-top: 2px;
-        margin-right: 12px;
-      }
-
-      #grid {
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-
-      .headerText {
-        padding: 0 0 !important;
-      }
-
-      .collectionName {
-        font-size: 22px;
-        margin-bottom: 1px;
-        margin-top: 4px;
-      }
-
-      .innerHeader {
-        font-size: 17px;
-        color: #F5F5F5;
-      }
-
-      .closeButton {
-        width: 50px;
-        height: 50px;
-        margin-left: 4px;
-        margin-right: 4px;
-      }
-
-      @media (max-width: 600px) {
-        .closeButton {
-          width: 45px;
-          height: 45px;
+        #dialog {
+          width: 90%;
+          max-width: 1024px;
+          background-color: #FFF;
         }
 
-        .inputBox {
-          margin-top: 6px;
+        iron-list {
+          color: #000;
+          height: 500px;
+          width: 100%;
+        }
+
+        .userItem {
+          padding-right: 16px;
+        }
+
+        .id {
+          width: 40px;
+        }
+
+        .name {
+          width: 200px;
+        }
+
+        .email {
+          width: 190px;
+          overflow-wrap: break-word;
+        }
+
+        .organization {
+          width: 150px;
+        }
+
+        .addRemoveButtons {
+          width: 150px;
+        }
+
+        #selectOrganizationDialog {
+          background-color: #FFF;
+
+        }
+
+        [hidden] {
+          display: none !important;
         }
 
         paper-listbox {
-          margin-right: 8px;
+          margin-right: 8px !important;
         }
 
-        #dialog {
-          width: 100%;
-          height: 100%;
+        .headerBox {
+          background-color: var(--accent-color);
+          color: #FFF;
           margin: 0;
+          padding: 0 0;
+          padding-top: 12px;
+          padding-bottom: 10px;
+        }
+
+        paper-button {
+          margin-left: 24px;
+        }
+
+        .inputBox {
+          margin-left: 16px;
+          padding-left: 8px;
+          padding-right: 8px;
+          padding-bottom: 4px;
+          margin-bottom: 4px;
+          align-self: flex-start;
+          background-color: #FFF;
+          color: #000;
+          margin-top: 2px;
+          margin-right: 12px;
+        }
+
+        #grid {
+          margin-top: 0;
+          margin-bottom: 0;
         }
 
         .headerText {
-          font-size: 20px;
-          line-height: 1.2em;
-          text-align: center;
+          padding: 0 0 !important;
         }
-      }
 
-      paper-spinner {
-        margin-left: 16px;
-        margin-top: 8px;
-        --paper-spinner-layer-1-color: #FFF;
-        --paper-spinner-layer-2-color: #FFF;
-        --paper-spinner-layer-3-color: #FFF;
-        --paper-spinner-layer-4-color: #FFF;
-      }
+        .collectionName {
+          font-size: 22px;
+          margin-bottom: 1px;
+          margin-top: 4px;
+        }
 
-      .inviteButton {
-        margin-top: 5px;
-      }
-    `, YpFlexLayout]
+        .innerHeader {
+          font-size: 17px;
+          color: #F5F5F5;
+        }
+
+        .closeButton {
+          width: 50px;
+          height: 50px;
+          margin-left: 4px;
+          margin-right: 4px;
+        }
+
+        @media (max-width: 600px) {
+          .closeButton {
+            width: 45px;
+            height: 45px;
+          }
+
+          .inputBox {
+            margin-top: 6px;
+          }
+
+          paper-listbox {
+            margin-right: 8px;
+          }
+
+          #dialog {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+          }
+
+          .headerText {
+            font-size: 20px;
+            line-height: 1.2em;
+            text-align: center;
+          }
+        }
+
+        paper-spinner {
+          margin-left: 16px;
+          margin-top: 8px;
+          --paper-spinner-layer-1-color: #FFF;
+          --paper-spinner-layer-2-color: #FFF;
+          --paper-spinner-layer-3-color: #FFF;
+          --paper-spinner-layer-4-color: #FFF;
+        }
+
+        .inviteButton {
+          margin-top: 24px;
+          height: 48px;
+          margin-right: 8px;
+        }
+
+        @media (max-width: 600px) {
+          .inviteButton {
+            margin-top: 4px;
+            margin-bottom: 12px;
+            height: 48px;
+            margin-right: 8px;
+          }
+        }
+
+        .typeOfInvite {
+          margin-left: 4px;
+          margin-top: 6px;
+          margin-bottom: 6px;
+        }
+
+        .emailClass {
+          margin-left: 6px;
+          margin-right: 6px;
+        }
+    `, YpFlexLayout];
   }
 
   render() {
@@ -316,13 +342,17 @@ class YpUsersGridLit extends YpBaseElement {
         </div>
         <div ?hidden="${this.domainId}">
           <paper-material ?hidden="${this.adminUsers}" class="layout horizontal wrap inputBox">
-            <paper-input .label="${this.t('email')}" .value="${this.inviteUserEmail}"></paper-input>
+            <paper-input label="${this.t('email')}" class="emailClass" value="${this.inviteUserEmail}"></paper-input>
+            <paper-radio-group id="typeOfInvite" name="typeOfInvite" class="typeOfInvite layout vertical" selected="${this.inviteType}">
+              <paper-radio-button name="sendInviteByEmail">${this.t('sendInviteByEmail')}</paper-radio-button>
+              <paper-radio-button name="addUserDirectly">${this.t('addUserDirectlyIfExist')}</paper-radio-button>
+            </paper-radio-group>
             <mwc-button class="inviteButton" .label="${this.t('users.inviteUser')}" @click="${this._inviteUser}"></mwc-button>
           </paper-material>
         </div>
 
         <paper-material ?hidden="${!this.adminUsers}" class="layout horizontal wrap inputBox">
-          <paper-input .label="${this.t('email')}" value="${this.addAdminEmail}"></paper-input>
+          <paper-input .label="${this.t('email')}" class="emailClass" value="${this.addAdminEmail}"></paper-input>
           <mwc-button class="inviteButton" .label="${this.t('users.addAdmin')}" @click="${this._addAdmin}"></mwc-button>
         </paper-material>
       </div>
@@ -707,13 +737,13 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _inviteUser(event) {
-    this.$$("#inviteUserAjax").body = {};
+    this.$.inviteUserAjax.body = {};
     if (this.modelType==="groups" && this.groupId) {
-      this.$$("#inviteUserAjax").url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user";
-      this.$$("#inviteUserAjax").generateRequest();
+      this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.groupId + "/" + this.inviteUserEmail + "/invite_user"+(this.inviteType==='addUserDirectly' ? '?addToGroupDirectly=1' : '');
+      this.$.inviteUserAjax.generateRequest();
     } else if (this.modelType==="communities" && this.communityId) {
-      this.$$("#inviteUserAjax").url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user";
-      this.$$("#inviteUserAjax").generateRequest();
+      this.$.inviteUserAjax.url = "/api/" + this.modelType + "/" + this.communityId + "/" + this.inviteUserEmail + "/invite_user"+(this.inviteType==='addUserDirectly' ? '?addToCommunityDirectly=1' : '');
+      this.$.inviteUserAjax.generateRequest();
     } else {
       console.warn("Can't find model type or ids");
     }

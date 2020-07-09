@@ -45,6 +45,11 @@ class YpPointActionsLit extends YpBaseElement {
       hideSharing: {
         type: Boolean,
         value: false
+      },
+
+      allowWhatsAppSharing: {
+        type: Boolean,
+        value: false
       }
     }
   }
@@ -84,6 +89,7 @@ class YpPointActionsLit extends YpBaseElement {
 
       .all-actions {
         color: #aaa;
+        padding-right: 8px;
       }
 
       yp-ajax {
@@ -114,21 +120,24 @@ class YpPointActionsLit extends YpBaseElement {
 
   render() {
     return html`
-    <div class="all-actions layout horizontal flex start-justified" ?hidden="${this.hideNotHelpful}">
-      <div id="actionUp" class="actionUp layout horizontal">
-        <paper-icon-button .title="${this.t('point.helpful')}" ?disabled="${this.allDisabled}" .icon="arrow-upward" class="point-up-vote-icon myButton" @tap="${this.pointHelpful}"></paper-icon-button>
-        <div class="action-text action-up layouthorizontal ">${this.point.counter_quality_up}</div>
+      <div class="all-actions layout horizontal flex start-justified" ?hidden="${this.hideNotHelpful}">
+        <div id="actionUp" class="actionUp layout horizontal">
+          <paper-icon-button .title="${this.t('point.helpful')}" ?disabled="${this.allDisabled}" .icon="arrow-upward" class="point-up-vote-icon myButton" @tap="${this.pointHelpful}"></paper-icon-button>
+          <div class="action-text action-up layouthorizontal ">${this.point.counter_quality_up}</div>
+        </div>
+        <div id="actionDown" class="actionDown layout horizontal">
+          <paper-icon-button .title="${this.t('point.not_helpful')}" ?disabled="${this.allDisabled}" .icon="arrow-downward" class="point-down-vote-icon myButton" @tap="${this.pointNotHelpful}"></paper-icon-button>
+          <div class="action-text">${this.point.counter_quality_down}</div>
+        </div>
       </div>
-      <div id="actionDown" class="actionDown layout horizontal">
-        <paper-icon-button .title="${this.t('point.not_helpful')}" ?disabled="${this.allDisabled}" .icon="arrow-downward" class="point-down-vote-icon myButton" @tap="${this.pointNotHelpful}"></paper-icon-button>
-        <div class="action-text">${this.point.counter_quality_down}</div>
-      </div>
-    </div>
-    <paper-share-button ?hidden="${this.hideSharing}" @share-tap="${this._shareTap}" class="shareIcon" up-voted="${this.isUpVoted}" horizontal-align="right" id="shareButton" title="${this.t('sharePoint')}" .facebook="" .google="" .twitter="" .popup="" .url="${this.pointUrl}"></paper-share-button>
+      <paper-share-button ?hidden="${this.hideSharing}" @share-tap="${this._shareTap}" class="shareIcon" up-voted="${this.isUpVoted}" horizontal-align="right" id="shareButton"
+        title="${this.t('sharePoint')}" facebook email twitter popup .url="${this.pointUrl}"
+        ?whatsapp="${this.allowWhatsAppSharing}">
+      </paper-share-button>
 
-    <yp-ajax id="pointQualityAjax" .method="POST" @response="${this._pointQualityResponse}"></yp-ajax>
-    <lite-signal @lite-signal-got-endorsements-and-qualities="${this._updateQualitiesFromSignal}"></lite-signal>
-    `
+      <yp-ajax id="pointQualityAjax" .method="POST" @response="${this._pointQualityResponse}"></yp-ajax>
+      <lite-signal @lite-signal-got-endorsements-and-qualities="${this._updateQualitiesFromSignal}"></lite-signal>
+    `;
   }
 
 /*

@@ -19,8 +19,12 @@ class YpPostCardAddLit extends YpBaseElement {
 
       disabled: {
         type: Boolean
+      },
+
+      group: {
+        type: Object
       }
-    }
+    };
   }
 
   static get styles() {
@@ -45,6 +49,7 @@ class YpPostCardAddLit extends YpBaseElement {
         margin-bottom: 8px;
         text-align: center;
         max-width: 310px;
+        outline-color: var(--accent-color);
       }
 
       iron-icon {
@@ -147,20 +152,43 @@ class YpPostCardAddLit extends YpBaseElement {
 
   render() {
     return html`
-    <div class="layout vertical center-center container">
-      <paper-card ?disabled="${this.disabled}" .elevation="${this.elevation}" class="postCard" @tap="${this._newPost}">
-        <div class="layout horizontal center-center addNewIdeaText">
-          <iron-icon ?disabled="${this.disabled}" icon="lightbulb-outline"></iron-icon>
-          <div class="flex addText" ?hidden="${this.disabled}">
-            ${this.t('post.add_new')}
+      <div class="layout vertical center-center container">
+        <paper-card ?disabled="${this.disabled}" .elevation="${this.elevation}"
+          aria-disabled="${this.disabled}" role="button" aria-label="${this.t('post.add_new')}" tabindex="0" @keydown="${this._keyDown}"
+          class="postCard" @click="${this._newPost}">
+          <div class="layout horizontal center-center addNewIdeaText">
+            <iron-icon ?disabled="${this.disabled}" icon="lightbulb-outline"></iron-icon>
+            ${ this.disable ? html`
+              <div class="flex addText closed">
+                ${ !this.group.configuration.alternativeTextForNewIdeaButtonClosed ? html`
+                  ${this.t('closedForNewPosts')}
+                ` : html`
+                  <yp-magic-text .contentId="${this.group.id}" extraId="${this.index}" text-only
+                    .content="${this.group.configuration.alternativeTextForNewIdeaButtonClosed}" .contentLanguage="${this.group.language}"
+                    class="ratingName" textType="alternativeTextForNewIdeaButtonClosed"></yp-magic-text>
+                `}
+              </div>
+            ` : html`
+              <div class="flex addText" ?hidden="${this.disabled}">
+                ${ !this.group.configuration.alternativeTextForNewIdeaButtonClosed ? html`
+                  ${this.t('post.add_new')}
+                ` : html`
+                  <yp-magic-text .contentId="${this.group.id}" extraId="${this.index}" text-only
+                    .content="${this.group.configuration.alternativeTextForNewIdeaButton}" .contentLanguage="${this.group.language}"
+                    class="ratingName" textType="alternativeTextForNewIdeaButton"></yp-magic-text>
+                `}
+              </div>
+            `}
           </div>
-          <div class="flex addText closed" ?hidden="${!this.disabled}">
-            ${this.t('closedForNewPosts')}
-          </div>
-        </div>
-      </paper-card>
-    </div>
-    `
+        </paper-card>
+      </div>
+    `;
+  }
+
+  _keyDown(event) {
+    if (event.keyCode===13) {
+      this._newPost();
+    }
   }
 
   _newPost() {
@@ -170,4 +198,5 @@ class YpPostCardAddLit extends YpBaseElement {
   }
 }
 
-window.customElements.define('yp-post-card-add-lit', YpPostCardAddLit)
+window.customElements.define('yp-post-card-add-lit', YpPostCardAddLit);
+

@@ -31,6 +31,11 @@ class YpPostLit extends YpBaseElement {
       idRouteData: Object,
       tabRouteData: Object,
 
+      isAdmin: {
+        type: Boolean,
+        value: false
+      },
+
       postId: {
         type: Number,
         value: null,
@@ -102,6 +107,10 @@ class YpPostLit extends YpBaseElement {
         height: 100%;
       }
 
+      .topContainer {
+        margin-top: 28px;
+      }
+
       .flex {
 
       }
@@ -156,6 +165,10 @@ class YpPostLit extends YpBaseElement {
         .postHeader {
           width: 400px;
         }
+
+        .topContainer {
+          margin-top: 16px;
+        }
       }
 
       .createFab {
@@ -177,8 +190,8 @@ class YpPostLit extends YpBaseElement {
         height: 72px;
         --paper-fab-iron-icon: {
           color: var(--icon-general-color, #FFF);
-          width: 72px;
-          height: 72px;
+          width: 50px;
+          height: 50px;
         }
       }
 
@@ -236,10 +249,6 @@ class YpPostLit extends YpBaseElement {
         font-size: 11px;
       }
 
-      .topContainer {
-        margin-top: 16px;
-      }
-
       .tabs {
         margin-top: 24px;
       }
@@ -295,15 +304,6 @@ class YpPostLit extends YpBaseElement {
         width: 250px;
       }
 
-      @media (max-width: 1000px) {
-        .tabs {
-          width: 100%;
-        }
-
-        .tab {
-          width: 200px;
-        }
-      }
 
       @media (max-width: 900px) {
         .tabs {
@@ -312,7 +312,7 @@ class YpPostLit extends YpBaseElement {
           word-wrap: break-word !important;
           margin-top: 8px;
           width: 100%;
-          margin-bottom: 16px;
+          margin-bottom: 8px;
         }
 
         .tabs .tab {
@@ -386,7 +386,7 @@ class YpPostLit extends YpBaseElement {
 
       <iron-pages id="pages" class="tabPages" .selected="${this.selectedTab}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
         <div .name="debate" class="layout horizontal center-center">
-          <yp-post-points .host="${this.host}" id="pointsSection" .post="${this.post}" .scrollToId="${this.scrollToPointId}"></yp-post-points>
+          <yp-post-points .host="${this.host}" id="pointsSection" ?isAdmin="${this.isAdmin}" .post="${this.post}" .scrollToId="${this.scrollToPointId}"></yp-post-points>
         </div>
         <section .name="news" class="minHeightSection">
 
@@ -437,7 +437,7 @@ class YpPostLit extends YpBaseElement {
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" ?hidden="${this.post.Group.configuration.hideNewPostOnPostPage}">
 
       ${ !this.disableNewPosts ? html`
-        <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" .wideLayout="${this.wideWidth}" title="${this.createFabTitle}" @tap="${this._newPost}"></paper-fab>
+        <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" .wideLayout="${this.wideWidth}" title="${this.t('post.new')}" @tap="${this._newPost}"></paper-fab>
       `: html``}
     </div>
 
@@ -576,6 +576,11 @@ class YpPostLit extends YpBaseElement {
   }
 
   _postChanged(newValue, oldValue) {
+    if (post) {
+      this.set('isAdmin', this.checkPostAdminOnlyAccess(post));
+    } else {
+      this.set('isAdmin', false);
+    }
   }
 
   _postIdChanged(postId) {
@@ -737,10 +742,35 @@ class YpPostLit extends YpBaseElement {
 
       window.appGlobals.currentGroup = this.post.Group;
 
-      if (this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) {
-        window.appGlobals.currentGroupForceSaml = true;
+      if ((this.post.Group.configuration &&
+        this.post.Group.configuration.forceSecureSamlLogin &&
+        !this.checkGroupAccess(this.post.Group)) ||
+        (this.post.Group.Community &&
+          this.post.Group.Community.configuration &&
+          this.post.Group.Community.configuration.forceSecureSamlLogin &&
+          !this.checkCommunityAccess(this.post.Group.Community))) {
+        window.appGlobals.currentForceSaml = true;
       } else {
-        window.appGlobals.currentGroupForceSaml = false;
+        window.appGlobals.currentForceSaml = false;
+      }
+
+      if ((this.post.Group.configuration && this.post.Group.configuration.forceSecureSamlLogin) ||
+        (this.post.Group.Community && this.post.Group.Community.configuration && this.post.Group.Community.configuration.forceSecureSamlLogin)) {
+        window.appGlobals.currentForceSaml = true;
+      } else {
+        window.appGlobals.currentForceSaml = false;
+      }
+
+      if (this.post.Group.Community && this.post.Group.Community.configuration && this.post.Group.Community.configuration.customSamlDeniedMessage) {
+        window.appGlobals.currentSamlDeniedMessage = this.post.Group.Community.configuration.customSamlDeniedMessage;
+      } else {
+        window.appGlobals.currentSamlDeniedMessage = null;
+      }
+
+      if (this.post.Group.Community.configuration && this.post.Group.Community.configuration.customSamlLoginMessage) {
+        window.appGlobals.currentSamlLoginMessage = this.post.Group.Community.configuration.customSamlLoginMessage;
+      } else {
+        window.appGlobals.currentSamlLoginMessage = null;
       }
     }
   }

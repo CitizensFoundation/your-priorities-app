@@ -169,15 +169,26 @@ class YpPostMapLit extends YpBaseElement {
   resetMapHeight() {
     const map = this.$$("#mapContainer");
     if (map) {
-      const windowHeight = window.innerHeight;
-      if (map) {
-        let height;
-        if (this.wide) {
-          height = windowHeight - 448;
-          //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
-          //map.style.width = Math.min(window.innerWidth, 1920) + 'px';
-        }
+      var windowHeight = window.innerHeight;
+      var height;
+      if (this.wide) {
+        height = windowHeight/1.5;
+        //map.style.height = Math.max(Math.min(height, window.innerHeight)),  + 'px';
+      } else {
+        height = windowHeight/1.5;
       }
+      map.style.width = Math.min(window.innerWidth-(this.wide ? 96 : 32), 1920) + 'px';
+      map.style.height = height + 'px';
+      map.style.marginBottom = "64px";
+      this.async(function () {
+        var gMap=this.$$("#map");
+        if (gMap) {
+          gMap.fitToMarkers=true;
+          this.async(function () {
+            gMap.fitToMarkers=false;
+          }, 1000);
+        }
+      });
     }
  }
 
@@ -208,7 +219,9 @@ class YpPostMapLit extends YpBaseElement {
     } else {
       this.set('noPosts', true);
     }
-    this.resetMapHeight();
+    this.async(function () {
+      this.resetMapHeight();
+    });
   }
 
   markerClick(e) {

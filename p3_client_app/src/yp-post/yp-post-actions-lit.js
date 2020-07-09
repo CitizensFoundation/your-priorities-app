@@ -108,7 +108,7 @@ class YpPostActionsLit extends YpBaseElement {
 
       hideDebate: {
         type: Boolean,
-        computed: '_hideDebate(small,forceSmall,post)'
+        computed: '_hideDebate(small,forceSmall,headerMode,post)'
       },
 
       customVoteUpHoverText: {
@@ -119,9 +119,20 @@ class YpPostActionsLit extends YpBaseElement {
       customVoteDownHoverText: {
         type: String,
         computed: '_customVoteDownHoverText(post)'
+      },
+
+      endorseModeIconUp: {
+        type: String,
+        computed: '_endorseModeIconUp(endorsementButtons, post, endorseValue)'
+      },
+
+      endorseModeIconDown: {
+        type: String,
+        computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
       }
-    }
+    };
   }
+
 
   static get styles() {
     return [
@@ -150,7 +161,7 @@ class YpPostActionsLit extends YpBaseElement {
       }
 
       .action-text {
-        font-size: 18px;
+        font-size: 16px;
         text-align: left;
         vertical-align: bottom;
         padding-top: 8px;
@@ -208,13 +219,23 @@ class YpPostActionsLit extends YpBaseElement {
         margin-right: 8px;
       }
 
+      .up-text[rtl] {
+        margin-right: -8px;
+      }
+
       .down-vote-icon {
         margin-right: 0px;
       }
 
-      paper-icon-button.largeButton {
-        width: 52px;
-        height: 52px;
+      paper-icon-button.mainIcons {
+        width: 48px;
+        height: 48px;
+      }
+
+      paper-icon-button.debateIcon {
+        width: 46px;
+        height: 46px;
+        margin-top: 2px;
       }
 
       paper-icon-button[smaller-icons] {
@@ -224,23 +245,6 @@ class YpPostActionsLit extends YpBaseElement {
 
       .debate-icon {
         color: #757575;
-      }
-
-      .shareIcon {
-        margin-left: 16px;
-        margin-top: 3px;
-        --paper-share-button-icon-color: #656565;
-        --paper-share-button-icon-height: 46px;
-        --paper-share-button-icon-width: 46px;
-        text-align: right;
-      }
-
-      .shareIcon[endorsed] {
-        --paper-share-button-icon-color: var(--accent-color-400);
-      }
-
-      .shareIcon[less-margin] {
-        margin-left: 0;
       }
 
       .up-vote-icon {
@@ -281,38 +285,39 @@ class YpPostActionsLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-    `, YpFlexLayout]
+
+      paper-material[rtl] {
+        direction: rtl;
+      }
+    `, YpFlexLayout];
   }
 
   render() {
     return html`
-    <iron-media-query query="(max-width: 420px)" .query-matches="${this.small}"></iron-media-query>
+      <iron-media-query query="(max-width: 420px)" .query-matches="${this.small}"></iron-media-query>
 
-    <yp-ajax id="endorseAjax" .method="POST" @response="${this._endorseResponse}"></yp-ajax>
-    <paper-material .elevation="${this.elevationPlusOne}" .title="${this.disabledTitle}" floating="${this.floating}" .animated="" class="action-bar layout horizontal">
-      <div id="actionUp" class="action-up layout horizontal layout start justified">
-        <paper-icon-button id="iconUpButton" .smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" .title="${this.customVoteUpHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'up')}" class="action-icon up-vote-icon largeButton" @tap="${thisupVote}"></paper-icon-button>
-        <div class="action-text up-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedUpCount}</div>
-      </div>
+      <yp-ajax id="endorseAjax" .method="POST" @response="${this._endorseResponse}"></yp-ajax>
+      <paper-material ?rtl="${this.rtl}" .elevation="${this.elevationPlusOne}" .title="${this.disabledTitle}" floating="${this.floating}" .animated="" class="action-bar layout horizontal">
+        <div id="actionUp" class="action-up layout horizontal layout start justified">
+          <paper-icon-button id="iconUpButton" .smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" .title="${this.customVoteUpHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'up')}" class="action-icon up-vote-icon largeButton" @tap="${thisupVote}"></paper-icon-button>
+          <div ?rtl="${this.rtl}" class="action-text up-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedUpCount}</div>
+        </div>
 
-      <div class="action-debate layout horizontal layout center justified " ?hidden="${this.hideDebate}">
-        <paper-icon-button ?disabled="${this.allDisabled}" .title="${this.t('post.debate')}" icon="chat-bubble-outline" class="action-icon debate-icon largeButton" @tap="${this._goToPostIfNotHeader}"></paper-icon-button>
-        <div class="action-text debate-text">${this.formattedPointCount}</div>
-      </div>
+        <div class="action-debate layout horizontal layout center justified " ?hidden="${this.hideDebate}">
+            <paper-icon-button ?disabled="${this.allDisabled}" title="${this.t('post.debate')}" icon="chat-bubble-outline" class="action-icon debate-icon mainIcons debateIcon" @click="${this._goToPostIfNotHeader}"></paper-icon-button>
+          <div class="action-text debate-text">${this.formattedPointCount}</div>
+        </div>
 
-      <div class="" ?hidden="${!this.hideDebate}"></div>
+        <div class="" ?hidden="${!this.hideDebate}"></div>
 
-      <div id="actionDown" class="action-down layout horizontal layout center justified" ?hidden="${this.post.Group.configuration.hideDownVoteForPost}">
-        <paper-icon-button smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" .title="${this.customVoteDownHoverText}" icon="${this.endorseModeIcon(endorsementButtons,'down')}" class="action-icon down-vote-icon largeButton" @tap="${this.downVote}"></paper-icon-button>
-        <div class="action-text down-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedDownCount}</div>
-      </div>
-      <div class="share">
-        <paper-share-button @share-tap="${this._shareTap}" class="shareIcon" .less-margin="${this.post.Group.configuration.hideDownVoteForPost}" .endorsed="${this.isEndorsed}" horizontal-align="right" id="shareButton" title="${this.t('post.shareInfo')}" facebook google twitter popup url="${this.postUrl}"></paper-share-button>
-      </div>
-    </paper-material>
+        <div id="actionDown" class="action-down layout horizontal layout center justified" ?hidden="${this.post.Group.configuration.hideDownVoteForPost}">
+          <paper-icon-button smaller-icons="${this.smallerIcons}" ?disabled="${this.allDisabled}" title="${this.customVoteDownHoverText}" icon="${this.endorseModeIconDown}" class="action-icon down-vote-icon mainIcons" @click="${this.downVote}"></paper-icon-button>
+          <div class="action-text down-text" ?hidden="${this.post.Group.configuration.hideVoteCount}">${this.formattedDownCount}</div>
+        </div>
+      </paper-material>
 
-    <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
-    `
+      <lite-signal on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
+    `;
   }
 
 /*
@@ -322,6 +327,13 @@ class YpPostActionsLit extends YpBaseElement {
     ypGotoBehavior
   ],
 */
+  _endorseModeIconUp (endorsementButtons) {
+    return this.endorseModeIcon(endorsementButtons, 'up');
+  }
+
+  _endorseModeIconDown(endorsementButtons) {
+    return this.endorseModeIcon(endorsementButtons, 'down');
+  }
 
   _customVoteUpHoverText(post) {
     if (post && post.Group && post.Group.configuration && post.Group.configuration.customVoteUpHoverText) {
@@ -386,8 +398,8 @@ class YpPostActionsLit extends YpBaseElement {
     }
   }
 
-  _hideDebate(small, forceSmall) {
-    return (small || forceSmall || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
+  _hideDebate(small, forceSmall, headerMode) {
+    return (small || forceSmall || headerMode || (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.hideDebateIcon));
   }
 
   _onPostChanged(post, oldValue) {
@@ -428,7 +440,13 @@ class YpPostActionsLit extends YpBaseElement {
     if (this.post) {
       this._updateEndorsements(this.post);
     } else {
-      console.warn("Trying to update post null from signal");
+      this.async(function () {
+        if (this.post) {
+          this._updateEndorsements(this.post);
+        } else {
+          console.warn("Trying to update post null from signal");
+        }
+      }, 50);
     }
   }
 
@@ -438,6 +456,8 @@ class YpPostActionsLit extends YpBaseElement {
       const thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
       if (thisPostsEndorsement)
         this._setEndorsement(thisPostsEndorsement.value);
+      else
+        this._setEndorsement(0);
     }
   }
 
@@ -468,10 +488,6 @@ class YpPostActionsLit extends YpBaseElement {
 
   _setEndorsement(value) {
     this.endorseValue = value;
-
-    if (value>0) {
-      this.set('isEndorsed', true);
-    }
 
     if (value !== 0 && this.post.Group.configuration &&
       (this.post.Group.configuration.hideVoteCount && !this.post.Group.configuration.originalHideVoteCount)) {
@@ -504,6 +520,10 @@ class YpPostActionsLit extends YpBaseElement {
         this.removeClass(this.$$("#actionDown"), 'default-buttons-down-selected');
       }
     }
+
+    if (value>0) {
+      this.set('isEndorsed', true);
+    }
   }
 
   _enableVoting() {
@@ -516,8 +536,8 @@ class YpPostActionsLit extends YpBaseElement {
     this._enableVoting();
     const endorsement = detail.response.endorsement;
     const oldEndorsementValue = detail.response.oldEndorsementValue;
-    this._setEndorsement(endorsement.value);
     window.appUser.updateEndorsementForPost(this.post.id, endorsement);
+    this._setEndorsement(endorsement.value);
     if (oldEndorsementValue) {
       if (oldEndorsementValue>0)
         this.set('post.counter_endorsements_up', this.post.counter_endorsements_up-1);
@@ -528,6 +548,14 @@ class YpPostActionsLit extends YpBaseElement {
       this.set('post.counter_endorsements_up', this.post.counter_endorsements_up+1);
     else if (endorsement.value<0)
       this.set('post.counter_endorsements_down', this.post.counter_endorsements_down+1);
+
+    document.dispatchEvent(
+      new CustomEvent("lite-signal", {
+        bubbles: true,
+        compose: true,
+        detail: { name: 'got-endorsements-and-qualities' }
+      })
+    );
   }
 
   generateEndorsementFromLogin(value) {
@@ -550,10 +578,6 @@ class YpPostActionsLit extends YpBaseElement {
       this._enableVoting();
       window.appUser.loginForEndorse(this, { value: value } );
     }
-  }
-
-  _shareTap(event, detail) {
-    window.appGlobals.activity('postShareOpen', detail.brand, this.post ? this.post.id : -1);
   }
 
   upVote(event) {

@@ -31,7 +31,7 @@ class YpPostCardLit extends YpBaseElement {
 
       elevation: {
         type: Number,
-        value: 2
+        value: 1
       },
 
       post: {
@@ -54,6 +54,11 @@ class YpPostCardLit extends YpBaseElement {
       isAudioCover: {
         type: Boolean,
         value: false
+      },
+
+      structuredAnswersFormatted: {
+        type: String,
+        computed: '_structuredAnswersFormatted(post)'
       }
     }
   }
@@ -67,13 +72,16 @@ class YpPostCardLit extends YpBaseElement {
 
       .post-name {
         margin:0 ;
-        font-size: var(--extra-large-heading-size, 28px);
-        background-color: var(--primary-color-600);
-        color: #FFF;
-        padding: 15px;
+        padding: 16px;
+        padding-top: 20px;
+        padding-bottom: 14px;
         cursor: pointer;
         vertical-align: middle !important;
-        font-weight: bold;
+        font-size: 1.25rem;
+        background-color: #fff;
+        color: #000;
+        font-weight: 500;
+        letter-spacing: .0125em;
       }
 
       .postNameContainer {
@@ -95,6 +103,7 @@ class YpPostCardLit extends YpBaseElement {
       .postCard {
         height: 435px;
         width: 416px;
+        border-radius: 4px;
       }
 
       .postCard[hide-post-cover] {
@@ -114,11 +123,11 @@ class YpPostCardLit extends YpBaseElement {
       }
 
       .postCard[hide-description][hide-actions] {
-        height: 311px;
+        height: 331px;
       }
 
       .postCard[hide-description][hide-post-cover][hide-actions] {
-        height: 77px;
+        height: 110px;
       }
 
       .postCard[hide-actions] {
@@ -130,6 +139,7 @@ class YpPostCardLit extends YpBaseElement {
         height: 100%;
         margin: 0;
         padding-top: 0;
+        padding-bottom: 0;
       }
 
       yp-post-cover-media {
@@ -143,30 +153,55 @@ class YpPostCardLit extends YpBaseElement {
         min-height: 118px;
       }
 
-      .post-name {
-        font-size: 23px;
-      }
-
       .post-name[mini] {
         padding: 16px;
       }
 
       .description {
-        font-size: 18px;
-        padding: 8px;
+        font-size: 17px;
+        padding: 16px;
+        padding-top: 0;
         cursor: pointer;
+        color: #555;
       }
 
       .postActions  {
         position: absolute;
-        right: 11px;
+        right: 20px;
         bottom: 2px;
+        margin: 0;
+      }
+
+      .shareIcon {
+        position: absolute;
+        left: 8px;
+        bottom: 2px;
+        --paper-share-button-icon-color: #656565;
+        --paper-share-button-icon-height: 46px;
+        --paper-share-button-icon-width: 46px;
+        text-align: right;
+        width: 48px;
+        height: 48px;
+      }
+
+      .customRatings {
+        position: absolute;
+        bottom: 10px;
+        right: 6px;
       }
 
       @media (max-width: 960px) {
+        .customRatings {
+          bottom: 12px;
+        }
+
         :host {
           width: 100%;
           max-width: 423px;
+        }
+
+        .description[has-custom-ratings] {
+          padding-bottom: 28px;
         }
 
         .postCard {
@@ -197,10 +232,6 @@ class YpPostCardLit extends YpBaseElement {
           height: 100%;
         }
 
-        .postActions  {
-          bottom: 0;
-          right: 8px;
-        }
 
         yp-post-cover-media {
           width: 100%;
@@ -267,31 +298,70 @@ class YpPostCardLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-    `, YpFlexLayout]
+
+      a {
+        text-decoration: none;
+      }
+
+      .share[mini] {
+        display: none;
+      }
+    `, YpFlexLayout];
   }
 
   render() {
     return html`
-    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-    <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
+      <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
+      <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
-    <paper-material .mini="${this.mini}" .hide-post-cover="${this.post.Group.configuration.hidePostCover}" .hide-description="${this.post.Group.configuration.hidePostDescription}" hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}" audio-cover="${this.isAudioCover}" class="card postCard layout vertical" elevation="${this.elevation}" animated>
-      <div class="layout vertical">
-        <yp-post-cover-media mini="${this.mini}" audio-cover="${this.isAudioCover}" .post="${this.post}" ?hidden="${this.post.Group.configuration.hidePostCover}"></yp-post-cover-media>
-        <div class="postNameContainer">
-          <div class="post-name" .mini="${this.mini}" id="postName" @tap="${this.goToPostIfNotHeader}">
-            <yp-magic-text id="postNameMagicText" .text-type="postName" .content-language="${this.post.language}" .text-only="" .content="${this.postName}" .content-id="${this.post.id}">
-            </yp-magic-text>
+      <paper-material .mini="${this.mini}" .hide-post-cover="${this.post.Group.configuration.hidePostCover}" .hide-description="${this.post.Group.configuration.hidePostDescription}" hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}" audio-cover="${this.isAudioCover}" class="card postCard layout vertical" elevation="${this.elevation}" animated>
+        <div class="layout vertical">
+          <a .href="${this._getPostLink(post)}" id="theMainA">
+            <yp-post-cover-media ?mini="${this.mini}" top-radius ?audioCover="${this.isAudioCover}" .altTag="${this.post.name}"
+              .post="${this.post}" ?hidden="${this.post.Group.configuration.hidePostCover}"></yp-post-cover-media>
+            <div class="postNameContainer">
+              <div class="post-name" ?mini="${this.mini}" id="postName">
+                <yp-magic-text id="postNameMagicText" textType="postName" .contentLanguage="${this.post.language}"
+                  @click="${this.goToPostIfNotHeader}" text-only .content="${this.postName}" .contentId="${this.post.id}">
+                </yp-magic-text>
+              </div>
+            </div>
+            ${ !this.post.public_data.structuredAnswersJson ? html`
+              <yp-magic-text class="description layout horizontal"
+                ?hasCustomRatings="${this.post.Group.configuration.customRatings}"
+                ?hidden="${this.hideDescription}" textType="postContent" .contentLanguage="${this.post.language}"
+                @click="${this.goToPostIfNotHeader}" text-only .content="${this.post.description}"
+                .contentId="${this.post.id}" truncate="120">
+              </yp-magic-text>
+
+            ` : html`
+              <yp-magic-text id="description" textType="postContent" .contentLanguage="[[post.language]]" hidden\$="[[hideDescription]]" content="[[structuredAnswersFormatted]]" content-id="[[post.id]]" class="description" truncate="120">
+              </yp-magic-text>
+            `}
+          </a>
+          <div ?hidden="${this.post.Group.configuration.hidePostActionsInGrid}" @click="${this._onBottomClick}">
+            ${ !this.mini ? html`
+              <div class="share">
+                <paper-share-button @share-tap="${this._shareTap}" class="shareIcon"
+                  ?lessMargin="${this.post.Group.configuration.hideDownVoteForPost}"
+                  ?endorsed="${this.isEndorsed}" horizontal-align="right" id="shareButton"
+                  ?whatsapp="${this.post.Group.configuration.allowWhatsAppSharing}"
+                  title="${this.t('post.shareInfo')}" facebook email
+                  twitter popup url="${this.fullPostUrl}">
+                </paper-share-button>
+              </div>
+              ${ this.post.Group.configuration.customRatings ? html`
+                <yp-post-ratings-info class="customRatings" .post="${post}"></yp-post-ratings-info>
+              ` : html`
+                <yp-post-actions floating class="postActions" elevation="-1" .endorseMode="${this.endorseMode}"
+                  .post="${this.post}" ?hidden="${this.mini}">
+                </yp-post-actions>
+              `}
+            ` : nothing }
           </div>
         </div>
-        <yp-magic-text class="description layout horizontal" @tap="${this.goToPostIfNotHeader}" ?hidden="${this.hideDescription}" .text-type="postContent" .content-language="${this.post.language}" text-only="" content="${this.post.description}" .contentId="${this.post.id}" truncate="100">
-        </yp-magic-text>
-        <div ?hidden="${this.post.Group.configuration.hidePostActionsInGrid}">
-          <yp-post-actions floating class="postActions" .elevation="-1" .endorse-mode="${this.endorseMode}" .post="${this.post}" ?hidden="${this.mini}"></yp-post-actions>
-        </div>
-      </div>
-    </paper-material>
-    `
+      </paper-material>
+    `;
   }
 /*
   behaviors: [
@@ -303,6 +373,67 @@ class YpPostCardLit extends YpBaseElement {
     ypGotoBehavior
   ],
 */
+
+  _structuredAnswersFormatted(post) {
+    if (post && post.public_data && post.public_data.structuredAnswersJson &&
+      post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
+      var questionHash = {};
+      var outText = "";
+      post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
+        if (question.uniqueId) {
+          questionHash[question.uniqueId] = question;
+        }
+      }.bind(this));
+
+      for (let i=0;i<post.public_data.structuredAnswersJson.length;i++) {
+        const answer = post.public_data.structuredAnswersJson[i];
+        if (answer && answer.value) {
+          var question = questionHash[answer.uniqueId];
+          if (question) {
+            outText+=question.text+": ";
+            outText+=answer.value+" ";
+          }
+          if (outText.length>120) {
+            break;
+          }
+        }
+      }
+
+      return outText;
+    } else {
+      return "";
+    }
+  }
+
+  _onBottomClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+  }
+
+  clickOnA() {
+    if (this.$.theMainA) {
+      this.$.theMainA.click();
+    }
+  }
+
+  _getPostLink(post) {
+    if (post) {
+      if (post.Group.configuration && post.Group.configuration.disablePostPageLink) {
+        return "#";
+      } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+        return post.description.trim();
+      } else {
+        return "/post/"+post.id;
+      }
+    } else {
+      console.warn("Trying to get empty post link");
+    }
+  }
+
+  _shareTap(event, detail) {
+    window.appGlobals.activity('postShareCardOpen', detail.brand, this.post ? this.post.id : -1);
+  }
 
   _hideDescription(mini, post) {
     return (mini || (post && post.Group.configuration && post.Group.configuration.hidePostDescription))
@@ -323,6 +454,8 @@ class YpPostCardLit extends YpBaseElement {
   goToPostIfNotHeader() {
     if (this.post.Group.configuration && this.post.Group.configuration.disablePostPageLink) {
       console.log("goToPostDisabled");
+    } else if (this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+      // Do nothing
     } else {
       this.goToPost(null, null, null, this.post);
     }
@@ -336,13 +469,13 @@ class YpPostCardLit extends YpBaseElement {
         this.set('isAudioCover', false);
       }
       this.async(function () {
-        const postName = this.$$("#postName");
-        if (postName) {
+        var postName = this.$$("#postName");
+        if (postName && false) {
           if (this.mini) {
             if (post.name.length>200) {
-              postName.style.fontSize = "12px";
-            } else if (post.name.length>100) {
               postName.style.fontSize = "13px";
+            } else if (post.name.length>100) {
+              postName.style.fontSize = "14px";
             } else if (post.name.length>40) {
               postName.style.fontSize="16px";
             } else if (post.name.length>20) {
@@ -352,11 +485,11 @@ class YpPostCardLit extends YpBaseElement {
             }
           } else if (!this.wide) {
             if (post.name.length>200) {
-              postName.style.fontSize = "13px";
-            } else if (post.name.length>100) {
               postName.style.fontSize = "15px";
+            } else if (post.name.length>100) {
+              postName.style.fontSize = "17px";
             } else if (post.name.length>40) {
-              postName.style.fontSize="16px";
+              postName.style.fontSize="18px";
             } else if (post.name.length>20) {
               postName.style.fontSize="21px";
             } else {

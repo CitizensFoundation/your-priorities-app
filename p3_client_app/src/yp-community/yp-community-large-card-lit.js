@@ -141,6 +141,7 @@ static get styles() {
         right: 0px;
         padding-right: 0;
         margin-right: 0;
+        z-index: 200;
       }
 
       .contentContainer {
@@ -155,6 +156,7 @@ static get styles() {
       .description {
         padding: 0;
         margin: 0;
+        z-index: 100;
       }
 
       .communityDescription {

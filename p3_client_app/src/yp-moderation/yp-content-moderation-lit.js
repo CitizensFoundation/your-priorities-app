@@ -299,6 +299,10 @@ class YpContentModerationLit extends YpBaseElement {
       .linkIcon {
         color: #000;
       }
+
+      vaadin-grid {
+        font-size: 14px;
+      }
       `, YpFlexLayout]
   }
 
@@ -379,11 +383,11 @@ class YpContentModerationLit extends YpBaseElement {
           <template>${this._getType(item.type)}</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="120px" .textAlign="start" .flexGrow="0" .path="status" .header="${this.t('publishStatus')}">
+        <vaadin-grid-sort-column width="100px" .textAlign="start" .flexGrow="0" .path="status" .header="${this.t('publishStatus')}">
           <template>${this.item.status}</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="80px" .textAlign="center" .flexGrow="0" .path="counter_flags" .header="${this.t('flags')}" ?hidden="${this.userId}">
+        <vaadin-grid-sort-column width="100px" .textAlign="center" .flexGrow="0" .path="counter_flags" .header="${this.t('flags')}" ?hidden="${this.userId}">
           <template>${this.item.counter_flags}</template>
         </vaadin-grid-sort-column>
 
@@ -391,7 +395,7 @@ class YpContentModerationLit extends YpBaseElement {
           <template>${this.item.source}</template>
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column width="100px" .textAlign="center" .flexGrow="0" .path="toxicityScoreRaw" .header="${this.t('toxicityScore')}?" ?hidden="${this.userId}">
+        <vaadin-grid-sort-column width="105px" .textAlign="center" .flexGrow="0" .path="toxicityScoreRaw" .header="${this.t('toxicityScore')}?" ?hidden="${this.userId}">
           <template>${this.item.toxicityScore}</template>
         </vaadin-grid-sort-column>
 
@@ -419,8 +423,8 @@ class YpContentModerationLit extends YpBaseElement {
 
         <vaadin-grid-column width="70px" .flexGrow="0">
           <template class="header">
-            <paper-menu-button .horizontalAlign="right" class="helpButton" ?disabled="${this.selectedItemsEmpty}">
-              <paper-icon-button .ariaLabel="${this.t('openSelectedItemsMenu')}" .icon="more-vert" .slot="dropdown-trigger"></paper-icon-button>
+            <paper-menu-button .horizontalAlign="right" @opened-changed="${this._refreshGridAsyncDelay}" class="helpButton"?disabled="${this.selectedItemsEmpty}">
+              <paper-icon-button .ariaLabel="${this.t('openSelectedItemsMenu')}" .icon="more-vert" .slot="dropdown-trigger" @click="${this._menuOpened}"></paper-icon-button>
               <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
 
                 ${!this.selectedItemsEmpty ? html`
@@ -445,7 +449,7 @@ class YpContentModerationLit extends YpBaseElement {
             </paper-menu-button>
           </template>
           <template>
-            <paper-menu-button horizontal-align="right" class="helpButton">
+            <paper-menu-button horizontal-align="right" class="helpButton" @opened-changed="${this._refreshGridAsyncDelay}">
               <paper-icon-button .ariaLabel="${this.t('openOneItemMenu')}" .icon="more-vert" data-args="${this.item.id}" @tap="${this._setSelected}" slot="dropdown-trigger"></paper-icon-button>
               <paper-listbox slot="dropdown-content" @iron-select="${this._menuSelection}">
                 <paper-item data-args="${this.item.id}" data-model-class="${this.item.type}" ?hidden="${this.userId}" @tap="${this._approve}">
@@ -534,6 +538,25 @@ class YpContentModerationLit extends YpBaseElement {
     if (oldItem) {
       this.$$("#grid").closeItemDetails(oldItem);
     }
+
+    this._refreshGridAsync();
+  }
+
+  _refreshGridAsync() {
+    this._refreshGridAsyncBase(10);
+  }
+
+  _refreshGridAsyncDelay(event, detail) {
+    if (this.allowGridEventsAfterMenuOpen) {
+      this._refreshGridAsyncBase(250);
+    }
+  }
+
+  _refreshGridAsyncBase(ms) {
+    this.async(function () {
+      this.$.grid.fire('iron-resize');
+      this.$.grid.notifyResize();
+    }, ms);
   }
 
   _menuSelection(event, detail) {
@@ -541,6 +564,7 @@ class YpContentModerationLit extends YpBaseElement {
     allMenus.forEach(function (item) {
       item.select(null);
     });
+    this._refreshGridAsync();
   }
 
   connectedCallback() {
@@ -593,6 +617,7 @@ class YpContentModerationLit extends YpBaseElement {
       this.set('selectedItemsCount', 0);
     }
     this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.type }});
+    this._refreshGridAsyncDelay();
   }
 
   _setupItemIdFromEvent(event) {
@@ -604,6 +629,7 @@ class YpContentModerationLit extends YpBaseElement {
     if (!modelClass)
       modelClass = event.target.getAttribute('data-model-class');
     this.set('selectedModelClass', modelClass);
+    this._refreshGridAsync();
   }
 
   _deleteSelected(event) {
@@ -717,11 +743,17 @@ class YpContentModerationLit extends YpBaseElement {
     }
   }
 
+  _menuOpened() {
+    this.allowGridEventsAfterMenuOpen = true;
+  }
+
   _setSelected(event) {
     const item = this._findItemFromId(event.target.getAttribute('data-args'));
     if (item) {
       this.$$("#grid").selectItem(item);
     }
+    this.allowGridEventsAfterMenuOpen = true;
+    this._refreshGridAsync();
   }
 
   _findItemFromId(id) {

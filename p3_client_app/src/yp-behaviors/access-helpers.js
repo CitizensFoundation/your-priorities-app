@@ -45,6 +45,8 @@ export const AccessHelpers = {
       return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
     } else if (post) {
       return false;
+    } else if (post && post.User && window.appUser && window.appUser.user) {
+      return (post.User.id===window.appUser.user.id);
     } else {
       console.warn("No post in hasAccess");
       return false;

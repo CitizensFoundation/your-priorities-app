@@ -60,6 +60,7 @@ class YpUserWithOrganizationLit extends YpBaseElement {
         padding-top: 4px;
         font-weight: bold;
         text-align: left;
+        padding-right: 16px;
       }
 
       .name[inverted] {
@@ -121,7 +122,7 @@ class YpUserWithOrganizationLit extends YpBaseElement {
           </div>
 
           ${ this.organizationImageUrl ? html`
-            <img width="48" height="48" .sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
+            <img width="48" height="48" alt="${this.organizationName}" sizing="cover" ?hidden="${this.hideImage}" class="orgImage" src="${this.organizationImageUrl}">
           ` : html``}
 
         </div>

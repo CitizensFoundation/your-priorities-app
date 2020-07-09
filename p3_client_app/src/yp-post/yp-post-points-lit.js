@@ -23,6 +23,17 @@ class YpPostPointsLit extends YpBaseElement {
 
       host: String,
 
+      isAdmin: {
+        type: Boolean,
+        value: false,
+        observer: '_isAdminChanged'
+      },
+
+      disableDebate: {
+        type: Boolean,
+        value: false
+      },
+
       downPoints: {
         type: Array,
         value: []
@@ -64,6 +75,16 @@ class YpPostPointsLit extends YpBaseElement {
         type: Boolean,
         value: false,
         observer: '_updateEmojiBindings'
+      },
+
+      largeModeReady: {
+        type: Boolean,
+        computed: '_largeModeReady(largeMode, post)'
+      },
+
+      smallModeReady: {
+        type: Boolean,
+        computed: '_smallModeReady(largeMode, post)'
       },
 
       textValueMobileUpOrDown: String,
@@ -262,8 +283,13 @@ class YpPostPointsLit extends YpBaseElement {
       storedPoints: {
         type: Array,
         value: null
+      },
+
+      pointMaxLength: {
+        type: Number,
+        computed: '_pointMaxLength(post, largeMode)'
       }
-    }
+    };
   }
 
   static get styles() {
@@ -294,6 +320,7 @@ class YpPostPointsLit extends YpBaseElement {
         padding-top: 24px;
         padding-left: 16px;
         padding-right: 16px;
+        padding-bottom: 16px;
         margin-bottom: 16px;
         background-color: #FFF;
       }
@@ -401,7 +428,7 @@ class YpPostPointsLit extends YpBaseElement {
         }
 
         #pointUpOrDownMaterial {
-          margin-top: 0;
+          margin-top: 16px;
         }
 
         .main-container {
@@ -463,7 +490,6 @@ class YpPostPointsLit extends YpBaseElement {
       }
 
       :focus {
-        outline: none;
       }
 
       #ironListMobile[debate-disabled] {
@@ -505,7 +531,26 @@ class YpPostPointsLit extends YpBaseElement {
         margin-right: 8px;
         vertical-align: top;
       }
-    `, YpFlexLayout]
+
+      .videoUploadDisclamer {
+        font-size: 12px;
+        padding: 8px;
+        margin-bottom: 4px;
+      }
+
+      .pointMaterialMobile {
+      }
+
+      div[rtl] {
+        direction: rtl;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-label: {
+          padding-right: 6px;
+        }
+      }
+    `, YpFlexLayout];
   }
 
   render() {
@@ -520,24 +565,34 @@ class YpPostPointsLit extends YpBaseElement {
       <yp-ajax id="ajax" .large-spinner="" .active="${this.ajaxActive}" @response="${this._response}"></yp-ajax>
     </div>
 
-    ${ this.largeMode ? html`
-      <div class="layout vertical topContainer">
+    <div class="layout horizontal center-center" hidden="">
+      <yp-ajax id="moreAjax" hidden="" @response="${this._morePointsResponse}"></yp-ajax>
+    </div>
+
+    ${ this.largeModeReady ? html`
+      <div ?rtl="${this.rtl}" class="layout vertical topContainer">
         <div class="main-container layout-horizontal">
           <div class="point">
 
             ${ !this.post.Group.configuration.alternativePointForHeader ? html`
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" role="heading" aria-level="2">>
                 ${this.t('pointsFor')}
               </div>
             `: html`
               <div class="pointMainHeader layout horizontal center-center">
-                ${this.post.Group.configuration.alternativePointForHeader}
+                <yp-magic-text .contentId="${this.post.Group.id}" textOnly
+                  .content="${this.post.Group.configuration.alternativePointForHeader}"
+                  .contentLanguage="${this.post.Group.language}" role="heading" aria-level="2"
+                  class="ratingName" textType="alternativePointForHeader">
+                </yp-magic-text>
               </div>
             `}
 
             <paper-material id="pointUpMaterial" .elevation="1" class="pointInputMaterial layout vertical" .animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
 
-              <paper-textarea id="up_point" @tap="${this.focusUpPoint}" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueUp}" .label="${this.labelUp}" alwaysFloatLabel="${this._floatIfValueOrIE()}" char-counter .rows="2" ?hidden="${this.hideUpText}" .max-rows="3" .maxlength="500">
+              <paper-textarea id="up_point" @tap="${this.focusUpPoint}" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueUp}" .label="${this.labelUp}" alwaysFloatLabel="${this._floatIfValueOrIE()}" char-counter
+                .rows="2" ?hidden="${this.hideUpText}" .max-rows="3"
+                .maxlength="${this.pointMaxLength}">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" ?hidden="${this.post.Group.configuration.hideEmoji}">
@@ -549,13 +604,16 @@ class YpPostPointsLit extends YpBaseElement {
                 ${ this.post.Group.configuration.allowPointVideoUploads ? html`
                   <div ?hidden="${this.hideUpVideo}" class="uploadSection">
                     <div class="layout vertical center-center self-start" ?hidden="${!this.loggedInUser}">
-                      <yp-file-upload id="videoFileUploadUp" .uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" .currentFile="${this.hasCurrentUpVideo}" .containerType="points" .group="${this.post.Group}" raised .video-upload .method="POST" @success="${this._videoUpUploaded}">
+                      <yp-file-upload id="videoFileUploadUp" noDefaultCoverImage .uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" .currentFile="${this.hasCurrentUpVideo}" .containerType="points" .group="${this.post.Group}" raised .video-upload .method="POST" @success="${this._videoUpUploaded}">
                         <iron-icon class="icon" icon="videocam"></iron-icon>
                         <span>${this.t('uploadVideoPointFor')}</span>
                       </yp-file-upload>
                     </div>
+                    <div class="videoUploadDisclamer"  ?hidden="${!this.post.Group.configuration.showVideoUploadDisclaimer || !this.uploadedVideoUpId}">
+                      [[t('videoUploadDisclaimer')]]
+                    </div>
                     <div class="layout horizontal center-center">
-                      <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${this.loggedInUser}" 
+                      <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${this.loggedInUser}"
                                   @click="${this._openLogin}" .label="${this.t('uploadVideoPointFor')}">
                         <iron-icon class="icon" ></iron-icon>
                       </mwc-button>
@@ -582,39 +640,58 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthUpIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <mwc-button raised class="submitButton" ?disabled="${this.addPointDisabled}" .icon="add" .mini="" .elevation="3" @tap="${this.addPointUp}" .title="${this.t('point.add_up')}" .label="${this.t('postPoint')}"></mwc-button>
+                  <mwc-button raised class="submitButton" ?disabled="${this.addPointDisabled}" .icon="add" .mini="" .elevation="3" @tap="${this.addPointUp}" .title="${this.t('postPoint')}" .label="${this.t('postPoint')}"></mwc-button>
                 </div>
               </div>
             </paper-material>
 
             <div id="allUpPoints">
-              <iron-list id="ironListUp" .items="${this.upPoints}" as="point" .scrollTarget="document" .scrollOffset="550">
+            <iron-scroll-threshold id="ironScrollThesholdUp" scroll-target="document" on-lower-threshold="_loadMorePoints">
+              <iron-list id="ironListUp" lowerThreshold="200" .items="${this.upPoints}" role="list" as="point" .scrollTarget="document" .scrollOffset="550">
                 <template>
-                  <div class="item layout-horizontal" tabindex="${this.tabIndex}">
+                  <div class="item layout-horizontal" tabindex="${this.tabIndex}" role="listitem" aria-level="3">>
                     <paper-material id="point${this.point.id}" .elevation="1" .animated .class="pointMaterial">
                       <yp-point point="${this.point}"></yp-point>
                     </paper-material>
                   </div>
                 </template>
               </iron-list>
+            </iron-scroll-threshold>
             </div>
           </div>
 
-          <div class="point layout-vertical">
+          <div class="point layout vertical" ?hidden="${this.post.Group.configuration.hidePointAgainst}">
 
             ${ !this.post.Group.configuration.alternativePointAgainstHeader ? html`
-              <div class="pointMainHeader layout horizontal center-center">
+              <div class="pointMainHeader layout horizontal center-center" role="heading" aria-level="2">>
                 ${this.t('pointsAgainst')}
               </div>
             `: html`
               <div class="pointMainHeader layout horizontal center-center">
-                ${this.post.Group.configuration.alternativePointAgainstHeader}
+                <yp-magic-text .contentId="${this.post.Group.id}" textOnly
+                  .content="${this.post.Group.configuration.alternativePointAgainstHeader}" .contentLanguage="${this.post.Group.language}"
+                  role="heading" aria-level="2" class="ratingName" textType="alternativePointAgainstHeader">
+                </yp-magic-text>
               </div>
             `}
 
-            <paper-material id="pointDownMaterial" .elevation="1" class="pointInputMaterial layout vertical" .animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
+            ${ !this.post.Group.configuration.alternativePointForLabel ? html`
+              <yp-magic-text id="alternativePointForLabelId" hidden contentId="${this.post.Group.id}" textOnly .content="${this.post.Group.configuration.alternativePointForLabel}"
+                .contentLanguage="${this.post.Group.language}" @new-translation="${this._updatePointLabels}" role="heading" aria-level="2" textType="alternativePointForLabel">
+              </yp-magic-text>
+            ` : nothing }
 
-              <paper-textarea id="down_point" @tap="${this.focusDownPoint}" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueDown}" .label="${this.labelDown}" .charCounter .rows="2" ?hidden="${this.hideDownText}" alwaysFloatLabel="${this._floatIfValueOrIE()}" .max-rows="5" .maxlength="500">
+
+            ${ !this.post.Group.configuration.alternativePointAgainstLabel ? html`
+            <yp-magic-text id="alternativePointAgainstLabelId" hidden contentId="${this.post.Group.id}" textOnly .content="${this.post.Group.configuration.alternativePointAgainstLabel}"
+                .contentLanguage="${this.post.Group.language}" @new-translation="${this._updatePointLabels}" role="heading" aria-level="2" textType="alternativePointAgainstLabel">
+              </yp-magic-text>
+            ` : nothing }
+
+            <paper-material id="pointDownMaterial" elevation="1" class="pointInputMaterial layout vertical" animated ?hidden="${this.disableDebate}">
+
+              <paper-textarea id="down_point" @tap="${this.focusDownPoint}" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueDown}"
+               .label="${this.labelDown}" .charCounter .rows="2" ?hidden="${this.hideDownText}" alwaysFloatLabel="${this._floatIfValueOrIE()}" max-rows="5" .maxlength="${this.pointMaxLenght}">
               </paper-textarea>
 
               <div class="horizontal end-justified layout" ?hidden="${this.post.Group.configuration.hideEmoji}">
@@ -626,10 +703,13 @@ class YpPostPointsLit extends YpBaseElement {
                 ${ this.post.Group.configuration.allowPointVideoUploads ? html`
                   <div ?hidden="${this.hideDownVideo}" class="uploadSection">
                     <div class="layout vertical center-center self-start" ?hidden=${!this.loggedInUser}">
-                      <yp-file-upload id="videoFileUploadDown" currentFile="${this.hasCurrentDownVideo}" .containerType="points" uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" .group="${this.post.Group}" .raised="true" .multi="false" .videoUpload="" .method="POST" @success="${this._videoDownUploaded}">
+                      <yp-file-upload id="videoFileUploadDown" currentFile="${this.hasCurrentDownVideo}" noDefaultCoverImage .containerType="points" uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" .group="${this.post.Group}" .raised="true" .multi="false" .videoUpload="" .method="POST" @success="${this._videoDownUploaded}">
                         <iron-icon class="icon" .icon="videocam"></iron-icon>
                         <span>${this.t('uploadVideoPointAgainst')}</span>
                       </yp-file-upload>
+                    </div>
+                    <div class="videoUploadDisclamer"  ?hidden="${!this.post.Group.configuration.showVideoUploadDisclaimer || !this.uploadedVideoUpId}">
+                      [[t('videoUploadDisclaimer')]]
                     </div>
                     <div class="layout horizontal center-center">
                       <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${this.loggedInUser}" .label="${this.t('uploadVideoPointAgainst')}" @click="${this._openLogin}">
@@ -658,33 +738,37 @@ class YpPostPointsLit extends YpBaseElement {
 
               <div ?hidden="${!this.ifLengthDownIsRight}">
                 <div class="addPointFab layout horizontal center-center">
-                  <mwc-button raised ?disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @click="${this.addPointDown}" .title="${this.t('point.add_down')}" .label="${this.t('postPoint')}"></mwc-button>
+                  <mwc-button raised ?disabled="${this.addPointDisabled}" .icon="add" .elevation="3" @click="${this.addPointDown}" .title="${this.t('postPoint')}" .label="${this.t('postPoint')}"></mwc-button>
                 </div>
               </div>
             </paper-material>
 
             <div id="allDownPoints">
-              <iron-list id="ironListDown" .items="${this.downPoints}" .as="point" .scroll-target="document" .scroll-offset="550">
-                <template>
-                  <div class="item" .tabindex="${this.tabIndex}">
-                    <paper-material id="point${this.point.id}" .elevation="1" .animated="" class="pointMaterial">
-                      <yp-point .point="${this.point}"></yp-point>
-                    </paper-material>
-                  </div>
-                </template>
-              </iron-list>
+              <iron-scroll-threshold id="ironScrollThesholdDown" lower-threshold="200" scroll-target="document" @lower-threshold="${this._loadMorePoints}">
+                <iron-list id="ironListDown" .items="${this.downPoints}" .as="point" .scroll-target="document" .scroll-offset="550">
+                  <template>
+                    <div class="item" .tabindex="${this.tabIndex}" role="listitem" aria-level="3">>
+                      <paper-material id="point${this.point.id}" .elevation="1" .animated="" class="pointMaterial">
+                        <yp-point .point="${this.point}"></yp-point>
+                      </paper-material>
+                    </div>
+                  </template>
+                </iron-list>
+              </iron-scroll-threshold>
             </div>
           </div>
         </div>
       </div>
-    `: html`
+    `: nothing }
 
-      <div class="layout vertical center-center">
+    ${ this.smallModeReady ? html`
+      <div ?rtl="${this.rtl}" class="layout vertical center-center">
         <paper-material id="pointUpOrDownMaterial" .elevation="1" class="pointInputMaterial layout vertical" .animated="" ?hidden="${this.post.Group.configuration.disableDebate}">
-          <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}" .value="${this.textValueMobileUpOrDown}" .label="${this.labelMobileUpOrDown}" charCounter .rows="2" ?hidden="${this.hideMobileText}" .max-rows="3" .maxlength="500"></paper-textarea>
+          <paper-textarea id="mobileUpOrDownPoint" class="mobilePaperTextArea" on-tap="focusDownPoint" @focus="${this.focusTextArea}" @blur="${this.blurTextArea}"
+            .value="${this.textValueMobileUpOrDown}" .label="${this.labelMobileUpOrDown}" charCounter .rows="2" ?hidden="${this.hideMobileText}" .max-rows="3" .maxlength="${this.pointMaxLength}"></paper-textarea>
           <div class="layout vertical end-justified">
             <div class="layout horizontal center-center pointButtons">
-              <paper-radio-group id="upOrDown" .attributeForSelected="name" class="layout horizontal" .selected="${this.pointUpOrDownSelected}">
+              <paper-radio-group id="upOrDown" ?hidden="${this.post.Group.configuration.hidePointAgainst}" .attributeForSelected="name" class="layout horizontal" .selected="${this.pointUpOrDownSelected}">
                 <paper-radio-button .name="pointFor">${this.t('pointForShort')}</paper-radio-button>
                 <paper-radio-button .name="pointAgainst">${this.t('pointAgainstShort')}</paper-radio-button>
               </paper-radio-group>
@@ -699,13 +783,16 @@ class YpPostPointsLit extends YpBaseElement {
               ${ this.post.Group.configuration.allowPointVideoUploads ? html`
                 <div ?hidden="${this.hideMobileVideo}" class="uploadSection">
                   <div class="layout vertical center-center self-start" ?hidden="${!this.loggedInUser}">
-                    <yp-file-upload id="videoFileUploadMobile" currentFile="${this.hasCurrentMobileVideo}" containerType="points" .uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" group="${this.post.Group}" raised .video-upload="" .method="POST" @success="${this._videoMobileUploaded}">
+                    <yp-file-upload id="videoFileUploadMobile" currentFile="${this.hasCurrentMobileVideo}" noDefaultCoverImage containerType="points" .uploadLimitSeconds="${this.post.Group.configuration.videoPointUploadLimitSec}" group="${this.post.Group}" raised .video-upload="" .method="POST" @success="${this._videoMobileUploaded}">
                       <iron-icon class="icon" .icon="videocam"></iron-icon>
 
                       <span ?hidden="${!this.selectedPointForMobile}">${this.t('uploadVideoPointFor')}</span>
                       <span ?hidden="${this.selectedPointForMobile}">${this.t('uploadVideoPointAgainst')}</span>
                     </yp-file-upload>
                   </div>
+                  <div class="videoUploadDisclamer" ?hidden="${!this.post.Group.configuration.showVideoUploadDisclaimer || !this.uploadedVideoUpId}">
+                      [[t('videoUploadDisclaimer')]]
+                    </div>
                   <div class="layout horizontal center-center">
                     <mwc-button class="uploadNotLoggedIn" raised ?hidden="${this.loggedInUser}" @click="${this._openLogin}">
                       <iron-icon class="icon" icon="videocam"></iron-icon>
@@ -734,9 +821,8 @@ class YpPostPointsLit extends YpBaseElement {
                     </mwc-button>
                   </div>
                 </div>
-              `: html``}
+              `: html ``}
             </div>
-
           </div>
           <div ?hidden="${!this.ifLengthMobileRight}">
             <div class="addPointFab layout horizontal center-center mobileFab">
@@ -748,26 +834,28 @@ class YpPostPointsLit extends YpBaseElement {
           </div>
         </paper-material>
       </div>
-      <div class="layout vertical center-center">
-        <iron-list id="ironListMobile" debateDisabled="${this.post.Group.configuration.disableDebate}" .items="${this.points}" .as="point" .scrollTarget="document" .scrollOffset="${this.mobileScrollOffset}">
-          <template>
-            <div class="item layout vertical center-center" tabindex="${this.tabIndex}">
-              <paper-material id="point${this.point.id}" .elevation="1" .animated="" class="pointMaterial">
-                <yp-point .point="${this.point}"></yp-point>
-              </paper-material>
-            </div>
-          </template>
-        </iron-list>
+      <div ?rtl="${this.rtl}" class="layout vertical center-center">
+        <iron-scroll-threshold id="ironScrollThesholdMobile" scroll-target="document" @lower-threshold="${this._loadMorePoints}">
+          <iron-list id="ironListMobile" lowerThreshold="150" ?debate-disabled="${this.post.Group.configuration.disableDebate}" .items="${this.points}" as="point" scrollTarget="document" .scrollOffset="${this.mobileScrollOffset}">
+            <template>
+              <div class="item layout vertical center-center" tabindex="${this.tabIndex}" role="listitem" aria-level="3">>
+                <paper-material id="point${this.point.id}" .elevation="1" .animated="" class="pointMaterial pointMaterialMobile">
+                  <yp-point .point="${this.point}"></yp-point>
+                </paper-material>
+              </div>
+            </template>
+          </iron-list>
+        </iron-scroll-threshold>
       </div>
-    `}
+    `: nothing }
 
     <div class="layout vertical center-center">
       <yp-ajax id="newPointsAjax" @response="${this._newPointsResponse}"></yp-ajax>
-      <yp-ajax id="newPointAjax" @error="${this._newPointError}" .method="POST" url="/api/points" @response="${this._newPointResponse}"></yp-ajax>
+      <yp-ajax id="newPointAjax" @error="${this._newPointError}" method="POST" url="/api/points" @response="${this._newPointResponse}"></yp-ajax>
     </div>
 
     <paper-toast id="newPointToast" .text="${this.newPointTextCombined}"></paper-toast>
-`
+  `;
   }
 
 /*
@@ -776,6 +864,22 @@ class YpPostPointsLit extends YpBaseElement {
     ypLoggedInUserBehavior
   ],
 */
+
+  _largeModeReady(largeMode, post) {
+    return largeMode && post;
+  }
+
+  _smallModeReady(largeMode, post) {
+    return !largeMode && post;
+  }
+
+  _pointMaxLength(post) {
+    if (post && post.Group && post.Group.configuration && post.Group.configuration.pointCharLimit) {
+      return post.Group.configuration.pointCharLimit;
+    } else {
+      return 500;
+    }
+  }
 
   _openLogin() {
     this.fire('yp-open-login');
@@ -857,7 +961,8 @@ class YpPostPointsLit extends YpBaseElement {
 /*
   listeners: {
     'yp-point-deleted': '_pointDeleted',
-    'yp-update-point-in-list': '_updatePointInLists'
+    'yp-update-point-in-list': '_updatePointInLists',
+    'yp-iron-resize': '_ypIronResize'
   },
 
   observers: [
@@ -870,6 +975,16 @@ class YpPostPointsLit extends YpBaseElement {
     }
   }
 */
+
+  _ypIronResize() {
+    if (this.$$("#ironListUp"))
+      this.$$("#ironListUp").fire("iron-resize");
+    if (this.$$("#ironListDown"))
+      this.$$("#ironListDown").fire("iron-resize");
+    if (this.$$("#ironListMobile"))
+      this.$$("#ironListMobile").fire("iron-resize");
+  }
+
   _loadNewPointsIfNeeded(event, detail) {
     if (this.post && this.post.id == detail.postId) {
       if (this.latestPointCreatedAt) {
@@ -880,6 +995,79 @@ class YpPostPointsLit extends YpBaseElement {
         console.error("Trying to send point without latestPointCreatedAt");
       }
     }
+  }
+
+  _loadMorePoints() {
+    if (!this.loadMoreInProgress && !this.noMorePoints) {
+      this.loadMoreInProgress = true;
+      if (this.post && this.storedPoints && this.storedPoints.length>0) {
+        if (this.host) {
+          this.$.moreAjax.url = this.host+'/api/posts/' + this.post.id + '/points';
+        } else {
+          this.$.moreAjax.url = '/api/posts/' + this.post.id + '/points';
+        }
+        this.$.moreAjax.params = {
+           offsetUp: this.storedUpPointsCount ? this.storedUpPointsCount : 0,
+           offsetDown: this.storedDownPointsCount ? this.storedDownPointsCount : 0,
+        };
+        this.$.moreAjax.generateRequest();
+      } else {
+        console.warn("Trying to load more points early");
+        this.loadMoreInProgress = false;
+      }
+    }
+  }
+
+  _interleaveMorePoints(points) {
+    var upPoints = [];
+    var downPoints = [];
+
+    for (var i = 0; i < points.length; i++) {
+      if (points[i].value>0) {
+        upPoints.push(points[i]);
+      } else if (points[i].value<0) {
+        downPoints.push(points[i]);
+      }
+    }
+
+    return this.interleaveArrays(upPoints, downPoints);
+  }
+
+  _morePointsResponse(event, detail) {
+    this.loadMoreInProgress = false;
+    var points = this._preProcessPoints(detail.response.points);
+    if (points.length===0) {
+      this.noMorePoints = true;
+    }
+
+    let haveAddedPoint = false;
+    points = this._interleaveMorePoints(points);
+    points.forEach(function (point) {
+      if (this._addMorePoint(point)) {
+        haveAddedPoint = true;
+      }
+    }.bind(this));
+    this.async(function () {
+      if (this.$$("#ironListUp"))
+        this.$$("#ironListUp").fire("iron-resize");
+      if (this.$$("#ironListDown"))
+        this.$$("#ironListDown").fire("iron-resize");
+      if (this.$$("#ironListMobile"))
+        this.$$("#ironListMobile").fire("iron-resize");
+    }, 5);
+
+    if (haveAddedPoint) {
+      this._clearScrollTrigger();
+    }
+  }
+
+  _clearScrollTrigger() {
+    if (this.$$("#ironScrollThesholdUp"))
+      this.$$("#ironScrollThesholdUp").clearTriggers();
+    if (this.$$("#ironScrollThesholdDown"))
+      this.$$("#ironScrollThesholdDown").clearTriggers();
+    if (this.$$("#ironScrollThesholdMobile"))
+      this.$$("#ironScrollThesholdMobile").clearTriggers();
   }
 
   _newPointsResponse(event, detail) {
@@ -976,34 +1164,57 @@ class YpPostPointsLit extends YpBaseElement {
       this.$$("#audioFileUploadMobile").clear();
   }
 
-  _postChanged(newPost) {
-    // Remove any manually inserted points when the list is updated
-    this.set('points', null);
-    this.set('upPoints', null);
-    this.set('downPoints', null);
-    this.set('latestPointCreatedAt', null);
-    this.set('storedPoints', null);
-    this._clearVideo();
-    this._clearAudio();
-
-    if (newPost) {
-      if (this.host) {
-        this.$$("#ajax").url = this.host+'/api/posts/' + newPost.id + '/points';
-      } else {
-        this.$$("#ajax").url = '/api/posts/' + newPost.id + '/points';
-      }
-      this.$$("#ajax").generateRequest();
-      if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
-        this.set('labelUp', this.post.Group.configuration.alternativePointForLabel);
-      } else {
-        this.set('labelUp', this.t('point.for'));
-      }
-      if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointAgainstLabel) {
-        this.set('labelDown', this.post.Group.configuration.alternativePointAgainstLabel);
-      } else {
-        this.set('labelDown', this.t('point.against'));
-      }
+  _isAdminChanged(isAdmin) {
+    if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !isAdmin) {
+      this.set('disableDebate', true);
+    } else {
+      this.set('disableDebate', false);
     }
+  }
+
+  _postChanged(newPost) {
+   // Remove any manually inserted points when the list is updated
+   this.set('points', null);
+   this.set('upPoints', null);
+   this.set('downPoints', null);
+   this.set('latestPointCreatedAt', null);
+   this.set('storedPoints', null);
+   this._clearVideo();
+   this._clearAudio();
+   this.loadedPointIds = {};
+
+   this.storedUpPointsCount = null;
+   this.storedDownPointsCount = null;
+
+
+   if (newPost) {
+     if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.isAdmin) {
+       this.set('disableDebate', true);
+     } else {
+       this.set('disableDebate', false);
+     }
+
+     if (this.host) {
+       this.$.ajax.url = this.host+'/api/posts/' + newPost.id + '/points';
+     } else {
+       this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+     }
+     this.$.ajax.generateRequest();
+     if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
+       this.set('labelUp', this.post.Group.configuration.alternativePointForLabel);
+     } else {
+       this.set('labelUp', this.t('point.for'));
+     }
+     if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointAgainstLabel) {
+       this.set('labelDown', this.post.Group.configuration.alternativePointAgainstLabel);
+     } else {
+       this.set('labelDown', this.t('point.against'));
+     }
+   }
+
+   this.async(function () {
+     this._updatePointLabels();
+   });
   }
 
   removeElementsByClass(rootElement, className) {
@@ -1011,6 +1222,19 @@ class YpPostPointsLit extends YpBaseElement {
     while(elements.length > 0){
       elements[0].parentNode.removeChild(elements[0]);
     }
+  }
+
+  _updatePointLabels() {
+    this.async(function () {
+      var forLabel = this.$$("#alternativePointForLabelId");
+      var againstLabel = this.$$("#alternativePointAgainstLabelId");
+      if (forLabel && forLabel.finalContent) {
+        this.set('labelUp', forLabel.finalContent);
+      }
+      if (againstLabel && againstLabel.finalContent) {
+        this.set('labelDown', againstLabel.finalContent);
+      }
+    });
   }
 
   _processStoredPoints() {
@@ -1041,10 +1265,23 @@ class YpPostPointsLit extends YpBaseElement {
     if (!this.largeMode && !this.points) {
       this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
     }
+    this._clearScrollTrigger();
   }
 
   _response(event, detail) {
-    this.set('storedPoints', this._preProcessPoints(detail.response));
+    this.set('storedPoints', this._preProcessPoints(detail.response.points));
+    this.totalCount = detail.response.count;
+    this.storedUpPointsCount = 0;
+    this.storedDownPointsCount = 0;
+
+    for (var i = 0; i < this.storedPoints.length; i++) {
+      if (this.storedPoints[i].value>0) {
+        this.storedUpPointsCount += 1;
+      } else if (this.storedPoints[i].value<0) {
+        this.storedDownPointsCount += 1;
+      }
+      this.loadedPointIds[this.storedPoints[i].id]=true;
+    }
     this._processStoredPoints();
     this.removeElementsByClass(this, 'inserted-outside-list');
     this._updateCounterInfo();
@@ -1201,37 +1438,69 @@ class YpPostPointsLit extends YpBaseElement {
   _updateCounterInfo() {
     if (this.largeMode) {
       this.fire('yp-debate-info', {
-        count: this.upPoints.length + this.downPoints.length,
+        count: this.totalCount,
         firstPoint: this.upPoints[0]
       });
     } else {
       this.fire('yp-debate-info', {
-        count: this.points.length,
+        count: this.totalCount,
         firstPoint: this.points[0]
       });
     }
   }
 
   _insertNewPoint(point) {
-    if (this.largeMode) {
-      if (point.value > 0) {
-        this.unshift('upPoints', point);
+    if (!this.loadedPointIds[point.id]) {
+      this.loadedPointIds[point.id] = true;
+      if (this.largeMode) {
+        if (point.value > 0) {
+          this.unshift('upPoints', point);
+          this.async(function () {
+            this.$$("#ironListUp").fire("iron-resize");
+          }, 700);
+        } else if (point.value < 0) {
+          this.unshift('downPoints', point);
+          this.async(function () {
+            this.$$("#ironListDown").fire("iron-resize");
+          }, 700);
+        }
+      } else {
+        this.unshift('points', point);
         this.async(function () {
-          this.$$("#ironListUp").fire("iron-resize");
-        }, 700);
-      } else if (point.value < 0) {
-        this.unshift('downPoints', point);
-        this.async(function () {
-          this.$$("#ironListDown").fire("iron-resize");
+          this.$$("#ironListMobile").fire("iron-resize");
         }, 700);
       }
-    } else {
-      this.unshift('points', point);
-      this.async(function () {
-        this.$$("#ironListMobile").fire("iron-resize");
-      }, 700);
+      this.unshift('storedPoints', point);
     }
   }
+
+  _addMorePoint(point) {
+    let haveAddedPoints = false;
+    if (!this.loadedPointIds[point.id]) {
+      this.loadedPointIds[point.id] = true;
+      haveAddedPoints = true;
+      if (this.largeMode) {
+        if (point.value > 0) {
+          this.push('upPoints', point);
+        } else if (point.value < 0) {
+          this.push('downPoints', point);
+        }
+      } else {
+        this.push('points', point);
+      }
+
+      this.push('storedPoints', point);
+
+      if (point.value > 0) {
+        this.storedUpPointsCount += 1;
+      } else if (point.value < 0) {
+        this.storedDownPointsCount += 1;
+      }
+    }
+
+    return haveAddedPoints;
+  }
+
 
   _newPointResponse(inEvent, inDetail) {
     if (this.currentVideoId) {
@@ -1348,7 +1617,8 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   focusTextArea(event) {
-    event.currentTarget.parentElement.elevation = 3;
+    if (window.innerWidth>500)
+      event.currentTarget.parentElement.elevation = 2;
   }
 
   blurTextArea(event) {

@@ -49,13 +49,23 @@ class YpPageDialogLit extends YpBaseElement {
           margin: 0;
         }
       }
+
+      paper-dialog[rtl] {
+        direction: rtl;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
     `, YpFlexLayout]
   }
 
   render() {
     return html`
-    <paper-dialog id="dialog">
-      <h2>${this.pageTitle}</h2>
+   <paper-dialog id="dialog" ?rtl="${this.rtl}">
+      <div ?hidden="${!this.pageTitle}">
+        <h2>${this.pageTitle}</h2>
+      </div>
       <paper-dialog-scrollable>
         <div id="content"></div>
       </paper-dialog-scrollable>

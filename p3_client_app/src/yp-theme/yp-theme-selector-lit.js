@@ -33,7 +33,10 @@ class YpThemeSelectorLit extends YpBaseElement {
           max-width: 250px;
           width: 250px;
         }
-    `, YpFlexLayout]
+        [hidden] {
+          display: none;
+        }
+    `, YpFlexLayout];
   }
 
   render() {
@@ -42,7 +45,7 @@ class YpThemeSelectorLit extends YpBaseElement {
       <paper-listbox .slot="dropdown-content" .selected="${this.selectedTheme}">
 
         ${ this.themes.map(theme => html`
-          <paper-item name="${this.index}">${this.theme.name}</paper-item>
+          <paper-item name="${this.index}" ?hidden="${this.theme.disabled}">${this.theme.name}</paper-item>
         `)}
 
       </paper-listbox>

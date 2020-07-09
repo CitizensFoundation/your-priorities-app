@@ -137,19 +137,19 @@ class YpUserImageLit extends YpBaseElement {
     ${ this.user ? html`
 
       ${this.profileImageUrl ? html`
-        <iron-image .sizing="cover" .title="${this.userTitle}" .preload src="${this.profileImageUrl}" class="${this.computeClass(small)}"></iron-image>
+        <iron-image .sizing="cover" alt="${this.userTitle}" title="${this.userTitle}" .preload src="${this.profileImageUrl}" class="${this.computeClass(small)}"></iron-image>
       ` : html``}
 
       ${ this.noProfileImage ? html`
 
         ${this.user.facebook_id ? html`
-          <iron-image .sizing="cover" ?hidden="${this.profileImageUrl}" .title="${this.userTitle}" .preload="" src="${this.computeFacebookSrc}" class="${this.computeClass(small)}"></iron-image>
+          <iron-image .sizing="cover" ?hidden="${this.profileImageUrl}" alt="${this.userTitle}" title="${this.userTitle}" .preload="" src="${this.computeFacebookSrc}" class="${this.computeClass(small)}"></iron-image>
         ` : html``}
 
         ${!this.noDefault ? html`
 
           ${this.user.facebook_id ? html`
-            <iron-image .sizing="cover" title="${this.userTitle}" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class="${this.computeClass(small)}"></iron-image>
+            <iron-image .sizing="cover" title="${this.userTitle}" alt="${this.userTitle}" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class="${this.computeClass(small)}"></iron-image>
           ` : html``}
         ` : html``}
 

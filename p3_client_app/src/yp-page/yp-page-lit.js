@@ -98,8 +98,8 @@ class YpPageLit extends YpBaseElement {
           height: 72px;
           --paper-fab-iron-icon: {
             color: var(--icon-general-color, #FFF);
-            width: 72px;
-            height: 72px;
+            width: 60px;
+            height: 60px;
           }
         }
 
@@ -209,18 +209,18 @@ class YpPageLit extends YpBaseElement {
     <div class="create-fab-wrapper layout horizontal end-justified createFabContainer middleArea">
 
       ${ this.createFabIcon ? html`
-        <paper-fab class="createFab" .icon="${this.createFabIcon}" .elevation="5" wide-layout="${this.wideWidth}" .title="${this.createFabTitle}" @tap="${this._createTap}"></paper-fab>
+        <paper-fab class="createFab" icon="${this.createFabIcon}" elevation="5" wide-layout="${this.wideWidth}" title="${this.createFabTitle}" @click="${this._createTap}"></paper-fab>
       `: html``}
 
     </div>
     <iron-media-query query="(min-width: 1024px)" query-matches="${this.wideWidth}"></iron-media-query>
     `
   }
-  
+
 /*
   behaviors: [
     ypMediaFormatsBehavior
-  ], 
+  ],
 */
 
   connectedCallback() {

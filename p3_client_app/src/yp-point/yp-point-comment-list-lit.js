@@ -132,8 +132,8 @@ class YpPointCommentListLit extends YpBaseElement {
           <div class="commentText">${this.t('noComments')}</div>
         </div>
         <div class="layout horizontal">
-          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-right" @tap="${this._setOpen}" ?hidden="${this.open}"></paper-icon-button>
-          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" .icon="hardware:keyboard-arrow-down" @tap="${this._setClosed}" ?hidden="${!this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('openComments')}" class="openCloseButton" .icon="keyboard-arrow-right" @tap="${this._setOpen}" ?hidden="${this.open}"></paper-icon-button>
+          <paper-icon-button title="${this.t('closeComments')}" class="openCloseButton" .icon="keyboard-arrow-down" @tap="${this._setClosed}" ?hidden="${!this.open}"></paper-icon-button>
         </div>
       </div>
 

@@ -87,7 +87,11 @@ class YpPointCommentEditLit extends YpBaseElement {
       <div class="layout horizontal">
         <yp-user-image class="userImage" .user="${this.loggedInUser}"></yp-user-image>
         <div class="layout vertical">
-          <paper-textarea id="pointComment" required .minlength="15" .name="pointComment" .value="${this.comment.content}" always-float-label="${this.comment.content}" .label="${t(this.point.addComment)}" char-counter .rows="2" .max-rows="2" @keydown="${this_keyDown}" .maxlength="200">
+          <paper-textarea id="pointComment" required .minlength="15" .name="pointComment"
+            .value="${this.comment.content}" always-float-label="${this.comment.content}"
+            .label="${t(this.point.addComment)}" char-counter .rows="2" .max-rows="2"
+            @keydown="${this_keyDown}" .maxlength="200"
+            aria-label="${this.t('point.addComment')}">
           </paper-textarea>
           <div class="layout horizontal">
             <mwc-button id="submitButton" raised @click="${this._sendComment}" .label="${this.t(point.postComment)}"></mwc-button>
