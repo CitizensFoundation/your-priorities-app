@@ -4,7 +4,6 @@ import { openWcLogo } from './open-wc-logo.js';
 export class YpApp extends LitElement {
 
   @property({type: String}) page = 'main';
-
   @property({type: String}) title = '';
 
   static styles = css`

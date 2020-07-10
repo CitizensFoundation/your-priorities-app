@@ -1,41 +1,22 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-pages/iron-pages.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-media-query/iron-media-query.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-badge/paper-badge.js';
-import '@polymer/paper-menu-button/paper-menu-button.js';
-import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '@polymer/app-layout/app-drawer/app-drawer.js';
-import '@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
-import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '@polymer/app-route/app-location.js';
-import '@polymer/app-route/app-route.js';
 import '../yp-behaviors/yp-lodash-behavior.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
 import '../yp-app-globals/yp-app-globals.js';
 import '../yp-app-globals/yp-app-user.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypTranslatedPagesBehavior } from '../yp-behaviors/yp-translated-pages-behavior.js';
+import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
+
 import '../ac-notifications/ac-notification-list.js';
 import './yp-app-nav-drawer.js';
 import '../yp-dialog-container/yp-dialog-container.js';
 import '../yp-user/yp-user-image.js';
-import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
 import '../yp-app-globals/yp-sw-update-toast.js';
+
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 //import i18next from 'i18next/dist/es/i18next.js'
 //import { XHR } from 'i18next-xhr-backend/dist/es';
 //import moment from 'moment-es6';
-
+import { customElement, property, internalProperty } from 'lit-element';
 import i18next, { t as translate } from 'i18next'
 import backend from 'i18next-xhr-backend'
 import { format, formatDistance } from 'date-fns';
@@ -58,10 +39,195 @@ import 'moment/locale/de.js';
 import 'moment/locale/fr.js';
 import 'moment/locale/da.js';
 */
-setPassiveTouchGestures(true);
-Polymer({
-  _template: html`
-    <style include="iron-flex iron-flex-alignment">
+
+declare global {
+  interface Window { YpAppGlobals: object }
+}
+
+@customElement('yp-app')
+export class YpApp extends YpBaseElement {
+
+  static get properties() {
+    return {
+      domainSubRoute: Object,
+      communitySubRoute: Object,
+      communityFolderSubRoute: Object,
+      groupSubRoute: Object,
+      postSubRoute: Object,
+      userSubRoute: Object,
+      navDrawOpenedDelayed: Boolean,
+
+      homeLink: {
+        type: Object
+      },
+
+      page: {
+        type: String,
+        reflectToAttribute: true,
+        observer: '_pageChanged'
+      },
+
+      route: {
+        type: Object,
+        observer: '_routeChanged'
+      },
+
+      routeData: {
+        type: Object,
+        observer: '_routePageChanged',
+        value: null
+      },
+
+      subRoute: Object,
+
+      appTitle: {
+        type: String,
+        value: "Your Priorities"
+      },
+
+      user: {
+        type: Object,
+        value: null
+      },
+
+      previousSearches: {
+        type: Array,
+        value: []
+      },
+
+      showSearch: {
+        type: Boolean,
+        value: false
+      },
+
+      showBack: {
+        type: Boolean,
+        value: false
+      },
+
+      backPath: {
+        type: String
+      },
+
+      forwardToPostId: {
+        type: String,
+        value: null
+      },
+
+      storedBackPath: String,
+
+      backListPostItem: {
+        type: Number,
+        value: null
+      },
+
+      backListGroupItemId: {
+        type: Number,
+        value: null
+      },
+
+      backListCommuntiyItemId: {
+        type: Number,
+        value: null
+      },
+
+      storedLastDocumentTitle: String,
+
+      headerTitle: {
+        type: String
+      },
+
+      headerDescription: {
+        type: String
+      },
+
+      params: {
+        type: Object
+      },
+
+      narrow: {
+        type: Boolean
+      },
+
+      keepOpenForPost: {
+        type: String,
+        value: null
+      },
+
+      closePostHeader: {
+        type: Boolean,
+        computed: '_closePostHeader(page, keepOpenForPost)',
+        value: null
+      },
+
+      numberOfUnViewedNotifications: {
+        type: String,
+        value: null
+      },
+
+      // Use window.location when clicking back link
+      useHardBack: {
+        type: Boolean,
+        value: false
+      },
+
+      hideHelpIcon: {
+        type: Boolean,
+        value: false
+      },
+
+      wide: Boolean,
+
+      _scrollPositionMap: {
+        type: Object,
+        value: function() {
+          return {};
+        }
+      },
+
+      autoTranslate: {
+        type: Boolean,
+        value: false
+      },
+
+      languageName: String,
+
+      goBackToPostId: {
+        type: Number,
+        value: null
+      },
+
+      currentPostId: {
+        type: Number,
+        value: null
+      },
+
+      goForwardToPostId: {
+        type: Number,
+        value: null
+      },
+
+      showBackToPost: {
+        type: Boolean,
+        value: false
+      },
+
+      goForwardPostName:{
+        type: String,
+        value: null
+      },
+
+      goForwardCount:{
+        type: String,
+        value: 0
+      }
+    }
+  }
+
+  static get styles() {
+    return [
+      css`
+
       :host {
         --main-stats-color-on-white: #878787;
 
@@ -248,7 +414,7 @@ Polymer({
           padding: 0;
         }
 
-        paper-button {
+        mwc-button {
           padding:0;
           margin: 0;
         }
@@ -308,298 +474,123 @@ Polymer({
         padding-left: 8px;
         padding-right: 16px;
       }
-    </style>
+    `, YpFlexLayout]
+  }
 
-    <iron-media-query query="(min-width: 600px)" query-matches="{{wide}}"></iron-media-query>
 
-    <yp-app-globals id="appGlobals" setup-defaults="" on-change-header="onChangeHeader"></yp-app-globals>
+  constructor() {
+    super();
+    setPassiveTouchGestures(true);
+  }
 
-    <app-drawer-layout drawer-width="360px" responsive-width="16000px" fullbleed="">
+  render() {
+    return html`
+    ${this.app ? html`
+    <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
-      <app-drawer id="drawer" slot="drawer" align="end" position="right" opened="{{userDrawerOpened}}" swipe-open="">
+    <yp-app-globals id="appGlobals" setup-defaults @change-header="${this.onChangeHeader}"></yp-app-globals>
+
+    <app-drawer-layout .drawerWidth="360px" .responsiveWidth="16000px" fullbleed>
+
+      <app-drawer id="drawer" slot="drawer" .align="end" .position="right" .opened="${this.userDrawerOpened}" swipe-open>
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important; width: 255px;">
-          <ac-notification-list id="acNotificationsList" user="[[user]]" opened="[[userDrawerOpened]]" route="[[route]]"></ac-notification-list>
+          <ac-notification-list id="acNotificationsList" .user="${this.user}" .opened="${this.userDrawerOpened}" .route="${this.route}"></ac-notification-list>
         </div>
       </app-drawer>
 
-      <app-drawer id="navDrawer" slot="drawer" align="start" position="left" swipe-open="" opened="{{navDrawOpened}}">
+      <app-drawer id="navDrawer" slot="drawer" .align="start" position="left" swipe-open="" opened="${this.navDrawOpened}">
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important;">
-          <yp-app-nav-drawer id="ypNavDrawer" home-link="[[homeLink]]" on-yp-toggle-nav-drawer="_toggleNavDrawer" user="[[user]]" route="[[route]]"></yp-app-nav-drawer>
+          <yp-app-nav-drawer id="ypNavDrawer" .home-link="${this.homeLink}" @yp-toggle-nav-drawer="${this._toggleNavDrawer}" .user="${this.user}" .route="${this.route}"></yp-app-nav-drawer>
         </div>
       </app-drawer>
 
-      <app-header-layout id="mainArea" fullbleed="">
+      <app-header-layout id="mainArea" fullbleed>
 
         <app-header slot="header" id="appHeader" effects="waterfall" reveals="" class="main-header">
           <app-toolbar>
-            <div class="layout horizontal navContainer" hidden\$="[[closePostHeader]]">
-              <paper-icon-button aria-label\$="[[t('goBack')]]" title\$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden\$="[[!showBack]]"></paper-icon-button>
+            <div class="layout horizontal navContainer" ?hidden="${this.closePostHeader}">
+              <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
             </div>
-            <div hide\$="[[closePostHeader]]" hidden\$="[[goForwardToPostId]]" id="headerTitle" title="" class="layout vertical navContainer">[[headerTitle]]</div>
-            <template is="dom-if" if="[[closePostHeader]]">
-              <paper-icon-button aria-label\$="[[t('close')]]" id="closePostButton" class="masterActionIcon" icon="arrow-back" on-tap="_closePost"></paper-icon-button>
-            </template>
-            <template is="dom-if" if="[[goForwardToPostId]]">
+            <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
+
+            ${this.closePostHeader ? html`
+              <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
+            `: html``}
+
+            ${this.goForwardToPostId ? html`
               <div class="layout horizontal">
-                <paper-icon-button aria-label\$="[[t('forwardToPost')]]" title\$="[[t('forwardToPost')]]" id="goPostForward" class="masterActionIcon" icon="fast-forward" on-tap="_goToNextPost"></paper-icon-button>
+                <paper-icon-button .ariaLabel="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" .icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
                 <div id="forwardPostName" class="forwardPostName">
-                  [[goForwardPostName]]
+                  ${this.goForwardPostName}
                 </div>
               </div>
-            </template>
-            <span class="flex"></span>
-            <div hidden\$="[[!autoTranslate]]" class="layout horizontal">
-              <paper-button raised="" id="translationButton" on-tap="_stopTranslation" title="{{t('stopAutoTranslate')}}">
-                <iron-icon icon="translate"></iron-icon>
-                <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
-              </paper-button>
-            </div>
-            <paper-icon-button aria-label\$="[[t('openMainMenu')]]" id="paperToggleNavMenu" icon="menu" on-tap="_toggleNavDrawer"></paper-icon-button>
-            <paper-menu-button horizontal-align="right" hide\$="[[hideHelpIcon]]" class="helpButton">
-              <paper-icon-button aria-label\$="[[t('menu.help')]]" icon="help-outline" slot="dropdown-trigger"></paper-icon-button>
+            `: html``}
 
-              <paper-listbox slot="dropdown-content">
-                <template is="dom-repeat" items="[[translatedPages]]" as="page">
-                  <paper-item data-args\$="[[index]]" on-tap="_openPageFromMenu">[[_getLocalizePageTitle(page)]]</paper-item>
-                </template>
+            <span class="flex"></span>
+            <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
+              <mwc-button raised id="translationButton"
+                          @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
+                <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
+              </mwc-button>
+            </div>
+            <paper-icon-button .ariaLabel="${this.t('openMainMenu')}" id="paperToggleNavMenu" .icon="menu" @tap="${this._toggleNavDrawer}"></paper-icon-button>
+            <paper-menu-button horizontal-align="right" hide="${this.hideHelpIcon}" class="helpButton">
+              <paper-icon-button .ariaLabel="${this.t('menu.help')}" icon="help-outline" .slot="dropdown-trigger"></paper-icon-button>
+
+              <paper-listbox .slot="dropdown-content">
+
+              ${ this.translatedPages.map(page => html`
+                <paper-item data-args="${this.index}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(page)}</paper-item>
+              `)}
+
               </paper-listbox>
             </paper-menu-button>
 
-            <template is="dom-if" if="[[user]]">
-              <div class="userImageNotificationContainer layout horizontal" on-tap="_toggleUserDrawer">
-                <yp-user-image id="userImage" small="" user="[[user]]"></yp-user-image>
-                <paper-badge id="notificationBadge" class="activeBadge" label="[[numberOfUnViewedNotifications]]" hidden\$="[[!numberOfUnViewedNotifications]]"></paper-badge>
+            ${ this.user ? html`
+              <div class="userImageNotificationContainer layout horizontal" @tap="${this._toggleUserDrawer}">
+                <yp-user-image id="userImage" .small="" .user="${this.user}"></yp-user-image>
+                <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
               </div>
-            </template>
+            ` : html`
+              <mwc-button class="loginButton" @click="${this._login}" .label="${this.t('user.login')}"></mwc-button>
+            `}
 
-            <template is="dom-if" if="[[!user]]">
-              <paper-button class="loginButton" on-tap="_login">[[t('user.login')]]</paper-button>
-            </template>
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="{{page}}" style="height:auto;" attr-for-selected="name" fullbleed="">
-          <yp-domain id="domainPage" name="domain" id-route\$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
-          <yp-community id="communityPage" name="community" id-route\$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
-          <yp-community-folder id="communityFolderPage" name="community_folder" id-route\$="[[communityFolderSubRoute]]" on-change-header="onChangeHeader"></yp-community-folder>
-          <yp-group id="groupPage" name="group" id-route\$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
-          <yp-post id="postPage" name="post" id-route\$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
-          <yp-user id="userPage" name="user" id-route\$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
+        <iron-pages selected="${this.page}" .style="height:auto;" .attrForSelected="name" fullbleed="">
+          <yp-domain id="domainPage" name="domain" id-route="${this.domainSubRoute}" @change-header="${this.onChangeHeader}"></yp-domain>
+          <yp-community id="communityPage" name="community" id-route="${this.communitySubRoute}" @change-header="${this.onChangeHeader}"></yp-community>
+          <yp-community-folder id="communityFolderPage" name="community_folder" id-route="${this.communityFolderSubRoute}" @change-header="${this.onChangeHeader}"></yp-community-folder>
+          <yp-group id="groupPage" name="group" id-route="${this.groupSubRoute}" @change-header="${this.onChangeHeader}"></yp-group>
+          <yp-post id="postPage" name="post" id-route="${this.postSubRoute}" @change-header="${this.onChangeHeader}"></yp-post>
+          <yp-user id="userPage" name="user" id-route="${this.userSubRoute}" @change-header="${this.onChangeHeader}"></yp-user>
           <yp-view-404 name="view-404"></yp-view-404>
         </iron-pages>
 
       </app-header-layout>
     </app-drawer-layout>
 
-    <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
-    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+    <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
 
-    <app-location route="{{route}}"></app-location>
+    <app-location .route="${this.route}"></app-location>
 
-    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subRoute}}"></app-route>
+    <app-route .route="${this.route}" .pattern="/:page" data="${this.routeData}" tail="${this.subRoute}"></app-route>
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
-    <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
-    <yp-sw-update-toast button-label="[[t('reload')]]" message="[[t('newVersionAvailable')]]"></yp-sw-update-toast>
-`,
+    <yp-app-user id="appUser" @user-changed="${this.onUserChanged}"></yp-app-user>
+    <yp-sw-update-toast .buttonLabel="${this.t('reload')}" .message="${this.t('newVersionAvailable')}"></yp-sw-update-toast>
+` : html``}
+`
+  }
 
-  is: 'yp-app',
-
+/*
   behaviors: [
-    ypLanguageBehavior,
     ypThemeBehavior,
     ypGotoBehavior,
     ypTranslatedPagesBehavior,
     ypAppSwipeBehavior
   ],
-
-  properties: {
-
-    domainSubRoute: Object,
-    communitySubRoute: Object,
-    communityFolderSubRoute: Object,
-    groupSubRoute: Object,
-    postSubRoute: Object,
-    userSubRoute: Object,
-
-    userDrawerOpened: {
-      type: Boolean,
-      observer: '_userDrawerOpened'
-    },
-
-    navDrawOpened:  {
-      type: Boolean,
-      observer: '_navDrawOpened'
-    },
-
-    userDrawerOpenedDelayed: Boolean,
-    navDrawOpenedDelayed: Boolean,
-
-    homeLink: {
-      type: Object
-    },
-
-    page: {
-      type: String,
-      reflectToAttribute: true,
-      observer: '_pageChanged'
-    },
-
-    route: {
-      type: Object,
-      observer: '_routeChanged'
-    },
-
-    routeData: {
-      type: Object,
-      observer: '_routePageChanged',
-      value: null
-    },
-
-    subRoute: Object,
-
-    appTitle: {
-      type: String,
-      value: "Your Priorities"
-    },
-
-    user: {
-      type: Object,
-      value: null
-    },
-
-    previousSearches: {
-      type: Array,
-      value: []
-    },
-
-    showSearch: {
-      type: Boolean,
-      value: false
-    },
-
-    showBack: {
-      type: Boolean,
-      value: false
-    },
-
-    backPath: {
-      type: String
-    },
-
-    forwardToPostId: {
-      type: String,
-      value: null
-    },
-
-    storedBackPath: String,
-
-    backListPostItem: {
-      type: Number,
-      value: null
-    },
-
-    backListGroupItemId: {
-      type: Number,
-      value: null
-    },
-
-    backListCommuntiyItemId: {
-      type: Number,
-      value: null
-    },
-
-    storedLastDocumentTitle: String,
-
-    headerTitle: {
-      type: String
-    },
-
-    headerDescription: {
-      type: String
-    },
-
-    params: {
-      type: Object
-    },
-
-    narrow: {
-      type: Boolean
-    },
-
-    keepOpenForPost: {
-      type: String,
-      value: null
-    },
-
-    closePostHeader: {
-      type: Boolean,
-      computed: '_closePostHeader(page, keepOpenForPost)',
-      value: null
-    },
-
-    numberOfUnViewedNotifications: {
-      type: String,
-      value: null
-    },
-
-    // Use window.location when clicking back link
-    useHardBack: {
-      type: Boolean,
-      value: false
-    },
-
-    hideHelpIcon: {
-      type: Boolean,
-      value: false
-    },
-
-    wide: Boolean,
-
-    _scrollPositionMap: {
-      type: Object,
-      value: function() {
-        return {};
-      }
-    },
-
-    autoTranslate: {
-      type: Boolean,
-      value: false
-    },
-
-    languageName: String,
-
-    goBackToPostId: {
-      type: Number,
-      value: null
-    },
-
-    currentPostId: {
-      type: Number,
-      value: null
-    },
-
-    goForwardToPostId: {
-      type: Number,
-      value: null
-    },
-
-    showBackToPost: {
-      type: Boolean,
-      value: false
-    },
-
-    goForwardPostName:{
-      type: String,
-      value: null
-    },
-
-    goForwardCount:{
-      type: String,
-      value: 0
-    }
-  },
 
   listeners: {
     'yp-set-pages': '_setPages',
@@ -615,22 +606,34 @@ Polymer({
     'yp-dialog-closed': '_dialogClosed',
     'yp-open-page': '_openPageFromEvent',
     'yp-open-login': '_login',
-    'yp-reset-keep-open-for-page': '_resetKeepOpenForPage'
+    'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
+    'yp-add-back-community-override': '_addBackCommunityOverride'
   },
+*/
+  _addBackCommunityOverride(event, detail) {
+    if (!this.communityBackOverride) {
+      this.communityBackOverride = {};
+    }
 
-  _userDrawerOpened: function (value) {
+    this.communityBackOverride[detail.fromCommunityId] = {
+      backPath: detail.backPath,
+      backName: detail.backName
+    };
+  }
+
+  _userDrawerOpened(value) {
     this.async(function() {
       this.set('userDrawerOpenedDelayed', value);
     }, 500);
-  },
+  }
 
-  _navDrawOpened: function (value) {
+  _navDrawOpened(value) {
     this.async(function() {
       this.set('navDrawOpenedDelayed', value);
     }, 500);
-  },
+  }
 
-  _goToNextPost: function () {
+  _goToNextPost() {
     if (this.currentPostId) {
       this.set('goBackToPostId', this.currentPostId);
     } else {
@@ -645,9 +648,9 @@ Polymer({
     } else {
       console.error("No goForwardToPostId");
     }
-  },
+  }
 
-  _goToPreviousPost: function () {
+  _goToPreviousPost() {
     if (this.goForwardCount>0) {
       window.history.back();
       window.appGlobals.activity('recommendations', 'goBack');
@@ -655,9 +658,9 @@ Polymer({
       this.set('showBackToPost', false);
     }
     this.goForwardCount -= 1;
-  },
+  }
 
-  _setNextPost: function (event, detail) {
+  _setNextPost(event, detail) {
     if (detail.goForwardToPostId) {
       this.set('goForwardToPostId', detail.goForwardToPostId);
       this.set('goForwardPostName', detail.goForwardPostName);
@@ -665,19 +668,19 @@ Polymer({
       this._clearNextPost();
     }
     this.set('currentPostId', detail.currentPostId);
-  },
+  }
 
-  _clearNextPost: function () {
+  _clearNextPost() {
     this.set('goForwardToPostId', null);
     this.set('goForwardPostName', null);
     this.goForwardCount=0;
     this.set('showBackToPost', false);
-  },
+  }
 
-  _setupSamlCallback: function () {
-    var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-    var eventer = window[eventMethod];
-    var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+  _setupSamlCallback() {
+    const eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+    const eventer = window[eventMethod];
+    const messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
 
     console.log("Have created event listener for samlLogin");
 
@@ -687,12 +690,12 @@ Polymer({
         console.log("Have contacted app user 2");
       }
     },false);
-  },
+  }
 
-  _setupTranslationSystem: function () {
+  _setupTranslationSystem() {
     console.log("Have started _setupTranslationSystem");
-    var hostname = window.location.hostname;
-    var defaultLocale = 'en';
+    const hostname = window.location.hostname;
+    let defaultLocale = 'en';
     if (hostname.indexOf('betrireykjavik') > -1) {
       defaultLocale = 'is';
     } else if (hostname.indexOf('betraisland') > -1) {
@@ -700,8 +703,8 @@ Polymer({
     } else if (hostname.indexOf('forbrukerradet') > -1) {
         defaultLocale = 'no';
     } else {
-      var tld = hostname.substring(hostname.lastIndexOf('.'));
-      var localeByTld = {
+      const tld = hostname.substring(hostname.lastIndexOf('.'));
+      let localeByTld = {
         '.fr': 'fr',
         '.hr': 'hr',
         '.hu': 'hu',
@@ -714,13 +717,13 @@ Polymer({
       defaultLocale = localeByTld[tld] || 'en';
     }
 
-    var language;
-    var storedLocale = localStorage.getItem('yp-user-locale');
+    let language;
+    const storedLocale = localStorage.getItem('yp-user-locale');
     if (storedLocale) {
       defaultLocale = storedLocale;
     }
 
-    var localeFromUrl;
+    let localeFromUrl;
 
     if (window.appGlobals.originalQueryParameters &&
         window.appGlobals.originalQueryParameters["locale"]) {
@@ -734,7 +737,7 @@ Polymer({
       }, 2500);
     }
 
-    if (localeFromUrl && localeFromUrl.length == 2) {
+    if (localeFromUrl && (localeFromUrl.length>1)) {
       defaultLocale = localeFromUrl;
       localStorage.setItem('yp-user-locale', localeFromUrl);
     }
@@ -762,15 +765,15 @@ Polymer({
         })
       );
     }.bind(this));
-  },
+  }
 
-  _openPageFromEvent: function (event, detail) {
+  _openPageFromEvent(event, detail) {
     if (detail.pageId) {
       this.openPageFromId(detail.pageId);
     }
-  },
+  }
 
-  _startTranslation: function () {
+  _startTranslation() {
     window.autoTranslate = true;
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
@@ -788,9 +791,9 @@ Polymer({
       toast.text = this.t('autoTranslationStarted');
       toast.show();
     }.bind(this));
-  },
+  }
 
-  _stopTranslation: function () {
+  _stopTranslation() {
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
         bubbles: true,
@@ -804,42 +807,42 @@ Polymer({
       toast.show();
     }.bind(this));
     sessionStorage.setItem("dontPromptForAutoTranslation", true);
-  },
+  }
 
-  _setLanguageName: function (event, detail) {
+  _setLanguageName(event, detail) {
     this.set('languageName', detail);
-  },
+  }
 
   _autoTranslateEvent(event, detail) {
     this.set('autoTranslate', detail);
-  },
+  }
 
-  _refreshGroup: function () {
+  _refreshGroup() {
     this._refreshByName("#groupPage");
-  },
+  }
 
-  _refreshCommunity: function () {
+  _refreshCommunity() {
     this._refreshByName("#communityPage");
-  },
+  }
 
-  _refreshDomain: function () {
+  _refreshDomain() {
     this._refreshByName("#domainPage");
-  },
+  }
 
-  _refreshByName: function(id) {
-    var el = this.$$(id);
+  _refreshByName(id) {
+    const el = this.$$(id);
     if (el) {
       el._refreshAjax();
     }
-  },
+  }
 
-  _closeRightDrawer: function () {
+  _closeRightDrawer() {
     this.async(function () {
       this.$$("#drawer").close();
     }, 100);
-  },
+  }
 
-  _setNumberOfUnViewedNotifications: function (event, detail) {
+  _setNumberOfUnViewedNotifications(event, detail) {
     if (detail.count) {
       if (detail.count<10) {
         this.set('numberOfUnViewedNotifications', detail.count);
@@ -852,15 +855,15 @@ Polymer({
     this.async(function () {
       this.$$("#notificationBadge").fire("iron-resize");
     });
-  },
+  }
 
-  _redirectTo: function (event, detail) {
+  _redirectTo(event, detail) {
     if (detail.path) {
       this.set('route.path', detail.path);
     }
-  },
+  }
 
-  _routeChanged: function (route) {
+  _routeChanged(route) {
     // Support older pre version 6.1 links
     if (window.location.href.indexOf("/#!/") > -1) {
       window.location = window.location.href.replace("/#!/", "/");
@@ -899,11 +902,11 @@ Polymer({
         }
       }
     });
-  },
+  }
 
-  _routePageChanged: function(pageData, oldPageData) {
+  _routePageChanged(pageData, oldPageData) {
     if (pageData) {
-      var params = this.route.path.split('/');
+      const params = this.route.path.split('/');
 
       if (this.route.path.indexOf('/user/reset_password') > -1 ||
         this.route.path.indexOf('/user/open_notification_settings') > -1 ||
@@ -923,21 +926,21 @@ Polymer({
         }
       } else {
 
-        var map = this._scrollPositionMap;
+        const map = this._scrollPositionMap;
 
         if (oldPageData != null && oldPageData.page != null) {
           map[oldPageData.page] = window.pageYOffset;
           console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
         }
 
-        var delayUntilScrollToPost = null;
+        let delayUntilScrollToPost = null;
 
         if (this.wide) {
           delayUntilScrollToPost = 2;
         }
 
         this.async(function () {
-          var skipMasterScroll = false;
+          const skipMasterScroll = false;
 
           if (oldPageData && oldPageData.page && pageData) {
             // Post -> Group
@@ -1015,7 +1018,7 @@ Polymer({
           }
 
           if (oldPageData && pageData && oldPageData.page===pageData.page) {
-            var testRoute = this.subRoute.path;
+            let testRoute = this.subRoute.path;
             testRoute = testRoute.replace("/","");
             if (isNaN(testRoute)) {
               skipMasterScroll = true;
@@ -1045,12 +1048,12 @@ Polymer({
         }
       }
     }
-  },
+  }
 
-  _pageChanged: function(page, oldPage) {
+  _pageChanged(page, oldPage) {
     console.log("Page changed to "+page);
     if (page) {
-      var resolvedPageUrl;
+      let resolvedPageUrl;
       if (page=="view-404") {
         resolvedPageUrl = this.resolveUrl("yp-view-404.html");
       } else if (page==='community_folder') {
@@ -1065,52 +1068,52 @@ Polymer({
     if (page) {
       window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
     }
-  },
+  }
 
-  openResetPasswordDialog: function (resetPasswordToken) {
+  openResetPasswordDialog(resetPasswordToken) {
     this.getDialogAsync("resetPassword", function (dialog) {
       dialog.open(resetPasswordToken);
     }.bind(this));
-  },
+  }
 
-  openUserNotificationsDialog: function () {
+  openUserNotificationsDialog() {
     if (window.appUser && window.appUser.loggedIn()===true) {
       window.appUser.openNotificationSettings();
     } else {
       window.appUser.loginForNotificationSettings();
     }
-  },
+  }
 
-  openAcceptInvitationDialog: function (inviteToken) {
+  openAcceptInvitationDialog(inviteToken) {
     debugger;
     this.getDialogAsync("acceptInvite", function (dialog) {
       dialog.open(inviteToken);
     }.bind(this));
-  },
+  }
 
-  _showPage404: function() {
+  _showPage404() {
     this.page = 'view-404';
-  },
+  }
 
-  _setHomeLink: function (event, homeLink) {
+  _setHomeLink(event, homeLink) {
     if (!this.homeLink) {
       this.set('homeLink', homeLink);
     }
-  },
+  }
 
-  setKeepOpenForPostsOn: function (goBackToPage) {
-    this.set('keepOpenForPost', goBackToPage);
+  setKeepOpenForPostsOn(goBackToPage) {
+    this.keepOpenForPost = goBackToPage;
     this.set('storedBackPath', this.backPath);
     this.set('storedLastDocumentTitle', document.title);
-  },
+  }
 
-  _resetKeepOpenForPage: function () {
+  _resetKeepOpenForPage() {
     this.set('keepOpenForPost', null);
     this.set('storedBackPath', null);
     this.set('storedLastDocumentTitle', null);
-  },
+  }
 
-  _closePost: function () {
+  _closePost() {
     if (this.keepOpenForPost)
       this.redirectTo(this.keepOpenForPost);
 
@@ -1124,101 +1127,113 @@ Polymer({
 
     this.set('this.keepOpenForPost', null);
     document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
-  },
+  }
 
-  _closePostHeader: function (page, keepOpenForPost) {
+  _closePostHeader(page, keepOpenForPost) {
     if (page=="post" && keepOpenForPost)
       return true;
     else
       return false;
-  },
+  }
 
-  _isGroupOpen: function (params, keepOpenForPost) {
+  _isGroupOpen(params, keepOpenForPost) {
     if (params.groupId || (params.postId && keepOpenForPost))
       return true;
     else
       return false;
-  },
+  }
 
-  _isCommunityOpen: function (params, keepOpenForPost) {
+  _isCommunityOpen(params, keepOpenForPost) {
     if (params.communityId || (params.postId && keepOpenForPost))
       return true;
     else
       return false;
-  },
+  }
 
-  _isDomainOpen: function (params, keepOpenForPost) {
+  _isDomainOpen(params, keepOpenForPost) {
     if (params.domainId || (params.postId && keepOpenForPost))
       return true;
     else
       return false;
-  },
+  }
 
-  _toggleNavDrawer: function () {
+  _toggleNavDrawer() {
     this.$$("#navDrawer").toggle();
-  },
+  }
 
-  ready: function () {
-    console.info("yp-app is ready");
-    window.app = this;
-    this._setupTranslationSystem();
-    this.setTheme(16);
-    this._setupSamlCallback();
-  },
+  connectedCallback() {
+    super.connectedCallback()
+      console.info("yp-app is ready");
+      window.app = this;
+      this._setupTranslationSystem();
+      this.setTheme(16);
+      this._setupSamlCallback();
+  }
 
-  getDialogAsync: function (idName, callback) {
+  getDialogAsync(idName, callback) {
     this.$$("#dialogContainer").getDialogAsync(idName, callback);
-  },
+  }
 
-  getUsersGridAsync: function (callback) {
+  getRatingsDialogAsync(callback) {
+    this.$$("#dialogContainer").getRatingsDialogAsync(callback);
+  }
+
+  getUsersGridAsync(callback) {
     this.$$("#dialogContainer").getUsersGridAsync(callback);
-  },
+  }
 
-  getMediaRecorderAsync: function (callback) {
+  getMediaRecorderAsync(callback) {
     this.$$("#dialogContainer").getMediaRecorderAsync(callback);
-  },
+  }
 
-  getContentModerationAsync: function (callback) {
+  getContentModerationAsync(callback) {
     this.$$("#dialogContainer").getContentModerationAsync(callback);
-  },
+  }
 
-  openPixelCookieConfirm: function (trackerId) {
+  getCreateReportAsync(callback) {
+    this.$$("#dialogContainer").getCreateReportAsync(callback);
+  }
+
+  getDuplicateCollectionAsyncAsync(callback) {
+    this.$$("#dialogContainer").getDuplicateCollectionAsyncAsync(callback);
+  }
+
+  openPixelCookieConfirm(trackerId) {
     this.$$("#dialogContainer").openPixelCookieConfirm(trackerId);
-  },
+  }
 
-  closeDialog: function (idName) {
+  closeDialog(idName) {
     this.$$("#dialogContainer").closeDialog(idName);
-  },
+  }
 
-  _dialogClosed: function (event, detail) {
+  _dialogClosed(event, detail) {
     this.$$("#dialogContainer").dialogClosed(detail);
-  },
+  }
 
-  scrollPageToTop: function() {
-    var mainArea = document.getElementById('#mainArea');
+  scrollPageToTop() {
+    const mainArea = document.getElementById('#mainArea');
     if (mainArea) {
       mainArea.scroller.scrollTop = 0;
     }
-  },
+  }
 
-  _toggleUserDrawer: function () {
+  _toggleUserDrawer() {
     this.$$("#drawer").toggle();
-  },
+  }
 
-  _login: function () {
+  _login() {
     if (window.appUser) {
       window.appUser.openUserlogin();
     }
-  },
+  }
 
-  onChangeHeader: function (event, header) {
-    console.info(header);
+  onChangeHeader(event, header) {
     this.set('headerTitle', document.title = header.headerTitle);
 
     this.async(function () {
-      var headerTitle = this.$$("#headerTitle");
+      const headerTitle = this.$$("#headerTitle");
       if (headerTitle) {
-        var length = headerTitle.innerHTML.length;
+        const length = headerTitle.innerHTML.length;
         if (this.wide) {
           headerTitle.style.fontSize = "20px";
         } else {
@@ -1273,13 +1288,22 @@ Polymer({
       this.set('hideHelpIcon', false);
     }
 
+    if (this.communityBackOverride && this.backPath && window.location.pathname.indexOf("/community/") > -1) {
+      var communityId =  window.location.pathname.split("/community/")[1];
+      if (communityId && !isNaN(communityId) && this.communityBackOverride[communityId]) {
+        this.set('backPath', this.communityBackOverride[communityId].backPath);
+        this.set('headerTitle', this.communityBackOverride[communityId].backName);
+        this.set('useHardBack', false);
+      }
+    }
+
     if (this.showBack && header.disableDomainUpLink===true) {
       this.set('showBack', false);
       this.set('headerTitle', '');
     }
-  },
+  }
 
-  goBack: function (event, detail) {
+  goBack(event, detail) {
     if (this.backPath) {
       if (this.useHardBack) {
         document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
@@ -1288,30 +1312,32 @@ Polymer({
         this.redirectTo(this.backPath);
       }
     }
-  },
+  }
 
-  _onSearch: function (e) {
+  _onSearch(e) {
     this.toggleSearch();
     this.unshift('previousSearches', e.detail.value);
-    var postsFilter = document.querySelector('#postsFilter');
+    const postsFilter = document.querySelector('#postsFilter');
     if (postsFilter) {
       postsFilter.searchFor(e.detail.value);
     }
-  },
+  }
 
-  onUserChanged: function (event, detail) {
+  onUserChanged(event, detail) {
     if (detail && detail.id) {
       this.set('user', detail);
     } else {
       this.set('user', null);
     }
-  },
+  }
 
-  toggleSearch: function () {
+  toggleSearch() {
     this.$$("#search").toggle();
-  },
+  }
 
-  __equal: function (a, b) {
+  __equal(a, b) {
     return a === b;
   }
-});
+}
+
+window.customElements.define('yp-app-lit', YpAppLit)
