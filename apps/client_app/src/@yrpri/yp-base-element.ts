@@ -1,10 +1,11 @@
 // Locale implementation inspired by https://github.com/PolymerElements/app-localize-behavior
 
 import { IntlMessageFormat } from "intl-messageformat";
-import { LitElement, css } from 'lit-element';
+import { LitElement, css, property } from 'lit-element';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 import enLocaleData from './locales/en/enTranslations.js';
+import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 
 window.IntlMessageFormat = IntlMessageFormat;
 window.localeResources = {};
@@ -15,15 +16,11 @@ window.__localizationCache = {
 
 export class YpBaseElement extends LitElement {
 
-  static get properties() {
-    return {
-      wide: {
-        type: Boolean,
-        value: false
-      },
-      language: { type: String }
-    }
-  }
+  @property({type: String})
+  language = 'en';
+
+  @property({type: Boolean})
+  wide = false;
 
   constructor() {
     super();
@@ -40,42 +37,30 @@ export class YpBaseElement extends LitElement {
       `];
   }
 
-  activity(type, object) {
+  activity(type: string, object: object) {
     this.sendToGoogleAnalytics('send', 'event', object, type);
   }
 
-  handleNetworkErrors(response) {
+  handleNetworkErrors(response: Response) {
     if (!response.ok) {
-      debugger;
       throw Error(response.statusText);
     }
     return response;
   }
 
-  sendToGoogleAnalytics(type, parameterA, parameterB, parameterC) {
+  sendToGoogleAnalytics(type: string, parameterA: string, parameterB: object, parameterC: string) {
     if (typeof ga == 'function') {
       if (parameterB && parameterC) {
         ga(type,parameterA,parameterB,parameterC);
       } else {
         ga(type, parameterA);
-        window.__localizationCache = {
-          messages: {},
-        }
-        this.hideBudget = true;
-        this.disableAutoSave = true;
-        const language = this.getPathVariable('locale');
-        if (language) {
-          this.language = language;
-          localStorage.setItem("languageOverride", language);
-        }
-
       }
     } else {
       console.warn("Google analytics message not sent for type:"+type+" parameterA:"+parameterA+" parameterB:"+parameterB+" parameterC:"+parameterC);
     }
   }
 
-  formatNumber(value, currencyIcon) {
+  formatNumber(value: string|number, currencyIcon: string) {
     if (!currencyIcon)
       currencyIcon=""
 
@@ -86,17 +71,12 @@ export class YpBaseElement extends LitElement {
     }
   }
 
-  localize(token) {
-    return this.t(token);
-  }
-
-
-  t() {
-    const key = arguments[0];
+  t(...args: string[]) {
+    const key = args[0];
     if (!key || !window.localeResources || !this.language)
       return key;
 
-    let usingLocale = this.languagee;
+    let usingLocale = this.language;
 
     if (!window.localeResources[usingLocale]) {
       usingLocale = 'en';
@@ -117,34 +97,34 @@ export class YpBaseElement extends LitElement {
       window.__localizationCache.messages[messageKey] = translatedMessage;
     }
 
-    const args = {};
-    for (var i = 1; i < arguments.length; i += 2) {
-      args[arguments[i]] = arguments[i + 1];
+    const translateArgs: Record<string, string> = {};
+    for (let i = 1; i < args.length; i += 2) {
+      translateArgs[args[i]] = args[i + 1];
     }
 
-    return translatedMessage.format(args);
+    return translatedMessage.format(translateArgs);
   }
 
-  updated(changedProps) {
+  updated(changedProps: Map<string | number | symbol, unknown>) {
     super.updated(changedProps);
     if (changedProps.has('language')) {
       //this.requestUpdate();
     }
   }
 
-  firstUpdated() {
-    super.firstUpdated();
+  firstUpdated(changedProps: Map<string | number | symbol, unknown>) {
+    super.firstUpdated(changedProps);
     installMediaQueryWatcher(`(min-width: 1024px)`,
-    (matches) => {
+    (matches: boolean) => {
       this.wide = matches;
     });
   }
 
-  $$(id) {
-    return this.shadowRoot.querySelector(id);
+  $$(id: string) {
+    return this.shadowRoot ? this.shadowRoot.querySelector(id) : null;
   }
 
-  fire(eventName, data) {
+  fire(eventName: string, data: object) {
     const event = new CustomEvent(eventName, { detail: data, bubbles: true, composed: true });
     this.dispatchEvent(event);
   }

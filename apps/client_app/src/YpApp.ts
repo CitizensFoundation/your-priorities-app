@@ -1,5 +1,6 @@
-import { LitElement, html, css, property } from 'lit-element';
+import { LitElement, html, css, property, customElement } from 'lit-element';
 import { openWcLogo } from './open-wc-logo.js';
+
 
 export class YpApp extends LitElement {
 

@@ -62,7 +62,8 @@
   "author": "yp-app",
   "license": "MIT",
   "dependencies": {
-    "lit-html": "^1.0.0",
-    "lit-element": "^2.0.1"
+    "lit-element": "^2.0.1",
+    "lit-flexbox-literals": "0.0.7",
+    "lit-html": "^1.0.0"
   }
 }

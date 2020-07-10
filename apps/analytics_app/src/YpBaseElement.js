@@ -22,7 +22,7 @@ export class YpBaseElement extends LitElement {
         value: false
       },
       language: { type: String }
-    }
+    };
   }
 
   constructor() {
@@ -56,18 +56,7 @@ export class YpBaseElement extends LitElement {
       if (parameterB && parameterC) {
         ga(type,parameterA,parameterB,parameterC);
       } else {
-        ga(type, parameterA);    setPassiveTouchGestures(true);
-        window.__localizationCache = {
-          messages: {},
-        }
-        this.hideBudget = true;
-        this.disableAutoSave = true;
-        const language = this.getPathVariable('locale');
-        if (language) {
-          this.language = language;
-          localStorage.setItem("languageOverride", language);
-        }
-
+        ga(type, parameterA);
       }
     } else {
       console.warn("Google analytics message not sent for type:"+type+" parameterA:"+parameterA+" parameterB:"+parameterB+" parameterC:"+parameterC);
@@ -76,8 +65,7 @@ export class YpBaseElement extends LitElement {
 
   formatNumber(value, currencyIcon) {
     if (!currencyIcon)
-      currencyIcon=""
-
+      currencyIcon="";
     if (value) {
       return currencyIcon+value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     } else {

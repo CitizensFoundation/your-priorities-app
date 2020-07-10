@@ -20,6 +20,8 @@ import { customElement, property, internalProperty } from 'lit-element';
 import i18next, { t as translate } from 'i18next'
 import backend from 'i18next-xhr-backend'
 import { format, formatDistance } from 'date-fns';
+import { YpBaseElement} from '../@yrpri/yp-base-element.js';
+
 //import {
 //  ca,da,de,dev,en,en_CA,en_GB,es,fa,fr,hr,hu,is,it,kl,nl,no,pl,pt,pt_BR,ru,sl,sr,sr_latin,tr,zh_TW
 //} from 'date-fns/locale';
@@ -47,54 +49,23 @@ declare global {
 @customElement('yp-app')
 export class YpApp extends YpBaseElement {
 
-  static get properties() {
+  @property({type: Object})
+  homeLink = null
+
+  @property({type: String})
+  page = ""
+
+  @property({type: Object})
+  user = null
+
+  @property({type: String})
+  backPath = ""
+
+  @internalProperty()
+  previousSearches: Array<string> = []
+
+  static get properssties() {
     return {
-      domainSubRoute: Object,
-      communitySubRoute: Object,
-      communityFolderSubRoute: Object,
-      groupSubRoute: Object,
-      postSubRoute: Object,
-      userSubRoute: Object,
-      navDrawOpenedDelayed: Boolean,
-
-      homeLink: {
-        type: Object
-      },
-
-      page: {
-        type: String,
-        reflectToAttribute: true,
-        observer: '_pageChanged'
-      },
-
-      route: {
-        type: Object,
-        observer: '_routeChanged'
-      },
-
-      routeData: {
-        type: Object,
-        observer: '_routePageChanged',
-        value: null
-      },
-
-      subRoute: Object,
-
-      appTitle: {
-        type: String,
-        value: "Your Priorities"
-      },
-
-      user: {
-        type: Object,
-        value: null
-      },
-
-      previousSearches: {
-        type: Array,
-        value: []
-      },
-
       showSearch: {
         type: Boolean,
         value: false
@@ -103,11 +74,7 @@ export class YpApp extends YpBaseElement {
       showBack: {
         type: Boolean,
         value: false
-      },
-
-      backPath: {
-        type: String
-      },
+      },,
 
       forwardToPostId: {
         type: String,
@@ -1306,7 +1273,7 @@ export class YpApp extends YpBaseElement {
   goBack(event, detail) {
     if (this.backPath) {
       if (this.useHardBack) {
-        document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
+        document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, composed: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
         window.location = this.backPath;
       } else {
         this.redirectTo(this.backPath);
@@ -1314,25 +1281,25 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _onSearch(e) {
+  _onSearch(e: CustomEvent) {
     this.toggleSearch();
-    this.unshift('previousSearches', e.detail.value);
+    this.previousSearches.unshift(e.detail.value);
     const postsFilter = document.querySelector('#postsFilter');
     if (postsFilter) {
       postsFilter.searchFor(e.detail.value);
     }
   }
 
-  onUserChanged(event, detail) {
-    if (detail && detail.id) {
-      this.set('user', detail);
+  onUserChanged(event: CustomEvent) {
+    if (event.detail && event.detail.id) {
+      this.user = detail;
     } else {
-      this.set('user', null);
+      this.user = null;
     }
   }
 
   toggleSearch() {
-    this.$$("#search").toggle();
+    this.$$("#search")?.toggle();
   }
 
   __equal(a, b) {
