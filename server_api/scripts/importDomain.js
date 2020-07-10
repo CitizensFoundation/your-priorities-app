@@ -223,7 +223,7 @@ var loadCacheUrls = function (callback) {
 };
 
 var changePointCounter = function (pointId, column, upDown, next) {
-  models.Point.find({
+  models.Point.findOne({
     where: { id: pointId }
   }).then(function(point) {
     if (point && upDown===1) {
@@ -241,7 +241,7 @@ var changePointCounter = function (pointId, column, upDown, next) {
 };
 
 var changePostCounter = function (req, postId, column, upDown, next) {
-  models.Post.find({
+  models.Post.findOne({
     where: { id: postId }
   }).then(function(post) {
     if (post && upDown === 1) {
@@ -653,7 +653,7 @@ async.series([
             function(innerSeriesCallback){
               if (incoming.encrypted_password &&
                 incoming.encrypted_password != masterUser.encrypted_password) {
-                models.UserLegacyPassword.find({
+                models.UserLegacyPassword.findOne({
                   where: { encrypted_password: incoming.encrypted_password }
                 }).then(function(legacyPassword) {
                   if (legacyPassword) {
@@ -1174,7 +1174,7 @@ async.series([
       models.Point.build(incoming).save().then(function (point) {
         if (point) {
           allPointsByOldIds[oldId] = point.id;
-          models.Post.find({
+          models.Post.findOne({
             where: { id: point.post_id }
           }).then(function(post) {
             if (post) {
@@ -1314,7 +1314,7 @@ async.series([
           incoming['post_id'] = null;
           models.PointRevision.build(incoming).save().then(function (point_revision) {
             if (point_revision) {
-              models.Post.find({
+              models.Post.findOne({
                 where: { id: point.post_id }
               }).then(function(post) {
                 if (post) {
@@ -1589,7 +1589,7 @@ async.series([
       var user = allUserModelsByOldIds[incoming.user_id];
       var group = allGroupsModelByOldIds[incoming.group_id];
       console.log('Processing admin user in community user ' + user.email+' for community '+group.name);
-      models.Community.find({
+      models.Community.findOne({
         where: {id: group.community_id}
       }).then(function (community) {
         community.hasCommunityAdmins(user).then(function(results) {

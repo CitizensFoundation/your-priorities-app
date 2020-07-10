@@ -9,7 +9,7 @@ var toJson = require('../utils/to_json');
 var queue = require('../active-citizen/workers/queue');
 
 var loadPointWithAll = function (pointId, callback) {
-  models.Point.find({
+  models.Point.findOne({
     where: {
       id: pointId
     },
@@ -98,7 +98,7 @@ router.get('/hasAudioUploadSupport', (req, res) => {
 });
 
 router.put('/audioListen', (req, res) => {
-  models.Audio.find({
+  models.Audio.findOne({
     where: {
       id: req.body.audioId
     }
@@ -166,7 +166,7 @@ const startTranscoding = (req, res) => {
     audioPointUploadLimitSec: req.body.audioPointUploadLimitSec,
   };
 
-  models.Audio.find({
+  models.Audio.findOne({
     where: {
       id: req.params.audioId
     }
@@ -192,7 +192,7 @@ router.post('/:audioId/startTranscodingLoggedIn', auth.isLoggedIn, (req, res) =>
 });
 
 router.put('/:audioId/getTranscodingJobStatus', (req, res) => {
-  models.Audio.find({
+  models.Audio.findOne({
     where: {
       id: req.params.audioId
     }

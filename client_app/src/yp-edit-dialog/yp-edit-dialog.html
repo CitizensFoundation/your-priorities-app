@@ -75,7 +75,7 @@
         padding: 24px 24px;
       }
 
-      @media (max-width: 601px) {
+      @media (max-width: 1024px) {
         paper-dialog > * {
           padding: 0 0;
         }
@@ -122,7 +122,7 @@
         height: 100%;
       }
 
-      @media (max-width: 600px) {
+      @media (max-width: 1024px) {
         paper-dialog > * {
           padding: 0;
           margin: 0;
@@ -133,6 +133,16 @@
           max-height: 100% !important;
           height: 100% !important;
         }
+      }
+
+      paper-dialog[tablet] > * {
+        padding: 0;
+        margin: 0;
+        background-color: #FFF;
+      }
+
+      paper-dialog[tablet] {
+        max-width: 3200px !important;
       }
 
       .toolbar {
@@ -150,6 +160,7 @@
       .largeIcon {
         width: 48px;
         height: 48px;
+        margin-left: 8px;
       }
 
       .smallIcon {
@@ -157,6 +168,7 @@
         height: 32px;
         padding-right: 8px;
         margin-top: 7px;
+        margin-left: 8px;
       }
 
       .titleHeader {
@@ -216,15 +228,31 @@
           min-height: 350px;
         }
       }
+
+      paper-dialog[rtl] {
+        direction: rtl;
+      }
+
+      paper-dialog, paper-checkbox {
+        --paper-checkbox-label: {
+          padding-right: 6px;
+        }
+      }
+
+      paper-dialog, paper-radio-button {
+        --paper-radio-button-label: {
+          padding-right: 6px;
+        }
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
-      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrow}}"></iron-media-query>
+    <paper-dialog rtl$="[[rtl]]" name$="[[name]]" id="editDialog" class$="[[_computeClass(narrow)]]" tablet$="[[tablet]]" on-iron-overlay-closed="_dialogClosed" with-backdrop$="[[!narrowPad]]" modal>
+      <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowScreen}}"></iron-media-query>
       <iron-media-query query="(max-width: 1024px)" query-matches="{{narrowPad}}"></iron-media-query>
       <iron-media-query query="(min-height: 830px)" query-matches="{{largeHeight}}"></iron-media-query>
-      <iron-media-query query="(min-height: 640px)" query-matches="{{mediumHeight}}"></iron-media-query>
-      <iron-media-query query="(max-height: 640px)" query-matches="{{smallHeight}}"></iron-media-query>
+      <iron-media-query query="(min-height: 1024px)" query-matches="{{mediumHeight}}"></iron-media-query>
+      <iron-media-query query="(max-height: 1024px)" query-matches="{{smallHeight}}"></iron-media-query>
       <template is="dom-if" if="opened" restamp>
         <template is="dom-if" if="[[narrow]]" restamp>
           <div class="outerMobile">
@@ -235,7 +263,7 @@
               <div class="flex"></div>
               <template is="dom-if" if="[[!useNextTabAction]]">
                 <template is="dom-if" if="[[!uploadingState]]">
-                  <paper-button id="submit1" on-tap="_submit"><span class="smallButtonText">[[saveText]]</span></paper-button>
+                  <paper-button id="submit1" on-tap="_submit" hidden$="[[!saveText]]"><span class="smallButtonText">[[saveText]]</span></paper-button>
                 </template>
                 <template is="dom-if" if="[[uploadingState]]">
                   <paper-button disabled on-tap="_nextTab">[[t('uploading.inProgress')]]</paper-button>
@@ -270,10 +298,11 @@
             <paper-spinner id="spinner"></paper-spinner>
           </paper-dialog-scrollable>
           <div class="buttons">
-            <paper-button id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
+            <paper-button hidden$="[[!cancelText]]" id="dismissBtn" dialog-dismiss>[[cancelText]]</paper-button>
+            <paper-button hidden$="[[cancelText]]" id="dismissBtn" dialog-dismiss>[[t('cancel')]]</paper-button>
             <template is="dom-if" if="[[!uploadingState]]">
               <template is="dom-if" if="[[!useNextTabAction]]">
-                <paper-button raised class="actionButtons" id="submit2" on-tap="_submit">[[saveText]]</paper-button>
+                <paper-button raised class="actionButtons" hidden$="[[!saveText]]" id="submit2" on-tap="_submit">[[saveText]]</paper-button>
               </template>
               <template is="dom-if" if="[[useNextTabAction]]">
                 <paper-button raised class="actionButtons" on-tap="_nextTab">[[nextActionText]]</paper-button>
@@ -318,13 +347,28 @@
           type: String
         },
 
+        tablet: {
+          type: Boolean,
+          value: false
+        },
+
         baseAction: {
           type: String
+        },
+
+        cancelText: {
+          type: String,
+          value: null
         },
 
         method: {
           type: String,
           value: "POST"
+        },
+
+        rtl: {
+          type: Boolean,
+          value: false
         },
 
         buttonText: {
@@ -357,10 +401,15 @@
           type: String
         },
 
+        narrowScreen: {
+          type: Boolean,
+          observer: '_narrowScreenChanged',
+          notify: true
+        },
+
         narrow: {
           type: Boolean,
-          observer: '_narrowChanged',
-          notify: true
+          computed: '_narrow(narrowScreen,tablet)'
         },
 
         params: {
@@ -414,6 +463,9 @@
         }
       },
 
+    _narrow: function(narrowScreen, tablet) {
+      return narrowScreen || tablet;
+    },
 
     scrollResize: function () {
       if (this.$$("#scrollable")) {
@@ -439,7 +491,7 @@
         this.fire('next-tab-action')
       },
 
-      _narrowChanged: function() {
+      _narrowScreenChanged: function() {
         this.fire('paper-responsive-change', {narrow: this.narrow});
       },
 
@@ -481,6 +533,13 @@
 
       ready: function() {
         this.baseAction = this.action;
+        if (/iPad/.test(navigator.userAgent)) {
+          this.set('tablet', true);
+        } else if (/Android/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent)) {
+          this.set('tablet', true);
+        } else {
+          this.set('tablet', false);
+        }
       },
 
       _formResponse: function(response, detail) {

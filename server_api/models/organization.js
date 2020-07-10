@@ -1,13 +1,9 @@
-var async = require("async");
-var log = require('../utils/logger');
-var toJson = require('../utils/to_json');
-
 "use strict";
 
-// https://www.npmjs.org/package/enum for state of posts
+const async = require("async");
 
-module.exports = function(sequelize, DataTypes) {
-  var Organization = sequelize.define("Organization", {
+module.exports = (sequelize, DataTypes) => {
+  const Organization = sequelize.define("Organization", {
     name: { type: DataTypes.STRING, allowNull: false },
     description: DataTypes.TEXT,
     address: DataTypes.TEXT,
@@ -30,98 +26,110 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     underscored: true,
 
+    indexes: [
+      {
+        name: 'organizations_idx_id_deleted',
+        fields: ['id', 'deleted']
+      },
+      {
+        name: 'organizations_idx_deleted',
+        fields: ['deleted']
+      }
+    ],
+
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX organizationlogoimag_idx_organization_id ON "OrganizationLogoImage" (organization_id);
+    // CREATE INDEX organizationuser_idx_user_id ON "OrganizationUser" (user_id);
+
     tableName: 'organizations',
+  });
 
-    instanceMethods: {
+  Organization.associate = (models) => {
+    Organization.belongsTo(models.Domain, { foreignKey: 'domain_id'});
+    Organization.belongsTo(models.Community, { foreignKey: 'community_id'});
+    Organization.belongsTo(models.User, { foreignKey: 'user_id'});
+    Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
+    Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
+    Organization.belongsToMany(models.User, { as: 'OrganizationUsers', through: 'OrganizationUser' });
+    Organization.belongsToMany(models.User, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
+  };
 
-      simple: function() {
-        return { id: this.id, name: this.name, hostname: this.hostname };
-      },
+  Organization.ACCESS_PUBLIC = 0;
+  Organization.ACCESS_CLOSED = 1;
+  Organization.ACCESS_SECRET = 2;
 
-      updateAllExternalCounters: function(req, direction, column, done) {
-        if (direction=='up')
-          req.ypDomain.increment(column);
-        else if (direction=='down')
-          req.ypDomain.decrement(column);
+  Organization.convertAccessFromRadioButtons = (body) => {
+    let access = 0;
+    if (body.public) {
+      access = 0;
+    } else if (body.closed) {
+      access = 1;
+    } else if (body.secret) {
+      access = 2;
+    }
+    return access;
+  };
+
+
+  Organization.prototype.simple = function () {
+    return { id: this.id, name: this.name, hostname: this.hostname };
+  };
+
+  Organization.prototype.updateAllExternalCounters = function  (req, direction, column, done) {
+    if (direction==='up')
+      req.ypDomain.increment(column);
+    else if (direction==='down')
+      req.ypDomain.decrement(column);
+    done();
+  };
+
+  Organization.prototype.setupLogoImage = function (body, done) {
+    if (body.uploadedLogoImageId) {
+      sequelize.models.Image.findOne({
+        where: {id: body.uploadedLogoImageId}
+      }).then((image) => {
+        if (image)
+          this.addOrganizationLogoImage(image);
         done();
-      },
+      });
+    } else done();
+  };
 
-      setupLogoImage: function(body, done) {
-        if (body.uploadedLogoImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedLogoImageId}
-          }).then(function (image) {
-            if (image)
-              this.addOrganizationLogoImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
+  Organization.prototype.setupHeaderImage = function  (body, done) {
+    if (body.uploadedHeaderImageId) {
+      sequelize.models.Image.findOne({
+        where: {id: body.uploadedHeaderImageId}
+      }).then((image) => {
+        if (image)
+          this.addOrganizationHeaderImage(image);
+        done();
+      });
+    } else done();
+  };
 
-      setupHeaderImage: function(body, done) {
-        if (body.uploadedHeaderImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedHeaderImageId}
-          }).then(function (image) {
-            if (image)
-              this.addOrganizationHeaderImage(image);
-            done();
-          }.bind(this));
-        } else done();
+  Organization.prototype.setupImages = function  (body, done) {
+    async.parallel([
+      (callback) => {
+        this.setupLogoImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
+        });
       },
-
-      setupImages: function(body, done) {
-        async.parallel([
-          function(callback) {
-            this.setupLogoImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this),
-          function(callback) {
-            this.setupHeaderImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this)
-        ], function(err) {
-          done(err);
+      (callback) => {
+        this.setupHeaderImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
         });
       }
-    },
-
-    classMethods: {
-
-      ACCESS_PUBLIC: 0,
-      ACCESS_CLOSED: 1,
-      ACCESS_SECRET: 2,
-
-      convertAccessFromRadioButtons: function(body) {
-        var access = 0;
-        if (body.public) {
-          access = 0;
-        } else if (body.closed) {
-          access = 1;
-        } else if (body.secret) {
-          access = 2;
-        }
-        return access;
-      },
-
-      associate: function(models) {
-        Organization.belongsTo(models.Domain);
-        Organization.belongsTo(models.Community);
-        Organization.belongsTo(models.User);
-        Organization.belongsToMany(models.Image, { as: 'OrganizationLogoImages', through: 'OrganizationLogoImage' });
-        Organization.belongsToMany(models.Image, { as: 'OrganizationHeaderImages', through: 'OrganizationHeaderImage' });
-        Organization.belongsToMany(models.User, { as: 'OrganizationUsers', through: 'OrganizationUser' });
-        Organization.belongsToMany(models.User, { as: 'OrganizationAdmins', through: 'OrganizationAdmin' });
-      }
-    }
-  });
+    ], (err) => {
+      done(err);
+    });
+  };
 
   return Organization;
 };

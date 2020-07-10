@@ -32,7 +32,7 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
 
   async.parallel([
     function (seriesCallback) {
-      models.Organization.find({
+      models.Organization.findOne({
         where: {
           id: organizationId
         }
@@ -47,7 +47,7 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -74,7 +74,7 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
 };
 
 router.get('/:id', auth.can('view organization'), function(req, res) {
-  models.Organization.find({
+  models.Organization.findOne({
     where: { id: req.params.id },
     order: [
       [ { model: models.Group }, 'counter_users', 'desc' ],
@@ -110,7 +110,7 @@ router.get('/:id', auth.can('view organization'), function(req, res) {
 
 router.post('/:domainId', auth.can('create domainOrganization'), function(req, res) {
   var hostname;
-  if (req.hostname=='localhost') {
+  if (req.hostname && req.hostname=='localhost') {
     hostname = 'localhost';
   } else {
     hostname = models.Domain.extractHost(req.headers.host);
@@ -142,7 +142,7 @@ router.post('/:domainId', auth.can('create domainOrganization'), function(req, r
 });
 
 router.put('/:id', auth.can('edit organization'), function(req, res) {
-  models.Organization.find({
+  models.Organization.findOne({
     where: { id: req.params.id }
   }).then(function(organization) {
     if (organization) {
@@ -165,7 +165,7 @@ router.put('/:id', auth.can('edit organization'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit organization'), function(req, res) {
-  models.Organization.find({
+  models.Organization.findOne({
     where: {id: req.params.id, user_id: req.user.id }
   }).then(function (organization) {
     if (organization) {

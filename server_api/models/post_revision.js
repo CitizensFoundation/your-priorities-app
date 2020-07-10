@@ -1,7 +1,7 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
-  var PostRevision = sequelize.define("PostRevision", {
+module.exports = (sequelize, DataTypes) => {
+  const PostRevision = sequelize.define("PostRevision", {
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
     data: DataTypes.JSONB,
@@ -12,15 +12,31 @@ module.exports = function(sequelize, DataTypes) {
         deleted: false
       }
     },
-    timestamps: true,
-    underscored: true,
-    tableName: 'post_revisions',
-    classMethods: {
-      associate: function(models) {
-        PostRevision.belongsTo(models.Post);
-        PostRevision.belongsTo(models.User);
+    indexes: [
+      {
+        fields: ['user_id', 'deleted']
+      },
+      {
+        name: 'post_revisions_idx_deleted',
+        fields: ['deleted']
+      },
+      {
+        name: 'post_revisions_idx_post_id_deleted',
+        fields: ['deleted','post_id']
       }
-    }
+    ],
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+
+    underscored: true,
+    tableName: 'post_revisions'
   });
+
+  PostRevision.associate = (models) => {
+    PostRevision.belongsTo(models.Post, { foreignKey: 'post_id'});
+    PostRevision.belongsTo(models.User, { foreignKey: 'user_id'});
+  };
+
   return PostRevision;
 };

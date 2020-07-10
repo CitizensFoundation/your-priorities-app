@@ -84,6 +84,10 @@
         <yp-confirmation-dialog id="confirmationDialog"></yp-confirmation-dialog>
       </template>
 
+      <template is="dom-if" if="[[autoTranslateDialogOpen]]" restamp>
+        <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
+      </template>
+
       <iron-lazy-pages selected="{{selectedDialog}}" attr-for-selected="name">
         <template is="dom-if" name="userLogin" restamp>
           <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
@@ -95,6 +99,10 @@
 
         <template is="dom-if" name="resetPassword" restamp>
           <yp-reset-password id="resetPassword"></yp-reset-password>
+        </template>
+
+        <template is="dom-if" name="ratings" restamp>
+          <yp-dialog-ratings id="ratings"></yp-dialog-ratings>
         </template>
 
         <template is="dom-if" name="acceptInvite" restamp>
@@ -127,10 +135,6 @@
 
         <template is="dom-if" name="apiActionDialog" restamp>
           <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
-        </template>
-
-        <template is="dom-if" name="autoTranslateDialog" restamp>
-          <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
         </template>
 
         <template is="dom-if" name="userEdit" restamp>
@@ -170,6 +174,7 @@
         </template>
 
         <template is="dom-if" name="none" restamp>
+          <div hidden> </div>
         </template>
 
         <template is="dom-if" name="usersGrid" restamp>
@@ -178,6 +183,14 @@
 
         <template is="dom-if" name="contentModeration" restamp>
           <yp-content-moderation id="contentModeration"></yp-content-moderation>
+        </template>
+
+        <template is="dom-if" name="createReport" restamp>
+          <yp-create-report id="createReport"></yp-create-report>
+        </template>
+
+        <template is="dom-if" name="duplicateCollection" restamp>
+          <yp-duplicate-collection id="duplicateCollection"></yp-duplicate-collection>
         </template>
       </iron-lazy-pages>
 
@@ -264,12 +277,27 @@
           value: false
         },
 
+        gotCreateReport: {
+          type: Boolean,
+          value: false
+        },
+
+        gotDuplicateCollection: {
+          type: Boolean,
+          value: false
+        },
+
         gotMediaRecorder: {
           type: Boolean,
           value: false
         },
 
         needsPixelCookieConfirm: {
+          type: Boolean,
+          value: false
+        },
+
+        autoTranslateDialogOpen: {
           type: Boolean,
           value: false
         },
@@ -357,8 +385,22 @@
 
       dialogClosed: function  (detail) {
         if (detail.name===this.selectedDialog) {
-          this.set('selectedDialog', 'none');
+          this.set('selectedDialog', "none");
           console.log("Setting selectedDialog to none");
+        }
+      },
+
+      getRatingsDialogAsync: function (callback) {
+        if (this.gotRatingsDialog) {
+          this.getDialogAsync("ratings", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-rating/yp-dialog-ratings.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded ratings dialog");
+            this.gotRatingsDialog=true;
+            this.getDialogAsync("ratings", callback);
+          }.bind(this), null, true);
         }
       },
 
@@ -394,6 +436,35 @@
         }
       },
 
+      getCreateReportAsync: function (callback) {
+        if (this.gotCreateReport) {
+          this.getDialogAsync("createReport", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-create-report.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded createReport");
+            this.set('gotCreateReport', true);
+            this.getDialogAsync("createReport", callback);
+          }.bind(this), null, true);
+        }
+      },
+
+      getDuplicateCollectionAsync: function (callback) {
+        if (this.gotDuplicateCollection) {
+          this.getDialogAsync("duplicateCollection", callback);
+        } else {
+          this.$.loadingDialog.open();
+          this.importHref(this.resolveUrl("/src/yp-dialog-container/yp-dialog-container-duplicate-collection.html"), function () {
+            this.$.loadingDialog.close();
+            console.info("Have loaded duplicateCollection");
+            this.set('gotDuplicateCollection', true);
+            this.getDialogAsync("duplicateCollection", callback);
+          }.bind(this), null, true);
+        }
+      },
+
+
       getMediaRecorderAsync: function (callback) {
         if (this.gotMediaRecorder) {
           this.getDialogAsync("mediaRecorder", callback);
@@ -415,9 +486,12 @@
           this.set('pageDialogOpen', true);
         } else if (idName==="confirmationDialog") {
           this.set('confirmationDialogOpen', true);
-        } else if (idName!=='notificationToast') {
+        } else if (idName==="autoTranslateDialog") {
+          this.set('autoTranslateDialogOpen', true);
+        } else if (idName!=='notificationToast' && idName!=='masterToast') {
           this.set('pageDialogOpen', false);
           this.set('confirmationDialogOpen', false);
+          this.set('autoTranslateDialogOpen', false);
           this.set('selectedDialog', idName);
         }
 

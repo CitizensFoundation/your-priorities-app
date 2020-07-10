@@ -40,6 +40,10 @@
         line-height: var(--description-line-height, 1.3);
       }
 
+      video {
+        outline: none !important;
+      }
+
       .stats {
         position: absolute;
         bottom: 0;
@@ -86,6 +90,7 @@
         right: 0px;
         padding-right: 0;
         margin-right: 0;
+        z-index: 200;
       }
 
       .contentContainer {
@@ -100,6 +105,7 @@
       .description {
         padding: 0;
         margin: 0;
+        z-index: 100;
       }
 
       .communityDescription {
@@ -115,7 +121,7 @@
         padding-top: 16px;
         padding-bottom: 16px;
         min-height: 31px;
-        padding-right: 24px;
+        padding-right: 32px;
       }
 
       .textBox {
@@ -305,7 +311,7 @@
             <video id="videoPlayer" data-id$="[[communityVideoId]]" controls preload="meta" class="image pointer" src="[[communityVideoURL]]" playsinline poster="[[communityVideoPosterURL]]"></video>
           </template>
           <template is="dom-if" if="[[!communityVideoURL]]">
-            <iron-image class="image" sizing="cover" src$="[[communityLogoImagePath]]"></iron-image>
+            <iron-image class="image" sizing="cover" alt$="[[community.name]]" src$="[[communityLogoImagePath]]"></iron-image>
           </template>
         </div>
       </paper-material>
@@ -314,11 +320,13 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="description">
-                <div class="community-name">
-                  <yp-magic-text text-type="communityName" content-language="[[community.language]]"
-                                 disable-translation="[[community.configuration.disableNameAutoTranslation]]"
-                                 text-only content="[[communityNameFull]]" content-id="[[community.id]]">
-                  </yp-magic-text>
+                <div class="community-name" role="heading" aria-level="1" aria-label="[[community.name]]">
+                  <template is="dom-if" if="[[community]]">
+                    <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+                                   disable-translation="[[community.configuration.disableNameAutoTranslation]]"
+                                   text-only content="[[communityNameFull]]" content-id="[[community.id]]">
+                    </yp-magic-text>
+                  </template>
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
                 <yp-magic-text id="description" class="communityDescription"
@@ -342,6 +350,7 @@
                 [[t('manageAllContent')]]
               </paper-item>
               <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportLoginsUrl]]"><paper-item id="exportLogins">[[t('exportLogins')]]</paper-item></a>
+              <a hidden$="[[!hasCommunityAccess]]" target="_blank" href$="[[exportUsersUrl]]"><paper-item id="exportUsers">[[t('exportUsers')]]</paper-item></a>
 
               <paper-item hidden$="[[!hasCommunityAccess]]" id="deleteMenuItem">[[t('community.delete')]]</paper-item>
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="anonymizeMenuItem">[[t('anonymizeCommunityContent')]]</paper-item>
@@ -349,6 +358,7 @@
               <paper-item hidden$="[[!hasCommunityAccessAndNotFolder]]" id="bulkStatusUpdateMenuItem">[[t('bulkStatusUpdate')]]</paper-item>
               <paper-item id="addGroupMenuItem" hidden$="[[community.is_community_folder]]">[[t('group.new')]]</paper-item>
               <paper-item  hidden id="addCommunityFolderMenuItem">[[t('newCommunityFolder')]]</paper-item>
+              <paper-item id="openAnalyticsApp" hidden$="[[!hasCommunityAccess]]">[[t('openAnalyticsApp')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -426,11 +436,24 @@
           type: String,
           computed: '_exportLoginsUrl(hasCommunityAccess, community)'
         },
+
+        exportUsersUrl: {
+          type: String,
+          computed: '_exportUsersUrl(hasCommunityAccess, community)'
+        },
       },
 
       _exportLoginsUrl: function (access, community) {
         if (access && community) {
           return '/api/communities/'+community.id+'/export_logins';
+        } else {
+          return null;
+        }
+      },
+
+      _exportUsersUrl: function (access, community) {
+        if (access && community) {
+          return '/api/communities/'+community.id+'/export_users';
         } else {
           return null;
         }
@@ -460,7 +483,7 @@
         if (community && community.configuration &&
           community.configuration.useVideoCover &&
           community.CommunityLogoVideos) {
-          var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos);
+          var videoPosterURL = this._getVideoPosterURL(community.CommunityLogoVideos, community.CommunityLogoImages);
           if (videoPosterURL) {
             return videoPosterURL;
           } else {
@@ -549,6 +572,8 @@
           this._openDeleteContent();
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
+        else if (detail.item.id==="openAnalyticsApp")
+          window.location = "/analytics/community/"+this.community.id;
         this.$$("paper-listbox").select(null);
       },
 

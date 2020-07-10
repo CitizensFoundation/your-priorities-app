@@ -179,6 +179,15 @@
                    value="{{community.configuration.themeOverrideColorAccent}}">
       </paper-input>
 
+      <paper-input id="themeOverrideBackgroundColor"
+                   name="themeOverrideBackgroundColor"
+                   allowed-pattern="[#-#0-9A-Fa-f]"
+                   maxlength="7"
+                   char-counter
+                   label="[[t('themeOverrideBackgroundColor')]]"
+                   value="{{community.configuration.themeOverrideBackgroundColor}}">
+      </paper-input>
+
       <div class="themeOverrideInfo">
         <b><em>[[t('themeOverrideColorInfo')]]</em></b>
       </div>
@@ -186,6 +195,7 @@
       <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
       <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
       <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
+      <input type="hidden" name="ssnLoginListDataId" value="[[ssnLoginListDataId]]">
       <input type="hidden" name="is_community_folder" value="[[community.is_community_folder]]">
 
       <div class="layout horizontal config">
@@ -221,6 +231,17 @@
           </paper-listbox>
         </paper-dropdown-menu>
         <input type="hidden" name="signupTermsPageId" value="[[community.configuration.signupTermsPageId]]">
+      </div>
+
+      <div class="layout horizontal config" hidden$="[[!pages]]">
+        <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+          <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{community.configuration.welcomePageId}}">
+            <template is="dom-repeat" items="[[translatedPages]]" as="page">
+              <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <input type="hidden" name="welcomePageId" value="[[community.configuration.welcomePageId]]">
       </div>
 
       <paper-input id="google_analytics_code"
@@ -305,8 +326,61 @@
           <span>[[t('appHomeScreenIconImageUpload')]] (512x512)</span>
         </yp-file-upload>
       </div>
+
+      <paper-checkbox name="sortBySortOrder" checked$="{{community.configuration.sortBySortOrder}}">[[t('sortGroupsBySortOrder')]]</paper-checkbox>
+
+      <paper-checkbox name="hideRecommendationOnNewsFeed" checked$="{{community.configuration.hideRecommendationOnNewsFeed}}">[[t('hideRecommendationOnNewsFeed')]]</paper-checkbox>
+
+      <paper-checkbox name="forceSecureSamlLogin" disabled$="[[!hasSamlLoginProvider]]"
+                      checked$="{{community.configuration.forceSecureSamlLogin}}">[[t('forceSecureSamlLogin')]]
+      </paper-checkbox>
+
+      <paper-textarea id="customSamlLoginMessage"
+                      name="customSamlLoginMessage"
+                      value="{{community.configuration.customSamlLoginMessage}}"
+                      always-float-label="[[community.configuration.customSamlLoginMessage]]"
+                      label="[[t('customSamlLoginMessage')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      minlength="1"
+                      maxlength="175" class="mainInput">
+      </paper-textarea>
+
+      <paper-textarea id="customSamlDeniedMessage"
+                      name="customSamlDeniedMessage"
+                      value="{{community.configuration.customSamlDeniedMessage}}"
+                      always-float-label="[[community.configuration.customSamlDeniedMessage]]"
+                      label="[[t('customSamlDeniedMessage')]]"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      minlength="1"
+                      maxlength="150" class="mainInput">
+      </paper-textarea>
+
+      <div class="layout horizontal additionalSettings half" hidden$="[[!ssnLoginListDataId]]">
+        <div>
+          <b>[[t('ssnLoginListCount')]]: [[ssnLoginListDataCount]]</b>
+        </div>
+        <div>
+          <paper-button style="padding: 8px;" raised on-tap="_deleteSsnLoginList">[[t('deleteSsnLoginList')]]</paper-button>
+        </div>
+      </div>
+      <div class="layout vertical additionalSettings half" hidden$="[[ssnLoginListDataId]]">
+        <yp-file-upload id="ssnLoginListDataUpload" raised="true" disabled$="[[!hasSamlLoginProvider]]" hidden$="[[!community.id]]"
+                        accept=".txt"
+                        multi="false" target="/api/communities/[[community.id]]/upload_ssn_login_list"
+                        method="POST" on-success="_ssnLoginListDataUploaded">
+          <iron-icon class="icon" icon="link"></iron-icon>
+          <span>[[t('ssnLoginListDataUpload')]]</span>
+        </yp-file-upload>
+      </div>
+
       <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
       <yp-ajax id="communityFoldersAjax" on-response="_communityFoldersResponse"></yp-ajax>
+      <yp-ajax id="ssnLoginListCount" on-response="_ssnLoginListCount"></yp-ajax>
+      <yp-ajax id="ssnLoginListDelete" method="DELETE"></yp-ajax>
 
     </yp-edit-dialog>
   </template>
@@ -316,7 +390,6 @@
 <script>
 
   Polymer({
-
     is: 'yp-community-edit',
 
     behaviors: [
@@ -388,6 +461,13 @@
 
       appHomeScreenIconImageId: String,
 
+      ssnLoginListDataId: {
+        type: String,
+        value: null
+      },
+
+      ssnLoginListDataCount: String,
+
       hasVideoUpload: {
         type: Boolean,
         value: false
@@ -396,6 +476,11 @@
       uploadedVideoId: {
         type: Number,
         value: null
+      },
+
+      hasSamlLoginProvider: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -436,6 +521,28 @@
     _appHomeScreenIconImageUploaded: function (event, detail) {
       var image = JSON.parse(detail.xhr.response);
       this.set('appHomeScreenIconImageId', image.id);
+    },
+
+    _deleteSsnLoginList: function () {
+      this.$.ssnLoginListDelete.url="/api/communities/"+this.community.id+"/"+this.ssnLoginListDataId+"/delete_ssn_login_list";
+      this.$.ssnLoginListDelete.body = {};
+      this.$.ssnLoginListDelete.generateRequest();
+      this.set('ssnLoginListDataId', null);
+      this.set('ssnLoginListDataCount', null);
+    },
+
+    _ssnLoginListDataUploaded: function (event, detail) {
+      this.set('ssnLoginListDataId', JSON.parse(detail.xhr.response).ssnLoginListDataId);
+      this._getSsnListCount();
+    },
+
+    _getSsnListCount: function () {
+      this.$.ssnLoginListCount.url="/api/communities/"+this.community.id+"/"+this.ssnLoginListDataId+"/ssn_login_list_count";
+      this.$.ssnLoginListCount.generateRequest();
+    },
+
+    _ssnLoginListCount: function (event, detail) {
+      this.set('ssnLoginListDataCount', detail.response.count);
     },
 
     _updateEmojiBindings: function () {
@@ -489,7 +596,7 @@
     },
 
     _finishRedirect: function (community) {
-      if (this.community.is_community_folder) {
+      if (community.is_community_folder) {
         this.redirectTo("/community_folder/"+community.id);
       } else {
         this.redirectTo("/community/"+community.id);
@@ -522,6 +629,17 @@
       } else {
         this.set('hasVideoUpload', false);
       }
+
+      if (window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided) {
+        this.set('hasSamlLoginProvider', true);
+      } else {
+        this.set('hasSamlLoginProvider', false);
+      }
+
+      if (this.community && this.community.configuration && this.community.configuration.ssnLoginListDataId) {
+        this.set('ssnLoginListDataId', this.community.configuration.ssnLoginListDataId)
+        this._getSsnListCount();
+      }
     },
 
     _clear: function () {
@@ -529,6 +647,9 @@
       this.set('uploadedLogoImageId', null);
       this.set('uploadedHeaderImageId', null);
       this.set('appHomeScreenIconImageId', null);
+      this.set('ssnLoginListDataId', null);
+      this.set('ssnLoginListDataCount', null);
+
       this.set('communityFolderId', null);
       this.set('availableCommunityFolders', null);
       this.$.headerImageUpload.clear();

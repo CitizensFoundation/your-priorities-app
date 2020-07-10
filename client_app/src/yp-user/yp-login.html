@@ -359,7 +359,7 @@
                   <div class="layout horizontal">
                     <template is="dom-if" if="[[hasFacebookLogin]]">
                     <span hidden$="[[forceSecureSamlLogin]]">
-                      <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin"
+                      <div class="btn-auth btn-facebook cursor" on-tap="_facebookLogin" role="button" tabindex="0"
                            hidden$="[[disableFacebookLoginForGroup]]">
                         [[t('user.facebookLogin')]]
                       </div>
@@ -369,7 +369,7 @@
                       <template is="dom-if" if="[[samlLoginButtonUrl]]">
                         <div class="islandIs cursor layout horizontal center-center">
                           <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" src="[[samlLoginButtonUrl]]"/>
-                          <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin">
+                          <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin" role="button" tabindex="0">
                             <img width="130" src="[[samlLoginButtonUrl]]"/>
                           </div>
                         </div>
@@ -377,7 +377,7 @@
                       <template is="dom-if" if="[[!samlLoginButtonUrl]]">
                         <div class="islandIs cursor layout horizontal center-center">
                           <img hidden$="[[forceSecureSamlLogin]]" on-tap="_openSamlLogin" width="80" height="18" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
-                          <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin">
+                          <div hidden$="[[!forceSecureSamlLogin]]" class="largeSamlLogo" on-tap="_openSamlLogin" role="button" tabindex="0">
                             <img width="130" height="30" src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png"/>
                           </div>
                         </div>
@@ -397,7 +397,7 @@
                 <template is="dom-if" if="[[registerMode]]" restamp>
                   <paper-input id="fullname"
                                type="text"
-                               label="[[t('user.name')]]"
+                               label="[[userNameText]]"
                                value="{{name}}"
                                maxlength="50"
                                minlength="2"
@@ -425,7 +425,7 @@
                 </paper-input>
               </div>
             </div>
-            <div class="signupTerms" hidden$="[[!showSignupTerms]]">{{t('signupTermsInfo')}} - <span on-tap="_openTerms"
+            <div class="signupTerms" hidden$="[[!showSignupTerms]]">[[customTermsIntroText]] - <span on-tap="_openTerms"
                                                                                                      class="openTerms">{{t('signupTermsOpen')}}</span>
             </div>
             <div class="buttons layout vertical center-center">
@@ -584,6 +584,16 @@
         computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, disableFacebookLoginForGroup)'
       },
 
+      userNameText: {
+        type: String,
+        computed: '_userNameText(domain)'
+      },
+
+      customTermsIntroText: {
+        type: String,
+        computed: '_customTermsIntroText(domain)'
+      },
+
       disableFacebookLoginForGroup: {
         type: Boolean,
         value: false
@@ -625,12 +635,36 @@
       }
     },
 
+    _customTermsIntroText: function () {
+      if (window.appGlobals.currentGroup && window.appGlobals.currentGroup.configuration && window.appGlobals.currentGroup.configuration.customTermsIntroText) {
+        return window.appGlobals.currentGroup.configuration.customTermsIntroText;
+      } else {
+        return this.t('signupTermsInfo');
+      }
+    },
+
+    _userNameText: function () {
+      if (window.appGlobals.currentGroup && window.appGlobals.currentGroup.configuration && window.appGlobals.currentGroup.configuration.customUserNamePrompt) {
+        return window.appGlobals.currentGroup.configuration.customUserNamePrompt;
+      } else {
+        return this.t('user.name');
+      }
+    },
+
+    base64EncodeUnicode: function(str) {
+      var utf8Bytes = encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+      });
+
+      return btoa(utf8Bytes);
+    },
+
     _showSignupTerms: function (signupTermsId, registerMode) {
       return signupTermsId && registerMode == 1;
     },
 
-    _isiOsInApp: function () {
-      return /iPad|iPhone|Android|iPod/.test(navigator.userAgent) && !window.MSStream && /FBAN/.test(navigator.userAgent);
+    _isInApp: function () {
+      return /iPad|iPhone|Android|android|iPod/.test(navigator.userAgent) && !window.MSStream && (/FBAN/.test(navigator.userAgent) || /FBAV/.test(navigator.userAgent) || /Instagram/.test(navigator.userAgent));
     },
 
     _openTerms: function () {
@@ -644,6 +678,10 @@
 
       if (domainName.indexOf("forbrukerradet") > -1) {
         hostName = "mineideer";
+      } else if (domainName.indexOf("parliament.scot") > -1) {
+        hostName = "engage";
+      } else if (domainName.indexOf("smarter.nj.gov") > -1) {
+        hostName = "enjine";
       } else {
         hostName = "login";
       }
@@ -655,7 +693,8 @@
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
         name = '_blank';
-      if (this._isiOsInApp()) {
+      if (this._isInApp()) {
+        document.cookie = "ypRedirectCookie=" + encodeURI(window.location.href) + ";domain=."+domainName+";path=/";
         window.location = url;
       } else {
         window.appUser.facebookPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
@@ -681,13 +720,17 @@
           window.appUser.logout();
         });
       }
+
+      var domainName = window.location.hostname.split('.').slice(-2).join('.');
+
       var url = '/api/users/auth/saml',
         width = 1200,
         height = 650,
         top = (window.outerHeight - height) / 2,
         left = (window.outerWidth - width) / 2,
         name = '_blank';
-      if (this._isiOsInApp()) {
+      if (this._isInApp()) {
+        document.cookie = "ypRedirectCookie=" + encodeURI(window.location.href) + ";domain=."+domainName+";path=/";
         window.location = url;
       } else {
         window.appUser.samlPopupWindow = window.open(url, name, 'width=' + width + ',height=' + height + ',scrollbars=0,top=' + top + ',left=' + left);
@@ -768,6 +811,8 @@
           window.appGlobals.domain.configuration &&
           window.appGlobals.domain.configuration.customSamlLoginText) {
           this.set('customSamlLoginText', window.appGlobals.domain.configuration.customSamlLoginText);
+        } else if (window.appGlobals.currentSamlLoginMessage) {
+          this.set('customSamlLoginText', window.appGlobals.currentSamlLoginMessage);
         } else {
           this.set('customSamlLoginText', null);
         }
@@ -783,7 +828,7 @@
           this.signupTermsId = null;
         }
 
-        if (window.appGlobals.currentGroupForceSaml) {
+        if (window.appGlobals.currentForceSaml) {
           this.set('forceSecureSamlLogin', true);
           this.set('registerMode',1);
         } else {

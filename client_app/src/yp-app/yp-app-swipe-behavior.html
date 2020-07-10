@@ -3,6 +3,8 @@
 <script>
   /**
    * @polymerBehavior Polymer.ypAppSwipeBehavior
+   * TODO: Make sure event listeners are detached, create this._handlers* with the .bind()
+   *       so in the addEvt and removeEvt use the function without the bind (as it wont release it because of sig. probl.)
    */
   Polymer.ypAppSwipeBehavior = {
 
@@ -51,7 +53,7 @@
       if (this.page==='post' && this.touchXUp && this.goForwardToPostId) {
         var xDiff = this.touchXDown-this.touchXUp;
         var yDiff = this.touchYDown-this.touchYUp;
-        console.error("xDiff: "+xDiff+" yDiff: "+yDiff);
+        //console.error("xDiff: "+xDiff+" yDiff: "+yDiff);
 
         if ((Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(yDiff)<120)) {
           var factor = 3;
@@ -68,7 +70,6 @@
           var minScrollFactorPx = Math.round(window.innerWidth/factor);
 
           console.log("Recommendation swipe minScrollFactorPx: "+minScrollFactorPx);
-
 
           if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
             if ( xDiff > 0 && xDiff > minScrollFactorPx ) {

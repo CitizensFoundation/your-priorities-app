@@ -202,7 +202,11 @@
           } else if (errorText && errorText.indexOf('status code: 500') > -1) {
             return this.t('generalError');
           } else if (errorText && errorText.indexOf('status code: 401') > -1) {
-            return this.t('errorNotAuthorized');
+            var finalErrorText = this.t('errorNotAuthorized');
+            if (window.appGlobals.currentSamlDeniedMessage) {
+              finalErrorText+="\n\n"+window.appGlobals.currentSamlDeniedMessage;
+            }
+            return finalErrorText;
           } else if (errorText && errorText.indexOf('503') > -1) {
             return this.t('errorCantConnect');
           } else {
@@ -220,6 +224,8 @@
         } else {
           text = errorText;
         }
+
+
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {
           dialog.showErrorDialog(this._transformErrorText(text));
         }.bind(this));

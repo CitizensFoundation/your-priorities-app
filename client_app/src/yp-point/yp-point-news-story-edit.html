@@ -45,6 +45,11 @@
         padding-right: 16px;
       }
 
+      .userImage[rtl] {
+        padding-left: 16px;
+        padding-right: 4px;
+      }
+
       paper-icon-button {
         margin-top: 16px;
         padding-bottom: 0;
@@ -93,7 +98,7 @@
 
     <div class="layout vertical container">
       <div class="layout horizontal">
-        <yp-user-image class="userImage" user="[[loggedInUser]]"></yp-user-image>
+        <yp-user-image class="userImage" user="[[loggedInUser]]" rtl$="[[rtl]]"></yp-user-image>
         <div class="layout vertical">
           <paper-textarea id="pointNewsStory"
                           required
@@ -147,6 +152,11 @@
         loadingPostStory: {
           type: Boolean,
           notify: true
+        },
+
+        rtl: {
+          type: Boolean,
+          value: false
         },
 
         point: {

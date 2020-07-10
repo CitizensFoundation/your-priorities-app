@@ -46,7 +46,11 @@
       }
 
       .group-name[admin] {
-        padding-right: 16px;
+        padding-right: 32px;
+      }
+
+      video {
+        outline: none !important;
       }
 
       .objectives {
@@ -111,7 +115,7 @@
         padding-left: 16px;
         padding-top: 16px;
         padding-bottom: 16px;
-        padding-right: 24px !important;
+        padding-right: 32px !important;
         min-height: 28px;
       }
 
@@ -218,6 +222,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <lite-signal on-lite-signal-yp-pause-media-playback="_pauseMediaPlayback"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <div class="layout horizontal center-center wrap">
       <paper-material id="cardImage" elevation="3" is-video$="[[groupVideoURL]]" animated class="groupCard imageCard top-card">
@@ -225,7 +230,7 @@
           <video id="videoPlayer" data-id$="[[groupVideoId]]" controls preload="meta" class="logo" src="[[groupVideoURL]]" playsinline poster="[[groupVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!groupVideoURL]]" restamp>
-          <iron-image class="logo" sizing="cover" preload src="[[groupLogoImagePath]]"></iron-image>
+          <iron-image class="logo" sizing="cover" alt$="[[group.name]]" preload src="[[groupLogoImagePath]]"></iron-image>
         </template>
       </paper-material>
       <paper-material id="card" elevation="3" animated-shadow class="groupCard textBox">
@@ -233,7 +238,7 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="description">
-                <div class="group-name" admin$="[[hasGroupAccess]]">
+                <div class="group-name" admin$="[[hasGroupAccess]]" role="heading" aria-level="1" aria-label="[[group.name]]">
                   <yp-magic-text id="groupName" text-type="groupName" content-language="[[group.language]]"
                                  disable-translation="[[group.configuration.disableNameAutoTranslation]]"
                                  text-only content="[[groupName]]" content-id="[[group.id]]">
@@ -241,6 +246,7 @@
                 </div>
                 <div hidden class="groupAccess">[[groupAccessText]]</div>
                 <yp-magic-text id="objectives" class="groupDescription"
+                               simple-format="[[group.configuration.simpleFormatDescription]]"
                                text-type="groupContent" content-language="[[group.language]]"
                                content="[[group.objectives]]" content-id="[[group.id]]">
 
@@ -261,11 +267,13 @@
               <paper-item hidden$="[[!hasGroupAccess]]" id="moderationAllMenuItem">
                 [[t('manageAllContent')]]
               </paper-item>
-              <a hidden$="[[!hasGroupAccess]]" target="_blank" href$="[[exportUrl]]"><paper-item id="exportMenuItem">[[t('exportGroup')]]</paper-item></a>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="exportXlsMenuItem">[[t('exportGroupXls')]]</paper-item>
+              <paper-item hidden$="[[!hasGroupAccess]]" id="exportDocxMenuItem">[[t('exportGroupDocx')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteMenuItem">[[t('group.delete')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="anonymizeMenuItem">[[t('anonymizeGroupContent')]]</paper-item>
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
               <paper-item id="addPostMenuItem">[[t('post.new')]]</paper-item>
+              <paper-item id="openAnalyticsApp" hidden$="[[!hasGroupAccess]]">[[t('openAnalyticsApp')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -326,6 +334,16 @@
           computed: '_exportUrl(hasGroupAccess, group)'
         },
 
+        exportUrlDocx: {
+          type: String,
+          computed: '_exportUrlDocx(hasGroupAccess, group, language, autoTranslateActive)'
+        },
+
+        autoTranslateActive: {
+          type: Boolean,
+          value: false
+        },
+
         groupVideoURL: {
           type: String,
           value: null
@@ -344,9 +362,27 @@
         }
       },
 
+      _autoTranslateEvent: function (event, detail) {
+        this.set('autoTranslateActive', detail);
+      },
+
+
+
       _exportUrl: function (access, group) {
         if (access && group) {
           return '/api/groups/'+group.id+'/export_group';
+        } else {
+          return null;
+        }
+      },
+
+      _exportUrlDocx: function (access, group, language, autoTranslate) {
+        if (access && group && language) {
+          var langInfo = "";
+          if (autoTranslate) {
+            langInfo = "?translateLanguage="+language;
+          }
+          return '/api/groups/'+group.id+'/export_group_docx'+langInfo;
         } else {
           return null;
         }
@@ -369,7 +405,7 @@
       },
 
       _groupChanged: function (group, previousGroup) {
-        if (group && group.objectives && group.objectives.length>220) {
+        if (group && group.objectives && group.objectives.length>200) {
           this.$$("#objectives").style.fontSize = "15px";
         } else {
           this.$$("#objectives").style.fontSize = "16px";
@@ -377,7 +413,7 @@
 
         if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
           var videoURL = this._getVideoURL(group.GroupLogoVideos);
-          var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos);
+          var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos, group.GroupLogoImages);
           if (videoURL && videoPosterURL) {
             this.set('groupVideoURL', videoURL);
             this.set('groupVideoPosterURL', videoPosterURL);
@@ -436,10 +472,17 @@
           this._openContentModeration();
         else if (detail.item.id==="moderationAllMenuItem")
           this._openAllContentModeration();
+        else if (detail.item.id==="exportDocxMenuItem")
+          this._openCreateDocxReport();
+        else if (detail.item.id==="exportXlsMenuItem")
+          this._openCreateXlsReport();
         else if (detail.item.id==="anonymizeMenuItem")
           this._openAnonymizeContent();
+        else if (detail.item.id==="openAnalyticsApp")
+          window.location = "/analytics/group/"+this.group.id;
         this.$$("paper-listbox").select(null);
       },
+
       _openContentModeration: function () {
         window.appGlobals.activity('open', 'groupContentModeration');
         Polymer.dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
@@ -504,6 +547,20 @@
           console.error("Couldn't refresh grop");
         }.bind(this));
         ajax.generateRequest();
+      },
+
+      _openCreateDocxReport: function () {
+        window.appGlobals.activity('open', 'createReportDocx');
+        Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+          dialog.setupAndOpen("docx",this.group, null);
+        }.bind(this));
+      },
+
+      _openCreateXlsReport: function () {
+        window.appGlobals.activity('open', 'createReportXls');
+        Polymer.dom(document).querySelector('yp-app').getCreateReportAsync(function (dialog) {
+          dialog.setupAndOpen("xls",this.group, null);
+        }.bind(this));
       },
 
       _openDelete: function () {

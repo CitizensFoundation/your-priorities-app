@@ -75,8 +75,8 @@
         height: 72px;
         --paper-fab-iron-icon: {
           color: var(--icon-general-color, #FFF);
-          width: 72px;
-          height: 72px;
+          width: 50px;
+          height: 50px;
         }
       }
 
@@ -183,7 +183,7 @@
       </div>
 
       <div class="largeAddButton layout horizontal center-center" is-apple$="[[isOldiOs]]" is-ipad$="[[isIpad]]" hidden$="[[group.configuration.hideNewPost]]">
-        <yp-post-card-add disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2"></yp-post-card-add>
+        <yp-post-card-add group="[[group]]" disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2"></yp-post-card-add>
       </div>
 
       <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
@@ -277,7 +277,8 @@
 
     <template is="dom-if" if="[[!disableNewPosts]]" restamp>
       <div class="create-fab-wrapper layout horizontal end-justified createFabContainer" hidden$="[[disableNewPosts]]">
-          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5" wide-layout$="{{wideWidth}}" title="[[createFabTitle]]" on-tap="_newPost"></paper-fab>
+          <paper-fab class="createFab" icon="[[createFabIcon]]" elevation="5"
+                     wide-layout$="{{wideWidth}}" title$="[[t('post.new')]]" on-tap="_newPost"></paper-fab>
       </div>
     </template>
 
@@ -324,6 +325,7 @@
       behaviors: [
         Polymer.ypLanguageBehavior,
         Polymer.ypThemeBehavior,
+        Polymer.AccessHelpers,
         Polymer.YpNewsTabSelected,
         Polymer.ypDetectOldiOs,
         Polymer.ypGotoBehavior,
@@ -670,7 +672,7 @@
 
       _refreshAjax: function () {
         this.async(function () {
-          this.$.ajax.generateRequest();
+          this._getGroup();
           var groupActivities = this.$$("#groupActivities");
           if (groupActivities) {
             this.$$("#groupActivities").loadNewData();
@@ -678,7 +680,7 @@
         }, 100);
       },
 
-      _groupIdChanged: function (groupId) {
+      _groupIdChanged: function (groupId, oldGroupId) {
         if (groupId && groupId!=this.lastValidGroupId) {
           this.set('lastValidGroupId', groupId);
           this.set('group', null);
@@ -704,7 +706,7 @@
             this._getGroup();
           }
           this.async(function () {
-            if (!this.selectedTab) {
+            if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
               this.set('selectedTab', 'open');
             }
           });
@@ -728,7 +730,6 @@
       _groupResponse: function (event, detail) {
         this.set('group', detail.response.group);
         this.set('group.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
-
         this.refresh();
 
         if (this.group.configuration.canAddNewPosts!=undefined) {
@@ -752,6 +753,8 @@
           this.set('tabName', 'open');
           this.$$("#groupCard")._openEdit();
         }
+
+        window.appGlobals.postLoadGroupProcessing(this.group);
       },
 
       setupTopHeaderImage: function (image) {
@@ -763,6 +766,22 @@
             path = 'none';
           }
           this.updateStyles( {'--top-area-background-image': path });
+        }
+      },
+
+      _useHardBack: function (configuration) {
+        if (configuration && configuration.customBackURL) {
+          var backUrl = configuration.customBackURL;
+          if (backUrl.startsWith("/community/") ||
+            backUrl.startsWith("/group/") ||
+            backUrl.startsWith("/domain/") ||
+            backUrl.startsWith("/post/")) {
+            return false;
+          } else {
+            return true;
+          }
+        } else {
+          return false;
         }
       },
 
@@ -809,7 +828,11 @@
 
           this._refreshTabsAndPages();
 
-          if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
+          if (this.group.configuration.useCommunityTopBanner &&
+            this.group.Community.CommunityHeaderImages &&
+            this.group.Community.CommunityHeaderImages.length>0) {
+            this.setupTopHeaderImage(this.group.Community.CommunityHeaderImages);
+          } else if (this.group.GroupHeaderImages && this.group.GroupHeaderImages.length>0) {
             this.setupTopHeaderImage(this.group.GroupHeaderImages);
           } else {
             this.setupTopHeaderImage(null);
@@ -824,7 +847,7 @@
             documentTitle: this.group.name,
             enableSearch: true,
             hideHelpIcon: this.group.configuration.hideHelpIcon ? true : null,
-            useHardBack: this.group.configuration.customBackURL ? true : false,
+            useHardBack: this._useHardBack(this.group.configuration),
             backPath:  this.group.configuration.customBackURL ?
                          this.group.configuration.customBackURL :
                          "/community/" + this.group.community_id
@@ -842,9 +865,9 @@
           }
 
           if (this.group.configuration && this.group.configuration.externalGoalTriggerUrl) {
-            window.appGlobals.externalGoalTriggerUrl = this.group.configuration.externalGoalTriggerUrl;
+            window.appGlobals.externalGoalTriggerGroupId = this.group.id;
           } else {
-            window.appGlobals.externalGoalTriggerUrl = null;
+            window.appGlobals.externalGoalTriggerGroupId = null;
           }
 
           if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.signupTermsPageId &&
@@ -854,12 +877,33 @@
             window.appGlobals.signupTermsPageId = null;
           }
 
+          if (this.group.Community && this.group.Community.configuration && this.group.Community.configuration.customSamlDeniedMessage) {
+            window.appGlobals.currentSamlDeniedMessage = this.group.Community.configuration.customSamlDeniedMessage;
+          } else {
+            window.appGlobals.currentSamlDeniedMessage = null;
+          }
+
+          if (this.group.Community.configuration && this.group.Community.configuration.customSamlLoginMessage) {
+            window.appGlobals.currentSamlLoginMessage = this.group.Community.configuration.customSamlLoginMessage;
+          } else {
+            window.appGlobals.currentSamlLoginMessage = null;
+          }
+
           window.appGlobals.currentGroup = this.group;
 
-          if (this.group.configuration && this.group.configuration.forceSecureSamlLogin) {
-            window.appGlobals.currentGroupForceSaml = true;
+          if ((this.group.configuration &&
+               this.group.configuration.forceSecureSamlLogin &&
+               !this.checkGroupAccess(this.group)) ||
+             (this.group.Community &&
+              this.group.Community.configuration &&
+              this.group.Community.configuration.forceSecureSamlLogin &&
+              !this.checkCommunityAccess(this.group.Community))) {
+            window.appGlobals.currentForceSaml = true;
           } else {
-            window.appGlobals.currentGroupForceSaml = false;
+            window.appGlobals.currentForceSaml = false;
+          }
+          if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
+            this.set('selectedTab','map');
           }
         }
       },

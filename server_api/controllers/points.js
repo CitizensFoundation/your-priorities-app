@@ -10,7 +10,7 @@ var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 
 var changePointCounter = function (pointId, column, upDown, next) {
-  models.Point.find({
+  models.Point.findOne({
     where: { id: pointId }
   }).then(function(point) {
     if (point && upDown===1) {
@@ -38,7 +38,7 @@ var decrementOldPointQualityCountersIfNeeded = function (oldPointQualityValue, p
         next();
       })
     } else {
-      console.error("Strange state of pointQualities");
+      log.error("Strange state of pointQualities");
       next();
     }
   } else {
@@ -72,10 +72,12 @@ var validateEmbedUrl = function(urlIn) {
 };
 
 var loadPointWithAll = function (pointId, callback) {
-  models.Point.find({
+  models.Point.findOne({
     where: {
       id: pointId
     },
+    attributes: ['id','name','content','status','value','counter_quality_up','counter_quality_down',
+      'counter_flags','embed_data','data','public_data','language','group_id','post_id','user_id'],
     order: [
       [ models.PointRevision, 'created_at', 'asc' ],
       [ models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
@@ -167,13 +169,13 @@ var loadPointWithAll = function (pointId, callback) {
 };
 
 router.put('/:id/report', auth.can('vote on point'), function (req, res) {
-  models.Point.find({
+  models.Point.findOne({
     where: {
       id: req.params.id
     }
   }).then(function (point) {
     if (point) {
-      models.Post.find({
+      models.Post.findOne({
         where: {
           id: point.post_id
         },
@@ -230,7 +232,8 @@ router.get('/:parentPointId/comments', auth.can('view point'), function(req, res
     },
     order: [
       ["created_at", "asc"],
-      [ models.PointRevision, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ]
+      [ models.PointRevision, models.User, { model: models.Image, as: 'UserProfileImages' }, 'created_at', 'asc' ],
+      [ models.PointRevision, 'created_at', 'asc' ],
     ],
     include: [
       {
@@ -302,7 +305,7 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
   if (!req.body.content) {
     req.body.content="";
   }
-  var point = models.Point.find({
+  var point = models.Point.findOne({
     where: {
       id: req.params.pointId
     }
@@ -321,7 +324,9 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
         ip_address: req.clientIp
       });
       pointRevision.save().then(function() {
-        log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
+        log.info('PointRevision Created', { pointRevisionId: pointRevision ? pointRevision.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
+        queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
+
         models.AcActivity.createActivity({
           type:'activity.point.edited',
           userId: point.user_id,
@@ -337,6 +342,12 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
               log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
               res.sendStatus(500);
             } else {
+              if (loadedPoint.content && loadedPoint.content!=='') {
+                log.info("process-moderation point toxicity after create point");
+                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: loadedPoint.id }).priority('high').removeOnComplete(true).save();
+              } else {
+                log.info("No process-moderation toxicity for empty text on point");
+              }
               res.send(loadedPoint);
             }
           });
@@ -353,14 +364,14 @@ router.put('/:pointId', auth.can('edit point'), function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view point'), function(req, res) {
   if (req.query.textType.indexOf("point") > -1) {
-    models.Point.find({
+    models.Point.findOne({
       where: {
         id: req.params.id
       },
       order: [
         [ models.PointRevision, 'created_at', 'asc' ],
       ],
-      attributes: ['id'],
+      attributes: ['id','public_data'],
       include: [
         {
           model: models.PointRevision,
@@ -393,7 +404,7 @@ router.get('/:id/videoTranscriptStatus', auth.can('view point'), function(req, r
     if (error) {
       sendPointOrError(res, req.params.id, 'videoTranscriptStatus', req.user, error, 500);
     } else if (point.PointVideos && point.PointVideos.length>0) {
-      models.Video.find({
+      models.Video.findOne({
         where: {
           id: point.PointVideos[0].id
         }
@@ -447,7 +458,7 @@ router.get('/:id/audioTranscriptStatus', auth.can('view point'), function(req, r
     if (error) {
       sendPointOrError(res, req.params.id, 'audioTranscriptStatus', req.user, error, 500);
     } else if (point.PointAudios && point.PointAudios.length>0) {
-      models.Audio.find({
+      models.Audio.findOne({
         where: {
           id: point.PointAudios[0].id
         }
@@ -512,7 +523,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
     ip_address: req.clientIp
   });
   point.save().then(function() {
-    log.info('Point Created', { point: toJson(point), context: 'create', user: toJson(req.user) });
+    log.info('Point Created', { pointId: point ? point.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
     var pointRevision = models.PointRevision.build({
       group_id: point.group_id,
       post_id: point.post_id,
@@ -525,7 +536,8 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
       ip_address: req.clientIp
     });
     pointRevision.save().then(function() {
-      log.info('PointRevision Created', { pointRevision: toJson(pointRevision), context: 'create', user: toJson(req.user) });
+      log.info('PointRevision Created', { pointRevisionId: pointRevision ? pointRevision.id : -1, context: 'create', userId: req.user ? req.user.id : -1 });
+      queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
       models.AcActivity.createActivity({
         type:'activity.point.new',
         userId: point.user_id,
@@ -536,38 +548,38 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
         pointId: point.id,
         access: models.AcActivity.ACCESS_PUBLIC
       }, function (error) {
-        models.Point.find({
+        models.Point.findOne({
           where: { id: point.id },
-          include: [
-            { model: models.PointRevision ,
-              include: [
-                { model: models.User, attributes: ["id", "name", "facebook_id", "buddy_icon_file_name"] }
-              ]
-            }
-          ]
+          attributes: ['id','content','group_id','post_id']
         }).then(function(point) {
-          models.Post.find({
-            where: { id: point.post_id }
+          models.Post.findOne({
+            where: { id: point.post_id },
+            attributes: ['id','counter_points','group_id']
           }).then(function(post) {
-            post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
-              post.increment('counter_points');
-              if (point.content && point.content!=='') {
-                log.info("process-moderation point toxicity after create point");
-                queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
-              } else {
-                log.info("No process-moderation toxicity for empty text on point");
-              }
-              loadPointWithAll(point.id, function (error, loadedPoint) {
-                if (error) {
-                  log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
-                  res.sendStatus(500);
+            if (post) {
+              post.updateAllExternalCounters(req, 'up', 'counter_points', function () {
+                post.increment('counter_points');
+                if (point.content && point.content!=='') {
+                  log.info("process-moderation point toxicity after create point");
+                  queue.create('process-moderation', { type: 'estimate-point-toxicity', pointId: point.id }).priority('high').removeOnComplete(true).save();
                 } else {
-                  models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
-                    res.send(loadedPoint);
-                  });
+                  log.info("No process-moderation toxicity for empty text on point");
                 }
+                loadPointWithAll(point.id, function (error, loadedPoint) {
+                  if (error) {
+                    log.error('Could not reload point point', { err: error, context: 'createPoint', user: toJson(req.user.simple()) });
+                    res.sendStatus(500);
+                  } else {
+                    models.Group.addUserToGroupIfNeeded(point.group_id, req, function () {
+                      res.send(loadedPoint);
+                    });
+                  }
+                });
               });
-            });
+            } else {
+              log.error("Can't find post for posting point", { pointId: point ? point.id : null});
+              res.sendStatus(404);
+            }
           });
         });
       });
@@ -578,7 +590,7 @@ router.post('/:groupId', auth.can('create point'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('delete point'), function(req, res) {
-  models.Point.find({
+  models.Point.findOne({
     where: { id: req.params.id },
     include: [{
       model: models.Post,
@@ -588,6 +600,7 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
     point.deleted = true;
     point.save().then(function () {
       log.info('Point Deleted', { point: toJson(point), context: 'delete', user: toJson(req.user) });
+      queue.create('process-similarities', { type: 'update-collection', pointId: point.id }).priority('low').removeOnComplete(true).save();
       queue.create('process-deletion', { type: 'delete-point-content', pointId: point.id, userId: req.user.id }).priority('high').removeOnComplete(true).save();
       if (point.Post) {
         point.Post.updateAllExternalCounters(req, 'down', 'counter_points', function () {
@@ -605,7 +618,7 @@ router.delete('/:id', auth.can('delete point'), function(req, res) {
 
 router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
   var point, post;
-  models.PointQuality.find({
+  models.PointQuality.findOne({
     where: { point_id: req.params.id, user_id: req.user.id },
     include: [
       {
@@ -641,13 +654,13 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
       })
     }
     pointQuality.save().then(function() {
-      log.info('PointQuality Created or Updated', { pointQuality: toJson(pointQuality), context: 'createOrUpdate', user: toJson(req.user) });
+      log.info('PointQuality Created or Updated', { pointQualityId: pointQuality ? pointQuality.id : -1, context: 'createOrUpdate', userId: req.user ? req.user.id : -1 });
       async.series([
         function (seriesCallback) {
           if (point) {
             seriesCallback();
           } else {
-            models.Point.find({
+            models.Point.findOne({
               where: { id: pointQuality.point_id },
               attributes: ['id','post_id','group_id']
             }).then(function (results) {
@@ -710,7 +723,7 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
 });
 
 router.delete('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
-  models.PointQuality.find({
+  models.PointQuality.findOne({
     where: { point_id: req.params.id, user_id: req.user.id }
   }).then(function(pointQuality) {
     if (pointQuality) {
@@ -745,19 +758,13 @@ router.delete('/:id/pointQuality', auth.can('vote on point'), function(req, res)
 
 router.get('/url_preview', auth.isLoggedIn, function(req, res) {
   if (req.query.url && validateEmbedUrl(req.query.url)) {
-    new embedly({key: process.env.EMBEDLY_KEY},function(err, api) {
+    const api =  new embedly({key: process.env.EMBEDLY_KEY});
+    api.oembed({url: req.query.url, maxwidth: 470, width: 470, secure: true}, function (err, objs) {
       if (!!err) {
         log.error('Embedly not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
         res.sendStatus(500);
       } else {
-        api.oembed({url: req.query.url, maxwidth: 470, width: 470, secure: true}, function (err, objs) {
-          if (!!err) {
-            log.error('Embedly not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
-            res.sendStatus(500);
-          } else {
-            res.send(objs);
-          }
-        });
+        res.send(objs);
       }
     });
   } else {

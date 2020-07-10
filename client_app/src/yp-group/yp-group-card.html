@@ -198,7 +198,7 @@
 
     <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
       <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
-      <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
+      <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
       <div id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
         <yp-magic-text text-type="groupName" content-language="[[group.language]]"
                        disable-translation="[[group.configuration.disableNameAutoTranslation]]"
@@ -208,10 +208,11 @@
       </div>
       <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
                      text-type="groupContent" content-language="[[group.language]]"
+                     remove-urls
                      text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">
       </yp-magic-text>
-      <yp-group-stats class="stats" group="[[group]]"></yp-group-stats>
-      <yp-membership-button archived$="[[archived]]" group="[[group]]"></yp-membership-button>
+      <yp-group-stats hidden$="[[group.configuration.actAsLinkToCommunityId]]" class="stats" group="[[group]]"></yp-group-stats>
+      <yp-membership-button hidden$="[[group.configuration.actAsLinkToCommunityId]]" archived$="[[archived]]" group="[[group]]"></yp-membership-button>
     </paper-card>
   </template>
 

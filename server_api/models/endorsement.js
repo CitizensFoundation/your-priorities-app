@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var Endorsement = sequelize.define("Endorsement", {
+  const Endorsement = sequelize.define("Endorsement", {
     value: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
     ip_address: { type: DataTypes.STRING, allowNull: false },
@@ -14,6 +14,8 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'endorsements',
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     defaultScope: {
       where: {
@@ -34,12 +36,14 @@ module.exports = function(sequelize, DataTypes) {
     ],
 
     classMethods: {
-      associate: function(models) {
-        Endorsement.belongsTo(models.Post);
-        Endorsement.belongsTo(models.User);
-      }
+
     }
   });
+
+  Endorsement.associate = (models) => {
+    Endorsement.belongsTo(models.Post, { foreignKey: 'post_id'});
+    Endorsement.belongsTo(models.User, { foreignKey: 'user_id'});
+  };
 
   return Endorsement;
 };

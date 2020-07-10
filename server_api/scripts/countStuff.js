@@ -14,7 +14,7 @@ var size = function(obj) {
   return size;
 };
 
-models.Domain.find({where: {id: 1}}).then(function(domain) {
+models.Domain.findOne({where: {id: 1}}).then(function(domain) {
   domain.getDomainUsers().then(function (users) {
     console.log(users.length);
     users.map(function(user) {

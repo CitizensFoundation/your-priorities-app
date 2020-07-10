@@ -1,7 +1,7 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
-  var PointQuality = sequelize.define("PointQuality", {
+module.exports = (sequelize, DataTypes) => {
+  const PointQuality = sequelize.define("PointQuality", {
     value: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
     ip_address: { type: DataTypes.STRING, allowNull: false },
@@ -14,6 +14,8 @@ module.exports = function(sequelize, DataTypes) {
     tableName: 'point_qualities',
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     defaultScope: {
       where: {
@@ -24,16 +26,21 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         fields: ['user_id', 'deleted']
+      },
+      {
+        fields: ['id', 'deleted']
+      },
+      {
+        name: 'point_qualities_idx_deleted',
+        fields: ['deleted']
       }
-    ],
-
-    classMethods: {
-      associate: function(models) {
-        PointQuality.belongsTo(models.Point);
-        PointQuality.belongsTo(models.User);
-      }
-    }
+    ]
   });
+
+  PointQuality.associate = (models) => {
+    PointQuality.belongsTo(models.Point, { foreignKey: 'point_id'});
+    PointQuality.belongsTo(models.User, { foreignKey: 'user_id'});
+  };
 
   return PointQuality;
 };

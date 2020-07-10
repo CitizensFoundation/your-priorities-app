@@ -73,7 +73,7 @@
         </div>
       </div>
       <div class="languageSelector layout vertical self-start">
-        <yp-language-selector class="languageSelector"></yp-language-selector>
+        <yp-language-selector class="languageSelector" selected-locale="{{selectedLocale}}"></yp-language-selector>
       </div>
       <div class="layout vertical" hidden$="[[!user]]">
         <div hidden>
@@ -164,7 +164,16 @@
 
         myDomains: {
           type: Array
+        },
+
+        selectedLocale: {
+          type: String,
+          computed: '_selectedLocale(user, language)'
         }
+      },
+
+      _selectedLocale: function (user) {
+        return this.language;
       },
 
       _goBack: function (event) {

@@ -54,7 +54,7 @@ var recountOnePost = function(postId, done) {
     if (error) {
       done(error)
     } else {
-      models.Post.find({
+      models.Post.findOne({
         where: {
           id: postId
         },

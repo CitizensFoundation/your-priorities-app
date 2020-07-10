@@ -167,7 +167,7 @@
       }
 
       :focus {
-        outline: none;
+
       }
 
       .notLoggedInButton {
@@ -177,8 +177,12 @@
         margin-bottom: 8px;
         text-align: center;
       }
+
+      .topLevelActivitiesContainer[rtl] {
+        direction: rtl;
+      }
     </style>
-    <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]">
+    <div class="layout horizontal topLevelActivitiesContainer" wide$="[[wide]]" rtl$="[[rtl]]">
       <div class="layout vertical self-start">
         <template is="dom-if" if="[[loggedInUser]]">
           <paper-material logged-in-user$="[[hasLoggedInUser]]" elevation="1" class="layout horizontal addNewsBox">
@@ -282,6 +286,11 @@
 
         postGroupId: {
           type: Number
+        },
+
+        rtl: {
+          type: Boolean,
+          value: false
         },
 
         // 'activities' and 'news_feed'
@@ -556,7 +565,20 @@
       },
 
       _recommendedPostsResponse: function (event, detail) {
-        if (detail.response && detail.response.length>0) {
+        var allowRecommendations = true;
+        if (this.activities && this.activities.length>0) {
+          if( this.activities[0].Group &&
+            this.activities[0].Group.configuration &&
+            this.activities[0].Group.configuration.hideRecommendationOnNewsFeed) {
+            allowRecommendations = false;
+          }
+          if( this.activities[0].Community &&
+            this.activities[0].Community.configuration &&
+            this.activities[0].Community.configuration.hideRecommendationOnNewsFeed) {
+            allowRecommendations = false;
+          }
+        }
+        if (allowRecommendations && detail.response && detail.response.length>0) {
           this.set('recommendedPosts', detail.response);
           this.set('noRecommendedPosts', false);
         } else {

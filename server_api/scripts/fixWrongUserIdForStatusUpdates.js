@@ -14,7 +14,7 @@ if (!domainId || !oldUserId || !newUserId || !beforeDate) {
   process.exit();
 } else {
   let beforeDateObject = moment(beforeDate);
-  models.User.find({
+  models.User.findOne({
     where: {
       id: newUserId
     }

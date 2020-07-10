@@ -32,6 +32,7 @@
         margin-bottom: 8px;
         text-align: center;
         max-width: 310px;
+        outline-color: var(--accent-color);
       }
 
       iron-icon {
@@ -122,8 +123,6 @@
 
       }
 
-
-
       [hidden] {
         display: none !important;
       }
@@ -135,14 +134,31 @@
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
     <div class="layout vertical center-center container">
-      <paper-card disabled$="[[disabled]]" elevation="[[elevation]]" class="postCard" on-tap="_newPost" >
+      <paper-card disabled$="[[disabled]]" elevation="[[elevation]]"
+                  aria-disabled="[[disabled]]" role="button" aria-label="[[t('post.add_new')]]"
+                  tabindex="0" on-keydown="_keyDown"
+                  class="postCard" on-tap="_newPost">
         <div class="layout horizontal center-center addNewIdeaText">
           <iron-icon disabled$="[[disabled]]" icon="lightbulb-outline"></iron-icon>
           <div class="flex addText" hidden$="[[disabled]]">
-            [[t('post.add_new')]]
+            <template is="dom-if" if="[[!group.configuration.alternativeTextForNewIdeaButton]]">
+              [[t('post.add_new')]]
+            </template>
+            <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButton]]">
+              <yp-magic-text content-id="[[group.id]]" extra-id="[[index]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButton]]"
+                             content-language="[[group.language]]"
+                             class="ratingName" text-type="alternativeTextForNewIdeaButton"></yp-magic-text>
+            </template>
           </div>
           <div class="flex addText closed" hidden$="[[!disabled]]">
-            [[t('closedForNewPosts')]]
+            <template is="dom-if" if="[[!group.configuration.alternativeTextForNewIdeaButtonClosed]]">
+              [[t('closedForNewPosts')]]
+            </template>
+            <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButtonClosed]]">
+              <yp-magic-text content-id="[[group.id]]" extra-id="[[index]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButtonClosed]]"
+                             content-language="[[group.language]]"
+                             class="ratingName" text-type="alternativeTextForNewIdeaButtonClosed"></yp-magic-text>
+            </template>
           </div>
         </div>
       </paper-card>
@@ -160,6 +176,14 @@
 
         disabled: {
           type: Boolean
+        },
+
+        group: Object
+      },
+
+      _keyDown: function (event) {
+        if (event.keyCode===13) {
+          this._newPost();
         }
       },
 

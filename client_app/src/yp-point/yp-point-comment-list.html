@@ -92,8 +92,8 @@
           <div class="commentText">[[t('noComments')]]</div>
         </div>
         <div class="layout horizontal">
-          <paper-icon-button title$="[[t('openComments')]]" class="openCloseButton" icon="hardware:keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
-          <paper-icon-button title$="[[t('closeComments')]]" class="openCloseButton" icon="hardware:keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
+          <paper-icon-button title$="[[t('openComments')]]" class="openCloseButton" icon="keyboard-arrow-right" on-tap="_setOpen" hidden$="[[open]]"></paper-icon-button>
+          <paper-icon-button title$="[[t('closeComments')]]" class="openCloseButton" icon="keyboard-arrow-down" on-tap="_setClosed" hidden$="[[!open]]"></paper-icon-button>
         </div>
       </div>
       <template is="dom-if" if="[[open]]" restamp>

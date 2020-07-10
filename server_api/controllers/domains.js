@@ -12,6 +12,13 @@ const getAllModeratedItemsByDomain = require('../active-citizen/engine/moderatio
 const getLoginsExportDataForDomain = require('../utils/export_utils').getLoginsExportDataForDomain;
 var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getDomainIncludes = require('../active-citizen/engine/analytics/statsCalc').getDomainIncludes;
+const getPointDomainIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointDomainIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
 
 var sendDomainOrError = function (res, domain, context, user, error, errorStatus) {
   if (error || !domain) {
@@ -37,31 +44,11 @@ var truthValueFromBody = function(bodyParameter) {
 };
 
 var getAvailableCommunityFolders = function (req, domainId, done) {
-  var openCommunities, combinedCommunities;
+  let adminCommunities = [];
 
   async.series([
     function (seriesCallback) {
-      models.Community.findAll({
-        where: {
-          access: {
-            $ne: models.Community.ACCESS_SECRET
-          },
-          domain_id: domainId,
-          is_community_folder: true
-        },
-        attributes: ['id','name'],
-      }).then(function (communities) {
-        openCommunities = communities;
-        seriesCallback(null);
-        return null;
-      }).catch(function (error) {
-        seriesCallback(error)
-      });
-    },
-    function (seriesCallback) {
       if (req.user) {
-        var adminCommunities, userCommunities;
-
         async.parallel([
           function (parallelCallback) {
             models.Community.findAll({
@@ -87,47 +74,20 @@ var getAvailableCommunityFolders = function (req, domainId, done) {
             }).catch(function (error) {
               parallelCallback(error)
             });
-          },
-          function (parallelCallback) {
-            models.Community.findAll({
-              where: {
-                is_community_folder: true,
-                domain_id: domainId
-              },
-              attributes: ['id','name'],
-              include: [
-                {
-                  model: models.User,
-                  as: 'CommunityUsers',
-                  attributes: ['id'],
-                  required: true,
-                  where: {
-                    id: req.user.id
-                  }
-                }
-              ]
-            }).then(function (communities) {
-              userCommunities = communities;
-              parallelCallback();
-            }).catch(function (error) {
-              parallelCallback(error)
-            });
           }
         ], function (error) {
-          combinedCommunities = _.concat(userCommunities, openCommunities);
-          combinedCommunities = _.concat(adminCommunities, combinedCommunities);
-          combinedCommunities = _.uniqBy(combinedCommunities, function (community) {
-            return community.id;
-          });
           seriesCallback(error);
         });
       } else {
-        combinedCommunities = openCommunities;
         seriesCallback();
       }
     }
   ], function (error) {
-    done(error, combinedCommunities);
+    if (!error) {
+      done(error, adminCommunities);
+    } else {
+      done(error);
+    }
   });
 };
 
@@ -144,7 +104,7 @@ var getDomain = function (req, domainId, done) {
       });
     },
     function (seriesCallback) {
-      models.Domain.find({
+      models.Domain.findOne({
         where: {id: domainId},
         attributes: attributes,
         order: [
@@ -193,7 +153,7 @@ var getDomain = function (req, domainId, done) {
               $or: [
                 {
                   counter_users: {
-                    $gt: 5
+                    $gt: process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW ? parseInt(process.env.MINIMUM_USERS_FOR_COMMUNITY_TO_SHOW) : 5
                   },
                 },
                 {
@@ -201,7 +161,7 @@ var getDomain = function (req, domainId, done) {
                 },
                 {
                   is_community_folder: {
-                    $ne: null
+                    $ne: false
                   }
                 }
               ],
@@ -232,12 +192,11 @@ var getDomain = function (req, domainId, done) {
                 model: models.Image,
                 as: 'CommunityHeaderImages',
                 attributes:  models.Image.defaultAttributesPublic,
-                order: 'created_at asc',
                 required: false
               }
             ]
           }).then(function (communities) {
-            log.info('Domain Viewed', {domain: toJson(domain.simple()), context: 'view', user: toJson(req.user)});
+            log.info('Domain Viewed', {domainId: domain ? domain.id : -1, context: 'view', userId: req.user ? req.user.id : -1 });
             if (req.ypDomain && req.ypDomain.secret_api_keys &&
               req.ypDomain.secret_api_keys.saml && req.ypDomain.secret_api_keys.saml.entryPoint &&
               req.ypDomain.secret_api_keys.saml.entryPoint.length > 6) {
@@ -284,7 +243,7 @@ var getDomain = function (req, domainId, done) {
                   required: false
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {
@@ -333,7 +292,7 @@ var getDomain = function (req, domainId, done) {
                   required: false,
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {
@@ -378,7 +337,7 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
 
   async.series([
     function (seriesCallback) {
-      models.Domain.find({
+      models.Domain.findOne({
         where: {
           id: domainId
         }
@@ -393,7 +352,7 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -412,7 +371,7 @@ var getDomainAndUser = function (domainId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userEmail) {
-        models.User.find({
+        models.User.findOne({
           where: {
             email: userEmail
           },
@@ -452,7 +411,7 @@ router.get('/:domainId/availableCommunityFolders', auth.can('view domain'), func
 });
 
 router.delete('/:domainId/:activityId/delete_activity', auth.can('edit domain'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: {
       domain_id: req.params.domainId,
       id: req.params.activityId
@@ -478,7 +437,7 @@ router.get('/:domainId/pages', auth.can('view domain'), function(req, res) {
       log.error('Could not get pages for domain', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
+      log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -490,7 +449,7 @@ router.get('/:domainId/pages_for_admin', auth.can('edit domain'), function(req, 
       log.error('Could not get page for admin for domain', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -509,7 +468,7 @@ router.post('/:domainId/add_page', auth.can('edit domain'), function(req, res) {
 });
 
 router.get('/:domainId/users', auth.can('edit domain'), function (req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: {
       id: req.params.domainId
     },
@@ -543,7 +502,7 @@ router.get('/:domainId/users', auth.can('edit domain'), function (req, res) {
 });
 
 router.get('/:domainId/admin_users', auth.can('edit domain'), function (req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: {
       id: req.params.domainId
     },
@@ -648,7 +607,7 @@ router.get('/', function(req, res) {
         log.info('Domain Lookup Found Community', { community: req.ypCommunity.hostname, context: 'index', user: toJson(req.user) });
         res.send({community: req.ypCommunity, domain: domain});
       } else {
-        log.info('Domain Lookup Found Domain', { domain: toJson(domain.simple()), context: 'index', user: toJson(req.user) });
+        log.info('Domain Lookup Found Domain', { domainId: domain ? domain.id : -1, context: 'index', userId: req.user ? req.user.id : -1 });
         res.send({domain: domain})
       }
     }
@@ -657,7 +616,7 @@ router.get('/', function(req, res) {
 
 router.get('/:id/translatedText', auth.can('view domain'), function(req, res) {
   if (req.query.textType.indexOf("domain") > -1) {
-    models.Domain.find({
+    models.Domain.findOne({
       where: {
         id: req.params.id
       },
@@ -688,17 +647,18 @@ router.get('/:id', auth.can('view domain'), function(req, res) {
     if (error) {
       sendDomainOrError(res, null, 'view', req.user, error);
     } else {
-      log.info('Domain Viewed', { domain: toJson(domain.simple()), context: 'index', user: req.user ? req.user.email : null });
+      log.info('Domain Viewed', { domainId: domain ? domain.id : -1, context: 'index', userEmail: req.user ? req.user.email : null });
       res.send(domain);
     }
   });
 });
 
 router.put('/:id', auth.can('edit domain'), function(req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: { id: req.params.id }
   }).then(function(domain) {
     if (domain) {
+      queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
       domain.ensureApiKeySetup();
       domain.set('secret_api_keys.facebook.client_id', req.body.facebookClientId);
       domain.set('secret_api_keys.facebook.client_secret', req.body.facebookClientSecret);
@@ -773,13 +733,14 @@ router.put('/:id', auth.can('edit domain'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit domain'), function(req, res) {
-  models.Domain.find({
+  models.Domain.findOne({
     where: {id: req.params.id}
   }).then(function (domain) {
     if (domain) {
       domain.deleted = true;
       domain.save().then(function () {
         log.info('Domain Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
         res.sendStatus(200);
       });
     } else {
@@ -791,7 +752,7 @@ router.delete('/:id', auth.can('edit domain'), function(req, res) {
 });
 
 router.get(':id/news', auth.can('view domain'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: { domain_id: req.params.id },
     order: [
       [ { model: models.Domain } ,'created_at', 'asc' ]
@@ -965,7 +926,7 @@ router.get('/:domainId/export_logins', auth.can('edit domain'), function(req, re
       log.error('Could not export logins for domain', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      models.Domain.find({
+      models.Domain.findOne({
         where: {
           id: req.params.domainId
         },
@@ -990,6 +951,46 @@ router.get('/:domainId/export_logins', auth.can('edit domain'), function(req, re
         res.sendStatus(500);
       });
     }
+  });
+});
+
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit domain'), function(req, res) {
+  getFromAnalyticsApi(req,"wordclouds", "domain", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit domain'), function(req, res) {
+  getFromAnalyticsApi(req,"similarities_weights", "domain", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit domain'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_posts"+req.params.id+"_domain", models.Post, {}, getDomainIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit domain'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_points"+req.params.id+"_domain", models.Point, {}, getPointDomainIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit domain'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_domain", models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getDomainIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
   });
 });
 

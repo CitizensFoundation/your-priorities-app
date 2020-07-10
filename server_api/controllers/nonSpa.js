@@ -5,6 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var url = require('url');
+var _ = require('lodash');
 
 // TODO: Make sure to load the latest image
 // TODO: Make sure to still support the escaped_fragment routes after moving to the direct urls for backwards sharing capacity
@@ -25,8 +26,8 @@ var fullUrl = function (req) {
   return formattedUrl;
 };
 
-var sendDomain = function (id, req, res) {
-  models.Domain.find({
+var sendDomain = function sendDomainForBot(id, req, res) {
+  models.Domain.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description'],
     order: [
@@ -37,11 +38,19 @@ var sendDomain = function (id, req, res) {
         attributes: ['id','formats'],
         model: models.Image, as: 'DomainLogoImages',
         required: false
+      },
+      {
+        attributes: ['id','name'],
+        model: models.Community,
+        where: {
+          access: models.Community.ACCESS_PUBLIC
+        },
+        required: false
       }
     ]
   }).then(function(domain) {
     if (domain) {
-      log.info('Domain Viewed From Bot', { domain: toJson(domain.simple()), context: 'view', bot: true });
+      log.info('Domain Viewed From Bot', { domainId: domain ? domain.id : -1, context: 'view', bot: true });
       var imageUrl = '';
       if (domain.DomainLogoImages && domain.DomainLogoImages.length>0) {
         var formats = JSON.parse(domain.DomainLogoImages[0].formats);
@@ -51,7 +60,13 @@ var sendDomain = function (id, req, res) {
         url       : fullUrl(req),
         title     :  domain.name,
         descriptionText : domain.description,
-        imageUrl  : imageUrl
+        imageUrl  : imageUrl,
+        subItemsUrlbase: "/community/",
+        subItemContainerName: "Communities",
+        backUrl: "",
+        backText: "",
+        subItemPoints: [],
+        subItemIds: _.dropRight(domain.Communities, domain.Communities.length>10000 ? domain.Communities.length - 10000 : 0)
       };
       res.render('bot', botOptions);
     } else {
@@ -64,10 +79,10 @@ var sendDomain = function (id, req, res) {
   });
 };
 
-var sendCommunity = function (id, req, res) {
-  models.Community.find({
+var sendCommunity = function sendCommunityForBot(id, req, res) {
+  models.Community.findOne({
     where: { id: id, access: models.Community.ACCESS_PUBLIC },
-    attributes: ['id', 'name', 'description'],
+    attributes: ['id', 'name', 'description','domain_id'],
     order: [
       [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'desc' ]
     ],
@@ -76,11 +91,22 @@ var sendCommunity = function (id, req, res) {
         attributes: ['id','formats'],
         model: models.Image, as: 'CommunityLogoImages',
         required: false
+      },
+      {
+        attributes: ['id','name'],
+        model: models.Group,
+        where: {
+          $or: [
+            { access: models.Group.ACCESS_PUBLIC },
+            { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+          ],
+        },
+        required: false
       }
     ]
   }).then(function(community) {
     if (community) {
-      log.info('Community Viewed From Bot', { community: toJson(community.simple()), context: 'view', bot: true });
+      log.info('Community Viewed From Bot', { communityId: community.id, context: 'view', bot: true });
       var imageUrl = '';
       if (community.CommunityLogoImages && community.CommunityLogoImages.length>0) {
         var formats = JSON.parse(community.CommunityLogoImages[0].formats);
@@ -91,7 +117,13 @@ var sendCommunity = function (id, req, res) {
         title     :  community.name,
         descriptionText : community.description,
         imageUrl  : imageUrl,
-        contentType: 'article'
+        contentType: 'article',
+        subItemsUrlbase: "/group/",
+        subItemContainerName: "Groups",
+        backUrl: "/domain/"+community.domain_id,
+        backText: "Back to domain",
+        subItemPoints: [],
+        subItemIds: _.dropRight(community.Groups, community.Groups.length>10000 ? community.Groups.length - 10000 : 0)
       };
       res.render('bot', botOptions);
     } else {
@@ -104,10 +136,16 @@ var sendCommunity = function (id, req, res) {
   });
 };
 
-var sendGroup = function (id, req, res) {
-  models.Group.find({
-    where: { id: id, access: models.Group.ACCESS_PUBLIC },
-    attributes: ['id', 'name', 'objectives'],
+var sendGroup = function sendGroupForBot(id, postsOffset, req, res) {
+  models.Group.findOne({
+    where: {
+      id: id,
+      $or: [
+        { access: models.Group.ACCESS_PUBLIC },
+        { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+      ],
+    },
+    attributes: ['id', 'name', 'objectives','community_id'],
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'desc' ],
       [ { model: models.Community }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'desc' ]
@@ -123,6 +161,7 @@ var sendGroup = function (id, req, res) {
         where: {
           access: models.Community.ACCESS_PUBLIC
         },
+        attributes: ['id'],
         required: true,
         include: [
           {
@@ -136,23 +175,54 @@ var sendGroup = function (id, req, res) {
   }).then(function(group) {
     var formats;
     if (group) {
-      log.info('Group Viewed From Bot', { group: toJson(group.simple()), context: 'view', bot: true });
-      var imageUrl = '';
-      if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
-        formats = JSON.parse(group.GroupLogoImages[0].formats);
-        imageUrl = formats[0];
-      } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
+      if (!postsOffset)
+        postsOffset = 0;
+      models.Post.findAndCountAll({
+        where: {
+          group_id: group.id
+        },
+        attributes: ['id','name'],
+        limit: 20,
+        offset: postsOffset
+      }).then((postsInfo)=>{
+        group.Posts = postsInfo.rows;
+        log.info('Group Viewed From Bot', { groupId: group.id, context: 'view', bot: true });
+        var imageUrl = '';
+        if (group.GroupLogoImages && group.GroupLogoImages.length>0) {
+          formats = JSON.parse(group.GroupLogoImages[0].formats);
+          imageUrl = formats[0];
+        } else if (group.Community.CommunityLogoImages && group.Community.CommunityLogoImages.length>0) {
           formats = JSON.parse(group.Community.CommunityLogoImages[0].formats);
           imageUrl = formats[0];
-      }
-      var botOptions = {
-        url       : fullUrl(req),
-        title     :  group.name,
-        descriptionText : group.objectives,
-        imageUrl  : imageUrl,
-        contentType: 'article'
-      };
-      res.render('bot', botOptions);
+        }
+
+        const postsLeft = postsInfo.count-(postsOffset+postsInfo.rows.length);
+        if (postsLeft>0) {
+          postsOffset+=20;
+        } else {
+          postsOffset = null;
+        }
+
+        var botOptions = {
+          url       : fullUrl(req),
+          title     :  group.name,
+          descriptionText : group.objectives,
+          imageUrl  : imageUrl,
+          contentType: 'article',
+          subItemsUrlbase: "/post/",
+          subItemContainerName: "Posts",
+          backUrl: "/community/"+group.community_id,
+          backText: "Back to community",
+          moreUrl: postsOffset ? "/group/"+group.id+"?postsOffset="+postsOffset : null,
+          moreText: "More posts ("+postsLeft+")",
+          subItemPoints: [],
+          subItemIds: group.Posts
+        };
+        res.render('bot', botOptions);
+      }).catch((error)=>{
+        log.error('Group Not Found for Bot', { err: error, context: 'view', bot: true });
+        res.sendStatus(500);
+      });
     } else {
       log.warn('Group Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
       res.sendStatus(404);
@@ -163,10 +233,10 @@ var sendGroup = function (id, req, res) {
   });
 };
 
-var sendPost = function (id, req, res) {
-  models.Post.find({
+var sendPost = function sendPostforBot(id, pointsOffset, req, res) {
+  models.Post.findOne({
     where: { id: id },
-    attributes: ['id', 'name', 'description'],
+    attributes: ['id', 'name', 'description','group_id'],
     order: [
       [ { model: models.Image, as: 'PostHeaderImages' } , 'created_at', 'desc' ],
       [ { model: models.Group }, { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'desc' ],
@@ -181,8 +251,12 @@ var sendPost = function (id, req, res) {
       {
         model: models.Group,
         where: {
-          access: models.Group.ACCESS_PUBLIC
+          $or: [
+            { access: models.Group.ACCESS_PUBLIC },
+            { access: models.Group.ACCESS_OPEN_TO_COMMUNITY },
+          ]
         },
+        attributes: ['id'],
         required: true,
         include: [
           {
@@ -192,6 +266,7 @@ var sendPost = function (id, req, res) {
           },
           {
             model: models.Community,
+            attributes: ['id'],
             where: {
               access: models.Community.ACCESS_PUBLIC
             },
@@ -210,26 +285,55 @@ var sendPost = function (id, req, res) {
   }).then(function(post) {
     var formats;
     if (post) {
-      log.info('Post Viewed From Bot', { post: toJson(post.simple()), context: 'view', bot: true });
-      var imageUrl = '';
-      if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
-        formats = JSON.parse(post.PostHeaderImages[0].formats);
-        imageUrl = formats[0];
-      } else if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
-        formats = JSON.parse(post.Group.GroupLogoImages[0].formats);
-        imageUrl = formats[0];
-      } else if (post.Group.Community.CommunityLogoImages && post.Group.Community.CommunityLogoImages.length>0) {
-        formats = JSON.parse(post.Group.Community.CommunityLogoImages[0].formats);
-        imageUrl = formats[0];
-      }
-      var botOptions = {
-        url       : fullUrl(req),
-        title     :  post.name,
-        descriptionText : post.description,
-        imageUrl  : imageUrl,
-        contentType: 'article'
-      };
-      res.render('bot', botOptions);
+      models.Point.findAndCountAll({
+        where: {
+          post_id: post.id
+        },
+        attributes: ['id','content'],
+        limit: 20,
+        offset: pointsOffset
+      }).then((pointsInfo)=>{
+        post.Points = pointsInfo.rows;
+        log.info('Post Viewed From Bot', { postId: post ? post.id : -1, context: 'view', bot: true });
+        var imageUrl = '';
+        if (post.PostHeaderImages && post.PostHeaderImages.length>0) {
+          formats = JSON.parse(post.PostHeaderImages[0].formats);
+          imageUrl = formats[0];
+        } else if (post.Group.GroupLogoImages && post.Group.GroupLogoImages.length>0) {
+          formats = JSON.parse(post.Group.GroupLogoImages[0].formats);
+          imageUrl = formats[0];
+        } else if (post.Group.Community.CommunityLogoImages && post.Group.Community.CommunityLogoImages.length>0) {
+          formats = JSON.parse(post.Group.Community.CommunityLogoImages[0].formats);
+          imageUrl = formats[0];
+        }
+
+        const pointsLeft = pointsInfo.count-(pointsOffset+pointsInfo.rows.length);
+        if (pointsLeft>0) {
+          pointsOffset+=20;
+        } else {
+          pointsOffset = null;
+        }
+
+        var botOptions = {
+          url       : fullUrl(req),
+          title     :  post.name,
+          descriptionText : post.description,
+          imageUrl  : imageUrl,
+          contentType: 'article',
+          subItemsUrlbase: "",
+          subItemIds: [],
+          backUrl: "/group/"+post.group_id,
+          backText: "Back to group",
+          moreUrl: pointsOffset ? "/post/"+post.id+"?pointsOffset="+pointsOffset : null,
+          moreText: "More points ("+pointsLeft+")",
+          subItemContainerName: "Points",
+          subItemPoints: post.Points
+        };
+        res.render('bot', botOptions);
+      }).catch(function(error) {
+        log.error('Points Not Found for Bot', { err: error, context: 'view', bot: true });
+        res.sendStatus(500);
+      });
     } else {
       log.warn('Post Not Found for Bot', { err: 'Not found', context: 'view', bot: true });
       res.sendStatus(404);
@@ -240,8 +344,8 @@ var sendPost = function (id, req, res) {
   });
 };
 
-var sendUser = function (id, req, res) {
-  models.User.find({
+var sendUser = function sendUserForBot(id, req, res) {
+  models.User.findOne({
     where: { id: id },
     attributes: ['id', 'name', 'description'],
     order: [
@@ -255,6 +359,7 @@ var sendUser = function (id, req, res) {
       }
     ]
   }).then(function(user) {
+    user = null;
     if (user) {
       log.info('User Viewed From Bot', { userId: id, context: 'view', bot: true });
       var imageUrl = '';
@@ -280,38 +385,56 @@ var sendUser = function (id, req, res) {
   });
 };
 
-router.get('/*', function(req, res, next) {
-  var url = req.url;
-  var splitPath = 1;
+router.get('/*', function botController(req, res, next) {
+  let url = req.url;
+  let splitPath = 1;
 
   if (url.startsWith('/?_escaped_fragment_=')) {
     url = req.url.replace(/%2F/g, "/");
     splitPath = 2;
   }
 
-  var splitUrl = url.split('/');
+  let splitUrl = url.split('/');
 
-  var id = splitUrl[splitPath+1];
+  let id = splitUrl[splitPath+1];
   if (id) {
     id = id.split("?")[0];
   }
 
-  if (splitUrl[splitPath]=='domain') {
-    sendDomain(id, req, res)
-  } else if (splitUrl[splitPath]=='community') {
-    sendCommunity(id, req, res)
-  } else if (splitUrl[splitPath]=='group') {
-    sendGroup(id, req, res)
-  } else if (splitUrl[splitPath]=='post') {
-    sendPost(id, req, res)
-  } else if (splitUrl[splitPath]=='user') {
-    sendUser(id, req, res)
+  let postsOffset = 0;
+  if (url.indexOf("postsOffset=")>-1) {
+    postsOffset = parseInt(url.split("postsOffset=")[1].trim());
+  }
+
+  let pointsOffset = 0;
+  if (url.indexOf("pointsOffset=")>-1) {
+    pointsOffset = parseInt(url.split("pointsOffset=")[1].trim());
+  }
+
+  if(!isNaN(id)) {
+    if (splitUrl[splitPath]=='domain') {
+      sendDomain(id, req, res)
+    } else if (splitUrl[splitPath]=='community') {
+      sendCommunity(id, req, res)
+    } else if (splitUrl[splitPath]=='group') {
+      sendGroup(id, postsOffset, req, res)
+    } else if (splitUrl[splitPath]=='post') {
+      sendPost(id, pointsOffset, req, res)
+    } else if (req.ypCommunity && req.ypCommunity.id != null) {
+      sendCommunity(req.ypCommunity.id, req, res);
+    } else if (req.ypDomain && req.ypDomain.id != null) {
+      sendDomain(req.ypDomain.id, req, res);
+    } else {
+      log.error("Cant find controller for nonSpa", { id, splitUrl });
+      res.sendStatus(404);
+    }
   } else if (req.ypCommunity && req.ypCommunity.id != null) {
-    sendCommunity(req.ypCommunity.id, req, res);
+    sendCommunity(req.ypCommunity.id, req, res)
   } else if (req.ypDomain && req.ypDomain.id != null) {
-    sendDomain(req.ypDomain.id, req, res);
+    sendDomain(req.ypDomain.id, req, res)
   } else {
-    next();
+    log.error("Id for nonSpa is not a number", { id: id });
+    res.sendStatus(404);
   }
 });
 

@@ -21,7 +21,7 @@ var setupIconsFromDefault = function(callback) {
 var setupIconsFromImage = function (imageId, callback) {
   var icons = [];
 
-  models.Image.find({
+  models.Image.findOne({
     where: {
       id: imageId
     }

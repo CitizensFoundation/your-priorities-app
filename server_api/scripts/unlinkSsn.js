@@ -5,7 +5,7 @@ var ip = require('ip');
 var ssn = process.argv[2];
 console.log("Unlinking "+ssn+" from user");
 
-models.User.find({
+models.User.findOne({
   where: {
     ssn: ssn
   }

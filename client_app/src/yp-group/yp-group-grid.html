@@ -33,22 +33,27 @@
       }
 
       :focus {
-        outline: none;
+
       }
 
       @media (max-width: 1199px) {
         .groupCard {
         }
       }
+
+      a {
+        text-decoration: none;
+        width: 100%;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
     <iron-media-query query="(min-width: 1024px)" query-matches="{{wide}}"></iron-media-query>
 
     <div class="layout horizontal center-center">
-      <iron-list id="ironList" scroll-offset="[[scrollOffset]]" items="[[activeGroups]]" as="group" scroll-target="document" grid$="[[wide]]">
+      <iron-list id="ironList" selection-enabled scroll-offset="[[scrollOffset]]" on-selected-item-changed="_selectedItemChanged" items="[[activeGroups]]" as="group" scroll-target="document" role="list" grid$="[[wide]]">
         <template>
-          <div class="groupCard layout vertical center-center" tabindex$="[[tabIndex]]" wide-padding$="[[wide]]">
-            <yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card>
+          <div class="groupCard layout vertical center-center" wide-padding$="[[wide]]" tabindex$="[[tabIndex]]" role="listitem" aria-level="2" aria-label="[[group.name]]">
+            <a href="[[_getGroupUrl(group)]]" id="groupCardHref[[group.id]]" class="layout vertical center-center"><yp-group-card wide-padding$="[[wide]]" group="[[group]]" on-mouseover="cardMouseOver" on-mouseout="cardMouseOut"></yp-group-card></a>
           </div>
         </template>
       </iron-list>
@@ -81,6 +86,23 @@
         scrollOffset: {
           type: Number,
           computed: '_scrollOffset(wide, featuredGroups, activeGroups)'
+        }
+      },
+
+      _selectedItemChanged: function (event, detail) {
+        if (detail && detail.value) {
+          var selectedCard = this.$$("#groupCardHref"+detail.value.id);
+          if (selectedCard) {
+            selectedCard.click();
+          }
+        }
+      },
+
+      _getGroupUrl: function (group) {
+        if (group && group.configuration && group.configuration.actAsLinkToCommunityId) {
+          return "/community/"+group.configuration.actAsLinkToCommunityId;
+        } else {
+         return "/group/"+group.id;
         }
       },
 

@@ -23,6 +23,12 @@ let replaceForYrpri = function (data) {
   return data.replace(/XmanifestPathX/g, "manifest_yp");
 };
 
+let replaceForParlScot = function (data) {
+  data = data.replace(/XappNameX/g, "Engage - Scottish Parliament");
+  data = data.replace(/XdescriptionX/g, "Engage with the Scottish Parliament");
+  return data.replace(/XmanifestPathX/g, "manifest_parlscott");
+};
+
 let replaceForSmarterNJ = function (data) {
   data = data.replace(/XappNameX/g, "SmarterNJ");
   data = data.replace(/XdescriptionX/g, "SmarterNJ is an open government initiative that uses new and innovative technology to meaningfully engage New Jerseyans. Your participation in SmarterNJ will allow us to create policies, programs and services that are more effective, more efficient, and more impactful for all New Jerseyans.");
@@ -37,7 +43,7 @@ let replaceFromEnv = function (data) {
 
 let sendIndex = function (req, res) {
   let indexFilePath;
-  log.info('Index Viewed', { context: 'view', user: req.user ? toJson(req.user) : null });
+  log.info('Index Viewed', { context: 'view', userId: req.user ? req.user.id : null });
 
   if (FORCE_PRODUCTION || process.env.NODE_ENV == 'production') {
     indexFilePath = path.resolve(__dirname, '../../client_app/build/bundled/index.html');
@@ -52,15 +58,30 @@ let sendIndex = function (req, res) {
       console.error("Cant read index file");
       throw err;
     } else {
-      if (req.hostname.indexOf('betrireykjavik.is') > -1) {
-        res.send(replaceForBetterReykjavik(indexFileData));
-      } else if (req.hostname.indexOf('betraisland.is') > -1) {
-        res.send(replaceForBetterIceland(indexFileData));
-      } else if (req.hostname.indexOf('smarter.nj.gov') > -1) {
-        res.send(replaceForSmarterNJ(indexFileData));
-      } else if (req.hostname.indexOf('yrpri.org') > -1) {
-        res.send(replaceForYrpri(indexFileData));
+      var userAgent = req.headers['user-agent'];
+      var ie11 = /Trident/.test(userAgent);
+      if (!ie11) {
+        indexFileData = indexFileData.replace('<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE11">','');
+      }
+
+      if (req.hostname) {
+        if (req.hostname.indexOf('betrireykjavik.is') > -1) {
+          res.send(replaceForBetterReykjavik(indexFileData));
+        } else if (req.hostname.indexOf('betraisland.is') > -1) {
+          res.send(replaceForBetterIceland(indexFileData));
+        } else if (req.hostname.indexOf('smarter.nj.gov') > -1) {
+          res.send(replaceForSmarterNJ(indexFileData));
+        } else if (req.hostname.indexOf('parliament.scot') > -1) {
+          res.send(replaceForParlScot(indexFileData));
+        } else if (req.hostname.indexOf('ypus.org') > -1) {
+          res.send(replaceForYrpri(indexFileData));
+        } else if (req.hostname.indexOf('yrpri.org') > -1) {
+          res.send(replaceForYrpri(indexFileData));
+        } else {
+          res.send(replaceFromEnv(indexFileData));
+        }
       } else {
+        log.warn("No req.hostname");
         res.send(replaceFromEnv(indexFileData));
       }
     }

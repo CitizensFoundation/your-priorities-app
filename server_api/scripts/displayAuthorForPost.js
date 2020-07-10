@@ -5,7 +5,7 @@ var _ = require('lodash');
 
 var postId = process.argv[2];
 
-models.Post.find({
+models.Post.findOne({
   where: {
     id: postId
   },

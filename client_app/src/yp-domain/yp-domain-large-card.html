@@ -95,6 +95,10 @@
         margin: 0;
       }
 
+      video {
+        outline: none !important;
+      }
+
       .domainDescription {
         padding-left: 16px;
         padding-right: 16px;
@@ -108,7 +112,9 @@
         padding-left: 16px;
         vertical-align: middle;
         margin: 0;
-        padding-right: 24px;
+        padding-right: 32px;
+        padding-bottom: 6px;
+        padding-top: 14px;
       }
 
       @media (max-width: 960px) {
@@ -146,7 +152,7 @@
 
         .domain-name {
           font-size: 22px;
-          padding-bottom: 12px;
+          padding-bottom: 9px;
           min-height: 28px;
         }
 
@@ -219,7 +225,7 @@
           <video id="videoPlayer" data-id$="[[domainVideoId]]" controls preload="meta" class="image" src="[[domainVideoURL]]" playsinline poster="[[domainVideoPosterURL]]"></video>
         </template>
         <template is="dom-if" if="[[!domainVideoURL]]">
-          <iron-image class="image" hidden$="[[hideImage]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
+          <iron-image class="image" hidden$="[[hideImage]]" alt$="[[domain.name]]" sizing="cover" src$="[[_domainLogoImagePath(domain)]]"></iron-image>
         </template>
       </paper-material>
       <paper-material id="card" elevation="4" animated class="large-card textBox">
@@ -227,7 +233,7 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="descriptionContainer">
-                <div class="domain-name">
+                <div class="domain-name" role="heading" aria-level="1" aria-label="[[domain.name]]">
                   <yp-magic-text text-type="domainName" content-language="[[domain.language]]"
                                  disable-translation="[[domain.configuration.disableNameAutoTranslation]]"
                                  text-only content="[[domain.name]]" content-id="[[domain.id]]">
@@ -261,6 +267,7 @@
 
               <paper-item id="addCommunityMenuItem">[[t('community.add')]]</paper-item>
               <paper-item id="addCommunityFolderMenuItem" hidden$="[[!hasDomainAccess]]">[[t('newCommunityFolder')]]</paper-item>
+              <paper-item id="openAnalyticsApp" hidden$="[[!hasDomainAccess]]">[[t('openAnalyticsApp')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -377,7 +384,7 @@
         if (domain && domain.configuration &&
           domain.configuration.useVideoCover &&
           domain.DomainLogoVideos) {
-          var videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos);
+          var videoPosterURL = this._getVideoPosterURL(domain.DomainLogoVideos, domain.DomainLogoImages);
           if (videoPosterURL) {
             return videoPosterURL;
           } else {
@@ -425,6 +432,8 @@
           this.fire('yp-new-community');
         else if (detail.item.id==="addCommunityFolderMenuItem")
           this.fire('yp-new-community-folder');
+        else if (detail.item.id==="openAnalyticsApp")
+          window.location = "/analytics/domain/"+this.domain.id;
         this.$$("paper-listbox").select(null);
       },
 

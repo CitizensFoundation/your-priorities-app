@@ -34,11 +34,21 @@
           margin: 0;
         }
       }
+
+      paper-dialog[rtl] {
+        direction: rtl;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <paper-dialog id="dialog">
-      <h2>[[pageTitle]]</h2>
+    <paper-dialog id="dialog" rtl$="[[rtl]]">
+      <div hidden$="[[!pageTitle]]">
+        <h2>[[pageTitle]]</h2>
+      </div>
       <paper-dialog-scrollable>
         <div id="content"></div>
       </paper-dialog-scrollable>
@@ -65,6 +75,11 @@
         pageTitle: {
           type: String,
           computed: '_pageTitle(page, language)'
+        },
+
+        rtl: {
+          type: Boolean,
+          value: false
         }
       },
 

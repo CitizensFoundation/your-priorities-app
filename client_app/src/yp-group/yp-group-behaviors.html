@@ -100,6 +100,12 @@
               }
             }
 
+            if (group.language && group.language==="ru" && group.objectives && group.objectives.length>140) {
+              this.$$("#objectives").style.fontSize = "15px";
+            } else {
+              this.$$("#objectives").style.fontSize = "16px";
+            }
+
             if (this.archived) {
               var fontSizePixels = groupName.style.fontSize.replace("px", "");
               fontSizePixels = parseInt(fontSizePixels);
@@ -116,19 +122,27 @@
     },
 
     _goToGroup: function (e) {
-      var groupUrl = '/group/' + this.group.id + '/open';
-      window.appGlobals.activity('open', 'group', groupUrl, { id: this.group.id });
-      if (window.appGlobals.backToCommunityGroupItems===null)
-        window.appGlobals.backToCommunityGroupItems = {};
-      window.appGlobals.backToCommunityGroupItems[this.group.community_id] = this.group;
+      if (this.group && this.group.configuration && this.group.configuration.actAsLinkToCommunityId) {
+        this.fire('yp-add-back-community-override', {
+          backPath: '/community/'+this.group.Community.id,
+          backName: this.group.Community.name,
+          fromCommunityId: this.group.configuration.actAsLinkToCommunityId
+        })
+      } else {
+        var groupUrl = '/group/' + this.group.id + '/open';
+        window.appGlobals.activity('open', 'group', groupUrl, { id: this.group.id });
+        if (window.appGlobals.backToCommunityGroupItems===null)
+          window.appGlobals.backToCommunityGroupItems = {};
+        window.appGlobals.backToCommunityGroupItems[this.group.community_id] = this.group;
 
-      if (!window.appGlobals.groupItemsCache)
-        window.appGlobals.groupItemsCache = {};
-      window.appGlobals.groupItemsCache[this.group.id] = this.group;
+        if (!window.appGlobals.groupItemsCache)
+          window.appGlobals.groupItemsCache = {};
+        window.appGlobals.groupItemsCache[this.group.id] = this.group;
 
-      console.log("Cached saved for group id: "+this.group.id);
-      console.log("Saving group item for community "+this.group.community_id);
-      this.redirectTo(groupUrl);
+        console.log("Cached saved for group id: "+this.group.id);
+        console.log("Saving group item for community "+this.group.community_id);
+        this.redirectTo(groupUrl);
+      }
     },
 
     _groupLogoImagePath: function (group) {

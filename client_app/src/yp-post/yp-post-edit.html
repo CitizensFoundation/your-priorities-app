@@ -7,7 +7,6 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -18,6 +17,7 @@
 <link rel="import" href="../../bower_components/neon-animation/neon-animatable.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animation.html">
 
+<link rel="import" href="../yp-app-globals/paper-textarea-aria.html">
 <link rel="import" href="../yp-file-upload/yp-file-upload.html">
 <link rel="import" href="../yp-behaviors/yp-language-behavior.html">
 <link rel="import" href="../yp-behaviors/emoji-selector.html">
@@ -25,6 +25,7 @@
 <link rel="import" href="../yp-edit-dialog/yp-edit-dialog-behavior.html">
 <link rel="import" href="yp-post-location.html">
 <link rel="import" href="../yp-behaviors/yp-goto-behavior.html">
+<link rel="import" href="../yp-survey-group/yp-structured-question-edit.html">
 
 <dom-module id="yp-post-edit">
   <template>
@@ -126,6 +127,11 @@
 
       .postEmoji {
         margin-left: 16px;
+        direction: ltr !important;
+      }
+
+      .pointEmoji {
+        direction: ltr !important;
       }
 
       .uploadSection {
@@ -139,10 +145,48 @@
         .uploadSection {
           max-width: 100%;
         }
+
+        .videoCam {
+          --iron-icon-height: 15px;
+          --iron-icon-width: 15px;
+          --iron-icon-fill-color: #555;
+        }
+
+        yp-structured-question-edit {
+          max-width: calc(100vw - 64px);
+        }
       }
 
       .postCoverVideoInfo {
         margin-top: 8px;
+      }
+
+      .videoUploadDisclamer {
+        margin-top: 6px;
+        font-size: 12px;
+        padding: 0;
+        max-width: 200px;
+      }
+
+      .categoryDropDown {
+        margin-bottom: 8px;
+      }
+
+      .topNewPostContainer[no-title] {
+        margin-top: -42px;
+      }
+
+      paper-tabs[title-disabled] {
+        margin-bottom: 24px;
+      }
+
+      .videoCamIcon {
+        margin-left: 6px;
+        margin-bottom: 2px
+      }
+
+      .mediaTab {
+        vertical-align: center;
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
@@ -151,7 +195,8 @@
                     use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
                     title="[[editHeaderText]]" save-text="[[saveText]]" class="container" custom-submit
                     next-action-text="[[t('next')]]" toast-text="[[toastText]]" params="[[params]]">
-      <paper-tabs selected="{{selected}}" id="paperTabs" focused>
+
+      <paper-tabs title-disabled$="[[group.configuration.hideNameInputAndReplaceWith]]" selected="{{selected}}" id="paperTabs" focused hidden$="[[hasOnlyOneTab]]">
         <paper-tab><span>[[t('post.yourPost')]]</span></paper-tab>
         <template is="dom-if" restamp if="[[newPointShown]]">
           <paper-tab>
@@ -168,27 +213,42 @@
         <template is="dom-if" if="[[!locationHidden]]" restamp>
           <paper-tab>[[t('post.location')]]</paper-tab>
         </template>
-        <paper-tab>[[t('media')]]</paper-tab>
+        <template is="dom-if" if="[[!mediaHidden]]" restamp>
+          <paper-tab>
+              <div>
+                [[t('media')]]
+              </div>
+              <div class="videoCamIcon">
+                <iron-icon class="videoCam" icon="videocam" style="color: #555"></iron-icon>
+              </div>
+          </paper-tab>
+        </template>
       </paper-tabs>
 
-      <div class="layout vertical wrap">
+      <div class="layout vertical wrap topNewPostContainer" no-title$="[[group.configuration.hideNameInputAndReplaceWith]]">
         <iron-pages id="pages" class="layout horizontal" selected="[[selected]]">
           <section>
             <div class="layout vertical flex">
 
-              <paper-input id="name"
-                           required
-                           minlength="3"
-                           name="name"
-                           type="text"
-                           label="[[t('title')]]"
-                           value="{{post.name}}"
-                           maxlength="60"
-                           char-counter>
-              </paper-input>
+              <template is="dom-if" if="[[group.configuration.hideNameInputAndReplaceWith]]">
+                <input type="hidden" name="name" value="[[replacedName]]">
+              </template>
+
+              <template is="dom-if" if="[[!group.configuration.hideNameInputAndReplaceWith]]">
+                <paper-input id="name"
+                             required
+                             minlength="3"
+                             name="name"
+                             type="text"
+                             label="[[t('title')]]"
+                             value="{{post.name}}"
+                             maxlength="60"
+                             char-counter>
+                </paper-input>
+              </template>
 
               <template is="dom-if" if="[[_showCategories(group)]]" restamp>
-                <paper-dropdown-menu label="[[t('category.select')]]">
+                <paper-dropdown-menu class="categoryDropDown" label="[[t('category.select')]]" required$="[[group.configuration.makeCategoryRequiredOnNewPost]]">
                   <paper-listbox slot="dropdown-content" selected="{{selectedCategoryArrayId}}">
                     <template is="dom-repeat" items="[[group.Categories]]" as="category">
                       <paper-item data-category-id$="[[category.id]]">[[category.name]]</paper-item>
@@ -199,43 +259,44 @@
               </template>
 
               <template is="dom-if" if="[[postDescriptionLimit]]">
-                <paper-textarea id="description"
-                                hidden$="[[structuredQuestions]]"
-                                required$="[[!structuredQuestions]]"
+                <paper-textarea-aria id="description"
+                                hidden$="[[hasStructuredQuestions]]"
+                                required$="[[!hasStructuredQuestions]]"
                                 minlength="3"
                                 name="description"
                                 value="{{post.description}}"
                                 always-float-label="[[_floatIfValueOrIE(post.description)]]"
                                 label="[[t('post.description')]]"
+                                aria-label$="[[t('post.description')]]"
                                 on-value-changed="_resizeScrollerIfNeeded"
                                 char-counter
                                 rows="2"
                                 max-rows="5"
                                 maxrows="5"
                                 maxlength="[[postDescriptionLimit]]">
-                </paper-textarea>
+                </paper-textarea-aria>
 
                 <div class="horizontal end-justified layout postEmoji" hidden$="[[group.configuration.hideEmoji]]">
-                  <emoji-selector id="emojiSelectorDescription" hidden$="[[structuredQuestions]]"></emoji-selector>
+                  <emoji-selector id="emojiSelectorDescription" hidden$="[[hasStructuredQuestions]]"></emoji-selector>
                 </div>
               </template>
 
-              <template is="dom-if" if="[[structuredQuestions]]">
-                <template is="dom-repeat" items="[[structuredQuestions]]">
-                  <paper-textarea id="structuredQuestion_[[index]]"
-                                  value="{{item.value}}"
-                                  always-float-label="[[_floatIfValueOrIE(item.value)]]"
-                                  label="[[item.translatedQuestion]]"
-                                  char-counter
-                                  minlength="2"
-                                  on-value-changed="_resizeScrollerIfNeeded"
-                                  rows="2"
-                                  max-rows="3"
-                                  maxrows="3"
-                                  required
-                                  maxlength="[[item.maxLength]]">
-                  </paper-textarea>
-                </template>
+              <template is="dom-if" if="[[hasStructuredQuestions]]">
+                <div id="surveyContainer">
+                  <template is="dom-repeat" items="[[structuredQuestions]]" as="question">
+                    <yp-structured-question-edit index="[[index]]"
+                                                 use-small-font
+                                                 id="structuredQuestionContainer_[[index]]"
+                                                 dont-focus-first-question="[[!group.configuration.hideNameInputAndReplaceWith]]"
+                                                 on-resize-scroller="_resizeScrollerIfNeeded"
+                                                 structured-answers="[[initialStructuredAnswersJson]]"
+                                                 is-last-rating="[[_isLastRating(index)]]"
+                                                 is-first-rating="[[_isFirstRating(index)]]"
+                                                 hide-question-index="[[group.configuration.hideQuestionIndexOnNewPost]]"
+                                                 question="[[question]]"></yp-structured-question-edit>
+
+                  </template>
+                </div>
               </template>
 
               <template is="dom-if" if="[[group.configuration.attachmentsEnabled]]">
@@ -277,25 +338,35 @@
                              maxlength="20"
                              char-counter>
                 </paper-input>
+                <paper-input id="contactAddress"
+                             name="contactAddress"
+                             type="text"
+                             hidden$="[[!group.configuration.moreContactInformationAddress]]"
+                             label="[[t('contactAddress')]]"
+                             value="{{post.data.contact.address}}"
+                             maxlength="300"
+                             char-counter>
+                </paper-input>
               </template>
             </div>
           </section>
 
           <template is="dom-if" restamp if="[[newPointShown]]">
             <section class="subContainer">
-              <paper-textarea id="pointFor"
+              <paper-textarea-aria id="pointFor"
                               required$="[[!group.configuration.newPointOptional]]"
                               minlength="3"
                               name="pointFor"
                               value="{{post.pointFor}}"
                               always-float-label="[[_floatIfValueOrIE(post.pointFor)]]"
                               label="[[t('point.for')]]"
+                              aria-label$="[[t('point.for')]]"
                               char-counter
                               rows="2"
                               max-rows="5"
-                              maxlength="500">
-              </paper-textarea>
-              <div class="horizontal end-justified layout" hidden$="[[group.configuration.hideEmoji]]">
+                              maxlength="[[_pointMaxLength(group)]]">
+              </paper-textarea-aria>
+              <div class="horizontal end-justified layout pointEmoji" hidden$="[[group.configuration.hideEmoji]]">
                 <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
               </div>
             </section>
@@ -331,6 +402,11 @@
                       <iron-icon class="icon" icon="videocam"></iron-icon>
                       <span>[[t('uploadVideo')]]</span>
                     </yp-file-upload>
+                    <div hidden$="[[!group.configuration.showVideoUploadDisclaimer]]">
+                      <div class="videoUploadDisclamer" hidden$="[[!uploadedVideoId]]">
+                        [[t('videoUploadDisclaimer')]]
+                      </div>
+                    </div>
                   </div>
                 </template>
                 <template is="dom-if" if="[[group.configuration.allowPostAudioUploads]]">
@@ -365,8 +441,23 @@
         <input type="hidden" name="uploadedDocumentUrl" value="[[uploadedDocumentUrl]]">
         <input type="hidden" name="uploadedDocumentFilename" value="[[uploadedDocumentFilename]]">
         <input type="hidden" name="structuredAnswers" value="[[structuredAnswers]]">
+        <input type="hidden" name="structuredAnswersJson" value="[[structuredAnswersJson]]">
       </div>
     </yp-edit-dialog>
+
+    <template is="dom-if" if="[[group.configuration.alternativeTextForNewIdeaButtonHeader]]">
+      <yp-magic-text id="alternativeTextForNewIdeaButtonHeaderId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.alternativeTextForNewIdeaButtonHeader]]"
+                     content-language="[[group.language]]" on-new-translation="_alternativeTextForNewIdeaButtonHeaderTranslation"
+                     text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+    </template>
+
+    <template is="dom-if" if="[[group.configuration.customThankYouTextNewPosts]]">
+      <yp-magic-text id="customThankYouTextNewPostsId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customThankYouTextNewPosts]]"
+                     content-language="[[group.language]]"
+                     text-type="customThankYouTextNewPosts"></yp-magic-text>
+    </template>
+
+
   </template>
 
 </dom-module>
@@ -393,6 +484,11 @@
       newPost: {
         type: Boolean,
         value: false
+      },
+
+      initialStructuredAnswersJson: {
+        type: Array,
+        value: null
       },
 
       post: {
@@ -480,6 +576,12 @@
         computed: '_newPointShown(newPost, group)'
       },
 
+
+      mediaHidden: {
+        type: Boolean,
+        computed: '_mediaHidden(newPost, group)'
+      },
+
       selected: {
         type: Number,
         value: 0,
@@ -501,27 +603,145 @@
         computed: '_structuredQuestions(post, group)'
       },
 
+      hasStructuredQuestions:  {
+        type: Boolean,
+        computed: '_hasStructuredQuestions(structuredQuestions)'
+      },
+
+      replacedName: {
+        type: String,
+        computed: '_replacedName(post, group, newPost)'
+      },
+
       sructuredAnswers: {
         type: String,
         value: null
       },
 
+      sructuredAnswersJson: {
+        type: Object,
+        value: null
+      },
+
       uploadedDocumentUrl: String,
-      uploadedDocumentFilename: String
+      uploadedDocumentFilename: String,
+
+      pointMaxLength: {
+        type: Number,
+        computed: '_pointMaxLength(group)'
+      },
+
+      hasOnlyOneTab: {
+        type: Boolean,
+        value: false
+      }
     },
 
     listeners: {
       'iron-form-invalid': '_formInvalid',
-      'yp-custom-form-submit': '_customSubmit'
+      'yp-custom-form-submit': '_customSubmit',
+      'yp-skip-to-unique-id': '_skipToId',
+      'yp-open-to-unique-id': '_openToId',
+      'yp-goto-next-index': '_goToNextIndex'
+    },
+
+    _isLastRating: function (index) {
+      return (this.structuredQuestions[index].subType==="rating" &&
+        (index+2)<this.structuredQuestions.length &&
+        this.structuredQuestions[index+1].subType!=="rating")
+    },
+
+    _isFirstRating: function (index) {
+      return (this.structuredQuestions[index].subType==="rating" &&
+        this.structuredQuestions[index-1] &&
+        this.structuredQuestions[index-1].subType!=="rating")
+    },
+
+    _openToId: function (event, detail) {
+      this._skipToId(event, detail, true);
+    },
+
+    _goToNextIndex: function (event, detail) {
+      var currentPos = this.liveQuestionIds.indexOf(detail.currentIndex);
+      if (currentPos<this.liveQuestionIds.length-1) {
+        var item = this.$$("#structuredQuestionContainer_"+this.liveQuestionIds[currentPos+1]);
+        item.scrollIntoView({block: "center", inline: "center", behavior: 'smooth'});
+        item.focus();
+      }
+    },
+
+    _hasStructuredQuestions: function (questions) {
+      return questions!=null;
+    },
+
+    _skipToId: function (event, detail, showItems) {
+      var foundFirst = false;
+      if (this.$$("#surveyContainer")) {
+        var children = this.$$("#surveyContainer").children;
+        for (var i=0; i<children.length;i++) {
+          var toId = detail.toId.replace(/]/g,"");
+          var fromId = detail.fromId.replace(/]/g,"");
+          if (children[i+1] &&
+            children[i+1].question &&
+            children[i+1].question.uniqueId &&
+            children[i+1].question.uniqueId.substring(children[i+1].question.uniqueId.length-1)==="a") {
+            children[i].question.uniqueId = children[i+1].question.uniqueId.substring(0, children[i+1].question.uniqueId.length-1);
+          }
+          if (children[i].question && detail.fromId && children[i].question.uniqueId===fromId) {
+            foundFirst = true;
+          } else if (children[i].question && detail.toId && (children[i].question.uniqueId===toId || children[i].question.uniqueId===toId+"a")) {
+            break;
+          } else {
+            if (foundFirst) {
+              if (showItems) {
+                children[i].hidden = false;
+              } else {
+                children[i].hidden = true;
+              }
+            }
+          }
+        }
+      } else {
+        console.error("No survey container found")
+      }
     },
 
     observers: [
       '_setupTranslation(language,t)'
     ],
 
+    _replacedName: function (post, group) {
+      if (post && group && group.configuration.hideNameInputAndReplaceWith) {
+        let text = group.configuration.hideNameInputAndReplaceWith;
+        text = text.replace('<DATESECONDS>', moment(new Date()).format("DD/MM/YYYY hh:mm:ss"));
+        text = text.replace('<DATEMINUTES>', moment(new Date()).format("DD/MM/YYYY hh:mm"));
+        text = text.replace('<DATE>', moment(new Date()).format("DD/MM/YYYY"));
+        return text;
+      } else {
+        return null;
+      }
+    },
+
+    _pointMaxLength: function (group) {
+      if (group && group.configuration && group.configuration.pointCharLimit) {
+        return group.configuration.pointCharLimit;
+      } else {
+        return 500;
+      }
+    },
+
     _floatIfValueOrIE: function (value) {
       var ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
       return ie11 || value;
+    },
+
+
+    _mediaHidden: function (newPost, group) {
+      if (group && group.configuration && group.configuration.hideMediaInput===true) {
+        return true;
+      } else {
+        return false;
+      }
     },
 
     _newPointShown: function (newPost, group) {
@@ -534,7 +754,17 @@
     },
 
     _customSubmit: function (value, valueB) {
-      if (this.structuredQuestions && this.structuredQuestions.length>0) {
+      if (this.group.configuration && this.group.configuration.structuredQuestionsJson) {
+        var answers = [];
+        this.liveQuestionIds.forEach(function (liveIndex) {
+          var questionElement = this.$$("#structuredQuestionContainer_"+liveIndex);
+          if (questionElement) {
+            answers.push(questionElement.getAnswer());
+          }
+        }.bind(this));
+        this.set('structuredAnswersJson', JSON.stringify(answers));
+        this.$.editDialog._reallySubmit();
+      } else if (this.structuredQuestions && this.structuredQuestions.length>0) {
         var description="", answers="";
         for (i=0 ; i<this.structuredQuestions.length; i+=1) {
           description += this.structuredQuestions[i].question;
@@ -561,15 +791,17 @@
     },
 
     _structuredQuestions: function (post, group) {
-      if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
+      if (post && group && group.configuration.structuredQuestionsJson) {
+        return group.configuration.structuredQuestionsJson;
+      } else if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
         var structuredQuestions = [];
 
         var questionComponents = group.configuration.structuredQuestions.split(",");
-        for (i=0 ; i<questionComponents.length; i+=2) {
+        for (var i=0 ; i<questionComponents.length; i+=2) {
           var question = questionComponents[i];
           var maxLength = questionComponents[i+1];
           structuredQuestions.push({
-            translatedQuestion: question,
+            text: question,
             question: question,
             maxLength: maxLength, value: ""
           });
@@ -598,7 +830,7 @@
     _videoUploaded: function (event, detail) {
       this.set('uploadedVideoId', detail.videoId);
       this.set('selectedCoverMediaType','video');
-      this.async(function () { this.fire('iron-resize'); });
+      this.async(function () { this.fire('iron-resize'); }, 50);
     },
 
     _audioUploaded: function (event, detail) {
@@ -661,8 +893,10 @@
       } else {
         this.set('selected', 0);
       }
-      this.$$('#name').autoValidate = true;
-      this.$$('#description').autoValidate = true;
+      if (this.$$('#name'))
+        this.$$('#name').autoValidate = true;
+      if (this.$$('#description'))
+        this.$$('#description').autoValidate = true;
       if (this.newPointShown) {
         this.$$('#pointFor').autoValidate = true;
       }
@@ -699,6 +933,11 @@
       if (this.locationHidden) {
         length -= 1;
       }
+
+      if (this.mediaHidden) {
+        length -= 1;
+      }
+
       return length;
     },
 
@@ -711,32 +950,41 @@
     },
 
     _selectedChanged: function (newValue) {
-      if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
-        this.set('mapActive', true);
-      } else {
-        this.set('mapActive', false);
-      }
-
-      var finalTabNumber = this._getTabLength()-1;
-
-      if (newValue==finalTabNumber) {
-        this.$$("#editDialog").useNextTabAction = false;
-      } else {
-        this.$$("#editDialog").useNextTabAction = true;
-      }
-
-      if (newValue==0) {
-        var nameElement = this.$$("#name");
-        if (nameElement) {
-          nameElement.focus();
+      this.async(function () {
+        if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
+          this.set('mapActive', true);
+        } else {
+          this.set('mapActive', false);
         }
-      }
-      if (newValue==1 && this.newPointShown) {
-        var pointFor = this.$$("#pointFor");
-        if (pointFor) {
-          pointFor.focus();
+
+        var finalTabNumber = this._getTabLength()-1;
+
+        if (finalTabNumber===0) {
+          this.set('hasOnlyOneTab', true);
         }
-      }
+
+        if (newValue==finalTabNumber) {
+          this.$$("#editDialog").useNextTabAction = false;
+        } else {
+          this.$$("#editDialog").useNextTabAction = true;
+        }
+
+        if (newValue==0) {
+          var nameElement = this.$$("#name");
+          if (nameElement) {
+            nameElement.focus();
+          }
+        }
+        if (newValue==1 && this.newPointShown) {
+          var pointFor = this.$$("#pointFor");
+          if (pointFor) {
+            pointFor.focus();
+          }
+        }
+        this.async(function() {
+          this._resizeScrollerIfNeeded();
+        }, 50);
+      });
     },
 
     _selectedCategoryChanged: function (newCategoryArrayId, oldValue) {
@@ -762,7 +1010,7 @@
     },
 
     _postChanged: function(newPost, oldPost) {
-      if (newPost){
+      if (newPost) {
         if (newPost.location) {
           this.set('location', newPost.location);
           this.set('encodedLocation', JSON.stringify(this.location));
@@ -843,8 +1091,31 @@
 
     _finishRedirect: function (post) {
       this.fire('yp-reset-keep-open-for-page');
-      this.redirectTo("/post/"+(post ? post.id : this.post.id));
       window.appGlobals.activity('completed', 'newPost');
+
+      var text = this.t('thankYouForYourSubmission');
+      if (this.group && this.group.configuration &&
+          this.group.configuration.customThankYouTextNewPosts &&
+          this.$$("#customThankYouTextNewPostsId") &&
+          this.$$("#customThankYouTextNewPostsId").content) {
+        if (this.$$("#customThankYouTextNewPostsId").finalContent) {
+          text = this.$$("#customThankYouTextNewPostsId").finalContent;
+        } else {
+          text = this.$$("#customThankYouTextNewPostsId").content;
+        }
+      }
+
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+        toast.text = text;
+        toast.duration = 5000;
+        toast.show();
+      }.bind(this));
+
+      if (this.group && this.group.configuration && this.group.configuration.allPostsBlockedByDefault) {
+        // Nothing?
+      } else {
+        this.redirectTo("/post/"+(post ? post.id : this.post.id));
+      }
     },
 
     _clear: function () {
@@ -859,9 +1130,11 @@
         this.set('uploadedAudioId', null);
         this.set('currentVideoId', null);
         this.set('currentAudioId', null);
-        this.$$("#imageFileUpload").clear();
         this.set('selectedCoverMediaType', 'none');
         this.async(function () { this.fire('iron-resize'); });
+        if (this.$$("#imageFileUpload")) {
+          this.$$("#imageFileUpload").clear();
+        }
       }
     },
 
@@ -904,9 +1177,40 @@
           } else {
             this.set('postDescriptionLimit', 500);
           }
+
+          if (group.configuration.structuredQuestionsJson) {
+            this.async(function () {
+              this.liveQuestionIds = [];
+              this.uniqueIdsToElementIndexes = {};
+              this.liveUniqueIds = [];
+
+              group.configuration.structuredQuestionsJson.forEach(function (question, index) {
+                if (question.type.toLowerCase()==="textfield" ||
+                  question.type.toLowerCase()==="textfieldlong" ||
+                  question.type.toLowerCase()==="textarea" ||
+                  question.type.toLowerCase()==="textarealong" ||
+                  question.type.toLowerCase()==="numberfield" ||
+                  question.type.toLowerCase()==="checkboxes" ||
+                  question.type.toLowerCase()==="radios" ||
+                  question.type.toLowerCase()==="dropdown"
+                ) {
+                  this.liveQuestionIds.push(index);
+                  this.uniqueIdsToElementIndexes[question.uniqueId] = index;
+                  this.liveUniqueIds.push(question.uniqueId);
+                }
+              }.bind(this));
+            });
+          }
+
         } else {
           this.set('postDescriptionLimit', 500);
         }
+
+        this.async(function () {
+          if (this.structuredQuestions) {
+            this.set('postDescriptionLimit', 9999);
+          }
+        }, 50);
       }
     },
 
@@ -918,13 +1222,31 @@
           nameElement.focus();
         }
       }.bind(this), 250);
+
+      if (!this.newPost && this.post.public_data && this.post.public_data.structuredAnswersJson) {
+        this.set('initialStructuredAnswersJson', this.post.public_data.structuredAnswersJson);
+      }
+    },
+
+    _alternativeTextForNewIdeaButtonHeaderTranslation: function () {
+      this.async(function () {
+        var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
+        if (label && label.finalContent) {
+          this.set('editHeaderText', label.finalContent);
+        }
+      });
     },
 
     _setupTranslation: function () {
       this.async(function () {
         if (this.t) {
           if (this.newPost) {
-            this.editHeaderText = this.t('post.new');
+            if (this.group && this.group.configuration && this.group.configuration.alternativeTextForNewIdeaButtonHeader) {
+              var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
+              this.editHeaderText = (label && label.finalContent) ? label.finalContent : this.group.configuration.alternativeTextForNewIdeaButtonHeader;
+            } else {
+              this.editHeaderText = this.t('post.new');
+            }
             this.toastText = this.t('postCreated');
             this.set('saveText', this.t('create'));
           } else {

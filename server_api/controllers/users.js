@@ -9,6 +9,8 @@ var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
+const url = require('url');
+
 var getAllModeratedItemsByUser = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByUser;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 
@@ -32,11 +34,11 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 };
 
 var getUserWithAll = function (userId, callback) {
-  var user, endorsements, pointQualities;
+  var user, endorsements, ratings, pointQualities;
 
   async.parallel([
     function (seriesCallback) {
-      models.User.find({
+      models.User.findOne({
         where: {id: userId},
         attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['notifications_settings','profile_data','email','ssn','default_locale']),
         order: [
@@ -74,6 +76,19 @@ var getUserWithAll = function (userId, callback) {
       });
     },
     function (seriesCallback) {
+      models.Rating.findAll({
+        where: {
+          user_id: userId
+        },
+        attributes: ['id', 'value', 'post_id', 'type_index']
+      }).then(function(ratingsIn) {
+        ratings = ratingsIn;
+        seriesCallback();
+      }).catch(function(error) {
+        seriesCallback(error);
+      });
+    },
+    function (seriesCallback) {
       models.PointQuality.findAll({
         where: {user_id: userId},
         attributes: ['id', 'value', 'point_id']
@@ -88,6 +103,7 @@ var getUserWithAll = function (userId, callback) {
     if (user) {
       user.dataValues.Endorsements = endorsements;
       user.dataValues.PointQualities = pointQualities;
+      user.dataValues.Ratings = ratings;
     }
     callback(error, user);
   })
@@ -95,12 +111,14 @@ var getUserWithAll = function (userId, callback) {
 
 // Login
 router.post('/login', function (req, res) {
+  const startTime = new Date();
+  log.info('User Login start', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
   req.sso.authenticate('local-strategy', {}, req, res, function(err, user) {
-    console.log(user);
-    log.info('User Login', {context: 'view', userId: req.user ? req.user.id : null});
+    log.info('User Login before get', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
     getUserWithAll(req.user.id, function (error, user) {
+      log.info('User Login completed', { elapsedTime: (new Date()-startTime), context: 'view', userId: req.user ? req.user.id : null});
       if (error || !user) {
-        log.error("User Login Error", {context: 'login', user: user.id, err: error, errorStatus: 500});
+        log.error("User Login Error", {context: 'login', user: user ? user.id : null, err: error, errorStatus: 500});
         res.sendStatus(500);
       } else {
         if (user.email) {
@@ -144,14 +162,14 @@ router.post('/register_anonymously', function (req, res) {
   log.info("Anon debug in register_anonymously");
   var groupId = req.body.groupId;
 
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: groupId
     }
   }).then(function (group) {
     if (group && group.configuration && group.configuration.allowAnonymousUsers) {
       var anonEmail = req.sessionID+"_anonymous@citizens.is";
-      models.User.find({
+      models.User.findOne({
         where: {
           email: anonEmail
         }
@@ -159,7 +177,7 @@ router.post('/register_anonymously', function (req, res) {
         if (existingUser && existingUser.profile_data && existingUser.profile_data.isAnonymousUser) {
           log.info('Found Already Registered Anonymous', { user: toJson(existingUser), context: 'register_anonymous' });
           req.logIn(existingUser, function (error, detail) {
-            log.info("Have logged in Anon 1", { error, user: req.user });
+            log.info("Have logged in Anon 1", { error: error ? error : null, user: req.user });
             sendUserOrError(res, existingUser, 'register_anonymous', error, 401);
           });
         } else {
@@ -176,7 +194,7 @@ router.post('/register_anonymously', function (req, res) {
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {
-              log.info("Have logged in Anon 2", { error, user: req.user });
+              log.info("Have logged in Anon 2", { error: error ? error : null, user: req.user });
               log.info("Anon debug Session 2", { sessionID: req.sessionID, session: req.session });
               sendUserOrError(res, user, 'register_anonymous', error, 401);
             });
@@ -238,15 +256,18 @@ router.get('/:userId/moderate_all_content', auth.can('edit user'), (req, res) =>
 
 // Edit User
 router.put('/:id', auth.can('edit user'), function (req, res) {
-  models.User.find({
+  models.User.findOne({
     where: {id: req.params.id},
-    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'notifications_settings'])
+    attributes: _.concat(models.User.defaultAttributesWithSocialMediaPublic, ['created_at', 'profile_data', 'notifications_settings'])
   }).then(function (user) {
     if (user) {
       user.name = req.body.name;
       user.email = req.body.email;
       user.description = req.body.description;
       user.notifications_settings = JSON.parse(req.body.notifications_settings);
+      if (user.profile_data && user.profile_data.isAnonymousUser) {
+        user.set('profile_data.isAnonymousUser', false);
+      }
       user.save().then(function () {
         log.info('User Updated', { user: toJson(user.simple()), context: 'update', loggedInUser: toJson(req.user.simple()) });
         user.setupImages(req.body, function (error) {
@@ -269,93 +290,98 @@ router.put('/:id', auth.can('edit user'), function (req, res) {
   });
 });
 
-router.get('/:id', function (req, res) {
-  var groupsInclude, communitiesInclude;
-
-  var where = {
-    id: req.params.id
-  };
-
-  groupsInclude = {
-    model: models.Group,
-    as: 'GroupUsers',
-    attributes: ['id','name','objectives'],
-    include: [
-      {
-        model: models.Image, as: 'GroupLogoImages',
-        attributes: ['id','formats'],
-        required: false
-      }
-    ]
-  };
-
-  communitiesInclude = {
-    model: models.Community,
-    as: 'CommunityUsers',
-    attributes: ['id','name','description'],
-    include: [
-      {
-        model: models.Image, as: 'CommunityLogoImages',
-        attributes: ['id','formats'],
-        required: false
-      }
-    ]
-  };
-
-  var attributes = ['id','name','description'];
-
-  if (req.user && req.user.id==req.params.id) {
-    attributes = _.concat(attributes, ['email'])
-  }
-
-  if (req.user && req.user.id == parseInt(req.params.id)) {
+router.get('/:id', auth.can('edit user'), function (req, res) {
+  if (true) {
+    log.error("In Get User - Should not be called error", { context: 'user_get' });
+    res.sendStatus(401);
   } else {
-    _.merge(communitiesInclude, {
-      where: {
-        access: models.Community.ACCESS_PUBLIC
-      }
-    });
+    var groupsInclude, communitiesInclude;
 
-    _.merge(groupsInclude, {
-      where: {
-        access: models.Group.ACCESS_PUBLIC
-      }
+    var where = {
+      id: req.params.id
+    };
+
+    groupsInclude = {
+      model: models.Group,
+      as: 'GroupUsers',
+      attributes: ['id','name','objectives'],
+      include: [
+        {
+          model: models.Image, as: 'GroupLogoImages',
+          attributes: ['id','formats'],
+          required: false
+        }
+      ]
+    };
+
+    communitiesInclude = {
+      model: models.Community,
+      as: 'CommunityUsers',
+      attributes: ['id','name','description'],
+      include: [
+        {
+          model: models.Image, as: 'CommunityLogoImages',
+          attributes: ['id','formats'],
+          required: false
+        }
+      ]
+    };
+
+    var attributes = ['id','name','description'];
+
+    if (req.user && req.user.id==req.params.id) {
+      attributes = _.concat(attributes, ['email'])
+    }
+
+    if (req.user && req.user.id == parseInt(req.params.id)) {
+    } else {
+      _.merge(communitiesInclude, {
+        where: {
+          access: models.Community.ACCESS_PUBLIC
+        }
+      });
+
+      _.merge(groupsInclude, {
+        where: {
+          access: models.Group.ACCESS_PUBLIC
+        }
+      });
+    }
+
+    models.User.findOne({
+      where: where,
+      order: [
+        [ { model: models.Community, as: "CommunityUsers" }, 'counter_users', 'desc' ],
+        [ { model: models.Community, as: "CommunityUsers" }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+        [ { model: models.Group, as: "GroupUsers" }, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ],
+        [ { model: models.Group, as: "GroupUsers" }, 'counter_users', 'desc' ],
+        [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
+        [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
+      ],
+
+      attributes: attributes,
+
+      include: [
+        communitiesInclude,
+        groupsInclude,
+        {
+          model: models.Image, as: 'UserProfileImages',
+          attributes: ['id', 'created_at', 'formats'],
+          required: false
+        },
+        {
+          model: models.Image, as: 'UserHeaderImages',
+          attributes: ['id', 'created_at', 'formats'],
+          required: false
+        }
+      ]
+    }).then(function (user) {
+      res.send(user);
+    }).catch(function (error) {
+      log.error("User Get Error", { context: 'user_get', err: error, errorStatus: 500 });
+      res.sendStatus(500);
     });
   }
-
-  models.User.find({
-    where: where,
-    order: [
-      [ { model: models.Community, as: "CommunityUsers" }, 'counter_users', 'desc' ],
-      [ { model: models.Community, as: "CommunityUsers" }, { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
-      [ { model: models.Group, as: "GroupUsers" }, { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ],
-      [ { model: models.Group, as: "GroupUsers" }, 'counter_users', 'desc' ],
-      [ { model: models.Image, as: 'UserProfileImages' } , 'created_at', 'asc' ],
-      [ { model: models.Image, as: 'UserHeaderImages' } , 'created_at', 'asc' ]
-    ],
-
-    attributes: attributes,
-
-    include: [
-      communitiesInclude,
-      groupsInclude,
-      {
-        model: models.Image, as: 'UserProfileImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      },
-      {
-        model: models.Image, as: 'UserHeaderImages',
-        attributes: ['id', 'created_at', 'formats'],
-        required: false
-      }
-    ]
-  }).then(function (user) {
-    res.send(user);
-  }).catch(function (error) {
-    log.error("User Get Error", { context: 'user_get', err: error, errorStatus: 500 });
-    res.sendStatus(500);
-  });
 });
 
 router.get('/loggedInUser/adminRights', function (req, res) {
@@ -363,7 +389,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
     var adminAccess = {};
     async.parallel([
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -385,7 +411,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -407,7 +433,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -436,7 +462,7 @@ router.get('/loggedInUser/adminRights', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -459,8 +485,15 @@ router.get('/loggedInUser/adminRights', function (req, res) {
       }
     ], function (error) {
       if (!error) {
-        log.info('User Sent Admin Rights', { user: toJson(req.user.simple()), context: 'adminRights'});
-        res.send(adminAccess);
+        log.info('User Sent Admin Rights', { userId: req.user ? req.user.id : -1, context: 'adminRights'});
+        if (adminAccess.OrganizationAdmins.length===0 &&
+            adminAccess.GroupAdmins.length===0 &&
+            adminAccess.CommunityAdmins.length===0 &&
+            adminAccess.DomainAdmins.length===0) {
+          res.send('0');
+        } else {
+          res.send(adminAccess);
+        }
       } else {
         log.error("User AdminRights Error", { context: 'adminRights', err: error, errorStatus: 500 });
         res.sendStatus(500);
@@ -477,7 +510,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
     var memberships = {};
     async.parallel([
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -499,7 +532,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -521,7 +554,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           order: [
@@ -550,7 +583,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
         });
       },
       function (seriesCallback) {
-        models.User.find({
+        models.User.findOne({
           where: {id: req.user.id},
           attributes: ['id'],
           include: [
@@ -570,7 +603,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
       }
     ], function (error) {
       if (!error) {
-        log.info('User Sent Memberships', { user: toJson(req.user.simple()), context: 'memberships'});
+        log.info('User Sent Memberships', { userId: req.user ? req.user.id : -1, context: 'memberships'});
         res.send(memberships);
       } else {
         log.error("User Memberships Error", { context: 'memberships', err: error, errorStatus: 500 });
@@ -583,7 +616,7 @@ router.get('/loggedInUser/memberships', function (req, res) {
   }
 });
 
-router.put('/loggedInUser/setLocale', auth.isLoggedIn, function (req, res) {
+router.put('/loggedInUser/setLocale', function (req, res) {
   if (req.isAuthenticated() && req.user) {
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
@@ -605,16 +638,168 @@ router.put('/loggedInUser/setLocale', auth.isLoggedIn, function (req, res) {
   }
 });
 
+const setSAMLSettingsOnUser = (req, user, done) => {
+  let forceSecureSamlLogin = null;
+  let customSamlLoginMessage = null;
+  let customSamlDeniedMessage = null;
+  const referrer = req.get('Referrer');
+  let id=null;
+  let urlComponents;
+  if (referrer) {
+    urlComponents = url.parse(referrer);
+  } else {
+    log.warn("Can't find referrer for URL when setting up SAML");
+  }
+  if (urlComponents && urlComponents.pathname && urlComponents.pathname.split("/").length>1) {
+    id = urlComponents.pathname.split("/")[2];
+  }
+
+  let community, group, isGroupAdmin, isCommunityAdmin;
+
+  async.parallel([
+    (parallelCallback) => {
+      if (id && referrer.indexOf("/community/")>-1) {
+        models.Community.findOne({
+          where: {
+            id: id
+          },
+          attributes: ['id','configuration']
+        }).then((communityIn) => {
+          community = communityIn;
+          parallelCallback();
+        }).catch((error)=> {
+          parallelCallback(error);
+        });
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (id && referrer.indexOf("/group/")>-1) {
+        models.Group.findOne({
+          where: {
+            id: id
+          },
+          attributes: ['id','configuration'],
+          include: [
+            {
+              model: models.Community,
+              attributes: ['id','configuration'],
+            }
+          ]
+        }).then((groupIn) => {
+          group = groupIn;
+          community = groupIn.Community;
+          parallelCallback();
+        }).catch((error)=> {
+          parallelCallback(error);
+        });
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (id && referrer.indexOf("/post/")>-1) {
+        models.Post.findOne({
+          where: {
+            id: id
+          },
+          attributes: ['id'],
+          include: [
+            {
+              model: models.Group,
+              attributes: ['id','configuration'],
+              include: [
+                {
+                  model: models.Community,
+                  attributes: ['id','configuration'],
+                }
+              ]
+            }
+          ]
+        }).then((postIn) => {
+          group = postIn.Group;
+          community = postIn.Group.Community;
+          parallelCallback();
+        }).catch((error)=> {
+          parallelCallback(error);
+        });
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (group && req.user) {
+        group.hasGroupAdmins(req.user).then((results) => {
+          isGroupAdmin = results;
+          parallelCallback();
+        }).catch((error)=>{
+          parallelCallback(error);
+        })
+      } else {
+        parallelCallback();
+      }
+    },
+    (parallelCallback) => {
+      if (community && req.user) {
+        community.hasCommunityAdmins(req.user).then((results) => {
+          isCommunityAdmin = results;
+          parallelCallback();
+        }).catch((error)=>{
+          parallelCallback(error);
+        })
+      } else {
+        parallelCallback();
+      }
+    }
+  ], (error) => {
+    if (error) {
+      done(error);
+    } else {
+      if (group && group.configuration && !isGroupAdmin) {
+        if (group.configuration.forceSecureSamlLogin) {
+          forceSecureSamlLogin = true;
+        }
+      }
+
+      if (community && community.configuration && !isCommunityAdmin) {
+        if (community.configuration.forceSecureSamlLogin) {
+          forceSecureSamlLogin = true;
+        }
+
+        if (community.configuration.customSamlDeniedMessage) {
+          customSamlDeniedMessage = community.configuration.customSamlDeniedMessage;
+        }
+
+        if (community.configuration.customSamlLoginMessage) {
+          customSamlLoginMessage = community.configuration.customSamlLoginMessage;
+        }
+      }
+
+      if (user.dataValues) {
+        user.dataValues.forceSecureSamlLogin = forceSecureSamlLogin;
+        user.dataValues.customSamlDeniedMessage = customSamlDeniedMessage;
+        user.dataValues.customSamlLoginMessage = customSamlLoginMessage;
+      } else {
+        user.forceSecureSamlLogin = forceSecureSamlLogin;
+        user.customSamlDeniedMessage = customSamlDeniedMessage;
+        user.customSamlLoginMessage = customSamlLoginMessage;
+      }
+      done();
+    }
+  });
+};
+
 router.get('/loggedInUser/isloggedin', function (req, res) {
   if (req.isAuthenticated()) {
-    log.info('User Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
+    log.info('User Logged in', { userId: req.user ? req.user.id : -1, context: 'isLoggedIn'});
   } else {
     log.info('User Not Logged in', { user: toJson(req.user), context: 'isLoggedIn'});
   }
   if (req.isAuthenticated() && req.user) {
     getUserWithAll(req.user.id, function (error, user) {
       if (error || !user) {
-        log.error("User IsLoggedIn Error", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
+        log.error("User IsLoggedIn Error 1", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
         res.sendStatus(500);
       } else {
         if (user.email && user.email!="") {
@@ -629,19 +814,34 @@ router.get('/loggedInUser/isloggedin', function (req, res) {
         if (req.user.isSamlEmployee)
           user.dataValues.isSamlEmployee = req.user.isSamlEmployee;
 
-        res.send(user);
+        setSAMLSettingsOnUser(req, user, (error) => {
+          if (error) {
+            log.error("User IsLoggedIn Error 2", { context: 'isloggedin', user: req.user.id, err: error, errorStatus: 500 });
+            res.sendStatus(500);
+          } else {
+            res.send(user);
+          }
+        });
       }
     })
   } else {
-    res.send('0');
+    const user = { notLoggedIn: true };
+    setSAMLSettingsOnUser(req, user, (error) => {
+      if (error) {
+        log.error("User IsLoggedIn Error 3", {context: 'isloggedin', user: req.user ? req.user.id : -1, err: error, errorStatus: 500});
+        res.sendStatus(500);
+      } else {
+        res.send(user);
+      }
+    })
   }
 });
 
 router.delete('/delete_current_user', function (req, res) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user) {
     log.info('Deleting user', { user: toJson(req.user), context: 'delete_current_user'});
     var userId = req.user.id;
-    models.User.find({
+    models.User.findOne({
       where: {
         id: userId
       }
@@ -676,7 +876,7 @@ router.delete('/anonymize_current_user', function (req, res) {
   if (req.isAuthenticated()) {
     log.info('Anonymizing user', { user: toJson(req.user), context: 'delete_current_user'});
     var userId = req.user.id;
-    models.User.find({
+    models.User.findOne({
       where: {
         id: userId
       }
@@ -773,7 +973,7 @@ router.post('/forgot_password', function(req, res) {
       });
     },
     function(token, done) {
-      models.User.find({
+      models.User.findOne({
         where: { email: req.body.email },
         attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled']
       }).then(function (user) {
@@ -813,7 +1013,7 @@ router.post('/forgot_password', function(req, res) {
 
 router.get('/reset/:token', function(req, res) {
   if (req.params.token) {
-    models.User.find({
+    models.User.findOne({
       attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
       where:
         {
@@ -848,32 +1048,35 @@ router.get('/reset/:token', function(req, res) {
 });
 
 router.post('/createActivityFromApp', function(req, res) {
-  models.AcActivity.createActivity({
-    type: 'activity.fromApp',
-    sub_type: req.body.type,
-    actor: { appActor: req.body.actor },
-    object: { name: req.body.object, target: req.body.target ? JSON.parse(req.body.target) : null },
-    context: { pathName: req.body.path_name, name: req.body.context, eventTime: req.body.event_time,
-               sessionId: req.body.sessionId, userAgent: req.body.user_agent },
+  const workData = {
+    body: {
+      actor: req.body.actor,
+      type: req.body.type,
+      object: req.body.object,
+      target: req.body.target,
+      path_name: req.body.path_name,
+      context: req.body.context,
+      event_time: req.body.event_time,
+      sessionId: req.body.sessionId,
+      user_agent: req.body.user_agent,
+      server_timestamp: Date.now()
+    },
+
     userId: req.user ? req.user.id : null,
     domainId: req.ypDomain.id,
+    communityId: req.ypCommunity ? req.ypCommunity.id : null,
     groupId: req.params.groupId,
-//    communityId: req.ypCommunity ? req.ypCommunity.id : null,
     postId: req.body.object ? req.body.object.postId : null
-  }, function (error) {
-    if (error) {
-      log.error('Create Activity Error', { user: null, context: 'createActivity', loggedInUser: req.user ? toJson(req.user) : null, err: error, errorStatus: 500 });
-      res.sendStatus(500);
-    } else {
-      res.sendStatus(200);
-    }
-  });
+  };
+
+  queue.create('delayed-job', { type: 'create-activity-from-app', workData }).priority('low').removeOnComplete(true).save();
+  res.sendStatus(200);
 });
 
 router.post('/reset/:token', function(req, res) {
   async.waterfall([
     function(done) {
-      models.User.find({
+      models.User.findOne({
         attributes: ['id','email','reset_password_token','reset_password_expires','legacy_passwords_disabled'],
         where:
         {
@@ -943,7 +1146,7 @@ router.post('/reset/:token', function(req, res) {
 });
 
 router.get('/get_invite_info/:token', function(req, res) {
-  models.Invite.find({
+  models.Invite.findOne({
     where: {
       token: req.params.token,
       joined_at: null
@@ -988,7 +1191,7 @@ router.get('/get_invite_info/:token', function(req, res) {
 });
 
 router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
-  models.Invite.find({
+  models.Invite.findOne({
     where: {
       token: req.params.token,
       joined_at: null
@@ -1032,7 +1235,7 @@ router.post('/accept_invite/:token', auth.isLoggedIn, function(req, res) {
 });
 
 router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
-  models.User.find({
+  models.User.findOne({
     where: {
       email: req.body.email
     }}).then( function (user) {
@@ -1041,7 +1244,7 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
           alreadyRegistered: true
         })
       } else {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: req.user.id
           }}).then( function (user) {
@@ -1059,7 +1262,7 @@ router.put('/missingEmail/setEmail', auth.isLoggedIn, function(req, res, next) {
 
 router.put('/missingEmail/emailConfirmationShown', auth.isLoggedIn, function(req, res, next) {
   log.info("email_confirmation_shown 1");
-  models.User.find({
+  models.User.findOne({
     attributes: ['id', 'profile_data'],
     where: {
       id: req.user.id
@@ -1089,7 +1292,7 @@ router.put('/missingEmail/emailConfirmationShown', auth.isLoggedIn, function(req
 });
 
 router.delete('/disconnectFacebookLogin', auth.isLoggedIn, function(req, res, next) {
-  models.User.find({
+  models.User.findOne({
     where: {
       id: req.user.id
     }}).then( function (user) {
@@ -1109,7 +1312,7 @@ router.delete('/disconnectFacebookLogin', auth.isLoggedIn, function(req, res, ne
 });
 
 router.delete('/disconnectSamlLogin', auth.isLoggedIn, function(req, res, next) {
-  models.User.find({
+  models.User.findOne({
     where: {
       id: req.user.id
     }}).then( function (user) {
@@ -1130,7 +1333,7 @@ router.delete('/disconnectSamlLogin', auth.isLoggedIn, function(req, res, next) 
 
 router.put('/missingEmail/linkAccounts', auth.isLoggedIn, function(req, res, next) {
   log.info("User Serialized Link 1", {loginProvider: req.user.loginProvider});
-  models.User.find({
+  models.User.findOne({
     where: {
       email: req.body.email
     }}).then( function (user) {
@@ -1258,109 +1461,117 @@ router.get('/has/AutoTranslation', function(req, res) {
 });
 
 router.get('/:id/status_update/:bulkStatusUpdateId', function(req, res, next) {
-  var statusUpdate;
-  var allUserEndorsementsPostId = [];
-  var config;
+  if (false) {
+    log.error("In status_update status_update - Should not be called error", { context: 'user_get' });
+    res.sendStatus(500);
+  } else {
+    var statusUpdate;
+    var allUserEndorsementsPostId = [];
+    var config;
 
-  async.series([
-    function (seriesCallback) {
-      models.BulkStatusUpdate.find({
-        where: { id: req.params.bulkStatusUpdateId },
-        order: [
-          [ models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
-          [ models.Community, {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
-        ],
-        include: [
-          {
-            model: models.Community,
-            required: true,
-            include: [
-              {
-                model: models.Image, as: 'CommunityLogoImages',
-                required: false
-              },
-              {
-                model: models.Image, as: 'CommunityHeaderImages',
-                required: false
-              }
-            ]
-          },
-          {
-            model: models.User,
-            required: true,
-            attributes: models.User.defaultAttributesWithSocialMediaPublic
+    async.series([
+      function (seriesCallback) {
+        models.BulkStatusUpdate.findOne({
+          where: { id: req.params.bulkStatusUpdateId },
+          order: [
+            [ models.Community, {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
+            [ models.Community, {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
+          ],
+          include: [
+            {
+              model: models.Community,
+              required: true,
+              attributes: models.Community.defaultAttributesPublic,
+              include: [
+                {
+                  model: models.Image, as: 'CommunityLogoImages',
+                  attributes: ['id','formats'],
+                  required: false
+                },
+                {
+                  model: models.Image, as: 'CommunityHeaderImages',
+                  attributes: ['id','formats'],
+                  required: false
+                }
+              ]
+            },
+            {
+              model: models.User,
+              required: true,
+              attributes: ['id']
+            }
+          ]
+        }).then(function(statusUpdateIn) {
+          if (statusUpdateIn) {
+            statusUpdate = statusUpdateIn;
+            seriesCallback();
+          } else {
+            seriesCallback("Bulk status update not found");
           }
-        ]
-      }).then(function(statusUpdateIn) {
-        if (statusUpdateIn) {
-          statusUpdate = statusUpdateIn;
+        }).catch(function(error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        models.Endorsement.findAll({
+          where: {
+            user_id: req.params.id
+          },
+          attributes: ['id','post_id']
+        }).then(function (endorsements) {
+          _.each(endorsements, function (endorsement) {
+            allUserEndorsementsPostId.push(endorsement.post_id);
+          });
           seriesCallback();
-        } else {
-          seriesCallback("Bulk status update not found");
-        }
-      }).catch(function(error) {
-        seriesCallback(error);
-      });
-    },
-    function (seriesCallback) {
-      models.Endorsement.findAll({
-        where: {
-          user_id: req.params.id
-        },
-        attributes: ['id','post_id']
-      }).then(function (endorsements) {
-        _.each(endorsements, function (endorsement) {
-          allUserEndorsementsPostId.push(endorsement.post_id);
+        }).catch(function (error) {
+          seriesCallback(error);
+        });
+      },
+      function (seriesCallback) {
+        config = JSON.parse(JSON.stringify(statusUpdate.config));
+        _.each(config.groups, function (group, groupsIndex) {
+          log.info("Before posts reject count "+config.groups[groupsIndex].posts.length);
+          /*config.groups[groupsIndex].posts = _.reject(config.groups[groupsIndex].posts, function (post) {
+            return !_.includes(allUserEndorsementsPostId, post.id)
+          });*/
+          log.info("After posts reject count "+config.groups[groupsIndex].posts.length);
+          config.groups[groupsIndex]["statuses"] = [];
+          var gotStatus = {};
+          _.each(config.groups[groupsIndex].posts, function (post) {
+            if (!post.newOfficialStatus)
+              post.newOfficialStatus = 0;
+            if (!gotStatus[post.newOfficialStatus]) {
+              gotStatus[post.newOfficialStatus] = true;
+              if (post.newOfficialStatus) {
+                config.groups[groupsIndex]["statuses"].push({official_status: post.newOfficialStatus, posts: []});
+              }
+            }
+            _.each(config.groups[groupsIndex]["statuses"], function (status, index) {
+              if (status.official_status == post.newOfficialStatus) {
+                config.groups[groupsIndex]["statuses"][index].posts.push(post);
+              }
+            });
+            config.groups[groupsIndex].posts = null;
+          });
+        });
+        config.groups = _.reject(config.groups, function (group) {
+          var totalCount = 0;
+          _.each(group.statuses, function (status) {
+            totalCount += status.posts.length;
+          });
+          return totalCount == 0;
         });
         seriesCallback();
-      }).catch(function (error) {
-        seriesCallback(error);
-      });
-    },
-    function (seriesCallback) {
-       config = JSON.parse(JSON.stringify(statusUpdate.config));
-      _.each(config.groups, function (group, groupsIndex) {
-        log.info("Before posts reject count "+config.groups[groupsIndex].posts.length);
-        /*config.groups[groupsIndex].posts = _.reject(config.groups[groupsIndex].posts, function (post) {
-          return !_.includes(allUserEndorsementsPostId, post.id)
-        });*/
-        log.info("After posts reject count "+config.groups[groupsIndex].posts.length);
-        config.groups[groupsIndex]["statuses"] = [];
-        var gotStatus = {};
-        _.each(config.groups[groupsIndex].posts, function (post) {
-          if (!post.newOfficialStatus)
-            post.newOfficialStatus = 0;
-          if (!gotStatus[post.newOfficialStatus]) {
-            gotStatus[post.newOfficialStatus] = true;
-            if (post.newOfficialStatus) {
-              config.groups[groupsIndex]["statuses"].push({official_status: post.newOfficialStatus, posts: []});
-            }
-          }
-          _.each(config.groups[groupsIndex]["statuses"], function (status, index) {
-            if (status.official_status == post.newOfficialStatus) {
-              config.groups[groupsIndex]["statuses"][index].posts.push(post);
-            }
-          });
-          config.groups[groupsIndex].posts = null;
-        });
-      });
-      config.groups = _.reject(config.groups, function (group) {
-        var totalCount = 0;
-        _.each(group.statuses, function (status) {
-          totalCount += status.posts.length;
-        });
-        return totalCount == 0;
-      });
-      seriesCallback();
-    }
-  ], function (error) {
-    if (error) {
-      log.error("Error from status_update", { err: error });
-      res.sendStatus(500);
-    } else {
-     res.send({ config: config, templates: statusUpdate.templates, community: statusUpdate.Community });
-    }
-  });
+      }
+    ], function (error) {
+      if (error) {
+        log.error("Error from status_update", { err: error });
+        res.sendStatus(500);
+      } else {
+        res.send({ config: config, templates: statusUpdate.templates, community: statusUpdate.Community });
+      }
+    });
+  }
 });
 
 // Facebook Authentication
@@ -1428,7 +1639,7 @@ router.get('/auth/github/callback',
 router.get('/:id/endorsements', auth.can('view user'), function (req, res) {
   models.Endorsement.findAll({
     where: {user_id: req.params.id, status: 'active'},
-    order: "created_at DESC"
+    order: [['created_at','DESC']],
   }).then(function (endorsements) {
     res.send(endorsements);
   });

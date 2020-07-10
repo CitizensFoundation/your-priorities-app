@@ -1,7 +1,7 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
-  var PostStatusChange = sequelize.define("PostStatusChange", {
+module.exports = (sequelize, DataTypes) => {
+  const PostStatusChange = sequelize.define("PostStatusChange", {
     subject: { type: DataTypes.STRING, allowNull: true },
     content: { type: DataTypes.TEXT, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
@@ -18,19 +18,20 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     underscored: true,
 
-    tableName: 'post_status_changes',
-    classMethods: {
-      associate: function(models) {
-        PostStatusChange.belongsTo(models.Post);
-        PostStatusChange.belongsTo(models.User);
-        PostStatusChange.hasMany(models.PointRevision);
-        PostStatusChange.hasMany(models.PointQuality);
-      }
-    }
+    tableName: 'post_status_changes'
   });
+
+  PostStatusChange.associate = (models) => {
+    PostStatusChange.belongsTo(models.Post, { foreignKey: 'post_id'});
+    PostStatusChange.belongsTo(models.User, { foreignKey: 'user_id'});
+    PostStatusChange.hasMany(models.PointRevision);
+    PostStatusChange.hasMany(models.PointQuality);
+  };
 
   return PostStatusChange;
 };

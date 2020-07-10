@@ -1,7 +1,7 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
-  var Promotion = sequelize.define("Promotion", {
+module.exports = (sequelize, DataTypes) => {
+  const Promotion = sequelize.define("Promotion", {
     content: { type: DataTypes.TEXT, allowNull: false },
     status: { type: DataTypes.STRING, allowNull: false },
     cost: { type: DataTypes.INTEGER, allowNull: false },
@@ -21,16 +21,17 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     underscored: true,
-    tableName: 'promotions',
-    classMethods: {
-      associate: function(models) {
-        Promotion.belongsTo(models.Group);
-        Promotion.belongsTo(models.Post);
-        Promotion.belongsTo(models.User);
-      }
-    }
+    tableName: 'promotions'
   });
+
+  Promotion.associate = (models) => {
+    Promotion.belongsTo(models.Group, { foreignKey: 'group_id'});
+    Promotion.belongsTo(models.Post, { foreignKey: 'post_id'});
+    Promotion.belongsTo(models.User, { foreignKey: 'user_id'});
+  };
 
   return Promotion;
 };

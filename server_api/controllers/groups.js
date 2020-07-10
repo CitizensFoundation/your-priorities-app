@@ -12,11 +12,22 @@ var multer = require('multer');
 var s3multer = require('multer-s3');
 var aws = require('aws-sdk');
 var getExportFileDataForGroup = require('../utils/export_utils').getExportFileDataForGroup;
+const exportGroupToDocx = require('../utils/docx_utils').exportGroupToDocx;
+
 var moment = require('moment');
 var sanitizeFilename = require("sanitize-filename");
 var queue = require('../active-citizen/workers/queue');
 const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByGroup;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
+const request = require('request');
+
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getGroupIncludes;
+const getPointGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointGroupIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -50,7 +61,7 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
 
   async.series([
     function (seriesCallback) {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: groupId
         }
@@ -65,7 +76,7 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -84,7 +95,7 @@ var getGroupAndUser = function (groupId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userEmail) {
-        models.User.find({
+        models.User.findOne({
           where: {
             email: userEmail
           },
@@ -142,6 +153,9 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.attachmentsEnabled', truthValueFromBody(req.body.attachmentsEnabled));
   group.set('configuration.moreContactInformation', truthValueFromBody(req.body.moreContactInformation));
+  group.set('configuration.moreContactInformationAddress', truthValueFromBody(req.body.moreContactInformationAddress));
+
+  group.set('configuration.useContainImageMode', truthValueFromBody(req.body.useContainImageMode));
 
   group.set('configuration.endorsementButtons', (req.body.endorsementButtons && req.body.endorsementButtons!="") ? req.body.endorsementButtons : "hearts");
   group.set('configuration.alternativeHeader', (req.body.alternativeHeader && req.body.alternativeHeader!="") ? req.body.alternativeHeader : null);
@@ -165,21 +179,31 @@ var updateGroupConfigParamters = function (req, group) {
     group.set('configuration.uploadedDefaultPostImageId', req.body.uploadedDefaultPostImageId);
   }
 
+  group.set('configuration.alternativeTextForNewIdeaButton', (req.body.alternativeTextForNewIdeaButton && req.body.alternativeTextForNewIdeaButton!=="") ? req.body.alternativeTextForNewIdeaButton : null);
+  group.set('configuration.alternativeTextForNewIdeaButtonClosed', (req.body.alternativeTextForNewIdeaButtonClosed && req.body.alternativeTextForNewIdeaButtonClosed!=="") ? req.body.alternativeTextForNewIdeaButtonClosed : null);
+  group.set('configuration.alternativeTextForNewIdeaButtonHeader', (req.body.alternativeTextForNewIdeaButtonHeader && req.body.alternativeTextForNewIdeaButtonHeader!=="") ? req.body.alternativeTextForNewIdeaButtonHeader : null);
+
   group.set('configuration.alternativePointForHeader', (req.body.alternativePointForHeader && req.body.alternativePointForHeader!="") ? req.body.alternativePointForHeader : null);
   group.set('configuration.alternativePointAgainstHeader', (req.body.alternativePointAgainstHeader && req.body.alternativePointAgainstHeader!="") ? req.body.alternativePointAgainstHeader : null);
 
   group.set('configuration.alternativePointForLabel', (req.body.alternativePointForLabel && req.body.alternativePointForLabel!="") ? req.body.alternativePointForLabel : null);
   group.set('configuration.alternativePointAgainstLabel', (req.body.alternativePointAgainstLabel && req.body.alternativePointAgainstLabel!="") ? req.body.alternativePointAgainstLabel : null);
+
   group.set('configuration.disableFacebookLoginForGroup', truthValueFromBody(req.body.disableFacebookLoginForGroup));
   group.set('configuration.disableNameAutoTranslation', truthValueFromBody(req.body.disableNameAutoTranslation));
   group.set('configuration.externalGoalTriggerUrl', (req.body.externalGoalTriggerUrl && req.body.externalGoalTriggerUrl!="") ? req.body.externalGoalTriggerUrl : null);
   group.set('configuration.hideNewPost', truthValueFromBody(req.body.hideNewPost));
+
+  group.set('configuration.makeCategoryRequiredOnNewPost', truthValueFromBody(req.body.makeCategoryRequiredOnNewPost));
+
+  group.set('configuration.showVideoUploadDisclaimer', truthValueFromBody(req.body.showVideoUploadDisclaimer));
 
   group.set('configuration.hideVoteCount', truthValueFromBody(req.body.hideVoteCount));
   group.set('configuration.hideVoteCountUntilVoteCompleted', truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted));
   group.set('configuration.hidePostCover', truthValueFromBody(req.body.hidePostCover));
   group.set('configuration.hidePostDescription', truthValueFromBody(req.body.hidePostDescription));
   group.set('configuration.hideDebateIcon', truthValueFromBody(req.body.hideDebateIcon));
+  group.set('configuration.hidePointAgainst', truthValueFromBody(req.body.hidePointAgainst));
   group.set('configuration.disablePostPageLink', truthValueFromBody(req.body.disablePostPageLink));
   group.set('configuration.hidePostActionsInGrid', truthValueFromBody(req.body.hidePostActionsInGrid));
   group.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
@@ -212,6 +236,12 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.customVoteUpHoverText', (req.body.customVoteUpHoverText && req.body.customVoteUpHoverText!="") ? req.body.customVoteUpHoverText : null);
   group.set('configuration.customVoteDownHoverText', (req.body.customVoteDownHoverText && req.body.customVoteDownHoverText!="") ? req.body.customVoteDownHoverText : null);
 
+  group.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
+
+  group.set('configuration.descriptionTruncateAmount', (req.body.descriptionTruncateAmount && req.body.descriptionTruncateAmount!="") ? req.body.descriptionTruncateAmount : null);
+  group.set('configuration.descriptionSimpleFormat', truthValueFromBody(req.body.descriptionSimpleFormat));
+  group.set('configuration.transcriptSimpleFormat', truthValueFromBody(req.body.transcriptSimpleFormat));
+
   group.set('configuration.allowPostAudioUploads', truthValueFromBody(req.body.allowPostAudioUploads));
   group.set('configuration.allowPointAudioUploads', truthValueFromBody(req.body.allowPointAudioUploads));
   group.set('configuration.useAudioCover', truthValueFromBody(req.body.useAudioCover));
@@ -231,8 +261,74 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.structuredQuestions', (req.body.structuredQuestions && req.body.structuredQuestions!="") ? req.body.structuredQuestions : null);
 
+  if (group.configuration.structuredQuestions) {
+    try {
+      const cleaned = group.configuration.structuredQuestions.trim().replace(/\n/g,'').replace(/\r/g,'').replace(/"/,'"');
+      const jsonArray = JSON.parse(cleaned);
+      const updatedJsonArray = [];
+      let questionIndex = 0;
+      jsonArray.forEach((question, index) =>{
+        if (question.type.toLowerCase()==="textfield" ||
+          question.type.toLowerCase()==="textfieldlong" ||
+          question.type.toLowerCase()==="textarea" ||
+          question.type.toLowerCase()==="textarealong" ||
+          question.type.toLowerCase()==="numberfield" ||
+          question.type.toLowerCase()==="checkboxes" ||
+          question.type.toLowerCase()==="radios" ||
+          question.type.toLowerCase()==="dropdown"
+        ) {
+          question.questionIndex = questionIndex+=1;
+        }
+        updatedJsonArray.push(question);
+      });
+      group.set('configuration.structuredQuestionsJson', updatedJsonArray);
+    } catch (error) {
+      group.set('configuration.structuredQuestionsJson', null);
+      log.error("Error in parsing structured questions", { error });
+    }
+  }
+
   group.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   group.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
+  group.set('configuration.customUserNamePrompt', (req.body.customUserNamePrompt && req.body.customUserNamePrompt!="") ? req.body.customUserNamePrompt : null);
+  group.set('configuration.customTermsIntroText', (req.body.customTermsIntroText && req.body.customTermsIntroText!="") ? req.body.customTermsIntroText : null);
+
+  const customRatingsText = (req.body.customRatingsText && req.body.customRatingsText!="") ? req.body.customRatingsText : null;
+  group.set('configuration.customRatingsText', customRatingsText);
+
+  if (customRatingsText) {
+    var ratingsComponents = customRatingsText.split(",");
+    let ratings = [];
+    if (ratingsComponents && ratingsComponents.length>2) {
+      for (var i=0 ; i<ratingsComponents.length; i+=3) {
+        ratings.push({name: ratingsComponents[i], numberOf: ratingsComponents[i+1], emoji: ratingsComponents[i+2]});
+      }
+      group.set('configuration.customRatings', ratings);
+    } else {
+      log.error("Ratings not in correct format for customRatings");
+    }
+  } else {
+    group.set('configuration.customRatings', null);
+  }
+
+  group.set('configuration.allowAdminAnswersToPoints', truthValueFromBody(req.body.allowAdminAnswersToPoints));
+  group.set('configuration.forcePostSortMethodAs', (req.body.forcePostSortMethodAs && req.body.forcePostSortMethodAs!=="") ? req.body.forcePostSortMethodAs : null);
+  group.set('configuration.pointCharLimit', (req.body.pointCharLimit && req.body.pointCharLimit!=="") ? req.body.pointCharLimit : null);
+  group.set('configuration.allPostsBlockedByDefault', truthValueFromBody(req.body.allPostsBlockedByDefault));
+  group.set('configuration.customThankYouTextNewPosts', (req.body.customThankYouTextNewPosts && req.body.customThankYouTextNewPosts!=="") ? req.body.customThankYouTextNewPosts : null);
+  group.set('configuration.useCommunityTopBanner', truthValueFromBody(req.body.useCommunityTopBanner));
+  group.set('configuration.makeMapViewDefault', truthValueFromBody(req.body.makeMapViewDefault));
+  group.set('configuration.simpleFormatDescription', truthValueFromBody(req.body.simpleFormatDescription));
+  group.set('configuration.resourceLibraryLinkMode', truthValueFromBody(req.body.resourceLibraryLinkMode));
+  group.set('configuration.collapsableTranscripts', truthValueFromBody(req.body.collapsableTranscripts));
+  group.set('configuration.customAdminCommentsTitle', (req.body.customAdminCommentsTitle && req.body.customAdminCommentsTitle!=="") ? req.body.customAdminCommentsTitle : null);
+  group.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
+  group.set('configuration.hideNameInputAndReplaceWith', (req.body.hideNameInputAndReplaceWith && req.body.hideNameInputAndReplaceWith!="") ? req.body.hideNameInputAndReplaceWith : null);
+  group.set('configuration.hideMediaInput', truthValueFromBody(req.body.hideMediaInput));
+  group.set('configuration.actAsLinkToCommunityId', (req.body.actAsLinkToCommunityId && req.body.actAsLinkToCommunityId!="") ? req.body.actAsLinkToCommunityId : null);
+  group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
+  group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
+  group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
 };
 
 var upload = multer({
@@ -257,7 +353,7 @@ router.post('/:id/upload_document',  auth.can('add to group'), upload.single('fi
 });
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: {
       group_id: req.params.groupId,
       id: req.params.activityId
@@ -319,7 +415,7 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       });
     },
     function(callback) {
-      models.User.find({
+      models.User.findOne({
         where: { email: req.params.userEmail },
         attributes: ['id','email']
       }).then(function (userIn) {
@@ -332,46 +428,83 @@ router.post('/:groupId/:userEmail/invite_user', auth.can('edit group'), function
       });
     },
     function(callback) {
-      models.Invite.create({
-        token: token,
-        expires_at: Date.now() + (3600000*24*30*365*1000),
-        type: models.Invite.INVITE_TO_GROUP,
-        group_id: req.params.groupId,
-        domain_id: req.ypDomain.id,
-        user_id: user ? user.id : null,
-        from_user_id: req.user.id,
-        metadata:  { toEmail: req.params.userEmail}
-      }).then(function (inviteIn) {
-        if (inviteIn) {
-          invite = inviteIn;
-          callback();
-        } else {
-          callback('Invite not found')
-        }
-      }).catch(function (error) {
-        callback(error);
-      });
+      if (!req.query.addToGroupDirectly) {
+        models.Invite.create({
+          token: token,
+          expires_at: Date.now() + (3600000*24*30*365*1000),
+          type: models.Invite.INVITE_TO_GROUP,
+          group_id: req.params.groupId,
+          domain_id: req.ypDomain.id,
+          user_id: user ? user.id : null,
+          from_user_id: req.user.id,
+          metadata:  { toEmail: req.params.userEmail}
+        }).then(function (inviteIn) {
+          if (inviteIn) {
+            invite = inviteIn;
+            callback();
+          } else {
+            callback('Invite not found')
+          }
+        }).catch(function (error) {
+          callback(error);
+        });
+      } else {
+        callback()
+      }
     },
     function(callback) {
-      models.AcActivity.inviteCreated({
-        email: req.params.userEmail,
-        user_id: user ? user.id : null,
-        sender_user_id: req.user.id,
-        sender_name: req.user.name,
-        group_id: req.params.groupId,
-        domain_id: req.ypDomain.id,
-        invite_id: invite.id,
-        token: token}, function (error) {
-        callback(error);
-      });
+      if (!req.query.addToGroupDirectly) {
+        models.AcActivity.inviteCreated({
+          email: req.params.userEmail,
+          user_id: user ? user.id : null,
+          sender_user_id: req.user.id,
+          sender_name: req.user.name,
+          group_id: req.params.groupId,
+          domain_id: req.ypDomain.id,
+          invite_id: invite.id,
+          token: token}, function (error) {
+          callback(error);
+        });
+      } else {
+        callback()
+      }
+    },
+    function(callback) {
+      if (user && req.query.addToGroupDirectly) {
+        models.Group.findOne({
+          where: {
+            id: req.params.groupId
+          },
+          attributes: ['id']
+        }).then(group=>{
+          if (group) {
+            group.addGroupUsers(user).then(()=>{
+              callback();
+            }).catch(error=>{
+              callback(error);
+            })
+          } else {
+            callback("Can't find group");
+          }
+        }).catch(error=>{
+          callback(error);
+        });
+      } else {
+        callback();
+      }
     }
   ], function(error) {
     if (error) {
       log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user) });
-      res.sendStatus(200);
+      if (!user && req.query.addToGroupDirectly) {
+        log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(404);
+      } else {
+        log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user', loggedInUser: toJson(req.user) });
+        res.sendStatus(200);
+      }
     }
   });
 });
@@ -470,35 +603,62 @@ router.post('/:groupId/:email/add_admin', auth.can('edit group'), function(req, 
 });
 
 router.get('/:groupId/pages', auth.can('view group'), function(req, res) {
-  models.Group.find({
-    where: { id: req.params.groupId},
-    attributes: ['id'],
-    include: [
-      {
-        model: models.Community,
+  const redisKey = "cache:groupPages:"+req.params.groupId;
+  req.redisClient.get(redisKey, (error, pages) => {
+    if (error) {
+      log.error('Could not get pages for group from redis', {
+        err: error,
+        context: 'pages',
+        userId: req.user ? req.user.id : null
+      });
+      res.sendStatus(500);
+    } else if (pages) {
+      res.send(JSON.parse(pages));
+    } else {
+      models.Group.findOne({
+        where: {id: req.params.groupId},
         attributes: ['id'],
         include: [
           {
-            model: models.Domain,
-            attributes: ['id']
+            model: models.Community,
+            attributes: ['id'],
+            include: [
+              {
+                model: models.Domain,
+                attributes: ['id']
+              }
+            ]
           }
         ]
-      }
-    ]
-  }).then(function (group) {
-    models.Page.getPages(req, { group_id: req.params.groupId , community_id: group.Community.id, domain_id: group.Community.Domain.id }, function (error, pages) {
-      if (error) {
-        log.error('Could not get pages for group', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
+      }).then(function (group) {
+        models.Page.getPages(req, {
+          group_id: req.params.groupId,
+          community_id: group.Community.id,
+          domain_id: group.Community.Domain.id
+        }, function (error, pages) {
+          if (error) {
+            log.error('Could not get pages for group', {
+              err: error,
+              context: 'pages',
+              user: req.user ? toJson(req.user.simple()) : null
+            });
+            res.sendStatus(500);
+          } else {
+            log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
+            req.redisClient.setex(redisKey, process.env.PAGES_CACHE_TTL ? parseInt(process.env.PAGES_CACHE_TTL) : 3, JSON.stringify(pages));
+            res.send(pages);
+          }
+        });
+        return null;
+      }).catch(function (error) {
+        log.error('Could not get pages for group', {
+          err: error,
+          context: 'pages',
+          user: req.user ? toJson(req.user.simple()) : null
+        });
         res.sendStatus(500);
-      } else {
-        log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
-        res.send(pages);
-      }
-    });
-    return null;
-  }).catch(function (error) {
-    log.error('Could not get pages for group', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null});
-    res.sendStatus(500);
+      });
+    }
   });
 });
 
@@ -508,43 +668,119 @@ router.get('/:groupId/pages_for_admin', auth.can('edit group'), function(req, re
       log.error('Could not get page for admin for group', { err: error, context: 'pages_for_admin', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: toJson(req.user.simple()) });
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
 });
 
-router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) {
-  getExportFileDataForGroup(req.params.groupId, req.ypDomain.domain_name, function (error, fileData) {
+router.put('/:groupId/:type/start_report_creation', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.createJob((error, jobId) => {
     if (error) {
-      log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      log.error('Could not create backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      models.Group.find({
-        where: {
-          id: req.params.groupId
-        },
-        attributes: ["id", "name","community_id"]
-      }).then(function (model) {
-        if (model) {
+      let reportType;
+      if (req.params.type==='docx') {
+        reportType = 'start-docx-report-generation';
+      } else if (req.params.type==='xls') {
+        reportType = 'start-xls-report-generation';
+      }
+
+      queue.create('process-reports', {
+        type: reportType,
+        userId: req.user.id,
+        exportType: req.params.type,
+        translateLanguage: req.query.translateLanguage,
+        jobId: jobId,
+        groupId: req.params.groupId
+      }).priority('medium').removeOnComplete(true).save();
+
+      res.send({ jobId });
+    }
+  });
+});
+
+router.get('/:groupId/:jobId/report_creation_progress', auth.can('edit group'), function(req, res) {
+  models.AcBackgroundJob.findOne({
+    where: {
+      id: req.params.jobId
+    },
+    attributes: ['id','progress','error','data']
+  }).then( job => {
+    res.send(job);
+  }).catch( error => {
+    log.error('Could not get backgroundJob', { err: error, context: 'start_report_creation', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:groupId/export_group', auth.can('edit group'), function(req, res) {
+    models.Group.findOne({
+      where: {
+        id: req.params.groupId
+      },
+      attributes: ["id", "name","community_id","configuration"]
+    }).then(function (group) {
+      if (group) {
+        getExportFileDataForGroup(group, req.ypDomain.domain_name, function (error, fileData) {
+          if (error) {
+            log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+            res.sendStatus(500);
+          } else {
+            log.info('Got Export Admin', {context: 'export_group', user: toJson(req.user.simple()) });
+            var groupName = sanitizeFilename(group.name).replace(/ /g,'');
+            var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
+            var filename = 'ideas_and_points_group_export_'+group.community_id+'_'+req.params.groupId+'_'+
+                groupName+'_'+dateString+'.csv';
+            res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
+            res.charset = 'utf-8';
+            res.attachment(filename);
+            res.send(fileData);
+          }
+        });
+      } else {
+        log.error('Cant find group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+        res.sendStatus(404);
+      }
+    }).catch(function (error) {
+      log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    });
+});
+
+router.get('/:groupId/export_group_docx', auth.can('edit group'), async (req, res) => {
+  models.Group.findOne({
+    where: {
+      id: req.params.groupId
+    },
+    attributes: ["id", "name","community_id","objectives","configuration","language"]
+  }).then(function (group) {
+    if (group) {
+      exportGroupToDocx(group, req.ypDomain.domain_name, req.query.translateLanguage,function (error, fileData) {
+        if (error) {
+          log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+          res.sendStatus(500);
+        } else {
           log.info('Got Export Admin', {context: 'export_group', user: toJson(req.user.simple()) });
-          var groupName = sanitizeFilename(model.name).replace(/ /g,'');
+          var groupName = sanitizeFilename(group.name).replace(/ /g,'');
           var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
-          var filename = 'ideas_and_points_group_export_'+model.community_id+'_'+req.params.groupId+'_'+
-                          groupName+'_'+dateString+'.csv';
-          res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
+          var filename = 'ideas_and_points_group_export_'+group.community_id+'_'+req.params.groupId+'_'+
+            groupName+'_'+dateString+'.docx';
+          res.set({ 'content-type': 'application/application/vnd.openxmlformats-officedocument.wordprocessingml.document; charset=utf-8' });
+          res.setHeader('Content-Disposition', 'attachment; filename='+filename);
           res.charset = 'utf-8';
           res.attachment(filename);
           res.send(fileData);
-        } else {
-          log.error('Cant find group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
-          res.sendStatus(404);
         }
-      }).catch(function (error) {
-        log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
-        res.sendStatus(500);
       });
+    } else {
+      log.error('Cant find group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+      res.sendStatus(404);
     }
+  }).catch(function (error) {
+    log.error('Could not export for group', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
+    res.sendStatus(500);
   });
 });
 
@@ -633,7 +869,7 @@ router.post('/:groupId/news_story', auth.isLoggedIn, auth.can('add to group'), f
 });
 
 router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: req.params.groupId
     },
@@ -667,7 +903,7 @@ router.get('/:groupId/admin_users', auth.can('edit group'), function (req, res) 
 });
 
 router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {
       id: req.params.groupId
     },
@@ -701,7 +937,7 @@ router.get('/:groupId/users', auth.can('edit group'), function (req, res) {
 });
 
 router.get('/:groupId/default_post_image/:imageId', auth.can('view group'), function (req, res) {
-  models.Image.find({
+  models.Image.findOne({
     where: {
       id: req.params.imageId
     }
@@ -736,6 +972,8 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 
   group.save().then(function(group) {
     log.info('Group Created', { group: toJson(group), context: 'create', user: toJson(req.user) });
+    queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
+
     group.updateAllExternalCounters(req, 'up', 'counter_groups', function () {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.addGroupAdmins(req.user).then(function (results) {
@@ -751,7 +989,7 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
 });
 
 router.put('/:id', auth.can('edit group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id },
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
@@ -801,6 +1039,7 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
       updateGroupConfigParamters(req, group);
       group.save().then(function () {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
         group.setupImages(req.body, function(error) {
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
@@ -816,13 +1055,14 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
       group.deleted = true;
       group.save().then(function () {
         log.info('Group Deleted', { group: toJson(group), context: 'delete', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
         queue.create('process-deletion', { type: 'delete-group-content', resetCounters: true, groupName: group.name,
                                            userId: req.user.id, groupId: group.id }).priority('high').removeOnComplete(true).save();
         group.updateAllExternalCounters(req, 'down', 'counter_groups', function () {
@@ -838,7 +1078,7 @@ router.delete('/:id', auth.can('edit group'), function(req, res) {
 });
 
 router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
@@ -857,7 +1097,7 @@ router.delete('/:id/delete_content', auth.can('edit group'), function(req, res) 
 
 router.delete('/:id/anonymize_content', auth.can('edit group'), function(req, res) {
   const anonymizationDelayMs = 1000*60*60*24*7;
-  models.Group.find({
+  models.Group.findOne({
     where: {id: req.params.id }
   }).then(function (group) {
     if (group) {
@@ -889,12 +1129,14 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
 });
 
 router.get('/:id', auth.can('view group'), function(req, res) {
-  models.Group.find({
+  models.Group.findOne({
     where: { id: req.params.id },
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
       [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Category }, 'name', 'asc' ],
       [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
     ],
     include: [
@@ -905,6 +1147,12 @@ router.get('/:id', auth.can('view group'), function(req, res) {
           {
             model: models.Domain,
             attributes: ['id','theme_id','name']
+          },
+          {
+            model: models.Image,
+            as: 'CommunityHeaderImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
           }
         ]
       },
@@ -952,7 +1200,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     ]
   }).then(function(group) {
     if (group) {
-      log.info('Group Viewed', { group: toJson(group.simple()), context: 'view', user: toJson(req.user) });
+      log.info('Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
       var PostsByNotOpen = models.Post.scope('not_open');
       PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
         res.send({group: group, hasNonOpenPosts: count != 0});
@@ -968,13 +1216,25 @@ router.get('/:id', auth.can('view group'), function(req, res) {
   });
 });
 
+const allowedTextTypesForGroup = [
+  "alternativeTextForNewIdeaButton",
+  "alternativeTextForNewIdeaButtonClosed",
+  "alternativeTextForNewIdeaButtonHeader",
+  "alternativePointForHeader",
+  "customThankYouTextNewPosts",
+  "alternativePointAgainstHeader",
+  "alternativePointForLabel",
+  "alternativePointAgainstLabel",
+  "customAdminCommentsTitle"
+];
+
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
-  if (req.query.textType.indexOf("group") > -1) {
-    models.Group.find({
+  if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {
+    models.Group.findOne({
       where: {
         id: req.params.id
       },
-      attributes: ['id','name','objectives']
+      attributes: ['id','name','objectives','configuration']
     }).then(function(group) {
       if (group) {
         models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
@@ -1025,8 +1285,8 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
       [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
-      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
@@ -1125,70 +1385,78 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
 };
 
 router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), function(req, res) {
+  const redisKey = `cache:posts:${req.params.id}:${req.params.filter}:${req.params.categoryId}:${req.params.status}:${req.query.offset}:${req.query.randomSeed}`;
+  req.redisClient.get(redisKey, (error, postsInfo) => {
+    if (error) {
+      sendGroupOrError(res, null, 'getPostsFromGroup', req.user, error);
+    } else if (postsInfo) {
+      res.send(JSON.parse(postsInfo));
+    } else {
+      var where = { group_id: req.params.id, deleted: false };
 
-  var where = { group_id: req.params.id, deleted: false };
+      var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
-  var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
+      if (req.params.filter==="newest") {
+        postOrder = "created_at DESC";
+      } else if (req.params.filter==="most_debated") {
+        postOrder = "counter_points DESC";
+      } else if (req.params.filter==="random") {
+        postOrder = "created_at DESC";
+      } else if (req.params.filter==="oldest") {
+        postOrder = "created_at ASC";
+      } else if (req.params.filter==="alphabetical") {
+        postOrder = "name ASC";
+      }
 
-  if (req.params.filter=="newest") {
-    postOrder = "created_at DESC";
-  } else if (req.params.filter=="most_debated") {
-    postOrder = "counter_points DESC";
-  } else if (req.params.filter=="random") {
-    postOrder = "created_at DESC";
-  }
+      if (req.params.categoryId!='null') {
+        where['category_id'] = req.params.categoryId;
+      }
 
-  console.log(req.params.categoryId);
-  console.log(req.params);
+      log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
 
-  if (req.params.categoryId!='null') {
-    where['category_id'] = req.params.categoryId;
-  }
+      var offset = 0;
+      if (req.query.offset) {
+        offset = parseInt(req.query.offset);
+      }
 
-  log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', user: toJson(req.user) });
-
-  var offset = 0;
-  if (req.query.offset) {
-    offset = parseInt(req.query.offset);
-  }
-
-  var PostsByStatus = models.Post.scope(req.params.status);
-  PostsByStatus.findAll({
-    where: where,
-    attributes: ['id','status','official_status','language','counter_endorsements_up',
-                 'counter_endorsements_down','created_at'],
-    order: [
-      models.sequelize.literal(postOrder)
-    ]
-  }).then(function(posts) {
-    var totalPostsCount = posts.length;
-    var rows = [];
-    var postRows = posts;
-    if (req.params.filter==="random" && req.query.randomSeed && postRows && postRows.length>0) {
-      postRows = seededShuffle(postRows, req.query.randomSeed);
-    }
-    if (offset<postRows.length) {
-      var toValue = offset+20;
-      rows = _.slice(postRows, offset, toValue);
-    }
-    //TODO: Remove this hack by finding way to let sequelize work with offsets... (maybe in seq 4.0)
-    getPostsWithAllFromIds(rows, postOrder, function (error, finalRows) {
-      if (error) {
+      var PostsByStatus = models.Post.scope(req.params.status);
+      PostsByStatus.findAndCountAll({
+        where: where,
+        attributes: ['id','status','official_status','language','counter_endorsements_up',
+          'counter_endorsements_down','created_at'],
+        order: [
+          models.sequelize.literal(postOrder)
+        ],
+        limit: 20,
+        offset: offset
+      }).then(function(postResults) {
+        const posts = postResults.rows;
+        var totalPostsCount = postResults.count;
+        var postRows = posts;
+        if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
+          postRows = seededShuffle(postRows, req.query.randomSeed);
+        }
+        getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
+          if (error) {
+            log.error("Error getting group", { err: error });
+            res.sendStatus(500);
+          } else {
+            if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
+              finalRows = seededShuffle(finalRows, req.query.randomSeed);
+            }
+            const postsOut = {
+              posts: finalRows,
+              totalPostsCount: totalPostsCount
+            };
+            req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+            res.send(postsOut);
+          }
+        });
+      }).catch(function (error) {
         log.error("Error getting group", { err: error });
         res.sendStatus(500);
-      } else {
-        if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
-          finalRows = seededShuffle(finalRows, req.query.randomSeed);
-        }
-        res.send({
-          posts: finalRows,
-          totalPostsCount: totalPostsCount
-        });
-      }
-    });
-  }).catch(function (error) {
-    log.error("Error getting group", { err: error });
-    res.sendStatus(500);
+      });
+    }
   });
 });
 
@@ -1310,7 +1578,7 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
       var inGroup, outGroup, post, outCommunityId, outDomainId;
       async.series([
         function (callback) {
-          models.Group.find({
+          models.Group.findOne({
             where: {
               id: req.params.id
             },
@@ -1335,7 +1603,7 @@ router.put('/:id/:groupId/mergeWithGroup', auth.can('edit post'), function(req, 
           });
         },
         function (callback) {
-          models.Group.find({
+          models.Group.findOne({
             where: {
               id: req.params.groupId
             },
@@ -1465,6 +1733,366 @@ router.get('/:groupId/flagged_content_count', auth.can('edit group'), (req, res)
     } else {
       res.send({count: items ? items.length : 0});
     }
+  });
+});
+
+// CAMPAIGNS
+
+router.post('/:id/campaignCreateAndStart', auth.can('edit group'), (req, res) => {
+  models.AcCampaign.createAndSendCampaign(req.body, (error) => {
+    if (error) {
+      log.error('Group createCampaign error', { context: 'campaignCreateAndStart',params: req.body, error});
+      res.sendStatus(500);
+    } else {
+      log.info('Group createCampaign completed', { context: 'campaignCreateAndStart' });
+      res.sendStatus(200);
+    }
+  });
+});
+
+router.get('/:groupId/:jobId/getCampaignSendStatus', auth.can('edit group'), function(req, res) {
+  models.AcCampaign.getSendStatus(req.params.jobId, (error, results) => {
+    if (error) {
+      log.error('Group createCampaign error', { context: 'getCampaignSendStatus', error});
+      res.sendStatus(500);
+    } else {
+      log.info('Group getCampaignSendStatus completed', { context: 'getCampaignSendStatus'});
+      res.sendresults;
+    }
+  });
+});
+
+router.get('/:id/getCampaigns', auth.can('edit group'), (req, res) => {
+  models.AcCampaign.find({
+    where: {
+      group_id: req.params.id
+    }
+  }).then(campaigns=>{
+    res.send(campaigns);
+  }).catch(error=>{
+    log.info('Group createCampaign error', { context: 'createCampaign',params: req.body, error});
+    res.sendStatus(500);
+  });
+});
+
+// LISTS
+
+router.get('/:id/getList', auth.can('edit group'), (req, res) => {
+  models.AcList.getList(req.params.id, (error, results) => {
+    if (error) {
+      log.error('Group getList error', { context: 'getList', error});
+      res.sendStatus(500);
+    } else {
+      log.info('Group getList completed', { context: 'getList'});
+      res.send(results);
+    }
+  });
+});
+
+router.put('/:id/:listId/addListUsers', auth.can('edit group'), (req, res) => {
+  models.AcList.addListUsers(req.params.listId, req.body,(error, results) => {
+    if (error) {
+      log.error('Group addListUsers error', { context: 'addListUsers', error});
+      res.sendStatus(500);
+    } else {
+      log.info('Group addListUsers completed', { context: 'addListUsers'});
+      res.send(results);
+    }
+  });
+});
+
+
+router.get('/:id/:listId/getListUsers', auth.can('edit group'), (req, res) => {
+  models.AcListUser.find({
+    where: {
+      ac_list_id: req.params.listId
+    },
+  }).then(listUsers=>{
+    res.send(listUsers);
+  }).catch(error=>{
+    log.error('Group getListUsers error', { context: 'createCampaign', error});
+    res.sendStatus(500);
+  });
+});
+
+router.post('/:id/marketingTrackingOpen', auth.can('view group'), (req, res) => {
+  if (req.body && req.body.originalQueryParameters && req.body.originalQueryParameters.yu) {
+    models.AcCampaign.updateCampaignAndUser(req.body.originalQueryParameters,'openCount', (error) => {
+      if (error) {
+        log.error('Group marketingTracking error', { context: 'marketingTracking',params: req.body, error});
+        res.sendStatus(500);
+      } else {
+        log.info('Group marketingTracking marketing completed', { context: 'marketingTracking', params: req.body});
+        res.sendStatus(200);
+      }
+    });
+  } else {
+    log.warn("Group marketingTracking no tracking parameters");
+    res.sendStatus(200);
+  }
+});
+
+router.post('/:id/triggerTrackingGoal', auth.can('view group'), (req, res) => {
+  if (req.body && req.body.originalQueryParameters && req.body.originalQueryParameters.yu) {
+    models.AcCampaign.updateCampaignAndUser(req.body.originalQueryParameters,'completeCount', (error) => {
+      if (error) {
+        log.error('Group triggerTrackingGoal error', { context: 'marketingTracking',params: req.body, error});
+        res.sendStatus(500);
+      } else {
+        log.info('Group triggerTrackingGoal marketing completed', { context: 'triggerTrackingGoal', params: req.body});
+        res.sendStatus(200);
+      }
+    });
+  } else {
+    models.Group.findOne({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','configuration']
+    }).then(function(group) {
+      if (group && group.configuration && group.configuration.externalGoalTriggerUrl) {
+        log.info('Group triggerTrackingGoal starting', { context: 'triggerTrackingGoal', params: req.body, group: group});
+        const options = {
+          url: group.configuration.externalGoalTriggerUrl,
+          qs: req.body
+        };
+        request.get(options, (response, message) => {
+          if ((response && response.errno) || (message && message.statusCode!==200)) {
+            log.info('Group triggerTrackingGoal error', { context: 'triggerTrackingGoal', response: response, message: message, params: req.body, group: group});
+            res.sendStatus(500);
+          } else {
+            log.info('Group triggerTrackingGoal completed', { context: 'triggerTrackingGoal', params: req.body, group: group});
+            res.sendStatus(200);
+          }
+        });
+        //
+      } else {
+        log.error("Error getting group for triggerTrackingGoal");
+        res.sendStatus(404);
+      }
+    }).catch(function(error) {
+      log.error("Error getting group for triggerTrackingGoal", {error});
+      res.sendStatus(404);
+    });
+  }
+});
+
+router.put('/:id/:pointId/adminComment', auth.can('edit group'), function(req, res) {
+  if (!req.body.content) {
+    req.body.content="";
+  }
+
+  models.Point.findOne({
+    where: {
+      id: req.params.pointId
+    },
+    attributes: ['id','public_data']
+  }).then(function(point) {
+    if (point) {
+      if (!point.public_data) {
+        point.set('public_data', {});
+      }
+      if (!point.public_data.admin_comment) {
+        point.set('public_data.admin_comment', {});
+      }
+      point.set('public_data.admin_comment', { text: req.body.content, userId: req.user.id, userName: req.user.name, createdAt: new Date() });
+      point.save().then(()=>{
+        res.send({content: req.body.content });
+      }).catch(function(error) {
+        log.error("Error adminComment", {error});
+        res.sendStatus(500);
+      });
+    } else {
+      res.sendStatus(404);
+    }
+  }).catch(function(error) {
+    log.error("Error adminComment", {error});
+    res.sendStatus(500);
+  });
+});
+
+router.get('/:groupId/survey', auth.can('view group'), (req, res) => {
+  models.Group.findOne({
+    where: { id: req.params.groupId },
+    order: [
+      [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+    ],
+    attributes: ['id','name','configuration','objectives'],
+    include: [
+      {
+        model: models.Community,
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        include: [
+          {
+            model: models.Domain,
+            attributes: ['id','theme_id','name']
+          }
+        ]
+      },
+      {
+        model: models.Image,
+        as: 'GroupLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Video,
+        as: 'GroupLogoVideos',
+        attributes:  ['id','formats','viewable','public_meta'],
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      }
+    ]
+  }).then(function(group) {
+    if (group) {
+      log.info('Survey Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
+      res.send({ surveyGroup: group });
+    } else {
+      res.send({ error: 'notFound' });
+    }
+  }).catch(function(error) {
+    sendGroupOrError(res, null, 'view survey', req.user, error);
+  });
+});
+
+router.post('/:groupId/survey', auth.can('view group'), (req, res) => {
+  let surveyGroup;
+  let loggedInUser = req.user;
+
+  async.series([
+    (seriesCallback) => {
+      models.Group.findOne({
+        where: { id: req.params.groupId },
+        attributes: ['id','configuration']
+      }).then(group => {
+        if (group) {
+          surveyGroup = group;
+          seriesCallback();
+        } else {
+          seriesCallback("Group not found");
+        }
+      }).catch(error => {
+        seriesCallback(error)
+      });
+    },
+    (seriesCallback) => {
+      if (loggedInUser) {
+        seriesCallback();
+      } else {
+        const anonSurveyEmail = "survey_group_"+surveyGroup.id+"_user_anonymous@citizens.is";
+        models.User.findOne({
+          where: {
+            email: anonSurveyEmail
+          }
+        }).then(function (existingUser) {
+          if (existingUser) {
+            loggedInUser = existingUser;
+            seriesCallback();
+          } else {
+            var user = models.User.build({
+              email: anonSurveyEmail,
+              name: "Anonymous Survey User",
+              notifications_settings: models.AcNotification.anonymousNotificationSettings,
+              status: 'active'
+            });
+            user.set('profile_data', {});
+            user.set('profile_data.isAnonymousUser', true);
+            user.save().then(() =>  {
+              loggedInUser = user;
+              seriesCallback();
+            }).catch(error => {
+              seriesCallback(error);
+            });
+          }
+        }).catch(error => {
+          seriesCallback(error);
+        });
+      }
+    },
+    (seriesCallback) => {
+      const post = models.Post.build({
+        name: "Survey Response -"+moment(new Date()).format("DD/MM/YYYY hh:mm:ss"),
+        description: "",
+        group_id: surveyGroup.id,
+        cover_media_type: "none",
+        user_id: loggedInUser.id,
+        status: 'blocked',
+        counter_endorsements_up: 0,
+        content_type: models.Post.CONTENT_SURVEY,
+        user_agent: req.useragent.source,
+        ip_address: req.clientIp
+      });
+
+      post.set('public_data', {});
+
+      if (req.body.structuredAnswers) {
+        post.set('public_data.structuredAnswersJson', req.body.structuredAnswers);
+      }
+
+      post.save().then(() => {
+        log.info('Survey Post Created', { postId: post.id, context: 'create' });
+        post.updateAllExternalCounters(req, 'up', 'counter_posts', function () {
+          seriesCallback();
+        });
+      }).catch(error => {
+        seriesCallback(error)
+      });
+    }
+  ], (error) => {
+    if (error) {
+      sendGroupOrError(res, null, 'post survey', req.user, error);
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit group'), function(req, res) {
+  getFromAnalyticsApi(req,"wordclouds", "group", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit group'), function(req, res) {
+  getFromAnalyticsApi(req,"similarities_weights", "group", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_posts_"+req.params.id+"_group", models.Post, {}, getGroupIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_points_"+req.params.id+"_group", models.Point, {}, getPointGroupIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit group'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_group", models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getGroupIncludes(req.params.id),  (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
   });
 });
 

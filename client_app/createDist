@@ -1,0 +1,2 @@
+polymer build
+node minifyBuild.js

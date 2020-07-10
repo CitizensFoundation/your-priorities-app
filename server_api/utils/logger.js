@@ -3,7 +3,7 @@ var PrettyStream = require('bunyan-prettystream');
 
 var logger;
 
-if (process.env.NODE_ENV != 'production') {
+if (process.env.NODE_ENV !== 'production') {
   var prettyStdOut = new PrettyStream();
   prettyStdOut.pipe(process.stdout);
 

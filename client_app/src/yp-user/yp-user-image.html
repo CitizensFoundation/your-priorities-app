@@ -77,17 +77,17 @@
 
     <template restamp is="dom-if" if="[[user]]">
       <template is="dom-if" if="[[profileImageUrl]]">
-        <iron-image sizing="cover" title="[[userTitle]]" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
+        <iron-image sizing="cover" alt$="[[userTitle]]" title="[[userTitle]]" preload src="[[profileImageUrl]]" class$="[[computeClass(small)]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[noProfileImage]]" restamp>
         <template is="dom-if" if="[[user.facebook_id]]">
-          <iron-image sizing="cover" hidden$="[[profileImageUrl]]" title="[[userTitle]]" preload src$="[[computeFacebookSrc]]" class$="[[computeClass(small)]]"></iron-image>
+          <iron-image sizing="cover" hidden$="[[profileImageUrl]]" alt$="[[userTitle]]" title="[[userTitle]]" preload src$="[[computeFacebookSrc]]" class$="[[computeClass(small)]]"></iron-image>
         </template>
 
         <template is="dom-if" if="[[!noDefault]]">
           <template is="dom-if" if="[[!user.facebook_id]]">
-            <iron-image sizing="cover" title="[[userTitle]]" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
+            <iron-image sizing="cover" title="[[userTitle]]" alt$="[[userTitle]]" preload src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png" class$="[[computeClass(small)]]"></iron-image>
           </template>
         </template>
 

@@ -38,7 +38,7 @@ var size = function(obj) {
 });
 */
 
-models.AcNotification.find({
+models.AcNotification.findOne({
   attributes: ['id','type'],
   include: [
     {

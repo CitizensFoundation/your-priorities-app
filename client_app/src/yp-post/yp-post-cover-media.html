@@ -21,6 +21,23 @@
         display: block;
       }
 
+      .topContainer[top-radius] > iron-image, #videoPreviewImage {
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+      }
+
+      video {
+        outline: none !important;
+      }
+
+      .topContainer[top-left-radius] > iron-image, #videoPreviewImage, google-streetview-pano, google-map {
+        border-top-left-radius: 4px;
+      }
+
+      .topContainer[top-left-radius] > video {
+        border-top-left-radius: 4px;
+      }
+
       google-streetview-pano {
         width: 100%;
         height: 100%;
@@ -42,7 +59,7 @@
         padding: 0;
       }
 
-      .mapCanvas {
+      .topContainer {
         width: 100%;
         height: 100%;
       }
@@ -64,6 +81,12 @@
         height: 100%;
         margin: 0 !important;
         padding: 0 !important;
+      }
+
+      @media (max-width: 960px) {
+        .topContainer[top-left-radius] > iron-image {
+          border-top-left-radius: 0;
+        }
       }
 
       @media (max-width: 600px) {
@@ -154,7 +177,7 @@
         height: 100%;
       }
 
-      .mapCanvas[portrait] {
+      .topContainer[portrait] {
         background-color: #777;
       }
 
@@ -173,19 +196,19 @@
       }
     </style>
 
-    <div class="mapCanvas">
+    <div class="topContainer" top-radius$="[[topRadius]]" top-left-radius$="[[topLeftRadius]]">
       <template is="dom-if" if="[[noneActive]]">
         <iron-image header-mode$="[[headerMode]]" sizing="cover" hidden$="[[defaultPostImageEnabled]]"
                     class="main-image pointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToPost"></iron-image>
 
         <template is="dom-if" if="[[activeDefaultImageUrl]]" restamp>
-          <iron-image header-mode$="[[headerMode]]" sizing="cover" class="main-image pointer" src="[[activeDefaultImageUrl]]" on-tap="_goToPost"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" sizing="cover" alt$="[[altTag]]" class="main-image pointer" src="[[activeDefaultImageUrl]]" on-tap="_goToPost"></iron-image>
         </template>
       </template>
 
       <template is="dom-if" if="[[categoryActive]]">
         <div id="categoryImageId" class="layout horizontal center-center">
-          <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="_goToPost" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
+          <iron-image header-mode$="[[headerMode]]" tiny$="[[tiny]]" on-tap="_goToPost" alt$="[[altTag]]" class="category-icon pointer" title="[[post.Category.name]]" sizing="contain" src$="[[getCategoryImagePath]]"></iron-image>
         </div>
       </template>
 
@@ -194,7 +217,7 @@
       </template>
 
       <template is="dom-if" if="[[imageActive]]">
-        <iron-image header-mode$="[[headerMode]]" on-tap="_goToPost" sizing="cover" class="main-image pointer" src="[[postImagePath]]"></iron-image>
+        <iron-image header-mode$="[[headerMode]]" on-tap="_goToPost" alt$="[[altTag]]" sizing="[[sizingMode]]" class="main-image pointer" src="[[postImagePath]]"></iron-image>
       </template>
 
       <template is="dom-if" if="[[videoActive]]" restamp>
@@ -278,6 +301,16 @@
           observer: "_postChanged"
         },
 
+        topRadius: {
+          type: Boolean,
+            value: false
+        },
+
+        topLeftRadius: {
+          type: Boolean,
+          value: false
+        },
+
         noneActive: {
           type: Boolean,
           value: false,
@@ -318,6 +351,11 @@
           type: Boolean,
           value: false,
           computed: '_isMapActive(post)'
+        },
+
+        altTag: {
+          type: String,
+          value: null
         },
 
         streetViewActive: {
@@ -445,6 +483,20 @@
           type: String,
           computed: '_activeDefaultImageUrl(defaultPostImageEnabled, defaultImageGroupId, uploadedDefaultPostImageId)',
           value: null
+        },
+
+        sizingMode: {
+          type: String,
+          computed: '_sizingMode(post)'
+        }
+      },
+
+
+      _sizingMode: function (post) {
+        if (post && post.Group && post.Group.configuration && post.Group.configuration.useContainImageMode) {
+          return 'contain'
+        } else {
+          return 'cover';
         }
       },
 
@@ -457,14 +509,18 @@
       },
 
       _goToPost: function () {
-        if (this.post) {
-          if (this.headerMode) {
-            this.goToPost(this.post.id)
-          } else {
-            this.goToPost(this.post.id, null, null, this.post);
-          }
+        if (this.post && this.post.Group.configuration && this.post.Group.configuration.resourceLibraryLinkMode) {
+          // Do nothing
         } else {
-          console.error("No post in post cover media on goToPost");
+          if (this.post) {
+            if (this.headerMode) {
+              this.goToPost(this.post.id)
+            } else {
+              this.goToPost(this.post.id, null, null, this.post);
+            }
+          } else {
+            console.error("No post in post cover media on goToPost");
+          }
         }
       },
 
@@ -652,7 +708,7 @@
 
       _postVideoPosterPath: function (post) {
         if (post && post.PostVideos) {
-          var videoPosterURL = this._getVideoPosterURL(post.PostVideos);
+          var videoPosterURL = this._getVideoPosterURL(post.PostVideos, post.PostHeaderImages);
           if (videoPosterURL) {
             return videoPosterURL;
           } else {

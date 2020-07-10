@@ -11,8 +11,22 @@ var queue = require('../active-citizen/workers/queue');
 const getAllModeratedItemsByCommunity = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByCommunity;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 const getLoginsExportDataForCommunity = require('../utils/export_utils').getLoginsExportDataForCommunity;
+const getUsersForCommunity = require('../utils/export_utils').getUsersForCommunity;
 var sanitizeFilename = require("sanitize-filename");
 var moment = require('moment');
+var multer  = require('multer');
+var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
+const fs = require('fs');
+const readline = require('readline');
+const stream = require('stream');
+
+const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
+const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
+const sendBackAnalyticsResultsOrError = require('../active-citizen/engine/analytics/manager').sendBackAnalyticsResultsOrError;
+const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/statsCalc').countModelRowsByTimePeriod;
+const getCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getCommunityIncludes;
+const getPointCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointCommunityIncludes;
+const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -38,11 +52,15 @@ var getCommunityFolder = function (req, communityFolderId, done) {
 
   async.series([
     function (seriesCallback) {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: communityFolderId
         },
         attributes: models.Community.defaultAttributesPublic,
+        order: [
+          [ {model: models.Image, as: 'CommunityLogoImages'}, 'created_at', 'asc'],
+          [ {model: models.Image, as: 'CommunityHeaderImages'}, 'created_at', 'asc']
+        ],
         include: [
           {
             model: models.Image,
@@ -65,7 +83,6 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             model: models.Image,
             as: 'CommunityHeaderImages',
             attributes:  models.Image.defaultAttributesPublic,
-            order: 'created_at asc',
             required: false
           },
           {
@@ -127,7 +144,6 @@ var getCommunityFolder = function (req, communityFolderId, done) {
             model: models.Image,
             as: 'CommunityHeaderImages',
             attributes:  models.Image.defaultAttributesPublic,
-            order: 'created_at asc',
             required: false
           }
         ]
@@ -160,7 +176,7 @@ var getCommunityFolder = function (req, communityFolderId, done) {
                   required: false
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {
@@ -213,7 +229,7 @@ var getCommunityFolder = function (req, communityFolderId, done) {
                   required: false
                 },
                 {
-                  model: models.Image, as: 'CommunityHeaderImages', order: 'created_at asc',
+                  model: models.Image, as: 'CommunityHeaderImages',
                   required: false
                 },
                 {
@@ -253,7 +269,9 @@ var getCommunityFolder = function (req, communityFolderId, done) {
       }
     }
   ], function (error) {
-    communityFolder.dataValues.Communities = combinedCommunities;
+    if (communityFolder) {
+      communityFolder.dataValues.Communities = combinedCommunities;
+    }
     done(error, communityFolder);
   });
 };
@@ -263,7 +281,7 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
 
   async.series([
     function (seriesCallback) {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: communityId
         }
@@ -278,7 +296,7 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },
@@ -297,7 +315,7 @@ var getCommunityAndUser = function (communityId, userId, userEmail, callback) {
     },
     function (seriesCallback) {
       if (userEmail) {
-        models.User.find({
+        models.User.findOne({
           where: {
             email: userEmail
           },
@@ -382,12 +400,11 @@ const masterGroupIncludes = [
 var getCommunity = function(req, done) {
   var community;
 
-  log.info("getCommunity 1");
+  log.info("getCommunity");
 
   async.series([
     function (seriesCallback) {
-      log.info("getCommunity 1a");
-      models.Community.find({
+      models.Community.findOne({
         where: { id: req.params.id },
         order: [
           [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
@@ -422,7 +439,7 @@ var getCommunity = function(req, done) {
           {
             model: models.Video,
             as: 'CommunityLogoVideos',
-            attributes:  ['id','formats','viewable'],
+            attributes:  ['id','formats','viewable','public_meta'],
             required: false,
             include: [
               {
@@ -435,10 +452,9 @@ var getCommunity = function(req, done) {
           }
         ]
       }).then(function(communityIn) {
-        log.info("getCommunity 2");
         community = communityIn;
         if (community) {
-          log.info('Community Viewed', { community: toJson(community.simple()), context: 'view', user: toJson(req.user) });
+          log.info('Community Viewed', { communityId: community.id, context: 'view', userId: req.user ? req.user.id : -1 });
           seriesCallback()
         } else {
           seriesCallback("Not found");
@@ -449,35 +465,49 @@ var getCommunity = function(req, done) {
       });
     },
     function (seriesCallback) {
-      log.info("getCommunity 2a");
-      models.Group.findAll({
-        where: {
-          community_id: community.id,
-          access: {
-            $ne: models.Group.ACCESS_SECRET
-          }
-        },
-        attributes: ['id','configuration','access','objectives','name','theme_id','community_id',
-          'access','status','counter_points','counter_posts','counter_users','language'],
-        required: false,
-        order: [
-          [ 'counter_users', 'desc' ],
-          [ { model: models.Image, as: 'GroupLogoImages' }, 'created_at', 'asc' ],
-          [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-          [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
-          [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
-        ],
-        include: masterGroupIncludes
-      }).then(function (groups) {
-        log.info("getCommunity 2b");
-        community.dataValues.Groups = groups;
-        seriesCallback();
-      }).catch(error => {
-        seriesCallback(error);
+      const redisKey = "cache:community_groups:"+community.id+":"+models.Group.ACCESS_SECRET;
+      req.redisClient.get(redisKey, (error, groups) => {
+        if (error) {
+          seriesCallback(error);
+        } else if (groups) {
+          community.dataValues.Groups = JSON.parse(groups);
+          seriesCallback();
+        } else {
+          models.Group.findAll({
+            where: {
+              community_id: community.id,
+              access: {
+                $ne: models.Group.ACCESS_SECRET
+              },
+              status: {
+                $ne: 'hidden'
+              }
+            },
+            attributes: ['id', 'configuration', 'access', 'objectives', 'name', 'theme_id', 'community_id',
+              'access', 'status', 'counter_points', 'counter_posts', 'counter_users', 'language'],
+            required: false,
+            order: [
+              ['counter_users', 'desc'],
+              [{model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc'],
+              [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
+              [{model: models.Video, as: "GroupLogoVideos"}, 'updated_at', 'desc'],
+              [{model: models.Video, as: "GroupLogoVideos"}, {
+                model: models.Image,
+                as: 'VideoImages'
+              }, 'updated_at', 'asc'],
+            ],
+            include: masterGroupIncludes
+          }).then(function (groups) {
+            community.dataValues.Groups = groups;
+            req.redisClient.setex(redisKey, process.env.GROUPS_CACHE_TTL ? parseInt(process.env.GROUPS_CACHE_TTL) : 3, JSON.stringify(groups));
+            seriesCallback();
+          }).catch(error => {
+            seriesCallback(error);
+          });
+        }
       });
     },
     function (seriesCallback) {
-      log.info("getCommunity 3");
       if (req.user && community) {
         var adminGroups, userGroups;
 
@@ -507,7 +537,6 @@ var getCommunity = function(req, done) {
                 }
               ].concat(masterGroupIncludes)
             }).then(function (groups) {
-              log.info("getCommunity 4");
               adminGroups = groups;
               parallelCallback(null, "admin");
             }).catch(function (error) {
@@ -516,7 +545,6 @@ var getCommunity = function(req, done) {
           },
 
           function (parallelCallback) {
-            log.info("getCommunity 5");
             models.Group.findAll({
               where: {
                 community_id: community.id
@@ -540,7 +568,6 @@ var getCommunity = function(req, done) {
                 }
               ].concat(masterGroupIncludes)
             }).then(function (groups) {
-              log.info("getCommunity 6");
               userGroups = groups;
               parallelCallback(null, "users");
             }).catch(function (error) {
@@ -548,7 +575,6 @@ var getCommunity = function(req, done) {
             });
           }
         ], function (error) {
-            log.info("getCommunity 7");
           var combinedGroups = _.concat(userGroups, community.dataValues.Groups);
           if (adminGroups) {
             combinedGroups = _.concat(adminGroups, combinedGroups);
@@ -571,7 +597,6 @@ var getCommunity = function(req, done) {
       }
     }
   ], function (error) {
-    log.info("getCommunity 8");
     done(error, community);
   });
 };
@@ -595,6 +620,12 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
 
   community.set('configuration.welcomeHTML', (req.body.welcomeHTML && req.body.welcomeHTML!="") ? req.body.welcomeHTML : null);
+
+  community.set('configuration.customSamlDeniedMessage', (req.body.customSamlDeniedMessage && req.body.customSamlDeniedMessage!="") ? req.body.customSamlDeniedMessage : null);
+  community.set('configuration.customSamlLoginMessage', (req.body.customSamlLoginMessage && req.body.customSamlLoginMessage!="") ? req.body.customSamlLoginMessage : null);
+
+  community.set('configuration.forceSecureSamlLogin', truthValueFromBody(req.body.forceSecureSamlLogin));
+  community.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
 
   if (req.body.google_analytics_code && req.body.google_analytics_code!="") {
     community.google_analytics_code = req.body.google_analytics_code;
@@ -620,11 +651,15 @@ var updateCommunityConfigParameters = function (req, community) {
 
   community.set('configuration.appHomeScreenShortName', (req.body.appHomeScreenShortName && req.body.appHomeScreenShortName!=null)? req.body.appHomeScreenShortName : null);
   community.set('configuration.signupTermsPageId', (req.body.signupTermsPageId && req.body.signupTermsPageId!="") ? req.body.signupTermsPageId : null);
+  community.set('configuration.welcomePageId', (req.body.welcomePageId && req.body.welcomePageId!="") ? req.body.welcomePageId : null);
+
   community.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));
   community.set('configuration.hideAllTabs', truthValueFromBody(req.body.hideAllTabs));
 
   community.set('configuration.themeOverrideColorPrimary', (req.body.themeOverrideColorPrimary && req.body.themeOverrideColorPrimary!="") ? req.body.themeOverrideColorPrimary : null);
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
+  community.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
+  community.set('configuration.sortBySortOrder', truthValueFromBody(req.body.sortBySortOrder));
 };
 
 router.get('/:communityFolderId/communityFolders', auth.can('view community'), function(req, res) {
@@ -641,7 +676,7 @@ router.get('/:communityFolderId/communityFolders', auth.can('view community'), f
 });
 
 router.delete('/:communityId/:activityId/delete_activity', auth.can('edit community'), function(req, res) {
-  models.AcActivity.find({
+  models.AcActivity.findOne({
     where: {
       community_id: req.params.communityId,
       id: req.params.activityId
@@ -664,11 +699,11 @@ router.delete('/:communityId/:activityId/delete_activity', auth.can('edit commun
 router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
-      log.error('Could not remove user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: req.user ? toJson(req.user.simple()) : null });
+      log.error('Could not remove user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else if (user && community) {
       community.removeCommunityUsers(user).then(function (results) {
-        log.info('User removed', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: req.user ? toJson(req.user.simple()) : null });
+        log.info('User removed', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
         res.send({ membershipValue: false, name: community.name });
       });
     } else {
@@ -680,11 +715,11 @@ router.delete('/:communityId/user_membership', auth.isLoggedIn, auth.can('view c
 router.post('/:communityId/user_membership', auth.isLoggedIn, auth.can('view community'), function(req, res) {
   getCommunityAndUser(req.params.communityId, req.user.id, null, function (error, community, user) {
     if (error) {
-      log.error('Could not add user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: req.user ? toJson(req.user.simple()) : null });
+      log.error('Could not add user', { err: error, communityId: req.params.communityId, userRemovedId: req.user.id, context: 'user_membership', user: toJson(req.user.simple())});
       res.sendStatus(500);
     } else if (user && community) {
       community.addCommunityUsers(user).then(function (results) {
-        log.info('User Added', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: req.user ? toJson(req.user.simple()) : null });
+        log.info('User Added', {context: 'user_membership', communityId: req.params.communityId, userRemovedId: req.user.id, user: toJson(req.user.simple()) });
         res.send({ membershipValue: true, name: community.name });
       });
     } else {
@@ -703,7 +738,7 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       });
     },
     function(callback) {
-      models.User.find({
+      models.User.findOne({
         where: { email: req.params.userEmail },
         attributes: ['id','email']
       }).then(function (userIn) {
@@ -716,45 +751,82 @@ router.post('/:communityId/:userEmail/invite_user', auth.can('edit community'), 
       });
     },
     function(callback) {
-      models.Invite.create({
-        token: token,
-        expires_at: Date.now() + (3600000*24*30*365*1000),
-        type: models.Invite.INVITE_TO_COMMUNITY,
-        community_id: req.params.communityId,
-        user_id: user ? user.id : null,
-        from_user_id: req.user.id,
-        metadata:  { toEmail: req.params.userEmail}
-      }).then(function (inviteIn) {
-        if (inviteIn) {
-          invite = inviteIn;
-          callback();
-        } else {
-          callback('Invite not found')
-        }
-      }).catch(function (error) {
-        callback(error);
-      });
+      if (!req.query.addToCommunityDirectly) {
+        models.Invite.create({
+          token: token,
+          expires_at: Date.now() + (3600000*24*30*365*1000),
+          type: models.Invite.INVITE_TO_COMMUNITY,
+          community_id: req.params.communityId,
+          user_id: user ? user.id : null,
+          from_user_id: req.user.id,
+          metadata:  { toEmail: req.params.userEmail}
+        }).then(function (inviteIn) {
+          if (inviteIn) {
+            invite = inviteIn;
+            callback();
+          } else {
+            callback('Invite not found')
+          }
+        }).catch(function (error) {
+          callback(error);
+        });
+      } else {
+        callback();
+      }
     },
     function(callback) {
-      models.AcActivity.inviteCreated({
-        email: req.params.userEmail,
-        user_id: user ? user.id : null,
-        sender_user_id: req.user.id,
-        community_id: req.params.communityId,
-        sender_name: req.user.name,
-        domain_id: req.ypDomain.id,
-        invite_id: invite.id,
-        token: token}, function (error) {
-        callback(error);
-      });
+      if (!req.query.addToCommunityDirectly) {
+        models.AcActivity.inviteCreated({
+          email: req.params.userEmail,
+          user_id: user ? user.id : null,
+          sender_user_id: req.user.id,
+          community_id: req.params.communityId,
+          sender_name: req.user.name,
+          domain_id: req.ypDomain.id,
+          invite_id: invite.id,
+          token: token}, function (error) {
+          callback(error);
+        });
+      } else {
+        callback();
+      }
+    },
+    function(callback) {
+     if (user && req.query.addToCommunityDirectly) {
+       models.Community.findOne({
+         where: {
+           id: req.params.communityId
+         },
+         attributes: ['id']
+       }).then(community=>{
+         if (community) {
+           community.addCommunityUsers(user).then(()=>{
+             callback();
+           }).catch(error=>{
+             callback(error);
+           })
+         } else {
+           callback("Can't find community");
+         }
+       }).catch(error=>{
+         callback(error);
+       });
+     } else {
+       callback();
+     }
     }
   ], function(error) {
     if (error) {
       log.error('Send Invite Error', { user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user), err: error, errorStatus: 500 });
       res.sendStatus(500);
     } else {
-      log.info('Send Invite Activity Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
-      res.sendStatus(200);
+      if (!user && req.query.addToCommunityDirectly) {
+        log.info('Send Invite User Not Found To add', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(404);
+      } else {
+        log.info('Send Invite Created', { userEmail: req.params.userEmail, user: user ? toJson(user) : null, context: 'invite_user_community', loggedInUser: toJson(req.user) });
+        res.sendStatus(200);
+      }
     }
   });
 });
@@ -853,7 +925,7 @@ router.post('/:communityId/:email/add_admin', auth.can('edit community'), functi
 });
 
 router.get('/:communityId/pages', auth.can('view community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
       where: { id: req.params.communityId},
       attributes: ['id', 'domain_id']
     }).then(function (community) {
@@ -862,7 +934,7 @@ router.get('/:communityId/pages', auth.can('view community'), function(req, res)
           log.error('Could not get pages for community', { err: error, context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
           res.sendStatus(500);
         } else {
-          log.info('Got Pages', {context: 'pages', user: req.user ? toJson(req.user.simple()) : null });
+          log.info('Got Pages', {context: 'pages', userId: req.user ? req.user.id : null });
           res.send(pages);
         }
       });
@@ -879,7 +951,7 @@ router.get('/:communityId/pages_for_admin', auth.can('edit community'), function
       log.error('Could not get page for admin for community', { err: error, context: 'pages_for_admin', user: req.user ? toJson(req.user.simple()) : null });
       res.sendStatus(500);
     } else {
-      log.info('Got Pages For Admin', {context: 'pages_for_admin', user: req.user ? toJson(req.user.simple()) : null });
+      log.info('Got Pages For Admin', {context: 'pages_for_admin', userId: req.user ? req.user.id : null });
       res.send(pages);
     }
   });
@@ -958,7 +1030,7 @@ router.post('/:communityId/news_story', auth.isLoggedIn, auth.can('view communit
 });
 
 router.get('/:communityId/admin_users', auth.can('edit community'), function (req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {
       id: req.params.communityId
     },
@@ -992,7 +1064,7 @@ router.get('/:communityId/admin_users', auth.can('edit community'), function (re
 });
 
 router.get('/:communityId/users', auth.can('edit community'), function (req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {
       id: req.params.communityId
     },
@@ -1101,9 +1173,72 @@ router.get('/:id', auth.can('view community'), function(req, res) {
   });
 });
 
+router.get('/:id/basic', auth.can('view community'), function(req, res) {
+  models.Community.findOne({
+    where: {
+      id: req.params.id
+    },
+    order: [
+      [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+      [ { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
+      [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "CommunityLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+    ],
+    attributes: models.Community.defaultAttributesPublic,
+    include: [
+      {
+        model: models.Domain,
+        attributes: models.Domain.defaultAttributesPublic
+      },
+      {
+        model: models.Image,
+        as: 'CommunityLogoImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Image,
+        as: 'CommunityHeaderImages',
+        attributes:  models.Image.defaultAttributesPublic,
+        required: false
+      },
+      {
+        model: models.Community,
+        required: false,
+        as: 'CommunityFolder',
+        attributes: ['id', 'name', 'description']
+      },
+      {
+        model: models.Video,
+        as: 'CommunityLogoVideos',
+        attributes:  ['id','formats','viewable','public_meta'],
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats",'updated_at'],
+            required: false
+          },
+        ]
+      }
+    ]
+  }).then(community=>{
+    if (community) {
+      res.send(community);
+    } else if (error && error!="Not found") {
+      sendCommunityOrError(res, null, 'view', req.user, error);
+    } else {
+      sendCommunityOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
+    }
+  }).catch(error=>{
+    sendCommunityOrError(res, null, 'view', req.user, error);
+  })
+});
+
 router.get('/:id/translatedText', auth.can('view community'), function(req, res) {
   if (req.query.textType && req.query.textType.indexOf("community") > -1) {
-    models.Community.find({
+    models.Community.findOne({
       where: {
         id: req.params.id
       },
@@ -1153,6 +1288,7 @@ const createNewCommunity = (req, res) => {
   updateCommunityConfigParameters(req, community);
   community.save().then(function() {
     log.info('Community Created', { community: toJson(community), context: 'create', user: toJson(req.user) });
+    queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
     community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
       community.setupImages(req.body, function(error) {
         community.addCommunityAdmins(req.user).then(function (results) {
@@ -1167,7 +1303,7 @@ const createNewCommunity = (req, res) => {
 
 router.post('/:domainId', auth.can('create community'), function(req, res) {
   if (req.body.hostname && req.body.hostname!=='') {
-    models.Community.find({
+    models.Community.findOne({
       where: {
         hostname: req.body.hostname
       }
@@ -1185,7 +1321,7 @@ router.post('/:domainId', auth.can('create community'), function(req, res) {
 });
 
 router.put('/:id', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: { id: req.params.id }
   }).then(function(community) {
     if (community) {
@@ -1205,6 +1341,7 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
       updateCommunityConfigParameters(req, community);
       community.save().then(function () {
         log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
         community.setupImages(req.body, function(error) {
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
@@ -1218,13 +1355,14 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
 });
 
 router.delete('/:id', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
       community.deleted = true;
       community.save().then(function () {
         log.info('Community Deleted', { community: toJson(community), user: toJson(req.user) });
+        queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
         queue.create('process-deletion', { type: 'delete-community-content', communityName: community.name, communityId: community.id, userId: req.user.id }).priority('high').removeOnComplete(true).save();
         community.updateAllExternalCounters(req, 'down', 'counter_communities', function () {
           res.sendStatus(200);
@@ -1239,7 +1377,7 @@ router.delete('/:id', auth.can('edit community'), function(req, res) {
 });
 
 router.delete('/:id/delete_content', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
@@ -1257,7 +1395,7 @@ router.delete('/:id/delete_content', auth.can('edit community'), function(req, r
 });
 
 router.delete('/:id/anonymize_content', auth.can('edit community'), function(req, res) {
-  models.Community.find({
+  models.Community.findOne({
     where: {id: req.params.id }
   }).then(function (community) {
     if (community) {
@@ -1376,13 +1514,47 @@ router.get('/:communityId/flagged_content_count',  auth.can('edit community'), (
   });
 });
 
+router.get('/:communityId/export_users', auth.can('edit community'), function(req, res) {
+  getUsersForCommunity(req.params.communityId, function (error, fileData) {
+    if (error) {
+      log.error('Could not export users for community', { err: error, context: 'export_users', user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    } else {
+      models.Community.findOne({
+        where: {
+          id: req.params.communityId
+        },
+        attributes: ["id", "name"]
+      }).then(function (model) {
+        if (model) {
+          log.info('Got Users Exports', {context: 'export_users', user: toJson(req.user.simple()) });
+          var communityName = sanitizeFilename(model.name).replace(/ /g,'');
+          var dateString = moment(new Date()).format("DD_MM_YY_HH_mm");
+          var filename = 'users_export_for_community_id_'+model.id+'_'+
+            communityName+'_'+dateString+'.csv';
+          res.set({ 'content-type': 'application/octet-stream; charset=utf-8' });
+          res.charset = 'utf-8';
+          res.attachment(filename);
+          res.send(fileData);
+        } else {
+          log.error('Cant find community', { err: error, context: 'export_users', user: toJson(req.user.simple()) });
+          res.sendStatus(404);
+        }
+      }).catch(function (error) {
+        log.error('Could not export for community', { err: error, context: 'export_users', user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      });
+    }
+  });
+});
+
 router.get('/:communityId/export_logins', auth.can('edit community'), function(req, res) {
   getLoginsExportDataForCommunity(req.params.communityId, req.ypDomain.domain_name, function (error, fileData) {
     if (error) {
       log.error('Could not export logins for commnity', { err: error, context: 'export_group', user: toJson(req.user.simple()) });
       res.sendStatus(500);
     } else {
-      models.Community.find({
+      models.Community.findOne({
         where: {
           id: req.params.communityId
         },
@@ -1407,6 +1579,179 @@ router.get('/:communityId/export_logins', auth.can('edit community'), function(r
         res.sendStatus(500);
       });
     }
+  });
+});
+
+router.get('/:communityId/:ssnListId/ssn_login_list_count', auth.can('edit community'), function(req, res) {
+  models.GeneralDataStore.findOne({
+    where: {
+      id: req.params.ssnListId
+    }
+  }).then((dataItem)=>{
+    if (dataItem.data.ssns) {
+      res.send({count: dataItem.data.ssns.length });
+    } else {
+      log.error('Could not get ssl login list count', { context: 'ssn_login_list_count', user: toJson(req.user.simple()) });
+      res.sendStatus(404);
+    }
+  }).catch((error)=>{
+    log.error('Could not get ssl login list count', { context: 'ssn_login_list_count', error, user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  })
+});
+
+router.delete('/:communityId/:ssnListId/delete_ssn_login_list', auth.can('edit community'), function(req, res) {
+  models.GeneralDataStore.destroy({
+    where: {
+      id: req.params.ssnListId
+    }
+  }).then(()=>{
+    models.Community.findOne({
+      where: {
+        id: req.params.communityId
+      },
+      attributes: ['id','configuration']
+    }).then((community) => {
+      community.set('configuration.ssnLoginListDataId', null);
+      community.save().then(()=>{
+        res.sendStatus(200);
+      }).catch((error)=>{
+        log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      })
+    }).catch((error)=>{
+      log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+      res.sendStatus(500);
+    });
+  }).catch((error)=>{
+    log.error('Could not destroy ssl login list count', { context: 'delete_ssn_login_list', error, user: toJson(req.user.simple()) });
+    res.sendStatus(500);
+  })
+});
+
+router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), function(req, res) {
+  let ssnLoginListDataId;
+  let mainDataItem;
+  multerMultipartResolver(req, res, function (error) {
+    if (!error && req.file && req.file.path) {
+      const instream = fs.createReadStream(req.file.path);
+      const outstream = new stream();
+      const rl = readline.createInterface(instream, outstream);
+      const ssns = [];
+      rl.on('line', (line) => {
+        const isnum = /^\d+$/.test(line);
+        if (isnum && line.length==10) {
+          ssns.push(line);
+        } else {
+          log.warn("Malformatted line in upload_ssn_login_list", { line });
+        }
+      });
+      rl.on('close', () => {
+        models.GeneralDataStore.create({ data: { ssns: ssns }}).then((dataItem)=>{
+          mainDataItem = dataItem;
+          let community;
+          async.series([
+            (seriesCallback) => {
+              models.Community.findOne({
+                where: {
+                  id: req.params.communityId
+                },
+                attributes: ['id','configuration']
+              }).then((communityIn)=>{
+                community = communityIn;
+                seriesCallback();
+              }).catch((error)=>{
+                seriesCallback(error);
+              });
+            },
+
+            (seriesCallback) => {
+              if (community && community.configuration && community.configuration.ssnLoginListDataId) {
+                models.GeneralDataStore.destroy({
+                  where: {
+                    id: community.configuration.ssnLoginListDataId
+                  }
+                }).then(()=>{
+                  seriesCallback();
+                }).catch((error)=>{
+                  seriesCallback(error);
+                })
+              } else {
+                seriesCallback();
+              }
+            },
+
+            (seriesCallback) => {
+              community.set('configuration.ssnLoginListDataId', dataItem.id);
+              ssnLoginListDataId = dataItem.id;
+              community.save().then(()=>{
+                seriesCallback();
+              }).catch((error)=>{
+                seriesCallback(error);
+              })
+            }
+          ], (error) => {
+            if (error) {
+              log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+              res.sendStatus(500);
+            } else {
+              res.send({ ssnLoginListDataId, numberOfSsns: mainDataItem.data.ssns.length });
+            }
+          });
+        }).catch((error)=>{
+          log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+          res.sendStatus(500);
+        })
+      });
+      rl.on('error', (error) => {
+        log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+      });
+      } else {
+        log.error('Could not upload ssl to community', { context: 'upload_ssn_login_list', error, user: toJson(req.user.simple()) });
+        res.sendStatus(500);
+    }
+  })
+});
+
+// WORD CLOUD
+router.get('/:id/wordcloud', auth.can('edit community'), function(req, res) {
+  triggerSimilaritiesTraining(req,"community", req.params.id, ()=>{});
+  getFromAnalyticsApi(req,"wordclouds", "community", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error,content);
+  });
+});
+
+// SIMILARITIES
+router.get('/:id/similarities_weights', auth.can('edit community'), function(req, res) {
+  getFromAnalyticsApi(req,"similarities_weights", "community", req.params.id, function (error, content) {
+    sendBackAnalyticsResultsOrError(req,res,error ? error : content.body ? null : 'noBody', getParsedSimilaritiesContent(content));
+  });
+});
+
+// STATS
+router.get('/:id/stats_posts', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_posts_"+req.params.id+"_community", models.Post, {}, getCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_points', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_points_"+req.params.id+"_community", models.Point, {}, getPointCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error, results);
+  });
+});
+
+router.get('/:id/stats_votes', auth.can('edit community'), function(req, res) {
+  countModelRowsByTimePeriod(req,"stats_votes_"+req.params.id+"_community", models.AcActivity, {
+    type: {
+      $in: [
+        "activity.post.opposition.new","activity.post.endorsement.new",
+        "activity.point.helpful.new","activity.point.unhelpful.new"
+      ]
+    }
+  }, getCommunityIncludes(req.params.id), (error, results) => {
+    sendBackAnalyticsResultsOrError(req,res,error,results);
   });
 });
 

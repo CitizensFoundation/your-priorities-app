@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-  var Invite = sequelize.define("Invite", {
+  const Invite = sequelize.define("Invite", {
     type: { type: DataTypes.INTEGER, allowNull: false },
     expires_at: DataTypes.DATE,
     token: DataTypes.STRING,
@@ -17,6 +17,8 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     indexes: [
       {
@@ -29,30 +31,27 @@ module.exports = function(sequelize, DataTypes) {
 
     underscored: true,
 
-    tableName: 'invites',
-
-    classMethods: {
-
-      INVITE_TO_GROUP: 0,
-      INVITE_TO_COMMUNITY: 1,
-      INVITE_TO_IDEA: 2,
-      INVITE_TO_FRIEND: 3,
-
-      associate: function(models) {
-        Invite.belongsTo(models.Community);
-        Invite.belongsTo(models.Group);
-        Invite.belongsTo(models.Post);
-        Invite.belongsTo(models.User, { as: 'FromUser' });
-        Invite.belongsTo(models.User, { as: 'ToUser' });
-      },
-
-      checkIfColumnExists: function(columnName) {
-        var a = this.rawAttributes;
-        var b = this.rawAttributes[columnName];
-        return this.rawAttributes[columnName]!=null;
-      }
-    }
+    tableName: 'invites'
   });
+
+  Invite.associate = (models) => {
+    Invite.belongsTo(models.Community, { foreignKey: 'community_id'});
+    Invite.belongsTo(models.Group, { foreignKey: 'group_id'});
+    Invite.belongsTo(models.Post,{ foreignKey: 'post_id'});
+    Invite.belongsTo(models.User, { as: 'FromUser', foreignKey: "from_user_id" });
+    Invite.belongsTo(models.User, { as: 'ToUser', foreignKey: "to_user_id" });
+  };
+
+  Invite.INVITE_TO_GROUP = 0;
+  Invite.INVITE_TO_COMMUNITY = 1;
+  Invite.INVITE_TO_IDEA = 2;
+  Invite.INVITE_TO_FRIEND = 3;
+
+  Invite.checkIfColumnExists = function(columnName) {
+    const a = this.rawAttributes;
+    const b = this.rawAttributes[columnName];
+    return this.rawAttributes[columnName]!=null;
+  };
 
   return Invite;
 };

@@ -1,11 +1,9 @@
-var async = require("async");
-
 "use strict";
 
-// https://www.npmjs.org/package/enum for state of posts
+const async = require("async");
 
-module.exports = function(sequelize, DataTypes) {
-  var Group = sequelize.define("Group", {
+module.exports = (sequelize, DataTypes) => {
+  const Group = sequelize.define("Group", {
     name: { type: DataTypes.STRING, allowNull: false },
     access: { type: DataTypes.INTEGER, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -32,6 +30,8 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
 
     underscored: true,
 
@@ -46,6 +46,14 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         fields: ['id', 'deleted']
+      },
+      {
+        name: 'groups_idx_counter_users',
+        fields: ['counter_users']
+      },
+      {
+        name: 'groups_idx_counter_users_community_id_access_deleted',
+        fields:['counter_users','community_id','access','deleted']
       },
       {
         fields: ['community_id', 'deleted', 'in_group_folder_id']
@@ -80,198 +88,198 @@ module.exports = function(sequelize, DataTypes) {
       }
     ],
 
-    instanceMethods: {
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX groupheaderimage_idx_group_id ON "GroupHeaderImage" (group_id);
+    // CREATE INDEX grouplogoimage_idx_group_id ON "GroupLogoImage" (group_id);
+    // CREATE INDEX grouplogovideo_idx_group_id ON "GroupLogoVideo" (group_id);
+  });
 
-      simple: function() {
-        return { id: this.id, name: this.name };
-      },
+  Group.associate = (models) => {
+    Group.hasMany(models.Post, { foreignKey: "group_id" });
+    Group.hasMany(models.Point, { foreignKey: "group_id" });
+    Group.hasMany(models.Endorsement, { foreignKey: "group_id" });
+    Group.hasMany(models.Category, { foreignKey: "group_id" });
+    Group.belongsTo(models.Community, { foreignKey: 'community_id'});
+    Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
+    Group.belongsTo(models.User, { foreignKey: 'user_id'});
+    Group.hasMany(models.Group, { as: 'GroupFolders', foreignKey: "in_group_folder_id" });
+    Group.belongsTo(models.Group, { as: 'GroupFolder', foreignKey: "in_group_folder_id"});
+    Group.belongsToMany(models.Image, { through: 'GroupImage' });
+    Group.belongsToMany(models.Video, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
+    Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });
+    Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
+    Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
+    Group.belongsToMany(models.User, { as: 'GroupAdmins', through: 'GroupAdmin' });
+  };
 
-      updateAllExternalCounters: function(req, direction, column, done) {
-        async.parallel([
-          function(callback) {
-            sequelize.models.Community.find({
-              where: {id: this.community_id}
-            }).then(function (community) {
-              if (direction=='up')
-                community.increment(column);
-              else if (direction=='down')
-                community.decrement(column);
-              callback();
-            }.bind(this));
-          }.bind(this),
-          function(callback) {
-            if (req.ypDomain) {
-              if (direction=='up')
-                req.ypDomain.increment(column);
-              else if (direction=='down')
-                req.ypDomain.decrement(column);
-              callback();
-            } else {
-              callback();
-            }
-          }.bind(this)
-        ], function(err) {
-          done(err);
-        });
-      },
+  Group.ACCESS_PUBLIC = 0;
+  Group.ACCESS_CLOSED = 1;
+  Group.ACCESS_SECRET = 2;
+  Group.ACCESS_OPEN_TO_COMMUNITY = 3;
 
-      setupLogoImage: function(body, done) {
-        if (body.uploadedLogoImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedLogoImageId}
-          }).then(function (image) {
-            if (image)
-              this.addGroupLogoImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
+  Group.defaultPublicAttributes = ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id','status',
+    'weight','theme_id','created_at','updated_at','configuration','language'];
 
-      setupHeaderImage: function(body, done) {
-        if (body.uploadedHeaderImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedHeaderImageId}
-          }).then(function (image) {
-            if (image)
-              this.addGroupHeaderImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
-
-      getImageFormatUrl: function(formatId) {
-        if (this.GroupLogoImages && this.GroupLogoImages.length>0) {
-          var formats = JSON.parse(this.GroupLogoImages[this.GroupLogoImages.length-1].formats);
-          if (formats && formats.length>0)
-            return formats[formatId];
-        } else {
-          return "";
-        }
-      },
-
-      setupImages: function(body, done) {
-        async.parallel([
-          function(callback) {
-            this.setupLogoImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this),
-          function(callback) {
-            this.setupHeaderImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this)
-        ], function(err) {
-          done(err);
-        });
-      }
-    },
-
-    classMethods: {
-
-      ACCESS_PUBLIC: 0,
-      ACCESS_CLOSED: 1,
-      ACCESS_SECRET: 2,
-      ACCESS_OPEN_TO_COMMUNITY: 3,
-
-      defaultPublicAttributes: ['id','name','access','google_analytics_code','is_group_folder','in_group_folder_id','status',
-        'weight','theme_id','created_at','updated_at','configuration','language'],
-
-      addUserToGroupIfNeeded: function (groupId, req, done) {
-        sequelize.models.Group.find({
-          where: { id: groupId }
-        }).then(function (group) {
-          if (group) {
-            group.hasGroupUser(req.user).then(function(result) {
-              if (!result) {
-                async.parallel([
-                  function(callback) {
-                    group.addGroupUser(req.user).then(function (result) {
-                      group.increment('counter_users');
-                      callback();
-                    })
-                  },
-                  function(callback) {
-                    sequelize.models.Community.find({
-                      where: {id: group.community_id}
-                    }).then(function (community) {
-                      if (community) {
-                        community.hasCommunityUser(req.user).then(function(result) {
-                          if (result) {
-                            callback();
-                          } else {
-                            community.addCommunityUser(req.user).then(function (result) {
-                              community.increment('counter_users');
-                              callback();
-                            });
-                          }
-                        });
-                      } else {
-                        callback();
-                      }
-                    }.bind(this));
-                  }.bind(this),
-                  function(callback) {
-                    req.ypDomain.hasDomainUser(req.user).then(function(result) {
+  Group.addUserToGroupIfNeeded = (groupId, req, done) => {
+    sequelize.models.Group.findOne({
+      where: { id: groupId },
+      attributes: ['id','community_id','counter_users']
+    }).then((group) => {
+      if (group) {
+        group.hasGroupUser(req.user).then((result) => {
+          if (!result) {
+            async.parallel([
+              (callback) => {
+                group.addGroupUser(req.user).then((result) => {
+                  group.increment('counter_users');
+                  callback();
+                })
+              },
+              (callback) => {
+                sequelize.models.Community.findOne({
+                  where: {id: group.community_id},
+                  attributes: ['id']
+                }).then((community) => {
+                  if (community) {
+                    community.hasCommunityUser(req.user).then((result) => {
                       if (result) {
                         callback();
                       } else {
-                        req.ypDomain.addDomainUser(req.user).then(function(result) {
-                          req.ypDomain.increment('counter_users');
+                        community.addCommunityUser(req.user).then((result) => {
+                          community.increment('counter_users');
                           callback();
                         });
                       }
                     });
-                  }.bind(this)
-                ], function(err) {
-                  console.log(err);
-                  done(err);
+                  } else {
+                    callback();
+                  }
                 });
-              } else {
-                done();
+              },
+              (callback) => {
+                req.ypDomain.hasDomainUser(req.user).then((result) => {
+                  if (result) {
+                    callback();
+                  } else {
+                    req.ypDomain.addDomainUser(req.user).then((result) => {
+                      req.ypDomain.increment('counter_users');
+                      callback();
+                    });
+                  }
+                });
               }
+            ], (err) => {
+              done(err);
             });
           } else {
             done();
           }
-        })
-      },
-
-      convertAccessFromRadioButtons: function(body) {
-        var access = 0;
-        if (body.public) {
-          access = 0;
-        } else if (body.closed) {
-          access = 1;
-        } else if (body.secret) {
-          access = 2;
-        } else if (body.open_to_community) {
-          access = 3;
-        }
-        return access;
-      },
-      
-      associate: function(models) {
-        Group.hasMany(models.Post, { foreignKey: "group_id" });
-        Group.hasMany(models.Point, { foreignKey: "group_id" });
-        Group.hasMany(models.Endorsement, { foreignKey: "group_id" });
-        Group.hasMany(models.Category, { foreignKey: "group_id" });
-        Group.belongsTo(models.Community);
-        Group.belongsTo(models.IsoCountry, { foreignKey: "iso_country_id" });
-        Group.belongsTo(models.User);
-        Group.hasMany(models.Group, { as: 'GroupFolders', foreignKey: "in_group_folder_id" });
-        Group.belongsTo(models.Group, { as: 'GroupFolder', foreignKey: "in_group_folder_id"});
-        Group.belongsToMany(models.Image, { through: 'GroupImage' });
-        Group.belongsToMany(models.Video, { as: 'GroupLogoVideos', through: 'GroupLogoVideo' });
-        Group.belongsToMany(models.Image, { as: 'GroupLogoImages', through: 'GroupLogoImage' });
-        Group.belongsToMany(models.Image, { as: 'GroupHeaderImages', through: 'GroupHeaderImage' });
-        Group.belongsToMany(models.User, { as: 'GroupUsers', through: 'GroupUser' });
-        Group.belongsToMany(models.User, { as: 'GroupAdmins', through: 'GroupAdmin' });
+        });
+      } else {
+        done();
       }
+    })
+  };
+
+  Group.convertAccessFromRadioButtons = (body) => {
+    let access = 0;
+    if (body.public) {
+      access = 0;
+    } else if (body.closed) {
+      access = 1;
+    } else if (body.secret) {
+      access = 2;
+    } else if (body.open_to_community) {
+      access = 3;
     }
-  });
+    return access;
+  };
+
+  Group.prototype.simple = function () {
+    return { id: this.id, name: this.name };
+  };
+
+  Group.prototype.updateAllExternalCounters = function (req, direction, column, done) {
+    async.parallel([
+      (callback) => {
+        sequelize.models.Community.findOne({
+          where: {id: this.community_id}
+        }).then((community) => {
+          if (direction==='up')
+            community.increment(column);
+          else if (direction==='down')
+            community.decrement(column);
+          callback();
+        });
+      },
+      (callback) => {
+        if (req.ypDomain) {
+          if (direction==='up')
+            req.ypDomain.increment(column);
+          else if (direction==='down')
+            req.ypDomain.decrement(column);
+          callback();
+        } else {
+          callback();
+        }
+      }
+    ], (err) => {
+      done(err);
+    });
+  };
+
+  Group.prototype.setupLogoImage = function (body, done) {
+    if (body.uploadedLogoImageId) {
+      sequelize.models.Image.findOne({
+        where: {id: body.uploadedLogoImageId}
+      }).then((image) => {
+        if (image)
+          this.addGroupLogoImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  Group.prototype.setupHeaderImage = function (body, done) {
+    if (body.uploadedHeaderImageId) {
+      sequelize.models.Image.findOne({
+        where: {id: body.uploadedHeaderImageId}
+      }).then((image) => {
+        if (image)
+          this.addGroupHeaderImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  Group.prototype.getImageFormatUrl = function (formatId) {
+    if (this.GroupLogoImages && this.GroupLogoImages.length>0) {
+      const formats = JSON.parse(this.GroupLogoImages[this.GroupLogoImages.length-1].formats);
+      if (formats && formats.length>0)
+        return formats[formatId];
+    } else {
+      return "";
+    }
+  };
+
+  Group.prototype.setupImages = function (body, done) {
+    async.parallel([
+      (callback) => {
+        this.setupLogoImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
+        });
+      },
+      (callback) => {
+        this.setupHeaderImage(body, (err) => {
+          if (err) return callback(err);
+          callback();
+        });
+      }
+    ], (err) => {
+      done(err);
+    });
+  };
 
   return Group;
 };

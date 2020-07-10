@@ -10,7 +10,7 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
 
   async.parallel([
     function (seriesCallback) {
-      models.Organization.find({
+      models.Organization.findOne({
         where: {
           id: organizationId
         }
@@ -25,7 +25,7 @@ var getOrganizationAndUser = function (organizationId, userId, callback) {
     },
     function (seriesCallback) {
       if (userId) {
-        models.User.find({
+        models.User.findOne({
           where: {
             id: userId
           },

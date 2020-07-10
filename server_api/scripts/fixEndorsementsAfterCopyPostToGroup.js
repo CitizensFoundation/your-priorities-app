@@ -35,7 +35,7 @@ var fixOnePost = function (groupId, postId, done) {
 
   async.series([
     function (callback) {
-      models.Group.find({
+      models.Group.findOne({
         where: {
           id: groupId
         },
@@ -62,7 +62,7 @@ var fixOnePost = function (groupId, postId, done) {
       });
     },
     function (callback) {
-      models.Post.find({
+      models.Post.findOne({
         where: {
           id: postId
         },
@@ -87,7 +87,7 @@ var fixOnePost = function (groupId, postId, done) {
           console.error("No post in");
           callback("no post");
         } else {
-          models.Post.find({
+          models.Post.findOne({
             where: {
               user_id: oldPost.user_id,
               name: oldPost.name,
@@ -108,7 +108,7 @@ var fixOnePost = function (groupId, postId, done) {
                       }
                     }).then(function (endorsements) {
                       async.eachSeries(endorsements, function (endorsement, endorsementCallback) {
-                        models.Endorsement.find({
+                        models.Endorsement.findOne({
                           where: {
                             post_id: newPost.id,
                             user_id: endorsement.user_id

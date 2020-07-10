@@ -1,9 +1,9 @@
-var async = require("async");
-
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
-  var Category = sequelize.define("Category", {
+const async = require("async");
+
+module.exports = (sequelize, DataTypes) => {
+  const Category = sequelize.define("Category", {
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT, allowNull: false },
     deleted: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -11,7 +11,9 @@ module.exports = function(sequelize, DataTypes) {
     language: { type: DataTypes.STRING, allowNull: true }
   }, {
     underscored: true,
-    
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+
     tableName: 'categories',
 
     defaultScope: {
@@ -23,66 +25,75 @@ module.exports = function(sequelize, DataTypes) {
     indexes: [
       {
         fields: ['id', 'deleted']
+      },
+      {
+        name: 'categories_idx_deleted_group_id',
+        fields: ['deleted','group_id']
+      },
+      {
+        name: 'categories_idx_deleted',
+        fields: ['deleted']
       }
     ],
 
+    // Add following indexes manually for high throughput sites
+    // CREATE INDEX categoryiconimage_idx_category_id ON "CategoryIconImage" (category_id);
+    // CREATE INDEX communityheaderimage_idx_community_id ON "CommunityHeaderImage" (community_id);
+
     timestamps: true,
+  });
 
-    instanceMethods: {
+  Category.associate = (models) => {
+    Category.hasMany(models.Post);
+    Category.belongsTo(models.Group, { foreignKey: 'group_id'});
+    Category.belongsToMany(models.Image, {
+      as: 'CategoryIconImages',
+      through: 'CategoryIconImage'});
+    Category.belongsToMany(models.Image, { as: 'CategoryHeaderImages', through: 'CategoryHeaderImage' });
+  };
 
-      setupIconImage: function(body, done) {
-        if (body.uploadedIconImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedIconImageId}
-          }).then(function (image) {
-            if (image)
-              this.addCategoryIconImage(image);
-            done();
-          }.bind(this));
-        } else done();
+  Category.prototype.setupIconImage = function (body, done) {
+    if (body.uploadedIconImageId) {
+      sequelize.models.Image.findOne({
+        where: {id: body.uploadedIconImageId}
+      }).then((image) => {
+        if (image)
+          this.addCategoryIconImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  Category.prototype.setupHeaderImage = function (body, done) {
+    if (body.uploadedHeaderImageId) {
+      sequelize.models.Image.findOne({
+        where: {id: body.uploadedHeaderImageId}
+      }).then((image) => {
+        if (image)
+          this.addCategoryHeaderImage(image);
+        done();
+      });
+    } else done();
+  };
+
+  Category.prototype.setupImages = function (body, done) {
+    async.parallel([
+      (callback) => {
+        this.setupIconImage(body,  (err) => {
+          if (err) return callback(err);
+          callback();
+        });
       },
-
-      setupHeaderImage: function(body, done) {
-        if (body.uploadedHeaderImageId) {
-          sequelize.models.Image.find({
-            where: {id: body.uploadedHeaderImageId}
-          }).then(function (image) {
-            if (image)
-              this.addCategoryHeaderImage(image);
-            done();
-          }.bind(this));
-        } else done();
-      },
-
-      setupImages: function(body, done) {
-        async.parallel([
-          function(callback) {
-            this.setupIconImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this),
-          function(callback) {
-            this.setupHeaderImage(body, function (err) {
-              if (err) return callback(err);
-              callback();
-            });
-          }.bind(this)
-        ], function(err) {
-          done(err);
+      (callback) => {
+        this.setupHeaderImage(body,  (err) => {
+          if (err) return callback(err);
+          callback();
         });
       }
-    },
-    
-    classMethods: {
-      associate: function(models) {
-        Category.hasMany(models.Post);
-        Category.belongsTo(models.Group);
-        Category.belongsToMany(models.Image, { as: 'CategoryIconImages', through: 'CategoryIconImage' });
-        Category.belongsToMany(models.Image, { as: 'CategoryHeaderImages', through: 'CategoryHeaderImage' });
-      }
-    }
-  });
+    ], (err) => {
+      done(err);
+    });
+  };
 
   return Category;
 };

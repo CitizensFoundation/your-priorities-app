@@ -9,7 +9,7 @@ console.log("Adding "+userEmail+" as admin to all public communities and groups 
 
 async.series([
   function(callback) {
-    models.User.find({where: {email: userEmail}}).then(function(incomingUser) {
+    models.User.findOne({where: {email: userEmail}}).then(function(incomingUser) {
       if (incomingUser) {
         user = incomingUser;
         console.log("Found user "+user.name);
