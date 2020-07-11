@@ -16,7 +16,9 @@ import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js'
 //import i18next from 'i18next/dist/es/i18next.js'
 //import { XHR } from 'i18next-xhr-backend/dist/es';
 //import moment from 'moment-es6';
-import { customElement, property, internalProperty } from 'lit-element';
+import { customElement, property, internalProperty, css, html } from 'lit-element';
+import {ifDefined} from 'lit-html/directives/if-defined';
+
 import i18next, { t as translate } from 'i18next'
 import backend from 'i18next-xhr-backend'
 import { format, formatDistance } from 'date-fns';
@@ -43,7 +45,7 @@ import 'moment/locale/da.js';
 */
 
 declare global {
-  interface Window { YpAppGlobals: object }
+  interface Window { appGlobal: object; appUser: object }
 }
 
 @customElement('yp-app')
@@ -53,395 +55,321 @@ export class YpApp extends YpBaseElement {
   homeLink = null
 
   @property({type: String})
-  page = ""
+  page: string|null = null
 
   @property({type: Object})
   user = null
 
   @property({type: String})
-  backPath = ""
+  backPath: string|null = null
+
+  @property({type: Boolean})
+  showSearch = false
+
+  @property({type: Boolean})
+  showBack = false
+
+  @property({type: String})
+  forwardToPostId: string|null = null
+
+  @property({type: String})
+  headerTitle: string|null = null
+
+  @property({type: String})
+  numberOfUnViewedNotifications: string|null = null
+
+  @property({type: Boolean})
+  hideHelpIcon = false
+
+  @property({type: Boolean})
+  autoTranslate = false
+
+  @property({type: String})
+  languageName: string|null = null
+
+  @property({type: Number})
+  goForwardToPostId: number|null = null
+
+  @property({type: Boolean})
+  showBackToPost = false
+
+  @property({type: String})
+  goForwardPostName: string|null = null
 
   @internalProperty()
   previousSearches: Array<string> = []
 
-  static get properssties() {
-    return {
-      showSearch: {
-        type: Boolean,
-        value: false
-      },
+  @internalProperty()
+  storedBackPath: string|null = null
 
-      showBack: {
-        type: Boolean,
-        value: false
-      },,
+  @internalProperty()
+  storedLastDocumentTitle: string|null = null
 
-      forwardToPostId: {
-        type: String,
-        value: null
-      },
+  @internalProperty()
+  keepOpenForPost: string|null = null
 
-      storedBackPath: String,
+  @internalProperty()
+  useHardBack = false
 
-      backListPostItem: {
-        type: Number,
-        value: null
-      },
+  @internalProperty()
+  _scrollPositionMap = {}
 
-      backListGroupItemId: {
-        type: Number,
-        value: null
-      },
+  @internalProperty()
+  goBackToPostId: number|null = null
 
-      backListCommuntiyItemId: {
-        type: Number,
-        value: null
-      },
+  @internalProperty()
+  currentPostId: number|null = null
 
-      storedLastDocumentTitle: String,
-
-      headerTitle: {
-        type: String
-      },
-
-      headerDescription: {
-        type: String
-      },
-
-      params: {
-        type: Object
-      },
-
-      narrow: {
-        type: Boolean
-      },
-
-      keepOpenForPost: {
-        type: String,
-        value: null
-      },
-
-      closePostHeader: {
-        type: Boolean,
-        computed: '_closePostHeader(page, keepOpenForPost)',
-        value: null
-      },
-
-      numberOfUnViewedNotifications: {
-        type: String,
-        value: null
-      },
-
-      // Use window.location when clicking back link
-      useHardBack: {
-        type: Boolean,
-        value: false
-      },
-
-      hideHelpIcon: {
-        type: Boolean,
-        value: false
-      },
-
-      wide: Boolean,
-
-      _scrollPositionMap: {
-        type: Object,
-        value: function() {
-          return {};
-        }
-      },
-
-      autoTranslate: {
-        type: Boolean,
-        value: false
-      },
-
-      languageName: String,
-
-      goBackToPostId: {
-        type: Number,
-        value: null
-      },
-
-      currentPostId: {
-        type: Number,
-        value: null
-      },
-
-      goForwardToPostId: {
-        type: Number,
-        value: null
-      },
-
-      showBackToPost: {
-        type: Boolean,
-        value: false
-      },
-
-      goForwardPostName:{
-        type: String,
-        value: null
-      },
-
-      goForwardCount:{
-        type: String,
-        value: 0
-      }
-    }
-  }
+  @internalProperty()
+  goForwardCount = 0
 
   static get styles() {
     return [
       css`
+        :host {
+          --main-stats-color-on-white: #878787;
 
-      :host {
-        --main-stats-color-on-white: #878787;
+          --paper-dialog-button-color: var(--accent-color);
+          --paper-tabs-selection-bar-color: var(--accent-color);
+          --paper-input-container-focus-color: var(--accent-color);
 
-        --paper-dialog-button-color: var(--accent-color);
-        --paper-tabs-selection-bar-color: var(--accent-color);
-        --paper-input-container-focus-color: var(--accent-color);
+          --paper-dropdown-menu: {
+            background-color: #FFF;
+          };
 
-        --paper-dropdown-menu: {
-          background-color: #FFF;
-        };
+          --icon-general-color: '#fff';
+          --master-point-up-color: rgba(0,127,0,0.62);
+          --master-point-down-color: rgba(127,0,0,0.62);
+        }
 
-        --icon-general-color: '#fff';
-        --master-point-up-color: rgba(0,127,0,0.62);
-        --master-point-down-color: rgba(127,0,0,0.62);
-      }
+        :host  {
+          --paper-dropdown-menu: {
+            background-color: #FFF;
+          };
 
-      :host  {
-        --paper-dropdown-menu: {
-          background-color: #FFF;
-        };
+          --light-primary-color: #FFCC80;
+          --text-primary-color: #fff;
+          --dark-primary-color: #F57C00;
+          --primary-text-color: #212121;
+          --secondary-text-color: #727272;
+          --disabled-text-color: #bdbdbd;
+          --divider-color: #FF5722;
 
-        --light-primary-color: #FFCC80;
-        --text-primary-color: #fff;
-        --dark-primary-color: #F57C00;
-        --primary-text-color: #212121;
-        --secondary-text-color: #727272;
-        --disabled-text-color: #bdbdbd;
-        --divider-color: #FF5722;
+          --paper-tabs: {
+            font-size: 18px;
+            text-transform: uppercase;
+          };
 
-        --paper-tabs: {
-          font-size: 18px;
-          text-transform: uppercase;
-        };
+          --paper-fab-mini: {
+            background: var(--primary-background-color);
+            color: #555 !important;
+          };
 
-        --paper-fab-mini: {
-          background: var(--primary-background-color);
-          color: #555 !important;
-        };
+          /* Components */
 
-        /* Components */
+          --paper-tabs-selection-bar: {
+            border-bottom: 4px solid !important;
+            border-bottom-color: var(--accent-color, #000) !important;
+          };
 
-        --paper-tabs-selection-bar: {
-          border-bottom: 4px solid !important;
-          border-bottom-color: var(--accent-color, #000) !important;
-        };
+          /* paper-drawer-panel */
+          --drawer-menu-color: #ffffff;
+          --drawer-border-color: 1px solid #ccc;
+          /* paper-menu */
+          --paper-menu-background-color: var(--primary-background-color);
+          --menu-link-color: #111111;
+        }
 
-        /* paper-drawer-panel */
-        --drawer-menu-color: #ffffff;
-        --drawer-border-color: 1px solid #ccc;
-        /* paper-menu */
-        --paper-menu-background-color: var(--primary-background-color);
-        --menu-link-color: #111111;
-      }
+        :host {
+          background-color: var(--primary-background-color);
+        }
 
-      :host {
-        background-color: var(--primary-background-color);
-      }
+        app-header {
+          color: #fff;
+          background-color: var(--primary-background-color);
+        }
 
-      app-header {
-        color: #fff;
-        background-color: var(--primary-background-color);
-      }
+        app-toolbar {
+          color: #FFF;
+        }
 
-      app-toolbar {
-        color: #FFF;
-      }
+        iron-pages {
+          background-color: var(--primary-background-color);
+        }
 
-      iron-pages {
-        background-color: var(--primary-background-color);
-      }
+        [condensed-title] {
+          font-size: 16px;
+        }
 
-      [condensed-title] {
-        /*        background-size: 76px; */
-        /* The difference in font size is used to calculate the scale of the title in the transition. */
-        font-size: 16px;
-      }
+        [title] {
+          padding-top: 8px;
+          padding-left: 8px;
+          padding-bottom: 8px;
+        }
 
-      [title] {
-        /* The difference in font size is used to calculate the scale of the title in the transition. */
-        padding-top: 8px;
-        padding-left: 8px;
-        padding-bottom: 8px;
-      }
+        .backIcon {
+          width: 32px !important;
+          height: 32px !important;
+          margin-right: 12px;
+          margin-left: 12px;
+          padding: 0;
+          margin-top: 4px;
+        }
 
-      .backIcon {
-        width: 32px !important;
-        height: 32px !important;
-        margin-right: 12px;
-        margin-left: 12px;
-        padding: 0;
-        margin-top: 4px;
-      }
+        .backIcon[hide] {
+          display: none;
+        }
 
-      .backIcon[hide] {
-        display: none;
-      }
+        .masterActionIcon {
+          width: 52px;
+          height: 52px;
+        }
 
-      .masterActionIcon {
-        width: 52px;
-        height: 52px;
-      }
+        .main-header {
+          border-bottom: 1px solid var(--primary-color-800);
+          background-color: var(--primary-color-800);
+          color: #333;
+          height: 64px;
+        }
 
-      .main-header {
-        border-bottom: 1px solid var(--primary-color-800);
-        background-color: var(--primary-color-800);
-        color: #333;
-        height: 64px;
-      }
+        .dropdown-content {
+          width: 200px;
+        }
 
-      .dropdown-content {
-        width: 200px;
-      }
+        #paperToggleNavMenu {
+          min-width: 40px;
+        }
 
-      #paperToggleNavMenu {
-        min-width: 40px;
-      }
-
-      #translationButton {
-        color: #FFF;
-        background-color: var(--accent-color);
-        padding: 6px;
-        min-width: 0 !important;
-        margin-left: 8px;
-        margin-right: 8px;
-      }
-
-      .stopIcon {
-        margin-left: 6px;
-      }
-
-      .helpButton {
-        margin-right: 8px;
-      }
-
-      .forwardPostName {
-        margin-left: 4px;
-        margin-top: 14px;
-        color: #C5C5C5;
-      }
-
-      @media (max-width: 480px) {
-        #forwardPostName {
-          display: none !important;
+        #translationButton {
+          color: #FFF;
+          background-color: var(--accent-color);
+          padding: 6px;
+          min-width: 0 !important;
+          margin-left: 8px;
+          margin-right: 8px;
         }
 
         .stopIcon {
-          display: none;
+          margin-left: 6px;
+        }
+
+        .helpButton {
+          margin-right: 8px;
         }
 
         .forwardPostName {
           margin-left: 4px;
           margin-top: 14px;
-          font-size: 15px;
+          color: #C5C5C5;
         }
 
-        #translationButton {
-          width: 40px !important;
-          max-width: 40px !important;
-          margin-left: 8px;
+        @media (max-width: 480px) {
+          #forwardPostName {
+            display: none !important;
+          }
+
+          .stopIcon {
+            display: none;
+          }
+
+          .forwardPostName {
+            margin-left: 4px;
+            margin-top: 14px;
+            font-size: 15px;
+          }
+
+          #translationButton {
+            width: 40px !important;
+            max-width: 40px !important;
+            margin-left: 8px;
+          }
+
+          div[title] {
+            font-size: 17px;
+            white-space: normal !important;
+            padding-left: 0;
+          }
+
+          .backIcon {
+            min-width: 28px !important;
+            min-height: 28px !important;
+          }
+
+          .masterActionIcon {
+            width: 48px;
+            height: 48px;
+          }
+
+          .loginButton {
+            font-size: 15px;
+            padding: 4px;
+          }
+
+          paper-menu-button {
+            padding: 0;
+          }
+
+          mwc-button {
+            padding:0;
+            margin: 0;
+          }
+
+          #translationIcon {
+            width: 30px;
+            height: 30px;
+            padding: 6px;
+          }
         }
 
-        div[title] {
-          font-size: 17px;
-          white-space: normal !important;
-          padding-left: 0;
+        @media (max-width: 340px) {
+          div[title] {
+            font-size: 17px;
+            white-space: normal !important;
+            padding-left: 0;
+          }
+
+          .backIcon {
+            min-width: 26px !important;
+            min-height: 26px !important;
+          }
+
+          .loginButton {
+            font-size: 12px;
+            padding: 0;
+          }
         }
 
-        .backIcon {
-          min-width: 28px !important;
-          min-height: 28px !important;
+        .userImageNotificationContainer {
+          cursor: pointer;
+          margin-right: 8px;
+          display:inline-block;
         }
 
-        .masterActionIcon {
-          width: 48px;
-          height: 48px;
+        .activeBadge {
+          --paper-badge-background: var(--accent-color);
         }
 
-        .loginButton {
-          font-size: 15px;
-          padding: 4px;
+        .helpButton[hide] {
+          display: none;
         }
 
-        paper-menu-button {
-          padding: 0;
+        .navContainer[hide] {
+          display: none;
         }
 
-        mwc-button {
-          padding:0;
-          margin: 0;
+        [hidden] {
+          display: none !important;
         }
 
-        #translationIcon {
-          width: 30px;
-          height: 30px;
-          padding: 6px;
-        }
-      }
-
-      @media (max-width: 340px) {
-        div[title] {
-          font-size: 17px;
-          white-space: normal !important;
-          padding-left: 0;
+        #headerTitle {
+          padding-right: 0 !important;
         }
 
-        .backIcon {
-          min-width: 26px !important;
-          min-height: 26px !important;
+        app-toolbar {
+          padding-left: 8px;
+          padding-right: 16px;
         }
-
-        .loginButton {
-          font-size: 12px;
-          padding: 0;
-        }
-      }
-
-      .userImageNotificationContainer {
-        cursor: pointer;
-        margin-right: 8px;
-        display:inline-block;
-      }
-
-      .activeBadge {
-        --paper-badge-background: var(--accent-color);
-      }
-
-      .helpButton[hide] {
-        display: none;
-      }
-
-      .navContainer[hide] {
-        display: none;
-      }
-
-      [hidden] {
-        display: none !important;
-      }
-
-      #headerTitle {
-        padding-right: 0 !important;
-      }
-
-      app-toolbar {
-        padding-left: 8px;
-        padding-right: 16px;
-      }
-    `, YpFlexLayout]
+      `, YpFlexLayout];
   }
 
 
@@ -478,7 +406,7 @@ export class YpApp extends YpBaseElement {
             <div class="layout horizontal navContainer" ?hidden="${this.closePostHeader}">
               <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
             </div>
-            <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
+            <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId!=null}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
 
             ${this.closePostHeader ? html`
               <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
@@ -525,7 +453,7 @@ export class YpApp extends YpBaseElement {
           </app-toolbar>
         </app-header>
 
-        <iron-pages selected="${this.page}" .style="height:auto;" .attrForSelected="name" fullbleed="">
+        <iron-pages selected="${ifDefined(this.page===null ? undefined : this.page)}" style="height:auto;" attrForSelected="name" fullbleed="">
           <yp-domain id="domainPage" name="domain" id-route="${this.domainSubRoute}" @change-header="${this.onChangeHeader}"></yp-domain>
           <yp-community id="communityPage" name="community" id-route="${this.communitySubRoute}" @change-header="${this.onChangeHeader}"></yp-community>
           <yp-community-folder id="communityFolderPage" name="community_folder" id-route="${this.communityFolderSubRoute}" @change-header="${this.onChangeHeader}"></yp-community-folder>
@@ -589,20 +517,20 @@ export class YpApp extends YpBaseElement {
   }
 
   _userDrawerOpened(value) {
-    this.async(function() {
-      this.set('userDrawerOpenedDelayed', value);
+    this.async(() => {
+      this.userDrawerOpenedDelayed=value;
     }, 500);
   }
 
   _navDrawOpened(value) {
-    this.async(function() {
-      this.set('navDrawOpenedDelayed', value);
+    this.async(() => {
+      this.navDrawOpenedDelayed=value;
     }, 500);
   }
 
   _goToNextPost() {
     if (this.currentPostId) {
-      this.set('goBackToPostId', this.currentPostId);
+      this.goBackToPostId=this.currentPostId;
     } else {
       console.error("No currentPostId on next");
     }
@@ -611,7 +539,7 @@ export class YpApp extends YpBaseElement {
       this.goToPost(this.goForwardToPostId, null, null, null, true);
       window.appGlobals.activity('recommendations', 'goForward', this.goForwardToPostId);
       this.goForwardCount += 1;
-      this.set('showBackToPost', true);
+      this.showBackToPos=true;
     } else {
       console.error("No goForwardToPostId");
     }
@@ -622,26 +550,26 @@ export class YpApp extends YpBaseElement {
       window.history.back();
       window.appGlobals.activity('recommendations', 'goBack');
     } else {
-      this.set('showBackToPost', false);
+      this.showBackToPost=false;
     }
     this.goForwardCount -= 1;
   }
 
   _setNextPost(event, detail) {
     if (detail.goForwardToPostId) {
-      this.set('goForwardToPostId', detail.goForwardToPostId);
-      this.set('goForwardPostName', detail.goForwardPostName);
+      this.goForwardToPostId=detail.goForwardToPostId;
+      this.goForwardPostName=detail.goForwardPostName;
     } else {
       this._clearNextPost();
     }
-    this.set('currentPostId', detail.currentPostId);
+    this.currentPostId=detail.currentPostId;
   }
 
   _clearNextPost() {
-    this.set('goForwardToPostId', null);
-    this.set('goForwardPostName', null);
+    this.goForwardToPostId=null;
+    this.goForwardPostName=null;
     this.goForwardCount=0;
-    this.set('showBackToPost', false);
+    this.showBackToPost=false;
   }
 
   _setupSamlCallback() {
@@ -777,11 +705,11 @@ export class YpApp extends YpBaseElement {
   }
 
   _setLanguageName(event, detail) {
-    this.set('languageName', detail);
+    this.languageName=detail;
   }
 
   _autoTranslateEvent(event, detail) {
-    this.set('autoTranslate', detail);
+    this.autoTranslate=detail;
   }
 
   _refreshGroup() {
@@ -812,21 +740,21 @@ export class YpApp extends YpBaseElement {
   _setNumberOfUnViewedNotifications(event, detail) {
     if (detail.count) {
       if (detail.count<10) {
-        this.set('numberOfUnViewedNotifications', detail.count);
+        this.numberOfUnViewedNotifications=detail.count;
       } else {
-        this.set('numberOfUnViewedNotifications', '9+');
+        this.numberOfUnViewedNotifications='9+';
       }
     } else {
-      this.set('numberOfUnViewedNotifications', '');
+      this.numberOfUnViewedNotifications='';
     }
-    this.async(function () {
-      this.$$("#notificationBadge").fire("iron-resize");
+    this.async(() => {
+      this.$$("#notificationBadge")?.fire("iron-resize");
     });
   }
 
   _redirectTo(event, detail) {
     if (detail.path) {
-      this.set('route.path', detail.path);
+      this.route.path=detail.path;
     }
   }
 
@@ -836,34 +764,34 @@ export class YpApp extends YpBaseElement {
       window.location = window.location.href.replace("/#!/", "/");
     }
 
-    this.async(function () {
+    this.async(() => {
       if (route.path.indexOf('domain') > -1) {
-        this.set('domainSubRoute', this.subRoute);
+        this.domainSubRoute=this.subRoute;
         if (this.$$("#domainPage") && typeof this.$$("#domainPage").refresh !== "undefined") {
           this.$$("#domainPage").refresh();
         }
       } else if (route.path.indexOf('community_folder') > -1) {
-        this.set('communityFolderSubRoute', this.subRoute);
+        this.communityFolderSubRoute=this.subRoute;
         if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").refresh !== "undefined") {
           this.$$("#communityFolderPage").refresh();
         }
       } else if (route.path.indexOf('community') > -1) {
-        this.set('communitySubRoute', this.subRoute);
+        this.communitySubRoute=this.subRoute;
         if (this.$$("#communityPage") && typeof this.$$("#communityPage").refresh !== "undefined") {
           this.$$("#communityPage").refresh();
         }
       } else if (route.path.indexOf('group') > -1) {
-        this.set('groupSubRoute', this.subRoute);
+        this.groupSubRoute=this.subRoute;
         if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
           this.$$("#groupPage").refresh();
         }
       } else if (route.path.indexOf('post') > -1) {
-        this.set('postSubRoute', this.subRoute);
+        this.postSubRoute=this.subRoute;
         if (this.$$("#postPage") && typeof this.$$("#postPage").refresh !== "undefined") {
           this.$$("#postPage").refresh();
         }
       } else if (route.path.indexOf('user') > -1) {
-        this.set('userSubRoute', this.subRoute);
+        this.userSubRoute=this.subRoute;
         if (this.$$("#userPage") && typeof this.$$("#userPage").refresh !== "undefined") {
           this.$$("#userPage").refresh();
         }
@@ -906,20 +834,20 @@ export class YpApp extends YpBaseElement {
           delayUntilScrollToPost = 2;
         }
 
-        this.async(function () {
-          const skipMasterScroll = false;
+        this.async(() => {
+          let skipMasterScroll = false;
 
           if (oldPageData && oldPageData.page && pageData) {
             // Post -> Group
             if (oldPageData.page==="post" && pageData.page==="group") {
               if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                this.$$("#groupPage").goToPostOrNewsItem();
+                this.$$("#groupPage")?.goToPostOrNewsItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll groupPage for goToPostOrNewsItem, trying again");
-                this.async(function () {
+                this.async(() => {
                   if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                    this.$$("#groupPage").goToPostOrNewsItem();
+                    this.$$("#groupPage")?.goToPostOrNewsItem();
                   } else {
                     console.warn("Can't find scroll groupPage for goToPostOrNewsItem final");
                   }
@@ -929,14 +857,14 @@ export class YpApp extends YpBaseElement {
 
             // Group -> Community
             else if ((oldPageData.page==="group" || oldPageData.page==="post") && pageData.page==="community") {
-              if (this.$$("#communityPage") && typeof this.$$("#communityPage").scrollToGroupItem !== "undefined") {
-                this.$$("#communityPage").scrollToGroupItem();
+              if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
+                this.$$("#communityPage")?.scrollToGroupItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
-                this.async(function () {
-                  if (this.$$("#communityPage") && typeof this.$$("#communityPage").scrollToGroupItem !== "undefined") {
-                    this.$$("#communityPage").scrollToGroupItem();
+                this.async(() => {
+                  if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
+                    this.$$("#communityPage")?.scrollToGroupItem();
                   } else {
                     console.error("Can't find scroll communityPage for goToPostOrNewsItem");
                   }
@@ -1002,7 +930,7 @@ export class YpApp extends YpBaseElement {
             }
           } else if (this.isAttached && !skipMasterScroll) {
             console.info("AppLayout scroll to top");
-            this.async(function () {
+            this.async(() => {
               window.scrollTo(0, 0);
             });
           }
@@ -1064,20 +992,20 @@ export class YpApp extends YpBaseElement {
 
   _setHomeLink(event, homeLink) {
     if (!this.homeLink) {
-      this.set('homeLink', homeLink);
+      this.homeLink=homeLink;
     }
   }
 
   setKeepOpenForPostsOn(goBackToPage) {
     this.keepOpenForPost = goBackToPage;
-    this.set('storedBackPath', this.backPath);
-    this.set('storedLastDocumentTitle', document.title);
+    this.storedBackPath=this.backPath;
+    this.storedLastDocumentTitle=document.title;
   }
 
   _resetKeepOpenForPage() {
-    this.set('keepOpenForPost', null);
-    this.set('storedBackPath', null);
-    this.set('storedLastDocumentTitle', null);
+    this.keepOpenForPost=null;
+    this.storedBackPath=null;
+    this.storedLastDocumentTitle=null;
   }
 
   _closePost() {
@@ -1085,19 +1013,21 @@ export class YpApp extends YpBaseElement {
       this.redirectTo(this.keepOpenForPost);
 
     if (this.storedBackPath)
-      this.set('backPath', this.storedBackPath);
+      this.backPath=this.storedBackPath;
 
     if (this.storedLastDocumentTitle) {
       document.title = this.storedLastDocumentTitle;
-      this.set('storedLastDocumentTitle', null);
+      this.storedLastDocumentTitle=null;
     }
 
-    this.set('this.keepOpenForPost', null);
-    document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, compose: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
+    this.keepOpenForPost=null;
+    document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
   }
 
-  _closePostHeader(page, keepOpenForPost) {
-    if (page=="post" && keepOpenForPost)
+  // Computed
+
+  get closePostHeader() {
+    if (this.page=="post" && this.keepOpenForPost)
       return true;
     else
       return false;
@@ -1195,7 +1125,7 @@ export class YpApp extends YpBaseElement {
   }
 
   onChangeHeader(event, header) {
-    this.set('headerTitle', document.title = header.headerTitle);
+    this.headerTitle=document.title = header.headerTitle;
 
     this.async(function () {
       const headerTitle = this.$$("#headerTitle");
@@ -1220,7 +1150,7 @@ export class YpApp extends YpBaseElement {
     if (header.documentTitle) {
       document.title = header.documentTitle;
     }
-    this.set('headerDescription', header.headerDescription);
+    this.headerDescription=header.headerDescription;
 
     //if (header.headerIcon)
     //app.headerIcon = header.headerIcon;
@@ -1230,43 +1160,38 @@ export class YpApp extends YpBaseElement {
       this.showSearch = false;
 
     if (header.useHardBack===true) {
-      this.set('useHardBack', true);
+      this.useHardBack = true;
     } else {
-      this.set('useHardBack', false);
+      this.useHardBack = false;
     }
 
     if (header.backPath) {
-      this.set('showBack', true);
-      this.set('backPath', header.backPath);
+      this.showBack=true;
+      this.backPath=header.backPath;
     } else {
-      this.set('showBack', false);
-      this.set('backPath', null);
+      this.showBack=false;
+      this.backPath=null;
     }
 
-    if (header.backListPostItem) {
-      this.set('backListPostItem', header.backListPostItem);
-    } else {
-      this.set('backListPostItem', null);
-    }
 
     if (header.hideHelpIcon) {
-      this.set('hideHelpIcon', true);
+      this.hideHelpIcon=true;
     } else {
-      this.set('hideHelpIcon', false);
+      this.hideHelpIcon=false;
     }
 
     if (this.communityBackOverride && this.backPath && window.location.pathname.indexOf("/community/") > -1) {
       var communityId =  window.location.pathname.split("/community/")[1];
       if (communityId && !isNaN(communityId) && this.communityBackOverride[communityId]) {
-        this.set('backPath', this.communityBackOverride[communityId].backPath);
-        this.set('headerTitle', this.communityBackOverride[communityId].backName);
-        this.set('useHardBack', false);
+        this.backPath=this.communityBackOverride[communityId].backPath;
+        this.headerTitle=this.communityBackOverride[communityId].backName;
+        this.useHardBack=false;
       }
     }
 
     if (this.showBack && header.disableDomainUpLink===true) {
-      this.set('showBack', false);
-      this.set('headerTitle', '');
+      this.showBack=false;
+      this.headerTitle='';
     }
   }
 
@@ -1274,7 +1199,7 @@ export class YpApp extends YpBaseElement {
     if (this.backPath) {
       if (this.useHardBack) {
         document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, composed: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
-        window.location = this.backPath;
+        window.location.href = this.backPath;
       } else {
         this.redirectTo(this.backPath);
       }
@@ -1307,4 +1232,3 @@ export class YpApp extends YpBaseElement {
   }
 }
 
-window.customElements.define('yp-app-lit', YpAppLit)

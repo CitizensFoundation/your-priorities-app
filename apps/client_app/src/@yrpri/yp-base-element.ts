@@ -41,6 +41,10 @@ export class YpBaseElement extends LitElement {
     this.sendToGoogleAnalytics('send', 'event', object, type);
   }
 
+  async(func: Function, ms = 0) {
+    setTimeout(func, ms)
+  }
+
   handleNetworkErrors(response: Response) {
     if (!response.ok) {
       throw Error(response.statusText);
