@@ -1,156 +1,69 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-ajax/iron-ajax.js';
-import '@polymer/paper-dialog/paper-dialog.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypAppRecommendationsBehavior } from './yp-app-recommendations-behavior.js';
 import { ypAppCacheBehavior } from './yp-app-cache-behavior.js';
 import { ypAppAnalyticsBehavior } from './yp-app-analytics-behavior.js';
-import '../yp-session/yp-session.js';
 import '../yp-ajax/yp-ajax.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 import i18next from 'i18next';
+import { YpBaseMixin } from '../@yrpri/YpBaseMixin.js'
 
-class YpAppGlobalsLit extends YpBaseElement {
-  static get properties() {
-    return {
-      dialogHeading: {
-        type: String,
-        value: ''
-      },
+export class YpAppGlobals extends YpBaseMixin(class {}) {
+  seenWelcome = false;
 
-      seenWelcome: {
-        type: Boolean,
-        value: false,
-        notify: true
-      },
+  resetSeenWelcome = false;
 
-      activityHost: {
-        type: String,
-        value: ""
-      },
+  disableWelcome = false;
 
-      resetSeenWelcome: {
-        type: Boolean,
-        value: false
-      },
+  activityHost = "";
 
-      disableWelcome: {
-        type: Boolean,
-        value: true
-      },
+  domain: YpDomain|null = null;
 
-      setupDefaults: {
-        type: Boolean,
-        value: false
-      },
+  groupConfigOverrides: Record<number, Record<string, string|boolean>> = {};
 
-      domain: {
-        type: Object,
-        value: null,
-        observer: '_domainChanged'
-      },
+  currentAnonymousUser: YpUser|null = null;
 
-      minSplashMs: {
-        type: Number,
-        value: 1500
-      },
+  currentGroup: YpGroup|null = null;
 
-      requestInProgress: {
-       type: Boolean,
-       value: false
-      },
+  currentAnonymousGroup: YpGroup|null = null;
 
-      groupConfigOverrides: {
-        type: Object,
-        value: {}
-      },
+  currentForceSaml = false;
 
-      currentAnonymousUser: {
-        type: Object,
-        value: null
-      },
+  disableFacebookLoginForGroup = false;
 
-      currentGroup: {
-        type: Object,
-        value: null,
-      },
+  currentSamlDeniedMessage: string|null = null;
 
-      currentAnonymousGroup: {
-        type: Object,
-        value: null
-      },
+  currentSamlLoginMessage: string|null = null;
 
-      currentForceSaml: {
-        type: Boolean,
-        value: false
-      },
+  originalQueryParameters: Record<string,string> = {};
 
-      disableFacebookLoginForGroup: {
-        type: Boolean,
-        value: false
-      },
+  externalGoalTriggerGroupId: number|null = null;
 
+  externalGoalCounter = 0;
 
-    currentSamlDeniedMessage: {
-      type: String,
-      value: null
-    },
+  appStartTime: Date;
 
-    currentSamlLoginMessage: {
-      type: String,
-      value: null
-    },
+  goalTriggerEvents: Array<string> = ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst'];
 
-      originalQueryParameters: Object,
+  haveLoadedLanguages = false;
 
-      externalGoalTriggerGroupId: String,
+  hasTranscriptSupport = false;
 
-      externalGoalCounter: {
-        type: Number,
-        value: 0
-      },
+  hasVideoUpload = false;
 
-      goalTriggerEvents: {
-        type: Array,
-        value: ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst']
-      },
+  hasAudioUpload = false;
 
-      notifyDialogText: String
+  // The selected language
+  language: string|null = null;
 
-    }
-  }
+  // Locale seleted from query or loaded
+  locale: string|null = null;
 
-  static get styles() {
-    return [
-      css`
-
-      paper-dialog {
-        background-color: #FFF;
-        max-width: 400px;
-      }
-
-      .dialogText {
-        margin-bottom: 0;
-      }
-    `, YpFLexLayout]
-  }
+  i18nTranslation: i18next|null = null;
 
   render() {
     return html`
-    <paper-dialog id="dialog">
-      <div class="dialogText">${this.notifyDialogText}</div>
-      <div class="buttons">
-        <mwc-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}" .label="OK"></mwc-button>
-      </div>
-    </paper-dialog>
-
-    <yp-session id="session"></yp-session>
-
     <yp-ajax id="boot" url="/api/domains" @response="${this._bootResponse}"></yp-ajax>
-    <yp-ajax ?hidden="" auto url="/api/videos/hasVideoUploadSupport" @response="${this._hasVideoUploadSupport}"></yp-ajax>
-    <yp-ajax ?hidden="" auto url="/api/audios/hasAudioUploadSupport" @response="${this._hasAudioUploadSupport}"></yp-ajax>
+    <yp-ajax hidden auto url="/api/videos/hasVideoUploadSupport" @response="${this._hasVideoUploadSupport}"></yp-ajax>
+    <yp-ajax hidden auto url="/api/audios/hasAudioUploadSupport" @response="${this._hasAudioUploadSupport}"></yp-ajax>
     <yp-ajax id="videoViewsAjax" ?hidden="" .method="PUT" url="/api/videos/videoView"></yp-ajax>
     <yp-ajax id="audioListenAjax" ?hidden="" .method="PUT" url="/api/audios/audioListen"></yp-ajax>
     <yp-ajax id="recommendationsForGroupAjax" .dispatchError="" ?hidden="" .method="PUT" @response="${this._recommendationsForGroupResponse}"></yp-ajax>
@@ -166,32 +79,29 @@ class YpAppGlobalsLit extends YpBaseElement {
   ],
 */
 
-  _resetNotifyDialogText() {
-    this.set('notifyDialogText', null);
-  }
 
   showRecommendationInfoIfNeeded() {
     if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
-      localStorage.setItem("ypHaveShownRecommendationInfo", true);
-      this.set('notifyDialogText', this.t('recommendationToastInfo'));
+      localStorage.setItem("ypHaveShownRecommendationInfo", "1");
+      this.notifyDialogText=this.t('recommendationToastInfo');
       this.$$("#dialog").open();
     }
   }
 
   showSpeechToTextInfoIfNeeded() {
     if (window.appGlobals.hasTranscriptSupport && !localStorage.getItem("haveShownTranscriptInfo")) {
-      localStorage.setItem("haveShownTranscriptInfo", true);
-      this.set('notifyDialogText', this.t('speechToTextInfo'));
+      localStorage.setItem("haveShownTranscriptInfo", "1");
+      this.notifyDialogText=this.t('speechToTextInfo');
       this.$$("#dialog").open();
     }
   }
 
-  _hasVideoUploadSupport(event, detail) {
-    if (detail && detail.response && detail.response.hasVideoUploadSupport===true) {
+  _hasVideoUploadSupport(event: CustomEvent) {
+    if (event.detail && event.etail.response && event.detail.response.hasVideoUploadSupport===true) {
       window.appGlobals.hasVideoUpload = true;
     }
 
-    if (detail && detail.response && detail.response.hasTranscriptSupport===true) {
+    if (event.detail && event.detail.response && event.detail.response.hasTranscriptSupport===true) {
       window.appGlobals.hasTranscriptSupport = true;
     }
   }
@@ -207,8 +117,8 @@ class YpAppGlobalsLit extends YpBaseElement {
     this.$$("#videoViewsAjax").generateRequest();
   }
 
-  _hasAudioUploadSupport(event, detail) {
-    if (detail && detail.response && detail.response.hasAudioUploadSupport===true) {
+  _hasAudioUploadSupport(event: CustomEvent) {
+    if (event.detail && event.detail.response && event.detail.response.hasAudioUploadSupport===true) {
       window.appGlobals.hasAudioUpload = true;
     }
   }
@@ -226,7 +136,7 @@ class YpAppGlobalsLit extends YpBaseElement {
 
   changeLocaleIfNeededAfterWait(locale, force) {
     console.log("changeLocaleIfNeeded "+locale);
-    if (window.haveLoadedLanguages===true && locale && this.language!=locale) {
+    if (window.appGlobals.haveLoadedLanguages===true && locale && this.language!=locale) {
       if (force || !localStorage.getItem('yp-user-locale')) {
         i18next.changeLanguage(locale, function(loaded) {
           console.log("i18n init loaded "+loaded);
@@ -235,7 +145,6 @@ class YpAppGlobalsLit extends YpBaseElement {
           document.dispatchEvent(
             new CustomEvent("lite-signal", {
               bubbles: true,
-              compose: true,
               detail: { name: 'yp-language', data: { type: 'language-loaded', language: locale}  }
             })
           );
@@ -244,34 +153,45 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  changeLocaleIfNeeded(locale, force) {
-    if (window.haveLoadedLanguages) {
+  changeLocaleIfNeeded(locale: string, force = false) {
+    if (window.appGlobals.haveLoadedLanguages) {
       this.changeLocaleIfNeededAfterWait(locale, force)
     } else {
-      this.async(function () {
+      setTimeout(() => {
         console.warn("Locales not loaded while trying to load languages, trying again in 500 ms");
         this.changeLocaleIfNeeded(locale, force)
       }, 500);
     }
   }
 
+  //TODO: Test this well
   parseQueryString() {
-    let query = (window.location.search || '?').substr(1),
-      map   = {};
-    query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
-      map[key] = value;
+    const queryString = (window.location.search || '?').substr(1);
+
+    const params: Record<string,string> = {};
+
+    const queries = queryString.split("&");
+
+    queries.forEach((indexQuery: string) => {
+        const indexPair = indexQuery.split("=");
+
+        const queryKey = decodeURIComponent(indexPair[0]);
+        const queryValue = decodeURIComponent(indexPair.length > 1 ? indexPair[1] : "");
+
+        params[queryKey] = queryValue;
     });
-    this.originalQueryParameters = map;
+
+    this.originalQueryParameters = params;
   }
 
-  setAnonymousUser(user) {
-    this.set('currentAnonymousUser', user);
+  setAnonymousUser(user: YpUser) {
+    this.currentAnonymousUser=user;
     console.debug("Set anon user "+user);
   }
 
-  setAnonymousGroupStatus(group) {
+  setAnonymousGroupStatus(group: YpGroup) {
     if (group && group.configuration && group.configuration.allowAnonymousUsers) {
-      this.set('currentAnonymousGroup', group);
+      this.currentAnonymousGroup=group;
       console.debug("Have set anonymous group id: "+group.id);
       if (!window.appUser.user && this.currentAnonymousUser) {
         console.debug("Setting anon user from cache");
@@ -286,7 +206,7 @@ class YpAppGlobalsLit extends YpBaseElement {
         console.debug("Logout anon user");
       }
       console.debug("Set anon group to null");
-      this.set('currentAnonymousGroup', null);
+      this.currentAnonymousGroup=null;
     }
   }
 
@@ -317,7 +237,7 @@ class YpAppGlobalsLit extends YpBaseElement {
 
   _userLoggedIn(event, user) {
     if (user) {
-      this.async(function () {
+      setTimeout(function () {
         if (typeof ga == 'function') {
           ga('set', '&uid', user.id);
         }
@@ -330,8 +250,9 @@ class YpAppGlobalsLit extends YpBaseElement {
 
   _bootResponse(event, detail) {
     this._removeSplash();
-    this.set('requestInProgress', false);
-    this.set('domain', detail.response.domain);
+    this.requestInProgress=false;
+    this.domain=detail.response.domain;
+    this._domainChanged(this.domain);
 
     this.setupGoogleAnalytics(this.domain);
     if (window.location.pathname=="/") {
@@ -349,8 +270,8 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  setupGroupConfigOverride(groupId, configOverride) {
-    const configOverrideHash = {};
+  setupGroupConfigOverride(groupId: number, configOverride: string) {
+    const configOverrideHash: Record<string,string> = {};
     configOverride.split(";").forEach(function (configItem) {
       const splitItem = configItem.split("=");
       configOverrideHash[splitItem[0]] = splitItem[1];
@@ -362,7 +283,7 @@ class YpAppGlobalsLit extends YpBaseElement {
   }
 
   // Example use http://localhost:4242/group/47/config/hg=1;rn=Your Priorities;ru=https://yrpri.org/
-  overrideGroupConfigIfNeeded(groupId, configuration) {
+  overrideGroupConfigIfNeeded(groupId: number, configuration: YpGroupConfiguration) {
     if (!configuration) {
       configuration = {};
     }
@@ -380,10 +301,10 @@ class YpAppGlobalsLit extends YpBaseElement {
         configuration["hideHelpIcon"]=Boolean(override["hh"]);
       }
       if (override["rn"]) {
-        configuration["customBackName"] = override["rn"];
+        configuration["customBackName"] = override["rn"] as string;
       }
       if (override["ru"]) {
-        configuration["customBackURL"] = override["ru"];
+        configuration["customBackURL"] = override["ru"] as string;
       }
       return configuration;
     }
@@ -424,7 +345,7 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  activity(type, object, context, target) {
+  activity(type: string, object: object|string, context: string, target: string|null = null) {
     let actor;
 
     if (window.appUser && window.appUser.user) {
@@ -433,7 +354,7 @@ class YpAppGlobalsLit extends YpBaseElement {
       actor = "-1";
     }
 
-    const logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
+    let logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
 
     console.log(logString);
 
@@ -442,7 +363,7 @@ class YpAppGlobalsLit extends YpBaseElement {
 
     if (type=='open') {
       // Wait by sending open so pageview event can be completed before
-      this.async(function ()  {
+      setTimeout(() =>  {
         this.sendToAnalyticsTrackers('send', 'event', object, type);
       }, 25);
     } else {
@@ -474,25 +395,19 @@ class YpAppGlobalsLit extends YpBaseElement {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback()
-    window.appStartTime = new Date();
+  constructor() {
+    super();
     window.appGlobals = this;
-
-    this.fire('app-ready');
+    this.appStartTime = new Date();
     this.$$("#boot").generateRequest();
-    this.requestInProgress = true;
-
-    window.googleMapsApiKey = null;
-    window.instagramAccessToken = '';
-    window.instagramClientID = '';
-
+    //TODO: See if this is recieved
+    this.fire('app-ready');
     this.parseQueryString();
   }
 
   setSeenWelcome() {
     this.seenWelcome = true;
-    localStorage.setItem('yrpri-welcome-status', true);
+    localStorage.setItem('yrpri-welcome-status', "1");
   }
 
   getSessionFromCookie() {
@@ -512,5 +427,3 @@ class YpAppGlobalsLit extends YpBaseElement {
     return this.t('');
   }
 }
-
-window.customElements.define('yp-app-globals-lit', YpAppGlobalsLit)

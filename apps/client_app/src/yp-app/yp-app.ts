@@ -1,7 +1,6 @@
 import '../yp-behaviors/yp-lodash-behavior.js';
 import '../yp-app-globals/yp-app-globals.js';
 import '../yp-app-globals/yp-app-user.js';
-import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypTranslatedPagesBehavior } from '../yp-behaviors/yp-translated-pages-behavior.js';
 import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
@@ -22,7 +21,10 @@ import {ifDefined} from 'lit-html/directives/if-defined';
 import i18next, { t as translate } from 'i18next'
 import backend from 'i18next-xhr-backend'
 import { format, formatDistance } from 'date-fns';
+
 import { YpBaseElement} from '../@yrpri/yp-base-element.js';
+import { YpAppStyles } from './YpAppStyles.js';
+import { YpAppGlobals } from './YpAppGlobals.js'
 
 //import {
 //  ca,da,de,dev,en,en_CA,en_GB,es,fa,fr,hr,hu,is,it,kl,nl,no,pl,pt,pt_BR,ru,sl,sr,sr_latin,tr,zh_TW
@@ -45,7 +47,7 @@ import 'moment/locale/da.js';
 */
 
 declare global {
-  interface Window { appGlobal: object; appUser: object }
+  interface Window { appGlobals: YpAppGlobals; appUser: object }
 }
 
 @customElement('yp-app')
@@ -96,282 +98,46 @@ export class YpApp extends YpBaseElement {
   @property({type: String})
   goForwardPostName: string|null = null
 
-  @internalProperty()
+  @property({type: Array})
+  pages: Array<YpHelpPage> = []
+
+  @property({type: String})
+  headerDescription: string|null = null
+
+  @property({type: String})
+  notifyDialogHeading: string|null = null
+
+  @property({type: String})
+  notifyDialogText: string|null = null
+
+  anchor: HTMLElement|null = null;
+
   previousSearches: Array<string> = []
 
-  @internalProperty()
   storedBackPath: string|null = null
 
-  @internalProperty()
   storedLastDocumentTitle: string|null = null
 
-  @internalProperty()
   keepOpenForPost: string|null = null
 
-  @internalProperty()
   useHardBack = false
 
-  @internalProperty()
   _scrollPositionMap = {}
 
-  @internalProperty()
   goBackToPostId: number|null = null
 
-  @internalProperty()
   currentPostId: number|null = null
 
-  @internalProperty()
   goForwardCount = 0
+
+  communityBackOverride: Record<string, Record<string,string>>|null = null
 
   static get styles() {
     return [
-      css`
-        :host {
-          --main-stats-color-on-white: #878787;
-
-          --paper-dialog-button-color: var(--accent-color);
-          --paper-tabs-selection-bar-color: var(--accent-color);
-          --paper-input-container-focus-color: var(--accent-color);
-
-          --paper-dropdown-menu: {
-            background-color: #FFF;
-          };
-
-          --icon-general-color: '#fff';
-          --master-point-up-color: rgba(0,127,0,0.62);
-          --master-point-down-color: rgba(127,0,0,0.62);
-        }
-
-        :host  {
-          --paper-dropdown-menu: {
-            background-color: #FFF;
-          };
-
-          --light-primary-color: #FFCC80;
-          --text-primary-color: #fff;
-          --dark-primary-color: #F57C00;
-          --primary-text-color: #212121;
-          --secondary-text-color: #727272;
-          --disabled-text-color: #bdbdbd;
-          --divider-color: #FF5722;
-
-          --paper-tabs: {
-            font-size: 18px;
-            text-transform: uppercase;
-          };
-
-          --paper-fab-mini: {
-            background: var(--primary-background-color);
-            color: #555 !important;
-          };
-
-          /* Components */
-
-          --paper-tabs-selection-bar: {
-            border-bottom: 4px solid !important;
-            border-bottom-color: var(--accent-color, #000) !important;
-          };
-
-          /* paper-drawer-panel */
-          --drawer-menu-color: #ffffff;
-          --drawer-border-color: 1px solid #ccc;
-          /* paper-menu */
-          --paper-menu-background-color: var(--primary-background-color);
-          --menu-link-color: #111111;
-        }
-
-        :host {
-          background-color: var(--primary-background-color);
-        }
-
-        app-header {
-          color: #fff;
-          background-color: var(--primary-background-color);
-        }
-
-        app-toolbar {
-          color: #FFF;
-        }
-
-        iron-pages {
-          background-color: var(--primary-background-color);
-        }
-
-        [condensed-title] {
-          font-size: 16px;
-        }
-
-        [title] {
-          padding-top: 8px;
-          padding-left: 8px;
-          padding-bottom: 8px;
-        }
-
-        .backIcon {
-          width: 32px !important;
-          height: 32px !important;
-          margin-right: 12px;
-          margin-left: 12px;
-          padding: 0;
-          margin-top: 4px;
-        }
-
-        .backIcon[hide] {
-          display: none;
-        }
-
-        .masterActionIcon {
-          width: 52px;
-          height: 52px;
-        }
-
-        .main-header {
-          border-bottom: 1px solid var(--primary-color-800);
-          background-color: var(--primary-color-800);
-          color: #333;
-          height: 64px;
-        }
-
-        .dropdown-content {
-          width: 200px;
-        }
-
-        #paperToggleNavMenu {
-          min-width: 40px;
-        }
-
-        #translationButton {
-          color: #FFF;
-          background-color: var(--accent-color);
-          padding: 6px;
-          min-width: 0 !important;
-          margin-left: 8px;
-          margin-right: 8px;
-        }
-
-        .stopIcon {
-          margin-left: 6px;
-        }
-
-        .helpButton {
-          margin-right: 8px;
-        }
-
-        .forwardPostName {
-          margin-left: 4px;
-          margin-top: 14px;
-          color: #C5C5C5;
-        }
-
-        @media (max-width: 480px) {
-          #forwardPostName {
-            display: none !important;
-          }
-
-          .stopIcon {
-            display: none;
-          }
-
-          .forwardPostName {
-            margin-left: 4px;
-            margin-top: 14px;
-            font-size: 15px;
-          }
-
-          #translationButton {
-            width: 40px !important;
-            max-width: 40px !important;
-            margin-left: 8px;
-          }
-
-          div[title] {
-            font-size: 17px;
-            white-space: normal !important;
-            padding-left: 0;
-          }
-
-          .backIcon {
-            min-width: 28px !important;
-            min-height: 28px !important;
-          }
-
-          .masterActionIcon {
-            width: 48px;
-            height: 48px;
-          }
-
-          .loginButton {
-            font-size: 15px;
-            padding: 4px;
-          }
-
-          paper-menu-button {
-            padding: 0;
-          }
-
-          mwc-button {
-            padding:0;
-            margin: 0;
-          }
-
-          #translationIcon {
-            width: 30px;
-            height: 30px;
-            padding: 6px;
-          }
-        }
-
-        @media (max-width: 340px) {
-          div[title] {
-            font-size: 17px;
-            white-space: normal !important;
-            padding-left: 0;
-          }
-
-          .backIcon {
-            min-width: 26px !important;
-            min-height: 26px !important;
-          }
-
-          .loginButton {
-            font-size: 12px;
-            padding: 0;
-          }
-        }
-
-        .userImageNotificationContainer {
-          cursor: pointer;
-          margin-right: 8px;
-          display:inline-block;
-        }
-
-        .activeBadge {
-          --paper-badge-background: var(--accent-color);
-        }
-
-        .helpButton[hide] {
-          display: none;
-        }
-
-        .navContainer[hide] {
-          display: none;
-        }
-
-        [hidden] {
-          display: none !important;
-        }
-
-        #headerTitle {
-          padding-right: 0 !important;
-        }
-
-        app-toolbar {
-          padding-left: 8px;
-          padding-right: 16px;
-        }
-      `, YpFlexLayout];
+      super.styles,
+      YpAppStyles
+    ];
   }
-
 
   constructor() {
     super();
@@ -435,7 +201,7 @@ export class YpApp extends YpBaseElement {
               <paper-listbox .slot="dropdown-content">
 
               ${ this.translatedPages.map(page => html`
-                <paper-item data-args="${this.index}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(page)}</paper-item>
+                <paper-item data-args="${this.index}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(this.page)}</paper-item>
               `)}
 
               </paper-listbox>
@@ -475,13 +241,21 @@ export class YpApp extends YpBaseElement {
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
     <yp-app-user id="appUser" @user-changed="${this.onUserChanged}"></yp-app-user>
     <yp-sw-update-toast .buttonLabel="${this.t('reload')}" .message="${this.t('newVersionAvailable')}"></yp-sw-update-toast>
+
+    <paper-dialog id="dialog">
+      <div class="dialogText">${this.notifyDialogText}</div>
+      <div class="buttons">
+        <mwc-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}" .label="OK"></mwc-button>
+      </div>
+    </paper-dialog>
+
+
 ` : html``}
 `
   }
 
 /*
   behaviors: [
-    ypThemeBehavior,
     ypGotoBehavior,
     ypTranslatedPagesBehavior,
     ypAppSwipeBehavior
@@ -499,13 +273,82 @@ export class YpApp extends YpBaseElement {
     'yp-refresh-domain': '_refreshDomain',
     'yp-language-name': '_setLanguageName',
     'yp-dialog-closed': '_dialogClosed',
+    'yp-open-notify-dialog': '_openNotifyDialog',
     'yp-open-page': '_openPageFromEvent',
     'yp-open-login': '_login',
     'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
     'yp-add-back-community-override': '_addBackCommunityOverride'
   },
 */
-  _addBackCommunityOverride(event, detail) {
+
+  _openNotifyDialog(event: CustomEvent) {
+    this.notifyDialogText = event.detail;
+    this.$$("#dialog")!.open();
+  }
+
+  _resetNotifyDialogText() {
+    this.notifyDialogText=null;
+  }
+
+  // Translated Pages
+  translatedPages(pages: Array<YpHelpPage>) {
+    if (pages) {
+      return JSON.parse(JSON.stringify(pages));
+    } else {
+      return [];
+    }
+  }
+
+  openPageFromId(pageId: number) {
+    if (this.pages) {
+      this.pages.forEach((page) => {
+        if (page.id==pageId) {
+          this._openPage(page)
+        }
+      });
+    } else {
+      console.warn("Trying to open a page when not loaded");
+    }
+  }
+
+  _openPageFromMenu(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    const value = element.getAttribute('data-args');
+    if (value) {
+      const index = JSON.parse(value);
+      const page = this.pages[index];
+      this._openPage(page);
+      //TODO: Make sure to reset menu here
+      //this.$$("paper-listbox")?.select(null);
+    }
+  }
+
+  _openPage(page: YpHelpPage) {
+    window.appGlobals.activity('open', 'pages', page.id);
+    this.getDialogAsync("pageDialog", function (dialog) {
+      let pageLocale = 'en';
+      if (page.title[window.appGlobals.locale]) {
+        pageLocale = window.appGlobals.locale;
+      }
+      dialog.open(page.title[pageLocale], page.content[pageLocale]);
+    }.bind(this));
+  }
+
+  _getLocalizePageTitle(page: YpHelpPage) {
+    let pageLocale = 'en';
+    if (page.title[window.appGlobals.locale]) {
+      pageLocale = window.appGlobals.locale;
+    }
+    return page.title[pageLocale];
+  }
+
+  _setPages(event: CustomEvent) {
+    this.pages = event.detail;
+  }
+
+  _addBackCommunityOverride(event: CustomEvent) {
+    const detail = event.detail;
+
     if (!this.communityBackOverride) {
       this.communityBackOverride = {};
     }
@@ -514,18 +357,6 @@ export class YpApp extends YpBaseElement {
       backPath: detail.backPath,
       backName: detail.backName
     };
-  }
-
-  _userDrawerOpened(value) {
-    this.async(() => {
-      this.userDrawerOpenedDelayed=value;
-    }, 500);
-  }
-
-  _navDrawOpened(value) {
-    this.async(() => {
-      this.navDrawOpenedDelayed=value;
-    }, 500);
   }
 
   _goToNextPost() {
@@ -539,7 +370,7 @@ export class YpApp extends YpBaseElement {
       this.goToPost(this.goForwardToPostId, null, null, null, true);
       window.appGlobals.activity('recommendations', 'goForward', this.goForwardToPostId);
       this.goForwardCount += 1;
-      this.showBackToPos=true;
+      this.showBackToPost=true;
     } else {
       console.error("No goForwardToPostId");
     }
@@ -555,7 +386,8 @@ export class YpApp extends YpBaseElement {
     this.goForwardCount -= 1;
   }
 
-  _setNextPost(event, detail) {
+  _setNextPost(event: CustomEvent) {
+    const detail = event.detail;
     if (detail.goForwardToPostId) {
       this.goForwardToPostId=detail.goForwardToPostId;
       this.goForwardPostName=detail.goForwardPostName;
@@ -573,13 +405,9 @@ export class YpApp extends YpBaseElement {
   }
 
   _setupSamlCallback() {
-    const eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-    const eventer = window[eventMethod];
-    const messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-
     console.log("Have created event listener for samlLogin");
 
-    eventer(messageEvent,function(e) {
+    window.addEventListener("message",(e) => {
       if (e.data=='samlLogin' && window.appUser) {
         window.appUser.loginFromSaml();
         console.log("Have contacted app user 2");
@@ -599,7 +427,7 @@ export class YpApp extends YpBaseElement {
         defaultLocale = 'no';
     } else {
       const tld = hostname.substring(hostname.lastIndexOf('.'));
-      let localeByTld = {
+      const localeByTld: Record<string,string> = {
         '.fr': 'fr',
         '.hr': 'hr',
         '.hu': 'hu',
@@ -612,7 +440,6 @@ export class YpApp extends YpBaseElement {
       defaultLocale = localeByTld[tld] || 'en';
     }
 
-    let language;
     const storedLocale = localStorage.getItem('yp-user-locale');
     if (storedLocale) {
       defaultLocale = storedLocale;
@@ -627,7 +454,7 @@ export class YpApp extends YpBaseElement {
 
     if (window.appGlobals.originalQueryParameters &&
       window.appGlobals.originalQueryParameters["startAutoTranslate"]) {
-      this.async(function () {
+      setTimeout(() => {
         this._startTranslation();
       }, 2500);
     }
@@ -645,9 +472,9 @@ export class YpApp extends YpBaseElement {
         backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' }
         }, function(loaded) {
       console.info("Have loaded languages for "+defaultLocale);
-      window.locale = defaultLocale;
-      window.i18nTranslation = i18next;
-      window.haveLoadedLanguages = true;
+      window.appGlobals.locale = defaultLocale;
+      window.appGlobals.i18nTranslation = i18next;
+      window.appGlobals.haveLoadedLanguages = true;
 //      moment.locale([defaultLocale, 'en']);
 
       console.log("Changed language to "+defaultLocale);
@@ -655,25 +482,23 @@ export class YpApp extends YpBaseElement {
       document.dispatchEvent(
         new CustomEvent("lite-signal", {
           bubbles: true,
-          compose: true,
           detail: { name: 'yp-language', data: { type: 'language-loaded', language: defaultLocale }  }
         })
       );
     }.bind(this));
   }
 
-  _openPageFromEvent(event, detail) {
+  _openPageFromEvent(event: CustomEvent) {
     if (detail.pageId) {
-      this.openPageFromId(detail.pageId);
+      this.openPageFromId(event.detail.pageId);
     }
   }
 
   _startTranslation() {
-    window.autoTranslate = true;
+    window.appGlobals.autoTranslate = true;
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
         bubbles: true,
-        compose: true,
         detail: { name: 'yp-auto-translate', data: true }
       })
     );
@@ -682,34 +507,33 @@ export class YpApp extends YpBaseElement {
       this.fire('yp-language-name', this.supportedLanguages[this.language]);
     }
 
-    dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+    this.getDialogAsync("masterToast", (toast) => {
       toast.text = this.t('autoTranslationStarted');
       toast.show();
-    }.bind(this));
+    });
   }
 
   _stopTranslation() {
     document.dispatchEvent(
       new CustomEvent("lite-signal", {
         bubbles: true,
-        compose: true,
         detail: { name: 'yp-auto-translate', data: false }
       })
     );
-    window.autoTranslate = false;
-    dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+    window.appGlobals.autoTranslate = false;
+    this.getDialogAsync("masterToast", (toast) => {
       toast.text = this.t('autoTranslationStopped');
       toast.show();
-    }.bind(this));
-    sessionStorage.setItem("dontPromptForAutoTranslation", true);
+    });
+    sessionStorage.setItem("dontPromptForAutoTranslation", "1");
   }
 
-  _setLanguageName(event, detail) {
-    this.languageName=detail;
+  _setLanguageName(event: CustomEvent) {
+    this.languageName=event.detail;
   }
 
-  _autoTranslateEvent(event, detail) {
-    this.autoTranslate=detail;
+  _autoTranslateEvent(event: CustomEvent) {
+    this.autoTranslate=event.detail;
   }
 
   _refreshGroup() {
@@ -732,39 +556,40 @@ export class YpApp extends YpBaseElement {
   }
 
   _closeRightDrawer() {
-    this.async(function () {
+    setTimeout(() => {
       this.$$("#drawer").close();
     }, 100);
   }
 
-  _setNumberOfUnViewedNotifications(event, detail) {
-    if (detail.count) {
-      if (detail.count<10) {
-        this.numberOfUnViewedNotifications=detail.count;
+  _setNumberOfUnViewedNotifications(event: CustomEvent) {
+    if (event.detail.count) {
+      if (event.detail.count<10) {
+        this.numberOfUnViewedNotifications=event.detail.count;
       } else {
         this.numberOfUnViewedNotifications='9+';
       }
     } else {
       this.numberOfUnViewedNotifications='';
     }
-    this.async(() => {
+    //TODO: This is not needed
+    setTimeout(() => {
       this.$$("#notificationBadge")?.fire("iron-resize");
     });
   }
 
-  _redirectTo(event, detail) {
-    if (detail.path) {
-      this.route.path=detail.path;
+  _redirectTo(event: CustomEvent) {
+    if (event.detail.path) {
+      this.route.path=event.detail.path;
     }
   }
 
   _routeChanged(route) {
     // Support older pre version 6.1 links
     if (window.location.href.indexOf("/#!/") > -1) {
-      window.location = window.location.href.replace("/#!/", "/");
+      window.location.href = window.location.href.replace("/#!/", "/");
     }
 
-    this.async(() => {
+    setTimeout(() => {
       if (route.path.indexOf('domain') > -1) {
         this.domainSubRoute=this.subRoute;
         if (this.$$("#domainPage") && typeof this.$$("#domainPage").refresh !== "undefined") {
@@ -816,25 +641,25 @@ export class YpApp extends YpBaseElement {
           this.openUserNotificationsDialog();
         } else if (this.route.path.indexOf('/user/info_page') > -1) {
           this.openUserInfoPage(params[params.length-1]);
-          window.history.pushState({}, null, "/");
+          window.history.pushState({}, "", "/");
           window.dispatchEvent(new CustomEvent('location-changed'));
         }
       } else {
 
-        const map = this._scrollPositionMap;
+        const map: Record<string,number> = this._scrollPositionMap;
 
         if (oldPageData != null && oldPageData.page != null) {
           map[oldPageData.page] = window.pageYOffset;
           console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
         }
 
-        let delayUntilScrollToPost = null;
+        let delayUntilScrollToPost = 0;
 
         if (this.wide) {
           delayUntilScrollToPost = 2;
         }
 
-        this.async(() => {
+        setTimeout(() => {
           let skipMasterScroll = false;
 
           if (oldPageData && oldPageData.page && pageData) {
@@ -845,7 +670,7 @@ export class YpApp extends YpBaseElement {
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll groupPage for goToPostOrNewsItem, trying again");
-                this.async(() => {
+                setTimeout(() => {
                   if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
                     this.$$("#groupPage")?.goToPostOrNewsItem();
                   } else {
@@ -862,7 +687,7 @@ export class YpApp extends YpBaseElement {
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
-                this.async(() => {
+                setTimeout(() => {
                   if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
                     this.$$("#communityPage")?.scrollToGroupItem();
                   } else {
@@ -879,7 +704,7 @@ export class YpApp extends YpBaseElement {
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll domainPage for scrollToCommunityItem, trying again");
-                this.async(function () {
+                setTimeout(function () {
                   if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToGroupItem !== "undefined") {
                     this.$$("#domainPage").scrollToCommunityItem();
                   } else {
@@ -897,7 +722,7 @@ export class YpApp extends YpBaseElement {
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll communityFolderPage for goToPostOrNewsItem, trying again");
-                this.async(function () {
+                setTimeout(function () {
                   if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
                     this.$$("#communityFolderPage").scrollToGroupItem();
                   } else {
@@ -930,7 +755,7 @@ export class YpApp extends YpBaseElement {
             }
           } else if (this.isAttached && !skipMasterScroll) {
             console.info("AppLayout scroll to top");
-            this.async(() => {
+            setTimeout(() => {
               window.scrollTo(0, 0);
             });
           }
@@ -965,10 +790,10 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  openResetPasswordDialog(resetPasswordToken) {
-    this.getDialogAsync("resetPassword", function (dialog) {
+  openResetPasswordDialog(resetPasswordToken: string) {
+    this.getDialogAsync("resetPassword", (dialog) => {
       dialog.open(resetPasswordToken);
-    }.bind(this));
+    });
   }
 
   openUserNotificationsDialog() {
@@ -979,24 +804,23 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  openAcceptInvitationDialog(inviteToken) {
-    debugger;
-    this.getDialogAsync("acceptInvite", function (dialog) {
+  openAcceptInvitationDialog(inviteToken: string) {
+    this.getDialogAsync("acceptInvite", (dialog) => {
       dialog.open(inviteToken);
-    }.bind(this));
+    });
   }
 
   _showPage404() {
     this.page = 'view-404';
   }
 
-  _setHomeLink(event, homeLink) {
+  _setHomeLink(event: CustomEvent) {
     if (!this.homeLink) {
-      this.homeLink=homeLink;
+      this.homeLink=event.detail;
     }
   }
 
-  setKeepOpenForPostsOn(goBackToPage) {
+  setKeepOpenForPostsOn(goBackToPage: string) {
     this.keepOpenForPost = goBackToPage;
     this.storedBackPath=this.backPath;
     this.storedLastDocumentTitle=document.title;
@@ -1055,7 +879,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _toggleNavDrawer() {
-    this.$$("#navDrawer").toggle();
+    this.$$("#navDrawer")?.toggle();
   }
 
   connectedCallback() {
@@ -1068,43 +892,43 @@ export class YpApp extends YpBaseElement {
   }
 
   getDialogAsync(idName, callback) {
-    this.$$("#dialogContainer").getDialogAsync(idName, callback);
+    this.$$("#dialogContainer")!.getDialogAsync(idName, callback);
   }
 
   getRatingsDialogAsync(callback) {
-    this.$$("#dialogContainer").getRatingsDialogAsync(callback);
+    this.$$("#dialogContainer")!.getRatingsDialogAsync(callback);
   }
 
   getUsersGridAsync(callback) {
-    this.$$("#dialogContainer").getUsersGridAsync(callback);
+    this.$$("#dialogContainer")!.getUsersGridAsync(callback);
   }
 
   getMediaRecorderAsync(callback) {
-    this.$$("#dialogContainer").getMediaRecorderAsync(callback);
+    this.$$("#dialogContainer")!.getMediaRecorderAsync(callback);
   }
 
   getContentModerationAsync(callback) {
-    this.$$("#dialogContainer").getContentModerationAsync(callback);
+    this.$$("#dialogContainer")!.getContentModerationAsync(callback);
   }
 
   getCreateReportAsync(callback) {
-    this.$$("#dialogContainer").getCreateReportAsync(callback);
+    this.$$("#dialogContainer")!.getCreateReportAsync(callback);
   }
 
   getDuplicateCollectionAsyncAsync(callback) {
-    this.$$("#dialogContainer").getDuplicateCollectionAsyncAsync(callback);
+    this.$$("#dialogContainer")!.getDuplicateCollectionAsyncAsync(callback);
   }
 
   openPixelCookieConfirm(trackerId) {
-    this.$$("#dialogContainer").openPixelCookieConfirm(trackerId);
+    this.$$("#dialogContainer")!.openPixelCookieConfirm(trackerId);
   }
 
   closeDialog(idName) {
-    this.$$("#dialogContainer").closeDialog(idName);
+    this.$$("#dialogContainer")!.closeDialog(idName);
   }
 
   _dialogClosed(event, detail) {
-    this.$$("#dialogContainer").dialogClosed(detail);
+    this.$$("#dialogContainer")!.dialogClosed(detail);
   }
 
   scrollPageToTop() {
@@ -1115,7 +939,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _toggleUserDrawer() {
-    this.$$("#drawer").toggle();
+    this.$$("#drawer")!.toggle();
   }
 
   _login() {
@@ -1124,11 +948,12 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  onChangeHeader(event, header) {
+  onChangeHeader(event: CustomEvent) {
+    const header = event.detail;
     this.headerTitle=document.title = header.headerTitle;
 
-    this.async(function () {
-      const headerTitle = this.$$("#headerTitle");
+    setTimeout(() => {
+      const headerTitle = this.$$("#headerTitle") as HTMLElement;
       if (headerTitle) {
         const length = headerTitle.innerHTML.length;
         if (this.wide) {
@@ -1181,7 +1006,7 @@ export class YpApp extends YpBaseElement {
     }
 
     if (this.communityBackOverride && this.backPath && window.location.pathname.indexOf("/community/") > -1) {
-      var communityId =  window.location.pathname.split("/community/")[1];
+      const communityId =  window.location.pathname.split("/community/")[1];
       if (communityId && !isNaN(communityId) && this.communityBackOverride[communityId]) {
         this.backPath=this.communityBackOverride[communityId].backPath;
         this.headerTitle=this.communityBackOverride[communityId].backName;
@@ -1217,7 +1042,7 @@ export class YpApp extends YpBaseElement {
 
   onUserChanged(event: CustomEvent) {
     if (event.detail && event.detail.id) {
-      this.user = detail;
+      this.user = event.detail;
     } else {
       this.user = null;
     }
@@ -1225,10 +1050,6 @@ export class YpApp extends YpBaseElement {
 
   toggleSearch() {
     this.$$("#search")?.toggle();
-  }
-
-  __equal(a, b) {
-    return a === b;
   }
 }
 
