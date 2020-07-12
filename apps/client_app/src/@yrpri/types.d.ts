@@ -14,8 +14,8 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   customBackURL?: string;
 }
 
-interface YpCommuynityConfiguration extends YpCollectionConfiguration {
-  somethingrather?: string;
+interface YpCommunityConfiguration extends YpCollectionConfiguration {
+  redirectToGroupId?: number;
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {
@@ -31,8 +31,24 @@ interface YpHelpPage {
 interface YpDomain {
   id: number;
   name: string;
+  domain_name: string;
   description?: string;
   configuration: YpDomainConfiguration;
+}
+
+
+interface YpCommunity {
+  id: number;
+  name: string;
+  hostname: string;
+  description?: string;
+  is_community_folder?: boolean;
+  configuration: YpCommunityConfiguration;
+}
+
+interface YpDomainGetResponse {
+  domain: YpDomain;
+  community: YpCommunity;
 }
 
 interface YpGroup {

@@ -5,6 +5,8 @@ import { ypAppAnalyticsBehavior } from './yp-app-analytics-behavior.js';
 import '../yp-ajax/yp-ajax.js';
 import i18next from 'i18next';
 import { YpBaseMixin } from '../@yrpri/YpBaseMixin.js'
+import { html } from 'lit-html';
+import { YpServerApi } from '../@yrpri/YpServerApi.js';
 
 export class YpAppGlobals extends YpBaseMixin(class {}) {
   seenWelcome = false;
@@ -33,7 +35,7 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
 
   currentSamlLoginMessage: string|null = null;
 
-  originalQueryParameters: Record<string,string> = {};
+  originalQueryParameters: Record<string,string|number> = {};
 
   externalGoalTriggerGroupId: number|null = null;
 
@@ -67,7 +69,6 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     <yp-ajax id="videoViewsAjax" ?hidden="" .method="PUT" url="/api/videos/videoView"></yp-ajax>
     <yp-ajax id="audioListenAjax" ?hidden="" .method="PUT" url="/api/audios/audioListen"></yp-ajax>
     <yp-ajax id="recommendationsForGroupAjax" .dispatchError="" ?hidden="" .method="PUT" @response="${this._recommendationsForGroupResponse}"></yp-ajax>
-    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
 `
   }
 /*
@@ -78,7 +79,6 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     ypAppAnalyticsBehavior
   ],
 */
-
 
   showRecommendationInfoIfNeeded() {
     if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
@@ -230,9 +230,7 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
   }
 
   reBoot() {
-    if (!this.requestInProgress) {
-      this.$$("#boot").generateRequest();
-    }
+    this.boot();
   }
 
   _userLoggedIn(event, user) {
@@ -248,26 +246,26 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     }
   }
 
-  _bootResponse(event, detail) {
-    this._removeSplash();
-    this.requestInProgress=false;
-    this.domain=detail.response.domain;
-    this._domainChanged(this.domain);
+  boot() {
+    this.serverApi.boot().then((results: YpDomainGetResponse) => {
+      this.domain=results.domain;
+      this._domainChanged(this.domain);
+      this.setupGoogleAnalytics(this.domain);
 
-    this.setupGoogleAnalytics(this.domain);
-    if (window.location.pathname=="/") {
-      if (detail.response.community && detail.response.community.configuration && detail.response.community.configuration.redirectToGroupId) {
-        this.redirectTo("/group/"+detail.response.community.configuration.redirectToGroupId);
-      } else if (detail.response.community && !detail.response.community.is_community_folder) {
-        this.redirectTo("/community/"+detail.response.community.id);
-      } else if (detail.response.community && detail.response.community.is_community_folder) {
-        this.redirectTo("/community_folder/"+detail.response.community.id);
-      } else {
-        this.redirectTo("/domain/" + this.domain.id);
-        this.fire("change-header", { headerTitle: this.domain.domain_name,
-          headerDescription: this.domain.description});
+      if (window.location.pathname=="/") {
+        if (results.community && results.community.configuration && results.community.configuration.redirectToGroupId) {
+          this.redirectTo("/group/"+results.community.configuration.redirectToGroupId);
+        } else if (results.community && !results.community.is_community_folder) {
+          this.redirectTo("/community/"+results.community.id);
+        } else if (results.community && results.community.is_community_folder) {
+          this.redirectTo("/community_folder/"+results.community.id);
+        } else {
+          this.redirectTo("/domain/" + this.domain.id);
+          this.fire("change-header", { headerTitle: this.domain.domain_name,
+            headerDescription: this.domain.description});
+        }
       }
-    }
+    });
   }
 
   setupGroupConfigOverride(groupId: number, configOverride: string) {
@@ -312,7 +310,7 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
 
   postLoadGroupProcessing(group) {
     if (this.originalQueryParameters['yu']) {
-      var promotionTrackingAjax = document.createElement('iron-ajax');
+      const promotionTrackingAjax = document.createElement('iron-ajax');
       promotionTrackingAjax.handleAs = 'json';
       promotionTrackingAjax.contentType = 'application/json';
       promotionTrackingAjax.url = "/api/groups/"+group.id+"/marketingTrackingOpen";
@@ -334,7 +332,7 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
         this.externalGoalCounter += 1;
         if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
           //TODO: Use fetch
-          var goalTriggerAjax = document.createElement('iron-ajax');
+          const goalTriggerAjax = document.createElement('iron-ajax');
           goalTriggerAjax.handleAs = 'json';
           goalTriggerAjax.contentType = 'application/json';
           goalTriggerAjax.url = "/api/groups/"+this.externalGoalTriggerGroupId+"/triggerTrackingGoal";
@@ -399,10 +397,13 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     super();
     window.appGlobals = this;
     this.appStartTime = new Date();
-    this.$$("#boot").generateRequest();
+    this.serverApi = new YpServerApi();
+    this.serverApi.boot();
+
     //TODO: See if this is recieved
     this.fire('app-ready');
     this.parseQueryString();
+    this.addGlobalListener('yp-logged-in', this._userLoggedIn);
   }
 
   setSeenWelcome() {
@@ -421,9 +422,5 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
         sid = value;
     }
     return sid;
-  }
-
-  computeHeading() {
-    return this.t('');
   }
 }

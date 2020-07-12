@@ -1,6 +1,3 @@
-// Locale implementation inspired by https://github.com/PolymerElements/app-localize-behavior
-
-import { IntlMessageFormat } from "intl-messageformat";
 import { LitElement, css, property } from 'lit-element';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
@@ -51,7 +48,7 @@ export class YpBaseElement extends YpBaseMixin(LitElement) {
   }
 
   $$(id: string) {
-    return this.shadowRoot ? this.shadowRoot.querySelector(id) : null;
+    this.shadowRoot.querySelector(id);
   }
 }
 

@@ -6,7 +6,7 @@ export const YpBaseMixin = dedupeMixin(
 
       constructor() {
         super();
-        document.addEventListener('language-loaded', this._languageEvent as EventListener, false);
+        this.addGlobalListener('language-loaded', this._languageEvent);
       }
 
       _languageEvent(event: CustomEvent) {
@@ -18,7 +18,7 @@ export const YpBaseMixin = dedupeMixin(
         }
       }
 
-      fire(eventName: string, data: object|string = {}, target: any = this) {
+      fire(eventName: string, data: object|string = {}, target: this|Document = this) {
         const event = new CustomEvent(eventName, { detail: data, bubbles: true, composed: true });
         target.dispatchEvent(event);
       }
@@ -27,7 +27,7 @@ export const YpBaseMixin = dedupeMixin(
         this.fire(eventName, data, document);
       }
 
-      addListener(name: string, callback: Function, target: any = this) {
+      addListener(name: string, callback: Function, target: this|Document = this) {
         target.addEventListener(name, callback as EventListener, false);
       }
 
@@ -35,7 +35,7 @@ export const YpBaseMixin = dedupeMixin(
         this.addListener(name, callback, document);
       }
 
-      removeListener(name: string, callback: Function, target: any = this) {
+      removeListener(name: string, callback: Function, target: this|Document = this) {
         target.removeEventListener(name, callback as EventListener);
       }
 
