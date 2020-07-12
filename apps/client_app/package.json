@@ -62,8 +62,10 @@
   "author": "yp-app",
   "license": "MIT",
   "dependencies": {
+    "@types/google.analytics": "0.0.40",
     "lit-element": "^2.0.1",
     "lit-flexbox-literals": "0.0.7",
-    "lit-html": "^1.0.0"
+    "lit-html": "^1.0.0",
+    "pwa-helpers": "^0.9.1"
   }
 }

@@ -1,3 +1,5 @@
+declare module 'lit-flexbox-literals';
+
 interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;
   themeOverrideColorAccent?: string;
@@ -13,6 +15,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   customBackName?: string;
   customBackURL?: string;
 }
+
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
@@ -51,11 +54,49 @@ interface YpDomainGetResponse {
   community: YpCommunity;
 }
 
+interface YpHasVideoResponse {
+  hasVideoUploadSupport: boolean;
+  hasTranscriptSupport: boolean;
+}
+
+interface YpHasAudioResponse {
+  hasAudioUploadSupport: boolean;
+  hasTranscriptSupport: boolean;
+}
+
 interface YpGroup {
   id: number;
   name: string;
   objectives?: string;
+  Community?: YpCommunity;
   configuration: YpGroupConfiguration;
+}
+
+interface YpImage {
+  id: number;
+  formats: string;
+}
+
+interface YpCategory {
+  id: number;
+  name: string;
+  CategoryIconImages?: Array<YpImage>;
+}
+
+interface YpPost {
+  id: number;
+  name: string;
+  cover_media_type?: string;
+  PostHeaderImages?: Array<YpImage>;
+  Category?: YpCategory;
+  Group?: YpGroup;
+  description?: string;
+}
+
+interface YpActivity {
+  id: number;
+  name: string;
+  description?: string;
 }
 
 interface YpUserProfileData {

@@ -1,4 +1,4 @@
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
+/* eslint-disable @typescript-eslint/camelcase */
 import { ypAppRecommendationsBehavior } from './yp-app-recommendations-behavior.js';
 import { ypAppCacheBehavior } from './yp-app-cache-behavior.js';
 import { ypAppAnalyticsBehavior } from './yp-app-analytics-behavior.js';
@@ -7,8 +7,11 @@ import i18next from 'i18next';
 import { YpBaseMixin } from '../@yrpri/YpBaseMixin.js'
 import { html } from 'lit-html';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
+import { YpNavHelpers } from './YpNavHelpers.js';
+import { YpCodeBase } from '../@yrpri/YpCodeBase.js';
+import { YpRecommendations } from './YpRecommendations.js';
 
-export class YpAppGlobals extends YpBaseMixin(class {}) {
+export class YpAppGlobals extends YpCodeBase {
   seenWelcome = false;
 
   resetSeenWelcome = false;
@@ -61,19 +64,17 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
 
   i18nTranslation: i18next|null = null;
 
+  serverApi: YpServerApi
+
+  recommendations: YpRecommendations
+
   render() {
     return html`
-    <yp-ajax id="boot" url="/api/domains" @response="${this._bootResponse}"></yp-ajax>
-    <yp-ajax hidden auto url="/api/videos/hasVideoUploadSupport" @response="${this._hasVideoUploadSupport}"></yp-ajax>
-    <yp-ajax hidden auto url="/api/audios/hasAudioUploadSupport" @response="${this._hasAudioUploadSupport}"></yp-ajax>
-    <yp-ajax id="videoViewsAjax" ?hidden="" .method="PUT" url="/api/videos/videoView"></yp-ajax>
-    <yp-ajax id="audioListenAjax" ?hidden="" .method="PUT" url="/api/audios/audioListen"></yp-ajax>
     <yp-ajax id="recommendationsForGroupAjax" .dispatchError="" ?hidden="" .method="PUT" @response="${this._recommendationsForGroupResponse}"></yp-ajax>
 `
   }
 /*
   behaviors: [
-    ypGotoBehavior,
     ypAppRecommendationsBehavior,
     ypAppCacheBehavior,
     ypAppAnalyticsBehavior
@@ -96,42 +97,39 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     }
   }
 
-  _hasVideoUploadSupport(event: CustomEvent) {
-    if (event.detail && event.etail.response && event.detail.response.hasVideoUploadSupport===true) {
-      window.appGlobals.hasVideoUpload = true;
-    }
-
-    if (event.detail && event.detail.response && event.detail.response.hasTranscriptSupport===true) {
-      window.appGlobals.hasTranscriptSupport = true;
+  async hasVideoUploadSupport() {
+    const response = await this.serverApi.hasVideoUploadSupport() as YpHasVideoResponse|void;
+    if (response) {
+      window.appGlobals.hasVideoUpload = response.hasVideoUploadSupport;
+      window.appGlobals.hasTranscriptSupport = response.hasTranscriptSupport;
     }
   }
 
-  sendVideoView(videoId) {
-    this.$$("#videoViewsAjax").body = { videoId: videoId };
-    this.$$("#videoViewsAjax").generateRequest();
+  sendVideoView(videoId: number) {
+    this.serverApi.sendVideoView({ videoId: videoId });
     this.activity('view', 'video', videoId);
   }
 
-  sendLongVideoView(videoId) {
-    this.$$("#videoViewsAjax").body = { videoId: videoId, longPlaytime: true };
-    this.$$("#videoViewsAjax").generateRequest();
+  sendLongVideoView(videoId: number) {
+    this.serverApi.sendVideoView({ videoId: videoId, longPlaytime: true });
+    this.activity('view', 'videoLong', videoId);
   }
 
-  _hasAudioUploadSupport(event: CustomEvent) {
-    if (event.detail && event.detail.response && event.detail.response.hasAudioUploadSupport===true) {
-      window.appGlobals.hasAudioUpload = true;
+  async hasAudioUploadSupport() {
+    const response = await this.serverApi.hasAudioUploadSupport() as YpHasAudioResponse|void;
+    if (response) {
+      window.appGlobals.hasAudioUpload = response.hasAudioUploadSupport;
     }
   }
 
-  sendAudioListen(audioId) {
-    this.$$("#audioListenAjax").body = { audioId: audioId };
-    this.$$("#audioListenAjax").generateRequest();
+  sendAudioListen(audioId: number) {
+    this.serverApi.sendAudioView({ audioId: audioId });
     this.activity('view', 'audio', audioId);
   }
 
-  sendLongAudioListen(audioId) {
-    this.$$("#audioListenAjax").body = { audioId: audioId, longPlaytime: true };
-    this.$$("#audioListenAjax").generateRequest();
+  sendLongAudioListen(audioId: number) {
+    this.serverApi.sendAudioView({ audioId: audioId, longPlaytime: true });
+    this.activity('view', 'audioLong', audioId);
   }
 
   changeLocaleIfNeededAfterWait(locale, force) {
@@ -210,15 +208,9 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     }
   }
 
-  _domainChanged(domain) {
+  _domainChanged(domain: YpDomain|null) {
     if (domain) {
-      document.dispatchEvent(
-        new CustomEvent("lite-signal", {
-          bubbles: true,
-          compose: true,
-          detail: { name: 'yp-domain-changed', data: { domain: domain } }
-        })
-      );
+      this.fireGlobal('yp-domain-changed', { domain: domain });
     }
   }
 
@@ -233,39 +225,38 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     this.boot();
   }
 
-  _userLoggedIn(event, user) {
+  _userLoggedIn(event: CustomEvent) {
+    const user: YpUser = event.detail;
     if (user) {
       setTimeout(function () {
         if (typeof ga == 'function') {
           ga('set', '&uid', user.id);
         }
       }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamically
-      this._recommendationsForUser(user);
-    } else {
-      this._recommendationsForUser();
     }
+    this.recommendations.reset();
   }
 
-  boot() {
-    this.serverApi.boot().then((results: YpDomainGetResponse) => {
-      this.domain=results.domain;
+  async boot() {
+    const results = await this.serverApi.boot() as YpDomainGetResponse|void;
+    if (results) {
+      this.domain = results.domain;
       this._domainChanged(this.domain);
       this.setupGoogleAnalytics(this.domain);
 
       if (window.location.pathname=="/") {
         if (results.community && results.community.configuration && results.community.configuration.redirectToGroupId) {
-          this.redirectTo("/group/"+results.community.configuration.redirectToGroupId);
+          YpNavHelpers.redirectTo("/group/"+results.community.configuration.redirectToGroupId);
         } else if (results.community && !results.community.is_community_folder) {
-          this.redirectTo("/community/"+results.community.id);
+          YpNavHelpers.redirectTo("/community/"+results.community.id);
         } else if (results.community && results.community.is_community_folder) {
-          this.redirectTo("/community_folder/"+results.community.id);
+          YpNavHelpers.redirectTo("/community_folder/"+results.community.id);
         } else {
-          this.redirectTo("/domain/" + this.domain.id);
-          this.fire("change-header", { headerTitle: this.domain.domain_name,
-            headerDescription: this.domain.description});
+          YpNavHelpers.redirectTo("/domain/" + this.domain.id);
+          this.fireGlobal("change-header", { headerTitle: this.domain.domain_name, headerDescription: this.domain.description});
         }
       }
-    });
+    }
   }
 
   setupGroupConfigOverride(groupId: number, configOverride: string) {
@@ -308,42 +299,28 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
     }
   }
 
-  postLoadGroupProcessing(group) {
+  postLoadGroupProcessing(group: YpGroup) {
     if (this.originalQueryParameters['yu']) {
-      const promotionTrackingAjax = document.createElement('iron-ajax');
-      promotionTrackingAjax.handleAs = 'json';
-      promotionTrackingAjax.contentType = 'application/json';
-      promotionTrackingAjax.url = "/api/groups/"+group.id+"/marketingTrackingOpen";
-      promotionTrackingAjax.body = this.originalQueryParameters;
-      promotionTrackingAjax.method = 'POST';
-      promotionTrackingAjax.generateRequest();
-
+      this.serverApi.marketingTrackingOpen(group.id, this.originalQueryParameters);
       this.externalGoalTriggerGroupId = group.id;
       this.goalTriggerEvents = ['newPost','newPointFor','newPointAgainst'];
       this.originalQueryParameters['goalThreshold'] = 1;
     }
   }
 
-  checkExternalGoalTrigger(object) {
+  checkExternalGoalTrigger(type: string) {
     if (this.externalGoalTriggerGroupId &&
       this.originalQueryParameters &&
       this.originalQueryParameters.goalThreshold &&
-      this.goalTriggerEvents.indexOf(object) > -1) {
+      this.goalTriggerEvents.indexOf(type) > -1) {
         this.externalGoalCounter += 1;
         if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
-          //TODO: Use fetch
-          const goalTriggerAjax = document.createElement('iron-ajax');
-          goalTriggerAjax.handleAs = 'json';
-          goalTriggerAjax.contentType = 'application/json';
-          goalTriggerAjax.url = "/api/groups/"+this.externalGoalTriggerGroupId+"/triggerTrackingGoal";
-          goalTriggerAjax.body = this.originalQueryParameters;
-          goalTriggerAjax.method = 'POST';
-          goalTriggerAjax.generateRequest();
+          this.serverApi.triggerTrackingGoal(this.externalGoalTriggerGroupId, this.originalQueryParameters);
         }
     }
   }
 
-  activity(type: string, object: object|string, context: string, target: string|null = null) {
+  activity(type: string, object: object|string, context: string|object|number, target: string|object|null = null) {
     let actor;
 
     if (window.appUser && window.appUser.user) {
@@ -368,40 +345,40 @@ export class YpAppGlobals extends YpBaseMixin(class {}) {
       this.sendToAnalyticsTrackers('send', 'event', object, type);
     }
 
-    //TODO: Use fetch here
-    const activityAjax = document.createElement('iron-ajax');
-    const date = new Date();
-    activityAjax.handleAs = 'json';
-    activityAjax.contentType = 'application/x-www-form-urlencoded';
-    activityAjax.url = '/api/users/createActivityFromApp';
-    activityAjax.method = 'POST';
-    activityAjax.body = {
+    this.serverApi.createActivityFromApp({
       actor: actor,
       type: type,
       object: object,
       target: JSON.stringify(target),
       context: context ? context : "",
       path_name: location.pathname,
-      event_time: date.toISOString(),
+      event_time: new Date().toISOString(),
       session_id: this.getSessionFromCookie(),
       user_agent: navigator.userAgent
-    };
-    activityAjax.generateRequest();
+    });
 
     if (type==='completed' || type==='clicked') {
-      this.checkExternalGoalTrigger(object);
+      this.checkExternalGoalTrigger(object as string);
     }
   }
 
   constructor() {
     super();
+
     window.appGlobals = this;
+
     this.appStartTime = new Date();
+
     this.serverApi = new YpServerApi();
-    this.serverApi.boot();
+    this.recommendations = new YpRecommendations(this.serverApi);
+
+    // Boot
+    this.boot();
+    this.hasVideoUploadSupport();
+    this.hasAudioUploadSupport();
 
     //TODO: See if this is recieved
-    this.fire('app-ready');
+    this.fireGlobal('app-ready');
     this.parseQueryString();
     this.addGlobalListener('yp-logged-in', this._userLoggedIn);
   }
