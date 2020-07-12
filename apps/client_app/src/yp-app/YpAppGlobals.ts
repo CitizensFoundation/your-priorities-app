@@ -75,7 +75,6 @@ export class YpAppGlobals extends YpCodeBase {
   }
 /*
   behaviors: [
-    ypAppRecommendationsBehavior,
     ypAppCacheBehavior,
     ypAppAnalyticsBehavior
   ],
@@ -84,16 +83,14 @@ export class YpAppGlobals extends YpCodeBase {
   showRecommendationInfoIfNeeded() {
     if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
       localStorage.setItem("ypHaveShownRecommendationInfo", "1");
-      this.notifyDialogText=this.t('recommendationToastInfo');
-      this.$$("#dialog").open();
+      this.fireGlobal('yp-notify-dialog', { text: this.t('recommendationToastInfo') });
     }
   }
 
   showSpeechToTextInfoIfNeeded() {
     if (window.appGlobals.hasTranscriptSupport && !localStorage.getItem("haveShownTranscriptInfo")) {
       localStorage.setItem("haveShownTranscriptInfo", "1");
-      this.notifyDialogText=this.t('speechToTextInfo');
-      this.$$("#dialog").open();
+      this.fireGlobal('yp-notify-dialog', { text: this.t('speechToTextInfo') });
     }
   }
 

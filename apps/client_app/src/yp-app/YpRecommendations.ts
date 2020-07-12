@@ -1,6 +1,5 @@
 import { YpCodeBase } from '../@yrpri/YpCodeBase.js'
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpNavHelpers } from './YpNavHelpers.js';
 
 export class YpRecommendations extends YpCodeBase {
 
@@ -25,9 +24,7 @@ export class YpRecommendations extends YpCodeBase {
     this.recommendationCallbacks[groupId] = recommendationCallback;
     if (!this.recommendationsGroupCache[groupId]) {
       console.log("Recommendation getting initial cache from server groupId: "+groupId);
-      this.$.recommendationsForGroupAjax.url = '/api/recommendations/groups/'+groupId+'/getPostRecommendations';
-      this.$.recommendationsForGroupAjax.body = {};
-      this.$.recommendationsForGroupAjax.generateRequest();
+      this.getRecommendationsForGroup(groupId);
     } else if (this.recommendationsGroupCache[groupId].length>0) {
       console.log("Recommendation getting next from cache groupId: "+groupId);
       const selectedPost = this._getSelectedPost(groupId);
@@ -117,8 +114,9 @@ export class YpRecommendations extends YpCodeBase {
     }
   }
 
-  getRecommendationsForGroupResponse(groupId: number) {
-    this.serverApi.getRecommendationsForGroup(groupId).then((recommendations: Array<YpPost>) => {
+  async getRecommendationsForGroup(groupId: number) {
+    const recommendations = await this.serverApi.getRecommendationsForGroup(groupId) as Array<YpPost>|void;
+    if (recommendations) {
       this.lastRecommendationResponseLengths[groupId] = recommendations.length;
       if (!this.recommendationsGroupCache[groupId]) {
         this.recommendationsGroupCache[groupId] = recommendations;
@@ -129,7 +127,7 @@ export class YpRecommendations extends YpCodeBase {
         this.recommendationCallbacks[groupId](this._getSelectedPost(groupId));
         delete this.recommendationCallbacks[groupId];
       }
-    })
+    }
   }
 
   _getSelectedPost(groupId: number) {

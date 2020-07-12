@@ -23,6 +23,10 @@ export class YpServerApi extends YpCodeBase  {
     return this.fetchWrapper(this.baseUrlPath+'/domains');
   }
 
+  public getRecommendationsForGroup(groupId: number) {
+    return this.fetchWrapper(this.baseUrlPath+`/recommendations/groups/${groupId}/getPostRecommendations`);
+  }
+
   public hasVideoUploadSupport() {
     return this.fetchWrapper(this.baseUrlPath+'/videos/hasVideoUploadSupport');
   }
