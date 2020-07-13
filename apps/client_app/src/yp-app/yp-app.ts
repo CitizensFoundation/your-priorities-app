@@ -1,8 +1,4 @@
-import '../yp-behaviors/yp-lodash-behavior.js';
-import '../yp-app-globals/yp-app-globals.js';
-import '../yp-app-globals/yp-app-user.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { ypTranslatedPagesBehavior } from '../yp-behaviors/yp-translated-pages-behavior.js';
 import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
 
 import '../ac-notifications/ac-notification-list.js';
@@ -12,19 +8,19 @@ import '../yp-user/yp-user-image.js';
 import '../yp-app-globals/yp-sw-update-toast.js';
 
 import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
-//import i18next from 'i18next/dist/es/i18next.js'
-//import { XHR } from 'i18next-xhr-backend/dist/es';
-//import moment from 'moment-es6';
-import { customElement, property, internalProperty, css, html } from 'lit-element';
-import {ifDefined} from 'lit-html/directives/if-defined';
+import { customElement, property, html } from 'lit-element';
+import { ifDefined } from 'lit-html/directives/if-defined';
 
-import i18next, { t as translate } from 'i18next'
-import backend from 'i18next-xhr-backend'
+import i18next from 'i18next';
+import HttpApi from 'i18next-http-backend';
+
 import { format, formatDistance } from 'date-fns';
 
 import { YpBaseElement} from '../@yrpri/yp-base-element.js';
 import { YpAppStyles } from './YpAppStyles.js';
 import { YpAppGlobals } from './YpAppGlobals.js'
+import { YpAppUser } from './YpAppUser.js'
+import { YpServerApi } from '../@yrpri/YpServerApi.js';
 
 //import {
 //  ca,da,de,dev,en,en_CA,en_GB,es,fa,fr,hr,hu,is,it,kl,nl,no,pl,pt,pt_BR,ru,sl,sr,sr_latin,tr,zh_TW
@@ -47,7 +43,12 @@ import 'moment/locale/da.js';
 */
 
 declare global {
-  interface Window { appGlobals: YpAppGlobals; appUser: object }
+  interface Window {
+    appGlobals: YpAppGlobals;
+    appUser: YpAppUser;
+    serverApi: YpServerApi;
+    app: YpApp;
+  }
 }
 
 @customElement('yp-app')
@@ -132,6 +133,23 @@ export class YpApp extends YpBaseElement {
 
   communityBackOverride: Record<string, Record<string,string>>|null = null
 
+  constructor() {
+    super();
+    setPassiveTouchGestures(true);
+    window.app = this;
+    window.serverApi = new YpServerApi();
+    window.appGlobals = new YpAppGlobals(window.serverApi);
+    window.appUser = new YpAppUser(window.serverApi);
+    this._setupTranslationSystem();
+}
+
+  connectedCallback() {
+    super.connectedCallback()
+      console.info("yp-app is ready");
+      window.appGlobals.theme.setTheme(16, this);
+      this._setupSamlCallback();
+  }
+
   static get styles() {
     return [
       super.styles,
@@ -139,10 +157,6 @@ export class YpApp extends YpBaseElement {
     ];
   }
 
-  constructor() {
-    super();
-    setPassiveTouchGestures(true);
-  }
 
   render() {
     return html`
@@ -274,6 +288,7 @@ export class YpApp extends YpBaseElement {
     'yp-language-name': '_setLanguageName',
     'yp-dialog-closed': '_dialogClosed',
     'yp-open-notify-dialog': '_openNotifyDialog',
+    'yp-open-toast': '_openToast',
     'yp-open-page': '_openPageFromEvent',
     'yp-open-login': '_login',
     'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
@@ -445,11 +460,11 @@ export class YpApp extends YpBaseElement {
       defaultLocale = storedLocale;
     }
 
-    let localeFromUrl;
+    let localeFromUrl: string|null = null;
 
     if (window.appGlobals.originalQueryParameters &&
         window.appGlobals.originalQueryParameters["locale"]) {
-      localeFromUrl = window.appGlobals.originalQueryParameters["locale"];
+      localeFromUrl = window.appGlobals.originalQueryParameters["locale"] as string;
     }
 
     if (window.appGlobals.originalQueryParameters &&
@@ -465,43 +480,31 @@ export class YpApp extends YpBaseElement {
     }
 
     console.info("Have started loading i18n for "+defaultLocale);
-    i18next.use(backend).init(
+    i18next.use(HttpApi).init(
       {
         lng: defaultLocale,
         fallbackLng: 'en',
         backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' }
-        }, function(loaded) {
+        }, () => {
       console.info("Have loaded languages for "+defaultLocale);
       window.appGlobals.locale = defaultLocale;
       window.appGlobals.i18nTranslation = i18next;
       window.appGlobals.haveLoadedLanguages = true;
 //      moment.locale([defaultLocale, 'en']);
-
       console.log("Changed language to "+defaultLocale);
-
-      document.dispatchEvent(
-        new CustomEvent("lite-signal", {
-          bubbles: true,
-          detail: { name: 'yp-language', data: { type: 'language-loaded', language: defaultLocale }  }
-        })
-      );
-    }.bind(this));
+      this.fireGlobal('language-loaded', { language: defaultLocale })
+    });
   }
 
   _openPageFromEvent(event: CustomEvent) {
-    if (detail.pageId) {
+    if (event.detail.pageId) {
       this.openPageFromId(event.detail.pageId);
     }
   }
 
   _startTranslation() {
     window.appGlobals.autoTranslate = true;
-    document.dispatchEvent(
-      new CustomEvent("lite-signal", {
-        bubbles: true,
-        detail: { name: 'yp-auto-translate', data: true }
-      })
-    );
+    this.fireGlobal('yp-auto-translate', true);
 
     if (this.supportedLanguages) {
       this.fire('yp-language-name', this.supportedLanguages[this.language]);
@@ -514,13 +517,8 @@ export class YpApp extends YpBaseElement {
   }
 
   _stopTranslation() {
-    document.dispatchEvent(
-      new CustomEvent("lite-signal", {
-        bubbles: true,
-        detail: { name: 'yp-auto-translate', data: false }
-      })
-    );
     window.appGlobals.autoTranslate = false;
+    this.fireGlobal('yp-auto-translate', false);
     this.getDialogAsync("masterToast", (toast) => {
       toast.text = this.t('autoTranslationStopped');
       toast.show();
@@ -548,7 +546,7 @@ export class YpApp extends YpBaseElement {
     this._refreshByName("#domainPage");
   }
 
-  _refreshByName(id) {
+  _refreshByName(id: string) {
     const el = this.$$(id);
     if (el) {
       el._refreshAjax();
@@ -571,10 +569,6 @@ export class YpApp extends YpBaseElement {
     } else {
       this.numberOfUnViewedNotifications='';
     }
-    //TODO: This is not needed
-    setTimeout(() => {
-      this.$$("#notificationBadge")?.fire("iron-resize");
-    });
   }
 
   _redirectTo(event: CustomEvent) {
@@ -880,15 +874,6 @@ export class YpApp extends YpBaseElement {
 
   _toggleNavDrawer() {
     this.$$("#navDrawer")?.toggle();
-  }
-
-  connectedCallback() {
-    super.connectedCallback()
-      console.info("yp-app is ready");
-      window.app = this;
-      this._setupTranslationSystem();
-      this.setTheme(16);
-      this._setupSamlCallback();
   }
 
   getDialogAsync(idName, callback) {

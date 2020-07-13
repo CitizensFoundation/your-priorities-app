@@ -1,4 +1,3 @@
-import { YpBaseMixin } from '../@yrpri/YpBaseMixin.js'
 import { YpCodeBase } from './YpCodeBase.js';
 
 export class YpServerApi extends YpCodeBase  {
@@ -21,6 +20,29 @@ export class YpServerApi extends YpCodeBase  {
 
   public boot() {
     return this.fetchWrapper(this.baseUrlPath+'/domains');
+  }
+
+  public isloggedin() {
+    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/isloggedin');
+  }
+
+  public getAdminRights() {
+    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/adminRights');
+  }
+
+  public getMemberships() {
+    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/memberships');
+  }
+
+  public logout() {
+    return this.fetchWrapper(this.baseUrlPath+'/users/logout', { method: "POST" });
+  }
+
+  public setLocale(body: object) {
+    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/setLocale', {
+      method: "PUT",
+      body: { body }
+    }, false);
   }
 
   public getRecommendationsForGroup(groupId: number) {
@@ -69,5 +91,7 @@ export class YpServerApi extends YpCodeBase  {
       body: { body }
     }, false);
   }
+
+
 
 }

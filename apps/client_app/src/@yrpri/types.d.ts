@@ -14,6 +14,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideHelpIcon?: boolean;
   customBackName?: string;
   customBackURL?: string;
+  forceSecureSamlEmployeeLogin?: boolean;
 }
 
 
@@ -31,18 +32,57 @@ interface YpHelpPage {
   title: Record<string,string>;
 }
 
-interface YpDomain {
+interface YpEndorsement {
+  id: number;
+  value: number;
+  post_id: number;
+}
+
+interface YpMemberships {
+  GroupUsers: Array<YpUser>;
+  CommunityUsers: Array<YpUser>;
+  DomainUsers: Array<YpUser>;
+}
+
+interface YpRating {
+  id: number;
+  value: number;
+  post_id: number;
+  type_index: number;
+}
+
+interface YpPointQuality {
+  id: number;
+  value: number;
+  point_id: number;
+}
+
+interface YpCollection {
   id: number;
   name: string;
+  User?: YpUser;
+  user_id?: number;
+}
+
+interface YpAdminRights {
+  GroupAdmins: Array<YpCollection>;
+  CommunityAdmins: Array<YpCollection>;
+  DomainAdmins: Array<YpCollection>;
+}
+
+interface YpDomain extends YpCollection {
   domain_name: string;
+  google_analytics_code?: string;
+  public_api_keys?: {
+    google?: {
+      analytics_tracking_id: string;
+    };
+  };
   description?: string;
   configuration: YpDomainConfiguration;
 }
 
-
-interface YpCommunity {
-  id: number;
-  name: string;
+interface YpCommunity extends YpCollection {
   hostname: string;
   description?: string;
   is_community_folder?: boolean;
@@ -64,17 +104,17 @@ interface YpHasAudioResponse {
   hasTranscriptSupport: boolean;
 }
 
-interface YpGroup {
+interface YpGroup extends YpCollection {
   id: number;
   name: string;
-  objectives?: string;
-  Community?: YpCommunity;
   configuration: YpGroupConfiguration;
 }
 
 interface YpImage {
   id: number;
   formats: string;
+  user_id?: number;
+  User?: YpUser;
 }
 
 interface YpCategory {
@@ -87,10 +127,28 @@ interface YpPost {
   id: number;
   name: string;
   cover_media_type?: string;
+  group_id: number;
+  user_id?: number;
   PostHeaderImages?: Array<YpImage>;
   Category?: YpCategory;
   Group?: YpGroup;
   description?: string;
+  User?: YpUser;
+}
+
+interface YpPointRevision {
+  id: number;
+  content: string;
+}
+
+interface YpPoint {
+  id: number;
+  content: string;
+  user_id?: number;
+  Post?: YpPost;
+  User?: YpUser;
+  PointQualities?: Array<YpPointQuality>;
+  PointRevisions?: Array<YpPointRevision>;
 }
 
 interface YpActivity {
@@ -101,6 +159,7 @@ interface YpActivity {
 
 interface YpUserProfileData {
   isAnonymousUser?: boolean;
+  saml_show_confirm_email_completed?: boolean;
 }
 
 interface YpUser {
@@ -108,6 +167,16 @@ interface YpUser {
   name: string;
   email?: string;
   profile_data?: YpUserProfileData;
+  isSamlEmployee?: boolean;
+  loginProvider?: string;
+  Endorsements?: Array<YpEndorsement>;
+  PointQualities?: Array<YpPointQuality>;
+  Ratings?: Array<YpRating>;
+  notLoggedIn?: boolean;
+  missingEmail?: boolean;
+  customSamlDeniedMessage?: string;
+  customSamlLoginMessage?: string;
+  forceSecureSamlLogin?: boolean;
 }
 
 declare const YpHelpPageArray: Array<YpHelpPage>

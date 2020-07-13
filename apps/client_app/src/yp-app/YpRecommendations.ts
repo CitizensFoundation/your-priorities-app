@@ -19,12 +19,17 @@ export class YpRecommendations extends YpCodeBase {
 
   serverApi: YpServerApi;
 
+  constructor(serverApi: YpServerApi) {
+    super();
+    this.serverApi = serverApi;
+  }
+
   getNextRecommendationForGroup (groupId: number, currentPostId: number, recommendationCallback: Function) {
     this.currentPostId=currentPostId;
     this.recommendationCallbacks[groupId] = recommendationCallback;
     if (!this.recommendationsGroupCache[groupId]) {
       console.log("Recommendation getting initial cache from server groupId: "+groupId);
-      this.getRecommendationsForGroup(groupId);
+      this._getRecommendationsForGroup(groupId);
     } else if (this.recommendationsGroupCache[groupId].length>0) {
       console.log("Recommendation getting next from cache groupId: "+groupId);
       const selectedPost = this._getSelectedPost(groupId);
@@ -47,7 +52,7 @@ export class YpRecommendations extends YpCodeBase {
         imagePath = this._getCategoryImagePath(post);
         console.log("Recommendation downloading category image: "+post.id);
       } else if (post.cover_media_type==='image') {
-        imagePath = this.getImageFormatUrl(post.PostHeaderImages, 0);
+        imagePath = this._getImageFormatUrl(post.PostHeaderImages, 0);
         console.log("Recommendation downloading image: "+post.id);
       }
 
@@ -60,7 +65,7 @@ export class YpRecommendations extends YpCodeBase {
     });
   }
 
-  getImageFormatUrl(images: Array<YpImage>|undefined, formatId: number) {
+  _getImageFormatUrl(images: Array<YpImage>|undefined, formatId: number) {
     if (images && images.length>0) {
       const formats = JSON.parse(images[images.length-1].formats);
       if (formats && formats.length>0)
@@ -72,7 +77,7 @@ export class YpRecommendations extends YpCodeBase {
 
   _getCategoryImagePath(post: YpPost) {
     if (post && post.Category && post.Category.CategoryIconImages) {
-      return this.getImageFormatUrl(post.Category.CategoryIconImages, 0);
+      return this._getImageFormatUrl(post.Category.CategoryIconImages, 0);
     } else {
       return "";
     }
@@ -114,7 +119,7 @@ export class YpRecommendations extends YpCodeBase {
     }
   }
 
-  async getRecommendationsForGroup(groupId: number) {
+  async _getRecommendationsForGroup(groupId: number) {
     const recommendations = await this.serverApi.getRecommendationsForGroup(groupId) as Array<YpPost>|void;
     if (recommendations) {
       this.lastRecommendationResponseLengths[groupId] = recommendations.length;
@@ -166,10 +171,5 @@ export class YpRecommendations extends YpCodeBase {
     this.lastRecommendationResponseLengths = {};
     this.recommendationCallbacks = {};
     this.recommendationsGroupCache = {};
-  }
-
-  constructor(serverApi: YpServerApi) {
-    super();
-    this.serverApi = serverApi;
   }
 }

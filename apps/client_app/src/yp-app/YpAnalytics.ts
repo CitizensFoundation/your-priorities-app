@@ -1,29 +1,14 @@
-import '@polymer/polymer/polymer-legacy.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { YpCodeBase } from '../@yrpri/YpCodeBase.js'
 
-/**
- * @polymerBehavior Polymer.ypAppAnalyticsBehavior
- */
-export const ypAppAnalyticsBehavior = {
+export class YpAnalytics extends YpCodeBase {
 
-  properties: {
-    pixelTrackerId: {
-      type: String,
-      value: null
-    },
+  pixelTrackerId: string|null = null
 
-    communityTrackerId: {
-      type: String,
-      value: null
-    },
+  communityTrackerId: string|null = null
 
-    communityTrackerIds: {
-      type: Object,
-      value: {}
-    },
-  },
+  communityTrackerIds: Record<string,boolean> = {}
 
-  setupGoogleAnalytics: function(domain) {
+  setupGoogleAnalytics(domain: YpDomain) {
     if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
       ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
     } else if (domain.google_analytics_code && domain.google_analytics_code!="") {
@@ -33,17 +18,17 @@ export const ypAppAnalyticsBehavior = {
       ga('set', 'anonymizeIp', true);
       ga('send', 'pageview', location.pathname);
       ga('set', 'nonInteraction', true);
-      this.async(function () {
+      setTimeout(() => {
         ga('set', 'nonInteraction', false);
       }, 900);
     } else {
       console.error("Can't find Google Analytics object");
     }
-  },
+  }
 
-  facebookPixelTracking: function (event, detailedEvent) {
+  facebookPixelTracking(event: string, detailedEvent: string|null = null) {
     if (this.pixelTrackerId && event) {
-      var fbEvent;
+      let fbEvent;
       if (event==="pageview") {
         fbEvent="PageView"
       } else if (event==="event" && detailedEvent) {
@@ -51,43 +36,46 @@ export const ypAppAnalyticsBehavior = {
       } else {
         fbEvent=event;
       }
-      var image = new Image(1,1);
+      const image = new Image(1,1);
       image.src = "https://www.facebook.com/tr?id="+this.pixelTrackerId+"&ev="+fbEvent+"&noscript=1";
       console.debug("Have sent to Facebook pixel: "+fbEvent)
     }
-  },
+  }
 
-  setCommunityPixelTracker: function (trackerId) {
+  setCommunityPixelTracker(trackerId: string) {
     if (trackerId && trackerId!=='') {
       if (localStorage.getItem("consentGivenForFacebookPixelTracking")!=null) {
-        var oldTrackerId = this.pixelTrackerId;
-        this.set('pixelTrackerId', trackerId);
+        const oldTrackerId = this.pixelTrackerId;
+        this.pixelTrackerId = trackerId;
         if (trackerId!==oldTrackerId) {
           this.facebookPixelTracking('pageview');
         }
       } else if (!localStorage.getItem("disableFacebookPixelTracking")) {
-        dom(document).querySelector('yp-app').openPixelCookieConfirm(trackerId);
+        //TODO: Make sure is implemented
+        this.fireGlobal('yp-open-pixel-cookie-confirm', trackerId);
       } else {
         console.log("Facebook tracking disabled");
       }
     } else {
-      this.set('pixelTrackerId', null);
+      this.pixelTrackerId = null;
     }
-  },
+  }
 
-  setCommunityAnalyticsTracker: function (trackerId) {
+  setCommunityAnalyticsTracker(trackerId: string) {
     if (trackerId && trackerId!=='') {
-      var oldTrackerId = this.communityTrackerId;
-      this.set('communityTrackerId', trackerId);
+      const oldTrackerId = this.communityTrackerId;
+      this.communityTrackerId=trackerId;
       if (trackerId!==oldTrackerId) {
         this.sendToAnalyticsTrackers('sendOnlyCommunity', 'pageview', location.pathname);
       }
     } else {
-      this.set('communityTrackerId', null);
+      this.communityTrackerId=null;
     }
-  },
+  }
 
-  sendToAnalyticsTrackers: function (a, b, c, d, e, f) {
+  sendToAnalyticsTrackers(a: string|object, b: string|object,
+                          c: string|object, d: string|object|null = null,
+                          e: string|object|null = null, f: string|object|null = null) {
     //console.debug("Analytics "+a+" "+b+" "+c+" "+d);
     if (typeof ga == 'function') {
       if (a!='sendOnlyCommunity') {
@@ -95,7 +83,7 @@ export const ypAppAnalyticsBehavior = {
         console.debug("Analytics global: send "+b+" "+c+" "+d);
       }
       if (this.communityTrackerId) {
-        var sendName = 'tracker'+this.communityTrackerId.replace(/-/g,'');
+        let sendName = 'tracker'+this.communityTrackerId.replace(/-/g,'');
         if (!this.communityTrackerIds[this.communityTrackerId]) {
           ga('create', this.communityTrackerId, 'auto', sendName);
           this.communityTrackerIds[this.communityTrackerId] = true;
@@ -110,18 +98,18 @@ export const ypAppAnalyticsBehavior = {
     }
 
     if (a!='sendOnlyCommunity') {
-      this.facebookPixelTracking(b, c);
+      this.facebookPixelTracking(b as string, c as string);
     }
-  },
+  }
 
-  sendLoginAndSignupToAnalytics: function (userId, eventType, authProvider, validationError) {
+  sendLoginAndSignup(userId: number, eventType: string, authProvider: string, validationError: string|null = null) {
     if (typeof ga == 'function') {
       if (userId) {
         ga('set', '&uid', userId);
       }
 
-      var fieldsObjects;
-      var authProviderText = authProvider;
+      let fieldsObjects;
+      let authProviderText = authProvider;
 
       switch(eventType) {
         case 'Signup Success':
@@ -175,4 +163,4 @@ export const ypAppAnalyticsBehavior = {
       this.sendToAnalyticsTrackers('send','event','Login and Signup', eventType, authProviderText, fieldsObjects);
     }
   }
-};
+}

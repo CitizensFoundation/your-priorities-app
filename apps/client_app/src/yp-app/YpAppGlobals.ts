@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { ypAppRecommendationsBehavior } from './yp-app-recommendations-behavior.js';
-import { ypAppCacheBehavior } from './yp-app-cache-behavior.js';
-import { ypAppAnalyticsBehavior } from './yp-app-analytics-behavior.js';
-import '../yp-ajax/yp-ajax.js';
-import i18next from 'i18next';
-import { YpBaseMixin } from '../@yrpri/YpBaseMixin.js'
-import { html } from 'lit-html';
+import * as i18next from 'i18next'
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from './YpNavHelpers.js';
 import { YpCodeBase } from '../@yrpri/YpCodeBase.js';
 import { YpRecommendations } from './YpRecommendations.js';
+import { YpCache } from './YpCache.js';
+import { YpAnalytics } from './YpAnalytics.js';
+import { YpThemeManager } from './YpThemeManager.js';
 
 export class YpAppGlobals extends YpCodeBase {
   seenWelcome = false;
@@ -46,6 +43,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   appStartTime: Date;
 
+  autoTranslate = false
+
   goalTriggerEvents: Array<string> = ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst'];
 
   haveLoadedLanguages = false;
@@ -62,23 +61,39 @@ export class YpAppGlobals extends YpCodeBase {
   // Locale seleted from query or loaded
   locale: string|null = null;
 
-  i18nTranslation: i18next|null = null;
+  i18nTranslation: i18next.i18n|null = null;
 
   serverApi: YpServerApi
 
   recommendations: YpRecommendations
 
-  render() {
-    return html`
-    <yp-ajax id="recommendationsForGroupAjax" .dispatchError="" ?hidden="" .method="PUT" @response="${this._recommendationsForGroupResponse}"></yp-ajax>
-`
+  cache: YpCache
+
+  analytics: YpAnalytics
+
+  theme: YpThemeManager
+
+  constructor(serverApi: YpServerApi) {
+    super();
+
+    this.appStartTime = new Date();
+
+    this.serverApi = serverApi;
+    this.recommendations = new YpRecommendations(serverApi);
+    this.cache = new YpCache();
+    this.analytics = new YpAnalytics();
+    this.theme = new YpThemeManager();
+
+    // Boot
+    this.boot();
+    this.hasVideoUploadSupport();
+    this.hasAudioUploadSupport();
+
+    //TODO: See if this is recieved
+    this.fireGlobal('app-ready');
+    this.parseQueryString();
+    this.addGlobalListener('yp-logged-in', this._userLoggedIn);
   }
-/*
-  behaviors: [
-    ypAppCacheBehavior,
-    ypAppAnalyticsBehavior
-  ],
-*/
 
   showRecommendationInfoIfNeeded() {
     if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
@@ -129,7 +144,7 @@ export class YpAppGlobals extends YpCodeBase {
     this.activity('view', 'audioLong', audioId);
   }
 
-  changeLocaleIfNeededAfterWait(locale, force) {
+  changeLocaleIfNeededAfterWait(locale: string, force: boolean) {
     console.log("changeLocaleIfNeeded "+locale);
     if (window.appGlobals.haveLoadedLanguages===true && locale && this.language!=locale) {
       if (force || !localStorage.getItem('yp-user-locale')) {
@@ -179,7 +194,7 @@ export class YpAppGlobals extends YpCodeBase {
     this.originalQueryParameters = params;
   }
 
-  setAnonymousUser(user: YpUser) {
+  setAnonymousUser(user: YpUser|null) {
     this.currentAnonymousUser=user;
     console.debug("Set anon user "+user);
   }
@@ -211,11 +226,8 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  notifyUserViaToast(text) {
-    dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
-      toast.text = text;
-      toast.show();
-    }.bind(this));
+  notifyUserViaToast(text: string) {
+    this.fireGlobal('yp-open-toast', { text: text });
   }
 
   reBoot() {
@@ -239,7 +251,7 @@ export class YpAppGlobals extends YpCodeBase {
     if (results) {
       this.domain = results.domain;
       this._domainChanged(this.domain);
-      this.setupGoogleAnalytics(this.domain);
+      this.analytics.setupGoogleAnalytics(this.domain);
 
       if (window.location.pathname=="/") {
         if (results.community && results.community.configuration && results.community.configuration.redirectToGroupId) {
@@ -336,10 +348,10 @@ export class YpAppGlobals extends YpCodeBase {
     if (type=='open') {
       // Wait by sending open so pageview event can be completed before
       setTimeout(() =>  {
-        this.sendToAnalyticsTrackers('send', 'event', object, type);
+        this.analytics.sendToAnalyticsTrackers('send', 'event', object, type);
       }, 25);
     } else {
-      this.sendToAnalyticsTrackers('send', 'event', object, type);
+      this.analytics.sendToAnalyticsTrackers('send', 'event', object, type);
     }
 
     this.serverApi.createActivityFromApp({
@@ -357,27 +369,6 @@ export class YpAppGlobals extends YpCodeBase {
     if (type==='completed' || type==='clicked') {
       this.checkExternalGoalTrigger(object as string);
     }
-  }
-
-  constructor() {
-    super();
-
-    window.appGlobals = this;
-
-    this.appStartTime = new Date();
-
-    this.serverApi = new YpServerApi();
-    this.recommendations = new YpRecommendations(this.serverApi);
-
-    // Boot
-    this.boot();
-    this.hasVideoUploadSupport();
-    this.hasAudioUploadSupport();
-
-    //TODO: See if this is recieved
-    this.fireGlobal('app-ready');
-    this.parseQueryString();
-    this.addGlobalListener('yp-logged-in', this._userLoggedIn);
   }
 
   setSeenWelcome() {

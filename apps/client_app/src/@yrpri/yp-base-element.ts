@@ -59,12 +59,12 @@ export class YpBaseElement extends LitElement {
     }
   }
 
-  fire(eventName: string, data: object|string = {}, target: LitElement|Document = this) {
+  fire(eventName: string, data: object|string|boolean|number|null = {}, target: LitElement|Document = this) {
     const event = new CustomEvent(eventName, { detail: data, bubbles: true, composed: true });
     target.dispatchEvent(event);
   }
 
-  fireGlobal(eventName: string, data: object|string = {}) {
+  fireGlobal(eventName: string, data: object|string|boolean|number|null = {}) {
     this.fire(eventName, data, document);
   }
 
@@ -84,23 +84,21 @@ export class YpBaseElement extends LitElement {
     this.removeListener(name, callback, document);
   }
 
-  t(...args: Array<string>) {
-    return function() {
-      const key = args[0];
-      if (window.appGlobals.i18nTranslation) {
-        let translation = window.appGlobals.i18nTranslation.t(key);
-        if (translation=='')
-          translation = key;
-        return translation;
-      } else {
-        return key;
-        //console.warn("Translation system i18n not initialized for "+key);
-      }
-    };
+  t(...args: Array<string>): string {
+    const key = args[0];
+    if (window.appGlobals.i18nTranslation) {
+      let translation = window.appGlobals.i18nTranslation.t(key);
+      if (!translation)
+        translation = key;
+      return translation;
+    } else {
+      console.warn("Translation system i18n not initialized for "+key);
+      return key;
+    }
   }
 
   $$(id: string) {
-    this.shadowRoot!.querySelector(id);
+    this.shadowRoot?.querySelector(id);
   }
 }
 

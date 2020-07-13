@@ -1,54 +1,28 @@
-import '@polymer/polymer/polymer-legacy.js';
+import { YpCodeBase } from '../@yrpri/YpCodeBase.js'
 
-/**
- * @polymerBehavior Polymer.ypAppCacheBehavior
- */
-export const ypAppCacheBehavior = {
+export class YpCache extends YpCodeBase {
 
-  properties: {
-    cachedActivityItem: {
-      type: Object,
-      value: null
-    },
+  cachedActivityItem: Record<number,YpActivity> = {}
 
-    cachedPostItem: {
-      type: Object,
-      value: null
-    },
+  cachedPostItem: Record<number,YpPost> = {}
 
-    backToDomainCommunityItems: {
-      type: Object,
-      value: null
-    },
+  backToDomainCommunityItems: Record<number,YpCommunity> = {}
 
-    backToCommunityGroupItems: {
-      type: Object,
-      value: null
-    },
+  backToCommunityGroupItems: Record<number,YpGroup> = {}
 
-    communityItemsCache: {
-      type: Object,
-      value: null
-    },
+  communityItemsCache: Record<number,YpCommunity> = {}
 
-    groupItemsCache: {
-      type: Object,
-      value: null
-    },
+  groupItemsCache: Record<number,YpGroup> = {}
 
-    postItemsCache: {
-      type: Object,
-      value: null
-    },
+  postItemsCache: Record<number,YpPost> = {}
 
-    autoTranslateCache: Object,
-  },
+  autoTranslateCache: Record<string,string> = {}
 
-  addPostsToCacheLater: function (posts) {
-    var laterTimeoutMs = Math.floor(Math.random() * 1000) + 750;
-    this.async(function () {
+  addPostsToCacheLater(posts: Array<YpPost>) {
+    const laterTimeoutMs = Math.floor(Math.random() * 1000) + 750;
+    setTimeout(() => {
       if (posts) {
-        for (i = 0; i < posts.length; i++) {
+        for (let i = 0; i < posts.length; i++) {
           if (!this.postItemsCache[posts[i].id]) {
             this.postItemsCache[posts[i].id]=posts[i];
           }
@@ -57,20 +31,13 @@ export const ypAppCacheBehavior = {
         console.error("No posts for cache");
       }
     }, laterTimeoutMs);
-  },
-
-  getPostFromCache: function (postId) {
-    return this.postItemsCache[parseInt(postId)];
-  },
-
-  updatePostInCache: function (post) {
-    this.postItemsCache[post.id] = post;
-  },
-
-  ready: function () {
-    this.autoTranslateCache = {};
-    this.communityItemsCache = {};
-    this.groupItemsCache = {};
-    this.postItemsCache = {};
   }
-};
+
+  getPostFromCache(postId: number) {
+    return this.postItemsCache[postId];
+  }
+
+  updatePostInCache(post: YpPost) {
+    this.postItemsCache[post.id] = post;
+  }
+}

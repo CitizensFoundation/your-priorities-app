@@ -1,15 +1,10 @@
-import '@polymer/polymer/polymer-legacy.js';
+export class YpAccessHelpers {
 
-/**
- * @polymerBehavior Polymer.AccessHelpers
- */
-export const AccessHelpers = {
+  static _hasAdminRights(objectId: number, adminRights: Array<YpCollection>) {
+    return adminRights.find((o: YpCollection) => { return o.id == objectId; });
+  }
 
-  _hasAdminRights: function(objectId, adminRights) {
-    return __.find(adminRights, function(o) { return o.id == objectId; });
-  },
-
-  _hasAccess: function (object, objectId, adminRights) {
+  static _hasAccess (object: YpCollection|YpImage|YpPoint|YpPost, objectId: number, adminRights: Array<YpCollection>) {
     if (object) {
       if (window.appUser && window.appUser.user) {
         if (window.appUser.user.id == object.user_id) {
@@ -32,28 +27,26 @@ export const AccessHelpers = {
       console.warn("No object in hasAccess");
       return false;
     }
-  },
+  }
 
-  hasImageAccess: function (image, post) {
+  static hasImageAccess (image: YpImage, post: YpPost) {
     if (image && post && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(image, post.group_id, window.appUser.adminRights.GroupAdmins);
     }
-  },
+  }
 
-  checkPostAccess: function (post) {
+  static checkPostAccess (post: YpPost) {
     if (post && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
-    } else if (post) {
-      return false;
-    } else if (post && post.User && window.appUser && window.appUser.user) {
+    } if (post && post.User && window.appUser && window.appUser.user) {
       return (post.User.id===window.appUser.user.id);
     } else {
       console.warn("No post in hasAccess");
       return false;
     }
-  },
+  }
 
-  checkPointAccess: function (point) {
+  static checkPointAccess (point: YpPoint) {
     if (point && point.Post && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(point, point.Post.group_id, window.appUser.adminRights.GroupAdmins);
     } else if (point && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id) {
@@ -64,9 +57,9 @@ export const AccessHelpers = {
       //console.warn("No point in hasAccess");
       return false;
     }
-  },
+  }
 
-  checkPostAdminOnlyAccess: function (post) {
+  static checkPostAdminOnlyAccess (post: YpPost) {
     if (post && window.appUser && window.appUser.adminRights) {
       return this._hasAdminRights(post.group_id, window.appUser.adminRights.GroupAdmins);
     } else if (post) {
@@ -75,9 +68,9 @@ export const AccessHelpers = {
       console.warn("No post in hasAccess");
       return false;
     }
-  },
+  }
 
-  checkGroupAccess: function (group) {
+  static checkGroupAccess (group: YpGroup) {
     if (group && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
     } else if (group) {
@@ -86,9 +79,9 @@ export const AccessHelpers = {
       console.warn("No group in hasAccess");
       return false;
     }
-  },
+  }
 
-  checkCommunityAccess: function (community) {
+  static checkCommunityAccess (community: YpCommunity) {
     if (community && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
     } else if (community) {
@@ -97,9 +90,9 @@ export const AccessHelpers = {
       console.warn("No community in hasAccess");
       return false;
     }
-  },
+  }
 
-  checkDomainAccess: function(domain) {
+  static checkDomainAccess(domain: YpDomain) {
     if (domain && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
     } else if (domain) {
@@ -108,14 +101,13 @@ export const AccessHelpers = {
       console.warn("No domain in hasAccess");
       return false;
     }
-  },
+  }
 
-  hasUserAccess: function(user) {
+  static hasUserAccess(user: YpUser) {
     if (user && window.appUser && window.appUser.user && window.appUser.user.id == user.id) {
       return true
     } else {
       return false;
     }
   }
-
-};
+}

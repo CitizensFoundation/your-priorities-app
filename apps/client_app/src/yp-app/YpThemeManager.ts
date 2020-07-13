@@ -259,7 +259,7 @@ export class YpThemeManager {
     return filterdProperties;
   }
 
-  setTheme(number: number, element: HTMLElement, configuration: YpCollectionConfiguration) {
+  setTheme(number: number, element: HTMLElement, configuration: YpCollectionConfiguration|null = null) {
     if (configuration && configuration.themeOverrideColorPrimary &&
         configuration.themeOverrideColorPrimary.length>5 &&
         configuration.themeOverrideColorAccent &&

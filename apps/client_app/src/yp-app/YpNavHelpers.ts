@@ -1,4 +1,5 @@
 export class YpNavHelpers {
+
   static redirectTo(path: string) {
     window.history.pushState({}, "", path);
     window.dispatchEvent(new CustomEvent('location-changed'));
