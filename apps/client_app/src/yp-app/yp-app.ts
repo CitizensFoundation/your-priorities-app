@@ -168,10 +168,18 @@ export class YpApp extends YpBaseElement {
     this._removeEventListeners();
   }
 
+  _netWorkError(event: CustomEvent) {
+    const detail = event.detail;
+  }
+
   _setupEventListeners() {
-    this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent);
-    this.addGlobalListener('yp-change-header', this._onChangeHeader);
-    this.addGlobalListener('yp-user-changed', this._onUserChanged);
+    this.addGlobalListener(
+      'yp-auto-translate',
+      this._autoTranslateEvent.bind(this)
+    );
+    this.addGlobalListener('yp-change-header', this._onChangeHeader.bind(this));
+    this.addGlobalListener('yp-user-changed', this._onUserChanged.bind(this));
+    this.addGlobalListener('yp-network-error', this._netWorkError.bind(this));
 
     this.addListener(
       'yp-add-back-community-override',
@@ -211,6 +219,7 @@ export class YpApp extends YpBaseElement {
     this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent);
     this.removeGlobalListener('yp-change-header', this._onChangeHeader);
     this.removeGlobalListener('yp-user-changed', this._onUserChanged);
+    this.removeGlobalListener('yp-network-error', this._netWorkError);
 
     this.removeListener(
       'yp-add-back-community-override',
@@ -401,7 +410,7 @@ export class YpApp extends YpBaseElement {
           <mwc-icon-button icon="gavel"></mwc-icon-button>
         </div>
         <div slot="appContent">
-          <mwc-top-app-bar dense>
+          <mwc-top-app-bar>
             <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
             <div slot="title">
               ${this.goForwardToPostId

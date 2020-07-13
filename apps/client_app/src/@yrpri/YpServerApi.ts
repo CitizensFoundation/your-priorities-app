@@ -1,97 +1,145 @@
 import { YpCodeBase } from './YpCodeBase.js';
 
-export class YpServerApi extends YpCodeBase  {
-
-  protected baseUrlPath = "/api"
+export class YpServerApi extends YpCodeBase {
+  protected baseUrlPath = '/api';
 
   private async fetchWrapper(url: string, options = {}, showUserError = true) {
     const response = await fetch(url, options);
     this.handleResponse(response, showUserError);
   }
 
-  private handleResponse (response: Response, showUserError: boolean) {
+  private async handleResponse(response: Response, showUserError: boolean) {
     if (response.ok) {
-      return response.json();
+      let responseJson = null;
+      try {
+        responseJson = await response.json();
+      } catch (error) {
+        this.fireGlobal('yp-network-error', {
+          response: response,
+          jsonError: error,
+          showUserError,
+        });
+      }
+      return responseJson;
     } else {
-      this.fireGlobal('yp-network-error', { response: response, showUserError });
+      this.fireGlobal('yp-network-error', {
+        response: response,
+        showUserError,
+      });
       return null;
     }
   }
 
   public boot() {
-    return this.fetchWrapper(this.baseUrlPath+'/domains');
+    return this.fetchWrapper(this.baseUrlPath + '/domains');
   }
 
   public isloggedin() {
-    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/isloggedin');
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/loggedInUser/isloggedin'
+    );
   }
 
   public getAdminRights() {
-    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/adminRights');
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/loggedInUser/adminRights'
+    );
   }
 
   public getMemberships() {
-    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/memberships');
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/loggedInUser/memberships'
+    );
   }
 
   public logout() {
-    return this.fetchWrapper(this.baseUrlPath+'/users/logout', { method: "POST" });
+    return this.fetchWrapper(this.baseUrlPath + '/users/logout', {
+      method: 'POST',
+    });
   }
 
   public setLocale(body: object) {
-    return this.fetchWrapper(this.baseUrlPath+'/users/loggedInUser/setLocale', {
-      method: "PUT",
-      body: { body }
-    }, false);
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/loggedInUser/setLocale',
+      {
+        method: 'PUT',
+        body: { body },
+      },
+      false
+    );
   }
 
   public getRecommendationsForGroup(groupId: number) {
-    return this.fetchWrapper(this.baseUrlPath+`/recommendations/groups/${groupId}/getPostRecommendations`);
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/recommendations/groups/${groupId}/getPostRecommendations`
+    );
   }
 
   public hasVideoUploadSupport() {
-    return this.fetchWrapper(this.baseUrlPath+'/videos/hasVideoUploadSupport');
+    return this.fetchWrapper(
+      this.baseUrlPath + '/videos/hasVideoUploadSupport'
+    );
   }
 
   public hasAudioUploadSupport() {
-    return this.fetchWrapper(this.baseUrlPath+'/videos/hasAudioUploadSupport');
+    return this.fetchWrapper(
+      this.baseUrlPath + '/videos/hasAudioUploadSupport'
+    );
   }
 
   public sendVideoView(body: object) {
-    return this.fetchWrapper(this.baseUrlPath+'/videos/videoView', {
-      method: "PUT",
-      body: { body }
-    }, false);
+    return this.fetchWrapper(
+      this.baseUrlPath + '/videos/videoView',
+      {
+        method: 'PUT',
+        body: { body },
+      },
+      false
+    );
   }
 
   public sendAudioView(body: object) {
-    return this.fetchWrapper(this.baseUrlPath+'/audios/videoView', {
-      method: "PUT",
-      body: { body }
-    }, false);
+    return this.fetchWrapper(
+      this.baseUrlPath + '/audios/videoView',
+      {
+        method: 'PUT',
+        body: { body },
+      },
+      false
+    );
   }
 
   public createActivityFromApp(body: object) {
-    return this.fetchWrapper(this.baseUrlPath+'/users/createActivityFromApp', {
-      method: "POST",
-      body: { body }
-    }, false);
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/createActivityFromApp',
+      {
+        method: 'POST',
+        body: { body },
+      },
+      false
+    );
   }
 
   public marketingTrackingOpen(groupId: number, body: object) {
-    return this.fetchWrapper(this.baseUrlPath+`/groups/${groupId}/marketingTrackingOpen`, {
-      method: "POST",
-      body: { body }
-    }, false);
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${groupId}/marketingTrackingOpen`,
+      {
+        method: 'POST',
+        body: { body },
+      },
+      false
+    );
   }
 
   public triggerTrackingGoal(groupId: number, body: object) {
-    return this.fetchWrapper(this.baseUrlPath+`/groups/${groupId}/triggerTrackingGoal`, {
-      method: "POST",
-      body: { body }
-    }, false);
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${groupId}/triggerTrackingGoal`,
+      {
+        method: 'POST',
+        body: { body },
+      },
+      false
+    );
   }
-
-
-
 }
