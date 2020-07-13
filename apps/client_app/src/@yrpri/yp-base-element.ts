@@ -15,15 +15,19 @@ export class YpBaseElement extends LitElement {
 
   constructor() {
     super();
-    this.language = 'en';
-    this.addGlobalListener('language-loaded', this._languageEvent);
+
+    this.addGlobalListener('yp-language-loaded', this._languageEvent);
+
     if (window.appGlobals && window.appGlobals.i18nTranslation && window.appGlobals.locale) {
       this.language = window.appGlobals.locale;
 
       if (this.rtl!==undefined) {
         this._setupRtl();
       }
+    } else {
+      this.language = "en";
     }
+
     installMediaQueryWatcher(`(min-width: 900px)`, (matches) => {
       this.wide = matches;
     });
@@ -51,9 +55,8 @@ export class YpBaseElement extends LitElement {
   }
 
   _languageEvent(event: CustomEvent) {
-    const detail = event.detail;
-    this.language = detail.language;
-    window.appGlobals.locale = detail.language;
+    this.language = event.detail.language;
+    window.appGlobals.locale = event.detail.language;
     if (this.rtl!==undefined) {
       this._setupRtl();
     }

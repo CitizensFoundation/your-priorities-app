@@ -21,16 +21,12 @@ export class YpNavHelpers {
     }
 
     const windowLocation = window.location.href;
-    console.log("Go to post: "+postUrl);
-    console.log("Current window location: "+windowLocation);
 
     if (cachedActivityItem) {
-      console.info("Saving cached scroll to item "+cachedActivityItem.id);
       window.appGlobals.cache.cachedActivityItem = cachedActivityItem;
     }
 
     if (cachedPostItem && cachedPostItem.Group && cachedPostItem.Group.Community) {
-      console.info("Saving cached scroll to post "+cachedPostItem.id);
       window.appGlobals.cache.cachedPostItem = cachedPostItem;
     }
 

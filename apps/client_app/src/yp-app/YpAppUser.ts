@@ -547,7 +547,7 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _onUserChanged(user: YpUser|null) {
-    this.fireGlobal("user-changed", user);
+    this.fireGlobal("yp-user-changed", user);
     if (user) {
       this._updateEndorsementPostsIndex(user);
       this._updatePointQualitiesIndex(user);

@@ -154,12 +154,53 @@ export class YpApp extends YpBaseElement {
 
   _setupEventListeners() {
     this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+    this.addGlobalListener('yp-change-header', this._onChangeHeader);
+    this.addGlobalListener('yp-user-changed', this._onUserChanged);
+
+    this.addListener('yp-add-back-community-override', this._addBackCommunityOverride, this);
+    this.addListener('yp-reset-keep-open-for-page', this._resetKeepOpenForPage, this);
+    this.addListener('yp-open-login', this._login, this);
+    this.addListener('yp-open-page', this._openPageFromEvent, this);
+    this.addListener('yp-open-toast', this._openToast, this);
+    this.addListener('yp-open-notify-dialog', this._openNotifyDialog, this);
+    this.addListener('yp-dialog-closed', this._dialogClosed, this);
+    this.addListener('yp-language-name', this._setLanguageName, this);
+    this.addListener('yp-refresh-domain', this._refreshDomain, this);
+    this.addListener('yp-refresh-community', this._refreshCommunity, this);
+    this.addListener('yp-refresh-group', this._refreshGroup, this);
+    this.addListener('yp-close-right-drawer', this._closeRightDrawer, this);
+    this.addListener('yp-set-number-of-un-viewed-notifications', this._setNumberOfUnViewedNotifications, this);
+    this.addListener('yp-redirect-to', this._redirectTo, this);
+    this.addListener('yp-set-home-link', this._setHomeLink, this);
+    this.addListener('yp-set-next-post', this._setNextPost, this);
+    this.addListener('yp-set-pages', this._setPages, this);
+
     window.addEventListener('locationchange', this.updateLocation);
     this._setupTouchEvents();
   }
 
   _removeEventListeners() {
     this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+    this.removeGlobalListener('yp-change-header', this._onChangeHeader);
+    this.removeGlobalListener('yp-user-changed', this._onUserChanged);
+
+    this.removeListener('yp-add-back-community-override', this._addBackCommunityOverride, this);
+    this.removeListener('yp-reset-keep-open-for-page', this._resetKeepOpenForPage, this);
+    this.removeListener('yp-open-login', this._login, this);
+    this.removeListener('yp-open-page', this._openPageFromEvent, this);
+    this.removeListener('yp-open-toast', this._openToast, this);
+    this.removeListener('yp-open-notify-dialog', this._openNotifyDialog, this);
+    this.removeListener('yp-dialog-closed', this._dialogClosed, this);
+    this.removeListener('yp-language-name', this._setLanguageName, this);
+    this.removeListener('yp-refresh-domain', this._refreshDomain, this);
+    this.removeListener('yp-refresh-community', this._refreshCommunity, this);
+    this.removeListener('yp-refresh-group', this._refreshGroup, this);
+    this.removeListener('yp-close-right-drawer', this._closeRightDrawer, this);
+    this.removeListener('yp-set-number-of-un-viewed-notifications', this._setNumberOfUnViewedNotifications, this);
+    this.removeListener('yp-redirect-to', this._redirectTo, this);
+    this.removeListener('yp-set-home-link', this._setHomeLink, this);
+    this.removeListener('yp-set-next-post', this._setNextPost, this);
+    this.removeListener('yp-set-pages', this._setPages, this);
     window.removeEventListener('locationchange', this.updateLocation);
     this._removeTouchEvents();
   }
@@ -204,7 +245,6 @@ export class YpApp extends YpBaseElement {
       }
     }
 
-
     let tailPath = remainingPieces.join('/');
     if (remainingPieces.length > 0) {
       tailPath = '/' + tailPath;
@@ -217,55 +257,56 @@ export class YpApp extends YpBaseElement {
     this._routePageChanged(oldRouteData);
   }
 
-  renderToolbar() {
+  renderNavigationIcon() {
+    let icons;
+
+    if (this.closePostHeader)
+      icons = html`<mwc-icon-button title="${this.t('close')}"  icon="menu"  @click="${this._closePost}"></mwc-icon-button>`;
+    else
+      icons = html`<mwc-icon-button icon="menu" title="${this.t('goBack')}"></mwc-icon-button>`;
+
+    return html`${icons} ${ this.goForwardToPostId ? html`
+      <mwc-icon-button icon="menu" title="${this.t('forwardToPost')}" title="" @click="${this._goToNextPost}"></mwc-icon-button>
+    ` : nothing}`;
+  }
+
+  renderActionItems() {
     return html`
-      <div class="layout horizontal navContainer" ?hidden="${this.closePostHeader}">
-        <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
+      <mwc-icon-button id="translationButton" slot="actionItems" ?hidden="${!this.autoTranslate}"
+                        @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
+      </mwc-icon-button>
+
+      <div style="position: relative;" ?hidden="${this.hideHelpIcon}">
+        <mwc-icon-button id="button" title="${this.t('menu.help')}" label="Open Menu"></mwc-icon-button>
+        <mwc-menu id="menu">
+          ${ this.translatedPages.map((page: YpHelpPage) => html`
+            <mwc-list-item data-args="${page.id}" @click="${this._openPageFromMenu}">${this._getLocalizePageTitle(page)}</mwc-list-item>
+          `)}
+        </mwc-menu>
       </div>
-      <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId!=null}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
 
-      ${this.closePostHeader ? html`
-        <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
-      `: html``}
-
-      ${this.goForwardToPostId ? html`
-        <div class="layout horizontal">
-          <paper-icon-button aria-label="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" .icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
-          <div id="forwardPostName" class="forwardPostName">
-            ${this.goForwardPostName}
-          </div>
-        </div>
-      `: html``}
-
-      <span class="flex"></span>
-
-      <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
-        <mwc-button raised id="translationButton"
-                    @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
-          <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
-        </mwc-button>
-      </div>
-      <paper-icon-button .ariaLabel="${this.t('openMainMenu')}" id="paperToggleNavMenu" .icon="menu" @tap="${this._toggleNavDrawer}"></paper-icon-button>
-      <paper-menu-button horizontal-align="right" hide="${this.hideHelpIcon}" class="helpButton">
-        <paper-icon-button .ariaLabel="${this.t('menu.help')}" icon="help-outline" .slot="dropdown-trigger"></paper-icon-button>
-
-        <paper-listbox .slot="dropdown-content">
-
-        ${ this.translatedPages.map((page: YpHelpPage) => html`
-          <paper-item data-args="${page.id}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(page)}</paper-item>
-        `)}
-
-        </paper-listbox>
-      </paper-menu-button>
-
+      <mwc-icon-button icon="menu" title="${this.t('openMainMenu')}" slot="actionItems" @click="${this._toggleNavDrawer}"></mwc-icon-button>
       ${ this.user ? html`
-        <div class="userImageNotificationContainer layout horizontal" @tap="${this._toggleUserDrawer}">
+        <div class="userImageNotificationContainer layout horizontal" @click="${this._toggleUserDrawer}" slot="actionItems">
           <yp-user-image id="userImage" small .user="${this.user}"></yp-user-image>
           <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
         </div>
       ` : html`
         <mwc-button class="loginButton" @click="${this._login}" .label="${this.t('user.login')}"></mwc-button>
       `}
+    `;
+  }
+
+  renderToolbar() {
+    return html`
+      <mwc-top-app-bar dense>
+        <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
+        <div slot="title">${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle }</div>
+        ${this.renderActionItems()}
+        <div>
+          <h1>HELOOOOSDKJ</h1>
+        </div>
+      </mwc-top-app-bar>
     `;
   }
 
@@ -339,30 +380,6 @@ export class YpApp extends YpBaseElement {
       </div>
     </paper-dialog>`;
   }
-
-/*
-  listeners: {
-    'yp-set-pages': '_setPages',
-    'yp-set-next-post': '_setNextPost',
-    'yp-set-home-link': '_setHomeLink',
-    'yp-redirect-to': '_redirectTo',
-    'yp-set-number-of-un-viewed-notifications': '_setNumberOfUnViewedNotifications',
-    'yp-close-right-drawer': '_closeRightDrawer',
-    'yp-refresh-group': '_refreshGroup',
-    'yp-refresh-community': '_refreshCommunity',
-    'yp-refresh-domain': '_refreshDomain',
-    'yp-language-name': '_setLanguageName',
-    'yp-dialog-closed': '_dialogClosed',
-    'yp-open-notify-dialog': '_openNotifyDialog',
-    'yp-open-toast': '_openToast',
-    'yp-open-page': '_openPageFromEvent',
-    'yp-open-login': '_login',
-    'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
-    'yp-add-back-community-override': '_addBackCommunityOverride'
-    change-header="${this.onChangeHeader}
-    @user-changed="${this.onUserChanged}"
-  },
-*/
 
   _openNotifyDialog(event: CustomEvent) {
     this.notifyDialogText = event.detail;
@@ -472,8 +489,8 @@ export class YpApp extends YpBaseElement {
   _setNextPost(event: CustomEvent) {
     const detail = event.detail;
     if (detail.goForwardToPostId) {
-      this.goForwardToPostId=detail.goForwardToPostId;
-      this.goForwardPostName=detail.goForwardPostName;
+      this.goForwardToPostId = detail.goForwardToPostId;
+      this.goForwardPostName = detail.goForwardPostName;
     } else {
       this._clearNextPost();
     }
@@ -481,10 +498,10 @@ export class YpApp extends YpBaseElement {
   }
 
   _clearNextPost() {
-    this.goForwardToPostId=null;
-    this.goForwardPostName=null;
-    this.goForwardCount=0;
-    this.showBackToPost=false;
+    this.goForwardToPostId = null;
+    this.goForwardPostName = null;
+    this.goForwardCount = 0;
+    this.showBackToPost = false;
   }
 
   _setupSamlCallback() {
@@ -495,7 +512,7 @@ export class YpApp extends YpBaseElement {
         window.appUser.loginFromSaml();
         console.log("Have contacted app user 2");
       }
-    },false);
+    }, false);
   }
 
   _setupTranslationSystem() {
@@ -547,26 +564,47 @@ export class YpApp extends YpBaseElement {
       localStorage.setItem('yp-user-locale', localeFromUrl);
     }
 
-    console.info("Have started loading i18n for "+defaultLocale);
     i18next.use(HttpApi).init(
       {
         lng: defaultLocale,
         fallbackLng: 'en',
         backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' }
         }, () => {
-      console.info("Have loaded languages for "+defaultLocale);
       window.appGlobals.locale = defaultLocale;
       window.appGlobals.i18nTranslation = i18next;
       window.appGlobals.haveLoadedLanguages = true;
       moment.locale([defaultLocale, 'en']);
-      console.log("Changed language to "+defaultLocale);
-      this.fireGlobal('language-loaded', { language: defaultLocale })
+      this.fireGlobal('yp-language-loaded', { language: defaultLocale });
     });
   }
 
   _openPageFromEvent(event: CustomEvent) {
     if (event.detail.pageId) {
       this.openPageFromId(event.detail.pageId);
+    }
+  }
+
+  openUserInfoPage(pageId: number) {
+    if (this.pages && this.pages.length>0) {
+      this._openPage(this.pages[pageId]);
+    } else {
+      setTimeout(() => {
+        if (this.pages && this.pages.length>0) {
+          this._openPage(this.pages[pageId]);
+        } else {
+          setTimeout(() => {
+            if (this.pages && this.pages.length>0) {
+              this._openPage(this.pages[pageId]);
+            } else {
+              setTimeout(() => {
+                if (this.pages && this.pages.length>0) {
+                  this._openPage(this.pages[pageId]);
+                }
+              }, 1250);
+            }
+          }, 1250);
+        }
+      }, 1250);
     }
   }
 
@@ -996,7 +1034,7 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  onChangeHeader(event: CustomEvent) {
+  _onChangeHeader(event: CustomEvent) {
     const header = event.detail;
     this.headerTitle=document.title = header.headerTitle;
 
@@ -1089,7 +1127,7 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  onUserChanged(event: CustomEvent) {
+  _onUserChanged(event: CustomEvent) {
     if (event.detail && event.detail.id) {
       this.user = event.detail;
     } else {

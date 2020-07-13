@@ -28,16 +28,13 @@ export class YpRecommendations extends YpCodeBase {
     this.currentPostId=currentPostId;
     this.recommendationCallbacks[groupId] = recommendationCallback;
     if (!this.recommendationsGroupCache[groupId]) {
-      console.log("Recommendation getting initial cache from server groupId: "+groupId);
       this._getRecommendationsForGroup(groupId);
     } else if (this.recommendationsGroupCache[groupId].length>0) {
-      console.log("Recommendation getting next from cache groupId: "+groupId);
       const selectedPost = this._getSelectedPost(groupId);
       if (selectedPost)
         window.appGlobals.showRecommendationInfoIfNeeded();
       recommendationCallback(selectedPost);
     } else {
-      console.log("Recommendation found no post on cache or server groupId: "+groupId);
       recommendationCallback(null);
     }
   }
@@ -47,21 +44,15 @@ export class YpRecommendations extends YpCodeBase {
       let imagePath=null;
       if ((!post.cover_media_type || post.cover_media_type==='none') && !post.Category) {
         imagePath = "https://i.imgur.com/sdsFAoT.png";
-        console.log("Recommendation downloading default image: "+post.id);
       } else  if ((!post.cover_media_type || post.cover_media_type==='none') && post.Category) {
         imagePath = this._getCategoryImagePath(post);
-        console.log("Recommendation downloading category image: "+post.id);
       } else if (post.cover_media_type==='image') {
         imagePath = this._getImageFormatUrl(post.PostHeaderImages, 0);
-        console.log("Recommendation downloading image: "+post.id);
       }
 
       if (imagePath) {
         new Image().src=imagePath;
-        console.log("Recommendation preCaching image: "+imagePath);
       }
-      else
-        console.log("Recommendation no image download for: "+post.id);
     });
   }
 
@@ -98,7 +89,6 @@ export class YpRecommendations extends YpCodeBase {
             console.error("Recommendation no post to save to cache");
           }
           window.appGlobals.cache.postItemsCache[postId]=post;
-          console.log("Recommendation saved post to cache: "+postId);
         }).catch((ex) => {
           console.error("Recommendation: Error in getting post for cache", ex);
           this.currentlyDownloadingIds[postId]=false;
@@ -113,8 +103,6 @@ export class YpRecommendations extends YpCodeBase {
     for (let i = 0; i < Math.min(this.recommendationsGroupCache[groupId].length-1, this.preCacheLimit); i++) {
      if (!window.appGlobals.cache.postItemsCache[this.recommendationsGroupCache[groupId][i].id]) {
        this._downloadItemToCache(this.recommendationsGroupCache[groupId][i].id);
-     } else {
-       console.log("Recommendation already in cache for group: "+groupId);
      }
     }
   }
@@ -139,15 +127,11 @@ export class YpRecommendations extends YpCodeBase {
     if (this.recommendationsGroupCache[groupId]) {
       let post = this.recommendationsGroupCache[groupId][0] as YpPost|null;
       if (post) {
-        console.info("Recommendation found post: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
         if (post.id===this.currentPostId) {
-          console.info("Recommendation not showing current post id: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
           this.recommendationsGroupCache[groupId].shift();
           if (this.recommendationsGroupCache[groupId].length>0) {
             post = this.recommendationsGroupCache[groupId][0];
-            console.info("Recommendation found 2nd time: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
           } else {
-            console.info("Recommendation not found 2nd time: "+post.id+" recCacheLength: "+this.recommendationsGroupCache[groupId].length);
             post = null;
           }
         }

@@ -5,7 +5,12 @@ export class YpCodeBase {
   language: string|null = null
 
   constructor() {
-    this.addGlobalListener('language-loaded', this._languageEvent);
+    this.addGlobalListener('yp-language-loaded', this._languageEvent);
+    if (window.appGlobals && window.appGlobals.i18nTranslation && window.appGlobals.locale) {
+      this.language = window.appGlobals.locale;
+    } else {
+      this.language = "en";
+    }
   }
 
   _languageEvent(event: CustomEvent) {
