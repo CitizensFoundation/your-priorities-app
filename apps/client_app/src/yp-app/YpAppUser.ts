@@ -1,25 +1,46 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpNavHelpers } from './YpNavHelpers.js';
 import { YpCodeBase } from '../@yrpri/YpCodeBase.js';
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 
 export class YpAppUser extends YpCodeBase {
   serverApi: YpServerApi;
 
-  loginForAcceptInviteParams: object|null = null;
+  loginForAcceptInviteParams: {
+    token: string;
+    editDialog: HTMLElement;
+  }|null = null;
 
-  loginForEditParams: object|null = null;
+  loginForEditParams: {
+    editDialog: HTMLElement;
+    newOrUpdate: boolean;
+    params: object;
+    refreshFunction: Function;
+   }|null = null;
 
-  loginForNewPointParams: object|null = null;
+  loginForNewPointParams: {
+    postPointsElement: HTMLElement;
+    params: { value: string; content: string };
+  }|null = null;
 
-  loginForEndorseParams: object|null = null;
+  loginForEndorseParams: {
+    postActionElement: HTMLElement;
+    params: { value: string; content: string };
+  }|null = null;
 
-  loginForRatingsParams: object|null = null;
+  loginForRatingsParams: {
+    postActionElement: HTMLElement;
+  }|null = null;
 
-  loginForPointQualityParams: object|null = null;
+  loginForPointQualityParams: {
+    pointActionElement: HTMLElement;
+    params: { value: string; content: string };
+  }|null = null;
 
-  loginForMembershipParams: object|null = null;
+  loginForMembershipParams: {
+    membershipActionElement: HTMLElement;
+    params: { value: string; content: string };
+  }|null = null;
 
   loginFor401refreshFunction: Function|null = null;
 
@@ -50,9 +71,9 @@ export class YpAppUser extends YpCodeBase {
 
   lastLoginMethod: string|null = null;
 
-  facebookPopupWindow: HTMLElement|null = null;
+  facebookPopupWindow: Window|null = null;
 
-  samlPopupWindow: HTMLElement|null = null;
+  samlPopupWindow: Window|null = null;
 
   pollingStartedAt: number|null = null;
 
@@ -120,12 +141,12 @@ export class YpAppUser extends YpCodeBase {
     this.openUserlogin();
   }
 
-  loginForNewPoint(postPointsElement: HTMLElement, params: object) {
+  loginForNewPoint(postPointsElement: HTMLElement, params: { value: string; content: string }) {
     this.loginForNewPointParams = { postPointsElement: postPointsElement, params: params };
     this.openUserlogin();
   }
 
-  loginForEndorse(postActionElement: HTMLElement, params: object) {
+  loginForEndorse(postActionElement: HTMLElement, params: { value: string; content: string }) {
     this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
     this.openUserlogin();
   }
@@ -135,12 +156,12 @@ export class YpAppUser extends YpCodeBase {
     this.openUserlogin();
   }
 
-  loginForPointQuality(pointActionElement: HTMLElement, params: object) {
+  loginForPointQuality(pointActionElement: HTMLElement, params: { value: string; content: string }) {
     this.loginForPointQualityParams = { pointActionElement: pointActionElement, params: params };
     this.openUserlogin();
   }
 
-  loginForMembership(membershipActionElement: HTMLElement, params: object) {
+  loginForMembership(membershipActionElement: HTMLElement, params: { value: string; content: string }) {
     this.loginForMembershipParams = { membershipActionElement: membershipActionElement, params: params };
     this.openUserlogin();
   }
