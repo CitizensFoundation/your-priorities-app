@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import i18next from 'i18next';
-import moment from 'moment';
+//TODO: Fix moment
+//import moment from 'moment';
 
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from './YpNavHelpers.js';
@@ -17,37 +18,43 @@ export class YpAppGlobals extends YpCodeBase {
 
   disableWelcome = false;
 
-  activityHost = "";
+  activityHost = '';
 
-  domain: YpDomain|null = null;
+  domain: YpDomain | null = null;
 
-  groupConfigOverrides: Record<number, Record<string, string|boolean>> = {};
+  groupConfigOverrides: Record<number, Record<string, string | boolean>> = {};
 
-  currentAnonymousUser: YpUser|null = null;
+  currentAnonymousUser: YpUser | null = null;
 
-  currentGroup: YpGroup|null = null;
+  currentGroup: YpGroup | null = null;
 
-  currentAnonymousGroup: YpGroup|null = null;
+  currentAnonymousGroup: YpGroup | null = null;
 
   currentForceSaml = false;
 
   disableFacebookLoginForGroup = false;
 
-  currentSamlDeniedMessage: string|null = null;
+  currentSamlDeniedMessage: string | null = null;
 
-  currentSamlLoginMessage: string|null = null;
+  currentSamlLoginMessage: string | null = null;
 
-  originalQueryParameters: Record<string,string|number> = {};
+  originalQueryParameters: Record<string, string | number> = {};
 
-  externalGoalTriggerGroupId: number|null = null;
+  externalGoalTriggerGroupId: number | null = null;
 
   externalGoalCounter = 0;
 
   appStartTime: Date;
 
-  autoTranslate = false
+  autoTranslate = false;
 
-  goalTriggerEvents: Array<string> = ['newPost','endorse_up','endorse_down','newPointFor','newPointAgainst'];
+  goalTriggerEvents: Array<string> = [
+    'newPost',
+    'endorse_up',
+    'endorse_down',
+    'newPointFor',
+    'newPointAgainst',
+  ];
 
   haveLoadedLanguages = false;
 
@@ -58,22 +65,23 @@ export class YpAppGlobals extends YpCodeBase {
   hasAudioUpload = false;
 
   // The selected language
-  language: string|null = null;
+  language: string | null = null;
 
   // Locale seleted from query or loaded
-  locale: string|null = null;
+  locale: string | null = null;
 
-  i18nTranslation: i18next.i18n|null = null;
+  // TODO: Remove any,
+  i18nTranslation: any | null = null;
 
-  serverApi: YpServerApi
+  serverApi: YpServerApi;
 
-  recommendations: YpRecommendations
+  recommendations: YpRecommendations;
 
-  cache: YpCache
+  cache: YpCache;
 
-  analytics: YpAnalytics
+  analytics: YpAnalytics;
 
-  theme: YpThemeManager
+  theme: YpThemeManager;
 
   constructor(serverApi: YpServerApi) {
     super();
@@ -99,20 +107,25 @@ export class YpAppGlobals extends YpCodeBase {
 
   showRecommendationInfoIfNeeded() {
     if (!localStorage.getItem('ypHaveShownRecommendationInfo')) {
-      localStorage.setItem("ypHaveShownRecommendationInfo", "1");
-      this.fireGlobal('yp-notify-dialog', { text: this.t('recommendationToastInfo') });
+      localStorage.setItem('ypHaveShownRecommendationInfo', '1');
+      this.fireGlobal('yp-notify-dialog', {
+        text: this.t('recommendationToastInfo'),
+      });
     }
   }
 
   showSpeechToTextInfoIfNeeded() {
-    if (window.appGlobals.hasTranscriptSupport && !localStorage.getItem("haveShownTranscriptInfo")) {
-      localStorage.setItem("haveShownTranscriptInfo", "1");
+    if (
+      window.appGlobals.hasTranscriptSupport &&
+      !localStorage.getItem('haveShownTranscriptInfo')
+    ) {
+      localStorage.setItem('haveShownTranscriptInfo', '1');
       this.fireGlobal('yp-notify-dialog', { text: this.t('speechToTextInfo') });
     }
   }
 
   async hasVideoUploadSupport() {
-    const response = await this.serverApi.hasVideoUploadSupport() as YpHasVideoResponse|void;
+    const response = (await this.serverApi.hasVideoUploadSupport()) as YpHasVideoResponse | void;
     if (response) {
       window.appGlobals.hasVideoUpload = response.hasVideoUploadSupport;
       window.appGlobals.hasTranscriptSupport = response.hasTranscriptSupport;
@@ -130,7 +143,7 @@ export class YpAppGlobals extends YpCodeBase {
   }
 
   async hasAudioUploadSupport() {
-    const response = await this.serverApi.hasAudioUploadSupport() as YpHasAudioResponse|void;
+    const response = (await this.serverApi.hasAudioUploadSupport()) as YpHasAudioResponse | void;
     if (response) {
       window.appGlobals.hasAudioUpload = response.hasAudioUploadSupport;
     }
@@ -147,11 +160,16 @@ export class YpAppGlobals extends YpCodeBase {
   }
 
   changeLocaleIfNeededAfterWait(locale: string, force: boolean) {
-    if (window.appGlobals.haveLoadedLanguages===true && locale && this.language!=locale) {
+    if (
+      window.appGlobals.haveLoadedLanguages === true &&
+      locale &&
+      this.language != locale
+    ) {
       if (force || !localStorage.getItem('yp-user-locale')) {
         i18next.changeLanguage(locale, () => {
-          moment.locale([locale, 'en']);
-          this.fireGlobal('yp-language-loaded', { language: locale })
+          //TODO: Fix moment
+          //moment.locale([locale, 'en']);
+          this.fireGlobal('yp-language-loaded', { language: locale });
         });
       }
     }
@@ -159,11 +177,13 @@ export class YpAppGlobals extends YpCodeBase {
 
   changeLocaleIfNeeded(locale: string, force = false) {
     if (window.appGlobals.haveLoadedLanguages) {
-      this.changeLocaleIfNeededAfterWait(locale, force)
+      this.changeLocaleIfNeededAfterWait(locale, force);
     } else {
       setTimeout(() => {
-        console.warn("Locales not loaded while trying to load languages, trying again in 500 ms");
-        this.changeLocaleIfNeeded(locale, force)
+        console.warn(
+          'Locales not loaded while trying to load languages, trying again in 500 ms'
+        );
+        this.changeLocaleIfNeeded(locale, force);
       }, 500);
     }
   }
@@ -172,49 +192,65 @@ export class YpAppGlobals extends YpCodeBase {
   parseQueryString() {
     const queryString = (window.location.search || '?').substr(1);
 
-    const params: Record<string,string> = {};
+    const params: Record<string, string> = {};
 
-    const queries = queryString.split("&");
+    const queries = queryString.split('&');
 
     queries.forEach((indexQuery: string) => {
-        const indexPair = indexQuery.split("=");
+      const indexPair = indexQuery.split('=');
 
-        const queryKey = decodeURIComponent(indexPair[0]);
-        const queryValue = decodeURIComponent(indexPair.length > 1 ? indexPair[1] : "");
+      const queryKey = decodeURIComponent(indexPair[0]);
+      const queryValue = decodeURIComponent(
+        indexPair.length > 1 ? indexPair[1] : ''
+      );
 
-        params[queryKey] = queryValue;
+      params[queryKey] = queryValue;
     });
 
     this.originalQueryParameters = params;
   }
 
-  setAnonymousUser(user: YpUser|null) {
-    this.currentAnonymousUser=user;
-    console.debug("Set anon user "+user);
+  setAnonymousUser(user: YpUser | null) {
+    this.currentAnonymousUser = user;
+    console.debug('Set anon user ' + user);
   }
 
   setAnonymousGroupStatus(group: YpGroup) {
-    if (group && group.configuration && group.configuration.allowAnonymousUsers) {
-      this.currentAnonymousGroup=group;
-      console.debug("Have set anonymous group id: "+group.id);
+    if (
+      group &&
+      group.configuration &&
+      group.configuration.allowAnonymousUsers
+    ) {
+      this.currentAnonymousGroup = group;
+      console.debug('Have set anonymous group id: ' + group.id);
       if (!window.appUser.user && this.currentAnonymousUser) {
-        console.debug("Setting anon user from cache");
+        console.debug('Setting anon user from cache');
         window.appUser.setLoggedInUser(this.currentAnonymousUser);
-      } else if (window.appUser && !window.appUser.user && group.configuration.allowAnonymousAutoLogin &&
-                 this.originalQueryParameters && this.originalQueryParameters.autoLogin) {
+      } else if (
+        window.appUser &&
+        !window.appUser.user &&
+        group.configuration.allowAnonymousAutoLogin &&
+        this.originalQueryParameters &&
+        this.originalQueryParameters.autoLogin
+      ) {
         window.appUser.autoAnonymousLogin();
       }
     } else {
-      if (window.appUser && window.appUser.user && window.appUser.user.profile_data && window.appUser.user.profile_data.isAnonymousUser) {
+      if (
+        window.appUser &&
+        window.appUser.user &&
+        window.appUser.user.profile_data &&
+        window.appUser.user.profile_data.isAnonymousUser
+      ) {
         window.appUser.removeAnonymousUser();
-        console.debug("Logout anon user");
+        console.debug('Logout anon user');
       }
-      console.debug("Set anon group to null");
-      this.currentAnonymousGroup=null;
+      console.debug('Set anon group to null');
+      this.currentAnonymousGroup = null;
     }
   }
 
-  _domainChanged(domain: YpDomain|null) {
+  _domainChanged(domain: YpDomain | null) {
     if (domain) {
       this.fireGlobal('yp-domain-changed', { domain: domain });
     }
@@ -241,41 +277,56 @@ export class YpAppGlobals extends YpCodeBase {
   }
 
   async boot() {
-    const results = await this.serverApi.boot() as YpDomainGetResponse|void;
+    const results = (await this.serverApi.boot()) as YpDomainGetResponse | void;
     if (results) {
       this.domain = results.domain;
       this._domainChanged(this.domain);
       this.analytics.setupGoogleAnalytics(this.domain);
 
-      if (window.location.pathname=="/") {
-        if (results.community && results.community.configuration && results.community.configuration.redirectToGroupId) {
-          YpNavHelpers.redirectTo("/group/"+results.community.configuration.redirectToGroupId);
-        } else if (results.community && !results.community.is_community_folder) {
-          YpNavHelpers.redirectTo("/community/"+results.community.id);
+      if (window.location.pathname == '/') {
+        if (
+          results.community &&
+          results.community.configuration &&
+          results.community.configuration.redirectToGroupId
+        ) {
+          YpNavHelpers.redirectTo(
+            '/group/' + results.community.configuration.redirectToGroupId
+          );
+        } else if (
+          results.community &&
+          !results.community.is_community_folder
+        ) {
+          YpNavHelpers.redirectTo('/community/' + results.community.id);
         } else if (results.community && results.community.is_community_folder) {
-          YpNavHelpers.redirectTo("/community_folder/"+results.community.id);
+          YpNavHelpers.redirectTo('/community_folder/' + results.community.id);
         } else {
-          YpNavHelpers.redirectTo("/domain/" + this.domain.id);
-          this.fireGlobal("change-header", { headerTitle: this.domain.domain_name, headerDescription: this.domain.description});
+          YpNavHelpers.redirectTo('/domain/' + this.domain.id);
+          this.fireGlobal('change-header', {
+            headerTitle: this.domain.domain_name,
+            headerDescription: this.domain.description,
+          });
         }
       }
     }
   }
 
   setupGroupConfigOverride(groupId: number, configOverride: string) {
-    const configOverrideHash: Record<string,string> = {};
-    configOverride.split(";").forEach(function (configItem) {
-      const splitItem = configItem.split("=");
+    const configOverrideHash: Record<string, string> = {};
+    configOverride.split(';').forEach(function (configItem) {
+      const splitItem = configItem.split('=');
       configOverrideHash[splitItem[0]] = splitItem[1];
     });
-    this.groupConfigOverrides[groupId]=configOverrideHash;
-    if (configOverrideHash["ln"]) {
-      this.changeLocaleIfNeeded(configOverrideHash["ln"], true);
+    this.groupConfigOverrides[groupId] = configOverrideHash;
+    if (configOverrideHash['ln']) {
+      this.changeLocaleIfNeeded(configOverrideHash['ln'], true);
     }
   }
 
   // Example use http://localhost:4242/group/47/config/hg=1;rn=Your Priorities;ru=https://yrpri.org/
-  overrideGroupConfigIfNeeded(groupId: number, configuration: YpGroupConfiguration) {
+  overrideGroupConfigIfNeeded(
+    groupId: number,
+    configuration: YpGroupConfiguration
+  ) {
     if (!configuration) {
       configuration = {};
     }
@@ -283,20 +334,20 @@ export class YpAppGlobals extends YpCodeBase {
     if (!override) {
       return configuration;
     } else {
-      if (override["hg"]) {
-        configuration["hideGroupHeader"]=Boolean(override["hg"]);
+      if (override['hg']) {
+        configuration['hideGroupHeader'] = Boolean(override['hg']);
       }
-      if (override["ht"]) {
-        configuration["hideAllTabs"]=Boolean(override["ht"]);
+      if (override['ht']) {
+        configuration['hideAllTabs'] = Boolean(override['ht']);
       }
-      if (override["hh"]) {
-        configuration["hideHelpIcon"]=Boolean(override["hh"]);
+      if (override['hh']) {
+        configuration['hideHelpIcon'] = Boolean(override['hh']);
       }
-      if (override["rn"]) {
-        configuration["customBackName"] = override["rn"] as string;
+      if (override['rn']) {
+        configuration['customBackName'] = override['rn'] as string;
       }
-      if (override["ru"]) {
-        configuration["customBackURL"] = override["ru"] as string;
+      if (override['ru']) {
+        configuration['customBackURL'] = override['ru'] as string;
       }
       return configuration;
     }
@@ -304,44 +355,58 @@ export class YpAppGlobals extends YpCodeBase {
 
   postLoadGroupProcessing(group: YpGroup) {
     if (this.originalQueryParameters['yu']) {
-      this.serverApi.marketingTrackingOpen(group.id, this.originalQueryParameters);
+      this.serverApi.marketingTrackingOpen(
+        group.id,
+        this.originalQueryParameters
+      );
       this.externalGoalTriggerGroupId = group.id;
-      this.goalTriggerEvents = ['newPost','newPointFor','newPointAgainst'];
+      this.goalTriggerEvents = ['newPost', 'newPointFor', 'newPointAgainst'];
       this.originalQueryParameters['goalThreshold'] = 1;
     }
   }
 
   checkExternalGoalTrigger(type: string) {
-    if (this.externalGoalTriggerGroupId &&
+    if (
+      this.externalGoalTriggerGroupId &&
       this.originalQueryParameters &&
       this.originalQueryParameters.goalThreshold &&
-      this.goalTriggerEvents.indexOf(type) > -1) {
-        this.externalGoalCounter += 1;
-        if (this.externalGoalCounter==this.originalQueryParameters.goalThreshold) {
-          this.serverApi.triggerTrackingGoal(this.externalGoalTriggerGroupId, this.originalQueryParameters);
-        }
+      this.goalTriggerEvents.indexOf(type) > -1
+    ) {
+      this.externalGoalCounter += 1;
+      if (
+        this.externalGoalCounter == this.originalQueryParameters.goalThreshold
+      ) {
+        this.serverApi.triggerTrackingGoal(
+          this.externalGoalTriggerGroupId,
+          this.originalQueryParameters
+        );
+      }
     }
   }
 
-  activity(type: string, object: object|string, context: string|object|number|null=null, target: string|object|null = null) {
+  activity(
+    type: string,
+    object: object | string,
+    context: string | object | number | null = null,
+    target: string | object | null = null
+  ) {
     let actor;
 
     if (window.appUser && window.appUser.user) {
       actor = window.appUser.user.id;
     } else {
-      actor = "-1";
+      actor = '-1';
     }
 
     let logString = 'activity stream: ' + actor + ' ' + type + ' ' + object;
 
     console.log(logString);
 
-    if (context)
-      logString += ' ' + context;
+    if (context) logString += ' ' + context;
 
-    if (type=='open') {
+    if (type == 'open') {
       // Wait by sending open so pageview event can be completed before
-      setTimeout(() =>  {
+      setTimeout(() => {
         this.analytics.sendToAnalyticsTrackers('send', 'event', object, type);
       }, 25);
     } else {
@@ -353,21 +418,21 @@ export class YpAppGlobals extends YpCodeBase {
       type: type,
       object: object,
       target: JSON.stringify(target),
-      context: context ? context : "",
+      context: context ? context : '',
       path_name: location.pathname,
       event_time: new Date().toISOString(),
       session_id: this.getSessionFromCookie(),
-      user_agent: navigator.userAgent
+      user_agent: navigator.userAgent,
     });
 
-    if (type==='completed' || type==='clicked') {
+    if (type === 'completed' || type === 'clicked') {
       this.checkExternalGoalTrigger(object as string);
     }
   }
 
   setSeenWelcome() {
     this.seenWelcome = true;
-    localStorage.setItem('yrpri-welcome-status', "1");
+    localStorage.setItem('yrpri-welcome-status', '1');
   }
 
   getSessionFromCookie() {
@@ -377,8 +442,7 @@ export class YpAppGlobals extends YpCodeBase {
     for (let i = 0; i < cookiearray.length; i++) {
       const name = cookiearray[i].split('=')[0];
       const value = cookiearray[i].split('=')[1];
-      if (name == ' connect.sid')
-        sid = value;
+      if (name == ' connect.sid') sid = value;
     }
     return sid;
   }

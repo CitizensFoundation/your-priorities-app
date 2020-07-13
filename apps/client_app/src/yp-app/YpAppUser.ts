@@ -9,73 +9,73 @@ export class YpAppUser extends YpCodeBase {
   loginForAcceptInviteParams: {
     token: string;
     editDialog: HTMLElement;
-  }|null = null;
+  } | null = null;
 
   loginForEditParams: {
     editDialog: HTMLElement;
     newOrUpdate: boolean;
     params: object;
     refreshFunction: Function;
-   }|null = null;
+  } | null = null;
 
   loginForNewPointParams: {
     postPointsElement: HTMLElement;
     params: { value: string; content: string };
-  }|null = null;
+  } | null = null;
 
   loginForEndorseParams: {
     postActionElement: HTMLElement;
     params: { value: string; content: string };
-  }|null = null;
+  } | null = null;
 
   loginForRatingsParams: {
     postActionElement: HTMLElement;
-  }|null = null;
+  } | null = null;
 
   loginForPointQualityParams: {
     pointActionElement: HTMLElement;
     params: { value: string; content: string };
-  }|null = null;
+  } | null = null;
 
   loginForMembershipParams: {
     membershipActionElement: HTMLElement;
     params: { value: string; content: string };
-  }|null = null;
+  } | null = null;
 
-  loginFor401refreshFunction: Function|null = null;
+  loginFor401refreshFunction: Function | null = null;
 
   loginForNotificationSettingsParams = false;
 
-  toastLoginTextCombined: string|null = null;
+  toastLoginTextCombined: string | null = null;
 
-  toastLogoutTextCombined: string|null = null;
+  toastLogoutTextCombined: string | null = null;
 
-  user: YpUser|null = null;
+  user: YpUser | null = null;
   //TODO:   observer: "_onUserChanged"
 
   endorsementPostsIndex: Record<number, YpEndorsement> = {};
 
-  ratingPostsIndex: Record<number, Record<number,YpRating>> = {};
+  ratingPostsIndex: Record<number, Record<number, YpRating>> = {};
 
-  membershipsIndex: Record<string, Record<number,boolean>> = {};
+  membershipsIndex: Record<string, Record<number, boolean>> = {};
 
   pointQualitiesIndex: Record<number, YpPointQuality> = {};
 
-  adminRights: YpAdminRights|null = null;
+  adminRights: YpAdminRights | null = null;
 
-  memberships: YpMemberships|null = null;
+  memberships: YpMemberships | null = null;
 
-  completeExternalLoginText: string|null = null;
+  completeExternalLoginText: string | null = null;
 
-  isPollingForLogin = false
+  isPollingForLogin = false;
 
-  lastLoginMethod: string|null = null;
+  lastLoginMethod: string | null = null;
 
-  facebookPopupWindow: Window|null = null;
+  facebookPopupWindow: Window | null = null;
 
-  samlPopupWindow: Window|null = null;
+  samlPopupWindow: Window | null = null;
 
-  pollingStartedAt: number|null = null;
+  pollingStartedAt: number | null = null;
 
   hasIssuedLogout = false;
 
@@ -86,10 +86,10 @@ export class YpAppUser extends YpCodeBase {
   constructor(serverApi: YpServerApi) {
     super();
     this.serverApi = serverApi;
-    if (!window.location.pathname.startsWith("/survey/")) {
+    if (!window.location.pathname.startsWith('/survey/')) {
       this.checkLogin();
     } else {
-      console.log("Not checking login in survey mode");
+      console.log('Not checking login in survey mode');
     }
     this.addGlobalListener('yp-forgot-password', this._forgotPassword);
     this.addGlobalListener('yp-reset-password', this._resetPassword);
@@ -101,7 +101,7 @@ export class YpAppUser extends YpCodeBase {
     return value !== null;
   }
 
-  sessionGet (key: string) {
+  sessionGet(key: string) {
     const prefixed_key = this.sessionPrefix + key;
     const value = this.sessionStorage.getItem(prefixed_key);
     let parsed;
@@ -115,7 +115,7 @@ export class YpAppUser extends YpCodeBase {
     return parsed;
   }
 
-  sessionSet (key: string, value: string|object) {
+  sessionSet(key: string, value: string | object) {
     const prefixed_key = this.sessionPrefix + key;
     const stringfied = JSON.stringify(value);
     this.sessionStorage.setItem(prefixed_key, stringfied);
@@ -126,28 +126,54 @@ export class YpAppUser extends YpCodeBase {
     this.sessionStorage.removeItem(prefixed_key);
   }
 
-  sessionClear () {
+  sessionClear() {
     this.sessionStorage.clear();
   }
 
-  loginForAcceptInvite(editDialog: HTMLElement, token: string, email: string, collectionConfiguration: object) {
+  loginForAcceptInvite(
+    editDialog: HTMLElement,
+    token: string,
+    email: string,
+    collectionConfiguration: object
+  ) {
     this.loginForAcceptInviteParams = { editDialog: editDialog, token: token };
     this.openUserlogin(email, collectionConfiguration);
   }
 
-  loginForEdit(editDialog: HTMLElement, newOrUpdate: boolean, params: object, refreshFunction: Function) {
-    this.loginForEditParams = { editDialog: editDialog, newOrUpdate: newOrUpdate,
-                                params: params, refreshFunction: refreshFunction };
+  loginForEdit(
+    editDialog: HTMLElement,
+    newOrUpdate: boolean,
+    params: object,
+    refreshFunction: Function
+  ) {
+    this.loginForEditParams = {
+      editDialog: editDialog,
+      newOrUpdate: newOrUpdate,
+      params: params,
+      refreshFunction: refreshFunction,
+    };
     this.openUserlogin();
   }
 
-  loginForNewPoint(postPointsElement: HTMLElement, params: { value: string; content: string }) {
-    this.loginForNewPointParams = { postPointsElement: postPointsElement, params: params };
+  loginForNewPoint(
+    postPointsElement: HTMLElement,
+    params: { value: string; content: string }
+  ) {
+    this.loginForNewPointParams = {
+      postPointsElement: postPointsElement,
+      params: params,
+    };
     this.openUserlogin();
   }
 
-  loginForEndorse(postActionElement: HTMLElement, params: { value: string; content: string }) {
-    this.loginForEndorseParams = { postActionElement: postActionElement, params: params };
+  loginForEndorse(
+    postActionElement: HTMLElement,
+    params: { value: string; content: string }
+  ) {
+    this.loginForEndorseParams = {
+      postActionElement: postActionElement,
+      params: params,
+    };
     this.openUserlogin();
   }
 
@@ -156,28 +182,44 @@ export class YpAppUser extends YpCodeBase {
     this.openUserlogin();
   }
 
-  loginForPointQuality(pointActionElement: HTMLElement, params: { value: string; content: string }) {
-    this.loginForPointQualityParams = { pointActionElement: pointActionElement, params: params };
+  loginForPointQuality(
+    pointActionElement: HTMLElement,
+    params: { value: string; content: string }
+  ) {
+    this.loginForPointQualityParams = {
+      pointActionElement: pointActionElement,
+      params: params,
+    };
     this.openUserlogin();
   }
 
-  loginForMembership(membershipActionElement: HTMLElement, params: { value: string; content: string }) {
-    this.loginForMembershipParams = { membershipActionElement: membershipActionElement, params: params };
+  loginForMembership(
+    membershipActionElement: HTMLElement,
+    params: { value: string; content: string }
+  ) {
+    this.loginForMembershipParams = {
+      membershipActionElement: membershipActionElement,
+      params: params,
+    };
     this.openUserlogin();
   }
 
   loginFor401(refreshFunction: Function) {
-    this.loginFor401refreshFunction=refreshFunction;
+    this.loginFor401refreshFunction = refreshFunction;
     this.openUserlogin();
   }
 
   loginForNotificationSettings() {
-    this.loginForNotificationSettingsParams=true;
+    this.loginForNotificationSettingsParams = true;
     this.openUserlogin();
   }
 
-  openUserlogin(email: string|null = null, collectionConfiguration: object|null = null) {
-    window.app.getDialogAsync("userLogin", (dialog) => {
+  openUserlogin(
+    email: string | null = null,
+    collectionConfiguration: object | null = null
+  ) {
+    // TODO: Remove any
+    window.app.getDialogAsync('userLogin', (dialog: any) => {
       dialog.setup(this._handleLogin, window.appGlobals.domain);
       dialog.open(null, email, collectionConfiguration);
     });
@@ -185,23 +227,25 @@ export class YpAppUser extends YpCodeBase {
 
   autoAnonymousLogin() {
     setTimeout(() => {
-      if (this.user==null) {
-        window.app.getDialogAsync("userLogin", (dialog) => {
+      if (this.user == null) {
+        // TODO: Remove any
+        window.app.getDialogAsync('userLogin', (dialog: any) => {
           dialog.setup(this._handleLogin, window.appGlobals.domain);
           dialog.anonymousLogin();
         });
       } else {
-        console.log("Not doing auto anon login as user already exists")
+        console.log('Not doing auto anon login as user already exists');
       }
     }, 1);
   }
 
   _closeUserLogin() {
-    window.app.closeDialog("userLogin");
+    window.app.closeDialog('userLogin');
   }
 
   _setUserLoginSpinner() {
-    window.app.getDialogAsync("userLogin", (dialog) => {
+    // TODO: Remove any
+    window.app.getDialogAsync('userLogin', (dialog: any) => {
       dialog.userSpinner = false;
     });
   }
@@ -210,28 +254,36 @@ export class YpAppUser extends YpCodeBase {
     this._closeUserLogin();
     this.setLoggedInUser(user);
     if (user.profile_data && user.profile_data.isAnonymousUser) {
-      console.debug("Do not fetch admin or memberships for anonymous users");
+      console.debug('Do not fetch admin or memberships for anonymous users');
     } else {
       this.getAdminRights();
       this.getMemberShips();
-      this.toastLoginTextCombined = this.t("user.loginCompleteFor")+ " " + this.user?.name;
-      this.fireGlobal('yp-open-toast', { text: this.toastLoginTextCombined  })
+      this.toastLoginTextCombined =
+        this.t('user.loginCompleteFor') + ' ' + this.user?.name;
+      this.fireGlobal('yp-open-toast', { text: this.toastLoginTextCombined });
     }
-    this.fireGlobal("login");
+    this.fireGlobal('login');
     this._checkLoginForParameters();
 
     // Redirect to another local service after login, for example the analytics app
     setTimeout(() => {
-      if (window.appGlobals.originalQueryParameters && window.appGlobals.originalQueryParameters['raLogin']) {
-        window.location.href = window.appGlobals.originalQueryParameters['raLogin'] as string;
+      if (
+        window.appGlobals.originalQueryParameters &&
+        window.appGlobals.originalQueryParameters['raLogin']
+      ) {
+        window.location.href = window.appGlobals.originalQueryParameters[
+          'raLogin'
+        ] as string;
       }
     });
   }
 
   _checkLoginForParameters() {
+    /* TODO: Get working again
     if (this.loginForEditParams) {
       const loginParams = this.loginForEditParams;
-      window.app.getDialogAsync(loginParams.editDialog, (dialog) => {
+      // TODO: Remove any
+      window.app.getDialogAsync(loginParams.editDialog, (dialog: any) => {
         dialog.setup(null, true, loginParams.refreshFunction);
         dialog.open('new', loginParams.params);
         this.loginForEditParams = null;
@@ -258,7 +310,8 @@ export class YpAppUser extends YpCodeBase {
       this.loginForMembershipParams = null;
     } else if (this.loginForAcceptInviteParams) {
       const acceptInviteParams = this.loginForAcceptInviteParams;
-      window.app.getDialogAsync("acceptInvite", (dialog) => {
+      // TODO: Remove any
+      window.app.getDialogAsync("acceptInvite", (dialog: any) => {
         dialog.reOpen(acceptInviteParams.token);
         dialog.afterLogin(acceptInviteParams.token);
         this.loginForAcceptInviteParams = null;
@@ -268,23 +321,27 @@ export class YpAppUser extends YpCodeBase {
     } else if (this.loginForNotificationSettingsParams) {
       this.openNotificationSettings();
     }
+    */
   }
 
   openNotificationSettings() {
-    window.app.getDialogAsync("userEdit", (dialog) => {
+    // TODO: Remove any
+    window.app.getDialogAsync('userEdit', (dialog: any) => {
       dialog.setup(window.appUser.user, false, null, true);
       dialog.open('edit', { userId: window.appUser.user?.id });
     });
   }
 
   _forgotPassword(event: CustomEvent) {
-    window.app.getDialogAsync("forgotPassword", (dialog) => {
+    // TODO: Remove any
+    window.app.getDialogAsync('forgotPassword', (dialog: any) => {
       dialog.open(event.detail);
     });
   }
 
   _resetPassword(event: CustomEvent) {
-    window.app.getDialogAsync("resetPassword", (dialog) => {
+    // TODO: Remove any
+    window.app.getDialogAsync('resetPassword', (dialog: any) => {
       dialog.open(event.detail);
     });
   }
@@ -303,8 +360,12 @@ export class YpAppUser extends YpCodeBase {
       this.fireGlobal('logged-in', this.user);
     }, 1000);
 
-    window.appGlobals.analytics.sendLoginAndSignup(user.id, "Login Success", this.lastLoginMethod ? this.lastLoginMethod : 'Email');
-    this.lastLoginMethod=null;
+    window.appGlobals.analytics.sendLoginAndSignup(
+      user.id,
+      'Login Success',
+      this.lastLoginMethod ? this.lastLoginMethod : 'Email'
+    );
+    this.lastLoginMethod = null;
     if (user && user.profile_data && user.profile_data.isAnonymousUser) {
       window.appGlobals.setAnonymousUser(user);
     } else {
@@ -313,13 +374,13 @@ export class YpAppUser extends YpCodeBase {
   }
 
   removeAnonymousUser() {
-    console.log("Remove anon user");
+    console.log('Remove anon user');
     this.removeUserSession();
   }
 
   removeUserSession() {
     this.sessionUnset('user');
-    this.user=null;
+    this.user = null;
     window.appGlobals.setAnonymousUser(null);
     this.fireGlobal('logged-in', null);
   }
@@ -329,12 +390,15 @@ export class YpAppUser extends YpCodeBase {
     if (window.appGlobals.currentForceSaml && window.appGlobals.currentGroup) {
       if (!YpAccessHelpers.checkGroupAccess(window.appGlobals.currentGroup)) {
         if (this.user) {
-          if (this.user.loginProvider !== "saml")
+          if (this.user.loginProvider !== 'saml')
             isCorrectLoginProviderAndAgency = false;
 
-          if (window.appGlobals.currentGroup &&
-              window.appGlobals.currentGroup.configuration &&
-              window.appGlobals.currentGroup.configuration.forceSecureSamlEmployeeLogin) {
+          if (
+            window.appGlobals.currentGroup &&
+            window.appGlobals.currentGroup.configuration &&
+            window.appGlobals.currentGroup.configuration
+              .forceSecureSamlEmployeeLogin
+          ) {
             if (!this.user.isSamlEmployee) {
               isCorrectLoginProviderAndAgency = false;
             }
@@ -376,13 +440,13 @@ export class YpAppUser extends YpCodeBase {
 
   async pollForLogin() {
     if (this.pollingStartedAt) {
-      const user = await this.serverApi.isloggedin() as YpUser|void;
-      if (user && user.notLoggedIn===true && this.pollingStartedAt) {
-        const timeSpent = (Date.now() - this.pollingStartedAt);
-        if (timeSpent<5*60*1000) {
+      const user = (await this.serverApi.isloggedin()) as YpUser | void;
+      if (user && user.notLoggedIn === true && this.pollingStartedAt) {
+        const timeSpent = Date.now() - this.pollingStartedAt;
+        if (timeSpent < 5 * 60 * 1000) {
           setTimeout(() => {
             this.pollForLogin();
-          }, 1200)
+          }, 1200);
         } else {
           this.pollingStartedAt = null;
         }
@@ -396,7 +460,7 @@ export class YpAppUser extends YpCodeBase {
         this._closeAllPopups();
       }
     } else {
-      console.error("Unkown state in polling...");
+      console.error('Unkown state in polling...');
       this._closeAllPopups();
       this.cancelLoginPolling();
     }
@@ -411,20 +475,20 @@ export class YpAppUser extends YpCodeBase {
 
   loginFromFacebook() {
     this.cancelLoginPolling();
-    this.lastLoginMethod='Facebook';
+    this.lastLoginMethod = 'Facebook';
     this._completeExternalLogin(this.t('user.loggedInWithFacebook'));
   }
 
   loginFromSaml() {
     this.cancelLoginPolling();
-    this.lastLoginMethod='Saml2';
+    this.lastLoginMethod = 'Saml2';
     this._completeExternalLogin(this.t('user.loggedInWithSaml'));
   }
 
   _completeExternalLogin(fromString: string) {
     this.checkLogin();
     this._setUserLoginSpinner();
-    this.completeExternalLoginText=fromString;
+    this.completeExternalLoginText = fromString;
   }
 
   checkLogin() {
@@ -443,8 +507,8 @@ export class YpAppUser extends YpCodeBase {
         this.user.Endorsements = [];
       }
       let hasChanged = false;
-      for(let i=0; i<this.user.Endorsements.length; i++) {
-        if (this.user.Endorsements[i].post_id===postId) {
+      for (let i = 0; i < this.user.Endorsements.length; i++) {
+        if (this.user.Endorsements[i].post_id === postId) {
           if (newEndorsement) {
             this.user.Endorsements[i] = newEndorsement;
           } else {
@@ -463,26 +527,29 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _updateEndorsementPostsIndex(user: YpUser) {
-    if (user && user.Endorsements && user.Endorsements.length>0) {
+    if (user && user.Endorsements && user.Endorsements.length > 0) {
       this.endorsementPostsIndex = {};
-      for(let i=0; i<user.Endorsements.length; i++){
-        this.endorsementPostsIndex[ user.Endorsements[i].post_id ] = user.Endorsements[i];
+      for (let i = 0; i < user.Endorsements.length; i++) {
+        this.endorsementPostsIndex[user.Endorsements[i].post_id] =
+          user.Endorsements[i];
       }
     } else {
-      this.endorsementPostsIndex = {}
+      this.endorsementPostsIndex = {};
     }
   }
 
   _updateRatingPostsIndex(user: YpUser) {
-    if (user && user.Ratings && user.Ratings.length>0) {
+    if (user && user.Ratings && user.Ratings.length > 0) {
       this.ratingPostsIndex = {};
-      for(let i=0; i<user.Ratings.length; i++){
-        if (!this.ratingPostsIndex[ user.Ratings[i].post_id ])
-          this.ratingPostsIndex[ user.Ratings[i].post_id ] = {};
-        this.ratingPostsIndex[ user.Ratings[i].post_id ][user.Ratings[i].type_index] = user.Ratings[i];
+      for (let i = 0; i < user.Ratings.length; i++) {
+        if (!this.ratingPostsIndex[user.Ratings[i].post_id])
+          this.ratingPostsIndex[user.Ratings[i].post_id] = {};
+        this.ratingPostsIndex[user.Ratings[i].post_id][
+          user.Ratings[i].type_index
+        ] = user.Ratings[i];
       }
     } else {
-      this.ratingPostsIndex = {}
+      this.ratingPostsIndex = {};
     }
   }
 
@@ -493,8 +560,11 @@ export class YpAppUser extends YpCodeBase {
       }
 
       let hasChanged = false;
-      for(let i=0; i<this.user.Ratings.length; i++) {
-        if (this.user.Ratings[i].post_id===postId && this.user.Ratings[i].type_index===typeIndex) {
+      for (let i = 0; i < this.user.Ratings.length; i++) {
+        if (
+          this.user.Ratings[i].post_id === postId &&
+          this.user.Ratings[i].type_index === typeIndex
+        ) {
           if (newRating) {
             this.user.Ratings[i] = newRating;
           } else {
@@ -504,8 +574,7 @@ export class YpAppUser extends YpCodeBase {
           break;
         }
       }
-      if (!hasChanged && newRating)
-        this.user.Ratings.push(newRating);
+      if (!hasChanged && newRating) this.user.Ratings.push(newRating);
       this._updateRatingPostsIndex(this.user);
     } else {
       console.error("Can't find user for updateRatingForPost");
@@ -516,8 +585,8 @@ export class YpAppUser extends YpCodeBase {
     if (this.user) {
       if (this.user.PointQualities) {
         let hasChanged = false;
-        for(let i=0; i<this.user.PointQualities.length; i++) {
-          if (this.user.PointQualities[i].point_id===pointId) {
+        for (let i = 0; i < this.user.PointQualities.length; i++) {
+          if (this.user.PointQualities[i].point_id === pointId) {
             if (newPointQuality) {
               this.user.PointQualities[i] = newPointQuality;
             } else {
@@ -527,27 +596,27 @@ export class YpAppUser extends YpCodeBase {
             break;
           }
         }
-        if (hasChanged)
-          this._updateEndorsementPostsIndex(this.user);
+        if (hasChanged) this._updateEndorsementPostsIndex(this.user);
       }
-    }  else {
+    } else {
       console.error("Can't find user for updatePointQualityForPost");
     }
   }
 
   _updatePointQualitiesIndex(user: YpUser) {
-    if (user && user.PointQualities && user.PointQualities.length>0) {
+    if (user && user.PointQualities && user.PointQualities.length > 0) {
       this.pointQualitiesIndex = {};
-      for(let i=0; i<user.PointQualities.length; i++){
-        this.pointQualitiesIndex[ user.PointQualities[i].point_id ] = user.PointQualities[i];
+      for (let i = 0; i < user.PointQualities.length; i++) {
+        this.pointQualitiesIndex[user.PointQualities[i].point_id] =
+          user.PointQualities[i];
       }
     } else {
-      this.pointQualitiesIndex = {}
+      this.pointQualitiesIndex = {};
     }
   }
 
-  _onUserChanged(user: YpUser|null) {
-    this.fireGlobal("yp-user-changed", user);
+  _onUserChanged(user: YpUser | null) {
+    this.fireGlobal('yp-user-changed', user);
     if (user) {
       this._updateEndorsementPostsIndex(user);
       this._updatePointQualitiesIndex(user);
@@ -558,8 +627,9 @@ export class YpAppUser extends YpCodeBase {
 
   async logout() {
     this.hasIssuedLogout = true;
-    await this.serverApi.logout() as void;
-    this.toastLogoutTextCombined = this.t("user.logoutCompleteFor")+ " " + this.user?.name;
+    (await this.serverApi.logout()) as void;
+    this.toastLogoutTextCombined =
+      this.t('user.logoutCompleteFor') + ' ' + this.user?.name;
     this.fireGlobal('yp-open-toast', { text: this.toastLogoutTextCombined });
     this.fireGlobal('yp-close-right-drawer', true);
     this.removeUserSession();
@@ -567,11 +637,16 @@ export class YpAppUser extends YpCodeBase {
   }
 
   async isloggedin() {
-    const user = await this.serverApi.isloggedin() as YpUser|void;
+    const user = (await this.serverApi.isloggedin()) as YpUser | void;
 
-    if (user && user.notLoggedIn===true) {
+    if (user && user.notLoggedIn === true) {
       this.removeUserSession();
-    } else if (user && user.name && user.profile_data && user.profile_data.isAnonymousUser) {
+    } else if (
+      user &&
+      user.name &&
+      user.profile_data &&
+      user.profile_data.isAnonymousUser
+    ) {
       setTimeout(() => {
         if (window.appGlobals.currentAnonymousGroup) {
           this.setLoggedInUser(user);
@@ -584,19 +659,25 @@ export class YpAppUser extends YpCodeBase {
     }
 
     if (user && user.missingEmail) {
-      window.app.getDialogAsync("missingEmail", (dialog) => {
+      // TODO: Remove any
+      window.app.getDialogAsync('missingEmail', (dialog: any) => {
         dialog.open(user.loginProvider);
       });
-    } else if (user && user.profile_data &&
-               user.profile_data.saml_show_confirm_email_completed===false) {
-      window.app.getDialogAsync("missingEmail", (dialog) => {
+    } else if (
+      user &&
+      user.profile_data &&
+      user.profile_data.saml_show_confirm_email_completed === false
+    ) {
+      // TODO: Remove any
+      window.app.getDialogAsync('missingEmail', (dialog: any) => {
         dialog.open(user.loginProvider, true, user.email);
       });
     }
 
     if (user) {
       if (user.customSamlDeniedMessage) {
-        window.appGlobals.currentSamlDeniedMessage = user.customSamlDeniedMessage;
+        window.appGlobals.currentSamlDeniedMessage =
+          user.customSamlDeniedMessage;
       } else {
         window.appGlobals.currentSamlDeniedMessage = null;
       }
@@ -617,13 +698,16 @@ export class YpAppUser extends YpCodeBase {
     if (this.completeExternalLoginText) {
       window.appGlobals.notifyUserViaToast(this.completeExternalLoginText);
       this._closeUserLogin();
-      this.completeExternalLoginText=null;
+      this.completeExternalLoginText = null;
       this._checkLoginForParameters();
     }
   }
 
   async getAdminRights() {
-    const response = await this.serverApi.getAdminRights() as YpAdminRights|void|boolean;
+    const response = (await this.serverApi.getAdminRights()) as
+      | YpAdminRights
+      | void
+      | boolean;
 
     if (response) {
       this.adminRights = response as YpAdminRights;
@@ -643,14 +727,16 @@ export class YpAppUser extends YpCodeBase {
     if (memberships) {
       let i;
       this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
-      for(i=0; i<memberships.GroupUsers.length; i++){
-        this.membershipsIndex.groups[ memberships.GroupUsers[i].id ] = true;
+      for (i = 0; i < memberships.GroupUsers.length; i++) {
+        this.membershipsIndex.groups[memberships.GroupUsers[i].id] = true;
       }
-      for(i=0; i<memberships.CommunityUsers.length; i++){
-        this.membershipsIndex.communities[memberships.CommunityUsers[i].id] = true;
+      for (i = 0; i < memberships.CommunityUsers.length; i++) {
+        this.membershipsIndex.communities[
+          memberships.CommunityUsers[i].id
+        ] = true;
       }
-      for(i=0; i<memberships.DomainUsers.length; i++){
-        this.membershipsIndex.domains[ memberships.DomainUsers[i].id ] = true;
+      for (i = 0; i < memberships.DomainUsers.length; i++) {
+        this.membershipsIndex.domains[memberships.DomainUsers[i].id] = true;
       }
     } else {
       this.membershipsIndex = { groups: {}, communities: {}, domains: {} };
@@ -658,13 +744,16 @@ export class YpAppUser extends YpCodeBase {
   }
 
   async getMemberShips() {
-    const response = await this.serverApi.getMemberships() as YpMemberships|void|boolean;
+    const response = (await this.serverApi.getMemberships()) as
+      | YpMemberships
+      | void
+      | boolean;
     if (response) {
       this.memberships = response as YpMemberships;
       this._updateMembershipsIndex(this.memberships);
       this.fireGlobal('got-memberships', true);
     } else {
-      this.memberships=null;
+      this.memberships = null;
       this.fireGlobal('got-memberships', false);
     }
   }

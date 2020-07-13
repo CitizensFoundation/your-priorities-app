@@ -1,15 +1,21 @@
 import { LitElement } from 'lit-element';
 
 export class YpCodeBase {
-
-  language: string|null = null
+  language: string | null = null;
 
   constructor() {
-    this.addGlobalListener('yp-language-loaded', this._languageEvent);
-    if (window.appGlobals && window.appGlobals.i18nTranslation && window.appGlobals.locale) {
+    this.addGlobalListener(
+      'yp-language-loaded',
+      this._languageEvent.bind(this)
+    );
+    if (
+      window.appGlobals &&
+      window.appGlobals.i18nTranslation &&
+      window.appGlobals.locale
+    ) {
       this.language = window.appGlobals.locale;
     } else {
-      this.language = "en";
+      this.language = 'en';
     }
   }
 
@@ -19,16 +25,27 @@ export class YpCodeBase {
     window.appGlobals.locale = detail.language;
   }
 
-  fire(eventName: string, data: object|string|boolean|number|null = {}, target: LitElement|Document) {
-    const event = new CustomEvent(eventName, { detail: data, bubbles: true, composed: true });
+  fire(
+    eventName: string,
+    data: object | string | boolean | number | null = {},
+    target: LitElement | Document
+  ) {
+    const event = new CustomEvent(eventName, {
+      detail: data,
+      bubbles: true,
+      composed: true,
+    });
     target.dispatchEvent(event);
   }
 
-  fireGlobal(eventName: string, data: object|string|boolean|number|null = {}) {
+  fireGlobal(
+    eventName: string,
+    data: object | string | boolean | number | null = {}
+  ) {
     this.fire(eventName, data, document);
   }
 
-  addListener(name: string, callback: Function, target: LitElement|Document) {
+  addListener(name: string, callback: Function, target: LitElement | Document) {
     target.addEventListener(name, callback as EventListener, false);
   }
 
@@ -36,7 +53,11 @@ export class YpCodeBase {
     this.addListener(name, callback, document);
   }
 
-  removeListener(name: string, callback: Function, target: LitElement|Document) {
+  removeListener(
+    name: string,
+    callback: Function,
+    target: LitElement | Document
+  ) {
     target.removeEventListener(name, callback as EventListener);
   }
 
@@ -48,12 +69,11 @@ export class YpCodeBase {
     const key = args[0];
     if (window.appGlobals.i18nTranslation) {
       let translation = window.appGlobals.i18nTranslation.t(key);
-      if (!translation)
-        translation = key;
+      if (!translation) translation = '';
       return translation;
     } else {
-      console.warn("Translation system i18n not initialized for "+key);
-      return key;
+      console.warn('Translation system i18n not initialized for ' + key);
+      return '';
     }
   }
 }
