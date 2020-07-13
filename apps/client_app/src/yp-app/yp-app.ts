@@ -1,46 +1,22 @@
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { ypAppSwipeBehavior } from './yp-app-swipe-behavior.js';
-
 import '../ac-notifications/ac-notification-list.js';
 import './yp-app-nav-drawer.js';
 import '../yp-dialog-container/yp-dialog-container.js';
 import '../yp-user/yp-user-image.js';
 import '../yp-app-globals/yp-sw-update-toast.js';
 
-import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
-import { customElement, property, html } from 'lit-element';
+import { customElement, property, html, LitElement } from 'lit-element';
 import { ifDefined } from 'lit-html/directives/if-defined';
 
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
-
-import { format, formatDistance } from 'date-fns';
+import moment from 'moment';
 
 import { YpBaseElement} from '../@yrpri/yp-base-element.js';
 import { YpAppStyles } from './YpAppStyles.js';
 import { YpAppGlobals } from './YpAppGlobals.js'
 import { YpAppUser } from './YpAppUser.js'
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
-
-//import {
-//  ca,da,de,dev,en,en_CA,en_GB,es,fa,fr,hr,hu,is,it,kl,nl,no,pl,pt,pt_BR,ru,sl,sr,sr_latin,tr,zh_TW
-//} from 'date-fns/locale';
-
-/*import 'moment/locale/is.js';
-import 'moment/locale/nb.js';
-import 'moment/locale/nl.js';
-import 'moment/locale/hu.js';
-import 'moment/locale/zh-tw.js';
-import 'moment/locale/sr.js';
-import 'moment/locale/hr.js';
-import 'moment/locale/tr.js';
-import 'moment/locale/sl.js';
-import 'moment/locale/pt.js';
-import 'moment/locale/pl.js';
-import 'moment/locale/de.js';
-import 'moment/locale/fr.js';
-import 'moment/locale/da.js';
-*/
+import { YpNavHelpers } from './YpNavHelpers.js';
 
 declare global {
   interface Window {
@@ -133,21 +109,103 @@ export class YpApp extends YpBaseElement {
 
   communityBackOverride: Record<string, Record<string,string>>|null = null
 
+  touchXDown: number|null = null;
+  touchYDown: number|null = null;
+  touchXUp: number|null = null;
+  touchYUp: number|null = null;
+  userDrawerOpenedDelayed = false;
+  navDrawOpenedDelayed = false;
+
   constructor() {
     super();
-    setPassiveTouchGestures(true);
     window.app = this;
     window.serverApi = new YpServerApi();
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
     this._setupTranslationSystem();
-}
+  }
 
   connectedCallback() {
     super.connectedCallback()
-      console.info("yp-app is ready");
-      window.appGlobals.theme.setTheme(16, this);
-      this._setupSamlCallback();
+    console.info("yp-app is ready");
+    window.appGlobals.theme.setTheme(16, this);
+    this._setupSamlCallback();
+  }
+
+  setupTouchEvents() {
+    document.addEventListener('touchstart', this._handleTouchStart.bind(this), {passive: true});
+    document.addEventListener('touchmove', this._handleTouchMove.bind(this), {passive: true});
+    document.addEventListener('touchend', this._handleTouchEnd.bind(this), {passive: true});
+  }
+
+
+  _handleTouchStart (event: any) {
+    if (this.page==='post' && this.goForwardToPostId) {
+      const touches = event.touches || event.originalEvent.touches;
+      const firstTouch = touches[0];
+
+      if (firstTouch.clientX>32 && firstTouch.clientX<window.innerWidth-32) {
+        this.touchXDown = firstTouch.clientX;
+        this.touchYDown = firstTouch.clientY;
+        this.touchXUp = null;
+        this.touchYUp = null;
+      }
+    }
+  }
+
+  _handleTouchMove (event: any) {
+    if (this.page==='post' && this.touchXDown && this.goForwardToPostId) {
+      const touches = event.touches || event.originalEvent.touches;
+      this.touchXUp = touches[0].clientX;
+      this.touchYUp = touches[0].clientY;
+    }
+  }
+
+  _handleTouchEnd () {
+    if (this.page==='post' && this.touchXDown && this.touchYDown && this.touchYUp && this.touchXUp && this.goForwardToPostId) {
+      const xDiff = this.touchXDown-this.touchXUp;
+      const yDiff = this.touchYDown-this.touchYUp;
+      //console.error("xDiff: "+xDiff+" yDiff: "+yDiff);
+
+      if ((Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(yDiff)<120)) {
+        let factor = 3;
+
+        if (window.innerWidth>500)
+          factor = 4;
+
+        if (window.innerWidth>1023)
+          factor = 5;
+
+        if (window.innerWidth>1400)
+          factor = 6;
+
+        const minScrollFactorPx = Math.round(window.innerWidth/factor);
+
+        console.log("Recommendation swipe minScrollFactorPx: "+minScrollFactorPx);
+
+        if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
+          if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
+            window.scrollTo(0, 0);
+            window.appGlobals.activity('swipe', 'postForward');
+            this.$$("#goPostForward")?.dispatchEvent(new Event('tap'));
+
+          } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
+            if (this.showBackToPost===true) {
+              window.scrollTo(0, 0);
+              this._goToPreviousPost();
+              window.appGlobals.activity('swipe', 'postBackward');
+            }
+          }
+        } else {
+          console.log("Recommendation swipe not active with open drawers")
+        }
+
+        this.touchXDown = null;
+        this.touchXUp = null;
+        this.touchYDown = null;
+        this.touchYUp = null;
+      }
+    }
   }
 
   static get styles() {
@@ -269,12 +327,6 @@ export class YpApp extends YpBaseElement {
   }
 
 /*
-  behaviors: [
-    ypGotoBehavior,
-    ypTranslatedPagesBehavior,
-    ypAppSwipeBehavior
-  ],
-
   listeners: {
     'yp-set-pages': '_setPages',
     'yp-set-next-post': '_setNextPost',
@@ -342,7 +394,7 @@ export class YpApp extends YpBaseElement {
     window.appGlobals.activity('open', 'pages', page.id);
     this.getDialogAsync("pageDialog", function (dialog) {
       let pageLocale = 'en';
-      if (page.title[window.appGlobals.locale]) {
+      if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
         pageLocale = window.appGlobals.locale;
       }
       dialog.open(page.title[pageLocale], page.content[pageLocale]);
@@ -351,7 +403,7 @@ export class YpApp extends YpBaseElement {
 
   _getLocalizePageTitle(page: YpHelpPage) {
     let pageLocale = 'en';
-    if (page.title[window.appGlobals.locale]) {
+    if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
       pageLocale = window.appGlobals.locale;
     }
     return page.title[pageLocale];
@@ -382,7 +434,7 @@ export class YpApp extends YpBaseElement {
     }
 
     if (this.goForwardToPostId) {
-      this.goToPost(this.goForwardToPostId, null, null, null, true);
+      YpNavHelpers.goToPost(this.goForwardToPostId, null, null, null, true);
       window.appGlobals.activity('recommendations', 'goForward', this.goForwardToPostId);
       this.goForwardCount += 1;
       this.showBackToPost=true;
@@ -490,7 +542,7 @@ export class YpApp extends YpBaseElement {
       window.appGlobals.locale = defaultLocale;
       window.appGlobals.i18nTranslation = i18next;
       window.appGlobals.haveLoadedLanguages = true;
-//      moment.locale([defaultLocale, 'en']);
+      moment.locale([defaultLocale, 'en']);
       console.log("Changed language to "+defaultLocale);
       this.fireGlobal('language-loaded', { language: defaultLocale })
     });
@@ -505,11 +557,6 @@ export class YpApp extends YpBaseElement {
   _startTranslation() {
     window.appGlobals.autoTranslate = true;
     this.fireGlobal('yp-auto-translate', true);
-
-    if (this.supportedLanguages) {
-      this.fire('yp-language-name', this.supportedLanguages[this.language]);
-    }
-
     this.getDialogAsync("masterToast", (toast) => {
       toast.text = this.t('autoTranslationStarted');
       toast.show();
@@ -780,7 +827,7 @@ export class YpApp extends YpBaseElement {
     }
 
     if (page) {
-      window.appGlobals.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
+      window.appGlobals.analytics.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
     }
   }
 
@@ -828,7 +875,7 @@ export class YpApp extends YpBaseElement {
 
   _closePost() {
     if (this.keepOpenForPost)
-      this.redirectTo(this.keepOpenForPost);
+      YpNavHelpers.redirectTo(this.keepOpenForPost);
 
     if (this.storedBackPath)
       this.backPath=this.storedBackPath;
@@ -851,21 +898,21 @@ export class YpApp extends YpBaseElement {
       return false;
   }
 
-  _isGroupOpen(params, keepOpenForPost) {
+  _isGroupOpen(params: { groupId?: number; postId?: number }, keepOpenForPost = false) {
     if (params.groupId || (params.postId && keepOpenForPost))
       return true;
     else
       return false;
   }
 
-  _isCommunityOpen(params, keepOpenForPost) {
+  _isCommunityOpen(params: { communityId?: number; postId?: number }, keepOpenForPost = false) {
     if (params.communityId || (params.postId && keepOpenForPost))
       return true;
     else
       return false;
   }
 
-  _isDomainOpen(params, keepOpenForPost) {
+  _isDomainOpen(params: { domainId?: number; postId?: number }, keepOpenForPost = false) {
     if (params.domainId || (params.postId && keepOpenForPost))
       return true;
     else
@@ -877,7 +924,7 @@ export class YpApp extends YpBaseElement {
   }
 
   getDialogAsync(idName, callback) {
-    this.$$("#dialogContainer")!.getDialogAsync(idName, callback);
+    (this.$$("#dialogContainer") as YpAppDialogs).getDialogAsync(idName, callback);
   }
 
   getRatingsDialogAsync(callback) {
@@ -938,7 +985,7 @@ export class YpApp extends YpBaseElement {
     this.headerTitle=document.title = header.headerTitle;
 
     setTimeout(() => {
-      const headerTitle = this.$$("#headerTitle") as HTMLElement;
+      const headerTitle = this.$$("#headerTitle") as HTMLElement|void;
       if (headerTitle) {
         const length = headerTitle.innerHTML.length;
         if (this.wide) {
@@ -991,8 +1038,8 @@ export class YpApp extends YpBaseElement {
     }
 
     if (this.communityBackOverride && this.backPath && window.location.pathname.indexOf("/community/") > -1) {
-      const communityId =  window.location.pathname.split("/community/")[1];
-      if (communityId && !isNaN(communityId) && this.communityBackOverride[communityId]) {
+      const communityId =  window.location.pathname.split("/community/")[1] as unknown as number;
+      if (communityId && this.communityBackOverride[communityId]) {
         this.backPath=this.communityBackOverride[communityId].backPath;
         this.headerTitle=this.communityBackOverride[communityId].backName;
         this.useHardBack=false;
@@ -1005,13 +1052,13 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  goBack(event, detail) {
+  goBack() {
     if (this.backPath) {
       if (this.useHardBack) {
         document.dispatchEvent(new CustomEvent("lite-signal", {bubbles: true, composed: true, detail: { name: 'yp-pause-media-playback',data:{}}}));
         window.location.href = this.backPath;
       } else {
-        this.redirectTo(this.backPath);
+        YpNavHelpers.redirectTo(this.backPath);
       }
     }
   }
@@ -1019,8 +1066,9 @@ export class YpApp extends YpBaseElement {
   _onSearch(e: CustomEvent) {
     this.toggleSearch();
     this.previousSearches.unshift(e.detail.value);
-    const postsFilter = document.querySelector('#postsFilter');
+    const postsFilter = document.querySelector('#postsFilter') as LitElement;
     if (postsFilter) {
+      //TODO: When we have postFilter live
       postsFilter.searchFor(e.detail.value);
     }
   }

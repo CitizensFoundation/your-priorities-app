@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import * as i18next from 'i18next'
+import i18next from 'i18next';
+import moment from 'moment';
+
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from './YpNavHelpers.js';
 import { YpCodeBase } from '../@yrpri/YpCodeBase.js';
@@ -329,7 +331,7 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  activity(type: string, object: object|string, context: string|object|number, target: string|object|null = null) {
+  activity(type: string, object: object|string, context: string|object|number|null=null, target: string|object|null = null) {
     let actor;
 
     if (window.appUser && window.appUser.user) {

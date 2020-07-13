@@ -97,8 +97,8 @@ export class YpBaseElement extends LitElement {
     }
   }
 
-  $$(id: string) {
-    this.shadowRoot?.querySelector(id);
+  $$(id: string): HTMLElement|null {
+    return this.shadowRoot ? this.shadowRoot.querySelector(id) : null;
   }
 }
 
