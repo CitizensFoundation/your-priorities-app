@@ -6,10 +6,12 @@ import '../yp-app-globals/yp-sw-update-toast.js';
 
 import { customElement, property, html, LitElement } from 'lit-element';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import { cache } from 'lit-html/directives/cache.js';
 
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 import moment from 'moment';
+
 
 import { YpBaseElement} from '../@yrpri/yp-base-element.js';
 import { YpAppStyles } from './YpAppStyles.js';
@@ -17,6 +19,7 @@ import { YpAppGlobals } from './YpAppGlobals.js'
 import { YpAppUser } from './YpAppUser.js'
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from './YpNavHelpers.js';
+import { nothing } from 'lit-html';
 
 declare global {
   interface Window {
@@ -87,6 +90,15 @@ export class YpApp extends YpBaseElement {
   @property({type: String})
   notifyDialogText: string|null = null
 
+  @property({type: String})
+  route = ""
+
+  @property({type: String})
+  subRoute: string|null = null
+
+  @property({type: Object})
+  routeData: Record<string,string> = {}
+
   anchor: HTMLElement|null = null;
 
   previousSearches: Array<string> = []
@@ -113,8 +125,10 @@ export class YpApp extends YpBaseElement {
   touchYDown: number|null = null;
   touchXUp: number|null = null;
   touchYUp: number|null = null;
+
   userDrawerOpenedDelayed = false;
   navDrawOpenedDelayed = false;
+  userDrawerOpened = false;
 
   constructor() {
     super();
@@ -127,85 +141,27 @@ export class YpApp extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback()
+    this._setupEventListeners();
     console.info("yp-app is ready");
     window.appGlobals.theme.setTheme(16, this);
     this._setupSamlCallback();
   }
 
-  setupTouchEvents() {
-    document.addEventListener('touchstart', this._handleTouchStart.bind(this), {passive: true});
-    document.addEventListener('touchmove', this._handleTouchMove.bind(this), {passive: true});
-    document.addEventListener('touchend', this._handleTouchEnd.bind(this), {passive: true});
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._removeEventListeners();
   }
 
-
-  _handleTouchStart (event: any) {
-    if (this.page==='post' && this.goForwardToPostId) {
-      const touches = event.touches || event.originalEvent.touches;
-      const firstTouch = touches[0];
-
-      if (firstTouch.clientX>32 && firstTouch.clientX<window.innerWidth-32) {
-        this.touchXDown = firstTouch.clientX;
-        this.touchYDown = firstTouch.clientY;
-        this.touchXUp = null;
-        this.touchYUp = null;
-      }
-    }
+  _setupEventListeners() {
+    this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+    window.addEventListener('locationchange', this.updateLocation);
+    this._setupTouchEvents();
   }
 
-  _handleTouchMove (event: any) {
-    if (this.page==='post' && this.touchXDown && this.goForwardToPostId) {
-      const touches = event.touches || event.originalEvent.touches;
-      this.touchXUp = touches[0].clientX;
-      this.touchYUp = touches[0].clientY;
-    }
-  }
-
-  _handleTouchEnd () {
-    if (this.page==='post' && this.touchXDown && this.touchYDown && this.touchYUp && this.touchXUp && this.goForwardToPostId) {
-      const xDiff = this.touchXDown-this.touchXUp;
-      const yDiff = this.touchYDown-this.touchYUp;
-      //console.error("xDiff: "+xDiff+" yDiff: "+yDiff);
-
-      if ((Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(yDiff)<120)) {
-        let factor = 3;
-
-        if (window.innerWidth>500)
-          factor = 4;
-
-        if (window.innerWidth>1023)
-          factor = 5;
-
-        if (window.innerWidth>1400)
-          factor = 6;
-
-        const minScrollFactorPx = Math.round(window.innerWidth/factor);
-
-        console.log("Recommendation swipe minScrollFactorPx: "+minScrollFactorPx);
-
-        if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
-          if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
-            window.scrollTo(0, 0);
-            window.appGlobals.activity('swipe', 'postForward');
-            this.$$("#goPostForward")?.dispatchEvent(new Event('tap'));
-
-          } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
-            if (this.showBackToPost===true) {
-              window.scrollTo(0, 0);
-              this._goToPreviousPost();
-              window.appGlobals.activity('swipe', 'postBackward');
-            }
-          }
-        } else {
-          console.log("Recommendation swipe not active with open drawers")
-        }
-
-        this.touchXDown = null;
-        this.touchXUp = null;
-        this.touchYDown = null;
-        this.touchYUp = null;
-      }
-    }
+  _removeEventListeners() {
+    this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+    window.removeEventListener('locationchange', this.updateLocation);
+    this._removeTouchEvents();
   }
 
   static get styles() {
@@ -215,19 +171,152 @@ export class YpApp extends YpBaseElement {
     ];
   }
 
+  updateLocation() {
+    const path = window.location.pathname;
+
+    const pattern = "/:page";
+
+    const remainingPieces = path.split('/');
+    const patternPieces = pattern.split('/');
+
+    const matched = [];
+    const namedMatches: Record<string, string> = {};
+
+    const oldRouteData = {...this.routeData};
+
+    for (let i = 0; i < patternPieces.length; i++) {
+      const patternPiece = patternPieces[i];
+      if (!patternPiece && patternPiece !== '') {
+        break;
+      }
+      const pathPiece = remainingPieces.shift();
+
+      // We don't match this path.
+      if (!pathPiece && pathPiece !== '') {
+        return;
+      }
+      matched.push(pathPiece);
+
+      if (patternPiece.charAt(0) == ':') {
+        namedMatches[patternPiece.slice(1)] = pathPiece;
+      } else if (patternPiece !== pathPiece) {
+        return;
+      }
+    }
+
+
+    let tailPath = remainingPieces.join('/');
+    if (remainingPieces.length > 0) {
+      tailPath = '/' + tailPath;
+    }
+
+    this.subRoute = tailPath;
+
+    this.routeData = namedMatches;
+    this._routeChanged();
+    this._routePageChanged(oldRouteData);
+  }
+
+  renderToolbar() {
+    return html`
+      <div class="layout horizontal navContainer" ?hidden="${this.closePostHeader}">
+        <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
+      </div>
+      <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId!=null}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
+
+      ${this.closePostHeader ? html`
+        <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
+      `: html``}
+
+      ${this.goForwardToPostId ? html`
+        <div class="layout horizontal">
+          <paper-icon-button aria-label="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" .icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
+          <div id="forwardPostName" class="forwardPostName">
+            ${this.goForwardPostName}
+          </div>
+        </div>
+      `: html``}
+
+      <span class="flex"></span>
+
+      <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
+        <mwc-button raised id="translationButton"
+                    @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
+          <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
+        </mwc-button>
+      </div>
+      <paper-icon-button .ariaLabel="${this.t('openMainMenu')}" id="paperToggleNavMenu" .icon="menu" @tap="${this._toggleNavDrawer}"></paper-icon-button>
+      <paper-menu-button horizontal-align="right" hide="${this.hideHelpIcon}" class="helpButton">
+        <paper-icon-button .ariaLabel="${this.t('menu.help')}" icon="help-outline" .slot="dropdown-trigger"></paper-icon-button>
+
+        <paper-listbox .slot="dropdown-content">
+
+        ${ this.translatedPages.map((page: YpHelpPage) => html`
+          <paper-item data-args="${page.id}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(page)}</paper-item>
+        `)}
+
+        </paper-listbox>
+      </paper-menu-button>
+
+      ${ this.user ? html`
+        <div class="userImageNotificationContainer layout horizontal" @tap="${this._toggleUserDrawer}">
+          <yp-user-image id="userImage" small .user="${this.user}"></yp-user-image>
+          <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
+        </div>
+      ` : html`
+        <mwc-button class="loginButton" @click="${this._login}" .label="${this.t('user.login')}"></mwc-button>
+      `}
+    `;
+  }
+
+  renderPage() {
+    let pageHtml;
+    if (this.page) {
+      switch (this.page) {
+        case 'domain':
+          pageHtml = cache(html`
+            <yp-domain id="domainPage" .idRoute="${this.subRoute}"></yp-domain>
+          `);
+          break;
+        case 'community':
+          pageHtml = cache(html`
+            <yp-community id="communityPage" .idRoute="${this.subRoute}"></yp-community>
+          `);
+          break;
+        case 'community_folder':
+          pageHtml = cache(html`
+            <yp-community-folder id="communityFolderPage" .idRoute="${this.subRoute}"></yp-community-folder>
+          `);
+          break;
+        case 'group':
+          pageHtml = cache(html`
+            <yp-group id="groupPage" .idRoute="${this.subRoute}"></yp-group>
+          `);
+          break;
+        case 'post':
+          pageHtml = cache(html`
+            <yp-post id="postPage" .idRoute="${this.subRoute}"></yp-post>
+          `);
+          break;
+        default:
+          pageHtml = cache(html`
+            <yp-view-404 name="view-404"></yp-view-404>
+          `);
+          break;
+          }
+    } else {
+      pageHtml = nothing;
+    }
+
+    return pageHtml;
+  }
 
   render() {
     return html`
-    ${this.app ? html`
-    <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
-    <yp-app-globals id="appGlobals" setup-defaults @change-header="${this.onChangeHeader}"></yp-app-globals>
-
-    <app-drawer-layout .drawerWidth="360px" .responsiveWidth="16000px" fullbleed>
-
-      <app-drawer id="drawer" slot="drawer" .align="end" .position="right" .opened="${this.userDrawerOpened}" swipe-open>
+      <app-drawer id="drawer" slot="drawer" .align="end" .position="right" ?opened="${this.userDrawerOpened}" swipe-open>
         <div style="height: 100%; overflow-x: hidden; max-width: 255px !important; width: 255px;">
-          <ac-notification-list id="acNotificationsList" .user="${this.user}" .opened="${this.userDrawerOpened}" .route="${this.route}"></ac-notification-list>
+          <ac-notification-list id="acNotificationsList" .user="${this.user}" ?opened="${this.userDrawerOpened}" .route="${this.route}"></ac-notification-list>
         </div>
       </app-drawer>
 
@@ -237,93 +326,18 @@ export class YpApp extends YpBaseElement {
         </div>
       </app-drawer>
 
-      <app-header-layout id="mainArea" fullbleed>
-
-        <app-header slot="header" id="appHeader" effects="waterfall" reveals="" class="main-header">
-          <app-toolbar>
-            <div class="layout horizontal navContainer" ?hidden="${this.closePostHeader}">
-              <paper-icon-button .ariaLabel="${this.t('goBack')}" title="${this.t('goBack')}" icon="arrow-upward" @tap="${this.goBack}" class="masterActionIcon" ?hidden="${!this.showBack}"></paper-icon-button>
-            </div>
-            <div .hide="${this.closePostHeader}" ?hidden="${this.goForwardToPostId!=null}" id="headerTitle" title="" class="layout vertical navContainer">${this.headerTitle}</div>
-
-            ${this.closePostHeader ? html`
-              <paper-icon-button ariaLabel="${this.t('close')}" id="closePostButton" class="masterActionIcon" .icon="arrow-back" @tap="${this._closePost}"></paper-icon-button>
-            `: html``}
-
-            ${this.goForwardToPostId ? html`
-              <div class="layout horizontal">
-                <paper-icon-button .ariaLabel="${this.t('forwardToPost')}" title="${this.t('forwardToPost')}" id="goPostForward" class="masterActionIcon" .icon="fast-forward" @tap="${this._goToNextPost}"></paper-icon-button>
-                <div id="forwardPostName" class="forwardPostName">
-                  ${this.goForwardPostName}
-                </div>
-              </div>
-            `: html``}
-
-            <span class="flex"></span>
-            <div ?hidden="${!this.autoTranslate}" class="layout horizontal">
-              <mwc-button raised id="translationButton"
-                          @click="${this._stopTranslation}" icon="translate" .label="${this.t('stopAutoTranslate')}">
-                <iron-icon class="stopIcon" icon="do-not-disturb"></iron-icon>
-              </mwc-button>
-            </div>
-            <paper-icon-button .ariaLabel="${this.t('openMainMenu')}" id="paperToggleNavMenu" .icon="menu" @tap="${this._toggleNavDrawer}"></paper-icon-button>
-            <paper-menu-button horizontal-align="right" hide="${this.hideHelpIcon}" class="helpButton">
-              <paper-icon-button .ariaLabel="${this.t('menu.help')}" icon="help-outline" .slot="dropdown-trigger"></paper-icon-button>
-
-              <paper-listbox .slot="dropdown-content">
-
-              ${ this.translatedPages.map(page => html`
-                <paper-item data-args="${this.index}" @tap="${this._openPageFromMenu}">${this._getLocalizePageTitle(this.page)}</paper-item>
-              `)}
-
-              </paper-listbox>
-            </paper-menu-button>
-
-            ${ this.user ? html`
-              <div class="userImageNotificationContainer layout horizontal" @tap="${this._toggleUserDrawer}">
-                <yp-user-image id="userImage" .small="" .user="${this.user}"></yp-user-image>
-                <paper-badge id="notificationBadge" class="activeBadge" .label="${this.numberOfUnViewedNotifications}" ?hidden="${!this.numberOfUnViewedNotifications}"></paper-badge>
-              </div>
-            ` : html`
-              <mwc-button class="loginButton" @click="${this._login}" .label="${this.t('user.login')}"></mwc-button>
-            `}
-
-          </app-toolbar>
-        </app-header>
-
-        <iron-pages selected="${ifDefined(this.page===null ? undefined : this.page)}" style="height:auto;" attrForSelected="name" fullbleed="">
-          <yp-domain id="domainPage" name="domain" id-route="${this.domainSubRoute}" @change-header="${this.onChangeHeader}"></yp-domain>
-          <yp-community id="communityPage" name="community" id-route="${this.communitySubRoute}" @change-header="${this.onChangeHeader}"></yp-community>
-          <yp-community-folder id="communityFolderPage" name="community_folder" id-route="${this.communityFolderSubRoute}" @change-header="${this.onChangeHeader}"></yp-community-folder>
-          <yp-group id="groupPage" name="group" id-route="${this.groupSubRoute}" @change-header="${this.onChangeHeader}"></yp-group>
-          <yp-post id="postPage" name="post" id-route="${this.postSubRoute}" @change-header="${this.onChangeHeader}"></yp-post>
-          <yp-user id="userPage" name="user" id-route="${this.userSubRoute}" @change-header="${this.onChangeHeader}"></yp-user>
-          <yp-view-404 name="view-404"></yp-view-404>
-        </iron-pages>
-
-      </app-header-layout>
-    </app-drawer-layout>
-
-    <lite-signal @lite-signal-yp-auto-translate="${this._autoTranslateEvent}"></lite-signal>
-
-    <app-location .route="${this.route}"></app-location>
-
-    <app-route .route="${this.route}" .pattern="/:page" data="${this.routeData}" tail="${this.subRoute}"></app-route>
+     ${this.renderPage()}
 
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
-    <yp-app-user id="appUser" @user-changed="${this.onUserChanged}"></yp-app-user>
+
     <yp-sw-update-toast .buttonLabel="${this.t('reload')}" .message="${this.t('newVersionAvailable')}"></yp-sw-update-toast>
 
     <paper-dialog id="dialog">
       <div class="dialogText">${this.notifyDialogText}</div>
       <div class="buttons">
-        <mwc-button dialog-confirm autofocus @tap="${this._resetNotifyDialogText}" .label="OK"></mwc-button>
+        <mwc-button dialog-confirm autofocus @click="${this._resetNotifyDialogText}" label="OK"></mwc-button>
       </div>
-    </paper-dialog>
-
-
-` : html``}
-`
+    </paper-dialog>`;
   }
 
 /*
@@ -345,6 +359,8 @@ export class YpApp extends YpBaseElement {
     'yp-open-login': '_login',
     'yp-reset-keep-open-for-page': '_resetKeepOpenForPage',
     'yp-add-back-community-override': '_addBackCommunityOverride'
+    change-header="${this.onChangeHeader}
+    @user-changed="${this.onUserChanged}"
   },
 */
 
@@ -620,44 +636,39 @@ export class YpApp extends YpBaseElement {
 
   _redirectTo(event: CustomEvent) {
     if (event.detail.path) {
-      this.route.path=event.detail.path;
+      YpNavHelpers.redirectTo(event.detail.path)
     }
   }
 
-  _routeChanged(route) {
+  _routeChanged() {
+    const route = this.route;
     // Support older pre version 6.1 links
     if (window.location.href.indexOf("/#!/") > -1) {
       window.location.href = window.location.href.replace("/#!/", "/");
     }
 
     setTimeout(() => {
-      if (route.path.indexOf('domain') > -1) {
-        this.domainSubRoute=this.subRoute;
+      if (route.indexOf('domain') > -1) {
         if (this.$$("#domainPage") && typeof this.$$("#domainPage").refresh !== "undefined") {
           this.$$("#domainPage").refresh();
         }
-      } else if (route.path.indexOf('community_folder') > -1) {
-        this.communityFolderSubRoute=this.subRoute;
+      } else if (route.indexOf('community_folder') > -1) {
         if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").refresh !== "undefined") {
           this.$$("#communityFolderPage").refresh();
         }
-      } else if (route.path.indexOf('community') > -1) {
-        this.communitySubRoute=this.subRoute;
+      } else if (route.indexOf('community') > -1) {
         if (this.$$("#communityPage") && typeof this.$$("#communityPage").refresh !== "undefined") {
           this.$$("#communityPage").refresh();
         }
-      } else if (route.path.indexOf('group') > -1) {
-        this.groupSubRoute=this.subRoute;
+      } else if (route.indexOf('group') > -1) {
         if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
           this.$$("#groupPage").refresh();
         }
-      } else if (route.path.indexOf('post') > -1) {
-        this.postSubRoute=this.subRoute;
+      } else if (route.indexOf('post') > -1) {
         if (this.$$("#postPage") && typeof this.$$("#postPage").refresh !== "undefined") {
           this.$$("#postPage").refresh();
         }
-      } else if (route.path.indexOf('user') > -1) {
-        this.userSubRoute=this.subRoute;
+      } else if (route.indexOf('user') > -1) {
         if (this.$$("#userPage") && typeof this.$$("#userPage").refresh !== "undefined") {
           this.$$("#userPage").refresh();
         }
@@ -665,22 +676,22 @@ export class YpApp extends YpBaseElement {
     });
   }
 
-  _routePageChanged(pageData, oldPageData) {
-    if (pageData) {
-      const params = this.route.path.split('/');
+  _routePageChanged(oldRouteData: Record<string,string>) {
+    if (this.routeData && this.route) {
+      const params = this.route.split('/');
 
-      if (this.route.path.indexOf('/user/reset_password') > -1 ||
-        this.route.path.indexOf('/user/open_notification_settings') > -1 ||
-        this.route.path.indexOf('/user/accept/invite') > -1 ||
-        this.route.path.indexOf('/user/info_page') > -1) {
+      if (this.route.indexOf('/user/reset_password') > -1 ||
+        this.route.indexOf('/user/open_notification_settings') > -1 ||
+        this.route.indexOf('/user/accept/invite') > -1 ||
+        this.route.indexOf('/user/info_page') > -1) {
 
-        if (this.route.path.indexOf('/user/reset_password') > -1) {
+        if (this.route.indexOf('/user/reset_password') > -1) {
           this.openResetPasswordDialog(params[params.length-1]);
-        } else if (pageData && pageData.page==="user" && this.route.path.indexOf('/user/accept/invite') > -1) {
+        } else if (this.routeData && this.routeData.page==="user" && this.route.indexOf('/user/accept/invite') > -1) {
           this.openAcceptInvitationDialog(params[params.length-1]);
-        } else if (this.route.path.indexOf('/user/open_notification_settings') > -1) {
+        } else if (this.route.indexOf('/user/open_notification_settings') > -1) {
           this.openUserNotificationsDialog();
-        } else if (this.route.path.indexOf('/user/info_page') > -1) {
+        } else if (this.route.indexOf('/user/info_page') > -1) {
           this.openUserInfoPage(params[params.length-1]);
           window.history.pushState({}, "", "/");
           window.dispatchEvent(new CustomEvent('location-changed'));
@@ -689,9 +700,9 @@ export class YpApp extends YpBaseElement {
 
         const map: Record<string,number> = this._scrollPositionMap;
 
-        if (oldPageData != null && oldPageData.page != null) {
-          map[oldPageData.page] = window.pageYOffset;
-          console.info("Saving scroll position for "+oldPageData.page+" to "+window.pageYOffset);
+        if (oldRouteData && oldRouteData.page != null) {
+          map[oldRouteData.page] = window.pageYOffset;
+          console.info("Saving scroll position for "+oldRouteData.page+" to "+window.pageYOffset);
         }
 
         let delayUntilScrollToPost = 0;
@@ -703,9 +714,9 @@ export class YpApp extends YpBaseElement {
         setTimeout(() => {
           let skipMasterScroll = false;
 
-          if (oldPageData && oldPageData.page && pageData) {
+          if (oldRouteData && oldRouteData.page && this.routeData) {
             // Post -> Group
-            if (oldPageData.page==="post" && pageData.page==="group") {
+            if (oldRouteData.page==="post" && this.routeData.page==="group") {
               if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
                 this.$$("#groupPage")?.goToPostOrNewsItem();
                 skipMasterScroll = true;
@@ -722,7 +733,7 @@ export class YpApp extends YpBaseElement {
             }
 
             // Group -> Community
-            else if ((oldPageData.page==="group" || oldPageData.page==="post") && pageData.page==="community") {
+            else if ((oldRouteData.page==="group" || oldRouteData.page==="post") && this.routeData.page==="community") {
               if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
                 this.$$("#communityPage")?.scrollToGroupItem();
                 skipMasterScroll = true;
@@ -739,7 +750,8 @@ export class YpApp extends YpBaseElement {
             }
 
             // Community/CommunityFolder -> Domain
-            else if ((oldPageData.page==="community_folder" || oldPageData.page==="community" || oldPageData.page==="post") && pageData.page==="domain") {
+            else if ((oldRouteData.page==="community_folder" || oldRouteData.page==="community" || oldRouteData.page==="post")
+                  && this.routeData.page==="domain") {
               if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToCommunityItem !== "undefined") {
                 this.$$("#domainPage").scrollToCommunityItem();
                 skipMasterScroll = true;
@@ -756,8 +768,8 @@ export class YpApp extends YpBaseElement {
             }
 
             // Community/CommunityFolder  -> Community
-            else if ((oldPageData.page==="community" || oldPageData.page==="community_folder") &&
-                 pageData.page==="community_folder") {
+            else if ((oldRouteData.page==="community" || oldRouteData.page==="community_folder") &&
+              this.routeData.page==="community_folder") {
               if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
                 this.$$("#communityFolderPage").scrollToGroupItem();
                 skipMasterScroll = true;
@@ -774,27 +786,27 @@ export class YpApp extends YpBaseElement {
             }
           }
 
-          if(pageData.page!=='post') {
+          if(this.routeData.page!=='post') {
             this._clearNextPost();
           }
 
-          if (oldPageData && pageData && oldPageData.page===pageData.page) {
-            let testRoute = this.subRoute.path;
+          if (oldRouteData && this.subRoute && this.routeData && oldRouteData.page===this.routeData.page) {
+            let testRoute = this.subRoute;
             testRoute = testRoute.replace("/","");
-            if (isNaN(testRoute)) {
+            if (isNaN(parseInt(testRoute))) {
               skipMasterScroll = true;
             }
           }
 
-          if (map[pageData.page] != null && pageData.page!=='post' &&
-             !(oldPageData && oldPageData.page==="community" && pageData.page==="group")) {
+          if (map[this.routeData.page] != null && this.routeData.page!=='post' &&
+             !(oldRouteData && oldRouteData.page==="community" && this.routeData.page==="group")) {
             if (!skipMasterScroll) {
-              window.scrollTo(0, map[pageData.page]);
-              console.info("Main window scroll " + pageData.page + " to " + map[pageData.page]);
+              window.scrollTo(0, map[this.routeData.page]);
+              console.info("Main window scroll " + this.routeData.page + " to " + map[this.routeData.page]);
             } else {
-              console.info("Skipping master scroller for " + pageData.page);
+              console.info("Skipping master scroller for " + this.routeData.page);
             }
-          } else if (this.isAttached && !skipMasterScroll) {
+          } else if (!skipMasterScroll) {
             console.info("AppLayout scroll to top");
             setTimeout(() => {
               window.scrollTo(0, 0);
@@ -802,8 +814,9 @@ export class YpApp extends YpBaseElement {
           }
         }, delayUntilScrollToPost);
 
-        if (pageData) {
-          this.page = pageData.page;
+        if (this.routeData) {
+          this.page = this.routeData.page;
+          this._pageChanged()
         } else {
           console.error("No page data, current page: "+this.page);
         }
@@ -811,9 +824,12 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _pageChanged(page, oldPage) {
+  _pageChanged() {
+    const page = this.page;
     console.log("Page changed to "+page);
-    if (page) {
+
+    //TODO: Get bundling working
+    /*if (page) {
       let resolvedPageUrl;
       if (page=="view-404") {
         resolvedPageUrl = this.resolveUrl("yp-view-404.html");
@@ -824,7 +840,7 @@ export class YpApp extends YpBaseElement {
       }
       console.log("Trying to load "+resolvedPageUrl);
       import(resolvedPageUrl).then(null, this._showPage404.bind(this));
-    }
+    }*/
 
     if (page) {
       window.appGlobals.analytics.sendToAnalyticsTrackers('send', 'pageview', location.pathname);
@@ -1083,6 +1099,87 @@ export class YpApp extends YpBaseElement {
 
   toggleSearch() {
     this.$$("#search")?.toggle();
+  }
+
+  _setupTouchEvents() {
+    document.addEventListener('touchstart', this._handleTouchStart.bind(this), {passive: true});
+    document.addEventListener('touchmove', this._handleTouchMove.bind(this), {passive: true});
+    document.addEventListener('touchend', this._handleTouchEnd.bind(this), {passive: true});
+  }
+
+  _removeTouchEvents() {
+    document.removeEventListener('touchstart', this._handleTouchStart.bind(this));
+    document.removeEventListener('touchmove', this._handleTouchMove.bind(this));
+    document.removeEventListener('touchend', this._handleTouchEnd.bind(this));
+  }
+
+  _handleTouchStart (event: any) {
+    if (this.page==='post' && this.goForwardToPostId) {
+      const touches = event.touches || event.originalEvent.touches;
+      const firstTouch = touches[0];
+
+      if (firstTouch.clientX>32 && firstTouch.clientX<window.innerWidth-32) {
+        this.touchXDown = firstTouch.clientX;
+        this.touchYDown = firstTouch.clientY;
+        this.touchXUp = null;
+        this.touchYUp = null;
+      }
+    }
+  }
+
+  _handleTouchMove (event: any) {
+    if (this.page==='post' && this.touchXDown && this.goForwardToPostId) {
+      const touches = event.touches || event.originalEvent.touches;
+      this.touchXUp = touches[0].clientX;
+      this.touchYUp = touches[0].clientY;
+    }
+  }
+
+  _handleTouchEnd () {
+    if (this.page==='post' && this.touchXDown && this.touchYDown && this.touchYUp && this.touchXUp && this.goForwardToPostId) {
+      const xDiff = this.touchXDown-this.touchXUp;
+      const yDiff = this.touchYDown-this.touchYUp;
+      //console.error("xDiff: "+xDiff+" yDiff: "+yDiff);
+
+      if ((Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(yDiff)<120)) {
+        let factor = 3;
+
+        if (window.innerWidth>500)
+          factor = 4;
+
+        if (window.innerWidth>1023)
+          factor = 5;
+
+        if (window.innerWidth>1400)
+          factor = 6;
+
+        const minScrollFactorPx = Math.round(window.innerWidth/factor);
+
+        console.log("Recommendation swipe minScrollFactorPx: "+minScrollFactorPx);
+
+        if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
+          if ( xDiff > 0 && xDiff > minScrollFactorPx ) {
+            window.scrollTo(0, 0);
+            window.appGlobals.activity('swipe', 'postForward');
+            this.$$("#goPostForward")?.dispatchEvent(new Event('tap'));
+
+          } else if (xDiff < 0 && xDiff < (-Math.abs(minScrollFactorPx))) {
+            if (this.showBackToPost===true) {
+              window.scrollTo(0, 0);
+              this._goToPreviousPost();
+              window.appGlobals.activity('swipe', 'postBackward');
+            }
+          }
+        } else {
+          console.log("Recommendation swipe not active with open drawers")
+        }
+
+        this.touchXDown = null;
+        this.touchXUp = null;
+        this.touchYDown = null;
+        this.touchYUp = null;
+      }
+    }
   }
 }
 

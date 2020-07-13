@@ -2,9 +2,9 @@ import { YpCodeBase } from '../@yrpri/YpCodeBase.js'
 
 export class YpCache extends YpCodeBase {
 
-  cachedActivityItem: Record<number,YpActivity> = {}
+  cachedActivityItem: YpActivity|null = null
 
-  cachedPostItem: Record<number,YpPost> = {}
+  cachedPostItem: YpPost|null = null
 
   backToDomainCommunityItems: Record<number,YpCommunity> = {}
 

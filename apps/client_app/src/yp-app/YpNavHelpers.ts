@@ -26,18 +26,18 @@ export class YpNavHelpers {
 
     if (cachedActivityItem) {
       console.info("Saving cached scroll to item "+cachedActivityItem.id);
-      window.appGlobals.cachedActivityItem = cachedActivityItem;
+      window.appGlobals.cache.cachedActivityItem = cachedActivityItem;
     }
 
     if (cachedPostItem && cachedPostItem.Group && cachedPostItem.Group.Community) {
       console.info("Saving cached scroll to post "+cachedPostItem.id);
-      window.appGlobals.cachedPostItem = cachedPostItem;
+      window.appGlobals.cache.cachedPostItem = cachedPostItem;
     }
 
     if (windowLocation.indexOf(postUrl) == -1) {
       window.appGlobals.activity('open', 'post', postUrl, { id: postId, modelType: 'post' });
       if (skipKeepOpen!==true)
-        window.appGlobals.setKeepOpenForPostsOn(window.location.pathname);
+        window.app.setKeepOpenForPostsOn(window.location.pathname);
       setTimeout(() => {
         this.redirectTo(postUrl);
       });

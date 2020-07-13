@@ -108,6 +108,7 @@ interface YpGroup extends YpCollection {
   id: number;
   name: string;
   configuration: YpGroupConfiguration;
+  Community?: YpCommunity;
 }
 
 interface YpImage {
