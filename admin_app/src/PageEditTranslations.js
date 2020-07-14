@@ -327,7 +327,7 @@ export class PageEditTranslations extends YpBaseElement {
     return html`
       <div class="layout horizontal shadow-animation shadow-elevation-3dp item">
         <div class="textType">
-          ${ this.t(item.textType) }
+          ${ this.t(item.textType) } <br\> id: ${ item.contentId }
         </div>
         <div class="originalText dont-break-out">
           ${ item.originalText }
