@@ -905,6 +905,13 @@
           if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
             this.set('selectedTab','map');
           }
+
+          if (this.group.Community && this.group.Community.configuration &&
+              this.group.Community.configuration.highlightedLanguages) {
+            window.appGlobals.setHighlightedLanguages(this.group.Community.configuration.highlightedLanguages);
+          } else {
+            window.appGlobals.setHighlightedLanguages(null);
+          }
         }
       },
 

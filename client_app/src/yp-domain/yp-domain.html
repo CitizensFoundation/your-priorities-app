@@ -376,6 +376,7 @@
 
           this.$.pagesAjax.url = "/api/domains/"+this.domain.id+"/pages";
           this.$.pagesAjax.generateRequest();
+          window.appGlobals.setHighlightedLanguages(null);
         }
         window.appGlobals.setAnonymousGroupStatus(null);
         window.appGlobals.disableFacebookLoginForGroup = false;
