@@ -104,6 +104,7 @@ export class PageEditTranslations extends YpBaseElement {
 
         .contentId {
           color: #999;
+          margin-top: 4px;
         }
     `];
   }
@@ -330,8 +331,8 @@ export class PageEditTranslations extends YpBaseElement {
   renderItem(item) {
     return html`
       <div class="layout horizontal shadow-animation shadow-elevation-3dp item">
-        <div class="textType">
-          ${ this.t(item.textType) } <br> <span class="contentId">id: ${ item.contentId }</span>
+        <div class="textType layout vertical">
+          <div>${ this.t(item.textType) }</div> <div class="contentId">id: ${ item.contentId }</div>
         </div>
         <div class="originalText dont-break-out">
           ${ item.originalText }
