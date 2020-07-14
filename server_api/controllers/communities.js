@@ -27,6 +27,8 @@ const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/s
 const getCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getCommunityIncludes;
 const getPointCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointCommunityIncludes;
 const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
+const getTranslatedTextsForCommunity = require('../active-citizen/utils/translation_helpers').getTranslatedTextsForCommunity;
+const updateTranslation = require('../active-citizen/utils/translation_helpers').updateTranslation;
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -660,6 +662,8 @@ var updateCommunityConfigParameters = function (req, community) {
   community.set('configuration.themeOverrideColorAccent', (req.body.themeOverrideColorAccent && req.body.themeOverrideColorAccent!="") ? req.body.themeOverrideColorAccent : null);
   community.set('configuration.themeOverrideBackgroundColor', (req.body.themeOverrideBackgroundColor && req.body.themeOverrideBackgroundColor!="") ? req.body.themeOverrideBackgroundColor : null);
   community.set('configuration.sortBySortOrder', truthValueFromBody(req.body.sortBySortOrder));
+
+  community.set('configuration.highlightedLanguages', (req.body.highlightedLanguages && req.body.highlightedLanguages!="") ? req.body.highlightedLanguages : null);
 };
 
 router.get('/:communityFolderId/communityFolders', auth.can('view community'), function(req, res) {
@@ -1752,6 +1756,28 @@ router.get('/:id/stats_votes', auth.can('edit community'), function(req, res) {
     }
   }, getCommunityIncludes(req.params.id), (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error,results);
+  });
+});
+
+router.get('/:id/get_translation_texts', auth.can('edit community'), function(req, res) {
+  getTranslatedTextsForCommunity(req.query.targetLocale, req.params.id,(results, error) => {
+    if (error) {
+      log.error("Error in getting translated texts", { error });
+      res.sendStatus(500);
+    } else {
+     res.send(results);
+    }
+  });
+});
+
+router.put('/:id/update_translation', auth.can('edit community'), function(req, res) {
+  updateTranslation(req.params.id, req.body,(results, error) => {
+    if (error) {
+      log.error("Error in updating translation", { error });
+      res.sendStatus(500);
+    } else {
+      res.send(results);
+    }
   });
 });
 
