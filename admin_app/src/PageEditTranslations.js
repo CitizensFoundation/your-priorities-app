@@ -101,6 +101,10 @@ export class PageEditTranslations extends YpBaseElement {
         mwc-select {
           margin-bottom: 32px;
         }
+
+        .contentId {
+          color: #999;
+        }
     `];
   }
 
@@ -327,7 +331,7 @@ export class PageEditTranslations extends YpBaseElement {
     return html`
       <div class="layout horizontal shadow-animation shadow-elevation-3dp item">
         <div class="textType">
-          ${ this.t(item.textType) } <br\> id: ${ item.contentId }
+          ${ this.t(item.textType) } <br> <span class="contentId">id: ${ item.contentId }</span>
         </div>
         <div class="originalText dont-break-out">
           ${ item.originalText }
