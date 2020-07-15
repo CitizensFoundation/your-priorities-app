@@ -368,6 +368,8 @@ class YpDomainLit extends YpBaseElement {
     window.appGlobals.currentSamlDeniedMessage = null;
     window.appGlobals.currentSamlLoginMessage = null;
     window.appGlobals.currentGroup = null;
+
+    window.appGlobals.setHighlightedLanguages(null);
   }
 }
 

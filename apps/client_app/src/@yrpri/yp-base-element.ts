@@ -122,7 +122,6 @@ export class YpBaseElement extends LitElement {
       if (!translation) translation = '';
       return translation;
     } else {
-      console.warn('Translation system i18n not initialized for ' + key);
       return '';
     }
   }

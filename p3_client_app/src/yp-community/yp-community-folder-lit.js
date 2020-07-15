@@ -310,6 +310,12 @@ behaviors: [
       } else {
         window.appGlobals.signupTermsPageId = null;
       }
+
+      if (this.communityFolder.configuration.highlightedLanguages) {
+        window.appGlobals.setHighlightedLanguages(this.communityFolder.configuration.highlightedLanguages);
+      } else {
+        window.appGlobals.setHighlightedLanguages(null);
+      }
     }
   }
 }

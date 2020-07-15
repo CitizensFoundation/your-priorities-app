@@ -497,6 +497,12 @@ class YpCommunityLit extends YpBaseElement {
       } else {
         window.appGlobals.signupTermsPageId = null;
       }
+
+      if (this.community.configuration.highlightedLanguages) {
+        window.appGlobals.setHighlightedLanguages(this.community.configuration.highlightedLanguages);
+      } else {
+        window.appGlobals.setHighlightedLanguages(null);
+      }
     }
   }
 

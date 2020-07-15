@@ -221,6 +221,14 @@ Polymer({
       <paper-input id="customBackName" name="customBackName" type="text" maxlength="20" label="[[t('customBackName')]]" value="{{community.configuration.customBackName}}">
       </paper-input>
 
+      <paper-input id="highlightedLanguages"
+                   name="highlightedLanguages"
+                   type="text"
+                   maxlength="200"
+                   label="[[t('highlightedLanguages')]]"
+                   value="{{community.configuration.highlightedLanguages}}">
+      </paper-input>
+
       <paper-input id="redirectToGroupId" name="redirectToGroupId" type="text" label="[[t('redirectToGroupId')]]" value="{{community.configuration.redirectToGroupId}}" maxlength="11">
       </paper-input>
 

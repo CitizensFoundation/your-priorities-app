@@ -15,10 +15,13 @@ import HttpApi from 'i18next-http-backend';
 //import moment from 'moment';
 
 import { Dialog } from '@material/mwc-dialog';
+import '@material/mwc-dialog';
 
 import { Snackbar } from '@material/mwc-snackbar';
+import '@material/mwc-snackbar';
 
 import { Drawer } from '@material/mwc-drawer';
+import '@material/mwc-drawer';
 
 import '@material/mwc-button';
 
@@ -37,6 +40,7 @@ import { YpAppUser } from './YpAppUser.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from './YpNavHelpers.js';
 import { nothing } from 'lit-html';
+import { Menu } from '@material/mwc-menu';
 
 declare global {
   interface Window {
@@ -71,7 +75,7 @@ export class YpApp extends YpBaseElement {
   forwardToPostId: string | null = null;
 
   @property({ type: String })
-  headerTitle: string | null = null;
+  headerTitle: string | null = "Betri Reykjavík";
 
   @property({ type: String })
   numberOfUnViewedNotifications: string | null = null;
@@ -161,6 +165,7 @@ export class YpApp extends YpBaseElement {
     console.info('yp-app is ready');
     window.appGlobals.theme.setTheme(16, this);
     this._setupSamlCallback();
+    this.updateLocation();
   }
 
   disconnectedCallback() {
@@ -170,6 +175,20 @@ export class YpApp extends YpBaseElement {
 
   _netWorkError(event: CustomEvent) {
     const detail = event.detail;
+    let errorText =  this.t('errorCantConnect')  ? this.t('errorCantConnect') : "Can't connect to server, try again later";
+    let statusCode = -1;
+    if (detail.response && detail.response.statusCode === 404)
+      errorText = this.t('errorNotAuthorized');
+    else if  (detail.response && detail.response.statusCode === 401)
+      errorText = this.t('errorNotAuthorized');
+
+    if (detail.response && detail.response.statusCode)
+      statusCode = detail.response.statusCode;
+
+    this.notifyDialogText = errorText;
+    (this.$$('#dialog') as Dialog).open = true;
+
+    console.error(`Can't connect to server. ${statusCode} ${detail.jsonError}`)
   }
 
   _setupEventListeners() {
@@ -313,10 +332,19 @@ export class YpApp extends YpBaseElement {
         @click="${this._closePost}"
       ></mwc-icon-button>`;
     else
-      icons = html`<mwc-icon-button
+      icons = html`
+      <mwc-icon-button
         icon="menu"
-        title="${this.t('goBack')}"
-      ></mwc-icon-button>`;
+        title="${this.t('openMainMenu')}"
+        slot="actionItems"
+        @click="${this._toggleNavDrawer}">
+      </mwc-icon-button>
+
+      <mwc-icon-button
+        icon="arrow_upward"
+        hidden
+        title="${this.t('goBack')}">
+      </mwc-icon-button>`;
 
     return html`${icons}
     ${this.goForwardToPostId
@@ -331,6 +359,10 @@ export class YpApp extends YpBaseElement {
       : nothing}`;
   }
 
+  _openHelpMenu() {
+    (this.$$("helpMenu") as Menu).open = true;
+  }
+
   renderActionItems() {
     return html`
       <mwc-icon-button
@@ -339,63 +371,58 @@ export class YpApp extends YpBaseElement {
         ?hidden="${!this.autoTranslate}"
         @click="${this._stopTranslation}"
         icon="translate"
-        .label="${this.t('stopAutoTranslate')}"
-      >
+        .label="${this.t('stopAutoTranslate')}">
       </mwc-icon-button>
 
-      <div style="position: relative;" ?hidden="${this.hideHelpIcon}">
+      <div style="position: relative;" ?hidden="${this.hideHelpIcon}" slot="actionItems">
         <mwc-icon-button
-          id="button"
-          title="${this.t('menu.help')}"
-          label="Open Menu"
-        ></mwc-icon-button>
-        <mwc-menu id="menu">
+          id="helpIconButton"
+          icon="help_outline"
+          @click="${this._openHelpMenu}"
+          title="${this.t('menu.help')}">
+        </mwc-icon-button>
+        <mwc-menu id="helpMenu">
+          <mwc-list-item>Item 0</mwc-list-item>
+          <mwc-list-item>Item 1</mwc-list-item>
           ${this.translatedPages(this.pages).map(
             (page: YpHelpPage, index) => html`
               <mwc-list-item
                 data-args="${index}"
-                @click="${this._openPageFromMenu}"
-                >${this._getLocalizePageTitle(page)}</mwc-list-item
-              >
+                @click="${this._openPageFromMenu}">
+                ${this._getLocalizePageTitle(page)}
+              </mwc-list-item>
             `
           )}
         </mwc-menu>
       </div>
 
-      <mwc-icon-button
-        icon="menu"
-        title="${this.t('openMainMenu')}"
-        slot="actionItems"
-        @click="${this._toggleNavDrawer}"
-      ></mwc-icon-button>
-
       ${this.user
         ? html`
-            <div
-              class="userImageNotificationContainer layout horizontal"
-              @click="${this._toggleUserDrawer}"
-              slot="actionItems"
-            >
-              <yp-user-image
-                id="userImage"
-                small
-                .user="${this.user}"
-              ></yp-user-image>
-              <paper-badge
-                id="notificationBadge"
-                class="activeBadge"
-                .label="${this.numberOfUnViewedNotifications}"
-                ?hidden="${!this.numberOfUnViewedNotifications}"
-              ></paper-badge>
-            </div>
-          `
-        : html`
-            <mwc-button
-              class="loginButton"
-              @click="${this._login}"
-              .label="${this.t('user.login')}"
-            ></mwc-button>
-          `}
+          <div
+            class="userImageNotificationContainer layout horizontal"
+            @click="${this._toggleUserDrawer}"
+            slot="actionItems">
+            <yp-user-image
+              id="userImage"
+              small
+              .user="${this.user}">
+            </yp-user-image>
+            <paper-badge
+              id="notificationBadge"
+              class="activeBadge"
+              .label="${this.numberOfUnViewedNotifications}"
+              ?hidden="${!this.numberOfUnViewedNotifications}">
+            </paper-badge>
+          </div>
+        `
+      : html`
+        <mwc-icon-button
+          icon="login"
+          slot="actionItems"
+          @click="${this._login}"
+          title="${this.t('user.login')}">
+        </mwc-icon-button>
+        `}
     `;
   }
 
@@ -419,7 +446,7 @@ export class YpApp extends YpBaseElement {
             </div>
             ${this.renderActionItems()}
             <div>
-              <h1>HELOOOOSDKJ</h1>
+              ${this.renderPage()}
             </div>
           </mwc-top-app-bar>
         </div>
@@ -440,16 +467,16 @@ export class YpApp extends YpBaseElement {
           pageHtml = cache(html`
             <yp-community
               id="communityPage"
-              .idRoute="${this.subRoute}"
-            ></yp-community>
+              .idRoute="${this.subRoute}">
+            </yp-community>
           `);
           break;
         case 'community_folder':
           pageHtml = cache(html`
             <yp-community-folder
               id="communityFolderPage"
-              .idRoute="${this.subRoute}"
-            ></yp-community-folder>
+              .idRoute="${this.subRoute}">
+            </yp-community-folder>
           `);
           break;
         case 'group':
@@ -481,16 +508,15 @@ export class YpApp extends YpBaseElement {
 
       <yp-sw-update-toast
         .buttonLabel="${this.t('reload')}"
-        .message="${this.t('newVersionAvailable')}"
-      ></yp-sw-update-toast>
+        .message="${this.t('newVersionAvailable')}">
+      </yp-sw-update-toast>
 
       <mwc-dialog id="dialog">
         <div>${this.notifyDialogText}</div>
         <mwc-button
           slot="primaryAction"
           @click="${this._resetNotifyDialogText}"
-          dialogAction="discard"
-        >
+          dialogAction="discard">
           ${this.t('ok')}
         </mwc-button>
       </mwc-dialog>

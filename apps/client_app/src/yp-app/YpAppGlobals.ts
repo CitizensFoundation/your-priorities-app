@@ -83,6 +83,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   theme: YpThemeManager;
 
+  highlightedLanguages: Array<string>|null = null;
+
   constructor(serverApi: YpServerApi) {
     super();
 
@@ -173,6 +175,11 @@ export class YpAppGlobals extends YpCodeBase {
         });
       }
     }
+  }
+
+  setHighlightedLanguages (languages: Array<string>) {
+    this.highlightedLanguages = languages;
+    this.fireGlobal('yp-refresh-language-selection');
   }
 
   changeLocaleIfNeeded(locale: string, force = false) {

@@ -72,6 +72,7 @@
     "@types/google.analytics": "0.0.40",
     "@types/i18next": "^13.0.0",
     "i18next-http-backend": "^1.0.16",
+    "koa-proxies": "^0.11.0",
     "lit-element": "^2.0.1",
     "lit-flexbox-literals": "0.0.7",
     "lit-html": "^1.0.0",

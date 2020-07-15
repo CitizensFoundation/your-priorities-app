@@ -1,9 +1,15 @@
 import { YpCodeBase } from './YpCodeBase.js';
+import { OptionsJson } from 'body-parser';
 
 export class YpServerApi extends YpCodeBase {
   protected baseUrlPath = '/api';
 
-  private async fetchWrapper(url: string, options = {}, showUserError = true) {
+  private async fetchWrapper(url: string, options: RequestInit =  {}, showUserError = true) {
+    if (!options.headers) {
+      options.headers = {
+        'Content-Type': 'application/json'
+      }
+    }
     const response = await fetch(url, options);
     this.handleResponse(response, showUserError);
   }
@@ -63,7 +69,7 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + '/users/loggedInUser/setLocale',
       {
         method: 'PUT',
-        body: { body },
+        body: JSON.stringify(body),
       },
       false
     );
@@ -84,7 +90,7 @@ export class YpServerApi extends YpCodeBase {
 
   public hasAudioUploadSupport() {
     return this.fetchWrapper(
-      this.baseUrlPath + '/videos/hasAudioUploadSupport'
+      this.baseUrlPath + '/audios/hasAudioUploadSupport'
     );
   }
 
@@ -93,7 +99,7 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + '/videos/videoView',
       {
         method: 'PUT',
-        body: { body },
+        body: JSON.stringify(body),
       },
       false
     );
@@ -104,7 +110,7 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + '/audios/videoView',
       {
         method: 'PUT',
-        body: { body },
+        body: JSON.stringify(body),
       },
       false
     );
@@ -115,7 +121,7 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + '/users/createActivityFromApp',
       {
         method: 'POST',
-        body: { body },
+        body: JSON.stringify(body),
       },
       false
     );
@@ -126,7 +132,7 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/groups/${groupId}/marketingTrackingOpen`,
       {
         method: 'POST',
-        body: { body },
+        body: JSON.stringify(body),
       },
       false
     );
@@ -137,7 +143,7 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/groups/${groupId}/triggerTrackingGoal`,
       {
         method: 'POST',
-        body: { body },
+        body: JSON.stringify(body),
       },
       false
     );

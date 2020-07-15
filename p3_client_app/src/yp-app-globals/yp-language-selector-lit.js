@@ -21,35 +21,35 @@ class YpLanguageSelectorLit extends YpBaseElement {
           en_GB: 'English (GB)',
           fr: 'Français',
           is: 'Íslenska',
-          es: 'Spanish',
-          it: 'Italian',
-          ar: 'Arabic',
-          ar_EG: 'Arabic (EG)',
-          ca: 'Catalan',
-          ro_MD: 'Moldovan',
-          de: 'German',
-          da: 'Danish',
-          sv: 'Swedish',
+          es: 'Español',
+          it: 'Italiano',
+          ar: 'اَلْعَرَبِيَّةُ',
+          ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
+          ca: 'Català',
+          ro_MD: 'Moldovenească',
+          de: 'Deutsch',
+          da: 'Dansk',
+          sv: 'Svenska',
           en_CA: 'English (CA)',
-          nl: 'Dutch',
-          no: 'Norwegian',
-          uk: 'Ukrainian',
-          sq: 'Albanian',
-          ky: 'Kyrgyz',
-          uz: 'Uzbek',
-          tr: 'Turkish',
-          fa: 'Persian',
-          pl: 'Polish',
-          pt: 'Portuguese',
-          pt_BR: 'Portuguese (Brazil)',
-          ru: 'Russian',
-          hu: 'Hungarian',
-          zh_TW: 'Chinese (TW)',
-          sr: 'Serbian',
-          sr_latin: 'Serbian (latin)',
-          hr: 'Croatian',
-          kl: 'Greenlandic',
-          sl: 'Slovenian'
+          nl: 'Nederlands',
+          no: 'Norsk',
+          uk: 'українська',
+          sq: 'Shqip',
+          ky: 'Кыргызча',
+          uz: 'Ўзбек',
+          tr: 'Türkçe',
+          fa: 'فارسی',
+          pl: 'Polski',
+          pt: 'Português',
+          pt_BR: 'Português (Brazil)',
+          ru: 'Русский',
+          hu: 'Magyar',
+          zh_TW: '国语 (TW)',
+          sr: 'Srpski',
+          sr_latin: 'Srpski (latin)',
+          hr: 'Hravtski',
+          kl: 'Kalaallisut',
+          sl: 'Slovenščina'
         }
       },
 
@@ -58,9 +58,14 @@ class YpLanguageSelectorLit extends YpBaseElement {
         value: ['kl']
       },
 
+      refreshLanguages: {
+        type: Boolean,
+        value: false
+      },
+
       languages: {
         type: Array,
-        computed: '_languages(supportedLanguages)'
+        computed: '_languages(supportedLanguages, language, refreshLanguages)'
       },
 
       selectedLocale: {
@@ -93,6 +98,11 @@ class YpLanguageSelectorLit extends YpBaseElement {
         value: false
       },
 
+      dropdownVisible: {
+        type: Boolean,
+        value: true
+      },
+
       hasServerAutoTranslation: {
         type: Boolean,
         value: false
@@ -102,7 +112,15 @@ class YpLanguageSelectorLit extends YpBaseElement {
         type: Boolean,
         value: false
       }
-    }
+    };
+  }
+
+  _refreshLanguage () {
+    this.set('dropdownVisible', false);
+    this.set('refreshLanguages', !this.refreshLanguages);
+    this.async(function () {
+      this.set('dropdownVisible', true);
+    });
   }
 
   static get styles() {
@@ -138,16 +156,20 @@ class YpLanguageSelectorLit extends YpBaseElement {
 
   render() {
     return html`
+    <lite-signal on-lite-signal-yp-refresh-language-selection="_refreshLanguage"></lite-signal>
+
     <div class="layout vertical">
-      <paper-dropdown-menu .label="Select language" .selected="${this.selectedLocale}}" .attrForSelected="name">
-        <paper-listbox slot="dropdown-content" .selected="${this.selectedLocale}" .attrForSelected="name">
+      ${ this.dropdownVisible ? html`
+        <paper-dropdown-menu .label="Select language" .selected="${this.selectedLocale}}" .attrForSelected="name">
+          <paper-listbox slot="dropdown-content" .selected="${this.selectedLocale}" .attrForSelected="name">
 
-          ${ this.languages.map(item => html`
-            <paper-item .name="${this.item.language}">${this.item.name}</paper-item>
-          `)}
+            ${ this.languages.map(item => html`
+              <paper-item .name="${this.item.language}">${this.item.name}</paper-item>
+            `)}
 
-        </paper-listbox>
-      </paper-dropdown-menu>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      ` : nothing }
       <div ?hidden="${!this.canUseAutoTranslate}">
         <mwc-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton"
                     @click="${this._startTranslation}" .icon="translate" .label="${this.t('autoTranslate')}">
@@ -239,13 +261,28 @@ connectedCallback() {
 
   _languages(supportedLanguages) {
     if (supportedLanguages) {
-      const arr = [];
-      for (const key in supportedLanguages) {
+      let arr = [];
+      const highlighted = [];
+      let highlightedLocales = ['en','en_GB','is','fr','de','es','ar'];
+      if (window.appGlobals.highlightedLanguages) {
+        highlightedLocales = window.appGlobals.highlightedLanguages.split(",");
+      }
+      for (var key in supportedLanguages) {
         if (supportedLanguages.hasOwnProperty(key)) {
-          arr.push({ language: key, name: supportedLanguages[key] });
+          if (highlightedLocales.indexOf(key) > -1) {
+            highlighted.push({ language: key, name: supportedLanguages[key] });
+          } else {
+            arr.push({ language: key, name: supportedLanguages[key] });
+          }
         }
       }
-      return arr;
+
+      arr = arr.sort(function (a, b) {
+        if(a.name < b.name) { return -1; }
+        if(a.name > b.name) { return 1; }
+        return 0;
+      });
+      return highlighted.concat(arr);
     } else {
       return [];
     }

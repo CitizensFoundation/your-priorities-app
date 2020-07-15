@@ -408,6 +408,7 @@ static get styles() {
                 <paper-item id="addGroupMenuItem" hidden="${this.community.is_community_folder}">${this.t('group.new')}</paper-item>
                 <paper-item ?hidden="" id="addCommunityFolderMenuItem">${this.t('newCommunityFolder')}</paper-item>
                 <paper-item id="openAnalyticsApp" hidden?="${!this.hasCommunityAccess}">${this.t('openAnalyticsApp')}</paper-item>
+                <paper-item id="openAdminApp" hidden$="[[!hasCommunityAccess]]">[[t('editTranslations')]]</paper-item>
 
               </paper-listbox>
             </paper-menu-button>
@@ -570,6 +571,8 @@ behaviors: [
       this.fire('yp-new-community-folder');
     else if (detail.item.id==="openAnalyticsApp")
       window.location = "/analytics/community/"+this.community.id;
+    else if (detail.item.id==="openAdminApp")
+      window.location = "/admin/community/"+this.community.id;
     this.$$("paper-listbox").select(null);
   }
 
