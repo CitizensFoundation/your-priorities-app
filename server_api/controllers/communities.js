@@ -28,7 +28,7 @@ const getCommunityIncludes = require('../active-citizen/engine/analytics/statsCa
 const getPointCommunityIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointCommunityIncludes;
 const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
 const getTranslatedTextsForCommunity = require('../active-citizen/utils/translation_helpers').getTranslatedTextsForCommunity;
-const updateTranslation = require('../active-citizen/utils/translation_helpers').updateTranslation;
+const updateTranslationForCommunity = require('../active-citizen/utils/translation_helpers').updateTranslationForCommunity;
 
 var sendCommunityOrError = function (res, community, context, user, error, errorStatus) {
   if (error || !community) {
@@ -1771,7 +1771,7 @@ router.get('/:id/get_translation_texts', auth.can('edit community'), function(re
 });
 
 router.put('/:id/update_translation', auth.can('edit community'), function(req, res) {
-  updateTranslation(req.params.id, req.body,(results, error) => {
+  updateTranslationForCommunity(req.params.id, req.body,(results, error) => {
     if (error) {
       log.error("Error in updating translation", { error });
       res.sendStatus(500);

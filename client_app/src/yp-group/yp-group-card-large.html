@@ -274,6 +274,7 @@
               <paper-item hidden$="[[!hasGroupAccess]]" id="deleteContentMenuItem">[[t('deleteGroupContent')]]</paper-item>
               <paper-item id="addPostMenuItem">[[t('post.new')]]</paper-item>
               <paper-item id="openAnalyticsApp" hidden$="[[!hasGroupAccess]]">[[t('openAnalyticsApp')]]</paper-item>
+              <paper-item id="openAdminApp" hidden$="[[!hasGroupAccess]]">[[t('editTranslations')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -480,6 +481,8 @@
           this._openAnonymizeContent();
         else if (detail.item.id==="openAnalyticsApp")
           window.location = "/analytics/group/"+this.group.id;
+        else if (detail.item.id==="openAdminApp")
+          window.location = "/admin/group/"+this.group.id;
         this.$$("paper-listbox").select(null);
       },
 

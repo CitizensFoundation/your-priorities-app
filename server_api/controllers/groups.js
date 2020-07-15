@@ -28,6 +28,8 @@ const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/s
 const getGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getGroupIncludes;
 const getPointGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointGroupIncludes;
 const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
+const getTranslatedTextsForGroup = require('../active-citizen/utils/translation_helpers').getTranslatedTextsForGroup;
+const updateTranslationForGroup = require('../active-citizen/utils/translation_helpers').updateTranslationForGroup;
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -2093,6 +2095,28 @@ router.get('/:id/stats_votes', auth.can('edit group'), function(req, res) {
     }
   }, getGroupIncludes(req.params.id),  (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error,results);
+  });
+});
+
+router.get('/:id/get_translation_texts', auth.can('edit group'), function(req, res) {
+  getTranslatedTextsForGroup(req.query.targetLocale, req.params.id,(results, error) => {
+    if (error) {
+      log.error("Error in getting translated texts", { error });
+      res.sendStatus(500);
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+router.put('/:id/update_translation', auth.can('edit group'), function(req, res) {
+  updateTranslationForGroup(req.params.id, req.body,(results, error) => {
+    if (error) {
+      log.error("Error in updating translation", { error });
+      res.sendStatus(500);
+    } else {
+      res.send(results);
+    }
   });
 });
 
