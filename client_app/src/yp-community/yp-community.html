@@ -64,7 +64,9 @@
       }
     </style>
 
-    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup" hide-all-tabs="[[community.configuration.hideAllTabs]]">
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup"
+             hide-all-tabs="[[community.configuration.hideAllTabs]]"
+             role="main" aria-label="[[t('groups')]]">
 
       <template is="dom-if" if="[[useAlternativeHeader]]">
         <yp-community-header id="communityCard" slot="largeCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-header>
