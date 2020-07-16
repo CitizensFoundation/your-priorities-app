@@ -135,8 +135,9 @@
                       label="[[t('group.objectives')]]"
                       char-counter
                       rows="2"
+                      on-value-changed="_objectivesChanged"
                       max-rows="5"
-                      maxlength="300">
+                      maxlength="[[maxObjectivesLength]]">
       </paper-textarea>
 
       <div class="horizontal end-justified layout">
@@ -886,6 +887,28 @@
       structuredQuestionsJsonError: {
         type: Boolean,
         value: false
+      },
+
+      maxObjectivesLength: {
+        type: Number,
+        value: 300
+      }
+    },
+
+    _objectivesChanged: function (event) {
+      var description = event.target.value;
+      var urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
+      var urlArray = description.match(urlRegex);
+
+      if (urlArray && urlArray.length>0) {
+        var urlsLength = 0;
+        for (var i=0;i<Math.min(urlArray.length,10); i++) {
+          urlsLength+=urlArray[i].length;
+        }
+        var maxLength = 300;
+        maxLength += urlsLength;
+        maxLength -= Math.min(urlsLength, urlArray.length*30);
+        this.set('maxObjectivesLength', maxLength);
       }
     },
 
