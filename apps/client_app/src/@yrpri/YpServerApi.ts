@@ -1,5 +1,4 @@
 import { YpCodeBase } from './YpCodeBase.js';
-import { OptionsJson } from 'body-parser';
 
 export class YpServerApi extends YpCodeBase {
   protected baseUrlPath = '/api';
@@ -146,6 +145,12 @@ export class YpServerApi extends YpCodeBase {
         body: JSON.stringify(body),
       },
       false
+    );
+  }
+
+  public getCollection(collectionApiType: string, collectionId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${collectionApiType}/${collectionId}`
     );
   }
 }

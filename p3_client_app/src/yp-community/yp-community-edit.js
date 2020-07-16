@@ -84,7 +84,13 @@ Polymer({
           https://[[hostnameExample]]
         </div>
 
-        <paper-textarea id="description" name="description" value="{{community.description}}" always-float-label="[[community.description]]" label="[[t('description')]]" char-counter="" rows="2" max-rows="5" minlength="1" required="" maxlength="300" class="mainInput">
+        <paper-textarea id="description" name="description"
+          value="{{community.description}}" always-float-label="[[community.description]]"
+          label="[[t('description')]]" char-counter="" rows="2" max-rows="5"
+          minlength="1"
+          on-value-changed="_descriptionChanged"
+          required
+          maxlength="[[descriptionMaxLength]]" class="mainInput">
         </paper-textarea>
 
         <div class="horizontal end-justified layout">
@@ -369,12 +375,34 @@ Polymer({
     hasSamlLoginProvider: {
       type: Boolean,
       value: false
+    },
+
+    descriptionMaxLength: {
+      type: Number,
+      value: 300
     }
   },
 
   observers: [
     '_setupTranslation(language,t)'
   ],
+
+  _descriptionChanged: function (event) {
+    var description = event.target.value;
+    var urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
+    var urlArray = description.match(urlRegex);
+
+    if (urlArray && urlArray.length>0) {
+      var urlsLength = 0;
+      for (var i=0;i<Math.min(urlArray.length,10); i++) {
+        urlsLength+=urlArray[i].length;
+      }
+      var maxLength = 300;
+      maxLength += urlsLength;
+      maxLength -= Math.min(urlsLength, urlArray.length*30);
+      this.set('descriptionMaxLength', maxLength);
+    }
+  },
 
   _videoUploaded: function (event, detail) {
     this.set('uploadedVideoId', detail.videoId);

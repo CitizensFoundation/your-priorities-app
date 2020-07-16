@@ -1,7 +1,3 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-tabs/paper-tab.js';
 import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
 import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
 import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
@@ -10,17 +6,44 @@ import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
 import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
 import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
 import { CommunityCollectionBehaviors } from '../yp-community/yp-community-collection-behaviors.js';
+
 import '../ac-activities/ac-activities.js';
-import '../yp-ajax/yp-ajax.js';
 import '../yp-page/yp-page.js';
 import '../yp-community/yp-community-grid.js';
 import './yp-domain-large-card.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 
-class YpDomainLit extends YpBaseElement {
-  static get properties() {
+import { property, html, css } from 'lit-element';
+import { nothing } from 'lit-html';
+import { ifDefined } from 'lit-html/directives/if-defined';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+
+export abstract class YpCollection extends YpBaseElement {
+
+  @property({ type: Boolean })
+  noHeader = false;
+
+  @property({ type: Boolean })
+  noTabs = false;
+
+  @property({ type: Number })
+  collectionId: number | undefined;
+
+  @property({ type: String })
+  collectionName: string | undefined;
+
+  @property({ type: Object })
+  collection: YpCollection | undefined;
+
+  @property({ type: String })
+  collectionTypeName: string | undefined;
+
+  @property({ type: String })
+  collectionApiType: string | undefined;
+
+  @property({ type: String })
+  subRoute: string | undefined;
+
+  static get propsfeerties() {
     return {
       idRoute: Object,
       tabRoute: Object,
@@ -77,72 +100,44 @@ class YpDomainLit extends YpBaseElement {
 
   static get styles() {
     return [
+      super.styles,
       css`
+    `]
+  }
 
-      ac-activities {
+  async refreshCollection() {
+    if (this.collectionId && this.collectionApiType) {
+      this.collection = await window.serverApi.getCollection(this.collectionApiType, this.collectionId) as YpCollection | undefined;
+    } else {
+      console.error("Collection not setup for refresh")
+    }
+  }
 
-      }
+  renderHeader() {
+    return (this.collection && !this.noHeader) ? html`
+      <yp-collection-header
+        .collection="${this.collection}"
+        aria-label="${ifDefined(this.collectionTypeName)}"
+        @refresh-collection="${this.refreshCollection}"
+        role="banner">
+      </yp-collection-header>;
+    ` : nothing;
+  }
 
-      .card-container {
-
-      }
-
-      .card {
-        padding: 16px;
-      }
-
-      @media (max-width: 330px) {
-        .card {
-          padding-left: 0;
-          padding-right: 0;
-          padding-bottom: 8px;
-          padding-top: 8px;
-        }
-
-        .card-container {
-          padding: 0;
-          margin: 0;
-        }
-      }
-
-      yp-ajax {
-        background-color: var(--primary-background-color);
-      }
-
-      .twitterFeed {
-        margin-top: 24px;
-      }
-
-      .archivedText {
-        font-size: 26px;
-        color: #333;
-      }
-
-      .ypBottomContainer {
-
-      }
-
-      :host {
-        display: block;
-      }
-
-      .minHeightSection {
-        min-height: 450px;
-      }
-
-      #paper_tabs[apple] {
-        margin-top: 42px;
-        margin-bottom: 8px;
-      }
-
-      [hidden] {
-        display: none !important;
-      }
-    `, YpFLexLayout]
+  renderTabs() {
+    return (this.collection && !this.noTabs) ? html`
+      <yp-collection-header
+        .collection="${this.collection}"
+        aria-label="${ifDefined(this.collectionTypeName)}"
+        @refresh-collection="${this.refreshCollection}"
+        role="banner">
+      </yp-collection-header>;
+    ` : nothing;
   }
 
   render() {
     return html`
+      ${ this.renderHeader() }
       ${this.group ? html`
         <yp-page id="page" .createFabIcon="${this.createFabIcon}" createFabTitle="${this.t('community.add')}" @yp-create-fab-tap="${this._newCommunity}">
 
@@ -372,5 +367,3 @@ class YpDomainLit extends YpBaseElement {
     window.appGlobals.setHighlightedLanguages(null);
   }
 }
-
-window.customElements.define('yp-domain-lit', YpDomainLit);

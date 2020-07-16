@@ -460,7 +460,7 @@ export class YpApp extends YpBaseElement {
       switch (this.page) {
         case 'domain':
           pageHtml = cache(html`
-            <yp-domain id="domainPage" .idRoute="${this.subRoute}"></yp-domain>
+            <yp-domain id="domainPage" role="main" aria-label="${this.t('communities')}" .idRoute="${this.subRoute}"></yp-domain>
           `);
           break;
         case 'community':

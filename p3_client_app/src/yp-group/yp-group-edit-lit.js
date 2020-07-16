@@ -149,6 +149,11 @@ class YpGroupEditLit extends YpBaseElement {
       structuredQuestionsJsonError: {
         type: Boolean,
         value: false
+      },
+
+      maxObjectivesLength: {
+        type: Number,
+        value: 300
       }
     }
   }
@@ -255,7 +260,13 @@ render() {
       <paper-input id="name" .name="name" .type="text" .label="${this.t('name')}" .value="${this.group.name}" .maxlength="50" char-counter>
       </paper-input>
 
-      <paper-textarea id="objectives" .name="objectives" .value="${this.group.objectives}" always-float-label="${this.group.objectives}" label="${this.t('group.objectives')}" char-counter .rows="2" .max-rows="5" .maxlength="300">
+      <paper-textarea id="objectives" .name="objectives" .value="${this.group.objectives}"
+        always-float-label="${this.group.objectives}" label="${this.t('group.objectives')}"
+        char-counter .rows="2"
+        .max-rows="5"
+        @value-changed="${this._objectivesChanged}"
+        max-rows="5"
+        maxlength="[[maxObjectivesLength]]">
       </paper-textarea>
 
       <div class="horizontal end-justified layout">
@@ -670,6 +681,23 @@ render() {
     ypMediaFormatsBehavior
   ],
 */
+
+  _objectivesChanged (event) {
+    const description = event.target.value;
+    const urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
+    var urlArray = description.match(urlRegex);
+
+    if (urlArray && urlArray.length>0) {
+      let urlsLength = 0;
+      for (let i=0;i<Math.min(urlArray.length,10); i++) {
+        urlsLength+=urlArray[i].length;
+      }
+      let maxLength = 300;
+      maxLength += urlsLength;
+      maxLength -= Math.min(urlsLength, urlArray.length*30);
+      this.maxObjectivesLength = maxLength;
+    }
+  }
 
   _structuredQuestionsChanged (event, detail) {
     if (detail && detail.value) {

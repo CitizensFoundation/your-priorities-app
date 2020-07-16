@@ -112,7 +112,7 @@ class YpMagicTextLit extends YpBaseElement {
 
       linkifyCutoff: {
         type: Number,
-        value: 35
+        value: 25
       },
 
       removeUrls: {
@@ -376,7 +376,7 @@ class YpMagicTextLit extends YpBaseElement {
     }
 
     if (this.removeUrls) {
-      this.processedContent = this.processedContent.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '')
+      this.processedContent = this.processedContent.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
     }
 
     this._setupStructuredQuestions();

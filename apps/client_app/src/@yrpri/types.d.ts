@@ -62,6 +62,7 @@ interface YpCollection {
   name: string;
   User?: YpUser;
   user_id?: number;
+  configuration?: YpCollectionConfiguration;
 }
 
 interface YpAdminRights {
