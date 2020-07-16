@@ -1,4 +1,7 @@
 {
+  "domainHeader": "Domain",
+  "communityHeader": "Community",
+  "groupHeader": "Group",
   "editTranslations": "Edit translations",
   "highlightedLanguages": "Highlighted locales (en,is,fr)",
   "optionalSortOrder": "Optional sort order",
