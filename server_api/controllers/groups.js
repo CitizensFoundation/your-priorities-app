@@ -222,13 +222,13 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.videoPostUploadLimitSec', (req.body.videoPostUploadLimitSec && req.body.videoPostUploadLimitSec!="") ? req.body.videoPostUploadLimitSec : "60");
   group.set('configuration.videoPointUploadLimitSec', (req.body.videoPointUploadLimitSec && req.body.videoPointUploadLimitSec!="") ? req.body.videoPointUploadLimitSec : "30");
   if (group.configuration.videoPostUploadLimitSec && parseInt(group.configuration.videoPostUploadLimitSec)) {
-    if (parseInt(group.configuration.videoPostUploadLimitSec)>150) {
-      group.set('configuration.videoPostUploadLimitSec', 150);
+    if (parseInt(group.configuration.videoPostUploadLimitSec)>600) {
+      group.set('configuration.videoPostUploadLimitSec', 600);
     }
   }
   if (group.configuration.videoPointUploadLimitSec && parseInt(group.configuration.videoPointUploadLimitSec)) {
-    if (parseInt(group.configuration.videoPointUploadLimitSec)>90) {
-      group.set('configuration.videoPointUploadLimitSec', 90);
+    if (parseInt(group.configuration.videoPointUploadLimitSec)>600) {
+      group.set('configuration.videoPointUploadLimitSec', 600);
     }
   }
 
@@ -250,14 +250,14 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.audioPostUploadLimitSec', (req.body.audioPostUploadLimitSec && req.body.audioPostUploadLimitSec!="") ? req.body.audioPostUploadLimitSec : "60");
   group.set('configuration.audioPointUploadLimitSec', (req.body.audioPointUploadLimitSec && req.body.audioPointUploadLimitSec!="") ? req.body.audioPointUploadLimitSec : "30");
   if (group.configuration.audioPostUploadLimitSec && parseInt(group.configuration.audioPostUploadLimitSec)) {
-    if (parseInt(group.configuration.audioPostUploadLimitSec)>150) {
-      group.set('configuration.audioPostUploadLimitSec', 150);
+    if (parseInt(group.configuration.audioPostUploadLimitSec)>600) {
+      group.set('configuration.audioPostUploadLimitSec', 600);
     }
   }
 
   if (group.configuration.audioPointUploadLimitSec && parseInt(group.configuration.audioPointUploadLimitSec)) {
-    if (parseInt(group.configuration.audioPointUploadLimitSec)>90) {
-      group.set('configuration.audioPointUploadLimitSec', 90);
+    if (parseInt(group.configuration.audioPointUploadLimitSec)>600) {
+      group.set('configuration.audioPointUploadLimitSec', 600);
     }
   }
 

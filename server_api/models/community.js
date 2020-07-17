@@ -30,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     other_social_media_info: DataTypes.JSONB,
     configuration:  DataTypes.JSONB,
-    language: { type: DataTypes.STRING, allowNull: true }
+    language: { type: DataTypes.STRING, allowNull: true },
+    data: DataTypes.JSONB
   }, {
 
     defaultScope: {
@@ -245,6 +246,57 @@ module.exports = (sequelize, DataTypes) => {
       }
     ], (err) => {
       done(err);
+    });
+  };
+
+  Community.prototype.setupModerationData = function () {
+    if (!this.data) {
+      this.set('data', {});
+    }
+    if (!this.data.moderation) {
+      this.set('data.moderation', {});
+    }
+  };
+
+  Community.prototype.report = function (req, source, callback) {
+    this.setupModerationData();
+    async.series([
+      (seriesCallback) => {
+        if (!this.data.moderation.lastReportedBy) {
+          this.set('data.moderation.lastReportedBy', []);
+          if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
+            log.info("process-moderation post toxicity on manual report");
+            queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
+          }
+        }
+        this.set('data.moderation.lastReportedBy',
+          [{ date: new Date(), source: source, userId: (req && req.user) ? req.user.id : null, userEmail: (req && req.user) ? req.user.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
+        );
+        this.save().then(() => {
+          seriesCallback();
+        }).catch((error) => {
+          seriesCallback(error);
+        });
+      },
+      (seriesCallback) => {
+        if (req && req.disableNotification===true) {
+          seriesCallback();
+        } else {
+          sequelize.models.AcActivity.createActivity({
+            type: 'activity.report.content',
+            userId: (req && req.user) ? req.user.id : null,
+            postId: this.id,
+            groupId: this.group_id,
+            communityId: (this.Group && this.Group.Community) ? this.Group.Community.id : null,
+            domainId:  (this.Group && this.Group.Community && this.Group.Community.Domain) ? this.Group.Community.Domain.id : null
+          }, (error) => {
+            seriesCallback(error);
+          });
+        }
+      }
+    ], (error) => {
+      this.increment('counter_flags');
+      callback(error);
     });
   };
 
