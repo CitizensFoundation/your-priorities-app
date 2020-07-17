@@ -1,5 +1,13 @@
 declare module 'lit-flexbox-literals';
 
+declare enum CollectionTabTypes {
+  Collection = 0,
+  Newsfeed = 1,
+  Map = 2,
+  UserDefined = 3,
+  Other,
+}
+
 interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;
   themeOverrideColorAccent?: string;
@@ -17,7 +25,6 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   forceSecureSamlEmployeeLogin?: boolean;
 }
 
-
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
 }
@@ -28,8 +35,8 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
 
 interface YpHelpPage {
   id: number;
-  content: Record<string,string>;
-  title: Record<string,string>;
+  content: Record<string, string>;
+  title: Record<string, string>;
 }
 
 interface YpEndorsement {
@@ -181,4 +188,4 @@ interface YpUser {
   forceSecureSamlLogin?: boolean;
 }
 
-declare const YpHelpPageArray: Array<YpHelpPage>
+declare const YpHelpPageArray: Array<YpHelpPage>;

@@ -13,12 +13,12 @@ import '../yp-community/yp-community-grid.js';
 import './yp-domain-large-card.js';
 
 import { property, html, css } from 'lit-element';
-import { nothing } from 'lit-html';
+import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import '@material/mwc-tab-bar';
 
 export abstract class YpCollection extends YpBaseElement {
-
   @property({ type: Boolean })
   noHeader = false;
 
@@ -43,6 +43,18 @@ export abstract class YpCollection extends YpBaseElement {
   @property({ type: String })
   subRoute: string | undefined;
 
+  @property({ type: Number })
+  selectedTab: CollectionTabTypes = CollectionTabTypes.Collection;
+
+  @property({ type: Boolean })
+  hideNewsfeed = false;
+
+  @property({ type: Boolean })
+  hideMap = false;
+
+  @property({ type: Boolean })
+  hideCollection = false;
+
   static get propsfeerties() {
     return {
       idRoute: Object,
@@ -53,135 +65,264 @@ export abstract class YpCollection extends YpBaseElement {
       createFabIcon: {
         type: String,
         value: null,
-        notify: true
+        notify: true,
       },
 
       domainId: {
         type: Number,
         value: null,
-        observer: "_domainIdChanged"
+        observer: '_domainIdChanged',
       },
 
       url: {
-        type: String
+        type: String,
       },
 
       domainEmpty: {
         type: Boolean,
-        value: false
+        value: false,
       },
 
       domain: {
-        type: Object
+        type: Object,
       },
 
       selectedTab: {
         type: String,
         value: 'communities',
-        observer: '_selectedTabChanged'
+        observer: '_selectedTabChanged',
       },
 
       otherSocialMediaActive: {
         type: Boolean,
-        value: false
+        value: false,
       },
 
       isOldiOs: {
         type: Boolean,
-        computed: '_isOldiOs(domainId)'
+        computed: '_isOldiOs(domainId)',
       },
 
       disableRefreshOnce: {
         type: Boolean,
-        value: false
-      }
-    }
+        value: false,
+      },
+    };
   }
 
   static get styles() {
-    return [
-      super.styles,
-      css`
-    `]
+    return [super.styles, css``];
   }
 
   async refreshCollection() {
     if (this.collectionId && this.collectionApiType) {
-      this.collection = await window.serverApi.getCollection(this.collectionApiType, this.collectionId) as YpCollection | undefined;
+      this.collection = (await window.serverApi.getCollection(
+        this.collectionApiType,
+        this.collectionId
+      )) as YpCollection | undefined;
     } else {
-      console.error("Collection not setup for refresh")
+      console.error('Collection not setup for refresh');
     }
   }
 
   renderHeader() {
-    return (this.collection && !this.noHeader) ? html`
-      <yp-collection-header
-        .collection="${this.collection}"
-        aria-label="${ifDefined(this.collectionTypeName)}"
-        @refresh-collection="${this.refreshCollection}"
-        role="banner">
-      </yp-collection-header>;
-    ` : nothing;
+    return this.collection && !this.noHeader
+      ? html`
+          <yp-collection-header
+            .collection="${this.collection}"
+            aria-label="${ifDefined(this.collectionTypeName)}"
+            @refresh-collection="${this.refreshCollection}"
+            role="banner"
+          >
+          </yp-collection-header
+          >;
+        `
+      : nothing;
+  }
+
+  _selectTab(event: CustomEvent) {
+    this.selectedTab = event.detail as CollectionTabTypes;
+  }
+
+  renderOtherTab() {
+    return nothing;
+  }
+
+  renderOtherPage() {
+    return nothing as TemplateResult;
   }
 
   renderTabs() {
-    return (this.collection && !this.noTabs) ? html`
-      <yp-collection-header
-        .collection="${this.collection}"
-        aria-label="${ifDefined(this.collectionTypeName)}"
-        @refresh-collection="${this.refreshCollection}"
-        role="banner">
-      </yp-collection-header>;
-    ` : nothing;
+    if (this.collection && !this.noTabs && this.collectionTypeName) {
+      return html`
+        <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
+          <mwc-tab
+            ?hidden="${this.hideCollection}"
+            .label="${this.t(this.collectionTypeName)}"
+            icon="people"
+            stacked
+          ></mwc-tab>
+          <mwc-tab
+            ?hidden="${this.hideNewsfeed}"
+            .label="${this.t('newsfeed')}"
+            icon="rss_feed"
+            stacked
+          ></mwc-tab>
+          <mwc-tab
+            ?hidden="${this.hideMap}"
+            .label="${this.t('map')}"
+            icon="map"
+            stacked
+          ></mwc-tab>
+          ${this.renderOtherTab()}
+        </mwc-tab-bar>
+      `;
+    } else {
+      return nothing;
+    }
+  }
+
+  renderCurrentTabPage(): TemplateResult | null {
+    let page: TemplateResult | null = null;
+
+    switch (this.selectedTab) {
+      case CollectionTabTypes.Collection:
+        page = html``;
+        break;
+      case CollectionTabTypes.Newsfeed:
+        page = html``;
+        break;
+      case CollectionTabTypes.Map:
+        page = html``;
+        break;
+      case CollectionTabTypes.Other:
+        page = this.renderOtherPage();
+        break;
+    }
+
+    return page;
   }
 
   render() {
     return html`
-      ${ this.renderHeader() }
-      ${this.group ? html`
-        <yp-page id="page" .createFabIcon="${this.createFabIcon}" createFabTitle="${this.t('community.add')}" @yp-create-fab-tap="${this._newCommunity}">
+      ${this.renderHeader()} ${this.renderTabs()} ${this.renderCurrentTabPage()}
+      ${this.group
+        ? html`
+            <yp-page
+              id="page"
+              .createFabIcon="${this.createFabIcon}"
+              createFabTitle="${this.t('community.add')}"
+              @yp-create-fab-tap="${this._newCommunity}"
+            >
+              <yp-domain-large-card
+                id="domainCard"
+                slot="largeCard"
+                class="largeCard card"
+                .domain="${this.domain}"
+                @update-domain="${this._refreshAjax}"
+              ></yp-domain-large-card>
 
-          <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" .domain="${this.domain}" @update-domain="${this._refreshAjax}"></yp-domain-large-card>
+              <paper-tabs
+                id="paper_tabs"
+                .apple="${this.isOldiOs}"
+                slot="tabs"
+                class="tabs"
+                .selected="${this.selectedTab}"
+                attr-for-selected="name"
+                .focused
+              >
+                <paper-tab .name="communities" class="tab"
+                  ><span>${this.t('communities')}</span> &nbsp;
+                  (<span>${this.communitiesLength}</span>)</paper-tab
+                >
+                <paper-tab
+                  .name="news"
+                  class="tab"
+                  ?hidden="${this.domain.configuration.hideDomainNews}"
+                  >${this.t('news')}</paper-tab
+                >
+              </paper-tabs>
 
-          <paper-tabs id="paper_tabs" .apple="${this.isOldiOs}" slot="tabs" class="tabs" .selected="${this.selectedTab}" attr-for-selected="name" .focused>
-            <paper-tab .name="communities" class="tab"><span>${this.t('communities')}</span> &nbsp; (<span>${this.communitiesLength}</span>)</paper-tab>
-            <paper-tab .name="news" class="tab" ?hidden="${this.domain.configuration.hideDomainNews}">${this.t('news')}</paper-tab>
-          </paper-tabs>
+              <iron-pages
+                class="tabPages"
+                fullbleed
+                slot="tabPages"
+                .selected="${this.selectedTab}"
+                .attrForSelected="name"
+                .entryAnimation="fade-in-animation"
+                .exitAnimation="fade-out-animation"
+              >
+                <section .name="communities" class="layout vertical">
+                  <div
+                    class="card-container layout center-center wrap layout-horizontal "
+                  >
+                    <yp-community-grid
+                      id="communityGrid"
+                      featured-communities="${this.featuredCommunities}"
+                      active-communities="${this.activeCommunities}"
+                      .archivedCommunities="${this.archivedCommunities}"
+                      .hideAdd="${!this.createFabIcon}"
+                      @add-new-community="${this._newCommunity}"
+                    >
+                    </yp-community-grid>
+                  </div>
+                </section>
+                <section .name="news" class="minHeightSection">
+                  ${this.newsTabSelected
+                    ? html`
+                        <ac-activities
+                          id="domainNews"
+                          .selectedTab="${this.selectedTab}"
+                          .domainId="${this.domain.id}"
+                        ></ac-activities>
+                      `
+                    : html``}
+                </section>
+              </iron-pages>
+            </yp-page>
 
-          <iron-pages class="tabPages" fullbleed slot="tabPages" .selected="${this.selectedTab}" .attrForSelected="name" .entryAnimation="fade-in-animation" .exitAnimation="fade-out-animation">
-            <section .name="communities" class="layout vertical">
-              <div class="card-container layout center-center wrap layout-horizontal ">
-                <yp-community-grid id="communityGrid" featured-communities="${this.featuredCommunities}" active-communities="${this.activeCommunities}" .archivedCommunities="${this.archivedCommunities}" .hideAdd="${!this.createFabIcon}" @add-new-community="${this._newCommunity}">
-                </yp-community-grid>
-              </div>
-            </section>
-            <section .name="news" class="minHeightSection">
+            <lite-signal
+              @lite-signal-yp-language="${this._languageEvent}"
+            ></lite-signal>
+            <lite-signal
+              @lite-signal-logged-in="${this._userLoggedIn}"
+            ></lite-signal>
 
-              ${ this.newsTabSelected ? html`
-                <ac-activities id="domainNews" .selectedTab="${this.selectedTab}" .domainId="${this.domain.id}"></ac-activities>
-              ` : html``}
-            </section>
-          </iron-pages>
-        </yp-page>
+            <app-route
+              .route="${this.idRoute}"
+              .pattern="/:id"
+              data="${this.idRouteData}"
+              .tail="${this.tabRoute}"
+            >
+            </app-route>
 
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
+            <app-route
+              .route="${this.tabRoute}"
+              .pattern="/:tabName"
+              data="${this.tabRouteData}"
+            >
+            </app-route>
 
-    <app-route .route="${this.idRoute}" .pattern="/:id" data="${this.idRouteData}" .tail="${this.tabRoute}">
-    </app-route>
-
-    <app-route .route="${this.tabRoute}" .pattern="/:tabName" data="${this.tabRouteData}">
-    </app-route>
-
-    <div class="ypBottomContainer layout-horizontal layout-center-center">
-      <yp-ajax id="ajax" url="${this.url}" @response="${this._response}"></yp-ajax>
-      <yp-ajax id="pagesAjax"1 @response="${this._pagesResponse}"></yp-ajax>
-    </div>
-  ` : html``}
-  `
+            <div
+              class="ypBottomContainer layout-horizontal layout-center-center"
+            >
+              <yp-ajax
+                id="ajax"
+                url="${this.url}"
+                @response="${this._response}"
+              ></yp-ajax>
+              <yp-ajax
+                id="pagesAjax"
+                1
+                @response="${this._pagesResponse}"
+              ></yp-ajax>
+            </div>
+          `
+        : html``}
+    `;
   }
 
-/*
+  /*
   behaviors: [
     ypThemeBehavior,
     CommunityCollectionBehaviors,
@@ -207,18 +348,25 @@ export abstract class YpCollection extends YpBaseElement {
 */
 
   scrollToCommunityItem() {
-    if (this.selectedTab==="news" && window.appGlobals.cachedActivityItem!==null) {
-      const list = this.$$("#domainNews");
+    if (
+      this.selectedTab === 'news' &&
+      window.appGlobals.cachedActivityItem !== null
+    ) {
+      const list = this.$$('#domainNews');
       if (list) {
         list.scrollToItem(window.appGlobals.cachedActivityItem);
         window.appGlobals.cachedActivityItem = null;
       } else {
-        console.warn("No domain activities for scroll to item");
+        console.warn('No domain activities for scroll to item');
       }
-    } else if (this.selectedTab==="communities") {
-      if (window.appGlobals.backToDomainCommunityItems &&
-        window.appGlobals.backToDomainCommunityItems[this.domain.id]) {
-        this.$$("#communityGrid").scrollToItem(window.appGlobals.backToDomainCommunityItems[this.domain.id]);
+    } else if (this.selectedTab === 'communities') {
+      if (
+        window.appGlobals.backToDomainCommunityItems &&
+        window.appGlobals.backToDomainCommunityItems[this.domain.id]
+      ) {
+        this.$$('#communityGrid').scrollToItem(
+          window.appGlobals.backToDomainCommunityItems[this.domain.id]
+        );
         window.appGlobals.backToDomainCommunityItems[this.domain.id] = null;
       }
     }
@@ -226,8 +374,8 @@ export abstract class YpCollection extends YpBaseElement {
 
   _userLoggedIn(user) {
     if (user) {
-      if (this.domain && window.location.href.indexOf("/domain/") > -1) {
-        this.$$("#ajax").generateRequest();
+      if (this.domain && window.location.href.indexOf('/domain/') > -1) {
+        this.$$('#ajax').generateRequest();
       }
     }
   }
@@ -245,22 +393,22 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   _selectedTabChanged(tabName) {
-    if (tabName=='other_social_media') {
+    if (tabName == 'other_social_media') {
       this.set('otherSocialMediaActive', true);
     } else {
       this.set('otherSocialMediaActive', false);
     }
 
     if (this.domain) {
-      this.redirectTo("/domain/" + this.domain.id + '/' + tabName);
+      this.redirectTo('/domain/' + this.domain.id + '/' + tabName);
     }
 
     if (tabName && window.appGlobals) {
-      window.appGlobals.activity('open', 'domain_tab_'+tabName);
+      window.appGlobals.activity('open', 'domain_tab_' + tabName);
     }
 
     this.async(function () {
-      const news = this.$$("#domainNews");
+      const news = this.$$('#domainNews');
       if (news) {
         news.fireResize();
       }
@@ -269,17 +417,17 @@ export abstract class YpCollection extends YpBaseElement {
 
   _domainIdChanged(newValue, oldValue) {
     if (newValue) {
-      this.set("featuredCommunities",null);
-      this.set("activeCommunities",null);
-      this.set("archivedCommunities",null);
-      this.$$("#ajax").url = '/api/domains/' + this.domainId;
-      this.$$("#ajax").generateRequest();
+      this.set('featuredCommunities', null);
+      this.set('activeCommunities', null);
+      this.set('archivedCommunities', null);
+      this.$$('#ajax').url = '/api/domains/' + this.domainId;
+      this.$$('#ajax').generateRequest();
     }
   }
 
   _refreshAjax() {
     this.async(function () {
-      this.$$("#ajax").generateRequest();
+      this.$$('#ajax').generateRequest();
     }, 100);
   }
 
@@ -290,18 +438,28 @@ export abstract class YpCollection extends YpBaseElement {
 
   _newCommunity() {
     window.appGlobals.activity('open', 'newCommunity');
-    dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
-      dialog.setup(null, true, this._refreshAjaxLimited.bind(this));
-      dialog.open('new', {domainId: this.domainId} );
-    }.bind(this));
+    dom(document)
+      .querySelector('yp-app')
+      .getDialogAsync(
+        'communityEdit',
+        function (dialog) {
+          dialog.setup(null, true, this._refreshAjaxLimited.bind(this));
+          dialog.open('new', { domainId: this.domainId });
+        }.bind(this)
+      );
   }
 
   _newCommunityFolder() {
     window.appGlobals.activity('open', 'newCommunityFolder');
-    dom(document).querySelector('yp-app').getDialogAsync("communityEdit", function (dialog) {
-      dialog.setup(null, true, this._refreshAjaxLimited.bind(this), true);
-      dialog.open('new', {domainId: this.domainId} );
-    }.bind(this));
+    dom(document)
+      .querySelector('yp-app')
+      .getDialogAsync(
+        'communityEdit',
+        function (dialog) {
+          dialog.setup(null, true, this._refreshAjaxLimited.bind(this), true);
+          dialog.open('new', { domainId: this.domainId });
+        }.bind(this)
+      );
   }
 
   _pagesResponse(event, detail) {
@@ -309,7 +467,7 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   _response(event, detail, sender) {
-    console.log("Got domain response: "+detail.response.id);
+    console.log('Got domain response: ' + detail.response.id);
 
     this.set('domain', detail.response);
 
@@ -321,40 +479,58 @@ export abstract class YpCollection extends YpBaseElement {
       this.refresh();
     }
 
-    if (!this.domain.only_admins_can_create_communities || this.checkDomainAccess(this.domain)) {
+    if (
+      !this.domain.only_admins_can_create_communities ||
+      this.checkDomainAccess(this.domain)
+    ) {
       this.set('createFabIcon', 'add');
     }
 
     window.appGlobals.setupGoogleAnalytics(this.domain);
 
     if (this.domain.Communities) {
-      this.setupCommunities(__.dropRight(this.domain.Communities, this.domain.Communities.length-500));
+      this.setupCommunities(
+        __.dropRight(
+          this.domain.Communities,
+          this.domain.Communities.length - 500
+        )
+      );
     }
 
-    this.$$("#domainCard").setElevation(5);
-    this.$$("#domainCard").lowerCardLater();
+    this.$$('#domainCard').setElevation(5);
+    this.$$('#domainCard').lowerCardLater();
   }
 
   refresh() {
     if (this.domain) {
-      if (this.domain.default_locale!=null) {
+      if (this.domain.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.domain.default_locale);
       }
 
-      if (this.domain.theme_id!=null) {
+      if (this.domain.theme_id != null) {
         this.setTheme(this.domain.theme_id);
       }
-      this.fire('yp-set-home-link', { type: 'domain', id: this.domain.id, name: this.domain.name });
-      this.fire("change-header", { headerTitle: null, documentTitle: this.domain.name,
-                                   headerDescription: this.domain.description});
-      if (this.domain.DomainHeaderImages && this.domain.DomainHeaderImages.length>0) {
-        this.$$("#page").setupTopHeaderImage(this.domain.DomainHeaderImages);
+      this.fire('yp-set-home-link', {
+        type: 'domain',
+        id: this.domain.id,
+        name: this.domain.name,
+      });
+      this.fire('change-header', {
+        headerTitle: null,
+        documentTitle: this.domain.name,
+        headerDescription: this.domain.description,
+      });
+      if (
+        this.domain.DomainHeaderImages &&
+        this.domain.DomainHeaderImages.length > 0
+      ) {
+        this.$$('#page').setupTopHeaderImage(this.domain.DomainHeaderImages);
       } else {
-        this.$$("#page").setupTopHeaderImage(null);
+        this.$$('#page').setupTopHeaderImage(null);
       }
 
-      this.$$("#pagesAjax").url = "/api/domains/"+this.domain.id+"/pages";
-      this.$$("#pagesAjax").generateRequest();
+      this.$$('#pagesAjax').url = '/api/domains/' + this.domain.id + '/pages';
+      this.$$('#pagesAjax').generateRequest();
     }
     window.appGlobals.setAnonymousGroupStatus(null);
     window.appGlobals.disableFacebookLoginForGroup = false;

@@ -68,6 +68,7 @@
     "@material/mwc-icon-button": "^0.17.2",
     "@material/mwc-menu": "^0.17.2",
     "@material/mwc-snackbar": "^0.17.2",
+    "@material/mwc-tab-bar": "^0.17.2",
     "@material/mwc-top-app-bar": "^0.17.2",
     "@types/google.analytics": "0.0.40",
     "@types/i18next": "^13.0.0",
