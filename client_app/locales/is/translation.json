@@ -1,4 +1,9 @@
 {
+  "uploadDocxSurveyFormat": "Hlaða upp skoðanakönnun í DOCX formi",
+  "storeSubCodesWithRadiosAndCheckboxes": "Geyma 'sub-codes' með 'radios' & 'checkboxes'",
+  "domainHeader": "Vefur",
+  "communityHeader": "Svæði",
+  "groupHeader": "Hópur",
   "editTranslations": "Breyta þýðingum",
   "highlightedLanguages": "Efstu tungumál (en,is,fr)",
   "optionalSortOrder": "Valkvæm röð á svæði",
