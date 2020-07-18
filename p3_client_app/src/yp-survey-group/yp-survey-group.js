@@ -259,6 +259,21 @@ Polymer({
     this.structuredAnswers = answers;
   },
 
+  _serializeAnswersWithSubCodesIfNeeded: function () {
+    var answers = [];
+    this.liveQuestionIds.forEach(function (liveIndex) {
+      var questionElement = this.$$("#structuredQuestionContainer_"+liveIndex);
+      if (questionElement) {
+        if (this.surveyGroup && this.surveyGroup.configuration && this.surveyGroup.configuration.storeSubCodesWithRadiosAndCheckboxes) {
+          answers.push(questionElement.getAnswer({ withSubCodes: true }));
+        } else {
+          answers.push(questionElement.getAnswer());
+        }
+      }
+    }.bind(this));
+    this.structuredAnswersWithSubCodesIfNeeded = answers;
+  },
+
   _surveySubmitResponse: function (event, detail) {
     if (detail.error) {
       this.set('surveySubmitError', detail.error);
@@ -268,11 +283,11 @@ Polymer({
   },
 
   _submit: function () {
-    this._serializeAnswers();
+    this._serializeAnswersWithSubCodesIfNeeded();
     var submitAjax = this.$$("#submitAjax");
     submitAjax.url = "/api/groups/"+this.surveyGroup.id+"/survey";
     submitAjax.method = "POST";
-    submitAjax.body = { structuredAnswers: this.structuredAnswers };
+    submitAjax.body = { structuredAnswers: this.structuredAnswersWithSubCodesIfNeeded };
     submitAjax.generateRequest();
   },
 
@@ -334,22 +349,24 @@ Polymer({
       this.liveUniqueIds = [];
       this.liveUniqueIdsAll = [];
       this.uniqueIdsToElementIndexes = {};
-      this.structuredQuestions.forEach(function (question, index) {
-        if (question.type.toLowerCase()==="textfield" ||
-          question.type.toLowerCase()==="textfieldlong" ||
-          question.type.toLowerCase()==="textarea" ||
-          question.type.toLowerCase()==="textarealong" ||
-          question.type.toLowerCase()==="numberfield" ||
-          question.type.toLowerCase()==="checkboxes" ||
-          question.type.toLowerCase()==="radios" ||
-          question.type.toLowerCase()==="dropdown"
-        ) {
-          this.liveQuestionIds.push(index);
-          this.uniqueIdsToElementIndexes[question.uniqueId] = index;
-          this.liveUniqueIds.push(question.uniqueId);
-          this.liveUniqueIdsAll.push({uniqueId: question.uniqueId, atIndex: index});
-        }
-      }.bind(this));
+      if (this.structuredQuestions) {
+        this.structuredQuestions.forEach(function (question, index) {
+          if (question.type.toLowerCase()==="textfield" ||
+            question.type.toLowerCase()==="textfieldlong" ||
+            question.type.toLowerCase()==="textarea" ||
+            question.type.toLowerCase()==="textarealong" ||
+            question.type.toLowerCase()==="numberfield" ||
+            question.type.toLowerCase()==="checkboxes" ||
+            question.type.toLowerCase()==="radios" ||
+            question.type.toLowerCase()==="dropdown"
+          ) {
+            this.liveQuestionIds.push(index);
+            this.uniqueIdsToElementIndexes[question.uniqueId] = index;
+            this.liveUniqueIds.push(question.uniqueId);
+            this.liveUniqueIdsAll.push({uniqueId: question.uniqueId, atIndex: index});
+          }
+        }.bind(this));
+      }
       this._checkAndLoadState();
     });
 

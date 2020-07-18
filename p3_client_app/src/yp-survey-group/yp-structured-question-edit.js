@@ -423,11 +423,13 @@ class YpStructuredQuestionEdit extends mixinBehaviors([IronFormElementBehavior, 
   }
 
   _getTextWithIndex(question) {
-    if (question.questionIndex && !this.hideQuestionIndex) {
+    return question.text;
+    //TODO: Think about if we need that
+    /*if (question.questionIndex && !this.hideQuestionIndex) {
       return question.questionIndex + ". " + question.text;
     } else {
       return question.text;
-    }
+    }*/
   }
 
   _getRadioClass(question) {
@@ -500,7 +502,7 @@ class YpStructuredQuestionEdit extends mixinBehaviors([IronFormElementBehavior, 
     }
   }
 
-  getAnswer () {
+  getAnswer (options) {
     var item = this.$$("#structuredQuestion_" + this.index);
 
     if (item) {
@@ -529,6 +531,9 @@ class YpStructuredQuestionEdit extends mixinBehaviors([IronFormElementBehavior, 
               } else {
                 value = selectedRadio.text;
               }
+              if (value && options && options.withSubCodes && button.subCode) {
+                value = button.subCode + " "+ value;
+              }
             }
           }.bind(this));
         }
@@ -538,15 +543,19 @@ class YpStructuredQuestionEdit extends mixinBehaviors([IronFormElementBehavior, 
           if (item.children[i].checked) {
             var checkboxSubId = item.children[i].id.split("_")[2];
             var selectedCheckbox = this.question.checkboxes[checkboxSubId];
+            let subCode = "";
+            if (options && options.withSubCodes && selectedCheckbox.subCode) {
+              subCode = selectedCheckbox.subCode + " ";
+            }
             if (selectedCheckbox.isSpecify) {
               var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
               if (checkboxInput && checkboxInput.value !== "") {
-                selectedCheckboxes += selectedCheckbox.text + ":" + this.cleanValue(checkboxInput.value) + ",";
+                selectedCheckboxes += subCode + selectedCheckbox.text + ":" + this.cleanValue(checkboxInput.value) + ",";
               } else {
-                selectedCheckboxes += selectedCheckbox.text + ",";
+                selectedCheckboxes += subCode + selectedCheckbox.text + ",";
               }
             } else {
-              selectedCheckboxes += selectedCheckbox.text + ",";
+              selectedCheckboxes += subCode + selectedCheckbox.text + ",";
             }
           }
         }
