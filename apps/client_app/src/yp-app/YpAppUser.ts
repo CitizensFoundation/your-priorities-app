@@ -353,11 +353,11 @@ export class YpAppUser extends YpCodeBase {
   setLoggedInUser(user: YpUser) {
     this.sessionSet('user', user);
     this.user = user;
-    this.fireGlobal('logged-in', this.user);
+    this.fireGlobal('yp-logged-in', this.user);
 
     // TODO: Look at this. Fire another signal a bit later in case some components had not set up their listeners
     setTimeout(() => {
-      this.fireGlobal('logged-in', this.user);
+      this.fireGlobal('yp-logged-in', this.user);
     }, 1000);
 
     window.appGlobals.analytics.sendLoginAndSignup(
@@ -382,7 +382,7 @@ export class YpAppUser extends YpCodeBase {
     this.sessionUnset('user');
     this.user = null;
     window.appGlobals.setAnonymousUser(null);
-    this.fireGlobal('logged-in', null);
+    this.fireGlobal('yp-logged-in', null);
   }
 
   loggedIn() {

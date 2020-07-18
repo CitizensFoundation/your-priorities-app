@@ -99,7 +99,7 @@ class YpCommunityGridLit extends YpBaseElement {
 
   _selectedItemChanged (event, detail) {
     if (detail && detail.value) {
-      var selectedCard = this.$$("#communityCardHref"+detail.value.id);
+      const selectedCard = this.$$("#communityCardHref"+detail.value.id);
       if (selectedCard) {
         selectedCard.click();
       }

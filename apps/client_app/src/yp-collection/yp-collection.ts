@@ -17,6 +17,8 @@ import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import '@material/mwc-tab-bar';
+import '@material/mwc-fab';
+import './yp-collection-items-grid.js';
 
 export abstract class YpCollection extends YpBaseElement {
   @property({ type: Boolean })
@@ -35,12 +37,6 @@ export abstract class YpCollection extends YpBaseElement {
   collection: YpCollection | undefined;
 
   @property({ type: String })
-  collectionTypeName: string | undefined;
-
-  @property({ type: String })
-  collectionApiType: string | undefined;
-
-  @property({ type: String })
   subRoute: string | undefined;
 
   @property({ type: Number })
@@ -55,6 +51,29 @@ export abstract class YpCollection extends YpBaseElement {
   @property({ type: Boolean })
   hideCollection = false;
 
+  @property({ type: Array })
+  collectionItems = [];
+
+  collectionTypeName: string;
+  collectionApiType: string;
+  collectionCreateFabIcon: string;
+  collectionCreateFabLabel: string;
+
+  constructor(
+    collectionTypeName: string,
+    collectionApiType: string,
+    collectionCreateFabIcon: string,
+    collectionCreateFabLabel: string
+  ) {
+    super();
+    this.collectionTypeName = collectionTypeName;
+    this.collectionApiType = collectionApiType;
+    this.collectionCreateFabIcon = collectionCreateFabIcon;
+    this.collectionCreateFabLabel = collectionCreateFabLabel;
+
+    this.addGlobalListener('yp-logged-in', this.refreshCollection);
+  }
+
   static get propsfeerties() {
     return {
       idRoute: Object,
@@ -62,66 +81,48 @@ export abstract class YpCollection extends YpBaseElement {
       idRouteData: Object,
       tabRouteData: Object,
 
-      createFabIcon: {
-        type: String,
-        value: null,
-        notify: true,
-      },
-
-      domainId: {
-        type: Number,
-        value: null,
-        observer: '_domainIdChanged',
-      },
-
-      url: {
-        type: String,
-      },
-
-      domainEmpty: {
-        type: Boolean,
-        value: false,
-      },
-
-      domain: {
-        type: Object,
-      },
-
-      selectedTab: {
-        type: String,
-        value: 'communities',
-        observer: '_selectedTabChanged',
-      },
-
-      otherSocialMediaActive: {
-        type: Boolean,
-        value: false,
-      },
 
       isOldiOs: {
         type: Boolean,
         computed: '_isOldiOs(domainId)',
       },
 
-      disableRefreshOnce: {
-        type: Boolean,
-        value: false,
-      },
     };
   }
 
   static get styles() {
-    return [super.styles, css``];
+    return [
+      super.styles,
+      css`
+        mwc-fab {
+          position: absolute;
+          bottom: 16px;
+          right: 16px;
+        }
+      `,
+    ];
   }
 
   async refreshCollection() {
-    if (this.collectionId && this.collectionApiType) {
+    if (this.collectionId) {
       this.collection = (await window.serverApi.getCollection(
         this.collectionApiType,
         this.collectionId
       )) as YpCollection | undefined;
     } else {
-      console.error('Collection not setup for refresh');
+      console.error('Collection id setup for refresh');
+    }
+  }
+
+  async getHelpPages() {
+    if (this.collectionId) {
+      const helpPages = (await window.serverApi.getHelpPages(
+        this.collectionApiType,
+        this.collectionId
+      )) as Array<YpHelpPage> | undefined;
+      this.fire("yp-set-pages", helpPages);
+    } else {
+      console.error('Collection id setup for get help pages');
     }
   }
 
@@ -130,11 +131,9 @@ export abstract class YpCollection extends YpBaseElement {
       ? html`
           <yp-collection-header
             .collection="${this.collection}"
-            aria-label="${ifDefined(this.collectionTypeName)}"
+            aria-label="${this.collectionTypeName}"
             @refresh-collection="${this.refreshCollection}"
-            role="banner"
-          >
-          </yp-collection-header
+            role="banner"></yp-collection-header
           >;
         `
       : nothing;
@@ -152,28 +151,31 @@ export abstract class YpCollection extends YpBaseElement {
     return nothing as TemplateResult;
   }
 
+  get collectionTabLabel(): string {
+    return `${this.t(this.collectionTypeName)} (${
+      this.collectionItems.length
+    })`;
+  }
+
   renderTabs() {
-    if (this.collection && !this.noTabs && this.collectionTypeName) {
+    if (this.collection && !this.noTabs) {
       return html`
         <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
           <mwc-tab
             ?hidden="${this.hideCollection}"
-            .label="${this.t(this.collectionTypeName)}"
+            .label="${this.collectionTabLabel}"
             icon="people"
-            stacked
-          ></mwc-tab>
+            stacked></mwc-tab>
           <mwc-tab
             ?hidden="${this.hideNewsfeed}"
             .label="${this.t('newsfeed')}"
             icon="rss_feed"
-            stacked
-          ></mwc-tab>
+            stacked></mwc-tab>
           <mwc-tab
             ?hidden="${this.hideMap}"
             .label="${this.t('map')}"
             icon="map"
-            stacked
-          ></mwc-tab>
+            stacked></mwc-tab>
           ${this.renderOtherTab()}
         </mwc-tab-bar>
       `;
@@ -187,7 +189,8 @@ export abstract class YpCollection extends YpBaseElement {
 
     switch (this.selectedTab) {
       case CollectionTabTypes.Collection:
-        page = html``;
+        page = html` <yp-collection-items-grid
+          .collectionId="${this.collectionId}"></yp-collection-items-grid>`;
         break;
       case CollectionTabTypes.Newsfeed:
         page = html``;
@@ -203,119 +206,67 @@ export abstract class YpCollection extends YpBaseElement {
     return page;
   }
 
+  abstract createCollectionItem(event: CustomEvent): void;
+
   render() {
     return html`
       ${this.renderHeader()} ${this.renderTabs()} ${this.renderCurrentTabPage()}
+      <mwc-fab
+        ?extended="${this.wide}"
+        .label="${this.collectionCreateFabLabel}"
+        icon="${this.collectionCreateFabIcon}"
+        @click="${this.createCollectionItem}"></mwc-fab>
+
       ${this.group
         ? html`
-            <yp-page
-              id="page"
-              .createFabIcon="${this.createFabIcon}"
-              createFabTitle="${this.t('community.add')}"
-              @yp-create-fab-tap="${this._newCommunity}"
-            >
-              <yp-domain-large-card
-                id="domainCard"
-                slot="largeCard"
-                class="largeCard card"
-                .domain="${this.domain}"
-                @update-domain="${this._refreshAjax}"
-              ></yp-domain-large-card>
-
-              <paper-tabs
-                id="paper_tabs"
-                .apple="${this.isOldiOs}"
-                slot="tabs"
-                class="tabs"
-                .selected="${this.selectedTab}"
-                attr-for-selected="name"
-                .focused
-              >
-                <paper-tab .name="communities" class="tab"
-                  ><span>${this.t('communities')}</span> &nbsp;
-                  (<span>${this.communitiesLength}</span>)</paper-tab
-                >
-                <paper-tab
-                  .name="news"
-                  class="tab"
-                  ?hidden="${this.domain.configuration.hideDomainNews}"
-                  >${this.t('news')}</paper-tab
-                >
-              </paper-tabs>
-
-              <iron-pages
-                class="tabPages"
-                fullbleed
-                slot="tabPages"
-                .selected="${this.selectedTab}"
-                .attrForSelected="name"
-                .entryAnimation="fade-in-animation"
-                .exitAnimation="fade-out-animation"
-              >
-                <section .name="communities" class="layout vertical">
-                  <div
-                    class="card-container layout center-center wrap layout-horizontal "
-                  >
                     <yp-community-grid
                       id="communityGrid"
                       featured-communities="${this.featuredCommunities}"
                       active-communities="${this.activeCommunities}"
                       .archivedCommunities="${this.archivedCommunities}"
                       .hideAdd="${!this.createFabIcon}"
-                      @add-new-community="${this._newCommunity}"
-                    >
+                      @add-new-community="${this._newCommunity}">
                     </yp-community-grid>
                   </div>
                 </section>
                 <section .name="news" class="minHeightSection">
-                  ${this.newsTabSelected
-                    ? html`
-                        <ac-activities
-                          id="domainNews"
-                          .selectedTab="${this.selectedTab}"
-                          .domainId="${this.domain.id}"
-                        ></ac-activities>
-                      `
-                    : html``}
+                  ${
+                    this.newsTabSelected
+                      ? html`
+                          <ac-activities
+                            id="domainNews"
+                            .selectedTab="${this.selectedTab}"
+                            .domainId="${this.domain.id}"></ac-activities>
+                        `
+                      : html``
+                  }
                 </section>
               </iron-pages>
             </yp-page>
-
-            <lite-signal
-              @lite-signal-yp-language="${this._languageEvent}"
-            ></lite-signal>
-            <lite-signal
-              @lite-signal-logged-in="${this._userLoggedIn}"
-            ></lite-signal>
 
             <app-route
               .route="${this.idRoute}"
               .pattern="/:id"
               data="${this.idRouteData}"
-              .tail="${this.tabRoute}"
-            >
+              .tail="${this.tabRoute}">
             </app-route>
 
             <app-route
               .route="${this.tabRoute}"
               .pattern="/:tabName"
-              data="${this.tabRouteData}"
-            >
+              data="${this.tabRouteData}">
             </app-route>
 
             <div
-              class="ypBottomContainer layout-horizontal layout-center-center"
-            >
+              class="ypBottomContainer layout-horizontal layout-center-center">
               <yp-ajax
                 id="ajax"
                 url="${this.url}"
-                @response="${this._response}"
-              ></yp-ajax>
+                @response="${this._response}"></yp-ajax>
               <yp-ajax
                 id="pagesAjax"
                 1
-                @response="${this._pagesResponse}"
-              ></yp-ajax>
+                @response="${this._pagesResponse}"></yp-ajax>
             </div>
           `
         : html``}
@@ -460,10 +411,6 @@ export abstract class YpCollection extends YpBaseElement {
           dialog.open('new', { domainId: this.domainId });
         }.bind(this)
       );
-  }
-
-  _pagesResponse(event, detail) {
-    this.fire('yp-set-pages', detail.response);
   }
 
   _response(event, detail, sender) {
