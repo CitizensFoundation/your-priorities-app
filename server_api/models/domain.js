@@ -40,7 +40,8 @@ module.exports = (sequelize, DataTypes) => {
     public_api_keys: DataTypes.JSONB,
     info_texts: DataTypes.JSONB,
     configuration:  DataTypes.JSONB,
-    language: { type: DataTypes.STRING, allowNull: true }
+    language: { type: DataTypes.STRING, allowNull: true },
+    data: DataTypes.JSONB
   }, {
     underscored: true,
 

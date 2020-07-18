@@ -290,13 +290,13 @@
           <template is="dom-if" if="[[!post.public_data.structuredAnswersJson]]">
             <yp-magic-text class="description layout horizontal" has-custom-ratings$="[[post.Group.configuration.customRatings]]" hidden$="[[hideDescription]]"
                            text-type="postContent" content-language="[[post.language]]"
-                           on-tap="goToPostIfNotHeader"
+                           on-tap="goToPostIfNotHeader" remove-urls
                            text-only content="[[post.description]]" content-id="[[post.id]]" truncate="120">
             </yp-magic-text>
           </template>
           <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
             <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
-                           content="[[structuredAnswersFormatted]]"
+                           content="[[structuredAnswersFormatted]]" remove-urls
                            content-id="[[post.id]]" class="description" truncate="120">
             </yp-magic-text>
           </template>

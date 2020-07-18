@@ -135,8 +135,9 @@
                       label="[[t('group.objectives')]]"
                       char-counter
                       rows="2"
+                      on-value-changed="_objectivesChanged"
                       max-rows="5"
-                      maxlength="300">
+                      maxlength="[[maxObjectivesLength]]">
       </paper-textarea>
 
       <div class="horizontal end-justified layout">
@@ -416,10 +417,10 @@
           [[t('allPostsBlockedByDefault')]]
         </paper-checkbox>
 
-        <paper-checkbox name="hideQuestionIndexOnNewPost" checked$="{{group.configuration.hideQuestionIndexOnNewPost}}">
-          [[t('hideQuestionIndexOnNewPost')]]
+        <paper-checkbox name="storeSubCodesWithRadiosAndCheckboxes" checked$="{{group.configuration.storeSubCodesWithRadiosAndCheckboxes}}">
+          [[t('storeSubCodesWithRadiosAndCheckboxes')]]
         </paper-checkbox>
-        
+
         <paper-textarea id="structuredQuestions"
                         name="structuredQuestions"
                         type="text"
@@ -435,6 +436,17 @@
         <div id="structuredQuestionsJsonErrorInfo" hidden$="[[!structuredQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
 
         <div class="structuredQuestionsInfo">[[t('structuredQuestionsInfo')]]</div>
+
+        <div class="layout vertical additionalSettings uploadSection">
+          <yp-file-upload id="docxSurveyUpload" raised="true" multi="false"
+                          target="/api/groups/-1/convert_docx_survey_to_json"
+                          accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          method="PUT" on-success="_haveUploadedDocxSurvey">
+            <iron-icon class="icon" icon="sort"></iron-icon>
+            <span>[[t('uploadDocxSurveyFormat')]]</span>
+          </yp-file-upload>
+        </div>
+
 
         <paper-input id="alternativeTextForNewIdeaButton"
                      name="alternativeTextForNewIdeaButton"
@@ -886,6 +898,28 @@
       structuredQuestionsJsonError: {
         type: Boolean,
         value: false
+      },
+
+      maxObjectivesLength: {
+        type: Number,
+        value: 300
+      }
+    },
+
+    _objectivesChanged: function (event) {
+      var description = event.target.value;
+      var urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
+      var urlArray = description.match(urlRegex);
+
+      if (urlArray && urlArray.length>0) {
+        var urlsLength = 0;
+        for (var i=0;i<Math.min(urlArray.length,10); i++) {
+          urlsLength+=urlArray[i].length;
+        }
+        var maxLength = 300;
+        maxLength += urlsLength;
+        maxLength -= Math.min(urlsLength, urlArray.length*30);
+        this.set('maxObjectivesLength', maxLength);
       }
     },
 
@@ -975,7 +1009,6 @@
     },
 
     _publicCommunity: function (group) {
-      debugger;
       if (group) {
         return group.Community.access === 0
       } else {
@@ -1058,7 +1091,6 @@
         this.async(function () {
           if (this.community) {
             if (this.community.access == 0) {
-              debugger;
               this.set('publicCommunity', true);
             } else {
               this.set('publicCommunity', false);
@@ -1203,6 +1235,20 @@
           this.editHeaderText = this.t('group.update');
           this.toastText = this.t('groupToastUpdated');
         }
+      }
+    },
+
+    _haveUploadedDocxSurvey: function (event, detail) {
+      if (detail.xhr.response) {
+        detail = JSON.parse(detail.xhr.response);
+        detail.jsonContent = JSON.stringify(JSON.parse(detail.jsonContent));
+        this.$$("#structuredQuestions").value = detail.jsonContent;
+        this.$$("#structuredQuestions").alwaysFloatLabel = true;
+        if (this.group && this.group.configuration) {
+          this.group.configuration.structuredQuestions = detail.jsonContent;
+        }
+        this.$.editDialog.scrollResize();
+        this.fire('iron-resize');
       }
     }
   });

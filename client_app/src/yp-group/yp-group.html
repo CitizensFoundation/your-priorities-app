@@ -176,7 +176,7 @@
       }
     </style>
 
-    <div id="topContainer">
+    <div id="topContainer" role="main" aria-label="[[t('posts.posts')]]">
 
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" hidden$="[[group.configuration.hideGroupHeader]]">
         <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
@@ -904,6 +904,13 @@
           }
           if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
             this.set('selectedTab','map');
+          }
+
+          if (this.group.Community && this.group.Community.configuration &&
+              this.group.Community.configuration.highlightedLanguages) {
+            window.appGlobals.setHighlightedLanguages(this.group.Community.configuration.highlightedLanguages);
+          } else {
+            window.appGlobals.setHighlightedLanguages(null);
           }
         }
       },

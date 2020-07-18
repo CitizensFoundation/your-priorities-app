@@ -75,7 +75,7 @@
       <div class="languageSelector layout vertical self-start">
         <yp-language-selector class="languageSelector" selected-locale="{{selectedLocale}}"></yp-language-selector>
       </div>
-      <div class="layout vertical" hidden$="[[!user]]">
+      <div class="layout vertical" hidden$="[[!user]]" role="navigation" aria-label="Community & Group navigation">
         <div hidden>
           <div class="header">[[t('myDomains')]]</div>
           <template is="dom-repeat" items="[[myDomains]]" as="domain">

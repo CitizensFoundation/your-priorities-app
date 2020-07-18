@@ -162,6 +162,17 @@
           notifyDialogText: String
         },
 
+        setHighlightedLanguages: function (languages) {
+          this.highlightedLanguages = languages;
+          document.dispatchEvent(
+            new CustomEvent("lite-signal", {
+              bubbles: true,
+              compose: true,
+              detail: { name: 'yp-refresh-language-selection', data: { }  }
+            })
+          );
+        },
+
         _resetNotifyDialogText: function () {
           this.set('notifyDialogText', null);
         },

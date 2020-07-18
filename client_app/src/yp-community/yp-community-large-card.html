@@ -302,7 +302,7 @@
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <div class="layout horizontal wrap">
+    <div class="layout horizontal wrap" aria-label="[[t('community')]]" role="banner">
       <paper-material is-video$="[[communityVideoURL]]" id="cardImage" elevation="3" animated class="large-card imageCard top-card">
         <div id="welcomeHTML" hidden$="[[!community.configuration.welcomeHTML]]" class="layout vertical center-center">
         </div>
@@ -359,6 +359,7 @@
               <paper-item id="addGroupMenuItem" hidden$="[[community.is_community_folder]]">[[t('group.new')]]</paper-item>
               <paper-item  hidden id="addCommunityFolderMenuItem">[[t('newCommunityFolder')]]</paper-item>
               <paper-item id="openAnalyticsApp" hidden$="[[!hasCommunityAccess]]">[[t('openAnalyticsApp')]]</paper-item>
+              <paper-item id="openAdminApp" hidden$="[[!hasCommunityAccess]]">[[t('editTranslations')]]</paper-item>
             </paper-listbox>
           </paper-menu-button>
         </div>
@@ -574,6 +575,8 @@
           this.fire('yp-new-community-folder');
         else if (detail.item.id==="openAnalyticsApp")
           window.location = "/analytics/community/"+this.community.id;
+        else if (detail.item.id==="openAdminApp")
+          window.location = "/admin/community/"+this.community.id;
         this.$$("paper-listbox").select(null);
       },
 

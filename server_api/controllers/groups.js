@@ -28,6 +28,11 @@ const countModelRowsByTimePeriod = require('../active-citizen/engine/analytics/s
 const getGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getGroupIncludes;
 const getPointGroupIncludes = require('../active-citizen/engine/analytics/statsCalc').getPointGroupIncludes;
 const getParsedSimilaritiesContent = require('../active-citizen/engine/analytics/manager').getParsedSimilaritiesContent;
+const getTranslatedTextsForGroup = require('../active-citizen/utils/translation_helpers').getTranslatedTextsForGroup;
+const updateTranslationForGroup = require('../active-citizen/utils/translation_helpers').updateTranslationForGroup;
+
+const convertDocxSurveyToJson = require('../active-citizen/engine/analytics/manager').convertDocxSurveyToJson;
+
 
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -220,13 +225,13 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.videoPostUploadLimitSec', (req.body.videoPostUploadLimitSec && req.body.videoPostUploadLimitSec!="") ? req.body.videoPostUploadLimitSec : "60");
   group.set('configuration.videoPointUploadLimitSec', (req.body.videoPointUploadLimitSec && req.body.videoPointUploadLimitSec!="") ? req.body.videoPointUploadLimitSec : "30");
   if (group.configuration.videoPostUploadLimitSec && parseInt(group.configuration.videoPostUploadLimitSec)) {
-    if (parseInt(group.configuration.videoPostUploadLimitSec)>150) {
-      group.set('configuration.videoPostUploadLimitSec', 150);
+    if (parseInt(group.configuration.videoPostUploadLimitSec)>600) {
+      group.set('configuration.videoPostUploadLimitSec', 600);
     }
   }
   if (group.configuration.videoPointUploadLimitSec && parseInt(group.configuration.videoPointUploadLimitSec)) {
-    if (parseInt(group.configuration.videoPointUploadLimitSec)>90) {
-      group.set('configuration.videoPointUploadLimitSec', 90);
+    if (parseInt(group.configuration.videoPointUploadLimitSec)>600) {
+      group.set('configuration.videoPointUploadLimitSec', 600);
     }
   }
 
@@ -248,14 +253,14 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.audioPostUploadLimitSec', (req.body.audioPostUploadLimitSec && req.body.audioPostUploadLimitSec!="") ? req.body.audioPostUploadLimitSec : "60");
   group.set('configuration.audioPointUploadLimitSec', (req.body.audioPointUploadLimitSec && req.body.audioPointUploadLimitSec!="") ? req.body.audioPointUploadLimitSec : "30");
   if (group.configuration.audioPostUploadLimitSec && parseInt(group.configuration.audioPostUploadLimitSec)) {
-    if (parseInt(group.configuration.audioPostUploadLimitSec)>150) {
-      group.set('configuration.audioPostUploadLimitSec', 150);
+    if (parseInt(group.configuration.audioPostUploadLimitSec)>600) {
+      group.set('configuration.audioPostUploadLimitSec', 600);
     }
   }
 
   if (group.configuration.audioPointUploadLimitSec && parseInt(group.configuration.audioPointUploadLimitSec)) {
-    if (parseInt(group.configuration.audioPointUploadLimitSec)>90) {
-      group.set('configuration.audioPointUploadLimitSec', 90);
+    if (parseInt(group.configuration.audioPointUploadLimitSec)>600) {
+      group.set('configuration.audioPointUploadLimitSec', 600);
     }
   }
 
@@ -329,6 +334,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
   group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
   group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
+  group.set('configuration.storeSubCodesWithRadiosAndCheckboxes', truthValueFromBody(req.body.storeSubCodesWithRadiosAndCheckboxes));
 };
 
 var upload = multer({
@@ -347,6 +353,8 @@ var upload = multer({
     }
   })
 });
+
+var uploadDox = multer({});
 
 router.post('/:id/upload_document',  auth.can('add to group'), upload.single('file'), function(req, res) {
   res.send({filename: req.file.originalname, url: req.file.location });
@@ -978,6 +986,10 @@ router.post('/:communityId', auth.can('create group'), function(req, res) {
       models.Group.addUserToGroupIfNeeded(group.id, req, function () {
         group.addGroupAdmins(req.user).then(function (results) {
           group.setupImages(req.body, function(error) {
+            queue.create('process-moderation', {
+              type: 'estimate-collection-toxicity',
+              collectionId: group.id,
+              collectionType: 'group' }).priority('high').removeOnComplete(true).save();
             sendGroupOrError(res, group, 'setupImages', req.user, error);
           });
         });
@@ -1041,6 +1053,10 @@ router.put('/:id', auth.can('edit group'), function(req, res) {
         log.info('Group Updated', { group: toJson(group), context: 'update', user: toJson(req.user) });
         queue.create('process-similarities', { type: 'update-collection', groupId: group.id }).priority('low').removeOnComplete(true).save();
         group.setupImages(req.body, function(error) {
+          queue.create('process-moderation', {
+            type: 'estimate-collection-toxicity',
+            collectionId: group.id,
+            collectionType: 'group' }).priority('high').removeOnComplete(true).save();
           sendGroupOrError(res, group, 'setupImages', req.user, error);
         });
       }).catch(function(error) {
@@ -2093,6 +2109,51 @@ router.get('/:id/stats_votes', auth.can('edit group'), function(req, res) {
     }
   }, getGroupIncludes(req.params.id),  (error, results) => {
     sendBackAnalyticsResultsOrError(req,res,error,results);
+  });
+});
+
+router.get('/:id/get_translation_texts', auth.can('edit group'), function(req, res) {
+  getTranslatedTextsForGroup(req.query.targetLocale, req.params.id,(results, error) => {
+    if (error) {
+      log.error("Error in getting translated texts", { error });
+      res.sendStatus(500);
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+router.put('/:id/update_translation', auth.can('edit group'), function(req, res) {
+  updateTranslationForGroup(req.params.id, req.body,(results, error) => {
+    if (error) {
+      log.error("Error in updating translation", { error });
+      res.sendStatus(500);
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+router.put('/:id/convert_docx_survey_to_json', uploadDox.single('file'), function(req, res) {
+  const formData = {
+    file: {
+      value: req.file.buffer,
+      options: {
+        filename: req.file.originalname
+      }
+    }
+  };
+  convertDocxSurveyToJson(formData,(error, results) => {
+    if (error) {
+      log.error("Error in converting docx to joson", { error });
+      res.sendStatus(500);
+    } else {
+      if (results.body) {
+        res.send({ jsonContent: JSON.parse(results.body) });
+      } else {
+        res.sendStatus(500);
+      }
+    }
   });
 });
 
