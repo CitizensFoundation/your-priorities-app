@@ -86,7 +86,7 @@ Polymer({
       }
     </style>
 
-    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
+    <yp-page id="page"  role="main" aria-label="[[t('communities')]]" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity">
 
       <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refreshAjax"></yp-domain-large-card>
 
