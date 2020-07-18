@@ -59,7 +59,7 @@
 
   "structuredQuestions": "Întrebări structurate",
 
-  "structuredQuestionsInfo": "Utilizați virgula pentru a separa întrebările și valoarea maximă de caractere în lungime. Întrebările nu vor depăși 32 de caractere pentru afișare pe ecranul telefoanelor mobile. Exemplu: Întrebarea 1,200,Întrebarea 2,150,Întrebarea 3,150",
+  "structuredQuestionsInfo": "Utilizați virgula pentru a separa întrebările și valoarea maximă de caractere în lungime. Întrebările nu vor depăși 32 de caractere pentru afișare pe ecranul telefoanelor mobile. Exemplu: Întrebarea 1,200,Întrebarea 2,600,Întrebarea 3,600",
 
   "backToPost": "Înapoi la postare",
   "forwardToPost": "Înainte spre postarea recomandată",
@@ -162,10 +162,10 @@
   "pointAudioInfoAndroid": "Pe Android, utilizați video în scopul înregistrării, va fi utilizată doar înregistrarea audio.",
   "allowPointVideoUploads": "Permite încărcarea înregistrării video pentru punct",
   "seconds": "secunde",
-  "videoPostUploadLimitSec": "Limita în secunde pentru înregistrarea video pentru postare a postării (max 150s)",
-  "videoPointUploadLimitSec": "Limita în secunde pentru înregistrarea video a punctului (max 90s)",
-  "audioPostUploadLimitSec": "Limita în secunde pentru înregistrarea audio a postării (max 150s)",
-  "audioPointUploadLimitSec": "Limita în secunde pentru înregistrarea audio a punctului (max 90s)",
+  "videoPostUploadLimitSec": "Limita în secunde pentru înregistrarea video pentru postare a postării (max 600s)",
+  "videoPointUploadLimitSec": "Limita în secunde pentru înregistrarea video a punctului (max 600s)",
+  "audioPostUploadLimitSec": "Limita în secunde pentru înregistrarea audio a postării (max 600s)",
+  "audioPointUploadLimitSec": "Limita în secunde pentru înregistrarea audio a punctului (max 600s)",
   "postCoverVideo": "Video",
   "uploadVideo": "Video",
   "uploadCompleted": "Încărcare finalizată",
