@@ -1296,6 +1296,10 @@ const createNewCommunity = (req, res) => {
     community.updateAllExternalCounters(req, 'up', 'counter_communities', function () {
       community.setupImages(req.body, function(error) {
         community.addCommunityAdmins(req.user).then(function (results) {
+          queue.create('process-moderation', {
+            type: 'estimate-collection-toxicity',
+            collectionId: community.id,
+            collectionType: 'community' }).priority('high').removeOnComplete(true).save();
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
       });
@@ -1347,6 +1351,10 @@ router.put('/:id', auth.can('edit community'), function(req, res) {
         log.info('Community Updated', { community: toJson(community), context: 'update', user: toJson(req.user) });
         queue.create('process-similarities', { type: 'update-collection', communityId: community.id }).priority('low').removeOnComplete(true).save();
         community.setupImages(req.body, function(error) {
+          queue.create('process-moderation', {
+            type: 'estimate-collection-toxicity',
+            collectionId: community.id,
+            collectionType: 'community' }).priority('high').removeOnComplete(true).save();
           sendCommunityOrError(res, community, 'setupImages', req.user, error);
         });
       });

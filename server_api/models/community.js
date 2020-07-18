@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_organizations: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     only_admins_can_create_groups: { type: DataTypes.BOOLEAN, defaultValue: false },
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     other_social_media_info: DataTypes.JSONB,
@@ -266,7 +267,7 @@ module.exports = (sequelize, DataTypes) => {
           this.set('data.moderation.lastReportedBy', []);
           if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
             log.info("process-moderation post toxicity on manual report");
-            queue.create('process-moderation', { type: 'estimate-post-toxicity', postId: this.id }).priority('high').removeOnComplete(true).save();
+            queue.create('process-moderation', { type: 'estimate-collection-toxicity', collectionId: this.id, collectionType: 'community' }).priority('high').removeOnComplete(true).save();
           }
         }
         this.set('data.moderation.lastReportedBy',
@@ -278,6 +279,7 @@ module.exports = (sequelize, DataTypes) => {
           seriesCallback(error);
         });
       },
+      /* TODO: Finish sending emails to domain admins if needed
       (seriesCallback) => {
         if (req && req.disableNotification===true) {
           seriesCallback();
@@ -285,15 +287,15 @@ module.exports = (sequelize, DataTypes) => {
           sequelize.models.AcActivity.createActivity({
             type: 'activity.report.content',
             userId: (req && req.user) ? req.user.id : null,
-            postId: this.id,
-            groupId: this.group_id,
-            communityId: (this.Group && this.Group.Community) ? this.Group.Community.id : null,
-            domainId:  (this.Group && this.Group.Community && this.Group.Community.Domain) ? this.Group.Community.Domain.id : null
+            postId: null,
+            groupId: null,
+            communityId: this.id,
+            domainId:  this.domain_id
           }, (error) => {
             seriesCallback(error);
           });
         }
-      }
+      } */
     ], (error) => {
       this.increment('counter_flags');
       callback(error);
