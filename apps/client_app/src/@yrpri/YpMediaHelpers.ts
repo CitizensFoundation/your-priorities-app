@@ -40,26 +40,12 @@ export class YpMediaHelpers {
     }
   }
 
-  static getImageFormatUrl(images: Array<YpImageData>, formatId: number) {
+  static getImageFormatUrl(images: Array<YpImageData> | undefined, formatId = 0) {
     if (images && images.length > 0) {
       const formats = JSON.parse(images[images.length - 1].formats);
       if (formats && formats.length > 0) return formats[formatId];
     } else {
       return '';
-    }
-  }
-
-  static setupMediaEventListeners(
-    current: YpElementWithPlayback | null,
-    previous: YpElementWithPlayback | null
-  ) {
-    if (previous && current) {
-      this.detachMediaListeners(previous);
-      this.attachMediaListeners(current);
-    } else if (current) {
-      this.attachMediaListeners(current);
-    } else if (!current && previous) {
-      this.detachMediaListeners(previous);
     }
   }
 
@@ -250,9 +236,9 @@ export class YpMediaHelpers {
   }
 
   static getVideoPosterURL(
-    videos: Array<YpVideoData>,
-    images: Array<YpImageData>,
-    selectedImageIndex: number
+    videos: Array<YpVideoData> | undefined,
+    images: Array<YpImageData> | undefined,
+    selectedImageIndex = 0
   ) {
     if (
       videos &&
@@ -260,7 +246,6 @@ export class YpMediaHelpers {
       videos[0].VideoImages &&
       videos[0].VideoImages.length > 0
     ) {
-      if (!selectedImageIndex) selectedImageIndex = 0;
       if (
         videos[0].public_meta &&
         videos[0].public_meta.selectedVideoFrameIndex

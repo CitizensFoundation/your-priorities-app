@@ -1,4 +1,4 @@
-import { property, html, css, customElement, supportsAdoptingStyleSheets } from 'lit-element';
+import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
@@ -23,132 +23,40 @@ export class YpCollectionHeader extends YpBaseElement {
   @property({ type: Number })
   collectionVideoId: number | null = null;
 
-  playStartedAt: Date | null = null;
-  videoPlayListener: Function | null = null;
-  videoPauseListener: Function | null = null;
-  videoEndedListener: Function | null = null;
-  audioPlayListener: Function | null = null;
-  audioPauseListener: Function | null = null;
-  audioEndedListener: Function | null = null;
-
-  get hasCollectionAccess(): boolean {
+  get _hasCollectionAccess(): boolean {
     switch(this.collectionTypeName) {
       case 'domain':
         return YpAccessHelpers.checkDomainAccess(this.collection as YpDomainData);
+        break;
       case 'community':
         return YpAccessHelpers.checkCommunityAccess(this.collection as YpCommunityData);
+        break;
       case 'group':
         return YpAccessHelpers.checkGroupAccess(this.collection as YpGroupData);
+        break;
       default:
         return false;
     }
   }
 
-  get collectionVideos(): Array<YpVideoData> | undefined {
-    switch(this.collectionTypeName) {
-      case 'domain':
-        return (this.collection as YpDomainData).DomainLogoVideos;
-      case 'community':
-        return (this.collection as YpCommunityData).CommunityLogoVideos;
-      case 'group':
-        return (this.collection as YpGroupData).GroupLogoVideos;
-    }
-  }
+  static get prodperties() {
+    return {
+      collectionVideoURL: {
+        type: String,
+        computed: '_collectionVideoURL(collection)',
+      },
 
-  get collectionNameTextType(): string | undefined {
-    switch(this.collectionTypeName) {
-      case 'domain':
-        return "domainName";
-      case 'community':
-        return "communityName";
-      case 'group':
-        return "groupName";
-    }
-  }
+      collectionVideoPosterURL: {
+        type: String,
+        computed: '_collectionVideoPosterURL(collection)',
+      },
 
-  get collectionDescriptionTextType(): string | undefined {
-    switch(this.collectionTypeName) {
-      case 'domain':
-        return "domainContent";
-      case 'community':
-        return "communityContent";
-      case 'group':
-        return "groupContent";
-    }
+      exportLoginsUrl: {
+        type: String,
+        computed: '_exportLoginsUrl(hasDomainAccess, collection)',
+      },
+    };
   }
-
-  get collectionLogoImages(): Array<YpImageData> | undefined {
-    switch(this.collectionTypeName) {
-      case 'domain':
-        return (this.collection as YpDomainData).DomainLogoImages;
-      case 'community':
-        return (this.collection as YpCommunityData).CommunityLogoImages;
-      case 'group':
-        return (this.collection as YpGroupData).GroupLogoImages;
-    }
-  }
-
-  get collectionHeaderImages(): Array<YpImageData> | undefined {
-    switch(this.collectionTypeName) {
-      case 'domain':
-        return (this.collection as YpDomainData).DomainHeaderImages;
-      case 'community':
-        return (this.collection as YpCommunityData).CommunityHeaderImages;
-      case 'group':
-        return (this.collection as YpGroupData).GroupHeaderImages;
-    }
-  }
-
-  get collectionVideoURL(): string | undefined {
-    if (
-      this.collection &&
-      this.collection.configuration &&
-      this.collection.configuration.useVideoCover
-    ) {
-      const collectionVideos = this.collectionVideos;
-      if (collectionVideos) {
-        const videoURL = YpMediaHelpers.getVideoURL(collectionVideos);
-        if (videoURL) {
-          this.collectionVideoId = collectionVideos[0].id;
-          return videoURL;
-        } else {
-          return undefined;
-        }
-      }
-    } else {
-      return undefined;
-    }
-  }
-
-  get collectionVideoPosterURL(): string | undefined {
-    if (
-      this.collection &&
-      this.collection.configuration &&
-      this.collection.configuration.useVideoCover
-    ) {
-      const videoPosterURL = YpMediaHelpers.getVideoPosterURL(
-        this.collectionVideos,
-        this.collectionLogoImages
-      );
-      if (videoPosterURL) {
-        return videoPosterURL;
-      } else {
-        return undefined;
-      }
-    } else {
-      return undefined;
-    }
-  }
-
-  get collectionLogoImagePath(): string | undefined {
-    return YpMediaHelpers.getImageFormatUrl(this.collectionLogoImages, 0);
-  }
-
-  get collectionHeaderImagePath(): string | undefined {
-    return YpMediaHelpers.getImageFormatUrl(this.collectionHeaderImages, 0);
-  }
-
-  // UI
 
   static get styles() {
     return [
@@ -352,39 +260,26 @@ export class YpCollectionHeader extends YpBaseElement {
     ];
   }
 
-  renderStats() {
-    switch(this.collectionTypeName) {
-      case 'domain':
-        return html``;
-      case 'community':
-        return html``;
-      case 'group':
-        return html``;
-      default:
-        return nothing;
-    }
-  }
-
   render() {
     return html`
       ${this.collection
         ? html`
             <div class="layout horizontal wrap">
               <div
-                is-video="${ifDefined(this.collectionVideoURL === null ? undefined : true)}"
+                is-video="${this.collectionVideoURL}"
                 id="cardImage"
                 class="large-card imageCard top-card shadow-elevation-6dp shadow-transition">
                 ${this.collectionVideoURL
                   ? html`
                       <video
                         id="videoPlayer"
-                        data-id="${ifDefined(this.collectionVideoId === null ? undefined : this.collectionVideoId )}"
+                        data-id="${ifDefined(this.collectionVideoId)}"
                         controls
                         preload="metadata"
                         class="image"
                         src="${this.collectionVideoURL}"
                         playsinline
-                        .oster="${this.collectionVideoPosterURL}"></video>
+                        .poster="${this.collectionVideoPosterURL}"></video>
                     `
                   : html`
                       <iron-image
@@ -392,7 +287,9 @@ export class YpCollectionHeader extends YpBaseElement {
                         ?hidden="${this.hideImage}"
                         .alt="${this.collection.name}"
                         sizing="cover"
-                        src="${this.collectionLogoImagePath}"></iron-image>
+                        src="${this._collectionLogoImagePath(
+                          this.collection
+                        )}"></iron-image>
                     `}
               </div>
               <div
@@ -406,7 +303,7 @@ export class YpCollectionHeader extends YpBaseElement {
                       aria-level="1"
                       aria-label="${this.collection.name}">
                       <yp-magic-text
-                        .textType="${this.collectionNameTextType}"
+                        textType="collectionName"
                         .contentLanguage="${this.collection.language}"
                         .disableTranslation="${this.collection.configuration?.disableNameAutoTranslation}"
                         textOnly
@@ -417,19 +314,17 @@ export class YpCollectionHeader extends YpBaseElement {
                     <yp-magic-text
                       id="description"
                       class="description collectionDescription"
-                      .textType="${this.collectionDescriptionTextType}"
+                      textType="collectionContent"
                       .contentLanguage="${this.collection.language}"
                       .content="${this.collection.description || this.collection.objectives}"
                       .contentId="${this.collection.id}">
                     </yp-magic-text>
                   </div>
-
-
                   <paper-menu-button
                     .verticalAlign="top"
                     .horizontalAlign="${this.editMenuAlign}"
                     class="edit"
-                    ?hidden="${!this.hasCollectionAccess}">
+                    ?hidden="${!this._hasCollectionAccess}">
                     <paper-icon-button
                       ariaLabel="${this.t('openDomainMenu')}"
                       .icon="more-vert"
@@ -443,66 +338,237 @@ export class YpCollectionHeader extends YpBaseElement {
                       >
                       <paper-item
                         id="openAnalyticsApp"
-                        ?hidden="${!this.hasCollectionAccess}"
+                        ?hidden="${!this._hasCollectionAccess}"
                         >[[t('openAnalyticsApp')]]</paper-item
                       >
                     </paper-listbox>
                   </paper-menu-button>
                 </div>
-
-                <div class="stats layout horizontal">
-                  ${this.renderStats()}
-                </div>
+                <yp-collection-stats-lit
+                  class="stats"
+                  .collection="${this.collection}"></yp-collection-stats-lit>
               </div>
             </div>
+
+            <lite-signal
+              @lite-signal-got-admin-rights="${this
+                ._gotAdminRights}"></lite-signal>
+            <lite-signal
+              @lite-signal-yp-pause-media-playback="${this
+                ._pauseMediaPlayback}"></lite-signal>
           `
         : html``}
     `;
   }
 
+  /*
+  behaviors: [
+    LargeCardBehaviors,
+    AccessHelpers,
+    ypGotAdminRightsBehavior,
+    ypMediaFormatsBehavior,
+    ypTruncateBehavior
+  ],
+*/
 
- // EVENTS
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.addGlobalListener("yp-got-admin-rights", this.requestUpdate);
-    this.addGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback);
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
-    this.removeGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback);
-    YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
-  }
-
-  firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
-    super.firstUpdated(changedProperties);
-    YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-  }
-
-  updated(changedProperties: Map<string | number | symbol, unknown>) {
-    super.updated(changedProperties);
-
-    // TODO: Test this well is it working as expected
-    if (changedProperties.has("collection")) {
-      YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
-      YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
+  _exportLoginsUrl(access, collection) {
+    if (access && collection) {
+      return '/api/collections/' + collection.id + '/export_logins';
+    } else {
+      return null;
     }
   }
 
-  _pauseMediaPlayback() {
-    YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback);
+  _collectionChanged(collection, previousDomain) {
+    this.setupMediaEventListeners(collection, previousDomain);
   }
 
-  _menuSelection(event: CustomEvent) {
-    if (this.collection) {
-      if (event.detail.item.id === 'editMenuItem')
-        window.location.href = `/admin/${this.collectionTypeName}/${this.collection.id}`;
-      else if (event.detail.item.id === 'openAnalyticsApp')
-        window.location.href = `/analytics/${this.collectionTypeName}/${this.collection.id}`;
-      this.$$('paper-listbox').select(null);
+  _collectionVideoURL(collection) {
+    if (
+      collection &&
+      collection.configuration &&
+      collection.configuration.useVideoCover &&
+      collection.DomainLogoVideos
+    ) {
+      const videoURL = this._getVideoURL(collection.DomainLogoVideos);
+      if (videoURL) {
+        this.set('collectionVideoId', collection.DomainLogoVideos[0].id);
+        return videoURL;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 
+  _collectionVideoPosterURL(collection) {
+    if (
+      collection &&
+      collection.configuration &&
+      collection.configuration.useVideoCover &&
+      collection.DomainLogoVideos
+    ) {
+      const videoPosterURL = this._getVideoPosterURL(
+        collection.DomainLogoVideos,
+        collection.DomainLogoImages
+      );
+      if (videoPosterURL) {
+        return videoPosterURL;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+
+  _menuSelection(event, detail) {
+    if (detail.item.id === 'editMenuItem') this._openEdit();
+    else if (detail.item.id === 'createOrganizationMenuItem')
+      this._newOrganization();
+    else if (detail.item.id === 'pagesMenuItem') this._openPagesDialog();
+    else if (detail.item.id === 'organizationsGridMenuItem')
+      this._openOrganizationsGrid();
+    else if (detail.item.id === 'usersMenuItem') this._openUsersDialog();
+    else if (detail.item.id === 'adminsMenuItem') this._openAdminsDialog();
+    else if (detail.item.id === 'moderationMenuItem')
+      this._openContentModeration();
+    else if (detail.item.id === 'moderationAllMenuItem')
+      this._openAllContentModeration();
+    else if (detail.item.id === 'addCommunityMenuItem')
+      this.fire('yp-new-community');
+    else if (detail.item.id === 'addCommunityFolderMenuItem')
+      this.fire('yp-new-community-folder');
+    else if (detail.item.id === 'openAnalyticsApp')
+      window.location = '/analytics/collection/' + this.collection.id;
+    this.$$('paper-listbox').select(null);
+  }
+
+  _openUsersDialog() {
+    window.appGlobals.activity('open', 'collectionUsers');
+    dom(document)
+      .querySelector('yp-app')
+      .getUsersGridAsync(
+        function (dialog) {
+          dialog.setup(null, null, this.collection.id, false);
+          dialog.open(this.collection.name);
+        }.bind(this)
+      );
+  }
+
+  _openAdminsDialog() {
+    window.appGlobals.activity('open', 'collectionAdmins');
+    dom(document)
+      .querySelector('yp-app')
+      .getUsersGridAsync(
+        function (dialog) {
+          dialog.setup(null, null, this.collection.id, true);
+          dialog.open(this.collection.name);
+        }.bind(this)
+      );
+  }
+
+  _openOrganizationsGrid() {
+    window.appGlobals.activity('open', 'collection.organizationsGrid');
+    dom(document)
+      .querySelector('yp-app')
+      .getDialogAsync(
+        'organizationsGrid',
+        function (dialog) {
+          dialog.open();
+        }.bind(this)
+      );
+  }
+
+  _openPagesDialog() {
+    window.appGlobals.activity('open', 'collection.pagesAdmin');
+    dom(document)
+      .querySelector('yp-app')
+      .getDialogAsync(
+        'pagesGrid',
+        function (dialog) {
+          dialog.setup(null, null, this.collection.id, false);
+          dialog.open();
+        }.bind(this)
+      );
+  }
+
+  _openEdit() {
+    window.appGlobals.activity('open', 'collectionEdit');
+    dom(document)
+      .querySelector('yp-app')
+      .getDialogAsync(
+        'collectionEdit',
+        function (dialog) {
+          dialog.setup(this.collection, false, this._refresh.bind(this));
+          dialog.open('edit', { collectionId: this.collection.id });
+        }.bind(this)
+      );
+  }
+
+  _openContentModeration() {
+    window.appGlobals.activity('open', 'collectionContentModeration');
+    dom(document)
+      .querySelector('yp-app')
+      .getContentModerationAsync(
+        function (dialog) {
+          dialog.setup(null, null, this.collection.id, false);
+          dialog.open(this.collection.name);
+        }.bind(this)
+      );
+  }
+
+  _openAllContentModeration() {
+    window.appGlobals.activity('open', 'collectionAllContentModeration');
+    dom(document)
+      .querySelector('yp-app')
+      .getContentModerationAsync(
+        function (dialog) {
+          dialog.setup(null, null, this.collection.id, '/moderate_all_content');
+          dialog.open(this.collection.name);
+        }.bind(this)
+      );
+  }
+
+  _newOrganization() {
+    window.appGlobals.activity('open', 'organizationEdit');
+    dom(document)
+      .querySelector('yp-app')
+      .getDialogAsync(
+        'organizationEdit',
+        function (dialog) {
+          dialog.setup(null, true, this._refresh.bind(this));
+          dialog.open('new', { collectionId: this.collection.id });
+        }.bind(this)
+      );
+  }
+
+  _refresh(collection) {
+    if (collection) {
+      this.set('collection', collection);
+    }
+    this.fire('update-collection');
+  }
+
+  _collectionName(collection) {
+    if (collection && collection.name) {
+      return this.truncate(this.trim(collection.name), 200);
+    } else if (collection) {
+      return collection.short_name;
+    }
+  }
+
+  _collectionLogoImagePath(collection) {
+    if (collection) {
+      return this.getImageFormatUrl(collection.DomainLogoImages, 0);
+    }
+  }
+
+  _collectionHeaderImagePath(collection) {
+    if (collection) {
+      return this.getImageFormatUrl(collection.DomainHeaderImages, 0);
+    }
+  }
 }

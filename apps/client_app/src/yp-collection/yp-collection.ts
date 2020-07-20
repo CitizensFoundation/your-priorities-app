@@ -1,22 +1,13 @@
-
-import { CollectionHelpers } from '../yp-behaviors/collection-helpers.js';
-import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
-import { CommunityCollectionBehaviors } from '../yp-community/yp-community-collection-behaviors.js';
-
-import '../ac-activities/ac-activities.js';
-import '../yp-page/yp-page.js';
-import '../yp-community/yp-community-grid.js';
-import './yp-domain-large-card.js';
-
 import { property, html, css } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { ifDefined } from 'lit-html/directives/if-defined';
+//import { ifDefined } from 'lit-html/directives/if-defined';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
 import '@material/mwc-tab-bar';
 import '@material/mwc-fab';
+import './yp-collection-header.js';
 import './yp-collection-items-grid.js';
 
 export abstract class YpCollection extends YpBaseElement {
@@ -290,13 +281,6 @@ export abstract class YpCollection extends YpBaseElement {
         @click="${this._openNewCollectionItemDialog}"></mwc-fab>` : nothing }
     `;
   }
-
-  /*
-  behaviors: [
-    CommunityCollectionBehaviors,
-    CollectionHelpers
-  ],
-*/
 
   // EVENTS
 

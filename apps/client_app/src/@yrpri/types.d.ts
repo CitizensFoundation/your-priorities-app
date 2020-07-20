@@ -12,6 +12,8 @@ interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;
   themeOverrideColorAccent?: string;
   themeOverrideBackgroundColor?: string;
+  disableNameAutoTranslation?: boolean;
+  useVideoCover?: boolean;
 }
 
 interface YpGroupConfiguration extends YpCollectionConfiguration {
@@ -81,6 +83,7 @@ interface YpCollectionData {
   description?: string;
   objectives?: string;
   theme_id?: number;
+  language?: string;
   default_locale?: string;
   User?: YpUserData;
   user_id?: number;
@@ -103,7 +106,9 @@ interface YpDomainData extends YpCollectionData {
   };
   description?: string;
   DomainHeaderImages?: Array<YpImageData>;
+  DomainLogoImages?: Array<YpImageData>;
   only_admins_can_create_communities: boolean;
+  DomainLogoVideos?: Array<YpVideoData>;
   configuration: YpDomainConfiguration;
   Communities: Array<YpCommunityData>;
 }
@@ -113,6 +118,9 @@ interface YpCommunityData extends YpCollectionData {
   description?: string;
   is_community_folder?: boolean;
   configuration: YpCommunityConfiguration;
+  CommunityLogoVideos?: Array<YpVideoData>;
+  CommunityHeaderImages?: Array<YpImageData>;
+  CommunityLogoImages?: Array<YpImageData>;
 }
 
 interface YpDomainGetResponse {
@@ -135,6 +143,9 @@ interface YpGroupData extends YpCollectionData {
   name: string;
   configuration: YpGroupConfiguration;
   Community?: YpCommunityData;
+  GroupLogoVideos?: Array<YpVideoData>;
+  GroupHeaderImages?: Array<YpImageData>;
+  GroupLogoImages?: Array<YpImageData>;
 }
 
 interface YpBaseMedia {
