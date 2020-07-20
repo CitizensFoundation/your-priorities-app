@@ -1,10 +1,18 @@
-import { property, html, css, customElement, supportsAdoptingStyleSheets } from 'lit-element';
+import {
+  property,
+  html,
+  css,
+  customElement
+} from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
+
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { Menu } from '@material/mwc-menu';
 
 @customElement('yp-collection-header')
 export class YpCollectionHeader extends YpBaseElement {
@@ -35,11 +43,15 @@ export class YpCollectionHeader extends YpBaseElement {
   audioEndedListener: Function | undefined;
 
   get hasCollectionAccess(): boolean {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
-        return YpAccessHelpers.checkDomainAccess(this.collection as YpDomainData);
+        return YpAccessHelpers.checkDomainAccess(
+          this.collection as YpDomainData
+        );
       case 'community':
-        return YpAccessHelpers.checkCommunityAccess(this.collection as YpCommunityData);
+        return YpAccessHelpers.checkCommunityAccess(
+          this.collection as YpCommunityData
+        );
       case 'group':
         return YpAccessHelpers.checkGroupAccess(this.collection as YpGroupData);
       default:
@@ -48,7 +60,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionVideos(): Array<YpVideoData> | undefined {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
         return (this.collection as YpDomainData).DomainLogoVideos;
       case 'community':
@@ -59,18 +71,18 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionNameTextType(): string | undefined {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
-        return "domainName";
+        return 'domainName';
       case 'community':
-        return "communityName";
+        return 'communityName';
       case 'group':
-        return "groupName";
+        return 'groupName';
     }
   }
 
   get openMenuLabel(): string {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
         return this.t('openDomainMenu');
       case 'community':
@@ -78,23 +90,23 @@ export class YpCollectionHeader extends YpBaseElement {
       case 'group':
         return this.t('openGroupMenu');
       default:
-        return "Open menu"
+        return 'Open menu';
     }
   }
 
   get collectionDescriptionTextType(): string | undefined {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
-        return "domainContent";
+        return 'domainContent';
       case 'community':
-        return "communityContent";
+        return 'communityContent';
       case 'group':
-        return "groupContent";
+        return 'groupContent';
     }
   }
 
   get collectionLogoImages(): Array<YpImageData> | undefined {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
         return (this.collection as YpDomainData).DomainLogoImages;
       case 'community':
@@ -105,7 +117,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionHeaderImages(): Array<YpImageData> | undefined {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
         return (this.collection as YpDomainData).DomainHeaderImages;
       case 'community':
@@ -231,7 +243,6 @@ export class YpCollectionHeader extends YpBaseElement {
         .description {
           padding: 0;
           margin: 0;
-        }welcomeHTML
           color: #fafafa;
           padding: 12px;
           padding-left: 16px;
@@ -242,12 +253,23 @@ export class YpCollectionHeader extends YpBaseElement {
           padding-top: 14px;
         }
 
+        #welcomeHTML {
+          width: 432px;
+          max-width: 432px;
+          overflow: hidden;
+        }
+
         @media (max-width: 960px) {
           :host {
             max-width: 423px;
             padding: 0 !important;
             padding-top: 8px !important;
             width: 100%;
+          }
+
+          #welcomeHTML {
+            width: 306px;
+            max-width: 306px;
           }
 
           .large-card {
@@ -353,7 +375,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   renderStats() {
-    switch(this.collectionType) {
+    switch (this.collectionType) {
       case 'domain':
         return html``;
       case 'community':
@@ -365,15 +387,59 @@ export class YpCollectionHeader extends YpBaseElement {
     }
   }
 
-  renderFirstBox() {
-    if (this.welcomeHTML) {
-      return html``;
+  renderFirstBoxContent() {
+    if (this.collection?.configuration?.welcomeHTML) {
+      return html`<div id="welcomeHTML">${unsafeHTML(this.welcomeHTML)}</div>`;
     } else if (this.collectionVideoURL) {
-      return html``;
+      return html`
+        <video
+          id="videoPlayer"
+          data-id="${ifDefined(this.collectionVideoId)}"
+          controls
+          preload="metadata"
+          class="image"
+          src="${this.collectionVideoURL}"
+          playsinline
+          poster="${ifDefined(this.collectionVideoPosterURL)}"></video>
+      `;
+    } else if (this.collection) {
+      return html`
+        <iron-image
+          class="image"
+          ?hidden="${this.hideImage}"
+          .alt="${this.collection.name}"
+          sizing="cover"
+          src="${ifDefined(this.collectionLogoImagePath)}"></iron-image>
+      `;
     } else {
-      return html``;
+      return nothing;
     }
+  }
 
+  _openMenu() {
+    (this.$$("#menu") as Menu).open = true;
+    this.requestUpdate();
+  }
+
+  renderMenu() {
+    return html`
+      <div style="position: relative;">
+        <mwc-icon-button
+          id="helpIconButton"
+          icon="help_outline"
+          @click="${this._openMenu}"
+          title="${this.openMenuLabel}">
+        </mwc-icon-button>
+        <mwc-menu id="menu" @changed="${this._menuSelection}">
+          <mwc-list-item id="openAdminApp"
+            >${this.t('openAdministration')}</mwc-list-item
+          >
+          <mwc-list-item id="openAnalyticsApp"
+            >${this.t('openAnalyticsApp')}</mwc-list-item
+          >
+        </mwc-menu>
+      </div>
+    `;
   }
 
   render() {
@@ -382,29 +448,10 @@ export class YpCollectionHeader extends YpBaseElement {
         ? html`
             <div class="layout horizontal wrap">
               <div
-                is-video="${ifDefined(this.collectionVideoURL === null ? undefined : true)}"
+                is-video="${ifDefined(this.collectionVideoURL)}"
                 id="cardImage"
                 class="large-card imageCard top-card shadow-elevation-6dp shadow-transition">
-                ${this.collectionVideoURL
-                  ? html`
-                      <video
-                        id="videoPlayer"
-                        data-id="${ifDefined(this.collectionVideoId)}"
-                        controls
-                        preload="metadata"
-                        class="image"
-                        src="${this.collectionVideoURL}"
-                        playsinline
-                        poster="${ifDefined(this.collectionVideoPosterURL)}"></video>
-                    `
-                  : html`
-                      <iron-image
-                        class="image"
-                        ?hidden="${this.hideImage}"
-                        .alt="${this.collection.name}"
-                        sizing="cover"
-                        src="${this.collectionLogoImagePath}"></iron-image>
-                    `}
+                ${this.renderFirstBoxContent()}
               </div>
               <div
                 id="card"
@@ -419,7 +466,8 @@ export class YpCollectionHeader extends YpBaseElement {
                       <yp-magic-text
                         .textType="${this.collectionNameTextType}"
                         .contentLanguage="${this.collection.language}"
-                        .disableTranslation="${this.collection.configuration?.disableNameAutoTranslation}"
+                        ?disableTranslation="${this.collection.configuration
+                          ?.disableNameAutoTranslation}"
                         textOnly
                         .content="${this.collection.name}"
                         .contentId="${this.collection.id}">
@@ -430,24 +478,15 @@ export class YpCollectionHeader extends YpBaseElement {
                       class="description collectionDescription"
                       .textType="${this.collectionDescriptionTextType}"
                       .contentLanguage="${this.collection.language}"
-                      .content="${this.collection.description || this.collection.objectives}"
+                      truncate="150"
+                      .content="${this.collection.description ||
+                      this.collection.objectives}"
                       .contentId="${this.collection.id}">
                     </yp-magic-text>
                   </div>
-
-                  <div style="position: relative;">
-                    <mwc-icon-button
-                      id="helpIconButton"
-                      icon="help_outline"
-                      @click="${this._openMenu}"
-                      title="${this.openMenuLabel}">
-                    </mwc-icon-button>
-                    <mwc-menu id="menu" @changed="${this._menuSelection}">
-                      <mwc-list-item id="openAdminApp">${this.t('openAdministration')}</mwc-list-item>
-                      <mwc-list-item id="openAnalyticsApp">${this.t('openAnalyticsApp')}</mwc-list-item>
-                    </mwc-menu>
-                  </div>
                 </div>
+
+                ${this.renderMenu()}
 
                 <div class="stats layout horizontal">
                   ${this.renderStats()}
@@ -459,19 +498,21 @@ export class YpCollectionHeader extends YpBaseElement {
     `;
   }
 
-
- // EVENTS
+  // EVENTS
 
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener("yp-got-admin-rights", this.requestUpdate);
-    this.addGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback);
+    this.addGlobalListener('yp-got-admin-rights', this.requestUpdate);
+    this.addGlobalListener('yp-pause-media-playback', this._pauseMediaPlayback);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-admin-rights", this.requestUpdate);
-    this.removeGlobalListener("yp-pause-media-playback", this._pauseMediaPlayback);
+    this.removeGlobalListener('yp-got-admin-rights', this.requestUpdate);
+    this.removeGlobalListener(
+      'yp-pause-media-playback',
+      this._pauseMediaPlayback
+    );
     YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
   }
 
@@ -484,7 +525,7 @@ export class YpCollectionHeader extends YpBaseElement {
     super.updated(changedProperties);
 
     // TODO: Test this well is it working as expected
-    if (changedProperties.has("collection")) {
+    if (changedProperties.has('collection')) {
       YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
     }
 
@@ -506,5 +547,4 @@ export class YpCollectionHeader extends YpBaseElement {
       this.$$('paper-listbox').select(null);
     }
   }
-
 }

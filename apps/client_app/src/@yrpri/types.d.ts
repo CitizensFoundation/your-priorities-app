@@ -14,6 +14,7 @@ interface YpCollectionConfiguration {
   themeOverrideBackgroundColor?: string;
   disableNameAutoTranslation?: boolean;
   useVideoCover?: boolean;
+  welcomeHTML?: string;
 }
 
 interface YpGroupConfiguration extends YpCollectionConfiguration {
@@ -69,18 +70,21 @@ interface YpPointQuality {
 interface YpElementWithPlayback extends HTMLElement {
   playStartedAt?: Date;
   $$(id: string): HTMLElement | void;
-  videoPlayListener: EventListenerOrEventListenerObject | null;
-  videoPauseListener: EventListenerOrEventListenerObject | null;
-  videoEndedListener: EventListenerOrEventListenerObject | null;
-  audioPlayListener: EventListenerOrEventListenerObject | null;
-  audioPauseListener: EventListenerOrEventListenerObject | null;
-  audioEndedListener: EventListenerOrEventListenerObject | null;
+  videoPlayListener: EventListenerOrEventListenerObject | undefined;
+  videoPauseListener: EventListenerOrEventListenerObject | undefined;
+  videoEndedListener: EventListenerOrEventListenerObject | undefined;
+  audioPlayListener: EventListenerOrEventListenerObject | undefined;
+  audioPauseListener: EventListenerOrEventListenerObject | undefined;
+  audioEndedListener: EventListenerOrEventListenerObject | undefined;
 }
 
-interface YpCollectionData {
+interface YpDatabaseItem {
   id: number;
   name: string;
   description?: string;
+}
+
+interface YpCollectionData extends YpDatabaseItem {
   objectives?: string;
   theme_id?: number;
   language?: string;
@@ -177,9 +181,7 @@ interface YpCategoryData {
   CategoryIconImages?: Array<YpImageData>;
 }
 
-interface YpPostData {
-  id: number;
-  name: string;
+interface YpPostData extends YpDatabaseItem {
   cover_media_type?: string;
   group_id: number;
   user_id?: number;
@@ -231,6 +233,10 @@ interface YpUserData {
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   forceSecureSamlLogin?: boolean;
+}
+
+declare interface IronListInterface extends HTMLElement {
+  scrollToItem(item: YpDatabaseItem): () => void;
 }
 
 declare const YpHelpPageArray: Array<YpHelpPage>;
