@@ -12,7 +12,7 @@ export class YpCollectionHeader extends YpBaseElement {
   collection: YpCollectionData | undefined;
 
   @property({ type: String })
-  collectionTypeName: string | undefined;
+  collectionType: string | undefined;
 
   @property({ type: Boolean })
   hideImage = false;
@@ -32,7 +32,7 @@ export class YpCollectionHeader extends YpBaseElement {
   audioEndedListener: Function | null = null;
 
   get hasCollectionAccess(): boolean {
-    switch(this.collectionTypeName) {
+    switch(this.collectionType) {
       case 'domain':
         return YpAccessHelpers.checkDomainAccess(this.collection as YpDomainData);
       case 'community':
@@ -45,7 +45,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionVideos(): Array<YpVideoData> | undefined {
-    switch(this.collectionTypeName) {
+    switch(this.collectionType) {
       case 'domain':
         return (this.collection as YpDomainData).DomainLogoVideos;
       case 'community':
@@ -56,7 +56,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionNameTextType(): string | undefined {
-    switch(this.collectionTypeName) {
+    switch(this.collectionType) {
       case 'domain':
         return "domainName";
       case 'community':
@@ -67,7 +67,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionDescriptionTextType(): string | undefined {
-    switch(this.collectionTypeName) {
+    switch(this.collectionType) {
       case 'domain':
         return "domainContent";
       case 'community':
@@ -78,7 +78,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionLogoImages(): Array<YpImageData> | undefined {
-    switch(this.collectionTypeName) {
+    switch(this.collectionType) {
       case 'domain':
         return (this.collection as YpDomainData).DomainLogoImages;
       case 'community':
@@ -89,7 +89,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   get collectionHeaderImages(): Array<YpImageData> | undefined {
-    switch(this.collectionTypeName) {
+    switch(this.collectionType) {
       case 'domain':
         return (this.collection as YpDomainData).DomainHeaderImages;
       case 'community':
@@ -284,9 +284,6 @@ export class YpCollectionHeader extends YpBaseElement {
             padding-bottom: 42px;
           }
 
-          .stats {
-          }
-
           .textBox {
             margin-left: 8px;
           }
@@ -353,7 +350,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   renderStats() {
-    switch(this.collectionTypeName) {
+    switch(this.collectionType) {
       case 'domain':
         return html``;
       case 'community':
@@ -487,6 +484,9 @@ export class YpCollectionHeader extends YpBaseElement {
     // TODO: Test this well is it working as expected
     if (changedProperties.has("collection")) {
       YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
+    }
+
+    if (this.collection) {
       YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
     }
   }
@@ -498,9 +498,9 @@ export class YpCollectionHeader extends YpBaseElement {
   _menuSelection(event: CustomEvent) {
     if (this.collection) {
       if (event.detail.item.id === 'editMenuItem')
-        window.location.href = `/admin/${this.collectionTypeName}/${this.collection.id}`;
+        window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
       else if (event.detail.item.id === 'openAnalyticsApp')
-        window.location.href = `/analytics/${this.collectionTypeName}/${this.collection.id}`;
+        window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
       this.$$('paper-listbox').select(null);
     }
   }

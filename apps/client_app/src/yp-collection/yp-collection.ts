@@ -50,19 +50,19 @@ export abstract class YpCollection extends YpBaseElement {
   @property({ type: String })
   createFabLabel: string | null = null;
 
-  collectionTypeName: string;
+  collectionType: string;
   collectionApiType: string;
   collectionCreateFabIcon: string;
   collectionCreateFabLabel: string;
 
   constructor(
-    collectionTypeName: string,
+    collectionType: string,
     collectionApiType: string,
     collectionCreateFabIcon: string,
     collectionCreateFabLabel: string
   ) {
     super();
-    this.collectionTypeName = collectionTypeName;
+    this.collectionType = collectionType;
     this.collectionApiType = collectionApiType;
     this.collectionCreateFabIcon = collectionCreateFabIcon;
     this.collectionCreateFabLabel = collectionCreateFabLabel;
@@ -104,7 +104,7 @@ export abstract class YpCollection extends YpBaseElement {
       }
 
       this.fire('yp-set-home-link', {
-        type: this.collectionTypeName,
+        type: this.collectionType,
         id: this.collection.id,
         name: this.collection.name,
       });
@@ -173,7 +173,7 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   get collectionTabLabel(): string {
-    return `${this.t(this.collectionTypeName)} (${
+    return `${this.t(this.collectionType)} (${
       this.collectionItems ? this.collectionItems.length : 0
     })`;
   }
@@ -206,10 +206,9 @@ export abstract class YpCollection extends YpBaseElement {
       ? html`
           <yp-collection-header
             .collection="${this.collection}"
-            aria-label="${this.collectionTypeName}"
-            @refresh-collection="${this._getCollection}"
-            role="banner"></yp-collection-header
-          >;
+            .collectionType="${this.collectionType}"
+            aria-label="${this.collectionType}"
+            role="banner"></yp-collection-header>;
         `
       : nothing;
   }
@@ -257,7 +256,7 @@ export abstract class YpCollection extends YpBaseElement {
           <ac-activities
             id="domainNews"
             .selectedTab="${this.selectedTab}"
-            .collectionTypeName="${this.collectionTypeName}"
+            .collectionType="${this.collectionType}"
             .collectionId="${this.collectionId}"></ac-activities>`;
         break;
       case CollectionTabTypes.Map:
