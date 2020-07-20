@@ -178,10 +178,10 @@ module.exports = (sequelize, DataTypes) => {
   Audio.startTranscoding = (audio, options, req, res) => {
     if (options.audioPostUploadLimitSec && options.audioPostUploadLimitSec!=="") {
       const postLimitSeconds = parseInt(options.audioPostUploadLimitSec);
-      audio.set('meta.maxDuration', Math.min(postLimitSeconds, 150));
+      audio.set('meta.maxDuration', Math.min(postLimitSeconds, 600));
     } else if (options.audioPointUploadLimitSec && options.audioPointUploadLimitSec!=="") {
       const pointLimitSeconds = parseInt(options.audioPointUploadLimitSec);
-      audio.set('meta.maxDuration', Math.min(pointLimitSeconds, 150));
+      audio.set('meta.maxDuration', Math.min(pointLimitSeconds, 600));
     } else {
       audio.set('meta.maxDuration', "600");
     }

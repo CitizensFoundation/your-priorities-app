@@ -219,7 +219,7 @@
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <div class="layout horizontal wrap">
+    <div class="layout horizontal wrap" aria-label="[[t('domain')]]" role="banner">
       <paper-material is-video$="[[domainVideoURL]]" id="cardImage" elevation="3" animated class="large-card imageCard top-card">
         <template is="dom-if" if="[[domainVideoURL]]" restamp>
           <video id="videoPlayer" data-id$="[[domainVideoId]]" controls preload="meta" class="image" src="[[domainVideoURL]]" playsinline poster="[[domainVideoPosterURL]]"></video>

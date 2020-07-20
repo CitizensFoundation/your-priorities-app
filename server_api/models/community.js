@@ -26,11 +26,13 @@ module.exports = (sequelize, DataTypes) => {
     counter_groups: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_users: { type: DataTypes.INTEGER, defaultValue: 0 },
     counter_organizations: { type: DataTypes.INTEGER, defaultValue: 0 },
+    counter_flags: { type: DataTypes.INTEGER, defaultValue: 0 },
     only_admins_can_create_groups: { type: DataTypes.BOOLEAN, defaultValue: false },
     theme_id: { type: DataTypes.INTEGER, defaultValue: null },
     other_social_media_info: DataTypes.JSONB,
     configuration:  DataTypes.JSONB,
-    language: { type: DataTypes.STRING, allowNull: true }
+    language: { type: DataTypes.STRING, allowNull: true },
+    data: DataTypes.JSONB
   }, {
 
     defaultScope: {
@@ -245,6 +247,58 @@ module.exports = (sequelize, DataTypes) => {
       }
     ], (err) => {
       done(err);
+    });
+  };
+
+  Community.prototype.setupModerationData = function () {
+    if (!this.data) {
+      this.set('data', {});
+    }
+    if (!this.data.moderation) {
+      this.set('data.moderation', {});
+    }
+  };
+
+  Community.prototype.report = function (req, source, callback) {
+    this.setupModerationData();
+    async.series([
+      (seriesCallback) => {
+        if (!this.data.moderation.lastReportedBy) {
+          this.set('data.moderation.lastReportedBy', []);
+          if ((source==='user' || source==='fromUser') && !this.data.moderation.toxicityScore) {
+            log.info("process-moderation post toxicity on manual report");
+            queue.create('process-moderation', { type: 'estimate-collection-toxicity', collectionId: this.id, collectionType: 'community' }).priority('high').removeOnComplete(true).save();
+          }
+        }
+        this.set('data.moderation.lastReportedBy',
+          [{ date: new Date(), source: source, userId: (req && req.user) ? req.user.id : null, userEmail: (req && req.user) ? req.user.email : 'anonymous' }].concat(this.data.moderation.lastReportedBy)
+        );
+        this.save().then(() => {
+          seriesCallback();
+        }).catch((error) => {
+          seriesCallback(error);
+        });
+      },
+      /* TODO: Finish sending emails to domain admins if needed
+      (seriesCallback) => {
+        if (req && req.disableNotification===true) {
+          seriesCallback();
+        } else {
+          sequelize.models.AcActivity.createActivity({
+            type: 'activity.report.content',
+            userId: (req && req.user) ? req.user.id : null,
+            postId: null,
+            groupId: null,
+            communityId: this.id,
+            domainId:  this.domain_id
+          }, (error) => {
+            seriesCallback(error);
+          });
+        }
+      } */
+    ], (error) => {
+      this.increment('counter_flags');
+      callback(error);
     });
   };
 

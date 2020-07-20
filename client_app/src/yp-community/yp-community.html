@@ -64,7 +64,9 @@
       }
     </style>
 
-    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup" hide-all-tabs="[[community.configuration.hideAllTabs]]">
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup"
+             hide-all-tabs="[[community.configuration.hideAllTabs]]"
+             role="main" aria-label="[[t('groups')]]">
 
       <template is="dom-if" if="[[useAlternativeHeader]]">
         <yp-community-header id="communityCard" slot="largeCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-header>
@@ -511,6 +513,12 @@
             window.appGlobals.signupTermsPageId = this.community.configuration.signupTermsPageId;
           } else {
             window.appGlobals.signupTermsPageId = null;
+          }
+
+          if (this.community.configuration.highlightedLanguages) {
+            window.appGlobals.setHighlightedLanguages(this.community.configuration.highlightedLanguages);
+          } else {
+            window.appGlobals.setHighlightedLanguages(null);
           }
         }
       },

@@ -479,9 +479,10 @@ render() {
           ${this.t('allPostsBlockedByDefault')}
         </paper-checkbox>
 
-        <paper-checkbox name="hideQuestionIndexOnNewPost" ?checked="${group.configuration.hideQuestionIndexOnNewPost}">
-          ${this.t('hideQuestionIndexOnNewPost')}
+        <paper-checkbox name="storeSubCodesWithRadiosAndCheckboxes" ?checked="${this.group.configuration.storeSubCodesWithRadiosAndCheckboxes}">
+          ${this.t('storeSubCodesWithRadiosAndCheckboxes')}
         </paper-checkbox>
+
 
         <paper-textarea id="structuredQuestions" .name="structuredQuestions" .type="text" .rows="4" always-float-label="${this.group.configuration.structuredQuestions}" .maxrows="2"
           .label="${this.t('structuredQuestions')}" .value="${this.group.configuration.structuredQuestions}"
@@ -491,6 +492,16 @@ render() {
         <div id="structuredQuestionsJsonErrorInfo" ?hidden="${!this.structuredQuestionsJsonError}">${this.t('structuredQuestionsJsonFormatNotValid')}</div>
 
         <div class="structuredQuestionsInfo">${this.t('structuredQuestionsInfo')}</div>
+
+        <div class="layout vertical additionalSettings uploadSection">
+          <yp-file-upload id="docxSurveyUpload" raised="true" multi="false"
+                          target="/api/groups/-1/convert_docx_survey_to_json"
+                          accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          method="PUT" @success="${this._haveUploadedDocxSurvey}">
+            <iron-icon class="icon" icon="sort"></iron-icon>
+            <span>${this.t('uploadDocxSurveyFormat')}</span>
+          </yp-file-upload>
+        </div>
 
         <paper-input id="alternativeTextForNewIdeaButton" name="alternativeTextForNewIdeaButton" type="text" label="${this.t('alternativeTextForNewIdeaButton')}" value="${this.group.configuration.alternativeTextForNewIdeaButton}" maxlength="30" char-counter="">
         </paper-input>
@@ -785,7 +796,6 @@ render() {
   }
 
   _publicCommunity(group) {
-    debugger;
     if (group) {
       return group.Community.access === 0
     } else {
@@ -1012,6 +1022,20 @@ render() {
         this.editHeaderText = this.t('group.update');
         this.toastText = this.t('groupToastUpdated');
       }
+    }
+  }
+
+  _haveUploadedDocxSurvey(event, detail) {
+    if (detail.xhr.response) {
+      detail = JSON.parse(detail.xhr.response);
+      detail.jsonContent = JSON.stringify(JSON.parse(detail.jsonContent));
+      this.$$("#structuredQuestions").value = detail.jsonContent;
+      this.$$("#structuredQuestions").alwaysFloatLabel = true;
+      if (this.group && this.group.configuration) {
+        this.group.configuration.structuredQuestions = detail.jsonContent;
+      }
+      this.$.editDialog.scrollResize();
+      this.fire('iron-resize');
     }
   }
 }

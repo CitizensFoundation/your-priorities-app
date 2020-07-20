@@ -165,6 +165,9 @@ app.use(function setupStaticPath(req, res, next) {
   } else if (req.path.startsWith('/analytics/') || (req.headers.referrer && req.headers.referrer.indexOf('/analytics/'))>-1) {
     staticPath = path.join(__dirname, '../analytics_app/dist');
     staticIndex = "index.html";
+  } else if (req.path.startsWith('/admin/') || (req.headers.referrer && req.headers.referrer.indexOf('/admin/'))>-1) {
+    staticPath = path.join(__dirname, '../admin_app/dist');
+    staticIndex = "index.html";
   } else {
     if (!FORCE_PRODUCTION && app.get('env') === 'development') {
       staticPath = path.join(__dirname, '../client_app');
@@ -410,6 +413,10 @@ app.use('/analytics/', express.static(path.join(__dirname, '../analytics_app/dis
 app.use('/analytics/domain/*', express.static(path.join(__dirname, '../analytics_app/dist')));
 app.use('/analytics/community/*', express.static(path.join(__dirname, '../analytics_app/dist')));
 app.use('/analytics/group/*', express.static(path.join(__dirname, '../analytics_app/dist')));
+app.use('/admin/', express.static(path.join(__dirname, '../admin_app/dist')));
+app.use('/admin/domain/*', express.static(path.join(__dirname, '../admin_app/dist')));
+app.use('/admin/community/*', express.static(path.join(__dirname, '../admin_app/dist')));
+app.use('/admin/group/*', express.static(path.join(__dirname, '../admin_app/dist')));
 app.use('/domain', index);
 app.use('/community', index);
 app.use('/group', index);
