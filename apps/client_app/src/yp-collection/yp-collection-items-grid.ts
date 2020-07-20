@@ -90,6 +90,12 @@ class YpCommunityGridLit extends YpBaseElement {
     `;
   }
 
+
+  this.featuredCommunities = null;
+  this.activeCommunities = null;
+  this.archivedCommunities = null;
+
+
 /*
   behaviors: [
     ypIronListBehavior,

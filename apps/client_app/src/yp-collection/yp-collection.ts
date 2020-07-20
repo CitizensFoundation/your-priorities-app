@@ -58,6 +58,7 @@ export abstract class YpCollection extends YpBaseElement {
   collectionApiType: string;
   collectionCreateFabIcon: string;
   collectionCreateFabLabel: string;
+  default_locale: null;
 
   constructor(
     collectionTypeName: string,
@@ -71,17 +72,11 @@ export abstract class YpCollection extends YpBaseElement {
     this.collectionCreateFabIcon = collectionCreateFabIcon;
     this.collectionCreateFabLabel = collectionCreateFabLabel;
 
-    this.addGlobalListener('yp-logged-in', this.refreshCollection);
+    this.addGlobalListener('yp-logged-in', this._refreshCollection);
   }
 
   static get propsfeerties() {
     return {
-      idRoute: Object,
-      tabRoute: Object,
-      idRouteData: Object,
-      tabRouteData: Object,
-
-
       isOldiOs: {
         type: Boolean,
         computed: '_isOldiOs(domainId)',
@@ -103,7 +98,7 @@ export abstract class YpCollection extends YpBaseElement {
     ];
   }
 
-  async refreshCollection() {
+  async _refreshCollection() {
     if (this.collectionId) {
       this.collection = (await window.serverApi.getCollection(
         this.collectionApiType,
@@ -114,7 +109,7 @@ export abstract class YpCollection extends YpBaseElement {
     }
   }
 
-  async getHelpPages() {
+  async _getHelpPages() {
     if (this.collectionId) {
       const helpPages = (await window.serverApi.getHelpPages(
         this.collectionApiType,
@@ -132,7 +127,7 @@ export abstract class YpCollection extends YpBaseElement {
           <yp-collection-header
             .collection="${this.collection}"
             aria-label="${this.collectionTypeName}"
-            @refresh-collection="${this.refreshCollection}"
+            @refresh-collection="${this._refreshCollection}"
             role="banner"></yp-collection-header
           >;
         `
@@ -244,30 +239,6 @@ export abstract class YpCollection extends YpBaseElement {
               </iron-pages>
             </yp-page>
 
-            <app-route
-              .route="${this.idRoute}"
-              .pattern="/:id"
-              data="${this.idRouteData}"
-              .tail="${this.tabRoute}">
-            </app-route>
-
-            <app-route
-              .route="${this.tabRoute}"
-              .pattern="/:tabName"
-              data="${this.tabRouteData}">
-            </app-route>
-
-            <div
-              class="ypBottomContainer layout-horizontal layout-center-center">
-              <yp-ajax
-                id="ajax"
-                url="${this.url}"
-                @response="${this._response}"></yp-ajax>
-              <yp-ajax
-                id="pagesAjax"
-                1
-                @response="${this._pagesResponse}"></yp-ajax>
-            </div>
           `
         : html``}
     `;
@@ -280,12 +251,9 @@ export abstract class YpCollection extends YpBaseElement {
     CollectionHelpers,
     AccessHelpers,
     YpNewsTabSelected,
-    ypLoggedInUserBehavior,
     ypDetectOldiOs,
     ypGotoBehavior
   ],
-
-
 
   observers: [
     '_routeIdChanged(idRouteData.id)',
@@ -297,6 +265,47 @@ export abstract class YpCollection extends YpBaseElement {
     'yp-new-community-folder': '_newCommunityFolder'
   },
 */
+
+_setSelectedTabFromRoute(routeTabName: string): void {
+  let tabNumber;
+
+  switch(routeTabName) {
+    case "community":
+    case "group":
+    case "domain":
+      tabNumber = 0;
+      break;
+    case "news":
+      tabNumber = 1;
+      break;
+    case "map":
+      tabNumber = 2;
+      break;
+  }
+
+  if (tabNumber) {
+    this.selectedTab = tabNumber;
+    window.appGlobals.activity('open', 'domain_tab_' + routeTabName);
+  }
+}
+
+updated(changedProperties: Map<string | number | symbol, unknown>) {
+  super.updated(changedProperties);
+
+  if (changedProperties.has("subRoute") && this.subRoute!=null) {
+    const splitSubRoute = this.subRoute.split("/");
+    this.collectionId = splitSubRoute[0] as unknown as number;
+    if (splitSubRoute.length>1) {
+      this._setSelectedTabFromRoute(splitSubRoute[1])
+    }
+  }
+
+  if (changedProperties.has("collectionId") && this.collectionId) {
+    this._refreshCollection();
+    this._getHelpPages();
+  }
+}
+
 
   scrollToCommunityItem() {
     if (
@@ -323,78 +332,14 @@ export abstract class YpCollection extends YpBaseElement {
     }
   }
 
-  _userLoggedIn(user) {
-    if (user) {
-      if (this.domain && window.location.href.indexOf('/domain/') > -1) {
-        this.$$('#ajax').generateRequest();
-      }
-    }
-  }
-
-  _routeIdChanged(newId) {
-    if (newId) {
-      this.set('domainId', newId);
-    }
-  }
-
-  _routeTabChanged(newTabName) {
-    if (newTabName) {
-      this.set('selectedTab', newTabName);
-    }
-  }
-
-  _selectedTabChanged(tabName) {
-    if (tabName == 'other_social_media') {
-      this.set('otherSocialMediaActive', true);
-    } else {
-      this.set('otherSocialMediaActive', false);
-    }
-
-    if (this.domain) {
-      this.redirectTo('/domain/' + this.domain.id + '/' + tabName);
-    }
-
-    if (tabName && window.appGlobals) {
-      window.appGlobals.activity('open', 'domain_tab_' + tabName);
-    }
-
-    this.async(function () {
-      const news = this.$$('#domainNews');
-      if (news) {
-        news.fireResize();
-      }
-    }, 300);
-  }
-
-  _domainIdChanged(newValue, oldValue) {
-    if (newValue) {
-      this.set('featuredCommunities', null);
-      this.set('activeCommunities', null);
-      this.set('archivedCommunities', null);
-      this.$$('#ajax').url = '/api/domains/' + this.domainId;
-      this.$$('#ajax').generateRequest();
-    }
-  }
-
-  _refreshAjax() {
-    this.async(function () {
-      this.$$('#ajax').generateRequest();
-    }, 100);
-  }
-
-  _refreshAjaxLimited() {
-    this.set('disableRefreshOnce', true);
-    this._refreshAjax();
-  }
+  abstract _openNewCollectionDialog(): void;
 
   _newCommunity() {
     window.appGlobals.activity('open', 'newCommunity');
-    dom(document)
-      .querySelector('yp-app')
-      .getDialogAsync(
+    window.dialogs.getDialogAsync(
         'communityEdit',
         function (dialog) {
-          dialog.setup(null, true, this._refreshAjaxLimited.bind(this));
+          dialog.setup(null, true, this._refreshCollection.bind(this));
           dialog.open('new', { domainId: this.domainId });
         }.bind(this)
       );
@@ -448,11 +393,16 @@ export abstract class YpCollection extends YpBaseElement {
     this.$$('#domainCard').lowerCardLater();
   }
 
-  refresh() {
-    if (this.domain) {
-      if (this.domain.default_locale != null) {
+  protected _setCommonConfig() {
+    if (this.collection && this.collection.configuration) {
+      if (this.collection.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.domain.default_locale);
       }
+    }
+  }
+
+  refresh() {
+    if (this.domain) {
 
       if (this.domain.theme_id != null) {
         this.setTheme(this.domain.theme_id);
@@ -476,8 +426,6 @@ export abstract class YpCollection extends YpBaseElement {
         this.$$('#page').setupTopHeaderImage(null);
       }
 
-      this.$$('#pagesAjax').url = '/api/domains/' + this.domain.id + '/pages';
-      this.$$('#pagesAjax').generateRequest();
     }
     window.appGlobals.setAnonymousGroupStatus(null);
     window.appGlobals.disableFacebookLoginForGroup = false;
