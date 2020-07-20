@@ -5,13 +5,13 @@ export class YpRecommendations extends YpCodeBase {
 
   recommendationsGroupCache: Record<number,Array<YpPostData>> = {}
 
-  recommendationsSeenPostIds: object|null = null
+  recommendationsSeenPostIds: object | undefined;
 
   recommendationCallbacks: Record<number,Function> = {}
 
   lastRecommendationResponseLengths: Record<number,number> = {}
 
-  currentPostId: number|null = null
+  currentPostId: number | undefined;
 
   currentlyDownloadingIds: Record<number,boolean> = {}
 

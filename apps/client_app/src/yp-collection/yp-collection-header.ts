@@ -18,18 +18,21 @@ export class YpCollectionHeader extends YpBaseElement {
   hideImage = false;
 
   @property({ type: Number })
-  flaggedContentCount: number | null = null;
+  flaggedContentCount: number | undefined;
 
   @property({ type: Number })
-  collectionVideoId: number | null = null;
+  collectionVideoId: number | undefined;
 
-  playStartedAt: Date | null = null;
-  videoPlayListener: Function | null = null;
-  videoPauseListener: Function | null = null;
-  videoEndedListener: Function | null = null;
-  audioPlayListener: Function | null = null;
-  audioPauseListener: Function | null = null;
-  audioEndedListener: Function | null = null;
+  @property({ type: String })
+  welcomeHTML: string | undefined;
+
+  playStartedAt: Date | undefined;
+  videoPlayListener: Function | undefined;
+  videoPauseListener: Function | undefined;
+  videoEndedListener: Function | undefined;
+  audioPlayListener: Function | undefined;
+  audioPauseListener: Function | undefined;
+  audioEndedListener: Function | undefined;
 
   get hasCollectionAccess(): boolean {
     switch(this.collectionType) {
@@ -63,6 +66,19 @@ export class YpCollectionHeader extends YpBaseElement {
         return "communityName";
       case 'group':
         return "groupName";
+    }
+  }
+
+  get openMenuLabel(): string {
+    switch(this.collectionType) {
+      case 'domain':
+        return this.t('openDomainMenu');
+      case 'community':
+        return this.t('openCommunityMenu');
+      case 'group':
+        return this.t('openGroupMenu');
+      default:
+        return "Open menu"
     }
   }
 
@@ -215,20 +231,7 @@ export class YpCollectionHeader extends YpBaseElement {
         .description {
           padding: 0;
           margin: 0;
-        }
-
-        video {
-          outline: none !important;
-        }
-
-        .collectionDescription {
-          padding-left: 16px;
-          padding-right: 16px;
-          padding-top: 16px;
-        }
-
-        .collection-name {
-          background-color: var(--primary-color-800, #000);
+        }welcomeHTML
           color: #fafafa;
           padding: 12px;
           padding-left: 16px;
@@ -362,6 +365,17 @@ export class YpCollectionHeader extends YpBaseElement {
     }
   }
 
+  renderFirstBox() {
+    if (this.welcomeHTML) {
+      return html``;
+    } else if (this.collectionVideoURL) {
+      return html``;
+    } else {
+      return html``;
+    }
+
+  }
+
   render() {
     return html`
       ${this.collection
@@ -375,13 +389,13 @@ export class YpCollectionHeader extends YpBaseElement {
                   ? html`
                       <video
                         id="videoPlayer"
-                        data-id="${ifDefined(this.collectionVideoId === null ? undefined : this.collectionVideoId )}"
+                        data-id="${ifDefined(this.collectionVideoId)}"
                         controls
                         preload="metadata"
                         class="image"
                         src="${this.collectionVideoURL}"
                         playsinline
-                        .oster="${this.collectionVideoPosterURL}"></video>
+                        poster="${ifDefined(this.collectionVideoPosterURL)}"></video>
                     `
                   : html`
                       <iron-image
@@ -421,30 +435,18 @@ export class YpCollectionHeader extends YpBaseElement {
                     </yp-magic-text>
                   </div>
 
-
-                  <paper-menu-button
-                    .verticalAlign="top"
-                    .horizontalAlign="${this.editMenuAlign}"
-                    class="edit"
-                    ?hidden="${!this.hasCollectionAccess}">
-                    <paper-icon-button
-                      ariaLabel="${this.t('openDomainMenu')}"
-                      .icon="more-vert"
-                      slot="dropdown-trigger"></paper-icon-button>
-                    <paper-listbox
-                      slot="dropdown-content"
-                      @iron-select="${this._menuSelection}">
-                      <paper-item
-                        id="editMenuItem"
-                        >${this.t('openAdministration')}</paper-item
-                      >
-                      <paper-item
-                        id="openAnalyticsApp"
-                        ?hidden="${!this.hasCollectionAccess}"
-                        >[[t('openAnalyticsApp')]]</paper-item
-                      >
-                    </paper-listbox>
-                  </paper-menu-button>
+                  <div style="position: relative;">
+                    <mwc-icon-button
+                      id="helpIconButton"
+                      icon="help_outline"
+                      @click="${this._openMenu}"
+                      title="${this.openMenuLabel}">
+                    </mwc-icon-button>
+                    <mwc-menu id="menu" @changed="${this._menuSelection}">
+                      <mwc-list-item id="openAdminApp">${this.t('openAdministration')}</mwc-list-item>
+                      <mwc-list-item id="openAnalyticsApp">${this.t('openAnalyticsApp')}</mwc-list-item>
+                    </mwc-menu>
+                  </div>
                 </div>
 
                 <div class="stats layout horizontal">

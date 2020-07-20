@@ -2,9 +2,9 @@ import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js'
 
 export class YpAnalytics extends YpCodeBase {
 
-  pixelTrackerId: string|null = null
+  pixelTrackerId: string | undefined;
 
-  communityTrackerId: string|null = null
+  communityTrackerId: string | undefined;
 
   communityTrackerIds: Record<string,boolean> = {}
 
@@ -26,7 +26,7 @@ export class YpAnalytics extends YpCodeBase {
     }
   }
 
-  facebookPixelTracking(event: string, detailedEvent: string|null = null) {
+  facebookPixelTracking(event: string, detailedEvent: string | undefined = undefined) {
     if (this.pixelTrackerId && event) {
       let fbEvent;
       if (event==="pageview") {
@@ -57,7 +57,7 @@ export class YpAnalytics extends YpCodeBase {
         console.log("Facebook tracking disabled");
       }
     } else {
-      this.pixelTrackerId = null;
+      this.pixelTrackerId = undefined;
     }
   }
 
@@ -69,13 +69,13 @@ export class YpAnalytics extends YpCodeBase {
         this.sendToAnalyticsTrackers('sendOnlyCommunity', 'pageview', location.pathname);
       }
     } else {
-      this.communityTrackerId=null;
+      this.communityTrackerId = undefined;
     }
   }
 
   sendToAnalyticsTrackers(a: string|object, b: string|object,
-                          c: string|object, d: string|object|null = null,
-                          e: string|object|null = null, f: string|object|null = null) {
+                          c: string|object, d: string|object|undefined = undefined,
+                          e: string|object|undefined = undefined, f: string|object|undefined = undefined) {
     //console.debug("Analytics "+a+" "+b+" "+c+" "+d);
     if (typeof ga == 'function') {
       if (a!='sendOnlyCommunity') {
@@ -102,7 +102,7 @@ export class YpAnalytics extends YpCodeBase {
     }
   }
 
-  sendLoginAndSignup(userId: number, eventType: string, authProvider: string, validationError: string|null = null) {
+  sendLoginAndSignup(userId: number, eventType: string, authProvider: string, validationError: string|undefined=undefined) {
     if (typeof ga == 'function') {
       if (userId) {
         ga('set', '&uid', userId);

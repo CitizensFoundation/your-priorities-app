@@ -20,27 +20,27 @@ export class YpAppGlobals extends YpCodeBase {
 
   activityHost = '';
 
-  domain: YpDomainData | null = null;
+  domain: YpDomainData | undefined;
 
   groupConfigOverrides: Record<number, Record<string, string | boolean>> = {};
 
-  currentAnonymousUser: YpUserData| null = null;
+  currentAnonymousUser: YpUserData | undefined;
 
-  currentGroup: YpGroupData | null = null;
+  currentGroup: YpGroupData | undefined ;
 
-  currentAnonymousGroup: YpGroupData | null = null;
+  currentAnonymousGroup: YpGroupData | undefined;
 
   currentForceSaml = false;
 
   disableFacebookLoginForGroup = false;
 
-  currentSamlDeniedMessage: string | null = null;
+  currentSamlDeniedMessage: string | undefined;
 
-  currentSamlLoginMessage: string | null = null;
+  currentSamlLoginMessage: string | undefined;
 
   originalQueryParameters: Record<string, string | number> = {};
 
-  externalGoalTriggerGroupId: number | null = null;
+  externalGoalTriggerGroupId: number | undefined;
 
   externalGoalCounter = 0;
 
@@ -64,14 +64,11 @@ export class YpAppGlobals extends YpCodeBase {
 
   hasAudioUpload = false;
 
-  // The selected language
-  language: string | null = null;
-
   // Locale seleted from query or loaded
-  locale: string | null = null;
+  locale: string | undefined;
 
   // TODO: Remove any,
-  i18nTranslation: any | null = null;
+  i18nTranslation: any | undefined;
 
   serverApi: YpServerApi;
 
@@ -83,7 +80,7 @@ export class YpAppGlobals extends YpCodeBase {
 
   theme: YpThemeManager;
 
-  highlightedLanguages: Array<string>|null = null;
+  highlightedLanguages: Array<string> | undefined;
 
   constructor(serverApi: YpServerApi) {
     super();
@@ -177,7 +174,7 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  setHighlightedLanguages (languages: Array<string> | null) {
+  setHighlightedLanguages (languages: Array<string> | undefined) {
     this.highlightedLanguages = languages;
     this.fireGlobal('yp-refresh-language-selection');
   }
@@ -217,12 +214,12 @@ export class YpAppGlobals extends YpCodeBase {
     this.originalQueryParameters = params;
   }
 
-  setAnonymousUser(user: YpUserData | null) {
+  setAnonymousUser(user: YpUserData | undefined) {
     this.currentAnonymousUser = user;
     console.debug('Set anon user ' + user);
   }
 
-  setAnonymousGroupStatus(group: YpGroupData | null) {
+  setAnonymousGroupStatus(group: YpGroupData | undefined) {
     if (
       group &&
       group.configuration &&
@@ -253,11 +250,11 @@ export class YpAppGlobals extends YpCodeBase {
         console.debug('Logout anon user');
       }
       console.debug('Set anon group to null');
-      this.currentAnonymousGroup = null;
+      this.currentAnonymousGroup = undefined;
     }
   }
 
-  _domainChanged(domain: YpDomainData | null) {
+  _domainChanged(domain: YpDomainData | undefined) {
     if (domain) {
       this.fireGlobal('yp-domain-changed', { domain: domain });
     }
@@ -394,8 +391,8 @@ export class YpAppGlobals extends YpCodeBase {
   activity(
     type: string,
     object: object | string,
-    context: string | object | number | null = null,
-    target: string | object | null = null
+    context: string | object | number | undefined = undefined,
+    target: string | object | undefined = undefined
   ) {
     let actor;
 

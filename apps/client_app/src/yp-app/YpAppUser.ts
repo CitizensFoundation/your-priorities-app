@@ -42,15 +42,15 @@ export class YpAppUser extends YpCodeBase {
     params: { value: string; content: string };
   } | null = null;
 
-  loginFor401refreshFunction: Function | null = null;
+  loginFor401refreshFunction: Function | undefined;
 
   loginForNotificationSettingsParams = false;
 
-  toastLoginTextCombined: string | null = null;
+  toastLoginTextCombined: string | undefined;
 
-  toastLogoutTextCombined: string | null = null;
+  toastLogoutTextCombined: string | undefined;
 
-  user: YpUserData | null = null;
+  user: YpUserData | null | undefined;
   //TODO:   observer: "_onUserChanged"
 
   endorsementPostsIndex: Record<number, YpEndorsement> = {};
@@ -61,21 +61,21 @@ export class YpAppUser extends YpCodeBase {
 
   pointQualitiesIndex: Record<number, YpPointQuality> = {};
 
-  adminRights: YpAdminRights | null = null;
+  adminRights: YpAdminRights | undefined;
 
-  memberships: YpMemberships | null = null;
+  memberships: YpMemberships | undefined;
 
-  completeExternalLoginText: string | null = null;
+  completeExternalLoginText: string | undefined;
 
   isPollingForLogin = false;
 
-  lastLoginMethod: string | null = null;
+  lastLoginMethod: string | undefined;
 
-  facebookPopupWindow: Window | null = null;
+  facebookPopupWindow: Window | undefined;
 
-  samlPopupWindow: Window | null = null;
+  samlPopupWindow: Window | undefined;
 
-  pollingStartedAt: number | null = null;
+  pollingStartedAt: number | undefined;
 
   hasIssuedLogout = false;
 
@@ -250,7 +250,7 @@ export class YpAppUser extends YpCodeBase {
     });
   }
 
-  _handleLogin(user: YpUser) {
+  _handleLogin(user: YpUserData) {
     this._closeUserLogin();
     this.setLoggedInUser(user);
     if (user.profile_data && user.profile_data.isAnonymousUser) {
@@ -365,11 +365,11 @@ export class YpAppUser extends YpCodeBase {
       'Login Success',
       this.lastLoginMethod ? this.lastLoginMethod : 'Email'
     );
-    this.lastLoginMethod = null;
+    this.lastLoginMethod = undefined;
     if (user && user.profile_data && user.profile_data.isAnonymousUser) {
       window.appGlobals.setAnonymousUser(user);
     } else {
-      window.appGlobals.setAnonymousUser(null);
+      window.appGlobals.setAnonymousUser(undefined);
     }
   }
 
@@ -381,7 +381,7 @@ export class YpAppUser extends YpCodeBase {
   removeUserSession() {
     this.sessionUnset('user');
     this.user = null;
-    window.appGlobals.setAnonymousUser(null);
+    window.appGlobals.setAnonymousUser(undefined);
     this.fireGlobal('yp-logged-in', null);
   }
 
@@ -416,7 +416,7 @@ export class YpAppUser extends YpCodeBase {
   }
 
   cancelLoginPolling() {
-    this.pollingStartedAt = null;
+    this.pollingStartedAt = undefined;
   }
 
   _closeAllPopups() {
@@ -426,7 +426,7 @@ export class YpAppUser extends YpCodeBase {
       } catch (error) {
         console.error(error);
       }
-      this.facebookPopupWindow = null;
+      this.facebookPopupWindow = undefined;
     }
     if (this.samlPopupWindow) {
       try {
@@ -434,7 +434,7 @@ export class YpAppUser extends YpCodeBase {
       } catch (error) {
         console.error(error);
       }
-      this.samlPopupWindow = null;
+      this.samlPopupWindow = undefined;
     }
   }
 
@@ -448,7 +448,7 @@ export class YpAppUser extends YpCodeBase {
             this.pollForLogin();
           }, 1200);
         } else {
-          this.pollingStartedAt = null;
+          this.pollingStartedAt = undefined;
         }
       } else if (user && user.name) {
         this.cancelLoginPolling();
@@ -526,7 +526,7 @@ export class YpAppUser extends YpCodeBase {
     }
   }
 
-  _updateEndorsementPostsIndex(user: YpUser) {
+  _updateEndorsementPostsIndex(user: YpUserData) {
     if (user && user.Endorsements && user.Endorsements.length > 0) {
       this.endorsementPostsIndex = {};
       for (let i = 0; i < user.Endorsements.length; i++) {
@@ -538,7 +538,7 @@ export class YpAppUser extends YpCodeBase {
     }
   }
 
-  _updateRatingPostsIndex(user: YpUser) {
+  _updateRatingPostsIndex(user: YpUserData) {
     if (user && user.Ratings && user.Ratings.length > 0) {
       this.ratingPostsIndex = {};
       for (let i = 0; i < user.Ratings.length; i++) {
@@ -679,13 +679,13 @@ export class YpAppUser extends YpCodeBase {
         window.appGlobals.currentSamlDeniedMessage =
           user.customSamlDeniedMessage;
       } else {
-        window.appGlobals.currentSamlDeniedMessage = null;
+        window.appGlobals.currentSamlDeniedMessage = undefined;
       }
 
       if (user.customSamlLoginMessage) {
         window.appGlobals.currentSamlLoginMessage = user.customSamlLoginMessage;
       } else {
-        window.appGlobals.currentSamlLoginMessage = null;
+        window.appGlobals.currentSamlLoginMessage = undefined;
       }
 
       if (user.forceSecureSamlLogin) {
@@ -698,7 +698,7 @@ export class YpAppUser extends YpCodeBase {
     if (this.completeExternalLoginText) {
       window.appGlobals.notifyUserViaToast(this.completeExternalLoginText);
       this._closeUserLogin();
-      this.completeExternalLoginText = null;
+      this.completeExternalLoginText = undefined;
       this._checkLoginForParameters();
     }
   }
@@ -718,7 +718,7 @@ export class YpAppUser extends YpCodeBase {
         this.fireGlobal('got-admin-rights', true);
       }, 1000);
     } else {
-      this.adminRights = null;
+      this.adminRights = undefined;
       this.fireGlobal('got-admin-rights', false);
     }
   }
@@ -753,7 +753,7 @@ export class YpAppUser extends YpCodeBase {
       this._updateMembershipsIndex(this.memberships);
       this.fireGlobal('got-memberships', true);
     } else {
-      this.memberships = null;
+      this.memberships = undefined;
       this.fireGlobal('got-memberships', false);
     }
   }

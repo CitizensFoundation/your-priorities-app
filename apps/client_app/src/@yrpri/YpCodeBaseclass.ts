@@ -1,7 +1,7 @@
 import { LitElement } from 'lit-element';
 
 export class YpCodeBase {
-  language: string | null = null;
+  language: string | undefined;
 
   constructor() {
     this.addGlobalListener(

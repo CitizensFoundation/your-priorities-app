@@ -2,21 +2,21 @@ import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js'
 
 export class YpCache extends YpCodeBase {
 
-  cachedActivityItem: YpActivityData |null = null
+  cachedActivityItem: YpActivityData | undefined;
 
-  cachedPostItem: YpPostData |null = null
+  cachedPostItem: YpPostData | undefined;
 
-  backToDomainCommunityItems: Record<number,YpCommunityData> = {}
+  backToDomainCommunityItems: Record<number,YpCommunityData> = {};
 
-  backToCommunityGroupItems: Record<number,YpGroupData> = {}
+  backToCommunityGroupItems: Record<number,YpGroupData> = {};
 
-  communityItemsCache: Record<number,YpCommunityData> = {}
+  communityItemsCache: Record<number,YpCommunityData> = {};
 
-  groupItemsCache: Record<number,YpGroupData> = {}
+  groupItemsCache: Record<number,YpGroupData> = {};
 
-  postItemsCache: Record<number,YpPostData> = {}
+  postItemsCache: Record<number,YpPostData> = {};
 
-  autoTranslateCache: Record<string,string> = {}
+  autoTranslateCache: Record<string,string> = {};
 
   addPostsToCacheLater(posts: Array<YpPostData>) {
     const laterTimeoutMs = Math.floor(Math.random() * 1000) + 750;

@@ -6,17 +6,17 @@ export class YpNavHelpers {
     document.dispatchEvent(new CustomEvent('yp-pause-media-playback', {bubbles: true, detail: {}}));
   }
 
-  static goToPost(postId: number, pointId: number|null = null,
-                           cachedActivityItem: YpActivityData | null = null,
-                          cachedPostItem: YpPostData | null = null, skipKeepOpen = false) {
-    if (postId===null) {
+  static goToPost(postId: number, pointId: number|undefined = undefined,
+                           cachedActivityItem: YpActivityData | undefined = undefined,
+                          cachedPostItem: YpPostData | undefined = undefined, skipKeepOpen = false) {
+    if (postId===undefined) {
       console.error("Can't find post id for goToPost");
       return;
     }
 
     let postUrl = '/post/' + postId;
 
-    if (pointId!==null) {
+    if (pointId!==undefined) {
       postUrl += '/' + pointId;
     }
 

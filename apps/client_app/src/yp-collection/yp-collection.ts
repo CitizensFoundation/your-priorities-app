@@ -45,10 +45,10 @@ export abstract class YpCollection extends YpBaseElement {
   hideCollection = false;
 
   @property({ type: String })
-  createFabIcon: string | null = null;
+  createFabIcon: string | undefined;
 
   @property({ type: String })
-  createFabLabel: string | null = null;
+  createFabLabel: string | undefined;
 
   collectionType: string;
   collectionApiType: string;
@@ -131,8 +131,8 @@ export abstract class YpCollection extends YpBaseElement {
         this.createFabIcon = this.collectionCreateFabIcon;
         this.createFabLabel = this.collectionCreateFabLabel;
       } else {
-        this.createFabIcon = null;
-        this.createFabLabel = null;
+        this.createFabIcon = undefined;
+        this.createFabLabel = undefined;
       }
     }
   }

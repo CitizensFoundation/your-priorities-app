@@ -1,7 +1,7 @@
 export class YpThemeManager {
   themes: Array<Record<string, boolean | string | Record<string, string>>> = [];
-  selectedTheme: number | null = null;
-  selectedFont: string | null = null;
+  selectedTheme: number | undefined ;
+  selectedFont: string | undefined;
 
   constructor() {
     this.themes.push({
@@ -268,7 +268,7 @@ export class YpThemeManager {
   setTheme(
     number: number,
     element: HTMLElement,
-    configuration: YpCollectionConfiguration | null = null
+    configuration: YpCollectionConfiguration | undefined = undefined
   ) {
     if (
       configuration &&
