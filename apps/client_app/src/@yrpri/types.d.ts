@@ -46,9 +46,9 @@ interface YpEndorsement {
 }
 
 interface YpMemberships {
-  GroupUsers: Array<YpUser>;
-  CommunityUsers: Array<YpUser>;
-  DomainUsers: Array<YpUser>;
+  GroupUsers: Array<YpUserData>;
+  CommunityUsers: Array<YpUserData>;
+  DomainUsers: Array<YpUserData>;
 }
 
 interface YpRating {
@@ -64,21 +64,36 @@ interface YpPointQuality {
   point_id: number;
 }
 
-interface YpCollection {
+interface YpElementWithPlayback extends HTMLElement {
+  playStartedAt?: Date;
+  $$(id: string): HTMLElement | void;
+  videoPlayListener: EventListenerOrEventListenerObject | null;
+  videoPauseListener: EventListenerOrEventListenerObject | null;
+  videoEndedListener: EventListenerOrEventListenerObject | null;
+  audioPlayListener: EventListenerOrEventListenerObject | null;
+  audioPauseListener: EventListenerOrEventListenerObject | null;
+  audioEndedListener: EventListenerOrEventListenerObject | null;
+}
+
+interface YpCollectionData {
   id: number;
   name: string;
-  User?: YpUser;
+  description?: string;
+  objectives?: string;
+  theme_id?: number;
+  default_locale?: string;
+  User?: YpUserData;
   user_id?: number;
   configuration?: YpCollectionConfiguration;
 }
 
 interface YpAdminRights {
-  GroupAdmins: Array<YpCollection>;
-  CommunityAdmins: Array<YpCollection>;
-  DomainAdmins: Array<YpCollection>;
+  GroupAdmins: Array<YpCollectionData>;
+  CommunityAdmins: Array<YpCollectionData>;
+  DomainAdmins: Array<YpCollectionData>;
 }
 
-interface YpDomain extends YpCollection {
+interface YpDomainData extends YpCollectionData {
   domain_name: string;
   google_analytics_code?: string;
   public_api_keys?: {
@@ -87,10 +102,13 @@ interface YpDomain extends YpCollection {
     };
   };
   description?: string;
+  DomainHeaderImages?: Array<YpImageData>;
+  only_admins_can_create_communities: boolean;
   configuration: YpDomainConfiguration;
+  Communities: Array<YpCommunityData>;
 }
 
-interface YpCommunity extends YpCollection {
+interface YpCommunityData extends YpCollectionData {
   hostname: string;
   description?: string;
   is_community_folder?: boolean;
@@ -98,8 +116,8 @@ interface YpCommunity extends YpCollection {
 }
 
 interface YpDomainGetResponse {
-  domain: YpDomain;
-  community: YpCommunity;
+  domain: YpDomainData;
+  community: YpCommunityData;
 }
 
 interface YpHasVideoResponse {
@@ -112,37 +130,53 @@ interface YpHasAudioResponse {
   hasTranscriptSupport: boolean;
 }
 
-interface YpGroup extends YpCollection {
+interface YpGroupData extends YpCollectionData {
   id: number;
   name: string;
   configuration: YpGroupConfiguration;
-  Community?: YpCommunity;
+  Community?: YpCommunityData;
 }
 
-interface YpImage {
+interface YpBaseMedia {
   id: number;
   formats: string;
   user_id?: number;
-  User?: YpUser;
 }
 
-interface YpCategory {
+interface YpImageData extends YpBaseMedia {
+  User?: YpUserData;
+}
+
+interface YpVideoData extends YpBaseMedia {
+  User?: YpUserData;
+  public_meta?: {
+    aspect: string;
+    selectedVideoFrameIndex: number;
+  };
+  VideoImages: Array<YpImageData> | null;
+}
+
+interface YpAudioData  extends YpBaseMedia {
+  User?: YpUserData;
+}
+
+interface YpCategoryData {
   id: number;
   name: string;
-  CategoryIconImages?: Array<YpImage>;
+  CategoryIconImages?: Array<YpImageData>;
 }
 
-interface YpPost {
+interface YpPostData {
   id: number;
   name: string;
   cover_media_type?: string;
   group_id: number;
   user_id?: number;
-  PostHeaderImages?: Array<YpImage>;
-  Category?: YpCategory;
-  Group?: YpGroup;
+  PostHeaderImages?: Array<YpImageData>;
+  Category?: YpCategoryData;
+  Group?: YpGroupData;
   description?: string;
-  User?: YpUser;
+  User?: YpUserData;
 }
 
 interface YpPointRevision {
@@ -150,17 +184,17 @@ interface YpPointRevision {
   content: string;
 }
 
-interface YpPoint {
+interface YpPointData {
   id: number;
   content: string;
   user_id?: number;
-  Post?: YpPost;
-  User?: YpUser;
+  Post?: YpPostData;
+  User?: YpUserData;
   PointQualities?: Array<YpPointQuality>;
   PointRevisions?: Array<YpPointRevision>;
 }
 
-interface YpActivity {
+interface YpActivityData {
   id: number;
   name: string;
   description?: string;
@@ -171,7 +205,7 @@ interface YpUserProfileData {
   saml_show_confirm_email_completed?: boolean;
 }
 
-interface YpUser {
+interface YpUserData {
   id: number;
   name: string;
   email?: string;

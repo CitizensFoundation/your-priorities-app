@@ -14,25 +14,26 @@
     "tsc:watch": "tsc --watch"
   },
   "devDependencies": {
-    "eslint": "^6.1.0",
+    "@open-wc/building-rollup": "^1.0.0",
     "@open-wc/eslint-config": "^2.0.0",
+    "@open-wc/testing": "^2.0.0",
+    "@open-wc/testing-karma": "^3.0.0",
+    "@types/node": "13.11.1",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
-    "prettier": "git+https://git@github.com/adamJLev/prettier.git",
+    "concurrently": "^5.1.0",
+    "deepmerge": "^3.2.0",
+    "es-dev-server": "^1.5.0",
+    "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.11.0",
     "husky": "^1.0.0",
     "lint-staged": "^8.0.0",
-    "@open-wc/testing-karma": "^3.0.0",
-    "deepmerge": "^3.2.0",
-    "@open-wc/testing": "^2.0.0",
-    "@open-wc/building-rollup": "^1.0.0",
+    "prettier": "git+https://git@github.com/adamJLev/prettier.git",
     "rimraf": "^2.6.3",
     "rollup": "^2.3.4",
-    "@types/node": "13.11.1",
-    "es-dev-server": "^1.5.0",
-    "typescript": "~3.8.2",
-    "concurrently": "^5.1.0",
-    "tslib": "^1.11.0"
+    "ts-lit-plugin": "^1.2.0",
+    "tslib": "^1.11.0",
+    "typescript": "~3.8.2"
   },
   "eslintConfig": {
     "extends": [

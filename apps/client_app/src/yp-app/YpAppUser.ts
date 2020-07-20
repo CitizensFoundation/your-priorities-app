@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpCodeBase } from '../@yrpri/YpCodeBase.js';
+import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js';
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 
 export class YpAppUser extends YpCodeBase {
@@ -50,7 +50,7 @@ export class YpAppUser extends YpCodeBase {
 
   toastLogoutTextCombined: string | null = null;
 
-  user: YpUser | null = null;
+  user: YpUserData | null = null;
   //TODO:   observer: "_onUserChanged"
 
   endorsementPostsIndex: Record<number, YpEndorsement> = {};
@@ -350,7 +350,7 @@ export class YpAppUser extends YpCodeBase {
     return this.sessionGet('user');
   }
 
-  setLoggedInUser(user: YpUser) {
+  setLoggedInUser(user: YpUserData) {
     this.sessionSet('user', user);
     this.user = user;
     this.fireGlobal('yp-logged-in', this.user);
@@ -603,7 +603,7 @@ export class YpAppUser extends YpCodeBase {
     }
   }
 
-  _updatePointQualitiesIndex(user: YpUser) {
+  _updatePointQualitiesIndex(user: YpUserData) {
     if (user && user.PointQualities && user.PointQualities.length > 0) {
       this.pointQualitiesIndex = {};
       for (let i = 0; i < user.PointQualities.length; i++) {
@@ -615,7 +615,7 @@ export class YpAppUser extends YpCodeBase {
     }
   }
 
-  _onUserChanged(user: YpUser | null) {
+  _onUserChanged(user: YpUserData | null) {
     this.fireGlobal('yp-user-changed', user);
     if (user) {
       this._updateEndorsementPostsIndex(user);
@@ -637,7 +637,7 @@ export class YpAppUser extends YpCodeBase {
   }
 
   async isloggedin() {
-    const user = (await this.serverApi.isloggedin()) as YpUser | void;
+    const user = (await this.serverApi.isloggedin()) as YpUserData | void;
 
     if (user && user.notLoggedIn === true) {
       this.removeUserSession();

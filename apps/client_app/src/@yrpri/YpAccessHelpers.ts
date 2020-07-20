@@ -1,10 +1,10 @@
 export class YpAccessHelpers {
 
-  static _hasAdminRights(objectId: number, adminRights: Array<YpCollection>) {
-    return adminRights.find((o: YpCollection) => { return o.id == objectId; });
+  static _hasAdminRights(objectId: number, adminRights: Array<YpCollectionData>) {
+    return adminRights.find((o: YpCollectionData) => { return o.id == objectId; });
   }
 
-  static _hasAccess (object: YpCollection|YpImage|YpPoint|YpPost, objectId: number, adminRights: Array<YpCollection>) {
+  static _hasAccess (object: YpCollectionData|YpImageData|YpPointData|YpPostData, objectId: number, adminRights: Array<YpCollectionData>) {
     if (object) {
       if (window.appUser && window.appUser.user) {
         if (window.appUser.user.id == object.user_id) {
@@ -29,13 +29,13 @@ export class YpAccessHelpers {
     }
   }
 
-  static hasImageAccess (image: YpImage, post: YpPost) {
+  static hasImageAccess (image: YpImageData, post: YpPostData) {
     if (image && post && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(image, post.group_id, window.appUser.adminRights.GroupAdmins);
     }
   }
 
-  static checkPostAccess (post: YpPost) {
+  static checkPostAccess (post: YpPostData) {
     if (post && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(post, post.group_id, window.appUser.adminRights.GroupAdmins);
     } if (post && post.User && window.appUser && window.appUser.user) {
@@ -46,7 +46,7 @@ export class YpAccessHelpers {
     }
   }
 
-  static checkPointAccess (point: YpPoint) {
+  static checkPointAccess (point: YpPointData) {
     if (point && point.Post && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(point, point.Post.group_id, window.appUser.adminRights.GroupAdmins);
     } else if (point && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id) {
@@ -59,7 +59,7 @@ export class YpAccessHelpers {
     }
   }
 
-  static checkPostAdminOnlyAccess (post: YpPost) {
+  static checkPostAdminOnlyAccess (post: YpPostData) {
     if (post && window.appUser && window.appUser.adminRights) {
       return this._hasAdminRights(post.group_id, window.appUser.adminRights.GroupAdmins);
     } else if (post) {
@@ -70,7 +70,7 @@ export class YpAccessHelpers {
     }
   }
 
-  static checkGroupAccess (group: YpGroup) {
+  static checkGroupAccess (group: YpGroupData) {
     if (group && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(group, group.id, window.appUser.adminRights.GroupAdmins);
     } else if (group) {
@@ -81,7 +81,7 @@ export class YpAccessHelpers {
     }
   }
 
-  static checkCommunityAccess (community: YpCommunity) {
+  static checkCommunityAccess (community: YpCommunityData) {
     if (community && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(community, community.id, window.appUser.adminRights.CommunityAdmins);
     } else if (community) {
@@ -92,7 +92,7 @@ export class YpAccessHelpers {
     }
   }
 
-  static checkDomainAccess(domain: YpDomain) {
+  static checkDomainAccess(domain: YpDomainData) {
     if (domain && window.appUser && window.appUser.adminRights) {
       return this._hasAccess(domain, domain.id, window.appUser.adminRights.DomainAdmins);
     } else if (domain) {
@@ -103,7 +103,7 @@ export class YpAccessHelpers {
     }
   }
 
-  static hasUserAccess(user: YpUser) {
+  static hasUserAccess(user: YpUserData) {
     if (user && window.appUser && window.appUser.user && window.appUser.user.id == user.id) {
       return true
     } else {

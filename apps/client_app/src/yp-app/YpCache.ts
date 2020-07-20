@@ -1,24 +1,24 @@
-import { YpCodeBase } from '../@yrpri/YpCodeBase.js'
+import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js'
 
 export class YpCache extends YpCodeBase {
 
-  cachedActivityItem: YpActivity|null = null
+  cachedActivityItem: YpActivityData |null = null
 
-  cachedPostItem: YpPost|null = null
+  cachedPostItem: YpPostData |null = null
 
-  backToDomainCommunityItems: Record<number,YpCommunity> = {}
+  backToDomainCommunityItems: Record<number,YpCommunityData> = {}
 
-  backToCommunityGroupItems: Record<number,YpGroup> = {}
+  backToCommunityGroupItems: Record<number,YpGroupData> = {}
 
-  communityItemsCache: Record<number,YpCommunity> = {}
+  communityItemsCache: Record<number,YpCommunityData> = {}
 
-  groupItemsCache: Record<number,YpGroup> = {}
+  groupItemsCache: Record<number,YpGroupData> = {}
 
-  postItemsCache: Record<number,YpPost> = {}
+  postItemsCache: Record<number,YpPostData> = {}
 
   autoTranslateCache: Record<string,string> = {}
 
-  addPostsToCacheLater(posts: Array<YpPost>) {
+  addPostsToCacheLater(posts: Array<YpPostData>) {
     const laterTimeoutMs = Math.floor(Math.random() * 1000) + 750;
     setTimeout(() => {
       if (posts) {
@@ -37,7 +37,7 @@ export class YpCache extends YpCodeBase {
     return this.postItemsCache[postId];
   }
 
-  updatePostInCache(post: YpPost) {
+  updatePostInCache(post: YpPostData) {
     this.postItemsCache[post.id] = post;
   }
 }

@@ -7,8 +7,8 @@ export class YpNavHelpers {
   }
 
   static goToPost(postId: number, pointId: number|null = null,
-                           cachedActivityItem: YpActivity|null = null,
-                          cachedPostItem: YpPost|null = null, skipKeepOpen = false) {
+                           cachedActivityItem: YpActivityData | null = null,
+                          cachedPostItem: YpPostData | null = null, skipKeepOpen = false) {
     if (postId===null) {
       console.error("Can't find post id for goToPost");
       return;

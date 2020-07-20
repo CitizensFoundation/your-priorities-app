@@ -1,9 +1,9 @@
-import { YpCodeBase } from '../@yrpri/YpCodeBase.js'
+import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js'
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 
 export class YpRecommendations extends YpCodeBase {
 
-  recommendationsGroupCache: Record<number,Array<YpPost>> = {}
+  recommendationsGroupCache: Record<number,Array<YpPostData>> = {}
 
   recommendationsSeenPostIds: object|null = null
 
@@ -39,7 +39,7 @@ export class YpRecommendations extends YpCodeBase {
     }
   }
 
-  _preCacheMediaForPost(post: YpPost) {
+  _preCacheMediaForPost(post: YpPostData) {
     setTimeout(() => {
       let imagePath=null;
       if ((!post.cover_media_type || post.cover_media_type==='none') && !post.Category) {
@@ -56,7 +56,7 @@ export class YpRecommendations extends YpCodeBase {
     });
   }
 
-  _getImageFormatUrl(images: Array<YpImage>|undefined, formatId: number) {
+  _getImageFormatUrl(images: Array<YpImageData>|undefined, formatId: number) {
     if (images && images.length>0) {
       const formats = JSON.parse(images[images.length-1].formats);
       if (formats && formats.length>0)
@@ -66,7 +66,7 @@ export class YpRecommendations extends YpCodeBase {
     }
   }
 
-  _getCategoryImagePath(post: YpPost) {
+  _getCategoryImagePath(post: YpPostData) {
     if (post && post.Category && post.Category.CategoryIconImages) {
       return this._getImageFormatUrl(post.Category.CategoryIconImages, 0);
     } else {
@@ -125,7 +125,7 @@ export class YpRecommendations extends YpCodeBase {
 
   _getSelectedPost(groupId: number) {
     if (this.recommendationsGroupCache[groupId]) {
-      let post = this.recommendationsGroupCache[groupId][0] as YpPost|null;
+      let post = this.recommendationsGroupCache[groupId][0] as YpPostData | null;
       if (post) {
         if (post.id===this.currentPostId) {
           this.recommendationsGroupCache[groupId].shift();

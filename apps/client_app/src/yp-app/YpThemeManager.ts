@@ -238,7 +238,7 @@ export class YpThemeManager {
     };
   }
 
-  private _updateStyles(
+  updateStyles(
     element: HTMLElement,
     properties: Record<string, string>
   ) {
@@ -293,7 +293,7 @@ export class YpThemeManager {
           '#' + configuration.themeOverrideBackgroundColor;
       }
 
-      this._updateStyles(
+      this.updateStyles(
         element,
         this._setupOverrideTheme(
           configuration.themeOverrideColorPrimary,
@@ -303,7 +303,7 @@ export class YpThemeManager {
       );
     } else {
       if (this.themes[number]) {
-        this._updateStyles(
+        this.updateStyles(
           element,
           this._onlyGetStylesFromTheme(this.themes[number])
         );

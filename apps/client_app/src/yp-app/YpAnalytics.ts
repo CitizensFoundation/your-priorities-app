@@ -1,4 +1,4 @@
-import { YpCodeBase } from '../@yrpri/YpCodeBase.js'
+import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js'
 
 export class YpAnalytics extends YpCodeBase {
 
@@ -8,7 +8,7 @@ export class YpAnalytics extends YpCodeBase {
 
   communityTrackerIds: Record<string,boolean> = {}
 
-  setupGoogleAnalytics(domain: YpDomain) {
+  setupGoogleAnalytics(domain: YpDomainData) {
     if (domain.public_api_keys && domain.public_api_keys && domain.public_api_keys.google && domain.public_api_keys.google.analytics_tracking_id) {
       ga('create', domain.public_api_keys.google.analytics_tracking_id, 'auto');
     } else if (domain.google_analytics_code && domain.google_analytics_code!="") {

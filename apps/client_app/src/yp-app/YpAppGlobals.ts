@@ -5,7 +5,7 @@ import i18next from 'i18next';
 
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from './YpNavHelpers.js';
-import { YpCodeBase } from '../@yrpri/YpCodeBase.js';
+import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js';
 import { YpRecommendations } from './YpRecommendations.js';
 import { YpCache } from './YpCache.js';
 import { YpAnalytics } from './YpAnalytics.js';
@@ -20,15 +20,15 @@ export class YpAppGlobals extends YpCodeBase {
 
   activityHost = '';
 
-  domain: YpDomain | null = null;
+  domain: YpDomainData | null = null;
 
   groupConfigOverrides: Record<number, Record<string, string | boolean>> = {};
 
-  currentAnonymousUser: YpUser | null = null;
+  currentAnonymousUser: YpUserData| null = null;
 
-  currentGroup: YpGroup | null = null;
+  currentGroup: YpGroupData | null = null;
 
-  currentAnonymousGroup: YpGroup | null = null;
+  currentAnonymousGroup: YpGroupData | null = null;
 
   currentForceSaml = false;
 
@@ -134,12 +134,12 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  sendVideoView(videoId: number) {
+  sendVideoView(videoId: number | string) {
     this.serverApi.sendVideoView({ videoId: videoId });
     this.activity('view', 'video', videoId);
   }
 
-  sendLongVideoView(videoId: number) {
+  sendLongVideoView(videoId: number | string) {
     this.serverApi.sendVideoView({ videoId: videoId, longPlaytime: true });
     this.activity('view', 'videoLong', videoId);
   }
@@ -151,12 +151,12 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  sendAudioListen(audioId: number) {
+  sendAudioListen(audioId: number | string) {
     this.serverApi.sendAudioView({ audioId: audioId });
     this.activity('view', 'audio', audioId);
   }
 
-  sendLongAudioListen(audioId: number) {
+  sendLongAudioListen(audioId: number | string) {
     this.serverApi.sendAudioView({ audioId: audioId, longPlaytime: true });
     this.activity('view', 'audioLong', audioId);
   }
@@ -177,7 +177,7 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  setHighlightedLanguages (languages: Array<string>) {
+  setHighlightedLanguages (languages: Array<string> | null) {
     this.highlightedLanguages = languages;
     this.fireGlobal('yp-refresh-language-selection');
   }
@@ -217,12 +217,12 @@ export class YpAppGlobals extends YpCodeBase {
     this.originalQueryParameters = params;
   }
 
-  setAnonymousUser(user: YpUser | null) {
+  setAnonymousUser(user: YpUserData | null) {
     this.currentAnonymousUser = user;
     console.debug('Set anon user ' + user);
   }
 
-  setAnonymousGroupStatus(group: YpGroup) {
+  setAnonymousGroupStatus(group: YpGroupData | null) {
     if (
       group &&
       group.configuration &&
@@ -257,7 +257,7 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  _domainChanged(domain: YpDomain | null) {
+  _domainChanged(domain: YpDomainData | null) {
     if (domain) {
       this.fireGlobal('yp-domain-changed', { domain: domain });
     }
@@ -272,7 +272,7 @@ export class YpAppGlobals extends YpCodeBase {
   }
 
   _userLoggedIn(event: CustomEvent) {
-    const user: YpUser = event.detail;
+    const user: YpUserData = event.detail;
     if (user) {
       setTimeout(function () {
         if (typeof ga == 'function') {
@@ -360,7 +360,7 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  postLoadGroupProcessing(group: YpGroup) {
+  postLoadGroupProcessing(group: YpGroupData) {
     if (this.originalQueryParameters['yu']) {
       this.serverApi.marketingTrackingOpen(
         group.id,

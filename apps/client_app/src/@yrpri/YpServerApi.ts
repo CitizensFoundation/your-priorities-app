@@ -1,4 +1,4 @@
-import { YpCodeBase } from './YpCodeBase.js';
+import { YpCodeBase } from './YpCodeBaseclass.js';
 
 export class YpServerApi extends YpCodeBase {
   protected baseUrlPath = '/api';
