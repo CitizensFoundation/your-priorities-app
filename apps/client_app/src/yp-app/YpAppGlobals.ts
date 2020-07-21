@@ -4,7 +4,7 @@ import i18next from 'i18next';
 //import moment from 'moment';
 
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpNavHelpers } from './YpNavHelpers.js';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js';
 import { YpRecommendations } from './YpRecommendations.js';
 import { YpCache } from './YpCache.js';

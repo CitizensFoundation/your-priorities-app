@@ -38,7 +38,7 @@ import { YpAppStyles } from './YpAppStyles.js';
 import { YpAppGlobals } from './YpAppGlobals.js';
 import { YpAppUser } from './YpAppUser.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpNavHelpers } from './YpNavHelpers.js';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { nothing } from 'lit-html';
 import { Menu } from '@material/mwc-menu';
 
