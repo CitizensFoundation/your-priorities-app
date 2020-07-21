@@ -15,6 +15,8 @@ interface YpCollectionConfiguration {
   disableNameAutoTranslation?: boolean;
   useVideoCover?: boolean;
   welcomeHTML?: string;
+  sortBySortOrder?: boolean;
+  optionalSortOrder?: number;
 }
 
 interface YpGroupConfiguration extends YpCollectionConfiguration {
@@ -78,6 +80,13 @@ interface YpElementWithPlayback extends HTMLElement {
   audioEndedListener: EventListenerOrEventListenerObject | undefined;
 }
 
+interface YpElementWithIronList extends HTMLElement {
+  resetListSize: EventListenerOrEventListenerObject | undefined;
+  $$(id: string): HTMLElement | void;
+  wide: boolean;
+  skipIronListWidth: boolean;
+}
+
 interface YpDatabaseItem {
   id: number;
   name: string;
@@ -91,6 +100,7 @@ interface YpCollectionData extends YpDatabaseItem {
   default_locale?: string;
   User?: YpUserData;
   user_id?: number;
+  status?: string;
   configuration?: YpCollectionConfiguration;
 }
 
@@ -121,6 +131,7 @@ interface YpCommunityData extends YpCollectionData {
   hostname: string;
   description?: string;
   is_community_folder?: boolean;
+  domain_id: number;
   configuration: YpCommunityConfiguration;
   CommunityLogoVideos?: Array<YpVideoData>;
   CommunityHeaderImages?: Array<YpImageData>;
@@ -145,6 +156,7 @@ interface YpHasAudioResponse {
 interface YpGroupData extends YpCollectionData {
   id: number;
   name: string;
+  community_id: number;
   configuration: YpGroupConfiguration;
   Community?: YpCommunityData;
   GroupLogoVideos?: Array<YpVideoData>;
@@ -237,6 +249,14 @@ interface YpUserData {
 
 declare interface IronListInterface extends HTMLElement {
   scrollToItem(item: YpDatabaseItem): () => void;
+  updateViewportBoundaries(): () => void;
+  notifyResize(): () => void;
 }
 
 declare const YpHelpPageArray: Array<YpHelpPage>;
+
+declare interface YpSplitCollectionsReturn {
+  active: Array<YpCollectionData>;
+  archived: Array<YpCollectionData>;
+  featured: Array<YpCollectionData>;
+}

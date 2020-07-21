@@ -1,31 +1,31 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
-import { ifDefined } from 'lit-html/directives/if-defined';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
-
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { Menu } from '@material/mwc-menu';
+import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
+import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
-  featuredCollectionItems: Array<YpCollectionData> | undefined;
-  activeCollectionItems: Array<YpCollectionData> | undefined;
-  archivedCollectionItems: Array<YpCollectionData> | undefined;
+  @property({ type: Array })
+  collectionItems: Array<YpCollectionData> | undefined;
+
+  @property({ type: String })
+  collectionItemType: string | undefined;
+
+  @property({ type: Array })
+  sortedCollectionItems: Array<YpCollectionData> | undefined;
+
+  resetListSize: Function | undefined;
+  skipIronListWidth = false;
 
   static get styles() {
     return [
       super.styles,
+      ShadowStyles,
       css`
-        .card[wide] {
-          padding: 16px;
-        }
-
         .card {
           padding: 0;
           padding-top: 16px;
@@ -35,24 +35,8 @@ export class YpCollectionItemsGrid extends YpBaseElement {
           padding: 16px !important;
         }
 
-        .archivedText {
-          font-size: 25px;
-          color: #333;
-        }
-
-        .archivedBorder {
-          border-bottom: 1px solid;
-          width: 95%;
-          margin-bottom: 12px;
-          border-color: #444;
-        }
-
         iron-list {
           height: 100vh;
-        }
-
-        [hidden] {
-          display: none !important;
         }
 
         a {
@@ -60,74 +44,90 @@ export class YpCollectionItemsGrid extends YpBaseElement {
           width: 100%;
         }
       `,
-      YpFlexLayout,
     ];
   }
 
   render() {
     return html`
-
       <iron-list
         id="ironList"
-        selection-enabled=""
-        scroll-offset="[[scrollOffset]]"
+        selection-enabled
+        .scrollOffset="${this._scrollOffset}"
         @selected-item-changed="${this._selectedItemChanged}"
-        items="[[activeCommunities]]"
-        as="community"
+        .items="${this.sortedCollectionItems}"
+        as="item"
         scroll-target="document"
-        grid$="[[wide]]"
+        ?grid="${this.wide}"
         role="list">
         <template>
           <div
             class="card layout vertical center-center"
-            wide-padding$="[[wide]]"
-            tabindex$="[[tabIndex]]"
+            ?wide-padding="${this.wide}"
+            tabindex="[[index]]"
             role="listitem"
             aria-level="2"
-            aria-label="[[community.name]]">
+            aria-label="[[item.name]]">
             <a
-              href="/[[_communityPath(community)]]/[[community.id]]"
-              id="communityCardHref[[community.id]]"
-              class="layout vertical center-center"
-              ><yp-community-card
-                wide$="[[wide]]"
-                community="[[community]]"
-                on-mouseover="cardMouseOver"
-                on-mouseout="cardMouseOut"></yp-community-card
-            ></a>
+              href="/${this.collectionItemType}/[[item.id]]"
+              class="layout vertical center-center">
+              <yp-collection-item-card
+                item="[[item]]"></yp-community-card
+              >
+            </a>
           </div>
         </template>
       </iron-list>
     `;
   }
 
-  /*
-  behaviors: [
-    ypIronListBehavior,
-    ypCardMouseBehavior
-  ],
-*/
+  firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.firstUpdated(changedProperties);
+    YpIronListHelpers.attachListeners(this as YpElementWithIronList);
+  }
 
+  connectedCallback() {
+    super.connectedCallback();
+    if (this.collection && this.collectionItems) {
+      const splitCommunities = YpCollectionHelpers.splitByStatus(
+        this.collectionItems,
+        this.collection.configuration
+      );
+      this.sortedCollectionItems = splitCommunities.featured.concat(
+        splitCommunities.active.concat(splitCommunities.archived)
+      );
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    YpIronListHelpers.detachListeners(this as YpElementWithIronList);
+  }
+
+  // TODO: Make sure this fires each time on keyboard, mouse & phone - make sure back key on browser works also just with the A
   _selectedItemChanged(event: CustomEvent) {
     const detail = event.detail;
-    if (detail && detail.value) {
-      const selectedCard = this.$$('#communityCardHref' + detail.value.id);
-      if (selectedCard) {
-        selectedCard.click();
+
+    if (this.collectionItemType && detail) {
+      window.appGlobals.activity(
+        'open',
+        this.collectionItemType,
+        `/${this.collectionItemType}/${detail.item.id}`,
+        { id: detail.item.id }
+      );
+
+      if (this.collectionItemType === 'community') {
+        const community = detail.item as YpCommunityData;
+        window.appGlobals.cache.backToDomainCommunityItems[
+          community.domain_id
+        ] = community;
+      } else if (this.collectionItemType === 'group') {
+        const group = detail.item as YpGroupData;
+        window.appGlobals.cache.backToCommunityGroupItems[
+          group.community_id
+        ] = group;
+        window.appGlobals.cache.groupItemsCache[group.id] = group;
       }
     }
-  }
-
-  _communityPath(community) {
-    if (community && community.is_community_folder) {
-      return 'community_folder';
-    } else {
-      return 'community';
-    }
-  }
-
-  _newCommunity() {
-    this.fire('add-new-community');
   }
 
   get _scrollOffset() {

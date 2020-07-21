@@ -148,9 +148,9 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
-  public getCollection(collectionApiType: string, collectionId: number) {
+  public getCollection(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${collectionApiType}/${collectionId}`
+      this.baseUrlPath + `/${collectionType}/${collectionId}`
     );
   }
 }

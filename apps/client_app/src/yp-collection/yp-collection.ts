@@ -51,19 +51,19 @@ export abstract class YpCollection extends YpBaseElement {
   createFabLabel: string | undefined;
 
   collectionType: string;
-  collectionApiType: string;
+  collectionItemType: string;
   collectionCreateFabIcon: string;
   collectionCreateFabLabel: string;
 
   constructor(
     collectionType: string,
-    collectionApiType: string,
+    collectionItemType: string,
     collectionCreateFabIcon: string,
     collectionCreateFabLabel: string
   ) {
     super();
     this.collectionType = collectionType;
-    this.collectionApiType = collectionApiType;
+    this.collectionItemType = collectionItemType;
     this.collectionCreateFabIcon = collectionCreateFabIcon;
     this.collectionCreateFabLabel = collectionCreateFabLabel;
 
@@ -87,14 +87,14 @@ export abstract class YpCollection extends YpBaseElement {
     } else {
       YpMediaHelpers.setupTopHeaderImage(this, null);
     }
-    window.appGlobals.setAnonymousGroupStatus(null);
+    window.appGlobals.setAnonymousGroupStatus(undefined);
     window.appGlobals.disableFacebookLoginForGroup = false;
-    window.appGlobals.externalGoalTriggerGroupId = null;
+    window.appGlobals.externalGoalTriggerGroupId = undefined;
     window.appGlobals.currentForceSaml = false;
-    window.appGlobals.currentSamlDeniedMessage = null;
-    window.appGlobals.currentSamlLoginMessage = null;
-    window.appGlobals.currentGroup = null;
-    window.appGlobals.setHighlightedLanguages(null);
+    window.appGlobals.currentSamlDeniedMessage = undefined;
+    window.appGlobals.currentSamlLoginMessage = undefined;
+    window.appGlobals.currentGroup = undefined;
+    window.appGlobals.setHighlightedLanguages(undefined);
   }
 
   refresh(): void {
@@ -150,7 +150,7 @@ export abstract class YpCollection extends YpBaseElement {
   async _getCollection() {
     if (this.collectionId) {
       this.collection = (await window.serverApi.getCollection(
-        this.collectionApiType,
+        this.collectionType,
         this.collectionId
       )) as YpCollectionData | undefined;
       this._afterCollectionLoad();
@@ -163,7 +163,7 @@ export abstract class YpCollection extends YpBaseElement {
   async _getHelpPages() {
     if (this.collectionId) {
       const helpPages = (await window.serverApi.getHelpPages(
-        this.collectionApiType,
+        this.collectionType,
         this.collectionId
       )) as Array<YpHelpPage> | undefined;
       this.fire("yp-set-pages", helpPages);
@@ -240,16 +240,18 @@ export abstract class YpCollection extends YpBaseElement {
     }
   }
 
-  renderCurrentTabPage(): TemplateResult | null {
-    let page: TemplateResult | null = null;
+  renderCurrentTabPage(): TemplateResult | undefined {
+    let page: TemplateResult | undefined;
 
     switch (this.selectedTab) {
       case CollectionTabTypes.Collection:
-        page = html`
+        page = this.collectionItems ? html`
           <yp-collection-items-grid
             .colletionItems="${this.collectionItems}"
-            .collectionId="${this.collectionId}"
-            @create-collection-item="${this._openNewCollectionItemDialog}"></yp-collection-items-grid>`;
+            .collection="${this.collection}"
+            .collectionType="${this.collectionType}"
+            .collectionItemType="${this.collectionItemType}"
+            .collectionId="${this.collectionId}"></yp-collection-items-grid>` : html``;
         break;
       case CollectionTabTypes.Newsfeed:
         page = html`
