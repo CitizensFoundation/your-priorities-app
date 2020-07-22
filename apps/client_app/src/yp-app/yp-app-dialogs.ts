@@ -35,6 +35,7 @@ export class YpAppDialogs extends YpBaseElement {
 
   haveLoadedDelayed = false;
   gotRatingsDialog = false
+  gotMediaRecorder = false;
   loadingStartedLoggedIn = false;
 
   waitForUpgradeCounter = 0;
