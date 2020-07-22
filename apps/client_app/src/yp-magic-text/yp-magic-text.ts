@@ -10,6 +10,8 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { Menu } from '@material/mwc-menu';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
+declare module "./sanitize-html.min.js";
+
 import * as sanitizeHtml from './sanitize-html.min.js';
 import { twemoji } from '@kano/twemoji/index.es.js';
 import linkifyStr from 'linkifyjs/string';
