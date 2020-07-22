@@ -88,15 +88,6 @@ export class YpMagicText extends YpBaseElement {
     this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent);
   }
 
-  static get propesrties() {
-    return {
-      content: {
-        type: String,
-        observer: '_contentChanged',
-      }
-    };
-  }
-
   static get styles() {
     return [
       super.styles,
@@ -151,10 +142,6 @@ export class YpMagicText extends YpBaseElement {
             `
           : nothing }
       </div>
-
-      <lite-signal
-        @lite-signal-yp-auto-translate="${this
-          ._autoTranslateEvent}"></lite-signal>
 
       <iron-ajax
         id="getTranslationAjax"
