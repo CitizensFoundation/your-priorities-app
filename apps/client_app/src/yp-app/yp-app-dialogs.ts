@@ -12,9 +12,6 @@ import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
 @customElement('yp-app-dialogs')
 export class YpAppDialogs extends YpBaseElement {
-  @property({ type: Boolean })
-  hideDialogs = false;
-
   @property({ type: String })
   selectedDialog: string | undefined;
 
@@ -46,6 +43,7 @@ export class YpAppDialogs extends YpBaseElement {
 
   static get styles() {
     return [
+      super.styles,
       css`
         :host {
           background-color: var(--primary-background-color);
@@ -90,6 +88,62 @@ export class YpAppDialogs extends YpBaseElement {
         selectedDialog =  html`
           <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
         `;
+        break;
+      case "userLogin":
+        selectedDialog =  html`
+          <yp-login id="userLogin" @yp-forgot-password="${this._forgotPassword}"></yp-login>
+        `;
+        break;
+      case "forgotPassword":
+        selectedDialog =  html`
+          <yp-forgot-password id="forgotPassword"></yp-forgot-password>
+        `;
+      break;
+      case "resetPassword":
+        selectedDialog =  html`
+          <yp-reset-password id="resetPassword"></yp-reset-password>
+        `;
+      break;
+      case "ratings":
+        selectedDialog =  html`
+          <yp-dialog-ratings id="ratings"></yp-dialog-ratings>
+        `;
+      break;
+      case "acceptInvite":
+        selectedDialog =  html`
+          <yp-accept-invite id="acceptInvite"></yp-accept-invite>
+        `;
+      break;
+      case "missingEmail":
+        selectedDialog =  html`
+          <yp-missing-email id="missingEmail"></yp-missing-email>
+        `;
+      break;
+      case "postEdit":
+        selectedDialog =  html`
+          <yp-post-edit id="postEdit"></yp-post-edit>
+        `;
+      break;
+      case "userImageEdit":
+        selectedDialog =  html`
+          <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
+        `;
+      break;
+      case "apiActionDialog":
+        selectedDialog =  html`
+          <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
+        `;
+      break;
+      case "userEdit":
+        selectedDialog =  html`
+          <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+        `;
+      break;
+      case "userDeleteOrAnonymize":
+        selectedDialog =  html`
+           <yp-user-delete-or-anonymize id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
+        `;
+      break;
     }
 
     return selectedDialog;
@@ -114,7 +168,6 @@ export class YpAppDialogs extends YpBaseElement {
         </paper-toast>
       `: html``}
 
-      <div id="dialogs">
         <paper-toast id="masterToast"></paper-toast>
         <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
 
@@ -134,85 +187,10 @@ export class YpAppDialogs extends YpBaseElement {
           <yp-media-recorder id="mediaRecorder"></yp-media-recorder>
         `: html``}
 
-
-          <iron-lazy-pages selected="${this.selectedDialog}" .attrForSelected="name">
-            <template is="dom-if" name="userLogin" restamp>
-              <yp-login id="userLogin" @yp-forgot-password="${this._forgotPassword}"></yp-login>
-            </template>
-
-            <template is="dom-if" name="forgotPassword" restamp>
-              <yp-forgot-password id="forgotPassword"></yp-forgot-password>
-            </template>
-
-            <template is="dom-if" name="resetPassword" restamp>
-              <yp-reset-password id="resetPassword"></yp-reset-password>
-            </template>
-
-            <template is="dom-if" name="ratings" restamp="">
-              <yp-dialog-ratings id="ratings"></yp-dialog-ratings>
-            </template>
-
-            <template is="dom-if" name="acceptInvite" restamp>
-              <yp-accept-invite id="acceptInvite"></yp-accept-invite>
-            </template>
-
-            <template is="dom-if" name="missingEmail" restamp>
-              <yp-missing-email id="missingEmail"></yp-missing-email>
-            </template>
-
-            <template is="dom-if" name="postEdit" restamp>
-              <yp-post-edit id="postEdit"></yp-post-edit>
-            </template>
-
-            <template is="dom-if" name="userImageEdit" restamp>
-              <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
-            </template>
-
-            <template is="dom-if" name="magicTextDialog" restamp>
-              <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
-            </template>
-
-            <template is="dom-if" name="apiActionDialog" restamp>
-              <yp-api-action-dialog id="apiActionDialog"></yp-api-action-dialog>
-            </template>
-
-            <template is="dom-if" name="userEdit" restamp>
-              <yp-user-edit id="userEdit" .method="PUT"></yp-user-edit>
-            </template>
-
-            <template is="dom-if" name="userDeleteOrAnonymize" restamp>
-              <yp-user-delete-or-anonymize id="userDeleteOrAnonymize"></yp-user-delete-or-anonymize>
-            </template>
-
-            <template is="dom-if" name="domainEdit" restamp>
-              <yp-domain-edit id="domainEdit"></yp-domain-edit>
-            </template>
-
-            <template is="dom-if" name="none" restamp>
-              <div hidden> </div>
-            </template>
-
-            <template is="dom-if" name="usersGrid" restamp>
-              <yp-users-grid id="usersGrid"></yp-users-grid>
-            </template>
-
-            <template is="dom-if" name="contentModeration" restamp>
-              <yp-content-moderation id="contentModeration"></yp-content-moderation>
-            </template>
-
-            <template is="dom-if" name="createReport" restamp="">
-              <yp-create-report id="createReport"></yp-create-report>
-            </template>
-
-            <template is="dom-if" name="duplicateCollection" restamp="">
-              <yp-duplicate-collection id="duplicateCollection"></yp-duplicate-collection>
-            </template>
-          </iron-lazy-pages>
-
-      </div>
+        ${ this.renderSelectedDialog() }
 
         <paper-dialog id="loadingDialog">
-          <paper-spinner .active></paper-spinner>
+          <paper-spinner active></paper-spinner>
         </paper-dialog>
     `
   }
@@ -286,16 +264,15 @@ export class YpAppDialogs extends YpBaseElement {
     if (this.gotRatingsDialog) {
       this.getDialogAsync("ratings", callback);
     } else {
-      this.$.loadingDialog.open();
-      import("../yp-rating/yp-dialog-ratings.html"), function () {
-        this.$.loadingDialog.close();
+      this.$$("#loadingDialog").open();
+      import("../yp-rating/yp-dialog-ratings.html").then(()=> {
+        this.$$("#loadingDialog").close();
         console.info("Have loaded ratings dialog");
         this.gotRatingsDialog=true;
         this.getDialogAsync("ratings", callback);
-      }.bind(this), null, true);
+      });
     }
   }
-
 
   getMediaRecorderAsync(callback) {
     if (this.gotMediaRecorder) {
@@ -311,9 +288,7 @@ export class YpAppDialogs extends YpBaseElement {
     }
   }
 
-  getDialogAsync(idName: string, callback: Function) {
-    this.hideDialogs = false;
-
+  async getDialogAsync(idName: string, callback: Function) {
     if (idName==="pageDialog") {
       this.pageDialogOpen = true;
     } else if (idName==="confirmationDialog") {
@@ -327,23 +302,23 @@ export class YpAppDialogs extends YpBaseElement {
       this.selectedDialog = idName;
     }
 
-    setTimeout(() => {
-      const element = this.$$("#"+idName);
-      if (element && (typeof element.ready === "function")) {
-        this.waitForUpgradeCounter = 0;
-        console.info("Found dialog: "+idName);
-        callback(element);
-      } else {
-        console.warn("Element not upgraded: "+idName);
-        this.waitForUpgradeCounter += 1;
-        if (this.waitForUpgradeCounter>100) {
-          console.error("Element not upgraded after wait: "+idName);
-        }
-        setTimeout(() => {
-          this.getDialogAsync(idName, callback);
-        }, this.waitForUpgradeCounter>100 ? 1000 : 250);
+    await this.requestUpdate();
+
+    const element = this.$$("#"+idName);
+    if (element && (typeof element.ready === "function")) {
+      this.waitForUpgradeCounter = 0;
+      console.info("Found dialog: "+idName);
+      callback(element);
+    } else {
+      console.warn("Element not upgraded: "+idName);
+      this.waitForUpgradeCounter += 1;
+      if (this.waitForUpgradeCounter>100) {
+        console.error("Element not upgraded after wait: "+idName);
       }
-    });
+      setTimeout(() => {
+        this.getDialogAsync(idName, callback);
+      }, this.waitForUpgradeCounter>100 ? 1000 : 250);
+    }
   }
 
   _forgotPassword() {
