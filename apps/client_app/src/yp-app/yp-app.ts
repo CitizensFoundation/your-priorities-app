@@ -46,6 +46,7 @@ declare global {
   interface Window {
     appGlobals: YpAppGlobals;
     appUser: YpAppUser;
+    appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
     app: YpApp;
   }

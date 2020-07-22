@@ -1,18 +1,10 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
+import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { Menu } from '@material/mwc-menu';
-import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
-declare module "./sanitize-html.min.js";
-
-import * as sanitizeHtml from './sanitize-html.min.js';
+import * as sanitizeHtml from 'sanitize-html.min';
 import { twemoji } from '@kano/twemoji/index.es.js';
 import linkifyStr from 'linkifyjs/string';
 
@@ -24,11 +16,11 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: String })
   truncatedContent: string | undefined;
 
-  @property({ type: String })
-  contentId: string | undefined;
+  @property({ type: Number })
+  contentId: number | undefined;
 
-  @property({ type: String })
-  extraId: string | undefined;
+  @property({ type: Number })
+  extraId: number | undefined;
 
   @property({ type: String })
   textType: string | undefined;
@@ -133,7 +125,7 @@ export class YpMagicText extends YpBaseElement {
           ${this.truncatedContent}
         </div>
 
-        ${this.showMoreText
+        ${this.showMoreText && this.moreText
           ? html`
               <mwc-button
                 class="moreText"
@@ -142,10 +134,6 @@ export class YpMagicText extends YpBaseElement {
             `
           : nothing }
       </div>
-
-      <iron-ajax
-        id="getTranslationAjax"
-        @response="${this._getTranslationResponse}"></iron-ajax>
     `;
   }
 
@@ -223,97 +211,80 @@ export class YpMagicText extends YpBaseElement {
     return `${this.textType}-${this.contentId}-${this.language}`;
   }
 
-  _startTranslationAndFinalize() {
+  async _startTranslationAndFinalize() {
     if (window.appGlobals.cache.autoTranslateCache[this.indexKey]) {
-      //console.warn("Using cache: "+window.appGlobals.autoTranslateCache[indexKey]);
       this.processedContent = window.appGlobals.cache.autoTranslateCache[this.indexKey];
       this._finalize();
     } else {
-      this.$$('#getTranslationAjax').params = {
-        textType: this.textType,
-        contentId: this.contentId,
-        targetLanguage: this.language,
-      };
-      switch (this.textType) {
-        case 'postName':
-        case 'postContent':
-        case 'postTranscriptContent':
-          this.$$('#getTranslationAjax').url =
-            '/api/posts/' + this.contentId + '/translatedText';
-          break;
-        case 'pointContent':
-        case 'pointAdminCommentContent':
-          this.$$('#getTranslationAjax').url =
-            '/api/points/' + this.contentId + '/translatedText';
-          break;
-        case 'domainName':
-        case 'domainContent':
-          this.$$('#getTranslationAjax').url =
-            '/api/domains/' + this.contentId + '/translatedText';
-          break;
-        case 'customRatingName':
-          this.$.getTranslationAjax.url =
-            '/api/ratings/' +
-            this.contentId +
-            '/' +
-            this.extraId +
-            '/translatedText';
-          break;
-        case 'communityName':
-        case 'communityContent':
-          this.$$('#getTranslationAjax').url =
-            '/api/communities/' + this.contentId + '/translatedText';
-          break;
-        case 'alternativeTextForNewIdeaButton':
-        case 'alternativeTextForNewIdeaButtonClosed':
-        case 'alternativeTextForNewIdeaButtonHeader':
-        case 'customThankYouTextNewPosts':
-        case 'alternativePointForHeader':
-        case 'customAdminCommentsTitle':
-        case 'alternativePointAgainstHeader':
-        case 'alternativePointForLabel':
-        case 'alternativePointAgainstLabel':
-        case 'groupName':
-        case 'groupContent':
-          this.$$('#getTranslationAjax').url =
-            '/api/groups/' + this.contentId + '/translatedText';
-          break;
-        case 'categoryName':
-          this.$$('#getTranslationAjax').url =
-            '/api/categories/' + this.contentId + '/translatedText';
-          break;
-        case 'statusChangeContent':
-          this.$$('#getTranslationAjax').url =
-            '/api/posts/' +
-            this.extraId +
-            '/' +
-            this.contentId +
-            '/translatedStatusText';
-          break;
-        default:
-          console.error(
-            'No valid textType for magic text to translate: ' + this.textType
-          );
-          return;
-      }
       if (this.contentId) {
-        this.$$('#getTranslationAjax').generateRequest();
+        let url;
+
+        const params = {
+          textType: this.textType,
+          contentId: this.contentId,
+          targetLanguage: this.language,
+        };
+
+        switch (this.textType) {
+          case 'postName':
+          case 'postContent':
+          case 'postTranscriptContent':
+            url = '/api/posts/' + this.contentId + '/translatedText';
+            break;
+          case 'pointContent':
+          case 'pointAdminCommentContent':
+            url = '/api/points/' + this.contentId + '/translatedText';
+            break;
+          case 'domainName':
+          case 'domainContent':
+            url = '/api/domains/' + this.contentId + '/translatedText';
+            break;
+          case 'customRatingName':
+            url = '/api/ratings/' + this.contentId + '/' + this.extraId + '/translatedText';
+            break;
+          case 'communityName':
+          case 'communityContent':
+            url = '/api/communities/' + this.contentId + '/translatedText';
+            break;
+          case 'alternativeTextForNewIdeaButton':
+          case 'alternativeTextForNewIdeaButtonClosed':
+          case 'alternativeTextForNewIdeaButtonHeader':
+          case 'customThankYouTextNewPosts':
+          case 'alternativePointForHeader':
+          case 'customAdminCommentsTitle':
+          case 'alternativePointAgainstHeader':
+          case 'alternativePointForLabel':
+          case 'alternativePointAgainstLabel':
+          case 'groupName':
+          case 'groupContent':
+            url = '/api/groups/' + this.contentId + '/translatedText';
+            break;
+          case 'categoryName':
+            url = '/api/categories/' + this.contentId + '/translatedText';
+            break;
+          case 'statusChangeContent':
+            url = '/api/posts/' + this.extraId + '/' + this.contentId + '/translatedStatusText';
+            break;
+          default:
+            console.error(
+              'No valid textType for magic text to translate: ' + this.textType
+            );
+            return;
+        }
+
+        this.processedContent = await window.serverApi.getTranslation(url, params);
+        if (this.processedContent) {
+          window.appGlobals.cache.autoTranslateCache[this.indexKey] = this.processedContent;
+          this.fire('new-translation');
+        } else {
+          console.error('No content from translation');
+        }
+        this._finalize();
       } else {
         console.error('No content id for: ' + this.textType);
         this._finalize();
       }
     }
-  }
-
-  _getTranslationResponse(event: CustomEvent) {
-    this.processedContent = event.detail.response.content;
-    if (this.processedContent) {
-      window.appGlobals.cache.autoTranslateCache[this.indexKey] = this.processedContent;
-    } else {
-      console.error('No content for magic text');
-    }
-    this.fire('new-translation');
-    this._finalize();
   }
 
   _update() {
