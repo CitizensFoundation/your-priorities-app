@@ -11,7 +11,7 @@ const baseConfig = createSpaConfig({
 
   // if you need to support older browsers, such as IE11, set the legacyBuild
   // option to generate an additional build just for this browser
-  // legacyBuild: true,
+  legacyBuild: true,
 
   // development mode creates a non-minified build for debugging or development
   developmentMode: process.env.ROLLUP_WATCH === 'true',
