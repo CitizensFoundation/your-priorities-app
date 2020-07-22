@@ -219,7 +219,7 @@ export class YpAppUser extends YpCodeBase {
     collectionConfiguration: object | null = null
   ) {
     // TODO: Remove any
-    window.app.getDialogAsync('userLogin', (dialog: any) => {
+    window.appDialogs.getAsync('userLogin', (dialog: any) => {
       dialog.setup(this._handleLogin, window.appGlobals.domain);
       dialog.open(null, email, collectionConfiguration);
     });
@@ -229,7 +229,7 @@ export class YpAppUser extends YpCodeBase {
     setTimeout(() => {
       if (this.user == null) {
         // TODO: Remove any
-        window.app.getDialogAsync('userLogin', (dialog: any) => {
+        window.appDialogs.getAsync('userLogin', (dialog: any) => {
           dialog.setup(this._handleLogin, window.appGlobals.domain);
           dialog.anonymousLogin();
         });
@@ -240,12 +240,12 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _closeUserLogin() {
-    window.app.closeDialog('userLogin');
+    window.appDialogs.close('userLogin');
   }
 
   _setUserLoginSpinner() {
     // TODO: Remove any
-    window.app.getDialogAsync('userLogin', (dialog: any) => {
+    window.appDialogs.getAsync('userLogin', (dialog: any) => {
       dialog.userSpinner = false;
     });
   }
@@ -283,7 +283,7 @@ export class YpAppUser extends YpCodeBase {
     if (this.loginForEditParams) {
       const loginParams = this.loginForEditParams;
       // TODO: Remove any
-      window.app.getDialogAsync(loginParams.editDialog, (dialog: any) => {
+      window.appDialogs.getAsync(loginParams.editDialog, (dialog: any) => {
         dialog.setup(null, true, loginParams.refreshFunction);
         dialog.open('new', loginParams.params);
         this.loginForEditParams = null;
@@ -311,7 +311,7 @@ export class YpAppUser extends YpCodeBase {
     } else if (this.loginForAcceptInviteParams) {
       const acceptInviteParams = this.loginForAcceptInviteParams;
       // TODO: Remove any
-      window.app.getDialogAsync("acceptInvite", (dialog: any) => {
+      window.appDialogs.getAsync("acceptInvite", (dialog: any) => {
         dialog.reOpen(acceptInviteParams.token);
         dialog.afterLogin(acceptInviteParams.token);
         this.loginForAcceptInviteParams = null;
@@ -326,7 +326,7 @@ export class YpAppUser extends YpCodeBase {
 
   openNotificationSettings() {
     // TODO: Remove any
-    window.app.getDialogAsync('userEdit', (dialog: any) => {
+    window.appDialogs.getAsync('userEdit', (dialog: any) => {
       dialog.setup(window.appUser.user, false, null, true);
       dialog.open('edit', { userId: window.appUser.user?.id });
     });
@@ -334,14 +334,14 @@ export class YpAppUser extends YpCodeBase {
 
   _forgotPassword(event: CustomEvent) {
     // TODO: Remove any
-    window.app.getDialogAsync('forgotPassword', (dialog: any) => {
+    window.appDialogs.getAsync('forgotPassword', (dialog: any) => {
       dialog.open(event.detail);
     });
   }
 
   _resetPassword(event: CustomEvent) {
     // TODO: Remove any
-    window.app.getDialogAsync('resetPassword', (dialog: any) => {
+    window.appDialogs.getAsync('resetPassword', (dialog: any) => {
       dialog.open(event.detail);
     });
   }
@@ -660,7 +660,7 @@ export class YpAppUser extends YpCodeBase {
 
     if (user && user.missingEmail) {
       // TODO: Remove any
-      window.app.getDialogAsync('missingEmail', (dialog: any) => {
+      window.appDialogs.getAsync('missingEmail', (dialog: any) => {
         dialog.open(user.loginProvider);
       });
     } else if (
@@ -669,7 +669,7 @@ export class YpAppUser extends YpCodeBase {
       user.profile_data.saml_show_confirm_email_completed === false
     ) {
       // TODO: Remove any
-      window.app.getDialogAsync('missingEmail', (dialog: any) => {
+      window.appDialogs.getAsync('missingEmail', (dialog: any) => {
         dialog.open(user.loginProvider, true, user.email);
       });
     }
