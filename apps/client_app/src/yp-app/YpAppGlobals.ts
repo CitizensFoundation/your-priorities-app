@@ -82,6 +82,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   highlightedLanguages: Array<string> | undefined;
 
+  magicTextIronResizeDebouncer: number | undefined;
+
   constructor(serverApi: YpServerApi) {
     super();
 

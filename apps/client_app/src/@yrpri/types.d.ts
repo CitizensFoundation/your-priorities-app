@@ -101,6 +101,10 @@ interface YpCollectionData extends YpDatabaseItem {
   User?: YpUserData;
   user_id?: number;
   status?: string;
+  counter_groups: number;
+  counter_posts: number;
+  counter_users: number;
+  counter_points: number;
   configuration?: YpCollectionConfiguration;
 }
 
@@ -132,6 +136,7 @@ interface YpCommunityData extends YpCollectionData {
   description?: string;
   is_community_folder?: boolean;
   domain_id: number;
+  is_collection_folder?: boolean;
   configuration: YpCommunityConfiguration;
   CommunityLogoVideos?: Array<YpVideoData>;
   CommunityHeaderImages?: Array<YpImageData>;

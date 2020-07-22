@@ -1,239 +1,293 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-image/iron-image.js';
-import '@polymer/paper-card/paper-card.js';
-import '../yp-app-globals/yp-app-icons.js';
-import './yp-community-stats.js';
-import { CommunityBehaviors } from './yp-community-behaviors.js';
-import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import '../yp-membership-button/yp-membership-button.js';
-import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
-import '../yp-magic-text/yp-magic-text.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpBaseElement } from '../yp-base-element.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing, TemplateResult } from 'lit-html';
+import { ifDefined } from 'lit-html/directives/if-defined';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
-class YpCommunityCardLit extends YpBaseElement {
-  static get properties() {
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { Menu } from '@material/mwc-menu';
+import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
+
+@customElement('yp-collection-item-card')
+export class YpCollectionItemCard extends YpBaseElement {
+  @property({ type: Object })
+  item: YpCollectionData | undefined;
+
+  @property({ type: String })
+  itemType: string | undefined;
+
+  @property({ type: Object })
+  collection: YpCollectionData | undefined;
+
+  static get prssoperties() {
     return {
-      community: {
-        type: Object
-      }
-    }
+      collection: {
+        type: Object,
+      },
+    };
   }
 
   static get styles() {
     return [
+      super.styles,
+      ShadowStyles,
       css`
-
-      .description {
-        color: var(--primary-color-more-darker, #424242);
-        line-height: var(--description-line-height, 1.3);
-        padding: 8px;
-        margin-top: 4px;
-      }
-
-      .stats {
-        color: var(--primary-color-more-darker, #424242);
-        position: absolute;
-        bottom: 0;
-        right: 8px;
-      }
-
-      .post-image {
-        width: 100%;
-      }
-
-      .communityCard {
-        height: 395px;
-        width: 320px;
-        background-color: #fff;
-        padding: 0;
-        margin: 0;
-      }
-
-      .communityCard[featured] {
-      }
-
-      iron-image {
-        width: 320px;
-        height: 180px;
-      }
-
-      iron-image[featured] {
-      }
-
-      .card-content {
-        padding: 0;
-        padding-bottom: 48px;
-      }
-
-      iron-image {
-        padding: 0;
-        margin: 0;
-      }
-
-      iron-image {
-        padding: 0;
-        margin: 0;
-      }
-
-      paper-card {
-        background-color: #f00;
-        vertical-align: text-top;
-      }
-
-      .informationText {
-        vertical-align: text-top;
-      }
-
-      .community-name {
-        font-size: 26px;
-        padding: 14px;
-        background-color: var(--primary-color-800);
-        color: #FFF;
-        cursor: pointer;
-        vertical-align: middle;
-        width: auto;
-      }
-
-      iron-image[archived] {
-      }
-
-      yp-membership-button {
-        position: absolute;
-        top: 159px;
-        right: 18px;
-        width: 30px;
-        height: 30px;
-        color: var(--icon-general-color, #FFF);
-      }
-
-      .community-name[featured] {
-        background-color: var(--accent-color);
-      }
-
-      .community-name[archived] {
-        background-color: #aaa;
-      }
-
-      yp-membership-button[archived] {
-        display: none;
-      }
-
-      @media (max-width: 960px) {
-        :host {
-          max-width: 423px;
-          width: 100%;
-          padding-top: 0 !important;
+        .description {
+          color: var(--primary-color-more-darker, #424242);
+          line-height: var(--description-line-height, 1.3);
+          padding: 8px;
+          margin-top: 4px;
         }
 
-        yp-membership-button {
-          top: 205px;
+        .stats {
+          color: var(--primary-color-more-darker, #424242);
+          position: absolute;
+          bottom: 0;
+          right: 8px;
         }
 
-        .communityCard {
-          margin-left: 0;
-          margin-right: 0;
-          padding-left: 0;
-          padding-right: 0;
+        .post-image {
           width: 100%;
-          height: 100%;
-          padding-bottom: 8px;
+        }
+
+        .collectionCard {
+          height: 395px;
+          width: 320px;
+          background-color: #fff;
+          padding: 0;
+          margin: 0;
+        }
+
+        .collectionCard[featured] {
         }
 
         iron-image {
-          width: 100%;
-          height: 230px;
+          width: 320px;
+          height: 180px;
         }
 
         iron-image[featured] {
         }
 
-        .description {
-          margin-bottom: 32px;
+        .card-content {
+          padding: 0;
+          padding-bottom: 48px;
         }
-      }
 
-      @media (max-width: 420px) {
         iron-image {
-          height: 225px;
+          padding: 0;
+          margin: 0;
+        }
+
+        iron-image {
+          padding: 0;
+          margin: 0;
+        }
+
+        paper-card {
+          background-color: #f00;
+          vertical-align: text-top;
+        }
+
+        .informationText {
+          vertical-align: text-top;
+        }
+
+        .collection-name {
+          font-size: 26px;
+          padding: 14px;
+          background-color: var(--primary-color-800);
+          color: #fff;
+          cursor: pointer;
+          vertical-align: middle;
+          width: auto;
+        }
+
+        iron-image[archived] {
         }
 
         yp-membership-button {
-          top: 205px;
-        }
-      }
-
-      @media (max-width: 375px) {
-        iron-image {
-          height: 207px;
-        }
-
-        yp-membership-button {
-          top: 185px;
-        }
-      }
-
-      @media (max-width: 360px) {
-        iron-image {
-          height: 200px;
-        }
-      }
-
-      @media (max-width: 320px) {
-        iron-image {
-          height: 180px;
+          position: absolute;
+          top: 159px;
+          right: 18px;
+          width: 30px;
+          height: 30px;
+          color: var(--icon-general-color, #fff);
         }
 
-        yp-membership-button {
-          top: 155px;
+        .collection-name[featured] {
+          background-color: var(--accent-color);
         }
-      }
 
-      .withPointer {
-        cursor: pointer;
-      }
+        .collection-name[archived] {
+          background-color: #aaa;
+        }
 
-      [hidden] {
-        display: none !important;
-      }
+        yp-membership-button[archived] {
+          display: none;
+        }
 
-    `, YpFlexLayout]
+        @media (max-width: 960px) {
+          :host {
+            max-width: 423px;
+            width: 100%;
+            padding-top: 0 !important;
+          }
+
+          yp-membership-button {
+            top: 205px;
+          }
+
+          .collectionCard {
+            margin-left: 0;
+            margin-right: 0;
+            padding-left: 0;
+            padding-right: 0;
+            width: 100%;
+            height: 100%;
+            padding-bottom: 8px;
+          }
+
+          iron-image {
+            width: 100%;
+            height: 230px;
+          }
+
+          iron-image[featured] {
+          }
+
+          .description {
+            margin-bottom: 32px;
+          }
+        }
+
+        @media (max-width: 420px) {
+          iron-image {
+            height: 225px;
+          }
+
+          yp-membership-button {
+            top: 205px;
+          }
+        }
+
+        @media (max-width: 375px) {
+          iron-image {
+            height: 207px;
+          }
+
+          yp-membership-button {
+            top: 185px;
+          }
+        }
+
+        @media (max-width: 360px) {
+          iron-image {
+            height: 200px;
+          }
+        }
+
+        @media (max-width: 320px) {
+          iron-image {
+            height: 180px;
+          }
+
+          yp-membership-button {
+            top: 155px;
+          }
+        }
+
+        .withPointer {
+          cursor: pointer;
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+      `,
+    ];
   }
 
-render() {
-  return html`
-    <paper-card .featured="${this.featured}" class="communityCard" .animated="" .elevation="${this.elevation}">
-      <div class="layout horizontal">
+  get archived(): boolean {
+    return this.item?.status==="archived";
+  }
 
-        ${this.noImage ? html`
-          <iron-image .headerMode="${this.headerMode}" .archived="${this.archived}" .sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" @tap="${this._goToCommunity}"></iron-image>
-        `: html`
-          <iron-image .sizing="cover" .archived="${this.archived}" alt="${this.community.name}" .featured="${this.featured}" .preload="" src="${this.communityLogoImagePath}" class="post-image withPointer" @tap="${this._goToCommunity}"></iron-image>
-        `}
+  get featured(): boolean {
+    return this.item?.status==="featured";
+  }
 
-      </div>
-      <div class="informationText">
-        <div class="community-name" .archived="${this.archived}" .featured="${this.featured}" @tap="${this._goToCommunity}">
-          <yp-magic-text .textType="communityName" .contentLanguage="${this.community.language}" disable-translation="${this.community.configuration.disableNameAutoTranslation}" text-only="" .content="${this.communityName}" .contentId="${this.community.id}">
-          </yp-magic-text>
-          <span ?hidden="" .oldHidden="${!this.archived}">- ${this.t('archived')}</span>
+  render() {
+    return this.item && this.collection ? html`
+      <div
+        ?featured="${this.featured}"
+        class="collectionCard shadow-elevation-8dp shadow-transaction">
+        <div class="layout horizontal">
+          ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
+            ? html`
+                <iron-image
+                  sizing="cover"
+                  ?archived="${this.archived}"
+                  alt="${this.collection.name}"
+                  ?featured="${this.featured}"
+                  preload
+                  .src="${YpCollectionHelpers.logoImagePath(this.itemType, this.item)}"
+                  class="post-image withPointer"></iron-image>
+              `
+            : html`
+                <iron-image
+                  ?archived="${this.archived}"
+                  sizing="cover"
+                  class="main-image withPointer"
+                  src="https://i.imgur.com/sdsFAoT.png"></iron-image>
+              `}
         </div>
-        <yp-magic-text id="description" class="description layout vertical withPointer" .featured="${this.featured}" @tap="${this._goToCommunity}" .textType="communityContent" .contentLanguage="${this.community.language}" .textOnly="" .content="${this.communityDescription}" .contentId="${this.community.id}" .truncate="130">
-        </yp-magic-text>
+        <div class="informationText">
+          <div
+            class="collection-name"
+            ?archived="${this.archived}"
+            ?featured="${this.featured}">
+            <yp-magic-text
+              .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
+              .contentLanguage="${this.item?.language}"
+              ?disableTranslation="${this.collection.configuration?.disableNameAutoTranslation}"
+              text-only
+              .content="${this.item.name}"
+              .contentId="${this.item.id}"></yp-magic-text>
+            <span hidden ?oldHidden="${!this.archived}">
+              - ${this.t('archived')}
+            </span>
+          </div>
+          <yp-magic-text
+            id="description"
+            class="description layout vertical withPointer"
+            ?featured="${this.featured}"
+            textType="collectionContent"
+            .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
+            .contentLanguage="${this.item.language}"
+            textOnly
+            remove-urls
+            .content="${this.item.description || this.item.objectives}"
+            .contentId="${this.collection.id}"
+            truncate="130">
+          </yp-magic-text>
+        </div>
+
+        <yp-collection-stats
+          class="stats"
+          .collectionType="${this.itemType}"
+          .collection="${this.item}"></yp-collection-stats>
+
+        ${!this.collection
+          ? html`
+              <yp-membership-button
+                .archived="${this.archived}"
+                .featured="${this.featured}"
+                .collection="${this.collection}"></yp-membership-button>
+            `
+          : html``}
       </div>
-      <yp-community-stats class="stats" .community="${thiscommunity}"></yp-community-stats>
-
-      ${!this.community.is_community_folder ? html`
-        <yp-membership-button .archived="${this.archived}" .featured="${this.featured}" .community="${this.community}"></yp-membership-button>
-      `: html``}
-
-    </paper-card>
-`
-
- }
+    ` : nothing;
+  }
 }
-
-window.customElements.define('yp-community-card-lit', YpCommunityCardLit)

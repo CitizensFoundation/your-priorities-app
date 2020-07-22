@@ -1,9 +1,4 @@
-import {
-  property,
-  html,
-  css,
-  customElement
-} from 'lit-element';
+import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
@@ -13,6 +8,7 @@ import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { Menu } from '@material/mwc-menu';
+import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
 @customElement('yp-collection-header')
 export class YpCollectionHeader extends YpBaseElement {
@@ -70,17 +66,6 @@ export class YpCollectionHeader extends YpBaseElement {
     }
   }
 
-  get collectionNameTextType(): string | undefined {
-    switch (this.collectionType) {
-      case 'domain':
-        return 'domainName';
-      case 'community':
-        return 'communityName';
-      case 'group':
-        return 'groupName';
-    }
-  }
-
   get openMenuLabel(): string {
     switch (this.collectionType) {
       case 'domain':
@@ -91,28 +76,6 @@ export class YpCollectionHeader extends YpBaseElement {
         return this.t('openGroupMenu');
       default:
         return 'Open menu';
-    }
-  }
-
-  get collectionDescriptionTextType(): string | undefined {
-    switch (this.collectionType) {
-      case 'domain':
-        return 'domainContent';
-      case 'community':
-        return 'communityContent';
-      case 'group':
-        return 'groupContent';
-    }
-  }
-
-  get collectionLogoImages(): Array<YpImageData> | undefined {
-    switch (this.collectionType) {
-      case 'domain':
-        return (this.collection as YpDomainData).DomainLogoImages;
-      case 'community':
-        return (this.collection as YpCommunityData).CommunityLogoImages;
-      case 'group':
-        return (this.collection as YpGroupData).GroupLogoImages;
     }
   }
 
@@ -156,7 +119,7 @@ export class YpCollectionHeader extends YpBaseElement {
     ) {
       const videoPosterURL = YpMediaHelpers.getVideoPosterURL(
         this.collectionVideos,
-        this.collectionLogoImages
+        YpCollectionHelpers.logoImages(this.collectionType, this.collection)
       );
       if (videoPosterURL) {
         return videoPosterURL;
@@ -166,10 +129,6 @@ export class YpCollectionHeader extends YpBaseElement {
     } else {
       return undefined;
     }
-  }
-
-  get collectionLogoImagePath(): string | undefined {
-    return YpMediaHelpers.getImageFormatUrl(this.collectionLogoImages, 0);
   }
 
   get collectionHeaderImagePath(): string | undefined {
@@ -409,7 +368,10 @@ export class YpCollectionHeader extends YpBaseElement {
           ?hidden="${this.hideImage}"
           .alt="${this.collection.name}"
           sizing="cover"
-          src="${ifDefined(this.collectionLogoImagePath)}"></iron-image>
+          .src="${YpCollectionHelpers.logoImagePath(
+            this.collectionType,
+            this.collection
+          )}"></iron-image>
       `;
     } else {
       return nothing;
@@ -417,7 +379,7 @@ export class YpCollectionHeader extends YpBaseElement {
   }
 
   _openMenu() {
-    (this.$$("#menu") as Menu).open = true;
+    (this.$$('#menu') as Menu).open = true;
     this.requestUpdate();
   }
 
@@ -464,7 +426,9 @@ export class YpCollectionHeader extends YpBaseElement {
                       aria-level="1"
                       aria-label="${this.collection.name}">
                       <yp-magic-text
-                        .textType="${this.collectionNameTextType}"
+                        .textType="${YpCollectionHelpers.nameTextType(
+                          this.collectionType
+                        )}"
                         .contentLanguage="${this.collection.language}"
                         ?disableTranslation="${this.collection.configuration
                           ?.disableNameAutoTranslation}"
@@ -476,7 +440,9 @@ export class YpCollectionHeader extends YpBaseElement {
                     <yp-magic-text
                       id="description"
                       class="description collectionDescription"
-                      .textType="${this.collectionDescriptionTextType}"
+                      .textType="${YpCollectionHelpers.descriptionTextType(
+                        this.collectionType
+                      )}"
                       .contentLanguage="${this.collection.language}"
                       truncate="150"
                       .content="${this.collection.description ||
@@ -486,10 +452,12 @@ export class YpCollectionHeader extends YpBaseElement {
                   </div>
                 </div>
 
-                ${this.renderMenu()}
+                ${this.hasCollectionAccess ? this.renderMenu() : nothing}
 
                 <div class="stats layout horizontal">
-                  ${this.renderStats()}
+                  <yp-collection-stats
+                    .collectionType="${this.collectionType}"
+                    .collection="${this.collection}"></yp-collection-stats>
                 </div>
               </div>
             </div>
