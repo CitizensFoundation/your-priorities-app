@@ -76,6 +76,16 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: Number })
   linkifyCutoff = 25;
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+  }
+
   static get propesrties() {
     return {
       content: {
@@ -154,6 +164,10 @@ export class YpMagicText extends YpBaseElement {
     return ['zh_TW', 'hy'];
   }
 
+  static get cyrillicLanguages() {
+    return ['ru', 'ky'];
+  }
+
   get showMoreText(): boolean {
     return (
       this.moreText!==undefined &&
@@ -187,20 +201,22 @@ export class YpMagicText extends YpBaseElement {
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
-    if (this.content && this.content !== '') {
-      this.finalContent = undefined;
-      if (window.appGlobals.autoTranslate) {
-        this.autoTranslate = window.appGlobals.autoTranslate;
-      }
-      if (this.autoTranslate && this.truncate) {
-        this.truncatedContent =  YpMagicText.truncateText(YpMagicText.trim(this.content), this.truncate);
+    if (changedProperties.has('content')) {
+      if (this.content && this.content !== '') {
+        this.finalContent = undefined;
+        if (window.appGlobals.autoTranslate) {
+          this.autoTranslate = window.appGlobals.autoTranslate;
+        }
+        if (this.autoTranslate && this.truncate) {
+          this.truncatedContent =  YpMagicText.truncateText(YpMagicText.trim(this.content), this.truncate);
+        } else {
+          this.truncatedContent = this.content;
+        }
+        this._update();
       } else {
-        this.truncatedContent = this.content;
+        this.truncatedContent = undefined;
+        this.finalContent = undefined;
       }
-      this._update();
-    } else {
-      this.truncatedContent = undefined;
-      this.finalContent = undefined;
     }
   }
 
@@ -211,9 +227,7 @@ export class YpMagicText extends YpBaseElement {
 
   _languageEvent(event: CustomEvent) {
     super._languageEvent(event);
-    if (event.detail.type === 'language-loaded') {
-      this._update();
-    }
+    this._update();
   }
 
   get indexKey(): string {
@@ -341,17 +355,17 @@ export class YpMagicText extends YpBaseElement {
       if (structuredQuestionsJson) {
         // TODO: setup json display
       } else {
-        var structuredQuestions = [];
-        var questionComponents = this.structuredQuestionsConfig.split(',');
+        const structuredQuestions = [];
+        const questionComponents = this.structuredQuestionsConfig.split(',');
         if (questionComponents && questionComponents.length > 1) {
-          for (var i = 0; i < questionComponents.length; i += 2) {
+          for (let i = 0; i < questionComponents.length; i += 2) {
             structuredQuestions.push(questionComponents[i]);
           }
-          var regEx = new RegExp(
+          const regEx = new RegExp(
             '(' + structuredQuestions.join('|') + ')',
             'ig'
           );
-          this.processedContent = this.processedContent.replace(
+          this.processedContent = this.processedContent?.replace(
             regEx,
             '<b>$1</b>'
           );
@@ -383,20 +397,21 @@ export class YpMagicText extends YpBaseElement {
       ) {
         truncateBy = truncateBy / 2;
       }
-      this.processedContent = YpMagicText.truncate(
-        YpMagicText.trim(this.processedContent),
-        truncateBy,
-        '...'
+      if (this.processedContent)
+        this.processedContent = YpMagicText.truncateText(
+          YpMagicText.trim(this.processedContent),
+          truncateBy,
+          '...'
       );
     }
 
-    if (this.simpleFormat) {
+    if (this.simpleFormat && this.processedContent) {
       this.processedContent = this.processedContent
         .trim()
         .replace(/(\n)/g, '<br>');
     }
 
-    if (this.removeUrls) {
+    if (this.removeUrls && this.processedContent) {
       this.processedContent = this.processedContent.replace(
         /(?:https?|ftp):\/\/[\n\S]+/g,
         ''
@@ -429,7 +444,6 @@ export class YpMagicText extends YpBaseElement {
       this.finalContent = undefined;
     }
   }
-
 
   _linksAndEmojis() {
     if (!this.skipSanitize) {
@@ -483,9 +497,5 @@ export class YpMagicText extends YpBaseElement {
 
   static trim(input: string): string {
     return input.replace(/^\s*|\s*$/g, '').trim();
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 }
