@@ -6,9 +6,9 @@ export class YpCache extends YpCodeBase {
 
   cachedPostItem: YpPostData | undefined;
 
-  backToDomainCommunityItems: Record<number,YpCommunityData> = {};
+  backToDomainCommunityItems: Record<number,YpCommunityData | undefined> = {};
 
-  backToCommunityGroupItems: Record<number,YpGroupData> = {};
+  backToCommunityGroupItems: Record<number,YpGroupData | undefined> = {};
 
   communityItemsCache: Record<number,YpCommunityData> = {};
 

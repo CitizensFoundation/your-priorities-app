@@ -21,14 +21,6 @@ export class YpCollectionItemCard extends YpBaseElement {
   @property({ type: Object })
   collection: YpCollectionData | undefined;
 
-  static get prssoperties() {
-    return {
-      collection: {
-        type: Object,
-      },
-    };
-  }
-
   static get styles() {
     return [
       super.styles,

@@ -18,6 +18,11 @@ interface YpCollectionConfiguration {
   welcomeHTML?: string;
   sortBySortOrder?: boolean;
   optionalSortOrder?: number;
+  locationHidden?: boolean;
+  welcomePageId?: number;
+  customBackName?: string;
+  customBackURL?: string;
+
 }
 
 interface YpGroupConfiguration extends YpCollectionConfiguration {
@@ -26,13 +31,18 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideGroupHeader?: boolean;
   hideAllTabs?: boolean;
   hideHelpIcon?: boolean;
-  customBackName?: string;
-  customBackURL?: string;
   forceSecureSamlEmployeeLogin?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
+  facebookPixelId?: string;
+  disableDomainUpLink: boolean;
+  forceSecureSamlLogin: boolean;
+  customSamlDeniedMessage?: string;
+  customSamlLoginMessage?: string;
+  signupTermsPageId?: number;
+  highlightedLanguages?: Array<string>;
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {
@@ -138,10 +148,15 @@ interface YpCommunityData extends YpCollectionData {
   is_community_folder?: boolean;
   domain_id: number;
   is_collection_folder?: boolean;
+  only_admins_can_create_groups: boolean;
   configuration: YpCommunityConfiguration;
+  google_analytics_code?: string;
+  Groups?: Array<YpGroupData>;
   CommunityLogoVideos?: Array<YpVideoData>;
   CommunityHeaderImages?: Array<YpImageData>;
   CommunityLogoImages?: Array<YpImageData>;
+  Domain: YpDomainData;
+  CommunityFolder?: YpCommunityData;
 }
 
 interface YpDomainGetResponse {
@@ -225,7 +240,7 @@ interface YpPointData {
   PointRevisions?: Array<YpPointRevision>;
 }
 
-interface YpActivityData {
+interface YpActivityData extends YpDatabaseItem {
   id: number;
   name: string;
   description?: string;

@@ -84,6 +84,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   magicTextIronResizeDebouncer: number | undefined;
 
+  signupTermsPageId: number | undefined;
+
   constructor(serverApi: YpServerApi) {
     super();
 

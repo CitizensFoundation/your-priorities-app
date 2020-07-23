@@ -42,7 +42,7 @@ export class YpAnalytics extends YpCodeBase {
     }
   }
 
-  setCommunityPixelTracker(trackerId: string) {
+  setCommunityPixelTracker(trackerId: string | undefined) {
     if (trackerId && trackerId!=='') {
       if (localStorage.getItem("consentGivenForFacebookPixelTracking")!=null) {
         const oldTrackerId = this.pixelTrackerId;
@@ -61,7 +61,7 @@ export class YpAnalytics extends YpCodeBase {
     }
   }
 
-  setCommunityAnalyticsTracker(trackerId: string) {
+  setCommunityAnalyticsTracker(trackerId: string | undefined) {
     if (trackerId && trackerId!=='') {
       const oldTrackerId = this.communityTrackerId;
       this.communityTrackerId=trackerId;

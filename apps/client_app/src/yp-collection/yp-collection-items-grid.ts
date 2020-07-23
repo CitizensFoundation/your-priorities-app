@@ -151,9 +151,12 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     }
   }
 
-  scrollToItem(item: YpDatabaseItem) {
-    console.log('Community grid scrolling to item');
-    (this.$$('#ironList') as IronListInterface).scrollToItem(item);
-    this.fireGlobal('yp-refresh-activities-scroll-threshold');
+  scrollToItem(item: YpDatabaseItem | undefined) {
+    if (item) {
+      (this.$$('#ironList') as IronListInterface).scrollToItem(item);
+      this.fireGlobal('yp-refresh-activities-scroll-threshold');
+    } else {
+      console.error("No item to scroll too");
+    }
   }
 }

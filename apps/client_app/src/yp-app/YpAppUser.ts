@@ -713,10 +713,10 @@ export class YpAppUser extends YpCodeBase {
       this.adminRights = response as YpAdminRights;
       this.fireGlobal('got-admin-rights', true);
 
-      //TODO: Fire another signal a bit later in case some components had not set up their listeners TODO: Find a better way
-      setTimeout(() => {
+      //TODO: Check this outFire another signal a bit later in case some components had not set up their listeners TODO: Find a better way
+      /*setTimeout(() => {
         this.fireGlobal('got-admin-rights', true);
-      }, 1000);
+      }, 1000);*/
     } else {
       this.adminRights = undefined;
       this.fireGlobal('got-admin-rights', false);
