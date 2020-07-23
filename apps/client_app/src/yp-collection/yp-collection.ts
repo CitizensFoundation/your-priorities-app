@@ -75,17 +75,19 @@ export abstract class YpCollection extends YpBaseElement {
     this.collectionCreateFabLabel = collectionCreateFabLabel;
 
     this.addGlobalListener('yp-logged-in', this._getCollection);
-    this.addGlobalListener('yp-got-admin-rights', this._afterCollectionLoad);
+    this.addGlobalListener('yp-got-admin-rights', this.refresh);
   }
 
-  abstract _afterCollectionLoadSubClass(): void;
-  abstract _refreshSubclass(): void;
   abstract scrollToCollectionItemSubClass(): void;
 
   // DATA PROCESSING
 
   refresh(): void {
     if (this.collection) {
+      if (this.collection.default_locale != null) {
+        window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
+      }
+
       if (this.collection.theme_id) {
         window.appGlobals.theme.setTheme(this.collection.theme_id, this);
       }
@@ -103,19 +105,6 @@ export abstract class YpCollection extends YpBaseElement {
           this.collection.description || this.collection.objectives,
       });
     }
-
-    this._refreshSubclass();
-  }
-
-  _afterCollectionLoad() {
-    if (this.collection) {
-      if (this.collection.default_locale != null) {
-        window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
-      }
-    }
-
-    this._afterCollectionLoadSubClass();
-    this.refresh();
   }
 
   async _getCollection() {
@@ -124,7 +113,7 @@ export abstract class YpCollection extends YpBaseElement {
         this.collectionType,
         this.collectionId
       )) as YpCollectionData | undefined;
-      this._afterCollectionLoad();
+      this.refresh();
     } else {
       console.error('Collection id setup for refresh');
     }
@@ -354,6 +343,7 @@ export abstract class YpCollection extends YpBaseElement {
     }
   }
 
+  //TODO: Review this when we remove the group community links
   _useHardBack (configuration: YpCollectionConfiguration) {
     if (configuration && configuration.customBackURL) {
       const backUrl = configuration.customBackURL;

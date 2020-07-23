@@ -11,7 +11,9 @@ export class YpDomain extends YpCollection {
     super("domain","community","edit",'community.create');
   }
 
-  _afterCollectionLoadSubClass() {
+  refresh() {
+    super.refresh();
+
     const domain = this.collection as YpDomainData;
 
     if (domain) {
@@ -22,23 +24,20 @@ export class YpDomain extends YpCollection {
         domain.only_admins_can_create_communities,
         YpAccessHelpers.checkDomainAccess(domain)
       );
-    }
-  }
 
-  _refreshSubclass() {
-    const domain = this.collection as YpDomainData;
-    if (
-      domain &&
-      domain.DomainHeaderImages &&
-      domain.DomainHeaderImages.length > 0
-    ) {
-      YpMediaHelpers.setupTopHeaderImage(
-        this,
-        domain.DomainHeaderImages as Array<YpImageData>
-      );
-    } else {
-      YpMediaHelpers.setupTopHeaderImage(this, null);
+      if (
+        domain.DomainHeaderImages &&
+        domain.DomainHeaderImages.length > 0
+      ) {
+        YpMediaHelpers.setupTopHeaderImage(
+          this,
+          domain.DomainHeaderImages as Array<YpImageData>
+        );
+      } else {
+        YpMediaHelpers.setupTopHeaderImage(this, null);
+      }
     }
+
     window.appGlobals.setAnonymousGroupStatus(undefined);
     window.appGlobals.disableFacebookLoginForGroup = false;
     window.appGlobals.externalGoalTriggerGroupId = undefined;
