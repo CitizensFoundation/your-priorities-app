@@ -38,9 +38,7 @@ export abstract class YpCollection extends YpBaseElement {
   selectedTab: CollectionTabTypes = CollectionTabTypes.Collection;
 
   @property({ type: Array })
-  collectionItems:
-    | Array<YpCommunityData | YpGroupData>
-    | undefined;
+  collectionItems: Array<YpCommunityData | YpGroupData> | undefined;
 
   @property({ type: Boolean })
   hideNewsfeed = false;
@@ -152,14 +150,6 @@ export abstract class YpCollection extends YpBaseElement {
     ];
   }
 
-  renderOtherTab() {
-    return nothing;
-  }
-
-  renderOtherPage() {
-    return nothing as TemplateResult;
-  }
-
   renderHeader() {
     return this.collection && !this.noHeader
       ? html`
@@ -173,6 +163,21 @@ export abstract class YpCollection extends YpBaseElement {
       : nothing;
   }
 
+  renderNewsAndMapTabs() {
+    return html`
+      <mwc-tab
+        ?hidden="${this.hideNewsfeed}"
+        .label="${this.t('newsfeed')}"
+        icon="rss_feed"
+        stacked></mwc-tab>
+      <mwc-tab
+        ?hidden="${this.hideMap}"
+        .label="${this.t('map')}"
+        icon="map"
+        stacked></mwc-tab>
+    `;
+  }
+
   renderTabs() {
     if (this.collection && !this.noTabs) {
       return html`
@@ -182,17 +187,7 @@ export abstract class YpCollection extends YpBaseElement {
             .label="${this.collectionTabLabel}"
             icon="people"
             stacked></mwc-tab>
-          <mwc-tab
-            ?hidden="${this.hideNewsfeed}"
-            .label="${this.t('newsfeed')}"
-            icon="rss_feed"
-            stacked></mwc-tab>
-          <mwc-tab
-            ?hidden="${this.hideMap}"
-            .label="${this.t('map')}"
-            icon="map"
-            stacked></mwc-tab>
-          ${this.renderOtherTab()}
+          ${this.renderNewsAndMapTabs()}
         </mwc-tab-bar>
       `;
     } else {
@@ -213,7 +208,7 @@ export abstract class YpCollection extends YpBaseElement {
               .collectionType="${this.collectionType}"
               .collectionItemType="${this.collectionItemType}"
               .collectionId="${this.collectionId}"></yp-collection-items-grid>`
-          :  html``;
+          : html``;
         break;
       case CollectionTabTypes.Newsfeed:
         page = html` <ac-activities
@@ -225,9 +220,6 @@ export abstract class YpCollection extends YpBaseElement {
       case CollectionTabTypes.Map:
         page = html``;
         break;
-      case CollectionTabTypes.Other:
-        page = this.renderOtherPage();
-        break;
     }
 
     return page;
@@ -235,13 +227,16 @@ export abstract class YpCollection extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderHeader()} ${this.renderTabs()} ${this.renderCurrentTabPage()}
+      ${this.renderHeader()}
+      ${this.collection?.configuration?.hideAllTabs
+        ? nothing
+        : this.renderTabs()}
+      ${this.renderCurrentTabPage()}
       ${this.createFabIcon
         ? html` <mwc-fab
             ?extended="${this.wide}"
             .label="${this.createFabLabel}"
-            .icon="${this.createFabIcon}"
-            @click="${this._openNewCollectionItemDialog}"></mwc-fab>`
+            .icon="${this.createFabIcon}"></mwc-fab>`
         : nothing}
     `;
   }
@@ -257,7 +252,7 @@ export abstract class YpCollection extends YpBaseElement {
       if (splitSubRoute.length > 1) {
         this._setSelectedTabFromRoute(splitSubRoute[1]);
       } else {
-        this._setSelectedTabFromRoute("default");
+        this._setSelectedTabFromRoute('default');
       }
     }
 
@@ -294,7 +289,10 @@ export abstract class YpCollection extends YpBaseElement {
 
     if (tabNumber) {
       this.selectedTab = tabNumber;
-      window.appGlobals.activity('open', this.collectionType+'_tab_' + routeTabName);
+      window.appGlobals.activity(
+        'open',
+        this.collectionType + '_tab_' + routeTabName
+      );
     }
   }
 
@@ -330,11 +328,11 @@ export abstract class YpCollection extends YpBaseElement {
     }
   }
 
-  setFabIconIfAccess(onlyAdminCanCreate: boolean, hasCollectionAccess: boolean) {
-    if (
-      onlyAdminCanCreate ||
-      hasCollectionAccess
-    ) {
+  setFabIconIfAccess(
+    onlyAdminCanCreate: boolean,
+    hasCollectionAccess: boolean
+  ) {
+    if (onlyAdminCanCreate || hasCollectionAccess) {
       this.createFabIcon = this.collectionCreateFabIcon;
       this.createFabLabel = this.collectionCreateFabLabel;
     } else {
@@ -344,13 +342,15 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   //TODO: Review this when we remove the group community links
-  _useHardBack (configuration: YpCollectionConfiguration) {
+  _useHardBack(configuration: YpCollectionConfiguration) {
     if (configuration && configuration.customBackURL) {
       const backUrl = configuration.customBackURL;
-      if (backUrl.startsWith("/community/") ||
-        backUrl.startsWith("/group/") ||
-        backUrl.startsWith("/domain/") ||
-        backUrl.startsWith("/post/")) {
+      if (
+        backUrl.startsWith('/community/') ||
+        backUrl.startsWith('/group/') ||
+        backUrl.startsWith('/domain/') ||
+        backUrl.startsWith('/post/')
+      ) {
         return false;
       } else {
         return true;
