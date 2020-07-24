@@ -11,6 +11,7 @@ import './yp-collection-header.js';
 import './yp-collection-items-grid.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 
+//TODO: Remove
 interface AcActivity extends LitElement {
   scrollToItem(item: YpDatabaseItem): () => void;
 }
@@ -276,20 +277,17 @@ export abstract class YpCollection extends YpBaseElement {
     let tabNumber;
 
     switch (routeTabName) {
-      case 'open':
-      case 'successful':
-      case 'in_progress':
-      case 'failed':
-        tabNumber = 0;
+      case 'collection':
+        tabNumber = CollectionTabTypes.Collection;
         break;
       case 'news':
-        tabNumber = 1;
+        tabNumber = CollectionTabTypes.Newsfeed;
         break;
       case 'map':
-        tabNumber = 2;
+        tabNumber = CollectionTabTypes.Map;
         break;
       default:
-        tabNumber = 0;
+        tabNumber = CollectionTabTypes.Collection;
         break;
     }
 

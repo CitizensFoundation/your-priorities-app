@@ -266,7 +266,7 @@ export class YpThemeManager {
   }
 
   setTheme(
-    number: number,
+    number: number | undefined,
     element: HTMLElement,
     configuration: YpCollectionConfiguration | undefined = undefined
   ) {
@@ -301,7 +301,7 @@ export class YpThemeManager {
           configuration.themeOverrideBackgroundColor
         )
       );
-    } else {
+    } else if (number) {
       if (this.themes[number]) {
         this.updateStyles(
           element,

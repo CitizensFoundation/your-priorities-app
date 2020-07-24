@@ -41,6 +41,12 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideHelpIcon?: boolean;
   forceSecureSamlEmployeeLogin?: boolean;
   hideNewPost?: boolean;
+  canAddNewPosts?: boolean;
+  disableFacebookLoginForGroup?: boolean;
+  externalGoalTriggerUrl?: string;
+  forceSecureSamlLogin?: boolean;
+  makeMapViewDefault?: boolean;
+  useCommunityTopBanner?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -281,6 +287,10 @@ declare interface IronListInterface extends HTMLElement {
   scrollToItem(item: YpDatabaseItem): () => void;
   updateViewportBoundaries(): () => void;
   notifyResize(): () => void;
+}
+
+declare interface IronScrollThresholdInterface extends HTMLElement {
+  clearTriggers(): () => void;
 }
 
 declare const YpHelpPageArray: Array<YpHelpPage>;

@@ -195,6 +195,6 @@ export class YpCommunity extends YpCollection {
         locationHidden = false;
       }
     });
-    this.hideMap = locationHidden;
+    this.locationHidden = locationHidden;
   }
 }
