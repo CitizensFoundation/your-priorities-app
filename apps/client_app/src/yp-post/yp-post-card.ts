@@ -80,11 +80,7 @@ class YpPostCardLit extends YpBaseElement {
         font-size: 1.25rem;
         background-color: #fff;
         color: #000;
-        font-weight: 500;
-        letter-spacing: .0125em;
-      }
-
-      .postNameContainer {
+        font-weight: 500;apps/client_app/src/yp-collection/yp-group-lit.js
         width: 100%;
       }
 
