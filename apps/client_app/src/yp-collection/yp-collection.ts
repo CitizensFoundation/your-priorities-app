@@ -20,7 +20,7 @@ export abstract class YpCollection extends YpBaseElement {
   noHeader = false;
 
   @property({ type: Boolean })
-  noTabs = false;
+  hideTabs = false;
 
   @property({ type: Number })
   collectionId: number | undefined;
@@ -102,6 +102,12 @@ export abstract class YpCollection extends YpBaseElement {
         headerDescription:
           this.collection.description || this.collection.objectives,
       });
+
+      if (this.collection.configuration?.hideAllTabs) {
+        this.hideTabs = true;
+      } else {
+        this.hideTabs = false;
+      }
     }
   }
 
@@ -179,7 +185,7 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   renderTabs() {
-    if (this.collection && !this.noTabs) {
+    if (this.collection && !this.hideTabs) {
       return html`
         <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
           <mwc-tab
@@ -228,9 +234,7 @@ export abstract class YpCollection extends YpBaseElement {
   render() {
     return html`
       ${this.renderHeader()}
-      ${this.collection?.configuration?.hideAllTabs
-        ? nothing
-        : this.renderTabs()}
+      ${this.renderTabs()}
       ${this.renderCurrentTabPage()}
       ${this.createFabIcon
         ? html` <mwc-fab

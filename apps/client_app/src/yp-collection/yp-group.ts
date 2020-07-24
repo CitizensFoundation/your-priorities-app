@@ -13,11 +13,10 @@ export class YpGroup extends YpCollection {
   }
 
   renderGroupTabs() {
-    if (this.collection && !this.noTabs) {
+    if (this.collection && !this.hideTabs) {
       return html`
         <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
           <mwc-tab
-            ?hidden="${this.hideCollection}"
             .label="${this.collectionTabLabel}"
             icon="people"
             stacked></mwc-tab>
@@ -91,9 +90,7 @@ export class YpGroup extends YpCollection {
   render() {
     return html`
       ${this.renderHeader()}
-      ${this.collection?.configuration?.hideAllTabs
-        ? nothing
-        : this.renderGroupTabs()}
+      ${this.renderGroupTabs()}
       ${this.renderCurrentGroupTabPage()}
       ${this.createFabIcon
         ? html` <mwc-fab
