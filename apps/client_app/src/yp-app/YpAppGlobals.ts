@@ -86,6 +86,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   signupTermsPageId: number | undefined;
 
+  retryMethodAfter401Login: Function | undefined;
+
   constructor(serverApi: YpServerApi) {
     super();
 

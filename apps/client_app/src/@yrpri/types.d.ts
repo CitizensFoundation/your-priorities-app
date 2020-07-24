@@ -40,6 +40,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideAllTabs?: boolean;
   hideHelpIcon?: boolean;
   forceSecureSamlEmployeeLogin?: boolean;
+  hideNewPost?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -124,7 +125,7 @@ interface YpCollectionData extends YpDatabaseItem {
   counter_posts: number;
   counter_users: number;
   counter_points: number;
-  configuration?: YpCollectionConfiguration;
+  configuration: YpCollectionConfiguration;
 }
 
 interface YpAdminRights {

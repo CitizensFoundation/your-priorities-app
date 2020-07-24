@@ -3,17 +3,44 @@ import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
 import { YpCollection } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
-import { customElement, html } from 'lit-element';
+import { customElement, html, property } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 
 @customElement('yp-group')
 export class YpGroup extends YpCollection {
+  @property({ type: String })
+  searchingFor: string | undefined;
+
+  @property({ type: Boolean })
+  hasNonOpenPosts = false;
+
+  @property({ type: Boolean })
+  disableNewPosts = false;
+
+  haveGotTabCountInfoCount = 0;
+  tabCounters = {};
+
   constructor() {
     super('group', 'post', 'light-bulb', 'post.create');
   }
 
+  async _getCollection() {
+    window.appGlobals.retryMethodAfter401Login = this._getCollection.bind(this);
+    if (
+      this.collectionId &&
+      window.appGlobals.cache.groupItemsCache[this.collectionId]
+    ) {
+      this.collection =
+        window.appGlobals.cache.groupItemsCache[this.collectionId];
+      this.refresh();
+    } else {
+      super._getCollection();
+    }
+    window.appGlobals.retryMethodAfter401Login = undefined;
+  }
+
   renderGroupTabs() {
-    if (this.collection && !this.hideTabs) {
+    if (this.collection && !this.tabsHidden) {
       return html`
         <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
           <mwc-tab
@@ -49,17 +76,13 @@ export class YpGroup extends YpCollection {
   }
 
   renderPostList(type: string): TemplateResult {
-    return  html`
-
-    `;
+    return html``;
   }
-
-
 
   renderCurrentGroupTabPage(): TemplateResult | undefined {
     let page: TemplateResult | undefined;
 
-    switch (this.selectedTab as unknown as GroupTabTypes) {
+    switch ((this.selectedTab as unknown) as GroupTabTypes) {
       case GroupTabTypes.Open:
         page = this.renderPostList('open');
         break;
@@ -90,13 +113,26 @@ export class YpGroup extends YpCollection {
   render() {
     return html`
       ${this.renderHeader()}
-      ${this.renderGroupTabs()}
-      ${this.renderCurrentGroupTabPage()}
-      ${this.createFabIcon
+      ${this.collection &&
+      !(this.collection.configuration as YpGroupConfiguration).hideNewPost
+        ? html`
+            <div
+              class="largeAddButton layout horizontal center-center"
+              ?hidden="${(this.collection.configuration as YpGroupConfiguration)
+                .hideNewPost}">
+              <yp-post-card-add
+                .group="${this.collection}"
+                .disabled="${this.disableNewPosts}"
+                @new-post="${this._openNewPost}"></yp-post-card-add>
+            </div>`
+        : nothing}
+      ${this.renderGroupTabs()} ${this.renderCurrentGroupTabPage()}
+      ${!this.disableNewPosts && this.collection &&
+      !(this.collection.configuration as YpGroupConfiguration).hideNewPost
         ? html` <mwc-fab
             ?extended="${this.wide}"
-            .label="${this.createFabLabel}"
-            .icon="${this.createFabIcon}"
+            .label="${this.t('post.create')}"
+            icon="light_bulb"
             @click="${this._openNewPost}"></mwc-fab>`
         : nothing}
     `;
