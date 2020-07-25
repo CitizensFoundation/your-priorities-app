@@ -32,6 +32,16 @@ interface YpCollectionConfiguration {
   hideAllTabs?: boolean;
 }
 
+interface YpStructuredQuestions {
+  uniqueId: string;
+  text: string;
+}
+
+interface YpStructuredAnswers {
+  uniqueId: string;
+  value: string;
+}
+
 interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowAnonymousUsers?: boolean;
   allowAnonymousAutoLogin?: boolean;
@@ -55,6 +65,20 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   forcePostSortMethodAs?: string;
   canVote?: boolean;
   customRatings?: string;
+  hidePostActionsInGrid?: boolean;
+  hideDownVoteForPost?: boolean;
+  hidePostCover?: boolean;
+  hidePostDescription?: boolean;
+  allowWhatsAppSharing?: boolean;
+  structuredQuestionsJson?: Array<YpStructuredQuestions>;
+  hideVoteCount?: boolean;
+  customVoteUpHoverText?: string;
+  customVoteDownHoverText?: string;
+  hideDebateIcon?: boolean;
+  originalHideVoteCount?: boolean;
+  hideVoteCountUntilVoteCompleted?: boolean;
+  endorsementButtons?: string;
+  useContainImageMode?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -245,9 +269,15 @@ interface YpPostData extends YpDatabaseItem {
   language?: string;
   PostHeaderImages?: Array<YpImageData>;
   Category?: YpCategoryData;
-  Group?: YpGroupData;
+  Group: YpGroupData;
   description: string;
   User?: YpUserData;
+  counter_endorsements_up: number;
+  counter_endorsements_down: number;
+  counter_points: number;
+  public_data?: {
+    structuredAnswersJson?: Array<YpStructuredAnswers>;
+  };
 }
 
 interface YpPointRevision {
@@ -316,4 +346,9 @@ declare interface YpSplitCollectionsReturn {
 interface YpPostsInfoInterface {
   posts: Array<YpPostData>;
   totalPostsCount: number;
+}
+
+interface YpEndorseResponse {
+  endorsement: YpEndorsement;
+  oldEndorsementValue: number;
 }

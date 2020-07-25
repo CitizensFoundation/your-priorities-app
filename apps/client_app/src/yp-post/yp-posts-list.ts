@@ -12,8 +12,8 @@ import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 import '@material/mwc-icon-button';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
-@customElement('yp-post-list')
-export class YpPostList extends YpBaseElement {
+@customElement('yp-posts-list')
+export class YpPostsList extends YpBaseElement {
   @property({ type: String })
   searchingFor: string | undefined;
 
@@ -402,6 +402,7 @@ export class YpPostList extends YpBaseElement {
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
     if (changedProperties.has('group')) {
       const allowedForceByValues = [
         'oldest',
@@ -540,7 +541,7 @@ export class YpPostList extends YpBaseElement {
         }
 
         setTimeout(() => {
-          const postFilter = this.$$('#postsFilter') as YpPostFilter;
+          const postFilter = this.$$('#postsFilter') as YpPostsFilter;
           if (postFilter) {
             postFilter._updateTitle();
           }

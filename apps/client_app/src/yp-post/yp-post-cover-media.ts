@@ -1,18 +1,75 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-image/iron-image.js';
-//TODO: import 'google-streetview-pano/google-streetview-pano.js';
-//TODO: import 'google-map/google-map.js';
-//TODO: import 'google-map/google-map-marker.js';
-import '../yp-app-globals/yp-app-icons.js';
-import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { constantCase } from 'change-case';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing } from 'lit-html';
+import { ifDefined } from 'lit-html/directives/if-defined';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
-class YpPostCoverMediaLit extends YpBaseElement {
-  static get properties() {
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { Menu } from '@material/mwc-menu';
+import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+
+@customElement('yp-post-cover-media')
+export class YpPostCoverMedia extends YpBaseElement {
+  @property({ type: Object })
+  post!: YpPostData;
+
+  @property({ type: Boolean })
+  topRadius = false
+
+  @property({ type: Boolean })
+  topLeftRadius = false
+
+  @property({ type: String })
+  altTag: string | undefined;
+
+  @property({ type: Number })
+  postAudioId: number | undefined;
+
+  @property({ type: Number })
+  postVideoId: number | undefined;
+
+  @property({ type: Boolean })
+  headerMode = false
+
+  @property({ type: Boolean })
+  disableMaps = false
+
+  @property({ type: Boolean })
+  mapActivated = false
+
+  @property({ type: Boolean })
+  streetViewActivated = false
+
+  @property({ type: Boolean })
+  tiny = false
+
+  //TODO: Make this dynamic from server, even if this key is host protected
+  @property({ type: String })
+  staticMapsApiKey = "AIzaSyBYy8UvdDD650mz7k1pY0j2hBFQmCPVnxA";
+
+  @property({ type: Number })
+  uploadedDefaultPostImageId: number | undefined;
+
+  @property({ type: Number })
+  defaultImageGroupId: number | undefined;
+
+  @property({ type: Boolean })
+  defaultPostImageEnabled = false
+
+  @property({ type: Boolean })
+  showVideo = false
+
+  @property({ type: Boolean })
+  showAudio = false
+
+  @property({ type: Boolean })
+  portraitVideo = false
+
+  static get prosperties() {
+
     return {
 
       post: {
@@ -21,14 +78,10 @@ class YpPostCoverMediaLit extends YpBaseElement {
         observer: "_postChanged"
       },
 
-      topRadius: {
+      headerMode: {
         type: Boolean,
-          value: false
-      },
-
-      topLeftRadius: {
-        type: Boolean,
-        value: false
+        value: false,
+        observer: '_headerModeChanged'
       },
 
       noneActive: {
@@ -71,11 +124,6 @@ class YpPostCoverMediaLit extends YpBaseElement {
         type: Boolean,
         value: false,
         computed: '_isMapActive(post)'
-      },
-
-      altTag: {
-        type: String,
-        value: null
       },
 
       streetViewActive: {
@@ -129,74 +177,9 @@ class YpPostCoverMediaLit extends YpBaseElement {
         computed: '_postVideoPosterPath(post)'
       },
 
-      postVideoId: Number,
-
       postAudioPath: {
         type: String,
         computed: '_postAudioPath(post)'
-      },
-
-      postAudioId: Number,
-
-      headerMode: {
-        type: Boolean,
-        value: false,
-        observer: '_headerModeChanged'
-      },
-
-      disableMaps: {
-        type: Boolean,
-        value: false
-      },
-
-      mapActivated: {
-        type: Boolean,
-        value: false
-      },
-
-      streetViewActivated: {
-        type: Boolean,
-        value: false
-      },
-
-      staticMapsApiKey: {
-        type: String,
-        value: "AIzaSyBYy8UvdDD650mz7k1pY0j2hBFQmCPVnxA"
-      },
-
-      tiny: {
-        type: Boolean,
-        value: false
-      },
-
-      uploadedDefaultPostImageId: {
-        type: String,
-        value: null
-      },
-
-      defaultImageGroupId: {
-        type: String,
-        value: null
-      },
-
-      defaultPostImageEnabled: {
-        type: Boolean,
-        value: false
-      },
-
-      showVideo: {
-        type: Boolean,
-        value: false
-      },
-
-      showAudio: {
-        type: Boolean,
-        value: false
-      },
-
-      portraitVideo: {
-        type: Boolean,
-        value: false
       },
 
       activeDefaultImageUrl: {
@@ -471,6 +454,7 @@ class YpPostCoverMediaLit extends YpBaseElement {
         ` : html``}
 
       </div>
+
       <lite-signal @lite-signal-yp-pause-media-playback="${this._pauseMediaPlayback}"></lite-signal>
     `;
   }
@@ -482,17 +466,17 @@ class YpPostCoverMediaLit extends YpBaseElement {
   ],
 */
 
-  _sizingMode(post) {
-    if (post && post.Group && post.Group.configuration && post.Group.configuration.useContainImageMode) {
+  get sizingMode() {
+    if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.useContainImageMode) {
       return 'contain';
     } else {
       return 'cover';
     }
   }
 
-  _activeDefaultImageUrl(defaultPostImageEnabled, defaultImageGroupId, uploadedDefaultPostImageId) {
-    if (defaultPostImageEnabled && defaultImageGroupId && uploadedDefaultPostImageId) {
-      return "/api/groups/"+defaultImageGroupId+"/default_post_image/"+uploadedDefaultPostImageId;
+  get activeDefaultImageUrl() {
+    if (this.defaultPostImageEnabled && this.defaultImageGroupId && this.uploadedDefaultPostImageId) {
+      return "/api/groups/"+this.defaultImageGroupId+"/default_post_image/"+this.uploadedDefaultPostImageId;
     } else {
       return null;
     }
@@ -504,9 +488,9 @@ class YpPostCoverMediaLit extends YpBaseElement {
     } else {
       if (this.post) {
         if (this.headerMode) {
-          this.goToPost(this.post.id)
+          YpNavHelpers.goToPost(this.post.id)
         } else {
-          this.goToPost(this.post.id, null, null, this.post);
+          YpNavHelpers.goToPost(this.post.id, undefined, undefined, this.post);
         }
       } else {
         console.error("No post in post cover media on goToPost");
@@ -717,5 +701,3 @@ class YpPostCoverMediaLit extends YpBaseElement {
     }
   }
 }
-
-window.customElements.define('yp-post-cover-media-lit', YpPostCoverMediaLit)

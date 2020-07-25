@@ -7,6 +7,8 @@ import { customElement, html, property, LitElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 
+import '../yp-post/yp-post-list.js';
+
 // TODO: Remove
 interface AcActivity extends LitElement {
   scrollToItem(item: YpDatabaseItem): () => void;
@@ -182,15 +184,15 @@ export class YpGroup extends YpCollection {
   }
 
   renderPostList(type: string): TemplateResult {
-    return html`
-      <yp-post-list
+    return this.collection ? html`
+      <yp-posts-list
         id="${type}PostList"
         .selectedGroupTab="${this.selectedGroupTab}"
         .listRoute="${this.subRoute}"
         .type="${type}"
         .searchingFor="${this.searchingFor}"
-        .group="${this.collection}"></yp-post-list>
-    `;
+        .group="${this.collection as YpGroupData}"></yp-posts-list>
+    ` : html``;
   }
 
   renderCurrentGroupTabPage(): TemplateResult | undefined {

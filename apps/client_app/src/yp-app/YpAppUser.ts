@@ -25,7 +25,7 @@ export class YpAppUser extends YpCodeBase {
 
   loginForEndorseParams: {
     postActionElement: HTMLElement;
-    params: { value: string; content: string };
+    params: { value: number };
   } | null = null;
 
   loginForRatingsParams: {
@@ -168,7 +168,7 @@ export class YpAppUser extends YpCodeBase {
 
   loginForEndorse(
     postActionElement: HTMLElement,
-    params: { value: string; content: string }
+    params: { value: number }
   ) {
     this.loginForEndorseParams = {
       postActionElement: postActionElement,

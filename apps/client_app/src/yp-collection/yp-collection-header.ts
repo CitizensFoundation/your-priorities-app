@@ -1,5 +1,5 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
+import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
