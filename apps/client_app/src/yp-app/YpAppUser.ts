@@ -219,7 +219,7 @@ export class YpAppUser extends YpCodeBase {
     collectionConfiguration: object | null = null
   ) {
     // TODO: Remove any
-    window.appDialogs.getAsync('userLogin', (dialog: any) => {
+    window.appDialogs.getDialogAsync('userLogin', (dialog: any) => {
       dialog.setup(this._handleLogin, window.appGlobals.domain);
       dialog.open(null, email, collectionConfiguration);
     });
@@ -229,7 +229,7 @@ export class YpAppUser extends YpCodeBase {
     setTimeout(() => {
       if (this.user == null) {
         // TODO: Remove any
-        window.appDialogs.getAsync('userLogin', (dialog: any) => {
+        window.appDialogs.getDialogAsync('userLogin', (dialog: any) => {
           dialog.setup(this._handleLogin, window.appGlobals.domain);
           dialog.anonymousLogin();
         });
@@ -240,12 +240,12 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _closeUserLogin() {
-    window.appDialogs.close('userLogin');
+    window.appDialogs.closeDialog('userLogin');
   }
 
   _setUserLoginSpinner() {
     // TODO: Remove any
-    window.appDialogs.getAsync('userLogin', (dialog: any) => {
+    window.appDialogs.getDialogAsync('userLogin', (dialog: any) => {
       dialog.userSpinner = false;
     });
   }
@@ -326,7 +326,7 @@ export class YpAppUser extends YpCodeBase {
 
   openNotificationSettings() {
     // TODO: Remove any
-    window.appDialogs.getAsync('userEdit', (dialog: any) => {
+    window.appDialogs.getDialogAsync('userEdit', (dialog: any) => {
       dialog.setup(window.appUser.user, false, null, true);
       dialog.open('edit', { userId: window.appUser.user?.id });
     });
@@ -334,14 +334,14 @@ export class YpAppUser extends YpCodeBase {
 
   _forgotPassword(event: CustomEvent) {
     // TODO: Remove any
-    window.appDialogs.getAsync('forgotPassword', (dialog: any) => {
+    window.appDialogs.getDialogAsync('forgotPassword', (dialog: any) => {
       dialog.open(event.detail);
     });
   }
 
   _resetPassword(event: CustomEvent) {
     // TODO: Remove any
-    window.appDialogs.getAsync('resetPassword', (dialog: any) => {
+    window.appDialogs.getDialogAsync('resetPassword', (dialog: any) => {
       dialog.open(event.detail);
     });
   }
@@ -440,7 +440,7 @@ export class YpAppUser extends YpCodeBase {
 
   async pollForLogin() {
     if (this.pollingStartedAt) {
-      const user = (await this.serverApi.isloggedin()) as YpUser | void;
+      const user = (await this.serverApi.isloggedin()) as YpUserData | void;
       if (user && user.notLoggedIn === true && this.pollingStartedAt) {
         const timeSpent = Date.now() - this.pollingStartedAt;
         if (timeSpent < 5 * 60 * 1000) {
@@ -660,7 +660,7 @@ export class YpAppUser extends YpCodeBase {
 
     if (user && user.missingEmail) {
       // TODO: Remove any
-      window.appDialogs.getAsync('missingEmail', (dialog: any) => {
+      window.appDialogs.getDialogAsync('missingEmail', (dialog: any) => {
         dialog.open(user.loginProvider);
       });
     } else if (
@@ -669,7 +669,7 @@ export class YpAppUser extends YpCodeBase {
       user.profile_data.saml_show_confirm_email_completed === false
     ) {
       // TODO: Remove any
-      window.appDialogs.getAsync('missingEmail', (dialog: any) => {
+      window.appDialogs.getDialogAsync('missingEmail', (dialog: any) => {
         dialog.open(user.loginProvider, true, user.email);
       });
     }

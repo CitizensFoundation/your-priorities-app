@@ -108,7 +108,7 @@ export class YpRecommendations extends YpCodeBase {
   }
 
   async _getRecommendationsForGroup(groupId: number) {
-    const recommendations = await this.serverApi.getRecommendationsForGroup(groupId) as Array<YpPost>|void;
+    const recommendations = await this.serverApi.getRecommendationsForGroup(groupId) as Array<YpPostData>|void;
     if (recommendations) {
       this.lastRecommendationResponseLengths[groupId] = recommendations.length;
       if (!this.recommendationsGroupCache[groupId]) {

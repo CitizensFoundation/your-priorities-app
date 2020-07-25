@@ -626,7 +626,7 @@ export class YpApp extends YpBaseElement {
     }
 
     if (this.goForwardToPostId) {
-      YpNavHelpers.goToPost(this.goForwardToPostId, null, null, null, true);
+      YpNavHelpers.goToPost(this.goForwardToPostId, undefined, undefined, undefined, true);
       window.appGlobals.activity(
         'recommendations',
         'goForward',

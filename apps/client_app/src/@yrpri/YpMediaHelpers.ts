@@ -132,21 +132,21 @@ export class YpMediaHelpers {
           'play',
           targetElement.videoPlayListener
         );
-        targetElement.videoPlayListener = null;
+        targetElement.videoPlayListener = undefined;
       }
       if (targetElement.videoPauseListener) {
         videoPlayer.removeEventListener(
           'pause',
           targetElement.videoPauseListener
         );
-        targetElement.videoPauseListener = null;
+        targetElement.videoPauseListener = undefined;
       }
       if (targetElement.videoEndedListener) {
         videoPlayer.removeEventListener(
           'ended',
           targetElement.videoEndedListener
         );
-        targetElement.videoEndedListener = null;
+        targetElement.videoEndedListener = undefined;
       }
       this._checkVideoLongPlayTimeAndReset(targetElement, videoPlayer);
     }
@@ -157,21 +157,21 @@ export class YpMediaHelpers {
           'play',
           targetElement.audioPlayListener
         );
-        targetElement.audioPlayListener = null;
+        targetElement.audioPlayListener = undefined;
       }
       if (targetElement.audioPauseListener) {
         audioPlayer.removeEventListener(
           'pause',
           targetElement.audioPauseListener
         );
-        targetElement.audioPauseListener = null;
+        targetElement.audioPauseListener = undefined;
       }
       if (targetElement.audioEndedListener) {
         audioPlayer.removeEventListener(
           'ended',
           targetElement.audioEndedListener
         );
-        targetElement.audioEndedListener = null;
+        targetElement.audioEndedListener = undefined;
       }
       this._checkVideoLongPlayTimeAndReset(targetElement, audioPlayer);
     }
