@@ -261,6 +261,7 @@ interface YpCategoryData {
   id: number;
   name: string;
   CategoryIconImages?: Array<YpImageData>;
+  count: number;
 }
 
 interface YpPostData extends YpDatabaseItem {
@@ -360,4 +361,15 @@ interface YpPostsInfoInterface {
 interface YpEndorseResponse {
   endorsement: YpEndorsement;
   oldEndorsementValue: number;
+}
+
+interface YpCategoriesCount {
+  category_id: number;
+  count: number;
+}
+
+interface YpCategoriesCountInfo {
+  categoryCounts: Array<YpCategoriesCount>;
+  allPostCount: number;
+
 }

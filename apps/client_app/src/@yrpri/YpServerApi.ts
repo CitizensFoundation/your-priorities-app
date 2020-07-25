@@ -153,4 +153,10 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/${collectionType}/${collectionId}`
     );
   }
+
+  public getCategoriesCount(id: number, tabName: string | undefined) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/group/${id}/categories_count/${tabName}`
+    );
+  }
 }

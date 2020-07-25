@@ -1,11 +1,4 @@
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
-
-import { YpCollection } from './yp-collection.js';
-import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement, html, property, css } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 

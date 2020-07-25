@@ -1,296 +1,326 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-image/iron-image.js';
-import '@polymer/iron-selector/iron-selector.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-item/paper-item.js';
-import '@material/mwc-button';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-menu-button/paper-menu-button.js';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '../yp-app-globals/yp-app-icons.js';
-import '../yp-ajax/yp-ajax.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { render } from 'pug';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing } from 'lit-html';
+import { ifDefined } from 'lit-html/directives/if-defined';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
-class YpPostsFilterLit extends YpBaseElement {
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { Menu } from '@material/mwc-menu';
+import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+
+import { find, chunk } from 'lodash-es';
+
+import '@material/mwc-select'
+
+@customElement('yp-posts-filter')
+export class YpPostsFilter extends YpBaseElement {
+  @property({ type: Object })
+  group!: YpGroupData;
+
+  @property({ type: String })
+  filterName: string | undefined;
+
+  @property({ type: String })
+  filter = 'newest';
+
+  @property({ type: Number })
+  categoryId: number | undefined;
+
+  @property({ type: String })
+  categoryName: string | undefined;
+
+  @property({ type: String })
+  subTitle = '';
+
+  @property({ type: String })
+  searchingFor: string | undefined;
+
+  @property({ type: Boolean })
+  showFilter = true;
+
+  @property({ type: Number })
+  postsCount: number | undefined;
+
+  //TODO: Clarify difference from above
+  @property({ type: Number })
+  allPostCount = 0;
+
+  @property({ type: String })
+  tabName: string | undefined;
+
+  @property({ type: Object })
+  category: YpCategoryData | undefined;
+
+  @property({ type: Array })
+  categoriesWithCount: Array<YpCategoryData> | undefined;
+
   static get properties() {
     return {
       filter: {
         type: String,
-        value: "newest",
-        notify: true,
-        observer: "_filterChanged"
-      },
-
-      filterName: {
-        type: String
+        observer: '_filterChanged',
       },
 
       categoryId: {
         type: String,
         notify: true,
-        observer: "_categoryIdChanged"
-      },
-
-      categoryName: {
-        type: String
+        observer: '_categoryIdChanged',
       },
 
       group: {
         type: Object,
-        observer: "_groupChanged"
-      },
-
-      subTitle: {
-        type: String,
-        value: '',
-        notify: true
+        observer: '_groupChanged',
       },
 
       searchingFor: {
         type: String,
-        value: null,
-        notify: true,
-        observer: "_searchingForChanged"
-      },
-
-      showFilter: {
-        type: Boolean,
-        value: true
-      },
-
-      postsCount: {
-        type: Number,
-        notify: true
+        observer: '_searchingForChanged',
       },
 
       tabName: {
         type: String,
-        observer: '_tabNameChanged'
+        observer: '_tabNameChanged',
       },
-
-      categoriesWithCount: {
-        type: Array,
-        value: null
-      },
-
-      allPostCount: {
-        type: Number,
-        value: 0
-      }
-    }
+    };
   }
 
   static get styles() {
     return [
+      super.styles,
       css`
+        :host {
+          padding-bottom: 0 !important;
+          margin-bottom: 0 !important;
+        }
 
-      :host {
-        padding-bottom: 0 !important;
-        margin-bottom: 0 !important;
-      }
+        paper-menu-button {
+          padding: 0;
+          margin: 0;
+        }
 
+        .filterIcon {
+          padding-right: 8px;
+        }
 
-      paper-menu-button {
-        padding: 0;
-        margin: 0;
-      }
-
-      .filterIcon {
-        padding-right: 8px;
-      }
-
-      .filterIconTransform {
-        -moz-transform: scaleY(-1);
-        -o-transform: scaleY(-1);
-        -webkit-transform: scaleY(-1);
-        transform: scaleY(-1);
-        filter: FlipV;
-        -ms-filter: "FlipV";
-      }
-
-      .dropdown-trigger  {
-        margin-bottom: 16px;
-        margin-left: 16px;
-      }
-
-      .clear-search-trigger {
-        width: 55px;
-        height: 55px;
-        margin-bottom: 16px;
-      }
-
-      paper-item {
-        min-height: 32px;
-      }
-
-      .subTitle {
-        font-size: 22px;
-        margin-top: 10px;
-        margin-right: 8px;
-      }
-
-      #filterDropdown {
-        padding-left: 0;
-        margin-left: 0;
-      }
-
-
-      #dropDownTrigger {
-        background-color: #fff;
-        margin-left: 16px;
-        color: #111;
-
-      }
-
-      @media (max-width: 600px) {
-        .subTitle {
-          font-size: 17px;
-          padding-top: 0;
-          margin-top: 16px;
+        .filterIconTransform {
+          -moz-transform: scaleY(-1);
+          -o-transform: scaleY(-1);
+          -webkit-transform: scaleY(-1);
+          transform: scaleY(-1);
+          filter: FlipV;
+          -ms-filter: 'FlipV';
         }
 
         .dropdown-trigger {
-          padding-left: 0;
-          margin-left: 0;
-          margin-bottom: 0;
-          margin-top: 0;
+          margin-bottom: 16px;
+          margin-left: 16px;
         }
 
         .clear-search-trigger {
-          width: 50px;
-          height: 50px;
-          margin-top: 5px;
-          margin-bottom: 0;
-          margin-top: 0;
+          width: 55px;
+          height: 55px;
+          margin-bottom: 16px;
+        }
+
+        mwc-list-item {
+          min-height: 32px;
+        }
+
+        .subTitle {
+          font-size: 22px;
+          margin-top: 10px;
+          margin-right: 8px;
+        }
+
+        #filterDropdown {
+          padding-left: 0;
+          margin-left: 0;
         }
 
         #dropDownTrigger {
-          margin-left: 0;
-          margin-right: 0;
+          background-color: #fff;
+          margin-left: 16px;
+          color: #111;
         }
 
-      }
+        @media (max-width: 600px) {
+          .subTitle {
+            font-size: 17px;
+            padding-top: 0;
+            margin-top: 16px;
+          }
 
-      paper-dropdown-menu {
-        padding-left: 8px;
-        padding-right: 8px;
-      }
+          .dropdown-trigger {
+            padding-left: 0;
+            margin-left: 0;
+            margin-bottom: 0;
+            margin-top: 0;
+          }
 
-      .filterHeader {
-        margin-top: 16px;
-        padding-bottom: 0;
-        margin-bottom: 0;
-        font-weight: bold;
-        font-size: 18px;
-      }
+          .clear-search-trigger {
+            width: 50px;
+            height: 50px;
+            margin-top: 5px;
+            margin-bottom: 0;
+            margin-top: 0;
+          }
 
-      .categoriesDropdownMenu {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
+          #dropDownTrigger {
+            margin-left: 0;
+            margin-right: 0;
+          }
+        }
 
+        paper-dropdown-menu {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
 
-      .dropdownIcon {
-        color: #000;
-        margin-right: 8px;
-        margin-left: 8px;
-      }
+        .filterHeader {
+          margin-top: 16px;
+          padding-bottom: 0;
+          margin-bottom: 0;
+          font-weight: bold;
+          font-size: 18px;
+        }
 
-      .catImage {
-        width: 24px;
-        height: 24px;
-        margin-right: 8px;
-      }
+        .categoriesDropdownMenu {
+          padding-left: 16px;
+          padding-right: 16px;
+        }
 
-      .filterText {
-        margin-right: 8px;
-      }
+        .dropdownIcon {
+          color: #000;
+          margin-right: 8px;
+          margin-left: 8px;
+        }
 
-      .dropDownContent, #mainListMenu, .categoriesDropdownMenu, .catDropDown {
-        background-color: #fff !important;
-      }
-    `, YpFlexLayout]
+        .catImage {
+          width: 24px;
+          height: 24px;
+          margin-right: 8px;
+        }
+
+        .filterText {
+          margin-right: 8px;
+        }
+
+        .dropDownContent,
+        #mainListMenu,
+        .categoriesDropdownMenu,
+        .catDropDown {
+          background-color: #fff !important;
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-
-    ${ this.group ? html`
       <div class="layout horizontal center-center mainContainer wrap">
-
-        ${ this.showFilter ? html`
-          <paper-menu-button id="filterDropdown" class="selected-items" .icon="sort" vertical-align="auto" horizontal-align="right">
-            <mwc-button raised .title="${this.t('filterIdeas')}" id="dropDownTrigger" class="filterText" .label="${this.t('filterIdeas')}" .icon="sort" slot="dropdown-trigger">
-              <iron-icon .icon="sort" class="dropdownIcon"></iron-icon>
-            </mwc-button>
-
-            <div slot="dropdown-content" class="layout vertical dropDownContent">
-              <div>
-                <div class="filterHeader layout horizontal center-center">
-                  ${this.t('filterIdeas')}
-                </div>
-
-                ${ this.categoriesWithCount ? html`
-                  <div class="layout vertical">
-                    <paper-dropdown-menu class="dropdown-content wrap categoriesDropdownMenu">
-                      <paper-listbox slot="dropdown-content" id="categoryMenu" class="catDropDown" .attrForSelected="${this.data-category-id}" @iron-select="${this._changeCategory}">
-                        <paper-item data-category-id="-1" .name="-1">
-                          <iron-icon .icon="select-all" class="filterIcon"></iron-icon>
-                          <span>${this.t('categories.the_all')} (${this.allPostCount})</span>
-                        </paper-item>
-
-                        ${ this.categoriesWithCount.map(category => html`
-                          <paper-item data-category-id="${this.category.id}" data-category-name="${this.category.name}">
-                            <iron-image .sizing="cover" class="catImage" height="24" width="24" src="${this._categoryImageSrc(category)}"></iron-image>
-                            ${this.category.name} (${this.category.count})
-                          </paper-item>
-                        `)}
-
-                      </paper-listbox>
-                    </paper-dropdown-menu>
+        ${this.showFilter
+          ? html`
+              <div
+                slot="dropdown-content"
+                class="layout vertical dropDownContent">
+                <div>
+                  <div class="filterHeader layout horizontal center-center">
+                    ${this.t('filterIdeas')}
                   </div>
-                `: html``}
 
-                <div class="layout horizontal center-center">
-                  <yp-ajax id="categoriesWithCountAjax" @response="${this._categoriesCountResponse}"></yp-ajax>
+                  <div class="layout horizontal center-center">
+                    <yp-ajax
+                      id="categoriesWithCountAjax"
+                      @response="${this._categoriesCountResponse}"></yp-ajax>
+                  </div>
+
+                  <paper-listbox
+                    slot="dropdown-content"
+                    id="mainListMenu"
+                    @iron-select="${this._changeFilter}">
+                    <mwc-list-item
+                      data-filter="top"
+                      ?hidden="${this.group.configuration.customRatings !=
+                      undefined}">
+                      <mwc-icon
+                        icon="trending-up"
+                        class="filterIcon"></mwc-icon>
+                      <span>${this.t('post.top')}</span>
+                    </mwc-list-item>
+                    <mwc-list-item data-filter="newest">
+                      <mwc-icon
+                        icon="new-releases"
+                        class="filterIcon"></mwc-icon>
+                      <span>${this.t('post.newest')}</span>
+                    </mwc-list-item>
+                    <mwc-list-item data-filter="most_debated">
+                      <mwc-icon
+                        icon="chat-bubble-outline"
+                        class="filterIcon"></mwc-icon>
+                      <span>${this.t('post.most_debated')}</span>
+                    </mwc-list-item>
+                    <mwc-list-item data-filter="random">
+                      <mwc-icon icon="cached" class="filterIcon"></mwc-icon>
+                      <span>${this.t('post.random')}</span>
+                    </mwc-list-item>
+                  </paper-listbox>
                 </div>
-                <paper-listbox slot="dropdown-content" id="mainListMenu" @iron-select="${this._changeFilter}">
-                  <paper-item data-filter="top" ?hidden="${this.group.configuration.customRatings}">
-                    <iron-icon .icon="trending-up" class="filterIcon"></iron-icon>
-                    <span>${this.t('post.top')}</span>
-                  </paper-item>
-                  <paper-item data-filter="newest">
-                    <iron-icon .icon="new-releases" class="filterIcon"></iron-icon>
-                    <span>${this.t('post.newest')}</span>
-                  </paper-item>
-                  <paper-item data-filter="most_debated">
-                    <iron-icon .icon="chat-bubble-outline" class="filterIcon"></iron-icon>
-                    <span>${this.t('post.most_debated')}</span>
-                  </paper-item>
-                  <paper-item data-filter="random">
-                    <iron-icon .icon="cached" class="filterIcon"></iron-icon>
-                    <span>${this.t('post.random')}</span>
-                  </paper-item>
-                </paper-listbox>
               </div>
-            </div>
-          </paper-menu-button>
-        `: html``}
-        ${ this.searchingFor ? html`
-          <paper-icon-button .ariaLabel="${this.t('clearSearchInput')}" .icon="clear" @tap="${this._clearSearch}" class="clear-search-trigger"></paper-icon-button>
-        `: html``}
+            `
+          : nothing}
+        ${this.categoriesWithCount
+          ? html`
+              <div class="layout vertical">
+                <mwc-select
+                  id="categoriesMenu"
+                  @iron-select="${this._changeCategory}"
+                  class="dropdown-content wrap categoriesDropdownMenu">
+                  <mwc-list-item data-category-id="-1" name="-1">
+                    <mwc-icon icon="select-all" class="filterIcon"></mwc-icon>
+                    <span
+                      >${this.t('categories.the_all')}
+                      (${this.allPostCount})</span
+                    >
+                  </mwc-list-item>
+
+                  ${this.categoriesWithCount.map(
+                    category => html`
+                      <mwc-list-item
+                        data-category-id="${category.id}"
+                        data-category-name="${category.name}">
+                        <iron-image
+                          sizing="cover"
+                          class="catImage"
+                          height="24"
+                          width="24"
+                          src="${this._categoryImageSrc(
+                            category
+                          )}"></iron-image>
+                        ${category.name} (${category.count})
+                      </mwc-list-item>
+                    `
+                  )}
+                </mwc-select>
+              </div>
+            `
+          : nothing}
+        ${this.searchingFor
+          ? html`
+              <mwc-icon-button
+                aria-label="${this.t('clearSearchInput')}"
+                icon="clear"
+                @click="${this._clearSearch}"
+                class="clear-search-trigger"></mwc-icon-button>
+            `
+          : nothing}
       </div>
-    `: html``}
-    `
+    `;
   }
 
-
-/*
+  /*
   behaviors: [
     ypGotoBehavior,
     ypMediaFormatsBehavior
@@ -302,9 +332,9 @@ class YpPostsFilterLit extends YpBaseElement {
   ],
 */
 
-  _getCategoryCount(id, categoryCounts) {
-    const foundCategory = __.find(categoryCounts, function (categoryCount) {
-      return (categoryCount.category_id==id);
+  _getCategoryCount(id: number, categoryCounts: Array<YpCategoriesCount>) {
+    const foundCategory = find(categoryCounts, function (categoryCount) {
+      return categoryCount.category_id == id;
     });
     if (foundCategory) {
       return foundCategory.count;
@@ -313,42 +343,16 @@ class YpPostsFilterLit extends YpBaseElement {
     }
   }
 
-  _oldCategory(category) {
-    if (!category || category.id<804) {
+  _oldCategory(category: YpCategoryData) {
+    if (!category || category.id < 804) {
       return true;
     } else {
       return false;
     }
   }
 
-  _categoriesCountResponse(event, detail) {
-    const categoryCounts = detail.response.categoriesCount;
-    this.set('allPostCount', detail.response.allPostCount);
-    const categoriesWithCount = [];
-    //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
-    __.each(this.group.Categories, function (category) {
-      category.count = this._getCategoryCount(category.id, categoryCounts);
-      if (category.count > 0) {
-        categoriesWithCount.push(category);
-      }
-    }.bind(this));
-    if (categoriesWithCount.length>1) {
-      this.set('categoriesWithCount', categoriesWithCount);
-      this.async(function () {
-        const categoryMenu = this.$$("#categoryMenu");
-        if (categoryMenu) {
-          categoryMenu.selected = "-1";
-        } else {
-          console.error("Cant set category menu");
-        }
-      });
-    } else {
-      console.error("Unexpected categories count");
-    }
-  }
-
   _openDropDown() {
-    const trigger = this.$$("#dropDownTrigger");
+    const trigger = this.$$('#dropDownTrigger');
     if (trigger) {
       trigger.click();
     }
@@ -363,8 +367,8 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _clearSearch() {
-    this.set('searchingFor', null);
-    this.set('filter', 'newest');
+    this.searchingFor = undefined;
+    this.filter = 'newest';
     this._updateAfterFiltering();
   }
 
@@ -385,23 +389,28 @@ class YpPostsFilterLit extends YpBaseElement {
     }
   }
 
-  _listLanguageChanged(language) {
-    if (language && this.t) {
-      this._updateTitle();
-    }
+  _languageEvent(event: CustomEvent) {
+    super._languageEvent(event);
+    this._updateTitle();
   }
 
-  searchFor(value) {
-    this.set('searchingFor', value);
-    const newLocation = '/group/' + this.group.id + '/open/' + this.group.name + '/search/' + this.searchingFor;
+  searchFor(value: string) {
+    this.searchingFor = value;
+    const newLocation =
+      '/group/' +
+      this.group.id +
+      '/open/' +
+      this.group.name +
+      '/search/' +
+      this.searchingFor;
     window.appGlobals.activity('change', 'filter', newLocation);
-    this.redirectTo(newLocation);
-    this.fire("refresh-group");
+    YpNavHelpers.redirectTo(newLocation);
+    this.fire('refresh-group');
   }
 
   _updateTitle() {
     if (this.searchingFor) {
-      this.set('subTitle', this.t('post.searchingFor') + this.searchingFor);
+      this.subTitle = this.t('post.searchingFor') + this.searchingFor;
     } else {
       const translatedFilterName = this.t(this.filterName);
       let translatedCategoryName;
@@ -412,37 +421,37 @@ class YpPostsFilterLit extends YpBaseElement {
       }
       const inWord = this.t('short_word.in');
       if (this._ifCategories()) {
-        this.set('subTitle', translatedFilterName + ' - ' + translatedCategoryName);
+        this.subTitle = translatedFilterName + ' - ' + translatedCategoryName;
       } else {
-        this.set('subTitle', translatedFilterName);
+        this.subTitle = translatedFilterName;
       }
     }
   }
 
-  _changeFilter(e, detail) {
-    this.set('filter',detail.item.dataset.filter);
+  _changeFilter(event: CustomEvent) {
+    this.filter = event.detail.item.dataset.filter;
     this._updateAfterFiltering();
   }
 
-  _changeCategory(e, detail) {
+  _changeCategory(event: CustomEvent) {
     const oldCategoryId = this.categoryId;
-    const categoryId = detail.item.dataset.categoryId;
+    const categoryId = event.detail.item.dataset.categoryId;
     if (categoryId != '-1') {
-      this.set('categoryId',categoryId);
-      this.categoryName = detail.item.dataset.categoryName;
+      this.categoryId = categoryId;
+      this.categoryName = event.detail.item.dataset.categoryName;
     } else {
-      this.set('categoryId',null);
-      this.categoryName = null;
-      this.$$("#categoryMenu").selected = null;
+      this.categoryId = undefined;
+      this.categoryName = undefined;
+      this.$$('#categoryMenu').selected = null;
     }
     this._updateTitle();
-    if (oldCategoryId!==this.categoryId) {
+    if (oldCategoryId !== this.categoryId) {
       this._updateAfterFiltering();
     }
   }
 
   buildPostsUrlPath() {
-    const newLocation = '/group/' + this.group.id + '/' + this.tabName;
+    let newLocation = '/group/' + this.group.id + '/' + this.tabName;
     if (this.filter) {
       newLocation += '/posts/' + this.filter;
     }
@@ -453,12 +462,11 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   _updateAfterFiltering() {
-    if (!this.filter)
-      this.set('filter','newest');
+    if (!this.filter) this.filter = 'newes';
     const newLocation = this.buildPostsUrlPath();
     window.appGlobals.activity('change', 'filter', newLocation);
- //   this.redirectTo(newLocation);
-    this.fire("refresh-group");
+    //   this.redirectTo(newLocation);
+    this.fire('refresh-group');
   }
 
   _ifCategories() {
@@ -470,66 +478,70 @@ class YpPostsFilterLit extends YpBaseElement {
   }
 
   resetSelection() {
-    this.async(function () {
-      const categoryMenu = this.$$("#categoryMenu");
+    setTimeout(() => {
+      const categoryMenu = this.$$('#categoryMenu');
       if (categoryMenu) {
-        this.$$("#categoryMenu").selected = null;
+        (this.$$('#categoryMenu') as List).selected = null;
       }
-      const mainListMenu = this.$$("#mainListMenu");
+      const mainListMenu = this.$$('#mainListMenu');
       if (mainListMenu) {
-        this.$$("#mainListMenu").selected = null;
+        this.$$('#mainListMenu').selected = null;
       } else {
-        console.error("Cant find mainListMenu menu");
+        console.error('Cant find mainListMenu menu');
       }
     }, 100);
   }
 
-  _tabNameChanged(tabName) {
-    if (false && tabName && this.group && this.group.Categories && this.group.Categories.length>0) {
-      this._setupCategories(this.group, tabName);
+  async _setupCategories() {
+    this.categoriesWithCount = undefined;
+    const categoryCountsInfo = await window.serverApi.getCategoriesCount(this.group.id, this.tabName) as YpCategoriesCountInfo | void;
+    if (categoryCountsInfo) {
+      const categoryCounts = categoryCountsInfo.categoryCounts;
+      this.allPostCount = categoryCountsInfo.allPostCount;
+
+      const categoriesWithCount: Array<YpCategoryData> = [];
+      //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
+      this.group.Categories?.forEach(category => {
+        category.count = this._getCategoryCount(category.id, categoryCounts);
+        if (category.count > 0) {
+          categoriesWithCount.push(category);
+        }
+      });
+      if (categoriesWithCount.length > 1) {
+        this.categoriesWithCount = categoriesWithCount;
+        setTimeout(() => {
+          const categoryMenu = this.$$('#categoryMenu');
+          if (categoryMenu) {
+            categoryMenu.selected = '-1';
+          } else {
+            console.error('Cant set category menu');
+          }
+        });
+      } else {
+        console.error('Unexpected categories count');
+      }
     }
   }
 
-  _setupCategories(group, tabName) {
-    this.set('categoriesWithCount', null);
-    this.async(function () {
-      const categoriesWithCountAjax = this.$$("#categoriesWithCountAjax");
-      if (categoriesWithCountAjax) {
-        categoriesWithCountAjax.url = "/api/groups/" + group.id + "/categories_count/"+tabName;
-        categoriesWithCountAjax.generateRequest();
-      } else {
-        console.error("Can't find categories ajax.");
-      }
-    }, 100);
-  }
-
   _groupChanged(group) {
-    this.set('categoriesWithCount', null);
-    this.set('allPostCount', 0);
-    this.set('categoryId',null);
-    if (group) {
+    this.categoriesWithCount = undefined;
+    this.allPostCount = 0;
+    this.categoryId = undefined;
+    if (this.group) {
       this._updateTitle();
-      if (group.Categories && group.Categories.length>0) {
-        this._setupCategories(group, this.tabName);
+      if (group.Categories && group.Categories.length > 0) {
+        this._setupCategories();
       }
       this.resetSelection();
     }
   }
 
   _categoryItems() {
-    if (this.group.Categories)
-      return this.splitArray(this.group.Categories, 7);
-    else
-      return [];
+    if (this.group.Categories) return chunk(this.group.Categories, 7);
+    else return [];
   }
 
-  _categoryImageSrc(category) {
-    return this.getImageFormatUrl(category.CategoryIconImages, 0);
-  }
-
-  splitArray(a, n) {
-    return a.chunk(n);
+  _categoryImageSrc(category: YpCategoryData) {
+    return YpMediaHelpers.getImageFormatUrl(category.CategoryIconImages, 0);
   }
 }
-
-window.customElements.define('yp-posts-filter-lit', YpPostsFilterLit)
