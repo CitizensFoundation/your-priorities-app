@@ -155,9 +155,10 @@ export class YpMagicText extends YpBaseElement {
   }
 
   _openFullScreen() {
-    window.dialogs.getDialogAsync(
+    //TODO: Fix ts type
+    window.appDialogs.getDialogAsync(
         'magicTextDialog',
-        (dialog) => {
+        (dialog: { open: (arg0: string | undefined, arg1: number | undefined, arg2: number | undefined, arg3: string | undefined, arg4: string | undefined, arg5: string | undefined, arg6: string | undefined, arg7: boolean) => void }) => {
           dialog.open(
             this.content,
             this.contentId,
