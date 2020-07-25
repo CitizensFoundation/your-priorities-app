@@ -13,12 +13,6 @@ interface AcActivity extends LitElement {
   loadNewData(): () => void;
 }
 
-interface YpPostList extends HTMLElement {
-  _loadMoreData(): () => void;
-  scrollToPost(item: YpPostData): () => void;
-  _refreshGroupFromFilter(): () => void;
-}
-
 @customElement('yp-group')
 export class YpGroup extends YpCollection {
   @property({ type: String })
@@ -240,8 +234,8 @@ export class YpGroup extends YpCollection {
             ?hidden="${(this.collection.configuration as YpGroupConfiguration)
               .hideNewPost}">
             <yp-post-card-add
-              .group="${this.collection}"
-              .disabled="${this.disableNewPosts}"
+              .group="${this.collection as YpGroupData}"
+              ?disableNewPosts="${this.disableNewPosts}"
               @new-post="${this._newPost}"></yp-post-card-add>
           </div>`
         : nothing}

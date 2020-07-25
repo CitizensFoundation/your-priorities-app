@@ -1,421 +1,377 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-list/iron-list.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
-import '../yp-app-globals/yp-app-icons.js';
-import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
-import '../yp-ajax/yp-ajax.js';
-import './yp-post-card.js';
-import '../yp-posts-filter/yp-posts-filter.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
-class YpPostListLit extends YpBaseElements {
-  static get properties() {
-    return {
+import { YpCollection } from './yp-collection.js';
+import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
+import { customElement, html, property, css } from 'lit-element';
+import { nothing, TemplateResult } from 'lit-html';
+import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 
-      wide: Boolean,
+import '@material/mwc-icon-button';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
-      categories: {
-        type: Array
-      },
+@customElement('yp-post-list')
+export class YpPostList extends YpBaseElement {
+  @property({ type: String })
+  searchingFor: string | undefined;
 
-      subTitle: {
-        type: String,
-        notify: true
-      },
+  @property({ type: String })
+  subTitle: string | undefined;
 
-      defaultCategories: {
-        type: Boolean,
-        value: false
-      },
+  @property({ type: String })
+  filter = 'newest';
 
-      posts: {
-        type: Array,
-        value: null,
-        notify: true
-      },
+  @property({ type: String })
+  statusFilter = 'open';
 
-      groupId: {
-        type: Number,
-        observer: "_groupIdChanged"
-      },
+  @property({ type: Array })
+  posts: Array<YpPostData> = [];
 
-      userId: {
-        type: Number
-      },
+  //TODO: Check if we still want to use this like that
+  @property({ type: Number })
+  userId: number | undefined;
 
-      group: {
-        type: Object,
-        notify: true,
-        observer: "_groupChanged"
-      },
+  @property({ type: Object })
+  group!: YpGroupData;
 
-      filter: {
-        type: String,
-        value: "newest",
-        observer: "_filterChanged"
-      },
+  @property({ type: Number })
+  categoryId: number | undefined;
 
-      statusFilter: {
-        type: String,
-        value: "open",
-        notify: true
-      },
+  @property({ type: Number })
+  postsCount: number | undefined;
 
-      categoryId: {
-        type: String,
-        observer: "_categoryIdChanged"
-      },
+  @property({ type: String })
+  selectedCategoryName: string | undefined;
 
-      postsCount: {
-        type: Number,
-        notify: true
-      },
+  @property({ type: Number })
+  selectedGroupTab: GroupTabTypes | undefined;
 
-      searchTarget: {
-        type: Object,
-        computed: '_searchTarget(noPosts)'
-      },
+  @property({ type: String })
+  type: string | undefined;
 
-      categoryName: {
-        type: String
-      },
+  @property({ type: Boolean })
+  noPosts = false;
 
-      searchingFor: {
-        type: String,
-        value: null,
-        observer: "_searchingForChanged"
-      },
+  @property({ type: Boolean })
+  showSearchIcon = false;
 
-      selectedCategoryName: {
-        type: String
-      },
+  moreToLoad = false;
 
-      selectedTab: {
-        type: String,
-        observer: '_selectedTabChanged'
-      },
+  // For YpIronListHelper
+  resetListSize: Function | undefined;
+  skipIronListWidth = false;
 
-      tabCounterId: {
-        type: String
-      },
+  static get styles() {
+    return [
+      super.styles,
+      ShadowStyles,
+      css`
+        .postsFilter {
+          padding-left: 16px;
+          height: 36px;
+        }
 
-      oldestPostAt: {
-        type: Date
-      },
+        .objectives {
+          padding-bottom: 40px;
+          max-width: 432px;
+        }
 
-      noPosts: {
-        type: Boolean,
-        value: false
+        .description {
+          padding: 12px;
+        }
 
-      },
+        yp-post-card {
+          padding-bottom: 52px;
+        }
 
-      wideListOffset: {
-        type: Number,
-        value: 610
-      },
+        #outerRegion {
+          position: relative;
+        }
 
-      listOffset: {
-        type: String,
-        value: "500px"
-      },
+        #scrollableRegion {
+        }
 
-      showSearchIcon: {
-        type: Boolean,
-        value: false
-      },
+        iron-list {
+          height: 100vh;
+        }
 
-      randomSeed: {
-        type: Number,
-        value: null
-      },
-
-      scrollOffset: {
-        type: Number,
-        computed: '_scrollOffset(wide, group, selectedTab)'
-      },
-    }
-  }
-
-static get styles() {
-  return [
-    css`
-
-      .container {
-
-      }
-
-      .postsFilter {
-        padding-left: 16px;
-        height: 36px;
-      }
-
-      .objectives {
-        padding-bottom: 40px;
-        max-width: 432px;
-      }
-
-      .description {
-        padding: 12px;
-      }
-
-
-      yp-post-card {
-        padding-bottom: 52px;
-      }
-
-      #outerRegion {
-        position: relative;
-      }
-
-      #scrollableRegion {
-      }
-
-      iron-list {
-        height: 100vh;
-      }
-
-      yp-ajax {
-        padding-top: 48px;
-      }
-
-
-      yp-posts-filter {
-        margin-bottom: 8px;
-        margin-left: 8px;
-        margin-top: 16px;
-      }
-
-      #ironList {
-      }
-
-      .searchButton {
-        padding: 8px;
-        margin: 8px;
-      }
-
-      .searchContainer {
-        margin-top: 8px;
-      }
-
-      yp-posts-filter {
-        padding-right: 16px;
-      }
-
-      .half {
-        width: 50%
-      }
-
-      .searchBox {
-        --paper-input-container-label: {
-          font-size: 23px;
-          color: #555;
-        };
-        margin-bottom: 22px;
-        margin-right: 8px;
-      }
-
-      @media (max-width: 800px) {
-
-        .searchBox {
-          --paper-input-container-label: {
-            font-size: 18px;
-          };
+        yp-posts-filter {
           margin-bottom: 8px;
+          margin-left: 8px;
+          margin-top: 16px;
         }
 
-        .searchBox {
-          margin-top: 8px;
+        #ironList {
         }
 
-        .half {
-          width: 100%;
+        .searchButton {
+          padding: 8px;
+          margin: 8px;
         }
 
         .searchContainer {
-          margin-top: 0;
+          margin-top: 8px;
         }
 
-        .postsFilter {
-          padding-left: 16px;
-          width: 215px !important;
+        yp-posts-filter {
+          padding-right: 16px;
         }
 
-      }
+        .half {
+          width: 50%;
+        }
 
-      .noIdeas {
-        background-color: #FFF;
-        max-width: 200px;
-        padding: 16px;
-        margin: 16px;
-        margin-top: 32px;
-      }
+        .searchBox {
+          --paper-input-container-label: {
+            font-size: 23px;
+            color: #555;
+          }
+          margin-bottom: 22px;
+          margin-right: 8px;
+        }
 
-      .noIdeasText {
-        font-weight: bold;
-      }
+        @media (max-width: 800px) {
+          .searchBox {
+            --paper-input-container-label: {
+              font-size: 18px;
+            }
+            margin-bottom: 8px;
+          }
 
-      .card {
-        padding: 0;
-        padding-top: 8px;
-      }
+          .searchBox {
+            margin-top: 8px;
+          }
 
-      .card[wide-padding] {
-        padding: 16px !important;
-      }
+          .half {
+            width: 100%;
+          }
 
-      #searchInput {
-        margin-left: 8px;
-      }
+          .searchContainer {
+            margin-top: 0;
+          }
 
-      [hidden] {
-        display: none !important;
-      }
+          .postsFilter {
+            padding-left: 16px;
+            width: 215px !important;
+          }
+        }
 
-      :focus {
-      }
+        .noIdeas {
+          background-color: #fff;
+          max-width: 200px;
+          padding: 16px;
+          margin: 16px;
+          margin-top: 32px;
+        }
 
-      .largeAjax {
-        position: absolute;
-        bottom: 32px;
-      }
+        .noIdeasText {
+          font-weight: bold;
+        }
 
-      a {
-        text-decoration: none;
-      }
-    `, YpFlexLayout];
+        .card {
+          padding: 0;
+          padding-top: 8px;
+        }
+
+        .card[wide-padding] {
+          padding: 16px !important;
+        }
+
+        #searchInput {
+          margin-left: 8px;
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+
+        :focus {
+        }
+
+        .largeAjax {
+          position: absolute;
+          bottom: 32px;
+        }
+
+        a {
+          text-decoration: none;
+        }
+      `,
+    ];
+  }
+
+  _searchKey(event: KeyboardEvent) {
+    if (event.keyCode === 13) {
+      this._search();
+    }
   }
 
   render() {
     return html`
-    <iron-media-query query="(min-width: 1024px)" query-matches="${this.wide}"></iron-media-query>
+      <div class="layout vertical center-center topMost">
+        <div
+          class="searchContainer layout horizontal center-center wrap"
+          ?hidden="${this.group.configuration.hidePostFilterAndSearch}">
+          <div class="layout horizontal center-center">
+            <yp-posts-filter
+              @tap="${this._tapOnFilter}"
+              .sub-title="${this.subTitle}"
+              class="filter"
+              id="postsFilter"
+              .tabName="${this.statusFilter}"
+              @refresh-group="${this._refreshGroupFromFilter}"
+              .group="${this.group}"
+              .filter="${this.filter}"
+              .searchingFor="${this.searchingFor}"
+              .categoryId="${this.categoryId}"
+              .postsCount="${this.postsCount}">
+            </yp-posts-filter>
+          </div>
+          <div class="layout horizontal center-center">
+            <mwc-input
+              id="searchInput"
+              @keydown="${this._searchKey}"
+              .label="${this.t('searchFor')}"
+              .value="${this.searchingFor}"
+              class="searchBox">
+            </mwc-input>
+            <mwc-icon-button
+              .label="${this.t('startSearch')}"
+              icon="search"
+              @click="${this._search}"
+              ?hidden="${!this.showSearchIcon}"></mwc-icon-button>
+          </div>
+        </div>
 
-    <iron-a11y-keys id="a11y" .target="${this.searchTarget}" .keys="enter" on-keys-pressed="_search"></iron-a11y-keys>
+        ${this.noPosts
+          ? html`
+              <div class="layout horiztonal center-center">
+                <div
+                  class="noIdeas layout horizontal center-center shadow-elevation-6dp shadow-transition"
+                  ?hidden="${this.group.configuration
+                    .allPostsBlockedByDefault}">
+                  <div class="noIdeasText">${this.t('noIdeasHere')}</div>
+                </div>
+              </div>
+            `
+          : html``}
 
-    <div class="layout vertical center-center topMost">
-      <div class="searchContainer layout horizontal center-center wrap" ?hidden="${this.group.configuration.hidePostFilterAndSearch}">
         <div class="layout horizontal center-center">
-          <yp-posts-filter @tap="${this._tapOnFilter}" .sub-title="${this.subTitle}" class="filter" id="postsFilter" .tabName="${this.statusFilter}" @refresh-group="${this._refreshGroupFromFilter}" .group="${this.group}" .filter="${this.filter}" .searchingFor="${this.searchingFor}" .categoryId="${this.categoryId}" .categoryName="${this.categoryName}" .postsCount="${this.postsCount}">
-          </yp-posts-filter>
-        </div>
-        <div class="layout horizontal center-center">
-          <paper-input id="searchInput" .label="${this.t('searchFor')}" .value="${this.searchingFor}" class="searchBox">
-          </paper-input>
-          <paper-icon-button .ariaLabel="${this.t('startSearch')}" .icon="search" @tap="${this._search}" ?hidden="${!this.showSearchIcon}"></paper-icon-button>
+          <iron-list
+            id="ironList"
+            selection-enabled=""
+            .scrollOffset="${this.scrollOffset}"
+            @selected-item-changed="${this._selectedItemChanged}"
+            .items="${this.posts}"
+            as="post"
+            scrollTarget="document"
+            ?grid="${this.wide}"
+            role="list">
+            <template>
+              <div
+                ?wide-padding="${this.wide}"
+                class="card layout vertical center-center"
+                aria-label="[[post.name]]"
+                role="listitem"
+                aria-level="2"
+                tabindex="${this.tabIndex}">
+                <yp-post-card
+                  id="postCard[[post.id]]"
+                  @refresh="${this._refreshPost}"
+                  class="card"
+                  post="[[post]]">
+                </yp-post-card>
+              </div>
+            </template>
+          </iron-list>
         </div>
       </div>
-
-      ${ this.noPosts ? html`
-        <div class="layout horiztonal center-center">
-          <paper-material class="noIdeas layout horizontal center-center" .elevation="2"
-            ?hidden="${this.group.configuration.allPostsBlockedByDefault}">
-            <div class="noIdeasText">${this.t('noIdeasHere')}</div>
-          </paper-material>
-        </div>
-      `: html``}
-
-      <div class="layout horizontal center-center">
-      <iron-list id="ironList" selection-enabled="" .scrollOffset="${this.scrollOffset}"
-        @selected-item-changed="${this.._selectedItemChanged}" .items="${this.posts}" as="post"
-        scrollTarget="document" ?grid="${this.wide}" role="list">
-          <template>
-            <div ?wide-padding="${this.wide}" class="card layout vertical center-center"
-             aria-label="${this.post.name}" role="listitem" aria-level="2" tabindex="${this.tabIndex}">
-              <yp-post-card id="postCard${this.post.id}" @refresh="${this._refreshPost}" class="card"
-              .post="${this.post}" @mouseover="${this.cardMouseOver}" @mouseout="${this.cardMouseOut}">
-            </yp-post-card>
-            </div>
-          </template>
-        </iron-list>
-      </div>
-
-      <div class="layout horizontal center-center largeAjax">
-        <yp-ajax id="ajax" .large-spinner @response="${this._postsResponse}"></yp-ajax>
-        <yp-ajax id="refreshPost" on-response="_refreshPostResponse"></yp-ajax>
-      </div>
-    </div>
-    `
+    `;
   }
 
-/*
-  behaviors: [
-    ypIronListBehavior
-  ],
-*/
+  connectedCallback() {
+    super.connectedCallback();
+    YpIronListHelpers.attachListeners(this as YpElementWithIronList);
+  }
 
-  _selectedItemChanged (event, detail) {
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    YpIronListHelpers.detachListeners(this as YpElementWithIronList);
+  }
+
+  _selectedItemChanged(event: CustomEvent) {
+    const detail = event.detail;
     if (detail && detail.value) {
-      var selectedCard = this.$$("#postCard"+detail.value.id);
+      const selectedCard = this.$$('#postCard' + detail.value.id);
       if (selectedCard) {
         selectedCard.clickOnA();
       }
     }
   }
 
-  _refreshPost(event, detail) {
-    this.$.refreshPost.url="/api/posts/"+detail.id;
-    this.$.refreshPost.generateRequest();
-  }
-
-  _refreshPostResponse (event, detail) {
-    var post = detail.response;
-    for (var i = 0; i < this.posts.length; i++) {
-      if (this.posts[i].id==post.id) {
-        this.set('posts.'+i, post);
-        window.appGlobals.updatePostInCache(post);
-        this.async(function () {
-          this.$$("#ironList").fire('iron-resize');
-        });
-        break;
+  _refreshPost(event: CustomEvent) {
+    const post = window.serverApi.getPost(event.detail.id);
+    if (post) {
+      for (let i = 0; i < this.posts.length; i++) {
+        if (this.posts[i].id == post.id) {
+          this.posts[i] = post;
+          window.appGlobals.cache.updatePostInCache(post);
+          setTimeout(() => {
+            (this.$$('#ironList') as IronListInterface).fire('iron-resize');
+          });
+          break;
+        }
       }
     }
   }
 
-  _getPostLink (post) {
+  _getPostLink(post: YpPostData) {
     if (post) {
-      if (post.Group.configuration && post.Group.configuration.disablePostPageLink) {
-        return "#";
-      } else if (post.Group.configuration && post.Group.configuration.resourceLibraryLinkMode) {
+      if (
+        post.Group &&
+        post.Group.configuration &&
+        post.Group.configuration.disablePostPageLink
+      ) {
+        return '#';
+      } else if (
+        post.Group &&
+        post.Group.configuration &&
+        post.Group.configuration.resourceLibraryLinkMode
+      ) {
         return post.description.trim();
       } else {
-        return "/post/"+post.id;
+        return '/post/' + post.id;
       }
     } else {
-      console.warn("Trying to get empty post link");
+      console.warn('Trying to get empty post link');
     }
   }
 
-  _scrollOffset(wide, group) {
-    const list = this.$$("iron-list");
+  get scrollOffset() {
+    const list = this.$$('iron-list');
     if (list) {
       let offset = list.offsetTop;
       offset -= 75;
-      if (list.offsetTop>0 && offset>0) {
-        console.info("Post list scroll offset: "+offset);
+      if (list.offsetTop > 0 && offset > 0) {
+        console.info('Post list scroll offset: ' + offset);
         return offset;
       } else {
-        if (wide)
-          offset = 550;
-        else
-          offset = 700;
+        if (this.wide) offset = 550;
+        else offset = 700;
 
-        if (group && group.configuration) {
-          if (group.configuration.hideAllTabs)
-            offset -= 60;
-          if (group.configuration.hideNewPost)
-            offset -= 100;
-          if (group.configuration.hidePostFilterAndSearch)
-            offset -= 100;
+        if (this.group && this.group.configuration) {
+          if (this.group.configuration.hideAllTabs) offset -= 60;
+          if (this.group.configuration.hideNewPost) offset -= 100;
+          if (this.group.configuration.hidePostFilterAndSearch) offset -= 100;
         }
 
-        console.info("Post list (manual) scroll offset: "+offset);
+        console.info('Post list (manual) scroll offset: ' + offset);
         return offset;
       }
     } else {
-      console.warn("No list for scroll offset");
+      console.warn('No list for scroll offset');
       return null;
     }
   }
@@ -424,232 +380,232 @@ static get styles() {
     window.appGlobals.activity('click', 'filter');
   }
 
-  _searchTarget(noPosts) {
-    if (!noPosts) {
-      this.async(function () {
-        return this.$$("#searchInput");
-      });
-    }
-  }
-
-  _selectedTabChanged(selectedTab) {
-    if (this.statusFilter==selectedTab) {
-      //this._loadMoreData();
-    }
-  }
-
   _search() {
     window.appGlobals.activity('click', 'search');
-    if (this.searchingFor && this.searchingFor!='') {
+    if (this.searchingFor && this.searchingFor != '') {
       this._refreshGroupFromFilter();
     }
   }
 
-  cardMouseOver(event) {
-    event.currentTarget.elevation = 4;
-  }
-
-  cardMouseOut(event) {
-    event.currentTarget.elevation = 1;
-  }
-
   buildPostsUrlPath() {
-    return this.$$("#postsFilter").buildPostsUrlPath();
+    return (this.$$('#postsFilter') as YpPostsFilter).buildPostsUrlPath();
   }
 
-  _searchingForChanged(newValue, oldValue) {
-    this.set('moreToLoad', true);
-    if (newValue && newValue!='') {
-      this.set('showSearchIcon', true);
-    } else {
-      this.set('showSearchIcon', false);
-    }
-  }
-
-  _filterChanged(newValue, oldValue) {
-    this.set('moreToLoad', true);
-  }
-
-  _categoryIdChanged(newValue, oldValue) {
-    this.set('moreToLoad', true);
-  }
-
-  scrollToPost(post) {
+  scrollToPost(post: YpPostData) {
     if (post && this.posts) {
-      console.info("Scrolling to post: "+post.id);
-      this.$$("#ironList").scrollToItem(post);
-      document.dispatchEvent(
-        new CustomEvent("lite-signal", {
-          bubbles: true,
-          compose: true,
-          detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
-        })
-      );
+      console.info('Scrolling to post: ' + post.id);
+      (this.$$('#ironList') as IronListInterface).scrollToItem(post);
+      this.fireGlobal('yp-refresh-activities-scroll-threshold');
     } else {
-      console.error("No post id on goToPostId");
+      console.error('No post id on goToPostId');
     }
   }
 
-  _groupIdChanged(newValue, oldValue) {
-  }
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    if (changedProperties.has('group')) {
+      const allowedForceByValues = [
+        'oldest',
+        'newest',
+        'top',
+        'most_debated',
+        'random',
+        'alphabetical',
+      ];
 
-  _groupChanged(group) {
-    var allowedForceByValues = ["oldest","newest","top","most_debated","random","alphabetical"];
-
-    this.set("posts", null);
-    this.set('noPosts', false);
-    this.set('randomSeed', Math.random());
-    if (group) {
-      this.set('moreToLoad', true);
-      if (group.configuration && group.configuration.forcePostSortMethodAs && allowedForceByValues.indexOf(group.configuration.forcePostSortMethodAs) > -1) {
-        this.set('filter', group.configuration.forcePostSortMethodAs);
-      } else {
-        if (group.configuration && group.configuration.canAddNewPosts!=undefined) {
-          if (group.configuration.canAddNewPosts===true) {
-            this.set('filter','newest');
-          } else if (group.configuration.canAddNewPosts===false && group.configuration.canVote===false) {
-            if (group.configuration.customRatings) {
-              this.set('filter','random');
+      this.posts = [];
+      this.noPosts = false;
+      if (this.group) {
+        this.moreToLoad = true;
+        if (
+          this.group.configuration &&
+          this.group.configuration.forcePostSortMethodAs &&
+          allowedForceByValues.indexOf(
+            this.group.configuration.forcePostSortMethodAs
+          ) > -1
+        ) {
+          this.filter = this.group.configuration.forcePostSortMethodAs;
+        } else {
+          if (
+            this.group.configuration &&
+            this.group.configuration.canAddNewPosts != undefined
+          ) {
+            if (this.group.configuration.canAddNewPosts === true) {
+              this.filter = 'newest';
+            } else if (
+              this.group.configuration.canAddNewPosts === false &&
+              this.group.configuration.canVote === false
+            ) {
+              if (this.group.configuration.customRatings) {
+                this.filter = 'random';
+              } else {
+                this.filter = 'top';
+              }
             } else {
-              this.set('filter','top');
+              this.filter = 'random';
             }
-          } else {
-            this.set('filter','random');
+          } else if (!this.filter) {
+            this.filter = 'newest';
           }
-        } else if (!this.filter) {
-          this.set('filter','newest');
         }
+        this._loadMoreData();
       }
+    } else if (changedProperties.has('filter') && this.filter) {
       this._loadMoreData();
+    } else if (changedProperties.has('categoryId') && this.categoryId) {
+      this._loadMoreData();
+    }
+
+    if (changedProperties.has('searchingFor')) {
+      if (this.searchingFor && this.searchingFor != '') {
+        this.moreToLoad = true;
+        this.showSearchIcon = true;
+      } else {
+        this.showSearchIcon = false;
+      }
     }
   }
 
   _refreshGroupFromFilter() {
-    this.set("posts", null);
-    this.set('moreToLoad', true);
+    this.posts = [];
+    this.moreToLoad = true;
     this._loadMoreData();
   }
 
-  _loadMoreData() {
+  async _loadMoreData() {
     if (this.moreToLoad && this.group) {
-      console.info("_loadMoreData for groupId: "+this.groupId+" statusFilter: "+this.statusFilter);
-
-      this.set('moreToLoad', false);
-      this.set('noPosts', false);
-      const objectId, objectType;
+      this.moreToLoad = false;
+      this.noPosts = false;
+      let objectIdString: string;
+      let objectType: string;
+      let url: string;
 
       if (this.userId) {
-        objectId = this.userId + '/posts';
+        objectIdString = this.userId + '/posts';
         objectType = 'users';
       } else {
-        objectId = this.groupId;
+        objectIdString = `${this.group.id}`;
         objectType = 'groups';
       }
 
       if (this.searchingFor) {
-        this.$$('#ajax').url = '/api/' + objectType + '/' + objectId+ '/search/' + this.searchingFor;
+        url =
+          '/api/' +
+          objectType +
+          '/' +
+          objectIdString +
+          '/search/' +
+          this.searchingFor;
       } else {
-        this.$$('#ajax').url = '/api/' + objectType + '/' + objectId + '/posts/' + this.filter;
+        url =
+          '/api/' + objectType + '/' + objectIdString + '/posts/' + this.filter;
         if (this.categoryId) {
-          this.$$('#ajax').url += '/' + this.categoryId;
+          url += '/' + this.categoryId;
         } else {
-          this.$$('#ajax').url += '/null';
+          url += '/null';
         }
-        this.$$('#ajax').url += '/'+this.statusFilter;
+        url += '/' + this.statusFilter;
       }
-      this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-      if (this.randomSeed) {
-        this.$$('#ajax').url += "&randomSeed="+this.randomSeed;
+      url += '?offset=' + this.posts.length;
+
+      const postsInfo = (await window.serverApi.getPosts(
+        url
+      )) as YpPostsInfoInterface;
+
+      if (postsInfo) {
+        this.postsCount = postsInfo.totalPostsCount;
+
+        this.fire('yp-post-count', {
+          type: this.type,
+          count: this.postsCount,
+        });
+
+        if (!this.posts) {
+          this.posts = postsInfo.posts;
+        } else {
+          for (let i = 0; i < postsInfo.posts.length; i++) {
+            this.posts.push(postsInfo.posts[i]);
+          }
+        }
+
+        if (postsInfo.posts.length == 0 && this.posts.length == 0) {
+          this.noPosts = true;
+        }
+
+        if (postsInfo.posts.length > 0) {
+          this.noPosts = false;
+        } else {
+          if (this.searchingFor && this.searchingFor != '') {
+            this.noPosts = false;
+          }
+        }
+
+        setTimeout(() => {
+          const postFilter = this.$$('#postsFilter') as YpPostFilter;
+          if (postFilter) {
+            postFilter._updateTitle();
+          }
+        }, 20);
+
+        setTimeout(() => {
+          (this.$$('#ironList') as IronListInterface).fire('iron-resize');
+        });
+
+        if (
+          postsInfo.posts.length > 0 &&
+          postsInfo.posts.length != this.postsCount
+        ) {
+          this.moreToLoad = true;
+        }
+
+        this.fireGlobal('yp-refresh-activities-scroll-threshold');
+
+        this._processCategories();
+        this._checkForMultipleLanguages(postsInfo.posts);
+        window.appGlobals.cache.addPostsToCacheLater(postsInfo.posts);
       }
-      this.$$('#ajax').generateRequest();
     }
   }
 
-  _postsResponse(event, detail, sender) {
-    const posts = detail.response.posts;
-    this .set('postsCount', detail.response.totalPostsCount);
-    this.fire('yp-post-count', {
-      tabCounterId: this.tabCounterId,
-      count: this.postsCount
-    } );
-
-    if (!this.posts) {
-      this.set('posts', posts);
-    } else {
-      for (let i = 0; i < posts.length; i++) {
-        this.push('posts', posts[i]);
-      }
-    }
-
-    if (posts.length==0 && (this.posts==null || this.posts.length==0)) {
-      this.set('noPosts', true);
-    }
-
-    if (posts.length>0) {
-      this.set('noPosts', false);
-    } else {
-      if (this.searchingFor && this.searchingFor!="") {
-        this.set('noPosts', false);
-      }
-    }
-
-    this.async(function () {
-      const postFilter = this.$$("#postsFilter");
-      if (postFilter) {
-        postFilter._updateTitle();
-      }
-    }, 20);
-
-    this.async(function () {
-      this.$$("#ironList").fire('iron-resize');
-    });
-
-    if (posts.length>0 && posts.length!=this.postsCount) {
-      this.set('moreToLoad', true);
-    }
-
-    document.dispatchEvent(
-      new CustomEvent("lite-signal", {
-        bubbles: true,
-        compose: true,
-        detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
-      })
-    );
-
-    this._processCategories();
-    this._checkForMultipleLanguages(posts);
-    window.appGlobals.addPostsToCacheLater(posts);
-  }
-
-  _checkForMultipleLanguages(posts) {
-    if (!localStorage.getItem("dontPromptForAutoTranslation") &&
-        !sessionStorage.getItem("dontPromptForAutoTranslation")) {
-      let firstLanguage=null;
-      let firstContent=null;
+  _checkForMultipleLanguages(posts: Array<YpPostData>) {
+    if (
+      !localStorage.getItem('dontPromptForAutoTranslation') &&
+      !sessionStorage.getItem('dontPromptForAutoTranslation')
+    ) {
+      let firstLanguage: string;
+      let firstContent: string;
       let multipleLanguages = false;
       posts.forEach(function (post) {
         if (post.language && !multipleLanguages) {
-          if (!firstLanguage && post.language!=='??') {
+          if (!firstLanguage && post.language !== '??') {
             firstLanguage = post.language;
             firstContent = post.description;
-          } else if (firstLanguage && firstLanguage!==post.language && post.language!=='??') {
+          } else if (
+            firstLanguage &&
+            firstLanguage !== post.language &&
+            post.language !== '??'
+          ) {
             multipleLanguages = true;
-            console.info("Multiple post languages: "+firstLanguage+" and "+post.language);
+            console.info(
+              'Multiple post languages: ' +
+                firstLanguage +
+                ' and ' +
+                post.language
+            );
             //console.info("A: "+firstContent+" B: "+post.description);
           }
         }
       });
 
       if (multipleLanguages) {
-        dom(document).querySelector('yp-app').getDialogAsync("autoTranslateDialog", function (dialog) {
+        window.appDialogs.getDialogAsync('autoTranslateDialog', dialog => {
           dialog.openLaterIfAutoTranslationEnabled();
-        }.bind(this));
+        });
       }
     }
   }
 
   _processCategories() {
-    if (this.categoryId && this.group) {
+    if (this.categoryId && this.group.Categories) {
       for (let i = 0; i < this.group.Categories.length; i++) {
         if (this.group.Categories[i].id == this.categoryId) {
           this.selectedCategoryName = this.group.Categories[i].name;
@@ -662,5 +618,3 @@ static get styles() {
     }
   }
 }
-
-window.customElements.define('yp-post-list-lit', YpPostListLit)

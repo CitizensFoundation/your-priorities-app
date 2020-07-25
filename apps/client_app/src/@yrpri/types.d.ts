@@ -30,7 +30,6 @@ interface YpCollectionConfiguration {
   customBackName?: string;
   customBackURL?: string;
   hideAllTabs?: boolean;
-
 }
 
 interface YpGroupConfiguration extends YpCollectionConfiguration {
@@ -47,6 +46,15 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   forceSecureSamlLogin?: boolean;
   makeMapViewDefault?: boolean;
   useCommunityTopBanner?: boolean;
+  alternativeTextForNewIdeaButtonClosed?: string;
+  alternativeTextForNewIdeaButton?: string;
+  hidePostFilterAndSearch?: boolean;
+  allPostsBlockedByDefault?: boolean;
+  disablePostPageLink?: boolean;
+  resourceLibraryLinkMode?: boolean;
+  forcePostSortMethodAs?: string;
+  canVote?: boolean;
+  customRatings?: string;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -195,6 +203,7 @@ interface YpGroupData extends YpCollectionData {
   community_id: number;
   configuration: YpGroupConfiguration;
   Community?: YpCommunityData;
+  Categories?: Array<YpCategoryData>;
   GroupLogoVideos?: Array<YpVideoData>;
   GroupHeaderImages?: Array<YpImageData>;
   GroupLogoImages?: Array<YpImageData>;
@@ -233,10 +242,11 @@ interface YpPostData extends YpDatabaseItem {
   cover_media_type?: string;
   group_id: number;
   user_id?: number;
+  language?: string;
   PostHeaderImages?: Array<YpImageData>;
   Category?: YpCategoryData;
   Group?: YpGroupData;
-  description?: string;
+  description: string;
   User?: YpUserData;
 }
 
@@ -287,6 +297,8 @@ declare interface IronListInterface extends HTMLElement {
   scrollToItem(item: YpDatabaseItem): () => void;
   updateViewportBoundaries(): () => void;
   notifyResize(): () => void;
+
+  fire(eventName: string): () => void;
 }
 
 declare interface IronScrollThresholdInterface extends HTMLElement {
@@ -299,4 +311,9 @@ declare interface YpSplitCollectionsReturn {
   active: Array<YpCollectionData>;
   archived: Array<YpCollectionData>;
   featured: Array<YpCollectionData>;
+}
+
+interface YpPostsInfoInterface {
+  posts: Array<YpPostData>;
+  totalPostsCount: number;
 }
