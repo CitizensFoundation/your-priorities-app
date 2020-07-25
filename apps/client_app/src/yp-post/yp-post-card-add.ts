@@ -4,6 +4,7 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
 import '../yp-magic-text/yp-magic-text.js';
+import '@material/mwc-icon';
 
 @customElement('yp-post-card-add')
 export class YpPostCardAdd extends YpBaseElement {

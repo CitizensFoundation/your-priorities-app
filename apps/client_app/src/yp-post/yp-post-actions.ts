@@ -274,9 +274,6 @@ export class YpPostActions extends YpBaseElement {
           </div>
         </div>
       </div>
-
-      <lite-signal
-        on-lite-signal-got-endorsements-and-qualities="_updateEndorsementsFromSignal"></lite-signal>
     `;
   }
 

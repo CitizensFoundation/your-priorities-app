@@ -1,19 +1,15 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
-import { ifDefined } from 'lit-html/directives/if-defined';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { Menu } from '@material/mwc-menu';
-import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-
 import { find, chunk } from 'lodash-es';
 
-import '@material/mwc-select'
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon';
+import { Select } from '@material/mwc-select';
 
 @customElement('yp-posts-filter')
 export class YpPostsFilter extends YpBaseElement {
@@ -56,36 +52,6 @@ export class YpPostsFilter extends YpBaseElement {
 
   @property({ type: Array })
   categoriesWithCount: Array<YpCategoryData> | undefined;
-
-  static get properties() {
-    return {
-      filter: {
-        type: String,
-        observer: '_filterChanged',
-      },
-
-      categoryId: {
-        type: String,
-        notify: true,
-        observer: '_categoryIdChanged',
-      },
-
-      group: {
-        type: Object,
-        observer: '_groupChanged',
-      },
-
-      searchingFor: {
-        type: String,
-        observer: '_searchingForChanged',
-      },
-
-      tabName: {
-        type: String,
-        observer: '_tabNameChanged',
-      },
-    };
-  }
 
   static get styles() {
     return [
@@ -231,13 +197,7 @@ export class YpPostsFilter extends YpBaseElement {
                     ${this.t('filterIdeas')}
                   </div>
 
-                  <div class="layout horizontal center-center">
-                    <yp-ajax
-                      id="categoriesWithCountAjax"
-                      @response="${this._categoriesCountResponse}"></yp-ajax>
-                  </div>
-
-                  <paper-listbox
+                  <mwc-select
                     slot="dropdown-content"
                     id="mainListMenu"
                     @iron-select="${this._changeFilter}">
@@ -266,7 +226,7 @@ export class YpPostsFilter extends YpBaseElement {
                       <mwc-icon icon="cached" class="filterIcon"></mwc-icon>
                       <span>${this.t('post.random')}</span>
                     </mwc-list-item>
-                  </paper-listbox>
+                  </mwc-select>
                 </div>
               </div>
             `
@@ -320,18 +280,6 @@ export class YpPostsFilter extends YpBaseElement {
     `;
   }
 
-  /*
-  behaviors: [
-    ypGotoBehavior,
-    ypMediaFormatsBehavior
-  ],
-
-
-  observers: [
-    '_listLanguageChanged(language)'
-  ],
-*/
-
   _getCategoryCount(id: number, categoryCounts: Array<YpCategoriesCount>) {
     const foundCategory = find(categoryCounts, function (categoryCount) {
       return categoryCount.category_id == id;
@@ -358,14 +306,6 @@ export class YpPostsFilter extends YpBaseElement {
     }
   }
 
-  _searchingForChanged(newValue, oldValue) {
-    if (newValue) {
-      this.showFilter = true;
-    } else {
-      this.showFilter = true;
-    }
-  }
-
   _clearSearch() {
     this.searchingFor = undefined;
     this.filter = 'newest';
@@ -374,19 +314,6 @@ export class YpPostsFilter extends YpBaseElement {
 
   openFilter() {
     window.appGlobals.activity('open', 'filter');
-  }
-
-  _filterChanged(newValue, oldValue) {
-    if (newValue) {
-      this.filterName = 'post.' + this.filter;
-      this._updateTitle();
-    }
-  }
-
-  _categoryIdChanged(newValue, oldValue) {
-    if (newValue) {
-      this._updateTitle();
-    }
   }
 
   _languageEvent(event: CustomEvent) {
@@ -411,7 +338,7 @@ export class YpPostsFilter extends YpBaseElement {
   _updateTitle() {
     if (this.searchingFor) {
       this.subTitle = this.t('post.searchingFor') + this.searchingFor;
-    } else {
+    } else if (this.filterName) {
       const translatedFilterName = this.t(this.filterName);
       let translatedCategoryName;
       if (this.categoryName) {
@@ -442,7 +369,7 @@ export class YpPostsFilter extends YpBaseElement {
     } else {
       this.categoryId = undefined;
       this.categoryName = undefined;
-      this.$$('#categoryMenu').selected = null;
+      (this.$$('#categoryMenu') as Select).value = '';
     }
     this._updateTitle();
     if (oldCategoryId !== this.categoryId) {
@@ -481,11 +408,11 @@ export class YpPostsFilter extends YpBaseElement {
     setTimeout(() => {
       const categoryMenu = this.$$('#categoryMenu');
       if (categoryMenu) {
-        (this.$$('#categoryMenu') as List).selected = null;
+        (this.$$('#categoryMenu') as Select).value = '';
       }
       const mainListMenu = this.$$('#mainListMenu');
       if (mainListMenu) {
-        this.$$('#mainListMenu').selected = null;
+        (this.$$('#mainListMenu') as Select).value = '';
       } else {
         console.error('Cant find mainListMenu menu');
       }
@@ -494,7 +421,10 @@ export class YpPostsFilter extends YpBaseElement {
 
   async _setupCategories() {
     this.categoriesWithCount = undefined;
-    const categoryCountsInfo = await window.serverApi.getCategoriesCount(this.group.id, this.tabName) as YpCategoriesCountInfo | void;
+    const categoryCountsInfo = (await window.serverApi.getCategoriesCount(
+      this.group.id,
+      this.tabName
+    )) as YpCategoriesCountInfo | void;
     if (categoryCountsInfo) {
       const categoryCounts = categoryCountsInfo.categoryCounts;
       this.allPostCount = categoryCountsInfo.allPostCount;
@@ -510,12 +440,7 @@ export class YpPostsFilter extends YpBaseElement {
       if (categoriesWithCount.length > 1) {
         this.categoriesWithCount = categoriesWithCount;
         setTimeout(() => {
-          const categoryMenu = this.$$('#categoryMenu');
-          if (categoryMenu) {
-            categoryMenu.selected = '-1';
-          } else {
-            console.error('Cant set category menu');
-          }
+          (this.$$('#categoryMenu') as Select).value = '';
         });
       } else {
         console.error('Unexpected categories count');
@@ -523,16 +448,35 @@ export class YpPostsFilter extends YpBaseElement {
     }
   }
 
-  _groupChanged(group) {
-    this.categoriesWithCount = undefined;
-    this.allPostCount = 0;
-    this.categoryId = undefined;
-    if (this.group) {
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('group') && this.group) {
+      this.categoriesWithCount = undefined;
+      this.allPostCount = 0;
+      this.categoryId = undefined;
       this._updateTitle();
-      if (group.Categories && group.Categories.length > 0) {
+      if (this.group.Categories && this.group.Categories.length > 0) {
         this._setupCategories();
       }
       this.resetSelection();
+    }
+
+    if (changedProperties.has('filter') && this.filter) {
+      this.filterName = 'post.' + this.filter;
+      this._updateTitle();
+    }
+
+    if (changedProperties.has('categoryId') && this.categoryId) {
+      this._updateTitle();
+    }
+
+    if (changedProperties.has('searchingFor')) {
+      if (this.searchingFor) {
+        this.showFilter = true;
+      } else {
+        this.showFilter = true;
+      }
     }
   }
 

@@ -6,6 +6,12 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
+import '../yp-magic-text/yp-magic-text.js';
+import './yp-post-cover-media.js';
+import './yp-post-actions.js';
+
+import '@material/mwc-icon-button';
+
 @customElement('yp-post-card')
 export class YpPostCard extends YpBaseElement {
   @property({ type: String })
@@ -337,7 +343,7 @@ export class YpPostCard extends YpBaseElement {
             ${!this.mini
               ? html`
                   <div class="share">
-                    <paper-share-button
+                    <mwc-icon-button
                       @share-tap="${this._shareTap}"
                       class="shareIcon"
                       ?lessMargin="${this.post.Group.configuration
@@ -352,7 +358,7 @@ export class YpPostCard extends YpBaseElement {
                       twitter
                       popup
                       url="${this._fullPostUrl}">
-                    </paper-share-button>
+                    </mwc-icon-button>
                   </div>
                   ${this.post.Group.configuration.customRatings
                     ? html`

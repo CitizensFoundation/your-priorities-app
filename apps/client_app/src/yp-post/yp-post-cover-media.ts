@@ -6,6 +6,8 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
+import '@polymer/iron-image';
+
 @customElement('yp-post-cover-media')
 export class YpPostCoverMedia extends YpBaseElement {
   @property({ type: Object })
@@ -63,6 +65,7 @@ export class YpPostCoverMedia extends YpBaseElement {
   @property({ type: Boolean })
   portraitVideo = false;
 
+  // From YpElementWithPlayback
   playStartedAt: Date | undefined;
   videoPlayListener: Function | undefined;
   videoPauseListener: Function | undefined;

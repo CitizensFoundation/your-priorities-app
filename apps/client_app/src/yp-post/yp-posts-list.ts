@@ -3,7 +3,14 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 
 import '@material/mwc-icon-button';
+import '@material/mwc-input';
+import '@polymer/iron-list';
+
+import './yp-posts-filter.js';
+import './yp-post-card.js';
+
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { YpPostCard } from './yp-post-card.js';
 
 @customElement('yp-posts-list')
 export class YpPostsList extends YpBaseElement {
@@ -259,7 +266,7 @@ export class YpPostsList extends YpBaseElement {
             @selected-item-changed="${this._selectedItemChanged}"
             .items="${this.posts}"
             as="post"
-            scrollTarget="document"
+            scroll-target="document"
             ?grid="${this.wide}"
             role="list">
             <template>
@@ -297,7 +304,7 @@ export class YpPostsList extends YpBaseElement {
   _selectedItemChanged(event: CustomEvent) {
     const detail = event.detail;
     if (detail && detail.value) {
-      const selectedCard = this.$$('#postCard' + detail.value.id);
+      const selectedCard = this.$$('#postCard' + detail.value.id) as YpPostCard;
       if (selectedCard) {
         selectedCard.clickOnA();
       }
