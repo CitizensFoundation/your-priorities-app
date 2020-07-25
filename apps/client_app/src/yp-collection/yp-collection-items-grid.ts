@@ -4,6 +4,9 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
+import '@polymer/iron-list';
+import './yp-collection-item-card.js';
+
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
   @property({ type: Object })

@@ -10,6 +10,11 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { Menu } from '@material/mwc-menu';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
+import '@polymer/iron-image';
+import '../yp-magic-text/yp-magic-text.js';
+import './yp-collection-stats.js';
+
+
 @customElement('yp-collection-item-card')
 export class YpCollectionItemCard extends YpBaseElement {
   @property({ type: Object })

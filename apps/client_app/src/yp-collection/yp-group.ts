@@ -7,7 +7,13 @@ import { customElement, html, property, LitElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 
-import '../yp-post/yp-post-list.js';
+import '@material/mwc-fab';
+import '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import '@polymer/iron-scroll-threshold';
+
+import '../yp-post/yp-posts-list.js';
+import '../yp-post/yp-post-card-add.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
