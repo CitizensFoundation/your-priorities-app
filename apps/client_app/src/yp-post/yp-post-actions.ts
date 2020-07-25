@@ -264,7 +264,7 @@ export class YpPostActions extends YpBaseElement {
             smaller-icons="${this.smallerIcons}"
             ?disabled="${this.allDisabled}"
             title="${this.customVoteDownHoverText}"
-            icon="${this.endorseModeIconDown}"
+            icon="${ifDefined(this.endorseModeIconDown)}"
             class="action-icon down-vote-icon mainIcons"
             @click="${this.downVote}"></mwc-icon-button>
           <div
@@ -368,7 +368,7 @@ export class YpPostActions extends YpBaseElement {
         this.post.Group.configuration &&
         this.post.Group.configuration.endorsementButtons != undefined
       ) {
-        this.endorsementButtons = post.Group.configuration.endorsementButtons;
+        this.endorsementButtons = this.post.Group.configuration.endorsementButtons;
       } else {
         this.endorsementButtons = 'hearts';
       }
@@ -521,7 +521,7 @@ export class YpPostActions extends YpBaseElement {
         this.post.id,
         method,
         { post_id: this.post.id, value: value }
-      )) as YpEndorseResponse;
+      )) as YpEndorseResponse | void;
 
       if (endorseResponse) {
         this._enableVoting();

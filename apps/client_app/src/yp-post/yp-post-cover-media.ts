@@ -464,10 +464,10 @@ export class YpPostCoverMedia extends YpBaseElement {
                       ? html`
                           <google-streetview-pano
                             .position="${this.mapPosition}"
-                            .heading="330"
+                            heading="330"
                             api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-                            .pitch="2"
-                            .zoom="0.8"
+                            pitch="2"
+                            zoom="0.8"
                             disable-default-ui=""></google-streetview-pano>
                         `
                       : nothing}

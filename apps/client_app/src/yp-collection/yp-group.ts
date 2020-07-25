@@ -5,7 +5,6 @@ import { YpCollection } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement, html, property, LitElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 
 import '@material/mwc-fab';
 import '@material/mwc-tab';
@@ -14,6 +13,7 @@ import '@polymer/iron-scroll-threshold';
 
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
+import { YpPostsList } from '../yp-post/yp-posts-list.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -190,15 +190,17 @@ export class YpGroup extends YpCollection {
   }
 
   renderPostList(type: string): TemplateResult {
-    return this.collection ? html`
-      <yp-posts-list
-        id="${type}PostList"
-        .selectedGroupTab="${this.selectedGroupTab}"
-        .listRoute="${this.subRoute}"
-        .type="${type}"
-        .searchingFor="${this.searchingFor}"
-        .group="${this.collection as YpGroupData}"></yp-posts-list>
-    ` : html``;
+    return this.collection
+      ? html`
+          <yp-posts-list
+            id="${type}PostList"
+            .selectedGroupTab="${this.selectedGroupTab}"
+            .listRoute="${this.subRoute}"
+            .type="${type}"
+            .searchingFor="${this.searchingFor}"
+            .group="${this.collection as YpGroupData}"></yp-posts-list>
+        `
+      : html``;
   }
 
   renderCurrentGroupTabPage(): TemplateResult | undefined {
@@ -262,7 +264,7 @@ export class YpGroup extends YpCollection {
         id="scrollTheshold"
         lowerThreshold="550"
         @lower-threshold="${this._loadMoreData}"
-        scrollTarget="document">
+        scroll-target="document">
       </iron-scroll-threshold>
     `;
   }
@@ -284,13 +286,26 @@ export class YpGroup extends YpCollection {
 
   _newPost() {
     window.appGlobals.activity('open', 'newPost');
+    //TODO: Fix ts type
     window.appDialogs.getDialogAsync(
-        'postEdit',
-        (dialog) => {
-          dialog.setup(null, true, null);
-          dialog.open('new', { groupId: this.collectionId, group: this.collection });
-        }
-      );
+      'postEdit',
+      (dialog: {
+        setup: (arg0: null, arg1: boolean, arg2: null) => void;
+        open: (
+          arg0: string,
+          arg1: {
+            groupId: number | undefined;
+            group: YpCollectionData | undefined;
+          }
+        ) => void;
+      }) => {
+        dialog.setup(null, true, null);
+        dialog.open('new', {
+          groupId: this.collectionId,
+          group: this.collection,
+        });
+      }
+    );
   }
 
   _clearScrollThreshold() {
@@ -349,7 +364,7 @@ export class YpGroup extends YpCollection {
 
   _loadMoreData() {
     if (this._isCurrentPostsTab) {
-      const tab = this.getCurrentTabElement() as YpPostList;
+      const tab = this.getCurrentTabElement() as YpPostsList;
       if (tab) {
         tab._loadMoreData();
       } else {
@@ -361,7 +376,7 @@ export class YpGroup extends YpCollection {
   }
 
   _goToPostIdTab() {
-    const tab = this.getCurrentTabElement() as YpPostList;
+    const tab = this.getCurrentTabElement() as YpPostsList;
     if (tab && window.appGlobals.cache.cachedPostItem !== undefined) {
       tab.scrollToPost(window.appGlobals.cache.cachedPostItem);
       window.appGlobals.cache.cachedPostItem = undefined;
@@ -372,7 +387,7 @@ export class YpGroup extends YpCollection {
 
   _refreshGroupPosts() {
     if (this._isCurrentPostsTab) {
-      const tab = this.getCurrentTabElement() as YpPostList;
+      const tab = this.getCurrentTabElement() as YpPostsList;
       if (tab) tab._refreshGroupFromFilter();
       else console.error('TODO: Check, cant find tab to refresh');
     } else {
@@ -418,9 +433,13 @@ export class YpGroup extends YpCollection {
       }
 
       setTimeout(async () => {
-        this.hasNonOpenPosts = await window.serverApi.getHasNonOpenPosts(
+        const checkResults = await window.serverApi.getHasNonOpenPosts(
           group.id
-        );
+        ) as boolean | void;
+
+        if (checkResults) {
+          this.hasNonOpenPosts = checkResults;
+        }
       });
 
       window.appGlobals.analytics.setCommunityAnalyticsTracker(
@@ -438,14 +457,22 @@ export class YpGroup extends YpCollection {
         (group.configuration &&
           group.configuration.themeOverrideColorPrimary != null)
       ) {
-        window.appGlobals.theme.setTheme(group.theme_id, this, group.configuration);
+        window.appGlobals.theme.setTheme(
+          group.theme_id,
+          this,
+          group.configuration
+        );
       } else if (
         group.Community &&
         (group.Community.theme_id != null ||
           (group.Community.configuration &&
             group.Community.configuration.themeOverrideColorPrimary))
       ) {
-        window.appGlobals.theme.setTheme(group.Community.theme_id, this, group.Community.configuration);
+        window.appGlobals.theme.setTheme(
+          group.Community.theme_id,
+          this,
+          group.Community.configuration
+        );
       } else if (
         group.Community &&
         group.Community.Domain &&
@@ -472,7 +499,10 @@ export class YpGroup extends YpCollection {
         group.Community.CommunityHeaderImages &&
         group.Community.CommunityHeaderImages.length > 0
       ) {
-        YpMediaHelpers.setupTopHeaderImage(this, group.Community.CommunityHeaderImages);
+        YpMediaHelpers.setupTopHeaderImage(
+          this,
+          group.Community.CommunityHeaderImages
+        );
       } else if (
         group.GroupHeaderImages &&
         group.GroupHeaderImages.length > 0

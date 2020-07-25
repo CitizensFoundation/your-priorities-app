@@ -180,7 +180,7 @@ export abstract class YpCollection extends YpBaseElement {
         icon="rss_feed"
         stacked></mwc-tab>
       <mwc-tab
-        ?hidden="${this.hideMap}"
+        ?hidden="${this.locationHidden}"
         .label="${this.t('map')}"
         icon="map"
         stacked></mwc-tab>
@@ -239,7 +239,7 @@ export abstract class YpCollection extends YpBaseElement {
       ${this.renderHeader()}
       ${this.renderTabs()}
       ${this.renderCurrentTabPage()}
-      ${this.createFabIcon
+      ${this.createFabIcon && this.createFabLabel
         ? html` <mwc-fab
             ?extended="${this.wide}"
             .label="${this.createFabLabel}"

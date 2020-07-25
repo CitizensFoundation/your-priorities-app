@@ -156,7 +156,42 @@ export class YpServerApi extends YpCodeBase {
 
   public getCategoriesCount(id: number, tabName: string | undefined) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/group/${id}/categories_count/${tabName}`
+      this.baseUrlPath + `/groups/${id}/categories_count/${tabName}`
+    );
+  }
+
+  public getGroupPosts(searchUrl: string) {
+    return this.fetchWrapper(
+      searchUrl
+    );
+  }
+
+  public getPost(postId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/post/${postId}`
+    );
+  }
+
+  public endorsePost(postId: number, method: string, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/posts/${postId}/endorse`,
+      {
+        method: method,
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public getHasNonOpenPosts(groupId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${groupId}/checkNonOpenPosts`
+    );
+  }
+
+  public getHelpPages(collectionType: string, collectionId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${collectionType}/${collectionId}/pages`
     );
   }
 }

@@ -11,6 +11,7 @@ import './yp-post-card.js';
 
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpPostCard } from './yp-post-card.js';
+import { YpPostsFilter } from './yp-posts-filter.js';
 
 @customElement('yp-posts-list')
 export class YpPostsList extends YpBaseElement {
@@ -311,17 +312,20 @@ export class YpPostsList extends YpBaseElement {
     }
   }
 
-  _refreshPost(event: CustomEvent) {
-    const post = window.serverApi.getPost(event.detail.id);
-    if (post) {
-      for (let i = 0; i < this.posts.length; i++) {
-        if (this.posts[i].id == post.id) {
-          this.posts[i] = post;
-          window.appGlobals.cache.updatePostInCache(post);
-          setTimeout(() => {
-            (this.$$('#ironList') as IronListInterface).fire('iron-resize');
-          });
-          break;
+  async _refreshPost(event: CustomEvent) {
+    const postId: number = event.detail.id as number;
+    if (postId) {
+      const post = await window.serverApi.getPost(postId) as YpPostData | void;
+      if (post) {
+        for (let i = 0; i < this.posts.length; i++) {
+          if (this.posts[i].id == post.id) {
+            this.posts[i] = post;
+            window.appGlobals.cache.updatePostInCache(post);
+            setTimeout(() => {
+              (this.$$('#ironList') as IronListInterface).fire('iron-resize');
+            });
+            break;
+          }
         }
       }
     }
@@ -508,9 +512,9 @@ export class YpPostsList extends YpBaseElement {
       }
       url += '?offset=' + this.posts.length;
 
-      const postsInfo = (await window.serverApi.getPosts(
+      const postsInfo = (await window.serverApi.getGroupPosts(
         url
-      )) as YpPostsInfoInterface;
+      )) as YpPostsInfoInterface | void;
 
       if (postsInfo) {
         this.postsCount = postsInfo.totalPostsCount;
@@ -598,7 +602,8 @@ export class YpPostsList extends YpBaseElement {
       });
 
       if (multipleLanguages) {
-        window.appDialogs.getDialogAsync('autoTranslateDialog', dialog => {
+        //TODO: Fix explicit typedef
+        window.appDialogs.getDialogAsync('autoTranslateDialog', (dialog: { openLaterIfAutoTranslationEnabled: () => void }) => {
           dialog.openLaterIfAutoTranslationEnabled();
         });
       }

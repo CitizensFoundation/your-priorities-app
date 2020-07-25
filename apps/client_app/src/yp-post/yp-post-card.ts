@@ -370,8 +370,6 @@ export class YpPostCard extends YpBaseElement {
                         <yp-post-actions
                           floating
                           class="postActions"
-                          elevation="-1"
-                          .endorseMode="${this.endorseMode}"
                           .post="${this.post}"
                           ?hidden="${this.mini}">
                         </yp-post-actions>
@@ -507,10 +505,11 @@ export class YpPostCard extends YpBaseElement {
   }
 
   _refresh() {
+    //TODO: Fix ts type
     window.appDialogs
       .getDialogAsync(
         'postEdit',
-       (dialog) => {
+       (dialog: { selected: number }) => {
           dialog.selected = 0;
           this.fire('refresh');
         }
@@ -519,10 +518,11 @@ export class YpPostCard extends YpBaseElement {
 
   _openReport() {
     window.appGlobals.activity('open', 'post.report');
+    //TODO: Fix ts type
     window.appDialogs
       .getDialogAsync(
         'apiActionDialog',
-       (dialog) => {
+       (dialog: { setup: (arg0: string, arg1: string, arg2: () => void, arg3: string, arg4: string) => void; open: () => void }) => {
           dialog.setup(
             '/api/posts/' + this.post.id + '/report',
             this.t('reportConfirmation'),
