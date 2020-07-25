@@ -79,6 +79,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideVoteCountUntilVoteCompleted?: boolean;
   endorsementButtons?: string;
   useContainImageMode?: boolean;
+  uploadedDefaultPostImageId?: number;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -278,6 +279,14 @@ interface YpPostData extends YpDatabaseItem {
   public_data?: {
     structuredAnswersJson?: Array<YpStructuredAnswers>;
   };
+  location: {
+    longitude: string;
+    latitude: string;
+    map_zoom: string;
+    mapType: string;
+  };
+  PostVideos?: Array<YpVideoData>;
+  PostAudios?: Array<YpAudioData>;
 }
 
 interface YpPointRevision {
