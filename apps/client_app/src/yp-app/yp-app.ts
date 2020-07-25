@@ -7,6 +7,7 @@ import '../yp-app-globals/yp-sw-update-toast.js';
 */
 
 import { customElement, property, html, LitElement } from 'lit-element';
+import { nothing } from 'lit-html';
 import { cache } from 'lit-html/directives/cache.js';
 
 import i18next from 'i18next';
@@ -28,6 +29,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon-button';
 
 import '@material/mwc-menu';
+import { Menu } from '@material/mwc-menu';
 
 import '@material/mwc-top-app-bar';
 
@@ -39,8 +41,11 @@ import { YpAppGlobals } from './YpAppGlobals.js';
 import { YpAppUser } from './YpAppUser.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { nothing } from 'lit-html';
-import { Menu } from '@material/mwc-menu';
+import { YpAppDialogs } from './yp-app-dialogs.js';
+
+import '../yp-collection/yp-domain.js';
+import '../yp-collection/yp-community.js';
+import '../yp-collection/yp-group.js';
 
 declare global {
   interface Window {
@@ -76,7 +81,7 @@ export class YpApp extends YpBaseElement {
   forwardToPostId: string | null = null;
 
   @property({ type: String })
-  headerTitle: string | null = "Betri Reykjavík";
+  headerTitle: string | null = 'Betri Reykjavík';
 
   @property({ type: String })
   numberOfUnViewedNotifications: string | null = null;
@@ -176,11 +181,13 @@ export class YpApp extends YpBaseElement {
 
   _netWorkError(event: CustomEvent) {
     const detail = event.detail;
-    let errorText =  this.t('errorCantConnect')  ? this.t('errorCantConnect') : "Can't connect to server, try again later";
+    let errorText = this.t('errorCantConnect')
+      ? this.t('errorCantConnect')
+      : "Can't connect to server, try again later";
     let statusCode = -1;
     if (detail.response && detail.response.statusCode === 404)
       errorText = this.t('errorNotAuthorized');
-    else if  (detail.response && detail.response.statusCode === 401)
+    else if (detail.response && detail.response.statusCode === 401)
       errorText = this.t('errorNotAuthorized');
 
     if (detail.response && detail.response.statusCode)
@@ -189,7 +196,7 @@ export class YpApp extends YpBaseElement {
     this.notifyDialogText = errorText;
     (this.$$('#dialog') as Dialog).open = true;
 
-    console.error(`Can't connect to server. ${statusCode} ${detail.jsonError}`)
+    console.error(`Can't connect to server. ${statusCode} ${detail.jsonError}`);
   }
 
   _setupEventListeners() {
@@ -330,22 +337,17 @@ export class YpApp extends YpBaseElement {
       icons = html`<mwc-icon-button
         title="${this.t('close')}"
         icon="menu"
-        @click="${this._closePost}"
-      ></mwc-icon-button>`;
+        @click="${this._closePost}"></mwc-icon-button>`;
     else
-      icons = html`
-      <mwc-icon-button
-        icon="menu"
-        title="${this.t('openMainMenu')}"
-        slot="actionItems"
-        @click="${this._toggleNavDrawer}">
-      </mwc-icon-button>
+      icons = html` <mwc-icon-button
+          icon="menu"
+          title="${this.t('openMainMenu')}"
+          slot="actionItems"
+          @click="${this._toggleNavDrawer}">
+        </mwc-icon-button>
 
-      <mwc-icon-button
-        icon="arrow_upward"
-        hidden
-        title="${this.t('goBack')}">
-      </mwc-icon-button>`;
+        <mwc-icon-button icon="arrow_upward" hidden title="${this.t('goBack')}">
+        </mwc-icon-button>`;
 
     return html`${icons}
     ${this.goForwardToPostId
@@ -354,14 +356,13 @@ export class YpApp extends YpBaseElement {
             icon="menu"
             title="${this.t('forwardToPost')}"
             title=""
-            @click="${this._goToNextPost}"
-          ></mwc-icon-button>
+            @click="${this._goToNextPost}"></mwc-icon-button>
         `
       : nothing}`;
   }
 
   _openHelpMenu() {
-    (this.$$("helpMenu") as Menu).open = true;
+    (this.$$('helpMenu') as Menu).open = true;
   }
 
   renderActionItems() {
@@ -375,7 +376,10 @@ export class YpApp extends YpBaseElement {
         .label="${this.t('stopAutoTranslate')}">
       </mwc-icon-button>
 
-      <div style="position: relative;" ?hidden="${this.hideHelpIcon}" slot="actionItems">
+      <div
+        style="position: relative;"
+        ?hidden="${this.hideHelpIcon}"
+        slot="actionItems">
         <mwc-icon-button
           id="helpIconButton"
           icon="help_outline"
@@ -399,31 +403,28 @@ export class YpApp extends YpBaseElement {
 
       ${this.user
         ? html`
-          <div
-            class="userImageNotificationContainer layout horizontal"
-            @click="${this._toggleUserDrawer}"
-            slot="actionItems">
-            <yp-user-image
-              id="userImage"
-              small
-              .user="${this.user}">
-            </yp-user-image>
-            <paper-badge
-              id="notificationBadge"
-              class="activeBadge"
-              .label="${this.numberOfUnViewedNotifications}"
-              ?hidden="${!this.numberOfUnViewedNotifications}">
-            </paper-badge>
-          </div>
-        `
-      : html`
-        <mwc-icon-button
-          icon="login"
-          slot="actionItems"
-          @click="${this._login}"
-          title="${this.t('user.login')}">
-        </mwc-icon-button>
-        `}
+            <div
+              class="userImageNotificationContainer layout horizontal"
+              @click="${this._toggleUserDrawer}"
+              slot="actionItems">
+              <yp-user-image id="userImage" small .user="${this.user}">
+              </yp-user-image>
+              <paper-badge
+                id="notificationBadge"
+                class="activeBadge"
+                .label="${this.numberOfUnViewedNotifications}"
+                ?hidden="${!this.numberOfUnViewedNotifications}">
+              </paper-badge>
+            </div>
+          `
+        : html`
+            <mwc-icon-button
+              icon="login"
+              slot="actionItems"
+              @click="${this._login}"
+              title="${this.t('user.login')}">
+            </mwc-icon-button>
+          `}
     `;
   }
 
@@ -461,14 +462,16 @@ export class YpApp extends YpBaseElement {
       switch (this.page) {
         case 'domain':
           pageHtml = cache(html`
-            <yp-domain id="domainPage" role="main" aria-label="${this.t('communities')}" .idRoute="${this.subRoute}"></yp-domain>
+            <yp-domain
+              id="domainPage"
+              role="main"
+              aria-label="${this.t('communities')}"
+              .idRoute="${this.subRoute}"></yp-domain>
           `);
           break;
         case 'community':
           pageHtml = cache(html`
-            <yp-community
-              id="communityPage"
-              .idRoute="${this.subRoute}">
+            <yp-community id="communityPage" .idRoute="${this.subRoute}">
             </yp-community>
           `);
           break;
