@@ -273,7 +273,7 @@ export class YpMagicText extends YpBaseElement {
             return;
         }
 
-        this.processedContent = await window.serverApi.getTranslation(url, params);
+        this.processedContent = await window.serverApi.getTranslation(url, params) as string | undefined;
         if (this.processedContent) {
           window.appGlobals.cache.autoTranslateCache[this.indexKey] = this.processedContent;
           this.fire('new-translation');
