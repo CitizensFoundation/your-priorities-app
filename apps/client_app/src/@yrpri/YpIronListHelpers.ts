@@ -31,6 +31,8 @@ export class YpIronListHelpers {
             list.notifyResize();
           })
         }
+      } else {
+        console.error("Can't find list to setup for size resize");
       }
     };
     window.addEventListener("resize", baseElement.resetListSize);

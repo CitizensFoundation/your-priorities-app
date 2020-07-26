@@ -434,29 +434,18 @@ export class YpApp extends YpBaseElement {
 
   renderAppBar() {
     return html`
-      <mwc-drawer hasHeader type="modal">
-        <span slot="title">Drawer Title</span>
-        <span slot="subtitle">subtitle</span>
+      <mwc-top-app-bar>
+        <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
+        <div slot="title">
+          ${this.goForwardToPostId
+            ? this.goForwardPostName
+            : this.headerTitle}
+        </div>
+        ${this.renderActionItems()}
         <div>
-          <p>Drawer content!</p>
-          <mwc-icon-button icon="gesture"></mwc-icon-button>
-          <mwc-icon-button icon="gavel"></mwc-icon-button>
+          ${this.renderPage()}
         </div>
-        <div slot="appContent">
-          <mwc-top-app-bar>
-            <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
-            <div slot="title">
-              ${this.goForwardToPostId
-                ? this.goForwardPostName
-                : this.headerTitle}
-            </div>
-            ${this.renderActionItems()}
-            <div>
-              ${this.renderPage()}
-            </div>
-          </mwc-top-app-bar>
-        </div>
-      </mwc-drawer>
+      </mwc-top-app-bar>
     `;
   }
 

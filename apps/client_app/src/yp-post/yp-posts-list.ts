@@ -259,42 +259,45 @@ export class YpPostsList extends YpBaseElement {
               </div>
             `
           : html``}
-        <div class="layout horizontal center-center">
-          <iron-list
-            id="ironList"
-            selection-enabled=""
-            .scrollOffset="${this.scrollOffset}"
-            @selected-item-changed="${this._selectedItemChanged}"
-            .items="${this.posts}"
-            as="post"
-            scroll-target="document"
-            ?grid="${this.wide}"
-            role="list">
-            <template>
-              <div
-                ?wide-padding="${this.wide}"
-                class="card layout vertical center-center"
-                aria-label="[[post.name]]"
-                role="listitem"
-                aria-level="2"
-                tabindex="[[index]]">
-                <yp-post-card
-                  id="postCard[[post.id]]"
-                  @refresh="${this._refreshPost}"
-                  class="card"
-                  post="[[post]]">
-                </yp-post-card>
+        ${this.posts
+          ? html`
+              <div class="layout horizontal center-center">
+                <iron-list
+                  id="ironList"
+                  selection-enabled=""
+                  .scrollOffset="${this.scrollOffset}"
+                  @selected-item-changed="${this._selectedItemChanged}"
+                  .items="${this.posts}"
+                  as="post"
+                  scroll-target="document"
+                  ?grid="${this.wide}"
+                  role="list">
+                  <template>
+                    <div
+                      ?wide-padding="${this.wide}"
+                      class="card layout vertical center-center"
+                      aria-label="[[post.name]]"
+                      role="listitem"
+                      aria-level="2"
+                      tabindex="[[index]]">
+                      <yp-post-card
+                        id="postCard[[post.id]]"
+                        @refresh="${this._refreshPost}"
+                        class="card"
+                        post="[[post]]">
+                      </yp-post-card>
+                    </div>
+                  </template>
+                </iron-list>
               </div>
-            </template>
-          </iron-list>
-        </div>
+            `
+          : nothing}
       </div>
     `;
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
-    YpIronListHelpers.attachListeners(this as YpElementWithIronList);
   }
 
   disconnectedCallback() {
@@ -323,6 +326,8 @@ export class YpPostsList extends YpBaseElement {
           if (this.posts[i].id == post.id) {
             this.posts[i] = post;
             window.appGlobals.cache.updatePostInCache(post);
+            this.requestUpdate;
+            await this.updateComplete;
             setTimeout(() => {
               (this.$$('#ironList') as IronListInterface).fire('iron-resize');
             });
@@ -410,7 +415,7 @@ export class YpPostsList extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
     if (changedProperties.has('group') && this.group) {
-     const allowedForceByValues = [
+      const allowedForceByValues = [
         'oldest',
         'newest',
         'top',
@@ -454,12 +459,16 @@ export class YpPostsList extends YpBaseElement {
             this.filter = 'newest';
           }
         }
-        console.error("LOADMOERE");
+        console.error('LOADMORE FOR CONTAINER');
         this._loadMoreData();
       }
     } else if (this.group && changedProperties.has('filter') && this.filter) {
       this._loadMoreData();
-    } else if (this.group && changedProperties.has('categoryId') && this.categoryId) {
+    } else if (
+      this.group &&
+      changedProperties.has('categoryId') &&
+      this.categoryId
+    ) {
       this._loadMoreData();
     }
 
@@ -474,7 +483,7 @@ export class YpPostsList extends YpBaseElement {
   }
 
   _refreshGroupFromFilter() {
-    this.posts = [];
+    this.posts = undefined;
     this.moreToLoad = true;
     this._loadMoreData();
   }
@@ -513,8 +522,7 @@ export class YpPostsList extends YpBaseElement {
         }
         url += '/' + this.statusFilter;
       }
-      if (this.posts)
-        url += '?offset=' + this.posts.length;
+      if (this.posts) url += '?offset=' + this.posts.length;
 
       const postsInfo = (await window.serverApi.getGroupPosts(
         url
@@ -555,10 +563,6 @@ export class YpPostsList extends YpBaseElement {
           }
         }, 20);
 
-        setTimeout(() => {
-          (this.$$('#ironList') as IronListInterface).fire('iron-resize');
-        });
-
         if (
           postsInfo.posts.length > 0 &&
           postsInfo.posts.length != this.postsCount
@@ -571,6 +575,13 @@ export class YpPostsList extends YpBaseElement {
         this._processCategories();
         this._checkForMultipleLanguages(postsInfo.posts);
         window.appGlobals.cache.addPostsToCacheLater(postsInfo.posts);
+        await this.updateComplete;
+        YpIronListHelpers.detachListeners(this as YpElementWithIronList);
+        YpIronListHelpers.attachListeners(this as YpElementWithIronList);
+        //TODO: Fix this hardcoded timeout for iron lise
+        setTimeout(() => {
+          (this.$$('#ironList') as IronListInterface).fire('iron-resize');
+        }, 50);
       }
     }
   }
