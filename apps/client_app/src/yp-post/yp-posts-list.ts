@@ -3,7 +3,7 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 
 import '@material/mwc-icon-button';
-import '@material/mwc-input';
+import '@material/mwc-textfield';
 import '@polymer/iron-list';
 
 import './yp-posts-filter.js';
@@ -231,13 +231,13 @@ export class YpPostsList extends YpBaseElement {
             </yp-posts-filter>
           </div>
           <div class="layout horizontal center-center">
-            <mwc-input
+            <mwc-textfield
               id="searchInput"
               @keydown="${this._searchKey}"
               .label="${this.t('searchFor')}"
               .value="${this.searchingFor}"
               class="searchBox">
-            </mwc-input>
+            </mwc-textfield>
             <mwc-icon-button
               .label="${this.t('startSearch')}"
               icon="search"

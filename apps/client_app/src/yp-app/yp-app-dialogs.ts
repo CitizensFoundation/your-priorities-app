@@ -218,11 +218,13 @@ export class YpAppDialogs extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
+    /* TODO: Do we still need this?
     setTimeout(() => {
       import('./yp-dialog-container-delayed.js').then(() => {
         this.haveLoadedDelayed = true;
       });
     }, 3000);
+    */
   }
 
   async openPixelCookieConfirm(facebookPixelTrackingId: string) {
@@ -252,9 +254,11 @@ export class YpAppDialogs extends YpBaseElement {
       this.hasLoggedInUser = true;
       if (!this.loadingStartedLoggedIn) {
         this.loadingStartedLoggedIn = true;
+      /* TODO: Do we still need this?
         import('./yp-dialog-container-logged-in.js').then(() => {
           console.info('Have loaded logged-in container');
         });
+        */
       } else {
         console.warn(
           'Trying to load logged in twice, see appUser potentially removing that second event'
@@ -294,6 +298,7 @@ export class YpAppDialogs extends YpBaseElement {
       this.getDialogAsync('ratings', callback);
     } else {
       this.openLoadingDialog();
+      /* TODO: Implement
       import('../yp-rating/yp-dialog-ratings.html').then(async () => {
         this.closeLoadingDialog();
         console.info('Have loaded ratings dialog');
@@ -301,6 +306,7 @@ export class YpAppDialogs extends YpBaseElement {
         await this.requestUpdate();
         this.getDialogAsync('ratings', callback);
       });
+      */
     }
   }
 
@@ -309,6 +315,7 @@ export class YpAppDialogs extends YpBaseElement {
       this.getDialogAsync('mediaRecorder', callback);
     } else {
       this.openLoadingDialog();
+      /* TODO: Implement
       import('./yp-dialog-container-media-recorder.js').then(async () => {
         this.closeLoadingDialog();
         console.info('Have loaded media recorder container');
@@ -316,6 +323,7 @@ export class YpAppDialogs extends YpBaseElement {
         await this.requestUpdate();
         this.getDialogAsync('mediaRecorder', callback);
       });
+      */
     }
   }
 

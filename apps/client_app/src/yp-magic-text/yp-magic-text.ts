@@ -4,9 +4,11 @@ import { ifDefined } from 'lit-html/directives/if-defined';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-import * as sanitizeHtml from 'sanitize-html.min';
+import { SanitizeHtml } from '../@yrpri/SanitizeHtml.js';
+
 import { twemoji } from '@kano/twemoji/index.es.js';
-import linkifyStr from 'linkifyjs/string';
+
+import linkifyStr from 'linkifyjs/string.js';
 
 @customElement('yp-magic-text')
 export class YpMagicText extends YpBaseElement {
@@ -403,19 +405,17 @@ export class YpMagicText extends YpBaseElement {
   }
 
   _linksAndEmojis() {
-    if (!this.skipSanitize) {
-      this.processedContent = sanitizeHtml(this.processedContent, {
-        allowedTags: ['b', 'i', 'em', 'strong'],
-      }) as string;
+    if (!this.skipSanitize && this.processedContent) {
+      this.processedContent = SanitizeHtml.sanitize(this.processedContent) as string;
       this.processedContent = this.processedContent.replace(/&amp;/g, '&');
       this.processedContent = linkifyStr(this.processedContent, {
-        format: (value, type) => {
+        format: (value: string, type: string) => {
           if (type === 'url' && value.length > this.linkifyCutoff - 1) {
             value = value.slice(0, this.linkifyCutoff) + '…';
           }
           return value;
         }
-      });
+      }) as string;
       this.processedContent = this.processedContent.replace(/&amp;/g, '&');
       this.processedContent = twemoji
         .parse(this.processedContent)

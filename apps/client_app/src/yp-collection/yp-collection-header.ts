@@ -400,7 +400,7 @@ export class YpCollectionHeader extends YpBaseElement {
           @click="${this._openMenu}"
           title="${this.openMenuLabel}">
         </mwc-icon-button>
-        <mwc-menu id="menu" @changed="${this._menuSelection}">
+        <mwc-menu id="adminMenu" @changed="${this._menuSelection}">
           <mwc-list-item id="openAdminApp"
             >${this.t('openAdministration')}</mwc-list-item
           >
@@ -520,7 +520,7 @@ export class YpCollectionHeader extends YpBaseElement {
         window.location.href = `/admin/${this.collectionType}/${this.collection.id}`;
       else if (event.detail.item.id === 'openAnalyticsApp')
         window.location.href = `/analytics/${this.collectionType}/${this.collection.id}`;
-      this.$$('paper-listbox').select(null);
+      (this.$$('#adminMenu') as Menu).select(-1);
     }
   }
 }

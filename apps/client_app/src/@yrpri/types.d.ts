@@ -1,5 +1,4 @@
 declare module 'lit-flexbox-literals';
-declare module "sanitize-html.min";
 
 declare enum CollectionTabTypes {
   Collection = 0,
