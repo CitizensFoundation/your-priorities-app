@@ -8,7 +8,7 @@ import { customElement } from 'lit-element';
 @customElement('yp-domain')
 export class YpDomain extends YpCollection {
   constructor() {
-    super("domain","community","edit",'community.create');
+    super("domain","community","edit",'community.add');
   }
 
   refresh() {

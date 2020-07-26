@@ -1,12 +1,19 @@
-import { property, html, css, customElement } from 'lit-element';
+import {
+  property,
+  html,
+  css,
+  customElement,
+  TemplateResult,
+} from 'lit-element';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
+import 'lit-virtualizer';
 
-import '@polymer/iron-list';
 import './yp-collection-item-card.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
+import { ifDefined } from 'lit-html/directives/if-defined';
 
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
@@ -33,14 +40,11 @@ export class YpCollectionItemsGrid extends YpBaseElement {
         .card {
           padding: 0;
           padding-top: 16px;
+          width: 100%;
         }
 
         .card[wide-padding] {
           padding: 16px !important;
-        }
-
-        iron-list {
-          height: 100vh;
         }
 
         a {
@@ -53,30 +57,28 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
   render() {
     return html`
-      <iron-list
-        id="ironList"
-        selection-enabled
-        .scrollOffset="${this._scrollOffset}"
-        @selected-item-changed="${this._selectedItemChanged}"
-        .items="${this.sortedCollectionItems}"
-        as="item"
-        scroll-target="document"
-        ?grid="${this.wide}"
-        role="list">
-        <template>
-          <div
-            class="card layout vertical center-center"
-            ?wide-padding="${this.wide}"
-            tabindex="[[index]]"
-            role="listitem"
-            aria-level="2"
-            aria-label="[[item.name]]">
-              <yp-collection-item-card item="[[item]]"></yp-community-card>
-            </a>
-          </div>
-        </template>
-      </iron-list>
+      <lit-virtualizer
+        style="width: 100vw; height: 100vh;"
+        .items=${this.collectionItems!}
+        .scrollTarget="${window}"
+        .renderItem=${this.renderItem}></lit-virtualizer>
     `;
+  }
+
+  renderItem(
+    item: YpCollectionData,
+    index?: number | undefined
+  ): TemplateResult {
+    return html`<div
+    class="card layout vertical center-center"
+    ?wide-padding="${this.wide}"
+    tabindex="${ifDefined(index)}"
+    role="listitem"
+    aria-level="2"
+    aria-label="[[item.name]]">
+      <yp-collection-item-card .item="${item}"></yp-collection-item-card>
+    </a>
+  </div>`;
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {

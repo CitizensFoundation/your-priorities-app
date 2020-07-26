@@ -52,10 +52,11 @@ export class YpCollectionItemCard extends YpBaseElement {
 
         .collectionCard {
           height: 395px;
-          width: 320px;
+          width: 860px;
           background-color: #fff;
           padding: 0;
           margin: 0;
+          position: relative;
         }
 
         .collectionCard[featured] {
@@ -245,10 +246,10 @@ export class YpCollectionItemCard extends YpBaseElement {
           <a
             href="/${this.itemType}/${this.item.id}"
             @click="${this.goToItem}"
-            class="layout vertical center-center">
+            class="">
             <div
               ?featured="${this.featured}"
-              class="collectionCard shadow-elevation-8dp shadow-transaction">
+              class="collectionCard shadow-elevation-8dp shadow-transaction layout horizontal">
               <div class="layout horizontal">
                 ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
                   ? html`

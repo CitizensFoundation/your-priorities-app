@@ -226,6 +226,11 @@ export class YpCollectionHeader extends YpBaseElement {
           overflow: hidden;
         }
 
+         :host {
+           margin-top: 32px;
+           margin-bottom: 32px;
+         }
+
         @media (max-width: 960px) {
           :host {
             max-width: 423px;

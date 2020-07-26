@@ -262,15 +262,11 @@ export class YpPostsList extends YpBaseElement {
           : html``}
         ${this.posts
           ? html`
-          <h1>uhuhuh</h1>
-              <div class="layout horizontal center-center">
               <lit-virtualizer style="width: 100vw; height: 100vh;"
                   .items=${this.posts}
                   .scrollTarget="${window}"
                   .renderItem=${this.renderPostItem}
                 ></lit-virtualizer>
-              </div>
-              <h1>5432543</h1>
             `
           : nothing}
       </div>

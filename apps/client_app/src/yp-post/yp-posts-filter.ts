@@ -193,13 +193,10 @@ export class YpPostsFilter extends YpBaseElement {
                 slot="dropdown-content"
                 class="layout vertical dropDownContent">
                 <div>
-                  <div class="filterHeader layout horizontal center-center">
-                    ${this.t('filterIdeas')}
-                  </div>
-
                   <mwc-select
                     slot="dropdown-content"
                     id="mainListMenu"
+                    .label="${this.t('filterIdeas')}"
                     @iron-select="${this._changeFilter}">
                     <mwc-list-item
                       data-filter="top"

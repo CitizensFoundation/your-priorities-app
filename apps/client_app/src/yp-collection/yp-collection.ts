@@ -10,6 +10,7 @@ import '@material/mwc-fab';
 import './yp-collection-header.js';
 import './yp-collection-items-grid.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
+import { YpServerApi } from '../@yrpri/YpServerApi.js';
 
 //TODO: Remove
 interface AcActivity extends LitElement {
@@ -148,7 +149,8 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   get collectionTabLabel(): string {
-    return `${this.t(this.collectionType)} (${
+    const translatedCollectionItems = this.t(YpServerApi.transformCollectionTypeToApi(this.collectionItemType));
+    return `${translatedCollectionItems} (${
       this.collectionItems ? this.collectionItems.length : 0
     })`;
   }
@@ -187,12 +189,12 @@ export abstract class YpCollection extends YpBaseElement {
     return html`
       <mwc-tab
         ?hidden="${this.hideNewsfeed}"
-        .label="${this.t('newsfeed')}"
+        .label="${this.t('post.tabs.news')}"
         icon="rss_feed"
         stacked></mwc-tab>
       <mwc-tab
         ?hidden="${this.locationHidden}"
-        .label="${this.t('map')}"
+        .label="${this.t('post.tabs.location')}"
         icon="map"
         stacked></mwc-tab>
     `;
@@ -253,7 +255,7 @@ export abstract class YpCollection extends YpBaseElement {
       ${this.createFabIcon && this.createFabLabel
         ? html` <mwc-fab
             ?extended="${this.wide}"
-            .label="${this.createFabLabel}"
+            .label="${this.t(this.createFabLabel)}"
             .icon="${this.createFabIcon}"></mwc-fab>`
         : nothing}
     `;
