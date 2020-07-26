@@ -84,14 +84,14 @@ export class YpMediaHelpers {
           targetElement.videoEndedListener = () => {
             this._checkVideoLongPlayTimeAndReset(targetElement, videoPlayer);
           };
-          videoPlayer.addEventListener('play', targetElement.videoPlayListener);
+          videoPlayer.addEventListener('play', targetElement.videoPlayListener.bind(targetElement));
           videoPlayer.addEventListener(
             'pause',
-            targetElement.videoPauseListener
+            targetElement.videoPauseListener.bind(targetElement)
           );
           videoPlayer.addEventListener(
             'ended',
-            targetElement.videoEndedListener
+            targetElement.videoEndedListener.bind(targetElement)
           );
         }
       }
@@ -109,14 +109,14 @@ export class YpMediaHelpers {
           targetElement.audioEndedListener = () => {
             this._checkAudioLongPlayTimeAndReset(targetElement, audioPlayer);
           };
-          audioPlayer.addEventListener('play', targetElement.audioPlayListener);
+          audioPlayer.addEventListener('play', targetElement.audioPlayListener.bind(targetElement));
           audioPlayer.addEventListener(
             'pause',
-            targetElement.audioPauseListener
+            targetElement.audioPauseListener.bind(targetElement)
           );
           audioPlayer.addEventListener(
             'ended',
-            targetElement.audioEndedListener
+            targetElement.audioEndedListener.bind(targetElement)
           );
         }
       }

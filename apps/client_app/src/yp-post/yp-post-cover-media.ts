@@ -78,9 +78,7 @@ export class YpPostCoverMedia extends YpBaseElement {
     super.connectedCallback();
     if (this.headerMode) {
       YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-      this.addGlobalListener('yp-pause-media-playback', () =>
-        YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback)
-      );
+      this.addGlobalListener('yp-pause-media-playback', YpMediaHelpers.pauseMediaPlayback.bind(this));
     }
   }
 
@@ -88,9 +86,7 @@ export class YpPostCoverMedia extends YpBaseElement {
     super.connectedCallback();
     if (this.headerMode) {
       YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
-      this.removeGlobalListener('yp-pause-media-playback', () =>
-        YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback)
-      );
+      this.removeGlobalListener('yp-pause-media-playback', YpMediaHelpers.pauseMediaPlayback.bind(this));
     }
   }
 

@@ -60,16 +60,16 @@ declare global {
 @customElement('yp-app')
 export class YpApp extends YpBaseElement {
   @property({ type: Object })
-  homeLink = null;
+  homeLink = undefined;
 
   @property({ type: String })
-  page: string | null = null;
+  page: string | undefined;
 
   @property({ type: Object })
-  user = null;
+  user = undefined;
 
   @property({ type: String })
-  backPath: string | null = null;
+  backPath: string | undefined;
 
   @property({ type: Boolean })
   showSearch = false;
@@ -78,13 +78,13 @@ export class YpApp extends YpBaseElement {
   showBack = false;
 
   @property({ type: String })
-  forwardToPostId: string | null = null;
+  forwardToPostId: string | undefined;
 
   @property({ type: String })
   headerTitle: string | null = 'Betri Reykjavík';
 
   @property({ type: String })
-  numberOfUnViewedNotifications: string | null = null;
+  numberOfUnViewedNotifications: string | undefined;
 
   @property({ type: Boolean })
   hideHelpIcon = false;
@@ -93,34 +93,34 @@ export class YpApp extends YpBaseElement {
   autoTranslate = false;
 
   @property({ type: String })
-  languageName: string | null = null;
+  languageName: string | undefined;
 
   @property({ type: Number })
-  goForwardToPostId: number | null = null;
+  goForwardToPostId: number | undefined;
 
   @property({ type: Boolean })
   showBackToPost = false;
 
   @property({ type: String })
-  goForwardPostName: string | null = null;
+  goForwardPostName: string | undefined;
 
   @property({ type: Array })
   pages: Array<YpHelpPage> = [];
 
   @property({ type: String })
-  headerDescription: string | null = null;
+  headerDescription: string | undefined;
 
   @property({ type: String })
-  notifyDialogHeading: string | null = null;
+  notifyDialogHeading: string | undefined;
 
   @property({ type: String })
-  notifyDialogText: string | null = null;
+  notifyDialogText: string | undefined;
 
   @property({ type: String })
   route = '';
 
   @property({ type: String })
-  subRoute: string | null = null;
+  subRoute: string | undefined;
 
   @property({ type: Object })
   routeData: Record<string, string> = {};
@@ -129,28 +129,28 @@ export class YpApp extends YpBaseElement {
 
   previousSearches: Array<string> = [];
 
-  storedBackPath: string | null = null;
+  storedBackPath: string | undefined;
 
-  storedLastDocumentTitle: string | null = null;
+  storedLastDocumentTitle: string | undefined;
 
-  keepOpenForPost: string | null = null;
+  keepOpenForPost: string | undefined;
 
   useHardBack = false;
 
   _scrollPositionMap = {};
 
-  goBackToPostId: number | null = null;
+  goBackToPostId: number | undefined;
 
-  currentPostId: number | null = null;
+  currentPostId: number | undefined;
 
   goForwardCount = 0;
 
-  communityBackOverride: Record<string, Record<string, string>> | null = null;
+  communityBackOverride: Record<string, Record<string, string>> | undefined;
 
-  touchXDown: number | null = null;
-  touchYDown: number | null = null;
-  touchXUp: number | null = null;
-  touchYUp: number | null = null;
+  touchXDown: number | undefined;
+  touchYDown: number | undefined;
+  touchXUp: number | undefined;
+  touchYUp: number | undefined;
 
   userDrawerOpenedDelayed = false;
   navDrawOpenedDelayed = false;
@@ -185,13 +185,13 @@ export class YpApp extends YpBaseElement {
       ? this.t('errorCantConnect')
       : "Can't connect to server, try again later";
     let statusCode = -1;
-    if (detail.response && detail.response.statusCode === 404)
+    if (detail.response && detail.response.status === 404)
       errorText = this.t('errorNotAuthorized');
-    else if (detail.response && detail.response.statusCode === 401)
+    else if (detail.response && detail.response.status === 401)
       errorText = this.t('errorNotAuthorized');
 
-    if (detail.response && detail.response.statusCode)
-      statusCode = detail.response.statusCode;
+    if (detail.response && detail.response.status)
+      statusCode = detail.response.status;
 
     this.notifyDialogText = errorText;
     (this.$$('#dialog') as Dialog).open = true;
@@ -238,7 +238,9 @@ export class YpApp extends YpBaseElement {
     this.addListener('yp-set-next-post', this._setNextPost, this);
     this.addListener('yp-set-pages', this._setPages, this);
 
-    window.addEventListener('locationchange', this.updateLocation);
+    window.addEventListener('locationchange', this.updateLocation.bind(this));
+    window.addEventListener('location-changed', this.updateLocation.bind(this));
+    window.addEventListener('onpopstate', this.updateLocation.bind(this));
     this._setupTouchEvents();
   }
 
@@ -278,6 +280,8 @@ export class YpApp extends YpBaseElement {
     this.removeListener('yp-set-next-post', this._setNextPost, this);
     this.removeListener('yp-set-pages', this._setPages, this);
     window.removeEventListener('locationchange', this.updateLocation);
+    window.removeEventListener('location-changed', this.updateLocation);
+    window.removeEventListener('onpopstate', this.updateLocation);
     this._removeTouchEvents();
   }
 
@@ -286,6 +290,7 @@ export class YpApp extends YpBaseElement {
   }
 
   updateLocation() {
+    debugger;
     const path = window.location.pathname;
 
     const pattern = '/:page';
@@ -466,12 +471,12 @@ export class YpApp extends YpBaseElement {
               id="domainPage"
               role="main"
               aria-label="${this.t('communities')}"
-              .idRoute="${this.subRoute}"></yp-domain>
+              .subRoute="${this.subRoute}"></yp-domain>
           `);
           break;
         case 'community':
           pageHtml = cache(html`
-            <yp-community id="communityPage" .idRoute="${this.subRoute}">
+            <yp-community id="communityPage" .subRoute="${this.subRoute}">
             </yp-community>
           `);
           break;
@@ -479,18 +484,18 @@ export class YpApp extends YpBaseElement {
           pageHtml = cache(html`
             <yp-community-folder
               id="communityFolderPage"
-              .idRoute="${this.subRoute}">
+              .subRoute="${this.subRoute}">
             </yp-community-folder>
           `);
           break;
         case 'group':
           pageHtml = cache(html`
-            <yp-group id="groupPage" .idRoute="${this.subRoute}"></yp-group>
+            <yp-group id="groupPage" .subRoute="${this.subRoute}"></yp-group>
           `);
           break;
         case 'post':
           pageHtml = cache(html`
-            <yp-post id="postPage" .idRoute="${this.subRoute}"></yp-post>
+            <yp-post id="postPage" .subRoute="${this.subRoute}"></yp-post>
           `);
           break;
         default:
@@ -542,7 +547,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _resetNotifyDialogText() {
-    this.notifyDialogText = null;
+    this.notifyDialogText = undefined;
   }
 
   // Translated Pages
@@ -661,8 +666,8 @@ export class YpApp extends YpBaseElement {
   }
 
   _clearNextPost() {
-    this.goForwardToPostId = null;
-    this.goForwardPostName = null;
+    this.goForwardToPostId = undefined;
+    this.goForwardPostName = undefined;
     this.goForwardCount = 0;
     this.showBackToPost = false;
   }
@@ -712,7 +717,7 @@ export class YpApp extends YpBaseElement {
       defaultLocale = storedLocale;
     }
 
-    let localeFromUrl: string | null = null;
+    let localeFromUrl: string | undefined;
 
     if (
       window.appGlobals.originalQueryParameters &&
@@ -895,7 +900,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _routePageChanged(oldRouteData: Record<string, string>) {
-    if (this.routeData && this.route) {
+    if (this.routeData) {
       const params = this.route.split('/');
 
       if (
@@ -924,7 +929,7 @@ export class YpApp extends YpBaseElement {
       } else {
         const map: Record<string, number> = this._scrollPositionMap;
 
-        if (oldRouteData && oldRouteData.page != null) {
+        if (oldRouteData && oldRouteData.page != undefined) {
           map[oldRouteData.page] = window.pageYOffset;
           console.info(
             'Saving scroll position for ' +
@@ -1045,6 +1050,7 @@ export class YpApp extends YpBaseElement {
           }
         }, delayUntilScrollToPost);
         */
+
         if (this.routeData) {
           this.page = this.routeData.page;
           this._pageChanged();
@@ -1121,9 +1127,9 @@ export class YpApp extends YpBaseElement {
   }
 
   _resetKeepOpenForPage() {
-    this.keepOpenForPost = null;
-    this.storedBackPath = null;
-    this.storedLastDocumentTitle = null;
+    this.keepOpenForPost = undefined;
+    this.storedBackPath = undefined;
+    this.storedLastDocumentTitle = undefined;
   }
 
   _closePost() {
@@ -1133,10 +1139,10 @@ export class YpApp extends YpBaseElement {
 
     if (this.storedLastDocumentTitle) {
       document.title = this.storedLastDocumentTitle;
-      this.storedLastDocumentTitle = null;
+      this.storedLastDocumentTitle = undefined;
     }
 
-    this.keepOpenForPost = null;
+    this.keepOpenForPost = undefined;
     document.dispatchEvent(
       new CustomEvent('lite-signal', {
         bubbles: true,
@@ -1288,7 +1294,7 @@ export class YpApp extends YpBaseElement {
       this.backPath = header.backPath;
     } else {
       this.showBack = false;
-      this.backPath = null;
+      this.backPath = undefined;
     }
 
     if (header.hideHelpIcon) {
@@ -1349,7 +1355,7 @@ export class YpApp extends YpBaseElement {
     if (event.detail && event.detail.id) {
       this.user = event.detail;
     } else {
-      this.user = null;
+      this.user = undefined;
     }
   }
 
@@ -1390,8 +1396,8 @@ export class YpApp extends YpBaseElement {
       ) {
         this.touchXDown = firstTouch.clientX;
         this.touchYDown = firstTouch.clientY;
-        this.touchXUp = null;
-        this.touchYUp = null;
+        this.touchXUp = undefined;
+        this.touchYUp = undefined;
       }
     }
   }
@@ -1448,10 +1454,10 @@ export class YpApp extends YpBaseElement {
           console.log('Recommendation swipe not active with open drawers');
         }
 
-        this.touchXDown = null;
-        this.touchXUp = null;
-        this.touchYDown = null;
-        this.touchYUp = null;
+        this.touchXDown = undefined;
+        this.touchXUp = undefined;
+        this.touchYDown = undefined;
+        this.touchYUp = undefined;
       }
     }
   }

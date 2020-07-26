@@ -3,6 +3,34 @@ import { YpCodeBase } from './YpCodeBaseclass.js';
 export class YpServerApi extends YpCodeBase {
   protected baseUrlPath = '/api';
 
+  static transformCollectionTypeToApi(type: string): string {
+
+    let transformedApiType;
+
+    switch (type) {
+      case "domain":
+        transformedApiType = "domains";
+        break;
+      case "community":
+        transformedApiType = "communities";
+        break;
+      case "group":
+        transformedApiType = "groups";
+        break;
+      case "post":
+        transformedApiType = "posts";
+        break;
+      case "user":
+        transformedApiType = "users";
+        break;
+      default:
+        transformedApiType ="";
+        console.error(`Cant find collection type transsform for ${type}`);
+    }
+
+    return transformedApiType;
+  }
+
   private async fetchWrapper(url: string, options: RequestInit =  {}, showUserError = true) {
     if (!options.headers) {
       options.headers = {
@@ -10,7 +38,7 @@ export class YpServerApi extends YpCodeBase {
       }
     }
     const response = await fetch(url, options);
-    this.handleResponse(response, showUserError);
+    return this.handleResponse(response, showUserError);
   }
 
   private async handleResponse(response: Response, showUserError: boolean) {
@@ -19,11 +47,15 @@ export class YpServerApi extends YpCodeBase {
       try {
         responseJson = await response.json();
       } catch (error) {
-        this.fireGlobal('yp-network-error', {
-          response: response,
-          jsonError: error,
-          showUserError,
-        });
+        if (response.status===200 && response.statusText==="OK") {
+          console.warn("HELLO");
+        } else {
+          this.fireGlobal('yp-network-error', {
+            response: response,
+            jsonError: error,
+            showUserError,
+          });
+        }
       }
       return responseJson;
     } else {
@@ -150,7 +182,7 @@ export class YpServerApi extends YpCodeBase {
 
   public getCollection(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${collectionType}/${collectionId}`
+      this.baseUrlPath + `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}`
     );
   }
 
@@ -191,7 +223,7 @@ export class YpServerApi extends YpCodeBase {
 
   public getHelpPages(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${collectionType}/${collectionId}/pages`
+      this.baseUrlPath + `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}/pages`
     );
   }
 

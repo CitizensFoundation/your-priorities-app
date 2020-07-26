@@ -47,7 +47,7 @@ export class YpPostsList extends YpBaseElement {
   selectedCategoryName: string | undefined;
 
   @property({ type: Number })
-  selectedGroupTab: GroupTabTypes | undefined;
+  selectedGroupTab: number | undefined;
 
   @property({ type: String })
   type: string | undefined;

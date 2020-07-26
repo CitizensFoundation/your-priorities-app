@@ -1,20 +1,5 @@
 declare module 'lit-flexbox-literals';
 
-declare enum CollectionTabTypes {
-  Collection = 0,
-  Newsfeed = 1,
-  Map = 2
-}
-
-declare enum GroupTabTypes {
-  Open = 0,
-  InProgress = 1,
-  Successful = 2,
-  Failed = 3,
-  Newsfeed = 4,
-  Map = 5
-}
-
 interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;
   themeOverrideColorAccent?: string;

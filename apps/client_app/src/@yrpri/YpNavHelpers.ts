@@ -1,7 +1,7 @@
 export class YpNavHelpers {
 
   static redirectTo(path: string) {
-    window.history.pushState({}, "", path);
+    history.pushState({}, "", path);
     window.dispatchEvent(new CustomEvent('location-changed'));
     document.dispatchEvent(new CustomEvent('yp-pause-media-playback', {bubbles: true, detail: {}}));
   }

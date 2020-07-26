@@ -16,6 +16,12 @@ interface AcActivity extends LitElement {
   scrollToItem(item: YpDatabaseItem): () => void;
 }
 
+export const CollectionTabTypes: Record<string,number>= {
+  Collection: 0,
+  Newsfeed: 1,
+  Map: 2
+}
+
 export abstract class YpCollection extends YpBaseElement {
   @property({ type: Boolean })
   noHeader = false;
@@ -36,7 +42,7 @@ export abstract class YpCollection extends YpBaseElement {
   subRoute: string | undefined;
 
   @property({ type: Number })
-  selectedTab: CollectionTabTypes = CollectionTabTypes.Collection;
+  selectedTab = CollectionTabTypes.Collection;
 
   @property({ type: Array })
   collectionItems: Array<YpCommunityData | YpGroupData> | undefined;
@@ -73,8 +79,8 @@ export abstract class YpCollection extends YpBaseElement {
     this.collectionCreateFabIcon = collectionCreateFabIcon;
     this.collectionCreateFabLabel = collectionCreateFabLabel;
 
-    this.addGlobalListener('yp-logged-in', this._getCollection);
-    this.addGlobalListener('yp-got-admin-rights', this.refresh);
+    this.addGlobalListener('yp-logged-in', this._getCollection.bind(this));
+    this.addGlobalListener('yp-got-admin-rights', this.refresh.bind(this));
   }
 
   abstract scrollToCollectionItemSubClass(): void;
@@ -122,7 +128,7 @@ export abstract class YpCollection extends YpBaseElement {
       )) as YpCollectionData | undefined;
       this.refresh();
     } else {
-      console.error('Collection id setup for refresh');
+      console.error('No collection id for _getCollection');
     }
   }
 
@@ -132,7 +138,9 @@ export abstract class YpCollection extends YpBaseElement {
         this.collectionType,
         this.collectionId
       )) as Array<YpHelpPage> | undefined;
-      this.fire('yp-set-pages', helpPages);
+      if (helpPages) {
+        this.fire('yp-set-pages', helpPages);
+      }
     } else {
       console.error('Collection id setup for get help pages');
     }
@@ -162,12 +170,14 @@ export abstract class YpCollection extends YpBaseElement {
   renderHeader() {
     return this.collection && !this.noHeader
       ? html`
+        <div class="layout vertical center-center">
           <yp-collection-header
             .collection="${this.collection}"
             .collectionType="${this.collectionType}"
             aria-label="${this.collectionType}"
             role="banner"></yp-collection-header
-          >;
+          >
+        </div>
         `
       : nothing;
   }
@@ -212,7 +222,7 @@ export abstract class YpCollection extends YpBaseElement {
         page = this.collectionItems
           ? html` <yp-collection-items-grid
               id="collectionItems"
-              .colletionItems="${this.collectionItems}"
+              .collectionItems="${this.collectionItems}"
               .collection="${this.collection}"
               .collectionType="${this.collectionType}"
               .collectionItemType="${this.collectionItemType}"
@@ -253,10 +263,10 @@ export abstract class YpCollection extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('subRoute') && this.subRoute != null) {
+    if (changedProperties.has('subRoute') && this.subRoute) {
       const splitSubRoute = this.subRoute.split('/');
-      this.collectionId = (splitSubRoute[0] as unknown) as number;
-      if (splitSubRoute.length > 1) {
+      this.collectionId = parseInt(splitSubRoute[1]);
+      if (splitSubRoute.length > 2) {
         this._setSelectedTabFromRoute(splitSubRoute[1]);
       } else {
         this._setSelectedTabFromRoute('default');
@@ -270,7 +280,7 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   _selectTab(event: CustomEvent) {
-    this.selectedTab = event.detail as CollectionTabTypes;
+    this.selectedTab = event.detail?.index as number;
   }
 
   _setSelectedTabFromRoute(routeTabName: string): void {

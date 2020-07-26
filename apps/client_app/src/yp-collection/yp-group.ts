@@ -21,6 +21,15 @@ interface AcActivity extends LitElement {
   loadNewData(): () => void;
 }
 
+export const GroupTabTypes: Record<string, number> = {
+  Open: 0,
+  InProgress: 1,
+  Successful: 2,
+  Failed: 3,
+  Newsfeed: 4,
+  Map: 5
+}
+
 @customElement('yp-group')
 export class YpGroup extends YpCollection {
   @property({ type: String })
@@ -33,7 +42,7 @@ export class YpGroup extends YpCollection {
   disableNewPosts = false;
 
   @property({ type: Number })
-  selectedGroupTab: GroupTabTypes = GroupTabTypes.Open;
+  selectedGroupTab = GroupTabTypes.Open;
 
   haveGotTabCountInfoCount = 0;
   tabCounters: Record<string, number> = {};
@@ -270,7 +279,7 @@ export class YpGroup extends YpCollection {
   }
 
   _selectGroupTab(event: CustomEvent) {
-    this.selectedGroupTab = event.detail as GroupTabTypes;
+    this.selectedGroupTab = event.detail as number;
   }
 
   //TODO: Check this and rename

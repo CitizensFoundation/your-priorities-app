@@ -479,7 +479,7 @@ export class YpCollectionHeader extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener('yp-got-admin-rights', this.requestUpdate);
-    this.addGlobalListener('yp-pause-media-playback', this._pauseMediaPlayback);
+    this.addGlobalListener('yp-pause-media-playback', this._pauseMediaPlayback.bind(this));
   }
 
   disconnectedCallback() {

@@ -13,7 +13,8 @@ import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 import '@polymer/iron-image';
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-collection-stats.js';
-
+import { YpGroup } from './yp-group.js';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
 @customElement('yp-collection-item-card')
 export class YpCollectionItemCard extends YpBaseElement {
@@ -203,88 +204,126 @@ export class YpCollectionItemCard extends YpBaseElement {
         [hidden] {
           display: none !important;
         }
+
+        a {
+          text-decoration: none;
+        }
       `,
     ];
   }
 
   get archived(): boolean {
-    return this.item?.status==="archived";
+    return this.item?.status === 'archived';
   }
 
   get featured(): boolean {
-    return this.item?.status==="featured";
+    return this.item?.status === 'featured';
   }
 
+  goToItem(event: CustomEvent) {
+    event.preventDefault();
+    if (event.currentTarget && event.currentTarget) {
+      const href = (event.currentTarget as HTMLElement).getAttribute('href');
+      if (href) {
+        YpNavHelpers.redirectTo(href);
+      }
+    }
+  }
+
+
   render() {
-    return this.item && this.collection ? html`
-      <div
-        ?featured="${this.featured}"
-        class="collectionCard shadow-elevation-8dp shadow-transaction">
-        <div class="layout horizontal">
-          ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
-            ? html`
-                <iron-image
-                  sizing="cover"
+    if (this.item && (this.item as YpGroupData).Community) {
+      this.collection = (this.item as YpGroupData).Community;
+      this.itemType = 'group';
+    } else if (this.item && (this.item as YpCommunityData).Domain) {
+      this.collection = (this.item as YpCommunityData).Domain;
+      this.itemType = 'community';
+    }
+
+    return this.item && this.collection
+      ? html`
+          <a
+            href="/${this.itemType}/${this.item.id}"
+            @click="${this.goToItem}"
+            class="layout vertical center-center">
+            <div
+              ?featured="${this.featured}"
+              class="collectionCard shadow-elevation-8dp shadow-transaction">
+              <div class="layout horizontal">
+                ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
+                  ? html`
+                      <iron-image
+                        sizing="cover"
+                        ?archived="${this.archived}"
+                        alt="${this.collection.name}"
+                        ?featured="${this.featured}"
+                        preload
+                        .src="${YpCollectionHelpers.logoImagePath(
+                          this.itemType,
+                          this.item
+                        )}"
+                        class="post-image withPointer"></iron-image>
+                    `
+                  : html`
+                      <iron-image
+                        ?archived="${this.archived}"
+                        sizing="cover"
+                        class="main-image withPointer"
+                        src="https://i.imgur.com/sdsFAoT.png"></iron-image>
+                    `}
+              </div>
+              <div class="informationText">
+                <div
+                  class="collection-name"
                   ?archived="${this.archived}"
-                  alt="${this.collection.name}"
+                  ?featured="${this.featured}">
+                  <yp-magic-text
+                    .textType="${YpCollectionHelpers.nameTextType(
+                      this.itemType
+                    )}"
+                    .contentLanguage="${this.item?.language}"
+                    ?disableTranslation="${this.collection.configuration
+                      ?.disableNameAutoTranslation}"
+                    text-only
+                    .content="${this.item.name}"
+                    .contentId="${this.item.id}"></yp-magic-text>
+                  <span hidden ?oldHidden="${!this.archived}">
+                    - ${this.t('archived')}
+                  </span>
+                </div>
+                <yp-magic-text
+                  id="description"
+                  class="description layout vertical withPointer"
                   ?featured="${this.featured}"
-                  preload
-                  .src="${YpCollectionHelpers.logoImagePath(this.itemType, this.item)}"
-                  class="post-image withPointer"></iron-image>
-              `
-            : html`
-                <iron-image
-                  ?archived="${this.archived}"
-                  sizing="cover"
-                  class="main-image withPointer"
-                  src="https://i.imgur.com/sdsFAoT.png"></iron-image>
-              `}
-        </div>
-        <div class="informationText">
-          <div
-            class="collection-name"
-            ?archived="${this.archived}"
-            ?featured="${this.featured}">
-            <yp-magic-text
-              .textType="${YpCollectionHelpers.nameTextType(this.itemType)}"
-              .contentLanguage="${this.item?.language}"
-              ?disableTranslation="${this.collection.configuration?.disableNameAutoTranslation}"
-              text-only
-              .content="${this.item.name}"
-              .contentId="${this.item.id}"></yp-magic-text>
-            <span hidden ?oldHidden="${!this.archived}">
-              - ${this.t('archived')}
-            </span>
-          </div>
-          <yp-magic-text
-            id="description"
-            class="description layout vertical withPointer"
-            ?featured="${this.featured}"
-            textType="collectionContent"
-            .textType="${YpCollectionHelpers.descriptionTextType(this.itemType)}"
-            .contentLanguage="${this.item.language}"
-            textOnly
-            remove-urls
-            .content="${this.item.description || this.item.objectives}"
-            .contentId="${this.collection.id}"
-            truncate="130">
-          </yp-magic-text>
-        </div>
+                  textType="collectionContent"
+                  .textType="${YpCollectionHelpers.descriptionTextType(
+                    this.itemType
+                  )}"
+                  .contentLanguage="${this.item.language}"
+                  textOnly
+                  remove-urls
+                  .content="${this.item.description || this.item.objectives}"
+                  .contentId="${this.collection.id}"
+                  truncate="130">
+                </yp-magic-text>
+              </div>
 
-        <yp-collection-stats
-          class="stats"
-          .collectionType="${this.itemType}"
-          .collection="${this.item}"></yp-collection-stats>
+              <yp-collection-stats
+                class="stats"
+                .collectionType="${this.itemType}"
+                .collection="${this.item}"></yp-collection-stats>
 
-        ${!this.collection
-          ? html`
-              <yp-membership-button
-                .archived="${this.archived}"
-                .featured="${this.featured}"
-                .collection="${this.collection}"></yp-membership-button>
-            `
-          : html``}
-      </div>
-    ` : nothing;
+              ${!this.collection
+                ? html`
+                    <yp-membership-button
+                      .archived="${this.archived}"
+                      .featured="${this.featured}"
+                      .collection="${this.collection}"></yp-membership-button>
+                  `
+                : html``}
+            </div>
+          </a>
+        `
+      : nothing;
   }
 }

@@ -6,6 +6,7 @@ import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
 import '@polymer/iron-list';
 import './yp-collection-item-card.js';
+import { YpServerApi } from '../@yrpri/YpServerApi.js';
 
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
@@ -16,7 +17,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
   collectionItems: Array<YpCollectionData> | undefined;
 
   @property({ type: String })
-  collectionItemType: string | undefined;
+  collectionItemType!: string;
 
   @property({ type: Array })
   sortedCollectionItems: Array<YpCollectionData> | undefined;
@@ -70,12 +71,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
             role="listitem"
             aria-level="2"
             aria-label="[[item.name]]">
-            <a
-              href="/${this.collectionItemType}/[[item.id]]"
-              class="layout vertical center-center">
-              <yp-collection-item-card
-                item="[[item]]"></yp-community-card
-              >
+              <yp-collection-item-card item="[[item]]"></yp-community-card>
             </a>
           </div>
         </template>
@@ -108,23 +104,23 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
   // TODO: Make sure this fires each time on keyboard, mouse & phone - make sure back key on browser works also just with the A
   _selectedItemChanged(event: CustomEvent) {
-    const detail = event.detail;
+    const item = event.detail.value;
 
-    if (this.collectionItemType && detail) {
+    if (this.collectionItemType && item) {
       window.appGlobals.activity(
         'open',
         this.collectionItemType,
-        `/${this.collectionItemType}/${detail.item.id}`,
-        { id: detail.item.id }
+        `/${this.collectionItemType}/${item.id}`,
+        { id: item.id }
       );
 
       if (this.collectionItemType === 'community') {
-        const community = detail.item as YpCommunityData;
+        const community = item as YpCommunityData;
         window.appGlobals.cache.backToDomainCommunityItems[
           community.domain_id
         ] = community;
-      } else if (this.collectionItemType === 'group') {
-        const group = detail.item as YpGroupData;
+      } else if (this.collectionItemType === 'group' && item) {
+        const group = item as YpGroupData;
         window.appGlobals.cache.backToCommunityGroupItems[
           group.community_id
         ] = group;
@@ -159,7 +155,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
       (this.$$('#ironList') as IronListInterface).scrollToItem(item);
       this.fireGlobal('yp-refresh-activities-scroll-threshold');
     } else {
-      console.error("No item to scroll too");
+      console.error('No item to scroll too');
     }
   }
 }

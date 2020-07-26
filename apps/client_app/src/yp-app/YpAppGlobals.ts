@@ -107,7 +107,7 @@ export class YpAppGlobals extends YpCodeBase {
     //TODO: See if this is recieved
     this.fireGlobal('app-ready');
     this.parseQueryString();
-    this.addGlobalListener('yp-logged-in', this._userLoggedIn);
+    this.addGlobalListener('yp-logged-in', this._userLoggedIn.bind(this));
   }
 
   showRecommendationInfoIfNeeded() {
@@ -277,7 +277,7 @@ export class YpAppGlobals extends YpCodeBase {
   _userLoggedIn(event: CustomEvent) {
     const user: YpUserData = event.detail;
     if (user) {
-      setTimeout(function () {
+      setTimeout( () => {
         if (typeof ga == 'function') {
           ga('set', '&uid', user.id);
         }
