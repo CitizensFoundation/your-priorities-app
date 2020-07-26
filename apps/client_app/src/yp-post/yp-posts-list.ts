@@ -578,7 +578,7 @@ export class YpPostsList extends YpBaseElement {
         await this.updateComplete;
         YpIronListHelpers.detachListeners(this as YpElementWithIronList);
         YpIronListHelpers.attachListeners(this as YpElementWithIronList);
-        //TODO: Fix this hardcoded timeout for iron lise
+        //TODO: Fix this hardcoded timeout for iron list, replace with something else
         setTimeout(() => {
           (this.$$('#ironList') as IronListInterface).fire('iron-resize');
         }, 50);
