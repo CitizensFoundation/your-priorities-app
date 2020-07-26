@@ -1,7 +1,7 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
-import {YpApp} from '../src/YpApp.js';
-import '../src/yp-app.js';
+import {YpApp} from '../src/yp-app/yp-app.js';
+import '../src/yp-app/yp-app.js';
 
 describe('YpApp', () => {
   let element: YpApp;
