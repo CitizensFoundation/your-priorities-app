@@ -60,6 +60,7 @@ export class YpPostCard extends YpBaseElement {
 
         .postCard {
           background-color: #fff;
+          width: 420px;margin-left:auto;margin-right:auto;
         }
 
         :host {
@@ -155,6 +156,11 @@ export class YpPostCard extends YpBaseElement {
           bottom: 10px;
           right: 6px;
         }
+
+        :host {
+            width: 600px;
+            max-width: 600px;
+          }
 
         @media (max-width: 960px) {
           .customRatings {
@@ -277,7 +283,8 @@ export class YpPostCard extends YpBaseElement {
 
   render() {
     return this.post ? html`
-      <div
+    <div class="layout vertical center-center">
+    <div
         .mini="${this.mini}"
         .hide-post-cover="${this.post.Group.configuration.hidePostCover}"
         .hide-description="${this.post.Group.configuration.hidePostDescription}"
@@ -378,6 +385,8 @@ export class YpPostCard extends YpBaseElement {
           </div>
         </div>
       </div>
+
+    </div>
     ` : nothing;
   }
 

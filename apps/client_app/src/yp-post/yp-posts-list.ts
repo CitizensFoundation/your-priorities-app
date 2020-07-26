@@ -4,7 +4,7 @@ import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
-import '@polymer/iron-list';
+import 'lit-virtualizer';
 
 import './yp-posts-filter.js';
 import './yp-post-card.js';
@@ -12,7 +12,8 @@ import './yp-post-card.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
-import { nothing } from 'lit-html';
+import { nothing, TemplateResult } from 'lit-html';
+import { ifDefined } from 'lit-html/directives/if-defined';
 
 @customElement('yp-posts-list')
 export class YpPostsList extends YpBaseElement {
@@ -261,39 +262,36 @@ export class YpPostsList extends YpBaseElement {
           : html``}
         ${this.posts
           ? html`
+          <h1>uhuhuh</h1>
               <div class="layout horizontal center-center">
-                <iron-list
-                  id="ironList"
-                  selection-enabled=""
-                  .scrollOffset="${this.scrollOffset}"
-                  @selected-item-changed="${this._selectedItemChanged}"
-                  .items="${this.posts}"
-                  as="post"
-                  scroll-target="document"
-                  ?grid="${this.wide}"
-                  role="list">
-                  <template>
-                    <div
-                      ?wide-padding="${this.wide}"
-                      class="card layout vertical center-center"
-                      aria-label="[[post.name]]"
-                      role="listitem"
-                      aria-level="2"
-                      tabindex="[[index]]">
-                      <yp-post-card
-                        id="postCard[[post.id]]"
-                        @refresh="${this._refreshPost}"
-                        class="card"
-                        post="[[post]]">
-                      </yp-post-card>
-                    </div>
-                  </template>
-                </iron-list>
+              <lit-virtualizer style="width: 100vw; height: 100vh;"
+                  .items=${this.posts}
+                  .scrollTarget="${window}"
+                  .renderItem=${this.renderPostItem}
+                ></lit-virtualizer>
               </div>
+              <h1>5432543</h1>
             `
           : nothing}
       </div>
     `;
+  }
+
+  renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
+    return html` <div
+      ?wide-padding="${this.wide}"
+      class="card layout vertical center-center"
+      aria-label="[[post.name]]"
+      role="listitem"
+      aria-level="2"
+      tabindex="${ifDefined(index)}">
+      <yp-post-card
+        id="postCard${post.id}"
+        @refresh="${this._refreshPost}"
+        class="card"
+        .post="${post}">
+      </yp-post-card>
+    </div>`;
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
@@ -575,13 +573,7 @@ export class YpPostsList extends YpBaseElement {
         this._processCategories();
         this._checkForMultipleLanguages(postsInfo.posts);
         window.appGlobals.cache.addPostsToCacheLater(postsInfo.posts);
-        await this.updateComplete;
-        YpIronListHelpers.detachListeners(this as YpElementWithIronList);
-        YpIronListHelpers.attachListeners(this as YpElementWithIronList);
-        //TODO: Fix this hardcoded timeout for iron list, replace with something else
-        setTimeout(() => {
-          (this.$$('#ironList') as IronListInterface).fire('iron-resize');
-        }, 50);
+        this.requestUpdate();
       }
     }
   }

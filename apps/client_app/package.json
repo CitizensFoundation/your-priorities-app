@@ -90,6 +90,7 @@
     "lit-element": "^2.0.1",
     "lit-flexbox-literals": "0.0.7",
     "lit-html": "^1.0.0",
+    "lit-virtualizer": "^0.4.2",
     "lodash-es": "^4.17.15",
     "moment": "^2.27.0",
     "pwa-helpers": "^0.9.1"
