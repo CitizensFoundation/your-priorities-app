@@ -12,6 +12,7 @@ import './yp-post-card.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
+import { nothing } from 'lit-html';
 
 @customElement('yp-posts-list')
 export class YpPostsList extends YpBaseElement {
@@ -258,36 +259,40 @@ export class YpPostsList extends YpBaseElement {
               </div>
             `
           : html``}
-
-        <div class="layout horizontal center-center">
-          <iron-list
-            id="ironList"
-            selection-enabled=""
-            .scrollOffset="${this.scrollOffset}"
-            @selected-item-changed="${this._selectedItemChanged}"
-            .items="${this.posts}"
-            as="post"
-            scroll-target="document"
-            ?grid="${this.wide}"
-            role="list">
-            <template>
-              <div
-                ?wide-padding="${this.wide}"
-                class="card layout vertical center-center"
-                aria-label="[[post.name]]"
-                role="listitem"
-                aria-level="2"
-                tabindex="${this.tabIndex}">
-                <yp-post-card
-                  id="postCard[[post.id]]"
-                  @refresh="${this._refreshPost}"
-                  class="card"
-                  post="[[post]]">
-                </yp-post-card>
+        ${this.posts && this.posts.length > 0
+          ? html`
+              <div class="layout horizontal center-center">
+                <iron-list
+                  id="ironList"
+                  selection-enabled=""
+                  .scrollOffset="${this.scrollOffset}"
+                  @selected-item-changed="${this._selectedItemChanged}"
+                  .items="${this.posts}"
+                  as="post"
+                  scroll-target="document"
+                  ?grid="${this.wide}"
+                  role="list">
+                  <template>
+                    <div
+                      ?wide-padding="${this.wide}"
+                      class="card layout vertical center-center"
+                      aria-label="[[post.name]]"
+                      role="listitem"
+                      aria-level="2"
+                      tabindex="[[index]]">
+                      <h1>ijijij</h1>
+                      <yp-post-card
+                        id="postCard[[post.id]]"
+                        @refresh="${this._refreshPost}"
+                        class="card"
+                        post="[[post]]">
+                      </yp-post-card>
+                    </div>
+                  </template>
+                </iron-list>
               </div>
-            </template>
-          </iron-list>
-        </div>
+            `
+          : nothing}
       </div>
     `;
   }
@@ -315,7 +320,9 @@ export class YpPostsList extends YpBaseElement {
   async _refreshPost(event: CustomEvent) {
     const postId: number = event.detail.id as number;
     if (postId) {
-      const post = await window.serverApi.getPost(postId) as YpPostData | void;
+      const post = (await window.serverApi.getPost(
+        postId
+      )) as YpPostData | void;
       if (post) {
         for (let i = 0; i < this.posts.length; i++) {
           if (this.posts[i].id == post.id) {
@@ -602,10 +609,10 @@ export class YpPostsList extends YpBaseElement {
       });
 
       if (multipleLanguages) {
-        //TODO: Fix explicit typedef
+        /* TODO: Fix explicit typedef
         window.appDialogs.getDialogAsync('autoTranslateDialog', (dialog: { openLaterIfAutoTranslationEnabled: () => void }) => {
           dialog.openLaterIfAutoTranslationEnabled();
-        });
+        }); */
       }
     }
   }

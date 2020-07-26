@@ -355,5 +355,9 @@ interface YpCategoriesCount {
 interface YpCategoriesCountInfo {
   categoryCounts: Array<YpCategoriesCount>;
   allPostCount: number;
+}
 
+interface YpGroupResults {
+  group: YpGroupData;
+  hasNonOpenPosts: boolean;
 }

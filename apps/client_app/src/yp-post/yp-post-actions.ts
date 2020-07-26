@@ -42,17 +42,20 @@ export class YpPostActions extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    if (this.endorsementButtons) {
-      this.$$('#actionDown')!.className += ' ' + 'default-buttons-color';
-      this.$$('#actionUp')!.className += ' ' + 'default-buttons-color';
-    }
-
     this.addGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal);
+  }
+
+  firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.firstUpdated(changedProperties);
+    if (this.endorsementButtons) {
+      this.$$('#actionDown')!.className += ' ' + 'default-buttons-color';
+      this.$$('#actionUp')!.className += ' ' + 'default-buttons-color';
+    }
   }
 
   static get styles() {

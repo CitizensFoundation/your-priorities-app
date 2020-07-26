@@ -156,8 +156,18 @@ export class YpGroup extends YpCollection {
       this.collection =
         window.appGlobals.cache.groupItemsCache[this.collectionId];
       this.refresh();
-    } else {
-      super._getCollection();
+    } else if (this.collectionId) {
+      this.collection = undefined;
+      this.collectionItems = undefined;
+      const groupResults = (await window.serverApi.getCollection(
+        this.collectionType,
+        this.collectionId
+      )) as YpGroupResults | undefined;
+      if (groupResults) {
+        this.collection = groupResults.group;
+        this.hasNonOpenPosts = groupResults.hasNonOpenPosts;
+        this.refresh();
+      }
     }
     window.appGlobals.retryMethodAfter401Login = undefined;
   }
