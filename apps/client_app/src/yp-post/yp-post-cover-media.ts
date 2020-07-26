@@ -123,6 +123,10 @@ export class YpPostCoverMedia extends YpBaseElement {
           display: block;
         }
 
+        .topContainer {
+          height: 100%;
+        }
+
         .topContainer[top-radius] > iron-image,
         #videoPreviewImage {
           border-top-right-radius: 4px;

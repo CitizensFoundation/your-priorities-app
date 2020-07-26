@@ -60,6 +60,7 @@ export class YpPostActions extends YpBaseElement {
 
   static get styles() {
     return [
+      super.styles,
       css`
         :host {
           display: block;

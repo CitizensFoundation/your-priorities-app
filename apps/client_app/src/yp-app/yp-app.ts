@@ -290,7 +290,6 @@ export class YpApp extends YpBaseElement {
   }
 
   updateLocation() {
-    debugger;
     const path = window.location.pathname;
 
     const pattern = '/:page';

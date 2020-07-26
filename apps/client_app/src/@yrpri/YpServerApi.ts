@@ -48,7 +48,7 @@ export class YpServerApi extends YpCodeBase {
         responseJson = await response.json();
       } catch (error) {
         if (response.status===200 && response.statusText==="OK") {
-          console.warn("HELLO");
+          // Do nothing
         } else {
           this.fireGlobal('yp-network-error', {
             response: response,

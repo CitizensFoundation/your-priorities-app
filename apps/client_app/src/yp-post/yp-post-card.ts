@@ -276,7 +276,7 @@ export class YpPostCard extends YpBaseElement {
   }
 
   render() {
-    return html`
+    return this.post ? html`
       <div
         .mini="${this.mini}"
         .hide-post-cover="${this.post.Group.configuration.hidePostCover}"
@@ -312,8 +312,7 @@ export class YpPostCard extends YpBaseElement {
               ? html`
                   <yp-magic-text
                     class="description layout horizontal"
-                    ?hasCustomRatings="${this.post.Group.configuration
-                      .customRatings}"
+                    ?hasCustomRatings="${this.post.Group.configuration.customRatings}"
                     ?hidden="${this.hideDescription}"
                     textType="postContent"
                     .contentLanguage="${this.post.language}"
@@ -321,7 +320,7 @@ export class YpPostCard extends YpBaseElement {
                     text-only
                     .content="${this.post.description}"
                     .contentId="${this.post.id}"
-                    truncate="120">
+                    truncate="220">
                   </yp-magic-text>
                 `
               : html`
@@ -379,7 +378,7 @@ export class YpPostCard extends YpBaseElement {
           </div>
         </div>
       </div>
-    `;
+    ` : nothing;
   }
 
   get _fullPostUrl() {

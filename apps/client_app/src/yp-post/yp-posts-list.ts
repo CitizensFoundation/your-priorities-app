@@ -29,7 +29,7 @@ export class YpPostsList extends YpBaseElement {
   statusFilter = 'open';
 
   @property({ type: Array })
-  posts: Array<YpPostData> = [];
+  posts: Array<YpPostData> | undefined;
 
   //TODO: Check if we still want to use this like that
   @property({ type: Number })
@@ -236,7 +236,7 @@ export class YpPostsList extends YpBaseElement {
               id="searchInput"
               @keydown="${this._searchKey}"
               .label="${this.t('searchFor')}"
-              .value="${this.searchingFor}"
+              .value="${this.searchingFor ? this.searchingFor : ''}"
               class="searchBox">
             </mwc-textfield>
             <mwc-icon-button
@@ -259,46 +259,41 @@ export class YpPostsList extends YpBaseElement {
               </div>
             `
           : html``}
-        ${this.posts && this.posts.length > 0
-          ? html`
-              <div class="layout horizontal center-center">
-                <iron-list
-                  id="ironList"
-                  selection-enabled=""
-                  .scrollOffset="${this.scrollOffset}"
-                  @selected-item-changed="${this._selectedItemChanged}"
-                  .items="${this.posts}"
-                  as="post"
-                  scroll-target="document"
-                  ?grid="${this.wide}"
-                  role="list">
-                  <template>
-                    <div
-                      ?wide-padding="${this.wide}"
-                      class="card layout vertical center-center"
-                      aria-label="[[post.name]]"
-                      role="listitem"
-                      aria-level="2"
-                      tabindex="[[index]]">
-                      <h1>ijijij</h1>
-                      <yp-post-card
-                        id="postCard[[post.id]]"
-                        @refresh="${this._refreshPost}"
-                        class="card"
-                        post="[[post]]">
-                      </yp-post-card>
-                    </div>
-                  </template>
-                </iron-list>
+        <div class="layout horizontal center-center">
+          <iron-list
+            id="ironList"
+            selection-enabled=""
+            .scrollOffset="${this.scrollOffset}"
+            @selected-item-changed="${this._selectedItemChanged}"
+            .items="${this.posts}"
+            as="post"
+            scroll-target="document"
+            ?grid="${this.wide}"
+            role="list">
+            <template>
+              <div
+                ?wide-padding="${this.wide}"
+                class="card layout vertical center-center"
+                aria-label="[[post.name]]"
+                role="listitem"
+                aria-level="2"
+                tabindex="[[index]]">
+                <yp-post-card
+                  id="postCard[[post.id]]"
+                  @refresh="${this._refreshPost}"
+                  class="card"
+                  post="[[post]]">
+                </yp-post-card>
               </div>
-            `
-          : nothing}
+            </template>
+          </iron-list>
+        </div>
       </div>
     `;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.firstUpdated(changedProperties);
     YpIronListHelpers.attachListeners(this as YpElementWithIronList);
   }
 
@@ -323,7 +318,7 @@ export class YpPostsList extends YpBaseElement {
       const post = (await window.serverApi.getPost(
         postId
       )) as YpPostData | void;
-      if (post) {
+      if (post && this.posts) {
         for (let i = 0; i < this.posts.length; i++) {
           if (this.posts[i].id == post.id) {
             this.posts[i] = post;
@@ -361,7 +356,7 @@ export class YpPostsList extends YpBaseElement {
   }
 
   get scrollOffset() {
-    const list = this.$$('iron-list');
+    const list = this.$$('ironList');
     if (list) {
       let offset = list.offsetTop;
       offset -= 75;
@@ -414,8 +409,8 @@ export class YpPostsList extends YpBaseElement {
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
-    if (changedProperties.has('group')) {
-      const allowedForceByValues = [
+    if (changedProperties.has('group') && this.group) {
+     const allowedForceByValues = [
         'oldest',
         'newest',
         'top',
@@ -424,7 +419,7 @@ export class YpPostsList extends YpBaseElement {
         'alphabetical',
       ];
 
-      this.posts = [];
+      this.posts = undefined;
       this.noPosts = false;
       if (this.group) {
         this.moreToLoad = true;
@@ -459,11 +454,12 @@ export class YpPostsList extends YpBaseElement {
             this.filter = 'newest';
           }
         }
+        console.error("LOADMOERE");
         this._loadMoreData();
       }
-    } else if (changedProperties.has('filter') && this.filter) {
+    } else if (this.group && changedProperties.has('filter') && this.filter) {
       this._loadMoreData();
-    } else if (changedProperties.has('categoryId') && this.categoryId) {
+    } else if (this.group && changedProperties.has('categoryId') && this.categoryId) {
       this._loadMoreData();
     }
 
@@ -517,7 +513,8 @@ export class YpPostsList extends YpBaseElement {
         }
         url += '/' + this.statusFilter;
       }
-      url += '?offset=' + this.posts.length;
+      if (this.posts)
+        url += '?offset=' + this.posts.length;
 
       const postsInfo = (await window.serverApi.getGroupPosts(
         url

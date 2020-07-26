@@ -79,7 +79,8 @@ export abstract class YpCollection extends YpBaseElement {
     this.collectionCreateFabIcon = collectionCreateFabIcon;
     this.collectionCreateFabLabel = collectionCreateFabLabel;
 
-    this.addGlobalListener('yp-logged-in', this._getCollection.bind(this));
+    //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
+   // this.addGlobalListener('yp-logged-in', this._getCollection.bind(this));
     this.addGlobalListener('yp-got-admin-rights', this.refresh.bind(this));
   }
 
