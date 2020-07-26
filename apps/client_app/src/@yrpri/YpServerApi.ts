@@ -194,4 +194,10 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/${collectionType}/${collectionId}/pages`
     );
   }
+
+  public getTranslation(translateUrl: string) {
+    return this.fetchWrapper(
+      translateUrl
+    );
+  }
 }

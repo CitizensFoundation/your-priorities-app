@@ -220,12 +220,6 @@ export class YpMagicText extends YpBaseElement {
       if (this.contentId) {
         let url;
 
-        const params = {
-          textType: this.textType,
-          contentId: this.contentId,
-          targetLanguage: this.language,
-        };
-
         switch (this.textType) {
           case 'postName':
           case 'postContent':
@@ -273,7 +267,9 @@ export class YpMagicText extends YpBaseElement {
             return;
         }
 
-        this.processedContent = await window.serverApi.getTranslation(url, params) as string | undefined;
+        url = `${url}?textType=${this.textType}&contentId=${this.contentId}&targetLanguage=${this.language}`;
+
+        this.processedContent = await window.serverApi.getTranslation(url) as string | undefined;
         if (this.processedContent) {
           window.appGlobals.cache.autoTranslateCache[this.indexKey] = this.processedContent;
           this.fire('new-translation');
