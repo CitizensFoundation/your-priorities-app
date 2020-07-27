@@ -189,6 +189,12 @@ var getDomain = function (req, domainId, done) {
                 required: false,
               },
               {
+                model: models.Domain,
+                as: 'Domain',
+                attributes: ['id','configuration','name'],
+                required: false
+              },
+              {
                 model: models.Image,
                 as: 'CommunityHeaderImages',
                 attributes:  models.Image.defaultAttributesPublic,
