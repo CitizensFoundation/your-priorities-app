@@ -274,8 +274,8 @@ export class YpGroup extends YpCollection {
       !(this.collection.configuration as YpGroupConfiguration).hideNewPost
         ? html` <mwc-fab
             ?extended="${this.wide}"
-            .label="${this.t('post.create')}"
-            icon="light_bulb"
+            .label="${this.t('post.new')}"
+            icon="post.add"
             @click="${this._newPost}"></mwc-fab>`
         : nothing}
 
