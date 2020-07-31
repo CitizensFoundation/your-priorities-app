@@ -488,15 +488,15 @@ class YpFileUploadLit extends YpBaseElement {
         this.setupDrop();
       }
       if (this.videoUpload) {
-        this.accept','video/*');
-        this.capture', true);
+        this.accept = 'video/*';
+        this.capture = true;
       } else if (this.audioUpload) {
-        this.accept','audio/*');
-        this.capture', true);
+        this.accept = 'audio/*';
+        this.capture = true;
       }
 
       if (!this.uploadLimitSeconds && (this.videoUpload || this.audioUpload)) {
-        this.uploadLimitSeconds', 600);
+        this.uploadLimitSeconds = 600;
       }
   }
 
@@ -737,7 +737,7 @@ class YpFileUploadLit extends YpBaseElement {
     this.async(function () {
       this.videoImages = videoImages;
     });
-    this.useMainPhotoForVideoCover = false);
+    this.useMainPhotoForVideoCover = false;
   }
 
   _selectVideoCoverMainPhoto() {
