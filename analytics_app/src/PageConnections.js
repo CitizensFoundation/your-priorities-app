@@ -232,7 +232,6 @@ export class PageConnections extends YpBaseElement {
      .nodeLabel("lemmatizedContentNOTTT")
      .d3AlphaDecay(0.0120)
      .d3VelocityDecay(0.7)
-     .linkOpacity(d => d.value)
      .backgroundColor("#000")
      .onNodeClick(node => {
        // Aim at node from outside it
