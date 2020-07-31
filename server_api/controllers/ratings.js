@@ -102,6 +102,7 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
             userId: rating.user_id,
             domainId: req.ypDomain.id,
             groupId : post.group_id,
+            ratingId: rating.id,
             postId : post.id,
             access: models.AcActivity.ACCESS_PRIVATE
           }, function (error) {

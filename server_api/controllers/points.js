@@ -679,6 +679,7 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
             userId: pointQuality.user_id,
             domainId: req.ypDomain.id,
 //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+            pointQualityId : pointQuality.id,
             groupId : point.group_id,
             postId : point.post_id,
             pointId: point.id,
