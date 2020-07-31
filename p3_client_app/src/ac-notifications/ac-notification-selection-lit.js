@@ -129,21 +129,21 @@ class AcNotificationSelectionLit extends YpBaseElement {
   _methodChanged(value) {
     value = parseInt(value);
     if (this.setting.method!=value) {
-      this.set('setting.method', value);
+      this.setting.method = value;
     }
   }
 
   _frequencyChanged(value) {
     value = parseInt(value);
     if (this.setting.frequency!=value) {
-      this.set('setting.frequency', value);
+      this.setting.frequency = value;
     }
   }
 
   _settingChanged(value) {
     if (value) {
-      this.set('method', value.method);
-      this.set('frequency', value.frequency);
+      this.method = value.method;
+      this.frequency = value.frequency;
     }
   }
 
@@ -156,7 +156,7 @@ class AcNotificationSelectionLit extends YpBaseElement {
     if (language) {
       if (!method || method==0) {
       } else if (method==1) {
-        this.set('frequency', 0);
+        this.frequency = 0;
         frequencyArray = [
           {
             name: this.t('notification.asItHappens'),

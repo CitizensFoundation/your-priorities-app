@@ -469,11 +469,11 @@ class YpEditDialogLit extends YpBaseElement {
     }
 
   _fileUploadStarting(event) {
-    this.set('uploadingState', true);
+    this.uploadingState = true;
   }
 
   _fileUploadComplete(event) {
-    this.set('uploadingState', false);
+    this.uploadingState = false;
   }
 
   _nextTab() {
@@ -526,11 +526,11 @@ class YpEditDialogLit extends YpBaseElement {
     super.connectedCallback()
     this.baseAction = this.action;
     if (/iPad/.test(navigator.userAgent)) {
-      this.set('tablet', true);
+      this.tablet = true;
     } else if (/Android/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent)) {
-      this.set('tablet', true);
+      this.tablet = true;
     } else {
-      this.set('tablet', false);
+      this.tablet = false;
     }
   }
 
@@ -639,13 +639,13 @@ class YpEditDialogLit extends YpBaseElement {
   }
 
   _showErrorDialog(errorText) {
-    this.set('errorText', errorText);
+    this.errorText = errorText;
     this.$$("#formErrorDialog").open();
   }
 
   _clearErrorText(event) {
     this.$$("#formErrorDialog").close();
-    this.set('errorText', null);
+    this.errorText = null;
   }
 }
 

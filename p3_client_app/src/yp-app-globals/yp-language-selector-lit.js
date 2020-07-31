@@ -116,10 +116,10 @@ class YpLanguageSelectorLit extends YpBaseElement {
   }
 
   _refreshLanguage () {
-    this.set('dropdownVisible', false);
-    this.set('refreshLanguages', !this.refreshLanguages);
+    this.dropdownVisible = false;
+    this.refreshLanguages = !this.refreshLanguages;
     this.async(function () {
-      this.set('dropdownVisible', true);
+      this.dropdownVisible = true;
     });
   }
 
@@ -196,13 +196,13 @@ connectedCallback() {
       this.$$("#hasAutoTranslationAjax").generateRequest();
       // Update dropdown language after it has been loaded from defaults
       this.async(function () {
-        this.set('selectedLocale', this.language);
+        this.selectedLocale = this.language;
       }, 1500);
     }
   }
 
   _autoTranslateEvent(event, detail) {
-    this.set('autoTranslate', detail);
+    this.autoTranslate = detail;
   }
 
   _stopTranslation() {
@@ -253,9 +253,9 @@ connectedCallback() {
 
   _hasAutoTranslationResponse(event, detail) {
     if (detail.response && detail.response.hasAutoTranslation===true) {
-      this.set('hasServerAutoTranslation', true);
+      this.hasServerAutoTranslation = true;
     } else {
-      this.set('hasServerAutoTranslation', false);
+      this.hasServerAutoTranslation = false;
     }
   }
 
@@ -290,7 +290,7 @@ connectedCallback() {
 
   _selectedLocaleChanged(locale, oldLocale) {
     if (locale) {
-      this.set('value', locale);
+      this.value = locale;
       if (!this.noUserEvents && oldLocale) {
         if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
           this._stopTranslation();

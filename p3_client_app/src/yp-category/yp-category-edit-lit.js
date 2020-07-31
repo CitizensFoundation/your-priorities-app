@@ -86,29 +86,29 @@ class YpCategoryEditLit extends YpBaseElement {
 
   _iconImageUploaded(event, detail) {
     const image = JSON.parse(detail.xhr.response);
-    this.set('uploadedIconImageId', image.id);
+    this.uploadedIconImageId = image.id;
   }
 
   _headerImageUploaded(event, detail) {
     const image = JSON.parse(detail.xhr.response);
-    this.set('uploadedHeaderImageId', image.id);
+    this.uploadedHeaderImageId = image.id;
   }
 
   setup(group, newNotEdit, refreshFunction, category) {
-    this.set('group', group);
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.group = group;
+    this.new = newNotEdit;
+    this.refreshFunction = refreshFunction;
     if (category) {
-      this.set('category', category);
+      this.category = category;
     }
     this._setupTranslation();
     this._setupNewUpdateState();
   }
 
   _clear() {
-    this.set('category', { name: '', description: '' });
-    this.set('uploadedIconImageId', null);
-    this.set('uploadedHeaderImageId', null);
+    this.category = { name: '', description: '' };
+    this.uploadedIconImageId = null;
+    this.uploadedHeaderImageId = null;
     this.$$("#headerImageUpload").clear();
     this.$$("#iconImageUpload").clear();
   }

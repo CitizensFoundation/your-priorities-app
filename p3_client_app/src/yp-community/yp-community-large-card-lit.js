@@ -465,7 +465,7 @@ behaviors: [
       community.CommunityLogoVideos) {
       const videoURL = this._getVideoURL(community.CommunityLogoVideos);
       if (videoURL) {
-        this.set('communityVideoId', community.CommunityLogoVideos[0].id);
+        this.communityVideoId = community.CommunityLogoVideos[0].id;
         return videoURL;
       } else {
         return null;
@@ -676,7 +676,7 @@ behaviors: [
 
   _refresh(community) {
     if (community) {
-      this.set('community', community);
+      this.community = community;
     }
     this.fire("update-community");
   }

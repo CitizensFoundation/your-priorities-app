@@ -156,7 +156,7 @@ behaviors: [
 
   _routeIdChanged(newId) {
     if (newId) {
-      this.set('communityFolderId', newId);
+      this.communityFolderId = newId;
     }
   }
 
@@ -209,17 +209,17 @@ behaviors: [
   }
 
   _response(event, detail, sender) {
-    this.set('communityFolder', detail.response);
+    this.communityFolder = detail.response;
 
     if (!this.communityFolder.is_community_folder) {
       this.redirectTo("/community/"+this.community.id);
     } else {
       this.refresh();
 
-      this.set('createFabIcon', null);
+      this.createFabIcon = null;
 
       /*if (false && !this.communityFolder.Domain.only_admins_can_create_communities || this.checkDomainAccess(this.communityFolder.Domain)) {
-        this.set('createFabIcon', 'group-work');
+        this.createFabIcon', 'group-work');
       } else {
       }*/
 
@@ -232,7 +232,7 @@ behaviors: [
   _gotAdminRights(event, detail) {
     if (detail && detail>0) {
       if (this.checkCommunityAccess(this.communityFolder)) {
-        this.set('createFabIcon', 'add');
+        this.createFabIcon = 'add';
       }
     }
   }

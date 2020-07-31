@@ -163,8 +163,8 @@ class AcNotificationListGenaralItemLit extends YpBaseElement {
 
   _notificationChanged(notification) {
     if (notification) {
-      this.set('post', notification.AcActivities[0].Post);
-      this.set('user', notification.AcActivities[0].User);
+      this.post = notification.AcActivities[0].Post;
+      this.user = notification.AcActivities[0].User;
     } else {
     }
   }

@@ -58,24 +58,24 @@ class YpApiActionDialogLit extends YpBaseElement {
   }
 
   setup(action, confirmationText, onFinishedFunction, confirmButtonText, method) {
-    this.set('action', action);
-    this.set('confirmationText', confirmationText);
-    this.set('onFinishedFunction', onFinishedFunction);
+    this.action = action;
+    this.confirmationText = confirmationText;
+    this.onFinishedFunction = onFinishedFunction;
     if (confirmButtonText) {
-      this.set('confirmButtonText', confirmButtonText);
+      this.confirmButtonText = confirmButtonText;
     } else {
-      this.set('confirmButtonText', this.t('delete'));
+      this.confirmButtonText = this.t('delete');
     }
     if (method) {
-      this.set('method', method);
+      this.method = method;
     } else {
-      this.set('method', 'DELETE');
+      this.method = 'DELETE';
     }
   }
 
   open(options) {
     if (options && options.finalDeleteWarning) {
-      this.set('finalDeleteWarning', true);
+      this.finalDeleteWarning = true;
     }
     this.$$("#confirmationDialog").open();
   }
@@ -86,8 +86,8 @@ class YpApiActionDialogLit extends YpBaseElement {
       this.$$("#apiAjax").setBody({deleteConfirmed: true});
       this.$$("#apiAjax").generateRequest();
     } else {
-      this.set('finalDeleteWarning', false);
-      this.set('confirmationText', this.t('finalDeleteWarning'));
+      this.finalDeleteWarning = false;
+      this.confirmationText = this.t('finalDeleteWarning');
       this.$$("#confirmationDialog").close();
       this.async(() => {
         this.$$("#confirmationDialog").open();

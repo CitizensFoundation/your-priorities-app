@@ -190,23 +190,23 @@ class AcNotificationListPointLit extends YpBaseElement {
 
   _notificationChanged(notification) {
     if (notification) {
-      this.set('point', notification.AcActivities[0].Point);
-      this.set('post', notification.AcActivities[0].Post);
-      this.set('user', notification.AcActivities[0].User);
+      this.point = notification.AcActivities[0].Point;
+      this.post = notification.AcActivities[0].Post;
+      this.user = notification.AcActivities[0].User;
       if (this.point) {
-        this.set('pointContent', this.truncate(this.point.content, 72));
+        this.pointContent = this.truncate(this.point.content, 72);
       }
       if (notification.type=='notification.point.new') {
-        this.set('newPointMode', true);
+        this.newPointMode = true;
       } else if (notification.type=='notification.point.quality') {
-        this.set('qualityMode', true);
+        this.qualityMode = true;
         this._createQualityStrings();
       }
     } else {
-      this.set('helpfulsText', null);
-      this.set('unhelpfulsText', null);
-      this.set('newPointMode', null);
-      this.set('qualityMode', null);
+      this.helpfulsText = null;
+      this.unhelpfulsText = null;
+      this.newPointMode = null;
+      this.qualityMode = null;
     }
   }
 
@@ -229,11 +229,11 @@ class AcNotificationListPointLit extends YpBaseElement {
     }.bind(this));
 
     if (helpfuls && helpfuls!="") {
-      this.set('helpfulsText', this.truncateNameList(helpfuls));
+      this.helpfulsText = this.truncateNameList(helpfuls);
     }
 
     if (unhelpfuls && unhelpfuls!="") {
-      this.set('unhelpfulsText', this.truncateNameList(unhelpfuls));
+      this.unhelpfulsText = this.truncateNameList(unhelpfuls);
     }
   }
 

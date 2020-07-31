@@ -456,17 +456,17 @@ class YpFileUploadLit extends YpBaseElement {
   clear() {
     this.set("files", []);
     this._showDropText();
-    this.set('uploadStatus', null);
-    this.set('currentVideoId', null);
-    this.set('currentAudioId', null);
-    this.set('currentFile', null);
-    this.set('transcodingJobId', null);
-    this.set('indeterminateProgress', false);
-    this.set('capture', false);
-    this.set('previewVideoUrl', null);
-    this.set('videoImages', null);
-    this.set('isPollingForTranscoding', false);
-    this.set('useMainPhotoForVideoCover', false);
+    this.uploadStatus = null;
+    this.currentVideoId = null;
+    this.currentAudioId = null;
+    this.currentFile = null;
+    this.transcodingJobId = null;
+    this.indeterminateProgress = false;
+    this.capture = false;
+    this.previewVideoUrl = null;
+    this.videoImages = null;
+    this.isPollingForTranscoding = false;
+    this.useMainPhotoForVideoCover = false;
 
     this.$$("#fileInput").value = null;
     if (this.videoUpload)
@@ -488,15 +488,15 @@ class YpFileUploadLit extends YpBaseElement {
         this.setupDrop();
       }
       if (this.videoUpload) {
-        this.set('accept','video/*');
-        this.set('capture', true);
+        this.accept','video/*');
+        this.capture', true);
       } else if (this.audioUpload) {
-        this.set('accept','audio/*');
-        this.set('capture', true);
+        this.accept','audio/*');
+        this.capture', true);
       }
 
       if (!this.uploadLimitSeconds && (this.videoUpload || this.audioUpload)) {
-        this.set('uploadLimitSeconds', 600);
+        this.uploadLimitSeconds', 600);
       }
   }
 
@@ -658,15 +658,15 @@ class YpFileUploadLit extends YpBaseElement {
 
   uploadFile(file) {
     if (this.videoUpload || this.audioUpload) {
-      this.set('indeterminateProgress', true);
-      this.set('currentFile', file);
+      this.indeterminateProgress = true;
+      this.currentFile = file;
       const ajax = document.createElement('iron-ajax');
       ajax.handleAs = 'json';
       ajax.contentType = 'application/json';
 
       if (this.videoUpload) {
         window.appGlobals.activity('starting', 'videoUpload');
-        this.set('uploadStatus', this.t("uploadingVideo"));
+        this.uploadStatus = this.t("uploadingVideo");
         this.headers =  {"Content-Type": 'video/mp4'};
         if (this.group) {
           ajax.url = '/api/videos/'+this.group.id+'/createAndGetPreSignedUploadUrl';
@@ -675,7 +675,7 @@ class YpFileUploadLit extends YpBaseElement {
         }
       } else {
         window.appGlobals.activity('starting', 'audioUpload');
-        this.set('uploadStatus', this.t("uploadingAudio"));
+        this.uploadStatus = this.t("uploadingAudio");
         this.headers =  {"Content-Type": 'audio/mp4'};
         if (this.group) {
           ajax.url = '/api/audios/'+this.group.id+'/createAndGetPreSignedUploadUrl';
@@ -688,17 +688,17 @@ class YpFileUploadLit extends YpBaseElement {
       ajax.addEventListener('response', function (event) {
         this.target = event.detail.response.presignedUrl;
         if (this.videoUpload)
-          this.set('currentVideoId',  event.detail.response.videoId);
+          this.currentVideoId = event.detail.response.videoId;
         else
-          this.set('currentAudioId',  event.detail.response.audioId);
+          this.currentAudioId = event.detail.response.audioId;
         this.method = "PUT";
-        this.set('indeterminateProgress', false);
+        this.indeterminateProgress = false;
         this.reallyUploadFile(this.currentFile);
       }.bind(this));
       ajax.generateRequest();
     } else {
       window.appGlobals.activity('starting', 'imageUpload');
-      this.set('uploadStatus', this.t("uploadingImage"));
+      this.uploadStatus = this.t("uploadingImage");
       this.reallyUploadFile(file);
     }
   }
@@ -711,9 +711,9 @@ class YpFileUploadLit extends YpBaseElement {
 
   _getVideoMetaResponse(event, detail) {
     if (detail.response.previewVideoUrl && detail.response.videoImages) {
-      this.set('previewVideoUrl', detail.response.previewVideoUrl);
-      this.set('videoImages', detail.response.videoImages);
-      this.set('uploadStatus', this.t('selectCoverImage'));
+      this.previewVideoUrl = detail.response.previewVideoUrl;
+      this.videoImages = detail.response.videoImages;
+      this.uploadStatus = this.t('selectCoverImage');
     }
   }
 
@@ -728,16 +728,16 @@ class YpFileUploadLit extends YpBaseElement {
 
   _selectVideoCover(event, detail) {
     const frameIndex = event.target.getAttribute('data-index');
-    this.set('selectedVideoCoverIndex', frameIndex);
+    this.selectedVideoCoverIndex = frameIndex;
     this.$$("#setVideoCoverAjax").url ="/api/videos/"+this.currentVideoId+'/setVideoCover';
     this.$$("#setVideoCoverAjax").body = { frameIndex: frameIndex };
     this.$$("#setVideoCoverAjax").generateRequest();
     const videoImages = this.videoImages;
-    this.set('videoImages', null);
+    this.videoImages = null;
     this.async(function () {
-      this.set('videoImages', videoImages);
+      this.videoImages = videoImages;
     });
-    this.set('useMainPhotoForVideoCover', false);
+    this.useMainPhotoForVideoCover = false);
   }
 
   _selectVideoCoverMainPhoto() {
@@ -754,7 +754,7 @@ class YpFileUploadLit extends YpBaseElement {
     const prefix = "files." + this.files.indexOf(this.currentFile);
     if (detail.response.status==="Complete") {
       this.set(prefix + ".complete", true);
-      this.set('uploadStatus', this.t('uploadCompleted'));
+      this.uploadStatus = this.t('uploadCompleted');
       if (this.videoUpload) {
         this.fire("success", { detail: detail, videoId: this.currentVideoId });
         this._getVideoMeta();
@@ -828,8 +828,8 @@ class YpFileUploadLit extends YpBaseElement {
     xhr.onload = function(e) {
       if (xhr.status === 200) {
         if (this.videoUpload) {
-          this.set('indeterminateProgress', true);
-          this.set('uploadStatus', this.t("transcodingVideo"));
+          this.indeterminateProgress = true;
+          this.uploadStatus = this.t("transcodingVideo");
           if (this.group) {
             this.$$("#startTranscodeAjax").url = '/api/videos/'+this.group.id+'/'+this.currentVideoId+'/startTranscoding';
           } else {
@@ -855,8 +855,8 @@ class YpFileUploadLit extends YpBaseElement {
           window.appGlobals.activity('complete', 'videoUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
         } else if (this.audioUpload) {
-          this.set('indeterminateProgress', true);
-          this.set('uploadStatus', this.t("transcodingAudio"));
+          this.indeterminateProgress = true;
+          this.uploadStatus = this.t("transcodingAudio");
 
           if (this.group) {
             this.$$("#startTranscodeAjax").url = '/api/audios/'+this.group.id+'/'+this.currentAudioId+'/startTranscoding';
@@ -881,7 +881,7 @@ class YpFileUploadLit extends YpBaseElement {
           window.appGlobals.activity('complete', 'audioUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
         } else {
-          this.set('uploadStatus', this.t('uploadCompleted'));
+          this.uploadStatus = this.t('uploadCompleted');
           self.fire('file-upload-complete');
           self.set(prefix + ".complete", true);
           self.fire("success", {xhr: xhr, videoId: this.currentVideoId });

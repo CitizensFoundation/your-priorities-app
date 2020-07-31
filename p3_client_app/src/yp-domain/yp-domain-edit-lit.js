@@ -263,13 +263,13 @@ class YpDomainEditLit extends YpBaseElement {
 */
 
   _videoUploaded(event, detail) {
-    this.set('uploadedVideoId', detail.videoId);
-    this.set('domain.configuration.useVideoCover', true);
+    this.uploadedVideoId = detail.videoId;
+    this.domain.configuration.useVideoCover = true;
   }
 
   _appHomeScreenIconImageUploaded(event, detail) {
     const image = JSON.parse(detail.xhr.response);
-    this.set('appHomeScreenIconImageId', image.id);
+    this.appHomeScreenIconImageId = image.id;
   }
 
   _updateEmojiBindings() {
@@ -287,9 +287,9 @@ class YpDomainEditLit extends YpBaseElement {
   _domainChanged(domain) {
     this._updateEmojiBindings();
     if (window.appGlobals.hasVideoUpload) {
-      this.set('hasVideoUpload', true);
+      this.hasVideoUpload = true;
     } else {
-      this.set('hasVideoUpload', false);
+      this.hasVideoUpload = false;
     }
   }
 
@@ -322,10 +322,10 @@ class YpDomainEditLit extends YpBaseElement {
   }
 
   _clear() {
-    this.set('domain', null);
-    this.set('uploadedLogoImageId', null);
-    this.set('uploadedHeaderImageId', null);
-    this.set('appHomeScreenIconImageId', null);
+    this.domain = null;
+    this.uploadedLogoImageId = null;
+    this.uploadedHeaderImageId = null;
+    this.appHomeScreenIconImageId = null;
     this.$$("#headerImageUpload").clear();
     this.$$("#logoImageUpload").clear();
     if (this.$$("#videoFileUpload"))
@@ -334,12 +334,12 @@ class YpDomainEditLit extends YpBaseElement {
   }
 
   setup(domain, newNotEdit, refreshFunction) {
-    this.set('domain', domain);
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.domain = domain;
+    this.new = newNotEdit;
+    this.refreshFunction = refreshFunction;
     this._setupTranslation();
     if (domain && domain.DomainLogoVideos && domain.DomainLogoVideos.length>0) {
-      this.set('uploadedVideoId', domain.DomainLogoVideos[0].id)
+      this.uploadedVideoId = domain.DomainLogoVideos[0].id
     }
   }
 
@@ -347,9 +347,9 @@ class YpDomainEditLit extends YpBaseElement {
     if (this.new) {
       this.editHeaderText = this.t('domain.new');
       this.toastText = this.t('domainToastCreated');
-      this.set('saveText', this.t('create'));
+      this.saveText = this.t('create');
     } else {
-      this.set('saveText', this.t('save'));
+      this.saveText = this.t('save');
       this.editHeaderText = this.t('domain.edit');
       this.toastText = this.t('domainToastUpdated');
     }

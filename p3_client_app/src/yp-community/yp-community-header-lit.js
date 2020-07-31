@@ -261,7 +261,7 @@ behaviors: [
       this._openPagesDialog();
     else if (detail.item.id="bulkStatusUpdateMenuItem")
       this._openBulkStatusUpdates();
-    this.set('selectedMenuItem', null);
+    this.selectedMenuItem = null;
   }
 
   _openBulkStatusUpdates() {
@@ -326,7 +326,7 @@ behaviors: [
 
   _refresh(community) {
     if (community) {
-      this.set('community', community);
+      this.community = community;
     }
     this.fire("update-community");
   }

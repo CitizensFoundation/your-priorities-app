@@ -212,20 +212,20 @@ class YpAppNavDrawerLit extends YpBaseElement {
       const groupUsers = __.reject(window.appUser.memberships.GroupUsers, function (item) {
         return item.name=="hidden_public_group_for_domain_level_points";
       });
-      this.set('myGroups', __.take(groupUsers, 1000));
-      this.set('myCommunities', __.take(window.appUser.memberships.CommunityUsers, 500));
-      this.set('myDomains', __.take(window.appUser.memberships.DomainUsers, 3));
+      this.myGroups = __.take(groupUsers, 1000);
+      this.myCommunities = __.take(window.appUser.memberships.CommunityUsers, 500);
+      this.myDomains = __.take(window.appUser.memberships.DomainUsers, 3);
     } else {
-      this.set('myGroups', null);
-      this.set('myCommunities', null);
-      this.set('myDomains', null);
+      this.myGroups = null;
+      this.myCommunities = null;
+      this.myDomains = null;
     }
 
     if (window.appUser && window.appUser.adminRights &&
         window.appUser.adminRights.CommunityAdmins && window.appUser.adminRights.CommunityAdmins.length>0) {
-      this.set('myAdminCommunities', window.appUser.adminRights.CommunityAdmins);
+      this.myAdminCommunities = window.appUser.adminRights.CommunityAdmins;
     } else {
-      this.set('myAdminCommunities', null);
+      this.myAdminCommunities = null;
     }
 
     if (window.appUser && window.appUser.adminRights &&
@@ -233,9 +233,9 @@ class YpAppNavDrawerLit extends YpBaseElement {
       const groupAdmins = __.reject(window.appUser.adminRights.GroupAdmins, function (item) {
         return item.name=="hidden_public_group_for_domain_level_points";
       });
-      this.set('myAdminGroups', groupAdmins);
+      this.myAdminGroups = groupAdmins;
     } else {
-      this.set('myAdminGroups', null);
+      this.myAdminGroups = null;
     }
   }
 

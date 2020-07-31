@@ -247,7 +247,7 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _handleUnViewedCount(unViewedCount) {
-    this.set('unViewedCount', unViewedCount);
+    this.unViewedCount = unViewedCount;
     this.fire('yp-set-number-of-un-viewed-notifications', { count: unViewedCount })
   }
 
@@ -322,7 +322,7 @@ class AcNotificationListLit extends YpBaseElement {
   cancelTimer() {
     if (this.timer) {
       clearTimeout(this.timer);
-      this.set('timer', null);
+      this.timer = null;
     }
   }
 
@@ -342,11 +342,11 @@ class AcNotificationListLit extends YpBaseElement {
     const notifications = detail.response.notifications;
 
     if (detail.response.oldestProcessedNotificationAt) {
-      this.set('oldestProcessedNotificationAt', detail.response.oldestProcessedNotificationAt);
+      this.oldestProcessedNotificationAt = detail.response.oldestProcessedNotificationAt;
     }
 
     if (!this.notifications) {
-      this.set('notifications', notifications);
+      this.notifications = notifications;
     } else {
       notifications.forEach(function (notification) {
         this.push('notifications', notification);
@@ -356,7 +356,7 @@ class AcNotificationListLit extends YpBaseElement {
     this._finalizeAfterResponse(notifications);
 
     if (this.firstReponse) {
-      this.set('firstReponse', false);
+      this.firstReponse = false;
       this.loadNewData();
     } else {
       if (this.opened) {
@@ -494,9 +494,9 @@ class AcNotificationListLit extends YpBaseElement {
   _finalizeAfterResponse(notifications) {
     if (notifications.length>0) {
       if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].updated_at) {
-        this.set('latestProcessedNotificationAt', notifications[0].updated_at);
+        this.latestProcessedNotificationAt = notifications[0].updated_at;
       }
-      this.set('moreToLoad', true);
+      this.moreToLoad = true;
     }
 
     this.async(function () {
@@ -509,7 +509,7 @@ class AcNotificationListLit extends YpBaseElement {
   _loadMoreData() {
     this._clearScrollThreshold();
     if (this.oldestProcessedNotificationAt) {
-      this.set('moreToLoad', false);
+      this.moreToLoad = false;
       this.$$("#loadNotificationsAjax").url = this.url + '?beforeDate='+this.oldestProcessedNotificationAt;
       this.$$("#loadNotificationsAjax").generateRequest();
     }

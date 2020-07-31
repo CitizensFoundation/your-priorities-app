@@ -323,9 +323,9 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
   }
 
   reset() {
-    this.set('config', null);
-    this.set('templates', null);
-    this.set('bulkStatusUpdates', null);
+    this.config = null;
+    this.templates = null;
+    this.bulkStatusUpdates = null;
   }
 
 /*
@@ -336,7 +336,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
 */
 
   _saveAndClose() {
-    this.set('closeAfterSave', true);
+    this.closeAfterSave = true;
     this._save();
   }
 
@@ -347,7 +347,7 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
   }
 
   _updatedTemplates(event, detail) {
-    this.set('templates', detail);
+    this.templates = detail;
     this.$$("#updateConfigAjax").body = { configValue: this.templates, configName: 'templates' };
     this.$$("#updateConfigAjax").generateRequest();
   }
@@ -374,20 +374,20 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
         }
       }.bind(this));
     }.bind(this));
-    this.set('config', configCopy);
+    this.config = configCopy;
   }
 
   _configChanged(config) {
     if (config && !this.haveGotMoveGroups) {
       this.$$("#getAvailableGroupsAjax").generateRequest();
-      this.set('haveGotMoveGroups', true);
+      this.haveGotMoveGroups = true;
     }
   }
 
   _updateConfigResponse() {
     window.appGlobals.notifyUserViaToast(this.t('saved'));
     if (this.closeAfterSave) {
-      this.set('closeAfterSave', false);
+      this.closeAfterSave = false;
       this.$$("#dialog").close();
     }
   }
@@ -415,9 +415,9 @@ class YpBulkStatusUpdateConfigLit extends YpBaseElement {
   }
 
   open(bulkStatusUpdate) {
-    this.set('config', bulkStatusUpdate.config);
-    this.set('templates', bulkStatusUpdate.templates);
-    this.set('bulkStatusUpdate', bulkStatusUpdate);
+    this.config = bulkStatusUpdate.config;
+    this.templates = bulkStatusUpdate.templates;
+    this.bulkStatusUpdate = bulkStatusUpdate;
     this.$$("#dialog").open();
   }
 }

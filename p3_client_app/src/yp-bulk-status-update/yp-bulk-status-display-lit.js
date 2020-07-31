@@ -233,7 +233,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
 
     if (community) {
       if (community.id==470) {
-        this.set('hideGroupName', true);
+        this.hideGroupName = true;
       }
     }
   }
@@ -293,13 +293,13 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
   }
 
   _response(event, detail) {
-    this.set('config', detail.response.config);
+    this.config = detail.response.config;
     const templates = {};
     detail.response.templates.forEach(function (template) {
       templates[template.title] = template;
     });
-    this.set('templates', templates);
-    this.set('community', detail.response.community);
+    this.templates = templates;
+    this.community = detail.response.community;
     this.fire("change-header", { headerTitle: this.truncate(this.community.name,80),
       documentTitle: this.t('bulkStatusUdateFor')+' '+this.truncate(this.community.name,80),
       headerDescription: '',//this.truncate(this.post.Group.objectives,45),
@@ -333,7 +333,7 @@ class YpBulkStatusDisplayLit extends YpBaseElement {
           delete this.templates[template.title];
         }
       }.bind(this));
-      this.set('gotModifiedTemplates', true);
+      this.gotModifiedTemplates = true;
     }
   }
 }

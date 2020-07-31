@@ -438,7 +438,7 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _deleteActivity(event, detail) {
-    this.set('activityIdToDelete', detail.id);
+    this.activityIdToDelete = detail.id;
     dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
       dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
     }.bind(this));
@@ -456,14 +456,14 @@ class AcActivitiesLit extends YpBaseElement {
     }
     this.$$("#deleteActivityAjax").body = {};
     this.$$("#deleteActivityAjax").generateRequest();
-    this.set('activityIdToDelete  ', null);
+    this.activityIdToDelete = null;
   }
 
   _generateRequest(typeId, typeName) {
     if (typeId) {
-      this.set('activities', []);
-      this.set('oldestProcessedActivityAt', null);
-      this.set('noRecommendedPosts', true);
+      this.activities = [];
+      this.oldestProcessedActivityAt = null;
+      this.noRecommendedPosts = true;
 
       //TODO: Add a minimum threshold of filtering before enabling dynamic news_feeds again
       if (false && window.appUser && window.appUser.user && !this.postId) {
@@ -472,7 +472,7 @@ class AcActivitiesLit extends YpBaseElement {
         this.mode = 'activities';
       }
 
-      this.set('url', '/api/'+this.mode+'/' + typeName + '/' + typeId);
+      this.url = '/api/'+this.mode+'/' + typeName + '/' + typeId;
       this.$$("#ajax").url = this.url;
       this.$$("#ajax").generateRequest();
       if (typeName!='posts') {
@@ -489,7 +489,7 @@ class AcActivitiesLit extends YpBaseElement {
         console.log("_loadMoreData for scroll 2 url: "+this.url+" moreToLoad: "+this.moreToLoad);
         if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
           console.log("_loadMoreData for scroll 3");
-          this.set('moreToLoad', false);
+          this.moreToLoad = false;
           console.info("_loadMoreData for scroll for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
           this.$$("#ajax").url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
           this.$$("#ajax").generateRequest();
@@ -511,26 +511,26 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _domainIdChanged(newValue) {
-    this.set('activities', null);
-    this.set('recommendedPosts', null);
+    this.activities = null;
+    this.recommendedPosts = null;
     this._generateRequest(newValue, 'domains');
   }
 
   _communityIdChanged(newValue) {
-    this.set('activities', null);
-    this.set('recommendedPosts', null);
+    this.activities = null;
+    this.recommendedPosts = null;
     this._generateRequest(newValue, 'communities');
   }
 
   _groupIdChanged(newValue) {
-    this.set('activities', null);
-    this.set('recommendedPosts', null);
+    this.activities = null;
+    this.recommendedPosts = null;
     this._generateRequest(newValue, 'groups');
   }
 
   _postIdChanged(newValue) {
-    this.set('activities', null);
-    this.set('recommendedPosts', null);
+    this.activities = null;
+    this.recommendedPosts = null;
     this._generateRequest(newValue, 'posts');
   }
 
@@ -554,10 +554,10 @@ class AcActivitiesLit extends YpBaseElement {
       }
     }
     if (allowRecommendations && detail.response && detail.response.length>0) {
-      this.set('recommendedPosts', detail.response);
-      this.set('noRecommendedPosts', false);
+      this.recommendedPosts = detail.response;
+      this.noRecommendedPosts = false;
     } else {
-      this.set('noRecommendedPosts', true);
+      this.noRecommendedPosts = true;
     }
   }
 
@@ -573,10 +573,10 @@ class AcActivitiesLit extends YpBaseElement {
   _activitiesResponse(event, detail) {
     const activities = this._preProcessActivities(detail.response.activities);
 
-    this.set('gotInitialData', true);
+    this.gotInitialData =true;
 
     if (detail.response.oldestProcessedActivityAt) {
-      this.set('oldestProcessedActivityAt', detail.response.oldestProcessedActivityAt);
+      this.oldestProcessedActivityAt = detail.response.oldestProcessedActivityAt;
     } else {
       console.warn("Have not set oldestProcessedActivityAt");
     }
@@ -592,14 +592,14 @@ class AcActivitiesLit extends YpBaseElement {
     console.info("Activities length: "+activities.length);
     if (activities.length>0) {
       if (!this.latestProcessedActivityAt || this.latestProcessedActivityAt < activities[0].created_at) {
-        this.set('latestProcessedActivityAt', activities[0].created_at);
+        this.latestProcessedActivityAt = activities[0].created_at;
       }
       if (!this.latestProcessedActivityAt) {
         console.error("Have not set latest processed activity at");
       } else {
         console.log("latestProcessedActivityAt: "+ this.latestProcessedActivityAt)
       }
-      this.set('moreToLoad', true);
+      this.moreToLoad = true;
       if (this.activities.length<15 || (activities.length<3 && this.activities.length<100)) {
         this._loadMoreData();
       }

@@ -47,9 +47,9 @@ class AcNotificationToastLit extends YpBaseElement {
   }
 
   open(user, notificationText, systemNotification) {
-    this.set('notificationText', notificationText);
+    this.notificationText = notificationText;
     if (!systemNotification) {
-      this.set('user', user);
+      this.user = user;
     }
     this.$$("#toast").close();
     this.async(function () {

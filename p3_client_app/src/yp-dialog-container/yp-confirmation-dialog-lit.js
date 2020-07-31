@@ -53,16 +53,16 @@ class YpConfirmationDialogLit extends YpBaseElement {
   }
 
   _reset() {
-    this.set('confirmationText', null);
-    this.set('onConfirmedFunction', null);
+    this.confirmationText = null;
+    this.onConfirmedFunction = null;
     this.haveIssuedFinalWarning = false;
     this.useFinalWarning = false;
-    this.set('hideCancel', false);
+    this.hideCancel = false;
   }
 
   open(confirmationText, onConfirmedFunction, useModal, useFinalWarning, hideCancel) {
-    this.set('confirmationText', confirmationText);
-    this.set('onConfirmedFunction', onConfirmedFunction);
+    this.confirmationText = confirmationText;
+    this.onConfirmedFunction = onConfirmedFunction;
     if (useModal) {
       this.$$("#confirmationDialog").modal = true;
     } else {
@@ -76,9 +76,9 @@ class YpConfirmationDialogLit extends YpBaseElement {
     }
     this.haveIssuedFinalWarning = false;
     if (hideCancel) {
-      this.set('hideCancel', true);
+      this.hideCancel = true;
     } else {
-      this.set('hideCancel', false);
+      this.hideCancel = false;
     }
   }
 
@@ -86,7 +86,7 @@ class YpConfirmationDialogLit extends YpBaseElement {
     if (this.useFinalWarning && !this.haveIssuedFinalWarning) {
       this.haveIssuedFinalWarning = true;
       this.$$("#confirmationDialog").close();
-      this.set('confirmationText', this.t("finalDeleteWarning"));
+      this.confirmationText = this.t("finalDeleteWarning");
       this.async(function () {
         this.$$("#confirmationDialog").open();
       });

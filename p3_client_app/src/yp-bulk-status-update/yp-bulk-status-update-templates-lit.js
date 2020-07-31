@@ -170,16 +170,16 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
   }
 
   _editTemplate(event) {
-    this.set('currentlyEditingTemplate', JSON.parse(event.target.getAttribute('data-args')));
-    this.set('currentlyEditingContent',this.wordwrap(120)(this.templates[this.currentlyEditingTemplate]["content"]));
-    this.set('currentlyEditingTitle',this.templates[this.currentlyEditingTemplate]["title"]);
+    this.currentlyEditingTemplate = JSON.parse(event.target.getAttribute('data-args'));
+    this.currentlyEditingContent = this.wordwrap(120)(this.templates[this.currentlyEditingTemplate]["content"]);
+    this.currentlyEditingTitle = this.templates[this.currentlyEditingTemplate]["title"];
     this.$$("#editTemplateLocale").open();
   }
 
   _clearTemplateEdit() {
-    this.set('currentlyEditingTemplate', null);
-    this.set('currentlyEditingContent', null);
-    this.set('currentlyEditingTitle', null);
+    this.currentlyEditingTemplate = null;
+    this.currentlyEditingContent = null;
+    this.currentlyEditingTitle = null;
   }
 
   _updateTemplate() {
@@ -189,7 +189,7 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
         templatesCopy[index] = { title: this.currentlyEditingTitle, content: this.currentlyEditingContent };
       }
     }.bind(this));
-    this.set('templates', templatesCopy);
+    this.templates = templatesCopy;
     this._clearTemplateEdit();
   }
 
@@ -201,23 +201,23 @@ class YpBulkStatusTemplatesLit extends YpBaseElement {
         templatesCopy.splice(index,1);
       }
     }.bind(this));
-    this.set('templates', templatesCopy);
+    this.templates = templatesCopy;
   }
 
   _addTemplate(event) {
     if (!this.templates) {
-      this.set('templates', []);
+      this.templates = [];
     }
     this.push('templates', { title: '', content: ''});
   }
 
   open(templates) {
-    this.set('templates', templates);
+    this.templates = templates;
     this.$$("#dialog").open();
   }
 
   _setupHeaderText() {
-    this.set('headerText', this.t('bulkStatusUpdatesTemplates'));
+    this.headerText = this.t('bulkStatusUpdatesTemplates');
   }
 }
 

@@ -246,13 +246,13 @@ class YpCommunityLit extends YpBaseElement {
 
   _routeIdChanged(newId) {
     if (newId) {
-      this.set('communityId', newId);
+      this.communityId = newId;
     }
   }
 
   _routeTabChanged(newTabName) {
     if (newTabName) {
-      this.set('selectedTab', newTabName);
+      this.selectedTab = newTabName;
     }
   }
 
@@ -262,9 +262,9 @@ class YpCommunityLit extends YpBaseElement {
     }
 
     if (tabName == "map") {
-      this.set('mapActive', true);
+      this.mapActive = true;
     } else {
-      this.set('mapActive', false);
+      this.mapActive = false;
     }
 
     if (tabName && window.appGlobals) {
@@ -324,7 +324,7 @@ class YpCommunityLit extends YpBaseElement {
   }
 
   _response(event, detail, sender) {
-    this.set('community', detail.response);
+    this.community = detail.response;
 
     if (this.community.is_community_folder) {
       this.redirectTo("/community_folder/"+this.community.id);
@@ -332,7 +332,7 @@ class YpCommunityLit extends YpBaseElement {
       this.refresh();
 
       if (!this.community.is_community_folder && (!this.community.only_admins_can_create_groups || this.checkCommunityAccess(this.community))) {
-        this.set('createFabIcon', 'add');
+        this.createFabIcon = 'add';
       }
 
       const url = this._communityHeaderUrl(this.community);
@@ -358,7 +358,7 @@ class YpCommunityLit extends YpBaseElement {
   _gotAdminRights(event, detail) {
     if (detail && detail>0) {
       if (this.checkCommunityAccess(this.community)) {
-        this.set('createFabIcon', 'add');
+        this.createFabIcon = 'add';
       }
     }
   }
@@ -374,7 +374,7 @@ class YpCommunityLit extends YpBaseElement {
         locationHidden = false;
       }
     }.bind(this));
-    this.set('locationHidden', locationHidden);
+    this.locationHidden = locationHidden;
     this._refreshTabsAndPages();
   }
 
@@ -427,11 +427,11 @@ class YpCommunityLit extends YpBaseElement {
       }
 
       if (this.community.configuration && this.community.configuration.alternativeHeader && this.community.configuration.alternativeHeader!="") {
-        this.set('useAlternativeHeader', true);
-        this.set('useNormalHeader', false);
+        this.useAlternativeHeader = true;
+        this.useNormalHeader = false;
       } else {
-        this.set('useAlternativeHeader', false);
-        this.set('useNormalHeader', true);
+        this.useAlternativeHeader = false;
+        this.useNormalHeader = true;
       }
 
       if (this.community.CommunityHeaderImages && this.community.CommunityHeaderImages.length>0) {

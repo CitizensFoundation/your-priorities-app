@@ -135,7 +135,7 @@ class YpAjaxLit extends YpBaseElement {
   }
 
   _setActive(active) {
-    this.set('active', active);
+    this.active = active;
     this.$$("#spinner").active = active;
   }
 

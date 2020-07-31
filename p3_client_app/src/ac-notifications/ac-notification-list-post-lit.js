@@ -160,23 +160,23 @@ class AcNotificationListPostLit extends YpBaseElement {
 
   _notificationChanged(notification) {
     if (notification) {
-      this.set('post', notification.AcActivities[0].Post);
-      this.set('userName', notification.AcActivities[0].User.name);
-      this.set('user', notification.AcActivities[0].User);
+      this.post = notification.AcActivities[0].Post;
+      this.userName = notification.AcActivities[0].User.name;
+      this.user = notification.AcActivities[0].User;
       if (notification.type=='notification.post.new') {
-        this.set('newPostMode', true);
+        this.newPostMode = true;
       } else if (notification.type=='notification.post.endorsement') {
-        this.set('endorseMode', true);
-        this.set('newPostMode', false);
+        this.endorseMode = true;
+        this.newPostMode = false;
         this._createEndorsementStrings();
       }
     } else {
-      this.set('endorsementsText', null);
-      this.set('oppositionsText', null);
-      this.set('newPostMode', null);
-      this.set('endorseMode', null);
-      this.set('userName', null);
-      this.set('user', null);
+      this.endorsementsText = null;
+      this.oppositionsText = null;
+      this.newPostMode = null;
+      this.endorseMode = null;
+      this.userName = null;
+      this.user = null;
     }
   }
 
@@ -199,11 +199,11 @@ class AcNotificationListPostLit extends YpBaseElement {
     }.bind(this));
 
     if (endorsements && endorsements!="") {
-      this.set('endorsementsText', this.truncateNameList(endorsements));
+      this.endorsementsText = this.truncateNameList(endorsements);
     }
 
     if (oppositions && oppositions!="") {
-      this.set('oppositionsText', this.truncateNameList(oppositions));
+      this.oppositionsText = this.truncateNameList(oppositions);
     }
 
   }

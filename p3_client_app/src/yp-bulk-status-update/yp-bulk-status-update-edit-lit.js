@@ -83,29 +83,29 @@ class YpBulkStatusUpdateEditLit extends YpBaseElement {
   }
 
   _clear() {
-    this.set('bulkStatusUpdate', { name: '', description: '', access: 0 });
+    this.bulkStatusUpdate = { name: '', description: '', access: 0 };
   }
 
   setup(bulkStatusUpdate, newNotEdit, refreshFunction) {
     if (!bulkStatusUpdate) {
-      this.set('bulkStatusUpdate', { name: '', emailHeader: '', emailFooter: '' });
+      this.bulkStatusUpdate = { name: '', emailHeader: '', emailFooter: '' };
     } else {
-      this.set('bulkStatusUpdate', bulkStatusUpdate);
+      this.bulkStatusUpdate = bulkStatusUpdate;
     }
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.new = newNotEdit;
+    this.refreshFunction = refreshFunction;
     this._setupTranslation();
   }
 
   _setupTranslation() {
     if (this.new) {
-      this.set('editHeaderText', this.t('newBulkStatusUpdate'));
-      this.set('toastText', this.t('bulkStatusUpdate.toast.created'));
-      this.set('saveText', this.t('create'));
+      this.editHeaderText = this.t('newBulkStatusUpdate');
+      this.toastText = this.t('bulkStatusUpdate.toast.created');
+      this.saveText = this.t('create');
     } else {
-      this.set('editHeaderText', this.t('editBulkStatusUpdate'));
-      this.set('toastText', this.t('bulkStatusUpdate.toast.updated'));
-      this.set('saveText', this.t('update'));
+      this.editHeaderText = this.t('editBulkStatusUpdate' );
+      this.toastText = this.t('bulkStatusUpdate.toast.updated');
+      this.saveText = this.t('update');
     }
   }
 }
