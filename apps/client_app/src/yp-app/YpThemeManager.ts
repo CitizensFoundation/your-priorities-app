@@ -15,70 +15,63 @@ export class YpThemeManager {
     this.themes.push({
       name: 'Basalt Gray',
       '--mdc-theme-background': '#f7f7f7',
-      '--mdc-theme-primary': '#607d8b',
+      '--mdc-theme-primary': '#37474f',
       '--mdc-theme-secondary': '#ff6500',
     });
 
     this.themes.push({
       name: 'Green Moss',
       '--mdc-theme-background': '#dcedc8',
-      '--mdc-theme-primary': '#33691e',
+      '--mdc-theme-primary': '#558b2f',
       '--mdc-theme-secondary': '#c51162',
     });
 
     this.themes.push({
       name: 'Google Blue',
       '--mdc-theme-background': '#e3f2fd',
-      '--mdc-theme-primary': '#2196f3',
+      '--mdc-theme-primary': '#1565c0',
       '--mdc-theme-secondary': '#ff3d00',
     });
 
     this.themes.push({
       name: 'Red Rhubarb',
       '--mdc-theme-background': '#f1f8e9',
-      '--mdc-theme-primary': '#f44336',
+      '--mdc-theme-primary': '#c62828',
       '--mdc-theme-secondary': '#ffd600',
     });
 
     this.themes.push({
       name: 'Mountain Roses',
       '--mdc-theme-background': '#f1f8e9',
-      '--mdc-theme-primary': '#0f9d58',
-      '--mdc-theme-secondary': '#d50000',
-    });
-
-    this.themes.push({
-      name: 'Mountain Roses',
-      '--mdc-theme-background': '#f1f8e9',
-      '--mdc-theme-primary': '#0f9d58',
+      '--mdc-theme-primary': '#2e7d32',
       '--mdc-theme-secondary': '#d50000',
     });
 
     this.themes.push({
       name: 'Purple Wizards',
       '--mdc-theme-background': '#ede7f6',
-      '--mdc-theme-primary': '#673ab7',
+      '--mdc-theme-primary': '#4527a0',
       '--mdc-theme-secondary': '#d50000',
     });
 
     this.themes.push({
       name: 'Kópavogur',
       '--mdc-theme-background': '#F0F0F0',
-      '--mdc-theme-primary': '#00853E',
+      '--mdc-theme-primary': '#004E24',
       '--mdc-theme-secondary': '#ff6500',
     });
 
     this.themes.push({
       name: 'Forbrukerrådet',
       '--mdc-theme-background': '#f5f5f5',
-      '--mdc-theme-primary': '#7dbdc9',
+      '--mdc-theme-primary': '#4b7179',
       '--mdc-theme-secondary': '#d0672f',
     });
 
     this.themes.push({
       name: 'Forbrukerrådet Fonts',
       '--mdc-theme-background': '#f5f5f5',
-      '--mdc-theme-primary': '#7dbdc9',
+      '--mdc-theme-primary': '#4b7179',
       '--mdc-theme-secondary': '#d0672f',
       fonts: {
         htmlImport: '/styles/fonts/forbrukerradet-font.html',
@@ -176,7 +169,7 @@ export class YpThemeManager {
     this.themes.push({
       name: 'The Westbourne',
       '--mdc-theme-background': '#f1f8e9',
-      '--mdc-theme-primary': '#f44336',
+      '--mdc-theme-primary': '#c62828',
       '--mdc-theme-secondary': '#fbba00',
     });
 
@@ -249,9 +242,9 @@ export class YpThemeManager {
       '--mdc-theme-on-secondary': '#FFF',
       '--mdc-theme-on-surface': '#111',
       '--mdc-theme-on-surface-lighter': '#888',
-      '--mdc-typography-headline1-font-size': '20px',
+      '--mdc-typography-headline1-font-size': '22px',
       '--mdc-typography-headline1-font-weight': '700',
-      '--mdc-typography-headline2-font-size': '20px',
+      '--mdc-typography-headline2-font-size': '18px',
       '--mdc-typography-headline2-font-weight': '700'
     })
   }
@@ -286,6 +279,7 @@ export class YpThemeManager {
     number: number | undefined,
     configuration: YpCollectionConfiguration | undefined = undefined
   ) {
+    console.error(number);
     if (
       configuration &&
       configuration.themeOverrideColorPrimary &&

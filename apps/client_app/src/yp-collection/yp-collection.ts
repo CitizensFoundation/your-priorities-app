@@ -162,7 +162,7 @@ export abstract class YpCollection extends YpBaseElement {
       super.styles,
       css`
         mwc-fab {
-          position: absolute;
+          position: fixed;
           bottom: 16px;
           right: 16px;
         }
@@ -259,7 +259,7 @@ export abstract class YpCollection extends YpBaseElement {
       ${this.renderTabs()}
       ${this.renderCurrentTabPage()}
       ${this.createFabIcon && this.createFabLabel
-        ? html` <mwc-fab
+        ? html`<mwc-fab
             ?extended="${this.wide}"
             .label="${this.t(this.createFabLabel)}"
             .icon="${this.createFabIcon}"></mwc-fab>`

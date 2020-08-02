@@ -51,18 +51,20 @@ export class YpCollectionStats extends YpBaseElement {
       ? html`
           <div class="stats layout horizontal end-justified">
             <div class="layout horizontal">
-              <mwc-icon
-                title="${this.t('stats.posts')}"
-                class="stats-icon bulb">highlight</mwc-icon>
+              <mwc-icon title="${this.t('stats.posts')}" class="stats-icon bulb"
+                >highlight</mwc-icon
+              >
               <div title="${this.t('stats.posts')}" class="stats-text">
                 ${YpFormattingHelpers.number(this.collection.counter_posts)}
               </div>
 
-              ${this.collectionType === 'community'
+              ${this.collectionType === 'community1'
                 ? html`
                     <mwc-icon
                       .title="${this.t('stats.groups')}"
-                      class="stats-icon">groups</mwc-icon>
+                      class="stats-icon"
+                      >groups</mwc-icon
+                    >
                     <div title="${this.t('stats.groups')}" class="stats-text">
                       ${YpFormattingHelpers.number(
                         this.collection.counter_groups
@@ -70,36 +72,38 @@ export class YpCollectionStats extends YpBaseElement {
                     </div>
                   `
                 : nothing}
-              ${this.collectionType === 'domain'
+              ${this.collectionType === 'domain1'
                 ? html`
                     <mwc-icon
                       .title="${this.t('stats.communities')}"
-                      class="stats-icon">groups</mwc-icon>
-                    <div title="${this.t('stats.communities')}" class="stats-text">
+                      class="stats-icon"
+                      >groups</mwc-icon
+                    >
+                    <div
+                      title="${this.t('stats.communities')}"
+                      class="stats-text">
                       ${YpFormattingHelpers.number(
                         this.collection.counter_communities
                       )}
                     </div>
                   `
                 : nothing}
-              ${this.collectionType === 'group'
-                ? html`
-                    <mwc-icon
-                      .title="${this.t('stats.points')}"
-                      icon="people"
-                      class="stats-icon">comment</mwc-icon>
-                    <div title="${this.t('stats.points')}" class="stats-text">
-                      ${YpFormattingHelpers.number(
-                        this.collection.counter_points
-                      )}
-                    </div>
-                  `
-                : nothing}
+              <mwc-icon
+                .title="${this.t('stats.points')}"
+                icon="people"
+                class="stats-icon"
+                >comment</mwc-icon
+              >
+              <div title="${this.t('stats.points')}" class="stats-text">
+                ${YpFormattingHelpers.number(this.collection.counter_points)}
+              </div>
 
               <mwc-icon
                 .title="${this.t('stats.users')}"
                 icon="face"
-                class="stats-icon">person</mwc-icon>
+                class="stats-icon"
+                >person</mwc-icon
+              >
               <div title="${this.t('stats.users')}" class="stats-text">
                 ${YpFormattingHelpers.number(this.collection.counter_users)}
               </div>
