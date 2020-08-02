@@ -169,7 +169,6 @@ export class YpApp extends YpBaseElement {
     super.connectedCallback();
     this._setupEventListeners();
     console.info('yp-app is ready');
-    window.appGlobals.theme.setTheme(16, this);
     this._setupSamlCallback();
     this.updateLocation();
   }

@@ -1,5 +1,5 @@
 export class YpFormattingHelpers {
-  static number(value: number): string {
+  static number(value: number | undefined): string {
     if (value) {
       return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     } else {

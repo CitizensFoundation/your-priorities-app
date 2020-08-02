@@ -60,7 +60,7 @@ export class YpMediaHelpers {
       } else {
         path = 'none';
       }
-      window.appGlobals.theme.updateStyles(element, {
+      window.appGlobals.theme.updateStyles({
         '--top-area-background-image': path,
       });
     }

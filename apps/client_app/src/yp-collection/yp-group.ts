@@ -478,7 +478,6 @@ export class YpGroup extends YpCollection {
       ) {
         window.appGlobals.theme.setTheme(
           group.theme_id,
-          this,
           group.configuration
         );
       } else if (
@@ -489,7 +488,6 @@ export class YpGroup extends YpCollection {
       ) {
         window.appGlobals.theme.setTheme(
           group.Community.theme_id,
-          this,
           group.Community.configuration
         );
       } else if (
@@ -497,9 +495,9 @@ export class YpGroup extends YpCollection {
         group.Community.Domain &&
         group.Community.Domain.theme_id != null
       ) {
-        window.appGlobals.theme.setTheme(group.Community.Domain.theme_id, this);
+        window.appGlobals.theme.setTheme(group.Community.Domain.theme_id);
       } else {
-        window.appGlobals.theme.setTheme(1, this);
+        window.appGlobals.theme.setTheme(1);
       }
 
       if (group.configuration.locationHidden) {

@@ -240,7 +240,6 @@ export class YpCollectionItemCard extends YpBaseElement {
       this.collection = (this.item as YpCommunityData).Domain;
       this.itemType = 'community';
     }
-
     return this.item && this.collection
       ? html`
           <a

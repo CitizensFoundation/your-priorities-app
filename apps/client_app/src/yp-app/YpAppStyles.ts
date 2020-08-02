@@ -17,4 +17,6 @@ export const YpAppStyles = css`
       flex-grow: 1;
     }
 
+    mwc-top-app-bar {
+    }
 `;

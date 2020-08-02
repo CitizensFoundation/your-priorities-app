@@ -34,7 +34,7 @@ export class YpCommunity extends YpCollection {
       }
 
       if (!community.theme_id && community.Domain?.theme_id) {
-        window.appGlobals.theme.setTheme(community.Domain.theme_id, this);
+        window.appGlobals.theme.setTheme(community.Domain.theme_id);
       }
 
       window.appGlobals.analytics.setCommunityAnalyticsTracker(

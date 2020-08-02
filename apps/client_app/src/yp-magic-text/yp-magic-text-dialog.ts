@@ -1,6 +1,7 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 import { YpMagicText } from './yp-magic-text.js';
 import { Dialog } from '@material/mwc-dialog';
 
@@ -48,8 +49,11 @@ export class YpMagicTextDialog extends YpMagicText {
     return html`
       <mwc-dialog id="dialog" aria-label="${this.t('textDialog')}">
         <div>
-          <div ?hidden="${!this.finalContent}" inner-h-t-m-l="${ifDefined(this.finalContent)}"></div>
-          <div ?hidden="${this.finalContent!==undefined}">${this.content}</div>
+          ${ this.finalContent ? html`
+            <div>${unsafeHTML(this.finalContent)}</div>
+          ` : html`
+            <div>${this.content}</div>
+          `}
         </div>
         <mwc-button
             slot="primaryAction"

@@ -95,8 +95,8 @@ export abstract class YpCollection extends YpBaseElement {
         window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
       }
 
-      if (this.collection.theme_id) {
-        window.appGlobals.theme.setTheme(this.collection.theme_id, this);
+      if (this.collection.theme_id!==undefined) {
+        window.appGlobals.theme.setTheme(this.collection.theme_id);
       }
 
       this.fire('yp-set-home-link', {
@@ -195,7 +195,7 @@ export abstract class YpCollection extends YpBaseElement {
       <mwc-tab
         ?hidden="${this.locationHidden}"
         .label="${this.t('post.tabs.location')}"
-        icon="map"
+        icon="location_on"
         stacked></mwc-tab>
     `;
   }
@@ -207,7 +207,7 @@ export abstract class YpCollection extends YpBaseElement {
           <mwc-tab
             ?hidden="${this.hideCollection}"
             .label="${this.collectionTabLabel}"
-            icon="people"
+            icon="groups"
             stacked></mwc-tab>
           ${this.renderNewsAndMapTabs()}
         </mwc-tab-bar>
