@@ -248,7 +248,7 @@ export class YpThemeManager {
       '--mdc-theme-on-primary': '#FFF',
       '--mdc-theme-on-secondary': '#FFF',
       '--mdc-theme-on-surface': '#111',
-      '--mdc-theme-on-surface-lighter': '#656565',
+      '--mdc-theme-on-surface-lighter': '#888',
       '--mdc-typography-headline1-font-size': '20px',
       '--mdc-typography-headline1-font-weight': '700',
       '--mdc-typography-headline2-font-size': '20px',

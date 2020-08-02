@@ -402,12 +402,12 @@ export class YpCollectionHeader extends YpBaseElement {
               <div
                 is-video="${ifDefined(this.collectionVideoURL)}"
                 id="cardImage"
-                class="large-card imageCard top-card shadow-elevation-6dp shadow-transition">
+                class="large-card imageCard top-card shadow-elevation-8dp shadow-transition">
                 ${this.renderFirstBoxContent()}
               </div>
               <div
                 id="card"
-                class="large-card textBox shadow-elevation-6dp shadow-transition layout horizontal">
+                class="large-card textBox shadow-elevation-8dp shadow-transition layout horizontal">
                 <div class="layout vertical">
                   <div class="descriptionContainer">
                     <div

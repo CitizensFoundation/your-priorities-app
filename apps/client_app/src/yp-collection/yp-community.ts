@@ -9,7 +9,7 @@ import { property } from 'lodash';
 @customElement('yp-community')
 export class YpCommunity extends YpCollection {
   constructor() {
-    super('community', 'group', 'edit', 'group.create');
+    super('community', 'group', 'edit', 'group.new');
   }
 
   refresh() {

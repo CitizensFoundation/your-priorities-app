@@ -237,13 +237,13 @@ export class YpCollectionItemCard extends YpBaseElement {
       this.itemType = 'community';
     }
     return this.item && this.collection
-      ? html`          <a
+      ? html`<a
             href="/${this.itemType}/${this.item.id}"
             @click="${this.goToItem}"
             class="">
             <div
               ?featured="${this.featured}"
-              class="collectionCard shadow-elevation-8dp shadow-transaction layout horizontal">
+              class="collectionCard shadow-elevation-4dp shadow-transaction layout horizontal">
               <div class="layout horizontal">
                 ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
                   ? html`
@@ -252,7 +252,7 @@ export class YpCollectionItemCard extends YpBaseElement {
                         ?archived="${this.archived}"
                         alt="${this.collection.name}"
                         ?featured="${this.featured}"
-                        prelsoad
+                        preload
                         .src="${YpCollectionHelpers.logoImagePath(
                           this.itemType,
                           this.item
@@ -296,7 +296,7 @@ export class YpCollectionItemCard extends YpBaseElement {
                   )}"
                   .contentLanguage="${this.item.language}"
                   textOnly
-                  remove-urls
+                  removeUrls
                   .content="${this.item.description || this.item.objectives}"
                   .contentId="${this.collection.id}"
                   truncate="300">

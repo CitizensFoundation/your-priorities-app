@@ -59,7 +59,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     return html`
       <lit-virtualizer
         style="width: 100vw; height: 100vh;"
-        .items=${this.collectionItems!}
+        .items=${this.sortedCollectionItems!}
         .scrollTarget="${window}"
         .renderItem=${this.renderItem}></lit-virtualizer>
     `;

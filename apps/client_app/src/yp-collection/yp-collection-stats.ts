@@ -14,9 +14,6 @@ export class YpCollectionStats extends YpBaseElement {
   @property({ type: String })
   collectionType: string | undefined;
 
-  @property({ type: Boolean})
-  hideStats = false
-
   static get styles() {
     return [
       super.styles,
@@ -50,7 +47,7 @@ export class YpCollectionStats extends YpBaseElement {
   }
 
   render() {
-    return this.collection && !this.hideStats
+    return this.collection
       ? html`
           <div class="stats layout horizontal end-justified">
             <div class="layout horizontal">

@@ -166,6 +166,10 @@ export abstract class YpCollection extends YpBaseElement {
           bottom: 16px;
           right: 16px;
         }
+
+        mwc-tab-bar {
+          width: 960px;
+        }
       `,
     ];
   }
@@ -203,15 +207,17 @@ export abstract class YpCollection extends YpBaseElement {
   renderTabs() {
     if (this.collection && !this.tabsHidden) {
       return html`
-        <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
-          <mwc-tab
-            ?hidden="${this.hideCollection}"
-            .label="${this.collectionTabLabel}"
-            icon="groups"
-            stacked></mwc-tab>
-          ${this.renderNewsAndMapTabs()}
-        </mwc-tab-bar>
-      `;
+        <div class="layout vertical center-center">
+          <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
+              <mwc-tab
+                ?hidden="${this.hideCollection}"
+                .label="${this.collectionTabLabel}"
+                icon="groups"
+                stacked></mwc-tab>
+              ${this.renderNewsAndMapTabs()}
+            </mwc-tab-bar>
+        </div>
+        `;
     } else {
       return nothing;
     }

@@ -239,7 +239,7 @@ export class YpApp extends YpBaseElement {
 
     window.addEventListener('locationchange', this.updateLocation.bind(this));
     window.addEventListener('location-changed', this.updateLocation.bind(this));
-    window.addEventListener('onpopstate', this.updateLocation.bind(this));
+    window.addEventListener('popstate', this.updateLocation.bind(this));
     this._setupTouchEvents();
   }
 
@@ -280,7 +280,7 @@ export class YpApp extends YpBaseElement {
     this.removeListener('yp-set-pages', this._setPages, this);
     window.removeEventListener('locationchange', this.updateLocation);
     window.removeEventListener('location-changed', this.updateLocation);
-    window.removeEventListener('onpopstate', this.updateLocation);
+    window.removeEventListener('popstate', this.updateLocation);
     this._removeTouchEvents();
   }
 
