@@ -46,6 +46,7 @@ import { YpAppDialogs } from './yp-app-dialogs.js';
 import '../yp-collection/yp-domain.js';
 import '../yp-collection/yp-community.js';
 import '../yp-collection/yp-group.js';
+import { YpCollection } from '../yp-collection/yp-collection.js';
 
 declare global {
   interface Window {
@@ -327,6 +328,7 @@ export class YpApp extends YpBaseElement {
     }
 
     this.subRoute = tailPath;
+    this.route = path;
 
     this.routeData = namedMatches;
     this._routeChanged();
@@ -846,42 +848,42 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _routeChanged() {
+  async _routeChanged() {
     const route = this.route;
     // Support older pre version 6.1 links
     if (window.location.href.indexOf('/#!/') > -1) {
       window.location.href = window.location.href.replace('/#!/', '/');
     }
 
-    /* TODO: Add back in
+    debugger;
+
     setTimeout(() => {
       if (route.indexOf('domain') > -1) {
-        if (this.$$("#domainPage") && typeof this.$$("#domainPage").refresh !== "undefined") {
-          this.$$("#domainPage").refresh();
+        if (this.$$("#domainPage")) {
+          (this.$$("#domainPage") as YpCollection).refresh();
         }
       } else if (route.indexOf('community_folder') > -1) {
-        if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").refresh !== "undefined") {
-          this.$$("#communityFolderPage").refresh();
+        if (this.$$("#communityFolderPage")) {
+          (this.$$("#communityFolderPage") as YpCollection).refresh();
         }
       } else if (route.indexOf('community') > -1) {
-        if (this.$$("#communityPage") && typeof this.$$("#communityPage").refresh !== "undefined") {
-          this.$$("#communityPage").refresh();
+        if (this.$$("#communityPage")) {
+          (this.$$("#communityPage") as YpCollection).refresh();
         }
       } else if (route.indexOf('group') > -1) {
-        if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
-          this.$$("#groupPage").refresh();
+        if (this.$$("#groupPage")) {
+          (this.$$("#groupPage") as YpCollection).refresh();
         }
       } else if (route.indexOf('post') > -1) {
-        if (this.$$("#postPage") && typeof this.$$("#postPage").refresh !== "undefined") {
-          this.$$("#postPage").refresh();
+        if (this.$$("#postPage")) {
+          (this.$$("#postPage") as YpCollection).refresh();
         }
       } else if (route.indexOf('user') > -1) {
-        if (this.$$("#userPage") && typeof this.$$("#userPage").refresh !== "undefined") {
-          this.$$("#userPage").refresh();
+        if (this.$$("#userPage")) {
+          (this.$$("#userPage") as YpCollection).refresh();
         }
       }
     });
-    */
   }
 
   _routePageChanged(oldRouteData: Record<string, string>) {
@@ -1312,13 +1314,7 @@ export class YpApp extends YpBaseElement {
   goBack() {
     if (this.backPath) {
       if (this.useHardBack) {
-        document.dispatchEvent(
-          new CustomEvent('lite-signal', {
-            bubbles: true,
-            composed: true,
-            detail: { name: 'yp-pause-media-playback', data: {} },
-          })
-        );
+        this.fireGlobal('yp-pause-media-playback', {});
         window.location.href = this.backPath;
       } else {
         YpNavHelpers.redirectTo(this.backPath);
