@@ -33,17 +33,15 @@ export class YpCollectionItemCard extends YpBaseElement {
       ShadowStyles,
       css`
         .description {
-          color: var(--primary-color-more-darker, #424242);
           line-height: var(--description-line-height, 1.3);
           padding: 8px;
-          margin-top: 4px;
+          padding: 16px;
         }
 
         .stats {
-          color: var(--primary-color-more-darker, #424242);
           position: absolute;
           bottom: 0;
-          right: 8px;
+          right: 38px;
         }
 
         .post-image {
@@ -51,10 +49,9 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         .collectionCard {
-          height: 395px;
           width: 860px;
-          background-color: #fff;
-          padding: 0;
+          background-color: var(--mdc-theme-surface);
+          color: var(--mdc-theme-on-surface);
           margin: 0;
           position: relative;
         }
@@ -63,8 +60,8 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         iron-image {
-          width: 320px;
-          height: 180px;
+          width: 320px !important;
+          height: 180px  !important;;
         }
 
         iron-image[featured] {
@@ -86,7 +83,6 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         paper-card {
-          background-color: #f00;
           vertical-align: text-top;
         }
 
@@ -95,11 +91,11 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         .collection-name {
-          font-size: 26px;
-          padding: 14px;
-          background-color: var(--primary-color-800);
-          color: #fff;
+          font-size: var(--mdc-typography-headline2-font-size);
+          font-weight: var(--mdc-typography-headline2-font-weight);
           cursor: pointer;
+          padding: 16px;
+          padding-bottom: 0;
           vertical-align: middle;
           width: auto;
         }
@@ -241,8 +237,7 @@ export class YpCollectionItemCard extends YpBaseElement {
       this.itemType = 'community';
     }
     return this.item && this.collection
-      ? html`
-          <a
+      ? html`          <a
             href="/${this.itemType}/${this.item.id}"
             @click="${this.goToItem}"
             class="">
@@ -257,7 +252,7 @@ export class YpCollectionItemCard extends YpBaseElement {
                         ?archived="${this.archived}"
                         alt="${this.collection.name}"
                         ?featured="${this.featured}"
-                        preload
+                        prelsoad
                         .src="${YpCollectionHelpers.logoImagePath(
                           this.itemType,
                           this.item
@@ -304,14 +299,9 @@ export class YpCollectionItemCard extends YpBaseElement {
                   remove-urls
                   .content="${this.item.description || this.item.objectives}"
                   .contentId="${this.collection.id}"
-                  truncate="130">
+                  truncate="300">
                 </yp-magic-text>
               </div>
-
-              <yp-collection-stats
-                class="stats"
-                .collectionType="${this.itemType}"
-                .collection="${this.item}"></yp-collection-stats>
 
               ${!this.collection
                 ? html`

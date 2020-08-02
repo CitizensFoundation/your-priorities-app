@@ -39,7 +39,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
       css`
         .card {
           padding: 0;
-          padding-top: 16px;
+          padding-top: 24px;
           width: 100%;
         }
 
