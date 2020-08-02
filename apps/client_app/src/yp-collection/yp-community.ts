@@ -124,7 +124,7 @@ export class YpCommunity extends YpCollection {
         headerTitle = community.Domain.name;
         headerDescription = community.Domain.description;
       }
-      this.fire('change-header', {
+      this.fire('yp-change-header', {
         headerTitle:
           community.configuration &&
           community.configuration.customBackName

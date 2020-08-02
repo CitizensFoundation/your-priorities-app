@@ -105,7 +105,7 @@ export abstract class YpCollection extends YpBaseElement {
         name: this.collection.name,
       });
 
-      this.fire('change-header', {
+      this.fire('yp-change-header', {
         headerTitle: null,
         documentTitle: this.collection.name,
         headerDescription:

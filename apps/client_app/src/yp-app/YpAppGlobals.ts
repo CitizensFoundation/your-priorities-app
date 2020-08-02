@@ -311,7 +311,7 @@ export class YpAppGlobals extends YpCodeBase {
           YpNavHelpers.redirectTo('/community_folder/' + results.community.id);
         } else {
           YpNavHelpers.redirectTo('/domain/' + this.domain.id);
-          this.fireGlobal('change-header', {
+          this.fireGlobal('yp-change-header', {
             headerTitle: this.domain.domain_name,
             headerDescription: this.domain.description,
           });

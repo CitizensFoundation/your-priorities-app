@@ -529,7 +529,7 @@ export class YpGroup extends YpCollection {
         YpMediaHelpers.setupTopHeaderImage(this, null);
       }
 
-      this.fire('change-header', {
+      this.fire('yp-change-header', {
         headerTitle: group.configuration.customBackName
           ? group.configuration.customBackName
           : group.Community?.name,

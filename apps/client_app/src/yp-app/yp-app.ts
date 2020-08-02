@@ -81,7 +81,7 @@ export class YpApp extends YpBaseElement {
   forwardToPostId: string | undefined;
 
   @property({ type: String })
-  headerTitle: string | null = 'Betri Reykjavík';
+  headerTitle: string | undefined;
 
   @property({ type: String })
   numberOfUnViewedNotifications: string | undefined;
@@ -339,26 +339,24 @@ export class YpApp extends YpBaseElement {
     if (this.closePostHeader)
       icons = html`<mwc-icon-button
         title="${this.t('close')}"
-        icon="menu"
+        icon="close"
         @click="${this._closePost}"></mwc-icon-button>`;
     else
       icons = html` <mwc-icon-button
-          icon="menu"
-          title="${this.t('openMainMenu')}"
+          icon="arrow_upward"
+          title="${this.t('goBack')}"
           slot="actionItems"
-          @click="${this._toggleNavDrawer}">
-        </mwc-icon-button>
-
-        <mwc-icon-button icon="arrow_upward" hidden title="${this.t('goBack')}">
+          ?hidden="${!this.backPath}"
+          @click="${this.goBack}">
         </mwc-icon-button>`;
 
     return html`${icons}
+
     ${this.goForwardToPostId
       ? html`
           <mwc-icon-button
-            icon="menu"
+            icon="fast_forward"
             title="${this.t('forwardToPost')}"
-            title=""
             @click="${this._goToNextPost}"></mwc-icon-button>
         `
       : nothing}`;
