@@ -259,6 +259,12 @@ var getDomain = function (req, domainId, done) {
                   required: false,
                 },
                 {
+                  model: models.Domain,
+                  as: 'Domain',
+                  attributes: ['id','configuration','name'],
+                  required: false
+                },
+                {
                   model: models.User,
                   as: 'CommunityAdmins',
                   attributes: ['id'],
