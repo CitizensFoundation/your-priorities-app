@@ -146,6 +146,8 @@ export class YpApp extends YpBaseElement {
 
   goForwardCount = 0;
 
+  firstLoad = true
+
   communityBackOverride: Record<string, Record<string, string>> | undefined;
 
   touchXDown: number | undefined;
@@ -855,33 +857,19 @@ export class YpApp extends YpBaseElement {
       window.location.href = window.location.href.replace('/#!/', '/');
     }
 
-    debugger;
-
     setTimeout(() => {
       if (route.indexOf('domain') > -1) {
-        if (this.$$("#domainPage")) {
-          (this.$$("#domainPage") as YpCollection).refresh();
-        }
+        (this.$$("#domainPage") as YpCollection).refresh();
       } else if (route.indexOf('community_folder') > -1) {
-        if (this.$$("#communityFolderPage")) {
-          (this.$$("#communityFolderPage") as YpCollection).refresh();
-        }
+        (this.$$("#communityFolderPage") as YpCollection).refresh();
       } else if (route.indexOf('community') > -1) {
-        if (this.$$("#communityPage")) {
-          (this.$$("#communityPage") as YpCollection).refresh();
-        }
+        (this.$$("#communityPage") as YpCollection).refresh();
       } else if (route.indexOf('group') > -1) {
-        if (this.$$("#groupPage")) {
-          (this.$$("#groupPage") as YpCollection).refresh();
-        }
+        (this.$$("#groupPage") as YpCollection).refresh();
       } else if (route.indexOf('post') > -1) {
-        if (this.$$("#postPage")) {
-          (this.$$("#postPage") as YpCollection).refresh();
-        }
+        (this.$$("#postPage") as YpCollection).refresh();
       } else if (route.indexOf('user') > -1) {
-        if (this.$$("#userPage")) {
-          (this.$$("#userPage") as YpCollection).refresh();
-        }
+        (this.$$("#userPage") as YpCollection).refresh();
       }
     });
   }

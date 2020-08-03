@@ -90,6 +90,7 @@ export abstract class YpCollection extends YpBaseElement {
   // DATA PROCESSING
 
   refresh(): void {
+    console.error("REFRESH");
     if (this.collection) {
       if (this.collection.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
@@ -170,6 +171,12 @@ export abstract class YpCollection extends YpBaseElement {
         mwc-tab-bar {
           width: 960px;
         }
+
+        .header {
+          background-color: var(--primary-background-color);
+          background-image: var(--top-area-background-image, none);
+          height: 300px;
+        }
       `,
     ];
   }
@@ -177,7 +184,7 @@ export abstract class YpCollection extends YpBaseElement {
   renderHeader() {
     return this.collection && !this.noHeader
       ? html`
-        <div class="layout vertical center-center">
+        <div class="layout vertical center-center header">
           <yp-collection-header
             .collection="${this.collection}"
             .collectionType="${this.collectionType}"

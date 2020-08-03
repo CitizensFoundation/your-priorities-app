@@ -191,10 +191,10 @@ export class YpAppGlobals extends YpCodeBase {
     } else {
       setTimeout(() => {
         console.warn(
-          'Locales not loaded while trying to load languages, trying again in 500 ms'
+          'Locales not loaded while trying to load languages, trying again in 100 ms'
         );
         this.changeLocaleIfNeeded(locale, force);
-      }, 500);
+      }, 100);
     }
   }
 

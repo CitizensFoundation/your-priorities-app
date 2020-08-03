@@ -77,7 +77,6 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     aria-level="2"
     aria-label="[[item.name]]">
       <yp-collection-item-card .item="${item}"></yp-collection-item-card>
-    </a>
   </div>`;
   }
 
