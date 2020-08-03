@@ -117,7 +117,8 @@ export class PageEditTranslations extends YpBaseElement {
       waitingOnData: { type: Boolean },
       editActive: { type: Object },
       collection: { type: Object },
-      targetLocale: { type: String }
+      targetLocale: { type: String },
+      baseMaxLength: { type: Number }
     };
   }
 
@@ -140,6 +141,7 @@ export class PageEditTranslations extends YpBaseElement {
     super();
     this.waitingOnData = false;
     this.editActive = {};
+    this.baseMaxLength = 300;
 
     this.supportedLanguages = {
       en: 'English (US)',
@@ -318,13 +320,30 @@ export class PageEditTranslations extends YpBaseElement {
     return highlighted.concat(arr);
   }
 
-  getMaxLength(item) {
-    if (item.textType==="groupName" || item.textType=="postName" || item.textType=="communityName") {
+  getMaxLength(item, baseLength) {
+    if (item.textType==="groupName" || item.textType==="postName" || item.textType==="communityName") {
       return 60;
     } else if (item.textType=="groupContent" || item.textType=="communityContent") {
-      return 300;
+      return baseLength;
     } else {
       return 2500;
+    }
+  }
+
+  textChanged(event) {
+    const description = event.target.value;
+    const urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
+    const urlArray = description.match(urlRegex);
+
+    if (urlArray && urlArray.length>0) {
+      let urlsLength = 0;
+      for (let i=0;i<Math.min(urlArray.length,10); i+=1) {
+        urlsLength+=urlArray[i].length;
+      }
+      let maxLength = 300;
+      maxLength += urlsLength;
+      maxLength -= Math.min(urlsLength, urlArray.length*30);
+      this.baseMaxLength = maxLength;
     }
   }
 
@@ -343,8 +362,9 @@ export class PageEditTranslations extends YpBaseElement {
             <mwc-textarea
               rows="5"
               id="editFor${item.indexKey}"
-              .maxLength="${this.getMaxLength(item)}"
+              .maxLength="${this.getMaxLength(item, this.baseMaxLength)}"
               charCounter
+              @input="${this.textChanged}"
               .label="${this.t('editTranslation')}"
               .value="${item.translatedText ? item.translatedText : ''}">
             </mwc-textarea>

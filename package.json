@@ -23,7 +23,6 @@
     "download-file": "^0.1.5",
     "ejs": "^2.7.4",
     "email-templates": "^2.0.1",
-    "embedly": "^2.1.1",
     "exceljs": "^3.8.2",
     "express": "^4.17.1",
     "express-session": "git+https://github.com/rbjarnason/session.git",
@@ -44,6 +43,7 @@
     "newrelic": "^6.5.0",
     "nodemailer": "^2.0.0",
     "nodemailer-smtp-transport": "^2.7.2",
+    "open-graph-scraper": "^4.5.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.0.0",
     "passport-github": "^1.0.0",
@@ -71,13 +71,13 @@
   "devDependencies": {
     "csv-parse": "^4.8.8",
     "diacritics": "^1.2.3",
+    "docx4js": "^3.2.2",
     "jshint": "^2.11.0",
     "jslint": "^0.12.1",
     "random-words": "^1.1.1",
     "temp": "^0.9.1",
     "wordwrap": "^1.0.0",
-    "yamljs": "^0.3.0",
-    "docx4js": "^3.2.2"
+    "yamljs": "^0.3.0"
   },
   "scripts": {
     "test": "gulp test:local",
@@ -88,6 +88,6 @@
     "node_modules"
   ],
   "engines": {
-    "node": "10.17.0"
+    "node": "10.22.0"
   }
 }

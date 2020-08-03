@@ -1,3 +1,5 @@
+/* eslint-disable prefer-template */
+/* eslint-disable camelcase */
 import { html, css } from 'lit-element';
 import { YpBaseElement } from './YpBaseElement';
 import { ShadowStyles } from './ShadowStyles';
@@ -232,7 +234,6 @@ export class PageConnections extends YpBaseElement {
      .d3VelocityDecay(0.7)
      .backgroundColor("#000")
      .onNodeClick(node => {
-       debugger;
        // Aim at node from outside it
        const distance = 300;
        const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
