@@ -6,29 +6,23 @@ import '../yp-user/yp-user-image.js';
 import '../yp-app-globals/yp-sw-update-toast.js';
 */
 
-import { customElement, property, html, LitElement } from 'lit-element';
+import { customElement, property, html, LitElement, css } from 'lit-element';
 import { nothing } from 'lit-html';
 import { cache } from 'lit-html/directives/cache.js';
 
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
-//TODO: Fix moment
-//import moment from 'moment';
 
 import { Dialog } from '@material/mwc-dialog';
-import '@material/mwc-dialog';
 
 import { Snackbar } from '@material/mwc-snackbar';
-import '@material/mwc-snackbar';
 
 import { Drawer } from '@material/mwc-drawer';
-import '@material/mwc-drawer';
 
 import '@material/mwc-button';
 
 import '@material/mwc-icon-button';
 
-import '@material/mwc-menu';
 import { Menu } from '@material/mwc-menu';
 
 import '@material/mwc-top-app-bar';
@@ -36,17 +30,17 @@ import '@material/mwc-top-app-bar';
 import '@material/mwc-list/mwc-list-item';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpAppStyles } from './YpAppStyles.js';
-import { YpAppGlobals } from './YpAppGlobals.js';
-import { YpAppUser } from './YpAppUser.js';
+//import { YpAppStyles } from './YpAppStyles.js';
+//import { YpAppGlobals } from './YpAppGlobals.js';
+//import { YpAppUser } from './YpAppUser.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { YpAppDialogs } from './yp-app-dialogs.js';
+//import { YpAppDialogs } from './yp-app-dialogs.js';
 
-import '../yp-collection/yp-domain.js';
-import '../yp-collection/yp-community.js';
-import '../yp-collection/yp-group.js';
-import { YpCollection } from '../yp-collection/yp-collection.js';
+//import '../yp-collection/yp-domain.js';
+//import '../yp-collection/yp-community.js';
+//import '../yp-collection/yp-group.js';
+//import { YpCollection } from '../yp-collection/yp-collection.js';
 
 declare global {
   interface Window {
@@ -58,8 +52,8 @@ declare global {
   }
 }
 
-@customElement('yp-app')
-export class YpApp extends YpBaseElement {
+@customElement('community-scorecard')
+export class CommunityScorecard extends YpBaseElement {
   @property({ type: Object })
   homeLink = undefined;
 
@@ -146,7 +140,7 @@ export class YpApp extends YpBaseElement {
 
   goForwardCount = 0;
 
-  firstLoad = true
+  firstLoad = true;
 
   communityBackOverride: Record<string, Record<string, string>> | undefined;
 
@@ -163,8 +157,8 @@ export class YpApp extends YpBaseElement {
     super();
     window.app = this;
     window.serverApi = new YpServerApi();
-    window.appGlobals = new YpAppGlobals(window.serverApi);
-    window.appUser = new YpAppUser(window.serverApi);
+    //    window.appGlobals = new YpAppGlobals(window.serverApi);
+    //    window.appUser = new YpAppUser(window.serverApi);
     this._setupTranslationSystem();
   }
 
@@ -277,9 +271,6 @@ export class YpApp extends YpBaseElement {
       this._setNumberOfUnViewedNotifications,
       this
     );
-    this.removeListener('yp-redirect-to', this._redirectTo, this);
-    this.removeListener('yp-set-home-link', this._setHomeLink, this);
-    this.removeListener('yp-set-next-post', this._setNextPost, this);
     this.removeListener('yp-set-pages', this._setPages, this);
     window.removeEventListener('locationchange', this.updateLocation);
     window.removeEventListener('location-changed', this.updateLocation);
@@ -288,7 +279,7 @@ export class YpApp extends YpBaseElement {
   }
 
   static get styles() {
-    return [super.styles, YpAppStyles];
+    return [super.styles, css``];
   }
 
   updateLocation() {
@@ -344,24 +335,26 @@ export class YpApp extends YpBaseElement {
       icons = html`<mwc-icon-button
         title="${this.t('close')}"
         icon="close"
-        @click="${this._closePost}"></mwc-icon-button>`;
+        @click="${this._closePost}"
+      ></mwc-icon-button>`;
     else
       icons = html` <mwc-icon-button
-          icon="arrow_upward"
-          title="${this.t('goBack')}"
-          slot="actionItems"
-          ?hidden="${!this.backPath}"
-          @click="${this.goBack}">
-        </mwc-icon-button>`;
+        icon="arrow_upward"
+        title="${this.t('goBack')}"
+        slot="actionItems"
+        ?hidden="${!this.backPath}"
+        @click="${this.goBack}"
+      >
+      </mwc-icon-button>`;
 
     return html`${icons}
-
     ${this.goForwardToPostId
       ? html`
           <mwc-icon-button
             icon="fast_forward"
             title="${this.t('forwardToPost')}"
-            @click="${this._goToNextPost}"></mwc-icon-button>
+            @click="${this._goToNextPost}"
+          ></mwc-icon-button>
         `
       : nothing}`;
   }
@@ -378,18 +371,21 @@ export class YpApp extends YpBaseElement {
         ?hidden="${!this.autoTranslate}"
         @click="${this._stopTranslation}"
         icon="translate"
-        .label="${this.t('stopAutoTranslate')}">
+        .label="${this.t('stopAutoTranslate')}"
+      >
       </mwc-icon-button>
 
       <div
         style="position: relative;"
         ?hidden="${this.hideHelpIcon}"
-        slot="actionItems">
+        slot="actionItems"
+      >
         <mwc-icon-button
           id="helpIconButton"
           icon="help_outline"
           @click="${this._openHelpMenu}"
-          title="${this.t('menu.help')}">
+          title="${this.t('menu.help')}"
+        >
         </mwc-icon-button>
         <mwc-menu id="helpMenu">
           <mwc-list-item>Item 0</mwc-list-item>
@@ -398,7 +394,8 @@ export class YpApp extends YpBaseElement {
             (page: YpHelpPage, index) => html`
               <mwc-list-item
                 data-args="${index}"
-                @click="${this._openPageFromMenu}">
+                @click="${this._openPageFromMenu}"
+              >
                 ${this._getLocalizePageTitle(page)}
               </mwc-list-item>
             `
@@ -411,14 +408,16 @@ export class YpApp extends YpBaseElement {
             <div
               class="userImageNotificationContainer layout horizontal"
               @click="${this._toggleUserDrawer}"
-              slot="actionItems">
+              slot="actionItems"
+            >
               <yp-user-image id="userImage" small .user="${this.user}">
               </yp-user-image>
               <paper-badge
                 id="notificationBadge"
                 class="activeBadge"
                 .label="${this.numberOfUnViewedNotifications}"
-                ?hidden="${!this.numberOfUnViewedNotifications}">
+                ?hidden="${!this.numberOfUnViewedNotifications}"
+              >
               </paper-badge>
             </div>
           `
@@ -427,7 +426,8 @@ export class YpApp extends YpBaseElement {
               icon="login"
               slot="actionItems"
               @click="${this._login}"
-              title="${this.t('user.login')}">
+              title="${this.t('user.login')}"
+            >
             </mwc-icon-button>
           `}
     `;
@@ -438,9 +438,7 @@ export class YpApp extends YpBaseElement {
       <mwc-top-app-bar>
         <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
         <div slot="title">
-          ${this.goForwardToPostId
-            ? this.goForwardPostName
-            : this.headerTitle}
+          ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
         <div>
@@ -460,7 +458,8 @@ export class YpApp extends YpBaseElement {
               id="domainPage"
               role="main"
               aria-label="${this.t('communities')}"
-              .subRoute="${this.subRoute}"></yp-domain>
+              .subRoute="${this.subRoute}"
+            ></yp-domain>
           `);
           break;
         case 'community':
@@ -473,7 +472,8 @@ export class YpApp extends YpBaseElement {
           pageHtml = cache(html`
             <yp-community-folder
               id="communityFolderPage"
-              .subRoute="${this.subRoute}">
+              .subRoute="${this.subRoute}"
+            >
             </yp-community-folder>
           `);
           break;
@@ -506,7 +506,8 @@ export class YpApp extends YpBaseElement {
 
       <yp-sw-update-toast
         .buttonLabel="${this.t('reload')}"
-        .message="${this.t('newVersionAvailable')}">
+        .message="${this.t('newVersionAvailable')}"
+      >
       </yp-sw-update-toast>
 
       <mwc-dialog id="dialog">
@@ -514,7 +515,8 @@ export class YpApp extends YpBaseElement {
         <mwc-button
           slot="primaryAction"
           @click="${this._resetNotifyDialogText}"
-          dialogAction="discard">
+          dialogAction="discard"
+        >
           ${this.t('ok')}
         </mwc-button>
       </mwc-dialog>
@@ -620,7 +622,13 @@ export class YpApp extends YpBaseElement {
     }
 
     if (this.goForwardToPostId) {
-      YpNavHelpers.goToPost(this.goForwardToPostId, undefined, undefined, undefined, true);
+      YpNavHelpers.goToPost(
+        this.goForwardToPostId,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
       window.appGlobals.activity(
         'recommendations',
         'goForward',
@@ -859,17 +867,17 @@ export class YpApp extends YpBaseElement {
 
     setTimeout(() => {
       if (route.indexOf('domain') > -1) {
-        (this.$$("#domainPage") as YpCollection).refresh();
+        (this.$$('#domainPage') as YpCollection).refresh();
       } else if (route.indexOf('community_folder') > -1) {
-        (this.$$("#communityFolderPage") as YpCollection).refresh();
+        (this.$$('#communityFolderPage') as YpCollection).refresh();
       } else if (route.indexOf('community') > -1) {
-        (this.$$("#communityPage") as YpCollection).refresh();
+        (this.$$('#communityPage') as YpCollection).refresh();
       } else if (route.indexOf('group') > -1) {
-        (this.$$("#groupPage") as YpCollection).refresh();
+        (this.$$('#groupPage') as YpCollection).refresh();
       } else if (route.indexOf('post') > -1) {
-        (this.$$("#postPage") as YpCollection).refresh();
+        (this.$$('#postPage') as YpCollection).refresh();
       } else if (route.indexOf('user') > -1) {
-        (this.$$("#userPage") as YpCollection).refresh();
+        (this.$$('#userPage') as YpCollection).refresh();
       }
     });
   }
