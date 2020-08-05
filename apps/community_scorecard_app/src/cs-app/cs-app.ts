@@ -20,12 +20,14 @@ import { Snackbar } from '@material/mwc-snackbar';
 import '@material/mwc-snackbar';
 
 import { Drawer } from '@material/mwc-drawer';
+import '@material/mwc-drawer';
 
 import '@material/mwc-button';
 
 import '@material/mwc-icon-button';
 
 import { Menu } from '@material/mwc-menu';
+import '@material/mwc-menu';
 
 import '@material/mwc-top-app-bar';
 
@@ -39,6 +41,8 @@ import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpAppDialogs } from './yp-app-dialogs.js';
 
+import '../cs-project/cs-projects.js';
+
 //import '../yp-collection/yp-domain.js';
 //import '../yp-collection/yp-community.js';
 //import '../yp-collection/yp-group.js';
@@ -50,13 +54,13 @@ declare global {
     appUser: YpAppUser;
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
-    app: CommunityScorecardApp;
+    app: CsApp;
 
   }
 }
 
 @customElement('community-scorecard-app')
-export class CommunityScorecardApp extends YpBaseElement {
+export class CsApp extends YpBaseElement {
   @property({ type: Object })
   homeLink = undefined;
 
@@ -170,6 +174,7 @@ export class CommunityScorecardApp extends YpBaseElement {
     this._setupEventListeners();
     console.info('yp-app is ready');
     this._setupSamlCallback();
+    debugger;
     this.updateLocation();
   }
 
@@ -329,6 +334,8 @@ export class CommunityScorecardApp extends YpBaseElement {
     this.routeData = namedMatches;
     this._routeChanged();
     this._routePageChanged(oldRouteData);
+
+    debugger;
   }
 
   renderNavigationIcon() {
@@ -432,14 +439,14 @@ export class CommunityScorecardApp extends YpBaseElement {
     let pageHtml;
     if (this.page) {
       switch (this.page) {
-        case 'domain':
-          pageHtml = cache(html`
-            <yp-domain
-              id="domainPage"
+        case 'projects':
+          pageHtml = cache(html`<h1>dsadsads</h1>
+            <cs-projects
+              id="projects"
               role="main"
               aria-label="${this.t('communities')}"
               .subRoute="${this.subRoute}"
-            ></yp-domain>
+            ></cs-projects>
           `);
           break;
         default:

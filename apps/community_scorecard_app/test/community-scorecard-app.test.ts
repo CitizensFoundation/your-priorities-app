@@ -1,13 +1,13 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
-import {CommunityScorecardApp} from '../src/community-scorecard-app/community-scorecard-app.js';
-import '../src/community-scorecard-app.js';
+import {CsApp} from '../src/cs-app/cs-app.js';
+import '../src/cs-app.js';
 
-describe('CommunityScorecardApp', () => {
-  let element: CommunityScorecardApp;
+describe('CsApp', () => {
+  let element: CsApp;
   beforeEach(async () => {
     element = await fixture(html`
-      <community-scorecard-app></community-scorecard-app>
+      <cs-app></cs-app>
     `);
   });
 
