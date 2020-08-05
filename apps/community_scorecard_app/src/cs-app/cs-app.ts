@@ -59,7 +59,7 @@ declare global {
   }
 }
 
-@customElement('community-scorecard-app')
+@customElement('cs-app')
 export class CsApp extends YpBaseElement {
   @property({ type: Object })
   homeLink = undefined;
@@ -174,7 +174,6 @@ export class CsApp extends YpBaseElement {
     this._setupEventListeners();
     console.info('yp-app is ready');
     this._setupSamlCallback();
-    debugger;
     this.updateLocation();
   }
 
@@ -334,8 +333,6 @@ export class CsApp extends YpBaseElement {
     this.routeData = namedMatches;
     this._routeChanged();
     this._routePageChanged(oldRouteData);
-
-    debugger;
   }
 
   renderNavigationIcon() {
@@ -440,11 +437,11 @@ export class CsApp extends YpBaseElement {
     if (this.page) {
       switch (this.page) {
         case 'projects':
-          pageHtml = cache(html`<h1>dsadsads</h1>
+          pageHtml = cache(html`
             <cs-projects
               id="projects"
               role="main"
-              aria-label="${this.t('communities')}"
+              aria-label="${this.t('projects')}"
               .subRoute="${this.subRoute}"
             ></cs-projects>
           `);

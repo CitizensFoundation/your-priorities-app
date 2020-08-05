@@ -68,7 +68,7 @@ export class YpBaseElement extends LitElement {
     if (this.rtl !== undefined) {
       this._setupRtl();
     }
-    //this.requestUpdate();
+    this.requestUpdate();
   }
 
   fire(

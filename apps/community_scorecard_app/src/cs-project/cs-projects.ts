@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { property, html, css, LitElement } from 'lit-element';
+import { property, html, css, LitElement, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 //import { ifDefined } from 'lit-html/directives/if-defined';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
@@ -18,7 +18,8 @@ export const ProjectsTabTypes: Record<string, number> = {
   Archived: 1,
 };
 
-export abstract class CsProjects extends YpBaseElement {
+@customElement('cs-projects')
+export class CsProjects extends YpBaseElement {
   @property({ type: Boolean })
   noHeader = false;
 
@@ -63,7 +64,8 @@ export abstract class CsProjects extends YpBaseElement {
       id: 3,
       user_id: 1,
       name: 'Project 3',
-      description: 'Project 3 description',
+      description:
+        'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -71,7 +73,8 @@ export abstract class CsProjects extends YpBaseElement {
       id: 4,
       user_id: 1,
       name: 'Project 4',
-      description: 'Project 4 description',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -114,7 +117,7 @@ export abstract class CsProjects extends YpBaseElement {
       only_admins_can_create_groups: true,
       configuration: {
         disableDomainUpLink: false,
-        forceSecureSamlLogin: false
+        forceSecureSamlLogin: false,
       },
       counter_communities: 0,
       counter_points: 0,
@@ -129,14 +132,10 @@ export abstract class CsProjects extends YpBaseElement {
         counter_points: 0,
         counter_posts: 0,
         counter_users: 0,
-        configuration: {
-
-        }
-      }
-    }
+        configuration: {},
+      },
+    };
   }
-
-  abstract scrollToCollectionItemSubClass(): void;
 
   // DATA PROCESSING
 
@@ -160,7 +159,8 @@ export abstract class CsProjects extends YpBaseElement {
       this.fire('yp-change-header', {
         headerTitle: null,
         documentTitle: this.community.name,
-        headerDescription: this.community.description || this.community.objectives,
+        headerDescription:
+          this.community.description || this.community.objectives,
       });
 
       if (this.community.configuration?.hideAllTabs) {
@@ -223,12 +223,25 @@ export abstract class CsProjects extends YpBaseElement {
 
         mwc-tab-bar {
           width: 960px;
+          margin-bottom: 16px;
         }
 
         .header {
-          background-color: var(--primary-background-color);
-          background-image: var(--top-area-background-image, none);
-          height: 300px;
+          height: 100px;
+          font-size: var(--mdc-typegraphy-headline1-font-size, 28px);
+        }
+
+        .project {
+          background-color: var(--mdc-theme-surface, #fff);
+          color: var(--mdc-theme-on-surface);
+          padding: 16px;
+          margin: 16px;
+          width: 960px;
+        }
+
+        .name {
+          font-weight: bold;
+          margin-bottom: 16px;
         }
       `,
     ];
@@ -277,14 +290,17 @@ export abstract class CsProjects extends YpBaseElement {
     if (options.current) projects = this.currentProjects;
     else projects = this.archivedProjects;
 
-    const projectList = html`${ projects.map(
-      project => html`
-        <div class="layout horizontal">
+    const projectList = html`<div class="layout vertical center-center">
+      ${projects.map(
+        project => html`
+        <div class="layout vertical shadow-elevation-4dp shadow-transition project">
           <div class="name">${project.name}</div>
           <div class="description">${project.description}</div>
         </div>
+    </div>
       `
-    )}`;
+      )}
+    </div>`;
 
     return projectList;
   }
@@ -305,7 +321,7 @@ export abstract class CsProjects extends YpBaseElement {
   }
 
   render() {
-    return html`<h1>9i9i</h1>
+    return html`
       ${this.renderHeader()} ${this.renderTabs()} ${this.renderCurrentTabPage()}
       <mwc-fab
         ?extended="${this.wide}"
