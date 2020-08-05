@@ -14,8 +14,10 @@ import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 
 import { Dialog } from '@material/mwc-dialog';
+import '@material/mwc-dialog';
 
 import { Snackbar } from '@material/mwc-snackbar';
+import '@material/mwc-snackbar';
 
 import { Drawer } from '@material/mwc-drawer';
 
@@ -31,11 +33,11 @@ import '@material/mwc-list/mwc-list-item';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 //import { YpAppStyles } from './YpAppStyles.js';
-//import { YpAppGlobals } from './YpAppGlobals.js';
-//import { YpAppUser } from './YpAppUser.js';
+import { YpAppGlobals } from './YpAppGlobals.js';
+import { YpAppUser } from './YpAppUser.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-//import { YpAppDialogs } from './yp-app-dialogs.js';
+import { YpAppDialogs } from './yp-app-dialogs.js';
 
 //import '../yp-collection/yp-domain.js';
 //import '../yp-collection/yp-community.js';
@@ -48,12 +50,13 @@ declare global {
     appUser: YpAppUser;
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
-    app: YpApp;
+    app: CommunityScorecardApp;
+
   }
 }
 
-@customElement('community-scorecard')
-export class CommunityScorecard extends YpBaseElement {
+@customElement('community-scorecard-app')
+export class CommunityScorecardApp extends YpBaseElement {
   @property({ type: Object })
   homeLink = undefined;
 
@@ -157,8 +160,8 @@ export class CommunityScorecard extends YpBaseElement {
     super();
     window.app = this;
     window.serverApi = new YpServerApi();
-    //    window.appGlobals = new YpAppGlobals(window.serverApi);
-    //    window.appUser = new YpAppUser(window.serverApi);
+    window.appGlobals = new YpAppGlobals(window.serverApi);
+    window.appUser = new YpAppUser(window.serverApi);
     this._setupTranslationSystem();
   }
 
@@ -329,34 +332,11 @@ export class CommunityScorecard extends YpBaseElement {
   }
 
   renderNavigationIcon() {
-    let icons;
-
-    if (this.closePostHeader)
-      icons = html`<mwc-icon-button
-        title="${this.t('close')}"
-        icon="close"
-        @click="${this._closePost}"
-      ></mwc-icon-button>`;
-    else
-      icons = html` <mwc-icon-button
-        icon="arrow_upward"
-        title="${this.t('goBack')}"
-        slot="actionItems"
-        ?hidden="${!this.backPath}"
-        @click="${this.goBack}"
-      >
-      </mwc-icon-button>`;
-
-    return html`${icons}
-    ${this.goForwardToPostId
-      ? html`
-          <mwc-icon-button
-            icon="fast_forward"
-            title="${this.t('forwardToPost')}"
-            @click="${this._goToNextPost}"
-          ></mwc-icon-button>
-        `
-      : nothing}`;
+    return html`<mwc-icon-button
+      title="${this.t('close')}"
+      icon="menu"
+      @click="${this._closePost}"
+    ></mwc-icon-button>`;
   }
 
   _openHelpMenu() {
@@ -460,31 +440,6 @@ export class CommunityScorecard extends YpBaseElement {
               aria-label="${this.t('communities')}"
               .subRoute="${this.subRoute}"
             ></yp-domain>
-          `);
-          break;
-        case 'community':
-          pageHtml = cache(html`
-            <yp-community id="communityPage" .subRoute="${this.subRoute}">
-            </yp-community>
-          `);
-          break;
-        case 'community_folder':
-          pageHtml = cache(html`
-            <yp-community-folder
-              id="communityFolderPage"
-              .subRoute="${this.subRoute}"
-            >
-            </yp-community-folder>
-          `);
-          break;
-        case 'group':
-          pageHtml = cache(html`
-            <yp-group id="groupPage" .subRoute="${this.subRoute}"></yp-group>
-          `);
-          break;
-        case 'post':
-          pageHtml = cache(html`
-            <yp-post id="postPage" .subRoute="${this.subRoute}"></yp-post>
           `);
           break;
         default:
@@ -867,17 +822,7 @@ export class CommunityScorecard extends YpBaseElement {
 
     setTimeout(() => {
       if (route.indexOf('domain') > -1) {
-        (this.$$('#domainPage') as YpCollection).refresh();
-      } else if (route.indexOf('community_folder') > -1) {
-        (this.$$('#communityFolderPage') as YpCollection).refresh();
-      } else if (route.indexOf('community') > -1) {
-        (this.$$('#communityPage') as YpCollection).refresh();
-      } else if (route.indexOf('group') > -1) {
-        (this.$$('#groupPage') as YpCollection).refresh();
-      } else if (route.indexOf('post') > -1) {
-        (this.$$('#postPage') as YpCollection).refresh();
-      } else if (route.indexOf('user') > -1) {
-        (this.$$('#userPage') as YpCollection).refresh();
+//        (this.$$('#domainPage') as YpCollection).refresh();
       }
     });
   }

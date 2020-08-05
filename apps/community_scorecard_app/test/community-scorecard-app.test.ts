@@ -1,6 +1,6 @@
 import { html, fixture, expect } from '@open-wc/testing';
 
-import {CommunityScorecardApp} from '../src/CommunityScorecardApp.js';
+import {CommunityScorecardApp} from '../src/community-scorecard-app/community-scorecard-app.js';
 import '../src/community-scorecard-app.js';
 
 describe('CommunityScorecardApp', () => {
