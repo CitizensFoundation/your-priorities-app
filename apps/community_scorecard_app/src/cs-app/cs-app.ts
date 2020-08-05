@@ -42,6 +42,7 @@ import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpAppDialogs } from './yp-app-dialogs.js';
 
 import '../cs-project/cs-projects.js';
+import '../cs-project/cs-project.js';
 
 //import '../yp-collection/yp-domain.js';
 //import '../yp-collection/yp-community.js';
@@ -446,7 +447,17 @@ export class CsApp extends YpBaseElement {
             ></cs-projects>
           `);
           break;
-        default:
+        case 'project':
+          pageHtml = cache(html`
+            <cs-project
+              id="project"
+              role="main"
+              aria-label="${this.t('project')}"
+              .subRoute="${this.subRoute}"
+            ></cs-project>
+          `);
+          break;
+          default:
           pageHtml = cache(html` <yp-view-404 name="view-404"></yp-view-404> `);
           break;
       }

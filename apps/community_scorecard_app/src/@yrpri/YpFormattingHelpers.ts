@@ -7,6 +7,10 @@ export class YpFormattingHelpers {
     }
   }
 
+  static formatDate(date: Date): string {
+    return date.toLocaleString();
+  }
+
   static removeClass(element: HTMLElement | undefined | null, classToRemove: string) {
     let newClassName = "";
     if (element) {

@@ -2,5 +2,10 @@
   "current": "Current",
   "archived": "Archived",
   "csProjectsFor": "Community Scorecard Projects for",
-  "createProject": "Create Project"
+  "createProject": "Create Project",
+  "addCoreIssue":"Add",
+  "coreIssue":"Core issue",
+  "coreIssues":"Core issues",
+  "projectName": "Project name",
+  "projectDescription": "Project description"
 }

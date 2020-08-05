@@ -54,7 +54,7 @@ interface CsQuestionData {
   id: number;
   user_id: number;
   type: string;
-  question: string;
+  content: string;
   created_at: Date;
   updated_at: Date;
   counter_flags: number;

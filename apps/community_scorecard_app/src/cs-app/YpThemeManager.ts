@@ -234,9 +234,9 @@ export class YpThemeManager {
 
   setLoadingStyles(): void {
     this.updateStyles({
-      '--mdc-theme-background': '#7f7f7f',
-      '--mdc-theme-primary': '#333',
-      '--mdc-theme-secondary': '#333',
+      '--mdc-theme-background': '#FFF',
+      '--mdc-theme-primary': '#222',
+      '--mdc-theme-secondary': '#F00',
       '--mdc-theme-surface': '#FFF',
       '--mdc-theme-on-primary': '#FFF',
       '--mdc-theme-on-secondary': '#FFF',
