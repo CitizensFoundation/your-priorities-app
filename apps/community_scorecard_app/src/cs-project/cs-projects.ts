@@ -110,7 +110,7 @@ export class CsProjects extends YpBaseElement {
 
     this.community = {
       id: 1,
-      name: 'Test Community',
+      name: 'ARIS',
       description: '',
       hostname: '',
       domain_id: 1,
@@ -228,7 +228,7 @@ export class CsProjects extends YpBaseElement {
 
         .header {
           height: 100px;
-          font-size: var(--mdc-typegraphy-headline1-font-size, 28px);
+          font-size: var(--mdc-typegraphy-headline1-font-size, 24px);
         }
 
         .project {
