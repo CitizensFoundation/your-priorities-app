@@ -337,6 +337,7 @@ export class YpApp extends YpBaseElement {
     this._routePageChanged(oldRouteData);
   }
 
+  //TODO: Use https://boguz.github.io/burgton-button-docs/
   renderNavigationIcon() {
     let icons;
 

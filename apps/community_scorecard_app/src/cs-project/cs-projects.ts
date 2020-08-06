@@ -138,6 +138,19 @@ export class CsProjects extends YpBaseElement {
   }
 
   // DATA PROCESSING
+  connectedCallback() {
+    super.connectedCallback();
+
+    setTimeout(()=>{
+      if (this.community) {
+        this.fire('yp-change-header', {
+          headerTitle: `${this.t('csProjectsFor')} ${this.community.name}`,
+          documentTitle: `${this.t('csProjectsFor')} ${this.community.name}` ,
+          headerDescription: '',
+        });
+      }
+    }, 500);
+  }
 
   refresh(): void {
     console.error('REFRESH');
@@ -247,16 +260,6 @@ export class CsProjects extends YpBaseElement {
     ];
   }
 
-  renderHeader() {
-    return this.community && !this.noHeader
-      ? html`
-          <div class="layout vertical center-center header">
-            ${this.t('csProjectsFor')} ${this.community.name}
-          </div>
-        `
-      : nothing;
-  }
-
   renderTabs() {
     if (this.community && !this.tabsHidden) {
       return html`
@@ -322,7 +325,7 @@ export class CsProjects extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderHeader()} ${this.renderTabs()} ${this.renderCurrentTabPage()}
+      ${this.renderTabs()} ${this.renderCurrentTabPage()}
       <mwc-fab
         ?extended="${this.wide}"
         .label="${this.t('createProject')}"

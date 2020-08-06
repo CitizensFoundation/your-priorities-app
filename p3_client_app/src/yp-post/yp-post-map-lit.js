@@ -9,6 +9,7 @@ import './yp-post-map-info.js';
 import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
 import { html } from '@polymer/polymer/lib/utils/html-tag.js';
 
+//TODO: CHECK THIS: https://github.com/jakelheknight/google-maps-limited and https://github.com/DoubleTrade/google-map
 class YpPostMapLit extends YpBaseElement {
   static get properties() {
     return {

@@ -9,6 +9,9 @@ import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import '@material/mwc-textfield';
 import '@material/mwc-textarea';
 import '@material/mwc-button';
+
+import 'app-datepicker';
+
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { runInThisContext } from 'vm';
@@ -65,7 +68,7 @@ export class CsProject extends YpBaseElement {
   rounds: Array<CsProjectRoundData> = [];
 
   @property({ type: Array })
-  coreQuestions: Array<CsQuestionData> = [];
+  coreIssues: Array<CsIssueData> = [];
 
   collectionType: string;
   collectionItemType: string;
@@ -139,11 +142,13 @@ export class CsProject extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
 
-    this.fire('yp-change-header', {
-      headerTitle: this.t('newProject'),
-      documentTitle: this.t('newProject'),
-      headerDescription: '',
-    });
+    setTimeout(() => {
+      this.fire('yp-change-header', {
+        headerTitle: this.t('newProject'),
+        documentTitle: this.t('newProject'),
+        headerDescription: '',
+      });
+    }, 500);
   }
 
   // DATA PROCESSING
@@ -240,34 +245,71 @@ export class CsProject extends YpBaseElement {
           margin-top: 32px;
         }
 
-        mwc-textfield, mwc-textarea {
+        mwc-textfield,
+        mwc-textarea {
           margin-bottom: 16px;
           width: 450px;
         }
 
-        .coreIssuesTitle {
+        .coreIssuesTitle,
+        .roundsTitle {
           font-size: var(--mdc-typography-headline1-font-size);
           font-weight: var(--mdc-typography-headline1-font-weight);
           margin-bottom: 16px;
           margin-top: 16px;
         }
 
-        .questions {
+        .issues {
           font-size: var(--mdc-typography-headline2-font-size);
+          font-weight: var(--mdc-typography-headline2-font-weight);
           max-width: 450px;
+          min-width: 450px;
         }
 
-        .question {
-          padding: 8px;
+        .issue {
+          padding: 4px;
         }
 
+        .saveButton {
+          margin-top: 32px;
+          --mdc-theme-on-primary: var(--mdc-theme-on-secondary);
+          --mdc-theme-primary: var(--mdc-theme-secondary);
+          width: 200px;
+        }
+
+        #newRoundDateInput {
+          width: 150px;
+        }
+
+        app-datepicker {
+        }
+
+        .round {
+          background-color: var(--mdc-theme-surface);
+          color: var(--mdc-theme-on-surface);
+          padding: 32px;
+          margin: 16px;
+          width: 450px;
+          font-size: var(--mdc-typography-headline2-font-size);
+          font-weight: var(--mdc-typography-headline2-font-weight);
+        }
+
+        .newRoundButton {
+          margin-left: 16px;
+          --mdc-theme-on-primary: var(--mdc-theme-on-secondary);
+          --mdc-theme-primary: var(--mdc-theme-secondary);
+        }
+
+        a {
+          text-decoration: none;
+        }
       `,
     ];
   }
 
-  addQuestion() {
-    this.coreQuestions = [
-      ...this.coreQuestions,
+  addIssue() {
+    this.coreIssues = [
+      ...this.coreIssues,
       {
         id: 5,
         user_id: 1,
@@ -278,11 +320,11 @@ export class CsProject extends YpBaseElement {
         counter_endorsements_up: 0,
         created_at: new Date(),
         updated_at: new Date(),
-        content: (this.$$('#coreQuestionInput') as HTMLInputElement).value,
+        content: (this.$$('#coreIssueInput') as HTMLInputElement).value,
       },
     ];
 
-    (this.$$('#coreQuestionInput') as HTMLInputElement).value = '';
+    (this.$$('#coreIssueInput') as HTMLInputElement).value = '';
   }
 
   addRound() {
@@ -295,84 +337,128 @@ export class CsProject extends YpBaseElement {
         created_at: new Date(),
         updated_at: new Date(),
         starts_at: new Date(
-          (this.$$('#newRoundDateInput') as HTMLInputElement).value
+          (this.$$('app-datepicker') as HTMLInputElement).value
         ),
         ends_at: new Date(),
       },
     ];
   }
 
-  renderQuestions() {
+  renderIssues() {
     return html`
-    <div class="layout vertical center-center">
-      <div class="questions">
-        ${this.coreQuestions.map(
-          (question: CsQuestionData, index: number) => html`
-            <div class="question"> ${index + 1}. ${question.content}</div>
-          `
-        )}
-      </div></div>
+      <div class="layout vertical center-center">
+        <div class="issues">
+          ${this.coreIssues.map(
+            (issue: CsIssueData, index: number) => html`
+              <div class="issue">${index + 1}. ${issue.content}</div>
+            `
+          )}
+        </div>
+      </div>
     `;
   }
 
   renderEdit() {
     return html`<div class="layout vertical center-center">
       <div class="layout vertical editBox">
-        <mwc-textfield
-          .label="${this.t('projectName')}"
-          .value="${this.project.name}"
-        ></mwc-textfield>
-        <mwc-textarea
-          .label="${this.t('projectDescription')}"
-          .value="${this.project.description}"
-        ></mwc-textarea>
-        <div class="layout horizontal center-center coreIssuesTitle">
-          ${this.t('coreIssues')}
-        </div>
         <div class="layout horizontal">
-          <mwc-textarea
-            charCounter
-            maxLength="300"
-            id="coreQuestionInput"
-            .label="${this.t('coreIssue')}"
-          ></mwc-textarea>
-          <div class="layout horizontal center-center">
-            <mwc-button
-              class="layout end-aligned button"
-              @click="${this.addQuestion}"
-              .label="${this.t('addCoreIssue')}"
-            ></mwc-button>
+          <div>
+            <div class="layout horizontal center-center coreIssuesTitle">
+              ${this.t('projectInformation')}
+            </div>
+            <mwc-textfield
+              charCounter
+              id="projectName"
+              maxLength="60"
+              .label="${this.t('projectName')}"
+              .value="${this.project.name}"
+            ></mwc-textfield>
+            <mwc-textarea
+              rows="4"
+              charCounter
+              maxLength="300"
+              .label="${this.t('projectDescription')}"
+              .value="${this.project.description}"
+            ></mwc-textarea>
+          </div>
+          <div>
+            <div class="layout horizontal center-center coreIssuesTitle">
+              ${this.t('coreIssues')}
+            </div>
+            <div class="layout vertical">
+              <mwc-textarea
+                ?hidden="${this.saved}"
+                charCounter
+                maxLength="200"
+                id="coreIssueInput"
+                .label="${this.t('coreIssue')}"
+              ></mwc-textarea>
+              <div class="layout horizontal center-center">
+                <mwc-button
+                  ?hidden="${this.saved}"
+                  class="layout button"
+                  @click="${this.addIssue}"
+                  .label="${this.t('addCoreIssue')}"
+                ></mwc-button>
+              </div>
+            </div>
+            ${this.renderIssues()}
           </div>
         </div>
-        ${this.renderQuestions()}
+        <div class="layout horizontal center-center">
+          <mwc-button
+            raised
+            class="saveButton"
+            ?hidden="${this.saved}"
+            @click="${() => {
+              this.saved = true;
+            }}"
+            .label="${this.t('save')}"
+          ></mwc-button>
+        </div>
       </div>
     </div> `;
   }
 
+  gotoRound(event: CustomEvent) {
+    event.preventDefault();
+    YpNavHelpers.redirectTo('/round/1');
+  }
+
   renderProjectRounds() {
     return html`
-      <div class="layout horizontal center-center roundsTitle">
-        ${this.t('projectRounds')}
-      </div>
-      <div class="layout horizontal">
-        <mwc-textfield
-          id="newRoundDateInput"
-          type="date"
-          .label="${this.t('roundStartDate')}"
-        ></mwc-textfield>
-        <mwc-button
-          @click="${this.addRound}"
-          .label="${this.t('addNewRound')}"
-        ></mwc-button>
-      </div>
-      <div class="rounds layout vertical">
-        ${this.rounds.map(
-          (round: CsProjectRoundData, index: number) => html`
-            <div class="date">
-              ${index + 1}. ${YpFormattingHelpers.formatDate(round.starts_at)}
-            </div>
-          `
-        )}
+      <div class="layout vertical center-center">
+        <div class="layout horizontal center-center roundsTitle">
+          ${this.t('projectRounds')}
+        </div>
+        <div class="layout horizontal">
+          <app-datepicker landscape hidden></app-datepicker>
+          <mwc-button
+            class="newRoundButton"
+            @click="${this.addRound}"
+            raised
+            .label="${this.t('addNewRound')}"
+          ></mwc-button>
+        </div>
+        <div class="rounds layout vertical">
+          ${this.rounds.map(
+            (round: CsProjectRoundData, index: number) => html`
+              <a @click="${this.gotoRound}" href="/round/1"
+                ><div
+                  class="layout vertical round shadow-elevation-4dp shadow-transition"
+                >
+                  <div>
+                    ${(this.$$('#projectName') as HTMLInputElement).value}
+                  </div>
+                  <div class="">
+                    ${this.t('round')} ${index + 1} -
+                    ${YpFormattingHelpers.formatDate(round.starts_at)}
+                  </div>
+                </div></a
+              >
+            `
+          )}
+        </div>
       </div>
     `;
   }

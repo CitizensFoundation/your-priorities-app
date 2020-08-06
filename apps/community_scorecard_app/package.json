@@ -76,6 +76,7 @@
     "@material/mwc-textarea": "^0.18.0",
     "@material/mwc-textfield": "^0.18.0",
     "@material/mwc-top-app-bar": "^0.18.0",
+    "app-datepicker": "^4.1.0",
     "i18next-http-backend": "^1.0.16",
     "linkifyjs": "^2.1.9",
     "lit-element": "^2.0.1",

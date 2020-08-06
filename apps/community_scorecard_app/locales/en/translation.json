@@ -3,9 +3,15 @@
   "archived": "Archived",
   "csProjectsFor": "Community Scorecard Projects for",
   "createProject": "Create Project",
-  "addCoreIssue":"Add",
+  "addCoreIssue":"Add issue",
   "coreIssue":"Core issue",
   "coreIssues":"Core issues",
   "projectName": "Project name",
-  "projectDescription": "Project description"
+  "projectDescription": "Project description",
+  "projectRounds": "Project Rounds",
+  "addNewRound": "Add round",
+  "roundStartDate": "Round starts at",
+  "projectInformation": "Project information",
+  "newProject": "New Community Scorecard Project",
+  "round": "Round"
 }

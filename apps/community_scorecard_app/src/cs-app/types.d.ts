@@ -31,8 +31,8 @@ interface CsProjectEventData {
   planned_end_at: Date;
   ended_at: Date;
   type: string;
-  CsAllQuestions?: Array<CsQuestionData>;
-  CsFinalQuestions?: Array<CsQuestionData>;
+  CsAllIssues?: Array<CsIssueData>;
+  CsFinalIssues?: Array<CsIssueData>;
 }
 
 interface CsLiveMeetingData extends CsProjectEventData {
@@ -50,7 +50,7 @@ interface CsUserDatePreferenceData {
   preferred_dates: Array<Date>;
 }
 
-interface CsQuestionData {
+interface CsIssueData {
   id: number;
   user_id: number;
   type: string;
@@ -61,7 +61,7 @@ interface CsQuestionData {
   counter_endorsements_up: number;
   counter_endorsements_down: number;
   counter_points: number;
-  CsQuestionPoints?: Array<CsPointData>;
+  CsIssuePoints?: Array<CsPointData>;
 }
 
 interface CsPointData {

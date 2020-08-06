@@ -20,6 +20,8 @@ import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
 import { YpBaseElement } from '../yp-base-element.js';
 import { YpFlexLayout } from '../yp-flex-layout.js';
 
+//TODO: Check this: https://www.webcomponents.org/element/@doubletrade/lit-datatable
+
 class YpGroupEditLit extends YpBaseElement {
   static get properties() {
     return {
