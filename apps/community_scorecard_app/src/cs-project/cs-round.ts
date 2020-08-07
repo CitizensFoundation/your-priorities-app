@@ -17,8 +17,8 @@ import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
 export const RoundTabTypes: Record<string, number> = {
   Process: 0,
-  Activities: 1,
-  Analytics: 2,
+  Analytics: 1,
+  Activities: 2,
 };
 
 @customElement('cs-round')
@@ -287,13 +287,13 @@ export class CsRound extends YpBaseElement {
               stacked
             ></mwc-tab>
             <mwc-tab
-              .label="${this.t('activities')}"
-              icon="rss_feed"
+              .label="${this.t('analytics')}"
+              icon="equalizer"
               stacked
             ></mwc-tab>
             <mwc-tab
-              .label="${this.t('analytics')}"
-              icon="equalizer"
+              .label="${this.t('activities')}"
+              icon="rss_feed"
               stacked
             ></mwc-tab>
           </mwc-tab-bar>

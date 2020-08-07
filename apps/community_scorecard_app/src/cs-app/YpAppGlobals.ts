@@ -100,9 +100,9 @@ export class YpAppGlobals extends YpCodeBase {
     this.theme = new YpThemeManager();
 
     // Boot
-    this.boot();
-    this.hasVideoUploadSupport();
-    this.hasAudioUploadSupport();
+    //this.boot();
+    //this.hasVideoUploadSupport();
+    //this.hasAudioUploadSupport();
 
     //TODO: See if this is recieved
     this.fireGlobal('app-ready');

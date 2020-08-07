@@ -492,9 +492,9 @@ export class YpAppUser extends YpCodeBase {
   }
 
   checkLogin() {
-    this.isloggedin();
-    this.getMemberShips();
-    this.getAdminRights();
+    //this.isloggedin();
+    //this.getMemberShips();
+    //this.getAdminRights();
   }
 
   recheckAdminRights() {

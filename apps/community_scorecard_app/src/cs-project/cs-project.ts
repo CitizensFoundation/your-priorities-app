@@ -19,8 +19,8 @@ import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 
 export const ProjectTabTypes: Record<string, number> = {
   Information: 0,
-  Activities: 1,
-  Analytics: 2,
+  Analytics: 1,
+  Activities: 2
 };
 
 @customElement('cs-project')
@@ -449,6 +449,11 @@ export class CsProject extends YpBaseElement {
             <mwc-tab
               .label="${this.t('analytics')}"
               icon="equalizer"
+              stacked
+            ></mwc-tab>
+            <mwc-tab
+              .label="${this.t('activities')}"
+              icon="rss_feed"
               stacked
             ></mwc-tab>
           </mwc-tab-bar>

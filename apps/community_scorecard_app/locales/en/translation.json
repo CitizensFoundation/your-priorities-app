@@ -20,5 +20,7 @@
   "stakeHolderScoringStage": "Stakeholder Scoring",
   "createActionPlan": "Create Action Plan Meeting",
   "monitoring": "Monitoring",
-  "communityScore": "Community Score"
+  "communityScore": "Community Score",
+  "chooseTimesYouAreFree": "Choose dates you are free",
+  "sendYourDates": "Send your dates"
 }

@@ -45,6 +45,8 @@ import '../cs-project/cs-projects.js';
 import '../cs-project/cs-project.js';
 import '../cs-project/cs-round.js';
 
+import '../cs-project/cs-choose-meeting-time.js';
+
 //import '../yp-collection/yp-domain.js';
 //import '../yp-collection/yp-community.js';
 //import '../yp-collection/yp-group.js';
@@ -467,7 +469,17 @@ export class CsApp extends YpBaseElement {
             ></cs-round>
           `);
           break;
-        default:
+        case 'choose_time':
+          pageHtml = cache(html`
+            <cs-choose-meeting-time
+              id="project"
+              role="main"
+              aria-label="${this.t('projectRound')}"
+              .subRoute="${this.subRoute}"
+            ></cs-choose-meeting-time>
+          `);
+          break;
+          default:
           pageHtml = cache(html` <yp-view-404 name="view-404"></yp-view-404> `);
           break;
       }
