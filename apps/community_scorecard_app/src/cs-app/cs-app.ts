@@ -47,6 +47,8 @@ import '../cs-project/cs-round.js';
 
 import '../cs-project/cs-choose-meeting-time.js';
 
+import '../cs-project/cs-create-issues.js';
+
 //import '../yp-collection/yp-domain.js';
 //import '../yp-collection/yp-community.js';
 //import '../yp-collection/yp-group.js';
@@ -129,6 +131,9 @@ export class CsApp extends YpBaseElement {
 
   @property({ type: Object })
   routeData: Record<string, string> = {};
+
+  @property({ type: Boolean })
+  hideAppBar = false;
 
   anchor: HTMLElement | null = null;
 
@@ -248,6 +253,9 @@ export class CsApp extends YpBaseElement {
     window.addEventListener('location-changed', this.updateLocation.bind(this));
     window.addEventListener('popstate', this.updateLocation.bind(this));
     this._setupTouchEvents();
+
+    this.addListener('yp-hide-app-bar', () => { this.hideAppBar = true });
+    this.addListener('yp-unhide-app-bar', () => { this.hideAppBar = false });
   }
 
   _removeEventListeners() {
@@ -286,6 +294,9 @@ export class CsApp extends YpBaseElement {
     window.removeEventListener('location-changed', this.updateLocation);
     window.removeEventListener('popstate', this.updateLocation);
     this._removeTouchEvents();
+
+    this.removeEventListener('yp-hide-app-bar', () => { this.hideAppBar = true });
+    this.removeEventListener('yp-unhide-app-bar', () => { this.hideAppBar = false });
   }
 
   static get styles() {
@@ -422,6 +433,7 @@ export class CsApp extends YpBaseElement {
 
   renderAppBar() {
     return html`
+      ${ !this.hideAppBar ? html`
       <mwc-top-app-bar>
         <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
         <div slot="title">
@@ -432,6 +444,9 @@ export class CsApp extends YpBaseElement {
           ${this.renderPage()}
         </div>
       </mwc-top-app-bar>
+      ` : html`
+      ${this.renderPage()}
+        `}
     `;
   }
 
@@ -479,6 +494,16 @@ export class CsApp extends YpBaseElement {
             ></cs-choose-meeting-time>
           `);
           break;
+        case 'create_issues':
+          pageHtml = cache(html`
+            <cs-create-issues
+              id="project"
+              role="main"
+              aria-label="${this.t('projectRound')}"
+              .subRoute="${this.subRoute}"
+            ></cs-create-issues>
+          `);
+          break;
           default:
           pageHtml = cache(html` <yp-view-404 name="view-404"></yp-view-404> `);
           break;
@@ -492,7 +517,7 @@ export class CsApp extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderAppBar()}
+      ${ this.renderAppBar() }
 
       <yp-dialog-container id="dialogContainer"></yp-dialog-container>
 

@@ -9,55 +9,97 @@ import '@material/mwc-tab-bar';
 import '@material/mwc-fab';
 import '@material/mwc-icon';
 import '@material/mwc-button';
-
+import '@material/mwc-circular-progress-four-color';
 import '../cs-story/cs-story.js';
 
 import 'app-datepicker';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
 export const CreationStages: Record<string, number> = {
   IntroStory: 0,
-  IntroSurvey: 1,
-  ElectSecretary: 2,
-  AddAndRateIssues: 3,
-  FinalIssues: 4,
-  NextMeeting: 5,
+  WaitToStart: 1,
+  IntroSurvey: 2,
+  ElectSecretary: 3,
+  AddAndRateIssues: 4,
+  FinalIssues: 5,
+  NextMeeting: 6,
 };
 
 @customElement('cs-create-issues')
 export class CsCreateIssues extends YpBaseElement {
-  @property({ type: Boolean })
-  storyOpen = true;
-
   @property({ type: Number })
   stage = CreationStages.IntroStory;
 
-  render() {
+  renderCurrentStage(): TemplateResult | undefined {
+    let stage: TemplateResult | undefined;
+
+    switch (this.stage) {
+      case CreationStages.IntroStory:
+        stage = this.renderIntroStory();
+        break;
+      case CreationStages.WaitToStart:
+        stage = this.renderWaitToStart();
+        break;
+      case CreationStages.IntroSurvey:
+        stage = this.renderIntroSurvey();
+        break;
+      case CreationStages.ElectSecretary:
+        stage = this.renderIntroSurvey();
+        break;
+    }
+
+    return stage;
+  }
+
+  renderIntroStory() {
     return html`
-      ${this.storyOpen
-        ? html`
-            <div class="layout horizontal center-center">
-              <div class="storyContainer">
-                <cs-story number="2"></cs-story>
-              </div>
-            </div>
-          `
-        : html`
-            <div class="layout vertical center-center">
-              <div><h1>${this.t('chooseTimesYouAreFree')}</h1></div>
-
-              <app-datepicker></app-datepicker>
-
-              <mwc-button
-                raised
-                .label="${this.t('sendYourDates')}"
-              ></mwc-button>
-            </div>
-          `}
+      <div class="layout vertical center-center">
+        <cs-story number="2"></cs-story>
+      </div>
     `;
   }
 
+  renderWaitToStart() {
+    return html`
+      <div class="layout vertical center-center">
+        <div
+          class="waitingToStartBox layout vertical center-center shadow-elevation-4dp shadow-transition"
+        >
+          <div>${this.t('waitingOnEverybodyToCompleteIntro')}</div>
+          <mwc-circular-progress-four-color
+            class="spinner"
+            indeterminate
+          ></mwc-circular-progress-four-color>
+        </div>
+      </div>
+    `;
+  }
+
+  renderIntroSurvey() {
+    return html`
+      <div class="layout vertical center-center">
+        <div
+          class="waitingToStartBox layout vertical center-center shadow-elevation-4dp shadow-transition"
+        >
+          <div>${this.t('waitingOnEverybodyToCompleteIntro')}</div>
+          <mwc-circular-progress-four-color
+            class="spinner"
+            indeterminate
+          ></mwc-circular-progress-four-color>
+        </div>
+      </div>
+    `;
+  }
+
+  render() {
+    return html` ${this.renderCurrentStage()} `;
+  }
+
   _lastStoryCard() {
-    this.storyOpen = false;
+    this.stage = CreationStages.WaitToStart;
+    setTimeout(() => {
+      this.stage = CreationStages.IntroSurvey;
+    }, 7000);
   }
 
   connectedCallback() {
@@ -73,13 +115,20 @@ export class CsCreateIssues extends YpBaseElement {
   static get styles() {
     return [
       super.styles,
+      ShadowStyles,
       css`
         mwc-button {
           margin-top: 16px;
         }
-        .storyContsainer {
-          width: 300px;
-          max-width: 300px;
+
+        .spinner {
+          margin: 32px;
+        }
+
+        .waitingToStartBox {
+          background-color: var(--mdc-theme-surface);
+          padding: 16px;
+          margin: 32px;
         }
       `,
     ];

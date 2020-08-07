@@ -16,39 +16,42 @@ import 'app-datepicker';
 
 @customElement('cs-choose-meeting-time')
 export class CsChooseMeetingTime extends YpBaseElement {
-
-  @property({type: Boolean})
-  storyOpen = true
+  @property({ type: Boolean })
+  storyOpen = true;
 
   render() {
     return html`
+      ${this.storyOpen
+        ? html`
+            <div class="layout horizontal center-center">
+              <cs-story></cs-story>
+            </div>
+          `
+        : html`
+            <div class="layout vertical center-center">
+              <div><h1>${this.t('chooseTimesYouAreFree')}</h1></div>
 
-    ${ this.storyOpen ? html`
-    <div class="layout horizontal center-center">
-        <div class="storyContainer">
-          <cs-story></cs-story>
-        </div>
-      </div>
-    ` : html`
-    <div class="layout vertical center-center">
-      <div><h1>${this.t('chooseTimesYouAreFree')}</h1></div>
+              <app-datepicker></app-datepicker>
 
-      <app-datepicker></app-datepicker>
-
-      <mwc-button raised .label="${this.t('sendYourDates')}"></mwc-button>
-    </div>
-
-    `}
+              <mwc-button
+                raised
+                .label="${this.t('sendYourDates')}"
+              ></mwc-button>
+            </div>
+          `}
     `;
   }
 
-  _lastStoryCard() {
+  async _lastStoryCard() {
+    //this.fire('yp-unhide-app-bar');
     this.storyOpen = false;
+    this.requestUpdate();
   }
 
   connectedCallback() {
     super.connectedCallback();
     this.addListener('cs-last-story-card', this._lastStoryCard.bind(this));
+    //this.fire('yp-hide-app-bar');
   }
 
   disconnectedCallback() {
@@ -56,17 +59,12 @@ export class CsChooseMeetingTime extends YpBaseElement {
     this.removeListener('cs-last-story-card', this._lastStoryCard.bind(this));
   }
 
-
   static get styles() {
     return [
       super.styles,
       css`
-      mwc-button {
-        margin-top: 16px;
-      }
-        .storyContsainer {
-          width: 300px;
-          max-width: 300px;
+        mwc-button {
+          margin-top: 16px;
         }
       `,
     ];
