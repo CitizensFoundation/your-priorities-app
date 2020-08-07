@@ -434,7 +434,7 @@ export class CsApp extends YpBaseElement {
   renderAppBar() {
     return html`
       ${ !this.hideAppBar ? html`
-      <mwc-top-app-bar>
+      <mwc-top-app-bar dense>
         <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
         <div slot="title">
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}

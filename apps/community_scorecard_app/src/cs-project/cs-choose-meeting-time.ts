@@ -29,9 +29,10 @@ export class CsChooseMeetingTime extends YpBaseElement {
           `
         : html`
             <div class="layout vertical center-center">
-              <div><h1>${this.t('chooseTimesYouAreFree')}</h1></div>
+              <div class="header">${this.t('chooseTimesYouAreFreeFor')}</div>
 
               <app-datepicker></app-datepicker>
+              <div class="subHeader">${this.t('helpCreateCs')}</div>
 
               <mwc-button
                 raised
@@ -63,6 +64,18 @@ export class CsChooseMeetingTime extends YpBaseElement {
     return [
       super.styles,
       css`
+        .header {
+          font-size: 18px;
+          font-weight: bold;
+          margin: 16px;
+        }
+
+        .subHeader {
+          font-size: 14px;
+          margin: 16px;
+          font-style: italic;
+        }
+
         mwc-button {
           margin-top: 16px;
         }

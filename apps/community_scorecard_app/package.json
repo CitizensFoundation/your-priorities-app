@@ -65,6 +65,7 @@
   "license": "MIT",
   "dependencies": {
     "@kano/twemoji": "^1.0.0",
+    "@manufosela/stars-rating": "^3.3.3",
     "@material/mwc-button": "^0.18.0",
     "@material/mwc-circular-progress-four-color": "^0.18.0",
     "@material/mwc-dialog": "^0.18.0",

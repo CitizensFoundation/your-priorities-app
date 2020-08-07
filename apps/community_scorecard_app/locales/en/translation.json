@@ -21,7 +21,16 @@
   "createActionPlan": "Create Action Plan Meeting",
   "monitoring": "Monitoring",
   "communityScore": "Community Score",
-  "chooseTimesYouAreFree": "Choose dates you are free",
+  "chooseTimesYouAreFreeFor": "Choose dates you are free",
   "sendYourDates": "Send your dates",
-  "waitingOnEverybodyToCompleteIntro": "Waiting on everybody to completed viewing the introduction story"
+  "waitingOnEverybodyToCompleteIntro": "Waiting for all to completed introduction story...",
+  "waitingOnEverybodyToCompleteSurvey": "Waiting for all to completed introduction survey...",
+  "waitingOnEverybodyToCompleteElect": "Waiting for all to completed secretary election...",
+  "howIsYourMoodToday": "How is your mood today?",
+  "helpCreateCs": "Help make your services better",
+  "ourMood": "Our collective mood",
+  "electSecretary": "Elect Secretary",
+  "votingResults": "Voting results",
+  "addAndRateIssues": "Rate the Issues",
+  "addAndRateIssuesIntro": "Rate the issues by voting them up or down. Watch this space..."
 }

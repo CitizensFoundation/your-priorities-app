@@ -88,8 +88,8 @@ export class CsStoryViewer extends YpBaseElement {
       display: block;
       position: relative;
       align-items: center;
-      width: 300px;
-      height: 800px;
+      width: 400px;
+      height: 711px;
     }
     ::slotted(*) {
       position: absolute;
