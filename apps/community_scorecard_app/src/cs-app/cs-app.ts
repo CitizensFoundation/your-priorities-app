@@ -43,6 +43,7 @@ import { YpAppDialogs } from './yp-app-dialogs.js';
 
 import '../cs-project/cs-projects.js';
 import '../cs-project/cs-project.js';
+import '../cs-project/cs-round.js';
 
 //import '../yp-collection/yp-domain.js';
 //import '../yp-collection/yp-community.js';
@@ -56,7 +57,6 @@ declare global {
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
     app: CsApp;
-
   }
 }
 
@@ -457,7 +457,17 @@ export class CsApp extends YpBaseElement {
             ></cs-project>
           `);
           break;
-          default:
+        case 'round':
+          pageHtml = cache(html`
+            <cs-round
+              id="project"
+              role="main"
+              aria-label="${this.t('projectRound')}"
+              .subRoute="${this.subRoute}"
+            ></cs-round>
+          `);
+          break;
+        default:
           pageHtml = cache(html` <yp-view-404 name="view-404"></yp-view-404> `);
           break;
       }
@@ -837,7 +847,7 @@ export class CsApp extends YpBaseElement {
 
     setTimeout(() => {
       if (route.indexOf('domain') > -1) {
-//        (this.$$('#domainPage') as YpCollection).refresh();
+        //        (this.$$('#domainPage') as YpCollection).refresh();
       }
     });
   }

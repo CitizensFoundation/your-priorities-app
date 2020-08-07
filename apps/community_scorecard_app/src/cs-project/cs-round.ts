@@ -8,18 +8,21 @@ import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
 import '@material/mwc-tab-bar';
 import '@material/mwc-fab';
+import '@material/mwc-icon';
+import '@material/mwc-button';
+
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
-export const ProjectsTabTypes: Record<string, number> = {
-  Current: 0,
-  Archived: 1,
+export const RoundTabTypes: Record<string, number> = {
+  Process: 0,
+  Activities: 1,
+  Analytics: 2,
 };
 
-//TODO: Create abstract class for tabs and pages
-@customElement('cs-projects')
-export class CsProjects extends YpBaseElement {
+@customElement('cs-round')
+export class CsRound extends YpBaseElement {
   @property({ type: Boolean })
   noHeader = false;
 
@@ -36,7 +39,7 @@ export class CsProjects extends YpBaseElement {
   subRoute: string | undefined;
 
   @property({ type: Number })
-  selectedTab = ProjectsTabTypes.Current;
+  selectedTab = RoundTabTypes.Process;
 
   @property({ type: Array })
   projects: Array<CsProjectData> | undefined;
@@ -138,19 +141,6 @@ export class CsProjects extends YpBaseElement {
   }
 
   // DATA PROCESSING
-  connectedCallback() {
-    super.connectedCallback();
-
-    setTimeout(()=>{
-      if (this.community) {
-        this.fire('yp-change-header', {
-          headerTitle: `${this.t('csProjectsFor')} ${this.community.name}`,
-          documentTitle: `${this.t('csProjectsFor')} ${this.community.name}` ,
-          headerDescription: '',
-        });
-      }
-    }, 500);
-  }
 
   refresh(): void {
     console.error('REFRESH');
@@ -230,8 +220,8 @@ export class CsProjects extends YpBaseElement {
       css`
         mwc-fab {
           position: fixed;
-          bottom: 24px;
-          right: 24px;
+          bottom: 16px;
+          right: 16px;
         }
 
         mwc-tab-bar {
@@ -249,31 +239,60 @@ export class CsProjects extends YpBaseElement {
           color: var(--mdc-theme-on-surface);
           padding: 16px;
           margin: 16px;
-          width: 620px;
+          width: 960px;
+        }
+
+        .process {
+          background-color: var(--mdc-theme-surface, #fff);
+          color: var(--mdc-theme-on-surface);
+          padding: 16px;
+          margin: 8px;
+          width: 420px;
+        }
+
+        .processes {
+          margin-top: 32px;
+          margin-bottom: 32px;
+        }
+
+        mwc-icon {
+          margin-right: 8px;
         }
 
         .name {
           font-weight: bold;
           margin-bottom: 16px;
         }
+
+        .withLineContainer {
+          background-image: linear-gradient(#555, #aaa);
+          background-size: 2px 100%;
+          background-repeat: no-repeat;
+          background-position: center center;
+          height: 40px;
+          width: 100px;
+        }
       `,
     ];
   }
 
   renderTabs() {
-    if (this.community && !this.tabsHidden) {
+    if (!this.tabsHidden) {
       return html`
         <div class="layout vertical center-center">
           <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
             <mwc-tab
-              ?hidden="${this.hideCollection}"
-              .label="${this.t('current')}"
-              icon="groups"
+              .label="${this.t('process')}"
+              icon="format_list_numbered"
               stacked
             ></mwc-tab>
             <mwc-tab
-              ?hidden="${this.hideCollection}"
-              .label="${this.t('archived')}"
+              .label="${this.t('activities')}"
+              icon="rss_feed"
+              stacked
+            ></mwc-tab>
+            <mwc-tab
+              .label="${this.t('analytics')}"
               icon="equalizer"
               stacked
             ></mwc-tab>
@@ -308,14 +327,58 @@ export class CsProjects extends YpBaseElement {
     return projectList;
   }
 
+  renderProcess(
+    name: string,
+    icon: string,
+    disableStart = false
+  ): TemplateResult | undefined {
+    return html` <div
+      class="layout horizontal process shadow-elevation-2dp shadow-transition"
+    >
+      <mwc-icon>${icon}</mwc-icon>
+      <div class="processName">${name}</div>
+      <div class="flex"></div>
+      <mwc-button
+        .label="${this.t('start')}"
+        ?disabled="${disableStart}"
+        raised
+      ></mwc-button>
+    </div>`;
+  }
+
+  renderDivider(): TemplateResult | undefined {
+    return html` <div class="withLineContainer"></div> `;
+  }
+
+  renderProcesses(): TemplateResult | undefined {
+    return html`
+      <div class="layout vertical center-center processes">
+        ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today')}
+        ${this.renderDivider()}
+        ${this.renderProcess(this.t('createScorecardMeeting'), 'meeting_room', true)}
+        ${this.renderDivider()}
+        ${this.renderProcess(this.t('stakeHolderScoringStage'), 'rate_review', true)}
+        ${this.renderDivider()}
+        ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today', true)}
+        ${this.renderDivider()}
+        ${this.renderProcess(this.t('createActionPlan'), 'pending_actions', true)}
+        ${this.renderDivider()}
+        ${this.renderProcess(this.t('monitoring'), 'equalizer', true)}
+      </div>
+    `;
+  }
+
   renderCurrentTabPage(): TemplateResult | undefined {
     let page: TemplateResult | undefined;
 
     switch (this.selectedTab) {
-      case ProjectsTabTypes.Current:
-        page = this.renderProjectList({ current: true });
+      case RoundTabTypes.Process:
+        page = this.renderProcesses();
         break;
-      case ProjectsTabTypes.Archived:
+      case RoundTabTypes.Activities:
+        page = this.renderProjectList({ archived: true });
+        break;
+      case RoundTabTypes.Analytics:
         page = this.renderProjectList({ archived: true });
         break;
     }
@@ -324,15 +387,7 @@ export class CsProjects extends YpBaseElement {
   }
 
   render() {
-    return html`
-      ${this.renderTabs()} ${this.renderCurrentTabPage()}
-      <mwc-fab
-        ?extended="${this.wide}"
-        .label="${this.t('createProject')}"
-        @click="${this.createProject}"
-        icon="edit"
-      ></mwc-fab>
-    `;
+    return html` ${this.renderTabs()} ${this.renderCurrentTabPage()} `;
   }
 
   createProject() {
@@ -368,11 +423,14 @@ export class CsProjects extends YpBaseElement {
     let tabNumber;
 
     switch (routeTabName) {
-      case 'current':
-        tabNumber = ProjectsTabTypes.Current;
+      case 'process':
+        tabNumber = RoundTabTypes.Process;
         break;
-      case 'archived':
-        tabNumber = ProjectsTabTypes.Archived;
+      case 'activities':
+        tabNumber = RoundTabTypes.Activities;
+        break;
+      case 'analytics':
+        tabNumber = RoundTabTypes.Analytics;
         break;
     }
 

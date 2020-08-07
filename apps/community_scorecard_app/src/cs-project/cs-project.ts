@@ -10,17 +10,17 @@ import '@material/mwc-textfield';
 import '@material/mwc-textarea';
 import '@material/mwc-button';
 
-import 'app-datepicker';
+import Chart from 'chart.js';
 
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { runInThisContext } from 'vm';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 
-export const ProjectsTabTypes: Record<string, number> = {
-  Current: 0,
-  Archived: 1,
+export const ProjectTabTypes: Record<string, number> = {
+  Information: 0,
+  Activities: 1,
+  Analytics: 2,
 };
 
 @customElement('cs-project')
@@ -41,7 +41,7 @@ export class CsProject extends YpBaseElement {
   subRoute: string | undefined;
 
   @property({ type: Number })
-  selectedTab = ProjectsTabTypes.Current;
+  selectedTab = ProjectTabTypes.Information;
 
   @property({ type: Array })
   projects: Array<CsProjectData> | undefined;
@@ -69,6 +69,10 @@ export class CsProject extends YpBaseElement {
 
   @property({ type: Array })
   coreIssues: Array<CsIssueData> = [];
+
+  chart: Chart | undefined;
+
+  charts: Record<number, Chart> = {}
 
   collectionType: string;
   collectionItemType: string;
@@ -222,6 +226,83 @@ export class CsProject extends YpBaseElement {
     })`;
   }
 
+  randomScalingFactor(): number {
+    return Math.trunc((Math.round(Math.random() * 5)));
+  }
+
+  setupChart (number: number, title: string) {
+    const lineChartElement = this.shadowRoot!.getElementById(`line-chart-${number}`);
+    const config = {
+			type: 'line',
+			data: {
+				labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 'Round 6', 'Round 7'],
+				datasets: [{
+					label: this.t('communityScore'),
+					backgroundColor: "#FFF",
+          borderColor: "#000",
+          beginAtZero: true,
+					data: [
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor()
+					],
+					fill: false,
+        }
+      ]
+			},
+			options: {
+        responsive: false,
+        elements: {
+          line: {
+              tension: 0.1
+          }
+        },
+				title: {
+					display: true,
+					text: title
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: false,
+							labelString: 'Rounds'
+						},
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Score'
+            },
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+          }
+					}]
+				}
+			}
+    };
+
+    if (this.charts[number]) {
+//      this.charts.destroy();
+    }
+
+    this.charts[number] = new Chart(lineChartElement as HTMLCanvasElement, config as any);
+  }
+
   // UI
 
   static get styles() {
@@ -233,6 +314,11 @@ export class CsProject extends YpBaseElement {
           position: fixed;
           bottom: 16px;
           right: 16px;
+        }
+
+        mwc-tab-bar {
+          width: 960px;
+          margin-bottom: 16px;
         }
 
         .name {
@@ -259,15 +345,18 @@ export class CsProject extends YpBaseElement {
           margin-top: 16px;
         }
 
-        .issues {
-          font-size: var(--mdc-typography-headline2-font-size);
-          font-weight: var(--mdc-typography-headline2-font-weight);
+        .issues, .rounds {
+          font-size: var(--mdc-typography-body-font-size);
+          font-weight: var(--mdc-typography-body-font-weight);
           max-width: 450px;
-          min-width: 450px;
+          width: 450px;
         }
 
         .issue {
-          padding: 4px;
+          padding: 16px;
+          margin-top: 16px;
+          background-color: var(--mdc-theme-surface);
+          color: var(--mdc-theme-on-surface);
         }
 
         .saveButton {
@@ -275,21 +364,18 @@ export class CsProject extends YpBaseElement {
           --mdc-theme-on-primary: var(--mdc-theme-on-secondary);
           --mdc-theme-primary: var(--mdc-theme-secondary);
           width: 200px;
+          margin-bottom: 32px;
         }
 
         #newRoundDateInput {
           width: 150px;
         }
 
-        app-datepicker {
-        }
-
         .round {
           background-color: var(--mdc-theme-surface);
           color: var(--mdc-theme-on-surface);
-          padding: 32px;
-          margin: 16px;
-          width: 450px;
+          padding: 16px;
+          margin-top: 16px;
           font-size: var(--mdc-typography-headline2-font-size);
           font-weight: var(--mdc-typography-headline2-font-weight);
         }
@@ -300,8 +386,16 @@ export class CsProject extends YpBaseElement {
           --mdc-theme-primary: var(--mdc-theme-secondary);
         }
 
+        .addNewIssueButton {
+          margin-bottom: 32px;
+        }
+
         a {
           text-decoration: none;
+        }
+
+        canvas {
+          margin-top: 32px;
         }
       `,
     ];
@@ -336,21 +430,42 @@ export class CsProject extends YpBaseElement {
         cs_project_id: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        starts_at: new Date(
-          (this.$$('app-datepicker') as HTMLInputElement).value
-        ),
+        starts_at: new Date(),
         ends_at: new Date(),
       },
     ];
   }
 
+  renderTabs() {
+    if (!this.tabsHidden) {
+      return html`
+        <div class="layout vertical center-center">
+          <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
+            <mwc-tab
+              .label="${this.t('information')}"
+              icon="groups"
+              stacked
+            ></mwc-tab>
+            <mwc-tab
+              .label="${this.t('analytics')}"
+              icon="equalizer"
+              stacked
+            ></mwc-tab>
+          </mwc-tab-bar>
+        </div>
+      `;
+    } else {
+      return nothing;
+    }
+  }
+
   renderIssues() {
     return html`
       <div class="layout vertical center-center">
-        <div class="issues">
+        <div class="issues ">
           ${this.coreIssues.map(
             (issue: CsIssueData, index: number) => html`
-              <div class="issue">${index + 1}. ${issue.content}</div>
+              <div class="issue  shadow-elevation-2dp shadow-transition">${index + 1}. ${issue.content}</div>
             `
           )}
         </div>
@@ -361,11 +476,8 @@ export class CsProject extends YpBaseElement {
   renderEdit() {
     return html`<div class="layout vertical center-center">
       <div class="layout vertical editBox">
-        <div class="layout horizontal">
-          <div>
-            <div class="layout horizontal center-center coreIssuesTitle">
-              ${this.t('projectInformation')}
-            </div>
+        <div class="layout vertical center-center">
+          <div class="layout vertical">
             <mwc-textfield
               charCounter
               id="projectName"
@@ -374,7 +486,7 @@ export class CsProject extends YpBaseElement {
               .value="${this.project.name}"
             ></mwc-textfield>
             <mwc-textarea
-              rows="4"
+              rows="3"
               charCounter
               maxLength="300"
               .label="${this.t('projectDescription')}"
@@ -394,9 +506,9 @@ export class CsProject extends YpBaseElement {
                 .label="${this.t('coreIssue')}"
               ></mwc-textarea>
               <div class="layout horizontal center-center">
-                <mwc-button
+                <mwc-button raised
                   ?hidden="${this.saved}"
-                  class="layout button"
+                  class="layout addNewIssueButton"
                   @click="${this.addIssue}"
                   .label="${this.t('addCoreIssue')}"
                 ></mwc-button>
@@ -420,9 +532,29 @@ export class CsProject extends YpBaseElement {
     </div> `;
   }
 
-  gotoRound(event: CustomEvent) {
-    event.preventDefault();
-    YpNavHelpers.redirectTo('/round/1');
+  renderAnalytics() {
+    return html`
+    <div class="layout vertical center-center">
+      <canvas id="line-chart-1" width="800" height="400"></canvas>
+      <canvas id="line-chart-2" width="800" height="400"></canvas>
+      <canvas id="line-chart-3" width="800" height="400"></canvas>
+    </div>
+    `;
+  }
+
+  renderCurrentTabPage(): TemplateResult | undefined {
+    let page: TemplateResult | undefined;
+
+    switch (this.selectedTab) {
+      case ProjectTabTypes.Information:
+        page = this.renderInformation();
+        break;
+      case ProjectTabTypes.Analytics:
+        page = this.renderAnalytics();
+        break;
+    }
+
+    return page;
   }
 
   renderProjectRounds() {
@@ -432,7 +564,6 @@ export class CsProject extends YpBaseElement {
           ${this.t('projectRounds')}
         </div>
         <div class="layout horizontal">
-          <app-datepicker landscape hidden></app-datepicker>
           <mwc-button
             class="newRoundButton"
             @click="${this.addRound}"
@@ -445,7 +576,7 @@ export class CsProject extends YpBaseElement {
             (round: CsProjectRoundData, index: number) => html`
               <a @click="${this.gotoRound}" href="/round/1"
                 ><div
-                  class="layout vertical round shadow-elevation-4dp shadow-transition"
+                  class="layout vertical round shadow-elevation-2dp shadow-transition"
                 >
                   <div>
                     ${(this.$$('#projectName') as HTMLInputElement).value}
@@ -463,9 +594,13 @@ export class CsProject extends YpBaseElement {
     `;
   }
 
+  renderInformation() {
+    return html`${this.renderEdit()} ${this.saved ? this.renderProjectRounds() : nothing}`;
+  }
+
   render() {
     return html`
-      ${this.renderEdit()} ${this.saved ? this.renderProjectRounds() : nothing}
+      ${this.renderTabs()} ${this.renderCurrentTabPage()}
     `;
   }
 
@@ -475,7 +610,18 @@ export class CsProject extends YpBaseElement {
 
   // EVENTS
 
-  updated(changedProperties: Map<string | number | symbol, unknown>) {
+  gotoRound(event: CustomEvent) {
+    event.preventDefault();
+    this.fire('yp-change-header', {
+      headerTitle: this.t('newProject'),
+      documentTitle: this.t('newProject'),
+      headerDescription: '',
+    });
+    YpNavHelpers.redirectTo('/round/1');
+  }
+
+
+  async updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
     if (changedProperties.has('subRoute') && this.subRoute) {
@@ -492,22 +638,34 @@ export class CsProject extends YpBaseElement {
       this._getCollection();
       this._getHelpPages();
     }
+
+
+    if (changedProperties.has('selectedTab')) {
+      if (this.selectedTab==ProjectTabTypes.Analytics) {
+        await this.requestUpdate();
+        this.setupChart(1,'Hospitals are clean');
+        this.setupChart(2,'Hospitals are 1');
+        this.setupChart(3,'Hospitals are 2');
+      }
+    }
   }
 
   _selectTab(event: CustomEvent) {
     this.selectedTab = event.detail?.index as number;
   }
 
-  _setSelectedTabFromRoute(routeTabName: string): void {
+  async _setSelectedTabFromRoute(routeTabName: string) {
     let tabNumber;
 
     switch (routeTabName) {
       case 'current':
-        tabNumber = ProjectsTabTypes.Current;
+        tabNumber = ProjectTabTypes.Information;
         break;
-      case 'archived':
-        tabNumber = ProjectsTabTypes.Archived;
+      case 'analytics':
+        tabNumber = ProjectTabTypes.Analytics;
         break;
+      default:
+        tabNumber = ProjectTabTypes.Information;
     }
 
     if (tabNumber) {
