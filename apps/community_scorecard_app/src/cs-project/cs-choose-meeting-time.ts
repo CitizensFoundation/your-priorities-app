@@ -52,6 +52,14 @@ export class CsChooseMeetingTime extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     this.addListener('cs-last-story-card', this._lastStoryCard.bind(this));
+    setTimeout(()=>{
+      this.fire('yp-change-header', {
+        headerTitle: this.t('chooseMeetingTime'),
+        documentTitle: this.t('chooseMeetingTime'),
+        headerDescription: '',
+      });
+    }, 500)
+
     //this.fire('yp-hide-app-bar');
   }
 

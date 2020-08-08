@@ -617,11 +617,6 @@ export class CsProject extends YpBaseElement {
 
   gotoRound(event: CustomEvent) {
     event.preventDefault();
-    this.fire('yp-change-header', {
-      headerTitle: this.t('newProject'),
-      documentTitle: this.t('newProject'),
-      headerDescription: '',
-    });
     YpNavHelpers.redirectTo('/round/1');
   }
 

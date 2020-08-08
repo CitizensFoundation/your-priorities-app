@@ -140,6 +140,17 @@ export class CsRound extends YpBaseElement {
     };
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    setTimeout(()=>{
+      this.fire('yp-change-header', {
+        headerTitle: this.t('newRound'),
+        documentTitle: this.t('newRound'),
+        headerDescription: '',
+      });
+    }, 500)
+  }
+
   // DATA PROCESSING
 
   refresh(): void {

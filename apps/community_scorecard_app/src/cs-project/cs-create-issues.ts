@@ -273,6 +273,13 @@ export class CsCreateIssues extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     this.addListener('cs-last-story-card', this._lastStoryCard.bind(this));
+    setTimeout(()=>{
+      this.fire('yp-change-header', {
+        headerTitle: this.t('createScorecard'),
+        documentTitle: this.t('createScorecard'),
+        headerDescription: '',
+      });
+    }, 500)
   }
 
   disconnectedCallback() {
