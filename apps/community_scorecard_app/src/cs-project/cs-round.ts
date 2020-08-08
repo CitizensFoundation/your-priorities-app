@@ -410,8 +410,8 @@ export class CsRound extends YpBaseElement {
     }
 
     if (changedProperties.has('domainId') && this.domainId) {
-      this._getCollection();
-      this._getHelpPages();
+      //this._getCollection();
+      //this._getHelpPages();
     }
   }
 
