@@ -263,7 +263,8 @@ export class CsProject extends YpBaseElement {
         },
 				title: {
 					display: true,
-					text: title
+          text: title,
+          fontSize: 20
 				},
 				tooltips: {
 					mode: 'index',
@@ -395,7 +396,7 @@ export class CsProject extends YpBaseElement {
         }
 
         canvas {
-          margin-top: 32px;
+          margin-top: 48px;
         }
       `,
     ];
@@ -543,6 +544,12 @@ export class CsProject extends YpBaseElement {
       <canvas id="line-chart-1" width="800" height="400"></canvas>
       <canvas id="line-chart-2" width="800" height="400"></canvas>
       <canvas id="line-chart-3" width="800" height="400"></canvas>
+      <canvas id="line-chart-4" width="800" height="400"></canvas>
+      <canvas id="line-chart-5" width="800" height="400"></canvas>
+      <canvas id="line-chart-6" width="800" height="400"></canvas>
+      <canvas id="line-chart-7" width="800" height="400"></canvas>
+      <canvas id="line-chart-8" width="800" height="400"></canvas>
+      <canvas id="line-chart-9" width="800" height="400"></canvas>
     </div>
     `;
   }
@@ -643,12 +650,31 @@ export class CsProject extends YpBaseElement {
     if (changedProperties.has('selectedTab')) {
       if (this.selectedTab==ProjectTabTypes.Analytics) {
         await this.requestUpdate();
-        this.setupChart(1,'Hospitals are clean');
-        this.setupChart(2,'Hospitals are 1');
-        this.setupChart(3,'Hospitals are 2');
+        this.setupChart(1,this.stockIssues[0]);
+        this.setupChart(2,this.stockIssues[1]);
+        this.setupChart(3,this.stockIssues[2]);
+        this.setupChart(4,this.stockIssues[3]);
+        this.setupChart(5,this.stockIssues[4]);
+        this.setupChart(6,this.stockIssues[5]);
+        this.setupChart(7,this.stockIssues[6]);
+        this.setupChart(8,this.stockIssues[7]);
+        this.setupChart(9,this.stockIssues[8]);
       }
     }
   }
+
+  stockIssues = [
+    'Attitute of staff',
+    'Affordability of servies',
+    'Availability of medicine',
+    'Distance to health centre',
+    'Equal access to the health services for all community members',
+    'Punctuality of staff',
+    'Polite behavior',
+    "Listening to patients' problems",
+    'Honest and transparent staff (in terms of dealing with drugs, food, etc)',
+  ];
+
 
   _selectTab(event: CustomEvent) {
     this.selectedTab = event.detail?.index as number;
