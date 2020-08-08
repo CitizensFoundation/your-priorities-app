@@ -47,6 +47,8 @@ import '../cs-project/cs-round.js';
 
 import '../cs-project/cs-choose-meeting-time.js';
 
+import '../cs-project/cs-score.js';
+
 import '../cs-project/cs-create-issues.js';
 
 //import '../yp-collection/yp-domain.js';
@@ -502,6 +504,16 @@ export class CsApp extends YpBaseElement {
               aria-label="${this.t('projectRound')}"
               .subRoute="${this.subRoute}"
             ></cs-create-issues>
+          `);
+          break;
+          case 'score':
+          pageHtml = cache(html`
+            <cs-score
+              id="project"
+              role="main"
+              aria-label="${this.t('projectRound')}"
+              .subRoute="${this.subRoute}"
+            ></cs-score>
           `);
           break;
           default:

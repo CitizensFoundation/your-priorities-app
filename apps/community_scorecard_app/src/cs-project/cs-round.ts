@@ -142,13 +142,13 @@ export class CsRound extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    setTimeout(()=>{
+    setTimeout(() => {
       this.fire('yp-change-header', {
         headerTitle: this.t('newRound'),
         documentTitle: this.t('newRound'),
         headerDescription: '',
       });
-    }, 500)
+    }, 500);
   }
 
   // DATA PROCESSING
@@ -366,13 +366,29 @@ export class CsRound extends YpBaseElement {
       <div class="layout vertical center-center processes">
         ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today')}
         ${this.renderDivider()}
-        ${this.renderProcess(this.t('createScorecardMeeting'), 'meeting_room', true)}
+        ${this.renderProcess(
+          this.t('createScorecardMeeting'),
+          'meeting_room',
+          true
+        )}
         ${this.renderDivider()}
-        ${this.renderProcess(this.t('stakeHolderScoringStage'), 'rate_review', true)}
+        ${this.renderProcess(
+          this.t('stakeHolderScoringStage'),
+          'rate_review',
+          true
+        )}
         ${this.renderDivider()}
-        ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today', true)}
+        ${this.renderProcess(
+          this.t('organizeMeetingTime'),
+          'calendar_today',
+          true
+        )}
         ${this.renderDivider()}
-        ${this.renderProcess(this.t('createActionPlan'), 'pending_actions', true)}
+        ${this.renderProcess(
+          this.t('createActionPlan'),
+          'pending_actions',
+          true
+        )}
         ${this.renderDivider()}
         ${this.renderProcess(this.t('monitoring'), 'equalizer', true)}
       </div>

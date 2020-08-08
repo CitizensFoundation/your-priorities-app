@@ -51,6 +51,18 @@ export class CsCreateIssues extends YpBaseElement {
     'Scarlett Johansson',
   ];
 
+  stockIssues = [
+    'Attitute of staff',
+    'Affordability of servies',
+    'Availability of medicine',
+    'Distance to health centre',
+    'Equal access to the health services for all community members',
+    'Punctuality of staff',
+    'Polite behavior',
+    "Listening to patients' problems",
+    'Honest and transparent staff (in terms of dealing with drugs, food, etc'
+  ];
+
   renderCurrentStage(): TemplateResult | undefined {
     let stage: TemplateResult | undefined;
 
@@ -82,7 +94,7 @@ export class CsCreateIssues extends YpBaseElement {
       case CreationStages.AddAndRateIssues:
         stage = this.renderAddAndRateIssues();
         break;
-      }
+    }
 
     return stage;
   }
@@ -104,13 +116,12 @@ export class CsCreateIssues extends YpBaseElement {
       <div class="layout vertical center-center">
         <div class="rateIssuesHeader">${this.t('addAndRateIssues')}</div>
         <div class="rateIssuesInfo">${this.t('addAndRateIssuesIntro')}</div>
-        ${ this.issues.map( issue => {
+        ${this.issues.map(issue => {
           return html`
-            <div class="issueCard shadow-elevation-6dp shadow-transition layout horizontal">
+            <div class="issueCard shadow-elevation-4dp shadow-transition layout horizontal">
               <div class="layout vertical">
                 <div class="issueName">${issue}</div>
                 <div class="layout horizontal">
-                  <div class="flex"></div>
                   <mwc-icon-button
                   icon="arrow_upward"
                   class="voteButton"
@@ -121,8 +132,8 @@ export class CsCreateIssues extends YpBaseElement {
                   class="voteButton"
                   .label="${this.t('voteDown')}"
                 ></mwc-icon-button>
+                <div class="flex"></div>
                 </div>
-              </div>
               </div>
             </div>
           `;
@@ -179,7 +190,12 @@ export class CsCreateIssues extends YpBaseElement {
           @click="${this._electSecretary}"
           class="layout horizontal nomineeContainer shadow-elevation-2dp shadow-transition"
         >
-          <div class="nomineeName" style="padding-bottom: 16px;text-align:center;">Meryl Streep</div>
+          <div
+            class="nomineeName"
+            style="padding-bottom: 16px;text-align:center;"
+          >
+            Meryl Streep
+          </div>
           <div class="flex"></div>
         </div>
       </div>
@@ -205,12 +221,33 @@ export class CsCreateIssues extends YpBaseElement {
         setTimeout(() => {
           this.stage = CreationStages.AddAndRateIssues;
           setTimeout(() => {
-            this.addIssue("Is the hospital clean? Is the hospital clean? Is the hospital clean?");
+            this.addIssue(this.stockIssues[0]);
             setTimeout(() => {
-              this.addIssue("Is the hospital fully staffed? Is the hospital fully staffed? Is the hospital fully staffed?");
+              this.addIssue(this.stockIssues[1]);
               setTimeout(() => {
-                this.addIssue("Is blah blah blah?");
-              }, 5500);
+                this.addIssue(this.stockIssues[2]);
+                setTimeout(() => {
+                  this.addIssue(this.stockIssues[3]);
+                  setTimeout(() => {
+                    this.addIssue(this.stockIssues[4]);
+                    setTimeout(() => {
+                      this.addIssue(this.stockIssues[5]);
+                      setTimeout(() => {
+                        this.addIssue(this.stockIssues[6]);
+                        setTimeout(() => {
+                          this.addIssue(this.stockIssues[7]);
+                          setTimeout(() => {
+                            this.addIssue(this.stockIssues[8]);
+                            setTimeout(() => {
+                              this.addIssue(this.stockIssues[9]);
+                            }, 4200);
+                          }, 4200);
+                        }, 4200);
+                      }, 4200);
+                    }, 4200);
+                  }, 4200);
+                }, 4200);
+              }, 4200);
             }, 4500);
           }, 3500);
         }, 3000);
@@ -273,13 +310,13 @@ export class CsCreateIssues extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     this.addListener('cs-last-story-card', this._lastStoryCard.bind(this));
-    setTimeout(()=>{
+    setTimeout(() => {
       this.fire('yp-change-header', {
         headerTitle: this.t('createScorecard'),
         documentTitle: this.t('createScorecard'),
         headerDescription: '',
       });
-    }, 500)
+    }, 500);
   }
 
   disconnectedCallback() {
@@ -325,7 +362,7 @@ export class CsCreateIssues extends YpBaseElement {
         }
 
         #emojiLarge {
-          --star-size: 1.25em;
+          --star-size: 1.1em;
         }
 
         .ourMood {
@@ -371,9 +408,7 @@ export class CsCreateIssues extends YpBaseElement {
         }
 
         .issueName {
-          padding-left: 16px;
-          padding-top: 16px;
-          padding-bottom: 16px;
+          padding: 16px;
         }
 
         .rateIssuesHeader {

@@ -31,9 +31,11 @@
   "ourMood": "Our collective mood",
   "electSecretary": "Elect Secretary",
   "votingResults": "Voting results",
-  "addAndRateIssues": "Rate the Issues",
-  "addAndRateIssuesIntro": "Rate the issues by voting them up or down. Watch this space...",
+  "addAndRateIssues": "Prioritize the Issues",
+  "addAndRateIssuesIntro": "Prioritize the issues by voting them up or down. Watch this space...",
   "newRound": "Community Scorecard Round 1",
   "chooseMeetingTime": "Choose Meeting Time",
-  "createScorecard": "Create Scorecard"
+  "createScorecard": "Create Scorecard",
+  "scoreIssues": "Score issues",
+  "reason": "Reason"
 }
