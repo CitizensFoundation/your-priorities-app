@@ -23,7 +23,7 @@ export class CsScore extends YpBaseElement {
   @property({ type: Array })
   stockIssues = [
     'Attitute of staff',
-    'Affordability of servies',
+    'Affordability of services',
     'Availability of medicine',
     'Distance to health centre',
     'Equal access to the health services for all community members',
