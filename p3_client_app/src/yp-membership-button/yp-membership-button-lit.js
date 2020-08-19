@@ -105,14 +105,14 @@ class YpMembershipButtonLit extends YpBaseElement {
   _updateMembership() {
     if (window.appUser && window.appUser.loggedIn() && window.appUser.membershipsIndex) {
       if (this.community) {
-        this.set('membershipValue',  window.appUser.membershipsIndex.communities[this.community.id]);
+        this.membershipValue = window.appUser.membershipsIndex.communities[this.community.id];
       } else if (this.group) {
-        this.set('membershipValue',  window.appUser.membershipsIndex.groups[this.group.id]);
+        this.membershipValue = window.appUser.membershipsIndex.groups[this.group.id];
       } else {
-        this.set('membershipValue', false);
+        this.membershipValue = false;
       }
     } else {
-      this.set('membershipValue', false);
+      this.membershipValue = false;
     }
     this._resetClasses();
   }
@@ -126,8 +126,8 @@ class YpMembershipButtonLit extends YpBaseElement {
   }
 
   _membershipResponse(event, detail) {
-    this.set('disabled', false);
-    this.set('membershipValue', detail.response.membershipValue);
+    this.disabled = false;
+    this.membershipValue = detail.response.membershipValue;
     if (this.membershipValue) {
       window.appGlobals.notifyUserViaToast(this.t('membership.joined')+ " " + detail.response.name);
     } else {
@@ -171,7 +171,7 @@ class YpMembershipButtonLit extends YpBaseElement {
   }
 
   generateMembership(value) {
-    this.set('disabled', true);
+    this.disabled = true;
     if (window.appUser.loggedIn()===true) {
       if (this.community) {
         this.$$("#membershipAjax").url = "/api/communities/" + this.community.id + "/user_membership";
@@ -187,7 +187,7 @@ class YpMembershipButtonLit extends YpBaseElement {
       }
       this.$$("#membershipAjax").generateRequest();
     } else {
-      this.set('disabled', false);
+      this.disabled = false;
       window.appUser.loginForMembership(this, { value: value } );
     }
   }

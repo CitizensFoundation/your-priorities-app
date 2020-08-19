@@ -238,18 +238,18 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _editPageLocale(event) {
-    this.set('currentlyEditingPage', JSON.parse(event.target.getAttribute('data-args-page')));
-    this.set('currentlyEditingLocale', event.target.getAttribute('data-args-locale'));
-    this.set('currentlyEditingContent',this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]));
-    this.set('currentlyEditingTitle',this.currentlyEditingPage["title"][this.currentlyEditingLocale]);
+    this.currentlyEditingPage = JSON.parse(event.target.getAttribute('data-args-page'));
+    this.currentlyEditingLocale = event.target.getAttribute('data-args-locale');
+    this.currentlyEditingContent = this.wordwrap(120)(this.currentlyEditingPage["content"][this.currentlyEditingLocale]);
+    this.currentlyEditingTitle = this.currentlyEditingPage["title"][this.currentlyEditingLocale];
     this.$$("#editPageLocale").open();
   }
 
   _closePageLocale() {
-    this.set('currentlyEditingPage', null);
-    this.set('currentlyEditingLocale', null);
-    this.set('currentlyEditingContent', null);
-    this.set('currentlyEditingTitle', null);
+    this.currentlyEditingPage = null;
+    this.currentlyEditingLocale = null;
+    this.currentlyEditingContent = null;
+    this.currentlyEditingTitle = null;
   }
 
   _dispatchAjax(ajax, pageId, path) {
@@ -325,7 +325,7 @@ class YpPagesGridLit extends YpBaseElement {
         title: ''
       };
       this._dispatchAjax(this.$$("#updatePageAjax"), pageId, "update_page_locale")
-      this.set('newLocaleValue', null);
+      this.newLocaleValue = null;
     }
   }
 
@@ -348,21 +348,21 @@ class YpPagesGridLit extends YpBaseElement {
 
   _domainIdChanged(newGroupId) {
     if (newGroupId) {
-      this.set('modelType', 'domains');
+      this.modelType = 'domains';
       this._generateRequest(newGroupId);
     }
   }
 
   _groupIdChanged(newGroupId) {
     if (newGroupId) {
-      this.set('modelType', 'groups');
+      this.modelType = 'groups';
       this._generateRequest(newGroupId);
     }
   }
 
   _communityIdChanged(newCommunityId) {
     if (newCommunityId) {
-      this.set('modelType', 'communities');
+      this.modelType = 'communities';
       this._generateRequest(newCommunityId);
     }
   }
@@ -373,23 +373,23 @@ class YpPagesGridLit extends YpBaseElement {
   }
 
   _pagesResponse(event, detail) {
-    this.set('pages', detail.response);
+    this.pages = detail.response;
   }
 
   setup(groupId, communityId, domainId, adminUsers) {
-    this.set('groupId', null);
-    this.set('communityId', null);
-    this.set('domainId', null);
-    this.set('pages', null);
+    this.groupId = null;
+    this.communityId = null;
+    this.domainId = null;
+    this.pages = null;
 
     if (groupId)
-      this.set('groupId', groupId);
+      this.groupId = groupId;
 
     if (communityId)
-      this.set('communityId', communityId);
+      this.communityId = communityId;
 
     if (domainId)
-      this.set('domainId', domainId);
+      this.domainId = domainId;
 
     this._setupHeaderText();
   }
@@ -403,11 +403,11 @@ class YpPagesGridLit extends YpBaseElement {
 
   _setupHeaderText() {
     if (this.groupId) {
-      this.set('headerText', this.t('group.pages'));
+      this.headerText = this.t('group.pages');
     } else if (this.communityId) {
-      this.set('headerText', this.t('community.pages'));
+      this.headerText = this.t('community.pages');
     } else if (this.domainId) {
-      this.set('headerText', this.t('domain.pages'));
+      this.headerText = this.t('domain.pages');
     }
   }
 }

@@ -147,33 +147,33 @@ class YpOrganizationEditLit extends YpBaseElement {
   }
 
   _clear() {
-    this.set('organization', { name: '', description: '', access: 0 });
-    this.set('uploadedLogoImageId', null);
-    this.set('uploadedHeaderImageId', null);
+    this.organization = { name: '', description: '', access: 0 };
+    this.uploadedLogoImageId = null;
+    this.uploadedHeaderImageId = null;
     this.$("#headerImageUpload").clear();
     this.$("#logoImageUpload").clear();
   }
 
   setup(organization, newNotEdit, refreshFunction) {
     if (!organization) {
-      this.set('organization', { name: '', description: '', access: 0 });
+      this.organization = { name: '', description: '', access: 0 };
     } else {
-      this.set('organization', organization);
+      this.organization = organization;
     }
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.new = newNotEdit;
+    this.refreshFunction = refreshFunction;
     this._setupTranslation();
   }
 
   _setupTranslation() {
     if (this.new) {
-      this.set('editHeaderText', this.t('organization.new'));
-      this.set('toastText', this.t('organization.toast.created'));
-      this.set('saveText', this.t('create'));
+      this.editHeaderText = this.t('organization.new');
+      this.toastText = this.t('organization.toast.created');
+      this.saveText = this.t('create');
     } else {
-      this.set('editHeaderText', this.t('Update organization info'));
-      this.set('toastText', this.t('organization.toast.updated'));
-      this.set('saveText', this.t('update'));
+      this.editHeaderText = this.t('Update organization info');
+      this.toastText = this.t('organization.toast.updated');
+      this.saveText = this.t('update');
     }
   }
 }

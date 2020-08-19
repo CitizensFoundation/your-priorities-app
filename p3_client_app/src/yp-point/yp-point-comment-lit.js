@@ -138,15 +138,15 @@ class YpPointCommentLit extends YpBaseElement  {
 
   _editResponse(event, detail) {
     if (detail.response) {
-      this.set('point', detail.response)
+      this.point = detail.response;
     }
-    this.set('isEditing', false);
+    this.isEditing = false;
   }
 
   _deleteResponse() {
     this.fire("yp-point-deleted", { pointId: this.point.id });
     this.fire("iron-resize");
-    this.set('point', null);
+    this.point = null;
   }
 
   _reportPoint() {

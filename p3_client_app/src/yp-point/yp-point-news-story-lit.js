@@ -157,17 +157,17 @@ class YpPointNewsStoryLit extends YpBaseElement {
   }
 
   _setOpen() {
-    this.set('open', true);
+    this.open = true;
     this.$$("#commentsList")._setOpen();
   }
 
   _setClosed() {
-    this.set('open', false);
+    this.open = false;
     this.$$("#commentsList")._setClosed();
   }
 
   _setCommentsCount(event, detail) {
-    this.set('commentsCount', detail.count);
+    this.commentsCount = detail.count;
   }
 
   _pointChanged(point) {
@@ -177,7 +177,7 @@ class YpPointNewsStoryLit extends YpBaseElement {
       this.user = null;
     }
 
-    this.set('open', false);
+    this.open = false;
   }
 
   loginName() {

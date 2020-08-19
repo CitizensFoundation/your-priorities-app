@@ -615,7 +615,7 @@ class YpPostHeaderLit extends YpBaseElement {
 
   _cancelEdit() {
     //this._setlatestContent(this.point);
-    this.set('isEditing', false);
+    this.isEditing = false;
   }
 
   _saveEdit() {
@@ -625,26 +625,26 @@ class YpPostHeaderLit extends YpBaseElement {
   }
 
   _editPostTranscriptResponse(event, detail) {
-    this.set('post.public_data.transcript.text', this.editText);
-    this.set('post.public_data.transcript.userEdited', true);
-    this.set('isEditing', false);
+    this.post.public_data.transcript.text = this.editText;
+    this.post.public_data.transcript.userEdited = true;
+    this.isEditing = false;
   }
 
   _editPostTranscript() {
     if (this.hasPostAccess) {
-      this.set('editText', this.post.public_data.transcript.text);
-      this.set('isEditing', true);
+      this.editText = this.post.public_data.transcript.text;
+      this.isEditing = true;
     }
   }
 
   _transcriptStatusResponse(event, detail) {
     if (detail.response && detail.response.text) {
-      this.set('post.public_data.transcript.text', detail.response.text);
+      this.post.public_data.transcript.text = detail.response.text;
       if (this.hasPostAccess) {
-        this.set('editText',  detail.response.text);
-        this.set('isEditing', true);
+        this.editText =  detail.response.text;
+        this.isEditing = true;
       }
-      this.set('checkingTranscript', false);
+      this.checkingTranscript = false;
       this.async(function () {
         this.fire('iron-resize');
       });
@@ -653,10 +653,10 @@ class YpPostHeaderLit extends YpBaseElement {
         this.$$("#checkTranscriptStatusAjax").generateRequest();
       }, 2000);
     } else if (detail.response && detail.response.error) {
-      this.set('checkingTranscript', false);
-      this.set('checkTranscriptError', true);
+      this.checkingTranscript = false;
+      this.checkTranscriptError = true;
     } else {
-      this.set('checkingTranscript', false);
+      this.checkingTranscript = false;
     }
   }
 
@@ -675,8 +675,8 @@ class YpPostHeaderLit extends YpBaseElement {
   }
 
   _postChanged(post) {
-    this.set("checkingTranscript", false);
-    this.set('checkTranscriptError', false);
+    this.checkingTranscript = false;
+    this.checkTranscriptError = false;
     if (post && post.description) {
       this.async(function () {
         const description = this.$$("#description");
@@ -695,27 +695,27 @@ class YpPostHeaderLit extends YpBaseElement {
           if (post.cover_media_type==="audio") {
             this.$$("#checkTranscriptStatusAjax").url = "/api/posts/"+post.id+'/audioTranscriptStatus';
             this.$$("#checkTranscriptStatusAjax").generateRequest();
-            this.set('checkingTranscript', true);
+            this.checkingTranscript = true;
           } else if (post.cover_media_type==="video") {
             this.$$("#checkTranscriptStatusAjax").url = "/api/posts/"+post.id+'/videoTranscriptStatus';
             this.$$("#checkTranscriptStatusAjax").generateRequest();
-            this.set('checkingTranscript', true);
+            this.checkingTranscript = true;
           }
         }
       }
     }
     if (post) {
       if (post.cover_media_type==='audio') {
-        this.set('isAudioCover', true);
+        this.isAudioCover = true;
       } else {
-        this.set('isAudioCover', false);
+        this.isAudioCover = false;
       }
     }
   }
 
   updateDescriptionIfEmpty(description) {
     if (this.post && (!this.post.description || this.post.description=='')) {
-      this.set('post.description', description);
+      this.post.description = description;
     }
   }
 

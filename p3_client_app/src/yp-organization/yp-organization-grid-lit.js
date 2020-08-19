@@ -216,7 +216,7 @@ class YpOrganizationGridLit extends YpBaseElement {
   }
 
   _addToOrganization(event) {
-    this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
+    this.userIdForSelectingOrganization = event.target.getAttribute('data-args');
     this.$$("#selectOrganizationDialog").open();
   }
 
@@ -246,7 +246,7 @@ class YpOrganizationGridLit extends YpBaseElement {
   }
 
   open() {
-    this.set('availableOrganizations', this._availableOrganizations());
+    this.availableOrganizations = this._availableOrganizations();
     this.$$("#dialog").open();
   }
 }

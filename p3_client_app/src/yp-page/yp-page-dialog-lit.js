@@ -85,7 +85,7 @@ class YpPageDialogLit extends YpBaseElement {
   }
 
   open(title, content) {
-    this.set('title', title);
+    this.title = title;
     this.$$("#content").innerHTML = content;
     this.$$("#dialog").fit();
     this.$$("#dialog").notifyResize();
@@ -93,7 +93,7 @@ class YpPageDialogLit extends YpBaseElement {
   }
 
   _close() {
-    this.set('title', null);
+    this.title = null;
     this.$$("#content").innerHTML = '';
   }
 }

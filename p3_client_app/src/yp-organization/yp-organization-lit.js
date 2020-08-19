@@ -121,11 +121,11 @@ class YpOrganizationLit extends YpBaseElement {
   _tabNameChanged(newValue) {
     if (newValue) {
       if (newValue=='groups') {
-        this.set('selected', 0);
+        this.selected = 0;
       } else if (newValue=='news') {
-        this.set('selected', 1);
+        this.selected = 1;
       } else if (newValue=='map') {
-        this.set('selected', 2);
+        this.selected = 2;
       }
     }
   }
@@ -175,7 +175,7 @@ class YpOrganizationLit extends YpBaseElement {
   }
 
   _response(event, detail, sender) {
-    this.set('organization', detail.response);
+    this.organization = detail.response;
     if (this.organization.OrganizationHeaderImages && this.organization.OrganizationHeaderImages.length>0) {
       this.$("#page").setupTopHeaderImage(this.organization.OrganizationHeaderImages);
     }

@@ -705,7 +705,7 @@ class YpPostEditLit extends YpBaseElement {
           answers.push(questionElement.getAnswer());
         }
       }.bind(this));
-      this.set('structuredAnswersJson', JSON.stringify(answers));
+      this.structuredAnswersJson = JSON.stringify(answers);
       this.$.editDialog._reallySubmit();
     } else if (this.structuredQuestions && this.structuredQuestions.length>0) {
       var description="", answers="";
@@ -721,8 +721,8 @@ class YpPostEditLit extends YpBaseElement {
           description += '\n\n';
         }
       }
-      this.set('post.description', description);
-      this.set('structuredAnswers', answers);
+      this.post.description = description;
+      this.structuredAnswers = answers;
       this.$.editDialog._reallySubmit();
     } else {
       this.$.editDialog._reallySubmit();
@@ -771,21 +771,21 @@ class YpPostEditLit extends YpBaseElement {
   }
 
   _videoUploaded(event, detail) {
-    this.set('uploadedVideoId', detail.videoId);
-    this.set('selectedCoverMediaType','video');
+    this.uploadedVideoId = detail.videoId;
+    this.selectedCoverMediaType = 'video';
     this.async(function () { this.fire('iron-resize'); }, 50);
   }
 
   _audioUploaded(event, detail) {
-    this.set('uploadedAudioId', detail.audioId);
-    this.set('selectedCoverMediaType','audio');
+    this.uploadedAudioId = detail.audioId;
+    this.selectedCoverMediaType = 'audio';
     this.async(function () { this.fire('iron-resize'); });
   }
 
   _documentUploaded(event, detail) {
     const document = JSON.parse(detail.xhr.response);
-    this.set('uploadedDocumentUrl', document.url);
-    this.set('uploadedDocumentFilename', document.filename);
+    this.uploadedDocumentUrl = document.url;
+    this.uploadedDocumentFilename = document.filename;
   }
 
   customFormResponse() {
@@ -832,9 +832,9 @@ class YpPostEditLit extends YpBaseElement {
 
   _formInvalid() {
     if (this.newPointShown && !this.$$('#pointFor').validate()) {
-      this.set('selected', 1);
+      this.selected = 1;
     } else {
-      this.set('selected', 0);
+      this.selected = 0;
     }
     if (this.$$('#name'))
       this.$$('#name').autoValidate = true;
@@ -850,13 +850,13 @@ class YpPostEditLit extends YpBaseElement {
 
   _locationChanged(newValue) {
     if (newValue && (!this.selectedCoverMediaType || this.selectedCoverMediaType=='' || this.selectedCoverMediaType=='none')) {
-      this.set('selectedCoverMediaType','map');
+      this.selectedCoverMediaType = 'map';
     }
   }
 
   _uploadedHeaderImageIdChanged(newValue) {
     if (newValue) {
-      this.set('selectedCoverMediaType','image');
+      this.selectedCoverMediaType = 'image';
     }
   }
 
@@ -889,22 +889,22 @@ class YpPostEditLit extends YpBaseElement {
     const length = this._getTabLength();
 
     if (this.selected<length) {
-      this.set('selected', this.selected+1)
+      this.selected = this.selected+1;
     }
   }
 
   _selectedChanged(newValue) {
     this.async(function () {
       if (!this.locationHidden && newValue==(this.newPointShown ? 2 : 1)) {
-        this.set('mapActive', true);
+        this.mapActive = true;
       } else {
-        this.set('mapActive', false);
+        this.mapActive = false;
       }
 
       var finalTabNumber = this._getTabLength()-1;
 
       if (finalTabNumber===0) {
-        this.set('hasOnlyOneTab', true);
+        this.hasOnlyOneTab = true;
       }
 
       if (newValue==finalTabNumber) {
@@ -956,8 +956,8 @@ class YpPostEditLit extends YpBaseElement {
   _postChanged(newPost, oldPost) {
     if (newPost){
       if (newPost.location) {
-        this.set('location', newPost.location);
-        this.set('encodedLocation', JSON.stringify(this.location));
+        this.location = newPost.location;
+        this.encodedLocation = JSON.stringify(this.location);
       }
       if (newPost.cover_media_type)
         this.selectedCoverMediaType = newPost.cover_media_type;
@@ -974,7 +974,7 @@ class YpPostEditLit extends YpBaseElement {
 
   _imageUploaded(event, detail) {
     const image = JSON.parse(detail.xhr.response);
-    this.set('uploadedHeaderImageId', image.id);
+    this.uploadedHeaderImageId = image.id;
   }
 
   _coverMediaTypeValueChanged(newValue, oldValue) {
@@ -1064,17 +1064,17 @@ class YpPostEditLit extends YpBaseElement {
 
   _clear() {
     if (this.newPost) {
-      this.set('post', { name: '', description: '', pointFor: '', categoryId: null });
-      this.set('location', null);
-      this.set('selectedCategoryArrayId',null);
-      this.set('selectedCategoryId',null);
-      this.set('selected', 0);
-      this.set('uploadedHeaderImageId', null);
-      this.set('uploadedVideoId', null);
-      this.set('uploadedAudioId', null);
-      this.set('currentVideoId', null);
-      this.set('currentAudioId', null);
-      this.set('selectedCoverMediaType', 'none');
+      this.post = { name: '', description: '', pointFor: '', categoryId: null };
+      this.location = null;
+      this.selectedCategoryArrayId = null;
+      this.selectedCategoryId = null;
+      this.selected = 0;
+      this.uploadedHeaderImageId = null;
+      this.uploadedVideoId = null;
+      this.uploadedAudioId = null;
+      this.currentVideoId = null;
+      this.currentAudioId = null;
+      this.selectedCoverMediaType = 'none';
       this.async(function () { this.fire('iron-resize'); });
       if (this.$$("#imageFileUpload")) {
         this.$$("#imageFileUpload").clear();
@@ -1085,41 +1085,41 @@ class YpPostEditLit extends YpBaseElement {
   setup(post, newNotEdit, refreshFunction, group) {
     this._setupGroup(group);
     if (post) {
-      this.set('post', post);
+      this.post = post;
       if (post.PostVideos && post.PostVideos.length>0) {
-        this.set('currentVideoId', post.PostVideos[0].id)
+        this.currentVideoId = post.PostVideos[0].id
       }
 
       if (post.PostAudios && post.PostAudios.length>0) {
-        this.set('currentAudioId', post.PostAudios[0].id)
+        this.currentAudioId = post.PostAudios[0].id
       }
     } else {
-      this.set('post', null);
+      this.post = null;
     }
     this._updateInitialCategory(group);
-    this.set('newPost', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.newPost = newNotEdit;
+    this.refreshFunction = refreshFunction;
     this._setupTranslation();
     this._clear();
   }
 
   _setupGroup(group) {
     if (group) {
-      this.set('group', group);
+      this.group = group;
       if (group.configuration) {
         if (group.configuration.locationHidden) {
           if (group.configuration.locationHidden == true) {
-            this.set('locationHidden', true);
+            this.locationHidden = true;
           } else {
-            this.set('locationHidden', false);
+            this.locationHidden = false;
           }
         } else {
-          this.set('locationHidden', false);
+          this.locationHidden = false;
         }
         if (group.configuration.postDescriptionLimit) {
-          this.set('postDescriptionLimit', group.configuration.postDescriptionLimit);
+          this.postDescriptionLimit = group.configuration.postDescriptionLimit;
         } else {
-          this.set('postDescriptionLimit', 500);
+          this.postDescriptionLimit = 500;
         }
 
         if (group.configuration.structuredQuestionsJson) {
@@ -1147,12 +1147,12 @@ class YpPostEditLit extends YpBaseElement {
         }
 
       } else {
-        this.set('postDescriptionLimit', 500);
+        this.postDescriptionLimit = 500;
       }
 
       this.async(function () {
         if (this.structuredQuestions) {
-          this.set('postDescriptionLimit', 9999);
+          this.postDescriptionLimit = 9999;
         }
       }, 50);
     }
@@ -1168,7 +1168,7 @@ class YpPostEditLit extends YpBaseElement {
     }.bind(this), 250);
 
     if (!this.newPost && this.post.public_data && this.post.public_data.structuredAnswersJson) {
-      this.set('initialStructuredAnswersJson', this.post.public_data.structuredAnswersJson);
+      this.initialStructuredAnswersJson = this.post.public_data.structuredAnswersJson;
     }
   }
 
@@ -1176,7 +1176,7 @@ class YpPostEditLit extends YpBaseElement {
     this.async(function () {
       var label = this.$$("#alternativeTextForNewIdeaButtonHeaderId");
       if (label && label.finalContent) {
-        this.set('editHeaderText', label.finalContent);
+        this.editHeaderText = label.finalContent;
       }
     });
   }
@@ -1192,9 +1192,9 @@ class YpPostEditLit extends YpBaseElement {
             this.editHeaderText = this.t('post.new');
           }
           this.toastText = this.t('postCreated');
-          this.set('saveText', this.t('create'));
+          this.saveText = this.t('create');
         } else {
-          this.set('saveText', this.t('save'));
+          this.saveText = this.t('save');
           this.editHeaderText = this.t('post.edit');
           this.toastText = this.t('postUpdated');
         }

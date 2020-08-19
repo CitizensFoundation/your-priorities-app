@@ -226,7 +226,7 @@ class YpOrganizationLargeCardLit extends YpBaseElement {
 
   _refresh(community) {
     if (community) {
-      this.set('community', community);
+      this.community = community;
     }
     this.fire("update-community");
   }

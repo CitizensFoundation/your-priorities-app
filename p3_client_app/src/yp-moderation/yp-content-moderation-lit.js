@@ -501,12 +501,12 @@ class YpContentModerationLit extends YpBaseElement {
 
 
   _ajaxError() {
-    this.set('forceSpinner', false);
+    this.forceSpinner = false;
   }
 
   _reload() {
     this.$$("#ajax").generateRequest();
-    this.set('forceSpinner', true);
+    this.forceSpinner = true;
   }
 
   _onlyFlaggedItems(typeOfModeration) {
@@ -514,8 +514,8 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _manyItemsResponse() {
-    this.set('forceSpinner', false);
-    this.set('showReload', true);
+    this.forceSpinner = false;
+    this.showReload = true;
     window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
   }
 
@@ -610,11 +610,11 @@ class YpContentModerationLit extends YpBaseElement {
 
   _selectedItemsChanged() {
     if (this.selectedItems && this.selectedItems.length>0) {
-      this.set('selectedItemsEmpty', false);
-      this.set('selectedItemsCount', this.selectedItems.length);
+      this.selectedItemsEmpty = false;
+      this.selectedItemsCount = this.selectedItems.length;
     } else {
-      this.set('selectedItemsEmpty', true);
-      this.set('selectedItemsCount', 0);
+      this.selectedItemsEmpty = true;
+      this.selectedItemsCount = 0;
     }
     this.selectedItemIdsAndType = this.selectedItems.map(function (item) { return { id: item.id, modelType: item.type }});
     this._refreshGridAsyncDelay();
@@ -624,11 +624,11 @@ class YpContentModerationLit extends YpBaseElement {
     const itemId = event.target.parentElement.getAttribute('data-args');
     if (!itemId)
       itemId = event.target.getAttribute('data-args');
-    this.set('selectedItemId', itemId);
+    this.selectedItemId = itemId;
     const modelClass = event.target.parentElement.getAttribute('data-model-class');
     if (!modelClass)
       modelClass = event.target.getAttribute('data-model-class');
-    this.set('selectedModelClass', modelClass);
+    this.selectedModelClass = modelClass;
     this._refreshGridAsync();
   }
 
@@ -732,7 +732,7 @@ class YpContentModerationLit extends YpBaseElement {
     }
     ajax.url = url;
     ajax.generateRequest();
-    this.set('forceSpinner', true);
+    this.forceSpinner = true;
 
     if (this.selectedItemId) {
       const item = this._findItemFromId(this.selectedItemId);
@@ -769,7 +769,7 @@ class YpContentModerationLit extends YpBaseElement {
   _domainIdChanged(newDomainId) {
     if (newDomainId) {
       this._reset();
-      this.set('modelType', 'domains');
+      this.modelType = 'domains';
       this._generateRequest(newDomainId);
     }
   }
@@ -777,7 +777,7 @@ class YpContentModerationLit extends YpBaseElement {
   _groupIdChanged(newGroupId) {
     if (newGroupId) {
       this._reset();
-      this.set('modelType', 'groups');
+      this.modelType = 'groups';
       this._generateRequest(newGroupId);
     }
   }
@@ -785,7 +785,7 @@ class YpContentModerationLit extends YpBaseElement {
   _communityIdChanged(newCommunityId) {
     if (newCommunityId) {
       this._reset();
-      this.set('modelType', 'communities');
+      this.modelType = 'communities';
       this._generateRequest(newCommunityId);
     }
   }
@@ -793,7 +793,7 @@ class YpContentModerationLit extends YpBaseElement {
   _userIdChanged(userId) {
     if (userId) {
       this._reset();
-      this.set('modelType', 'users');
+      this.modelTyp = 'users';
       this._generateRequest(userId);
     }
   }
@@ -804,72 +804,72 @@ class YpContentModerationLit extends YpBaseElement {
   }
 
   _itemsResponse(event, detail) {
-    this.set('forceSpinner', false);
-    this.set('items', detail.response);
+    this.forceSpinner = false;
+    this.items = detail.response;
     this._resetSelectedAndClearCache();
   }
 
   setup(groupId, communityId, domainId, typeOfModeration, userId) {
     if (typeOfModeration) {
-      this.set('typeOfModeration', typeOfModeration);
+      this.typeOfModeration = typeOfModeration;
     } else {
-      this.set('typeOfModeration', "/flagged_content");
+      this.typeOfModeration = "/flagged_content";
     }
 
-    this.set('groupId', null);
-    this.set('communityId', null);
-    this.set('domainId', null);
-    this.set('userId', null);
-    this.set('items', null);
+    this.groupId = null;
+    this.communityId = null;
+    this.domainId = null;
+    this.userId = null;
+    this.items = null;
 
     if (groupId)
-      this.set('groupId', groupId);
+      this.groupId = groupId;
 
     if (communityId)
-      this.set('communityId', communityId);
+      this.communityId = communityId;
 
     if (domainId)
-      this.set('domainId', domainId);
+      this.domainId = domainId;
 
     if (userId)
-      this.set('userId', userId);
+      this.userId = userId;
 
     this._setupHeaderText();
   }
 
   open(name) {
-    this.set('collectionName', name);
-    this.set('opened', true);
+    this.collectionName = name;
+    this.opened = true;
     this.$$("#dialog").open();
   }
 
   _reset() {
-    this.set('items', null);
+    this.items = null;
     this._resetSelectedAndClearCache();
   }
 
   _resetSelectedAndClearCache() {
-    this.set('selectedItemsCount', 0);
-    this.set('selectedItemsEmpty', true);
-    this.set('selectedItemIdsAndType', []);
-    this.set('selectedItems', []);
+    this.selectedItemsCount = 0;
+    this.selectedItemsEmpty = true;
+    this.selectedItemIdsAndType = [];
+    this.selectedItems = [];
     this.$$("#grid").clearCache();
   }
 
   _setupHeaderText() {
     if (this.onlyFlaggedItems) {
-      this.set('itemsCountText', this.t('contentItemsFlagged'));
+      this.itemsCountText = this.t('contentItemsFlagged');
     } else {
-      this.set('itemsCountText', this.t('items'));
+      this.itemsCountText = this.t('items');
     }
     if (this.groupId) {
-      this.set('headerText', this.t('groupContentModeration'));
+      this.headerText = this.t('groupContentModeration');
     } else if (this.communityId) {
-      this.set('headerText', this.t('communityContentModeration'));
+      this.headerText = this.t('communityContentModeration');
     } else if (this.domainId) {
-      this.set('headerText', this.t('domainContentModeration'));
+      this.headerText = this.t('domainContentModeration');
     } else if (this.userId) {
-      this.set('headerText', this.t('userContentModeration'));
+      this.headerText = this.t('userContentModeration');
     }
   }
 }

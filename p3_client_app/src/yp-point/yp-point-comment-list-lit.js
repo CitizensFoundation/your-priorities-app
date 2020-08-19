@@ -175,7 +175,7 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   _setOpen() {
-    this.set('open', true);
+    this.open = true;
     this.async(function () {
       this.notifyResize();
       this.fire('iron-resize');
@@ -183,7 +183,7 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   _setClosed() {
-    this.set('open', false);
+    this.open = false;
     this.async(function () {
       this.fire('iron-resize');
       this.notifyResize();
@@ -195,8 +195,8 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   _pointChanged(newPoint) {
-    this.set('comments', []);
-    this.set('commentsCount', null);
+    this.comments = [];
+    this.commentsCount = null;
     if (newPoint) {
       this.$$("#commentsListAjax").url = '/api/points/'+newPoint.id+'/comments';
       this.$$("#commentsCountListAjax").url = '/api/points/'+newPoint.id+'/commentsCount';
@@ -218,13 +218,13 @@ class YpPointCommentListLit extends YpBaseElement {
   }
 
   _countResponse(event, detail) {
-    this.set('commentsCount', detail.response.count);
+    this.commentsCount = detail.response.count;
     this.fire('yp-set-comments-count', { count: this.commentsCount })
   }
 
   _commentsResponse(event, detail) {
     const comment = detail.response;
-    this.set('comments', comment);
+    this.comments = comment;
     if (comment && comment.length>0) {
       this.$$("#list").scrollToIndex(comment.length-1);
     }

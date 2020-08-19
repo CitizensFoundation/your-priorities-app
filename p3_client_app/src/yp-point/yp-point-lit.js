@@ -488,7 +488,7 @@ class YpPointLit extends YpBaseElement {
 */
 
   _setOpen () {
-    this.set('openTranscript', true);
+    this.openTranscript = true;
     this.async(function () {
       this.fire('yp-iron-resize');
       this.fire('iron-resize');
@@ -497,7 +497,7 @@ class YpPointLit extends YpBaseElement {
   }
 
   _setClosed () {
-    this.set('openTranscript', false);
+    this.openTranscript = false;
     this.async(function () {
       this.fire('yp-iron-resize');
       this.fire('iron-resize');
@@ -593,7 +593,7 @@ class YpPointLit extends YpBaseElement {
 
   _cancelEdit() {
     //this._setlatestContent(this.point);
-    this.set('isEditing', false);
+    this.isEditing = false;
   }
 
   _saveEdit() {
@@ -604,7 +604,7 @@ class YpPointLit extends YpBaseElement {
 
   _cancelAdminCommentEdit () {
     //this._setlatestContent(this.point);
-    this.set('isAdminCommentEditing', false);
+    this.isAdminCommentEditing = false;
   }
 
   _saveAdminCommentEdit () {
@@ -629,9 +629,9 @@ class YpPointLit extends YpBaseElement {
     if (detail.response) {
       const point = detail.response;
       point.latestContent = point.PointRevisions[point.PointRevisions.length-1].content;
-      this.set('point', point);
+      this.point = point;
     }
-    this.set('isEditing', false);
+    this.isEditing = false;
   }
 
   _editAdminCommentResponse(event, detail) {
@@ -639,16 +639,16 @@ class YpPointLit extends YpBaseElement {
       if (!this.point.public_data)
         this.point.public_data = {};
       this.point.public_data.admin_comment = { text: detail.response.content };
-      this.set('point', JSON.parse(JSON.stringify(this.point)));
-      this.set('isAdminCommentEditing', false);
-      this.set('hasAdminComments', true);
+      this.point = JSON.parse(JSON.stringify(this.point));
+      this.isAdminCommentEditing = false;
+      this.hasAdminComments = true;
     }
-    this.set('isAdminCommentEditing', false);
+    this.isAdminCommentEditing = false;
   }
 
   _deleteResponse() {
     this.fire("yp-point-deleted", { pointId: this.point.id });
-    this.set('point', null);
+    this.point = null;
 
   }
 
@@ -670,16 +670,16 @@ class YpPointLit extends YpBaseElement {
 
   _editPoint() {
     if (this._hasPointAccess(this.point)) {
-      this.set('editText', this.point.PointRevisions[this.point.PointRevisions.length-1].content);
-      this.set('isEditing', true);
+      this.editText = this.point.PointRevisions[this.point.PointRevisions.length-1].content;
+      this.isEditing = true;
     }
   }
 
 
   _editAdminComment() {
     if (this.checkPostAdminOnlyAccess(this.point.Post)) {
-      this.set('editAdminCommentText', (this.point.public_data && this.point.public_data.admin_comment ? this.point.public_data.admin_comment.text : ''));
-      this.set('isAdminCommentEditing', true);
+      this.editAdminCommentText = (this.point.public_data && this.point.public_data.admin_comment ? this.point.public_data.admin_comment.text : '');
+      this.isAdminCommentEditing = true;
     }
   }
 
@@ -697,42 +697,42 @@ class YpPointLit extends YpBaseElement {
     this._resetMedia();
     if (point) {
       if (point.Post && point.Post.Group && point.Post.Group.configuration && point.Post.Group.configuration.collapsableTranscripts) {
-        this.set('openTranscript', false);
+        this.openTranscript = false;
       }
-      this.set('user', this.point.User);
+      this.user = this.point.User;
       const videoURL = this._getVideoURL(point.PointVideos);
       const videoPosterURL = this._getVideoPosterURL(point.PointVideos);
-      this.set('portraitVideo', this._isPortraitVideo(point.PointVideos));
+      this.portraitVideo = this._isPortraitVideo(point.PointVideos);
       if (videoURL && videoPosterURL) {
-        this.set('videoActive', true);
-        this.set('pointVideoPath', videoURL);
-        this.set('pointImageVideoPath', videoPosterURL);
-        this.set('pointVideoId', point.PointVideos[0].id);
-        this.set('checkTranscriptError', false);
+        this.videoActive = true;
+        this.pointVideoPath = videoURL;
+        this.pointImageVideoPath = videoPosterURL;
+        this.pointVideoId = point.PointVideos[0].id;
+        this.checkTranscriptError = false;
         if (point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
           this.$$("#checkTranscriptStatusAjax").url = "/api/points/"+point.id+'/videoTranscriptStatus';
           this.$$("#checkTranscriptStatusAjax").generateRequest();
-          this.set('checkingTranscript', true);
+          this.checkingTranscript = true;
           point.checkTranscriptFor = null;
         }
       } else {
         const audioURL = this._getAudioURL(point.PointAudios);
         if (audioURL) {
-          this.set('audioActive', true);
-          this.set('pointAudioPath', audioURL);
-          this.set('pointAudioId', point.PointAudios[0].id);
-          this.set('checkTranscriptError', false);
+          this.audioActive = true;
+          this.pointAudioPath = audioURL;
+          this.pointAudioId = point.PointAudios[0].id;
+          this.checkTranscriptError = false;
           if (point.checkTranscriptFor==="audio" && window.appGlobals.hasTranscriptSupport===true) {
             this.$$("#checkTranscriptStatusAjax").url = "/api/points/"+point.id+'/audioTranscriptStatus';
             this.$$("#checkTranscriptStatusAjax").generateRequest();
-            this.set('checkingTranscript', true);
+            this.checkingTranscript = true;
             point.checkTranscriptFor = null;
           }
         }
       }
     } else {
-      this.set('user', null);
-      this.set('checkTranscriptError', false);
+      this.user = null;
+      this.checkTranscriptError = false;
     }
   }
 
@@ -740,13 +740,13 @@ class YpPointLit extends YpBaseElement {
     detail = detail.response;
     if (detail && detail.point) {
       const point = detail.point;
-      this.set('checkingTranscript', false);
+      this.checkingTranscript = false;
       point.latestContent = point.PointRevisions[point.PointRevisions.length-1].content;
-      this.set('point', point);
+      this.point = point;
       this.fire('yp-update-point-in-list', point);
       if (this._hasPointAccess(point)) {
-        this.set('editText',  point.latestContent);
-        this.set('isEditing', true);
+        this.editText = point.latestContent;
+        this.isEditing = true;
       }
       this.async(function () {
         this.fire('iron-resize');
@@ -756,21 +756,21 @@ class YpPointLit extends YpBaseElement {
         this.$$("#checkTranscriptStatusAjax").generateRequest();
       }, 2000);
     } else if (detail && detail.error) {
-      this.set('checkingTranscript', false);
-      this.set('checkTranscriptError', true);
+      this.checkingTranscript = false;
+      this.checkTranscriptError = true;
     } else {
-      this.set('checkingTranscript', false);
+      this.checkingTranscript = false;
     }
   }
 
   _resetMedia() {
-    this.set('videoActive', false);
-    this.set('pointVideoPath', null);
-    this.set('pointImageVideoPath', null);
-    this.set('pointVideoId', null);
-    this.set('audioActive', false);
-    this.set('pointAudioPath', null);
-    this.set('pointAudioId', null);
+    this.videoActive = false;
+    this.pointVideoPath = null;
+    this.pointImageVideoPath = null;
+    this.pointVideoId = null;
+    this.audioActive = false;
+    this.pointAudioPath = null;
+    this.pointAudioId = null;
   }
 
   loginName() {

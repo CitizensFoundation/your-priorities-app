@@ -187,8 +187,8 @@ render() {
   }
 
   _reset() {
-    this.set('point', { content: '' });
-    this.set('point.embed_data', null);
+    this.point = { content: '' };
+    this.point.embed_data = null;
     this._clearButtonState();
   }
 
@@ -221,7 +221,7 @@ render() {
 
   _urlPreviewResponse(event, detail) {
     if (detail.response && detail.response.length>0)
-    this.set('point.embed_data', detail.response[0]);
+    this.point.embed_data = detail.response[0];
   }
 
   _newsStoryResponse() {
@@ -236,7 +236,7 @@ render() {
   }
 
   _clearEmbed() {
-    this.set('point.embed_data', null);
+    this.point.embed_data = null;
   }
 
   _checkForUrl(event) {

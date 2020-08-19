@@ -140,7 +140,7 @@ class YpPointCommentEditLit extends YpBaseElement {
   }
 
   _reset() {
-    this.set('comment', { content: '' });
+    this.comment = { content: '' };
     this.$$("#submitButton").disabled = false;
   }
 

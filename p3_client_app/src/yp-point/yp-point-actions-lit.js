@@ -154,7 +154,7 @@ class YpPointActionsLit extends YpBaseElement {
     if (newValue) {
       this._updateQualities();
     } else {
-      this.set('isUpVoted', false);
+      this.isUpVoted = false;
     }
   }
 
@@ -168,14 +168,14 @@ class YpPointActionsLit extends YpBaseElement {
       if (thisPointQuality) {
         this._setPointQuality(thisPointQuality.value);
         if (thisPointQuality.value>0) {
-          this.set('isUpVoted', true);
+          this.isUpVoted = true;
         }
       } else {
-        this.set('isUpVoted', false);
+        this.isUpVoted = false;
         this._setPointQuality(null);
       }
     } else {
-      this.set('isUpVoted', false);
+      this.isUpVoted = false;
       this._setPointQuality(null);
     }
   }
@@ -183,7 +183,7 @@ class YpPointActionsLit extends YpBaseElement {
   _qualityChanged(a, b) {
     // TODO: Fix where you can't vote up a newstory just after posting
     //this._resetClasses();
-    //this.set('isUpVoted', false);
+    //this.isUpVoted = false;
   }
 
   _resetClasses() {
@@ -200,26 +200,26 @@ class YpPointActionsLit extends YpBaseElement {
   }
 
   _setPointQuality(value) {
-    this.set('pointQualityValue', value);
+    this.pointQualityValue = value;
     this._resetClasses();
   }
 
   _pointQualityResponse(event, detail) {
-    this.set('allDisabled', false);
+    this.allDisabled = false;
     const pointQuality = detail.response.pointQuality;
     const oldPointQualityValue = detail.response.oldPointQualityValue;
     this._setPointQuality(pointQuality.value);
     window.appUser.updatePointQualityForPost(this.point.id, pointQuality);
     if (oldPointQualityValue) {
       if (oldPointQualityValue>0)
-        this.set('point.counter_quality_up', this.point.counter_quality_up-1);
+        this.point.counter_quality_up = this.point.counter_quality_up-1;
       else if (oldPointQualityValue<0)
-        this.set('point.counter_quality_down', this.point.counter_quality_down-1);
+        this.point.counter_quality_down = this.point.counter_quality_down-1;
     }
     if (pointQuality.value>0)
-      this.set('point.counter_quality_up', this.point.counter_quality_up+1);
+      this.point.counter_quality_up = this.point.counter_quality_up+1;
     else if (pointQuality.value<0)
-      this.set('point.counter_quality_down', this.point.counter_quality_down+1)
+      this.point.counter_quality_down = this.point.counter_quality_down+1; 
   }
 
   generatePointQualityFromLogin(value) {
@@ -239,21 +239,21 @@ class YpPointActionsLit extends YpBaseElement {
       }
       this.$$("#pointQualityAjax").generateRequest();
     } else {
-      this.set('allDisabled', false);
+      this.allDisabled = false;
       window.appUser.loginForPointQuality(this, { value: value } );
     }
   }
 
   pointHelpful() {
-    this.set('allDisabled', true);
+    this.allDisabled = true;
     this.generatePointQuality(1);
-    this.set('isUpVoted', true);
+    this.isUpVoted = true;
     this.updateStyles();
     window.appGlobals.activity('clicked', 'pointHelpful', this.point.id);
   }
 
   pointNotHelpful() {
-    this.set('allDisabled', true);
+    this.allDisabled = true;
     window.appGlobals.activity('clicked', 'pointNotHelpful', this.point.id);
     this.generatePointQuality(-1);
   }

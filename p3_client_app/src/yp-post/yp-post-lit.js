@@ -468,16 +468,16 @@ class YpPostLit extends YpBaseElement {
 
   _routeIdChanged(newId) {
     if (newId) {
-      this.set('postId', newId);
+      this.postId = newId;
     }
   }
 
   _routeTabChanged(newTabName) {
     if (newTabName && !this._isNumber(newTabName)) {
-      this.set('selectedTab', newTabName);
+      this.selectedTab = newTabName;
     } else if (newTabName && this._isNumber(newTabName)) {
-      this.set('scrollToPointId', newTabName);
-      this.set('selectedTab', 'debate');
+      this.scrollToPointId = newTabName;
+      this.selectedTab = 'debate';
     }
   }
 
@@ -491,9 +491,9 @@ class YpPostLit extends YpBaseElement {
     }
 
     if (tabName == "location") {
-      this.set('mapActive', true);
+      this.mapActive = true;
     } else {
-      this.set('mapActive', false);
+      this.mapActive = false;
     }
 
     if (tabName && window.appGlobals) {
@@ -577,9 +577,9 @@ class YpPostLit extends YpBaseElement {
 
   _postChanged(newValue, oldValue) {
     if (post) {
-      this.set('isAdmin', this.checkPostAdminOnlyAccess(post));
+      this.isAdmin = this.checkPostAdminOnlyAccess(post);
     } else {
-      this.set('isAdmin', false);
+      this.isAdmin = false;
     }
   }
 
@@ -595,10 +595,10 @@ class YpPostLit extends YpBaseElement {
       console.log("Got post from cache possibly from recommendations");
     } else {
       console.log("Got post from server not cache");
-      this.set("post",null);
+      this.post =null;
       if (postId) {
         this._getPost();
-        this.set('selectedTab', 'debate');
+        this.selectedTab = 'debate';
       }
     }
   }
@@ -622,18 +622,18 @@ class YpPostLit extends YpBaseElement {
   }
 
   _handleIncomingPostResponse(event, detail) {
-    this.set("post", detail.response);
+    this.post = detail.response;
 
     this.refresh();
 
     if (this.post.Group.configuration && this.post.Group.configuration.canAddNewPosts!=undefined) {
       if (this.post.Group.configuration.canAddNewPosts===true) {
-        this.set('disableNewPosts', false);
+        this.disableNewPosts = false;
       } else {
-        this.set('disableNewPosts', true);
+        this.disableNewPosts = true;
       }
     } else {
-      this.set('disableNewPosts', false);
+      this.disableNewPosts = false;
     }
 
     if (!detail.fromCache)
@@ -698,9 +698,9 @@ class YpPostLit extends YpBaseElement {
       }
 
       if (this.post.Group.configuration && this.post.Group.configuration.locationHidden!=undefined) {
-        this.set('locationHidden', this.post.Group.configuration.locationHidden);
+        this.locationHidden = this.post.Group.configuration.locationHidden;
       } else {
-        this.set('locationHidden', false);
+        this.locationHidden = false;
       }
 
       /*
