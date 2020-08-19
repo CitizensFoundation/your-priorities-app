@@ -6,7 +6,6 @@ import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement, html, property, LitElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 
-import '@material/mwc-fab';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@polymer/iron-scroll-threshold';
@@ -27,8 +26,8 @@ export const GroupTabTypes: Record<string, number> = {
   Successful: 2,
   Failed: 3,
   Newsfeed: 4,
-  Map: 5
-}
+  Map: 5,
+};
 
 @customElement('yp-group')
 export class YpGroup extends YpCollection {
@@ -48,7 +47,7 @@ export class YpGroup extends YpCollection {
   tabCounters: Record<string, number> = {};
 
   constructor() {
-    super('group', 'post', 'light-bulb', 'post.create');
+    super('group', 'post', 'lightbulb_outline', 'post.create');
   }
 
   connectedCallback() {
@@ -73,10 +72,7 @@ export class YpGroup extends YpCollection {
 
   _updateTabPostCount(event: CustomEvent) {
     const tabCounterInfo = event.detail;
-    const tabCounter = this.$$('#' + tabCounterInfo.tabCounterId);
-    if (tabCounter) {
-      this.tabCounters[tabCounterInfo.tabCounterId] = tabCounterInfo.count;
-    }
+    this.tabCounters[tabCounterInfo.type] = tabCounterInfo.count;
 
     this.haveGotTabCountInfoCount += 1;
 
@@ -104,8 +100,6 @@ export class YpGroup extends YpCollection {
         }
       }
     }
-
-    this.requestUpdate();
   }
 
   tabLabelWithCount(type: string): string {
@@ -122,7 +116,7 @@ export class YpGroup extends YpCollection {
         element = this.$$('#openPostList');
         break;
       case GroupTabTypes.InProgress:
-        element = this.$$('#inProgressPostList');
+        element = this.$$('#in_progressPostList');
         break;
       case GroupTabTypes.Successful:
         element = this.$$('#successfulPostList');
@@ -175,47 +169,45 @@ export class YpGroup extends YpCollection {
   renderGroupTabs() {
     if (this.collection && !this.tabsHidden) {
       return html`
-        <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
+      <div class="layout vertical center-center">
+        <mwc-tab-bar @MDCTabBar:activated="${this._selectGroupTab}">
           <mwc-tab
-            .label="${this.collectionTabLabel}"
-            icon="people"
-            stacked></mwc-tab>
-          <mwc-tab
-            ?hidden="${this.hasNonOpenPosts}"
             .label="${this.tabLabelWithCount('open')}"
-            icon="people"
+            icon="lightbulb_outline"
             stacked></mwc-tab>
           <mwc-tab
-            ?hidden="${this.hasNonOpenPosts}"
+            ?hidden="${!this.hasNonOpenPosts}"
             .label="${this.tabLabelWithCount('inProgress')}"
-            icon="people"
+            icon="lightbulb_outline"
             stacked></mwc-tab>
           <mwc-tab
-            ?hidden="${this.hasNonOpenPosts}"
+            ?hidden="${!this.hasNonOpenPosts}"
             .label="${this.tabLabelWithCount('successful')}"
-            icon="people"
+            icon="lightbulb_outline"
             stacked></mwc-tab>
           <mwc-tab
-            ?hidden="${this.hasNonOpenPosts}"
+            ?hidden="${!this.hasNonOpenPosts}"
             .label="${this.tabLabelWithCount('failed')}"
-            icon="people"
-            stacked></mwc-tab>
+            icon="lightbulb_outline"
+            stacked>
+          </mwc-tab>
           ${this.renderNewsAndMapTabs()}
         </mwc-tab-bar>
+      </div>
       `;
     } else {
       return nothing;
     }
   }
 
-  renderPostList(type: string): TemplateResult {
+  renderPostList(statusFilter: string): TemplateResult {
     return this.collection
       ? html`
           <yp-posts-list
-            id="${type}PostList"
+            id="${statusFilter}PostList"
             .selectedGroupTab="${this.selectedGroupTab}"
             .listRoute="${this.subRoute}"
-            .type="${type}"
+            .statusFilter="${statusFilter}"
             .searchingFor="${this.searchingFor}"
             .group="${this.collection as YpGroupData}"></yp-posts-list>
         `
@@ -225,12 +217,14 @@ export class YpGroup extends YpCollection {
   renderCurrentGroupTabPage(): TemplateResult | undefined {
     let page: TemplateResult | undefined;
 
+    console.error(this.selectedGroupTab)
+
     switch (this.selectedGroupTab) {
       case GroupTabTypes.Open:
         page = this.renderPostList('open');
         break;
       case GroupTabTypes.InProgress:
-        page = this.renderPostList('inProgress');
+        page = this.renderPostList('in_progress');
         break;
       case GroupTabTypes.Successful:
         page = this.renderPostList('successful');
@@ -259,13 +253,15 @@ export class YpGroup extends YpCollection {
       ${this.collection &&
       !(this.collection.configuration as YpGroupConfiguration).hideNewPost
         ? html` <div
-            class="largeAddButton layout horizontal center-center"
+            class="layout vertical center-center"
             ?hidden="${(this.collection.configuration as YpGroupConfiguration)
               .hideNewPost}">
-            <yp-post-card-add
-              .group="${this.collection as YpGroupData}"
-              ?disableNewPosts="${this.disableNewPosts}"
-              @new-post="${this._newPost}"></yp-post-card-add>
+            <div>
+              <yp-post-card-add
+                .group="${this.collection as YpGroupData}"
+                ?disableNewPosts="${this.disableNewPosts}"
+                @new-post="${this._newPost}"></yp-post-card-add>
+            </div>
           </div>`
         : nothing}
       ${this.renderGroupTabs()} ${this.renderCurrentGroupTabPage()}
@@ -273,9 +269,8 @@ export class YpGroup extends YpCollection {
       this.collection &&
       !(this.collection.configuration as YpGroupConfiguration).hideNewPost
         ? html` <mwc-fab
-            ?extended="${this.wide}"
             .label="${this.t('post.new')}"
-            icon="post.add"
+            icon="lightbulb"
             @click="${this._newPost}"></mwc-fab>`
         : nothing}
 
@@ -289,7 +284,7 @@ export class YpGroup extends YpCollection {
   }
 
   _selectGroupTab(event: CustomEvent) {
-    this.selectedGroupTab = event.detail as number;
+    this.selectedGroupTab = event.detail.index;
   }
 
   //TODO: Check this and rename
@@ -452,9 +447,9 @@ export class YpGroup extends YpCollection {
       }
 
       setTimeout(async () => {
-        const checkResults = await window.serverApi.getHasNonOpenPosts(
+        const checkResults = (await window.serverApi.getHasNonOpenPosts(
           group.id
-        ) as boolean | void;
+        )) as boolean | void;
 
         if (checkResults) {
           this.hasNonOpenPosts = checkResults;
@@ -476,10 +471,7 @@ export class YpGroup extends YpCollection {
         (group.configuration &&
           group.configuration.themeOverrideColorPrimary != null)
       ) {
-        window.appGlobals.theme.setTheme(
-          group.theme_id,
-          group.configuration
-        );
+        window.appGlobals.theme.setTheme(group.theme_id, group.configuration);
       } else if (
         group.Community &&
         (group.Community.theme_id != null ||

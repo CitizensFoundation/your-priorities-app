@@ -33,31 +33,24 @@ export class YpPostCardAdd extends YpBaseElement {
           min-height: 75px;
           margin-top: 8px;
           padding: 16px;
-          background-color: var(--accent-color);
-          color: #fff;
-          font-size: 16px;
+          background-color: var(--mdc-theme-secondary);
+          color: var(--mdc-theme-on-secondary);
+          font-size: var(--mdc-typography-headline1-font-size);
           cursor: pointer;
           margin-bottom: 8px;
           text-align: center;
           max-width: 310px;
-          outline-color: var(--accent-color);
         }
 
         mwc-icon {
-          height: 80px;
-          width: 80px;
-          color: #fff;
+          --mdc-icon-size: 64px;
+          color: var(--mdc-theme-on-secondary);
         }
 
         .header {
           padding: 0;
           margin: 0;
           padding-top: 16px;
-        }
-
-        .icon {
-          --mwc-icon-height: 140px;
-          --mwc-icon-width: 140px;
         }
 
         .half {
@@ -78,7 +71,6 @@ export class YpPostCardAdd extends YpBaseElement {
 
         .addNewIdeaText {
           font-size: 26px;
-          color: #fff;
         }
 
         .closed {
@@ -147,7 +139,7 @@ export class YpPostCardAdd extends YpBaseElement {
             @keydown="${this._keyDown}"
             @click="${this._newPost}">
             <div class="layout horizontal center-center addNewIdeaText">
-              <mwc-icon icon="lightbulb-outline"></mwc-icon>
+              <mwc-icon>lightbulb_outline</mwc-icon>
               ${this.disableNewPosts
                 ? html`
                     <div class="flex addText closed">

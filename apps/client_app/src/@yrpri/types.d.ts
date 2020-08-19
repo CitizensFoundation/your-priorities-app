@@ -354,7 +354,7 @@ interface YpCategoriesCount {
 }
 
 interface YpCategoriesCountInfo {
-  categoryCounts: Array<YpCategoriesCount>;
+  categoriesCount: Array<YpCategoriesCount>;
   allPostCount: number;
 }
 

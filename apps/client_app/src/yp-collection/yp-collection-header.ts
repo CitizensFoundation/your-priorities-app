@@ -338,7 +338,7 @@ export class YpCollectionHeader extends YpBaseElement {
 
   renderFirstBoxContent() {
     if (this.collection?.configuration?.welcomeHTML) {
-      return html`<div id="welcomeHTML">${unsafeHTML(this.welcomeHTML)}</div>`;
+      return html`<div id="welcomeHTML">${unsafeHTML(this.collection.configuration.welcomeHTML)}</div>`;
     } else if (this.collectionVideoURL) {
       return html`
         <video

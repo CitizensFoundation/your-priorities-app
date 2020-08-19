@@ -7,8 +7,8 @@ import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { find, chunk } from 'lodash-es';
 
 import '@material/mwc-select';
-import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon';
+import '@material/mwc-list/mwc-list-item';
 import { Select } from '@material/mwc-select';
 
 @customElement('yp-posts-filter')
@@ -189,51 +189,37 @@ export class YpPostsFilter extends YpBaseElement {
       <div class="layout horizontal center-center mainContainer wrap">
         ${this.showFilter
           ? html`
-              <div
-                slot="dropdown-content"
-                class="layout vertical dropDownContent">
-                <div>
-                  <mwc-select
-                    slot="dropdown-content"
-                    id="mainListMenu"
-                    .label="${this.t('filterIdeas')}"
-                    @iron-select="${this._changeFilter}">
-                    <mwc-list-item
-                      data-filter="top"
-                      ?hidden="${this.group.configuration.customRatings !=
-                      undefined}">
-                      <mwc-icon
-                        icon="trending-up"
-                        class="filterIcon"></mwc-icon>
-                      <span>${this.t('post.top')}</span>
-                    </mwc-list-item>
-                    <mwc-list-item data-filter="newest">
-                      <mwc-icon
-                        icon="new-releases"
-                        class="filterIcon"></mwc-icon>
-                      <span>${this.t('post.newest')}</span>
-                    </mwc-list-item>
-                    <mwc-list-item data-filter="most_debated">
-                      <mwc-icon
-                        icon="chat-bubble-outline"
-                        class="filterIcon"></mwc-icon>
-                      <span>${this.t('post.most_debated')}</span>
-                    </mwc-list-item>
-                    <mwc-list-item data-filter="random">
-                      <mwc-icon icon="cached" class="filterIcon"></mwc-icon>
-                      <span>${this.t('post.random')}</span>
-                    </mwc-list-item>
-                  </mwc-select>
-                </div>
+              <div>
+                <mwc-select
+                  id="mainListMenu"
+                  icon="reorder"
+                  @selected="${this._changeFilter}">
+                  <mwc-list-item
+                    graphic="icon"
+                    data-filter="top"
+                    ?hidden="${this.group.configuration.customRatings !=
+                    undefined}">
+                    <span>${this.t('post.top')}</span>
+                  </mwc-list-item>
+                  <mwc-list-item data-filter="newest" graphic="icon">
+                    <span>${this.t('post.newest')}</span>
+                  </mwc-list-item>
+                  <mwc-list-item data-filter="most_debated" graphic="icon">
+                    <span>${this.t('post.most_debated')}</span>
+                  </mwc-list-item>
+                  <mwc-list-item data-filter="random" graphic="icon">
+                    <span>${this.t('post.random')}</span>
+                  </mwc-list-item>
+                </mwc-select>
               </div>
             `
-          : nothing}
+          : html`` }
         ${this.categoriesWithCount
           ? html`
               <div class="layout vertical">
                 <mwc-select
                   id="categoriesMenu"
-                  @iron-select="${this._changeCategory}"
+                  @selected="${this._changeCategory}"
                   class="dropdown-content wrap categoriesDropdownMenu">
                   <mwc-list-item data-category-id="-1" name="-1">
                     <mwc-icon icon="select-all" class="filterIcon"></mwc-icon>
@@ -272,7 +258,7 @@ export class YpPostsFilter extends YpBaseElement {
                 @click="${this._clearSearch}"
                 class="clear-search-trigger"></mwc-icon-button>
             `
-          : nothing}
+          : html``}
       </div>
     `;
   }
@@ -353,24 +339,30 @@ export class YpPostsFilter extends YpBaseElement {
   }
 
   _changeFilter(event: CustomEvent) {
-    this.filter = event.detail.item.dataset.filter;
-    this._updateAfterFiltering();
+    //this.filter = event.detail.item.dataset.filter;
+    //this._updateAfterFiltering();
   }
 
   _changeCategory(event: CustomEvent) {
     const oldCategoryId = this.categoryId;
-    const categoryId = event.detail.item.dataset.categoryId;
-    if (categoryId != '-1') {
-      this.categoryId = categoryId;
-      this.categoryName = event.detail.item.dataset.categoryName;
+    const index = event.detail.index;
+
+    if (this.categoriesWithCount) {
+      const categoryId = index==0 ? -1 :  this.categoriesWithCount[index-1].id;
+      if (categoryId != -1) {
+        this.categoryId = categoryId;
+        this.categoryName = this.categoriesWithCount[index-1].name;
+      } else {
+        this.categoryId = undefined;
+        this.categoryName = undefined;
+       // (this.$$('#categoryMenu') as Select).value = '';
+      }
+      this._updateTitle();
+      if (oldCategoryId !== this.categoryId) {
+        this._updateAfterFiltering();
+      }
     } else {
-      this.categoryId = undefined;
-      this.categoryName = undefined;
-      (this.$$('#categoryMenu') as Select).value = '';
-    }
-    this._updateTitle();
-    if (oldCategoryId !== this.categoryId) {
-      this._updateAfterFiltering();
+      console.error("Trying to change category without one");
     }
   }
 
@@ -386,10 +378,10 @@ export class YpPostsFilter extends YpBaseElement {
   }
 
   _updateAfterFiltering() {
-    if (!this.filter) this.filter = 'newes';
+    if (!this.filter) this.filter = 'newest';
     const newLocation = this.buildPostsUrlPath();
     window.appGlobals.activity('change', 'filter', newLocation);
-    //   this.redirectTo(newLocation);
+    YpNavHelpers.redirectTo(newLocation);
     this.fire('refresh-group');
   }
 
@@ -423,13 +415,13 @@ export class YpPostsFilter extends YpBaseElement {
       this.tabName
     )) as YpCategoriesCountInfo | void;
     if (categoryCountsInfo) {
-      const categoryCounts = categoryCountsInfo.categoryCounts;
+      const categoriesCount = categoryCountsInfo.categoriesCount;
       this.allPostCount = categoryCountsInfo.allPostCount;
 
       const categoriesWithCount: Array<YpCategoryData> = [];
-      //categoriesWithCount.push({id: "all", name: this.t('categories.the_all'), count: detail.response.allPostCount});
+      categoriesWithCount.push({id: -1, name: this.t('categories.the_all'), count: this.allPostCount});
       this.group.Categories?.forEach(category => {
-        category.count = this._getCategoryCount(category.id, categoryCounts);
+        category.count = this._getCategoryCount(category.id, categoriesCount);
         if (category.count > 0) {
           categoriesWithCount.push(category);
         }
@@ -437,7 +429,7 @@ export class YpPostsFilter extends YpBaseElement {
       if (categoriesWithCount.length > 1) {
         this.categoriesWithCount = categoriesWithCount;
         setTimeout(() => {
-          (this.$$('#categoryMenu') as Select).value = '';
+          //(this.$$('#categoryMenu') as Select).value = '';
         });
       } else {
         console.error('Unexpected categories count');

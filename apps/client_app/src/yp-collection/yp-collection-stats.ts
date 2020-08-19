@@ -52,7 +52,7 @@ export class YpCollectionStats extends YpBaseElement {
           <div class="stats layout horizontal end-justified">
             <div class="layout horizontal">
               <mwc-icon title="${this.t('stats.posts')}" class="stats-icon bulb"
-                >highlight</mwc-icon
+                >lightbulb_outline</mwc-icon
               >
               <div title="${this.t('stats.posts')}" class="stats-text">
                 ${YpFormattingHelpers.number(this.collection.counter_posts)}
