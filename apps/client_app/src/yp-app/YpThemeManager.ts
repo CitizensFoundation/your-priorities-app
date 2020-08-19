@@ -1,3 +1,5 @@
+//TODO: User facing automatic, dark mode or high contrast themes selection
+
 export class YpThemeManager {
   themes: Array<Record<string, boolean | string | Record<string, string>>> = [];
   selectedTheme: number | undefined ;
