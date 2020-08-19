@@ -61,7 +61,7 @@ class YpThemeSelectorLit extends YpBaseElement {
 
   _objectChanged(newObject) {
     if (newObject && newObject.theme_id!=null) {
-      this.set('selectedTheme', newObject.theme_id);
+      this.selectedTheme = newObject.theme_id;
     }
   }
 

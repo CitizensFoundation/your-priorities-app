@@ -505,9 +505,9 @@ class YpEditDialogLit extends YpBaseElement {
 */
 
   open() {
-    this.set("opened", false);
+    this.opened = false;
     this.async(function () {
-      this.set("opened", true);
+      this.opened = true;
       this.async(function () {
         this.$$("#editDialog").open();
       });
@@ -515,7 +515,7 @@ class YpEditDialogLit extends YpBaseElement {
   }
 
   close() {
-    this.set("opened", false);
+    this.opened = false;
     this.$$("#editDialog").close();
   }
 

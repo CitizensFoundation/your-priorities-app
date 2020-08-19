@@ -85,30 +85,30 @@ class YpPostStatusChangeEditLit extends YpBaseElement {
 
   _postChanged(newValue, oldValue) {
     if (newValue) {
-      this.set('officialStatus', this.post.official_status);
+      this.officialStatus = this.post.official_status;
     }
   }
 
   _clear() {
-    this.set('postStatusChange', { content: '' });
-    this.set('post', null);
+    this.postStatusChange = { content: '' };
+    this.post = null;
   }
 
   setup(post, postStatusChange, refreshFunction) {
-    this.set('post', post);
+    this.post = post;
     if (!postStatusChange) {
-      this.set('postStatusChange', { content: ''});
+      this.postStatusChange = { content: ''};
     } else {
-      this.set('postStatusChange', postStatusChange);
+      this.postStatusChange = postStatusChange;
     }
-    this.set('refreshFunction', refreshFunction);
+    this.refreshFunction = refreshFunction;
     this._setupTranslation();
   }
 
   _setupTranslation() {
-    this.set('editHeaderText', this.t('post.statusChange'));
-    this.set('toastText', this.t('post.statusChangeSent'));
-    this.set('saveText', this.t('post.statusChange'));
+    this.editHeaderText = this.t('post.statusChange');
+    this.toastText = this.t('post.statusChangeSent');
+    this.saveText = this.t('post.statusChange');
   }
 }
 

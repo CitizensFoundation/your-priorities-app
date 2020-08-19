@@ -70,7 +70,7 @@ class YpPostMoveLit extends YpBaseElement {
 */
 
   _selectGroup(event) {
-    this.set('selectedGroupId', event.target.getAttribute('data-args'));
+    this.selectedGroupId = event.target.getAttribute('data-args');
     const groupName = event.target.getAttribute('data-args-name');
     dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
       dialog.open(this.t('post.confirmMove')+' "'+this.post.name+'" '+this.t('to')+' "'+groupName+'"', this._reallyMove.bind(this));
@@ -88,22 +88,22 @@ class YpPostMoveLit extends YpBaseElement {
   }
 
   _clear() {
-    this.set('selectedGroupId', null);
-    this.set('post', null);
+    this.selectedGroupId = null;
+    this.post = null;
   }
 
   setupAndOpen(post, refreshFunction) {
-    this.set('post', post);
-    this.set('refreshFunction', refreshFunction);
+    this.post = post;
+    this.refreshFunction = refreshFunction;
     this._setupTranslation();
     this.$$("#getAvailableGroupsAjax").generateRequest();
     this.open();
   }
 
   _setupTranslation() {
-    this.set('editHeaderText', this.t('post.move'));
-    this.set('toastText', this.t('post.haveMovedPost'));
-    this.set('saveText', this.t('post.move'));
+    this.editHeaderText = this.t('post.move');
+    this.toastText = this.t('post.haveMovedPost');
+    this.saveText = this.t('post.move');
   }
 }
 

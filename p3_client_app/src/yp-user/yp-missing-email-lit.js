@@ -217,9 +217,9 @@ class YpMissingEmailLit extends YpBaseElement {
 
   _setEmailResponse(event, detail) {
     if (detail.response && detail.response.alreadyRegistered) {
-      this.set('needPassword', true);
-      this.set('header', this.t('user.linkAccount'));
-      this.set('linkAccountText', true);
+      this.needPassword = true;
+      this.header = this.t('user.linkAccount');
+      this.linkAccountText = true;
     } else {
       window.appGlobals.notifyUserViaToast(this.t('userHaveSetEmail')+ " " + detail.response.email);
       this.close();
@@ -239,10 +239,10 @@ class YpMissingEmailLit extends YpBaseElement {
   }
 
   open(loginProvider, onlyConfirming, email) {
-    this.set('onlyConfirmingEmail', onlyConfirming);
+    this.onlyConfirmingEmail = onlyConfirming;
     if (email) {
-      this.set('email', email);
-      this.set('originalConfirmationEmail', email);
+      this.email = email;
+      this.originalConfirmationEmail = email;
     }
     this.$$("#dialog").open();
     if (this.onlyConfirmingEmail) {

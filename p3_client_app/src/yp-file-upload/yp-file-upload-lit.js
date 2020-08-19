@@ -454,7 +454,7 @@ class YpFileUploadLit extends YpBaseElement {
    * Clears the list of files
   */
   clear() {
-    this.set("files", []);
+    this.files = [];
     this._showDropText();
     this.uploadStatus = null;
     this.currentVideoId = null;
@@ -653,7 +653,7 @@ class YpFileUploadLit extends YpBaseElement {
    * Whether or not to display the drop text
   */
   _showDropText() {
-    this.set("_shownDropText", (!this.files.length && this.droppable));
+    this._shownDropText = (!this.files.length && this.droppable);
   }
 
   uploadFile(file) {

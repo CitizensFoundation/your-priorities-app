@@ -720,26 +720,26 @@ render() {
         } catch (e) {
           jsonError = true;
         }
-        this.set('structuredQuestionsJsonError', jsonError);
+        this.structuredQuestionsJsonError = jsonError;
       } else {
-        this.set('structuredQuestionsJsonError', false);
+        this.structuredQuestionsJsonError = false;
       }
     } else {
-      this.set('structuredQuestionsJsonError', false);
+      this.structuredQuestionsJsonError = false;
     }
   }
 
   _customRatingsTextChanged(event, detail) {
     if (detail.value && detail.value!=="") {
-      this.set("endorsementButtonsDisabled", true);
+      this.endorsementButtonsDisabled = true;
     } else {
-      this.set("endorsementButtonsDisabled", false);
+      this.endorsementButtonsDisabled = false;
     }
   }
 
   _videoUploaded(event, detail) {
-    this.set('uploadedVideoId', detail.videoId);
-    this.set('group.configuration.useVideoCover', true);
+    this.uploadedVideoId = detail.videoId;
+    this.group.configuration.useVideoCover = true;
   }
 /*
   observers: [
@@ -763,7 +763,7 @@ render() {
         newCategories.push(oldCategory);
       }
     });
-    this.set('group.Categories', newCategories);
+    this.group.Categories = newCategories;
   }
 
   _categoryImageSrc(category) {
@@ -845,21 +845,21 @@ render() {
       }
 
       if (group && group.status) {
-        this.set('status', group.status);
+        this.status = group.status;
       }
 
       if (group.configuration && group.configuration.canVote != undefined) {
-        this.set('canVote', group.configuration.canVote);
-        this.set('canAddNewPosts', group.configuration.canAddNewPosts);
+        this.canVote = group.configuration.canVote;
+        this.canAddNewPosts = group.configuration.canAddNewPosts;
       } else {
-        this.set('canVote', true);
-        this.set('canAddNewPosts', true);
+        this.canVote = true;
+        this.canAddNewPosts = true;
       }
 
       if (group.configuration && group.configuration.endorsementButtons != undefined) {
-        this.set('endorsementButtons', group.configuration.endorsementButtons);
+        this.endorsementButtons = group.configuration.endorsementButtons;
       } else {
-        this.set('endorsementButtons', "hearts");
+        this.endorsementButtons = "hearts";
       }
 
       this._setFromConfiguration('locationHidden');
@@ -879,47 +879,47 @@ render() {
         if (this.community) {
           if (this.community.access == 0) {
             debugger;
-            this.set('publicCommunity', true);
+            this.publicCommunity = true; 
           } else {
-            this.set('publicCommunity', false);
+            this.publicCommunity = false;
           }
         } else if (group && group.Community) {
           if (group.Community.access == 0) {
-            this.set('publicCommunity', true);
+            this.publicCommunity = true;
           } else {
-            this.set('publicCommunity', false);
+            this.publicCommunity = false;
           }
         }
       });
 
       if ((!group || !group.id) && window.appGlobals.hasVideoUpload) {
         if (this.allowPostVideoUploads === null) {
-          this.set('allowPostVideoUploads', true);
+          this.allowPostVideoUploads = true;
         }
         if (this.allowPointVideoUploads === null) {
-          this.set('allowPointVideoUploads', true);
+          this.allowPointVideoUploads = true;
         }
       }
 
       if (window.appGlobals.hasVideoUpload) {
-        this.set('hasVideoUpload', true);
+        this.hasVideoUpload = true;
       } else {
-        this.set('hasVideoUpload', false);
+        this.hasVideoUpload = false;
       }
 
       if ((!group || !group.id) && window.appGlobals.hasAudioUpload) {
         if (this.allowPostAudioUploads === null) {
-          this.set('allowPostAudioUploads', true);
+          this.allowPostAudioUploads = true;
         }
         if (this.allowPointAudioUploads === null) {
-          this.set('allowPointAudioUploads', true);
+          this.allowPointAudioUploads = true;
         }
       }
 
       if (window.appGlobals.hasAudioUpload) {
-        this.set('hasAudioUpload', true);
+        this.hasAudioUpload = true;
       } else {
-        this.set('hasAudioUpload', false);
+        this.hasAudioUpload = false;
       }
 
       if (group.configuration && group.configuration.structuredQuestions) {
@@ -930,26 +930,26 @@ render() {
     this._updateEmojiBindings();
 
     if (window.appGlobals.domain && window.appGlobals.domain.samlLoginProvided) {
-      this.set('hasSamlLoginProvider', true);
+      this.hasSamlLoginProvider = true;
     } else {
-      this.set('hasSamlLoginProvider', false);
+      this.hasSamlLoginProvider = false;
     }
   }
 
   _setFromConfiguration(propertyName, setNullDefault) {
     if (this.group.configuration && this.group.configuration[propertyName] != undefined && this.group.configuration[propertyName] !== "") {
-      this.set(propertyName, this.group.configuration[propertyName]);
+      this.propertyName, this.group.configuration[propertyName];
     } else {
-      this.set(propertyName, setNullDefault ? null : false);
+      this.propertyName, setNullDefault ? null : false;
     }
   }
 
   _clear() {
-    this.set('group', null);
-    this.set('uploadedLogoImageId', null);
-    this.set('uploadedHeaderImageId', null);
-    this.set('uploadedDefaultDataImageId', null);
-    this.set('uploadedVideoId', null);
+    this.group = null;
+    this.uploadedLogoImageId = null;
+    this.uploadedHeaderImageId = null;
+    this.uploadedDefaultDataImageId = null;
+    this.uploadedVideoId = null;
 
     if (this.$$("#videoFileUpload"))
       this.$$("#videoFileUpload").clear();
@@ -963,7 +963,7 @@ render() {
 
   setup(group, newNotEdit, refreshFunction) {
     if (!group) {
-      this.set('group', {name: '', objectives: '', access: 0, status: 'active'});
+      this.group = {name: '', objectives: '', access: 0, status: 'active'};
     } else {
       if (group.configuration && group.configuration.customRatings && !group.configuration.customRatingsText) {
         var customRatingsText = "";
@@ -973,18 +973,18 @@ render() {
         customRatingsText = customRatingsText.substring(0, customRatingsText.length - 1);
         group.configuration.customRatingsText = customRatingsText;
       }
-      this.set('group', group);
+      this.group = group;
       if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
-        this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
+        this.uploadedVideoId = group.GroupLogoVideos[0].id
       }
     }
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.new = newNotEdit;
+    this.refreshFunction = refreshFunction;
 
     if (this.group.configuration && this.group.configuration.customRatingsText && this.group.configuration.customRatingsText!=="") {
-      this.set("endorsementButtonsDisabled", true);
+      this.endorsementButtonsDisabled = true;
     } else {
-      this.set("endorsementButtonsDisabled", false);
+      this.endorsementButtonsDisabled = false;
     }
 
     this._setupTranslation();
@@ -998,17 +998,17 @@ render() {
     var defaultAccess = 0;
     if (this.community) {
       if (this.community.access != 0) {
-        this.set('groupAccess', 'open_to_community');
-        this.set('group.access', 3);
+        this.groupAccess = 'open_to_community';
+        this.group.access = 3;
         defaultAccess = 3;
       }
     } else if (this.group.Community) {
       if (this.group.Community.access != 0) {
-        this.set('groupAccess', 'open_to_community');
+        this.groupAccess = 'open_to_community';
         defaultAccess = 3;
       }
     }
-    this.set('group.access', defaultAccess);
+    this.group.access = defaultAccess;
   }
 
   _setupTranslation(language, t) {
@@ -1016,9 +1016,9 @@ render() {
       if (this.new) {
         this.editHeaderText = this.t('group.new');
         this.toastText = this.t('groupToastCreated');
-        this.set('saveText', this.t('create'));
+        this.saveText = this.t('create');
       } else {
-        this.set('saveText', this.t('save'));
+        this.saveText = this.t('save');
         this.editHeaderText = this.t('group.update');
         this.toastText = this.t('groupToastUpdated');
       }

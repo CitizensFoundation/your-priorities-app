@@ -318,7 +318,7 @@ class YpMediaRecorderLit extends YpBaseElement {
 
   _selectAudioDevice (event, detail) {
     if (event.target.id) {
-      this.set('selectedAudioDeviceId', event.target.id);
+      this.selectedAudioDeviceId = event.target.id;
     }
 
     if (this.$$("#checkBox").checked) {
@@ -331,7 +331,7 @@ class YpMediaRecorderLit extends YpBaseElement {
 
   _selectVideoDevice (event) {
     if (event.target.id) {
-      this.set('selectedVideoDeviceId', event.target.id);
+      this.selectedVideoDeviceId = event.target.id;
     }
 
     if (this.$$("#checkBox").checked) {
@@ -345,13 +345,13 @@ class YpMediaRecorderLit extends YpBaseElement {
   _checkAudioDevices () {
     if (this.audioDevices && this.audioDevices.length>1) {
       if (localStorage.getItem("selectedAudioDeviceId")) {
-        this.set('selectedAudioDeviceId', localStorage.getItem("selectedAudioDeviceId"));
+        this.selectedAudioDeviceId = localStorage.getItem("selectedAudioDeviceId");
         this._openMediaSession(this.captureCallback);
       } else {
-        this.set('selectDeviceTitle', this.t('selectAudioDevice'));
+        this.selectDeviceTitle = this.t('selectAudioDevice');
         this.$$("#checkBox").checked = false;
         this.selectDeviceFunction = this._selectAudioDevice.bind(this);
-        this.set('allDevices', this.audioDevices);
+        this.allDevices = this.audioDevices;
         this.$$("#deviceListBox").selected = null;
         this.$$("#selectDevices").open();
       }
@@ -363,14 +363,14 @@ class YpMediaRecorderLit extends YpBaseElement {
   _checkVideoDevices () {
     if (this.videoRecording && this.videoDevices && this.videoDevices.length>1) {
       if (localStorage.getItem("selectedVideoDeviceId")) {
-        this.set('selectedVideoDeviceId', localStorage.getItem("selectedVideoDeviceId"));
+        this.selectedVideoDeviceId = localStorage.getItem("selectedVideoDeviceId");
         this._checkAudioDevices();
       } else {
-        this.set('selectDeviceTitle', this.t('selectVideoDevice'));
+        this.selectDeviceTitle = this.t('selectVideoDevice');
         this.$$("#checkBox").checked = false;
-        this.set('rememberDevice', false);
+        this.rememberDevice = false;
         this.selectDeviceFunction = this._selectVideoDevice.bind(this);
-        this.set('allDevices', this.videoDevices);
+        this.allDevices = this.videoDevices;
         this.$$("#deviceListBox").selected = null;
         this.$$("#selectDevices").open();
       }
@@ -389,7 +389,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       this.surfer.microphone.stop();
       this.surfer.destroy();
     }
-    this.set('previewActive', false);
+    this.previewActive = false;
     this.$$("#dialog").close();
   }
 
@@ -483,17 +483,17 @@ class YpMediaRecorderLit extends YpBaseElement {
 
   open (options) {
     this.callbackFunction = options.callbackFunction;
-    this.set('recordingFinished', false);
-    this.set('error', null);
-    this.set('audioRecording', false);
-    this.set('videoRecording', false);
+    this.recordingFinished = false;
+    this.error = null;
+    this.audioRecording = false;
+    this.videoRecording = false;
     if (options.videoRecording) {
-      this.set('videoRecording', true);
+      this.videoRecording = true;
     } else if (options.audioRecording) {
-      this.set('audioRecording', true);
+      this.audioRecording = true;
     }
-    this.set('maxLength', options.maxLength);
-    this.set('uploadFileFunction', options.uploadFileFunction);
+    this.maxLength = options.maxLength;
+    this.uploadFileFunction = options.uploadFileFunction;
     this.$$("#secondsLeft").className = "";
 
     setTimeout(function () {
@@ -503,12 +503,12 @@ class YpMediaRecorderLit extends YpBaseElement {
         const width, height;
 
         if (window.innerHeight>window.innerWidth) {
-          this.set('videoSettings', { width: 720, height: 1280 } );
+          this.videoSettings = { width: 720, height: 1280 } ;
           height = Math.min(1280, Math.abs(window.innerHeight)).toFixed();
           width = Math.min(720, Math.abs(height*0.5625)).toFixed();
           console.info("Portrait - width: "+width+" height: "+height+" video width: "+720+" height: 1280");
         } else {
-          this.set('videoSettings', { width: 1280, height: 720 });
+          this.videoSettings { width: 1280, height: 720 };
           let scaleFactor = 0.8;
           if (window.innerHeight<700)
             scaleFactor = 0.7;
@@ -552,7 +552,7 @@ class YpMediaRecorderLit extends YpBaseElement {
     if (!this.isRecording) {
       this.recorder.startRecording();
       this.recordSecondsLeft = this.maxLength;
-      this.set('isRecording', true);
+      this.isRecording = true;
       this.$$("#recordingIcon").className = "recording";
       this._recordingTimer();
     } else {
@@ -562,15 +562,15 @@ class YpMediaRecorderLit extends YpBaseElement {
 
   _stopRecording () {
     this.$$("#recordingIcon").className = "";
-    this.set('isRecording', false);
+    this.isRecording = false;
     this.recorder.stopRecording(this._storeRecordedData.bind(this));
     this.$$("#secondsLeft").className = "";
   }
 
   _deleteRecording () {
     this.recorder.reset();
-    this.set('previewActive', false);
-    this.set('recordedData',  null);
+    this.previewActive = false);
+    this.recordedData =  null);
     this.recordSecondsLeft = this.maxLength;
     this.$$("#secondsLeft").className = "";
     this.$$("#recordingIcon").className = "";
@@ -591,7 +591,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       this.recorder.reset();
       videoPreviewer.src = window.URL.createObjectURL(this.recordedData);
       videoPreviewer.controls = true;
-      this.set('previewActive', true);
+      this.previewActive = true;
     } else if (this.audioRecording) {
       const audioElement = this.shadowRoot.querySelector('#audioRecorder');
       const audioPreviewer = this.shadowRoot.querySelector('#audioPreviewer');
@@ -603,7 +603,7 @@ class YpMediaRecorderLit extends YpBaseElement {
       audioElement.pause();
       audioPreviewer.src = window.URL.createObjectURL(this.recordedData);
       audioPreviewer.controls = true;
-      this.set('previewActive', true);
+      this.previewActive = true;
     }
   }
 
@@ -701,14 +701,14 @@ class YpMediaRecorderLit extends YpBaseElement {
 
   connectedCallback () { 
     if (window.i18nTranslation) {
-      this.set('language', window.locale);
+      this.language = window.locale;
     }
     super.connectedCallback()
   }
 
   _languageEvent (event, detail) {
     if (detail.type === 'language-loaded') {
-      this.set('language', detail.language);
+      this.language = detail.language;
     }
   }
 }

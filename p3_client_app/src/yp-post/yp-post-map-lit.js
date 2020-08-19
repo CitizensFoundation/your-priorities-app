@@ -194,30 +194,30 @@ class YpPostMapLit extends YpBaseElement {
 
   _groupIdChanged(newValue, oldValue) {
     if (newValue) {
-      this.set("posts", null);
+      this.posts = null;
       this.$$("#ajax").url = '/api/groups/'+newValue+'/post_locations';
       this.$$("#ajax").generateRequest();
     } else {
-      this.set("posts", null);
+      this.posts = null;
     }
   }
 
   _communityIdChanged(newValue, oldValue) {
     if (newValue) {
-      this.set("posts", null);
+      this.posts = null;
       this.$$("#ajax").url = '/api/communities/'+newValue+'/post_locations';
       this.$$("#ajax").generateRequest();
     } else {
-      this.set("posts", null);
+      this.posts = null;
     }
   }
 
   _response(event, detail) {
     if (detail.response && detail.response.length>0) {
-      this.set('noPosts', false);
-      this.set('posts', detail.response);
+      this.noPosts = false;
+      this.posts = detail.response;
     } else {
-      this.set('noPosts', true);
+      this.noPosts = true;
     }
     this.async(function () {
       this.resetMapHeight();
@@ -226,7 +226,7 @@ class YpPostMapLit extends YpBaseElement {
 
   markerClick(e) {
     window.appGlobals.activity('clicked', 'marker');
-    this.set('selectedPost', e.model.get('post'));
+    this.selectedPost = e.model.get('post');
     const a = this.selectedPost;
     if (e.srcElement) {
       this.$$("#myInfoCard").showInfoWindow(e.srcElement.marker);

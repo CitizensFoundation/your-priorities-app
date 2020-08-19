@@ -296,11 +296,11 @@ class YpCommunityLit extends YpBaseElement {
 
   _communityIdChanged(newValue, oldValue) {
     if (newValue) {
-      this.set("community", null);
-      this.set("featuredGroups",null);
-      this.set("activeGroups",null);
-      this.set("archivedGroups",null);
-      this.set("selectedTab", "groups");
+      this.community = null;
+      this.featuredGroups = null;
+      this.activeGroups = null;
+      this.archivedGroups = null;
+      this.selectedTab = "groups";
       this._getCommunity();
     }
   }

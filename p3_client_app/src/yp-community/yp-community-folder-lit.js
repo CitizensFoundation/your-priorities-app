@@ -176,10 +176,10 @@ behaviors: [
 
   _communityFolderIdChanged(newValue, oldValue) {
     if (newValue) {
-      this.set("communityFolder", null);
-      this.set("featuredCommunities",null);
-      this.set("activeCommuntities",null);
-      this.set("archivedCommunities",null);
+      this.communityFolder = null;
+      this.featuredCommunities =null;
+      this.activeCommuntities =null;
+      this.archivedCommunities = null;
       this._getCommunityFolder();
     }
   }

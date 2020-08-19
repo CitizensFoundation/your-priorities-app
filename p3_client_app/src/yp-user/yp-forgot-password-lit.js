@@ -104,7 +104,7 @@ class YpForgotPasswordLit extends YpBaseElement {
   _validateAndSend(e) {
     if (this.$$("#form").checkValidity() && this.email) {
       if (!this.isSending) {
-        this.set('isSending', true);
+        this.isSending = true;
         this.$$("#forgotPasswordAjax").body = JSON.stringify({
           email: this.email
         });
@@ -116,11 +116,11 @@ class YpForgotPasswordLit extends YpBaseElement {
   }
 
   _forgotPasswordError() {
-    this.set('isSending', false);
+    this.isSending = false;
   }
 
   _forgotPasswordResponse(event, detail) {
-    this.set('isSending', false);
+    this.isSending = false;
     window.appGlobals.notifyUserViaToast(this.t('user.forgotPasswordEmailHasBeenSent'));
     this.emailHasBeenSent = true;
   }
@@ -132,7 +132,7 @@ class YpForgotPasswordLit extends YpBaseElement {
 
   open(detail) {
     if (detail && detail.email) {
-      this.set('email', detail.email);
+      this.email = detail.email;
     }
     this.$$("#dialog").open();
   }

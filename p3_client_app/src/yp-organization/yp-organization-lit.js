@@ -158,8 +158,8 @@ class YpOrganizationLit extends YpBaseElement {
 
   _organizationIdChanged(newValue, oldValue) {
     if (newValue) {
-      this.set("organization", null);
-      this.set("groups", null);
+      this.organization = null;
+      this.groups = null;
       this.$$('#ajax').url = '/api/organizations/' + this.organizationId;
       this.$$('#ajax').generateRequest();
       this.hideAdd = true;
@@ -185,7 +185,7 @@ class YpOrganizationLit extends YpBaseElement {
 
     const url = this._organizationHeaderUrl(this.organization);
     //headerPanel.style.background = "#f5f5f5 url('"+url+"') no-repeat center top";
-    this.set("groups", this.organization.Groups);
+    this.groups = this.organization.Groups);
     this.async(function() {
       const organizationCard = this.$$('#organizationCard');
       if (organizationCard) {

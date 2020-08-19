@@ -84,7 +84,7 @@ class YpPostUserImagesLit extends YpBaseElement {
   }
 
   _response(event, detail) {
-    this.set('images', detail.response);
+    this.images = detail.response;
     if (this.images && this.images.length>0) {
       this.fire('yp-post-image-count', this.images.length);
     } else {

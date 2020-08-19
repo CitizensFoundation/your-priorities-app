@@ -716,20 +716,20 @@ class YpLoginLit extends YpBaseElement {
   }
 
   _startSpinner() {
-    this.set('userSpinner', true);
+    this.userSpinner = true;
     this.async(function () {
       this.$$("#dialog").fire('iron-resize');
     });
   }
 
   _cancel() {
-    this.set('userSpinner', true);
+    this.userSpinner = true;
     window.appUser.cancelLoginPolling();
   }
 
   _domainEvent(event, detail) {
     if (detail.domain) {
-      this.set('domain', detail.domain);
+      this.domain = detail.domain;
     }
   }
 
@@ -756,40 +756,40 @@ class YpLoginLit extends YpBaseElement {
   _openedChanged(newValue) {
     if (newValue) {
       if (window.appGlobals.currentAnonymousGroup) {
-        this.set('hasAnonymousLogin', true);
+        this.hasAnonymousLogin = true;
       } else {
-        this.set('hasAnonymousLogin', false);
+        this.hasAnonymousLogin = false;
       }
       if (window.appGlobals.disableFacebookLoginForGroup) {
-        this.set('disableFacebookLoginForGroup', true);
+        this.disableFacebookLoginForGroup = true;
       } else {
-        this.set('disableFacebookLoginForGroup', false);
+        this.disableFacebookLoginForGroup = false;
       }
 
       if (window.appGlobals.domain &&
         window.appGlobals.domain.configuration &&
         window.appGlobals.domain.configuration.customUserRegistrationText) {
-        this.set('customUserRegistrationText', window.appGlobals.domain.configuration.customUserRegistrationText);
+        this.customUserRegistrationText = window.appGlobals.domain.configuration.customUserRegistrationText;
       } else {
-        this.set('customUserRegistrationText', null);
+        this.customUserRegistrationText = null;
       }
 
       if (window.appGlobals.domain &&
         window.appGlobals.domain.configuration &&
         window.appGlobals.domain.configuration.samlLoginButtonUrl) {
-        this.set('samlLoginButtonUrl', window.appGlobals.domain.configuration.samlLoginButtonUrl);
+        this.samlLoginButtonUrl = window.appGlobals.domain.configuration.samlLoginButtonUrl;
       } else {
-        this.set('samlLoginButtonUrl', null);
+        this.samlLoginButtonUrl = null;
       }
 
       if (window.appGlobals.domain &&
         window.appGlobals.domain.configuration &&
         window.appGlobals.domain.configuration.customSamlLoginText) {
-        this.set('customSamlLoginText', window.appGlobals.domain.configuration.customSamlLoginText);
+        this.customSamlLoginText = window.appGlobals.domain.configuration.customSamlLoginText;
       } else if (window.appGlobals.currentSamlLoginMessage) {
-        this.set('customSamlLoginText', window.appGlobals.currentSamlLoginMessage);
+        this.customSamlLoginText = window.appGlobals.currentSamlLoginMessage;
       } else {
-        this.set('customSamlLoginText', null);
+        this.customSamlLoginText = null;
       }
 
       this.async(function () {
@@ -804,11 +804,11 @@ class YpLoginLit extends YpBaseElement {
       }
 
       if (window.appGlobals.currentForceSaml) {
-        this.set('forceSecureSamlLogin', true);
-        this.set('registerMode',1);
+        this.forceSecureSamlLogin = true;
+        this.registerMode = 1;
       } else {
-        this.set('forceSecureSamlLogin', false);
-        this.set('registerMode',0);
+        this.forceSecureSamlLogin = false;
+        this.registerMode = 0;
       }
     }
   }
@@ -818,7 +818,7 @@ class YpLoginLit extends YpBaseElement {
   }
 
   _registerError(event, error) {
-    this.set('isSending', false);
+    this.isSending = false;
     if (error == 'SequelizeUniqueConstraintError') {
       this.$$("#registerAjax").showErrorDialog(this.t('user.alreadyRegisterred'));
     } else {
@@ -828,7 +828,7 @@ class YpLoginLit extends YpBaseElement {
   }
 
   _loginError(event, error) {
-    this.set('isSending', false);
+    this.isSending = false;
     if (error == 'Unauthorized') {
       this.$$("#loginAjax").showErrorDialog(this.t('user.loginNotAuthorized'));
     } else {
@@ -855,15 +855,15 @@ class YpLoginLit extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback()
       if (window.appGlobals && window.appGlobals.domain) {
-        this.set('domain', window.appGlobals.domain)
+        this.domain = window.appGlobals.domain
       }
   }
 
   setup(onLoginFunction, domain) {
-    this.set('onLoginFunction', onLoginFunction);
+    this.onLoginFunction = onLoginFunction;
     this._setTexts();
     if (domain) {
-      this.set('domain', domain);
+      this.domain = domain;
     }
   }
 
@@ -872,10 +872,10 @@ class YpLoginLit extends YpBaseElement {
     this.passwordErrorMessage = this.t('inputError');
     if (this.registerMode === 1) {
       this.header = this.t('user.registerHeader');
-      this.set('submitText', this.t('user.create'));
+      this.submitText = this.t('user.create');
     } else {
       this.header = this.t('user.header');
-      this.set('submitText', this.t('user.login'));
+      this.submitText = this.t('user.login');
     }
   }
 
@@ -891,7 +891,7 @@ class YpLoginLit extends YpBaseElement {
 
   _validateAndSend(e) {
     if (!this.isSending) {
-      this.set('isSending', true);
+      this.isSending = true;
       window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Submit' : 'Login Submit', 'Email');
       if (this.$$("#form").validate() && this.email && this.password) {
         if (this.registerMode) {
@@ -904,7 +904,7 @@ class YpLoginLit extends YpBaseElement {
       } else {
         this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
         window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Fail' : 'Login Fail', 'Email', 'Form not validated');
-        this.set('isSending', false);
+        this.isSending = false;
         return false;
       }
     } else {
@@ -913,14 +913,14 @@ class YpLoginLit extends YpBaseElement {
   }
 
   _registerResponse(event, detail) {
-    this.set('isSending', false);
+    this.isSending = false;
     window.appGlobals.sendLoginAndSignupToAnalytics(detail.response.id, "Signup Success", 'Email');
     this._loginCompleted(detail.response);
     console.error("Got register response for: "+ detail.response ? detail.response.email : 'unknown');
   }
 
   _loginResponse(event, detail) {
-    this.set('isSending', false);
+    this.isSending = false;
     this._loginCompleted(detail.response);
   }
 
@@ -958,11 +958,11 @@ class YpLoginLit extends YpBaseElement {
 
   open(redirectToURL, email, collectionConfiguration) {
     this.redirectToURL = redirectToURL;
-    this.set('userSpinner', false);
-    this.set('opened', false);
+    this.userSpinner = false;
+    this.opened = false;
 
     if (email) {
-      this.set('email', email);
+      this.email = email;
     }
 
     if (collectionConfiguration &&
@@ -971,7 +971,7 @@ class YpLoginLit extends YpBaseElement {
     }
 
     this.async(function () {
-      this.set('opened', true);
+      this.opened = true;
       this.async(function () {
         this.$$("#dialog").open();
       });
@@ -983,8 +983,8 @@ class YpLoginLit extends YpBaseElement {
       if (!this.forceSecureSamlLogin && window.PasswordCredential && navigator.credentials) {
         navigator.credentials.get({password: true}).then(function (credentials) {
           if (credentials && credentials.id && credentials.password) {
-            this.set('email', credentials.id);
-            this.set('password', credentials.password);
+            this.email = credentials.id;
+            this.password = credentials.password;
             if (window.appUser.hasIssuedLogout===true) {
               console.log("Have issued logout not auto logging in");
             } else {
@@ -1004,8 +1004,8 @@ class YpLoginLit extends YpBaseElement {
     if (dialog) {
       dialog.close();
     }
-    this.set('opened', false);
-    this.set('userSpinner', false);
+    this.opened = false;
+    this.userSpinner = false;
   }
 }
 

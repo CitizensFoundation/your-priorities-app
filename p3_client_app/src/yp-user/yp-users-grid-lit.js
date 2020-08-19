@@ -479,7 +479,7 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _ajaxError() {
-    this.set('forceSpinner', false);
+    this.forceSpinner = false;
   }
 
   connectedCallback() {
@@ -490,7 +490,7 @@ class YpUsersGridLit extends YpBaseElement {
 
   _reload() {
     this.$$("#ajax").generateRequest();
-    this.set('forceSpinner', true);
+    this.forceSpinner = true;
   }
 
   _resizeThrottler() {
@@ -527,11 +527,11 @@ class YpUsersGridLit extends YpBaseElement {
 
   _selectedUsersChanged() {
     if (this.selectedUsers && this.selectedUsers.length>0) {
-      this.set('selectedUsersEmpty', false);
-      this.set('selectedUsersCount', this.selectedUsers.length);
+      this.selectedUsersEmpty = false;
+      this.selectedUsersCount = this.selectedUsers.length;
     } else {
-      this.set('selectedUsersEmpty', true);
-      this.set('selectedUsersCount', 0);
+      this.selectedUsersEmpty = true;
+      this.selectedUsersCount = 0;
     }
     this.selectedUserIds = this.selectedUsers.map(function (user) { return user.id });
   }
@@ -561,8 +561,8 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _addToOrganization(event) {
-    this.set('userIdForSelectingOrganization', event.target.getAttribute('data-args'));
-    this.set('availableOrganizations', this._availableOrganizations());
+    this.userIdForSelectingOrganization = event.target.getAttribute('data-args');
+    this.availableOrganizations = this._availableOrganizations();
     this.$$("#selectOrganizationDialog").open();
   }
 
@@ -657,7 +657,7 @@ class YpUsersGridLit extends YpBaseElement {
     const userId = event.target.parentElement.getAttribute('data-args');
     if (!userId)
       userId = event.target.getAttribute('data-args');
-    this.set('selectedUserId', userId);
+    this.selectedUserId = userId;
   }
 
   _removeMaster(ajax, type, userIds) {
@@ -685,15 +685,15 @@ class YpUsersGridLit extends YpBaseElement {
     if (this.modelType==="groups" && this.groupId) {
       ajax.url = url;
       ajax.generateRequest();
-      this.set('forceSpinner', true);
+      this.forceSpinner = true;
     } else if (this.modelType==="communities" && this.communityId) {
       ajax.url = url;
       ajax.generateRequest();
-      this.set('forceSpinner', true);
+      this.forceSpinner = true;
     } else if (this.modelType==="domains" && this.domainId) {
       ajax.url = url;
       ajax.generateRequest();
-      this.set('forceSpinner', true);
+      this.forceSpinner = true;
     } else {
       console.warn("Can't find model type or ids");
     }
@@ -750,9 +750,8 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _manyItemsResponse(showToast) {
-    this.set('forceSpinner', false);
-    debugger;
-    this.set('showReload', true);
+    this.forceSpinner = false;
+    this.showReload = true;
     if (showToast)
       window.appGlobals.notifyUserViaToast(this.t('operationInProgressTryReloading'));
   }
@@ -797,7 +796,7 @@ class YpUsersGridLit extends YpBaseElement {
 
   _addAdminResponse() {
     window.appGlobals.notifyUserViaToast(this.t('adminAdded')+' '+this.addAdminEmail);
-    this.set('addAdminEmail', null);
+    this.addAdminEmail = null;
     this._reload();
   }
 
@@ -813,14 +812,14 @@ class YpUsersGridLit extends YpBaseElement {
 
   _inviteUserResponse() {
     window.appGlobals.notifyUserViaToast(this.t('users.userInvited')+' '+this.inviteUserEmail);
-    this.set('inviteUserEmail', null);
+    this.inviteUserEmail = null;
     this._reload();
   }
 
   _domainIdChanged(newGroupId) {
     if (newGroupId) {
       this._reset();
-      this.set('modelType', 'domains');
+      this.modelType = 'domains';
       this._generateRequest(newGroupId);
     }
   }
@@ -828,7 +827,7 @@ class YpUsersGridLit extends YpBaseElement {
   _groupIdChanged(newGroupId) {
     if (newGroupId) {
       this._reset();
-      this.set('modelType', 'groups');
+      this.modelType = 'groups';
       this._generateRequest(newGroupId);
     }
   }
@@ -836,7 +835,7 @@ class YpUsersGridLit extends YpBaseElement {
   _communityIdChanged(newCommunityId) {
     if (newCommunityId) {
       this._reset();
-      this.set('modelType', 'communities');
+      this.modelType = 'communities';
       this._generateRequest(newCommunityId);
     }
   }
@@ -848,71 +847,71 @@ class YpUsersGridLit extends YpBaseElement {
   }
 
   _usersResponse(event, detail) {
-    this.set('forceSpinner', false);
-    this.set('users', detail.response);
+    this.forceSpinner = false;
+    this.users = detail.response;
     this._resetSelectedAndClearCache();
   }
 
   setup(groupId, communityId, domainId, adminUsers) {
-    this.set('groupId', null);
-    this.set('communityId', null);
-    this.set('domainId', null);
-    this.set('users', null);
-    this.set('adminUsers', adminUsers);
+    this.groupId = null; 
+    this.communityId = null;
+    this.domainId = null;
+    this.users = null;
+    this.adminUsers = adminUsers;
 
     if (groupId)
-      this.set('groupId', groupId);
+      this.groupId = groupId;
 
     if (communityId)
-      this.set('communityId', communityId);
+      this.communityId = communityId;
 
     if (domainId)
-      this.set('domainId', domainId);
+      this.domainId = domainId;
 
     this._setupHeaderText();
   }
 
   open(name) {
-    this.set('opened', true);
-    this.set('collectionName', name);
+    this.opened = true;
+    this.collectionName = name)
     this.$$("#dialog").open();
   }
 
   _reset() {
-    this.set('users', null);
+    this.users = null)
     this._resetSelectedAndClearCache();
   }
 
   _resetSelectedAndClearCache() {
-    this.set('selectedUsers', []);
-    this.set('selectedUsersCount', 0);
-    this.set('selectedUsersEmpty', true);
+    this.selectedUsers = [];
+    this.selectedUsersCount = 0;
+    this.selectedUsersEmpty = true;
     this.$$("#grid").clearCache();
   }
 
   _setupHeaderText() {
     if (this.adminUsers) {
-      this.set('usersCountText', this.t('adminsCount'));
+      this.usersCountText = this.t('adminsCount');
     } else {
-      this.set('usersCountText', this.t('usersCount'));
+      this.usersCountText = this.t('usersCount');
     }
     if (this.groupId) {
       if (this.adminUsers) {
-        this.set('headerText', this.t('group.admins'));
+        this.headerText = this.t('group.admins');
       } else {
-        this.set('headerText', this.t('group.users'));
+        this.headerText = this.t('group.users');
       }
     } else if (this.communityId) {
       if (this.adminUsers) {
-        this.set('headerText', this.t('community.admins'));
+        this.headerText = this.t('community.admins');
       } else {
-        this.set('headerText', this.t('community.users'));
+        this.headerText = this.t('community.users');
       }
     } else if (this.domainId) {
       if (this.adminUsers) {
-        this.set('headerText', this.t('domainAdmins'));
+        this.headerText = this.t('domainAdmins');
       } else {
-        this.set('headerText', this.t('domainUsers'));
+        this.headerText = this.t('domainUsers');
       }
     }
   }

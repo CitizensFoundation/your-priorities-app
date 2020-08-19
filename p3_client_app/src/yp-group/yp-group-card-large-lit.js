@@ -361,7 +361,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
   */
 
   _autoTranslateEvent(event, detail) {
-    this.set('autoTranslateActive', detail);
+    this.autoTranslateActive = detail;
   }
 
 
@@ -398,7 +398,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
   }
 
   resetGroup() {
-    this.set('group', null);
+    this.group = null;
   }
 
   _groupChanged(group, previousGroup) {
@@ -412,9 +412,9 @@ class YpGroupCardLargeLit extends YpBaseElement {
       const videoURL = this._getVideoURL(group.GroupLogoVideos);
       var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos, group.GroupLogoImages);
       if (videoURL && videoPosterURL) {
-        this.set('groupVideoURL', videoURL);
-        this.set('groupVideoPosterURL', videoPosterURL);
-        this.set('groupVideoId', group.GroupLogoVideos[0].id);
+        this.groupVideoURL = videoURL;
+        this.groupVideoPosterURL = videoPosterURL;
+        this.groupVideoId = group.GroupLogoVideos[0].id;
       } else {
         this._resetVideo();
       }
@@ -426,8 +426,8 @@ class YpGroupCardLargeLit extends YpBaseElement {
   }
 
   _resetVideo() {
-    this.set('groupVideoURL', null);
-    this.set('groupVideoPosterURL', null);
+    this.groupVideoURL = null;
+    this.groupVideoPosterURL = null;
   }
 
   _groupAccessText(group, language) {
@@ -611,7 +611,7 @@ class YpGroupCardLargeLit extends YpBaseElement {
 
   _refresh(group) {
     if (group) {
-      this.set('group', group);
+      this.group = group;
     }
     this.fire("update-group");
   }

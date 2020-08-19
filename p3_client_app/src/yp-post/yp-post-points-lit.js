@@ -886,27 +886,27 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _videoUpUploaded(event, detail) {
-    this.set('uploadedVideoUpId', detail.videoId);
+    this.uploadedVideoUpId = detail.videoId;
   }
 
   _videoDownUploaded(event, detail) {
-    this.set('uploadedVideoDownId', detail.videoId);
+    this.uploadedVideoDownId = detail.videoId;
   }
 
   _videoMobileUploaded(event, detail) {
-    this.set('uploadedVideoMobileId', detail.videoId);
+    this.uploadedVideoMobileId = detail.videoId;
   }
 
   _audioUpUploaded(event, detail) {
-    this.set('uploadedAudioUpId', detail.audioId);
+    this.uploadedAudioUpId = detail.audioId;
   }
 
   _audioDownUploaded(event, detail) {
-    this.set('uploadedAudioDownId', detail.audioId);
+    this.uploadedAudioDownId = detail.audioId;
   }
 
   _audioMobileUploaded(event, detail) {
-    this.set('uploadedAudioMobileId', detail.audioId);
+    this.uploadedAudioMobileId = detail.audioId;
   }
 
   _mobileScrollOffset(large, post) {
@@ -926,7 +926,7 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _newPointError() {
-    this.set('addPointDisabled', false);
+    this.addPointDisabled = false;
   }
 
   _ironListResizeScrollThreshold(largeMode) {
@@ -950,7 +950,7 @@ class YpPostPointsLit extends YpBaseElement {
     const ua = navigator.userAgent.toLowerCase();
     const isAndroid = ua.indexOf("android") > -1;
     if (isAndroid) {
-      this.set('isAndroid', true);
+      this.isAndroid = true;
     }
     window.addEventListener("resize", this._processStoredPoints.bind(this));
   }
@@ -1117,29 +1117,29 @@ class YpPostPointsLit extends YpBaseElement {
   _pointUpOrDownSelectedChanged(newValue) {
     if (newValue=='pointFor') {
       if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
-        this.set('labelMobileUpOrDown', this.post.Group.configuration.alternativePointForLabel);
+        this.labelMobileUpOrDown = this.post.Group.configuration.alternativePointForLabel;
       } else {
-        this.set('labelMobileUpOrDown', this.t('point.for'));
+        this.labelMobileUpOrDown = this.t('point.for');
       }
-      this.set('selectedPointForMobile', true);
+      this.selectedPointForMobile = true;
     } else if (newValue=='pointAgainst') {
       if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointAgainstLabel) {
-        this.set('labelMobileUpOrDown', this.post.Group.configuration.alternativePointAgainstLabel);
+        this.labelMobileUpOrDown = this.post.Group.configuration.alternativePointAgainstLabel;
       } else {
-        this.set('labelMobileUpOrDown', this.t('point.against'));
+        this.labelMobileUpOrDown = this.t('point.against');
       }
-      this.set('selectedPointForMobile', false);
+      this.selectedPointForMobile = false;
     }
   }
 
   _clearVideo() {
-    this.set('uploadedVideoUpId', null);
-    this.set('uploadedVideoDownId', null);
-    this.set('uploadedVideoMobileId', null);
-    this.set('currentVideoId', null);
-    this.set('hideUpVideo', false);
-    this.set('hideDownVideo', false);
-    this.set('hideMobileVideo', false);
+    this.uploadedVideoUpId = null;
+    this.uploadedVideoDownId = null;
+    this.uploadedVideoMobileId = null;
+    this.currentVideoId = null;
+    this.hideUpVideo = false;
+    this.hideDownVideo = false;
+    this.hideMobileVideo = false;
     if (this.$$("#videoFileUploadUp"))
       this.$$("#videoFileUploadUp").clear();
     if (this.$$("#videoFileUploadDown"))
@@ -1149,13 +1149,13 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _clearAudio() {
-    this.set('uploadedAudioUpId', null);
-    this.set('uploadedAudioDownId', null);
-    this.set('uploadedAudioMobileId', null);
-    this.set('currentAudioId', null);
-    this.set('hideUpAudio', false);
-    this.set('hideDownAudio', false);
-    this.set('hideMobileAudio', false);
+    this.uploadedAudioUpId = null;
+    this.uploadedAudioDownId = null;
+    this.uploadedAudioMobileId = null;
+    this.currentAudioId = null;
+    this.hideUpAudio = false;
+    this.hideDownAudio = false;
+    this.hideMobileAudio = false;
     if (this.$$("#audioFileUploadUp"))
       this.$$("#audioFileUploadUp").clear();
     if (this.$$("#audioFileUploadDown"))
@@ -1166,19 +1166,19 @@ class YpPostPointsLit extends YpBaseElement {
 
   _isAdminChanged(isAdmin) {
     if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !isAdmin) {
-      this.set('disableDebate', true);
+      this.disableDebate = true;
     } else {
-      this.set('disableDebate', false);
+      this.disableDebate = false;
     }
   }
 
   _postChanged(newPost) {
    // Remove any manually inserted points when the list is updated
-   this.set('points', null);
-   this.set('upPoints', null);
-   this.set('downPoints', null);
-   this.set('latestPointCreatedAt', null);
-   this.set('storedPoints', null);
+   this.points = null;
+   this.upPoints = null;
+   this.downPoints = null;
+   this.latestPointCreatedAt = null;
+   this.storedPoints = null;
    this._clearVideo();
    this._clearAudio();
    this.loadedPointIds = {};
@@ -1189,9 +1189,9 @@ class YpPostPointsLit extends YpBaseElement {
 
    if (newPost) {
      if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.isAdmin) {
-       this.set('disableDebate', true);
+       this.disableDebate = true;
      } else {
-       this.set('disableDebate', false);
+       this.disableDebate = false;
      }
 
      if (this.host) {
@@ -1201,14 +1201,14 @@ class YpPostPointsLit extends YpBaseElement {
      }
      this.$.ajax.generateRequest();
      if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointForLabel) {
-       this.set('labelUp', this.post.Group.configuration.alternativePointForLabel);
+       this.labelUp = this.post.Group.configuration.alternativePointForLabel;
      } else {
-       this.set('labelUp', this.t('point.for'));
+       this.labelUp = this.t('point.for');
      }
      if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.alternativePointAgainstLabel) {
-       this.set('labelDown', this.post.Group.configuration.alternativePointAgainstLabel);
+       this.labelDown = this.post.Group.configuration.alternativePointAgainstLabel;
      } else {
-       this.set('labelDown', this.t('point.against'));
+       this.labelDown = this.t('point.against');
      }
    }
 
@@ -1229,10 +1229,10 @@ class YpPostPointsLit extends YpBaseElement {
       var forLabel = this.$$("#alternativePointForLabelId");
       var againstLabel = this.$$("#alternativePointAgainstLabelId");
       if (forLabel && forLabel.finalContent) {
-        this.set('labelUp', forLabel.finalContent);
+        this.labelUp = forLabel.finalContent;
       }
       if (againstLabel && againstLabel.finalContent) {
-        this.set('labelDown', againstLabel.finalContent);
+        this.labelDown = againstLabel.finalContent;
       }
     });
   }
@@ -1251,25 +1251,25 @@ class YpPostPointsLit extends YpBaseElement {
             downPoints.push(this.storedPoints[i]);
           }
         }
-        this.set('upPoints', upPoints);
-        this.set('downPoints', downPoints);
+        this.upPoints = upPoints;
+        this.downPoints = downPoints;
       } else {
-        this.set('upPoints', []);
-        this.set('downPoints', []);
-        this.set('points', []);
+        this.upPoints = [];
+        this.downPoints = [];
+        this.points = [];
       }
     } else {
       console.log("Landscape points already setup");
     }
 
     if (!this.largeMode && !this.points) {
-      this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
+      this.points = this.interleaveArrays(this.upPoints, this.downPoints);
     }
     this._clearScrollTrigger();
   }
 
   _response(event, detail) {
-    this.set('storedPoints', this._preProcessPoints(detail.response.points));
+    this.storedPoints = this._preProcessPoints(detail.response.points);
     this.totalCount = detail.response.count;
     this.storedUpPointsCount = 0;
     this.storedDownPointsCount = 0;
@@ -1409,7 +1409,7 @@ class YpPostPointsLit extends YpBaseElement {
             } else {
               console.warn("Can't find point to elevate");
             }
-            this.set('scrollToId', null);
+            this.scrollToId = null;
           }, 50);
         }
       }, 20);
@@ -1424,7 +1424,7 @@ class YpPostPointsLit extends YpBaseElement {
   _preProcessPoints(points) {
     for (let i = 0; i < points.length; i++) {
       if (!this.latestPointCreatedAt || (!this.latestPointCreatedAt || points[i].created_at > this.latestPointCreatedAt)) {
-        this.set('latestPointCreatedAt', points[i].created_at);
+        this.latestPointCreatedAt = points[i].created_at;
       }
       if (points[i].PointRevisions[points[i].PointRevisions.length-1] && points[i].PointRevisions[points[i].PointRevisions.length-1].content) {
         points[i].latestContent = points[i].PointRevisions[points[i].PointRevisions.length-1].content;
@@ -1541,7 +1541,7 @@ class YpPostPointsLit extends YpBaseElement {
   }
 
   _completeNewPointResponse(event, detail) {
-    this.set('addPointDisabled', false);
+    this.addPointDisabled = false;
     const point = this._preProcessPoints([detail.response])[0];
     if (this.currentVideoId) {
       point.checkTranscriptFor = "video";
@@ -1550,14 +1550,14 @@ class YpPostPointsLit extends YpBaseElement {
     }
     if (point.value > 0) {
       this.newPointTextCombined = this.t("point.forAdded") + " " + this.truncate(point.content, 21);
-      this.set("textValueUp", "");
+      this.textValueUp = "";
     } else {
       this.newPointTextCombined = this.t("point.againstAdded") + " " + this.truncate(point.content, 21);
-      this.set("textValueDown", "");
+      this.textValueDown = "";
     }
-    this.set("textValueMobileUpOrDown", "");
+    this.textValueMobileUpOrDown = "";
     this._insertNewPoint(point);
-    this.set('post.counter_points', this.post.counter_points + 1);
+    this.post.counter_points = this.post.counter_points + 1;
     this.$$("#newPointToast").show();
     this._updateCounterInfo();
     if (point.value > 0) {
@@ -1598,11 +1598,11 @@ class YpPostPointsLit extends YpBaseElement {
         value: value
       };
       this.$$("#newPointAjax").generateRequest();
-      this.set('addPointDisabled', true);
+      this.addPointDisabled = true;
       if (videoId)
-        this.set('currentVideoId', videoId);
+        this.currentVideoId = videoId;
       else if (audioId)
-        this.set('currentAudioId', audioId);
+        this.currentAudioId = audioId;
     } else {
       window.appUser.loginForNewPoint(this, {content: content, value: value});
     }
@@ -1627,131 +1627,131 @@ class YpPostPointsLit extends YpBaseElement {
 
   _hasCurrentUpVideo(value) {
     if (value) {
-      this.set('hideUpAudio', true);
-      this.set('hideUpText', true);
+      this.hideUpAudio = true;
+      this.hideUpText = true;
     } else {
-      this.set('hideUpAudio', false);
-      this.set('hideUpText', false);
+      this.hideUpAudio = false;
+      this.hideUpText = false;
     }
   }
 
   _hasCurrentDownVideo(value) {
     if (value) {
-      this.set('hideDownAudio', true);
-      this.set('hideDownText', true);
+      this.hideDownAudio = true;
+      this.hideDownText = true;
     } else {
-      this.set('hideDownAudio', false);
-      this.set('hideDownText', false);
+      this.hideDownAudio = false;
+      this.hideDownText = false;
     }
   }
 
   _hasCurrentUpAudio(value) {
     if (value) {
-      this.set('hideUpVideo', true);
-      this.set('hideUpText', true);
+      this.hideUpVideo = true;
+      this.hideUpText = true;
     } else {
-      this.set('hideUpVideo', false);
-      this.set('hideUpText', false);
+      this.hideUpVideo = false;
+      this.hideUpText = false;
     }
   }
 
   _hasCurrentDownAudio(value) {
     if (value) {
-      this.set('hideDownVideo', true);
-      this.set('hideDownText', true);
+      this.hideDownVideo = true;
+      this.hideDownText = true;
     } else {
-      this.set('hideDownVideo', false);
-      this.set('hideDownText', false);
+      this.hideDownVideo = false;
+      this.hideDownText = false;
     }
   }
 
   _hasCurrentMobileVideo(value) {
     if (value) {
-      this.set('hideMobileAudio', true);
-      this.set('hideMobileText', true);
+      this.hideMobileAudio = true;
+      this.hideMobileText = true;
     } else {
-      this.set('hideMobileAudio', false);
-      this.set('hideMobileText', false);
+      this.hideMobileAudio = false;
+      this.hideMobileText = false;
     }
   }
 
   _hasCurrentMobileAudio(value) {
     if (value) {
-      this.set('hideMobileVideo', true);
-      this.set('hideMobileText', true);
+      this.hideMobileVideo = true;
+      this.hideMobileText = true;
     } else {
-      this.set('hideMobileVideo', false);
-      this.set('hideMobileText', false);
+      this.hideMobileVideo = false;
+      this.hideMobileText = false;
     }
   }
 
   ifLengthIsRight(type, textValue, hasVideoId, hasAudioId) {
     if (hasVideoId != null) {
       if (type==="up") {
-        this.set("hideUpVideo", false);
-        this.set('hideUpAudio', true);
-        this.set('hideUpText', true);
+        this.hideUpVideo = false;
+        this.hideUpAudio = true;
+        this.hideUpText = true;
       }
       if (type==="down") {
-        this.set("hideDownVideo", false);
-        this.set("hideDownAudio", true);
-        this.set("hideDownText", true);
+        this.hideDownVideo = false;
+        this.hideDownAudio = true;
+        this.hideDownText = true;
       }
       if (type==="mobile") {
-        this.set("hideMobileVideo", false);
-        this.set("hideMobileAudio", true);
-        this.set("hideMobileText", true);
+        this.hideMobileVideo = false;
+        this.hideMobileAudio = true;
+        this.hideMobileText = true;
       }
       return true;
     } else  if (hasAudioId != null) {
       if (type==="up") {
-        this.set("hideUpAudio", false);
-        this.set('hideUpVideo', true);
-        this.set('hideUpText', true);
+        this.hideUpAudio = false;
+        this.hideUpVideo = true;
+        this.hideUpText = true;
       }
       if (type==="down") {
-        this.set("hideDownAudio", false);
-        this.set("hideDownVideo", true);
-        this.set("hideDownText", true);
+        this.hideDownAudio = false;
+        this.hideDownVideo = true;
+        this.hideDownText = true;
       }
       if (type==="mobile") {
-        this.set("hideMobileAudio", false);
-        this.set("hideMobileVideo", true);
-        this.set("hideMobileText", true);
+        this.hideMobileAudio = false;
+        this.hideMobileVideo = true;
+        this.hideMobileText = true;
       }
       return true;
     } else if (textValue!=null && textValue.length === 0) {
       if (type==="up") {
-        this.set("hideUpVideo", false);
-        this.set('hideUpAudio', false);
-        this.set('hideUpText', false);
+        this.hideUpVideo = false;
+        this.hideUpAudio = false;
+        this.hideUpText = false;
       }
       if (type==="down") {
-        this.set("hideDownVideo", false);
-        this.set("hideDownAudio", false);
-        this.set("hideDownText", false);
+        this.hideDownVideo = false;
+        this.hideDownAudio = false;
+        this.hideDownText = false;
       }
       if (type==="mobile") {
-        this.set("hideMobileVideo", false);
-        this.set("hideMobileAudio", false);
-        this.set("hideMobileText", false);
+        this.hideMobileVideo = false;
+        this.hideMobileAudio = false;
+        this.hideMobileText = false;
       }
       return false;
     } else if (textValue!=null && textValue.length > 0) {
       if (type==="up") {
-        this.set("hideUpVideo", true);
-        this.set('hideUpAudio', true);
-        this.set('hideUpText', false);
+        this.hideUpVideo = true;
+        this.hideUpAudio = true;
+        this.hideUpText = false;
       }
       if (type==="down") {
-        this.set("hideDownVideo", true);
-        this.set("hideDownAudio", true);
-        this.set("hideDownText", false);
+        this.hideDownVideo = true;
+        this.hideDownAudio = true;
+        this.hideDownText = false;
       }
       if (type==="mobile") {
-        this.set("hideMobileVideo", true);
-        this.set("hideMobileAudio", true);
-        this.set("hideMobileText", false);
+        this.hideMobileVideo = true;
+        this.hideMobileAudio = true;
+        this.hideMobileText = false;
       }
       return true;
     } else if (textValue!=null && textValue.length > 1) {

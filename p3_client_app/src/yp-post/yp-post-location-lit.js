@@ -181,13 +181,13 @@ class YpPostLocationLit extends YpBaseElement {
     this.$$("#mapSearch").query = this.mapSearchString;
     this.$$("#mapSearch").search();
     this.$$("#spinner").active = true;
-    this.set('mapSearchResultAddress', '');
+    this.mapSearchResultAddress = '';
   }
 
   _mapSearchResults(event, detail) {
     this.$$("#spinner").active = false;
     if (detail && detail.length > 0) {
-      this.set('location', {latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15});
+      this.location = {latitude: detail[0].latitude, longitude: detail[0].longitude, map_zoom: 15};
       this.mapSearchResultAddress = detail[0].formatted_address;
       this.$$("#map").zoom = 15;
       this.$$("#map").resize();
@@ -214,16 +214,16 @@ class YpPostLocationLit extends YpBaseElement {
 
   _zoomChanged(event, detail) {
     if (detail && detail.value) {
-      this.set('location.map_zoom', detail.value);
+      this.location.map_zoom = detail.value;
     }
-    this.set('encodedLocation', JSON.stringify(this.location));
+    this.encodedLocation = JSON.stringify(this.location);
   }
 
   _mapTypeChanged(event, detail) {
     if (detail && detail.value) {
-      this.set('location.mapType', detail.value);
+      this.location.mapType = detail.value;
     }
-    this.set('encodedLocation', JSON.stringify(this.location));
+    this.encodedLocation = JSON.stringify(this.location);
   }
 
   _locationChanged(newLocationValue, oldValue) {
@@ -235,17 +235,17 @@ class YpPostLocationLit extends YpBaseElement {
       if (newLocationValue.mapType)
         this.$$("#map").mapType = newLocationValue.mapType;
       this.$$("#map").resize();
-      this.set('encodedLocation', JSON.stringify(newLocationValue));
+      this.encodedLocation = JSON.stringify(newLocationValue);
     }
   }
 
   _setLocation(event, detail) {
-    this.set('location', {
+    this.location = {
       latitude: detail.latLng.lat(),
       longitude: detail.latLng.lng(),
       mapType: this.$$("#map").mapType,
       map_zoom: this.$$("#map").zoom
-    });
+    };
   }
 
   _groupChanged(group) {
@@ -255,21 +255,21 @@ class YpPostLocationLit extends YpBaseElement {
         group.configuration.defaultLocationLongLat != "" &&
         group.configuration.defaultLocationLongLat.split(",").length > 1) {
         longLat = group.configuration.defaultLocationLongLat.trim().split(",");
-        this.set('defaultLongitude', longLat[0]);
-        this.set('defaultLatitude', longLat[1]);
+        this.defaultLongitude = longLat[0];
+        this.defaultLatitude = longLat[1];
       } else if (group.Community && group.Community.configuration && group.Community.configuration.defaultLocationLongLat &&
         group.Community.configuration.defaultLocationLongLat != "" &&
         group.Community.configuration.defaultLocationLongLat.split(",").length > 1) {
         longLat = group.Community.configuration.defaultLocationLongLat.trim().split(",");
-        this.set('defaultLongitude', longLat[0]);
-        this.set('defaultLatitude', longLat[1]);
+        this.defaultLongitude = longLat[0];
+        this.defaultLatitude = longLat[1];
       }
     }
   }
 
   _postChanged(post) {
     if (!post) {
-      this.set("location", null);
+      this.location = null;
     }
   }
 }

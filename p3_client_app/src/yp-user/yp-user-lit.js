@@ -180,33 +180,33 @@ class YpUserLit extends YpBaseElement {
 
   _routeIdChanged(newId) {
     if (newId) {
-      this.set('userId', newId);
+      this.userId = newId;
     }
   }
 
   _routeTabChanged(newTabName) {
     if (newTabName) {
-      this.set('selectedTab', newTabName);
+      this.selectedTab = newTabName;
     } else if (newTabName && this._isNumber(newTabName)) {
-      this.set('scrollToPointId', newTabName);
-      this.set('selectedTab', 'debate');
+      this.scrollToPointId = newTabName;
+      this.selectedTab = 'debate';
     }
   }
 
   _routeStatusUpdateChanged(statusUpdateId) {
     if (statusUpdateId) {
-      this.set('statusUpdateId', statusUpdateId);
+      this.statusUpdateId = statusUpdateId;
     }
   }
 
   _tabNameChanged(newValue) {
     if (newValue) {
       if (newValue=='communities') {
-        this.set('selected', 0);
+        this.selected = 0;
       } else if (newValue=='news') {
-        this.set('selected', 1);
+        this.selected = 1;
       } else if (newValue=='other_social_media') {
-        this.set('selected', 2);
+        this.selected = 2;
       }
     }
   }
@@ -227,12 +227,12 @@ class YpUserLit extends YpBaseElement {
 
   _userIdChanged(newValue, oldValue) {
     if (newValue) {
-      this.set("featuredCommunities",null);
-      this.set("activeCommunities",null);
-      this.set("archivedCommunities",null);
-      this.set("featuredGroups",null);
-      this.set("activeGroups",null);
-      this.set("archivedGroups",null);
+      this.featuredCommunities = null;
+      this.activeCommunities = null;
+      this.archivedCommunities = null;
+      this.featuredGroups = null;
+      this.activeGroups = null;
+      this.archivedGroups = null;
       this.$$("#ajax").url = '/api/users/' + this.userId;
       this.$$("#ajax").generateRequest();
     }
@@ -243,7 +243,7 @@ class YpUserLit extends YpBaseElement {
   }
 
   _response(event, detail, sender) {
-    this.set('user', detail.response);
+    this.user = detail.response;
     if (this.user) {
       if (this.user.theme_id!=null) {
         this.setTheme(this.user.theme_id);

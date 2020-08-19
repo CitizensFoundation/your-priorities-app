@@ -106,39 +106,39 @@ class YpPostUserImageEditLit extends YpBaseElement {
 */
   _imageChanged(newValue) {
     if (newValue) {
-      this.set('oldUploadedPostUserImageId', newValue.id)
+      this.oldUploadedPostUserImageId = newValue.id
     }
   }
 
   _formInvalid() {
-    this.set('selected', 0);
+    this.selected = 0;
     this.$$('#photographerName').autoValidate = true;
     this.$$('#description').autoValidate = true;
   }
 
   _imageUploaded(event, detail) {
     const image = JSON.parse(detail.xhr.response);
-    this.set('uploadedPostUserImageId', image.id);
+    this.uploadedPostUserImageId = image.id;
   }
 
   _clear() {
-    this.set('uploadedPostUserImageId', null);
+    this.uploadedPostUserImageId = null;
     this.$$("#imageFileUpload").clear();
   }
 
   setup(post, image, newNotEdit, refreshFunction) {
     if (image) {
-      this.set('image', image);
+      this.image = image;
     } else {
-      this.set('image', { description: '' , photographerName: '' })
+      this.image = { description: '' , photographerName: '' }
     }
     if (post) {
-      this.set('post', post);
+      this.post = post;
     } else {
-      this.set('post', null);
+      this.post = null;
     }
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.new = newNotEdit;
+    this.refreshFunction = refreshFunction;
     this._setupTranslation();
   }
 

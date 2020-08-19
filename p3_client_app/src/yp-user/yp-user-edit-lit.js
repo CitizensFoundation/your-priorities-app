@@ -222,22 +222,22 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _disconnectFacebookLoginResponse() {
-    this.set('user.facebook_id', null);
+    this.user.facebook_id = null;
     window.appGlobals.notifyUserViaToast(this.t('disconnectedFacebookLoginFor')+' '+ this.user.email);
   }
 
   _disconnectSamlLoginResponse() {
-    this.set('user.ssn', null);
+    this.user.ssn = null;
     window.appGlobals.notifyUserViaToast(this.t('disconnectedSamlLoginFor')+' '+ this.user.email);
   }
 
   _setNotificationSettings(event, detail) {
-    this.set('notificationSettings', detail);
-    this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    this.notificationSettings = detail;
+    this.encodedUserNotificationSettings = this._encodeNotificationsSettings(this.notificationSettings);
   }
 
   _notificationSettingsChanged(value) {
-    this.set('encodedUserNotificationSettings', this._encodeNotificationsSettings(this.notificationSettings));
+    this.encodedUserNotificationSettings = this._encodeNotificationsSettings(this.notificationSettings);
   }
 
   _encodedUserNotificationSettingsChanged(value) {
@@ -248,17 +248,17 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _userChanged(newValue) {
-    this.set('notificationSettings', newValue.notifications_settings);
+    this.notificationSettings = newValue.notifications_settings;
   }
 
   _profileImageUploaded(event, detail) {
     const image = JSON.parse(detail.xhr.response);
-    this.set('uploadedProfileImageId', image.id);
+    this.uploadedProfileImageId = image.id;
   }
 
   _headerImageUploaded(event, detail) {
     const image = JSON.parse(detail.xhr.response);
-    this.set('uploadedHeaderImageId', image.id);
+    this.uploadedHeaderImageId = image.id;
   }
 
   _customRedirect(userId) {
@@ -266,19 +266,19 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   _clear() {
-    this.set('user', { name: '', email: '', access: 2 } );
-    this.set('uploadedProfileImageId', null);
-    this.set('uploadedHeaderImageId', null);
+    this.user = { name: '', email: '', access: 2 } ;
+    this.uploadedProfileImageId = null;
+    this.uploadedHeaderImageId = null;
     this.$$("#headerImageUpload").clear();
     this.$$("#profileImageUpload").clear();
   }
 
   setup(user, newNotEdit, refreshFunction, openNotificationTab) {
-    this.set('user', user);
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.user = user;
+    this.new = newNotEdit;
+    this.refreshFunction = refreshFunction;
     if (openNotificationTab) {
-      this.set('selected', 1);
+      this.selected = 1;
     }
     this._setupTranslation();
   }
@@ -287,9 +287,9 @@ class YpUserEditLit extends YpBaseElement {
     if (this.new) {
       this.editHeaderText = this.t('user.new');
       this.toastText = this.t('userToastCreated');
-      this.set('saveText', this.t('create'));
+      this.saveText = this.t('create');
     } else {
-      this.set('saveText', this.t('save'));
+      this.saveText = this.t('save');
       this.editHeaderText = this.t('user.edit');
       this.toastText = this.t('userToastUpdated');
     }

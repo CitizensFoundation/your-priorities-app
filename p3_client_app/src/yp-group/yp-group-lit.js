@@ -550,14 +550,14 @@ class YpGroupLit extends YpBaseElement {
 
   _routeIdChanged(newId) {
     if (newId) {
-      this.set('groupId', newId);
+      this.groupId = newId;
     }
   }
 
   _routeTabChanged(newTabName) {
     if (newTabName) {
       this.async(function () {
-        this.set('selectedTab', newTabName);
+        this.selectedTab = newTabName;
       });
     }
   }
@@ -570,7 +570,7 @@ class YpGroupLit extends YpBaseElement {
         const configOverride= configRoute.substring(1, configRoute.length);
         if (groupId && configOverride && configOverride!="")
         window.appGlobals.setupGroupConfigOverride(groupId, configOverride);
-        this.set('selectedTab', 'open');
+        this.selectedTab = 'open';
       });
     } else {
       if (this.group) {
@@ -578,9 +578,9 @@ class YpGroupLit extends YpBaseElement {
       }
 
       if (tabName == "map") {
-        this.set('mapActive', true);
+        this.mapActive = true;
       } else {
-        this.set('mapActive', false);
+        this.mapActive = false;
       }
 
       if (tabName && window.appGlobals) {
@@ -635,13 +635,13 @@ class YpGroupLit extends YpBaseElement {
       if (this.haveGotTabCountInfoCount==4) {
         if (this.selectedTab==='open') {
           if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
-            this.set('selectedTab', 'open');
+            this.selectedTab = 'open';
           } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
-            this.set('selectedTab', 'in_progress');
+            this.selectedTab = 'in_progress';
           } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
-            this.set('selectedTab', 'successful');
+            this.selectedTab = 'successful');
           } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
-            this.set('selectedTab', 'failed');
+            this.selectedTab = 'failed';
           }
         }
       }
@@ -674,8 +674,8 @@ class YpGroupLit extends YpBaseElement {
 
   _groupIdChanged(groupId, oldGroupId) {
     if (groupId && groupId!=this.lastValidGroupId) {
-      this.set('lastValidGroupId', groupId);
-      this.set('group', null);
+      this.lastValidGroupId = groupId;
+      this.group = null;
       this.$$("#groupCard").resetGroup();
       this.$$("#tabCountOpen").innerHTML = "";
       if (this.hasNonOpenPosts) {
@@ -683,9 +683,9 @@ class YpGroupLit extends YpBaseElement {
         this.$$("#tabCountSuccessful").innerHTML = "";
         this.$$("#tabCountFailed").innerHTML = "";
       }
-      this.set('hasNonOpenPosts', false);
-      this.set('haveGotTabCountInfoCount', 0);
-      this.set('tabCounters', {});
+      this.hasNonOpenPosts = false);
+      this.haveGotTabCountInfoCount = 0);
+      this.tabCounters = {});
       const groupIdInt = parseInt(groupId);
       if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
         this._groupResponse(null, { response: {
@@ -699,7 +699,7 @@ class YpGroupLit extends YpBaseElement {
       }
       this.async(function () {
         if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
-          this.set('selectedTab', 'open');
+          this.selectedTab = 'open';
         }
       });
     }
@@ -716,34 +716,34 @@ class YpGroupLit extends YpBaseElement {
   }
 
   _nonOpenPosts(event, detail) {
-    this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+    this.hasNonOpenPosts = detail.response.hasNonOpenPosts;
   }
 
   _groupResponse(event, detail) {
-    this.set('group', detail.response.group);
-    this.set('group.configuration', window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
+    this.group detail.response.group;
+    this.group.configuration = window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
 
     this.refresh();
 
     if (this.group.configuration.canAddNewPosts!=undefined) {
       if (this.group.configuration.canAddNewPosts===true) {
-        this.set('disableNewPosts', false);
+        this.disableNewPosts = false;
       } else {
-        this.set('disableNewPosts', true);
+        this.disableNewPosts = true;
       }
     } else {
-      this.set('disableNewPosts', false);
+      this.disableNewPosts = false;
     }
 
     if (detail.response.checkServerForNonOpenPosts && this.group) {
       this.$$("#ajaxCheckNonOpenPosts").url = "/api/groups/"+this.group.id+"/checkNonOpenPosts";
       this.$$("#ajaxCheckNonOpenPosts").generateRequest();
     } else {
-      this.set('hasNonOpenPosts', detail.response.hasNonOpenPosts);
+      this.hasNonOpenPosts = detail.response.hasNonOpenPosts;
     }
 
     if (this.selectedTab=='edit') {
-      this.set('tabName', 'open');
+      this.tabName = 'open';
       this.$$("#groupCard")._openEdit();
     }
 
@@ -811,12 +811,12 @@ class YpGroupLit extends YpBaseElement {
 
       if (this.group.configuration.locationHidden) {
         if (this.group.configuration.locationHidden == true) {
-          this.set('locationHidden', true);
+          this.locationHidden = true;
         } else {
-          this.set('locationHidden', false);
+          this.locationHidden = false;
         }
       } else {
-        this.set('locationHidden', false);
+        this.locationHidden = false;
       }
 
       this._refreshTabsAndPages();
@@ -897,7 +897,7 @@ class YpGroupLit extends YpBaseElement {
         window.appGlobals.currentForceSaml = false;
       }
       if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
-        this.set('selectedTab','map');
+        this.selectedTab = 'map';
       }
     }
   }

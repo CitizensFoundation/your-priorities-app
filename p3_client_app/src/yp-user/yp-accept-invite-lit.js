@@ -115,7 +115,7 @@ class YpAcceptInviteLit extends YpBaseElement {
 
   afterLogin(token) {
     if (!this.token) {
-      this.set('token', token);
+      this.token = token;
     }
     this._reallyAcceptInvite();
   }
@@ -127,10 +127,10 @@ class YpAcceptInviteLit extends YpBaseElement {
   }
 
   _getInviteSenderResponse(event, detail) {
-    this.set('inviteName', detail.response.inviteName);
-    this.set('targetName', detail.response.targetName);
-    this.set('targetEmail', detail.response.targetEmail);
-    this.set('collectionConfiguration', detail.response.configuration);
+    this.inviteName = detail.response.inviteName;
+    this.targetName = detail.response.targetName;
+    this.targetEmail = detail.response.targetEmail;
+    this.collectionConfiguration = detail.response.configuration;
   }
 
   _acceptInviteResponse(event, detail) {
@@ -147,7 +147,7 @@ class YpAcceptInviteLit extends YpBaseElement {
   open(token) {
     console.info("Opened user yp-accept-invite");
     if (token)
-      this.set('token', token);
+      this.token = token;
     this._checkInviteSender();
     this.$$("#dialog").open();
   }
@@ -155,7 +155,7 @@ class YpAcceptInviteLit extends YpBaseElement {
   reOpen(token) {
     console.info("Repened user yp-accept-invite");
     if (token)
-      this.set('token', token);
+      this.token = token;
     this.$$("dialog").open();
   }
 
