@@ -146,7 +146,7 @@ export class YpApp extends YpBaseElement {
 
   goForwardCount = 0;
 
-  firstLoad = true
+  firstLoad = true;
 
   communityBackOverride: Record<string, Record<string, string>> | undefined;
 
@@ -348,15 +348,14 @@ export class YpApp extends YpBaseElement {
         @click="${this._closePost}"></mwc-icon-button>`;
     else
       icons = html` <mwc-icon-button
-          icon="arrow_upward"
-          title="${this.t('goBack')}"
-          slot="actionItems"
-          ?hidden="${!this.backPath}"
-          @click="${this.goBack}">
-        </mwc-icon-button>`;
+        icon="arrow_upward"
+        title="${this.t('goBack')}"
+        slot="actionItems"
+        ?hidden="${!this.backPath}"
+        @click="${this.goBack}">
+      </mwc-icon-button>`;
 
     return html`${icons}
-
     ${this.goForwardToPostId
       ? html`
           <mwc-icon-button
@@ -368,7 +367,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _openHelpMenu() {
-    (this.$$('helpMenu') as Menu).open = true;
+    (this.$$('#helpMenu') as Menu).open = true;
   }
 
   renderActionItems() {
@@ -392,9 +391,7 @@ export class YpApp extends YpBaseElement {
           @click="${this._openHelpMenu}"
           title="${this.t('menu.help')}">
         </mwc-icon-button>
-        <mwc-menu id="helpMenu">
-          <mwc-list-item>Item 0</mwc-list-item>
-          <mwc-list-item>Item 1</mwc-list-item>
+        <mwc-menu id="helpMenu" menuCorner="END" corner="TOP_RIGHT">
           ${this.translatedPages(this.pages).map(
             (page: YpHelpPage, index) => html`
               <mwc-list-item
@@ -436,12 +433,10 @@ export class YpApp extends YpBaseElement {
 
   renderAppBar() {
     return html`
-      <mwc-top-app-bar>
+      <mwc-top-app-bar dense>
         <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
         <div slot="title">
-          ${this.goForwardToPostId
-            ? this.goForwardPostName
-            : this.headerTitle}
+          ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
         <div>
@@ -621,7 +616,13 @@ export class YpApp extends YpBaseElement {
     }
 
     if (this.goForwardToPostId) {
-      YpNavHelpers.goToPost(this.goForwardToPostId, undefined, undefined, undefined, true);
+      YpNavHelpers.goToPost(
+        this.goForwardToPostId,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
       window.appGlobals.activity(
         'recommendations',
         'goForward',
@@ -860,17 +861,17 @@ export class YpApp extends YpBaseElement {
 
     setTimeout(() => {
       if (route.indexOf('domain') > -1) {
-        (this.$$("#domainPage") as YpCollection).refresh();
+        (this.$$('#domainPage') as YpCollection).refresh();
       } else if (route.indexOf('community_folder') > -1) {
-        (this.$$("#communityFolderPage") as YpCollection).refresh();
+        (this.$$('#communityFolderPage') as YpCollection).refresh();
       } else if (route.indexOf('community') > -1) {
-        (this.$$("#communityPage") as YpCollection).refresh();
+        (this.$$('#communityPage') as YpCollection).refresh();
       } else if (route.indexOf('group') > -1) {
-        (this.$$("#groupPage") as YpCollection).refresh();
+        (this.$$('#groupPage') as YpCollection).refresh();
       } else if (route.indexOf('post') > -1) {
-        (this.$$("#postPage") as YpCollection).refresh();
+        (this.$$('#postPage') as YpCollection).refresh();
       } else if (route.indexOf('user') > -1) {
-        (this.$$("#userPage") as YpCollection).refresh();
+        (this.$$('#userPage') as YpCollection).refresh();
       }
     });
   }
