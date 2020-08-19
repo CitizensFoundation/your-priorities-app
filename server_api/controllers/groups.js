@@ -1435,43 +1435,48 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         offset = parseInt(req.query.offset);
       }
 
-      var PostsByStatus = models.Post.scope(req.params.status);
-      PostsByStatus.findAndCountAll({
-        where: where,
-        attributes: ['id','status','official_status','language','counter_endorsements_up',
-          'counter_endorsements_down','created_at'],
-        order: [
-          models.sequelize.literal(postOrder)
-        ],
-        limit: 20,
-        offset: offset
-      }).then(function(postResults) {
-        const posts = postResults.rows;
-        var totalPostsCount = postResults.count;
-        var postRows = posts;
-        if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
-          postRows = seededShuffle(postRows, req.query.randomSeed);
-        }
-        getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
-          if (error) {
-            log.error("Error getting group", { err: error });
-            res.sendStatus(500);
-          } else {
-            if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
-              finalRows = seededShuffle(finalRows, req.query.randomSeed);
-            }
-            const postsOut = {
-              posts: finalRows,
-              totalPostsCount: totalPostsCount
-            };
-            req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
-            res.send(postsOut);
+      if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
+        var PostsByStatus = models.Post.scope(req.params.status);
+        PostsByStatus.findAndCountAll({
+          where: where,
+          attributes: ['id','status','official_status','language','counter_endorsements_up',
+            'counter_endorsements_down','created_at'],
+          order: [
+            models.sequelize.literal(postOrder)
+          ],
+          limit: 20,
+          offset: offset
+        }).then(function(postResults) {
+          const posts = postResults.rows;
+          var totalPostsCount = postResults.count;
+          var postRows = posts;
+          if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
+            postRows = seededShuffle(postRows, req.query.randomSeed);
           }
+          getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
+            if (error) {
+              log.error("Error getting group", { err: error });
+              res.sendStatus(500);
+            } else {
+              if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
+                finalRows = seededShuffle(finalRows, req.query.randomSeed);
+              }
+              const postsOut = {
+                posts: finalRows,
+                totalPostsCount: totalPostsCount
+              };
+              req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+              res.send(postsOut);
+            }
+          });
+        }).catch(function (error) {
+          log.error("Error getting group", { err: error });
+          res.sendStatus(500);
         });
-      }).catch(function (error) {
-        log.error("Error getting group", { err: error });
-        res.sendStatus(500);
-      });
+      } else {
+        log.error("Cant find status", { status: req.params.status });
+        res.sendStatus(404);
+      }
     }
   });
 });
