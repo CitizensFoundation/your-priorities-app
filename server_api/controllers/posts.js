@@ -1199,6 +1199,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
             type: endorsement.value>0 ? 'activity.post.endorsement.new' : 'activity.post.opposition.new',
             userId: endorsement.user_id,
             domainId: req.ypDomain.id,
+            endorsementId: endorsement.id,
 //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
             groupId : post.group_id,
             postId : post.id,

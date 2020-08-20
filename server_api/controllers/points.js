@@ -5,7 +5,7 @@ var auth = require('../authorization');
 var log = require('../utils/logger');
 var toJson = require('../utils/to_json');
 var async = require('async');
-var embedly = require('embedly');
+const ogs = require('open-graph-scraper');
 var _ = require('lodash');
 var queue = require('../active-citizen/workers/queue');
 
@@ -679,6 +679,7 @@ router.post('/:id/pointQuality', auth.can('vote on point'), function(req, res) {
             userId: pointQuality.user_id,
             domainId: req.ypDomain.id,
 //            communityId: req.ypCommunity ?  req.ypCommunity.id : null,
+            pointQualityId : pointQuality.id,
             groupId : point.group_id,
             postId : point.post_id,
             pointId: point.id,
@@ -756,17 +757,34 @@ router.delete('/:id/pointQuality', auth.can('vote on point'), function(req, res)
   });
 });
 
+const translateToObsFormat = (json) => {
+  return [{
+    "url": json.ogUrl,
+    "type": json.ogType,
+    "title": json.ogTitle,
+    "version": "1.0",
+    "description": json.ogDescription,
+    "provider_url": json.ogUrl,
+    "request_url": json.requestUrl,
+    "provider_name": json.ogSiteName,
+    "thumbnail_url": json.ogImage ? json.ogImage.url : '',
+    "thumbnail_width": json.ogImage ? json.ogImage.width : '',
+    "thumbnail_height": json.ogImage ? json.ogImage.height : ''
+  }]
+}
+
 router.get('/url_preview', auth.isLoggedIn, function(req, res) {
   if (req.query.url && validateEmbedUrl(req.query.url)) {
-    const api =  new embedly({key: process.env.EMBEDLY_KEY});
-    api.oembed({url: req.query.url, maxwidth: 470, width: 470, secure: true}, function (err, objs) {
-      if (!!err) {
-        log.error('Embedly not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
-        res.sendStatus(500);
-      } else {
-        res.send(objs);
-      }
-    });
+    ogs({ url: req.query.url })
+      .then((data) => {
+        const { error, result, response } = data;
+        if (error) {
+          log.error('Open graph not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
+          res.sendStatus(500);
+        } else {
+          res.send(translateToObsFormat(result));
+        }
+      })
   } else {
     log.error('Url not found or not valid', { url: req.params.url, context: 'url_preview', user: toJson(req.user) });
     res.sendStatus(404);

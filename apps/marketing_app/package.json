@@ -10,7 +10,7 @@
     "test:watch": "karma start --auto-watch=true --single-run=false",
     "build": "rimraf dist && rollup -c rollup.config.js",
     "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --open --compatibility none",
-    "start": "es-dev-server --app-index index.html --node-resolve --open --watch"
+    "start": "es-dev-server --port 9005 --app-index index.html --node-resolve --open --watch"
   },
   "devDependencies": {
     "@open-wc/building-rollup": "^1.0.0",

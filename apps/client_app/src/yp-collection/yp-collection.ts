@@ -90,13 +90,14 @@ export abstract class YpCollection extends YpBaseElement {
   // DATA PROCESSING
 
   refresh(): void {
+    console.error("REFRESH");
     if (this.collection) {
       if (this.collection.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
       }
 
-      if (this.collection.theme_id) {
-        window.appGlobals.theme.setTheme(this.collection.theme_id, this);
+      if (this.collection.theme_id!==undefined) {
+        window.appGlobals.theme.setTheme(this.collection.theme_id);
       }
 
       this.fire('yp-set-home-link', {
@@ -105,7 +106,7 @@ export abstract class YpCollection extends YpBaseElement {
         name: this.collection.name,
       });
 
-      this.fire('change-header', {
+      this.fire('yp-change-header', {
         headerTitle: null,
         documentTitle: this.collection.name,
         headerDescription:
@@ -162,9 +163,19 @@ export abstract class YpCollection extends YpBaseElement {
       super.styles,
       css`
         mwc-fab {
-          position: absolute;
+          position: fixed;
           bottom: 16px;
           right: 16px;
+        }
+
+        mwc-tab-bar {
+          width: 960px;
+        }
+
+        .header {
+          background-color: var(--primary-background-color);
+          background-image: var(--top-area-background-image, none);
+          height: 300px;
         }
       `,
     ];
@@ -173,7 +184,7 @@ export abstract class YpCollection extends YpBaseElement {
   renderHeader() {
     return this.collection && !this.noHeader
       ? html`
-        <div class="layout vertical center-center">
+        <div class="layout vertical center-center header">
           <yp-collection-header
             .collection="${this.collection}"
             .collectionType="${this.collectionType}"
@@ -195,7 +206,7 @@ export abstract class YpCollection extends YpBaseElement {
       <mwc-tab
         ?hidden="${this.locationHidden}"
         .label="${this.t('post.tabs.location')}"
-        icon="map"
+        icon="location_on"
         stacked></mwc-tab>
     `;
   }
@@ -203,15 +214,17 @@ export abstract class YpCollection extends YpBaseElement {
   renderTabs() {
     if (this.collection && !this.tabsHidden) {
       return html`
-        <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
-          <mwc-tab
-            ?hidden="${this.hideCollection}"
-            .label="${this.collectionTabLabel}"
-            icon="people"
-            stacked></mwc-tab>
-          ${this.renderNewsAndMapTabs()}
-        </mwc-tab-bar>
-      `;
+        <div class="layout vertical center-center">
+          <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
+              <mwc-tab
+                ?hidden="${this.hideCollection}"
+                .label="${this.collectionTabLabel}"
+                icon="groups"
+                stacked></mwc-tab>
+              ${this.renderNewsAndMapTabs()}
+            </mwc-tab-bar>
+        </div>
+        `;
     } else {
       return nothing;
     }
@@ -253,7 +266,7 @@ export abstract class YpCollection extends YpBaseElement {
       ${this.renderTabs()}
       ${this.renderCurrentTabPage()}
       ${this.createFabIcon && this.createFabLabel
-        ? html` <mwc-fab
+        ? html`<mwc-fab
             ?extended="${this.wide}"
             .label="${this.t(this.createFabLabel)}"
             .icon="${this.createFabIcon}"></mwc-fab>`

@@ -46,6 +46,7 @@ import { YpAppDialogs } from './yp-app-dialogs.js';
 import '../yp-collection/yp-domain.js';
 import '../yp-collection/yp-community.js';
 import '../yp-collection/yp-group.js';
+import { YpCollection } from '../yp-collection/yp-collection.js';
 
 declare global {
   interface Window {
@@ -81,7 +82,7 @@ export class YpApp extends YpBaseElement {
   forwardToPostId: string | undefined;
 
   @property({ type: String })
-  headerTitle: string | null = 'Betri Reykjavík';
+  headerTitle: string | undefined;
 
   @property({ type: String })
   numberOfUnViewedNotifications: string | undefined;
@@ -145,6 +146,8 @@ export class YpApp extends YpBaseElement {
 
   goForwardCount = 0;
 
+  firstLoad = true;
+
   communityBackOverride: Record<string, Record<string, string>> | undefined;
 
   touchXDown: number | undefined;
@@ -169,7 +172,6 @@ export class YpApp extends YpBaseElement {
     super.connectedCallback();
     this._setupEventListeners();
     console.info('yp-app is ready');
-    window.appGlobals.theme.setTheme(16, this);
     this._setupSamlCallback();
     this.updateLocation();
   }
@@ -240,7 +242,7 @@ export class YpApp extends YpBaseElement {
 
     window.addEventListener('locationchange', this.updateLocation.bind(this));
     window.addEventListener('location-changed', this.updateLocation.bind(this));
-    window.addEventListener('onpopstate', this.updateLocation.bind(this));
+    window.addEventListener('popstate', this.updateLocation.bind(this));
     this._setupTouchEvents();
   }
 
@@ -281,7 +283,7 @@ export class YpApp extends YpBaseElement {
     this.removeListener('yp-set-pages', this._setPages, this);
     window.removeEventListener('locationchange', this.updateLocation);
     window.removeEventListener('location-changed', this.updateLocation);
-    window.removeEventListener('onpopstate', this.updateLocation);
+    window.removeEventListener('popstate', this.updateLocation);
     this._removeTouchEvents();
   }
 
@@ -328,45 +330,44 @@ export class YpApp extends YpBaseElement {
     }
 
     this.subRoute = tailPath;
+    this.route = path;
 
     this.routeData = namedMatches;
     this._routeChanged();
     this._routePageChanged(oldRouteData);
   }
 
+  //TODO: Use https://boguz.github.io/burgton-button-docs/
   renderNavigationIcon() {
     let icons;
 
     if (this.closePostHeader)
       icons = html`<mwc-icon-button
         title="${this.t('close')}"
-        icon="menu"
+        icon="close"
         @click="${this._closePost}"></mwc-icon-button>`;
     else
       icons = html` <mwc-icon-button
-          icon="menu"
-          title="${this.t('openMainMenu')}"
-          slot="actionItems"
-          @click="${this._toggleNavDrawer}">
-        </mwc-icon-button>
-
-        <mwc-icon-button icon="arrow_upward" hidden title="${this.t('goBack')}">
-        </mwc-icon-button>`;
+        icon="arrow_upward"
+        title="${this.t('goBack')}"
+        slot="actionItems"
+        ?hidden="${!this.backPath}"
+        @click="${this.goBack}">
+      </mwc-icon-button>`;
 
     return html`${icons}
     ${this.goForwardToPostId
       ? html`
           <mwc-icon-button
-            icon="menu"
+            icon="fast_forward"
             title="${this.t('forwardToPost')}"
-            title=""
             @click="${this._goToNextPost}"></mwc-icon-button>
         `
       : nothing}`;
   }
 
   _openHelpMenu() {
-    (this.$$('helpMenu') as Menu).open = true;
+    (this.$$('#helpMenu') as Menu).open = true;
   }
 
   renderActionItems() {
@@ -390,9 +391,7 @@ export class YpApp extends YpBaseElement {
           @click="${this._openHelpMenu}"
           title="${this.t('menu.help')}">
         </mwc-icon-button>
-        <mwc-menu id="helpMenu">
-          <mwc-list-item>Item 0</mwc-list-item>
-          <mwc-list-item>Item 1</mwc-list-item>
+        <mwc-menu id="helpMenu" menuCorner="END" corner="TOP_RIGHT">
           ${this.translatedPages(this.pages).map(
             (page: YpHelpPage, index) => html`
               <mwc-list-item
@@ -434,12 +433,10 @@ export class YpApp extends YpBaseElement {
 
   renderAppBar() {
     return html`
-      <mwc-top-app-bar>
+      <mwc-top-app-bar dense>
         <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
         <div slot="title">
-          ${this.goForwardToPostId
-            ? this.goForwardPostName
-            : this.headerTitle}
+          ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
         </div>
         ${this.renderActionItems()}
         <div>
@@ -619,7 +616,13 @@ export class YpApp extends YpBaseElement {
     }
 
     if (this.goForwardToPostId) {
-      YpNavHelpers.goToPost(this.goForwardToPostId, undefined, undefined, undefined, true);
+      YpNavHelpers.goToPost(
+        this.goForwardToPostId,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
       window.appGlobals.activity(
         'recommendations',
         'goForward',
@@ -849,42 +852,28 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _routeChanged() {
+  async _routeChanged() {
     const route = this.route;
     // Support older pre version 6.1 links
     if (window.location.href.indexOf('/#!/') > -1) {
       window.location.href = window.location.href.replace('/#!/', '/');
     }
 
-    /* TODO: Add back in
     setTimeout(() => {
       if (route.indexOf('domain') > -1) {
-        if (this.$$("#domainPage") && typeof this.$$("#domainPage").refresh !== "undefined") {
-          this.$$("#domainPage").refresh();
-        }
+        (this.$$('#domainPage') as YpCollection).refresh();
       } else if (route.indexOf('community_folder') > -1) {
-        if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").refresh !== "undefined") {
-          this.$$("#communityFolderPage").refresh();
-        }
+        (this.$$('#communityFolderPage') as YpCollection).refresh();
       } else if (route.indexOf('community') > -1) {
-        if (this.$$("#communityPage") && typeof this.$$("#communityPage").refresh !== "undefined") {
-          this.$$("#communityPage").refresh();
-        }
+        (this.$$('#communityPage') as YpCollection).refresh();
       } else if (route.indexOf('group') > -1) {
-        if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
-          this.$$("#groupPage").refresh();
-        }
+        (this.$$('#groupPage') as YpCollection).refresh();
       } else if (route.indexOf('post') > -1) {
-        if (this.$$("#postPage") && typeof this.$$("#postPage").refresh !== "undefined") {
-          this.$$("#postPage").refresh();
-        }
+        (this.$$('#postPage') as YpCollection).refresh();
       } else if (route.indexOf('user') > -1) {
-        if (this.$$("#userPage") && typeof this.$$("#userPage").refresh !== "undefined") {
-          this.$$("#userPage").refresh();
-        }
+        (this.$$('#userPage') as YpCollection).refresh();
       }
     });
-    */
   }
 
   _routePageChanged(oldRouteData: Record<string, string>) {
@@ -1315,13 +1304,7 @@ export class YpApp extends YpBaseElement {
   goBack() {
     if (this.backPath) {
       if (this.useHardBack) {
-        document.dispatchEvent(
-          new CustomEvent('lite-signal', {
-            bubbles: true,
-            composed: true,
-            detail: { name: 'yp-pause-media-playback', data: {} },
-          })
-        );
+        this.fireGlobal('yp-pause-media-playback', {});
         window.location.href = this.backPath;
       } else {
         YpNavHelpers.redirectTo(this.backPath);

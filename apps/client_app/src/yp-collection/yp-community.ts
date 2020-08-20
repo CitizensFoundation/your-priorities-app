@@ -9,7 +9,7 @@ import { property } from 'lodash';
 @customElement('yp-community')
 export class YpCommunity extends YpCollection {
   constructor() {
-    super('community', 'group', 'edit', 'group.create');
+    super('community', 'group', 'edit', 'group.new');
   }
 
   refresh() {
@@ -34,7 +34,7 @@ export class YpCommunity extends YpCollection {
       }
 
       if (!community.theme_id && community.Domain?.theme_id) {
-        window.appGlobals.theme.setTheme(community.Domain.theme_id, this);
+        window.appGlobals.theme.setTheme(community.Domain.theme_id);
       }
 
       window.appGlobals.analytics.setCommunityAnalyticsTracker(
@@ -124,7 +124,7 @@ export class YpCommunity extends YpCollection {
         headerTitle = community.Domain.name;
         headerDescription = community.Domain.description;
       }
-      this.fire('change-header', {
+      this.fire('yp-change-header', {
         headerTitle:
           community.configuration &&
           community.configuration.customBackName

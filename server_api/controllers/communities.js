@@ -1728,7 +1728,6 @@ router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), f
 
 // WORD CLOUD
 router.get('/:id/wordcloud', auth.can('edit community'), function(req, res) {
-  triggerSimilaritiesTraining(req,"community", req.params.id, ()=>{});
   getFromAnalyticsApi(req,"wordclouds", "community", req.params.id, function (error, content) {
     sendBackAnalyticsResultsOrError(req,res,error,content);
   });

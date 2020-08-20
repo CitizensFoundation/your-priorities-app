@@ -457,7 +457,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                       @tap="${this._goToPost}"
                       class="main-image pointer"
                       sizing="cover"
-                      src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;zoom=[[zoomLevel]]&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"
+                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;zoom=${this.zoomLevel}&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=[[staticMapsApiKey]]"
                       ?hidden="${this.streetViewActivated}"></iron-image>
 
                     ${this.streetViewActivated
@@ -480,7 +480,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                       class="main-image pointer"
                       ?hidden="${this.mapActivated}"
                       sizing="cover"
-                      src="https://maps.googleapis.com/maps/api/staticmap?center=[[latitude]],[[longitude]]&amp;size=432x243&amp;zoom=[[zoomLevel]]&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C[[latitude]],[[longitude]]&amp;key=[[staticMapsApiKey]]"></iron-image>
+                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;size=432x243&amp;zoom=${this.zoomLevel}&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=[[staticMapsApiKey]]"></iron-image>
 
                     ${this.mapActivated
                       ? html`

@@ -51,9 +51,6 @@ export class YpPostsList extends YpBaseElement {
   @property({ type: Number })
   selectedGroupTab: number | undefined;
 
-  @property({ type: String })
-  type: string | undefined;
-
   @property({ type: Boolean })
   noPosts = false;
 
@@ -214,40 +211,6 @@ export class YpPostsList extends YpBaseElement {
   render() {
     return html`
       <div class="layout vertical center-center topMost">
-        <div
-          class="searchContainer layout horizontal center-center wrap"
-          ?hidden="${this.group.configuration.hidePostFilterAndSearch}">
-          <div class="layout horizontal center-center">
-            <yp-posts-filter
-              @tap="${this._tapOnFilter}"
-              .sub-title="${this.subTitle}"
-              class="filter"
-              id="postsFilter"
-              .tabName="${this.statusFilter}"
-              @refresh-group="${this._refreshGroupFromFilter}"
-              .group="${this.group}"
-              .filter="${this.filter}"
-              .searchingFor="${this.searchingFor}"
-              .categoryId="${this.categoryId}"
-              .postsCount="${this.postsCount}">
-            </yp-posts-filter>
-          </div>
-          <div class="layout horizontal center-center">
-            <mwc-textfield
-              id="searchInput"
-              @keydown="${this._searchKey}"
-              .label="${this.t('searchFor')}"
-              .value="${this.searchingFor ? this.searchingFor : ''}"
-              class="searchBox">
-            </mwc-textfield>
-            <mwc-icon-button
-              .label="${this.t('startSearch')}"
-              icon="search"
-              @click="${this._search}"
-              ?hidden="${!this.showSearchIcon}"></mwc-icon-button>
-          </div>
-        </div>
-
         ${this.noPosts
           ? html`
               <div class="layout horiztonal center-center">
@@ -262,13 +225,47 @@ export class YpPostsList extends YpBaseElement {
           : html``}
         ${this.posts
           ? html`
+              <div
+                class="searchContainer layout horizontal center-center wrap"
+                ?hidden="${this.group.configuration.hidePostFilterAndSearch}">
+                <div class="layout horizontal center-center">
+                  <yp-posts-filter
+                    @tap="${this._tapOnFilter}"
+                    .subTitle="${this.subTitle ? this.subTitle : ''}"
+                    class="filter"
+                    id="postsFilter"
+                    .tabName="${this.statusFilter}"
+                    @refresh-group="${this._refreshGroupFromFilter}"
+                    .group="${this.group}"
+                    .filter="${this.filter}"
+                    .statusFilter="${this.statusFilter}"
+                    .searchingFor="${this.searchingFor}"
+                    .categoryId="${this.categoryId}"
+                    .postsCount="${this.postsCount}">
+                  </yp-posts-filter>
+                </div>
+                <div class="layout horizontal center-center">
+                  <mwc-textfield
+                    id="searchInput"
+                    @keydown="${this._searchKey}"
+                    .label="${this.t('searchFor')}"
+                    .value="${this.searchingFor ? this.searchingFor : ''}"
+                    class="searchBox">
+                  </mwc-textfield>
+                  <mwc-icon-button
+                    .label="${this.t('startSearch')}"
+                    icon="search"
+                    @click="${this._search}"
+                    ?hidden="${!this.showSearchIcon}"></mwc-icon-button>
+                </div>
+              </div>
               <lit-virtualizer style="width: 100vw; height: 100vh;"
                   .items=${this.posts}
                   .scrollTarget="${window}"
                   .renderItem=${this.renderPostItem}
                 ></lit-virtualizer>
             `
-          : nothing}
+          : html``}
       </div>
     `;
   }
@@ -292,11 +289,12 @@ export class YpPostsList extends YpBaseElement {
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
+    console.error(changedProperties);
+
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    YpIronListHelpers.detachListeners(this as YpElementWithIronList);
   }
 
   _selectedItemChanged(event: CustomEvent) {
@@ -408,7 +406,8 @@ export class YpPostsList extends YpBaseElement {
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
-    if (changedProperties.has('group') && this.group) {
+    console.error(changedProperties);
+    if (changedProperties.has('statusFilter') && this.group && this.statusFilter) {
       const allowedForceByValues = [
         'oldest',
         'newest',
@@ -526,7 +525,7 @@ export class YpPostsList extends YpBaseElement {
         this.postsCount = postsInfo.totalPostsCount;
 
         this.fire('yp-post-count', {
-          type: this.type,
+          type: this.statusFilter,
           count: this.postsCount,
         });
 

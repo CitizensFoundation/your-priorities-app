@@ -1,0 +1,94 @@
+{
+  "scripts": {
+    "lint:eslint": "eslint --ext .ts,.html . --ignore-path .gitignore",
+    "format:eslint": "eslint --ext .ts,.html . --fix --ignore-path .gitignore",
+    "lint:prettier": "prettier \"**/*.js\" \"**/*.ts\" --check --ignore-path .gitignore",
+    "format:prettier": "prettier \"**/*.js\" \"**/*.ts\" --write --ignore-path .gitignore",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "format": "npm run format:eslint && npm run format:prettier",
+    "test": "tsc && karma start --coverage",
+    "test:watch": "concurrently --kill-others --names tsc,karma \"npm run tsc:watch\" \"karma start --auto-watch=true --single-run=false\"",
+    "start": "concurrently --kill-others --names tsc,es-dev-server \"npm run tsc:watch\" \"es-dev-server --app-index index.html --node-resolve --open --watch\"",
+    "tsc:watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@open-wc/eslint-config": "^2.0.0",
+    "@open-wc/testing": "^2.0.0",
+    "@open-wc/testing-karma": "^3.0.0",
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@types/google.analytics": "0.0.40",
+    "@types/i18next": "^13.0.0",
+    "@types/linkifyjs": "^2.1.3",
+    "@types/lodash-es": "^4.17.3",
+    "@types/node": "13.11.1",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "concurrently": "^5.1.0",
+    "deepmerge": "^3.2.0",
+    "es-dev-server": "^1.5.0",
+    "es-dev-server-rollup": "0.0.6",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "husky": "^1.0.0",
+    "koa-proxies": "^0.11.0",
+    "lint-staged": "^10.0.0",
+    "prettier": "^2.0.4",
+    "tslib": "^1.11.0",
+    "typescript": "~3.8.2"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@open-wc/eslint-config",
+      "eslint-config-prettier"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "arrowParens": "avoid"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "name": "community-scorecard-app",
+  "version": "0.0.0",
+  "description": "Webcomponent community-scorecard-app following open-wc recommendations",
+  "author": "community-scorecard-app",
+  "license": "MIT",
+  "dependencies": {
+    "@kano/twemoji": "^1.0.0",
+    "@manufosela/stars-rating": "^3.3.3",
+    "@material/mwc-button": "^0.18.0",
+    "@material/mwc-circular-progress-four-color": "^0.18.0",
+    "@material/mwc-dialog": "^0.18.0",
+    "@material/mwc-drawer": "^0.18.0",
+    "@material/mwc-fab": "^0.18.0",
+    "@material/mwc-icon": "^0.18.0",
+    "@material/mwc-icon-button": "^0.18.0",
+    "@material/mwc-menu": "^0.18.0",
+    "@material/mwc-snackbar": "^0.18.0",
+    "@material/mwc-tab-bar": "^0.18.0",
+    "@material/mwc-textarea": "^0.18.0",
+    "@material/mwc-textfield": "^0.18.0",
+    "@material/mwc-top-app-bar": "^0.18.0",
+    "@types/chart.js": "^2.9.23",
+    "@types/hammerjs": "^2.0.36",
+    "app-datepicker": "^4.1.0",
+    "chart.js": "^2.9.3",
+    "hammerjs": "^2.0.8",
+    "i18next-http-backend": "^1.0.16",
+    "linkifyjs": "^2.1.9",
+    "lit-element": "^2.0.1",
+    "lit-flexbox-literals": "0.0.7",
+    "lit-html": "^1.0.0",
+    "pwa-helpers": "^0.9.1"
+  }
+}

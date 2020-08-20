@@ -189,6 +189,12 @@ var getDomain = function (req, domainId, done) {
                 required: false,
               },
               {
+                model: models.Domain,
+                as: 'Domain',
+                attributes: ['id','configuration','name'],
+                required: false
+              },
+              {
                 model: models.Image,
                 as: 'CommunityHeaderImages',
                 attributes:  models.Image.defaultAttributesPublic,
@@ -251,6 +257,12 @@ var getDomain = function (req, domainId, done) {
                   as: 'CommunityFolders',
                   attributes: ['id','name','counter_users', 'counter_posts', 'counter_groups'],
                   required: false,
+                },
+                {
+                  model: models.Domain,
+                  as: 'Domain',
+                  attributes: ['id','configuration','name'],
+                  required: false
                 },
                 {
                   model: models.User,

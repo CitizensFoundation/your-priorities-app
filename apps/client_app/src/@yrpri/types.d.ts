@@ -144,7 +144,8 @@ interface YpCollectionData extends YpDatabaseItem {
   User?: YpUserData;
   user_id?: number;
   status?: string;
-  counter_groups: number;
+  counter_groups?: number;
+  counter_communities?: number;
   counter_posts: number;
   counter_users: number;
   counter_points: number;
@@ -353,7 +354,7 @@ interface YpCategoriesCount {
 }
 
 interface YpCategoriesCountInfo {
-  categoryCounts: Array<YpCategoriesCount>;
+  categoriesCount: Array<YpCategoriesCount>;
   allPostCount: number;
 }
 

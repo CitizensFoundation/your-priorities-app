@@ -156,23 +156,17 @@ export class YpCollectionHeader extends YpBaseElement {
           right: 8px;
         }
 
-        yp-collection-stats {
-          color: #fff;
-        }
-
         .collection-name {
-          padding: 0;
-          padding-bottom: 4px;
-          padding-right: 1px;
-          margin: 0;
-          min-height: 54px;
-          font-size: 42px;
-          font-weight: bold;
+          font-size: var(--mdc-typography-headline1-font-size);
+          font-weight: var(--mdc-typography-headline1-font-weight);
+          background-color: var(--mdc-theme-primary);
+          color: var(--mdc-theme-on-primary);
+          padding: 16px;
         }
 
         .large-card {
-          background-color: #fefefe;
-          color: #333;
+          color: var(--mdc-theme-on-surface);
+          background-color:  var(--mdc-theme-surface);
           height: 243px;
           width: 432px;
           padding: 0 !important;
@@ -185,21 +179,12 @@ export class YpCollectionHeader extends YpBaseElement {
           height: 243px;
         }
 
-        .description-and-stats {
-          width: 100%;
-        }
-
-        .edit {
-          color: #fff;
+        #menuButton {
+          color: var(--mdc-theme-on-primary);
+          background-color:  var(--mdc-theme-primary);
           position: absolute;
           top: 0;
-          right: 0px;
-          padding-right: 0;
-          margin-right: 0;
-        }
-
-        h1 {
-          font-size: 42px;
+          right: 0;
         }
 
         .textBox {
@@ -208,16 +193,8 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         .description {
-          padding: 0;
-          margin: 0;
-          color: #fafafa;
-          padding: 12px;
-          padding-left: 16px;
+          padding: 16px;
           vertical-align: middle;
-          margin: 0;
-          padding-right: 32px;
-          padding-bottom: 6px;
-          padding-top: 14px;
         }
 
         #welcomeHTML {
@@ -361,7 +338,7 @@ export class YpCollectionHeader extends YpBaseElement {
 
   renderFirstBoxContent() {
     if (this.collection?.configuration?.welcomeHTML) {
-      return html`<div id="welcomeHTML">${unsafeHTML(this.welcomeHTML)}</div>`;
+      return html`<div id="welcomeHTML">${unsafeHTML(this.collection.configuration.welcomeHTML)}</div>`;
     } else if (this.collectionVideoURL) {
       return html`
         <video
@@ -398,10 +375,10 @@ export class YpCollectionHeader extends YpBaseElement {
 
   renderMenu() {
     return html`
-      <div style="position: relative;">
+      <div>
         <mwc-icon-button
-          id="helpIconButton"
-          icon="help_outline"
+          id="menuButton"
+          icon="more_vert"
           @click="${this._openMenu}"
           title="${this.openMenuLabel}">
         </mwc-icon-button>
@@ -425,13 +402,13 @@ export class YpCollectionHeader extends YpBaseElement {
               <div
                 is-video="${ifDefined(this.collectionVideoURL)}"
                 id="cardImage"
-                class="large-card imageCard top-card shadow-elevation-6dp shadow-transition">
+                class="large-card imageCard top-card shadow-elevation-8dp shadow-transition">
                 ${this.renderFirstBoxContent()}
               </div>
               <div
                 id="card"
-                class="large-card textBox shadow-elevation-6dp shadow-transition layout horizontal">
-                <div class="layout vertical description-and-stats">
+                class="large-card textBox shadow-elevation-8dp shadow-transition layout horizontal">
+                <div class="layout vertical">
                   <div class="descriptionContainer">
                     <div
                       class="collection-name"

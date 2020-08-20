@@ -191,10 +191,10 @@ export class YpAppGlobals extends YpCodeBase {
     } else {
       setTimeout(() => {
         console.warn(
-          'Locales not loaded while trying to load languages, trying again in 500 ms'
+          'Locales not loaded while trying to load languages, trying again in 100 ms'
         );
         this.changeLocaleIfNeeded(locale, force);
-      }, 500);
+      }, 100);
     }
   }
 
@@ -311,7 +311,7 @@ export class YpAppGlobals extends YpCodeBase {
           YpNavHelpers.redirectTo('/community_folder/' + results.community.id);
         } else {
           YpNavHelpers.redirectTo('/domain/' + this.domain.id);
-          this.fireGlobal('change-header', {
+          this.fireGlobal('yp-change-header', {
             headerTitle: this.domain.domain_name,
             headerDescription: this.domain.description,
           });

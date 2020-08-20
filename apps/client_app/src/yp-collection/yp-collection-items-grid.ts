@@ -39,7 +39,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
       css`
         .card {
           padding: 0;
-          padding-top: 16px;
+          padding-top: 24px;
           width: 100%;
         }
 
@@ -59,7 +59,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     return html`
       <lit-virtualizer
         style="width: 100vw; height: 100vh;"
-        .items=${this.collectionItems!}
+        .items=${this.sortedCollectionItems!}
         .scrollTarget="${window}"
         .renderItem=${this.renderItem}></lit-virtualizer>
     `;
@@ -77,7 +77,6 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     aria-level="2"
     aria-label="[[item.name]]">
       <yp-collection-item-card .item="${item}"></yp-collection-item-card>
-    </a>
   </div>`;
   }
 
