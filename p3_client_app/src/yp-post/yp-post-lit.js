@@ -515,12 +515,19 @@ class YpPostLit extends YpBaseElement {
       dialog.open('new', {groupId: this.post.Group.id, group: this.post.Group});
     }.bind(this));
   }
-/*
-  listeners: {
-    'yp-debate-info': '_updateDebateInfo',
-    'yp-post-image-count': '_updatePostImageCount'
-  },
-*/
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('yp-debate-info', this._updateDebateInfo);
+    this.addListener('yp-post-image-count', this._updatePostImageCount);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-debate-info', this._updateDebateInfo);
+    this.removeListener('yp-post-image-count', this._updatePostImageCount);
+  }
+
 
   _updatePostImageCount(event, imageCount) {
     const tabCounter = this.$$('#tabCountPhotos');
