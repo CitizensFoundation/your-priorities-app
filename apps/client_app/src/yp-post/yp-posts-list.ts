@@ -305,13 +305,22 @@ export class YpPostsList extends YpBaseElement {
     </div>`;
   }
 
+  _categoryChanged(event: CustomEvent) {
+    if (event.detail) {
+      this.categoryId = event.detail;
+      debugger;
+    }
+  }
+
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
     console.error(changedProperties);
+    this.addListener('yp-filter-category-change', this._categoryChanged);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeListener('yp-filter-category-change', this._categoryChanged);
   }
 
   _selectedItemChanged(event: CustomEvent) {

@@ -362,6 +362,8 @@ export class YpPostsFilter extends YpBaseElement {
       if (oldCategoryId !== this.categoryId) {
         this._updateAfterFiltering();
       }
+
+      this.fire('yp-filter-category-change', this.categoryId ? this.categoryId : null);
     } else {
       console.error("Trying to change category without one");
     }
@@ -382,7 +384,6 @@ export class YpPostsFilter extends YpBaseElement {
     if (!this.filter) this.filter = 'newest';
     const newLocation = this.buildPostsUrlPath();
     window.appGlobals.activity('change', 'filter', newLocation);
-    YpNavHelpers.redirectTo(newLocation);
     this.fire('refresh-group');
   }
 
