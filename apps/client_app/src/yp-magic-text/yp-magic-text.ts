@@ -413,7 +413,8 @@ export class YpMagicText extends YpBaseElement {
         window.appGlobals.magicTextIronResizeDebouncer = window.setTimeout(
           () => {
             window.appGlobals.magicTextIronResizeDebouncer = undefined;
-            this.fire('iron-resize');
+            //TODO: See if we need to do something like that still
+            //this.fire('iron-resize');
           },
           100
         );

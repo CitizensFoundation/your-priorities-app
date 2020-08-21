@@ -405,9 +405,8 @@ export class YpPostCoverMedia extends YpBaseElement {
                         class="main-image pointer"
                         src="${this.postVideoPosterPath}"></yp-image>
                     </div>
-                    <iron-icon
-                      icon="videocam"
-                      class="videoCamStatic"></iron-icon>
+                    <mwc-icon
+                      class="videoCamStatic">videocam</mwc-icon>
                   `}
             `
           : nothing}
@@ -445,7 +444,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                 ?hidden="${this.showAudio}"
                 class="layout horizontal center-center pointer"
                 @tap="${this._goToPost}">
-                <iron-icon icon="keyboard-voice" class="voiceIcon"></iron-icon>
+                <mwc-icon class="voiceIcon">keyboard_voice</mwc-icon>
               </div>
             `
           : nothing}

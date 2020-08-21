@@ -14,6 +14,7 @@ import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
 import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import { RangeChangeEvent } from 'lit-virtualizer';
 
 @customElement('yp-posts-list')
 export class YpPostsList extends YpBaseElement {
@@ -93,7 +94,7 @@ export class YpPostsList extends YpBaseElement {
         #scrollableRegion {
         }
 
-        iron-list {
+        lit-virtualizer {
           height: 100vh;
         }
 
@@ -259,15 +260,26 @@ export class YpPostsList extends YpBaseElement {
                     ?hidden="${!this.showSearchIcon}"></mwc-icon-button>
                 </div>
               </div>
-              <lit-virtualizer style="width: 100vw; height: 100vh;"
-                  .items=${this.posts}
-                  .scrollTarget="${window}"
-                  .renderItem=${this.renderPostItem}
-                ></lit-virtualizer>
+              <lit-virtualizer
+                .items=${this.posts}
+                .scrollTarget="${window}"
+                .renderItem=${this.renderPostItem}
+                @rangeChange=${this.scrollEvent}></lit-virtualizer>
             `
           : html``}
       </div>
     `;
+  }
+
+  scrollEvent(event: RangeChangeEvent) {
+    //TODO: Check this logic
+    if (
+      this.posts &&
+      event.lastVisible < this.posts.length &&
+      event.lastVisible + 3 >= this.posts.length
+    ) {
+      this._loadMoreData();
+    }
   }
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
@@ -290,7 +302,6 @@ export class YpPostsList extends YpBaseElement {
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
     console.error(changedProperties);
-
   }
 
   disconnectedCallback() {
@@ -321,7 +332,8 @@ export class YpPostsList extends YpBaseElement {
             this.requestUpdate;
             await this.updateComplete;
             setTimeout(() => {
-              (this.$$('#ironList') as IronListInterface).fire('iron-resize');
+              //TODO: See if we still need to do something like this
+              //(this.$$('#ironList') as IronListInterface).fire('iron-resize');
             });
             break;
           }
@@ -407,7 +419,11 @@ export class YpPostsList extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
     console.error(changedProperties);
-    if (changedProperties.has('statusFilter') && this.group && this.statusFilter) {
+    if (
+      changedProperties.has('statusFilter') &&
+      this.group &&
+      this.statusFilter
+    ) {
       const allowedForceByValues = [
         'oldest',
         'newest',

@@ -8,7 +8,6 @@ import { nothing, TemplateResult } from 'lit-html';
 
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
-import '@polymer/iron-scroll-threshold';
 
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
@@ -273,13 +272,6 @@ export class YpGroup extends YpCollection {
             icon="lightbulb"
             @click="${this._newPost}"></mwc-fab>`
         : nothing}
-
-      <iron-scroll-threshold
-        id="scrollTheshold"
-        lowerThreshold="550"
-        @lower-threshold="${this._loadMoreData}"
-        scroll-target="document">
-      </iron-scroll-threshold>
     `;
   }
 
