@@ -60,6 +60,8 @@ export class YpPostsList extends YpBaseElement {
 
   moreToLoad = false;
 
+  moreFromScrollTriggerActive = false
+
   // For YpIronListHelper
   resetListSize: Function | undefined;
   skipIronListWidth = false;
@@ -96,6 +98,7 @@ export class YpPostsList extends YpBaseElement {
 
         lit-virtualizer {
           height: 100vh;
+          width: 100vw;
         }
 
         yp-posts-filter {
@@ -264,7 +267,7 @@ export class YpPostsList extends YpBaseElement {
                 .items=${this.posts}
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem}
-                @rangeChange=${this.scrollEvent}></lit-virtualizer>
+                @rangechange=${this.scrollEvent}></lit-virtualizer>
             `
           : html``}
       </div>
@@ -275,9 +278,12 @@ export class YpPostsList extends YpBaseElement {
     //TODO: Check this logic
     if (
       this.posts &&
+      !this.moreFromScrollTriggerActive &&
+      event.lastVisible != -1 &&
       event.lastVisible < this.posts.length &&
       event.lastVisible + 3 >= this.posts.length
     ) {
+      this.moreFromScrollTriggerActive = true;
       this._loadMoreData();
     }
   }
@@ -286,7 +292,7 @@ export class YpPostsList extends YpBaseElement {
     return html` <div
       ?wide-padding="${this.wide}"
       class="card layout vertical center-center"
-      aria-label="[[post.name]]"
+      aria-label="${post.name}"
       role="listitem"
       aria-level="2"
       tabindex="${ifDefined(index)}">
@@ -587,6 +593,8 @@ export class YpPostsList extends YpBaseElement {
         this.requestUpdate();
       }
     }
+
+    this.moreFromScrollTriggerActive = false;
   }
 
   _checkForMultipleLanguages(posts: Array<YpPostData>) {
