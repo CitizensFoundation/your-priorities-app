@@ -99,11 +99,18 @@ class YpPostUserImageEditLit extends YpBaseElement {
       this.$$("#imageFileUpload").target = '/api/images?itemType=post-user-image&postId='+newPost.id;
     }
   }
-/*
-  listeners: {
-    'iron-form-invalid': '_formInvalid'
-  },
-*/
+
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('iron-form-invalid', this._formInvalid);
+  }
+  
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('iron-form-invalid', this._formInvalid);
+  }
+
   _imageChanged(newValue) {
     if (newValue) {
       this.oldUploadedPostUserImageId = newValue.id

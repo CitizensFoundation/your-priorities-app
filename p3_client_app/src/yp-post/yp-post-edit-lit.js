@@ -589,13 +589,27 @@ class YpPostEditLit extends YpBaseElement {
     ypEditDialogBehavior,
     ypGotoBehavior
   ],
-  listeners: {
-    'iron-form-invalid': '_formInvalid',
-    'yp-custom-form-submit': '_customSubmit',
-    'yp-skip-to-unique-id': '_skipToId',
-    'yp-open-to-unique-id': '_openToId',
-    'yp-goto-next-index': '_goToNextIndex'
-  },
+*/
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('yp-debate-info', this._updateDebateInfo);
+    this.addListener('yp-debate-info', this._updateDebateInfo);
+    this.addListener('yp-debate-info', this._updateDebateInfo);
+    this.addListener('yp-debate-info', this._updateDebateInfo);
+    this.addListener('yp-debate-info', this._updateDebateInfo);
+  }
+  
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-debate-info', this._updateDebateInfo);
+    this.removeListener('yp-debate-info', this._updateDebateInfo);
+    this.removeListener('yp-debate-info', this._updateDebateInfo);
+    this.removeListener('yp-debate-info', this._updateDebateInfo);
+    this.removeListener('yp-debate-info', this._updateDebateInfo);
+  }
+  
+/*
   observers: [
     '_setupTranslation(language,t)'
   ],

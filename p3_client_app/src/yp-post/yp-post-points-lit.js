@@ -958,23 +958,30 @@ class YpPostPointsLit extends YpBaseElement {
   detached() {
     window.removeEventListener("resize", this._processStoredPoints);
   }
-/*
-  listeners: {
-    'yp-point-deleted': '_pointDeleted',
-    'yp-update-point-in-list': '_updatePointInLists',
-    'yp-iron-resize': '_ypIronResize'
-  },
 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('yp-point-deleted', this._pointDeleted);
+    this.addListener('yp-update-point-in-list', this._updatePointInLists);
+    this.addListener('yp-iron-resize', this._ypIronResize);
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-point-deleted', this._pointDeleted);
+    this.removeListener('yp-update-point-in-list', this._updatePointInLists);
+    this.removeListener('yp-iron-resize', this._ypIronResize);
+  }
+  
+/*
   observers: [
     '_setupPointTextStartState(pointUpOrDownSelected, post)'
   ],
-
+*/
   _setupPointTextStartState(pointUpOrDownSelected, post) {
     if (post) {
       this._pointUpOrDownSelectedChanged(pointUpOrDownSelected)
     }
   }
-*/
 
   _ypIronResize() {
     if (this.$$("#ironListUp"))

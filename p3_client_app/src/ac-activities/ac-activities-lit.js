@@ -339,11 +339,16 @@ class AcActivitiesLit extends YpBaseElement {
     AccessHelpers,
     ypIronListBehavior
   ],
-
-  listeners: {
-    'yp-point-deleted': '_pointDeleted'
-  },
 */
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('yp-point-deleted', this._pointDeleted);
+    
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-point-deleted', this._pointDeleted);
+  
 
   _openLogin() {
     this.fire('yp-open-login');

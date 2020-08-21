@@ -428,7 +428,8 @@ class YpGroupLit extends YpBaseElement {
     `
   }
 
-  /*behaviors: [
+  /*
+  behaviors: [
     ypThemeBehavior,
     YpNewsTabSelected,
     ypDetectOldiOs,
@@ -437,23 +438,31 @@ class YpGroupLit extends YpBaseElement {
     ypMediaFormatsBehavior,
     ypNumberFormatBehavior
   ],
+  */
 
-
-  listeners: {
-    'yp-post-count': '_updateTabPostCount',
-    'yp-post-new': '_newPost'
-  },
-*/
+ 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('yp-post-count', this._updateTabPostCount);
+    this.addListener('yp-post-new', this._newPost);
+  }
+    disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-post-count', this._updateDebateInfo);
+    this.removeListener('yp-post-new', this._newPost);
+  }
+    
 
   _shouldScrollTabs(phoneWidth, hasNonOpenPosts) {
     return phoneWidth && hasNonOpenPosts;
   }
 
-  /*observers: [
+  /*
+  observers: [
     '_routeIdChanged(idRouteData.id)',
     '_routeTabChanged(tabRouteData.tabName)'
   ],
-*/
+  */
 
   _isTabOpen(selectedTab) {
     return selectedTab==='open';
@@ -639,7 +648,7 @@ class YpGroupLit extends YpBaseElement {
           } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
             this.selectedTab = 'in_progress';
           } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
-            this.selectedTab = 'successful');
+            this.selectedTab = 'successful';
           } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
             this.selectedTab = 'failed';
           }
@@ -683,9 +692,9 @@ class YpGroupLit extends YpBaseElement {
         this.$$("#tabCountSuccessful").innerHTML = "";
         this.$$("#tabCountFailed").innerHTML = "";
       }
-      this.hasNonOpenPosts = false);
-      this.haveGotTabCountInfoCount = 0);
-      this.tabCounters = {});
+      this.hasNonOpenPosts = false;
+      this.haveGotTabCountInfoCount = 0;
+      this.tabCounters = {};
       const groupIdInt = parseInt(groupId);
       if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
         this._groupResponse(null, { response: {
@@ -720,8 +729,8 @@ class YpGroupLit extends YpBaseElement {
   }
 
   _groupResponse(event, detail) {
-    this.group detail.response.group;
-    this.group.configuration = window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration));
+    this.group = detail.response.group;
+    this.group.configuration = window.appGlobals.overrideGroupConfigIfNeeded(this.group.id, this.group.configuration);
 
     this.refresh();
 

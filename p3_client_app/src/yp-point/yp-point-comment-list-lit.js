@@ -155,15 +155,23 @@ class YpPointCommentListLit extends YpBaseElement {
     </div>
     `
   }
-/*
+
+  /*
   behaviors: [
     IronResizableBehavior
   ],
+  */
 
-  listeners: {
-    'yp-point-deleted': '_refresh'
-  },
-*/
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('yp-point-deleted', this._refresh);  
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-point-deleted', this._refresh);
+  }  
+
   _openChanged(newOpenValue) {
     if (newOpenValue) {
       this.$$("#commentsListAjax").generateRequest();
