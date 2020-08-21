@@ -6,6 +6,7 @@ import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { find, chunk } from 'lodash-es';
 
+import '../@yrpri/yp-image.js';
 import '@material/mwc-select';
 import '@material/mwc-icon';
 import '@material/mwc-list/mwc-list-item';
@@ -234,14 +235,14 @@ export class YpPostsFilter extends YpBaseElement {
                       <mwc-list-item
                         data-category-id="${category.id}"
                         data-category-name="${category.name}">
-                        <iron-image
+                        <yp-image
                           sizing="cover"
                           class="catImage"
                           height="24"
                           width="24"
                           src="${this._categoryImageSrc(
                             category
-                          )}"></iron-image>
+                          )}"></yp-image>
                         ${category.name} (${category.count})
                       </mwc-list-item>
                     `

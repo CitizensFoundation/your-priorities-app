@@ -10,7 +10,7 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { Menu } from '@material/mwc-menu';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
-import '@polymer/iron-image';
+import '../@yrpri/yp-image.js';
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-collection-stats.js';
 import { YpGroup } from './yp-group.js';
@@ -59,12 +59,12 @@ export class YpCollectionItemCard extends YpBaseElement {
         .collectionCard[featured] {
         }
 
-        iron-image {
+        yp-image {
           width: 320px !important;
           height: 180px  !important;;
         }
 
-        iron-image[featured] {
+        yp-image[featured] {
         }
 
         .card-content {
@@ -72,12 +72,12 @@ export class YpCollectionItemCard extends YpBaseElement {
           padding-bottom: 48px;
         }
 
-        iron-image {
+        yp-image {
           padding: 0;
           margin: 0;
         }
 
-        iron-image {
+        yp-image {
           padding: 0;
           margin: 0;
         }
@@ -100,7 +100,7 @@ export class YpCollectionItemCard extends YpBaseElement {
           width: auto;
         }
 
-        iron-image[archived] {
+        yp-image[archived] {
         }
 
         yp-membership-button {
@@ -145,12 +145,12 @@ export class YpCollectionItemCard extends YpBaseElement {
             padding-bottom: 8px;
           }
 
-          iron-image {
+          yp-image {
             width: 100%;
             height: 230px;
           }
 
-          iron-image[featured] {
+          yp-image[featured] {
           }
 
           .description {
@@ -159,7 +159,7 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 420px) {
-          iron-image {
+          yp-image {
             height: 225px;
           }
 
@@ -169,7 +169,7 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 375px) {
-          iron-image {
+          yp-image {
             height: 207px;
           }
 
@@ -179,13 +179,13 @@ export class YpCollectionItemCard extends YpBaseElement {
         }
 
         @media (max-width: 360px) {
-          iron-image {
+          yp-image {
             height: 200px;
           }
         }
 
         @media (max-width: 320px) {
-          iron-image {
+          yp-image {
             height: 180px;
           }
 
@@ -247,7 +247,7 @@ export class YpCollectionItemCard extends YpBaseElement {
               <div class="layout horizontal">
                 ${YpCollectionHelpers.logoImagePath(this.itemType, this.item)
                   ? html`
-                      <iron-image
+                      <yp-image
                         sizing="cover"
                         ?archived="${this.archived}"
                         alt="${this.collection.name}"
@@ -257,14 +257,14 @@ export class YpCollectionItemCard extends YpBaseElement {
                           this.itemType,
                           this.item
                         )}"
-                        class="post-image withPointer"></iron-image>
+                        class="post-image withPointer"></yp-image>
                     `
                   : html`
-                      <iron-image
+                      <yp-image
                         ?archived="${this.archived}"
                         sizing="cover"
                         class="main-image withPointer"
-                        src="https://i.imgur.com/sdsFAoT.png"></iron-image>
+                        src="https://i.imgur.com/sdsFAoT.png"></yp-image>
                     `}
               </div>
               <div class="informationText">

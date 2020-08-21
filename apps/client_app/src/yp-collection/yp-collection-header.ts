@@ -10,7 +10,7 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { Menu } from '@material/mwc-menu';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 
-import '@polymer/iron-image';
+import '../@yrpri/yp-image.js';
 import '@material/mwc-icon-button';
 import '@material/mwc-menu';
 import '@material/mwc-list/mwc-list-item';
@@ -233,7 +233,7 @@ export class YpCollectionHeader extends YpBaseElement {
             margin-bottom: 16px;
           }
 
-          iron-image,
+          yp-image,
           video,
           .image {
             width: 100%;
@@ -264,7 +264,7 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         @media (max-width: 375px) {
-          iron-image,
+          yp-image,
           video,
           .image {
             height: 225px;
@@ -276,7 +276,7 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         @media (max-width: 375px) {
-          iron-image,
+          yp-image,
           video,
           .image {
             height: 207px;
@@ -288,7 +288,7 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         @media (max-width: 360px) {
-          iron-image,
+          yp-image,
           video,
           .image {
             height: 200px;
@@ -300,7 +300,7 @@ export class YpCollectionHeader extends YpBaseElement {
         }
 
         @media (max-width: 320px) {
-          iron-image,
+          yp-image,
           video,
           .image {
             height: 180px;
@@ -353,7 +353,7 @@ export class YpCollectionHeader extends YpBaseElement {
       `;
     } else if (this.collection) {
       return html`
-        <iron-image
+        <yp-image
           class="image"
           ?hidden="${this.hideImage}"
           .alt="${this.collection.name}"
@@ -361,7 +361,7 @@ export class YpCollectionHeader extends YpBaseElement {
           .src="${YpCollectionHelpers.logoImagePath(
             this.collectionType,
             this.collection
-          )}"></iron-image>
+          )}"></yp-image>
       `;
     } else {
       return nothing;

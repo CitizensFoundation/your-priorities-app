@@ -6,7 +6,7 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
-import '@polymer/iron-image';
+import '../@yrpri/yp-image.js';
 
 @customElement('yp-post-cover-media')
 export class YpPostCoverMedia extends YpBaseElement {
@@ -127,7 +127,7 @@ export class YpPostCoverMedia extends YpBaseElement {
           height: 100%;
         }
 
-        .topContainer[top-radius] > iron-image,
+        .topContainer[top-radius] > yp-image,
         #videoPreviewImage {
           border-top-right-radius: 4px;
           border-top-left-radius: 4px;
@@ -137,7 +137,7 @@ export class YpPostCoverMedia extends YpBaseElement {
           outline: none !important;
         }
 
-        .topContainer[top-left-radius] > iron-image,
+        .topContainer[top-left-radius] > yp-image,
         #videoPreviewImage,
         google-streetview-pano,
         google-map {
@@ -195,7 +195,7 @@ export class YpPostCoverMedia extends YpBaseElement {
         }
 
         @media (max-width: 960px) {
-          .topContainer[top-left-radius] > iron-image {
+          .topContainer[top-left-radius] > yp-image {
             border-top-left-radius: 0;
           }
         }
@@ -316,23 +316,23 @@ export class YpPostCoverMedia extends YpBaseElement {
         top-left-radius="${this.topLeftRadius}">
         ${this.isNoneActive
           ? html`
-              <iron-image
+              <yp-image
                 ?header-mode="${this.headerMode}"
                 sizing="cover"
                 ?hidden="${this.defaultPostImageEnabled}"
                 class="main-image pointer"
                 src="https://i.imgur.com/sdsFAoT.png"
-                @tap="${this._goToPost}"></iron-image>
+                @tap="${this._goToPost}"></yp-image>
 
               ${this.activeDefaultImageUrl
                 ? html`
-                    <iron-image
+                    <yp-image
                       ?headerMode="${this.headerMode}"
                       alt="${ifDefined(this.altTag)}"
                       sizing="cover"
                       class="main-image pointer"
                       src="${this.activeDefaultImageUrl}"
-                      @click="${this._goToPost}"></iron-image>
+                      @click="${this._goToPost}"></yp-image>
                   `
                 : nothing}
             `
@@ -340,7 +340,7 @@ export class YpPostCoverMedia extends YpBaseElement {
         ${this.isCategoryActive
           ? html`
               <div id="categoryImageId" class="layout horizontal center-center">
-                <iron-image
+                <yp-image
                   ?header-mode="${this.headerMode}"
                   alt="${ifDefined(this.altTag)}"
                   ?tiny="${this.tiny}"
@@ -348,13 +348,13 @@ export class YpPostCoverMedia extends YpBaseElement {
                   class="category-icon pointer"
                   title="${ifDefined(this.post.Category?.name)}"
                   sizing="contain"
-                  src="${this.categoryImagePath}"></iron-image>
+                  src="${this.categoryImagePath}"></yp-image>
               </div>
             `
           : nothing}
         ${this.isCategoryLargeActive
           ? html`
-              <iron-image
+              <yp-image
                 ?header-mode="${this.headerMode}"
                 alt="${ifDefined(this.altTag)}"
                 large
@@ -362,17 +362,17 @@ export class YpPostCoverMedia extends YpBaseElement {
                 class="category-icon pointer"
                 title="${ifDefined(this.post.Category?.name)}"
                 sizing="cover"
-                src="${this.categoryImagePath}"></iron-image>
+                src="${this.categoryImagePath}"></yp-image>
             `
           : nothing}
         ${this.isImageActive
           ? html`
-              <iron-image
+              <yp-image
                 .header-mode="${this.headerMode}"
                 @tap="${this._goToPost}"
                 .sizing="${this.sizingMode}"
                 class="main-image pointer"
-                src="${this.postImagePath}"></iron-image>
+                src="${this.postImagePath}"></yp-image>
             `
           : nothing}
         ${this.isVideoActive
@@ -396,14 +396,14 @@ export class YpPostCoverMedia extends YpBaseElement {
                     <div
                       class="layout vertical center-center videoPreviewContainer"
                       .portrait="${this.portraitVideo}">
-                      <iron-image
+                      <yp-image
                         id="videoPreviewImage layout-self-center"
                         .portrait="${this.portraitVideo}"
                         ?headerMode="${this.headerMode}"
                         @tap="${this._goToPost}"
                         sizing="cover"
                         class="main-image pointer"
-                        src="${this.postVideoPosterPath}"></iron-image>
+                        src="${this.postVideoPosterPath}"></yp-image>
                     </div>
                     <iron-icon
                       icon="videocam"
@@ -453,12 +453,12 @@ export class YpPostCoverMedia extends YpBaseElement {
           ? html`
               ${this.isStreetViewActive
                 ? html`
-                    <iron-image
+                    <yp-image
                       @tap="${this._goToPost}"
                       class="main-image pointer"
                       sizing="cover"
                       src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;zoom=${this.zoomLevel}&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=[[staticMapsApiKey]]"
-                      ?hidden="${this.streetViewActivated}"></iron-image>
+                      ?hidden="${this.streetViewActivated}"></yp-image>
 
                     ${this.streetViewActivated
                       ? html`
@@ -475,12 +475,12 @@ export class YpPostCoverMedia extends YpBaseElement {
                 : nothing}
               ${this.isMapActive
                 ? html`
-                    <iron-image
+                    <yp-image
                       @tap="${this._goToPost}"
                       class="main-image pointer"
                       ?hidden="${this.mapActivated}"
                       sizing="cover"
-                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;size=432x243&amp;zoom=${this.zoomLevel}&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=[[staticMapsApiKey]]"></iron-image>
+                      src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;size=432x243&amp;zoom=${this.zoomLevel}&amp;maptype=[[mapType]]&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=[[staticMapsApiKey]]"></yp-image>
 
                     ${this.mapActivated
                       ? html`
