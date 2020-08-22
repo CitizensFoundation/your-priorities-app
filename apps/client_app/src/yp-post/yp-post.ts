@@ -1,30 +1,40 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-media-query/iron-media-query.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-pages/iron-pages.js';
-import '@polymer/paper-material/paper-material.js';
-import '@polymer/paper-tabs/paper-tab.js';
-import '@polymer/paper-tabs/paper-tabs.js';
-import '@polymer/app-route/app-route.js';
-//TODO: import 'google-map/google-map.js';
-//TODO: import 'google-map/google-map-marker.js';
-import '../ac-activities/ac-activities.js';
-import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
-import { YpNewsTabSelected } from '../yp-behaviors/yp-news-tab-selected.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { ypMediaFormatsBehavior } from '../yp-behaviors/yp-media-formats-behavior.js';
-import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
-import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
-import './yp-post-header.js';
-import './yp-post-points.js';
-import './yp-post-user-images.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
-class YpPostLit extends YpBaseElement {
-  static get properties() {
+import { YpCollection } from './yp-collection.js';
+import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
+import { customElement, html, property, LitElement } from 'lit-element';
+import { nothing, TemplateResult } from 'lit-html';
+
+import '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+
+import '../yp-post/yp-posts-list.js';
+import '../yp-post/yp-post-card-add.js';
+import { YpPostsList } from '../yp-post/yp-posts-list.js';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+
+// TODO: Remove
+interface AcActivity extends LitElement {
+  scrollToItem(item: YpDatabaseItem): () => void;
+  loadNewData(): () => void;
+}
+
+export const GroupTabTypes: Record<string, number> = {
+  Open: 0,
+  InProgress: 1,
+  Successful: 2,
+  Failed: 3,
+  Newsfeed: 4,
+  Map: 5,
+};
+
+@customElement('yp-post')
+export class YpPost extends YpBaseElement {
+  @property({ type: String })
+  searchingFor: string | undefined;
+
+  static get psroperties() {
     return {
       idRoute: Object,
       tabRoute: Object,
@@ -410,7 +420,7 @@ class YpPostLit extends YpBaseElement {
 
             ${ this.post ? html`
               ${ !this.post.location ? html`
-                <h1 .style="padding-top: 16px">${this.t('post.noLocation')}</h1>
+                <h1 style="padding-top: 16px">${this.t('post.noLocation')}</h1>
               `: html``}
             `: html``}
 
