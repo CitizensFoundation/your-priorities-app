@@ -170,11 +170,19 @@ class YpUserEditLit extends YpBaseElement {
   behaviors: [
     ypEditDialogBehavior
   ],
-
-  listeners: {
-    'yp-notifications-changed': '_setNotificationSettings'
-  },
 */
+ 
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener(yp-notifications-changed, _setNotificationSettings);
+   }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-notifications-changed', _setNotificationSettings);
+  }
+
+
   _editResponse(event, detail) {
     if (detail.response.duplicateEmail) {
       dom(document).querySelector('yp-app').getDialogAsync("errorDialog", function (dialog) {

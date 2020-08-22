@@ -493,16 +493,26 @@ class YpEditDialogLit extends YpBaseElement {
       return "popUpDialog";
   }
 
-/*
-  listeners: {
-    'iron-form-submit': '_formSubmitted',
-    'iron-form-response': '_formResponse',
-    'iron-form-error': '_formError',
-    'iron-form-invalid': '_formInvalid',
-    'file-upload-starting': '_fileUploadStarting',
-    'file-upload-complete': '_fileUploadComplete'
+
+  connectedCallback() {
+    super.connectedCallback();
+      this.addListener('iron-form-submit', this._formSubmitted);
+      this.addListener('iron-form-response', this._formResponse);
+      this.addListener('iron-form-error', this._formError);
+      this.addListener('iron-form-invalid', this._formInvalid);
+      this.addListener('file-upload-starting', this._fileUploadStarting);
+      this.addListener('file-upload-complete', this._fileUploadComplete);
   }
-*/
+  
+  disconnectedCallback() {
+    super.disconnectedCallback();
+      this.removeListener('iron-form-submit', this._formSubmitted);
+      this.removeListener('iron-form-response', this._formResponse);
+      this.removeListener('iron-form-error', this._formError);
+      this.removeListener('iron-form-invalid', this._formInvalid);
+      this.removeListener('file-upload-starting', this._fileUploadStarting);
+      this.removeListener('file-upload-complete', this._fileUploadComplete);
+  }
 
   open() {
     this.opened = false;

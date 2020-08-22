@@ -188,12 +188,17 @@ class YpCommunityLit extends YpBaseElement {
     '_routeIdChanged(idRouteData.id)',
     '_routeTabChanged(tabRouteData.tabName)'
   ],
+*/
 
-  listeners: {
-    'yp-new-group': '_newGroup'
-  },
-
- */
+  connectedCallback() {
+    super.connectedCallback();
+    this.addListener('yp-new-group', this._newGroup);
+  }
+    
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeListener('yp-new-group', this._newGroup);
+  }
 
   _userLoggedIn(user) {
     if (user) {
