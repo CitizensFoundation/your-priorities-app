@@ -416,21 +416,21 @@ export class YpPostActions extends YpBaseElement {
       this.smallerIcons = false;
     }
     if (endorsementButtons == 'thumbs' && upDown == 'up') {
-      return 'thumb-up';
+      return 'thumb_up';
     } else if (endorsementButtons == 'thumbs' && upDown == 'down') {
-      return 'thumb-down';
+      return 'thumb_down';
     } else if (endorsementButtons == 'hearts' && upDown == 'up') {
-      return 'favorite-border';
+      return 'favorite_border';
     } else if (endorsementButtons == 'hearts' && upDown == 'down') {
-      return 'do-not-disturb';
+      return 'do_not_disturb';
     } else if (endorsementButtons == 'hats' && upDown == 'up') {
-      return 'keyboard-arrow-up';
+      return 'keyboard_arrow_up';
     } else if (endorsementButtons == 'hats' && upDown == 'down') {
-      return 'keyboard-arrow-down';
+      return 'keyboard_arrow_down';
     } else if (endorsementButtons == 'arrows' && upDown == 'up') {
-      return 'arrow-upward';
+      return 'arrow_upward';
     } else if (endorsementButtons == 'arrows' && upDown == 'down') {
-      return 'arrow-downward';
+      return 'arrow_downward';
     }
   }
 

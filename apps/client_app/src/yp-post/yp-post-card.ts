@@ -51,7 +51,6 @@ export class YpPostCard extends YpBaseElement {
           background-color: #fff;
           color: #000;
           font-weight: 500;
-          width: 100%;
         }
 
         .postCardCursor {
@@ -61,8 +60,6 @@ export class YpPostCard extends YpBaseElement {
         .postCard {
           background-color: #fff;
           width: 420px;
-          margin-left: auto;
-          margin-right: auto;
         }
 
         :host {
@@ -70,7 +67,6 @@ export class YpPostCard extends YpBaseElement {
         }
 
         .postCard {
-          height: 435px;
           width: 416px;
           border-radius: 4px;
         }
@@ -135,10 +131,6 @@ export class YpPostCard extends YpBaseElement {
         }
 
         .postActions {
-          position: absolute;
-          right: 20px;
-          bottom: 2px;
-          margin: 0;
         }
 
         .shareIcon {
@@ -384,7 +376,6 @@ export class YpPostCard extends YpBaseElement {
                             `
                           : html`
                               <yp-post-actions
-                                floating
                                 class="postActions"
                                 .post="${this.post}"
                                 ?hidden="${this.mini}">
