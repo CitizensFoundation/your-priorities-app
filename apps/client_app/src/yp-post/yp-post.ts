@@ -602,14 +602,6 @@ export class YpPost extends YpCollection {
     }
   }
 
-  _postChanged(newValue, oldValue) {
-    if (post) {
-      this.isAdmin = this.checkPostAdminOnlyAccess(post);
-    } else {
-      this.isAdmin = false;
-    }
-  }
-
   async _getPost() {
     if (this.collectionId) {
       this.post = undefined;
@@ -668,6 +660,8 @@ export class YpPost extends YpCollection {
         this.post.id,
         this._processRecommendation.bind(this)
       );
+
+      this.isAdmin = YpAccessHelpers.checkPostAdminOnlyAccess(this.post);
     } else {
       console.error("Trying to refresh without post");
     }
