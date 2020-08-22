@@ -21,4 +21,29 @@ export class YpFormattingHelpers {
       console.error("Trying to remove class from a non exisisting element");
     }
   }
+
+  static truncate(input: string, length: number, killwords: string|undefined = undefined, end: string|undefined = undefined) {
+    length = length || 255;
+
+    if (input.length <= length)
+      return input;
+
+    if (killwords) {
+      input = input.substring(0, length);
+    } else {
+      let idx = input.lastIndexOf(' ', length);
+      if (idx === -1) {
+        idx = length;
+      }
+
+      input = input.substring(0, idx);
+    }
+
+    input += (end !== undefined && end !== null) ? end : '...';
+    return input;
+  }
+
+  static trim(input: string) {
+    return input.replace(/^\s*|\s*$/g, '');
+  }
 }

@@ -64,13 +64,13 @@ export abstract class YpCollection extends YpBaseElement {
   createFabLabel: string | undefined;
 
   collectionType: string;
-  collectionItemType: string;
+  collectionItemType: string | null;
   collectionCreateFabIcon: string;
   collectionCreateFabLabel: string;
 
   constructor(
     collectionType: string,
-    collectionItemType: string,
+    collectionItemType: string | null,
     collectionCreateFabIcon: string,
     collectionCreateFabLabel: string
   ) {
@@ -88,6 +88,12 @@ export abstract class YpCollection extends YpBaseElement {
   abstract scrollToCollectionItemSubClass(): void;
 
   // DATA PROCESSING
+
+  connectedCallback() {
+    this.connectedCallback();
+    if (this.collection)
+      this.refresh();
+  }
 
   refresh(): void {
     console.error("REFRESH");
@@ -235,7 +241,7 @@ export abstract class YpCollection extends YpBaseElement {
 
     switch (this.selectedTab) {
       case CollectionTabTypes.Collection:
-        page = this.collectionItems
+        page = (this.collectionItems && this.collectionItemType)
           ? html` <yp-collection-items-grid
               id="collectionItems"
               .collectionItems="${this.collectionItems}"
@@ -276,6 +282,11 @@ export abstract class YpCollection extends YpBaseElement {
 
   // EVENTS
 
+  collectionIdChanged() {
+    this._getCollection();
+    this._getHelpPages();
+  }
+
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
@@ -290,8 +301,7 @@ export abstract class YpCollection extends YpBaseElement {
     }
 
     if (changedProperties.has('collectionId') && this.collectionId) {
-      this._getCollection();
-      this._getHelpPages();
+      this.collectionIdChanged();
     }
   }
 

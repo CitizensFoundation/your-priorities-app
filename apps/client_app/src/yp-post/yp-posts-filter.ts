@@ -441,11 +441,11 @@ export class YpPostsFilter extends YpBaseElement {
     }
   }
 
-  _updateMainListMenuValue(value: string) {
+  _updateMainListMenuValue() {
     const mainListMenu = this.$$('#mainListMenu');
     if (mainListMenu) {
       setTimeout(()=>{
-        (this.$$('#mainListMenu') as Select).value = value;
+        (this.$$('#mainListMenu') as Select).value = this.filter;
         (this.$$('#mainListMenu') as Select).layout();
       }, 20);
     } else {
@@ -471,7 +471,7 @@ export class YpPostsFilter extends YpBaseElement {
     if (changedProperties.has('filter') && this.filter) {
       this.filterName = 'post.' + this.filter;
       this._updateTitle();
-      this._updateMainListMenuValue(this.filter);
+      this._updateMainListMenuValue();
     }
 
     if (changedProperties.has('categoryId') && this.categoryId) {
