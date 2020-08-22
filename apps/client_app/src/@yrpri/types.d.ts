@@ -362,3 +362,7 @@ interface YpGroupResults {
   group: YpGroupData;
   hasNonOpenPosts: boolean;
 }
+
+interface YpGetNonOpenPostsResponse {
+  hasNonOpenPosts: boolean;
+}

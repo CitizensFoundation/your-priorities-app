@@ -77,6 +77,8 @@ export class YpGroup extends YpCollection {
 
     if (this.hasNonOpenPosts) {
       if (this.haveGotTabCountInfoCount == 4) {
+
+        //TODO: Fix this logic of selecting a group with some ideas after we get the new counts from the server
         if (this.selectedGroupTab === GroupTabTypes.Open) {
           if (this.tabCounters['open'] && this.tabCounters['open'] > 0) {
             this.selectedGroupTab = GroupTabTypes.Open;
@@ -99,11 +101,19 @@ export class YpGroup extends YpCollection {
         }
       }
     }
+
+    setTimeout(() => {
+      this.requestUpdate();
+    });
   }
 
   tabLabelWithCount(type: string): string {
-    return `${this.t('posts.' + type)} (${
-      this.tabCounters[type] ? this.tabCounters[type] : '...'
+    const labelTranslation = this.t('posts.' + type);
+    if (type==='inProgress')
+      type="in_progress"
+
+    return `${labelTranslation} (${
+      this.tabCounters[type] != undefined ? this.tabCounters[type] : '...'
     })`;
   }
 
@@ -165,6 +175,7 @@ export class YpGroup extends YpCollection {
     window.appGlobals.retryMethodAfter401Login = undefined;
   }
 
+  //TODO: Fix moving on to the next group with focus if 0 ideas in Open
   renderGroupTabs() {
     if (this.collection && !this.tabsHidden) {
       return html`
@@ -394,7 +405,7 @@ export class YpGroup extends YpCollection {
   _refreshGroupPosts() {
     if (this._isCurrentPostsTab) {
       const tab = this.getCurrentTabElement() as YpPostsList;
-      if (tab) tab._refreshGroupFromFilter();
+      if (tab) tab.refreshGroupFromFilter();
       else console.error('TODO: Check, cant find tab to refresh');
     } else {
       console.error('TODO: Check, post tab not selected');
@@ -441,10 +452,10 @@ export class YpGroup extends YpCollection {
       setTimeout(async () => {
         const checkResults = (await window.serverApi.getHasNonOpenPosts(
           group.id
-        )) as boolean | void;
+        )) as YpGetNonOpenPostsResponse | void;
 
         if (checkResults) {
-          this.hasNonOpenPosts = checkResults;
+          this.hasNonOpenPosts = checkResults.hasNonOpenPosts;
         }
       });
 

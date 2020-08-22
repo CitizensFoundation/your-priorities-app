@@ -31,7 +31,7 @@ export class YpPostCard extends YpBaseElement {
       post: {
         type: Object,
         observer: '_postChanged',
-      }
+      },
     };
   }
 
@@ -60,7 +60,9 @@ export class YpPostCard extends YpBaseElement {
 
         .postCard {
           background-color: #fff;
-          width: 420px;margin-left:auto;margin-right:auto;
+          width: 420px;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         :host {
@@ -158,9 +160,9 @@ export class YpPostCard extends YpBaseElement {
         }
 
         :host {
-            width: 600px;
-            max-width: 600px;
-          }
+          width: 600px;
+          max-width: 600px;
+        }
 
         @media (max-width: 960px) {
           .customRatings {
@@ -281,117 +283,127 @@ export class YpPostCard extends YpBaseElement {
     ];
   }
 
+  //TODO: Write a server side script to make sure Group.configuration is always there
   render() {
-    return this.post ? html`
-    <div class="layout vertical center-center">
-    <div
-        .mini="${this.mini}"
-        .hide-post-cover="${this.post.Group.configuration.hidePostCover}"
-        .hide-description="${this.post.Group.configuration.hidePostDescription}"
-        ?hide-actions="${this.post.Group.configuration.hidePostActionsInGrid}"
-        audio-cover="${this.isAudioCover}"
-        class="card postCard layout vertical shadow-elevation-6dp shadow-transition"
-        animated>
-        <div class="layout vertical">
-          <a href="${ifDefined(this._getPostLink(this.post))}" id="mainArea">
-            <yp-post-cover-media
-              ?mini="${this.mini}"
-              top-radius
-              ?audioCover="${this.isAudioCover}"
-              .altTag="${this.post.name}"
-              .post="${this.post}"
-              ?hidden="${this.post.Group.configuration
-                .hidePostCover}"></yp-post-cover-media>
-            <div class="postNameContainer">
-              <div class="post-name" ?mini="${this.mini}" id="postName">
-                <yp-magic-text
-                  id="postNameMagicText"
-                  textType="postName"
-                  .contentLanguage="${this.post.language}"
-                  @click="${this.goToPostIfNotHeader}"
-                  text-only
-                  .content="${this.post.name}"
-                  .contentId="${this.post.id}">
-                </yp-magic-text>
-              </div>
-            </div>
-            ${!this.post.public_data?.structuredAnswersJson
-              ? html`
-                  <yp-magic-text
-                    class="description layout horizontal"
-                    ?hasCustomRatings="${this.post.Group.configuration.customRatings}"
-                    ?hidden="${this.hideDescription}"
-                    textType="postContent"
-                    .contentLanguage="${this.post.language}"
-                    @click="${this.goToPostIfNotHeader}"
-                    text-only
-                    .content="${this.post.description}"
-                    .contentId="${this.post.id}"
-                    truncate="220">
-                  </yp-magic-text>
-                `
-              : html`
-                  <yp-magic-text
-                    id="description"
-                    textType="postContent"
-                    .contentLanguage="${this.post.language}"
-                    ?hidden="${this.hideDescription}"
-                    .content="${this.structuredAnswersFormatted}"
-                    .contentId="${this.post.id}"
-                    class="description"
-                    truncate="120">
-                  </yp-magic-text>
-                `}
-          </a>
-          <div
-            ?hidden="${this.post.Group.configuration.hidePostActionsInGrid}"
-            @click="${this._onBottomClick}">
-            ${!this.mini
-              ? html`
-                  <div class="share">
-                    <mwc-icon-button
-                      @share-tap="${this._shareTap}"
-                      class="shareIcon"
-                      ?lessMargin="${this.post.Group.configuration
-                        .hideDownVoteForPost}"
-                      horizontal-align="right"
-                      id="shareButton"
-                      ?whatsapp="${this.post.Group.configuration
-                        .allowWhatsAppSharing}"
-                      title="${this.t('post.shareInfo')}"
-                      facebook
-                      email
-                      twitter
-                      popup
-                      url="${this._fullPostUrl}">
-                    </mwc-icon-button>
+    return this.post
+      ? html`
+          <div class="layout vertical center-center">
+            <div
+              .mini="${this.mini}"
+              .hide-post-cover="${this.post.Group.configuration.hidePostCover}"
+              .hide-description="${this.post.Group.configuration
+                .hidePostDescription}"
+              ?hide-actions="${this.post.Group.configuration
+                .hidePostActionsInGrid}"
+              audio-cover="${this.isAudioCover}"
+              class="card postCard layout vertical shadow-elevation-6dp shadow-transition"
+              animated>
+              <div class="layout vertical">
+                <a
+                  href="${ifDefined(this._getPostLink(this.post))}"
+                  id="mainArea">
+                  <yp-post-cover-media
+                    ?mini="${this.mini}"
+                    top-radius
+                    ?audioCover="${this.isAudioCover}"
+                    .altTag="${this.post.name}"
+                    .post="${this.post}"
+                    ?hidden="${this.post.Group.configuration
+                      .hidePostCover}"></yp-post-cover-media>
+                  <div class="postNameContainer">
+                    <div class="post-name" ?mini="${this.mini}" id="postName">
+                      <yp-magic-text
+                        id="postNameMagicText"
+                        textType="postName"
+                        .contentLanguage="${this.post.language}"
+                        @click="${this.goToPostIfNotHeader}"
+                        text-only
+                        .content="${this.post.name}"
+                        .contentId="${this.post.id}">
+                      </yp-magic-text>
+                    </div>
                   </div>
-                  ${this.post.Group.configuration.customRatings
+                  ${!this.post.public_data?.structuredAnswersJson
                     ? html`
-                        <yp-post-ratings-info
-                          class="customRatings"
-                          .post="${this.post}"></yp-post-ratings-info>
+                        <yp-magic-text
+                          class="description layout horizontal"
+                          ?hasCustomRatings="${this.post.Group.configuration
+                            .customRatings}"
+                          ?hidden="${this.hideDescription}"
+                          textType="postContent"
+                          .contentLanguage="${this.post.language}"
+                          @click="${this.goToPostIfNotHeader}"
+                          text-only
+                          .content="${this.post.description}"
+                          .contentId="${this.post.id}"
+                          truncate="220">
+                        </yp-magic-text>
                       `
                     : html`
-                        <yp-post-actions
-                          floating
-                          class="postActions"
-                          .post="${this.post}"
-                          ?hidden="${this.mini}">
-                        </yp-post-actions>
+                        <yp-magic-text
+                          id="description"
+                          textType="postContent"
+                          .contentLanguage="${this.post.language}"
+                          ?hidden="${this.hideDescription}"
+                          .content="${this.structuredAnswersFormatted}"
+                          .contentId="${this.post.id}"
+                          class="description"
+                          truncate="120">
+                        </yp-magic-text>
                       `}
-                `
-              : nothing}
+                </a>
+                <div
+                  ?hidden="${this.post.Group.configuration
+                    .hidePostActionsInGrid}"
+                  @click="${this._onBottomClick}">
+                  ${!this.mini
+                    ? html`
+                        <div class="share">
+                          <mwc-icon-button
+                            @share-tap="${this._shareTap}"
+                            class="shareIcon"
+                            ?lessMargin="${this.post.Group.configuration
+                              .hideDownVoteForPost}"
+                            horizontal-align="right"
+                            id="shareButton"
+                            ?whatsapp="${this.post.Group.configuration
+                              .allowWhatsAppSharing}"
+                            title="${this.t('post.shareInfo')}"
+                            facebook
+                            email
+                            twitter
+                            popup
+                            url="${this._fullPostUrl}">
+                          </mwc-icon-button>
+                        </div>
+                        ${this.post.Group.configuration.customRatings
+                          ? html`
+                              <yp-post-ratings-info
+                                class="customRatings"
+                                .post="${this.post}"></yp-post-ratings-info>
+                            `
+                          : html`
+                              <yp-post-actions
+                                floating
+                                class="postActions"
+                                .post="${this.post}"
+                                ?hidden="${this.mini}">
+                              </yp-post-actions>
+                            `}
+                      `
+                    : nothing}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-    </div>
-    ` : nothing;
+        `
+      : nothing;
   }
 
   get _fullPostUrl() {
-    return encodeURIComponent("https://"+window.location.host+"/post/"+this.post.id);
+    return encodeURIComponent(
+      'https://' + window.location.host + '/post/' + this.post.id
+    );
   }
 
   get structuredAnswersFormatted(): string {
@@ -405,14 +417,18 @@ export class YpPostCard extends YpBaseElement {
       const questionHash: Record<string, YpStructuredQuestions> = {};
       let outText = '';
       this.post.Group.configuration.structuredQuestionsJson.forEach(
-       (question) => {
+        question => {
           if (question.uniqueId) {
             questionHash[question.uniqueId] = question;
           }
         }
       );
 
-      for (let i = 0; i < this.post.public_data.structuredAnswersJson.length; i++) {
+      for (
+        let i = 0;
+        i < this.post.public_data.structuredAnswersJson.length;
+        i++
+      ) {
         const answer = this.post.public_data.structuredAnswersJson[i];
         if (answer && answer.value) {
           const question = questionHash[answer.uniqueId];
@@ -439,7 +455,7 @@ export class YpPostCard extends YpBaseElement {
   }
 
   clickOnA() {
-    this.$$("#mainArea")?.click();
+    this.$$('#mainArea')?.click();
   }
 
   _getPostLink(post: YpPostData) {
@@ -471,12 +487,10 @@ export class YpPostCard extends YpBaseElement {
   }
 
   get hideDescription(): boolean {
-    return (
-      this.mini ||
+    return (this.mini ||
       (this.post &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.hidePostDescription)
-    ) as boolean;
+        this.post.Group.configuration.hidePostDescription)) as boolean;
   }
 
   goToPostIfNotHeader() {
@@ -514,33 +528,40 @@ export class YpPostCard extends YpBaseElement {
 
   _refresh() {
     //TODO: Fix ts type
-    window.appDialogs
-      .getDialogAsync(
-        'postEdit',
-       (dialog: { selected: number }) => {
-          dialog.selected = 0;
-          this.fire('refresh');
-        }
-      );
+    window.appDialogs.getDialogAsync(
+      'postEdit',
+      (dialog: { selected: number }) => {
+        dialog.selected = 0;
+        this.fire('refresh');
+      }
+    );
   }
 
   _openReport() {
     window.appGlobals.activity('open', 'post.report');
     //TODO: Fix ts type
-    window.appDialogs
-      .getDialogAsync(
-        'apiActionDialog',
-       (dialog: { setup: (arg0: string, arg1: string, arg2: () => void, arg3: string, arg4: string) => void; open: () => void }) => {
-          dialog.setup(
-            '/api/posts/' + this.post.id + '/report',
-            this.t('reportConfirmation'),
-            this._onReport.bind(this),
-            this.t('post.report'),
-            'PUT'
-          );
-          dialog.open();
-        }
-      );
+    window.appDialogs.getDialogAsync(
+      'apiActionDialog',
+      (dialog: {
+        setup: (
+          arg0: string,
+          arg1: string,
+          arg2: () => void,
+          arg3: string,
+          arg4: string
+        ) => void;
+        open: () => void;
+      }) => {
+        dialog.setup(
+          '/api/posts/' + this.post.id + '/report',
+          this.t('reportConfirmation'),
+          this._onReport.bind(this),
+          this.t('post.report'),
+          'PUT'
+        );
+        dialog.open();
+      }
+    );
   }
 
   _onReport() {

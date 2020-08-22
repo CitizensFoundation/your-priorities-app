@@ -15,6 +15,7 @@ import { YpPostsFilter } from './yp-posts-filter.js';
 import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { RangeChangeEvent } from 'lit-virtualizer';
+import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-posts-list')
 export class YpPostsList extends YpBaseElement {
@@ -60,7 +61,7 @@ export class YpPostsList extends YpBaseElement {
 
   moreToLoad = false;
 
-  moreFromScrollTriggerActive = false
+  moreFromScrollTriggerActive = false;
 
   // For YpIronListHelper
   resetListSize: Function | undefined;
@@ -210,6 +211,8 @@ export class YpPostsList extends YpBaseElement {
     if (event.keyCode === 13) {
       this._search();
     }
+
+    this.showSearchIcon = true;
   }
 
   render() {
@@ -226,52 +229,67 @@ export class YpPostsList extends YpBaseElement {
                 </div>
               </div>
             `
-          : html``}
+          : nothing }
+        <div
+          class="searchContainer layout horizontal center-center wrap"
+          ?hidden="${this.group.configuration.hidePostFilterAndSearch || this.noPosts}">
+          <div class="layout horizontal center-center">
+            <yp-posts-filter
+              @tap="${this._tapOnFilter}"
+              .subTitle="${this.subTitle ? this.subTitle : ''}"
+              class="filter"
+              id="postsFilter"
+              .tabName="${this.statusFilter}"
+              @refresh-group="${this.refreshGroupFromFilter}"
+              .group="${this.group}"
+              .filter="${this.filter}"
+              .statusFilter="${this.statusFilter}"
+              .searchingFor="${this.searchingFor}"
+              .categoryId="${this.categoryId}"
+              .postsCount="${this.postsCount}">
+            </yp-posts-filter>
+          </div>
+          <div class="layout horizontal center-center">
+          ${this.searchingFor
+            ? html`
+                <mwc-icon-button
+                  aria-label="${this.t('clearSearchInput')}"
+                  icon="clear"
+                  @click="${this._clearSearch}"
+                  class="clear-search-trigger"></mwc-icon-button>
+              `
+            : nothing }
+            <mwc-textfield
+              id="searchInput"
+              @keydown="${this._searchKey}"
+              .label="${this.t('searchFor')}"
+              .value="${this.searchingFor ? this.searchingFor : ''}"
+              class="searchBox">
+            </mwc-textfield>
+            <mwc-icon-button
+              .label="${this.t('startSearch')}"
+              icon="search"
+              @click="${this._search}"
+              ?hidden="${!this.showSearchIcon}"></mwc-icon-button>
+          </div>
+        </div>
         ${this.posts
           ? html`
-              <div
-                class="searchContainer layout horizontal center-center wrap"
-                ?hidden="${this.group.configuration.hidePostFilterAndSearch}">
-                <div class="layout horizontal center-center">
-                  <yp-posts-filter
-                    @tap="${this._tapOnFilter}"
-                    .subTitle="${this.subTitle ? this.subTitle : ''}"
-                    class="filter"
-                    id="postsFilter"
-                    .tabName="${this.statusFilter}"
-                    @refresh-group="${this._refreshGroupFromFilter}"
-                    .group="${this.group}"
-                    .filter="${this.filter}"
-                    .statusFilter="${this.statusFilter}"
-                    .searchingFor="${this.searchingFor}"
-                    .categoryId="${this.categoryId}"
-                    .postsCount="${this.postsCount}">
-                  </yp-posts-filter>
-                </div>
-                <div class="layout horizontal center-center">
-                  <mwc-textfield
-                    id="searchInput"
-                    @keydown="${this._searchKey}"
-                    .label="${this.t('searchFor')}"
-                    .value="${this.searchingFor ? this.searchingFor : ''}"
-                    class="searchBox">
-                  </mwc-textfield>
-                  <mwc-icon-button
-                    .label="${this.t('startSearch')}"
-                    icon="search"
-                    @click="${this._search}"
-                    ?hidden="${!this.showSearchIcon}"></mwc-icon-button>
-                </div>
-              </div>
               <lit-virtualizer
                 .items=${this.posts}
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem}
                 @rangechange=${this.scrollEvent}></lit-virtualizer>
             `
-          : html``}
+          : nothing }
       </div>
     `;
+  }
+
+  _clearSearch() {
+    this.searchingFor = undefined;
+    this.filter = 'newest';
+    (this.$$("#postsFilter") as YpPostsFilter)._updateAfterFiltering();
   }
 
   scrollEvent(event: RangeChangeEvent) {
@@ -308,19 +326,30 @@ export class YpPostsList extends YpBaseElement {
   _categoryChanged(event: CustomEvent) {
     if (event.detail) {
       this.categoryId = event.detail;
-      debugger;
+    } else {
+      this.categoryId = undefined;
     }
+  }
+
+  _filterChanged(event: CustomEvent) {
+    this.filter = event.detail;
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
     console.error(changedProperties);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
     this.addListener('yp-filter-category-change', this._categoryChanged);
+    this.addListener('yp-filter-changed', this._filterChanged);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener('yp-filter-category-change', this._categoryChanged);
+    this.removeListener('yp-filter-changed', this._filterChanged);
   }
 
   _selectedItemChanged(event: CustomEvent) {
@@ -412,8 +441,9 @@ export class YpPostsList extends YpBaseElement {
 
   _search() {
     window.appGlobals.activity('click', 'search');
+    this.searchingFor = (this.$$("#searchInput") as TextField).value;
     if (this.searchingFor && this.searchingFor != '') {
-      this._refreshGroupFromFilter();
+      this.refreshGroupFromFilter();
     }
   }
 
@@ -433,7 +463,6 @@ export class YpPostsList extends YpBaseElement {
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
-    console.error(changedProperties);
     if (
       changedProperties.has('statusFilter') &&
       this.group &&
@@ -487,7 +516,7 @@ export class YpPostsList extends YpBaseElement {
         this._loadMoreData();
       }
     } else if (this.group && changedProperties.has('filter') && this.filter) {
-      this._loadMoreData();
+      //this._loadMoreData();
     } else if (
       this.group &&
       changedProperties.has('categoryId') &&
@@ -506,7 +535,7 @@ export class YpPostsList extends YpBaseElement {
     }
   }
 
-  _refreshGroupFromFilter() {
+  refreshGroupFromFilter() {
     this.posts = undefined;
     this.moreToLoad = true;
     this._loadMoreData();
