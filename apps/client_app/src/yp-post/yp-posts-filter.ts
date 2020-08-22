@@ -447,7 +447,7 @@ export class YpPostsFilter extends YpBaseElement {
       setTimeout(()=>{
         (this.$$('#mainListMenu') as Select).value = value;
         (this.$$('#mainListMenu') as Select).layout();
-      })
+      }, 20);
     } else {
       console.error('Cant find mainListMenu menu');
     }

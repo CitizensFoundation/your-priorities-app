@@ -72,6 +72,12 @@ export class YpPostsList extends YpBaseElement {
       super.styles,
       ShadowStyles,
       css`
+
+        .cardContainer {
+          width: 100%;
+          margin: 8px;
+        }
+
         .postsFilter {
           padding-left: 16px;
           height: 36px;
@@ -286,30 +292,10 @@ export class YpPostsList extends YpBaseElement {
     `;
   }
 
-  _clearSearch() {
-    this.searchingFor = undefined;
-    this.filter = 'newest';
-    (this.$$("#postsFilter") as YpPostsFilter)._updateAfterFiltering();
-  }
-
-  scrollEvent(event: RangeChangeEvent) {
-    //TODO: Check this logic
-    if (
-      this.posts &&
-      !this.moreFromScrollTriggerActive &&
-      event.lastVisible != -1 &&
-      event.lastVisible < this.posts.length &&
-      event.lastVisible + 3 >= this.posts.length
-    ) {
-      this.moreFromScrollTriggerActive = true;
-      this._loadMoreData();
-    }
-  }
-
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
     return html` <div
       ?wide-padding="${this.wide}"
-      class="card layout vertical center-center"
+      class="cardContainer layout vertical center-center"
       aria-label="${post.name}"
       role="listitem"
       aria-level="2"
@@ -338,6 +324,26 @@ export class YpPostsList extends YpBaseElement {
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
     console.error(changedProperties);
+  }
+
+  _clearSearch() {
+    this.searchingFor = undefined;
+    this.filter = 'newest';
+    (this.$$("#postsFilter") as YpPostsFilter)._updateAfterFiltering();
+  }
+
+  scrollEvent(event: RangeChangeEvent) {
+    //TODO: Check this logic
+    if (
+      this.posts &&
+      !this.moreFromScrollTriggerActive &&
+      event.lastVisible != -1 &&
+      event.lastVisible < this.posts.length &&
+      event.lastVisible + 3 >= this.posts.length
+    ) {
+      this.moreFromScrollTriggerActive = true;
+      this._loadMoreData();
+    }
   }
 
   connectedCallback() {
