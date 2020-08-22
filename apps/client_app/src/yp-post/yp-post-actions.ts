@@ -460,7 +460,7 @@ export class YpPostActions extends YpBaseElement {
           this.$$('#actionUp'),
           'hearts-up-selected'
         );
-        (this.$$('#iconUpButton') as IconButton).icon = 'favoriate-border';
+        (this.$$('#iconUpButton') as IconButton).icon = 'favoriate_border';
       } else {
         YpFormattingHelpers.removeClass(
           this.$$('#actionUp'),
@@ -470,7 +470,7 @@ export class YpPostActions extends YpBaseElement {
           this.$$('#actionDown'),
           'hearts-down-selected'
         );
-        (this.$$('#iconUpButton') as IconButton).icon = 'favorite-border';
+        (this.$$('#iconUpButton') as IconButton).icon = 'favorite_border';
       }
     } else {
       if (value > 0) {
