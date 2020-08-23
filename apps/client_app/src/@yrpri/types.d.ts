@@ -16,13 +16,13 @@ interface YpCollectionConfiguration {
   hideAllTabs?: boolean;
 }
 
-interface YpStructuredQuestions {
-  uniqueId: string;
+interface YpStructuredQuestion {
+  uniqueId: number;
   text: string;
 }
 
-interface YpStructuredAnswers {
-  uniqueId: string;
+interface YpStructuredAnswer {
+  uniqueId: number;
   value: string;
 }
 
@@ -54,7 +54,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hidePostCover?: boolean;
   hidePostDescription?: boolean;
   allowWhatsAppSharing?: boolean;
-  structuredQuestionsJson?: Array<YpStructuredQuestions>;
+  structuredQuestionsJson?: Array<YpStructuredQuestion>;
   hideVoteCount?: boolean;
   customVoteUpHoverText?: string;
   customVoteDownHoverText?: string;
@@ -64,6 +64,12 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   endorsementButtons?: string;
   useContainImageMode?: boolean;
   uploadedDefaultPostImageId?: number;
+  defaultLocale?: string;
+  hideNewPostOnPostPage?: boolean;
+  structuredQuestions?: string;
+  descriptionTruncateAmount?: number;
+  showWhoPostedPosts?: boolean;
+  descriptionSimpleFormat?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -263,7 +269,19 @@ interface YpPostData extends YpDatabaseItem {
   counter_endorsements_down: number;
   counter_points: number;
   public_data?: {
-    structuredAnswersJson?: Array<YpStructuredAnswers>;
+    structuredAnswersJson?: Array<YpStructuredAnswer>;
+    law_issue: {
+      sessionId: string;
+      issueId: string;
+      issueStatus: string;
+    };
+    transcript: {
+      inProgress: boolean;
+      text: string;
+      noMachineTranslation: boolean;
+      userEdited: boolean;
+      language: string;
+    };
   };
   location: {
     longitude: string;
@@ -365,4 +383,10 @@ interface YpGroupResults {
 
 interface YpGetNonOpenPostsResponse {
   hasNonOpenPosts: boolean;
+}
+
+interface YpCheckTranscriptResponse {
+  text?: string;
+  inProgress?: boolean;
+  error?: string;
 }

@@ -356,9 +356,9 @@ export class YpAppUser extends YpCodeBase {
     this.fireGlobal('yp-logged-in', this.user);
 
     // TODO: Look at this. Fire another signal a bit later in case some components had not set up their listeners
-    setTimeout(() => {
-      this.fireGlobal('yp-logged-in', this.user);
-    }, 1000);
+    //setTimeout(() => {
+    //  this.fireGlobal('yp-logged-in', this.user);
+    //}, 1000);
 
     window.appGlobals.analytics.sendLoginAndSignup(
       user.id,
@@ -711,15 +711,15 @@ export class YpAppUser extends YpCodeBase {
 
     if (response) {
       this.adminRights = response as YpAdminRights;
-      this.fireGlobal('got-admin-rights', true);
+      this.fireGlobal('yp-got-admin-rights', true);
 
       //TODO: Check this outFire another signal a bit later in case some components had not set up their listeners TODO: Find a better way
       /*setTimeout(() => {
-        this.fireGlobal('got-admin-rights', true);
+        this.fireGlobal('yp-got-admin-rights', true);
       }, 1000);*/
     } else {
       this.adminRights = undefined;
-      this.fireGlobal('got-admin-rights', false);
+      this.fireGlobal('yp-got-admin-rights', false);
     }
   }
 
@@ -751,10 +751,10 @@ export class YpAppUser extends YpCodeBase {
     if (response) {
       this.memberships = response as YpMemberships;
       this._updateMembershipsIndex(this.memberships);
-      this.fireGlobal('got-memberships', true);
+      this.fireGlobal('yp-got-memberships', true);
     } else {
       this.memberships = undefined;
-      this.fireGlobal('got-memberships', false);
+      this.fireGlobal('yp-got-memberships', false);
     }
   }
 }

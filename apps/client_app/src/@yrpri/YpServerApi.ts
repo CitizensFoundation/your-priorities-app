@@ -232,4 +232,21 @@ export class YpServerApi extends YpCodeBase {
       translateUrl
     );
   }
+
+  public savePostTranscript(postId: number, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/posts/${postId}/editTranscript`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public getPostTranscriptStatus(id: number, tabName: string | undefined) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${id}/categories_count/${tabName}`
+    );
+  }
 }

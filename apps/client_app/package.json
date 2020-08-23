@@ -66,6 +66,7 @@
   "dependencies": {
     "@kano/twemoji": "^1.0.0",
     "@material/mwc-button": "^0.18.0",
+    "@material/mwc-circular-progress-four-color": "^0.18.0",
     "@material/mwc-dialog": "^0.18.0",
     "@material/mwc-drawer": "^0.18.0",
     "@material/mwc-fab": "^0.18.0",
@@ -74,6 +75,7 @@
     "@material/mwc-select": "^0.18.0",
     "@material/mwc-snackbar": "^0.18.0",
     "@material/mwc-tab-bar": "^0.18.0",
+    "@material/mwc-textarea": "^0.18.0",
     "@material/mwc-textfield": "^0.18.0",
     "@material/mwc-top-app-bar": "^0.18.0",
     "@rollup/plugin-commonjs": "^14.0.0",

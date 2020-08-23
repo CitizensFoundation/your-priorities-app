@@ -227,8 +227,6 @@ export class YpGroup extends YpCollection {
   renderCurrentGroupTabPage(): TemplateResult | undefined {
     let page: TemplateResult | undefined;
 
-    console.error(this.selectedGroupTab)
-
     switch (this.selectedGroupTab) {
       case GroupTabTypes.Open:
         page = this.renderPostList('open');

@@ -2,18 +2,21 @@ import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
-import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement, html, property, LitElement, css } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
+import '@material/mwc-fab';
 
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpPostCard } from './yp-post-card.js';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -37,10 +40,16 @@ export class YpPost extends YpCollection {
   disableNewPosts = false;
 
   @property({ type: Object })
-  post: YpPostData|undefined = undefined;
+  post: YpPostData | undefined = undefined;
 
   @property({ type: Number })
   scrollToPointId: number | undefined = undefined;
+
+  @property({ type: String })
+  debateCount: string | undefined = undefined;
+
+  @property({ type: String })
+  photosCount: string | undefined = undefined;
 
   constructor() {
     super('post', null, 'lightbulb_outline', 'post.create');
@@ -50,79 +59,19 @@ export class YpPost extends YpCollection {
     //TODO: Do we need this
   }
 
-  static get psroperties() {
-    return {
-      collectionId: {
-        type: Number,
-        value: null,
-        observer: '_collectionIdChanged',
-      },
-
-      post: {
-        type: Object,
-        value: null,
-        notify: true,
-        observer: '_postChanged',
-      },
-
-      selectedTab: {
-        type: String,
-        value: 'debate',
-        observer: '_selectedTabChanged',
-      },
-    };
-  }
-
   static get styles() {
     return [
       super.styles,
+      ShadowStyles,
       css`
-        .container {
-          padding-top: 0;
-          margin-top: -70px;
-          height: 100%;
-        }
-
-        .topContainer {
-          margin-top: 28px;
-        }
-
-        .flex {
-        }
-
-        .centerContainer {
-        }
-
         .postHeader {
           padding: 16px;
           background-color: #fefefe;
           width: 940px;
         }
 
-        .statusHeader {
-          padding: 16px;
-          background-color: #fefefe;
-          width: 940px;
-          margin-top: 16px;
-          height: 48px;
-        }
-
-        .description {
-          width: 510px;
-          padding-left: 24px;
-        }
-
         ac-activities {
           padding-top: 8px;
-        }
-
-        .statusColumn {
-          width: 670px;
-          padding-bottom: 16px;
-        }
-
-        .mainPage {
-          background-color: #fff;
         }
 
         yp-post-user-images {
@@ -139,406 +88,170 @@ export class YpPost extends YpCollection {
           .postHeader {
             width: 400px;
           }
-
-          .topContainer {
-            margin-top: 16px;
-          }
-        }
-
-        .createFab {
-          position: fixed;
-          bottom: 24px;
-          right: 28px;
-          background-color: var(--accent-color);
-          color: #fff;
-
-          --paper-fab-iron-icon: {
-            color: var(--icon-general-color, #fff);
-            height: 40px;
-            width: 40px;
-          }
-        }
-
-        .createFab[wide-layout] {
-          width: 72px;
-          height: 72px;
-          --paper-fab-iron-icon: {
-            color: var(--icon-general-color, #fff);
-            width: 50px;
-            height: 50px;
-          }
         }
 
         @media (max-width: 360px) {
-          .centerContainer {
-          }
-
           .postHeader {
             height: 100%;
             width: 360px;
             padding: 0;
           }
-
-          .tabsMaterial {
-            width: 360px;
-          }
-
-          .statusHeader {
-            width: 360px;
-            height: 120px;
-            padding: 0px;
-            padding-left: 20px;
-          }
-
-          .statusColumn {
-            height: 60px;
-            padding: 0px;
-          }
-
-          .description {
-            width: 320px;
-            padding: 8px;
-            padding-left: 20px;
-            padding-bottom: 16px;
-          }
-
-          .statusColumn {
-            width: 320px;
-          }
-        }
-
-        yp-ajax {
-          background-color: var(--primary-background-color);
-        }
-
-        .mapContainer {
-          margin: 24px;
-          width: 960px;
-          height: 500px;
-        }
-
-        .counterInfo {
-          font-size: 11px;
-        }
-
-        .tabs {
-          margin-top: 24px;
-        }
-
-        @media (max-width: 934px) {
-          .mapContainer {
-            margin: 16px;
-            width: 800px;
-            height: 400px;
-          }
-        }
-
-        @media (max-width: 832px) {
-          .mapContainer {
-            margin: 8px;
-            width: 600px;
-            height: 340px;
-          }
-        }
-
-        @media (max-width: 632px) {
-          .mapContainer {
-            margin: 8px;
-            width: 400px;
-            height: 300px;
-          }
-        }
-
-        @media (max-width: 420px) {
-          .mapContainer {
-            margin: 8px;
-            width: 330px;
-            height: 250px;
-          }
-        }
-
-        @media (max-width: 360px) {
-          .mapContainer {
-            margin: 8px;
-            width: 280px;
-            height: 200px;
-          }
-        }
-
-        .tabs {
-          width: 1100px;
-          padding-top: 8px;
-          padding-bottom: 8px;
-        }
-
-        .tab {
-          width: 250px;
-        }
-
-        @media (max-width: 900px) {
-          .tabs {
-            max-width: 100%;
-            font-size: 14px !important;
-            word-wrap: break-word !important;
-            margin-top: 8px;
-            width: 100%;
-            margin-bottom: 8px;
-          }
-
-          .tabs .tab {
-            width: 100%;
-            word-wrap: break-word !important;
-            margin-left: 8px;
-            margin-right: 8px;
-          }
-
-          .topArea {
-            height: 300px;
-          }
-
-          .topArea[is-post] {
-            min-height: 470px;
-          }
-        }
-
-        @media (max-width: 380px) {
-          .tabs {
-            font-size: 12px !important;
-          }
-
-          .topArea[is-post] {
-            min-height: 530px;
-          }
-
-          ac-activities {
-            min-height: 600px !important;
-          }
-        }
-
-        @media (max-width: 360px) {
-          .tabs {
-            font-size: 10px !important;
-          }
-        }
-
-        .minHeightSection {
-          min-height: 450px;
         }
 
         [hidden] {
           display: none !important;
         }
-      `
+      `,
     ];
+  }
+
+  renderPostHeader() {
+    return html`<yp-post-header
+      id="postCard"
+      class="largeCard"
+      .post="${this.post}"
+      @refresh="${this._getPost}"
+      headermode></yp-post-header>`;
+  }
+
+  renderPostTabs() {
+    if (this.post && !this.post.Group.configuration.hideAllTabs) {
+      return html`
+        <div class="layout vertical center-center">
+          <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
+            <mwc-tab
+              .label="${this.tabDebateCount}"
+              icon="lightbulb_outline"
+              stacked></mwc-tab>
+
+            ${this.renderNewsAndMapTabs()}
+
+            <mwc-tab
+              .label="${this.tabPhotosCount}"
+              icon="lightbulb_outline"
+              stacked></mwc-tab>
+          </mwc-tab-bar>
+        </div>
+      `;
+    } else {
+      return nothing;
+    }
+  }
+
+  renderCurrentPostTabPage(): TemplateResult | undefined {
+    let page: TemplateResult | undefined;
+
+    if (this.post) {
+      switch (this.selectedTab) {
+        case PostTabTypes.Debate:
+          page = html` <yp-post-points
+            id="pointsSection"
+            ?isAdmin="${this.isAdmin}"
+            .post="${this.post}"
+            .scrollToId="${this.scrollToPointId}"></yp-post-points>`;
+          break;
+        case PostTabTypes.News:
+          page = html`<ac-activities
+            id="postNews"
+            .selectedTab="${this.selectedTab}"
+            .disableNewPosts="${this.disableNewPosts}"
+            .postGroupId="${this.post!.group_id}"
+            .postId="${this.post!.id}"></ac-activities>`;
+          break;
+        case PostTabTypes.Location:
+          page = this.post.location
+            ? html`<div
+                class="mapContainer shadow-elevation-4dp shadow-transition">
+                <google-map
+                  additionalMapOptions="{'keyboardShortcuts':false}"
+                  apiKey="XXXX"
+                  id="map"
+                  libraries="places"
+                  class="map"
+                  .mapType="${this.post.location.mapType}"
+                  .zoom="${this.post.location.map_zoom}"
+                  fitToMarkers="">
+                  <google-map-marker
+                    slot="markers"
+                    latitude="${this.post.location.latitude}"
+                    longitude="${this.post.location.longitude}"
+                    id="marker"></google-map-marker>
+                </google-map>
+              </div>`
+            : html` <h1 style="padding-top: 16px">
+                ${this.t('post.noLocation')}
+              </h1>`;
+          break;
+        case PostTabTypes.Photos:
+          page = html` <div class="layout horizontal center-center">
+            <yp-post-user-images .post="${this.post}"></yp-post-user-images>
+          </div>`;
+          break;
+      }
+    }
+
+    return page;
   }
 
   render() {
     return html`
-      <div
-        class="topContainer layout vertical center-center"
-        is-post
-        .createFabTitle="${this.t('point.add')}"
-        @yp-create-fab-tap="${this._newPoint}">
-        <yp-post-header
-          id="postCard"
-          class="largeCard"
-          .post="${this.post}"
-          @refresh="${this._getCollection}"
-          .headermode></yp-post-header>
-
-        <div
-          class="layout horizontal center-center"
-          ?hidden="${this.post.Group.configuration.hideAllTabs}">
-          <paper-tabs
-            id="paper_tabs"
-            class="tabs"
-            .selected="${this.selectedTab}"
-            .attrForSelected="name"
-            .focused="">
-            <paper-tab .name="debate">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span
-                  >${this.t('post.tabs.debate')} (<span
-                    id="tabCountDebate"></span
-                  >)</span
-                >
-              </div>
-            </paper-tab>
-            <paper-tab .name="news">${this.t('post.tabs.news')}</paper-tab>
-            <paper-tab .name="location" ?hidden="${this.locationHidden}"
-              >${this.t('post.tabs.location')}</paper-tab
-            >
-            <paper-tab .name="photos">
-              <div class="layout vertical center-center tabCounterContainer">
-                <span
-                  >${this.t('post.tabs.photos')} (<span
-                    id="tabCountPhotos"></span
-                  >)</span
-                >
-              </div>
-            </paper-tab>
-          </paper-tabs>
-        </div>
-
-        <iron-pages
-          id="pages"
-          class="tabPages"
-          .selected="${this.selectedTab}"
-          attr-for-selected="name"
-          entry-animation="fade-in-animation"
-          exit-animation="fade-out-animation">
-          <div .name="debate" class="layout horizontal center-center">
-            <yp-post-points
-              id="pointsSection"
-              ?isAdmin="${this.isAdmin}"
-              .post="${this.post}"
-              .scrollToId="${this.scrollToPointId}"></yp-post-points>
-          </div>
-          <section .name="news" class="minHeightSection">
-            ${this.newsTabSelected
-              ? html`
-                  <ac-activities
-                    id="postNews"
-                    .selectedTab="${this.selectedTab}"
-                    .disableNewPosts="${this.disableNewPosts}"
-                    .postGroupId="${this.post.group_id}"
-                    .collectionId="${this.post.id}"></ac-activities>
-                `
-              : html``}
-          </section>
-          <section .name="location" class="minHeightSection">
-            <div class="layout horizontal center-center">
-              ${this.post.location
-                ? html`
-                    ${this.mapActive
-                      ? html`
-                          <paper-material class="mapContainer" .elevation="3">
-                            <google-map
-                              .additionalMapOptions="{'keyboardShortcuts':false}"
-                              .apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-                              id="map"
-                              .libraries="places"
-                              class="map"
-                              .mapType="${this.post.location.mapType}"
-                              .zoom="${this.post.location.map_zoom}"
-                              ,fitToMarkers="">
-                              <google-map-marker
-                                slot="markers"
-                                latitude="${this.post.location.latitude}"
-                                longitude="${this.post.location
-                                  .longitude}"
-                                id="marker"></google-map-marker>
-                            </google-map>
-                          </paper-material>
-                        `
-                      : html``}
-                  `
-                : html``}
-              ${this.post
-                ? html`
-                    ${!this.post.location
-                      ? html`
-                          <h1 style="padding-top: 16px">
-                            ${this.t('post.noLocation')}
-                          </h1>
-                        `
-                      : html``}
-                  `
-                : html``}
-            </div>
-          </section>
-          <section .name="photos" class="minHeightSection">
-            <div class="layout vertical flex">
-              <div class="layout horizontal center-center">
-                <yp-post-user-images
-                  .post="${this.post}"></yp-post-user-images>
-              </div>
-            </div>
-          </section>
-        </iron-pages>
-      </div>
-
-      <div
-        class="create-fab-wrapper layout horizontal end-justified createFabContainer"
-        ?hidden="${this.post.Group.configuration.hideNewPostOnPostPage}">
-        ${!this.disableNewPosts
-          ? html`
-              <paper-fab
-                class="createFab"
-                .icon="${this.createFabIcon}"
-                .elevation="5"
-                .wideLayout="${this.wideWidth}"
-                title="${this.t('post.new')}"
-                @tap="${this._newPost}"></paper-fab>
-            `
-          : html``}
-      </div>
-
-      <div class="layout horizontal center-center">
-        <yp-ajax
-          id="ajax"
-          @response="${this._handleIncomingPostResponse}"></yp-ajax>
-      </div>
+      ${this.renderPostHeader()} ${this.renderPostTabs()}
+      ${this.renderCurrentPostTabPage()}
+      ${!this.disableNewPosts &&
+      this.post &&
+      !this.post.Group.configuration.hideNewPost &&
+      !this.post.Group.configuration.hideNewPostOnPostPage
+        ? html` <mwc-fab
+            .label="${this.t('post.new')}"
+            icon="lightbulb"
+            @click="${this._newPost}"></mwc-fab>`
+        : nothing}
     `;
   }
 
-  /*
-  behaviors: [
-    ypThemeBehavior,
-    YpNewsTabSelected,
-    ypGotoBehavior,
-    ypMediaFormatsBehavior,
-    ypNumberFormatBehavior,
-    ypTruncateBehavior
-  ],
+  get tabDebateCount(): string {
+    const labelTranslation = this.t('post.tabs.debate');
 
-
-*/
-
-  _isNumber(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
+    return `${labelTranslation} (${
+      this.debateCount != undefined ? this.debateCount : '...'
+    })`;
   }
 
-  _selectedTabChanged(tabName) {
+  get tabPhotosCount(): string {
+    const labelTranslation = this.t('post.tabs.photos');
+
+    return `${labelTranslation} (${
+      this.photosCount != undefined ? this.photosCount : '...'
+    })`;
+  }
+
+  _selectedTabChanged() {
+    //TODO: Make sure to polyfill Object.keys IE11
+    const tabName = Object.keys(PostTabTypes)[this.selectedTab].toLowerCase();
+
     if (this.post) {
-      this.redirectTo('/post/' + this.post.id + '/' + tabName);
+      YpNavHelpers.redirectTo('/post/' + this.post.id + '/' + tabName);
     }
 
-    if (tabName == 'location') {
-      this.mapActive = true;
-    } else {
-      this.mapActive = false;
-    }
-
-    if (tabName && window.appGlobals) {
+    if (tabName) {
       window.appGlobals.activity('open', 'post_tab_' + tabName, '', {
         id: this.collectionId,
         modelType: 'post',
       });
     }
+  }
 
-    this.async(function () {
-      const news = this.$$('#postNews');
-      if (news) {
-        news.fireResize();
-      }
-    }, 300);
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('selectedTab')) {
+      this._selectedTabChanged();
+    }
   }
 
   _newPost() {
     window.appGlobals.activity('open', 'newPost');
-    dom(document)
-      .querySelector('yp-app')
-      .getDialogAsync(
-        'postEdit',
-        function (dialog) {
-          dialog.setup(null, true, null);
-          dialog.open('new', {
-            groupId: this.post.Group.id,
-            group: this.post.Group,
-          });
-        }.bind(this)
-      );
+    this.fire('yp-new-post', { group: this.post!.Group });
   }
 
   connectedCallback() {
@@ -553,33 +266,26 @@ export class YpPost extends YpCollection {
     this.removeListener('yp-post-image-count', this._updatePostImageCount);
   }
 
-  _updatePostImageCount(event, imageCount) {
-    const tabCounter = this.$$('#tabCountPhotos');
-    if (tabCounter) {
-      tabCounter.innerHTML = this.formatNumber(imageCount);
-    }
+  _updatePostImageCount(event: CustomEvent) {
+    const imageCount = event.detail;
+    this.photosCount = YpFormattingHelpers.number(imageCount);
   }
 
-  _updateDebateInfo(event, detail) {
-    const tabCounter = this.$$('#tabCountDebate');
-    if (tabCounter) {
-      tabCounter.innerHTML = YpFormattingHelpers.number(detail.count);
-    }
-    if (detail.firstPoint) {
-      this.$$('#postCard').updateDescriptionIfEmpty(detail.firstPoint.content);
-    }
+  _updateDebateInfo(event: CustomEvent) {
+    const detail = event.detail;
+    this.debateCount = YpFormattingHelpers.number(detail.count);
   }
 
-  _mainContainerClasses(small) {
-    if (small) {
+  _mainContainerClasses() {
+    if (!this.wide) {
       return 'layout horizontal wrap';
     } else {
       return 'layout horizontal center-center';
     }
   }
 
-  _headerClasses(small) {
-    if (small) {
+  _headerClasses() {
+    if (!this.wide) {
       return 'layout vertical postHeader wrap';
     } else {
       return 'layout horizontal postHeader';
@@ -587,16 +293,21 @@ export class YpPost extends YpCollection {
   }
 
   get postName() {
-    const post = this.post as unknown as YpPostData;
-    if (post && post.name) {
-      return YpFormattingHelpers.truncate(YpFormattingHelpers.trim(post.name), 200);
+    if (this.post && this.post.name) {
+      return YpFormattingHelpers.truncate(
+        YpFormattingHelpers.trim(this.post.name),
+        200
+      );
     }
   }
 
-  postDescription() {
-    const post = this.post as unknown as YpPostData;
-    if (post && post.description) {
-      return YpFormattingHelpers.truncate(YpFormattingHelpers.trim(post.description), 10000, '...');
+  get postDescription() {
+    if (this.post && this.post.description) {
+      return YpFormattingHelpers.truncate(
+        YpFormattingHelpers.trim(this.post.description),
+        10000,
+        '...'
+      );
     } else {
       return '';
     }
@@ -625,7 +336,9 @@ export class YpPost extends YpCollection {
       } else if (window.appGlobals.cache.getPostFromCache(this.collectionId)) {
         this.post = window.appGlobals.cache.getPostFromCache(this.collectionId);
         this._processIncomingPost(true);
-        console.debug('Got post from post multi cache possibly from recommendations');
+        console.debug(
+          'Got post from post multi cache possibly from recommendations'
+        );
       } else {
         console.debug('Got post from server not cache');
         this.post = undefined;
@@ -640,6 +353,45 @@ export class YpPost extends YpCollection {
     if (this.post) {
       this.refresh();
 
+      if (!fromCache) window.appGlobals.cache.addPostsToCacheLater([this.post]);
+      window.appGlobals.recommendations.getNextRecommendationForGroup(
+        this.post.group_id,
+        this.post.id,
+        this._processRecommendation.bind(this)
+      );
+
+      this.isAdmin = YpAccessHelpers.checkPostAdminOnlyAccess(this.post);
+    } else {
+      console.error('Trying to refresh without post');
+    }
+  }
+
+  _processRecommendation(recommendedPost: YpPostData) {
+    if (recommendedPost && this.post) {
+      let postName = recommendedPost.name;
+      if (this.wide) {
+        postName = YpFormattingHelpers.truncate(postName, 60);
+      } else {
+        postName = YpFormattingHelpers.truncate(postName, 30);
+      }
+
+      this.fire('yp-set-next-post', {
+        currentPostId: this.post.id,
+        goForwardToPostId: recommendedPost.id,
+        goForwardPostName: postName,
+      });
+    } else if (this.post) {
+      this.fire('yp-set-next-post', {
+        currentPostId: this.post.id,
+        goForwardToPostId: null,
+        goForwardPostName: null,
+      });
+      console.log('Not recommended post');
+    }
+  }
+
+  refresh() {
+    if (this.post) {
       if (
         this.post.Group.configuration &&
         this.post.Group.configuration.canAddNewPosts != undefined
@@ -653,52 +405,12 @@ export class YpPost extends YpCollection {
         this.disableNewPosts = false;
       }
 
-      if (!fromCache)
-        window.appGlobals.cache.addPostsToCacheLater([this.post]);
-      window.appGlobals.recommendations.getNextRecommendationForGroup(
-        this.post.group_id,
-        this.post.id,
-        this._processRecommendation.bind(this)
-      );
-
-      this.isAdmin = YpAccessHelpers.checkPostAdminOnlyAccess(this.post);
-    } else {
-      console.error("Trying to refresh without post");
-    }
-  }
-
-  _processRecommendation(recommendedPost) {
-    if (recommendedPost && this.post) {
-      const postName = recommendedPost.name;
-      if (this.wide) {
-        postName = this.truncate(postName, 60);
-      } else {
-        postName = this.truncate(postName, 30);
-      }
-
-      this.fire('yp-set-next-post', {
-        currentPostId: this.post.id,
-        goForwardToPostId: recommendedPost.id,
-        goForwardPostName: postName,
-      });
-    } else {
-      this.fire('yp-set-next-post', {
-        currentPostId: this.post.id,
-        goForwardToPostId: null,
-        goForwardPostName: null,
-      });
-      console.log('Not recommended post');
-    }
-  }
-
-  refresh() {
-    if (this.post) {
       if (
         this.post.Group.theme_id != null ||
         (this.post.Group.configuration &&
           this.post.Group.configuration.themeOverrideColorPrimary != null)
       ) {
-        this.setTheme(
+        window.appGlobals.theme.setTheme(
           this.post.Group.theme_id,
           this.post.Group.configuration
         );
@@ -706,34 +418,40 @@ export class YpPost extends YpCollection {
         this.post.Group.Community &&
         (this.post.Group.Community.theme_id != null ||
           (this.post.Group.Community.configuration &&
-            this.post.Group.Community.configuration
-              .themeOverrideColorPrimary))
+            this.post.Group.Community.configuration.themeOverrideColorPrimary))
       ) {
-        this.setTheme(
+        window.appGlobals.theme.setTheme(
           this.post.Group.Community.theme_id,
           this.post.Group.Community.configuration
         );
       } else {
-        this.setTheme(1);
+        window.appGlobals.theme.setTheme(1);
       }
 
-      if (!this.post.Group.Community) {
-        console.error('No community!');
-        debugger;
-      }
-
-      if (window.appGlobals) {
-        window.appGlobals.setCommunityAnalyticsTracker(
+      if (this.post.Group.Community) {
+        window.appGlobals.analytics.setCommunityAnalyticsTracker(
           this.post.Group.Community.google_analytics_code
         );
 
         if (this.post.Group.Community.configuration) {
-          window.appGlobals.setCommunityPixelTracker(
+          window.appGlobals.analytics.setCommunityPixelTracker(
             this.post.Group.Community.configuration.facebookPixelId
           );
         }
-        window.appGlobals.setAnonymousGroupStatus(this.post.Group);
+
+        if (
+          this.post.Group.Community.configuration &&
+          this.post.Group.Community.configuration.customSamlLoginMessage
+        ) {
+          window.appGlobals.currentSamlLoginMessage = this.post.Group.Community.configuration.customSamlLoginMessage;
+        } else {
+          window.appGlobals.currentSamlLoginMessage = undefined;
+        }
+      } else {
+        console.error('No community!');
       }
+
+      window.appGlobals.setAnonymousGroupStatus(this.post.Group);
 
       if (
         this.post.Group.configuration &&
@@ -753,15 +471,8 @@ export class YpPost extends YpCollection {
         this.locationHidden = false;
       }
 
-      /*
-      if (this.post.Group.GroupHeaderImages && this.post.Group.GroupHeaderImages.length>0) {
-        this.setupTopHeaderImage(this.post.Group.GroupHeaderImages);
-      } else  if (this.post.Group.Community.CommunityHeaderImages && this.post.Group.Community.CommunityHeaderImages.length>0) {
-        this.setupTopHeaderImage(this.post.Group.Community.CommunityHeaderImage);
-      }
-      */
       this.fire('change-header', {
-        headerTitle: this.truncate(this.post.Group.name, 80),
+        headerTitle: YpFormattingHelpers.truncate(this.post.Group.name, 80),
         documentTitle: this.post.name,
         headerDescription: '', //this.truncate(this.post.Group.objectives,45),
         backPath: '/group/' + this.post.group_id,
@@ -773,19 +484,15 @@ export class YpPost extends YpCollection {
             : null,
       });
 
-      this.$$('#pagesAjax').url =
-        '/api/groups/' + this.post.Group.id + '/pages';
-      this.$$('#pagesAjax').generateRequest();
-
       if (
         this.post.Group.configuration &&
-        this.post.Group.configuration.disableFacebookLoginForGroup ===
-          true
+        this.post.Group.configuration.disableFacebookLoginForGroup === true
       ) {
         window.appGlobals.disableFacebookLoginForGroup = true;
       } else {
         window.appGlobals.disableFacebookLoginForGroup = false;
       }
+
       this.fire('yp-set-home-link', {
         type: 'group',
         id: this.post.Group.id,
@@ -801,7 +508,7 @@ export class YpPost extends YpCollection {
       ) {
         window.appGlobals.signupTermsPageId = this.post.Group.Community.configuration.signupTermsPageId;
       } else {
-        window.appGlobals.signupTermsPageId = null;
+        window.appGlobals.signupTermsPageId = undefined;
       }
 
       window.appGlobals.currentGroup = this.post.Group;
@@ -809,11 +516,11 @@ export class YpPost extends YpCollection {
       if (
         (this.post.Group.configuration &&
           this.post.Group.configuration.forceSecureSamlLogin &&
-          !this.checkGroupAccess(this.post.Group)) ||
+          !YpAccessHelpers.checkGroupAccess(this.post.Group)) ||
         (this.post.Group.Community &&
           this.post.Group.Community.configuration &&
           this.post.Group.Community.configuration.forceSecureSamlLogin &&
-          !this.checkCommunityAccess(this.post.Group.Community))
+          !YpAccessHelpers.checkCommunityAccess(this.post.Group.Community))
       ) {
         window.appGlobals.currentForceSaml = true;
       } else {
@@ -839,28 +546,8 @@ export class YpPost extends YpCollection {
       ) {
         window.appGlobals.currentSamlDeniedMessage = this.post.Group.Community.configuration.customSamlDeniedMessage;
       } else {
-        window.appGlobals.currentSamlDeniedMessage = null;
-      }
-
-      if (
-        this.post.Group.Community.configuration &&
-        this.post.Group.Community.configuration.customSamlLoginMessage
-      ) {
-        window.appGlobals.currentSamlLoginMessage = this.post.Group.Community.configuration.customSamlLoginMessage;
-      } else {
-        window.appGlobals.currentSamlLoginMessage = null;
+        window.appGlobals.currentSamlDeniedMessage = undefined;
       }
     }
   }
-
-  setupTopHeaderImage(image) {
-    const url = 'url(' + this.getImageFormatUrl(image, 0) + ')';
-    this.updateStyles({ '--top-area-background-image': url });
-  }
-
-  computeUrl(post_id) {
-    return '/api/posts/' + post_id;
-  }
 }
-
-window.customELements.define('yp-post-lit', YpPostLit);
