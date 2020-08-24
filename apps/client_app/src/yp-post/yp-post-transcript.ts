@@ -11,6 +11,8 @@ import '@material/mwc-circular-progress-four-color';
 
 import './yp-posts-list.js';
 import './yp-post-card-add.js';
+import '../@yrpri/yp-emoji-selector.js';
+
 import { YpPostsList } from './yp-posts-list.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
@@ -18,6 +20,7 @@ import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpPostCard } from './yp-post-card.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -163,8 +166,8 @@ export class YpPostTranscript extends YpBaseElement {
                   maxlength="500"
                   .value="${this.editText ? this.editText : ''}"></mwc-textarea>
                 <div class="horizontal end-justified layout">
-                  <emoji-selector
-                    id="postTranscriptEmojiSelector"></emoji-selector>
+                  <yp-emoji-selector
+                    id="postTranscriptEmojiSelector"></yp-emoji-selector>
                 </div>
                 <div class="layout horizontal self-end">
                   <mwc-button
@@ -191,8 +194,8 @@ export class YpPostTranscript extends YpBaseElement {
   _updateEmojiBindings() {
     if (this.isEditing) {
       setTimeout(() => {
-        const post = this.$$('#postTranscriptionEditor');
-        const emoji = this.$$('#postTranscriptEmojiSelector');
+        const post = this.$$('#postTranscriptionEditor') as HTMLInputElement;
+        const emoji = this.$$('#postTranscriptEmojiSelector') as YpEmojiSelector;
         if (post && emoji) {
           emoji.inputTarget = post;
         } else {

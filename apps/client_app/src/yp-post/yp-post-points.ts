@@ -13,12 +13,7 @@ import { Menu } from '@material/mwc-menu';
 import '../yp-post/yp-posts-list.js';
 import '../@yrpri/yp-emoji-selector.js';
 import '../yp-post/yp-post-card-add.js';
-import { YpPostsList } from '../yp-post/yp-posts-list.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { YpPostCard } from './yp-post-card.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { RangeChangeEvent } from 'lit-virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
@@ -78,7 +73,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   @property({ type: String })
   pointUpOrDownSelected = 'pointFor';
 
-  @property({ type: Number })
+  @property({ type: Date })
   latestPointCreatedAt: Date | undefined;
 
   @property({ type: Number })
@@ -240,9 +235,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding: 0;
         }
 
-        .item {
-        }
-
         .main-container {
           background-color: var(--primary-background-color);
         }
@@ -374,11 +366,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             width: 100%;
           }
 
-          iron-list {
+          lit-virtualizer {
             width: 100vw;
-          }
-
-          .pointMaterial {
           }
         }
 
@@ -419,16 +408,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           display: none !important;
         }
 
-        iron-list {
+        lit-virtualizer {
           height: 80vh;
-        }
-
-        iron-list {
-          --iron-list-items-container: {
-          }
-        }
-
-        :focus {
         }
 
         #ironListMobile[debate-disabled] {
@@ -475,9 +456,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           font-size: 12px;
           padding: 8px;
           margin-bottom: 4px;
-        }
-
-        .pointMaterialMobile {
         }
 
         div[rtl] {
