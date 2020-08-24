@@ -17,6 +17,7 @@ import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpPostCard } from './yp-post-card.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { RangeChangeEvent } from 'lit-virtualizer';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -518,194 +519,186 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     hideText: boolean,
     hasCurrentVideo: string,
     videoUploadedFunc: Function,
+    uploadVideoHeader: string,
     uploadedVideoId: number,
     pointKeyDownFunction: Function,
+    hideAudio: boolean,
+    hasCurrentAudio: string,
+    uploadAudioPointHeader: string,
+    ifLengthIsRight: boolean,
+    addPointFunc: Function,
+    points: Array<YpPointData>
   ) {
     return html`
-           <div class="point">
-            ${
-              !alternativeHeader
-                ? html`
-                    <div
-                      class="pointMainHeader layout horizontal center-center"
-                      role="heading"
-                      aria-level="2">
-                      > ${header}
-                    </div>
-                  `
-                : html`
-                    <div
-                      class="pointMainHeader layout horizontal center-center">
-                      <yp-magic-text
-                        .contentId="${this.post.Group.id}"
-                        textOnly
-                        .content="${alternativeHeader}"
-                        .contentLanguage="${this.post.Group.language}"
-                        role="heading"
-                        aria-level="2"
-                        class="ratingName"
-                        textType="${headerTextType}">
-                      </yp-magic-text>
-                    </div>
-                  `
-            }
+      <div class="point">
+        ${!alternativeHeader
+          ? html`
+              <div
+                class="pointMainHeader layout horizontal center-center"
+                role="heading"
+                aria-level="2">
+                > ${header}
+              </div>
+            `
+          : html`
+              <div class="pointMainHeader layout horizontal center-center">
+                <yp-magic-text
+                  .contentId="${this.post.Group.id}"
+                  textOnly
+                  .content="${alternativeHeader}"
+                  .contentLanguage="${this.post.Group.language}"
+                  role="heading"
+                  aria-level="2"
+                  class="ratingName"
+                  textType="${headerTextType}">
+                </yp-magic-text>
+              </div>
+            `}
 
-            <div id="point${type}Material"
-            class="pointInputMaterial
+        <div
+          id="point${type}Material"
+          class="pointInputMaterial
                     layout vertical
-                  shadow-elevation-2dp shadow-transition" ?hidden="${
-                    this.post.Group.configuration.disableDebate
-                  }">
+                  shadow-elevation-2dp shadow-transition"
+          ?hidden="${this.post.Group.configuration.disableDebate}">
+          <mwc-textarea
+            id="${type}_point"
+            @keydown="${pointKeyDownFunction}"
+            @focus="${this.focusTextArea}"
+            @blur="${this.blurTextArea}"
+            .value="${this.textValueUp}"
+            .label="${label}"
+            charCounter
+            rows="2"
+            ?hidden="${hideText}"
+            maxrows="3"
+            .maxlength="${this.pointMaxLength}">
+          </mwc-textarea>
 
-              <mwc-textarea id="${type}_point"
-              @keydown="${pointKeyDownFunction}"
-              @focus="${this.focusTextArea}"
-              @blur="${this.blurTextArea}"
-              .value="${this.textValueUp}"
-              .label="${label}"
-              charCounter
-                rows="2"
-                ?hidden="${hideText}"
-                maxrows="3"
-                .maxlength="${this.pointMaxLength}">
-              </mwc-textarea>
+          <div
+            class="horizontal end-justified layout"
+            ?hidden="${this.post.Group.configuration.hideEmoji}">
+            <emoji-selector
+              id="pointUpEmojiSelector"
+              ?hidden="${hideText}"></emoji-selector>
+          </div>
 
-              <div class="horizontal end-justified layout" ?hidden="${
-                this.post.Group.configuration.hideEmoji
-              }">
-                <emoji-selector id="pointUpEmojiSelector" ?hidden="${
-                  hideText
-                }"></emoji-selector>
-              </div>
-
-              <div class="layout horizontal center-justified">
-
-                ${
-                  this.post.Group.configuration.allowPointVideoUploads
-                    ? html`
-                        <div
-                          ?hidden="${hideVideo}"
-                          class="uploadSection">
-                          <div
-                            class="layout vertical center-center self-start"
-                            ?hidden="${!this.isLoggedIn}">
-                            <yp-file-upload
-                              id="videoFileUploadUp"
-                              noDefaultCoverImage
-                              .uploadLimitSeconds="${this.post.Group
-                                .configuration.videoPointUploadLimitSec}"
-                              .currentFile="${hasCurrentVideo}"
-                              containerType="points"
-                              .group="${this.post.Group}"
-                              raised
-                              video-upload
-                              method="POST"
-                              @success="${videoUploadedFunc}">
-                              <iron-icon
-                                class="icon"
-                                icon="videocam"></iron-icon>
-                              <span>${this.t('uploadVideoPointFor')}</span>
-                            </yp-file-upload>
-                          </div>
-                          <div
-                            class="videoUploadDisclamer"
-                            ?hidden="${!this.post.Group.configuration
-                              .showVideoUploadDisclaimer ||
-                            !uploadedVideoId}">
-                            [[t('videoUploadDisclaimer')]]
-                          </div>
-                          <div class="layout horizontal center-center">
-                            <mwc-button
-                              class="uploadNotLoggedIn"
-                              icon="videocam"
-                              raised
-                              ?hidden="${this.isLoggedIn}"
-                              @click="${this._openLogin}"
-                              .label="${this.t('uploadVideoPointFor')}">
-                              <iron-icon class="icon"></iron-icon>
-                            </mwc-button>
-                          </div>
-                        </div>
-                      `
-                    : html``
-                }
-
-                ${
-                  this.post.Group.configuration.allowPointAudioUploads
-                    ? html`
-                        <div
-                          ?hidden="${this.hideUpAudio}"
-                          class="uploadSection">
-                          <div
-                            class="layout vertical center-center"
-                            ?hidden="${!this.isLoggedIn}">
-                            <yp-file-upload
-                              id="audioFileUploadUp"
-                              current-file="${this.hasCurrentUpAudio}"
-                              .container-type="points"
-                              .uploadlimitSeconds="${this.post.Group
-                                .configuration.audioPointUploadLimitSec}"
-                              group="${this.post.Group}"
-                              .raised
-                              audio-upload=""
-                              .method="POST"
-                              @success="${this._audioUpUploaded}">
-                              <iron-icon
-                                class="icon"
-                                .icon="keyboard-voice"></iron-icon>
-                              <span>${this.t('uploadAudioPointFor')}</span>
-                            </yp-file-upload>
-                          </div>
-                          <div class="layout horizontal center-center">
-                            <mwc-button
-                              class="uploadNotLoggedIn"
-                              icon="keyboard_voice"
-                              raised
-                              ?hidden="${this.isLoggedIn}"
-                              @click="${this._openLogin}"
-                              .label="${this.t('uploadAudioPointFor')}">
-                              <iron-icon class="icon"></iron-icon>
-                            </mwc-button>
-                          </div>
-                        </div>
-                      `
-                    : html``
-                }
-              </div>
-
-              <div ?hidden="${!this.ifLengthUpIsRight}">
-                <div class="addPointFab layout horizontal center-center">
-                  <mwc-button raised class="submitButton" ?disabled="${
-                    this.addPointDisabled
-                  }" icon="add" @click="${this.addPointUp}" .label="${this.t(
-      'postPoint'
-    )}"></mwc-button>
-                </div>
-              </div>
-            </paper-material>
-
-            <div id="allUpPoints">
-            <iron-scroll-threshold id="ironScrollThesholdUp" scroll-target="document" on-lower-threshold="_loadMorePoints">
-              <iron-list id="ironListUp" lowerThreshold="200" .items="${
-                this.upPoints
-              }" role="list" as="point" .scrollTarget="document" .scrollOffset="550">
-                <template>
-                  <div class="item layout-horizontal" tabindex="${
-                    this.tabIndex
-                  }" role="listitem" aria-level="3">>
-                    <paper-material id="point${
-                      this.point.id
-                    }" .elevation="1" .animated .class="pointMaterial">
-                      <yp-point point="${this.point}"></yp-point>
-                    </paper-material>
+          <div class="layout horizontal center-justified">
+            ${this.post.Group.configuration.allowPointVideoUploads
+              ? html`
+                  <div ?hidden="${hideVideo}" class="uploadSection">
+                    <div
+                      class="layout vertical center-center self-start"
+                      ?hidden="${!this.isLoggedIn}">
+                      <yp-file-upload
+                        id="videoFileUploadUp"
+                        noDefaultCoverImage
+                        .uploadLimitSeconds="${this.post.Group.configuration
+                          .videoPointUploadLimitSec}"
+                        .currentFile="${hasCurrentVideo}"
+                        containerType="points"
+                        .group="${this.post.Group}"
+                        raised
+                        video-upload
+                        method="POST"
+                        @success="${videoUploadedFunc}">
+                        <iron-icon class="icon" icon="videocam"></iron-icon>
+                        <span>${uploadVideoHeader}</span>
+                      </yp-file-upload>
+                    </div>
+                    <div
+                      class="videoUploadDisclamer"
+                      ?hidden="${!this.post.Group.configuration
+                        .showVideoUploadDisclaimer || !uploadedVideoId}">
+                      ${this.t('videoUploadDisclaimer')}
+                    </div>
+                    <div class="layout horizontal center-center">
+                      <mwc-button
+                        class="uploadNotLoggedIn"
+                        icon="videocam"
+                        raised
+                        ?hidden="${this.isLoggedIn}"
+                        @click="${this._openLogin}"
+                        .label="${uploadVideoHeader}">
+                        <iron-icon class="icon"></iron-icon>
+                      </mwc-button>
+                    </div>
                   </div>
-                </template>
-              </iron-list>
-            </iron-scroll-threshold>
+                `
+              : html``}
+            ${this.post.Group.configuration.allowPointAudioUploads
+              ? html`
+                  <div ?hidden="${hideAudio}" class="uploadSection">
+                    <div
+                      class="layout vertical center-center"
+                      ?hidden="${!this.isLoggedIn}">
+                      <yp-file-upload
+                        id="audioFileUploadUp"
+                        current-file="${hasCurrentAudio}"
+                        container-type="points"
+                        .uploadlimitSeconds="${this.post.Group.configuration
+                          .audioPointUploadLimitSec}"
+                        .group="${this.post.Group}"
+                        raised
+                        audio-upload
+                        method="POST"
+                        @success="${this._audioUpUploaded}">
+                        <mwc-icon class="icon">keyboard_voice</mwc-icon>
+                        <span>${uploadAudioPointHeader}</span>
+                      </yp-file-upload>
+                    </div>
+                    <div class="layout horizontal center-center">
+                      <mwc-button
+                        class="uploadNotLoggedIn"
+                        icon="keyboard_voice"
+                        raised
+                        ?hidden="${this.isLoggedIn}"
+                        @click="${this._openLogin}"
+                        .label="${uploadAudioPointHeader}">
+                      </mwc-button>
+                    </div>
+                  </div>
+                `
+              : html``}
+          </div>
+
+          <div ?hidden="${ifLengthIsRight}">
+            <div class="addPointFab layout horizontal center-center">
+              <mwc-button
+                raised
+                class="submitButton"
+                ?disabled="${this.addPointDisabled}"
+                icon="add"
+                @click="${addPointFunc}"
+                .label="${this.t('postPoint')}"></mwc-button>
             </div>
           </div>
-        </div>`;
+        </div>
+
+        <lit-virtualizer
+          id="list${type}"
+          .items=${points}
+          .scrollTarget="${window}"
+          .renderItem=${this.renderPointItem}
+          @rangechange=${this.scrollEvent}></lit-virtualizer>
+      </div>
+    `;
   }
+
+  renderPointItem(point: YpPointData, index: number): TemplateResult {
+    return html`<div
+      class="item layout-horizontal"
+      tabindex="${index}"
+      role="listitem"
+      aria-level="3">
+      >
+      <div id="point${point.id}" class="pointMaterial">
+        <yp-point .point="${point}"></yp-point>
+      </div>
+    </div>`;
+  }
+
+  scrollEvent(event: RangeChangeEvent) {}
 
   render() {
     return html`
@@ -737,200 +730,46 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         ? html`
             <div ?rtl="${this.rtl}" class="layout vertical topContainer">
               <div class="main-container layout-horizontal">
-                <div class="point">
-                  ${!this.post.Group.configuration.alternativePointForHeader
-                    ? html`
-                        <div
-                          class="pointMainHeader layout horizontal center-center"
-                          role="heading"
-                          aria-level="2">
-                          > ${this.t('pointsFor')}
-                        </div>
-                      `
-                    : html`
-                        <div
-                          class="pointMainHeader layout horizontal center-center">
-                          <yp-magic-text
-                            .contentId="${this.post.Group.id}"
-                            textOnly
-                            .content="${this.post.Group.configuration
-                              .alternativePointForHeader}"
-                            .contentLanguage="${this.post.Group.language}"
-                            role="heading"
-                            aria-level="2"
-                            class="ratingName"
-                            textType="alternativePointForHeader">
-                          </yp-magic-text>
-                        </div>
-                      `}
-
-                  <paper-material
-                    id="pointUpMaterial"
-                    .elevation="1"
-                    class="pointInputMaterial layout vertical"
-                    .animated=""
-                    ?hidden="${this.post.Group.configuration.disableDebate}">
-                    <paper-textarea
-                      id="up_point"
-                      @tap="${this.focusUpPoint}"
-                      @focus="${this.focusTextArea}"
-                      @blur="${this.blurTextArea}"
-                      .value="${this.textValueUp}"
-                      .label="${this.labelUp}"
-                      alwaysFloatLabel="${this._floatIfValueOrIE()}"
-                      char-counter
-                      .rows="2"
-                      ?hidden="${this.hideUpText}"
-                      .max-rows="3"
-                      .maxlength="${this.pointMaxLength}">
-                    </paper-textarea>
-
-                    <div
-                      class="horizontal end-justified layout"
-                      ?hidden="${this.post.Group.configuration.hideEmoji}">
-                      <emoji-selector
-                        id="pointUpEmojiSelector"
-                        ?hidden="${this.hideUpText}"></emoji-selector>
-                    </div>
-
-                    <div class="layout horizontal center-justified">
-                      ${this.post.Group.configuration.allowPointVideoUploads
-                        ? html`
-                            <div
-                              ?hidden="${this.hideUpVideo}"
-                              class="uploadSection">
-                              <div
-                                class="layout vertical center-center self-start"
-                                ?hidden="${!this.isLoggedIn}">
-                                <yp-file-upload
-                                  id="videoFileUploadUp"
-                                  noDefaultCoverImage
-                                  .uploadLimitSeconds="${this.post.Group
-                                    .configuration.videoPointUploadLimitSec}"
-                                  .currentFile="${this.hasCurrentUpVideo}"
-                                  .containerType="points"
-                                  .group="${this.post.Group}"
-                                  raised
-                                  .video-upload
-                                  .method="POST"
-                                  @success="${this._videoUpUploaded}">
-                                  <iron-icon
-                                    class="icon"
-                                    icon="videocam"></iron-icon>
-                                  <span>${this.t('uploadVideoPointFor')}</span>
-                                </yp-file-upload>
-                              </div>
-                              <div
-                                class="videoUploadDisclamer"
-                                ?hidden="${!this.post.Group.configuration
-                                  .showVideoUploadDisclaimer ||
-                                !this.uploadedVideoUpId}">
-                                [[t('videoUploadDisclaimer')]]
-                              </div>
-                              <div class="layout horizontal center-center">
-                                <mwc-button
-                                  class="uploadNotLoggedIn"
-                                  icon="videocam"
-                                  raised
-                                  ?hidden="${this.isLoggedIn}"
-                                  @click="${this._openLogin}"
-                                  .label="${this.t('uploadVideoPointFor')}">
-                                  <iron-icon class="icon"></iron-icon>
-                                </mwc-button>
-                              </div>
-                            </div>
-                          `
-                        : html``}
-                      ${this.post.Group.configuration.allowPointAudioUploads
-                        ? html`
-                            <div
-                              ?hidden="${this.hideUpAudio}"
-                              class="uploadSection">
-                              <div
-                                class="layout vertical center-center"
-                                ?hidden="${!this.isLoggedIn}">
-                                <yp-file-upload
-                                  id="audioFileUploadUp"
-                                  current-file="${this.hasCurrentUpAudio}"
-                                  .container-type="points"
-                                  .uploadlimitSeconds="${this.post.Group
-                                    .configuration.audioPointUploadLimitSec}"
-                                  group="${this.post.Group}"
-                                  .raised
-                                  audio-upload=""
-                                  .method="POST"
-                                  @success="${this._audioUpUploaded}">
-                                  <iron-icon
-                                    class="icon"
-                                    .icon="keyboard-voice"></iron-icon>
-                                  <span>${this.t('uploadAudioPointFor')}</span>
-                                </yp-file-upload>
-                              </div>
-                              <div class="layout horizontal center-center">
-                                <mwc-button
-                                  class="uploadNotLoggedIn"
-                                  icon="keyboard_voice"
-                                  raised
-                                  ?hidden="${this.isLoggedIn}"
-                                  @click="${this._openLogin}"
-                                  .label="${this.t('uploadAudioPointFor')}">
-                                  <iron-icon class="icon"></iron-icon>
-                                </mwc-button>
-                              </div>
-                            </div>
-                          `
-                        : html``}
-                    </div>
-
-                    <div ?hidden="${!this.ifLengthUpIsRight}">
-                      <div class="addPointFab layout horizontal center-center">
-                        <mwc-button
-                          raised
-                          class="submitButton"
-                          ?disabled="${this.addPointDisabled}"
-                          .icon="add"
-                          .mini=""
-                          .elevation="3"
-                          @tap="${this.addPointUp}"
-                          .title="${this.t('postPoint')}"
-                          .label="${this.t('postPoint')}"></mwc-button>
-                      </div>
-                    </div>
-                  </paper-material>
-
-                  <div id="allUpPoints">
-                    <iron-scroll-threshold
-                      id="ironScrollThesholdUp"
-                      scroll-target="document"
-                      on-lower-threshold="_loadMorePoints">
-                      <iron-list
-                        id="ironListUp"
-                        lowerThreshold="200"
-                        .items="${this.upPoints}"
-                        role="list"
-                        as="point"
-                        .scrollTarget="document"
-                        .scrollOffset="550">
-                        <template>
-                          <div
-                            class="item layout-horizontal"
-                            tabindex="${this.tabIndex}"
-                            role="listitem"
-                            aria-level="3">
-                            >
-                            <paper-material
-                              id="point${this.point.id}"
-                              .elevation="1"
-                              .animated
-                              .class="pointMaterial">
-                              <yp-point point="${this.point}"></yp-point>
-                            </paper-material>
-                          </div>
-                        </template>
-                      </iron-list>
-                    </iron-scroll-threshold>
-                  </div>
-                </div>
+                ${this.renderPointList(
+                  'Up',
+                  this.t('pointsFor'),
+                  this.post.Group.configuration.alternativePointForHeader,
+                  'alternativePointForHeader',
+                  this.labelUp,
+                  this.hideUpVideo,
+                  this.hideUpText,
+                  this.hasCurrentUpVideo,
+                  this._videoUpUploaded,
+                  this.t('uploadVideoPointFor'),
+                  this.uploadedVideoUpId,
+                  this.focusUpPoint,
+                  this.hideUpAudio,
+                  this._hasCurrentUpAudio,
+                  this.t('uploadAudioPointFor'),
+                  this.ifLengthUpIsRight,
+                  this.addPointUp,
+                  this.upPoints
+                )}
+                ${this.renderPointList(
+                  'Down',
+                  this.t('pointsAgainst'),
+                  this.post.Group.configuration.alternativePointAgainstHeader,
+                  'alternativePointAgainstHeader',
+                  this.labelDown,
+                  this.hideDownVideo,
+                  this.hideDownText,
+                  this.hasCurrentDownVideo,
+                  this._videoDownUploaded,
+                  this.t('uploadVideoPointAgainst'),
+                  this.uploadedVideoDOwnId,
+                  this.focusDownPoint,
+                  this.hideDownAudio,
+                  this._hasCurrentDownAudio,
+                  this.t('uploadAudioPointAgainst'),
+                  this.ifLengthDownIsRight,
+                  this.addPointDown,
+                  this.downPoints
+                )}
 
                 <div
                   class="point layout vertical"
@@ -960,40 +799,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                           </yp-magic-text>
                         </div>
                       `}
-                  ${!this.post.Group.configuration.alternativePointForLabel
-                    ? html`
-                        <yp-magic-text
-                          id="alternativePointForLabelId"
-                          hidden
-                          contentId="${this.post.Group.id}"
-                          textOnly
-                          .content="${this.post.Group.configuration
-                            .alternativePointForLabel}"
-                          .contentLanguage="${this.post.Group.language}"
-                          @new-translation="${this._updatePointLabels}"
-                          role="heading"
-                          aria-level="2"
-                          textType="alternativePointForLabel">
-                        </yp-magic-text>
-                      `
-                    : nothing}
-                  ${!this.post.Group.configuration.alternativePointAgainstLabel
-                    ? html`
-                        <yp-magic-text
-                          id="alternativePointAgainstLabelId"
-                          hidden
-                          contentId="${this.post.Group.id}"
-                          textOnly
-                          .content="${this.post.Group.configuration
-                            .alternativePointAgainstLabel}"
-                          .contentLanguage="${this.post.Group.language}"
-                          @new-translation="${this._updatePointLabels}"
-                          role="heading"
-                          aria-level="2"
-                          textType="alternativePointAgainstLabel">
-                        </yp-magic-text>
-                      `
-                    : nothing}
 
                   <paper-material
                     id="pointDownMaterial"
@@ -1388,6 +1193,41 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       <paper-toast
         id="newPointToast"
         .text="${this.newPointTextCombined}"></paper-toast>
+
+      ${!this.post.Group.configuration.alternativePointForLabel
+        ? html`
+            <yp-magic-text
+              id="alternativePointForLabelId"
+              hidden
+              contentId="${this.post.Group.id}"
+              textOnly
+              .content="${this.post.Group.configuration
+                .alternativePointForLabel}"
+              .contentLanguage="${this.post.Group.language}"
+              @new-translation="${this._updatePointLabels}"
+              role="heading"
+              aria-level="2"
+              textType="alternativePointForLabel">
+            </yp-magic-text>
+          `
+        : nothing}
+      ${!this.post.Group.configuration.alternativePointAgainstLabel
+        ? html`
+            <yp-magic-text
+              id="alternativePointAgainstLabelId"
+              hidden
+              contentId="${this.post.Group.id}"
+              textOnly
+              .content="${this.post.Group.configuration
+                .alternativePointAgainstLabel}"
+              .contentLanguage="${this.post.Group.language}"
+              @new-translation="${this._updatePointLabels}"
+              role="heading"
+              aria-level="2"
+              textType="alternativePointAgainstLabel">
+            </yp-magic-text>
+          `
+        : nothing}
     `;
   }
 
@@ -2341,7 +2181,39 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  ifLengthIsRight(type, textValue, hasVideoId, hasAudioId) {
+  get ifLengthUpIsRight() {
+    return this.ifLengthIsRight(
+      'up',
+      this.textValueUp,
+      this.uploadedVideoUpId,
+      this.uploadedAudioUpId
+    );
+  }
+
+  get ifLengthDownIsRight() {
+    return this.ifLengthIsRight(
+      'down',
+      this.textValueDown,
+      this.uploadedVideoDownId,
+      this.uploadedAudioDownId
+    );
+  }
+
+  get ifLengthMobileRight() {
+    return this.ifLengthIsRight(
+      'mobile',
+      this.textValueMobileUpOrDown,
+      this.uploadedVideoMobileId,
+      this.uploadedAudioMobileId
+    );
+  }
+
+  ifLengthIsRight(
+    type: string,
+    textValue: string,
+    hasVideoId: number,
+    hasAudioId: number
+  ) {
     if (hasVideoId != null) {
       if (type === 'up') {
         this.hideUpVideo = false;

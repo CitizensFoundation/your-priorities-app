@@ -80,6 +80,8 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   alternativePointAgainstLabel?: string;
   alternativePointForHeader?: string;
   videoPointUploadLimitSec?: number;
+  allowPointAudioUploads?: boolean;
+  audioPointUploadLimitSec?: number;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
