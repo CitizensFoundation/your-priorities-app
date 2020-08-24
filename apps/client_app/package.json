@@ -64,6 +64,7 @@
   "author": "yp-app",
   "license": "LGPL",
   "dependencies": {
+    "@joeattardi/emoji-button": "^4.0.4",
     "@kano/twemoji": "^1.0.0",
     "@material/mwc-button": "^0.18.0",
     "@material/mwc-circular-progress-four-color": "^0.18.0",

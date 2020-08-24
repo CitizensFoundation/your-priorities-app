@@ -405,7 +405,7 @@ export class YpPostCard extends YpBaseElement {
       this.post.Group.configuration &&
       this.post.Group.configuration.structuredQuestionsJson
     ) {
-      const questionHash: Record<string, YpStructuredQuestions> = {};
+      const questionHash: Record<string, YpStructuredQuestion> = {};
       let outText = '';
       this.post.Group.configuration.structuredQuestionsJson.forEach(
         question => {

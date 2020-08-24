@@ -156,7 +156,7 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   get collectionTabLabel(): string {
-    const translatedCollectionItems = this.t(YpServerApi.transformCollectionTypeToApi(this.collectionItemType));
+    const translatedCollectionItems = this.t(YpServerApi.transformCollectionTypeToApi(this.collectionItemType!));
     return `${translatedCollectionItems} (${
       this.collectionItems ? this.collectionItems.length : 0
     })`;

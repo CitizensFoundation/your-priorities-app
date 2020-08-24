@@ -11,6 +11,7 @@ import '@material/mwc-linear-progress';
 import { Menu } from '@material/mwc-menu';
 
 import '../yp-post/yp-posts-list.js';
+import '../@yrpri/yp-emoji-selector.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
@@ -22,6 +23,7 @@ import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js'
 import { RangeChangeEvent } from 'lit-virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -545,7 +547,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                   shadow-elevation-2dp shadow-transition"
           ?hidden="${this.post.Group.configuration.disableDebate}">
           <mwc-textarea
-            id="${type}_point"
+            id="${type.toLowerCase()}_point"
             @keydown="${pointKeyDownFunction}"
             @focus="${this.focusTextArea}"
             @blur="${this.blurTextArea}"
@@ -584,9 +586,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           <div
             class="horizontal end-justified layout"
             ?hidden="${this.post.Group.configuration.hideEmoji}">
-            <emoji-selector
-              id="pointUpEmojiSelector"
-              ?hidden="${hideText}"></emoji-selector>
+            <yp-emoji-selector
+              id="point${type}EmojiSelector"
+              ?hidden="${hideText}"></yp-emoji-selector>
           </div>
 
           <div class="layout horizontal center-justified">
@@ -1058,10 +1060,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   _updateEmojiBindings() {
     setTimeout(() => {
       if (this.wide) {
-        const upPoint = this.$$('#up_point');
-        const downPoint = this.$$('#down_point');
-        const upEmoji = this.$$('#pointUpEmojiSelector');
-        const downEmoji = this.$$('#pointDownEmojiSelector');
+        const upPoint = this.$$('#up_point') as HTMLInputElement;
+        const downPoint = this.$$('#down_point') as HTMLInputElement;
+        const upEmoji = this.$$('#pointUpEmojiSelector') as YpEmojiSelector;
+        const downEmoji = this.$$('#pointDownEmojiSelector') as YpEmojiSelector;
         if (upPoint && downPoint && upEmoji && downEmoji) {
           upEmoji.inputTarget = upPoint;
           downEmoji.inputTarget = downPoint;
@@ -1069,8 +1071,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           console.warn("Wide: Can't bind emojis :(");
         }
       } else {
-        const upDownPoint = this.$$('#mobileUpOrDownPoint');
-        const upDownEmoji = this.$$('#pointUpDownEmojiSelector');
+        const upDownPoint = this.$$('#mobile_point') as HTMLInputElement;
+        const upDownEmoji = this.$$('#pointMobileEmojiSelector') as YpEmojiSelector;
         if (upDownPoint && upDownEmoji) {
           upDownEmoji.inputTarget = upDownPoint;
         } else {
