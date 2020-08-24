@@ -2,7 +2,6 @@ import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
-import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement, html, property, LitElement, css } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 
@@ -211,8 +210,6 @@ export class YpPostHeader extends YpBaseElementWithLogin {
         }
 
         @media (max-width: 800px) {
-
-
           :host {
             max-width: 423px;
             width: 100%;
@@ -293,11 +290,24 @@ export class YpPostHeader extends YpBaseElementWithLogin {
             role="heading"
             aria-level="1"
             aria-label="${this.post.name}">
-            <yp-post-name-with-author
-              top-left-radius
-              class="mobileName"
-              .post="${this.post}"
-              ?isloggedin="${this.loggedInUser}"></yp-post-name-with-author>
+            <div>
+              <yp-magic-text
+                text-type="postName"
+                content-language="[[post.language]]"
+                content="[[post.name]]"
+                content-id="[[post.id]]">
+              </yp-magic-text>
+            </div>
+            ${this.post.Group.configuration.showWhoPostedPosts
+              ? html`
+                  <div class="layout horizontal userInfo">
+                    <yp-user-with-organization
+                      class="userWithOrg"
+                      hide-image
+                      .user="${this.post.User}"></yp-user-with-organization>
+                  </div>
+                `
+              : nothing}
 
             <div
               class="layout horizontal wrap mediaAndInfoContainer layout-center-center">
@@ -451,12 +461,6 @@ export class YpPostHeader extends YpBaseElementWithLogin {
                 </div>
               </div>
             </div>
-            <yp-post-name-with-author
-              bottom-left-radius=""
-              desktop=""
-              class="desktopName"
-              .post="${this.post}"
-              ?isloggedin="${this.loggedInUser}"></yp-post-name-with-author>
           </div>
         </div>
       </div>

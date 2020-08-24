@@ -36,6 +36,10 @@ export class YpBaseElementWithLogin extends YpBaseElement {
     this.removeGlobalListener('yp-got-admin-rights', this.requestUpdate.bind(this));
   }
 
+  get isLoggedIn() {
+    return this.loggedInUser != undefined;
+  }
+
   _loggedIn(event: CustomEvent) {
     this.loggedInUser = event.detail;
     this.requestUpdate();

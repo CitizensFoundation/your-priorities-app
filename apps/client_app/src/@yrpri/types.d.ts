@@ -70,6 +70,16 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   descriptionTruncateAmount?: number;
   showWhoPostedPosts?: boolean;
   descriptionSimpleFormat?: boolean;
+  disableDebate?: boolean;
+  hideEmoji?: boolean;
+  hidePointAgainst?: boolean;
+  allowPointVideoUploads?: boolean;
+  showVideoUploadDisclaimer?: boolean;
+  alternativePointAgainstHeader?: string;
+  alternativePointForLabel?: string;
+  alternativePointAgainstLabel?: string;
+  alternativePointForHeader?: string;
+  videoPointUploadLimitSec?: number;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
