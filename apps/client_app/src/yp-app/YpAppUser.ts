@@ -20,7 +20,7 @@ export class YpAppUser extends YpCodeBase {
 
   loginForNewPointParams: {
     postPointsElement: HTMLElement;
-    params: { value: string; content: string };
+    params: { value: number; content: string };
   } | null = null;
 
   loginForEndorseParams: {
@@ -157,7 +157,7 @@ export class YpAppUser extends YpCodeBase {
 
   loginForNewPoint(
     postPointsElement: HTMLElement,
-    params: { value: string; content: string }
+    params: { value: number; content: string }
   ) {
     this.loginForNewPointParams = {
       postPointsElement: postPointsElement,

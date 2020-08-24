@@ -320,6 +320,8 @@ interface YpPointData {
   language?: string;
   Post?: YpPostData;
   User?: YpUserData;
+  latestContent?: string;
+  checkTranscriptFor?: string;
   PointQualities?: Array<YpPointQuality>;
   PointRevisions?: Array<YpPointRevision>;
 }
@@ -405,4 +407,9 @@ interface YpCheckTranscriptResponse {
   text?: string;
   inProgress?: boolean;
   error?: string;
+}
+
+interface YpGetPointsResponse {
+  count: number;
+  points: Array<YpPointData>;
 }

@@ -244,9 +244,49 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
-  public getPostTranscriptStatus(id: number, tabName: string | undefined) {
+  public getPostTranscriptStatus(groupId: number, tabName: string | undefined) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/groups/${id}/categories_count/${tabName}`
+      this.baseUrlPath + `/groups/${groupId}/categories_count/${tabName}`
+    );
+  }
+
+  public addPoint(groupId: number, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/points/${groupId}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public completeMediaPoint(mediaType: string, pointId: number, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${mediaType}/${pointId}/completeAndAddToPoint`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public getPoints(postId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/posts/${postId}/points`
+    );
+  }
+
+  public getMorePoints(postId: number, offsetUp: number, offsetDown: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/posts/${postId}/points?offsetUp=${offsetUp}&offsetDown=${offsetDown}`
+    );
+  }
+
+  public getNewPoints(postId: number, latestPointCreatedAt: Date) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/posts/${postId}/newPoints?latestPointCreatedAt=${latestPointCreatedAt}`
     );
   }
 }
