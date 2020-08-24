@@ -99,13 +99,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   currentVideoId: number | undefined;
 
   @property({ type: Boolean })
-  hideUpVideo = false
+  hideUpVideo = false;
 
   @property({ type: Boolean })
-  hideDownVideo = false
+  hideDownVideo = false;
 
   @property({ type: Boolean })
-  hideMobileVideo = false
+  hideMobileVideo = false;
 
   @property({ type: Number })
   uploadedAudioUpId: number | undefined;
@@ -120,28 +120,28 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   currentAudioId: number | undefined;
 
   @property({ type: Boolean })
-  hideUpAudio = false
+  hideUpAudio = false;
 
   @property({ type: Boolean })
-  hideDownAudio = false
+  hideDownAudio = false;
 
   @property({ type: Boolean })
-  hideMobileAudio = false
+  hideMobileAudio = false;
 
   @property({ type: Boolean })
-  hideUpText = false
+  hideUpText = false;
 
   @property({ type: Boolean })
-  hideDownText = false
+  hideDownText = false;
 
   @property({ type: Boolean })
-  hideMobileText = false
+  hideMobileText = false;
 
   @property({ type: Boolean })
-  selectedPointForMobile = false
+  selectedPointForMobile = false;
 
   @property({ type: Boolean })
-  isAndroid = false
+  isAndroid = false;
 
   @property({ type: String })
   hasCurrentUpVideo: string | undefined;
@@ -166,7 +166,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   loadedPointIds: Record<number, boolean> = {};
 
-  loadMoreInProgress = false
+  loadMoreInProgress = false;
 
   totalCount: number | undefined;
 
@@ -174,7 +174,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   storedDownPointsCount = 0;
 
-  noMorePoints = false
+  noMorePoints = false;
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
@@ -202,7 +202,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this._hasCurrentUpVideo();
     }
 
-
     if (changedProperties.has('hasCurrentDownVideo')) {
       this._hasCurrentDownVideo();
     }
@@ -213,7 +212,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     if (changedProperties.has('hasCurrentUpAudio')) {
       this._hasCurrentUpAudio();
     }
-
 
     if (changedProperties.has('hasCurrentDownAudio')) {
       this._hasCurrentDownAudio();
@@ -489,21 +487,21 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     type: string,
     header: string,
     alternativeHeader: string | undefined,
-    label: string,
     headerTextType: string,
+    label: string | undefined,
     hideVideo: boolean,
     hideText: boolean,
-    hasCurrentVideo: string,
+    hasCurrentVideo: string | undefined,
     videoUploadedFunc: Function,
     uploadVideoHeader: string,
-    uploadedVideoId: number,
+    uploadedVideoId: number | undefined,
     pointKeyDownFunction: Function,
     hideAudio: boolean,
-    hasCurrentAudio: string,
+    hasCurrentAudio: string | undefined,
     uploadAudioPointHeader: string,
     ifLengthIsRight: boolean,
     addPointFunc: Function,
-    points: Array<YpPointData>,
+    points: Array<YpPointData> | undefined,
     mobile = false
   ) {
     return html`
@@ -544,7 +542,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             @focus="${this.focusTextArea}"
             @blur="${this.blurTextArea}"
             .value="${this.textValueUp}"
-            .label="${label}"
+            .label="${label ? label : ''}"
             charCounter
             rows="2"
             ?hidden="${hideText}"
@@ -563,10 +561,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                       attributeForSelected="name"
                       class="layout horizontal"
                       .selected="${this.pointUpOrDownSelected}">
-                      <paper-radio-button .name="pointFor"
+                      <paper-radio-button name="pointFor"
                         >${this.t('pointForShort')}</paper-radio-button
                       >
-                      <paper-radio-button .name="pointAgainst"
+                      <paper-radio-button name="pointAgainst"
                         >${this.t('pointAgainstShort')}</paper-radio-button
                       >
                     </paper-radio-group>
@@ -675,12 +673,16 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           </div>
         </div>
 
-        <lit-virtualizer
-          id="list${type}"
-          .items=${points}
-          .scrollTarget="${window}"
-          .renderItem=${this.renderPointItem}
-          @rangechange=${this.scrollEvent}></lit-virtualizer>
+        ${points
+          ? html`
+              <lit-virtualizer
+                id="list${type}"
+                .items=${points}
+                .scrollTarget="${window}"
+                .renderItem=${this.renderPointItem}
+                @rangechange=${this.scrollEvent}></lit-virtualizer>
+            `
+          : nothing}
       </div>
     `;
   }
@@ -705,11 +707,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       <lite-signal
         @lite-signal-yp-update-points-for-post="${this
           ._loadNewPointsIfNeeded}"></lite-signal>
-      <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-
-      <iron-media-query
-        query="(min-width: 985px)"
-        query-matches="${this.wide}"></iron-media-query>
 
       <div class="layout horizontal center-center" ?hidden="${this.ajaxActive}">
         <yp-ajax
@@ -744,7 +741,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                   this.uploadedVideoUpId,
                   this.focusUpPoint,
                   this.hideUpAudio,
-                  this._hasCurrentUpAudio,
+                  this.hasCurrentUpAudio,
                   this.t('uploadAudioPointFor'),
                   this.ifLengthUpIsRight,
                   this.addPointUp,
@@ -764,7 +761,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                   this.uploadedVideoDownId,
                   this.focusDownPoint,
                   this.hideDownAudio,
-                  this._hasCurrentDownAudio,
+                  this.hasCurrentDownAudio,
                   this.t('uploadAudioPointAgainst'),
                   this.ifLengthDownIsRight,
                   this.addPointDown,
@@ -774,7 +771,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             </div>
           `
         : nothing}
-
       ${this.smallReady
         ? html`
             <div ?rtl="${this.rtl}" class="layout vertical center-center">
@@ -1050,13 +1046,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
     let haveAddedPoint = false;
     points = this._interleaveMorePoints(points);
-    points.forEach(
-     (point)  => {
-        if (this._addMorePoint(point)) {
-          haveAddedPoint = true;
-        }
+    points.forEach(point => {
+      if (this._addMorePoint(point)) {
+        haveAddedPoint = true;
       }
-    );
+    });
     this.async(function () {
       if (this.$$('#ironListUp')) this.$$('#ironListUp').fire('iron-resize');
       if (this.$$('#ironListDown'))
@@ -1161,7 +1155,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.hideUpVideo = false;
     this.hideDownVideo = false;
     this.hideMobileVideo = false;
-    if (this.$$('#videoFileUploadUp')) (this.$$('#videoFileUploadUp') as YpFileUpload).clear();
+    if (this.$$('#videoFileUploadUp'))
+      (this.$$('#videoFileUploadUp') as YpFileUpload).clear();
     if (this.$$('#videoFileUploadDown'))
       (this.$$('#videoFileUploadDown') as YpFileUpload).clear();
     if (this.$$('#videoFileUploadMobile'))
@@ -1265,8 +1260,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _updatePointLabels() {
     setTimeout(() => {
-      const forLabel = (this.$$('#alternativePointForLabelId') as YpMagicText);
-      const againstLabel = (this.$$('#alternativePointAgainstLabelId') as YpMagicText);
+      const forLabel = this.$$('#alternativePointForLabelId') as YpMagicText;
+      const againstLabel = this.$$(
+        '#alternativePointAgainstLabelId'
+      ) as YpMagicText;
       if (forLabel && forLabel.finalContent) {
         this.labelUp = forLabel.finalContent;
       }
@@ -1333,30 +1330,24 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _updatePointInLists(event: CustomEvent) {
     const changedPoint = event.detail as YpPointData;
-    this.upPoints?.forEach(
-      (point, index) => {
-        if (point.id === changedPoint.id) {
-          this.upPoints![index] = changedPoint;
-        }
+    this.upPoints?.forEach((point, index) => {
+      if (point.id === changedPoint.id) {
+        this.upPoints![index] = changedPoint;
       }
-    );
+    });
 
-    this.downPoints?.forEach(
-      (point, index) => {
-        if (point.id === changedPoint.id) {
-          this.downPoints![index] = changedPoint;
-        }
+    this.downPoints?.forEach((point, index) => {
+      if (point.id === changedPoint.id) {
+        this.downPoints![index] = changedPoint;
       }
-    );
+    });
 
     if (this.points && this.points.length > 0) {
-      this.points.forEach(
-         (point, index) => {
-          if (point.id === changedPoint.id) {
-            this.points![index] = changedPoint;
-          }
+      this.points.forEach((point, index) => {
+        if (point.id === changedPoint.id) {
+          this.points![index] = changedPoint;
         }
-      );
+      });
     }
   }
 
@@ -1517,7 +1508,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       ) {
         this.latestPointCreatedAt = points[i].created_at;
       }
-      if (points[i].PointRevisions &&
+      if (
+        points[i].PointRevisions &&
         points[i].PointRevisions[points[i].PointRevisions.length - 1] &&
         points[i].PointRevisions[points[i].PointRevisions.length - 1].content
       ) {
@@ -1556,13 +1548,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         } else if (point.value < 0) {
           this.downPoints?.unshift(point);
           setTimeout(() => {
-           // this.$$('#ironListDown').fire('iron-resize');
+            // this.$$('#ironListDown').fire('iron-resize');
           }, 700);
         }
       } else {
         this.points?.unshift(point);
         setTimeout(() => {
-         // this.$$('#ironListMobile').fire('iron-resize');
+          // this.$$('#ironListMobile').fire('iron-resize');
         }, 700);
       }
       this.storedPoints?.unshift(point);
