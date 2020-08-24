@@ -40,7 +40,7 @@ import '@polymer/paper-tabs/paper-tabs.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-icon/iron-icon.js';
-import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-input/apaper-input.js';
 import '@polymer/iron-media-query/iron-media-query.js';
 import '../yp-app-globals/yp-app-icons.js';
 import { ypLanguageBehavior } from './yp-language-behavior.js';

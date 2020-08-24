@@ -65,7 +65,7 @@ class YpUserEditLit extends YpBaseElement {
   }
 
   static get styles() {
-    return[
+    return [
       css`
 
       .container {
