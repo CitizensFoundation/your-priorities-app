@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
@@ -18,6 +19,7 @@ import { YpPostCard } from './yp-post-card.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { RangeChangeEvent } from 'lit-virtualizer';
+import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -31,6 +33,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   host: string | undefined;
 
   @property({ type: Boolean })
+  ajaxActive = false;
+
+  @property({ type: Boolean })
   isAdmin = false;
 
   @property({ type: Boolean })
@@ -40,10 +45,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   points: Array<YpPointData> | undefined;
 
   @property({ type: Array })
-  downPoints: Array<YpPointData> = [];
+  downPoints: Array<YpPointData> | undefined;
 
   @property({ type: Array })
-  upPoints: Array<YpPointData> = [];
+  upPoints: Array<YpPointData> | undefined;
 
   @property({ type: String })
   textValueUp = '';
@@ -75,11 +80,101 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   @property({ type: Number })
   latestPointCreatedAt: Date | undefined;
 
-  @property({ type: String })
-  scrollToId: string | undefined;
+  @property({ type: Number })
+  scrollToId: number | undefined;
 
   @property({ type: Boolean })
   addPointDisabled = false;
+
+  @property({ type: Number })
+  uploadedVideoUpId: number | undefined;
+
+  @property({ type: Number })
+  uploadedVideoDownId: number | undefined;
+
+  @property({ type: Number })
+  uploadedVideoMobileId: number | undefined;
+
+  @property({ type: Number })
+  currentVideoId: number | undefined;
+
+  @property({ type: Boolean })
+  hideUpVideo = false
+
+  @property({ type: Boolean })
+  hideDownVideo = false
+
+  @property({ type: Boolean })
+  hideMobileVideo = false
+
+  @property({ type: Number })
+  uploadedAudioUpId: number | undefined;
+
+  @property({ type: Number })
+  uploadedAudioDownId: number | undefined;
+
+  @property({ type: Number })
+  uploadedAudioMobileId: number | undefined;
+
+  @property({ type: Number })
+  currentAudioId: number | undefined;
+
+  @property({ type: Boolean })
+  hideUpAudio = false
+
+  @property({ type: Boolean })
+  hideDownAudio = false
+
+  @property({ type: Boolean })
+  hideMobileAudio = false
+
+  @property({ type: Boolean })
+  hideUpText = false
+
+  @property({ type: Boolean })
+  hideDownText = false
+
+  @property({ type: Boolean })
+  hideMobileText = false
+
+  @property({ type: Boolean })
+  selectedPointForMobile = false
+
+  @property({ type: Boolean })
+  isAndroid = false
+
+  @property({ type: String })
+  hasCurrentUpVideo: string | undefined;
+
+  @property({ type: String })
+  hasCurrentDownVideo: string | undefined;
+
+  @property({ type: String })
+  hasCurrentMobileVideo: string | undefined;
+
+  @property({ type: String })
+  hasCurrentUpAudio: string | undefined;
+
+  @property({ type: String })
+  hasCurrentDownAudio: string | undefined;
+
+  @property({ type: String })
+  hasCurrentMobileAudio: string | undefined;
+
+  @property({ type: Array })
+  storedPoints: Array<YpPointData> | undefined;
+
+  loadedPointIds: Record<number, boolean> = {};
+
+  loadMoreInProgress = false
+
+  totalCount: number | undefined;
+
+  storedUpPointsCount = 0;
+
+  storedDownPointsCount = 0;
+
+  noMorePoints = false
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
@@ -102,150 +197,31 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     if (changedProperties.has('pointUpOrDownSelected')) {
       this._pointUpOrDownSelectedChanged();
     }
-  }
 
-  static get propersties() {
-    return {
-      ajaxActive: {
-        type: Boolean,
-        value: false,
-      },
+    if (changedProperties.has('hasCurrentUpVideo')) {
+      this._hasCurrentUpVideo();
+    }
 
-      uploadedVideoUpId: {
-        type: String,
-        value: null,
-      },
 
-      uploadedVideoDownId: {
-        type: String,
-        value: null,
-      },
+    if (changedProperties.has('hasCurrentDownVideo')) {
+      this._hasCurrentDownVideo();
+    }
 
-      uploadedVideoMobileId: {
-        type: String,
-        value: null,
-      },
+    if (changedProperties.has('hasCurrentMobileVideo')) {
+      this._hasCurrentMobileVideo();
+    }
+    if (changedProperties.has('hasCurrentUpAudio')) {
+      this._hasCurrentUpAudio();
+    }
 
-      currentVideoId: {
-        type: String,
-        value: null,
-      },
 
-      hideUpVideo: {
-        type: Boolean,
-        value: false,
-      },
+    if (changedProperties.has('hasCurrentDownAudio')) {
+      this._hasCurrentDownAudio();
+    }
 
-      hideDownVideo: {
-        type: Boolean,
-        value: false,
-      },
-
-      hideMobileVideo: {
-        type: Boolean,
-        value: false,
-      },
-
-      uploadedAudioUpId: {
-        type: String,
-        value: null,
-      },
-
-      uploadedAudioDownId: {
-        type: String,
-        value: null,
-      },
-
-      uploadedAudioMobileId: {
-        type: String,
-        value: null,
-      },
-
-      currentAudioId: {
-        type: String,
-        value: null,
-      },
-
-      hideUpAudio: {
-        type: Boolean,
-        value: false,
-      },
-
-      hideDownAudio: {
-        type: Boolean,
-        value: false,
-      },
-
-      hideMobileAudio: {
-        type: Boolean,
-        value: false,
-      },
-
-      hideUpText: {
-        type: Boolean,
-        value: false,
-      },
-
-      hideDownText: {
-        type: Boolean,
-        value: false,
-      },
-
-      hideMobileText: {
-        type: Boolean,
-        value: false,
-      },
-
-      selectedPointForMobile: {
-        type: Boolean,
-        value: true,
-      },
-
-      isAndroid: {
-        type: Boolean,
-        value: false,
-      },
-
-      hasCurrentUpVideo: {
-        type: String,
-        observer: '_hasCurrentUpVideo',
-      },
-
-      hasCurrentDownVideo: {
-        type: String,
-        observer: '_hasCurrentDownVideo',
-      },
-
-      hasCurrentMobileVideo: {
-        type: String,
-        observer: '_hasCurrentMobileVideo',
-      },
-
-      hasCurrentUpAudio: {
-        type: String,
-        observer: '_hasCurrentUpAudio',
-      },
-
-      hasCurrentDownAudio: {
-        type: String,
-        observer: '_hasCurrentDownAudio',
-      },
-
-      hasCurrentMobileAudio: {
-        type: String,
-        observer: '_hasCurrentMobileAudio',
-      },
-
-      storedPoints: {
-        type: Array,
-        value: null,
-      },
-
-      pointMaxLength: {
-        type: Number,
-        computed: '_pointMaxLength(post, largeMode)',
-      },
-    };
+    if (changedProperties.has('hasCurrentMobileAudio')) {
+      this._hasCurrentMobileAudio();
+    }
   }
 
   static get styles() {
@@ -512,7 +488,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   renderPointList(
     type: string,
     header: string,
-    alternativeHeader: string,
+    alternativeHeader: string | undefined,
     label: string,
     headerTextType: string,
     hideVideo: boolean,
@@ -527,7 +503,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     uploadAudioPointHeader: string,
     ifLengthIsRight: boolean,
     addPointFunc: Function,
-    points: Array<YpPointData>
+    points: Array<YpPointData>,
+    mobile = false
   ) {
     return html`
       <div class="point">
@@ -574,6 +551,29 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             maxrows="3"
             .maxlength="${this.pointMaxLength}">
           </mwc-textarea>
+
+          ${mobile
+            ? html`
+                <div class="layout vertical end-justified">
+                  <div class="layout horizontal center-center pointButtons">
+                    <paper-radio-group
+                      id="upOrDown"
+                      ?hidden="${this.post.Group.configuration
+                        .hidePointAgainst}"
+                      attributeForSelected="name"
+                      class="layout horizontal"
+                      .selected="${this.pointUpOrDownSelected}">
+                      <paper-radio-button .name="pointFor"
+                        >${this.t('pointForShort')}</paper-radio-button
+                      >
+                      <paper-radio-button .name="pointAgainst"
+                        >${this.t('pointAgainstShort')}</paper-radio-button
+                      >
+                    </paper-radio-group>
+                  </div>
+                </div>
+              `
+            : nothing}
 
           <div
             class="horizontal end-justified layout"
@@ -729,7 +729,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       ${this.wideReady
         ? html`
             <div ?rtl="${this.rtl}" class="layout vertical topContainer">
-              <div class="main-container layout-horizontal">
+              <div class="main-container layout horizontal">
                 ${this.renderPointList(
                   'Up',
                   this.t('pointsFor'),
@@ -761,7 +761,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                   this.hasCurrentDownVideo,
                   this._videoDownUploaded,
                   this.t('uploadVideoPointAgainst'),
-                  this.uploadedVideoDOwnId,
+                  this.uploadedVideoDownId,
                   this.focusDownPoint,
                   this.hideDownAudio,
                   this._hasCurrentDownAudio,
@@ -770,410 +770,35 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                   this.addPointDown,
                   this.downPoints
                 )}
-
-                <div
-                  class="point layout vertical"
-                  ?hidden="${this.post.Group.configuration.hidePointAgainst}">
-                  ${!this.post.Group.configuration.alternativePointAgainstHeader
-                    ? html`
-                        <div
-                          class="pointMainHeader layout horizontal center-center"
-                          role="heading"
-                          aria-level="2">
-                          > ${this.t('pointsAgainst')}
-                        </div>
-                      `
-                    : html`
-                        <div
-                          class="pointMainHeader layout horizontal center-center">
-                          <yp-magic-text
-                            .contentId="${this.post.Group.id}"
-                            textOnly
-                            .content="${this.post.Group.configuration
-                              .alternativePointAgainstHeader}"
-                            .contentLanguage="${this.post.Group.language}"
-                            role="heading"
-                            aria-level="2"
-                            class="ratingName"
-                            textType="alternativePointAgainstHeader">
-                          </yp-magic-text>
-                        </div>
-                      `}
-
-                  <paper-material
-                    id="pointDownMaterial"
-                    elevation="1"
-                    class="pointInputMaterial layout vertical"
-                    animated
-                    ?hidden="${this.disableDebate}">
-                    <paper-textarea
-                      id="down_point"
-                      @tap="${this.focusDownPoint}"
-                      @focus="${this.focusTextArea}"
-                      @blur="${this.blurTextArea}"
-                      .value="${this.textValueDown}"
-                      .label="${this.labelDown}"
-                      .charCounter
-                      .rows="2"
-                      ?hidden="${this.hideDownText}"
-                      alwaysFloatLabel="${this._floatIfValueOrIE()}"
-                      max-rows="5"
-                      .maxlength="${this.pointMaxLenght}">
-                    </paper-textarea>
-
-                    <div
-                      class="horizontal end-justified layout"
-                      ?hidden="${this.post.Group.configuration.hideEmoji}">
-                      <emoji-selector
-                        id="pointDownEmojiSelector"
-                        ?hidden="${this.hideDownText}"></emoji-selector>
-                    </div>
-
-                    <div class="layout horizontal center-justified">
-                      ${this.post.Group.configuration.allowPointVideoUploads
-                        ? html`
-                  <div ?hidden="${this.hideDownVideo}" class="uploadSection">
-                    <div class="layout vertical center-center self-start" ?hidden=${!this
-                      .isLoggedIn}">
-                      <yp-file-upload id="videoFileUploadDown" currentFile="${
-                        this.hasCurrentDownVideo
-                      }" noDefaultCoverImage .containerType="points" uploadLimitSeconds="${
-                            this.post.Group.configuration
-                              .videoPointUploadLimitSec
-                          }" .group="${
-                            this.post.Group
-                          }" .raised="true" .multi="false" .videoUpload="" .method="POST" @success="${
-                            this._videoDownUploaded
-                          }">
-                        <iron-icon class="icon" .icon="videocam"></iron-icon>
-                        <span>${this.t('uploadVideoPointAgainst')}</span>
-                      </yp-file-upload>
-                    </div>
-                    <div class="videoUploadDisclamer"  ?hidden="${
-                      !this.post.Group.configuration
-                        .showVideoUploadDisclaimer || !this.uploadedVideoUpId
-                    }">
-                      [[t('videoUploadDisclaimer')]]
-                    </div>
-                    <div class="layout horizontal center-center">
-                      <mwc-button class="uploadNotLoggedIn" icon="videocam" raised ?hidden="${
-                        this.isLoggedIn
-                      }" .label="${this.t(
-                            'uploadVideoPointAgainst'
-                          )}" @click="${this._openLogin}">
-                        <iron-icon class="icon"></iron-icon>
-                      </mwc-button>
-                    </div>
-                  </div>
-                `
-                        : html``}
-                      ${this.post.Group.configuration.allowPointAudioUploads
-                        ? html`
-                            <div
-                              ?hidden="${this.hideDownAudio}"
-                              class="uploadSection">
-                              <div
-                                class="layout vertical center-center"
-                                ?hidden="${!this.isLoggedIn}">
-                                <yp-file-upload
-                                  id="audioFileUploadDown"
-                                  .currentFile="${this.hasCurrentDownAudio}"
-                                  .containerType="points"
-                                  uploadLimitSeconds="${this.post.Group
-                                    .configuration.audioPointUploadLimitSec}"
-                                  group="${this.post.Group}"
-                                  .raised="true"
-                                  .multi="false"
-                                  .audio-upload=""
-                                  .method="POST"
-                                  @success="${this._audioDownUploaded}">
-                                  <iron-icon
-                                    class="icon"
-                                    .icon="keyboard-voice"></iron-icon>
-                                  <span
-                                    >${this.t('uploadAudioPointAgainst')}</span
-                                  >
-                                </yp-file-upload>
-                              </div>
-                              <div class="layout horizontal center-center">
-                                <mwc-button
-                                  class="uploadNotLoggedIn"
-                                  icon="keyboard-voice"
-                                  raised
-                                  .label="${this.t('uploadAudioPointAgainst')}"
-                                  ?hidden="${this.isLoggedIn}"
-                                  @click="${this._openLogin}">
-                                  <iron-icon class="icon"></iron-icon>
-                                </mwc-button>
-                              </div>
-                            </div>
-                          `
-                        : html``}
-                    </div>
-
-                    <div ?hidden="${!this.ifLengthDownIsRight}">
-                      <div class="addPointFab layout horizontal center-center">
-                        <mwc-button
-                          raised
-                          ?disabled="${this.addPointDisabled}"
-                          .icon="add"
-                          .elevation="3"
-                          @click="${this.addPointDown}"
-                          .title="${this.t('postPoint')}"
-                          .label="${this.t('postPoint')}"></mwc-button>
-                      </div>
-                    </div>
-                  </paper-material>
-
-                  <div id="allDownPoints">
-                    <iron-scroll-threshold
-                      id="ironScrollThesholdDown"
-                      lower-threshold="200"
-                      scroll-target="document"
-                      @lower-threshold="${this._loadMorePoints}">
-                      <iron-list
-                        id="ironListDown"
-                        .items="${this.downPoints}"
-                        .as="point"
-                        .scroll-target="document"
-                        .scroll-offset="550">
-                        <template>
-                          <div
-                            class="item"
-                            .tabindex="${this.tabIndex}"
-                            role="listitem"
-                            aria-level="3">
-                            >
-                            <paper-material
-                              id="point${this.point.id}"
-                              .elevation="1"
-                              .animated=""
-                              class="pointMaterial">
-                              <yp-point .point="${this.point}"></yp-point>
-                            </paper-material>
-                          </div>
-                        </template>
-                      </iron-list>
-                    </iron-scroll-threshold>
-                  </div>
-                </div>
               </div>
             </div>
           `
         : nothing}
+
       ${this.smallReady
         ? html`
             <div ?rtl="${this.rtl}" class="layout vertical center-center">
-              <paper-material
-                id="pointUpOrDownMaterial"
-                .elevation="1"
-                class="pointInputMaterial layout vertical"
-                .animated=""
-                ?hidden="${this.post.Group.configuration.disableDebate}">
-                <paper-textarea
-                  id="mobileUpOrDownPoint"
-                  class="mobilePaperTextArea"
-                  on-tap="focusDownPoint"
-                  @focus="${this.focusTextArea}"
-                  @blur="${this.blurTextArea}"
-                  .value="${this.textValueMobileUpOrDown}"
-                  .label="${this.labelMobileUpOrDown}"
-                  charCounter
-                  .rows="2"
-                  ?hidden="${this.hideMobileText}"
-                  .max-rows="3"
-                  .maxlength="${this.pointMaxLength}"></paper-textarea>
-                <div class="layout vertical end-justified">
-                  <div class="layout horizontal center-center pointButtons">
-                    <paper-radio-group
-                      id="upOrDown"
-                      ?hidden="${this.post.Group.configuration
-                        .hidePointAgainst}"
-                      .attributeForSelected="name"
-                      class="layout horizontal"
-                      .selected="${this.pointUpOrDownSelected}">
-                      <paper-radio-button .name="pointFor"
-                        >${this.t('pointForShort')}</paper-radio-button
-                      >
-                      <paper-radio-button .name="pointAgainst"
-                        >${this.t('pointAgainstShort')}</paper-radio-button
-                      >
-                    </paper-radio-group>
-                    <div class="flex"></div>
-                    <div ?hidden="${this.hideMobileText}">
-                      <emoji-selector
-                        id="pointUpDownEmojiSelector"
-                        ?hidden="${this.post.Group.configuration
-                          .hideEmoji}"></emoji-selector>
-                    </div>
-                  </div>
-
-                  <div class="layout horizontal center-justified">
-                    ${this.post.Group.configuration.allowPointVideoUploads
-                      ? html`
-                          <div
-                            ?hidden="${this.hideMobileVideo}"
-                            class="uploadSection">
-                            <div
-                              class="layout vertical center-center self-start"
-                              ?hidden="${!this.isLoggedIn}">
-                              <yp-file-upload
-                                id="videoFileUploadMobile"
-                                currentFile="${this.hasCurrentMobileVideo}"
-                                noDefaultCoverImage
-                                containerType="points"
-                                .uploadLimitSeconds="${this.post.Group
-                                  .configuration.videoPointUploadLimitSec}"
-                                group="${this.post.Group}"
-                                raised
-                                .video-upload=""
-                                .method="POST"
-                                @success="${this._videoMobileUploaded}">
-                                <iron-icon
-                                  class="icon"
-                                  .icon="videocam"></iron-icon>
-
-                                <span ?hidden="${!this.selectedPointForMobile}"
-                                  >${this.t('uploadVideoPointFor')}</span
-                                >
-                                <span ?hidden="${this.selectedPointForMobile}"
-                                  >${this.t('uploadVideoPointAgainst')}</span
-                                >
-                              </yp-file-upload>
-                            </div>
-                            <div
-                              class="videoUploadDisclamer"
-                              ?hidden="${!this.post.Group.configuration
-                                .showVideoUploadDisclaimer ||
-                              !this.uploadedVideoUpId}">
-                              [[t('videoUploadDisclaimer')]]
-                            </div>
-                            <div class="layout horizontal center-center">
-                              <mwc-button
-                                class="uploadNotLoggedIn"
-                                raised
-                                ?hidden="${!this.isLoggedIn}"
-                                @click="${this._openLogin}">
-                                <iron-icon
-                                  class="icon"
-                                  icon="videocam"></iron-icon>
-                                <span ?hidden="${!this.selectedPointForMobile}"
-                                  >${this.t('uploadVideoPointFor')}</span
-                                >
-                                <span ?hidden="${this.selectedPointForMobile}"
-                                  >${this.t('uploadVideoPointAgainst')}</span
-                                >
-                              </mwc-button>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                    ${this.post.Group.configuration.allowPointAudioUploads
-                      ? html`
-                          <div
-                            ?hidden="${this.hideMobileAudio}"
-                            class="uploadSection">
-                            <div
-                              class="layout vertical center-center  self-start"
-                              ?hidden="${!this.isLoggedIn}">
-                              <yp-file-upload
-                                id="audioFileUploadMobile"
-                                .currentFile="${this.hasCurrentMobileAudio}"
-                                .containerType="points"
-                                upload-limit-seconds="${this.post.Group
-                                  .configuration.audioPointUploadLimitSec}"
-                                group="${this.post.Group}"
-                                raised
-                                .audioUpload
-                                .method="POST"
-                                @success="${this._audioMobileUploaded}">
-                                <iron-icon
-                                  class="icon"
-                                  .icon="keyboard-voice"></iron-icon>
-
-                                <span ?hidden="${!this.selectedPointForMobile}"
-                                  >${this.t('uploadAudioPointFor')}</span
-                                >
-                                <span ?hidden="${this.selectedPointForMobile}"
-                                  >${this.t('uploadAudioPointAgainst')}</span
-                                >
-                              </yp-file-upload>
-                            </div>
-                            <div class="layout horizontal center-center">
-                              <mwc-button
-                                class="uploadNotLoggedIn"
-                                raised
-                                ?hidden="${this.isLoggedIn}"
-                                @click="${this._openLogin}">
-                                <iron-icon
-                                  class="icon"
-                                  icon="keyboard-voice"></iron-icon>
-                                <span ?hidden="${!this.selectedPointForMobile}"
-                                  >${this.t('uploadAudioPointFor')}</span
-                                >
-                                <span ?hidden="${this.selectedPointForMobile}"
-                                  >${this.t('uploadAudioPointAgainst')}</span
-                                >
-                              </mwc-button>
-                            </div>
-                          </div>
-                        `
-                      : html``}
-                  </div>
-                </div>
-                <div ?hidden="${!this.ifLengthMobileRight}">
-                  <div
-                    class="addPointFab layout horizontal center-center mobileFab">
-                    <mwc-button
-                      raised=""
-                      disabled="${this.addPointDisabled}"
-                      .icon="add"
-                      .elevation="3"
-                      @click="${this.addMobilePointUpOrDown}"
-                      .title="${this.t('postPoint')}">
-                      <span ?hidden="${!this.selectedPointForMobile}"
-                        >${this.t('postPointFor')}</span
-                      >
-                      <span ?hidden="${this.selectedPointForMobile}"
-                        >${this.t('postPointAgainst')}</span
-                      >
-                    </mwc-button>
-                  </div>
-                </div>
-              </paper-material>
-            </div>
-            <div ?rtl="${this.rtl}" class="layout vertical center-center">
-              <iron-scroll-threshold
-                id="ironScrollThesholdMobile"
-                scroll-target="document"
-                @lower-threshold="${this._loadMorePoints}">
-                <iron-list
-                  id="ironListMobile"
-                  lowerThreshold="150"
-                  ?debate-disabled="${this.post.Group.configuration
-                    .disableDebate}"
-                  .items="${this.points}"
-                  as="point"
-                  scrollTarget="document"
-                  .scrollOffset="${this.mobileScrollOffset}">
-                  <template>
-                    <div
-                      class="item layout vertical center-center"
-                      tabindex="${this.tabIndex}"
-                      role="listitem"
-                      aria-level="3">
-                      >
-                      <paper-material
-                        id="point${point.id}"
-                        .elevation="1"
-                        .animated=""
-                        class="pointMaterial pointMaterialMobile">
-                        <yp-point .point="${point}"></yp-point>
-                      </paper-material>
-                    </div>
-                  </template>
-                </iron-list>
-              </iron-scroll-threshold>
+              ${this.renderPointList(
+                'Mobile',
+                this.t('pointsAgainst'),
+                this.post.Group.configuration.alternativePointAgainstHeader,
+                'alternativePointAgainstHeader',
+                this.labelMobileUpOrDown,
+                this.hideMobileVideo,
+                this.hideMobileText,
+                this.hasCurrentMobileVideo,
+                this._videoMobileUploaded,
+                this.t('uploadVideoPointAgainst'),
+                this.uploadedVideoMobileId,
+                this.focusMobilePoint,
+                this.hideMobileAudio,
+                this._hasCurrentMobileudio,
+                this.t('uploadAudioPointAgainst'),
+                this.ifLengthMobileIsRight,
+                this.addPointMobile,
+                this.points,
+                true
+              )}
             </div>
           `
         : nothing}
@@ -1246,14 +871,14 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     return !this.wide && this.post;
   }
 
-  _pointMaxLength(post) {
+  get pointMaxLength() {
     if (
-      post &&
-      post.Group &&
-      post.Group.configuration &&
-      post.Group.configuration.pointCharLimit
+      this.post &&
+      this.post.Group &&
+      this.post.Group.configuration &&
+      this.post.Group.configuration.pointCharLimit
     ) {
-      return post.Group.configuration.pointCharLimit;
+      return this.post.Group.configuration.pointCharLimit;
     } else {
       return 500;
     }
@@ -1263,35 +888,35 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.fire('yp-open-login');
   }
 
-  _videoUpUploaded(event, detail) {
-    this.uploadedVideoUpId = detail.videoId;
+  _videoUpUploaded(event: CustomEvent) {
+    this.uploadedVideoUpId = event.detail.videoId;
   }
 
-  _videoDownUploaded(event, detail) {
-    this.uploadedVideoDownId = detail.videoId;
+  _videoDownUploaded(event: CustomEvent) {
+    this.uploadedVideoDownId = event.detail.videoId;
   }
 
-  _videoMobileUploaded(event, detail) {
-    this.uploadedVideoMobileId = detail.videoId;
+  _videoMobileUploaded(event: CustomEvent) {
+    this.uploadedVideoMobileId = event.detail.videoId;
   }
 
-  _audioUpUploaded(event, detail) {
-    this.uploadedAudioUpId = detail.audioId;
+  _audioUpUploaded(event: CustomEvent) {
+    this.uploadedAudioUpId = event.detail.audioId;
   }
 
-  _audioDownUploaded(event, detail) {
-    this.uploadedAudioDownId = detail.audioId;
+  _audioDownUploaded(event: CustomEvent) {
+    this.uploadedAudioDownId = event.detail.audioId;
   }
 
-  _audioMobileUploaded(event, detail) {
-    this.uploadedAudioMobileId = detail.audioId;
+  _audioMobileUploaded(event: CustomEvent) {
+    this.uploadedAudioMobileId = event.detail.audioId;
   }
 
-  _mobileScrollOffset(large, post) {
-    if (!large && post) {
+  get mobileScrollOffset() {
+    if (!this.wide && this.post) {
       const element = this.$$('#ironListMobile');
       if (element) {
-        const top = element.getBoundingClientRect().top;
+        let top = element.getBoundingClientRect().top;
         if (top <= 0) {
           top = 800;
         }
@@ -1307,16 +932,16 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.addPointDisabled = false;
   }
 
-  _ironListResizeScrollThreshold(largeMode) {
-    if (largeMode) {
+  get ironListResizeScrollThreshold() {
+    if (!this.wide) {
       return 300;
     } else {
       return 300;
     }
   }
 
-  _ironListPaddingTop(largeMode) {
-    if (largeMode) {
+  get ironListPaddingTop() {
+    if (this.wide) {
       return 600;
     } else {
       return 500;
@@ -1331,23 +956,17 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.isAndroid = true;
     }
     window.addEventListener('resize', this._processStoredPoints.bind(this));
-  }
-
-  detached() {
-    window.removeEventListener('resize', this._processStoredPoints);
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
     this.addListener('yp-point-deleted', this._pointDeleted);
     this.addListener('yp-update-point-in-list', this._updatePointInLists);
     this.addListener('yp-iron-resize', this._ypIronResize);
   }
+
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener('yp-point-deleted', this._pointDeleted);
     this.removeListener('yp-update-point-in-list', this._updatePointInLists);
     this.removeListener('yp-iron-resize', this._ypIronResize);
+    window.removeEventListener('resize', this._processStoredPoints);
   }
 
   /*
@@ -1368,8 +987,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.$$('#ironListMobile').fire('iron-resize');
   }
 
-  _loadNewPointsIfNeeded(event, detail) {
-    if (this.post && this.post.id == detail.postId) {
+  _loadNewPointsIfNeeded(event: CustomEvent) {
+    if (this.post && this.post.id == event.detail.postId) {
       if (this.latestPointCreatedAt) {
         this.$$('#newPointsAjax').url =
           '/api/posts/' + this.post.id + '/newPoints';
@@ -1407,11 +1026,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _interleaveMorePoints(points) {
-    var upPoints = [];
-    var downPoints = [];
+  _interleaveMorePoints(points: Array<YpPointData>) {
+    const upPoints = [];
+    const downPoints = [];
 
-    for (var i = 0; i < points.length; i++) {
+    for (let i = 0; i < points.length; i++) {
       if (points[i].value > 0) {
         upPoints.push(points[i]);
       } else if (points[i].value < 0) {
@@ -1422,9 +1041,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     return this.interleaveArrays(upPoints, downPoints);
   }
 
-  _morePointsResponse(event, detail) {
+  _morePointsResponse(event: CustomEvent) {
     this.loadMoreInProgress = false;
-    var points = this._preProcessPoints(detail.response.points);
+    let points = this._preProcessPoints(event.detail.response.points);
     if (points.length === 0) {
       this.noMorePoints = true;
     }
@@ -1432,11 +1051,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     let haveAddedPoint = false;
     points = this._interleaveMorePoints(points);
     points.forEach(
-      function (point) {
+     (point)  => {
         if (this._addMorePoint(point)) {
           haveAddedPoint = true;
         }
-      }.bind(this)
+      }
     );
     this.async(function () {
       if (this.$$('#ironListUp')) this.$$('#ironListUp').fire('iron-resize');
@@ -1535,25 +1154,25 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _clearVideo() {
-    this.uploadedVideoUpId = null;
-    this.uploadedVideoDownId = null;
-    this.uploadedVideoMobileId = null;
-    this.currentVideoId = null;
+    this.uploadedVideoUpId = undefined;
+    this.uploadedVideoDownId = undefined;
+    this.uploadedVideoMobileId = undefined;
+    this.currentVideoId = undefined;
     this.hideUpVideo = false;
     this.hideDownVideo = false;
     this.hideMobileVideo = false;
-    if (this.$$('#videoFileUploadUp')) this.$$('#videoFileUploadUp').clear();
+    if (this.$$('#videoFileUploadUp')) (this.$$('#videoFileUploadUp') as YpFileUpload).clear();
     if (this.$$('#videoFileUploadDown'))
-      this.$$('#videoFileUploadDown').clear();
+      (this.$$('#videoFileUploadDown') as YpFileUpload).clear();
     if (this.$$('#videoFileUploadMobile'))
-      this.$$('#videoFileUploadMobile').clear();
+      (this.$$('#videoFileUploadMobile') as YpFileUpload).clear();
   }
 
   _clearAudio() {
-    this.uploadedAudioUpId = null;
-    this.uploadedAudioDownId = null;
-    this.uploadedAudioMobileId = null;
-    this.currentAudioId = null;
+    this.uploadedAudioUpId = undefined;
+    this.uploadedAudioDownId = undefined;
+    this.uploadedAudioMobileId = undefined;
+    this.currentAudioId = undefined;
     this.hideUpAudio = false;
     this.hideDownAudio = false;
     this.hideMobileAudio = false;
@@ -1578,25 +1197,25 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _postChanged(newPost) {
+  _postChanged() {
     // Remove any manually inserted points when the list is updated
-    this.points = null;
-    this.upPoints = null;
-    this.downPoints = null;
-    this.latestPointCreatedAt = null;
-    this.storedPoints = null;
+    this.points = undefined;
+    this.upPoints = undefined;
+    this.downPoints = undefined;
+    this.latestPointCreatedAt = undefined;
+    this.storedPoints = undefined;
     this._clearVideo();
     this._clearAudio();
     this.loadedPointIds = {};
 
-    this.storedUpPointsCount = null;
-    this.storedDownPointsCount = null;
+    this.storedUpPointsCount = 0;
+    this.storedDownPointsCount = 0;
 
-    if (newPost) {
+    if (this.post) {
       if (
-        newPost.Group &&
-        newPost.Group.configuration &&
-        newPost.Group.configuration.disableDebate &&
+        this.post.Group &&
+        this.post.Group.configuration &&
+        this.post.Group.configuration.disableDebate &&
         !this.isAdmin
       ) {
         this.disableDebate = true;
@@ -1605,9 +1224,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       }
 
       if (this.host) {
-        this.$.ajax.url = this.host + '/api/posts/' + newPost.id + '/points';
+        this.$.ajax.url = this.host + '/api/posts/' + this.post.id + '/points';
       } else {
-        this.$.ajax.url = '/api/posts/' + newPost.id + '/points';
+        this.$.ajax.url = '/api/posts/' + this.post.id + '/points';
       }
       this.$.ajax.generateRequest();
       if (
@@ -1632,12 +1251,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       }
     }
 
-    this.async(function () {
+    setTimeout(() => {
       this._updatePointLabels();
     });
   }
 
-  removeElementsByClass(rootElement, className) {
+  removeElementsByClass(rootElement: HTMLElement, className: string) {
     const elements = rootElement.getElementsByClassName(className);
     while (elements.length > 0) {
       elements[0].parentNode.removeChild(elements[0]);
@@ -1645,9 +1264,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _updatePointLabels() {
-    this.async(function () {
-      var forLabel = this.$$('#alternativePointForLabelId');
-      var againstLabel = this.$$('#alternativePointAgainstLabelId');
+    setTimeout(() => {
+      const forLabel = (this.$$('#alternativePointForLabelId') as YpMagicText);
+      const againstLabel = (this.$$('#alternativePointAgainstLabelId') as YpMagicText);
       if (forLabel && forLabel.finalContent) {
         this.labelUp = forLabel.finalContent;
       }
@@ -1688,61 +1307,66 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this._clearScrollTrigger();
   }
 
-  _response(event, detail) {
+  _response(event: CustomEvent) {
+    const detail = event.detail;
     this.storedPoints = this._preProcessPoints(detail.response.points);
     this.totalCount = detail.response.count;
     this.storedUpPointsCount = 0;
     this.storedDownPointsCount = 0;
 
-    for (var i = 0; i < this.storedPoints.length; i++) {
-      if (this.storedPoints[i].value > 0) {
-        this.storedUpPointsCount += 1;
-      } else if (this.storedPoints[i].value < 0) {
-        this.storedDownPointsCount += 1;
+    if (this.storedPoints) {
+      for (let i = 0; i < this.storedPoints.length; i++) {
+        if (this.storedPoints[i].value > 0) {
+          this.storedUpPointsCount += 1;
+        } else if (this.storedPoints[i].value < 0) {
+          this.storedDownPointsCount += 1;
+        }
+        this.loadedPointIds[this.storedPoints[i].id] = true;
       }
-      this.loadedPointIds[this.storedPoints[i].id] = true;
+      this._processStoredPoints();
+      this.removeElementsByClass(this, 'inserted-outside-list');
+      this._updateCounterInfo();
+      this._scrollPointIntoView();
+      this._checkForMultipleLanguages();
     }
-    this._processStoredPoints();
-    this.removeElementsByClass(this, 'inserted-outside-list');
-    this._updateCounterInfo();
-    this._scrollPointIntoView();
-    this._checkForMultipleLanguages();
   }
 
-  _updatePointInLists(event, changedPoint) {
-    this.upPoints.forEach(
-      function (point, index) {
+  _updatePointInLists(event: CustomEvent) {
+    const changedPoint = event.detail as YpPointData;
+    this.upPoints?.forEach(
+      (point, index) => {
         if (point.id === changedPoint.id) {
-          this.upPoints[index] = changedPoint;
+          this.upPoints![index] = changedPoint;
         }
-      }.bind(this)
+      }
     );
 
-    this.downPoints.forEach(
-      function (point, index) {
+    this.downPoints?.forEach(
+      (point, index) => {
         if (point.id === changedPoint.id) {
-          this.downPoints[index] = changedPoint;
+          this.downPoints![index] = changedPoint;
         }
-      }.bind(this)
+      }
     );
 
     if (this.points && this.points.length > 0) {
       this.points.forEach(
-        function (point, index) {
+         (point, index) => {
           if (point.id === changedPoint.id) {
-            this.points[index] = changedPoint;
+            this.points![index] = changedPoint;
           }
-        }.bind(this)
+        }
       );
     }
   }
 
   _checkForMultipleLanguages() {
     if (
+      this.upPoints &&
       !localStorage.getItem('dontPromptForAutoTranslation') &&
       !sessionStorage.getItem('dontPromptForAutoTranslation')
     ) {
-      let firstLanguage;
+      let firstLanguage: string;
       let multipleLanguages = false;
       this.upPoints.forEach(function (point) {
         if (point.language && !multipleLanguages) {
@@ -1764,7 +1388,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
       });
 
-      if (!multipleLanguages) {
+      if (!multipleLanguages && this.downPoints) {
         this.downPoints.forEach(function (point) {
           if (point.language && !multipleLanguages) {
             if (!firstLanguage && point.language !== '??') {
@@ -1884,7 +1508,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     return ie11 || value;
   }
 
-  _preProcessPoints(points) {
+  _preProcessPoints(points: Array<YpPointData>): Array<YpPointData> {
     for (let i = 0; i < points.length; i++) {
       if (
         !this.latestPointCreatedAt ||
@@ -1893,7 +1517,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       ) {
         this.latestPointCreatedAt = points[i].created_at;
       }
-      if (
+      if (points[i].PointRevisions &&
         points[i].PointRevisions[points[i].PointRevisions.length - 1] &&
         points[i].PointRevisions[points[i].PointRevisions.length - 1].content
       ) {
@@ -1920,47 +1544,47 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _insertNewPoint(point) {
+  _insertNewPoint(point: YpPointData) {
     if (!this.loadedPointIds[point.id]) {
       this.loadedPointIds[point.id] = true;
       if (this.wide) {
         if (point.value > 0) {
-          this.unshift('upPoints', point);
-          this.async(function () {
-            this.$$('#ironListUp').fire('iron-resize');
+          this.upPoints?.unshift(point);
+          setTimeout(() => {
+            //this.$$('#ironListUp').fire('iron-resize');
           }, 700);
         } else if (point.value < 0) {
-          this.unshift('downPoints', point);
-          this.async(function () {
-            this.$$('#ironListDown').fire('iron-resize');
+          this.downPoints?.unshift(point);
+          setTimeout(() => {
+           // this.$$('#ironListDown').fire('iron-resize');
           }, 700);
         }
       } else {
-        this.unshift('points', point);
-        this.async(function () {
-          this.$$('#ironListMobile').fire('iron-resize');
+        this.points?.unshift(point);
+        setTimeout(() => {
+         // this.$$('#ironListMobile').fire('iron-resize');
         }, 700);
       }
-      this.unshift('storedPoints', point);
+      this.storedPoints?.unshift(point);
     }
   }
 
-  _addMorePoint(point) {
+  _addMorePoint(point: YpPointData) {
     let haveAddedPoints = false;
     if (!this.loadedPointIds[point.id]) {
       this.loadedPointIds[point.id] = true;
       haveAddedPoints = true;
       if (this.wide) {
         if (point.value > 0) {
-          this.push('upPoints', point);
+          this.upPoints?.push(point);
         } else if (point.value < 0) {
-          this.push('downPoints', point);
+          this.downPoints?.push(point);
         }
       } else {
-        this.push('points', point);
+        this.points?.push(point);
       }
 
-      this.push('storedPoints', point);
+      this.storedPoints?.push(point);
 
       if (point.value > 0) {
         this.storedUpPointsCount += 1;
@@ -2121,8 +1745,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     event.currentTarget.parentElement.elevation = 1;
   }
 
-  _hasCurrentUpVideo(value) {
-    if (value) {
+  _hasCurrentUpVideo() {
+    if (this.hasCurrentUpVideo) {
       this.hideUpAudio = true;
       this.hideUpText = true;
     } else {
@@ -2131,8 +1755,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _hasCurrentDownVideo(value) {
-    if (value) {
+  _hasCurrentDownVideo() {
+    if (this.hasCurrentDownVideo) {
       this.hideDownAudio = true;
       this.hideDownText = true;
     } else {
@@ -2141,8 +1765,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _hasCurrentUpAudio(value) {
-    if (value) {
+  _hasCurrentUpAudio() {
+    if (this.hasCurrentUpAudio) {
       this.hideUpVideo = true;
       this.hideUpText = true;
     } else {
@@ -2151,8 +1775,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _hasCurrentDownAudio(value) {
-    if (value) {
+  _hasCurrentDownAudio() {
+    if (this.hasCurrentDownAudio) {
       this.hideDownVideo = true;
       this.hideDownText = true;
     } else {
@@ -2161,8 +1785,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _hasCurrentMobileVideo(value) {
-    if (value) {
+  _hasCurrentMobileVideo() {
+    if (this.hasCurrentMobileVideo) {
       this.hideMobileAudio = true;
       this.hideMobileText = true;
     } else {
@@ -2172,7 +1796,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _hasCurrentMobileAudio(value) {
-    if (value) {
+    if (this.hasCurrentMobileAudio) {
       this.hideMobileVideo = true;
       this.hideMobileText = true;
     } else {

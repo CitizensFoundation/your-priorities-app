@@ -82,6 +82,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   videoPointUploadLimitSec?: number;
   allowPointAudioUploads?: boolean;
   audioPointUploadLimitSec?: number;
+  pointCharLimit?: number;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -313,7 +314,10 @@ interface YpPointRevision {
 interface YpPointData {
   id: number;
   content: string;
+  value: number;
+  created_at: Date;
   user_id?: number;
+  language?: string;
   Post?: YpPostData;
   User?: YpUserData;
   PointQualities?: Array<YpPointQuality>;
