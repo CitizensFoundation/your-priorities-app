@@ -88,6 +88,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowAdminAnswersToPoints?: boolean;
   hidePointAuthor?: boolean;
   customAdminCommentsTitle?: string;
+  collapsableTranscripts?: boolean;
 }
 
 
@@ -333,10 +334,12 @@ interface YpPointData {
   checkTranscriptFor?: string;
   PointQualities?: Array<YpPointQuality>;
   PointRevisions?: Array<YpPointRevision>;
+  PointVideos?: Array<YpVideoData>;
+  PointAudios?: Array<YpAudioData>;
   public_data: {
     admin_comment?: {
       text: string;
-      language: string;
+      language?: string;
     };
   };
 }
@@ -439,4 +442,10 @@ interface YpUploadFileData extends File {
 interface YpFormatsAndImagesResponse {
   previewVideoUrl?: string;
   videoImages?: Array<string>;
+}
+
+interface YpGetPointTranscriptResponse {
+  inProgress: boolean;
+  error: boolean;
+  point: YpPointData;
 }

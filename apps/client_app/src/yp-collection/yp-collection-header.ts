@@ -460,13 +460,13 @@ export class YpCollectionHeader extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener('yp-yp-got-admin-rights', this.requestUpdate);
+    this.addGlobalListener('yp-got-admin-rights', this.requestUpdate);
     this.addGlobalListener('yp-pause-media-playback', this._pauseMediaPlayback.bind(this));
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener('yp-yp-got-admin-rights', this.requestUpdate);
+    this.removeGlobalListener('yp-got-admin-rights', this.requestUpdate);
     this.removeGlobalListener(
       'yp-pause-media-playback',
       this._pauseMediaPlayback

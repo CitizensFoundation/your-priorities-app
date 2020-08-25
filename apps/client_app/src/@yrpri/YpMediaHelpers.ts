@@ -188,7 +188,7 @@ export class YpMediaHelpers {
     }
   }
 
-  static getVideoURL(videos: Array<YpVideoData>) {
+  static getVideoURL(videos: Array<YpVideoData> | undefined) {
     if (
       videos &&
       videos.length > 0 &&
@@ -201,7 +201,7 @@ export class YpMediaHelpers {
     }
   }
 
-  static isPortraitVideo(videos: Array<YpVideoData>) {
+  static isPortraitVideo(videos: Array<YpVideoData> | undefined) {
     if (
       videos &&
       videos.length > 0 &&
@@ -222,7 +222,7 @@ export class YpMediaHelpers {
     }
   }
 
-  static getAudioURL(audios: Array<YpAudioData>) {
+  static getAudioURL(audios: Array<YpAudioData> | undefined) {
     if (
       audios &&
       audios.length > 0 &&

@@ -25,9 +25,10 @@ import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { Select } from '@material/mwc-select';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 @customElement('yp-point')
-export class YpPoint extends YpBaseElementWithLogin {
+export class YpPoint extends YpBaseElement {
   @property({ type: Object })
   point!: YpPointData;
 
@@ -93,27 +94,57 @@ export class YpPoint extends YpBaseElementWithLogin {
   @property({ type: Boolean })
   checkTranscriptError = false;
 
-  static get propersties() {
-    return {
-      point: {
-        type: Object,
-        notify: true,
-        observer: '_pointChanged',
-      },
+  playStartedAt: Date | undefined;
+  videoPlayListener: Function | undefined;
+  videoPauseListener: Function | undefined;
+  videoEndedListener: Function | undefined;
+  audioPlayListener: Function | undefined;
+  audioPauseListener: Function | undefined;
+  audioEndedListener: Function | undefined;
 
-      isEditing: {
-        type: Boolean,
-        value: false,
-        observer: '_isEditingChanged',
-      },
-
-      isAdminCommentEditing: {
-        type: Boolean,
-        value: false,
-        observer: '_isAdminCommentEditingChanged',
-      },
-    };
+  connectedCallback() {
+    super.connectedCallback();
+    this.addGlobalListener(
+      'yp-got-admin-rights',
+      this.requestUpdate.bind(this)
+    );
+    this.addGlobalListener('yp-logged-in', this.requestUpdate.bind(this));
+    this.addGlobalListener(
+      'yp-pause-media-playback',
+      this._pauseMediaPlayback.bind(this)
+    );
   }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener(
+      'yp-got-admin-rights',
+      this.requestUpdate.bind(this)
+    );
+    this.removeGlobalListener('yp-logged-in', this.requestUpdate.bind(this));
+    this.removeGlobalListener(
+      'yp-pause-media-playback',
+      this._pauseMediaPlayback
+    );
+    YpMediaHelpers.detachMediaListeners(this as YpElementWithPlayback);
+  }
+
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('point')) {
+      this._pointChanged();
+    }
+
+    if (changedProperties.has('isAdminCommentEditing')) {
+      this._isAdminCommentEditingChanged();
+    }
+
+    if (changedProperties.has('isEditing')) {
+      this._isEditingChanged();
+    }
+  }
+
 
   static get styles() {
     return [
@@ -313,265 +344,250 @@ export class YpPoint extends YpBaseElementWithLogin {
     ];
   }
 
+  renderAdminComments() {
+    html`
+      <div class="commentFromAdmin" ?hidden="${this.isEditingSomething}">
+        ${this.point.Post!.Group.configuration.customAdminCommentsTitle
+          ? html`
+              <yp-magic-text
+                textType="customAdminCommentsTitle"
+                .contentLanguage="${this.point.Post!.Group.language}"
+                .content="${this.point.Post!.Group.configuration
+                  .customAdminCommentsTitle}"
+                .contentId="${this.point.Post!.Group.id}">
+              </yp-magic-text>
+            `
+          : ``}
+        ${!this.point.Post!.Group.configuration.customAdminCommentsTitle
+          ? html` ${this.t('commentFromAdmin')} `
+          : ``}
+      </div>
+      <div
+        id="pointAdminCommentContent"
+        ?link-point="${this.linkPoint}"
+        ?hidden="${this.isEditingSomething}"
+        @click="${this._linkIfNeeded}">
+        <yp-magic-text
+          simple-format
+          textType="pointAdminCommentContent"
+          .contentLanguage="${this.point.public_data?.admin_comment?.language}"
+          .content="${this.point.public_data?.admin_comment?.text}"
+          .contentId="${this.point.id}">
+        </yp-magic-text>
+      </div>
+    `;
+  }
+
+  renderUserHeader() {
+    return html` <div
+      class="userInfoContainer layout horizontal"
+      ?up-vote="${this.isUpVote}"
+      ?down-vote="${this.isDownVote}"
+      ?hidden="${this.hideUser}">
+      <mwc-icon class="thumbsIcon thumbsIconUp" ?hidden="${!this.isDownVote}"
+        >thumb_up</mwc-icon
+      >
+      <mwc-icon class="thumbsIcon thumbsIconDown" ?hidden="${this.isUpVote}"
+        >thumb_down</mwc-icon
+      >
+      <div
+        class="layout horizontal"
+        ?hidden="${this.point.Post!.Group.configuration.hidePointAuthor}">
+        <yp-user-with-organization
+          .titleDate="${this.point.created_at}"
+          inverted
+          .user="${this.user}"></yp-user-with-organization>
+      </div>
+    </div>`;
+  }
+
+  renderTextPoint() {
+    return html`
+      <div class="point-content layout vertical ">
+        <span ?hidden="${!this.point.name}">
+          <span>${this.point.name}</span>.
+        </span>
+        <div
+          id="pointContent"
+          .linkPoint="${this.linkPoint}"
+          ?hidden="${this.isEditingSomething}"
+          @click="${this._linkIfNeeded}">
+          <yp-magic-text
+            simpleFormat
+            textType="pointContent"
+            .contentLanguage="${this.point.language}"
+            .content="${this.point.latestContent}"
+            .contentId="${this.point.id}">
+          </yp-magic-text>
+        </div>
+      </div>
+    `;
+  }
+
+  renderVideoOrAudio() {
+    return html`
+      ${this.videoActive && this.pointVideoPath
+        ? html`
+            <div class="topContainer" ?portrait="${this.portraitVideo}">
+              <div class="layout horizontal center-center">
+                <video
+                  id="videoPlayer"
+                  portrait="${this.portraitVideo}"
+                  .data-id="${this.pointVideoId}"
+                  controls
+                  preload="none"
+                  class="video"
+                  .src="${this.pointVideoPath}"
+                  playsinline
+                  .poster="${this.pointImageVideoPath
+                    ? this.pointImageVideoPath
+                    : ''}"></video>
+              </div>
+            </div>
+          `
+        : nothing}
+      ${this.audioActive && this.pointAudioPath
+        ? html`
+            <div class="layout vertical center-center">
+              <audio
+                id="audioPlayer"
+                .data-id="${this.pointAudioId}"
+                controls
+                preload="metadata"
+                class="audio"
+                .src="${this.pointAudioPath}"
+                playsinline></audio>
+            </div>
+          `
+        : nothing}
+      ${this.checkingTranscript
+        ? html`
+            <div class="layout vertical center-center checkTranscript">
+              <div>${this.t('checkingForTranscript')}</div>
+              <paper-spinner active></paper-spinner>
+            </div>
+          `
+        : nothing}
+
+      <div
+        class="transcriptError layout horizontal center-center"
+        ?hidden="${!this.checkTranscriptError}">
+        ${this.t('checkTranscriptError')}
+      </div>
+
+      ${this.point.latestContent
+        ? html`
+            <div class="transcriptText layout vertical center-center">
+              <div class="layout horizontal">
+                <div class="transcriptHeader">
+                  ${this.t('automaticTranscript')}
+                </div>
+                <div
+                  hidden$="[[!point.Post.Group.configuration.collapsableTranscripts]]">
+                  <mwc-icon-button
+                    .label="${this.t('openComments')}"
+                    class="openCloseButton"
+                    icon="keyboard_arrow_right"
+                    @click="${this._setOpen}"
+                    hidden$="${this.openTranscript}"></mwc-icon-button>
+                  <mwc-icon-button
+                    .label="${this.t('closeComments')}"
+                    class="openCloseButton"
+                    icon="keyboard_arrow_down"
+                    @click="${this._setClosed}"
+                    hidden$="${!this.openTranscript}"></mwc-icon-button>
+                </div>
+              </div>
+              <div
+                id="pointContentTranscript"
+                .linkPoint="${this.linkPoint}"
+                ?hidden="${this.isEditing}"
+                @tap="${this._linkIfNeeded}">
+                <yp-magic-text
+                  ?hidden="${!this.openTranscript}"
+                  simpleFormat
+                  textType="pointContent"
+                  .contentLanguage="${this.point.language}"
+                  .content="${this.point.latestContent}"
+                  .contentId="${this.point.id}">
+                </yp-magic-text>
+              </div>
+            </div>
+          `
+        : nothing}
+    `;
+  }
+
+  renderEditPoint() {
+    return html`
+      <div class="layout vertical">
+        <mwc-textarea
+          id="pointContentEditor"
+          charCounter
+          maxlength="1500"
+          .value="${this.editText ? this.editText : ''}"></mwc-textarea
+        >
+        <div class="horizontal end-justified layout">
+          <yp-emoji-selector id="pointEmojiSelector"></yp-emoji-selector>
+        </div>
+        <div class="layout horizontal self-end">
+          <mwc-button
+            @click="${this._cancelEdit}"
+            .label="${this.t('cancel')}"></mwc-button>
+          <mwc-button
+            @click="${this._saveEdit}"
+            .label="${this.t('update')}"></mwc-button>
+        </div>
+      </div>
+    `;
+  }
+
+  renderEditMenu() {
+    return html`
+      <div class="layout horizontal self-end" hidden>
+        <mwc-icon-button
+          .label="${this.t('editAdminComment')}"
+          ?hidden="${!this.hasAdminCommentAccess}"
+          icon="comment"
+          @click="${this._editAdminComment}"></mwc-icon-button>
+        <mwc-icon-button
+          .label="${this.t('edit')}"
+          ?hidden="${!this.canEditPoint}"
+          icon="create"
+          @click="${this._editPoint}"></mwc-icon-button>
+        <mwc-icon-button
+          .label="${this.t('delete')}"
+          icon="clear"
+          @click="${this._deletePoint}"></mwc-icon-button>
+      </div>
+    `;
+  }
   render() {
     return html`
-      <lite-signal
-        @lite-signal-got-admin-rights="${this._gotAdminRights}"></lite-signal>
-      <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-      <lite-signal
-        @lite-signal-yp-pause-media-playback="${this
-          ._pauseMediaPlayback}"></lite-signal>
-
       <div class="layout vertical">
-        <div
-          class="userInfoContainer layout horizontal"
-          ?up-vote="${this.isUpVote()}"
-          ?down-vote="${this.isDownVote()}"
-          ?hidden="${this.hideUser}">
-          <iron-icon
-            .icon="thumb-up"
-            class="thumbsIcon thumbsIconUp"
-            ?hidden="${!this.isUpVote()}"></iron-icon>
-          <iron-icon
-            .icon="thumb-down"
-            class="thumbsIcon thumbsIconDown"
-            ?hidden="${this.isUpVote}"></iron-icon>
-          <div
-            class="layout horizontal"
-            ?hidden="${this.point.Post!.Group.configuration.hidePointAuthor}">
-            <yp-user-with-organization
-              .titleDate="${this.point.created_at}"
-              inverted
-              .user="${this.user}"></yp-user-with-organization>
-          </div>
-        </div>
+        ${this.renderUserHeader()}
 
         <div class="layout vertical">
-          <div class="topContainer" ?portrait="${this.portraitVideo}">
-            ${this.videoActive && this.pointVideoPath
-              ? html`
-                  <div class="layout horizontal center-center">
-                    <video
-                      id="videoPlayer"
-                      portrait="${this.portraitVideo}"
-                      .data-id="${this.pointVideoId}"
-                      controls
-                      preload="none"
-                      class="video"
-                      .src="${this.pointVideoPath}"
-                      playsinline
-                      .poster="${this.pointImageVideoPath
-                        ? this.pointImageVideoPath
-                        : ''}"></video>
-                  </div>
-                `
-              : nothing}
-          </div>
-
-          ${this.audioActive && this.pointAudioPath
-            ? html`
-                <div class="layout vertical center-center">
-                  <audio
-                    id="audioPlayer"
-                    .data-id="${this.pointAudioId}"
-                    controls
-                    preload="metadata"
-                    class="audio"
-                    .src="${this.pointAudioPath}"
-                    playsinline></audio>
-                </div>
-              `
-            : nothing}
           ${this.videoOrAudioActive
-            ? html`
-                ${this.checkingTranscript
-                  ? html`
-                      <div
-                        class="layout vertical center-center checkTranscript">
-                        <div>${this.t('checkingForTranscript')}</div>
-                        <paper-spinner active></paper-spinner>
-                      </div>
-                    `
-                  : nothing}
-
-                <div
-                  class="transcriptError layout horizontal center-center"
-                  ?hidden="${!this.checkTranscriptError}">
-                  ${this.t('checkTranscriptError')}
-                </div>
-
-                ${this.point.latestContent
-                  ? html`
-                      <div class="transcriptText layout vertical center-center">
-                        <div class="layout horizontal">
-                          <div class="transcriptHeader">
-                            ${this.t('automaticTranscript')}
-                          </div>
-                          <div
-                            hidden$="[[!point.Post.Group.configuration.collapsableTranscripts]]">
-                            <paper-icon-button
-                              title="${this.t('openComments')}"
-                              class="openCloseButton"
-                              icon="keyboard-arrow-right"
-                              @click="${this._setOpen}"
-                              hidden$="[[openTranscript]]"></paper-icon-button>
-                            <paper-icon-button
-                              title="${this.t('closeComments')}"
-                              class="openCloseButton"
-                              icon="keyboard-arrow-down"
-                              @click="${this._setClosed}"
-                              hidden$="[[!openTranscript]]"></paper-icon-button>
-                          </div>
-                        </div>
-                        <div
-                          id="pointContentTranscript"
-                          .linkPoint="${this.linkPoint}"
-                          ?hidden="${this.isEditing}"
-                          @tap="${this._linkIfNeeded}">
-                          <yp-magic-text
-                            ?hidden="${!this.openTranscript}"
-                            simpleFormat
-                            textType="pointContent"
-                            .contentLanguage="${this.point.language}"
-                            .content="${this.point.latestContent}"
-                            .contentId="${this.point.id}">
-                          </yp-magic-text>
-                        </div>
-                      </div>
-                    `
-                  : nothing}
-              `
-            : html`
-                <div class="point-content layout vertical ">
-                  <span ?hidden="${!this.point.name}">
-                    <span>${this.point.name}</span>.
-                  </span>
-                  <div
-                    id="pointContent"
-                    .linkPoint="${this.linkPoint}"
-                    ?hidden="${this.isEditingSomething}"
-                    @tap="${this._linkIfNeeded}">
-                    <yp-magic-text
-                      simpleFormat
-                      textType="pointContent"
-                      .contentLanguage="${this.point.language}"
-                      .content="${this.point.latestContent}"
-                      .contentId="${this.point.id}">
-                    </yp-magic-text>
-                  </div>
-                </div>
-              `}
-          ${this.showAdminComments
-            ? html`
-                <div
-                  class="commentFromAdmin"
-                  ?hidden="${this.isEditingSomething}">
-                  ${this.point.Post.Group.configuration.customAdminCommentsTitle
-                    ? html`
-                        <yp-magic-text
-                          .textType="customAdminCommentsTitle"
-                          .contentLanguage="${this.point.Post!.Group.language}"
-                          .content="${this.point.Post!.Group.configuration
-                            .customAdminCommentsTitle}"
-                          .contentId="${this.point.Post!.Group.id}">
-                        </yp-magic-text>
-                      `
-                    : ``}
-                  ${!this.point.Post!.Group.configuration
-                    .customAdminCommentsTitle
-                    ? html` ${this.t('commentFromAdmin')} `
-                    : ``}
-                </div>
-                <div
-                  id="pointAdminCommentContent"
-                  ?link-point="${this.linkPoint}"
-                  ?hidden="${this.isEditingSomething}"
-                  @click="${this._linkIfNeeded}">
-                  <yp-magic-text
-                    simple-format
-                    textType="pointAdminCommentContent"
-                    .contentLanguage="${this.point.public_data?.admin_comment?.language}"
-                    .content="${this.point.public_data?.admin_comment?.text}"
-                    .contentId="${this.point.id}">
-                  </yp-magic-text>
-                </div>
-              `
-            : ''}
-          ${this.isEditing
-            ? html`
-                <div class="layout vertical">
-                  <paper-textarea
-                    id="pointContentEditor"
-                    char-counter
-                    .maxlength="1500"
-                    .value="${this.editText}"></paper-textarea>
-                  <div class="horizontal end-justified layout">
-                    <emoji-selector id="pointEmojiSelector"></emoji-selector>
-                  </div>
-                  <div class="layout horizontal self-end">
-                    <mwc-button
-                      @click="${this._cancelEdit}"
-                      .label="${this.t('cancel')}"></mwc-button>
-                    <mwc-button
-                      @click="${this._saveEdit}"
-                      .label="${this.t('update')}"></mwc-button>
-                  </div>
-                </div>
-              `
-            : nothing}
+            ? this.renderVideoOrAudio()
+            : this.renderTextPoint()}
+          ${this.showAdminComments ? this.renderAdminComments() : nothing}
+          ${this.isEditing ? this.renderEditPoint() : nothing}
 
           <div
             class="layout horizontal actionContainer"
             ?hidden="${this.hideActions}">
             <yp-point-actions
               .point="${this.point}"
-              .pointUrl="${this.pointUrl}"
-              ?allowWhatsAppSharing="${this.point.Post.Group.configuration
-                .allowWhatsAppSharing}"></yp-point-actions>
-            <paper-icon-button
-              .title="${this.t('point.report')}"
+              .pointUrl="${this.pointUrl}"></yp-point-actions>
+            <mwc-icon-button
+              .label="${this.t('point.report')}"
               id="reportPointIconButton"
-              .icon="warning"
-              @tap="${this._reportPoint}"></paper-icon-button>
+              icon="warning"
+              @click="${this._reportPoint}"></mwc-icon-button>
             <div class="flex"></div>
 
-            ${this.hasPointAccess
-              ? html`
-                  <div class="layout horizontal self-end" ?hidden="">
-                    <yp-ajax
-                      id="editPointAjax"
-                      .method="PUT"
-                      @response="${this._editResponse}"></yp-ajax>
-                    <yp-ajax
-                      id="editAdminCommentPointAjax"
-                      method="PUT"
-                      @response="${this._editAdminCommentResponse}"></yp-ajax>
-                    <yp-ajax
-                      id="deletePointAjax"
-                      .method="DELETE"
-                      @response="${this._deleteResponse}"></yp-ajax>
-                    <paper-icon-button
-                      title="${this.t('editAdminComment')}"
-                      ?hidden="${!this.hasAdminCommentAccess}"
-                      icon="comment"
-                      @click="${this._editAdminComment}"></paper-icon-button>
-                    <paper-icon-button
-                      title="${this.t('edit')}"
-                      ?hidden="${!this.canEditPoint}"
-                      .icon="create"
-                      @click="${this._editPoint}"></paper-icon-button>
-                    <paper-icon-button
-                      title="${this.t('delete')}"
-                      .icon="clear"
-                      @click="${this._deletePoint}"></paper-icon-button>
-                  </div>
-                `
-              : nothing}
-
-            <yp-ajax
-              ?hidden=""
-              id="checkTranscriptStatusAjax"
-              @response="${this._transcriptStatusResponse}"></yp-ajax>
+            ${this.hasPointAccess ? this.renderEditMenu() : nothing}
           </div>
         </div>
       </div>
@@ -711,10 +727,15 @@ export class YpPoint extends YpBaseElementWithLogin {
     this.isEditing = false;
   }
 
-  _saveEdit() {
-    this.$$('#editPointAjax').url = '/api/points/' + this.point.id;
-    this.$$('#editPointAjax').body = { content: this.editText };
-    this.$$('#editPointAjax').generateRequest();
+  async _saveEdit() {
+    const point = await window.serverApi.updatePoint(this.point.id, { content: this.editText }) as YpPointData;
+    if (point) {
+      point.latestContent =
+        point.PointRevisions![point.PointRevisions!.length - 1].content;
+      this.point = point;
+    }
+    this.isEditing = false;
+
   }
 
   _cancelAdminCommentEdit() {
@@ -722,48 +743,16 @@ export class YpPoint extends YpBaseElementWithLogin {
     this.isAdminCommentEditing = false;
   }
 
-  _saveAdminCommentEdit() {
-    this.$$('#editAdminCommentPointAjax').url =
-      '/api/groups/' +
-      this.point.Post.Group.id +
-      '/' +
-      this.point.id +
-      '/adminComment';
-    this.$$('#editAdminCommentPointAjax').body = {
+  async _saveAdminCommentEdit() {
+    const response = await window.serverApi.updatePointAdminComment(this.point.id, {
       content: this.editAdminCommentText,
-    };
-    this.$$('#editAdminCommentPointAjax').generateRequest();
-  }
-
-  _deletePoint() {
-    window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
-      dialog.open(
-        this.t('point.confirmDelete'),
-        this._reallyDeletePoint.bind(this)
-      );
     });
-  }
 
-  _reallyDeletePoint() {
-    this.$$('#deletePointAjax').url = '/api/points/' + this.point.id;
-    this.$$('#deletePointAjax').body = {};
-    this.$$('#deletePointAjax').generateRequest();
-  }
-
-  _editResponse(event: CustomEvent) {
-    if (event.detail.response) {
-      const point = event.detail.response;
-      point.latestContent =
-        point.PointRevisions[point.PointRevisions.length - 1].content;
-      this.point = point;
-    }
-    this.isEditing = false;
-  }
-
-  _editAdminCommentResponse(event, detail) {
-    if (detail.response) {
+    if (response) {
       if (!this.point.public_data) this.point.public_data = {};
-      this.point.public_data.admin_comment = { text: detail.response.content };
+      this.point.public_data.admin_comment = {
+        text: response.content,
+      };
       this.point = JSON.parse(JSON.stringify(this.point));
       this.isAdminCommentEditing = false;
       this.hasAdminComments = true;
@@ -771,7 +760,18 @@ export class YpPoint extends YpBaseElementWithLogin {
     this.isAdminCommentEditing = false;
   }
 
-  _deleteResponse() {
+  _deletePoint() {
+    /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+      dialog.open(
+        this.t('point.confirmDelete'),
+        this._reallyDeletePoint.bind(this)
+      );
+    });*/
+  }
+
+  async _reallyDeletePoint() {
+    await window.serverApi.deletePoint(this.point.id);
+
     this.fire('yp-point-deleted', { pointId: this.point.id });
     //TODO: Check if we need this
     //this.point = undefined;
@@ -835,54 +835,64 @@ export class YpPoint extends YpBaseElementWithLogin {
     );
   }
 
-  _pointChanged(point, previousPoint) {
-    this.setupMediaEventListeners(point, previousPoint);
+
+  firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.firstUpdated(changedProperties);
+    YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
+  }
+
+  _pauseMediaPlayback() {
+    YpMediaHelpers.pauseMediaPlayback(this as YpElementWithPlayback);
+  }
+
+  _pointChanged() {
     this._resetMedia();
-    if (point) {
+    if (this.point) {
       if (
-        point.Post &&
-        point.Post.Group &&
-        point.Post.Group.configuration &&
-        point.Post.Group.configuration.collapsableTranscripts
+        this.point.Post &&
+        this.point.Post.Group &&
+        this.point.Post.Group.configuration &&
+        this.point.Post.Group.configuration.collapsableTranscripts
       ) {
         this.openTranscript = false;
       }
       this.user = this.point.User;
-      const videoURL = this._getVideoURL(point.PointVideos);
-      const videoPosterURL = this._getVideoPosterURL(point.PointVideos);
-      this.portraitVideo = this._isPortraitVideo(point.PointVideos);
+      const videoURL = YpMediaHelpers.getVideoURL(this.point.PointVideos);
+      const videoPosterURL = YpMediaHelpers.getVideoPosterURL(
+        this.point.PointVideos,
+        undefined
+      );
+      this.portraitVideo = YpMediaHelpers.isPortraitVideo(
+        this.point.PointVideos
+      );
       if (videoURL && videoPosterURL) {
         this.videoActive = true;
         this.pointVideoPath = videoURL;
         this.pointImageVideoPath = videoPosterURL;
-        this.pointVideoId = point.PointVideos[0].id;
+        this.pointVideoId = this.point.PointVideos![0].id;
         this.checkTranscriptError = false;
         if (
-          point.checkTranscriptFor === 'video' &&
+          this.point.checkTranscriptFor === 'video' &&
           window.appGlobals.hasTranscriptSupport === true
         ) {
-          this.$$('#checkTranscriptStatusAjax').url =
-            '/api/points/' + point.id + '/videoTranscriptStatus';
-          this.$$('#checkTranscriptStatusAjax').generateRequest();
+          this._checkTranscriptStatus();
           this.checkingTranscript = true;
-          point.checkTranscriptFor = null;
+          this.point.checkTranscriptFor = undefined;
         }
       } else {
-        const audioURL = this._getAudioURL(point.PointAudios);
+        const audioURL = YpMediaHelpers.getAudioURL(this.point.PointAudios);
         if (audioURL) {
           this.audioActive = true;
           this.pointAudioPath = audioURL;
-          this.pointAudioId = point.PointAudios[0].id;
+          this.pointAudioId = this.point.PointAudios![0].id;
           this.checkTranscriptError = false;
           if (
-            point.checkTranscriptFor === 'audio' &&
+            this.point.checkTranscriptFor === 'audio' &&
             window.appGlobals.hasTranscriptSupport === true
           ) {
-            this.$$('#checkTranscriptStatusAjax').url =
-              '/api/points/' + point.id + '/audioTranscriptStatus';
-            this.$$('#checkTranscriptStatusAjax').generateRequest();
+            this._checkTranscriptStatus();
             this.checkingTranscript = true;
-            point.checkTranscriptFor = null;
+            this.point.checkTranscriptFor = undefined;
           }
         }
       }
@@ -892,13 +902,19 @@ export class YpPoint extends YpBaseElementWithLogin {
     }
   }
 
-  _transcriptStatusResponse(event: CustomEvent) {
-    const detail = event.detail.response;
-    if (detail && detail.point) {
-      const point = detail.point;
+  async _checkTranscriptStatus() {
+
+    let type;
+    if (this.videoActive)
+    type="videoTranscriptStatus"
+    else type="audioTranscriptStatus"
+
+    const pointInfo = await window.serverApi.checkPointTranscriptStatus(type, this.point.id) as YpGetPointTranscriptResponse;
+    if (pointInfo.point) {
+      const point = pointInfo.point;
       this.checkingTranscript = false;
       point.latestContent =
-        point.PointRevisions[point.PointRevisions.length - 1].content;
+        point.PointRevisions![point.PointRevisions!.length - 1].content;
       this.point = point;
       this.fire('yp-update-point-in-list', point);
       if (this.hasPointAccess) {
@@ -906,11 +922,11 @@ export class YpPoint extends YpBaseElementWithLogin {
         this.isEditing = true;
       }
       this.requestUpdate();
-    } else if (detail && detail.inProgress) {
+    } else if (pointInfo && pointInfo.inProgress) {
       setTimeout(() => {
-        this.$$('#checkTranscriptStatusAjax').generateRequest();
+        this._checkTranscriptStatus();
       }, 2000);
-    } else if (detail && detail.error) {
+    } else if (pointInfo && pointInfo.error) {
       this.checkingTranscript = false;
       this.checkTranscriptError = true;
     } else {
@@ -934,7 +950,7 @@ export class YpPoint extends YpBaseElementWithLogin {
     }
   }
 
-  isUpVote() {
+  get isUpVote() {
     if (this.point) {
       if (this.point.value == 0) {
         return true;
@@ -947,7 +963,7 @@ export class YpPoint extends YpBaseElementWithLogin {
     }
   }
 
-  isDownVote() {
+  get isDownVote() {
     if (this.point) {
       if (this.point.value == 0) {
         return true;

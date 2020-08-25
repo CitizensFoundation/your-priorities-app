@@ -150,7 +150,7 @@ export class YpPostTranscript extends YpBaseElement {
                           class="editIcon"
                           .title="${this.t('edit')}"
                           icon="create"
-                          @mwc="${this._editPostTranscript}"></mwc-icon-button>
+                          @click="${this._editPostTranscript}"></mwc-icon-button>
                       </div>
                     `
                   : nothing}

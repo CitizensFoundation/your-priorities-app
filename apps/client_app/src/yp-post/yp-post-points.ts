@@ -450,6 +450,167 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     ];
   }
 
+  renderAudioUpload(
+    type: string,
+    hideAudio: boolean,
+    hasCurrentAudio: string | undefined,
+    uploadAudioPointHeader: string
+  ) {
+    return this.post.Group.configuration.allowPointAudioUploads
+      ? html`
+          <div ?hidden="${hideAudio}" class="uploadSection">
+            <div
+              class="layout vertical center-center"
+              ?hidden="${!this.isLoggedIn}">
+              <yp-file-upload
+                id="audioFileUpload${type}"
+                current-file="${ifDefined(hasCurrentAudio)}"
+                container-type="points"
+                .uploadlimitSeconds="${this.post.Group.configuration
+                  .audioPointUploadLimitSec}"
+                .group="${this.post.Group}"
+                raised
+                audioUpload
+                buttonIcon="keyboard_voice"
+                .buttonText="${uploadAudioPointHeader}"
+                method="POST"
+                @success="${this._audioUpUploaded}">
+              </yp-file-upload>
+            </div>
+            <div class="layout horizontal center-center">
+              <mwc-button
+                class="uploadNotLoggedIn"
+                icon="keyboard_voice"
+                raised
+                ?hidden="${this.isLoggedIn}"
+                @click="${this._openLogin}"
+                .label="${uploadAudioPointHeader}">
+              </mwc-button>
+            </div>
+          </div>
+        `
+      : nothing;
+  }
+
+  renderVideoUpload(
+    type: string,
+    hideVideo: boolean,
+    hasCurrentVideo: string | undefined,
+    uploadVideoHeader: string,
+    videoUploadedFunc: Function,
+    uploadedVideoId: number | undefined
+  ) {
+    return this.post.Group.configuration.allowPointVideoUploads
+      ? html`
+          <div ?hidden="${hideVideo}" class="uploadSection">
+            <div
+              class="layout vertical center-center self-start"
+              ?hidden="${!this.isLoggedIn}">
+              <yp-file-upload
+                id="videoFileUpload${type}"
+                noDefaultCoverImage
+                .uploadLimitSeconds="${this.post.Group.configuration
+                  .videoPointUploadLimitSec}"
+                .currentFile="${hasCurrentVideo}"
+                containerType="points"
+                .group="${this.post.Group}"
+                raised
+                videoUpload
+                method="POST"
+                buttonIcon="videocam"
+                .buttonText="${uploadVideoHeader}"
+                @success="${videoUploadedFunc}">
+              </yp-file-upload>
+            </div>
+            <div
+              class="videoUploadDisclamer"
+              ?hidden="${!this.post.Group.configuration
+                .showVideoUploadDisclaimer || !uploadedVideoId}">
+              ${this.t('videoUploadDisclaimer')}
+            </div>
+            <div class="layout horizontal center-center">
+              <mwc-button
+                class="uploadNotLoggedIn"
+                icon="videocam"
+                raised
+                ?hidden="${this.isLoggedIn}"
+                @click="${this._openLogin}"
+                .label="${uploadVideoHeader}">
+                <iron-icon class="icon"></iron-icon>
+              </mwc-button>
+            </div>
+          </div>
+        `
+      : nothing;
+  }
+
+  renderMobilePointSelection() {
+    html` <div class="layout vertical end-justified">
+      <div
+        class="layout horizontal center-center pointButtons"
+        ?hidden="${this.post.Group.configuration.hidePointAgainst}">
+        <mwc-formfield .label="${this.t('pointForShort')}">
+          <mwc-radio
+            @click="${this._chooseUpOrDownRadio}"
+            ?selected="${this.pointUpOrDownSelected == 'pointFor'}"
+            id="upRadio"
+            name="upOrDown"></mwc-radio>
+        </mwc-formfield>
+
+        <mwc-formfield .label="${this.t('pointAgainstShort')}">
+          <mwc-radio
+            @click="${this._chooseUpOrDownRadio}"
+            ?selected="${this.pointUpOrDownSelected == 'pointAgainst'}"
+            id="downRadio"
+            name="upOrDown"></mwc-radio>
+        </mwc-formfield>
+      </div>
+    </div>`;
+  }
+
+  renderPointItem(point: YpPointData, index: number): TemplateResult {
+    return html`<div
+      class="item layout-horizontal"
+      tabindex="${index}"
+      role="listitem"
+      aria-level="3">
+      >
+      <div id="point${point.id}" class="pointMaterial">
+        <yp-point .point="${point}"></yp-point>
+      </div>
+    </div>`;
+  }
+
+  renderPointHeader(
+    header: string,
+    alternativeHeader: string | undefined,
+    headerTextType: string
+  ) {
+    return !alternativeHeader
+      ? html`
+          <div
+            class="pointMainHeader layout horizontal center-center"
+            role="heading"
+            aria-level="2">
+            > ${header}
+          </div>
+        `
+      : html`
+          <div class="pointMainHeader layout horizontal center-center">
+            <yp-magic-text
+              .contentId="${this.post.Group.id}"
+              textOnly
+              .content="${alternativeHeader}"
+              .contentLanguage="${this.post.Group.language}"
+              role="heading"
+              aria-level="2"
+              class="ratingName"
+              textType="${headerTextType}">
+            </yp-magic-text>
+          </div>
+        `;
+  }
+
   renderPointList(
     type: string,
     header: string,
@@ -473,29 +634,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   ) {
     return html`
       <div class="point">
-        ${!alternativeHeader
-          ? html`
-              <div
-                class="pointMainHeader layout horizontal center-center"
-                role="heading"
-                aria-level="2">
-                > ${header}
-              </div>
-            `
-          : html`
-              <div class="pointMainHeader layout horizontal center-center">
-                <yp-magic-text
-                  .contentId="${this.post.Group.id}"
-                  textOnly
-                  .content="${alternativeHeader}"
-                  .contentLanguage="${this.post.Group.language}"
-                  role="heading"
-                  aria-level="2"
-                  class="ratingName"
-                  textType="${headerTextType}">
-                </yp-magic-text>
-              </div>
-            `}
+        ${this.renderPointHeader(header, alternativeHeader, headerTextType)}
 
         <div
           id="point${type}Material"
@@ -503,6 +642,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                     layout vertical
                   shadow-elevation-2dp shadow-transition"
           ?hidden="${this.post.Group.configuration.disableDebate}">
+
           <mwc-textarea
             id="${type.toLowerCase()}_point"
             @keydown="${pointKeyDownFunction}"
@@ -516,32 +656,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             .maxlength="${this.pointMaxLength}">
           </mwc-textarea>
 
-          ${mobile
-            ? html`
-                <div class="layout vertical end-justified">
-                  <div
-                    class="layout horizontal center-center pointButtons"
-                    ?hidden="${this.post.Group.configuration.hidePointAgainst}">
-                    <mwc-formfield .label="${this.t('pointForShort')}">
-                      <mwc-radio
-                        @click="${this._chooseUpOrDownRadio}"
-                        ?selected="${this.pointUpOrDownSelected == 'pointFor'}"
-                        id="upRadio"
-                        name="upOrDown"></mwc-radio>
-                    </mwc-formfield>
-
-                    <mwc-formfield .label="${this.t('pointAgainstShort')}">
-                      <mwc-radio
-                        @click="${this._chooseUpOrDownRadio}"
-                        ?selected="${this.pointUpOrDownSelected ==
-                        'pointAgainst'}"
-                        id="downRadio"
-                        name="upOrDown"></mwc-radio>
-                    </mwc-formfield>
-                  </div>
-                </div>
-              `
-            : nothing}
+          ${mobile ? this.renderMobilePointSelection() : nothing}
 
           <div
             class="horizontal end-justified layout"
@@ -552,82 +667,20 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           </div>
 
           <div class="layout horizontal center-justified">
-            ${this.post.Group.configuration.allowPointVideoUploads
-              ? html`
-                  <div ?hidden="${hideVideo}" class="uploadSection">
-                    <div
-                      class="layout vertical center-center self-start"
-                      ?hidden="${!this.isLoggedIn}">
-                      <yp-file-upload
-                        id="videoFileUpload${type}"
-                        noDefaultCoverImage
-                        .uploadLimitSeconds="${this.post.Group.configuration
-                          .videoPointUploadLimitSec}"
-                        .currentFile="${hasCurrentVideo}"
-                        containerType="points"
-                        .group="${this.post.Group}"
-                        raised
-                        videoUpload
-                        method="POST"
-                        buttonIcon="videocam"
-                        .buttonText="${uploadVideoHeader}"
-                        @success="${videoUploadedFunc}">
-                      </yp-file-upload>
-                    </div>
-                    <div
-                      class="videoUploadDisclamer"
-                      ?hidden="${!this.post.Group.configuration
-                        .showVideoUploadDisclaimer || !uploadedVideoId}">
-                      ${this.t('videoUploadDisclaimer')}
-                    </div>
-                    <div class="layout horizontal center-center">
-                      <mwc-button
-                        class="uploadNotLoggedIn"
-                        icon="videocam"
-                        raised
-                        ?hidden="${this.isLoggedIn}"
-                        @click="${this._openLogin}"
-                        .label="${uploadVideoHeader}">
-                        <iron-icon class="icon"></iron-icon>
-                      </mwc-button>
-                    </div>
-                  </div>
-                `
-              : html``}
-            ${this.post.Group.configuration.allowPointAudioUploads
-              ? html`
-                  <div ?hidden="${hideAudio}" class="uploadSection">
-                    <div
-                      class="layout vertical center-center"
-                      ?hidden="${!this.isLoggedIn}">
-                      <yp-file-upload
-                        id="audioFileUpload${type}"
-                        current-file="${ifDefined(hasCurrentAudio)}"
-                        container-type="points"
-                        .uploadlimitSeconds="${this.post.Group.configuration
-                          .audioPointUploadLimitSec}"
-                        .group="${this.post.Group}"
-                        raised
-                        audioUpload
-                        buttonIcon="keyboard_voice"
-                        .buttonText="${uploadAudioPointHeader}"
-                        method="POST"
-                        @success="${this._audioUpUploaded}">
-                      </yp-file-upload>
-                    </div>
-                    <div class="layout horizontal center-center">
-                      <mwc-button
-                        class="uploadNotLoggedIn"
-                        icon="keyboard_voice"
-                        raised
-                        ?hidden="${this.isLoggedIn}"
-                        @click="${this._openLogin}"
-                        .label="${uploadAudioPointHeader}">
-                      </mwc-button>
-                    </div>
-                  </div>
-                `
-              : html``}
+            ${this.renderVideoUpload(
+              type,
+              hideVideo,
+              hasCurrentVideo,
+              uploadVideoHeader,
+              videoUploadedFunc,
+              uploadedVideoId
+            )}
+            ${this.renderAudioUpload(
+              type,
+              hideAudio,
+              hasCurrentAudio,
+              uploadAudioPointHeader
+            )}
           </div>
 
           <div ?hidden="${ifLengthIsRight}">
@@ -657,21 +710,45 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     `;
   }
 
-  renderPointItem(point: YpPointData, index: number): TemplateResult {
-    return html`<div
-      class="item layout-horizontal"
-      tabindex="${index}"
-      role="listitem"
-      aria-level="3">
-      >
-      <div id="point${point.id}" class="pointMaterial">
-        <yp-point .point="${point}"></yp-point>
-      </div>
-    </div>`;
-  }
-
   scrollEvent(event: RangeChangeEvent) {
     //TODO
+  }
+
+  renderTranslationPlaceholders() {
+    return html`${!this.post.Group.configuration.alternativePointForLabel
+      ? html`
+          <yp-magic-text
+            id="alternativePointForLabelId"
+            hidden
+            contentId="${this.post.Group.id}"
+            textOnly
+            .content="${this.post.Group.configuration
+              .alternativePointForLabel}"
+            .contentLanguage="${this.post.Group.language}"
+            @new-translation="${this._updatePointLabels}"
+            role="heading"
+            aria-level="2"
+            textType="alternativePointForLabel">
+          </yp-magic-text>
+        `
+      : nothing}
+    ${!this.post.Group.configuration.alternativePointAgainstLabel
+      ? html`
+          <yp-magic-text
+            id="alternativePointAgainstLabelId"
+            hidden
+            contentId="${this.post.Group.id}"
+            textOnly
+            .content="${this.post.Group.configuration
+              .alternativePointAgainstLabel}"
+            .contentLanguage="${this.post.Group.language}"
+            @new-translation="${this._updatePointLabels}"
+            role="heading"
+            aria-level="2"
+            textType="alternativePointAgainstLabel">
+          </yp-magic-text>
+        `
+      : nothing}`;
   }
 
   render() {
@@ -755,40 +832,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             </div>
           `
         : nothing}
-      ${!this.post.Group.configuration.alternativePointForLabel
-        ? html`
-            <yp-magic-text
-              id="alternativePointForLabelId"
-              hidden
-              contentId="${this.post.Group.id}"
-              textOnly
-              .content="${this.post.Group.configuration
-                .alternativePointForLabel}"
-              .contentLanguage="${this.post.Group.language}"
-              @new-translation="${this._updatePointLabels}"
-              role="heading"
-              aria-level="2"
-              textType="alternativePointForLabel">
-            </yp-magic-text>
-          `
-        : nothing}
-      ${!this.post.Group.configuration.alternativePointAgainstLabel
-        ? html`
-            <yp-magic-text
-              id="alternativePointAgainstLabelId"
-              hidden
-              contentId="${this.post.Group.id}"
-              textOnly
-              .content="${this.post.Group.configuration
-                .alternativePointAgainstLabel}"
-              .contentLanguage="${this.post.Group.language}"
-              @new-translation="${this._updatePointLabels}"
-              role="heading"
-              aria-level="2"
-              textType="alternativePointAgainstLabel">
-            </yp-magic-text>
-          `
-        : nothing}
+      ${this.renderTranslationPlaceholders()}
     `;
   }
 
@@ -1102,7 +1146,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.hideUpAudio = false;
     this.hideDownAudio = false;
     this.hideMobileAudio = false;
-    if (this.$$('#audioFileUploadUp')) (this.$$('#audioFileUploadUp') as YpFileUpload).clear();
+    if (this.$$('#audioFileUploadUp'))
+      (this.$$('#audioFileUploadUp') as YpFileUpload).clear();
     if (this.$$('#audioFileUploadDown'))
       (this.$$('#audioFileUploadDown') as YpFileUpload).clear();
     if (this.$$('#audioFileUploadMobile'))

@@ -333,4 +333,41 @@ export class YpServerApi extends YpCodeBase {
       false
     );
   }
+
+  public updatePoint(pointId: number, body: object) {
+    return this.fetchWrapper(`/points/${pointId}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public updatePointAdminComment(pointId: number, body: object) {
+    return this.fetchWrapper(`/points/${pointId}/adminComment`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public deletePoint(pointId: number) {
+    return this.fetchWrapper(`/points/${pointId}`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public checkPointTranscriptStatus(type: string, pointId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/$points/${pointId}/${type}`
+    );
+  }
+
 }

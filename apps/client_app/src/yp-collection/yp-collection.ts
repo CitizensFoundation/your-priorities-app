@@ -82,7 +82,7 @@ export abstract class YpCollection extends YpBaseElement {
 
     //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
    // this.addGlobalListener('yp-logged-in', this._getCollection.bind(this));
-    this.addGlobalListener('yp-yp-got-admin-rights', this.refresh.bind(this));
+    this.addGlobalListener('yp-got-admin-rights', this.refresh.bind(this));
   }
 
   abstract scrollToCollectionItemSubClass(): void;
