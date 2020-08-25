@@ -145,7 +145,6 @@ export class YpPoint extends YpBaseElement {
     }
   }
 
-
   static get styles() {
     return [
       super.styles,
@@ -525,8 +524,7 @@ export class YpPoint extends YpBaseElement {
           id="pointContentEditor"
           charCounter
           maxlength="1500"
-          .value="${this.editText ? this.editText : ''}"></mwc-textarea
-        >
+          .value="${this.editText ? this.editText : ''}"></mwc-textarea>
         <div class="horizontal end-justified layout">
           <yp-emoji-selector id="pointEmojiSelector"></yp-emoji-selector>
         </div>
@@ -593,16 +591,6 @@ export class YpPoint extends YpBaseElement {
       </div>
     `;
   }
-
-  /*
-  behaviors: [
-    AccessHelpers,
-    ypLoggedInUserBehavior,
-    ypGotAdminRightsBehavior,
-    ypGotoBehavior,
-    ypMediaFormatsBehavior
-  ],
-*/
 
   _setOpen() {
     this.openTranscript = true;
@@ -728,14 +716,16 @@ export class YpPoint extends YpBaseElement {
   }
 
   async _saveEdit() {
-    const point = await window.serverApi.updatePoint(this.point.id, { content: this.editText }) as YpPointData;
+    const point = (await window.serverApi.updatePoint(this.point.id, {
+      content: this.editText,
+    })) as YpPointData;
     if (point) {
-      point.latestContent =
-        point.PointRevisions![point.PointRevisions!.length - 1].content;
+      point.latestContent = point.PointRevisions![
+        point.PointRevisions!.length - 1
+      ].content;
       this.point = point;
     }
     this.isEditing = false;
-
   }
 
   _cancelAdminCommentEdit() {
@@ -744,9 +734,12 @@ export class YpPoint extends YpBaseElement {
   }
 
   async _saveAdminCommentEdit() {
-    const response = await window.serverApi.updatePointAdminComment(this.point.id, {
-      content: this.editAdminCommentText,
-    });
+    const response = await window.serverApi.updatePointAdminComment(
+      this.point.id,
+      {
+        content: this.editAdminCommentText,
+      }
+    );
 
     if (response) {
       if (!this.point.public_data) this.point.public_data = {};
@@ -835,7 +828,6 @@ export class YpPoint extends YpBaseElement {
     );
   }
 
-
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
     YpMediaHelpers.attachMediaListeners(this as YpElementWithPlayback);
@@ -903,18 +895,20 @@ export class YpPoint extends YpBaseElement {
   }
 
   async _checkTranscriptStatus() {
-
     let type;
-    if (this.videoActive)
-    type="videoTranscriptStatus"
-    else type="audioTranscriptStatus"
+    if (this.videoActive) type = 'videoTranscriptStatus';
+    else type = 'audioTranscriptStatus';
 
-    const pointInfo = await window.serverApi.checkPointTranscriptStatus(type, this.point.id) as YpGetPointTranscriptResponse;
+    const pointInfo = (await window.serverApi.checkPointTranscriptStatus(
+      type,
+      this.point.id
+    )) as YpGetPointTranscriptResponse;
     if (pointInfo.point) {
       const point = pointInfo.point;
       this.checkingTranscript = false;
-      point.latestContent =
-        point.PointRevisions![point.PointRevisions!.length - 1].content;
+      point.latestContent = point.PointRevisions![
+        point.PointRevisions!.length - 1
+      ].content;
       this.point = point;
       this.fire('yp-update-point-in-list', point);
       if (this.hasPointAccess) {

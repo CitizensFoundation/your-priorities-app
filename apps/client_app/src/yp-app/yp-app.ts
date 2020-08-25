@@ -46,6 +46,7 @@ import { YpAppDialogs } from './yp-app-dialogs.js';
 import '../yp-collection/yp-domain.js';
 import '../yp-collection/yp-community.js';
 import '../yp-collection/yp-group.js';
+import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 
 declare global {

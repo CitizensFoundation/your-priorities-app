@@ -90,7 +90,7 @@ export abstract class YpCollection extends YpBaseElement {
   // DATA PROCESSING
 
   connectedCallback() {
-    this.connectedCallback();
+    super.connectedCallback();
     if (this.collection)
       this.refresh();
   }
