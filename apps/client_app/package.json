@@ -94,6 +94,7 @@
     "lit-virtualizer": "^0.4.2",
     "lodash-es": "^4.17.15",
     "moment": "^2.27.0",
-    "pwa-helpers": "^0.9.1"
+    "pwa-helpers": "^0.9.1",
+    "share-menu": "^4.0.0"
   }
 }

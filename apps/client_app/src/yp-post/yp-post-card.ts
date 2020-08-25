@@ -35,6 +35,7 @@ export class YpPostCard extends YpBaseElement {
     };
   }
 
+  //TODO: Make corners on posts card different
   static get styles() {
     return [
       super.styles,

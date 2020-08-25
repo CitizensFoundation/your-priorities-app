@@ -85,6 +85,9 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   pointCharLimit?: number;
   videoPostUploadLimitSec?: number;
   audioPostUploadLimitSec?: number;
+  allowAdminAnswersToPoints?: boolean;
+  hidePointAuthor?: boolean;
+  customAdminCommentsTitle?: string;
 }
 
 
@@ -318,15 +321,24 @@ interface YpPointData {
   id: number;
   content: string;
   value: number;
+  name?: string;
   created_at: Date;
   user_id?: number;
   language?: string;
   Post?: YpPostData;
   User?: YpUserData;
+  counter_quality_up: number;
+  counter_quality_down: number;
   latestContent?: string;
   checkTranscriptFor?: string;
   PointQualities?: Array<YpPointQuality>;
   PointRevisions?: Array<YpPointRevision>;
+  public_data: {
+    admin_comment?: {
+      text: string;
+      language: string;
+    };
+  };
 }
 
 interface YpActivityData extends YpDatabaseItem {

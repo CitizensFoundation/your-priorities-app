@@ -10,6 +10,8 @@ import '@material/mwc-tab-bar';
 import '@material/mwc-fab';
 import { Menu } from '@material/mwc-menu';
 
+import 'share-menu';
+
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
@@ -21,6 +23,7 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 
 import './yp-post-transcript.js';
+import { ShareMenu } from 'share-menu';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -42,15 +45,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
   @property({ type: Object })
   post!: YpPostData;
 
-  static get ppproperties() {
-    return {
-      post: {
-        type: Object,
-        observer: '_postChanged',
-      },
-    };
-  }
-
+  //TODO: Make corners on posts card different
   static get styles() {
     return [
       super.styles,
@@ -280,6 +275,138 @@ export class YpPostHeader extends YpBaseElementWithLogin {
     ];
   }
 
+  renderPostInformation() {
+    return html`
+      <div class="infoContainer">
+        ${!this.post.public_data?.structuredAnswersJson
+          ? html`
+              <yp-magic-text
+                id="description"
+                textType="postContent"
+                .contentLanguage="${this.post.language}"
+                content="${this.post.description}"
+                ?noUserInfo="${!this.post.Group.configuration
+                  .showWhoPostedPosts}"
+                .structuredQuestionsConfig="${this.post.Group.configuration
+                  .structuredQuestions}"
+                ?hasCustomRatings="${this.post.Group.configuration
+                  .customRatings}"
+                ?simpleFormat="${this.post.Group.configuration
+                  .descriptionSimpleFormat}"
+                .contentId="${this.post.id}"
+                class="description"
+                .truncate="${this.post.Group.configuration
+                  .descriptionTruncateAmount}"
+                .moreText="${this.t('readMore')}"
+                .closeDialogText="${this.t('close')}">
+              </yp-magic-text>
+            `
+          : html`
+              <yp-magic-text
+                id="description"
+                text-type="postContent"
+                .contentLanguage="${this.post.language}"
+                .content="${this.structuredAnswersFormatted}"
+                ?noUserInfo="${!this.post.Group.configuration
+                  .showWhoPostedPosts}"
+                simpleFormat
+                skipSanitize
+                .contentId="${this.post.id}"
+                class="description"
+                .truncate="${this.post.Group.configuration
+                  .descriptionTruncateAmount}"
+                .moreText="${this.t('readMore')}"
+                .closeDialogText="${this.t('close')}">
+              </yp-magic-text>
+            `}
+      </div>
+    `;
+  }
+
+  renderMenu() {
+    return html`
+      <div style="position: relative;" class="moreVert">
+        <mwc-icon-button
+          icon="more_vert"
+          @click="${this._openPostMenu}"
+          title="${this.t('openPostMenu')}">
+        </mwc-icon-button>
+        <mwc-menu id="postMenu" menuCorner="END" corner="TOP_RIGHT">
+          ${this.hasPostAccess
+            ? html`
+                <mwc-list-item @click="${this._openEdit}">
+                  ${this.t('post.edit')}
+                </mwc-list-item>
+                <mwc-list-item @click="${this._openMovePost}">
+                  ${this.t('post.move')}
+                </mwc-list-item>
+                <mwc-list-item
+                  @click="${this._openPostStatusChange}"
+                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
+                    this.post
+                  )}">
+                  ${this.t('post.statusChange')}
+                </mwc-list-item>
+                <mwc-list-item @click="${this._openDelete}">
+                  ${this.t('post.delete')}
+                </mwc-list-item>
+                <mwc-list-item
+                  @click="${this._openAnonymizeContent}"
+                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
+                    this.post
+                  )}">
+                  ${this.t('anonymizePostAndContent')}
+                </mwc-list-item>
+                <mwc-list-item
+                  @click="${this._openDeleteContent}"
+                  ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
+                    this.post
+                  )}">
+                  ${this.t('deletePostContent')}
+                </mwc-list-item>
+              `
+            : nothing}
+          <mwc-list-item @click="${this._openReport}">
+            ${this.t('post.report')}
+          </mwc-list-item>
+        </mwc-menu>
+      </div>
+    `;
+  }
+
+  renderActions() {
+    return html`${!this.post.public_data?.structuredAnswersJson
+        ? html`
+            <yp-post-ratings-info
+              class="customRatings"
+              .post="${this.post}"></yp-post-ratings-info>
+          `
+        : html`
+            <yp-post-actions
+              ?hidden="${this.hideActions}"
+              hideDebate
+              elevation="-1"
+              floating
+              class="postActions"
+              .post="${this.post}"></yp-post-actions>
+          `}
+
+      <div class="share">
+        <mwc-icon-button
+          icon="share"
+          @click="${this._shareTap}"></mwc-icon-button>
+        <share-menu
+          @share="${this._sharedContent}"
+          class="shareIcon"
+          ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
+          id="shareButton"
+          title="${this.t('post.shareInfo')}"
+          .url="${encodeURIComponent(
+            'https://' + window.location.host + '/post/' + this.post.id
+          )}"></share-menu>
+      </div>`;
+  }
+
   render() {
     return html`
       <div class="layout horizontal center-center">
@@ -331,136 +458,10 @@ export class YpPostHeader extends YpBaseElementWithLogin {
                   : nothing}
               </div>
               <div class="layout vertical">
-                <div class="infoContainer">
-                  ${!this.post.public_data?.structuredAnswersJson
-                    ? html`
-                        <yp-magic-text
-                          id="description"
-                          textType="postContent"
-                          .contentLanguage="${this.post.language}"
-                          content="${this.post.description}"
-                          ?noUserInfo="${!this.post.Group.configuration
-                            .showWhoPostedPosts}"
-                          .structuredQuestionsConfig="${this.post.Group
-                            .configuration.structuredQuestions}"
-                          ?hasCustomRatings="${this.post.Group.configuration
-                            .customRatings}"
-                          ?simpleFormat="${this.post.Group.configuration
-                            .descriptionSimpleFormat}"
-                          .contentId="${this.post.id}"
-                          class="description"
-                          .truncate="${this.post.Group.configuration
-                            .descriptionTruncateAmount}"
-                          .moreText="${this.t('readMore')}"
-                          .closeDialogText="${this.t('close')}">
-                        </yp-magic-text>
-                      `
-                    : html`
-                        <yp-magic-text
-                          id="description"
-                          text-type="postContent"
-                          .contentLanguage="${this.post.language}"
-                          .content="${this.structuredAnswersFormatted}"
-                          ?noUserInfo="${!this.post.Group.configuration
-                            .showWhoPostedPosts}"
-                          simpleFormat
-                          skipSanitize
-                          .contentId="${this.post.id}"
-                          class="description"
-                          .truncate="${this.post.Group.configuration
-                            .descriptionTruncateAmount}"
-                          .moreText="${this.t('readMore')}"
-                          .closeDialogText="${this.t('close')}">
-                        </yp-magic-text>
-                      `}
-                </div>
-
-                ${!this.post.public_data?.structuredAnswersJson
-                  ? html`
-                      <yp-post-ratings-info
-                        class="customRatings"
-                        .post="${this.post}"></yp-post-ratings-info>
-                    `
-                  : html`
-                      <yp-post-actions
-                        ?hidden="${this.hideActions}"
-                        hideDebate
-                        elevation="-1"
-                        floating
-                        class="postActions"
-                        .post="${this.post}"></yp-post-actions>
-                    `}
-
-                <div class="share">
-                  <paper-share-button
-                    on-share-tap="_shareTap"
-                    class="shareIcon"
-                    ?less-margin="${this.post.Group.configuration
-                      .hideDownVoteForPost}"
-                    horizontal-align="right"
-                    id="shareButton"
-                    ?whatsapp="${this.post.Group.configuration
-                      .allowWhatsAppSharing}"
-                    title="${this.t('post.shareInfo')}"
-                    facebook
-                    email
-                    twitter
-                    popup
-                    .url="${encodeURIComponent(
-                      'https://' +
-                        window.location.host +
-                        '/post/' +
-                        this.post.id
-                    )}"></paper-share-button>
-                </div>
-                <div style="position: relative;" class="moreVert">
-                  <mwc-icon-button
-                    icon="more_vert"
-                    @click="${this._openPostMenu}"
-                    title="${this.t('openPostMenu')}">
-                  </mwc-icon-button>
-                  <mwc-menu id="postMenu" menuCorner="END" corner="TOP_RIGHT">
-                    ${this.hasPostAccess
-                      ? html`
-                          <mwc-list-item @click="${this._openEdit}">
-                            ${this.t('post.edit')}
-                          </mwc-list-item>
-                          <mwc-list-item @click="${this._openMovePost}">
-                            ${this.t('post.move')}
-                          </mwc-list-item>
-                          <mwc-list-item
-                            @click="${this._openPostStatusChange}"
-                            ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                              this.post
-                            )}">
-                            ${this.t('post.statusChange')}
-                          </mwc-list-item>
-                          <mwc-list-item @click="${this._openDelete}">
-                            ${this.t('post.delete')}
-                          </mwc-list-item>
-                          <mwc-list-item
-                            @click="${this._openAnonymizeContent}"
-                            ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                              this.post
-                            )}">
-                            ${this.t('anonymizePostAndContent')}
-                          </mwc-list-item>
-                          <mwc-list-item
-                            @click="${this._openDeleteContent}"
-                            ?hidden="${!YpAccessHelpers.checkPostAdminOnlyAccess(
-                              this.post
-                            )}">
-                            ${this.t('deletePostContent')}
-                          </mwc-list-item>
-                        `
-                      : nothing}
-                    <mwc-list-item @click="${this._openReport}">
-                      ${this.t('post.report')}
-                    </mwc-list-item>
-                  </mwc-menu>
-                </div>
+                ${this.renderPostInformation()}
               </div>
             </div>
+            ${this.renderActions()} ${this.renderMenu()}
           </div>
         </div>
       </div>
@@ -505,6 +506,15 @@ export class YpPostHeader extends YpBaseElementWithLogin {
     }
   }
 
+  _sharedContent(event: CustomEvent) {
+    const shareData = event.detail;
+    window.appGlobals.activity(
+      'postShared',
+      shareData.social,
+      this.post ? this.post.id : -1
+    );
+  }
+
   _shareTap(event: CustomEvent) {
     const detail = event.detail;
     window.appGlobals.activity(
@@ -512,6 +522,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
       detail.brand,
       this.post ? this.post.id : -1
     );
+    (this.$$('#shareButton') as ShareMenu).share();
   }
 
   get hasPostAccess() {
