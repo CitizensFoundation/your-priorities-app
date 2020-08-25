@@ -289,4 +289,48 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/posts/${postId}/newPoints?latestPointCreatedAt=${latestPointCreatedAt}`
     );
   }
+
+  public getVideoFormatsAndImages(videoId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/videos/${videoId}/formatsAndImages`
+    );
+  }
+
+  public setVideoCover(videoId: number, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/videos/${videoId}/setVideoCover`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public getTranscodingJobStatus(mediaType: string, mediaId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${mediaType}/${mediaId}/getTranscodingJobStatus`
+    );
+  }
+
+  public startTranscoding(mediaType: string, mediaId: number, startType: string, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${mediaType}/${mediaId}/${startType}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public createPresignUrl(mediaUrl: string) {
+    return this.fetchWrapper(mediaUrl,
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
 }

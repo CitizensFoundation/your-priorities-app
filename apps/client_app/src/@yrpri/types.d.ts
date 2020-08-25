@@ -83,7 +83,10 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowPointAudioUploads?: boolean;
   audioPointUploadLimitSec?: number;
   pointCharLimit?: number;
+  videoPostUploadLimitSec?: number;
+  audioPostUploadLimitSec?: number;
 }
+
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
@@ -412,4 +415,16 @@ interface YpCheckTranscriptResponse {
 interface YpGetPointsResponse {
   count: number;
   points: Array<YpPointData>;
+}
+
+interface YpUploadFileData extends File {
+  complete: boolean;
+  error: boolean;
+  progress: number;
+  xhr?: XMLHttpRequest;
+}
+
+interface YpFormatsAndImagesResponse {
+  previewVideoUrl?: string;
+  videoImages?: Array<string>;
 }

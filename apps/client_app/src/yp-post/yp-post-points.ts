@@ -8,9 +8,12 @@ import { nothing, TemplateResult } from 'lit-html';
 
 import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
+import '@material/mwc-radio';
+import { Radio } from '@material/mwc-radio';
 import { Menu } from '@material/mwc-menu';
 
 import '../yp-post/yp-posts-list.js';
+import '../yp-file-upload/yp-file-upload.js';
 import '../@yrpri/yp-emoji-selector.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
@@ -19,6 +22,8 @@ import { RangeChangeEvent } from 'lit-virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+import { Select } from '@material/mwc-select';
+import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -297,15 +302,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           margin-bottom: 18px;
         }
 
-        paper-textarea {
-          --paper-input-container-label: {
-            font-size: 22px;
-            height: 30px;
-            overflow: visible;
-            color: #aaaaaa;
-          }
-        }
-
         .howToWriteInfoText {
           padding-top: 4px;
           color: var(--primary-color);
@@ -321,11 +317,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
         .upOrDown {
           margin-top: 72px;
-        }
-
-        paper-radio-button {
-          --paper-radio-button-checked-color: var(--accent-color) !important;
-          font-size: 16px;
         }
 
         #pointUpOrDownMaterial {
@@ -375,12 +366,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           .pointInputMaterial {
             width: 90%;
             max-width: 90%;
-          }
-        }
-
-        .mobilePaperTextArea {
-          --paper-input-container-label: {
-            font-size: 19px;
           }
         }
 
@@ -461,12 +446,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         div[rtl] {
           direction: rtl;
         }
-
-        paper-radio-button {
-          --paper-radio-button-label: {
-            padding-right: 6px;
-          }
-        }
       `,
     ];
   }
@@ -529,7 +508,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             @keydown="${pointKeyDownFunction}"
             @focus="${this.focusTextArea}"
             @blur="${this.blurTextArea}"
-            .value="${this.textValueUp}"
             .label="${label ? label : ''}"
             charCounter
             rows="2"
@@ -541,21 +519,25 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           ${mobile
             ? html`
                 <div class="layout vertical end-justified">
-                  <div class="layout horizontal center-center pointButtons">
-                    <paper-radio-group
-                      id="upOrDown"
-                      ?hidden="${this.post.Group.configuration
-                        .hidePointAgainst}"
-                      attributeForSelected="name"
-                      class="layout horizontal"
-                      .selected="${this.pointUpOrDownSelected}">
-                      <paper-radio-button name="pointFor"
-                        >${this.t('pointForShort')}</paper-radio-button
-                      >
-                      <paper-radio-button name="pointAgainst"
-                        >${this.t('pointAgainstShort')}</paper-radio-button
-                      >
-                    </paper-radio-group>
+                  <div
+                    class="layout horizontal center-center pointButtons"
+                    ?hidden="${this.post.Group.configuration.hidePointAgainst}">
+                    <mwc-formfield .label="${this.t('pointForShort')}">
+                      <mwc-radio
+                        @click="${this._chooseUpOrDownRadio}"
+                        ?selected="${this.pointUpOrDownSelected == 'pointFor'}"
+                        id="upRadio"
+                        name="upOrDown"></mwc-radio>
+                    </mwc-formfield>
+
+                    <mwc-formfield .label="${this.t('pointAgainstShort')}">
+                      <mwc-radio
+                        @click="${this._chooseUpOrDownRadio}"
+                        ?selected="${this.pointUpOrDownSelected ==
+                        'pointAgainst'}"
+                        id="downRadio"
+                        name="upOrDown"></mwc-radio>
+                    </mwc-formfield>
                   </div>
                 </div>
               `
@@ -577,7 +559,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                       class="layout vertical center-center self-start"
                       ?hidden="${!this.isLoggedIn}">
                       <yp-file-upload
-                        id="videoFileUploadUp"
+                        id="videoFileUpload${type}"
                         noDefaultCoverImage
                         .uploadLimitSeconds="${this.post.Group.configuration
                           .videoPointUploadLimitSec}"
@@ -585,11 +567,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                         containerType="points"
                         .group="${this.post.Group}"
                         raised
-                        video-upload
+                        videoUpload
                         method="POST"
+                        buttonIcon="videocam"
+                        .buttonText="${uploadVideoHeader}"
                         @success="${videoUploadedFunc}">
-                        <iron-icon class="icon" icon="videocam"></iron-icon>
-                        <span>${uploadVideoHeader}</span>
                       </yp-file-upload>
                     </div>
                     <div
@@ -619,18 +601,18 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                       class="layout vertical center-center"
                       ?hidden="${!this.isLoggedIn}">
                       <yp-file-upload
-                        id="audioFileUploadUp"
+                        id="audioFileUpload${type}"
                         current-file="${ifDefined(hasCurrentAudio)}"
                         container-type="points"
                         .uploadlimitSeconds="${this.post.Group.configuration
                           .audioPointUploadLimitSec}"
                         .group="${this.post.Group}"
                         raised
-                        audio-upload
+                        audioUpload
+                        buttonIcon="keyboard_voice"
+                        .buttonText="${uploadAudioPointHeader}"
                         method="POST"
                         @success="${this._audioUpUploaded}">
-                        <mwc-icon class="icon">keyboard_voice</mwc-icon>
-                        <span>${uploadAudioPointHeader}</span>
                       </yp-file-upload>
                     </div>
                     <div class="layout horizontal center-center">
@@ -773,8 +755,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             </div>
           `
         : nothing}
-
-        ${!this.post.Group.configuration.alternativePointForLabel
+      ${!this.post.Group.configuration.alternativePointForLabel
         ? html`
             <yp-magic-text
               id="alternativePointForLabelId"
@@ -809,6 +790,13 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           `
         : nothing}
     `;
+  }
+
+  _chooseUpOrDownRadio() {
+    const up = this.$$('#upRadio') as Radio;
+    const down = this.$$('#downRadio') as Radio;
+    if (up.checked) this.pointUpOrDownSelected = 'pointFor';
+    else if (down.checked) this.pointUpOrDownSelected = 'pointAgainst';
   }
 
   get wideReady() {
@@ -1050,7 +1038,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
       } else {
         const upDownPoint = this.$$('#mobile_point') as HTMLInputElement;
-        const upDownEmoji = this.$$('#pointMobileEmojiSelector') as YpEmojiSelector;
+        const upDownEmoji = this.$$(
+          '#pointMobileEmojiSelector'
+        ) as YpEmojiSelector;
         if (upDownPoint && upDownEmoji) {
           upDownEmoji.inputTarget = upDownPoint;
         } else {
@@ -1112,11 +1102,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     this.hideUpAudio = false;
     this.hideDownAudio = false;
     this.hideMobileAudio = false;
-    if (this.$$('#audioFileUploadUp')) this.$$('#audioFileUploadUp').clear();
+    if (this.$$('#audioFileUploadUp')) (this.$$('#audioFileUploadUp') as YpFileUpload).clear();
     if (this.$$('#audioFileUploadDown'))
-      this.$$('#audioFileUploadDown').clear();
+      (this.$$('#audioFileUploadDown') as YpFileUpload).clear();
     if (this.$$('#audioFileUploadMobile'))
-      this.$$('#audioFileUploadMobile').clear();
+      (this.$$('#audioFileUploadMobile') as YpFileUpload).clear();
   }
 
   _isAdminChanged() {

@@ -11,37 +11,21 @@ Example:
 
     <file-upload target="/path/to/destination"></file-upload>
 */
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
-import { YpCollection } from '../yp-collection/yp-collection.js';
-import { customElement, html, property, LitElement, css } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
+import { customElement, html, property, css } from 'lit-element';
+import { nothing  } from 'lit-html';
 
 import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
-import { Menu } from '@material/mwc-menu';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
 
 import '../yp-post/yp-posts-list.js';
 import '../@yrpri/yp-emoji-selector.js';
 import '../yp-post/yp-post-card-add.js';
-import { YpPostsList } from '../yp-post/yp-posts-list.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { YpPostCard } from './yp-post-card.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
-import { RangeChangeEvent } from 'lit-virtualizer';
-import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
-import { ifDefined } from 'lit-html/directives/if-defined';
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+import './yp-set-video-cover.js';
 
-// TODO: Remove
-interface AcActivity extends LitElement {
-  scrollToItem(item: YpDatabaseItem): () => void;
-  loadNewData(): () => void;
-}
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 @customElement('yp-post-points')
 export class YpFileUpload extends YpBaseElement {
@@ -84,7 +68,7 @@ export class YpFileUpload extends YpBaseElement {
    * `files` is the list of files to be uploaded
    */
   @property({ type: Array })
-  files = [];
+  files: Array<YpUploadFileData> = [];
 
   /**
    * `method` is the http method to be used during upload
@@ -158,8 +142,11 @@ export class YpFileUpload extends YpBaseElement {
   @property({ type: Number })
   transcodingJobId: number | undefined;
 
-  @property({ type: String })
-  currentFile: string | undefined;
+  @property({ type: Boolean })
+  transcodingComplete = false;
+
+  @property({ type: Object })
+  currentFile: YpUploadFileData | undefined;
 
   @property({ type: Boolean })
   isPollingForTranscoding = false;
@@ -182,14 +169,17 @@ export class YpFileUpload extends YpBaseElement {
   @property({ type: String })
   containerType: string | undefined;
 
-  @property({ type: String })
-  previewVideoUrl: string | undefined;
-
-  @property({ type: Array })
-  videoImages: Array<number> | undefined;
-
   @property({ type: Number })
   selectedVideoCoverIndex = 0;
+
+  @property({ type: Boolean })
+  useMainPhotoForVideoCover = false;
+
+  @property({ type: String })
+  buttonText = '';
+
+  @property({ type: String })
+  buttonIcon = 'file_upload';
 
   static get styles() {
     return [
@@ -272,37 +262,6 @@ export class YpFileUpload extends YpBaseElement {
           margin-bottom: 18px;
         }
 
-        .previewFrame {
-          max-height: 50px;
-          max-width: 89px;
-          height: 50px;
-          width: 89px;
-          cursor: pointer;
-        }
-
-        .videoImages {
-          overflow-x: auto;
-          width: 200px;
-          max-height: 70px;
-          height: 70px;
-        }
-
-        .videoPreviewContainer {
-        }
-
-        .selectedCover {
-          border-top: 2px solid var(--accent-color);
-          max-height: 50px;
-          max-width: 89px;
-          white-space: nowrap;
-        }
-
-        .coverImage {
-          max-height: 50px;
-          max-width: 89px;
-          white-space: nowrap;
-        }
-
         .limitInfo {
           margin-top: 0;
           color: #656565;
@@ -313,13 +272,7 @@ export class YpFileUpload extends YpBaseElement {
         mwc-button {
           min-width: 100px;
         }
-
-        .mainPhotoCheckbox {
-          margin-top: 4px;
-          margin-bottom: 4px;
-        }
       `,
-      YpFlexLayout,
     ];
   }
 
@@ -330,22 +283,22 @@ export class YpFileUpload extends YpBaseElement {
           <div class="layout horizontal center-center">
             <mwc-button
               id="button"
-              .icon="file-upload"
+              .icon="${this.buttonIcon}"
               class="blue"
+              .label="${this.buttonText}"
               @click="${this._fileClick}">
-              <slot></slot>
             </mwc-button>
-            <paper-icon-button
+            <mwc-icon-button
               .ariaLabel="${this.t('deleteFile')}"
               class="removeButton layout self-start"
-              .icon="delete"
+              icon="delete"
               @click="${this.clear}"
-              ?hidden="${!this.currentFile}"></paper-icon-button>
+              ?hidden="${!this.currentFile}"></mwc-icon-button>
           </div>
           <div
             ?hidden="${!this.uploadLimitSeconds}"
             class="limitInfo layout horizontal center-center">
-            <em ?hidden="${this.currentFile}"
+            <em ?hidden="${this.currentFile != null}"
               >${this.uploadLimitSeconds} ${this.t('seconds')}</em
             >
           </div>
@@ -357,94 +310,58 @@ export class YpFileUpload extends YpBaseElement {
                 <div class="name">
                   <span>${this.uploadStatus}</span>
                   <div class="commands">
-                    <iron-icon
-                      .icon="autorenew"
+                    <mwc-icon
                       .title="${this.retryText}"
                       @click="${this._retryUpload}"
-                      ?hidden="${!this.item.error}"></iron-icon>
-                    <iron-icon
-                      .icon="cancel"
+                      ?hidden="${!item.error}"
+                      >autorenew</mwc-icon
+                    >
+                    <mwc-icon
+                      icon="cancel"
                       .title="${this.removeText}"
                       @click="${this._cancelUpload}"
-                      ?hidden="${this.item.complete}"></iron-icon>
-                    <iron-icon
-                      .icon="check-circle"
+                      ?hidden="${item.complete}"
+                      >cancel</mwc-icon
+                    >
+                    <mwc-icon
+                      icon="check_circle"
                       .title="${this.successText}"
-                      ?hidden="${!this.item.complete}"></iron-icon>
+                      ?hidden="${!item.complete}"
+                      >check_circle</mwc-icon
+                    >
                   </div>
                 </div>
-                <div class="error" ?hidden="${!this.item.error}">
+                <div class="error" ?hidden="${!item.error}">
                   ${this.errorText}
                 </div>
-                <div ?hidden="${this.item.complete}">
-                  <paper-progress
-                    .value="${this.item.progress}"
+                <div ?hidden="${item.complete}">
+                  <mwc-linear-progress
+                    .value="${item.progress}"
                     .indeterminate="${this.indeterminateProgress}"
-                    .error="${this.item.error}"></paper-progress>
+                    .error="${item.error}"></mwc-linear-progress>
                 </div>
               </div>
             `
           )}
-          ${this.videoImages
-            ? html`
-                <video
-                  ?hidden
-                  .controls
-                  class="previewVideo"
-                  url="${this.previewVideoUrl}"></video>
-                <div
-                  class="layout horizontal videoImages videoPreviewContainer">
-                  <div .style="white-space: nowrap">
-                    ${this.videoImages.map(
-                      image => html`
-                        <img
-                          .class="${this._classFromImageIndex(index)}"
-                          data-index="${this.index}"
-                          @tap="${this._selectVideoCover}"
-                          .sizing="cover"
-                          class="previewFrame"
-                          src="${this.image}" />
-                      `
-                    )}
+          ${this.currentVideoId && this.transcodingComplete
+            ? html`<yp-set-video-cover
+                .noDefaultCoverImage="${this.noDefaultCoverImage}"
+                .videoId="${this.currentVideoId}"
+                @set-cover="${this._setVideoCover}"
+                @set-default-cover="${this
+                  ._setDefaultImageAsVideoCover}"></yp-set-video-cover> `
+            : nothing}
+        </div
 
-                    <div
-                      class="layout horizontal mainPhotoCheckbox"
-                      ?hidden="${this.noDefaultCoverImage}">
-                      <paper-checkbox
-                        id="useMainPhotoId"
-                        on-tap="_selectVideoCoverMainPhoto"
-                        >${this.t('useMainPhoto')}</paper-checkbox
-                      >
-                    </div>
-                  </div>
-                </div>
-              `
-            : html``}
-        </div>
-        <yp-ajax
-          ?hidden=""
-          id="transcodePollingAjax"
-          .method="PUT"
-          @response="${this._transcodePollingResponse}"></yp-ajax>
-        <yp-ajax
-          ?hidden=""
-          id="startTranscodeAjax"
-          .method="POST"
-          @response="${this._startTranscodeResponse}"></yp-ajax>
-        <yp-ajax
-          ?hidden=""
-          id="getVideoMetaAjax"
-          @response="${this._getVideoMetaResponse}"></yp-ajax>
-        <yp-ajax ?hidden="" id="setVideoCoverAjax" .method="PUT"></yp-ajax>
       </div>
       <input
-        .type="file"
+        type="file"
         id="fileInput"
-        .capture="${this.capture}"
+        ?capture="${this.capture}"
         @change="${this._fileChange}"
         .accept="${this.accept}"
-        ?hidden=""
-        .multiple="${this.multi}" />
+        hidden
+        ?multiple="${this.multi}" />
       <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
     <paper-toast id="toastFail" text="Error uploading file!"></paper-toast>-->
     `;
@@ -466,33 +383,24 @@ export class YpFileUpload extends YpBaseElement {
    * @event before-upload
    */
 
-  _classFromImageIndex(index) {
-    if (index == this.selectedVideoCoverIndex) {
-      return 'selectedCover';
-    } else {
-      return 'coverImage';
-    }
-  }
-
   /**
    * Clears the list of files
    */
   clear() {
     this.files = [];
     this._showDropText();
-    this.uploadStatus = null;
-    this.currentVideoId = null;
-    this.currentAudioId = null;
-    this.currentFile = null;
-    this.transcodingJobId = null;
+    this.uploadStatus = undefined;
+    this.currentVideoId = undefined;
+    this.currentAudioId = undefined;
+    this.currentFile = undefined;
+    this.transcodingJobId = undefined;
     this.indeterminateProgress = false;
+    this.transcodingComplete = false;
     this.capture = false;
-    this.previewVideoUrl = null;
-    this.videoImages = null;
     this.isPollingForTranscoding = false;
     this.useMainPhotoForVideoCover = false;
 
-    this.$$('#fileInput').value = null;
+    (this.$$('#fileInput') as HTMLInputElement).value = '';
     if (this.videoUpload) this.fire('success', { detail: null, videoId: null });
     else if (this.audioUpload)
       this.fire('success', { detail: null, audioId: null });
@@ -501,10 +409,7 @@ export class YpFileUpload extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     if (this.raised) {
-      this.toggleAttribute('raised', true, this.$$('#button'));
-    }
-    if (this.noink) {
-      this.toggleAttribute('noink', true, this.$$('#button'));
+      this.$$('#button')?.toggleAttribute('raised', true);
     }
     if (this.droppable) {
       this._showDropText();
@@ -528,30 +433,32 @@ export class YpFileUpload extends YpBaseElement {
    */
   setupDrop() {
     const uploadBorder = this.$$('#UploadBorder');
-    this.toggleClass('enabled', true, uploadBorder);
+    //this.toggleClass('enabled', true, uploadBorder);
 
-    this.ondragover = function (e) {
+    this.ondragover = e => {
       e.stopPropagation();
-      this.toggleClass('hover', true, uploadBorder);
+      //this.toggleClass('hover', true, uploadBorder);
       return false;
     };
 
-    this.ondragleave = function () {
-      this.toggleClass('hover', false, uploadBorder);
+    this.ondragleave = () => {
+      //this.toggleClass('hover', false, uploadBorder);
       return false;
     };
 
-    this.ondrop = function (event) {
-      this.toggleClass('hover', false, uploadBorder);
+    this.ondrop = event => {
+      //this.toggleClass('hover', false, uploadBorder);
       event.preventDefault();
-      const length = event.dataTransfer.files.length;
-      for (let i = 0; i < length; i++) {
-        const file = event.dataTransfer.files[i];
-        file.progress = 0;
-        file.error = false;
-        file.complete = false;
-        this.push('files', file);
-        this.uploadFile(file);
+      if (event.dataTransfer) {
+        const length = event.dataTransfer.files.length;
+        for (let i = 0; i < length; i++) {
+          const file = event.dataTransfer.files[i] as YpUploadFileData;
+          file.progress = 0;
+          file.error = false;
+          file.complete = false;
+          this.files.push(file);
+          this.uploadFile(file);
+        }
       }
     };
   }
@@ -560,9 +467,8 @@ export class YpFileUpload extends YpBaseElement {
     const isIOs =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isAndroid = /Android/.test(navigator.userAgent) && !window.MSStream;
-    const isEdge = /Edge/.test(navigator.userAgent);
     if (this.videoUpload) {
-      if ((isIOs || isAndroid) && !isEdge) {
+      if (isIOs || isAndroid) {
         return true;
       } else {
         return false;
@@ -580,7 +486,6 @@ export class YpFileUpload extends YpBaseElement {
     const rawChrome = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
     const chromeVersion = rawChrome ? parseInt(rawChrome[2], 10) : false;
     const isSamsungBrowser = /SamsungBrowser/.test(navigator.userAgent);
-    const isEdge = /Edge/.test(navigator.userAgent);
     const isIOs =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
@@ -588,10 +493,9 @@ export class YpFileUpload extends YpBaseElement {
       this._openFileInput();
     } else {
       if (
-        !isEdge &&
-        ((isIOs && this.audioUpload) ||
-          isFirefox ||
-          (chromeVersion && !isSamsungBrowser))
+        (isIOs && this.audioUpload) ||
+        isFirefox ||
+        (chromeVersion && !isSamsungBrowser)
       ) {
         this._openMediaRecorder();
       } else {
@@ -612,40 +516,36 @@ export class YpFileUpload extends YpBaseElement {
 
   _openMediaRecorder() {
     window.appGlobals.activity('open', 'mediaRecorder');
-    dom(document)
-      .querySelector('yp-app')
-      .getMediaRecorderAsync(
-        function (dialog) {
-          dialog.open({
-            callbackFunction: this._dataFromMediaRecorder.bind(this),
-            videoRecording: this.videoUpload,
-            audioRecording: this.audioUpload,
-            uploadFileFunction: this._openFileInput.bind(this),
-            maxLength: this.uploadLimitSeconds,
-          });
-        }.bind(this)
-      );
+    /*window.appDialogs.getMediaRecorderAsync(dialog => {
+      dialog.open({
+        callbackFunction: this._dataFromMediaRecorder.bind(this),
+        videoRecording: this.videoUpload,
+        audioRecording: this.audioUpload,
+        uploadFileFunction: this._openFileInput.bind(this),
+        maxLength: this.uploadLimitSeconds,
+      });
+    });*/
   }
 
-  _dataFromMediaRecorder(file) {
+  _dataFromMediaRecorder(file: YpUploadFileData) {
     file.progress = 0;
     file.error = false;
     file.complete = false;
-    this.push('files', file);
+    this.files.push(file);
     this.uploadFile(file);
   }
 
   /**
    * Called whenever the list of selected files changes
    */
-  _fileChange(e) {
+  _fileChange(e: { target: { files: Array<YpUploadFileData> } }) {
     const length = e.target.files.length;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
       file.progress = 0;
       file.error = false;
       file.complete = false;
-      this.push('files', file);
+      this.files.push(file);
       this.uploadFile(file);
     }
   }
@@ -655,10 +555,10 @@ export class YpFileUpload extends YpBaseElement {
    *
    * @param {object} a file, an element of the files array
    */
-  cancel(file) {
+  cancel(file: YpUploadFileData) {
     if (file && file.xhr) {
       file.xhr.abort();
-      this.splice('files', this.files.indexOf(file), 1);
+      this.files.splice(this.files.indexOf(file), 1);
       this._showDropText();
     }
   }
@@ -668,7 +568,7 @@ export class YpFileUpload extends YpBaseElement {
    *
    * @param {object}, an event object
    */
-  _cancelUpload(e) {
+  _cancelUpload(e: { model: { __data__: { item: YpUploadFileData } } }) {
     this.cancel(e.model.__data__.item);
   }
 
@@ -677,13 +577,14 @@ export class YpFileUpload extends YpBaseElement {
    *
    * @param {object}, an event object
    */
-  _retryUpload(e) {
-    e.model.set('item.error', false);
-    e.model.set('item.progress', 0);
+  _retryUpload(e: {
+    model: { item: YpUploadFileData; __data__: { item: any } };
+  }) {
+    e.model.item.error = false;
+    e.model.item.progress = 0;
     // The async helps give visual feedback of a retry occurring, even though it's less efficient.
-    const self = this;
-    this.async(function () {
-      self.uploadFile(e.model.__data__.item);
+    setTimeout(() => {
+      this.uploadFile(e.model.__data__.item);
     }, 50);
   }
 
@@ -694,50 +595,45 @@ export class YpFileUpload extends YpBaseElement {
     this.shownDropText = !this.files.length && this.droppable;
   }
 
-  uploadFile(file) {
+  async uploadFile(file: YpUploadFileData) {
     if (this.videoUpload || this.audioUpload) {
       this.indeterminateProgress = true;
       this.currentFile = file;
-      const ajax = document.createElement('iron-ajax');
-      ajax.handleAs = 'json';
-      ajax.contentType = 'application/json';
+
+      let mediaUrl;
 
       if (this.videoUpload) {
         window.appGlobals.activity('starting', 'videoUpload');
         this.uploadStatus = this.t('uploadingVideo');
         this.headers = { 'Content-Type': 'video/mp4' };
+
         if (this.group) {
-          ajax.url =
+          mediaUrl =
             '/api/videos/' + this.group.id + '/createAndGetPreSignedUploadUrl';
         } else {
-          ajax.url = '/api/videos/createAndGetPreSignedUploadUrlLoggedIn';
+          mediaUrl = '/api/videos/createAndGetPreSignedUploadUrlLoggedIn';
         }
       } else {
         window.appGlobals.activity('starting', 'audioUpload');
         this.uploadStatus = this.t('uploadingAudio');
         this.headers = { 'Content-Type': 'audio/mp4' };
+
         if (this.group) {
-          ajax.url =
+          mediaUrl =
             '/api/audios/' + this.group.id + '/createAndGetPreSignedUploadUrl';
         } else {
-          ajax.url = '/api/audios/createAndGetPreSignedUploadUrlLoggedIn';
+          mediaUrl = '/api/audios/createAndGetPreSignedUploadUrlLoggedIn';
         }
       }
-      ajax.method = 'POST';
-      ajax.body = {};
-      ajax.addEventListener(
-        'response',
-        function (event) {
-          this.target = event.detail.response.presignedUrl;
-          if (this.videoUpload)
-            this.currentVideoId = event.detail.response.videoId;
-          else this.currentAudioId = event.detail.response.audioId;
-          this.method = 'PUT';
-          this.indeterminateProgress = false;
-          this.reallyUploadFile(this.currentFile);
-        }.bind(this)
-      );
-      ajax.generateRequest();
+
+      const response = await window.serverApi.createPresignUrl(mediaUrl);
+
+      this.target = response.presignedUrl;
+      if (this.videoUpload) this.currentVideoId = response.videoId;
+      else this.currentAudioId = response.audioId;
+      this.method = 'PUT';
+      this.indeterminateProgress = false;
+      this.reallyUploadFile(this.currentFile);
     } else {
       window.appGlobals.activity('starting', 'imageUpload');
       this.uploadStatus = this.t('uploadingImage');
@@ -745,92 +641,73 @@ export class YpFileUpload extends YpBaseElement {
     }
   }
 
+  _startTranscodeResponse() {
+    this._checkTranscodingJob();
+  }
+
   _checkTranscodingJob() {
-    this.async(function () {
-      this.$$('#transcodePollingAjax').generateRequest();
+    setTimeout(async () => {
+      let mediaType, mediaId;
+      if (this.videoUpload) {
+        mediaType = 'videos';
+        mediaId = this.currentVideoId;
+      } else {
+        mediaType = 'audios';
+        mediaId = this.currentAudioId;
+      }
+
+      if (mediaId) {
+        const detail = await window.serverApi.getTranscodingJobStatus(
+          mediaType,
+          mediaId
+        );
+        if (this.currentFile) {
+          const fileIndex = this.files.indexOf(
+            this.currentFile as YpUploadFileData
+          );
+          if (detail.response.status === 'Complete') {
+            this.files[fileIndex].complete = true;
+            this.uploadStatus = this.t('uploadCompleted');
+            this.transcodingComplete = true;
+            if (this.videoUpload) {
+              this.fire('success', {
+                detail: detail,
+                videoId: this.currentVideoId,
+              });
+              this.uploadStatus = this.t('selectCoverImage');
+            } else
+              this.fire('success', {
+                detail: detail,
+                audioId: this.currentAudioId,
+              });
+            this.fire('file-upload-complete');
+            window.appGlobals.activity('complete', 'mediaTranscoding');
+          } else if (detail.error) {
+            this.files[fileIndex].error = true;
+            this.files[fileIndex].complete = false;
+            this.files[fileIndex].progress = 100;
+            this.requestUpdate();
+            this.fire('error', { xhr: event });
+            this.fire('file-upload-complete');
+            window.appGlobals.activity('error', 'mediaTranscoding');
+          } else {
+            this._checkTranscodingJob();
+          }
+        } else {
+          console.error('Trying to process non file');
+        }
+      } else {
+        console.error('No media edit for transcoding check');
+      }
     }, 1000);
   }
 
-  _getVideoMetaResponse(event, detail) {
-    if (detail.response.previewVideoUrl && detail.response.videoImages) {
-      this.previewVideoUrl = detail.response.previewVideoUrl;
-      this.videoImages = detail.response.videoImages;
-      this.uploadStatus = this.t('selectCoverImage');
-    }
+  _setVideoCover(event: CustomEvent) {
+    this.selectedVideoCoverIndex = event.detail;
   }
 
-  _getVideoMeta() {
-    if (this.currentVideoId) {
-      this.$$('#getVideoMetaAjax').url =
-        '/api/videos/' + this.currentVideoId + '/formatsAndImages';
-      this.$$('#getVideoMetaAjax').generateRequest();
-    } else {
-      console.error('_getVideoImages no video id');
-    }
-  }
-
-  _selectVideoCover(event, detail) {
-    const frameIndex = event.target.getAttribute('data-index');
-    this.selectedVideoCoverIndex = frameIndex;
-    this.$$('#setVideoCoverAjax').url =
-      '/api/videos/' + this.currentVideoId + '/setVideoCover';
-    this.$$('#setVideoCoverAjax').body = { frameIndex: frameIndex };
-    this.$$('#setVideoCoverAjax').generateRequest();
-    const videoImages = this.videoImages;
-    this.videoImages = null;
-    this.async(function () {
-      this.videoImages = videoImages;
-    });
-    this.useMainPhotoForVideoCover = false;
-  }
-
-  _selectVideoCoverMainPhoto() {
-    this.async(function () {
-      if (this.$$('#useMainPhotoId') && this.$$('#useMainPhotoId').checked) {
-        this.$.setVideoCoverAjax.url =
-          '/api/videos/' + this.currentVideoId + '/setVideoCover';
-        this.$.setVideoCoverAjax.body = { frameIndex: -2 };
-        this.$.setVideoCoverAjax.generateRequest();
-      }
-    });
-  }
-
-  _transcodePollingResponse(event, detail) {
-    const prefix = 'files.' + this.files.indexOf(this.currentFile);
-    if (detail.response.status === 'Complete') {
-      this.set(prefix + '.complete', true);
-      this.uploadStatus = this.t('uploadCompleted');
-      if (this.videoUpload) {
-        this.fire('success', { detail: detail, videoId: this.currentVideoId });
-        this._getVideoMeta();
-      } else
-        this.fire('success', { detail: detail, audioId: this.currentAudioId });
-      this.fire('file-upload-complete');
-      window.appGlobals.activity('complete', 'mediaTranscoding');
-    } else if (detail.error) {
-      this.set(prefix + '.error', true);
-      this.set(prefix + '.complete', false);
-      this.set(prefix + '.progress', 100);
-      this.updateStyles();
-      this.fire('error', { xhr: event });
-      this.fire('file-upload-complete');
-      window.appGlobals.activity('error', 'mediaTranscoding');
-    } else {
-      this._checkTranscodingJob();
-    }
-  }
-
-  _startTranscodeResponse(event, detail) {
-    if (this.videoUpload)
-      this.$$('#transcodePollingAjax').url =
-        '/api/videos/' + this.currentVideoId + '/getTranscodingJobStatus';
-    else
-      this.$$('#transcodePollingAjax').url =
-        '/api/audios/' + this.currentAudioId + '/getTranscodingJobStatus';
-    this.$$('#transcodePollingAjax').body = {
-      jobId: detail.response.transcodingJobId,
-    };
-    this._checkTranscodingJob();
+  _setDefaultImageAsVideoCover(event: CustomEvent) {
+    this.useMainPhotoForVideoCover = event.detail;
   }
 
   /**
@@ -838,12 +715,12 @@ export class YpFileUpload extends YpBaseElement {
    *
    * @param {object} a file, an element of the files array
    */
-  reallyUploadFile(file) {
+  reallyUploadFile(file: YpUploadFileData) {
     if (!file) {
       return;
     }
 
-    let aspect;
+    let aspect: string;
     if (window.innerHeight > window.innerWidth) {
       aspect = 'portrait';
     } else {
@@ -852,56 +729,54 @@ export class YpFileUpload extends YpBaseElement {
 
     this.fire('file-upload-starting');
     this._showDropText();
-    const prefix = 'files.' + this.files.indexOf(file);
-    const self = this;
+    const fileIndex = this.files.indexOf(file);
 
     const formData = new FormData();
     formData.append('file', file, file.name);
 
     const xhr = (file.xhr = new XMLHttpRequest());
 
-    xhr.upload.onprogress = function (e) {
+    xhr.upload.onprogress = e => {
       const done = e.loaded,
         total = e.total;
-      self.set(prefix + '.progress', Math.floor((done / total) * 1000) / 10);
+      this.files[fileIndex].progress = Math.floor((done / total) * 1000) / 10;
     };
 
     const url = this.target.replace('<name>', file.name);
     xhr.open(this.method, url, true);
-    for (key in this.headers) {
+    for (const key in this.headers) {
+      // eslint-disable-next-line no-prototype-builtins
       if (this.headers.hasOwnProperty(key)) {
         xhr.setRequestHeader(key, this.headers[key]);
       }
     }
 
-    xhr.onload = function (e) {
+    xhr.onload = async () => {
       if (xhr.status === 200) {
-        if (this.videoUpload) {
+        if (this.videoUpload && this.currentVideoId) {
           this.indeterminateProgress = true;
           this.uploadStatus = this.t('transcodingVideo');
+
+          let startType;
           if (this.group) {
-            this.$$('#startTranscodeAjax').url =
-              '/api/videos/' +
-              this.group.id +
-              '/' +
-              this.currentVideoId +
-              '/startTranscoding';
+            startType = 'startTranscoding';
           } else {
-            this.$$('#startTranscodeAjax').url =
-              '/api/videos/' +
-              this.currentVideoId +
-              '/startTranscodingLoggedIn';
+            startType = 'startTranscodingLoggedIn';
           }
+
           let options;
-          if (this.containerType === 'posts') {
+
+          if (this.containerType === 'posts' && this.group) {
             options = {
               videoPostUploadLimitSec: this.group.configuration
                 .videoPostUploadLimitSec,
+              aspect: '',
             };
-          } else if (this.containerType === 'points') {
+          } else if (this.containerType === 'points' && this.group) {
             options = {
               videoPointUploadLimitSec: this.group.configuration
                 .videoPointUploadLimitSec,
+              aspect: '',
             };
           } else {
             options = {};
@@ -909,35 +784,34 @@ export class YpFileUpload extends YpBaseElement {
 
           options.aspect = aspect;
 
-          this.$$('#startTranscodeAjax').body = options;
-          this.$$('#startTranscodeAjax').generateRequest();
+          await window.serverApi.startTranscoding(
+            'videos',
+            this.currentVideoId,
+            startType,
+            options
+          );
+          this._checkTranscodingJob();
+
           window.appGlobals.activity('complete', 'videoUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
-        } else if (this.audioUpload) {
+        } else if (this.audioUpload && this.currentAudioId) {
           this.indeterminateProgress = true;
           this.uploadStatus = this.t('transcodingAudio');
 
+          let startType;
           if (this.group) {
-            this.$$('#startTranscodeAjax').url =
-              '/api/audios/' +
-              this.group.id +
-              '/' +
-              this.currentAudioId +
-              '/startTranscoding';
+            startType = 'startTranscoding';
           } else {
-            this.$$('#startTranscodeAjax').url =
-              '/api/audios/' +
-              this.currentAudioId +
-              '/startTranscodingLoggedIn';
+            startType = 'startTranscodingLoggedIn';
           }
 
           let options;
-          if (this.containerType === 'posts') {
+          if (this.containerType === 'posts' && this.group) {
             options = {
               audioPostUploadLimitSec: this.group.configuration
                 .audioPostUploadLimitSec,
             };
-          } else if (this.containerType === 'points') {
+          } else if (this.containerType === 'points' && this.group) {
             options = {
               audioPointUploadLimitSec: this.group.configuration
                 .audioPointUploadLimitSec,
@@ -945,27 +819,34 @@ export class YpFileUpload extends YpBaseElement {
           } else {
             options = {};
           }
-          this.$$('#startTranscodeAjax').body = options;
-          this.$$('#startTranscodeAjax').generateRequest();
+
+          await window.serverApi.startTranscoding(
+            'audios',
+            this.currentAudioId,
+            startType,
+            options
+          );
+          this._checkTranscodingJob();
+
           window.appGlobals.activity('complete', 'audioUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
         } else {
           this.uploadStatus = this.t('uploadCompleted');
-          self.fire('file-upload-complete');
-          self.set(prefix + '.complete', true);
-          self.fire('success', { xhr: xhr, videoId: this.currentVideoId });
+          this.fire('file-upload-complete');
+          this.files[fileIndex].complete = true;
+          this.fire('success', { xhr: xhr, videoId: this.currentVideoId });
           window.appGlobals.activity('complete', 'imageUpload');
         }
       } else {
-        self.fire('file-upload-complete');
-        self.set(prefix + '.error', true);
-        self.set(prefix + '.complete', false);
-        self.set(prefix + '.progress', 100);
-        self.updateStyles();
-        self.fire('error', { xhr: xhr });
+        this.fire('file-upload-complete');
+        this.files[fileIndex].error = true;
+        this.files[fileIndex].complete = false;
+        this.files[fileIndex].progress = 100;
+        this.requestUpdate();
+        this.fire('error', { xhr: xhr });
         window.appGlobals.activity('error', 'mediaUpload');
       }
-    }.bind(this);
+    };
 
     if (this.videoUpload || this.audioUpload) {
       xhr.send(file);
