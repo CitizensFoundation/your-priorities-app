@@ -4,38 +4,41 @@ export class YpServerApi extends YpCodeBase {
   protected baseUrlPath = '/api';
 
   static transformCollectionTypeToApi(type: string): string {
-
     let transformedApiType;
 
     switch (type) {
-      case "domain":
-        transformedApiType = "domains";
+      case 'domain':
+        transformedApiType = 'domains';
         break;
-      case "community":
-        transformedApiType = "communities";
+      case 'community':
+        transformedApiType = 'communities';
         break;
-      case "group":
-        transformedApiType = "groups";
+      case 'group':
+        transformedApiType = 'groups';
         break;
-      case "post":
-        transformedApiType = "posts";
+      case 'post':
+        transformedApiType = 'posts';
         break;
-      case "user":
-        transformedApiType = "users";
+      case 'user':
+        transformedApiType = 'users';
         break;
       default:
-        transformedApiType ="";
+        transformedApiType = '';
         console.error(`Cant find collection type transsform for ${type}`);
     }
 
     return transformedApiType;
   }
 
-  private async fetchWrapper(url: string, options: RequestInit =  {}, showUserError = true) {
+  private async fetchWrapper(
+    url: string,
+    options: RequestInit = {},
+    showUserError = true
+  ) {
     if (!options.headers) {
       options.headers = {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      };
     }
     const response = await fetch(url, options);
     return this.handleResponse(response, showUserError);
@@ -47,13 +50,13 @@ export class YpServerApi extends YpCodeBase {
       try {
         responseJson = await response.json();
       } catch (error) {
-        if (response.status===200 && response.statusText==="OK") {
+        if (response.status === 200 && response.statusText === 'OK') {
           // Do nothing
         } else {
           this.fireGlobal('yp-network-error', {
             response: response,
             jsonError: error,
-            showUserError,
+            showUserError
           });
         }
       }
@@ -61,7 +64,7 @@ export class YpServerApi extends YpCodeBase {
     } else {
       this.fireGlobal('yp-network-error', {
         response: response,
-        showUserError,
+        showUserError
       });
       return null;
     }
@@ -110,10 +113,10 @@ export class YpServerApi extends YpCodeBase {
     return this.fetchWrapper(
       this.baseUrlPath +
         `/recommendations/groups/${groupId}/getPostRecommendations`,
-        {
-          method: 'PUT',
-          body: JSON.stringify({}),
-        }
+      {
+        method: 'PUT',
+        body: JSON.stringify({}),
+      }
     );
   }
 
@@ -186,7 +189,10 @@ export class YpServerApi extends YpCodeBase {
 
   public getCollection(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}`
+      this.baseUrlPath +
+        `/${YpServerApi.transformCollectionTypeToApi(
+          collectionType
+        )}/${collectionId}`
     );
   }
 
@@ -197,15 +203,11 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public getGroupPosts(searchUrl: string) {
-    return this.fetchWrapper(
-      searchUrl
-    );
+    return this.fetchWrapper(searchUrl);
   }
 
   public getPost(postId: number) {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/post/${postId}`
-    );
+    return this.fetchWrapper(this.baseUrlPath + `/post/${postId}`);
   }
 
   public endorsePost(postId: number, method: string, body: object) {
@@ -227,14 +229,15 @@ export class YpServerApi extends YpCodeBase {
 
   public getHelpPages(collectionType: string, collectionId: number) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${YpServerApi.transformCollectionTypeToApi(collectionType)}/${collectionId}/pages`
+      this.baseUrlPath +
+        `/${YpServerApi.transformCollectionTypeToApi(
+          collectionType
+        )}/${collectionId}/pages`
     );
   }
 
   public getTranslation(translateUrl: string) {
-    return this.fetchWrapper(
-      translateUrl
-    );
+    return this.fetchWrapper(translateUrl);
   }
 
   public savePostTranscript(postId: number, body: object) {
@@ -277,20 +280,20 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public getPoints(postId: number) {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/posts/${postId}/points`
-    );
+    return this.fetchWrapper(this.baseUrlPath + `/posts/${postId}/points`);
   }
 
   public getMorePoints(postId: number, offsetUp: number, offsetDown: number) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/posts/${postId}/points?offsetUp=${offsetUp}&offsetDown=${offsetDown}`
+      this.baseUrlPath +
+        `/posts/${postId}/points?offsetUp=${offsetUp}&offsetDown=${offsetDown}`
     );
   }
 
   public getNewPoints(postId: number, latestPointCreatedAt: Date) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/posts/${postId}/newPoints?latestPointCreatedAt=${latestPointCreatedAt}`
+      this.baseUrlPath +
+        `/posts/${postId}/newPoints?latestPointCreatedAt=${latestPointCreatedAt}`
     );
   }
 
@@ -317,7 +320,12 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
-  public startTranscoding(mediaType: string, mediaId: number, startType: string, body: object) {
+  public startTranscoding(
+    mediaType: string,
+    mediaId: number,
+    startType: string,
+    body: object
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/${mediaType}/${mediaId}/${startType}`,
       {
@@ -329,7 +337,8 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public createPresignUrl(mediaUrl: string) {
-    return this.fetchWrapper(mediaUrl,
+    return this.fetchWrapper(
+      mediaUrl,
       {
         method: 'POST',
         body: JSON.stringify({}),
@@ -339,7 +348,8 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public updatePoint(pointId: number, body: object) {
-    return this.fetchWrapper(`/points/${pointId}`,
+    return this.fetchWrapper(
+      `/points/${pointId}`,
       {
         method: 'PUT',
         body: JSON.stringify(body),
@@ -349,7 +359,8 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public updatePointAdminComment(pointId: number, body: object) {
-    return this.fetchWrapper(`/points/${pointId}/adminComment`,
+    return this.fetchWrapper(
+      `/points/${pointId}/adminComment`,
       {
         method: 'PUT',
         body: JSON.stringify(body),
@@ -359,7 +370,8 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public deletePoint(pointId: number) {
-    return this.fetchWrapper(`/points/${pointId}`,
+    return this.fetchWrapper(
+      `/points/${pointId}`,
       {
         method: 'DELETE',
         body: JSON.stringify({}),
@@ -369,9 +381,39 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public checkPointTranscriptStatus(type: string, pointId: number) {
+    return this.fetchWrapper(this.baseUrlPath + `/$points/${pointId}/${type}`);
+  }
+
+  public registerUser(body: object) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/$points/${pointId}/${type}`
+      `/users/register`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
     );
   }
 
+  public registerAnonymously(body: object) {
+    return this.fetchWrapper(
+      `/users/register_anonymously`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public loginUser(body: object) {
+    return this.fetchWrapper(
+      `/users/login`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
 }

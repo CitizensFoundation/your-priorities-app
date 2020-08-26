@@ -89,6 +89,8 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hidePointAuthor?: boolean;
   customAdminCommentsTitle?: string;
   collapsableTranscripts?: boolean;
+  customUserNamePrompt?: string;
+  customTermsIntroText?: string;
 }
 
 
@@ -101,10 +103,14 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   customSamlLoginMessage?: string;
   signupTermsPageId?: number;
   highlightedLanguages?: Array<string>;
+  disableFacebookLoginForCommunity?: boolean;
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {
   somethingrather?: string;
+  customUserRegistrationText?: string;
+  customSamlLoginText?: string;
+  samlLoginButtonUrl?: string;
 }
 
 interface YpHelpPage {
@@ -117,6 +123,11 @@ interface YpEndorsement {
   id: number;
   value: number;
   post_id: number;
+}
+
+interface YpOrganization {
+  name: string;
+  OrganizationLogoImages: Array<YpImageData>;
 }
 
 interface YpMemberships {
@@ -199,6 +210,8 @@ interface YpDomainData extends YpCollectionData {
   DomainLogoVideos?: Array<YpVideoData>;
   configuration: YpDomainConfiguration;
   Communities: Array<YpCommunityData>;
+  facebookLoginProvided?: boolean;
+  samlLoginProvided?: boolean;
 }
 
 interface YpCommunityData extends YpCollectionData {
@@ -370,6 +383,9 @@ interface YpUserData {
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   forceSecureSamlLogin?: boolean;
+  OrganizationUsers?: Array<YpOrganization>;
+  UserProfileImages?: Array<YpImageData>;
+  facebook_id?: number;
 }
 
 declare interface IronListInterface extends HTMLElement {

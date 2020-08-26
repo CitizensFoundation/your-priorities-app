@@ -56,6 +56,8 @@ declare global {
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
     app: YpApp;
+    PasswordCredential?: any;
+    FederatedCredential?: any;
   }
 }
 
@@ -192,6 +194,8 @@ export class YpApp extends YpBaseElement {
       errorText = this.t('errorNotAuthorized');
     else if (detail.response && detail.response.status === 401)
       errorText = this.t('errorNotAuthorized');
+    else if (detail.response && detail.response.status === 500 && detail.response.message == "SequelizeUniqueConstraintError")
+      errorText = this.t('user.alreadyRegisterred');
 
     if (detail.response && detail.response.status)
       statusCode = detail.response.status;

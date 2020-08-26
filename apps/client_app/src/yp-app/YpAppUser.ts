@@ -71,9 +71,9 @@ export class YpAppUser extends YpCodeBase {
 
   lastLoginMethod: string | undefined;
 
-  facebookPopupWindow: Window | undefined;
+  facebookPopupWindow: Window | null = null;
 
-  samlPopupWindow: Window | undefined;
+  samlPopupWindow: Window | null = null;
 
   pollingStartedAt: number | undefined;
 
@@ -426,7 +426,7 @@ export class YpAppUser extends YpCodeBase {
       } catch (error) {
         console.error(error);
       }
-      this.facebookPopupWindow = undefined;
+      this.facebookPopupWindow = null;
     }
     if (this.samlPopupWindow) {
       try {
@@ -434,7 +434,7 @@ export class YpAppUser extends YpCodeBase {
       } catch (error) {
         console.error(error);
       }
-      this.samlPopupWindow = undefined;
+      this.samlPopupWindow = null;
     }
   }
 

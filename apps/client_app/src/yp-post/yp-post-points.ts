@@ -77,7 +77,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   @property({ type: String })
   pointUpOrDownSelected = 'pointFor';
 
-  @property({ type: Date })
+  @property({ type: Object })
   latestPointCreatedAt: Date | undefined;
 
   @property({ type: Number })
