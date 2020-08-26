@@ -260,14 +260,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           background-color: #fff;
         }
 
-        paper-toast {
-          z-index: 9999;
-        }
-
-        paper-material {
-          background-color: #fff;
-        }
-
         yp-point {
           padding-top: 8px;
         }
@@ -625,7 +617,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     videoUploadedFunc: Function,
     uploadVideoHeader: string,
     uploadedVideoId: number | undefined,
-    pointKeyDownFunction: Function,
+    pointFocusFunction: Function,
     hideAudio: boolean,
     hasCurrentAudio: string | undefined,
     uploadAudioPointHeader: string,
@@ -646,8 +638,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           ?hidden="${this.post.Group.configuration.disableDebate}">
           <mwc-textarea
             id="${type.toLowerCase()}_point"
-            @keydown="${pointKeyDownFunction}"
-            @focus="${this.focusTextArea}"
+            @focus="${pointFocusFunction}"
             @blur="${this.blurTextArea}"
             .label="${label ? label : ''}"
             charCounter
