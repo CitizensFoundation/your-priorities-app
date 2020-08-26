@@ -383,12 +383,8 @@ export class YpPoint extends YpBaseElement {
       ?up-vote="${this.isUpVote}"
       ?down-vote="${this.isDownVote}"
       ?hidden="${this.hideUser}">
-      <mwc-icon class="thumbsIcon thumbsIconUp" ?hidden="${!this.isDownVote}"
-        >thumb_up</mwc-icon
-      >
-      <mwc-icon class="thumbsIcon thumbsIconDown" ?hidden="${this.isUpVote}"
-        >thumb_down</mwc-icon
-      >
+      <mwc-icon class="thumbsIcon thumbsIconUp" ?hidden="${!this.isDownVote}">thumb_up</mwc-icon>
+      <mwc-icon class="thumbsIcon thumbsIconDown" ?hidden="${this.isUpVote}">thumb_down</mwc-icon>
       <div
         class="layout horizontal"
         ?hidden="${this.point.Post!.Group.configuration.hidePointAuthor}">

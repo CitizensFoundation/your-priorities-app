@@ -12,10 +12,9 @@ import '@material/mwc-radio';
 import { Radio } from '@material/mwc-radio';
 import { Menu } from '@material/mwc-menu';
 
-import '../yp-post/yp-posts-list.js';
 import '../yp-file-upload/yp-file-upload.js';
 import '../@yrpri/yp-emoji-selector.js';
-import '../yp-post/yp-post-card-add.js';
+import '../yp-point/yp-point.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { RangeChangeEvent } from 'lit-virtualizer';
@@ -333,6 +332,11 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           background-color: var(--accent-color);
         }
 
+        lit-virtualizer {
+          width: 430px;
+          height: 100vh;
+        }
+
         @media (max-width: 985px) {
           .pointInputMaterial {
             width: 100%;
@@ -358,7 +362,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           }
 
           lit-virtualizer {
-            width: 100vw;
           }
         }
 
@@ -511,7 +514,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 noDefaultCoverImage
                 .uploadLimitSeconds="${this.post.Group.configuration
                   .videoPointUploadLimitSec}"
-                .currentFile="${hasCurrentVideo}"
+                .currentFile="${(hasCurrentVideo as unknown) as YpUploadFileData}"
                 containerType="points"
                 .group="${this.post.Group}"
                 raised
@@ -574,7 +577,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       tabindex="${index}"
       role="listitem"
       aria-level="3">
-      >
       <div id="point${point.id}" class="pointMaterial">
         <yp-point .point="${point}"></yp-point>
       </div>
@@ -592,7 +594,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             class="pointMainHeader layout horizontal center-center"
             role="heading"
             aria-level="2">
-            > ${header}
+             ${header}
           </div>
         `
       : html`
@@ -642,7 +644,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                     layout vertical
                   shadow-elevation-2dp shadow-transition"
           ?hidden="${this.post.Group.configuration.disableDebate}">
-
           <mwc-textarea
             id="${type.toLowerCase()}_point"
             @keydown="${pointKeyDownFunction}"
@@ -722,8 +723,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             hidden
             contentId="${this.post.Group.id}"
             textOnly
-            .content="${this.post.Group.configuration
-              .alternativePointForLabel}"
+            .content="${this.post.Group.configuration.alternativePointForLabel}"
             .contentLanguage="${this.post.Group.language}"
             @new-translation="${this._updatePointLabels}"
             role="heading"
@@ -754,7 +754,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   render() {
     return html`
       <div class="processBar layout horizontal center-center">
-        <mwc-linear-progress indeterminate></mwc-linear-progress>
+        <mwc-linear-progress indeterminate ?hidden="${!this.fetchActive}"></mwc-linear-progress>
       </div>
 
       ${this.wideReady
@@ -1280,7 +1280,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _processStoredPoints() {
     console.info('_processStoredPoints');
-    if (this.upPoints === null) {
+    if (this.upPoints === undefined) {
       if (this.storedPoints && this.storedPoints.length > 0) {
         const upPoints = [];
         const downPoints = [];
@@ -1791,7 +1791,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     hasVideoId: number | undefined,
     hasAudioId: number | undefined
   ) {
-    if (hasVideoId != null) {
+    if (hasVideoId != undefined) {
       if (type === 'up') {
         this.hideUpVideo = false;
         this.hideUpAudio = true;
@@ -1808,7 +1808,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.hideMobileText = true;
       }
       return true;
-    } else if (hasAudioId != null) {
+    } else if (hasAudioId != undefined) {
       if (type === 'up') {
         this.hideUpAudio = false;
         this.hideUpVideo = true;

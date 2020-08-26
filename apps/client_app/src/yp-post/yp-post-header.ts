@@ -14,6 +14,8 @@ import 'share-menu';
 
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
+import './yp-post-actions.js';
+
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
@@ -375,7 +377,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
   }
 
   renderActions() {
-    return html`${!this.post.public_data?.structuredAnswersJson
+    return html`${this.post.Group.configuration.customRatings
         ? html`
             <yp-post-ratings-info
               class="customRatings"
@@ -419,10 +421,10 @@ export class YpPostHeader extends YpBaseElementWithLogin {
             aria-label="${this.post.name}">
             <div>
               <yp-magic-text
-                text-type="postName"
-                content-language="[[post.language]]"
-                content="[[post.name]]"
-                content-id="[[post.id]]">
+                textType="postName"
+                .contentLanguage="${this.post.language}"
+                .content="${this.post.name}"
+                .contentId="${this.post.id}">
               </yp-magic-text>
             </div>
             ${this.post.Group.configuration.showWhoPostedPosts

@@ -109,7 +109,11 @@ export class YpServerApi extends YpCodeBase {
   public getRecommendationsForGroup(groupId: number) {
     return this.fetchWrapper(
       this.baseUrlPath +
-        `/recommendations/groups/${groupId}/getPostRecommendations`
+        `/recommendations/groups/${groupId}/getPostRecommendations`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({}),
+        }
     );
   }
 

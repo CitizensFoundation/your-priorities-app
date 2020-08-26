@@ -61,8 +61,10 @@ export class YpAccessHelpers {
     }
     if (post && post.User && window.appUser && window.appUser.user) {
       return post.User.id === window.appUser.user.id;
-    } else {
+    } else if (!post) {
       console.warn('No post in hasAccess');
+      return false;
+    } else {
       return false;
     }
   }

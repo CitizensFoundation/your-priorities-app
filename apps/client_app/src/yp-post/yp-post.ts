@@ -17,6 +17,8 @@ import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpPostCard } from './yp-post-card.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import './yp-post-header.js';
+import './yp-post-points.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -109,7 +111,7 @@ export class YpPost extends YpCollection {
     return html`<yp-post-header
       id="postCard"
       class="largeCard"
-      .post="${this.post}"
+      .post="${this.post!}"
       @refresh="${this._getPost}"
       headermode></yp-post-header>`;
   }
@@ -194,7 +196,7 @@ export class YpPost extends YpCollection {
   }
 
   render() {
-    return html`
+    return this.post ? html`
       ${this.renderPostHeader()} ${this.renderPostTabs()}
       ${this.renderCurrentPostTabPage()}
       ${!this.disableNewPosts &&
@@ -206,7 +208,7 @@ export class YpPost extends YpCollection {
             icon="lightbulb"
             @click="${this._newPost}"></mwc-fab>`
         : nothing}
-    `;
+    ` : html``;
   }
 
   get tabDebateCount(): string {
@@ -320,7 +322,10 @@ export class YpPost extends YpCollection {
         this.collectionType,
         this.collectionId
       )) as YpPostData | undefined;
-      this._processIncomingPost();
+      if (this.post) {
+        this._processIncomingPost();
+        this._getHelpPages("group", this.post.group_id);
+      }
     } else {
       console.error('No collection id for _getPost');
     }
@@ -344,8 +349,6 @@ export class YpPost extends YpCollection {
         this.post = undefined;
         this._getPost();
       }
-
-      this._getHelpPages();
     }
   }
 

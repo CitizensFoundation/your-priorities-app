@@ -13,7 +13,7 @@ Example:
 */
 
 import { customElement, html, property, css } from 'lit-element';
-import { nothing  } from 'lit-html';
+import { nothing } from 'lit-html';
 
 import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
@@ -27,7 +27,7 @@ import './yp-set-video-cover.js';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-@customElement('yp-post-points')
+@customElement('yp-file-upload')
 export class YpFileUpload extends YpBaseElement {
   /**
    * `target` is the target url to upload the files to.
@@ -343,14 +343,16 @@ export class YpFileUpload extends YpBaseElement {
               </div>
             `
           )}
-          ${this.currentVideoId && this.transcodingComplete
-            ? html`<yp-set-video-cover
-                .noDefaultCoverImage="${this.noDefaultCoverImage}"
-                .videoId="${this.currentVideoId}"
-                @set-cover="${this._setVideoCover}"
-                @set-default-cover="${this
-                  ._setDefaultImageAsVideoCover}"></yp-set-video-cover> `
-            : nothing}
+          ${
+            this.currentVideoId && this.transcodingComplete
+              ? html`<yp-set-video-cover
+                  .noDefaultCoverImage="${this.noDefaultCoverImage}"
+                  .videoId="${this.currentVideoId}"
+                  @set-cover="${this._setVideoCover}"
+                  @set-default-cover="${this
+                    ._setDefaultImageAsVideoCover}"></yp-set-video-cover> `
+              : nothing
+          }
         </div
 
       </div>
@@ -400,7 +402,8 @@ export class YpFileUpload extends YpBaseElement {
     this.isPollingForTranscoding = false;
     this.useMainPhotoForVideoCover = false;
 
-    (this.$$('#fileInput') as HTMLInputElement).value = '';
+    const fileInput = this.$$('#fileInput') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
     if (this.videoUpload) this.fire('success', { detail: null, videoId: null });
     else if (this.audioUpload)
       this.fire('success', { detail: null, audioId: null });

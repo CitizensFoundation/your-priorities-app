@@ -17,11 +17,11 @@ interface AcActivity extends LitElement {
   scrollToItem(item: YpDatabaseItem): () => void;
 }
 
-export const CollectionTabTypes: Record<string,number>= {
+export const CollectionTabTypes: Record<string, number> = {
   Collection: 0,
   Newsfeed: 1,
-  Map: 2
-}
+  Map: 2,
+};
 
 export abstract class YpCollection extends YpBaseElement {
   @property({ type: Boolean })
@@ -81,7 +81,7 @@ export abstract class YpCollection extends YpBaseElement {
     this.collectionCreateFabLabel = collectionCreateFabLabel;
 
     //TODO: Fix this as it causes loadMoreData to be called twice on post lists at least
-   // this.addGlobalListener('yp-logged-in', this._getCollection.bind(this));
+    // this.addGlobalListener('yp-logged-in', this._getCollection.bind(this));
     this.addGlobalListener('yp-got-admin-rights', this.refresh.bind(this));
   }
 
@@ -91,18 +91,17 @@ export abstract class YpCollection extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    if (this.collection)
-      this.refresh();
+    if (this.collection) this.refresh();
   }
 
   refresh(): void {
-    console.error("REFRESH");
+    console.error('REFRESH');
     if (this.collection) {
       if (this.collection.default_locale != null) {
         window.appGlobals.changeLocaleIfNeeded(this.collection.default_locale);
       }
 
-      if (this.collection.theme_id!==undefined) {
+      if (this.collection.theme_id !== undefined) {
         window.appGlobals.theme.setTheme(this.collection.theme_id);
       }
 
@@ -141,11 +140,14 @@ export abstract class YpCollection extends YpBaseElement {
     }
   }
 
-  async _getHelpPages() {
+  async _getHelpPages(
+    collectionTypeOverride: string | undefined = undefined,
+    collectionIdOverride: number | undefined = undefined
+  ) {
     if (this.collectionId) {
       const helpPages = (await window.serverApi.getHelpPages(
-        this.collectionType,
-        this.collectionId
+        collectionTypeOverride ? collectionTypeOverride : this.collectionType,
+        collectionIdOverride ? collectionIdOverride : this.collectionId
       )) as Array<YpHelpPage> | undefined;
       if (helpPages) {
         this.fire('yp-set-pages', helpPages);
@@ -156,7 +158,9 @@ export abstract class YpCollection extends YpBaseElement {
   }
 
   get collectionTabLabel(): string {
-    const translatedCollectionItems = this.t(YpServerApi.transformCollectionTypeToApi(this.collectionItemType!));
+    const translatedCollectionItems = this.t(
+      YpServerApi.transformCollectionTypeToApi(this.collectionItemType!)
+    );
     return `${translatedCollectionItems} (${
       this.collectionItems ? this.collectionItems.length : 0
     })`;
@@ -190,14 +194,13 @@ export abstract class YpCollection extends YpBaseElement {
   renderHeader() {
     return this.collection && !this.noHeader
       ? html`
-        <div class="layout vertical center-center header">
-          <yp-collection-header
-            .collection="${this.collection}"
-            .collectionType="${this.collectionType}"
-            aria-label="${this.collectionType}"
-            role="banner"></yp-collection-header
-          >
-        </div>
+          <div class="layout vertical center-center header">
+            <yp-collection-header
+              .collection="${this.collection}"
+              .collectionType="${this.collectionType}"
+              aria-label="${this.collectionType}"
+              role="banner"></yp-collection-header>
+          </div>
         `
       : nothing;
   }
@@ -222,15 +225,15 @@ export abstract class YpCollection extends YpBaseElement {
       return html`
         <div class="layout vertical center-center">
           <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
-              <mwc-tab
-                ?hidden="${this.hideCollection}"
-                .label="${this.collectionTabLabel}"
-                icon="groups"
-                stacked></mwc-tab>
-              ${this.renderNewsAndMapTabs()}
-            </mwc-tab-bar>
+            <mwc-tab
+              ?hidden="${this.hideCollection}"
+              .label="${this.collectionTabLabel}"
+              icon="groups"
+              stacked></mwc-tab>
+            ${this.renderNewsAndMapTabs()}
+          </mwc-tab-bar>
         </div>
-        `;
+      `;
     } else {
       return nothing;
     }
@@ -241,15 +244,17 @@ export abstract class YpCollection extends YpBaseElement {
 
     switch (this.selectedTab) {
       case CollectionTabTypes.Collection:
-        page = (this.collectionItems && this.collectionItemType)
-          ? html` <yp-collection-items-grid
-              id="collectionItems"
-              .collectionItems="${this.collectionItems}"
-              .collection="${this.collection}"
-              .collectionType="${this.collectionType}"
-              .collectionItemType="${this.collectionItemType}"
-              .collectionId="${this.collectionId}"></yp-collection-items-grid>`
-          : html``;
+        page =
+          this.collectionItems && this.collectionItemType
+            ? html` <yp-collection-items-grid
+                id="collectionItems"
+                .collectionItems="${this.collectionItems}"
+                .collection="${this.collection}"
+                .collectionType="${this.collectionType}"
+                .collectionItemType="${this.collectionItemType}"
+                .collectionId="${this
+                  .collectionId}"></yp-collection-items-grid>`
+            : html``;
         break;
       case CollectionTabTypes.Newsfeed:
         page = html` <ac-activities
@@ -268,9 +273,7 @@ export abstract class YpCollection extends YpBaseElement {
 
   render() {
     return html`
-      ${this.renderHeader()}
-      ${this.renderTabs()}
-      ${this.renderCurrentTabPage()}
+      ${this.renderHeader()} ${this.renderTabs()} ${this.renderCurrentTabPage()}
       ${this.createFabIcon && this.createFabLabel
         ? html`<mwc-fab
             ?extended="${this.wide}"
