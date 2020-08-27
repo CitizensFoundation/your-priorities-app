@@ -291,10 +291,10 @@ class EmojiSelectorLit extends YpBaseElement {
    * Load and parse the emojis into something we can use.
    */
   _loadEmojiLib() {
-    var request = new XMLHttpRequest();
-    var url = this.resolveUrl('https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/emojis.json');
+    const request = new XMLHttpRequest();
+    const url = this.resolveUrl('https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/emojis.json');
     request.open('GET', url, true);
-    var self = this;
+    const self = this;
 
     request.onload = function() {
       if (request.status >= 200 && request.status < 400) {
@@ -313,7 +313,7 @@ class EmojiSelectorLit extends YpBaseElement {
       { 'name': 'travelandplaces', 'items' : [ ], title : 'travel and places' },
       { 'name': 'objectsandsymbols', 'items' : [ ], title : 'objects and symbols' },
       { 'name': 'flags', 'items' : [ ], title : 'flags' }];
-    var indexes = { 'people' : 0,
+    const indexes = { 'people' : 0,
       'nature' : 1,
       'foodanddrink' : 2,
       'celebration': 3,
@@ -324,11 +324,11 @@ class EmojiSelectorLit extends YpBaseElement {
     };
     this._searchPageIndex = 9;  // the page after the last legit emoji page.
 
-    for (var name in emojis) {
-      var category = emojis[name]['category'];
-      var index = indexes[category];
+    for (const name in emojis) {
+      const category = emojis[name]['category'];
+      const index = indexes[category];
       if (index !== undefined) {
-        var keywords = emojis[name]['keywords'];
+        const keywords = emojis[name]['keywords'];
         if (keywords.indexOf(name) == -1)
           keywords.push(name);
 
@@ -344,11 +344,11 @@ class EmojiSelectorLit extends YpBaseElement {
   _onEmojiClick(event) {
     if (!this.inputTarget)
       return;
-    var emoji = event.target.textContent;
+    const emoji = event.target.textContent;
 
     // If this emoji already exists, remove it. In all cases, add it to the
     // front of the queue since it's the newest one.
-    var index = this.recentlyUsedEmojis.indexOf(emoji);
+    const index = this.recentlyUsedEmojis.indexOf(emoji);
     if (index != -1)
       this.splice('recentlyUsedEmojis', index, 1);
     this.unshift('recentlyUsedEmojis', emoji);
@@ -356,12 +356,12 @@ class EmojiSelectorLit extends YpBaseElement {
     if (this._hasLocalStorage)
       localStorage.setItem(this._localStorageKey, JSON.stringify(this.recentlyUsedEmojis));
 
-    var value = '';
+    const value = '';
     if (this.inputTarget.value)
       value = this.inputTarget.value;
 
     // Carets are witchcraft.
-    var newValue = this._updateValueAndPreserveCaret(value, emoji);
+    const newValue = this._updateValueAndPreserveCaret(value, emoji);
 
     // This is a bit of a hack, but an iron-input or iron-autogrow-textarea
     // need to get notified to update their `bind-value`. And `onInput`
@@ -377,7 +377,7 @@ class EmojiSelectorLit extends YpBaseElement {
   }
 
   _onSearchInput(event) {
-    var search = this.$$("$searchInput").value.toLowerCase();
+    const search = this.$$("#searchInput").value.toLowerCase();
     if (search.trim() == '' && this.selected == this._searchPageIndex) {
       this.$$("#clearSearch").hidden = true;
       this.selected = this._selectedTabBeforeSearch;
@@ -396,9 +396,9 @@ class EmojiSelectorLit extends YpBaseElement {
     this.searchResults = [];
 
     // UGH
-    for (var i = 0; i < this.emojis.length; i++) {
-      var category = this.emojis[i];
-      for (var j = 0; j < category.items.length; j++) {
+    for (let i = 0; i < this.emojis.length; i++) {
+      const category = this.emojis[i];
+      for (let j = 0; j < category.items.length; j++) {
         if (category.items[j]['keywords'].indexOf(search) != -1) {
           this.push('searchResults',
             {'char': category.items[j]['char'],
@@ -429,9 +429,9 @@ class EmojiSelectorLit extends YpBaseElement {
   _updateValueAndPreserveCaret(value, emoji) {
     // Preserve the cursor position. If this is a paper-input, we really
     // care about the cursor position of the underlying iron-input.
-    var underlyingIronInput = this.inputTarget.inputElement;
+    const underlyingIronInput = this.inputTarget.inputElement;
 
-    var start, end;
+    const start, end;
 
     if (underlyingIronInput) {
       start = underlyingIronInput.selectionStart || value.length;
@@ -441,9 +441,9 @@ class EmojiSelectorLit extends YpBaseElement {
       end = this.inputTarget.selectionEnd || value.length + 1;
     }
 
-    var front = value.substring(0, start);
-    var back = value.substring(end, value.length);
-    var newValue = front + emoji + back;
+    const front = value.substring(0, start);
+    const back = value.substring(end, value.length);
+    const newValue = front + emoji + back;
 
     this.inputTarget.value = newValue;
 
@@ -464,7 +464,7 @@ class EmojiSelectorLit extends YpBaseElement {
   }
 
   _checkLocalStorage() {
-    var mod = '__emoji_test_local_storage__';
+    const mod = '__emoji_test_local_storage__';
     try {
       localStorage.setItem(mod, 'a');
       localStorage.removeItem(mod);
