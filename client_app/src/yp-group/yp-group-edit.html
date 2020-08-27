@@ -391,9 +391,10 @@
         <paper-input id="customThankYouTextNewPosts"
                      name="customThankYouTextNewPosts"
                      type="text"
+                     char-counter
                      label="[[t('customThankYouTextNewPosts')]]"
                      value="{{group.configuration.customThankYouTextNewPosts}}"
-                     maxlength="60">
+                     maxlength="120">
         </paper-input>
 
         <paper-input id="descriptionTruncateAmount"
@@ -417,8 +418,8 @@
           [[t('allPostsBlockedByDefault')]]
         </paper-checkbox>
 
-        <paper-checkbox name="storeSubCodesWithRadiosAndCheckboxes" checked$="{{group.configuration.storeSubCodesWithRadiosAndCheckboxes}}">
-          [[t('storeSubCodesWithRadiosAndCheckboxes')]]
+        <paper-checkbox name="exportSubCodesForRadiosAndCheckboxes" checked$="{{group.configuration.exportSubCodesForRadiosAndCheckboxes}}">
+          [[t('exportSubCodesForRadiosAndCheckboxes')]]
         </paper-checkbox>
 
         <paper-textarea id="structuredQuestions"

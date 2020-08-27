@@ -126,14 +126,14 @@
       .longQuestion {
         font-size: 18px;
         font-weight: 400;
-        color: #000;
+        color: #777;
         padding-bottom: 0;
         margin-bottom: 0;
       }
 
       .longQuestion[use-small-font] {
         font-size: 16px;
-        color: #333;
+        color: #777;
       }
 
       .longQuestion[has-content] {
@@ -305,7 +305,6 @@
       <paper-textarea-aria id="structuredQuestion_[[index]]"
                       data-type="text"
                       value="{{question.value}}"
-                      on-keypress="_keyPressed"
                       minlength="2"
                       always-float-label="[[_floatIfValueOrIE(question.value)]]"
                       label="[[_getTextWithIndex(question)]]"
@@ -328,7 +327,6 @@
       <paper-textarea-aria id="structuredQuestion_[[index]]"
                       data-type="text"
                       value="{{question.value}}"
-                      on-keypress="_keyPressed"
                       minlength="2"
                       char-counter
                       on-focus="setLongFocus"
@@ -634,9 +632,6 @@
                   } else {
                     value = selectedRadio.text;
                   }
-                  if (value && options && options.withSubCodes && button.subCode) {
-                    value = button.subCode + " "+ value;
-                  }
                 }
               }.bind(this));
             }
@@ -646,19 +641,16 @@
               if (item.children[i].checked) {
                 var checkboxSubId = item.children[i].id.split("_")[2];
                 var selectedCheckbox = this.question.checkboxes[checkboxSubId];
-                var subCode = "";
-                if (options && options.withSubCodes && selectedCheckbox.subCode) {
-                  subCode = selectedCheckbox.subCode + " ";
-                }
+
                 if (selectedCheckbox.isSpecify) {
                   var checkboxInput = this.$$("#structuredQuestion_" + this.index + "_" + checkboxSubId + "_checkboxOther");
                   if (checkboxInput && checkboxInput.value !== "") {
-                    selectedCheckboxes += subCode + selectedCheckbox.text + ":" + this.cleanValue(checkboxInput.value) + ",";
+                    selectedCheckboxes += selectedCheckbox.text + ":" + this.cleanValue(checkboxInput.value) + ",";
                   } else {
-                    selectedCheckboxes += subCode + selectedCheckbox.text + ",";
+                    selectedCheckboxes += selectedCheckbox.text + ",";
                   }
                 } else {
-                  selectedCheckboxes += subCode + selectedCheckbox.text + ",";
+                  selectedCheckboxes += selectedCheckbox.text + ",";
                 }
               }
             }
