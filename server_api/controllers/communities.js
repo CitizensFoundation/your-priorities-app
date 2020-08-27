@@ -378,20 +378,6 @@ const masterGroupIncludes = [
     required: false
   },
   {
-    model: models.Video,
-    as: 'GroupLogoVideos',
-    attributes:  ['id','formats','viewable','public_meta'],
-    required: false,
-    include: [
-      {
-        model: models.Image,
-        as: 'VideoImages',
-        attributes:["formats",'updated_at'],
-        required: false
-      },
-    ]
-  },
-  {
     model: models.Image,
     as: 'GroupHeaderImages',
     attributes:  models.Image.defaultAttributesPublic,
@@ -399,7 +385,44 @@ const masterGroupIncludes = [
   }
 ];
 
-var getCommunity = function(req, done) {
+const addVideosToGroup = (groups, done) => {
+  //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
+  async.forEachLimit(groups, 20, (group, forEachCallback) => {
+    models.Video.findAll({
+      attributes:  ['id','formats','viewable','public_meta'],
+      include: [
+        {
+          model: models.Image,
+          as: 'VideoImages',
+          attributes:["formats",'updated_at'],
+          required: false
+        },
+        {
+          model: models.Group,
+          where: {
+            id: group.id
+          },
+          as: 'GroupLogoVideos',
+          required: true,
+          attributes: ['id']
+        }
+      ],
+      order: [
+        ['updated_at', 'desc' ],
+        [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+      ]
+    }).then(videos => {
+      group.dataValues.GroupLogoVideos = videos;
+      forEachCallback();
+    }).catch( error => {
+      forEachCallback(error);
+    })
+  }, error => {
+    done(error);
+  });
+}
+
+const getCommunity = function(req, done) {
   var community;
 
   log.info("getCommunity");
@@ -492,11 +515,6 @@ var getCommunity = function(req, done) {
               ['counter_users', 'desc'],
               [{model: models.Image, as: 'GroupLogoImages'}, 'created_at', 'asc'],
               [{model: models.Image, as: 'GroupHeaderImages'}, 'created_at', 'asc'],
-              [{model: models.Video, as: "GroupLogoVideos"}, 'updated_at', 'desc'],
-              [{model: models.Video, as: "GroupLogoVideos"}, {
-                model: models.Image,
-                as: 'VideoImages'
-              }, 'updated_at', 'asc'],
             ],
             include: masterGroupIncludes
           }).then(function (groups) {
@@ -524,8 +542,6 @@ var getCommunity = function(req, done) {
                 [ 'counter_users', 'desc'],
                 [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
                 [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-                [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
-                [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
               ],
               include: [
                 {
@@ -555,8 +571,6 @@ var getCommunity = function(req, done) {
                 [ 'counter_users', 'desc'],
                 [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
                 [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-                [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
-                [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
               ],
               include: [
                 {
@@ -577,25 +591,31 @@ var getCommunity = function(req, done) {
             });
           }
         ], function (error) {
-          var combinedGroups = _.concat(userGroups, community.dataValues.Groups);
-          if (adminGroups) {
-            combinedGroups = _.concat(adminGroups, combinedGroups);
-          }
-          combinedGroups = _.uniqBy(combinedGroups, function (group) {
-            if (!group) {
-              log.error("Can't find group in combinedGroups", { combinedGroupsL: combinedGroups.length, err: "Cant find group in combinedGroups" });
-              return null;
-            } else {
-              return group.id;
+          if (error) {
+            seriesCallback(error);
+          }  else {
+            var combinedGroups = _.concat(userGroups, community.dataValues.Groups);
+            if (adminGroups) {
+              combinedGroups = _.concat(adminGroups, combinedGroups);
             }
-          });
-
-          community.dataValues.Groups = combinedGroups;
-
-          seriesCallback(error);
+            combinedGroups = _.uniqBy(combinedGroups, function (group) {
+              if (!group) {
+                log.error("Can't find group in combinedGroups", { combinedGroupsL: combinedGroups.length, err: "Cant find group in combinedGroups" });
+                return null;
+              } else {
+                return group.id;
+              }
+            });
+            addVideosToGroup(combinedGroups, videoError => {
+              community.dataValues.Groups = combinedGroups;
+              seriesCallback(videoError);
+            })
+          }
         });
       } else {
-        seriesCallback();
+        addVideosToGroup( community.dataValues.Groups, videoError => {
+          seriesCallback(videoError);
+        })
       }
     }
   ], function (error) {
