@@ -334,7 +334,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
   group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
   group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
-  group.set('configuration.storeSubCodesWithRadiosAndCheckboxes', truthValueFromBody(req.body.storeSubCodesWithRadiosAndCheckboxes));
+  group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
 };
 
 var upload = multer({
