@@ -3,6 +3,7 @@ import { nothing } from 'lit-html';
 
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
+import '@material/mwc-textfield';
 import '@material/mwc-circular-progress-four-color';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
@@ -640,6 +641,7 @@ export class YpLogin extends YpBaseElement {
     if (changedProperties.has('registerMode')) {
       this._onRegisterChanged();
     }
+
     if (changedProperties.has('opened')) {
       this._openedChanged();
     }

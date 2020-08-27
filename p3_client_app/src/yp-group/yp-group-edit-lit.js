@@ -481,8 +481,8 @@ render() {
           ${this.t('allPostsBlockedByDefault')}
         </paper-checkbox>
 
-        <paper-checkbox name="storeSubCodesWithRadiosAndCheckboxes" ?checked="${this.group.configuration.storeSubCodesWithRadiosAndCheckboxes}">
-          ${this.t('storeSubCodesWithRadiosAndCheckboxes')}
+        <paper-checkbox name="exportSubCodesForRadiosAndCheckboxes" ?checked="${this.group.configuration.exportSubCodesForRadiosAndCheckboxes}">
+          ${this.t('exportSubCodesForRadiosAndCheckboxes')}
         </paper-checkbox>
 
 
@@ -881,7 +881,7 @@ render() {
         if (this.community) {
           if (this.community.access == 0) {
             debugger;
-            this.publicCommunity = true; 
+            this.publicCommunity = true;
           } else {
             this.publicCommunity = false;
           }

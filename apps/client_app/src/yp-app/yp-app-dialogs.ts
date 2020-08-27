@@ -17,6 +17,9 @@ export class YpAppDialogs extends YpBaseElement {
   pageDialogOpen = false;
 
   @property({ type: Boolean })
+  magicTextDialogOpen = false
+
+  @property({ type: Boolean })
   mediaRecorderOpen = false;
 
   @property({ type: Boolean })
@@ -84,11 +87,6 @@ export class YpAppDialogs extends YpBaseElement {
     let selectedDialog = nothing;
 
     switch (this.selectedDialog) {
-      case 'magicTextDialog':
-        selectedDialog = html`
-          <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
-        `;
-        break;
       case 'userLogin':
         selectedDialog = html`
           <yp-login
@@ -185,6 +183,11 @@ export class YpAppDialogs extends YpBaseElement {
       ${this.pageDialogOpen
         ? html` <yp-page-dialog id="pageDialog"></yp-page-dialog> `
         : nothing }
+
+      ${this.magicTextDialogOpen
+        ? html`  <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog> `
+        : nothing }
+
       ${this.confirmationDialogOpen
         ? html`
             <yp-confirmation-dialog
@@ -327,6 +330,7 @@ export class YpAppDialogs extends YpBaseElement {
     }
   }
 
+  //TODO: Figure out how to bind to close of dialogs to remove from DOM when not open
   async getDialogAsync(idName: string, callback: Function) {
     if (idName === 'pageDialog') {
       this.pageDialogOpen = true;
@@ -334,6 +338,8 @@ export class YpAppDialogs extends YpBaseElement {
       this.confirmationDialogOpen = true;
     } else if (idName === 'autoTranslateDialog') {
       this.autoTranslateDialogOpen = true;
+    } else if (idName === 'magicTextDialog') {
+      this.magicTextDialogOpen = true;
     } else if (idName !== 'notificationToast' && idName !== 'masterToast') {
       this.pageDialogOpen = false;
       this.confirmationDialogOpen = false;
