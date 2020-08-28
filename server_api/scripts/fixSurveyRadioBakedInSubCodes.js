@@ -2,7 +2,7 @@ var models = require("../models");
 var async = require("async");
 
 console.log("Fix group");
-const groupId = 3452; //process.argv[2];
+const groupId = process.argv[2];
 
 const getSubCodeFromRadio = (radios, answer) => {
   let subCode;
@@ -62,6 +62,7 @@ const processPost = (group, post, done) => {
   const clonedAnswers = [...answers];
 
   post.set('public_data.structuredAnswersJson', clonedAnswers);
+  post.changed('public_data', true);
   post.save().then(() =>{
     done();
   });
