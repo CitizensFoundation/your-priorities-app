@@ -126,14 +126,18 @@
       .longQuestion {
         font-size: 18px;
         font-weight: 400;
-        color: #777;
+        color: #333;
         padding-bottom: 0;
         margin-bottom: 0;
       }
 
       .longQuestion[use-small-font] {
         font-size: 16px;
-        color: #777;
+        color: #333;
+      }
+
+      .longQuestion[is-from-new-post] {
+          color: #777;
       }
 
       .longQuestion[has-content] {
@@ -259,6 +263,7 @@
 
     <template is="dom-if" if="[[_isTextFieldLong(question)]]">
       <div class="question general longQuestion" has-focus$="[[longFocus]]"
+           is-from-new-post$="[[isFromNewPost]]"
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
@@ -321,6 +326,7 @@
 
     <template is="dom-if" if="[[_isTextareaLong(question)]]">
       <div class="question general longQuestion" has-focus$="[[longFocus]]" has-content$="[[question.value]]"
+           is-from-new-post$="[[isFromNewPost]]"
            use-small-font$="[[useSmallFont]]" id="structuredQuestionIntro_[[index]]"
            inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
@@ -443,6 +449,11 @@
 
           index: {
             type: Number
+          },
+
+          isFromNewPost: {
+            type: Boolean,
+            value: false
           },
 
           language: {
