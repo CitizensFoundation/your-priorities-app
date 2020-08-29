@@ -279,9 +279,9 @@ export class YpForm extends YpBaseElement {
     for (let el, i = 0; (el = elements[i]), i < elements.length; i++) {
       // This is weird to appease the compiler. We assume the custom element
       // has a validate() method, otherwise we can't check it.
-      const validatable = /** @type {{validate: (function() : boolean)}} */ el as YpHTMLInputElement;
-      if (validatable.validate) {
-        valid = !!validatable.validate() && valid;
+      const validatable = el as YpHTMLInputElement;
+      if (validatable.reportValidity) {
+        valid = !!validatable.reportValidity() && valid;
       }
     }
     return valid;
@@ -293,7 +293,7 @@ export class YpForm extends YpBaseElement {
    * @param {Event=} event
    * @return {void}
    */
-  submit(event: CustomEvent) {
+  submit(event: CustomEvent | undefined = undefined) {
     // We are not using this form for submission, so always cancel its event.
     if (event) {
       event.preventDefault();

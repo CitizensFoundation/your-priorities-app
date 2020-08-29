@@ -2,6 +2,17 @@ import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
+import '@material/mwc-circular-progress-four-color';
+import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
+import { Dialog } from '@material/mwc-dialog';
+import '@material/mwc-dialog';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-snackbar';
+
+import { YpForm } from '../@yrpri/yp-form.js';
+import { Snackbar } from '@material/mwc-snackbar';
+
 @customElement('yp-edit-dialog')
 export class YpEditDialog extends YpBaseElement {
   @property({ type: String })
@@ -26,10 +37,10 @@ export class YpEditDialog extends YpBaseElement {
   errorText: string | undefined;
 
   @property({ type: String })
-  toastText: string | undefined;
+  snackbarText: string | undefined;
 
   @property({ type: String })
-  toastTextCombined: string | undefined;
+  snackbarTextCombined: string | undefined;
 
   @property({ type: String })
   saveText: string | undefined;
@@ -117,7 +128,7 @@ export class YpEditDialog extends YpBaseElement {
           padding-top: 2px;
         }
 
-        mwc-toast {
+        mwc-snackbar {
           z-index: 9999;
         }
 
@@ -301,7 +312,7 @@ export class YpEditDialog extends YpBaseElement {
   render() {
     return html`
       <mwc-dialog
-        ?opened="${this.opened}"
+        ?open="${this.opened}"
         ?rtl="${this.rtl}"
         .name="${this.name}"
         id="editDialog"
@@ -330,7 +341,7 @@ export class YpEditDialog extends YpBaseElement {
                                 id="submit1"
                                 ?hidden="${!this.saveText}"
                                 @click="${this._submit}"
-                                .label="${this.saveText}"
+                                .label="${this.saveText ? this.saveText : ''}"
                                 class="smallButtonText"></mwc-button>
                             `
                           : html`
@@ -432,7 +443,7 @@ export class YpEditDialog extends YpBaseElement {
             .label="${this.t('ok')}"></mwc-button>
         </div>
       </mwc-dialog>
-      <mwc-toast id="toast" .text="${this.toastTextCombined}"></mwc-toast>
+      <mwc-snackbar id="snackbar" .text="${this.snackbarTextCombined}"></mwc-snackbar>
     `;
   }
 
@@ -441,9 +452,9 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   scrollResize() {
-    if (this.$$('#scrollable')) {
+    /*if (this.$$('#scrollable')) {
       this.$$('#scrollable').fire('iron-resize');
-    }
+    }*/
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -509,14 +520,15 @@ export class YpEditDialog extends YpBaseElement {
 
   close() {
     this.opened = false;
-    this.$$('#editDialog').close();
   }
 
-  _formSubmitted(event) {}
+  _formSubmitted() {
+    //TODO: DO we need this
+  }
 
   _formResponse(event: CustomEvent) {
     this._setSubmitDisabledStatus(false);
-    this.$$('#spinner').active = false;
+    (this.$$('#spinner') as CircularProgressFourColorBase).hidden = true;
     const response = event.detail;
     if (response && response.isError) {
       console.log('There is an error in form handled by user');
@@ -524,11 +536,11 @@ export class YpEditDialog extends YpBaseElement {
       this.response = response;
       this.close();
       if (response && response.name) {
-        this.toastTextCombined = this.toastText + ' ' + response.name;
+        this.snackbarTextCombined = this.snackbarText + ' ' + response.name;
       } else {
-        this.toastTextCombined = this.toastText;
+        this.snackbarTextCombined = this.snackbarText;
       }
-      this.$$('#toast').show();
+      (this.$$('#snackbar') as Snackbar).open = true;
     }
   }
 
@@ -536,12 +548,12 @@ export class YpEditDialog extends YpBaseElement {
     this._setSubmitDisabledStatus(false);
     console.log('Form error: ', event.detail.error);
     this._showErrorDialog(event.detail.error);
-    this.$$('#spinner').active = false;
+    (this.$$('#spinner') as CircularProgressFourColorBase).hidden = false;
   }
 
   _formInvalid() {
     this._setSubmitDisabledStatus(false);
-    this.$$('#spinner').active = false;
+    (this.$$('#spinner') as CircularProgressFourColorBase).hidden = false;
   }
 
   _submit() {
@@ -549,9 +561,9 @@ export class YpEditDialog extends YpBaseElement {
       this.fire('yp-custom-form-submit');
     } else {
       if (this.confirmationText) {
-        window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+        /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
           dialog.open(this.confirmationText, this._reallySubmit.bind(this));
-        });
+        });*/
       } else {
         this._reallySubmit();
       }
@@ -559,8 +571,8 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   _setSubmitDisabledStatus(status: boolean) {
-    const submit1 = this.$$('#submit1');
-    const submit2 = this.$$('#submit2');
+    const submit1 = this.$$('#submit1') as HTMLInputElement;
+    const submit2 = this.$$('#submit2') as HTMLInputElement;
     if (submit1) submit1.disabled = status;
 
     if (submit2) submit2.disabled = status;
@@ -597,9 +609,11 @@ export class YpEditDialog extends YpBaseElement {
       this.action = this.baseAction + '/' + this.params.categoryId;
     }
 
-    if (this.$$('#form').validate()) {
-      this.$$('#form').submit();
-      this.$$('#spinner').active = true;
+    const form = this.$$('#form') as YpForm;
+
+    if (form.validate()) {
+      form.submit();
+      (this.$$('#spinner') as CircularProgressFourColorBase).hidden = false;
     } else {
       this.fire('yp-form-invalid');
       const error = this.t('form.invalid');
@@ -608,8 +622,9 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   submitForce() {
-    this.$$('#spinner').active = true;
-    this.$$('#form').submit();
+    const form = this.$$('#form') as YpForm;
+    form.submit();
+    (this.$$('#spinner') as CircularProgressFourColorBase).hidden = false;
   }
 
   getForm() {
@@ -617,20 +632,21 @@ export class YpEditDialog extends YpBaseElement {
   }
 
   stopSpinner() {
-    this.$$('#spinner').active = false;
+    (this.$$('#spinner') as CircularProgressFourColorBase).hidden = true;
   }
 
   validate() {
-    return this.$$('#form').validate();
+    const form = this.$$('#form') as YpForm;
+    form.validate();
   }
 
   _showErrorDialog(errorText: string) {
     this.errorText = errorText;
-    this.$$('#formErrorDialog').open();
+    (this.$$('#formErrorDialog') as Dialog).open = true;
   }
 
   _clearErrorText() {
-    this.$$('#formErrorDialog').close();
+    (this.$$('#formErrorDialog') as Dialog).open = false;
     this.errorText = undefined;
   }
 }
