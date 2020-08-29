@@ -20,30 +20,31 @@ export class YpPostEdit extends YpEditBase {
   @property({ type: String })
   action = '/posts'
 
+  @property({ type: Boolean })
+  newPost = false
+
+  @property({ type: Array })
+  initialStructuredAnswersJson: Array<YpStructuredAnswer> | undefined
+
+  @property({ type: Object })
+  post: YpPostData | undefined
+
+  @property({ type: Object })
+  group: YpGroupData | undefined
+
+  @property({ type: Boolean })
+  locationHidden = false
+
+  @property({ type: Object })
+  location: YpLocationData | undefined
+
+
   static get prsasasoperties() {
     return {
-      action: {
-        type: String,
-        value: '/api/posts',
-      },
-
-      newPost: {
-        type: Boolean,
-        value: false,
-      },
-
-      initialStructuredAnswersJson: {
-        type: Array,
-        value: null,
-      },
 
       post: {
         type: Object,
         observer: '_postChanged',
-      },
-
-      group: {
-        type: Object,
       },
 
       locationHidden: {
