@@ -13,7 +13,8 @@ found at http://polymer.github.io/PATENTS.txt
 
 import { YpBaseElement } from './yp-base-element.js';
 import { property, customElement, html, css } from 'lit-element';
-import { dom, DomApi, EventApi } from './domUtils/dom.js';
+import { dom, DomApi } from './domUtils/dom.js';
+import { FlattenedNodesObserver } from './domUtils/flattened-nodes-observer.js';
 
 /**
 `<yp-form>` is a wrapper around the HTML `<form>` element, that can
@@ -94,14 +95,6 @@ attach it to the `<yp-form>`:
 
 @customElement('yp-form')
 export class YpForm extends YpBaseElement {
-  /*
-   * Set this to true if you don't want the form to be submitted through an
-   * ajax request, and you want the page to redirect to the action URL
-   * after the form has been submitted.
-   */
-  @property({ type: Boolean })
-  allowRedirect = false;
-
   /**
    * HTTP request headers to send. See PolymerElements/iron-ajax for
    * more details. Only works when `allowRedirect` is false.
@@ -118,6 +111,8 @@ export class YpForm extends YpBaseElement {
   _form: HTMLFormElement | undefined;
   _defaults: WeakMap<HTMLInputElement | HTMLFormElement, object> | undefined;
 
+  _nodeObserver: FlattenedNodesObserver | undefined
+
   static get style() {
     return [
       css`
@@ -127,6 +122,7 @@ export class YpForm extends YpBaseElement {
       `,
     ];
   }
+
   render() {
     return html`
       <!-- This form is used to collect the elements that should be submitted -->
@@ -198,7 +194,19 @@ export class YpForm extends YpBaseElement {
       // values.
       window.setTimeout(this._saveInitialValues.bind(this), 1);
     } else {
-      console.error('No form element found');
+      this._nodeObserver = (dom(this) as DomApi).observeNodes((mutations) => {
+        for (let i = 0; i < mutations.addedNodes.length; i++) {
+          if (mutations.addedNodes[i].tagName === 'FORM') {
+            this._form = mutations.addedNodes[i] as HTMLFormElement;
+            // At this point in time, all custom elements are expected
+            // to be upgraded, hence we'll be able to traverse their
+            // shadowRoots.
+            this._init();
+            (dom(this) as DomApi).unobserveNodes(this._nodeObserver!);
+            this._nodeObserver = undefined;
+          }
+        }
+      });
     }
   }
 
@@ -208,11 +216,15 @@ export class YpForm extends YpBaseElement {
    */
   disconnectedCallback() {
     super.disconnectedCallback();
+    if (this._nodeObserver) {
+      (dom(this) as DomApi).unobserveNodes(this._nodeObserver);
+      this._nodeObserver = undefined;
+    }
   }
 
   _init() {
-    this._form!.addEventListener('submit', this.submit.bind(this));
-    this._form!.addEventListener('reset', this.reset.bind(this));
+    this._form!.addListener('submit', this.submit.bind(this));
+    this._form!.addListener('reset', this.reset.bind(this));
 
     // Save the initial values.
     this._defaults = this._defaults || new WeakMap();
@@ -247,11 +259,6 @@ export class YpForm extends YpBaseElement {
         const defaults = { value: node.value, checked: false, invalid: false };
         if ('checked' in node) {
           defaults.checked = node.checked;
-        }
-        // In 1.x yp-form would reset `invalid`, so
-        // keep it here for backwards compat.
-        if ('invalid' in node) {
-          defaults.invalid = node.invalid;
         }
         this._defaults!.set(node, defaults);
       }
@@ -304,9 +311,7 @@ export class YpForm extends YpBaseElement {
     }
 
     if (!this.validate()) {
-      this.dispatchEvent(
-        new CustomEvent('yp-form-invalid', { bubbles: true, composed: true })
-      );
+      this.fire('yp-form-invalid')
       return;
     }
 
@@ -315,32 +320,7 @@ export class YpForm extends YpBaseElement {
     this.$$('#helper')!.textContent = '';
 
     const json = this.serializeForm();
-
-    // If we want a redirect, submit the form natively.
-    if (this.allowRedirect) {
-      // If we're submitting the form natively, then create a hidden element for
-      // each of the values.
-      for (const element in json) {
-        this.$$('#helper')!.appendChild(
-          this._createHiddenElement(element, json[element])
-        );
-      }
-
-      // Copy the original form attributes.
-      const formHelper = this.$$('#helper') as HTMLFormElement;
-      formHelper.action = this._form.getAttribute('action') || '';
-      formHelper.method = this._form.getAttribute('method') || 'GET';
-      formHelper.contentType =
-        this._form.getAttribute('enctype') ||
-        'application/x-www-form-urlencoded';
-
-      formHelper.submit();
-      this.dispatchEvent(
-        new CustomEvent('yp-form-submit', { bubbles: true, composed: true })
-      );
-    } else {
-      this._makeAjaxRequest(json);
-    }
+    this._makeAjaxRequest(json);
   }
 
   /**
@@ -370,9 +350,9 @@ export class YpForm extends YpBaseElement {
     // Load the initial values.
     const nodes = this._getValidatableElements();
     for (let i = 0; i < nodes.length; i++) {
-      const node = nodes[i];
-      if (this._defaults!.has(node)) {
-        const defaults = this._defaults!.get(node);
+      const node = nodes[i] as LooseObject;
+      if (this._defaults!.has(node as HTMLInputElement)) {
+        const defaults = this._defaults!.get(node as HTMLInputElement) as Record<string,any>;
         for (const propName in defaults) {
           node[propName] = defaults[propName];
         }
@@ -404,55 +384,22 @@ export class YpForm extends YpBaseElement {
     return json;
   }
 
-  _handleFormResponse(event: CustomEvent) {
-    this.fire('yp-form-response', event.detail);
-  }
+  async _makeAjaxRequest(json: object) {
 
-  _handleFormError(event: CustomEvent) {
-    this.fire('yp-form-error', event.detail);
-  }
+    this.fire('yp-form-submit');
 
-  _makeAjaxRequest(json) {
-    // Initialize the iron-ajax element if we haven't already.
-    if (!this.request) {
-      this.request = document.createElement('iron-ajax');
-      this.request.addEventListener(
-        'response',
-        this._handleFormResponse.bind(this)
-      );
-      this.request.addEventListener('error', this._handleFormError.bind(this));
-    }
+    const success = await window.serverApi.submitForm(url, headers, json) as boolean | void;
 
-    // Native forms can also index elements magically by their name (can't make
-    // this up if I tried) so we need to get the correct attributes, not the
-    // elements with those names.
-    this.request.url = this._form.getAttribute('action');
-    this.request.method = this._form.getAttribute('method') || 'GET';
-    this.request.contentType =
-      this._form.getAttribute('enctype') || 'application/x-www-form-urlencoded';
-    this.request.withCredentials = this.withCredentials;
-    this.request.headers = this.headers;
-
-    if (this._form.method.toUpperCase() === 'POST') {
-      this.request.body = json;
+    if (success===true) {
+      this.fire('yp-form-response', true);
     } else {
-      this.request.params = json;
+      this.fire('yp-form-error', {});
     }
-
-    this.request.generateRequest();
-
-    this.dispatchEvent(
-      new CustomEvent('yp-form-submit', {
-        detail: json,
-        bubbles: true,
-        composed: true,
-      })
-    );
   }
 
   _getValidatableElements() {
     return this._findElements(
-      this._form,
+      this._form!,
       true /* ignoreName */,
       false /* skipSlots */
     );
@@ -460,7 +407,7 @@ export class YpForm extends YpBaseElement {
 
   _getSubmittableElements() {
     return this._findElements(
-      this._form,
+      this._form!,
       false /* ignoreName */,
       false /* skipSlots */
     );
@@ -480,7 +427,7 @@ export class YpForm extends YpBaseElement {
     parent: HTMLElement,
     ignoreName: boolean,
     skipSlots: boolean,
-    submittable: HTMLInputElement[] | undefined
+    submittable: HTMLInputElement[] | undefined = undefined
   ) {
     submittable = submittable || [];
     const nodes = (dom(parent) as DomApi).querySelectorAll('*');
@@ -491,9 +438,9 @@ export class YpForm extends YpBaseElement {
         !skipSlots &&
         (nodes[i].localName === 'slot' || nodes[i].localName === 'content')
       ) {
-        this._searchSubmittableInSlot(submittable, nodes[i], ignoreName);
+        this._searchSubmittableInSlot(submittable, nodes[i] as HTMLInputElement, ignoreName);
       } else {
-        this._searchSubmittable(submittable, nodes[i], ignoreName);
+        this._searchSubmittable(submittable, nodes[i] as HTMLInputElement, ignoreName);
       }
     }
     return submittable;
@@ -522,12 +469,12 @@ export class YpForm extends YpBaseElement {
 
       // Note: assignedNodes does not contain <slot> or <content> because
       // getDistributedNodes flattens the tree.
-      this._searchSubmittable(submittable, assignedNodes[i], ignoreName);
+      this._searchSubmittable(submittable, assignedNodes[i] as HTMLInputElement, ignoreName);
       const nestedAssignedNodes = (dom(assignedNodes[i]) as DomApi).querySelectorAll('*');
       for (let j = 0; j < nestedAssignedNodes.length; j++) {
         this._searchSubmittable(
           submittable,
-          nestedAssignedNodes[j],
+          nestedAssignedNodes[j] as HTMLInputElement,
           ignoreName
         );
       }
@@ -552,7 +499,7 @@ export class YpForm extends YpBaseElement {
       submittable!.push(node);
     } else if (node.root) {
       this._findElements(
-        node.root,
+        (node as HTMLInputElement).root,
         ignoreName,
         true /* skipSlots */,
         submittable

@@ -56,7 +56,7 @@ export class YpServerApi extends YpCodeBase {
           this.fireGlobal('yp-network-error', {
             response: response,
             jsonError: error,
-            showUserError
+            showUserError,
           });
         }
       }
@@ -64,7 +64,7 @@ export class YpServerApi extends YpCodeBase {
     } else {
       this.fireGlobal('yp-network-error', {
         response: response,
-        showUserError
+        showUserError,
       });
       return null;
     }
@@ -411,6 +411,17 @@ export class YpServerApi extends YpCodeBase {
       `/users/login`,
       {
         method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public submitForm(url: string, method: string, body: object) {
+    return this.fetchWrapper(
+      url,
+      {
+        method: method,
         body: JSON.stringify(body),
       },
       false

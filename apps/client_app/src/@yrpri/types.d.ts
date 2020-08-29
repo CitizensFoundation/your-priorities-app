@@ -465,3 +465,7 @@ interface YpGetPointTranscriptResponse {
   error: boolean;
   point: YpPointData;
 }
+
+interface LooseObject {
+  [key: string]: any
+}
