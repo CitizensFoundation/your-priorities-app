@@ -386,10 +386,10 @@ export class YpForm extends YpBaseElement {
 
     this.fire('yp-form-submit');
 
-    const success = await window.serverApi.submitForm(url!, method, headers, json) as boolean | void;
+    const formResults = await window.serverApi.submitForm(url!, method, headers, json) as unknown | void;
 
-    if (success===true) {
-      this.fire('yp-form-response', true);
+    if (formResults===true) {
+      this.fire('yp-form-response', formResults);
     } else {
       this.fire('yp-form-error', {});
     }

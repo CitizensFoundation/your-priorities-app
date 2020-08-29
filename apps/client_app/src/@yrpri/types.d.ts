@@ -475,3 +475,18 @@ interface YpHTMLInputElement extends HTMLInputElement {
   root: HTMLElement;
   options: Array<any>;
 }
+
+interface YpEditFormParams {
+  domainId?: number;
+  communityId?: number;
+  groupId?: number;
+  postId?: number;
+  pointId?: number;
+  imageId?: number;
+  videoId?: number;
+  organizationId?: number;
+  userId?: number;
+  categoryId?: number;
+  userImages?: Array<YpImageData>;
+  statusChange?: string;
+}
