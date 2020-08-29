@@ -1,4 +1,7 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
+import {AsyncInterface} from './interfaces';
+
+import {IdleDeadline} from './interfaces';
 
 /**
  * Async interface wrapper around `setTimeout`.
@@ -104,6 +107,3 @@ declare namespace microTask {
 
 export {microTask};
 
-import {AsyncInterface} from '../../interfaces';
-
-import {IdleDeadline} from '../../interfaces';

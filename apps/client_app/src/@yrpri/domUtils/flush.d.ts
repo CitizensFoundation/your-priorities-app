@@ -1,6 +1,6 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 
-import {enqueueDebouncer, flushDebouncers} from '../utils/debounce.js';
+import {enqueueDebouncer, flushDebouncers} from './debounce.js';
 
 export {enqueueDebouncer};
 

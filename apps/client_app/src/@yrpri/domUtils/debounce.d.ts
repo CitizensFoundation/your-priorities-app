@@ -2,6 +2,7 @@
 // tslint:disable:no-any describes the API as best we are able today
 
 export {Debouncer};
+import {AsyncInterface} from './interfaces';
 
 declare class Debouncer {
   constructor();
@@ -93,4 +94,3 @@ export {flushDebouncers};
  */
 declare function flushDebouncers(): boolean;
 
-import {AsyncInterface} from '../../interfaces';

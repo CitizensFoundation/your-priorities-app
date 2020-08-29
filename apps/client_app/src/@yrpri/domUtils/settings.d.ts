@@ -1,7 +1,7 @@
 // tslint:disable:variable-name Describing an API that's defined elsewhere.
 // tslint:disable:no-any describes the API as best we are able today
 
-import {pathFromUrl} from './resolve-url.js';
+//import {pathFromUrl} from './resolve-url.js';
 
 export {setRootPath};
 
