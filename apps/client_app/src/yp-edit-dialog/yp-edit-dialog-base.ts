@@ -1,12 +1,10 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '../yp-behaviors/yp-language-behavior.js';
+import { YpBaseElement } from '../@yrpri/yp-base-element';
 
-/**
- * @polymerBehavior Polymer.ypEditDialogBehavior
- */
+export class YpEditDialogBase extends YpBaseElement {
+
 export const ypEditDialogBehavior = {
 
-  properties: {
+  propesssrties: {
 
     new: {
       type: Boolean,
@@ -41,9 +39,9 @@ export const ypEditDialogBehavior = {
     }
   },
 
-  listeners: {
+  /*listeners: {
     'iron-form-response': '_formResponse'
-  },
+  },*/
 
   _logoImageUploaded: function (event, detail) {
     var image = JSON.parse(detail.xhr.response);

@@ -440,6 +440,7 @@ class YpPostEditLit extends YpBaseElement {
                 ${ this.hasStructuredQuestions ? html`
                   ${ this.structuredQuestions.map(question => html`
                     <yp-structured-question-edit .index="${this.index}"
+                      is-from-new-post
                       use-small-font id="structuredQuestionContainer_${this.index}"
                       ?dontFocusFirstQuestion="${!this.group.configuration.hideNameInputAndReplaceWith}"
                       @resize-scroller="${this._resizeScrollerIfNeeded}" .structuredAnswers="${this.initialStructuredAnswersJson}"
@@ -599,7 +600,7 @@ class YpPostEditLit extends YpBaseElement {
     this.addListener('yp-debate-info', this._updateDebateInfo);
     this.addListener('yp-debate-info', this._updateDebateInfo);
   }
-  
+
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener('yp-debate-info', this._updateDebateInfo);
@@ -608,7 +609,7 @@ class YpPostEditLit extends YpBaseElement {
     this.removeListener('yp-debate-info', this._updateDebateInfo);
     this.removeListener('yp-debate-info', this._updateDebateInfo);
   }
-  
+
 /*
   observers: [
     '_setupTranslation(language,t)'
