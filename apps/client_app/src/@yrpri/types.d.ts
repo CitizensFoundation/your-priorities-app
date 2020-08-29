@@ -467,5 +467,11 @@ interface YpGetPointTranscriptResponse {
 }
 
 interface LooseObject {
-  [key: string]: any
+  [key: string]: any;
+}
+
+interface YpHTMLInputElement extends HTMLInputElement {
+  validate(): boolean;
+  root: HTMLElement;
+  options: Array<any>;
 }

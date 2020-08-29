@@ -102,12 +102,6 @@ export class YpForm extends YpBaseElement {
   @property({ type: Object })
   headers = {};
 
-  @property({ type: Boolean })
-  withCredentials = false;
-
-  @property({ type: String })
-  action: string | undefined;
-
   _form: HTMLFormElement | undefined;
   _defaults: WeakMap<HTMLInputElement | HTMLFormElement, object> | undefined;
 
@@ -285,7 +279,7 @@ export class YpForm extends YpBaseElement {
     for (let el, i = 0; (el = elements[i]), i < elements.length; i++) {
       // This is weird to appease the compiler. We assume the custom element
       // has a validate() method, otherwise we can't check it.
-      const validatable = /** @type {{validate: (function() : boolean)}} */ el;
+      const validatable = /** @type {{validate: (function() : boolean)}} */ el as YpHTMLInputElement;
       if (validatable.validate) {
         valid = !!validatable.validate() && valid;
       }
@@ -386,9 +380,13 @@ export class YpForm extends YpBaseElement {
 
   async _makeAjaxRequest(json: object) {
 
+    const url = this._form!.getAttribute('action');
+    const method = this._form!.getAttribute('method') || 'GET';
+    const headers = this.headers;
+
     this.fire('yp-form-submit');
 
-    const success = await window.serverApi.submitForm(url, headers, json) as boolean | void;
+    const success = await window.serverApi.submitForm(url!, method, headers, json) as boolean | void;
 
     if (success===true) {
       this.fire('yp-form-response', true);
@@ -497,9 +495,9 @@ export class YpForm extends YpBaseElement {
   ) {
     if (this._isSubmittable(node, ignoreName)) {
       submittable!.push(node);
-    } else if (node.root) {
+    } else if ((node as YpHTMLInputElement).root) {
       this._findElements(
-        (node as HTMLInputElement).root,
+        (node as YpHTMLInputElement).root,
         ignoreName,
         true /* skipSlots */,
         submittable
@@ -522,7 +520,7 @@ export class YpForm extends YpBaseElement {
     return (
       !node.disabled &&
       (ignoreName
-        ? node.name || typeof node.validate === 'function'
+        ? node.name || typeof (node as YpHTMLInputElement).validate === 'function'
         : node.name)
     );
   }
@@ -556,7 +554,7 @@ export class YpForm extends YpBaseElement {
     }
 
     if (tag === 'select') {
-      return this._serializeSelectValues(element);
+      return this._serializeSelectValues(element as YpHTMLInputElement);
     } else if (tag === 'input') {
       return this._serializeInputValues(element);
     } else {
@@ -565,7 +563,7 @@ export class YpForm extends YpBaseElement {
     }
   }
 
-  _serializeSelectValues(element: HTMLInputElement) {
+  _serializeSelectValues(element: YpHTMLInputElement) {
     const values = [];
 
     // A <select multiple> has an array of options, some of which can be

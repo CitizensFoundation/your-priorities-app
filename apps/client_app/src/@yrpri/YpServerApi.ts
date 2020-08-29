@@ -417,11 +417,12 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
-  public submitForm(url: string, method: string, body: object) {
+  public submitForm(url: string, method: string, headers: Record<string, string>, body: object) {
     return this.fetchWrapper(
       url,
       {
         method: method,
+        headers: headers,
         body: JSON.stringify(body),
       },
       false
