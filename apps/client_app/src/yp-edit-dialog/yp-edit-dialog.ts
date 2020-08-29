@@ -413,7 +413,7 @@ export class YpEditDialog extends YpBaseElement {
                               ?hidden="${!this.saveText}"
                               id="submit2"
                               @click="${this._submit}"
-                              .label="${this.saveText}"></mwc-button>
+                              .label="${this.saveText ? this.saveText : ''}"></mwc-button>
                           `
                         : html`
                             <mwc-button
