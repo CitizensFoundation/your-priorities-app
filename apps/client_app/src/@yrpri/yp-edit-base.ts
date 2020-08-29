@@ -34,7 +34,7 @@ export abstract class YpEditBase extends YpBaseElement {
 
   customRedirect?: Function
 
-  setupAfterOpen?: Function
+  abstract setupAfterOpen(params?: YpEditFormParams): void
 
   abstract customFormResponse(event?: CustomEvent): void
 

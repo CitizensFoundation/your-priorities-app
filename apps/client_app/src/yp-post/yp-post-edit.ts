@@ -14,6 +14,10 @@ import { YpForm } from '../@yrpri/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { YpEditBase } from '../@yrpri/yp-edit-base.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
+import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
+import moment from 'moment';
+import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
 
 @customElement('yp-post-edit')
 export class YpPostEdit extends YpEditBase {
@@ -38,152 +42,93 @@ export class YpPostEdit extends YpEditBase {
   @property({ type: Object })
   location: YpLocationData | undefined
 
+  @property({ type: String })
+  encodedLocation: string | undefined
 
-  static get prsasasoperties() {
-    return {
+  @property({ type: Number })
+  selectedCategoryArrayId: number | undefined
 
-      post: {
-        type: Object,
-        observer: '_postChanged',
-      },
+  @property({ type: Number })
+  selectedCategoryId: number | undefined
 
-      locationHidden: {
-        type: Boolean,
-        value: false,
-        observer: '_locationHiddenChanged',
-      },
+  @property({ type: Number })
+  uploadedVideoId: number | undefined
 
-      location: {
-        type: Object,
-        observer: '_locationChanged',
-      },
+  @property({ type: Number })
+  uploadedAudioId: number | undefined
 
-      encodedLocation: {
-        type: String,
-        observer: '_encodedLocationChanged',
-      },
+  @property({ type: Number })
+  currentVideoId: number | undefined
 
-      selectedCategoryArrayId: {
-        type: Number,
-        observer: '_selectedCategoryChanged',
-      },
+  @property({ type: Number })
+  currentAudioId: number | undefined
 
-      selectedCategoryId: {
-        type: Number,
-      },
+  @property({ type: Number })
+  selected = 0
 
-      emailValidationPattern: {
-        type: String,
-        value:
-          '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$',
-      },
+  @property({ type: Boolean })
+  mapActive = false
 
-      selectedCoverMediaType: {
-        type: String,
-        value: 'none',
-        observer: '_coverMediaTypeValueChanged',
-      },
+  @property({ type: Boolean })
+  hasOnlyOneTab = false
 
-      uploadedHeaderImageId: {
-        type: String,
-        observer: '_uploadedHeaderImageIdChanged',
-      },
+  @property({ type: Number })
+  postDescriptionLimit: number | undefined
 
-      uploadedVideoId: {
-        type: String,
-        value: null,
-      },
+  @property({ type: String })
+  sructuredAnswers: string | undefined
 
-      uploadedAudioId: {
-        type: String,
-        value: null,
-      },
+  @property({ type: Array })
+  sructuredAnswersJson: Array<YpStructuredAnswer> | undefined
 
-      currentVideoId: {
-        type: String,
-        value: null,
-      },
+  @property({ type: String })
+  uploadedDocumentUrl: string | undefined
 
-      currentAudioId: {
-        type: String,
-        value: null,
-      },
+  @property({ type: String })
+  uploadedDocumentFilename: string | undefined
 
-      showVideoCover: {
-        type: Boolean,
-        computed: '_showVideoCover(uploadedVideoId, currentVideoId)',
-      },
+  @property({ type: String })
+  selectedCoverMediaType = 'none'
 
-      showAudioCover: {
-        type: Boolean,
-        computed: '_showAudioCover(uploadedAudioId, currentAudioId)',
-      },
+  @property({ type: Number })
+  uploadedHeaderImageId: number | undefined
 
-      newPointShown: {
-        type: Boolean,
-        computed: '_newPointShown(newPost, group)',
-      },
+  emailValidationPattern = '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$'
 
-      mediaHidden: {
-        type: Boolean,
-        computed: '_mediaHidden(newPost, group)',
-      },
+  liveQuestionIds: Array<number> = []
 
-      selected: {
-        type: Number,
-        value: 0,
-        observer: '_selectedChanged',
-      },
+  uniqueIdsToElementIndexes: Record<number, number> = []
 
-      mapActive: {
-        type: Boolean,
-        value: false,
-      },
+  liveUniqueIds: Array<number> = []
 
-      postDescriptionLimit: {
-        type: Number,
-        value: null,
-      },
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
 
-      structuredQuestions: {
-        type: Array,
-        computed: '_structuredQuestions(post, group)',
-      },
+    if (changedProperties.has('post')) {
+      this._postChanged();
+    }
 
-      hasStructuredQuestions: {
-        type: Boolean,
-        computed: '_hasStructuredQuestions(structuredQuestions)',
-      },
+    if (changedProperties.has('locationHidden')) {
+      this._locationHiddenChanged();
+    }
 
-      replacedName: {
-        type: String,
-        computed: '_replacedName(post, group, newPost)',
-      },
+    if (changedProperties.has('location')) {
+      this._locationChanged();
+    }
 
-      sructuredAnswers: {
-        type: String,
-        value: null,
-      },
+    if (changedProperties.has('selectedCategoryArrayId')) {
+      this._selectedCategoryChanged();
+    }
 
-      sructuredAnswersJson: {
-        type: Object,
-        value: null,
-      },
+    if (changedProperties.has('selectedCoverMediaType')) {
+      this._uploadedHeaderImageIdChanged();
+    }
 
-      uploadedDocumentUrl: String,
-      uploadedDocumentFilename: String,
-
-      pointMaxLength: {
-        type: Number,
-        computed: '_pointMaxLength(group)',
-      },
-
-      hasOnlyOneTab: {
-        type: Boolean,
-        value: false,
-      },
-    };
+    if (changedProperties.has('selected')) {
+      this._selectedChanged();
+    }
   }
+
 
   static get styles() {
     return [
@@ -364,7 +309,7 @@ export class YpPostEdit extends YpEditBase {
         class="container"
         custom-submit
         .next-action-text="${this.t('next')}"
-        .toastText="${this.toastText}"
+        .snackbarText="${this.snackbarText}"
         .params="${this.params}">
         <paper-tabs
           ?title-disabled="${this.group.configuration
@@ -440,7 +385,7 @@ export class YpPostEdit extends YpEditBase {
                         char-counter>
                       </paper-input>
                     `}
-                ${this._showCategories(group)
+                ${this._showCategories
                   ? html`
                       <paper-dropdown-menu
                         class="categoryDropDown"
@@ -821,6 +766,7 @@ export class YpPostEdit extends YpEditBase {
     `;
   }
 
+  //TODO: Investigate if any are missing .html version of listeners
   connectedCallback() {
     super.connectedCallback();
     this.addListener('yp-debate-info', this._updateDebateInfo);
@@ -880,8 +826,8 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _hasStructuredQuestions(questions) {
-    return questions != null;
+  get hasStructuredQuestions() {
+    return this.structuredQuestions != null;
   }
 
   _skipToId(event, detail, showItems) {
@@ -934,7 +880,9 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _replacedName(post, group) {
+  get replacedName() {
+    const post = this.post;
+    const group = this.group;
     if (post && group && group.configuration.hideNameInputAndReplaceWith) {
       let text = group.configuration.hideNameInputAndReplaceWith;
       text = text.replace(
@@ -952,7 +900,8 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _pointMaxLength(group) {
+  get pointMaxLength() {
+    const group = this.group;
     if (group && group.configuration && group.configuration.pointCharLimit) {
       return group.configuration.pointCharLimit;
     } else {
@@ -960,22 +909,26 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _floatIfValueOrIE(value) {
+  _floatIfValueOrIE(value: boolean) {
     const ie11 = /Trident.*rv[ :]*11\./.test(navigator.userAgent);
     return ie11 || value;
   }
 
-  _newPointShown(newPost, group) {
+  get newPointShown() {
     let hideNewPoint = false;
     if (
-      group &&
-      group.configuration &&
-      group.configuration.hideNewPointOnNewIdea === true
+      this.group &&
+      this.group.configuration &&
+      this.group.configuration.hideNewPointOnNewIdea === true
     ) {
       hideNewPoint = true;
     }
 
-    return newPost && !hideNewPoint;
+    return this.newPost && !hideNewPoint;
+  }
+
+  _submitWithQuestionsJson() {
+
   }
 
   _customSubmit(value, valueB) {
@@ -983,7 +936,7 @@ export class YpPostEdit extends YpEditBase {
       this.group.configuration &&
       this.group.configuration.structuredQuestionsJson
     ) {
-      var answers = [];
+      const answers = [];
       this.liveQuestionIds.forEach(
         function (liveIndex) {
           var questionElement = this.$$(
@@ -1031,7 +984,9 @@ export class YpPostEdit extends YpEditBase {
     this.$$('#editDialog').scrollResize();
   }
 
-  _structuredQuestions(post, group) {
+  structuredQuestions() {
+    const post = this.post;
+    const group = this.group;
     if (post && group && group.configuration.structuredQuestionsJson) {
       return group.configuration.structuredQuestionsJson;
     } else if (
@@ -1056,7 +1011,7 @@ export class YpPostEdit extends YpEditBase {
         });
       }
       if (
-        !this.newPost &&
+        !this.newPost && post && post.public_data &&
         post.public_data.structuredAnswers &&
         post.public_data.structuredAnswers !== ''
       ) {
@@ -1071,18 +1026,18 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _showVideoCover(uploaded, current) {
-    return uploaded || current;
+  get showVideoCover() {
+    return this.uploadedVideoId || this.currentVideoId;
   }
 
-  _showAudioCover(uploaded, current) {
-    return uploaded || current;
+  get showAudioCover() {
+    return this.uploadedAudioId || this.currentAudioId;
   }
 
   _videoUploaded(event, detail) {
     this.uploadedVideoId = detail.videoId;
     this.selectedCoverMediaType = 'video';
-    this.async(function () {
+    setTimeout( () => {
       this.fire('iron-resize');
     }, 50);
   }
@@ -1090,7 +1045,7 @@ export class YpPostEdit extends YpEditBase {
   _audioUploaded(event, detail) {
     this.uploadedAudioId = detail.audioId;
     this.selectedCoverMediaType = 'audio';
-    this.async(function () {
+    setTimeout( () => {
       this.fire('iron-resize');
     });
   }
@@ -1112,8 +1067,8 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _updateEmojiBindings() {
-    this.async(
-      function () {
+    setTimeout(
+       ()  => {
         const description = this.$$('#description');
         const emojiSelector = this.$$('#emojiSelectorDescription');
         if (description && emojiSelector) {
@@ -1126,13 +1081,14 @@ export class YpPostEdit extends YpEditBase {
         if (emojiSelectorPointFor && pointFor) {
           emojiSelectorPointFor.inputTarget = pointFor;
         }
-      }.bind(this),
+      },
       500
     );
   }
 
-  _locationHiddenChanged(newValue) {
-    this.async(function () {
+  _locationHiddenChanged() {
+    /*TODO: See if we need this
+    setTimeout( () => {
       const pages = this.$$('#pages');
       if (pages) {
         pages.forceSynchronousItemUpdate();
@@ -1143,7 +1099,7 @@ export class YpPostEdit extends YpEditBase {
         paperTabs.forceSynchronousItemUpdate();
       }
       console.log('Location hidden changed');
-    }, 10);
+    }, 10);*/
   }
 
   _formInvalid() {
@@ -1159,11 +1115,9 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _encodedLocationChanged(newValue) {}
-
-  _locationChanged(newValue) {
+  _locationChanged() {
     if (
-      newValue &&
+      this.location &&
       (!this.selectedCoverMediaType ||
         this.selectedCoverMediaType == '' ||
         this.selectedCoverMediaType == 'none')
@@ -1172,8 +1126,8 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _uploadedHeaderImageIdChanged(newValue) {
-    if (newValue) {
+  _uploadedHeaderImageIdChanged() {
+    if (this.uploadedHeaderImageId) {
       this.selectedCoverMediaType = 'image';
     }
   }
@@ -1210,79 +1164,80 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _selectedChanged(newValue) {
-    this.async(function () {
+  _selectedChanged() {
+    const newValue = this.selected;
+    setTimeout( () => {
       if (!this.locationHidden && newValue == (this.newPointShown ? 2 : 1)) {
         this.mapActive = true;
       } else {
         this.mapActive = false;
       }
 
-      var finalTabNumber = this._getTabLength() - 1;
+      const finalTabNumber = this._getTabLength() - 1;
 
       if (finalTabNumber === 0) {
         this.hasOnlyOneTab = true;
       }
 
       if (newValue == finalTabNumber) {
-        this.$$('#editDialog').useNextTabAction = false;
+        (this.$$('#editDialog') as YpEditDialog).useNextTabAction = false;
       } else {
-        this.$$('#editDialog').useNextTabAction = true;
+        (this.$$('#editDialog') as YpEditDialog).useNextTabAction = true;
       }
 
       if (newValue == 0) {
-        var nameElement = this.$$('#name');
+        const nameElement = this.$$('#name');
         if (nameElement) {
           nameElement.focus();
         }
       }
       if (newValue == 1 && this.newPointShown) {
-        var pointFor = this.$$('#pointFor');
+        const pointFor = this.$$('#pointFor');
         if (pointFor) {
           pointFor.focus();
         }
       }
-      this.async(function () {
+      setTimeout(() => {
         this._resizeScrollerIfNeeded();
       }, 50);
     });
   }
 
-  _selectedCategoryChanged(newCategoryArrayId, oldValue) {
-    if (newCategoryArrayId != null && newCategoryArrayId != undefined)
-      this.selectedCategoryId = this.group.Categories[newCategoryArrayId].id;
+  _selectedCategoryChanged() {
+    if (this.selectedCategoryArrayId && this.group && this.group.Categories)
+      this.selectedCategoryId = this.group.Categories[this.selectedCategoryArrayId].id;
   }
 
-  _showCategories(group) {
-    if (group && group.Categories) {
-      return group.Categories.length > 0;
+  get showCategories() {
+    if (this.group && this.group.Categories) {
+      return this.group.Categories.length > 0;
     } else {
       return false;
     }
   }
 
-  getPositionInArrayFromId(collection, id) {
+  getPositionInArrayFromId(collection: Array<YpCategoryData>, id: number) {
     for (let i = 0; i < collection.length; i++) {
       if (collection[i].id == id) {
         return i;
       }
     }
-    return null;
+    return undefined;
   }
 
-  _postChanged(newPost, oldPost) {
-    if (newPost) {
-      if (newPost.location) {
-        this.location = newPost.location;
+  _postChanged() {
+    if (this.newPost && this.post) {
+      if (this.post.location) {
+        this.location = this.post.location;
         this.encodedLocation = JSON.stringify(this.location);
       }
-      if (newPost.cover_media_type)
-        this.selectedCoverMediaType = newPost.cover_media_type;
+      if (this.post.cover_media_type)
+        this.selectedCoverMediaType = this.post.cover_media_type;
     }
     this._updateEmojiBindings();
   }
 
-  _updateInitialCategory(group) {
+  _updateInitialCategory(group: YpGroupData) {
     if (group && this.post && this.post.category_id) {
       this.selectedCategoryId = this.post.category_id;
       this.selectedCategoryArrayId = this.getPositionInArrayFromId(
@@ -1292,8 +1247,8 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _imageUploaded(event, detail) {
-    const image = JSON.parse(detail.xhr.response);
+  _imageUploaded(event: CustomEvent) {
+    const image = JSON.parse(event.detail.xhr.response);
     this.uploadedHeaderImageId = image.id;
   }
 
@@ -1326,7 +1281,7 @@ export class YpPostEdit extends YpEditBase {
           'response',
           function (event) {
             this._finishRedirect(post);
-            this.async(function () {
+            setTimeout( () => {
               window.appGlobals.showSpeechToTextInfoIfNeeded();
             }, 20);
           }.bind(this)
@@ -1349,7 +1304,7 @@ export class YpPostEdit extends YpEditBase {
             this._finishRedirect(post);
           }.bind(this)
         );
-        this.async(function () {
+        setTimeout( () => {
           window.appGlobals.showSpeechToTextInfoIfNeeded();
         }, 20);
         ajax.generateRequest();
@@ -1365,31 +1320,31 @@ export class YpPostEdit extends YpEditBase {
     this.fire('yp-reset-keep-open-for-page');
     window.appGlobals.activity('completed', 'newPost');
 
-    var text = this.t('thankYouForYourSubmission');
+    let text = this.t('thankYouForYourSubmission');
+    const customThankYouTextNewPostsId = this.$$('#customThankYouTextNewPostsId') as YpMagicText;
     if (
       this.group &&
       this.group.configuration &&
       this.group.configuration.customThankYouTextNewPosts &&
-      this.$$('#customThankYouTextNewPostsId') &&
-      this.$$('#customThankYouTextNewPostsId').content
+      customThankYouTextNewPostsId &&
+      customThankYouTextNewPostsId.content
     ) {
-      if (this.$$('#customThankYouTextNewPostsId').finalContent) {
-        text = this.$$('#customThankYouTextNewPostsId').finalContent;
+      if (customThankYouTextNewPostsId.finalContent) {
+        text = customThankYouTextNewPostsId.finalContent;
       } else {
-        text = this.$$('#customThankYouTextNewPostsId').content;
+        text = customThankYouTextNewPostsId.content;
       }
     }
 
-    dom(document)
-      .querySelector('yp-app')
+    window.appDialogs
       .getDialogAsync(
-        'masterToast',
-        function (toast) {
-          toast.text = text;
-          toast.duration = 5000;
-          toast.show();
-        }.bind(this)
-      );
+        'mastersnackbar',
+       ((snackbar: Snackbar) => {
+          snackbar.textContent = text;
+          snackbar.timeoutMs = 5000;
+          snackbar.open = true;
+        }
+      ));
 
     if (
       this.group &&
@@ -1405,26 +1360,24 @@ export class YpPostEdit extends YpEditBase {
   clear() {
     if (this.newPost) {
       this.post = { name: '', description: '', pointFor: '', categoryId: null };
-      this.location = null;
-      this.selectedCategoryArrayId = null;
-      this.selectedCategoryId = null;
+      this.location = undefined;
+      this.selectedCategoryArrayId = undefined;
+      this.selectedCategoryId = undefined;
       this.selected = 0;
-      this.uploadedHeaderImageId = null;
-      this.uploadedVideoId = null;
-      this.uploadedAudioId = null;
-      this.currentVideoId = null;
-      this.currentAudioId = null;
+      this.uploadedHeaderImageId = undefined;
+      this.uploadedVideoId = undefined;
+      this.uploadedAudioId = undefined;
+      this.currentVideoId = undefined;
+      this.currentAudioId = undefined;
       this.selectedCoverMediaType = 'none';
-      this.async(function () {
-        this.fire('iron-resize');
-      });
+      this.requestUpdate();
       if (this.$$('#imageFileUpload')) {
-        this.$$('#imageFileUpload').clear();
+        (this.$$('#imageFileUpload') as YpFileUpload).clear();
       }
     }
   }
 
-  setup(post, newNotEdit, refreshFunction, group) {
+  setup(post: YpPostData, newNotEdit: string, refreshFunction: Function, group: YpGroupData) {
     this._setupGroup(group);
     if (post) {
       this.post = post;
@@ -1436,7 +1389,7 @@ export class YpPostEdit extends YpEditBase {
         this.currentAudioId = post.PostAudios[0].id;
       }
     } else {
-      this.post = null;
+      this.post = undefined;
     }
     this._updateInitialCategory(group);
     this.newPost = newNotEdit;
@@ -1445,7 +1398,7 @@ export class YpPostEdit extends YpEditBase {
     this.clear();
   }
 
-  _setupGroup(group) {
+  _setupGroup(group: YpGroupData) {
     if (group) {
       this.group = group;
       if (group.configuration) {
@@ -1465,7 +1418,7 @@ export class YpPostEdit extends YpEditBase {
         }
 
         if (group.configuration.structuredQuestionsJson) {
-          this.async(function () {
+          setTimeout(() => {
             this.liveQuestionIds = [];
             this.uniqueIdsToElementIndexes = {};
             this.liveUniqueIds = [];
@@ -1486,7 +1439,7 @@ export class YpPostEdit extends YpEditBase {
                   this.uniqueIdsToElementIndexes[question.uniqueId] = index;
                   this.liveUniqueIds.push(question.uniqueId);
                 }
-              }.bind(this)
+              }
             );
           });
         }
@@ -1494,7 +1447,7 @@ export class YpPostEdit extends YpEditBase {
         this.postDescriptionLimit = 500;
       }
 
-      this.async(function () {
+      setTimeout( () => {
         if (this.structuredQuestions) {
           this.postDescriptionLimit = 9999;
         }
@@ -1502,19 +1455,27 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  setupAfterOpen(params) {
+  get mediaHidden () {
+    if (this.group && this.group.configuration && this.group.configuration.hideMediaInput===true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  setupAfterOpen(params: YpEditFormParams) {
     this._setupGroup(params.group);
-    this.async(
-      function () {
+    setTimeout(
+       ()  =>{
         const nameElement = this.$$('#name');
         if (nameElement) {
           nameElement.focus();
         }
-      }.bind(this),
+      },
       250
     );
 
-    if (
+    if (this.post &&
       !this.newPost &&
       this.post.public_data &&
       this.post.public_data.structuredAnswersJson
@@ -1524,8 +1485,8 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _alternativeTextForNewIdeaButtonHeaderTranslation() {
-    this.async(function () {
-      var label = this.$$('#alternativeTextForNewIdeaButtonHeaderId');
+    setTimeout( () => {
+      var label = this.$$('#alternativeTextForNewIdeaButtonHeaderId') as YpMagicText;
       if (label && label.finalContent) {
         this.editHeaderText = label.finalContent;
       }
@@ -1533,8 +1494,8 @@ export class YpPostEdit extends YpEditBase {
   }
 
   setupTranslation() {
-    this.async(
-      function () {
+    setTimeout(
+       () => {
         if (this.t) {
           if (this.newPost) {
             if (
@@ -1542,7 +1503,7 @@ export class YpPostEdit extends YpEditBase {
               this.group.configuration &&
               this.group.configuration.alternativeTextForNewIdeaButtonHeader
             ) {
-              var label = this.$$('#alternativeTextForNewIdeaButtonHeaderId');
+              const label = this.$$('#alternativeTextForNewIdeaButtonHeaderId') as YpMagicText;
               this.editHeaderText =
                 label && label.finalContent
                   ? label.finalContent
@@ -1551,15 +1512,15 @@ export class YpPostEdit extends YpEditBase {
             } else {
               this.editHeaderText = this.t('post.new');
             }
-            this.toastText = this.t('postCreated');
+            this.snackbarText = this.t('postCreated');
             this.saveText = this.t('create');
           } else {
             this.saveText = this.t('save');
             this.editHeaderText = this.t('post.edit');
-            this.toastText = this.t('postUpdated');
+            this.snackbarText = this.t('postUpdated');
           }
         }
-      }.bind(this),
+      },
       20
     );
   }

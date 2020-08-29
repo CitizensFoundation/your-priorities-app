@@ -91,6 +91,12 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   collapsableTranscripts?: boolean;
   customUserNamePrompt?: string;
   customTermsIntroText?: string;
+  alternativeTextForNewIdeaButtonHeader?: string;
+  hideNewPointOnNewIdea?: boolean;
+  hideMediaInput?: boolean;
+  hideNameInputAndReplaceWith?: string;
+  customThankYouTextNewPosts?: string;
+  postDescriptionLimit?: number;
 }
 
 
@@ -298,11 +304,14 @@ interface YpPostData extends YpDatabaseItem {
   Group: YpGroupData;
   description: string;
   User?: YpUserData;
+  pointFor?: string;
+  category_id?: number;
   counter_endorsements_up: number;
   counter_endorsements_down: number;
   counter_points: number;
   public_data?: {
     structuredAnswersJson?: Array<YpStructuredAnswer>;
+    structuredAnswers?: string;
     law_issue: {
       sessionId: string;
       issueId: string;
@@ -489,4 +498,9 @@ interface YpEditFormParams {
   categoryId?: number;
   userImages?: Array<YpImageData>;
   statusChange?: string;
+}
+
+interface YpLocationData {
+  latitude: string;
+  longitude: string;
 }
