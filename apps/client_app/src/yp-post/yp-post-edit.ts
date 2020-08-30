@@ -503,7 +503,7 @@ export class YpPostEdit extends YpEditBase {
 
                           ${this.post.data?.attachment?.url
                             ? html`
-                                <paper-checkbox .name="deleteAttachment"
+                                <paper-checkbox name="deleteAttachment"
                                   >${this.t('deleteAttachment')}:
                                   ${this.post.data.attachment
                                     .filename}</paper-checkbox
@@ -666,13 +666,13 @@ export class YpPostEdit extends YpEditBase {
                               <yp-file-upload
                                 id="audioFileUpload"
                                 container-type="posts"
-                                group="${this.group}"
-                                raised="true"
-                                upload-limit-seconds="${this.group.configuration
+                                .group="${this.group}"
+                                raised
+                                .uploadLimitSeconds="${this.group.configuration
                                   .audioPostUploadLimitSec}"
                                 .multi="false"
-                                .audio-upload=""
-                                .method="POST"
+                                audioUpload
+                                method="POST"
                                 @success="${this._audioUploaded}">
                                 <iron-icon
                                   class="icon"

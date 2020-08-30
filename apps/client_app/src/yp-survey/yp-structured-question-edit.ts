@@ -1,6 +1,7 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { nothing, TemplateResult } from 'lit-html';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import linkifyStr from 'linkifyjs/string.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
@@ -9,6 +10,14 @@ import '@material/mwc-dialog';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-snackbar';
+
+import '@material/mwc-checkbox';
+import '@material/mwc-radio';
+
+import '@material/mwc-formfield';
+import { Radio } from '@material/mwc-radio';
+
+import { Checkbox } from '@material/mwc-checkbox';
 
 import { YpForm } from '../@yrpri/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
@@ -20,6 +29,8 @@ import moment from 'moment';
 import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { TextArea } from '@material/mwc-textarea';
+import { ifDefined } from 'lit-html/directives/if-defined';
+import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-structured-question-edit')
 export class YpStructuredQuestionEdit extends YpBaseElement {
@@ -51,6 +62,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   structuredAnswers: Array<YpStructuredAnswer> | undefined;
 
   radioKeypress = false;
+
+  debunceChangeEventTimer: ReturnType<typeof setTimeout> | undefined;
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -103,14 +116,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           margin-top: 54px;
         }
 
-        paper-dropdown-menu {
+        mwc-dropdown-menu {
           margin-top: 16px;
         }
 
         .numberInput {
         }
 
-        paper-checkbox {
+        mwc-checkbox {
           margin-bottom: 16px;
         }
 
@@ -133,14 +146,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           margin-bottom: 32px;
         }
 
-        paper-radio-group {
+        mwc-radio-group {
           margin-top: 16px;
           margin-bottom: 16px;
           font-size: 16px;
         }
 
-        paper-radio-button {
-          --paper-radio-button-label-color: #333;
+        mwc-radio-button {
+          --mwc-radio-button-label-color: #333;
           font-size: 16px;
         }
 
@@ -192,8 +205,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           color: var(--accent-color);
         }
 
-        paper-checkbox {
-          --paper-checkbox-label-color: #333;
+        mwc-checkbox {
+          --mwc-checkbox-label-color: #333;
           margin-left: 42px;
           margin-bottom: 24px;
         }
@@ -238,7 +251,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           }
         }
 
-        paper-radio-button {
+        mwc-radio-button {
           margin-left: 24px;
         }
 
@@ -267,303 +280,259 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     ];
   }
 
-  render() {
+  renderTextField(skipLabel = false) {
     return html`
-      ${this._isTextField(question)
-        ? html`
-            ${this._isNumberSubType(question)
-              ? html`
-                  <mwc-textfield
-                    id="structuredQuestion_${this.index}"
-                    .value="${this.question.value}"
-                    .alwaysFloatLabel="${this._floatIfValueOrIE(
-                      question.value
-                    )}"
-                    .label="${this._getTextWithIndex(question)}"
-                    char-counter
-                    .useSmallFont="${this.useSmallFont}"
-                    .title="${this.question.text}"
-                    @keypress="${this._keyPressed}"
-                    type="text"
-                    .allowedPattern="[0-9]"
-                    half-width-desktop="${this.question.halfWidthDesktop}"
-                    @value-changed="${this._debounceChangeEvent}"
-                    required="${this.question.required}"
-                    .maxlength="${this.question.maxLength}">
-                  </mwc-textfield>
-                `
-              : html`
-                  <mwc-textfield
-                    id="structuredQuestion_${this.index}"
-                    value="${this.question.value}"
-                    always-float-label="${this._floatIfValueOrIE(
-                      question.value
-                    )}"
-                    .label="${this._getTextWithIndex(question)}"
-                    char-counter
-                    .useSmallFont="${this.useSmallFont}"
-                    .title="${this.question.text}"
-                    @keypress="${this._keyPressed}"
-                    .type="${this.question.subType}"
-                    .halfWidthDesktop="${this.question.halfWidthDesktop}"
-                    @value-changed="${this._debounceChangeEvent}"
-                    required="${this.question.required}"
-                    .maxlength="${this.question.maxLength}">
-                  </mwc-textfield>
-                `}
-          `
-        : nothing}
-      ${this._isTextFieldLong(question)
-        ? html`
-            <div
-              class="question general longQuestion"
-              .hasFocus="${this.longFocus}"
-              .useSmallFont="${this.useSmallFont}"
-              id="structuredQuestionIntro_${this.index}"
-              inner-h-t-m-l="${this._getTextWithIndex(question)}"></div>
-
-            ${this._isNumberSubType(question)
-              ? html`
-                  <mwc-textfield
-                    id="structuredQuestion_${this.index}"
-                    value="${this.question.value}"
-                    char-counter
-                    .useSmallFont="${this.useSmallFont}"
-                    @keypress="${this._keyPressed}"
-                    @focus="${this.setLongFocus}"
-                    @blur="${this.setLongUnFocus}"
-                    allowed-pattern="[0-9]"
-                    type="text"
-                    .title="${this.question.text}"
-                    no-label-float
-                    half-width-desktop="${this.question.halfWidthDesktop}"
-                    @value-changed="${this._debounceChangeEvent}"
-                    required="${this.question.required}"
-                    maxlength="${this.question.maxLength}">
-                  </mwc-textfield>
-                `
-              : html`
-                  <mwc-textfield
-                    id="structuredQuestion_${this.index}"
-                    value="${this.question.value}"
-                    char-counter
-                    .useSmallFont="${this.useSmallFont}"
-                    @keypress="${this._keyPressed}"
-                    @focus="${this.setLongFocus}"
-                    @blur="${this.setLongUnFocus}"
-                    type="${this.question.subType}"
-                    .title="${this.question.text}"
-                    .noLabelFloat
-                    half-width-desktop="${this.question.halfWidthDesktop}"
-                    @alue-changed="${this._debounceChangeEvent}"
-                    required="${this.question.required}"
-                    maxlength="${this.question.maxLength}">
-                  </mwc-textfield>
-                `}
-          `
-        : nothing}
-      ${this._isTextarea(question)
-        ? html`
-            <mwc-textarea
-              id="structuredQuestion_${this.index}"
-              data-type="text"
-              value="${this.question.value}"
-              @keypress="${this._keyPressed}"
-              minlength="2"
-              alwaysFloatLabel="${this._floatIfValueOrIE(question.value)}"
-              .label="${this._getTextWithIndex(question)}"
-              char-counter
-              useSmallFont="${this.useSmallFont}"
-              @value-changed="${this._debounceChangeEvent}"
-              rows="3"
-              max-rows="5"
-              maxrows="5"
-              required="${this.question.required}"
-              maxlength="${this.question.maxLength}">
-            </mwc-textarea>
-          `
-        : nothing}
-      ${this._isTextareaLong(question)
-        ? html`
-            <div
-              class="question general longQuestion"
-              has-focus="${this.longFocus}"
-              has-content="${this.question.value}"
-              useSmallFont="${this.useSmallFont}"
-              id="structuredQuestionIntro_${this.index}"
-              inner-h-t-m-l="${this._getTextWithIndex(question)}"></div>
-            <mwc-textarea
-              id="structuredQuestion_${this.index}"
-              data-type="text"
-              value="${this.question.value}"
-              @keypress="${this._keyPressed}"
-              minlength="2"
-              char-counter
-              @focus="${this.setLongFocus}"
-              @blur="${this.setLongUnFocus}"
-              no-label-float
-              .useSmallFont="${this.useSmallFont}"
-              @value-changed="${this._debounceChangeEvent}"
-              rows="3"
-              max-rows="5"
-              maxrows="5"
-              required="${this.question.required}"
-              maxlength="${this.question.maxLength}">
-            </mwc-textarea>
-          `
-        : nothing}
-      ${this._isTextHeader(question)
-        ? html`
-            <div
-              class="header"
-              is-not-first="${this.index}"
-              is-first="${!this.index}">
-              ${this.question.text}
-            </div>
-          `
-        : nothing}
-      ${this._isTextDescription(question)
-        ? html`
-            <div
-              class="question general"
-              id="structuredQuestionQuestion_${this.index}"
-              .useSmallFont="${this.useSmallFont}"
-              inner-h-t-m-l="${this._textWithLinks(question)}"
-              extra-top-margin="${this.question.extraTopMargin}"
-              less-bottom-margin="${this.question.lessBottomMargin}"></div>
-          `
-        : nothing}
-      ${this._isSeparator(question) ? html` <hr /> ` : nothing}
-      ${this._isRadios(question)
-        ? html`
-            <div
-              class="question general radiosLabel"
-              useSmallFont="${this.useSmallFont}"
-              .isFirstRating="${this.isFirstRating}"
-              id="structuredQuestionIntro_${this.index}"
-              inner-h-t-m-l="${this._getTextWithIndex(question)}"></div>
-            <paper-radio-group
-              required="${this.question.required}"
-              data-type="radios"
-              @selected-changed="${this._radioChanged}"
-              id="structuredQuestion_${this.index}"
-              .name="structuredQuestionRatioGroup_${this.index}"
-              class="${this._getRadioClass(question)}">
-              ${this.question.radioButtons.map(
-                radioButton => html`
-                  ${!this.radioButton.isSpecify
-                    ? html`
-                        <paper-radio-button
-                          .useSmallFont="${this.useSmallFont}"
-                          @keypress="${this.setRadioEventType}"
-                          id="structuredQuestionRatioGroup_${this.index}_${this
-                            .buttonIndex}"
-                          .name="${this.radioButton.text}">
-                          ${this.radioButton.text}
-                        </paper-radio-button>
-                      `
-                    : html`
-                        <paper-radio-button
-                          useSmallFont="${this.useSmallFont}"
-                          @keypress="${this.setRadioEventType}"
-                          id="structuredQuestionRatioGroup_${this.index}_${this
-                            .buttonIndex}"
-                          name="${this.radioButton.text}">
-                          ${this.radioButton.text}
-                        </paper-radio-button>
-                        ${!this._isNumberSubType(radioButton)
-                          ? html`
-                              <mwc-textfield
-                                class="specifyInput"
-                                hidden
-                                .noLabelFloat
-                                @value-changed="${this._debounceChangeEvent}"
-                                maxlength="${this.question.maxLength}"
-                                allowed-pattern="[0-9]"
-                                type="text"
-                                id="structuredQuestion_${this.index}_${this
-                                  .buttonIndex}__radioOther"></mwc-textfield>
-                            `
-                          : html`
-                              <mwc-textfield
-                                class="specifyInput"
-                                hidden
-                                .noLabelFloat
-                                @value-changed="${this._debounceChangeEvent}"
-                                maxlength="${this.question.maxLength}"
-                                type="${this.radioButton.subType}"
-                                id="structuredQuestion_${this.index}_${this
-                                  .buttonIndex}__radioOther"></mwc-textfield>
-                            `}
-                      `}
-                `
-              )}
-            </paper-radio-group>
-          `
-        : nothing}
-      ${this._isCheckboxes(question)
-        ? html`
-            <div
-              id="structuredQuestionIntro_${this.index}"
-              class="question general checkBoxesLabel"
-              .useSmallFont="${this.useSmallFont}"
-              inner-h-t-m-l="${this._getTextWithIndex(question)}"></div>
-            <div
-              id="structuredQuestion_${this.index}"
-              data-type="checkboxes"
-              class="layout vertical">
-              ${this.question.checkboxes.map(
-                checkbox => html`
-                  ${!this.checkbox.isSpecify
-                    ? html`
-                        <paper-checkbox
-                          id="structuredQuestionCheckbox_${this.index}_${this
-                            .buttonIndex}"
-                          @change="${this._checkboxChanged}">
-                          ${this.checkbox.text}
-                        </paper-checkbox>
-                      `
-                    : html`
-                        <paper-checkbox
-                          id="structuredQuestionCheckbox_${this.index}_${this
-                            .buttonIndex}"
-                          @change="${this._checkboxChanged}">
-                          ${this.checkbox.text}
-                        </paper-checkbox>
-                        <mwc-textfield
-                          class="specifyInput specifyCheckBox"
-                          hidden
-                          .noLabelFloat
-                          @value-changed="${this._debounceChangeEvent}"
-                          type="${this.checkbox.subType}"
-                          id="structuredQuestion_${this.index}_${this
-                            .buttonIndex}_checkboxOther"></mwc-textfield>
-                      `}
-                `
-              )}
-            </div>
-          `
-        : nothing}
-      ${this._isDropDown(question)
-        ? html`
-            <paper-dropdown-menu
-              id="structuredQuestion_${this.index}"
-              data-type="dropdown"
-              .label="${this._getTextWithIndex(question)}"
-              required="${this.question.required}">
-              <paper-listbox slot="dropdown-content" attr-for-selected="name">
-                ${this.question.dropdownOptions.map(
-                  dropDownOptions => html`
-                    <paper-item name="${this.dropDownOptions.text}"
-                      >${this.dropDownOptions.text}</paper-item
-                    >
-                  `
-                )}
-              </paper-listbox>
-            </paper-dropdown-menu>
-          `
-        : nothing}
+      <mwc-textfield
+        id="structuredQuestion_${this.index}"
+        .value="${this.question.value || ''}"
+        .label="${!skipLabel ? this.textWithIndex : ''}"
+        charCounter
+        ?useSmallFont="${this.useSmallFont}"
+        .title="${this.question.text}"
+        @keypress="${this._keyPressed}"
+        type="text"
+        .allowedPattern="${this.isNumberSubType ? '[0-9]' : ''}"
+        ?half-width-desktop="${this.question.halfWidthDesktop}"
+        @value-changed="${this._debounceChangeEvent}"
+        ?required="${this.question.required}"
+        .maxlength="${this.question.maxLength || 100000}">
+      </mwc-textfield>
     `;
+  }
+
+  renderTextFieldLong() {
+    return html`
+      <div
+        class="question general longQuestion"
+        .hasFocus="${this.longFocus}"
+        .useSmallFont="${this.useSmallFont}"
+        id="structuredQuestionIntro_${this.index}"
+        inner-h-t-m-l="${this.textWithIndex}"></div>
+      ${this.renderTextField(true)}
+    `;
+  }
+
+  renderTextArea(skipLabel = false) {
+    return html`
+      <mwc-textarea
+        id="structuredQuestion_${this.index}"
+        data-type="text"
+        .label="${!skipLabel ? this.textWithIndex : ''}"
+        value="${this.question.value || ''}"
+        @keypress="${this._keyPressed}"
+        minlength="2"
+        charCounter
+        @focus="${this.setLongFocus}"
+        @blur="${this.setLongUnFocus}"
+        .useSmallFont="${this.useSmallFont}"
+        @value-changed="${this._debounceChangeEvent}"
+        rows="3"
+        max-rows="5"
+        maxrows="5"
+        ?required="${this.question.required}"
+        .maxlength="${this.question.maxLength || 5000}">
+      </mwc-textarea>
+    `;
+  }
+
+  renderTextAreaLong() {
+    return html`
+      <div
+        class="question general longQuestion"
+        has-focus="${this.longFocus}"
+        ?has-content="${this.question.value}"
+        useSmallFont="${this.useSmallFont}"
+        id="structuredQuestionIntro_${this.index}"
+        inner-h-t-m-l="${this.textWithIndex}"></div>
+      ${this.renderTextArea()}
+    `;
+  }
+
+  renderTextHeader() {
+    return html`
+      <div
+        class="header"
+        ?is-not-first="${this.index}"
+        ?is-first="${!this.index}">
+        ${this.question.text}
+      </div>
+    `;
+  }
+
+  renderTextDescription() {
+    return html`
+      <div
+        class="question general"
+        id="structuredQuestionQuestion_${this.index}"
+        .useSmallFont="${this.useSmallFont}"
+        inner-h-t-m-l="${this.textWithLinks}"
+        ?extra-top-margin="${this.question.extraTopMargin}"
+        ?less-bottom-margin="${this.question.lessBottomMargin}"></div>
+    `;
+  }
+
+  renderSeperator() {
+    return html` <hr /> `;
+  }
+
+  renderRadioButton(radioButton: YpRadioButtonData, buttonIndex: number) {
+    return html`
+      <mwc-formfield label="${radioButton.text}">
+        <mwc-radio
+          .useSmallFont="${this.useSmallFont}"
+          @keypress="${this.setRadioEventType}"
+          @change="${this._radioChanged}"
+          .value="${radioButton.text}"
+          id="structuredQuestionRatioGroup_${this.index}_${buttonIndex}"
+          .name="radioButtons${this.index}">
+        </mwc-radio>
+      </mwc-formfield>
+    `;
+  }
+
+  renderRadios() {
+    return this.question.radioButtons
+      ? html`
+          <div
+            class="question general radiosLabel"
+            useSmallFont="${this.useSmallFont}"
+            ?isFirstRating="${this.isFirstRating}"
+            id="structuredQuestionIntro_${this.index}"
+            inner-h-t-m-l="${this.textWithIndex}"></div>
+          <div
+            ?required="${this.question.required}"
+            id="structuredQuestion_${this.index}"
+            .name="structuredQuestionRatioGroup_${this.index}"
+            class="${this._getRadioClass()}">
+            ${this.question.radioButtons.map(
+              (radioButton, buttonIndex) => html`
+                ${!radioButton.isSpecify
+                  ? html` ${this.renderRadioButton(radioButton, buttonIndex)} `
+                  : html`
+                      ${this.renderRadioButton(radioButton, buttonIndex)}
+                      <mwc-textfield
+                        class="specifyInput"
+                        hidden
+                        @value-changed="${this._debounceChangeEvent}"
+                        .maxlength="${this.question.maxLength || 5000}"
+                        .allowedPattern="${radioButton.subType === 'number'
+                          ? '[0-9]'
+                          : ''}"
+                        type="text"
+                        id="structuredQuestion_${this
+                          .index}_${buttonIndex}__radioOther"></mwc-textfield>
+                    `}
+              `
+            )}
+          </div>
+        `
+      : nothing;
+  }
+
+  renderCheckbox(text: string, buttonIndex: number) {
+    return html`
+      <mwc-checkbox
+        id="structuredQuestionCheckbox_${this.index}_${buttonIndex}"
+        @change="${this._checkboxChanged}">
+        ${text}
+      </mwc-checkbox>
+    `;
+  }
+
+  renderCheckboxes() {
+    return this.question.checkboxes
+      ? html`
+          <div
+            id="structuredQuestionIntro_${this.index}"
+            class="question general checkBoxesLabel"
+            .useSmallFont="${this.useSmallFont}"
+            inner-h-t-m-l="${this.textWithIndex}"></div>
+          <div
+            id="structuredQuestion_${this.index}"
+            data-type="checkboxes"
+            class="layout vertical">
+            ${this.question.checkboxes.map(
+              (checkbox, buttonIndex) => html`
+                ${!checkbox.isSpecify
+                  ? html` ${this.renderCheckbox(checkbox.text, buttonIndex)} `
+                  : html`
+                      ${this.renderCheckbox(checkbox.text, buttonIndex)}
+                      <mwc-textfield
+                        class="specifyInput specifyCheckBox"
+                        hidden
+                        @value-changed="${this._debounceChangeEvent}"
+                        .type="${checkbox.subType || 'text'}"
+                        id="structuredQuestion_${this
+                          .index}_${buttonIndex}_checkboxOther"></mwc-textfield>
+                    `}
+              `
+            )}
+          </div>
+        `
+      : nothing;
+  }
+
+  //TODO: Get this working
+  renderDropdown() {
+    return html`
+      <mwc-dropdown-menu
+        id="structuredQuestion_${this.index}"
+        data-type="dropdown"
+        .label="${this.textWithIndex}"
+        ?required="${this.question.required}">
+        <mwc-listbox slot="dropdown-content" attr-for-selected="name">
+          ${this.question.dropdownOptions?.map(
+            dropDownOptions => html`
+              <mwc-item name="${dropDownOptions.text}"
+                >${dropDownOptions.text}</mwc-item
+              >
+            `
+          )}
+        </mwc-listbox>
+      </mwc-dropdown-menu>
+    `;
+  }
+
+  render(): TemplateResult | undefined | {} {
+    let question: TemplateResult | undefined | {};
+
+    let questionType = this.question.type;
+    if (!questionType) questionType = 'textarea';
+
+    switch (questionType) {
+      case 'textarea':
+        question = this.renderTextArea();
+        break;
+      case 'textarealong':
+        question = this.renderTextAreaLong();
+        break;
+      case 'textfield':
+        question = this.renderTextField();
+        break;
+      case 'textfieldlong':
+        question = this.renderTextFieldLong();
+        break;
+      case 'textheader':
+        question = this.renderTextHeader();
+        break;
+      case 'textdescription':
+        question = this.renderTextDescription();
+        break;
+      case 'checkboxes':
+        question = this.renderCheckboxes();
+        break;
+      case 'radios':
+        question = this.renderRadios();
+        break;
+      case 'seperator':
+        question = this.renderSeperator();
+        break;
+      /*case 'dropdown':
+        page = this.renderSeperator()
+        break*/
+    }
+
+    return question;
   }
 
   setLongUnFocus() {
@@ -574,8 +543,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     this.longFocus = true;
   }
 
-  _isNumberSubType(item: YpStructuredQuestionData) {
-    return item && item.subType === 'number';
+  get isNumberSubType() {
+    return this.question && this.question.subType === 'number';
   }
 
   _keyPressed(event: KeyboardEvent) {
@@ -588,11 +557,11 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     this.radioKeypress = true;
   }
 
-  _sendDebouncedChange(detail) {
+  _sendDebouncedChange(event: CustomEvent) {
     if (!this.debunceChangeEventTimer) {
-      this.debunceChangeEventTimer = this.async(function () {
-        this.fire('yp-answer-content-changed', detail);
-        this.debunceChangeEventTimer = null;
+      this.debunceChangeEventTimer = setTimeout(() => {
+        this.fire('yp-answer-content-changed', event.detail);
+        this.debunceChangeEventTimer = undefined;
         this._resizeScrollerIfNeeded();
       }, 2000);
     }
@@ -600,35 +569,35 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   _debounceChangeEvent(event: CustomEvent) {
     event.stopPropagation();
-    this._sendDebouncedChange(event.detail);
+    this._sendDebouncedChange(event);
   }
 
-  _getTextWithIndex(question) {
-    return question.text;
+  get textWithIndex() {
+    return this.question.text;
     //TODO: Think about if we need that
     /*if (question.questionIndex && !this.hideQuestionIndex) {
-      return question.questionIndex + ". " + question.text;
+      return question.questionIndex + ". " + question.text
     } else {
-      return question.text;
+      return question.text
     }*/
   }
 
-  _getRadioClass(question) {
+  _getRadioClass() {
     if (
-      question.subType &&
-      question.subType === 'rating' &&
+      this.question.subType &&
+      this.question.subType === 'rating' &&
       !this.isLastRating
     ) {
       return 'layout horizontal wrap lessBottomMargin';
-    } else if (question.subType && question.subType === 'rating') {
+    } else if (this.question.subType && this.question.subType === 'rating') {
       return 'layout horizontal wrap';
     } else {
       return 'layout vertical';
     }
   }
 
-  _textWithLinks(question) {
-    const text = linkifyHtml(question.text);
+  get textWithLinks() {
+    let text = linkifyStr(this.question.text);
     text = text.replace(/\n/g, '<br>');
     return text;
   }
@@ -637,9 +606,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     this.fire('resize-scroller');
   }
 
-  validate() {
+  //TODO: Finish this
+  checkValidation() {
     return true;
-    const liveQuestion = this.$$('#structuredQuestion_' + this.index);
+    /*const liveQuestion = this.$$('#structuredQuestion_' + this.index);
     if (liveQuestion) {
       if (liveQuestion.dataset.type === 'dropdown') {
         return true; // DO something if required
@@ -654,18 +624,22 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           return true;
         }
       }
-    }
+    }*/
   }
 
-  focus() {
-    if (
+  get isInputField() {
+    return (
       this.question.type &&
       (this.question.type.toLowerCase() === 'textfield' ||
         this.question.type.toLowerCase() === 'textfieldlong' ||
         this.question.type.toLowerCase() === 'textarea' ||
         this.question.type.toLowerCase() === 'textarealong' ||
         this.question.type.toLowerCase() === 'numberfield')
-    ) {
+    );
+  }
+
+  focus() {
+    if (this.isInputField) {
       const item = this.$$('#structuredQuestion_' + this.index);
       if (item) {
         setTimeout(() => {
@@ -675,9 +649,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
   }
 
-  cleanValue(value) {
+  cleanValue(value: string) {
     if (value) {
-      return value.replace(/,/g, ';').replace(/:/g, ';');
+      return value.replace(/,/g, '').replace(/:/g, '');
     } else {
       console.warn('No value for cleanValue');
       return '';
@@ -688,51 +662,45 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     const item = this.$$('#structuredQuestion_' + this.index);
 
     if (item) {
-      const value = null;
+      let value;
 
-      if (
-        this.question.type &&
-        (this.question.type.toLowerCase() === 'textfield' ||
-          this.question.type.toLowerCase() === 'textfieldlong' ||
-          this.question.type.toLowerCase() === 'textarea' ||
-          this.question.type.toLowerCase() === 'textarealong' ||
-          this.question.type.toLowerCase() === 'numberfield')
-      ) {
-        value = item.value;
-      } else if (this.question.type.toLowerCase() === 'radios') {
-        if (item.selected) {
-          const selectedRadio = null;
-          this.question.radioButtons.forEach(function (button, buttonIndex) {
-            if (button.text === item.selected) {
-              selectedRadio = button;
-              if (selectedRadio.isSpecify) {
-                const radioInput = this.$$(
-                  '#structuredQuestion_' +
-                    this.index +
-                    '_' +
-                    buttonIndex +
-                    '__radioOther'
-                );
-                if (radioInput) {
-                  value =
-                    selectedRadio.text +
-                    ':' +
-                    this.cleanValue(radioInput.value);
-                } else {
-                  value = selectedRadio.text;
-                }
+      if (this.isInputField) {
+        value = (item as HTMLInputElement).value;
+      } else if (this.question.type!.toLowerCase() === 'radios') {
+        let selectedRadio;
+        this.question.radioButtons?.forEach((button, buttonIndex) => {
+          const radioButtonElement = this.$$(
+            '#structuredQuestionRatioGroup_' + this.index + '_' + buttonIndex
+          ) as Radio
+          if (radioButtonElement && button.text === radioButtonElement.value) {
+            selectedRadio = radioButtonElement;
+            if (button.isSpecify) {
+              const radioInput = this.$$(
+                '#structuredQuestion_' +
+                  this.index +
+                  '_' +
+                  buttonIndex +
+                  '__radioOther'
+              ) as TextField;
+              if (radioInput) {
+                value =
+                  selectedRadio.value + ':' + this.cleanValue(radioInput.value);
               } else {
-                value = selectedRadio.text;
+                value = selectedRadio.value;
               }
+            } else {
+              value = selectedRadio.value;
             }
-          });
-        }
-      } else if (this.question.type.toLowerCase() === 'checkboxes') {
-        const selectedCheckboxes = '';
+          }
+        });
+      } else if (this.question.type!.toLowerCase() === 'checkboxes') {
+        let selectedCheckboxes = '';
         for (let i = 0; i < item.children.length; i++) {
-          if (item.children[i].checked) {
-            const checkboxSubId = item.children[i].id.split('_')[2];
-            const selectedCheckbox = this.question.checkboxes[checkboxSubId];
+          if ((item.children[i] as Checkbox).checked) {
+            const checkboxSubId: string = item.children[i].id.split('_')[2];
+            const selectedCheckbox = this.question.checkboxes![
+              parseInt(checkboxSubId)
+            ];
             if (selectedCheckbox.isSpecify) {
               const checkboxInput = this.$$(
                 '#structuredQuestion_' +
@@ -741,11 +709,11 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                   checkboxSubId +
                   '_checkboxOther'
               );
-              if (checkboxInput && checkboxInput.value !== '') {
+              if (checkboxInput && (checkboxInput as TextField).value !== '') {
                 selectedCheckboxes +=
                   selectedCheckbox.text +
                   ':' +
-                  this.cleanValue(checkboxInput.value) +
+                  this.cleanValue((checkboxInput as TextField).value) +
                   ',';
               } else {
                 selectedCheckboxes += selectedCheckbox.text + ',';
@@ -770,31 +738,31 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
   }
 
-  setAnswer(value) {
+  setAnswer(value: string) {
     if (value) {
       const item = this.$$('#structuredQuestion_' + this.index);
 
-      if (item) {
-        if (
-          this.question.type.toLowerCase() === 'textfield' ||
-          this.question.type.toLowerCase() === 'textfieldlong' ||
-          this.question.type.toLowerCase() === 'textarea' ||
-          this.question.type.toLowerCase() === 'textarealong' ||
-          this.question.type.toLowerCase() === 'numberfield'
+      if (item && this.question.type) {
+        if (this.isInputField) {
+          (item as HTMLInputElement).value = value;
+        } else if (
+          this.question.type &&
+          this.question.type.toLowerCase() === 'radios'
         ) {
-          item.value = value;
-        } else if (this.question.type.toLowerCase() === 'radios') {
-          const specifyInput = null;
+          let specifyInput: string;
           if (value.indexOf(':') > -1) {
             const splitText = value.split(':');
             value = splitText[0];
             specifyInput = splitText[1];
           }
 
-          this.question.radioButtons.forEach(
-            function (button, buttonIndex) {
-              if (button.text === value) {
-                item.select(value);
+          this.question.radioButtons?.forEach((button, buttonIndex) => {
+            if (button.text === value) {
+              const radioButtonElement = this.$$(
+                '#structuredQuestionRatioGroup_' + this.index + '_' + buttonIndex
+              ) as Radio;
+              if (radioButtonElement) {
+                radioButtonElement.checked = true
                 if (specifyInput) {
                   const input = this.$$(
                     '#structuredQuestion_' +
@@ -805,19 +773,18 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                   );
                   if (input) {
                     input.hidden = false;
-                    input.value = specifyInput;
+                    (input as HTMLInputElement).value = specifyInput;
                   } else {
-                    debugger;
                     console.error("Can't find checkbox specify value");
                   }
                 }
               }
-            }.bind(this)
-          );
-        } else if (this.question.type.toLowerCase() === 'checkboxes') {
+            }
+          });
+        } else if (this.question.type.toLowerCase() === 'checkboxes' && this.question.checkboxes) {
           const checkboxValues = value.split(',');
-          let specifyInputs = {};
-          const hasSpecifyInputs = false;
+          const specifyInputs: Record<string,string> = {};
+          let hasSpecifyInputs = false;
           for (let i = 0; i < checkboxValues.length; i++) {
             if (checkboxValues[i].indexOf(':') > -1) {
               const splitText = checkboxValues[i].split(':');
@@ -829,10 +796,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           for (let i = 0; i < item.children.length; i++) {
             if (item.children[i]) {
               const checkboxSubId = item.children[i].id.split('_')[2];
-              const selectedCheckbox = this.question.checkboxes[checkboxSubId];
+              const selectedCheckbox = this.question.checkboxes[
+                parseInt(checkboxSubId)
+              ];
               if (selectedCheckbox) {
                 if (checkboxValues.indexOf(selectedCheckbox.text) > -1) {
-                  item.children[i].checked = true;
+                  (item.children[i] as Checkbox).checked = true;
                   if (hasSpecifyInputs) {
                     const input = this.$$(
                       '#structuredQuestion_' +
@@ -840,7 +809,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                         '_' +
                         checkboxSubId +
                         '_checkboxOther'
-                    );
+                    ) as TextField
                     if (input && specifyInputs[selectedCheckbox.text]) {
                       input.hidden = false;
                       input.value = specifyInputs[selectedCheckbox.text];
@@ -888,31 +857,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
   }
 
-  _openSubQuestion() {
-    this.dispatchEvent(
-      new CustomEvent('yp-open-sub-question', {
-        bubbles: true,
-        composed: true,
-        detail: this.question.id,
-      })
-    );
-  }
+  _checkboxChanged(event: CustomEvent) {
+    if (this.question.checkboxes && (event.target as Checkbox).checked) {
+      const checkboxSubId: string = (event.target as Checkbox).id.split('_')[2];
 
-  _closeSubQuestion() {
-    this.dispatchEvent(
-      new CustomEvent('yp-close-sub-question', {
-        bubbles: true,
-        composed: true,
-        detail: this.question.id,
-      })
-    );
-  }
-
-  _checkboxChanged(event, detail) {
-    if (event.target.checked) {
-      const checkboxSubId = event.target.id.split('_')[2];
-
-      const selectedCheckbox = this.question.checkboxes[checkboxSubId];
+      const selectedCheckbox = this.question.checkboxes[
+        parseInt(checkboxSubId)
+      ];
       if (selectedCheckbox.isSpecify) {
         const checkboxInput = this.$$(
           '#structuredQuestion_' +
@@ -920,7 +871,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             '_' +
             checkboxSubId +
             '_checkboxOther'
-        );
+        ) as HTMLInputElement;
         if (checkboxInput) {
           checkboxInput.hidden = false;
           if (!checkboxInput.value) {
@@ -934,141 +885,98 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
 
     if (this.question.maxLength) {
-      const checkedCount = 0;
-      const item = this.$$('#structuredQuestion_' + this.index);
+      let checkedCount = 0;
+      const item = this.$$(
+        '#structuredQuestion_' + this.index
+      ) as HTMLInputElement;
       for (let i = 0; i < item.children.length; i++) {
         if (
-          item.children[i].tagName.toLowerCase() === 'paper-checkbox' &&
-          item.children[i].checked
+          item.children[i].tagName.toLowerCase() === 'mwc-checkbox' &&
+          (item.children[i] as Checkbox).checked
         ) {
           checkedCount += 1;
         }
       }
 
-      if (checkedCount >= parseInt(this.question.maxLength)) {
+      if (checkedCount >= this.question.maxLength) {
         for (let x = 0; x < item.children.length; x++) {
           if (
-            item.children[x].tagName.toLowerCase() === 'paper-checkbox' &&
-            !item.children[x].checked
+            item.children[x].tagName.toLowerCase() === 'mwc-checkbox' &&
+            !(item.children[x] as Checkbox).checked
           ) {
-            item.children[x].disabled = true;
+            (item.children[x] as HTMLInputElement).disabled = true;
           }
         }
       } else {
         for (let n = 0; n < item.children.length; n++) {
           if (
-            item.children[n].tagName.toLowerCase() === 'paper-checkbox' &&
-            item.children[n].disabled
+            item.children[n].tagName.toLowerCase() === 'mwc-checkbox' &&
+            (item.children[n] as HTMLInputElement).disabled
           ) {
-            item.children[n].disabled = false;
+            (item.children[n] as HTMLInputElement).disabled = false;
           }
         }
       }
     }
 
     event.stopPropagation();
-    this._sendDebouncedChange({ value: 1 });
+    this._sendDebouncedChange({ detail: { value: 1 } } as CustomEvent);
   }
 
-  _radioChanged(event, detail) {
+  _radioChanged(event: CustomEvent) {
     event.stopPropagation();
-    this._sendDebouncedChange({ value: 1 });
+    if (this.question.radioButtons) {
+      this._sendDebouncedChange({ detail: { value: 1 } } as CustomEvent);
 
-    const selectedRadio = null;
+      let selectedRadio;
 
-    this.question.radioButtons.forEach((button, buttonIndex) => {
-      if (button.text === detail.value) {
-        selectedRadio = button;
-        if (selectedRadio.skipTo) {
-          this.fire('yp-skip-to-unique-id', {
-            fromId: this.question.uniqueId,
-            toId: selectedRadio.skipTo,
-          });
-        } else if (selectedRadio.isSpecify) {
-          const input = this.$$(
-            '#structuredQuestion_' +
-              this.index +
-              '_' +
-              buttonIndex +
-              '__radioOther'
-          );
-          if (input) {
-            input.hidden = false;
-            input.focus();
-          } else {
-            console.error("Can't find radio specify value");
-          }
-        } else {
-          setTimeout(() => {
-            if (!this.radioKeypress) {
-              this.fire('yp-goto-next-index', { currentIndex: this.index });
-            }
-          });
-
-          const hasSkipToId;
-
-          this.question.radioButtons.forEach(button => {
-            if (button.skipTo) {
-              hasSkipToId = button.skipTo;
-            }
-          });
-
-          if (hasSkipToId) {
-            this.fire('yp-open-to-unique-id', {
+      this.question.radioButtons.forEach((button, buttonIndex) => {
+        if (button.text === event.detail.value) {
+          selectedRadio = button;
+          if (selectedRadio.skipTo) {
+            this.fire('yp-skip-to-unique-id', {
               fromId: this.question.uniqueId,
-              toId: hasSkipToId,
+              toId: selectedRadio.skipTo,
             });
+          } else if (selectedRadio.isSpecify) {
+            const input = this.$$(
+              '#structuredQuestion_' +
+                this.index +
+                '_' +
+                buttonIndex +
+                '__radioOther'
+            );
+            if (input) {
+              input.hidden = false;
+              input.focus();
+            } else {
+              console.error("Can't find radio specify value");
+            }
+          } else {
+            setTimeout(() => {
+              if (!this.radioKeypress) {
+                this.fire('yp-goto-next-index', { currentIndex: this.index });
+              }
+            });
+
+            let hasSkipToId;
+
+            this.question.radioButtons?.forEach(button => {
+              if (button.skipTo) {
+                hasSkipToId = button.skipTo;
+              }
+            });
+
+            if (hasSkipToId) {
+              this.fire('yp-open-to-unique-id', {
+                fromId: this.question.uniqueId,
+                toId: hasSkipToId,
+              });
+            }
           }
         }
-      }
-    });
-  }
-
-  _isTextarea(question) {
-    return (
-      (question.type && question.type.toLowerCase() === 'textarea') ||
-      (question.type === undefined && question.maxLength > 1)
-    );
-  }
-
-  _isTextareaLong(question) {
-    return question.type && question.type.toLowerCase() === 'textarealong';
-  }
-
-  _isTextField(question) {
-    return question.type && question.type.toLowerCase() === 'textfield';
-  }
-
-  _isTextFieldLong(question) {
-    return question.type && question.type.toLowerCase() === 'textfieldlong';
-  }
-
-  _isNumberField(question) {
-    return question.type && question.type.toLowerCase() === 'numberfield';
-  }
-
-  _isTextHeader(question) {
-    return question.type && question.type.toLowerCase() === 'textheader';
-  }
-
-  _isTextDescription(question) {
-    return question.type && question.type.toLowerCase() === 'textdescription';
-  }
-
-  _isCheckboxes(question) {
-    return question.type && question.type.toLowerCase() === 'checkboxes';
-  }
-
-  _isSeparator(question) {
-    return question.type && question.type.toLowerCase() === 'separator';
-  }
-
-  _isRadios(question) {
-    return question.type && question.type.toLowerCase() === 'radios';
-  }
-
-  _isDropDown(question) {
-    return question.type && question.type.toLowerCase() === 'dropdown';
+      });
+    }
   }
 
   _structuredAnsweredChanged() {
@@ -1076,7 +984,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       const BreakException = {};
       try {
         this.structuredAnswers.forEach(answer => {
-          if (this.question.uniqueId === answer.uniqueId) {
+          if (this.question.uniqueId === answer.uniqueId && answer.value) {
             setTimeout(() => {
               this.setAnswer(answer.value);
             }, 100);

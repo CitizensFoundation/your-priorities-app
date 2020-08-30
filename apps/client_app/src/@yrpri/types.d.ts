@@ -16,14 +16,40 @@ interface YpCollectionConfiguration {
   hideAllTabs?: boolean;
 }
 
+interface YpRadioButtonData {
+  text: string;
+  isSpecify?: boolean;
+  skipTo?: string;
+  subType?: "number" | "text" | "search" | "tel" | "url" | "email" | "password" | "date" | "month" | "week" | "time" | "datetime-local" | "color";
+}
+
+interface YpCheckboxData {
+  text: string;
+  isSpecify?: boolean;
+  subType?: "number" | "text" | "search" | "tel" | "url" | "email" | "password" | "date" | "month" | "week" | "time" | "datetime-local" | "color";
+}
+
+interface YpDropdownData {
+  text: string;
+  isSpecify?: boolean;
+  subType?: "number" | "text" | "search" | "tel" | "url" | "email" | "password" | "date" | "month" | "week" | "time" | "datetime-local" | "color";
+}
+
 interface YpStructuredQuestionData {
   uniqueId?: number;
   text: string;
   type?: string;
   subType?: string;
-  maxLength?: string;
+  maxLength?: number;
   value?: string;
   questionIndex?: number;
+  required?: boolean;
+  halfWidthDesktop?: boolean;
+  extraTopMargin?: boolean;
+  lessBottomMargin?: boolean;
+  radioButtons?: Array<YpRadioButtonData>;
+  checkboxes?: Array<YpCheckboxData>;
+  dropdownOptions?: Array<YpDropdownData>;
 }
 
 
