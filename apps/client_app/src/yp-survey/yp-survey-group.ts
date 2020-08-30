@@ -25,28 +25,28 @@ import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 @customElement('yp-survey-group')
 export class YpSurveyGroup extends YpBaseElement {
   @property({ type: Number })
-  surveyGroupId: number | undefined
+  surveyGroupId: number | undefined;
 
   @property({ type: String })
-  surveySubmitError: string | undefined
+  surveySubmitError: string | undefined;
 
   @property({ type: Boolean })
-  surveyCompleted = false
+  surveyCompleted = false;
 
   @property({ type: Boolean })
-  submitHidden = false
+  submitHidden = false;
 
   @property({ type: Object })
-  surveyGroup: YpGroupData | undefined
+  surveyGroup: YpGroupData | undefined;
 
   @property({ type: Array })
-  structuredQuestions: Array<YpStructuredQuestionData> | undefined
+  structuredQuestions: Array<YpStructuredQuestionData> | undefined;
 
   @property({ type: Array })
-  structuredAnswers: Array<YpStructuredAnswer> | undefined
+  structuredAnswers: Array<YpStructuredAnswer> | undefined;
 
   @property({ type: Array })
-  initiallyLoadedAnswers: Array<YpStructuredAnswer> | undefined
+  initiallyLoadedAnswers: Array<YpStructuredAnswer> | undefined;
 
   liveQuestionIds: Array<number> = [];
 
@@ -54,7 +54,7 @@ export class YpSurveyGroup extends YpBaseElement {
 
   liveUniqueIds: Array<string> = [];
 
-  liveUniqueIdsAll: Array<string> = [];
+  liveUniqueIdsAll: Array<{ uniqueId: string; atIndex: number }> = [];
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -118,115 +118,73 @@ export class YpSurveyGroup extends YpBaseElement {
           margin: 128px;
         }
       `,
-      YpFlexLayout,
     ];
   }
 
   render() {
-    return html`
-      <lite-signal
-        @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-
-      <iron-media-query
-        query="(min-width: 1024px)"
-        query-matches="${this.wideWidth}"></iron-media-query>
-      <iron-media-query
-        query="(max-width: 700px)"
-        query-matches="${this.phoneWidth}"></iron-media-query>
-
-
-      ${!this.surveyCompleted
-        ? html`
-            ${this.structuredQuestions
-              ? html`
-                  <div class="layout vertical center-center">
-                    <div class="surveyContainer">
-                      <div id="surveyContainer">
-                        ${this.structuredQuestions.map(
-                          (question, index) => html`
-                            <yp-structured-question-edit
-                              index="${index}"
-                              id="structuredQuestionContainer_${index}"
-                              .structuredAnswers="${this
-                                .initiallyLoadedAnswers}"
-                              @changed="${this._saveState}"
-                              .question="${question}"
-                              is-last-rating="${this._isLastRating(index)}"
-                              is-first-rating="${this._isFirstRating(index)}"
-                              @hide-to-question="${this._hideToQuestion}">
-                            </yp-structured-question-edit>
-                          `
-                        )}
+    return this.surveyGroup
+      ? html`
+          ${!this.surveyCompleted
+            ? html`
+                ${this.structuredQuestions
+                  ? html`
+                      <div class="layout vertical center-center">
+                        <div class="surveyContainer">
+                          <div id="surveyContainer">
+                            ${this.structuredQuestions.map(
+                              (question, index) => html`
+                                <yp-structured-question-edit
+                                  index="${index}"
+                                  id="structuredQuestionContainer_${index}"
+                                  .structuredAnswers="${this
+                                    .initiallyLoadedAnswers}"
+                                  @changed="${this._saveState}"
+                                  .question="${question}"
+                                  is-last-rating="${this._isLastRating(index)}"
+                                  is-first-rating="${this._isFirstRating(
+                                    index
+                                  )}">
+                                </yp-structured-question-edit>
+                              `
+                            )}
+                          </div>
+                          <div
+                            class="layout horizontal center-center submitSpinnerContainer"></div>
+                          <div
+                            class="layout horizontal center-center"
+                            ?hidden="${this.submitHidden}">
+                            <mwc-button
+                              id="submitButton"
+                              raised
+                              .label="${this.t('submitSurvey')}"
+                              @click="${this._submit}"></mwc-button>
+                          </div>
+                        </div>
                       </div>
-                      <div
-                        class="layout horizontal center-center submitSpinnerContainer">
-                        <yp-ajax
-                          .largeSpinner
-                          id="submitAjax"
-                          .method="POST"
-                          .ironMethod="POST"
-                          @response="${this._surveySubmitResponse}"></yp-ajax>
-                      </div>
-                      <div
-                        class="layout horizontal center-center"
-                        hidden="${this.submitHidden}">
-                        <paper-button
-                          id="submitButton"
-                          raised
-                          @tap="${this._submit}"
-                          >${this.t('submitSurvey')}</paper-button
-                        >
-                      </div>
-                    </div>
-                  </div>
-                `
-              : html``}
-          `
-        : html`
-            <div class="surveyCompleted layout vertical center-center">
-              ${this.t('thankYouForCompletingTheSurvey')}
-              ${this.surveyGroup.configuration.customThankYouTextNewPosts
-                ? html`
-                    <yp-magic-text
-                      id="customThankYouTextNewPostsId"
-                      hidden
-                      contentId="${this.surveyGroup.id}"
-                      .textOnly
-                      content="${this.surveyGroup.configuration
-                        .customThankYouTextNewPosts}"
-                      .contentLanguage="${this.surveyGroup.language}"
-                      .textType="customThankYouTextNewPosts"></yp-magic-text>
-                  `
-                : html` ${this.t('thankYouForCompletingTheSurvey')} `}
-            </div>
-          `}
-
-      <div class="layout horizontal center-center">
-        <yp-ajax
-          .largeSpinner=""
-          id="ajax"
-          @response="${this._surveyGroupResponse}"></yp-ajax>
-        <yp-ajax
-          hidden
-          id="pagesAjax"
-          @response="${this._pagesResponse}"></yp-ajax>
-      </div>
-    `;
+                    `
+                  : html``}
+              `
+            : html`
+                <div class="surveyCompleted layout vertical center-center">
+                  ${this.t('thankYouForCompletingTheSurvey')}
+                  ${this.surveyGroup.configuration.customThankYouTextNewPosts
+                    ? html`
+                        <yp-magic-text
+                          id="customThankYouTextNewPostsId"
+                          hidden
+                          contentId="${this.surveyGroup.id}"
+                          textOnly
+                          content="${this.surveyGroup.configuration
+                            .customThankYouTextNewPosts}"
+                          .contentLanguage="${this.surveyGroup.language}"
+                          textType="customThankYouTextNewPosts"></yp-magic-text>
+                      `
+                    : html` ${this.t('thankYouForCompletingTheSurvey')} `}
+                </div>
+              `}
+        `
+      : nothing;
   }
-
-  /*
-  behaviors: [
-    ypLanguageBehavior,
-    ypThemeBehavior,
-    ypDetectOldiOs,
-    ypNumberFormatBehavior
-  ],
-
-
-  observers: [
-    '_routeIdChanged(idRouteData.id)'
-  ],
-*/
 
   connectedCallback() {
     super.connectedCallback();
@@ -266,7 +224,8 @@ export class YpSurveyGroup extends YpBaseElement {
 
   _skipToId(event: CustomEvent, showItems: boolean) {
     let foundFirst = false;
-    const children = this.$$('#surveyContainer')!.children as unknown as Array<YpStructuredQuestionEdit>;
+    const children = (this.$$('#surveyContainer')!
+      .children as unknown) as Array<YpStructuredQuestionEdit>;
     for (let i = 0; i < children.length; i++) {
       const toId = event.detail.toId.replace(/]/g, '');
       const fromId = event.detail.fromId.replace(/]/g, '');
@@ -315,7 +274,7 @@ export class YpSurveyGroup extends YpBaseElement {
     if (currentPos < this.liveQuestionIds.length - 1) {
       const item = this.$$(
         '#structuredQuestionContainer_' + this.liveQuestionIds[currentPos + 1]
-      ) as HTMLInputElement
+      ) as HTMLInputElement;
       item.scrollIntoView({
         block: 'center',
         inline: 'center',
@@ -327,53 +286,54 @@ export class YpSurveyGroup extends YpBaseElement {
 
   _serializeAnswers() {
     const answers: Array<YpStructuredAnswer> = [];
-    this.liveQuestionIds.forEach(
-       (liveIndex) => {
-        const questionElement = this.$$(
-          '#structuredQuestionContainer_' + liveIndex
-        ) as YpStructuredQuestionEdit
-        if (questionElement) {
-          const answer = questionElement.getAnswer();
-          if (answer)
-            answers.push(answer);
-        }
+    this.liveQuestionIds.forEach(liveIndex => {
+      const questionElement = this.$$(
+        '#structuredQuestionContainer_' + liveIndex
+      ) as YpStructuredQuestionEdit;
+      if (questionElement) {
+        const answer = questionElement.getAnswer();
+        if (answer) answers.push(answer);
       }
-    );
+    });
     this.structuredAnswers = answers;
   }
 
-  _surveySubmitResponse(event: CustomEvent) {
-    if (event.detail.error) {
-      this.surveySubmitError = event.detail.error;
+  async _submit() {
+    if (this.surveyGroupId) {
+      this._serializeAnswers();
+      const response = (await window.serverApi.postSurvey(
+        this.surveyGroup!.id,
+        {
+          structuredAnswers: this.structuredAnswers,
+        }
+      )) as YpSurveyPostResponse;
+
+      if (response) {
+        if (response.error) {
+          this.surveySubmitError = response.error;
+        } else {
+          this.surveyCompleted = true;
+        }
+      }
     } else {
-      this.surveyCompleted = true;
+      console.error('No survey id to post to');
     }
   }
 
-  _submit() {
-    this._serializeAnswers();
-    const submitAjax = this.$$('#submitAjax');
-    submitAjax.url = '/api/groups/' + this.surveyGroup.id + '/survey';
-    submitAjax.method = 'POST';
-    submitAjax.body = {
-      structuredAnswers: this.structuredAnswers,
-    };
-    submitAjax.generateRequest();
-  }
-
-  _saveState(event, detail) {
+  _saveState(event: CustomEvent) {
+    const detail = event.detail;
     if (detail && detail.value && (detail.value !== '' || detail.value > 1)) {
       this.submitHidden = false;
       this._serializeAnswers();
       localStorage.setItem(
-        'yp-survey-response-for-' + this.surveyGroup.id,
+        'yp-survey-response-for-' + this.surveyGroup!.id,
         JSON.stringify(this.structuredAnswers)
       );
     }
   }
 
   _clearState() {
-    localStorage.setItem('yp-survey-response-for-' + this.surveyGroup.id, null);
+    localStorage.setItem('yp-survey-response-for-' + this.surveyGroup!.id, '');
   }
 
   _checkAndLoadState() {
@@ -390,56 +350,44 @@ export class YpSurveyGroup extends YpBaseElement {
     return /iPad/.test(navigator.userAgent) && !window.MSStream;
   }
 
-  _routeIdChanged(newId) {
-    if (newId) {
-      this.surveyGroupId = newId;
-    }
-  }
-
   _surveyGroupIdChanged() {
     if (this.surveyGroupId) {
-      this.surveyGroup = undefined
-      this._getSurveyGroup()
+      this.surveyGroup = undefined;
+      this._getSurveyGroup();
     }
   }
 
-  _getSurveyGroup() {
-    this.$$('#ajax').url = '/api/groups/' + this.surveyGroupId + '/survey';
-    this.$$('#ajax').retryMethodAfter401Login = this._getSurveyGroup.bind(this);
-    this.$$('#ajax').generateRequest();
-  }
+  async _getSurveyGroup() {
+    const surveyGroup = (await window.serverApi.getSurveyGroup(
+      this.surveyGroupId!
+    )) as YpGroupData | void;
+    if (surveyGroup) {
+      this.surveyGroup = surveyGroup;
+      this.structuredQuestions = this.surveyGroup.configuration.structuredQuestionsJson;
+      this.surveyGroup.configuration = window.appGlobals.overrideGroupConfigIfNeeded(
+        this.surveyGroup.id,
+        this.surveyGroup.configuration
+      );
 
-  _pagesResponse(event, detail) {
-    this.fire('yp-set-pages', detail.response);
-  }
-
-  _surveyGroupResponse(event, detail) {
-    this.surveyGroup = detail.response.surveyGroup;
-    this.structuredQuestions =
-      detail.response.surveyGroup.configuration.structuredQuestionsJson;
-    this.surveyGroup.configuration = window.appGlobals.overrideGroupConfigIfNeeded(
-      this.surveyGroup.id,
-      this.surveyGroup.configuration
-    );
-
-    this.refresh();
-    setTimeout( () => {
-      this.liveQuestionIds = [];
-      this.liveUniqueIds = [];
-      this.liveUniqueIdsAll = [];
-      this.uniqueIdsToElementIndexes = {};
-      if (this.structuredQuestions) {
-        this.structuredQuestions.forEach(
-           (question, index) => {
-            if (question.type && question.uniqueId &&
-              question.type.toLowerCase() === 'textfield' ||
-              question.type.toLowerCase() === 'textfieldlong' ||
-              question.type.toLowerCase() === 'textarea' ||
-              question.type.toLowerCase() === 'textarealong' ||
-              question.type.toLowerCase() === 'numberfield' ||
-              question.type.toLowerCase() === 'checkboxes' ||
-              question.type.toLowerCase() === 'radios' ||
-              question.type.toLowerCase() === 'dropdown'
+      this.refresh();
+      setTimeout(() => {
+        this.liveQuestionIds = [];
+        this.liveUniqueIds = [];
+        this.liveUniqueIdsAll = [];
+        this.uniqueIdsToElementIndexes = {};
+        if (this.structuredQuestions) {
+          this.structuredQuestions.forEach((question, index) => {
+            if (
+              question.type &&
+              question.uniqueId &&
+              (question.type.toLowerCase() === 'textfield' ||
+                question.type.toLowerCase() === 'textfieldlong' ||
+                question.type.toLowerCase() === 'textarea' ||
+                question.type.toLowerCase() === 'textarealong' ||
+                question.type.toLowerCase() === 'numberfield' ||
+                question.type.toLowerCase() === 'checkboxes' ||
+                question.type.toLowerCase() === 'radios' ||
+                question.type.toLowerCase() === 'dropdown')
             ) {
               this.liveQuestionIds.push(index);
               this.uniqueIdsToElementIndexes[question.uniqueId!] = index;
@@ -449,18 +397,15 @@ export class YpSurveyGroup extends YpBaseElement {
                 atIndex: index,
               });
             }
-          }
-        );
-      }
-      this._checkAndLoadState();
-    });
+          });
+        }
+        this._checkAndLoadState();
+      });
+    }
   }
-
 
   refresh() {
     if (this.surveyGroup) {
-
-
       if (this.surveyGroup.configuration.defaultLocale != null) {
         window.appGlobals.changeLocaleIfNeeded(
           this.surveyGroup.configuration.defaultLocale
@@ -476,7 +421,7 @@ export class YpSurveyGroup extends YpBaseElement {
         (this.surveyGroup.configuration &&
           this.surveyGroup.configuration.themeOverrideColorPrimary != null)
       ) {
-        window.themes.setTheme(
+        window.appGlobals.theme.setTheme(
           this.surveyGroup.theme_id,
           this.surveyGroup.configuration
         );
@@ -486,7 +431,7 @@ export class YpSurveyGroup extends YpBaseElement {
           (this.surveyGroup.Community.configuration &&
             this.surveyGroup.Community.configuration.themeOverrideColorPrimary))
       ) {
-        this.setTheme(
+        window.appGlobals.theme.setTheme(
           this.surveyGroup.Community.theme_id,
           this.surveyGroup.Community.configuration
         );
@@ -495,9 +440,11 @@ export class YpSurveyGroup extends YpBaseElement {
         this.surveyGroup.Community.Domain &&
         this.surveyGroup.Community.Domain.theme_id != null
       ) {
-        this.setTheme(this.surveyGroup.Community.Domain.theme_id);
+        window.appGlobals.theme.setTheme(
+          this.surveyGroup.Community.Domain.theme_id
+        );
       } else {
-        this.setTheme(1);
+        window.appGlobals.theme.setTheme(1);
       }
 
       window.appGlobals.setAnonymousGroupStatus(this.surveyGroup);
@@ -517,7 +464,7 @@ export class YpSurveyGroup extends YpBaseElement {
       ) {
         window.appGlobals.externalGoalTriggerGroupId = this.surveyGroup.id;
       } else {
-        window.appGlobals.externalGoalTriggerGroupId = undefined
+        window.appGlobals.externalGoalTriggerGroupId = undefined;
       }
 
       if (
@@ -541,7 +488,8 @@ export class YpSurveyGroup extends YpBaseElement {
         window.appGlobals.currentSamlDeniedMessage = undefined;
       }
 
-      if ( this.surveyGroup.Community &&
+      if (
+        this.surveyGroup.Community &&
         this.surveyGroup.Community.configuration &&
         this.surveyGroup.Community.configuration.customSamlLoginMessage
       ) {

@@ -1,5 +1,5 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { nothing, TemplateResult } from 'lit-html';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 import '@material/mwc-circular-progress-four-color';
@@ -9,6 +9,10 @@ import '@material/mwc-dialog';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-snackbar';
+import '@material/mwc-tab-bar';
+import '@material/mwc-tab';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 
 import { YpForm } from '../@yrpri/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
@@ -21,6 +25,13 @@ import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { TextArea } from '@material/mwc-textarea';
 import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
+
+export const EditPostTabs: Record<string, number> = {
+  Description: 0,
+  Point: 1,
+  Location: 2,
+  Media: 3,
+};
 
 @customElement('yp-post-edit')
 export class YpPostEdit extends YpEditBase {
@@ -184,7 +195,7 @@ export class YpPostEdit extends YpEditBase {
           .subContainer {
           }
 
-          paper-tab {
+          mwc-tab {
             font-size: 12px;
           }
         }
@@ -232,7 +243,7 @@ export class YpPostEdit extends YpEditBase {
         }
 
         #description {
-          --paper-input-container-input: {
+          --mwc-textfield-container-input: {
             max-height: 125px;
           }
         }
@@ -288,7 +299,7 @@ export class YpPostEdit extends YpEditBase {
           margin-top: -42px;
         }
 
-        paper-tabs[title-disabled] {
+        mwc-tabs[title-disabled] {
           margin-bottom: 24px;
         }
 
@@ -302,6 +313,440 @@ export class YpPostEdit extends YpEditBase {
         }
       `,
     ];
+  }
+
+  renderTabs() {
+    return html`
+      <mwc-tab-bar
+        ?title-disabled="${this.group!.configuration
+          .hideNameInputAndReplaceWith}"
+        .selected="${this.selected}"
+        id="paperTabs"
+        focused
+        ?hidden="${this.hasOnlyOneTab}">
+        <mwc-tab
+          stacked
+          .label="${this.t('post.yourPost')}"
+          icon="lightbuld_outline"></mwc-tab>
+
+        ${this.newPointShown
+          ? html`
+              <mwc-tab
+                stacked
+                icon="comment"
+                .label="${this.t('post.yourPoint') +
+                this.group!.configuration.newPointOptional
+                  ? this.t('optional')
+                  : ''}">
+              </mwc-tab>
+            `
+          : nothing}
+        ${!this.locationHidden
+          ? html`
+              <mwc-tab
+                stacked
+                icon="location_on"
+                .label="${this.t('post.location')}"></mwc-tab>
+            `
+          : nothing}
+        ${!this.mediaHidden
+          ? html`
+              <mwc-tab stacked icon="videocam" .label=" ${this.t('media')}">
+              </mwc-tab>
+            `
+          : nothing}
+      </mwc-tab-bar>
+    `;
+  }
+
+  renderMoreContactInfo() {
+    return html`
+      <h2 class="contactInfo">
+        ${this.t('contactInformation')}
+      </h2>
+      <mwc-textfield
+        id="contactName"
+        name="contactName"
+        type="text"
+        .label="${this.t('user.name')}"
+        charCounter>
+      </mwc-textfield>
+      <mwc-textfield
+        id="contactEmail"
+        name="contactEmail"
+        type="text"
+        .label="${this.t('user.email')}"
+        charCounter>
+      </mwc-textfield>
+      <mwc-textfield
+        id="contactTelephone"
+        name="contacTelephone"
+        type="text"
+        .label="${this.t('contactTelephone')}"
+        maxlength="20"
+        charCounter>
+      </mwc-textfield>
+      <mwc-textfield
+        id="contactAddress"
+        name="contactAddress"
+        type="text"
+        ?hidden="${!this.group!.configuration.moreContactInformationAddress}"
+        .label="${this.t('contactAddress')}"
+        maxlength="300"
+        charCounter>
+      </mwc-textfield>
+    `;
+  }
+
+  renderDescriptionTab() {
+    return this.group
+      ? html`
+          <section>
+            <div class="layout vertical flex">
+              ${!this.group.configuration.hideNameInputAndReplaceWith
+                ? html`
+                    <input
+                      type="hidden"
+                      name="name"
+                      .value="${this.replacedName ? this.replacedName : ''}" />
+                  `
+                : html`
+                    <mwc-textfieldgit
+                      id="name"
+                      required
+                      minlength="3"
+                      name="name"
+                      type="text"
+                      .label="${this.t('title')}"
+                      .value="${this.post!.name}"
+                      maxlength="60"
+                      charCounter>
+                    </mwc-textfield>
+                  `}
+              ${this.showCategories && this.group.Categories
+                ? html`
+                    <paper-dropdown-menu
+                      class="categoryDropDown"
+                      .label="${this.t('category.select')}"
+                      ?required="${this.group.configuration
+                        .makeCategoryRequiredOnNewPost}">
+                      <paper-listbox
+                        slot="dropdown-content"
+                        .selected="${this.selectedCategoryArrayId}">
+                        ${this.group.Categories.map(
+                          category => html`
+                            <paper-item .data-category-id="${category.id}"
+                              >${category.name}</paper-item
+                            >
+                          `
+                        )}
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                    <input
+                      type="hidden"
+                      name="categoryId"
+                      .value="${this.selectedCategoryId
+                        ? this.selectedCategoryId.toString()
+                        : ''}" />
+                  `
+                : nothing}
+              ${this.postDescriptionLimit
+                ? html`
+                    <mwc-textarea
+                      id="description"
+                      ?hidden="${this.structuredQuestions != null}"
+                      ?required="${this.structuredQuestions == null}"
+                      minlength="3"
+                      name="description"
+                      .value="${this.post!.description}"
+                      .label="${this.t('post.description')}"
+                      aria-label="${this.t('post.description')}"
+                      @value-changed="${this._resizeScrollerIfNeeded}"
+                      char-counter
+                      rows="2"
+                      max-rows="5"
+                      maxrows="5"
+                      maxlength="${this.postDescriptionLimit}">
+                    </mwc-textarea>
+
+                    <div
+                      class="horizontal end-justified layout postEmoji"
+                      ?hidden="${this.group.configuration.hideEmoji}">
+                      <emoji-selector
+                        id="emojiSelectorDescription"
+                        ?hidden="${this.structuredQuestions !=
+                        undefined}"></emoji-selector>
+                    </div>
+                  `
+                : nothing}
+              ${this.structuredQuestions != undefined
+                ? html`
+                    ${this.structuredQuestions.map(
+                      (
+                        question: YpStructuredQuestionData,
+                        index: number
+                      ) => html`
+                        <yp-structured-question-edit
+                          .index="${index}"
+                          is-from-new-post
+                          use-small-font
+                          id="structuredQuestionContainer_${index}"
+                          ?dontFocusFirstQuestion="${!this.group!.configuration
+                            .hideNameInputAndReplaceWith}"
+                          @resize-scroller="${this._resizeScrollerIfNeeded}"
+                          .structuredAnswers="${this
+                            .initialStructuredAnswersJson}"
+                          ?isLastRating="${this._isLastRating(index)}"
+                          ?isFirstRating="${this._isFirstRating(index)}"
+                          ?hideQuestionIndex="${this.group!.configuration
+                            .hideQuestionIndexOnNewPost}"
+                          .question="${question}">
+                        </yp-structured-question-edit>
+                      `
+                    )}
+                  `
+                : nothing}
+              ${this.group.configuration.attachmentsEnabled
+                ? html`
+                    <yp-file-upload
+                      id="attachmentFileUpload"
+                      raised
+                      buttonIcon="attach_file"
+                      .buttonText="${this.t('uploadAttachment')}"
+                      accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*"
+                      .target="/api/groups/${this.group.id}/upload_document"
+                      method="POST"
+                      @success="${this._documentUploaded}">
+                    </yp-file-upload>
+
+                    ${this.post!.data?.attachment?.url
+                      ? html`
+                          <paper-checkbox name="deleteAttachment"
+                            >${this.t('deleteAttachment')}:
+                            ${this.post!.data.attachment
+                              .filename}</paper-checkbox
+                          >
+                        `
+                      : nothing}
+                  `
+                : nothing}
+              ${this.group.configuration.moreContactInformation
+                ? this.renderMoreContactInfo()
+                : nothing}
+            </div>
+          </section>
+        `
+      : nothing;
+  }
+
+  renderPointTab() {
+    return this.newPointShown
+      ? html`
+          <section class="subContainer">
+            <mwc-textarea
+              id="pointFor"
+              ?required="${!this.group!.configuration.newPointOptional}"
+              minlength="3"
+              name="pointFor"
+              .value="${this.post!.pointFor || ''}"
+              .label="${this.t('point.for')}"
+              charCounter
+              rows="2"
+              max-rows="5"
+              .maxlength="${this.pointMaxLength}">
+            </mwc-textarea>
+            <div
+              class="horizontal end-justified layout pointEmoji"
+              ?hidden="${this.group!.configuration.hideEmoji}">
+              <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
+            </div>
+          </section>
+        `
+      : nothing;
+  }
+
+  renderLocationTab() {
+    return !this.locationHidden
+      ? html`
+          <section>
+            ${this.mapActive
+              ? html`
+                  <yp-post-location
+                    .encodedLocation="${this.encodedLocation}"
+                    .location="${this.location}"
+                    .group="${this.group}"
+                    .post="${this.post}"></yp-post-location>
+                `
+              : nothing}
+          </section>
+        `
+      : nothing;
+  }
+
+  renderMediaTab() {
+    return html`
+      <section>
+        <div class="layout vertical center-center">
+          <div class="layout horizontal center-center wrap">
+            <div
+              class="layout vertical center-center self-start uploadSection"
+              ?hidden="${this.group!.configuration.hidePostImageUploads}">
+              <yp-file-upload
+                id="imageFileUpload"
+                raised
+                target="/api/images?itemType=post-header"
+                method="POST"
+                buttonIcon="photo_camera"
+                .buttonText="${this.t('image.upload')}"
+                @success="${this._imageUploaded}">
+              </yp-file-upload>
+              <div class="imageSizeInfo layout horizontal">
+                <div>864 x 486 (16/9 widescreen)</div>
+              </div>
+              <div>${this.t('post.cover.imageInfo')}</div>
+            </div>
+
+            ${this.group!.configuration.allowPostVideoUploads
+              ? html`
+                  <div
+                    class="layout vertical center-center self-start uploadSection">
+                    <yp-!file-upload
+                      id="videoFileUpload"
+                      container-type="posts"
+                      .group="${this.group}"
+                      raised
+                      .uploadLimitSeconds="${
+                        this.group!.configuration.videoPostUploadLimitSec
+                      }"
+                      videoUpload
+                      buttonIcon="videocam"
+                      .buttonText="${this.t('uploadVideo')}"
+                      method="POST"
+                      @success="${this._videoUploaded}">
+                    </yp-file-upload>
+                    <div
+                      class="videoUploadDisclamer"
+                      ?hidden="${
+                        !this.group!.configuration.showVideoUploadDisclaimer ||
+                        !this.uploadedVideoId
+                      }">
+                      ${this.t('videoUploadDisclaimer')}
+                    </div>
+                  </div>
+                `
+              : nothing}
+            ${this.group!.configuration.allowPostAudioUploads
+              ? html`
+                  <div
+                    class="layout vertical center-center self-start uploadSection">
+                    <yp-file-upload
+                      id="audioFileUpload"
+                      containerType="posts"
+                      .group="${this.group}"
+                      raised
+                      .uploadLimitSeconds="${this.group!.configuration
+                        .audioPostUploadLimitSec}"
+                      .multi="false"
+                      audioUpload
+                      method="POST"
+                      buttonIcon="keyboard_voice"
+                      .buttonText="${this.t('uploadAudio')}"
+                      @success="${this._audioUploaded}">
+                    </yp-file-upload>
+                  </div>
+                `
+              : nothing}
+          </div>
+          <br />
+          <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
+          <paper-radio-group
+            id="coverMediaType"
+            name="coverMediaType"
+            class="coverMediaType layout horizontal wrap"
+            .selected="${this.selectedCoverMediaType}">
+            <paper-radio-button name="none"
+              >${this.t('post.cover.none')}</paper-radio-button
+            >
+            <paper-radio-button
+              name="image"
+              ?hidden="${!this.uploadedHeaderImageId}"
+              >${this.t('post.cover.image')}</paper-radio-button
+            >
+            <paper-radio-button name="video" ?hidden="${!this.showVideoCover}"
+              >${this.t('postCoverVideo')}</paper-radio-button
+            >
+            <paper-radio-button name="audio" ?hidden="${!this.showAudioCover}"
+              >${this.t('postCoverAudio')}</paper-radio-button
+            >
+
+            ${this.location
+              ? html`
+                  <paper-radio-button name="map"
+                    >${this.t('post.cover.map')}</paper-radio-button
+                  >
+                  <paper-radio-button name="streetView"
+                    >${this.t('post.cover.streetview')}</paper-radio-button
+                  >
+                `
+              : nothing}
+          </paper-radio-group>
+        </div>
+      </section>
+    `;
+  }
+
+  renderCurrentTabPage(): TemplateResult | undefined | {} {
+    let page: TemplateResult | undefined | {};
+
+    switch (this.selected) {
+      case EditPostTabs.Description:
+        page = this.renderDescriptionTab();
+        break;
+      case EditPostTabs.Point:
+        page = this.renderPointTab();
+        break;
+      case EditPostTabs.Location:
+        page = this.renderLocationTab();
+        break;
+      case EditPostTabs.Media:
+        page = this.renderMediaTab();
+        break;
+    }
+
+    return page;
+  }
+
+  renderHiddenInputs() {
+    return html` <input
+        type="hidden"
+        name="location"
+        .value="${this.encodedLocation || ''}" />
+      <input
+        type="hidden"
+        name="coverMediaType"
+        .value="${this.selectedCoverMediaType}" />
+      <input
+        type="hidden"
+        name="uploadedHeaderImageId"
+        .value="${this.uploadedHeaderImageId
+          ? this.uploadedHeaderImageId.toString()
+          : ''}" />
+      <input
+        type="hidden"
+        name="uploadedDocumentUrl"
+        .value="${this.uploadedDocumentUrl || ''}" />
+      <input
+        type="hidden"
+        name="uploadedDocumentFilename"
+        .value="${this.uploadedDocumentFilename || ''}" />
+      <input
+        type="hidden"
+        name="structuredAnswers"
+        .value="${this.structuredAnswersString}" />
+      <input
+        type="hidden"
+        name="structuredAnswersJson"
+        .value="${this.structuredAnswersJson}" />`;
   }
 
   render() {
@@ -323,442 +768,13 @@ export class YpPostEdit extends YpEditBase {
             .next-action-text="${this.t('next')}"
             .snackbarText="${this.snackbarText}"
             .params="${this.params}">
-            <mwc-tab-bar
-              ?title-disabled="${this.group.configuration
-                .hideNameInputAndReplaceWith}"
-              .selected="${this.selected}"
-              id="paperTabs"
-              focused
-              ?hidden="${this.hasOnlyOneTab}">
-              <paper-tab><span>${this.t('post.yourPost')}</span></paper-tab>
-
-              ${this.newPointShown
-                ? html`
-                    <paper-tab>
-                      <div class="layout vertical center-center">
-                        <div>
-                          ${this.t('post.yourPoint')}
-                        </div>
-                        <div
-                          class="optional"
-                          ?hidden="${!this.group.configuration
-                            .newPointOptional}">
-                          ${this.t('optional')}
-                        </div>
-                      </div>
-                    </paper-tab>
-                  `
-                : nothing}
-              ${!this.locationHidden
-                ? html` <paper-tab>${this.t('post.location')}</paper-tab> `
-                : nothing}
-              ${!this.mediaHidden
-                ? html`
-                    <paper-tab>
-                      <div>
-                        ${this.t('media')}
-                      </div>
-                      <div class="videoCamIcon">
-                        <iron-icon
-                          class="videoCam"
-                          icon="videocam"
-                          style="color: #555"></iron-icon>
-                      </div>
-                    </paper-tab>
-                  `
-                : nothing}
-            </mwc-tab-bar>>
-
             <div
               class="layout vertical wrap topNewPostContainer"
               ?no-title="${this.group.configuration
                 .hideNameInputAndReplaceWith}">
-
-              <iron-pages
-                id="pages"
-                class="layout horizontal"
-                .selected="${this.selected}">
-                <section>
-                  <div class="layout vertical flex">
-                    ${!this.group.configuration.hideNameInputAndReplaceWith
-                      ? html`
-                          <input
-                            type="hidden"
-                            name="name"
-                            .value="${this.replacedName
-                              ? this.replacedName
-                              : ''}" />
-                        `
-                      : html`
-                          <mwc-textfield
-                            id="name"
-                            required
-                            minlength="3"
-                            name="name"
-                            type="text"
-                            .label="${this.t('title')}"
-                            .value="${this.post.name}"
-                            maxlength="60"
-                            charCounter>
-                          </mwc-textfield>
-                        `}
-                    ${this.showCategories && this.group.Categories
-                      ? html`
-                          <paper-dropdown-menu
-                            class="categoryDropDown"
-                            .label="${this.t('category.select')}"
-                            ?required="${this.group.configuration
-                              .makeCategoryRequiredOnNewPost}">
-                            <paper-listbox
-                              slot="dropdown-content"
-                              .selected="${this.selectedCategoryArrayId}">
-                              ${this.group.Categories.map(
-                                category => html`
-                                  <paper-item .data-category-id="${category.id}"
-                                    >${category.name}</paper-item
-                                  >
-                                `
-                              )}
-                            </paper-listbox>
-                          </paper-dropdown-menu>
-                          <input
-                            type="hidden"
-                            name="categoryId"
-                            .value="${this.selectedCategoryId
-                              ? this.selectedCategoryId.toString()
-                              : ''}" />
-                        `
-                      : nothing}
-                    ${this.postDescriptionLimit
-                      ? html`
-                          <mwc-textarea
-                            id="description"
-                            ?hidden="${this.structuredQuestions != null}"
-                            ?required="${this.structuredQuestions == null}"
-                            minlength="3"
-                            name="description"
-                            .value="${this.post.description}"
-                            .label="${this.t('post.description')}"
-                            aria-label="${this.t('post.description')}"
-                            @value-changed="${this._resizeScrollerIfNeeded}"
-                            char-counter
-                            rows="2"
-                            max-rows="5"
-                            maxrows="5"
-                            maxlength="${this.postDescriptionLimit}">
-                          </mwc-textarea>
-
-                          <div
-                            class="horizontal end-justified layout postEmoji"
-                            ?hidden="${this.group.configuration.hideEmoji}">
-                            <emoji-selector
-                              id="emojiSelectorDescription"
-                              ?hidden="${this.structuredQuestions !=
-                              undefined}"></emoji-selector>
-                          </div>
-                        `
-                      : nothing}
-                    ${this.structuredQuestions != undefined
-                      ? html`
-                          ${this.structuredQuestions.map(
-                            (
-                              question: YpStructuredQuestionData,
-                              index: number
-                            ) => html`
-                              <yp-structured-question-edit
-                                .index="${index}"
-                                is-from-new-post
-                                use-small-font
-                                id="structuredQuestionContainer_${index}"
-                                ?dontFocusFirstQuestion="${!this.group!
-                                  .configuration.hideNameInputAndReplaceWith}"
-                                @resize-scroller="${this
-                                  ._resizeScrollerIfNeeded}"
-                                .structuredAnswers="${this
-                                  .initialStructuredAnswersJson}"
-                                ?isLastRating="${this._isLastRating(index)}"
-                                ?isFirstRating="${this._isFirstRating(index)}"
-                                ?hideQuestionIndex="${this.group!.configuration
-                                  .hideQuestionIndexOnNewPost}"
-                                .question="${question}">
-                              </yp-structured-question-edit>
-                            `
-                          )}
-                        `
-                      : nothing}
-                    ${this.group.configuration.attachmentsEnabled
-                      ? html`
-                          <yp-file-upload
-                            id="attachmentFileUpload"
-                            raised
-                            accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*"
-                            .target="/api/groups/${this.group
-                              .id}/upload_document"
-                            method="POST"
-                            @success="${this._documentUploaded}">
-                            <iron-icon
-                              class="icon"
-                              icon="attach_file"></iron-icon>
-                            <span>${this.t('uploadAttachment')}</span>
-                          </yp-file-upload>
-
-                          ${this.post.data?.attachment?.url
-                            ? html`
-                                <paper-checkbox name="deleteAttachment"
-                                  >${this.t('deleteAttachment')}:
-                                  ${this.post.data.attachment
-                                    .filename}</paper-checkbox
-                                >
-                              `
-                            : nothing}
-                        `
-                      : nothing}
-                    ${this.group.configuration.moreContactInformation
-                      ? html`
-                          <h2 class="contactInfo">
-                            ${this.t('contactInformation')}
-                          </h2>
-                          <paper-input
-                            id="contactName"
-                            name="contactName"
-                            type="text"
-                            .label="${this.t('user.name')}"
-                            char-counter>
-                          </paper-input>
-                          <paper-input
-                            id="contactEmail"
-                            name="contactEmail"
-                            type="text"
-                            .label="${this.t('user.email')}"
-                            char-counter>
-                          </paper-input>
-                          <paper-input
-                            id="contactTelephone"
-                            name="contacTelephone"
-                            type="text"
-                            .label="${this.t('contactTelephone')}"
-                            maxlength="20"
-                            char-counter>
-                          </paper-input>
-                          <paper-input
-                            id="contactAddress"
-                            name="contactAddress"
-                            type="text"
-                            ?hidden="${!this.group.configuration
-                              .moreContactInformationAddress}"
-                            .label="${this.t('contactAddress')}"
-                            maxlength="300"
-                            char-counter>
-                          </paper-input>
-                        `
-                      : nothing}
-                  </div>
-                </section>
-
-                ${this.newPointShown
-                  ? html`
-                      <section class="subContainer">
-                        <mwc-textarea
-                          id="pointFor"
-                          ?required="${!this.group.configuration
-                            .newPointOptional}"
-                          minlength="3"
-                          name="pointFor"
-                          .value="${this.post.pointFor || ''}"
-                          .label="${this.t('point.for')}"
-                          aria-label="${this.t('point.for')}"
-                          char-counter
-                          rows="2"
-                          max-rows="5"
-                          .maxlength="${this.pointMaxLength}">
-                        </mwc-textarea>
-                        <div
-                          class="horizontal end-justified layout pointEmoji"
-                          ?hidden="${this.group.configuration.hideEmoji}">
-                          <emoji-selector
-                            id="emojiSelectorPointFor"></emoji-selector>
-                        </div>
-                      </section>
-                    `
-                  : nothing}
-                ${this.mapActive
-                  ? html`
-                      <yp-post-location
-                        .encodedLocation="${this.encodedLocation}"
-                        .location="${this.location}"
-                        .group="${this.group}"
-                        .post="${this.post}"></yp-post-location>
-                    `
-                  : nothing}
-
-                ${!this.locationHidden
-                  ? html`
-                      <section>
-                        ${this.mapActive
-                          ? html`
-                              <yp-post-location
-                                .encodedLocation="${this.encodedLocation}"
-                                .location="${this.location}"
-                                .group="${this.group}"
-                                .post="${this.post}"></yp-post-location>
-                            `
-                          : nothing}
-                      </section>
-                    `
-                  : nothing}
-
-                <section>
-                  <div class="layout vertical center-center">
-                    <div class="layout horizontal center-center wrap">
-                      <div
-                        class="layout vertical center-center self-start uploadSection"
-                        ?hidden="${this.group.configuration
-                          .hidePostImageUploads}">
-                        <yp-file-upload
-                          id="imageFileUpload"
-                          raised
-                          target="/api/images?itemType=post-header"
-                          method="POST"
-                          @success="${this._imageUploaded}">
-                          <iron-icon
-                            class="icon"
-                            icon="photo-camera"></iron-icon>
-                          <span>${this.t('image.upload')}</span>
-                        </yp-file-upload>
-                        <div class="imageSizeInfo layout horizontal">
-                          <div>864 x 486 (16/9 widescreen)</div>
-                        </div>
-                        <div>${this.t('post.cover.imageInfo')}</div>
-                      </div>
-
-                      ${this.group.configuration.allowPostVideoUploads
-                        ? html`
-                            <div
-                              class="layout vertical center-center self-start uploadSection">
-                              <yp-file-upload
-                                id="videoFileUpload"
-                                container-type="posts"
-                                .group="${this.group}"
-                                raised
-                                .uploadLimitSeconds="${this.group.configuration
-                                  .videoPostUploadLimitSec}"
-                                videoUpload
-                                method="POST"
-                                @success="${this._videoUploaded}">
-                                <iron-icon
-                                  class="icon"
-                                  icon="videocam"></iron-icon>
-                                <span>${this.t('uploadVideo')}</span>
-                              </yp-file-upload>
-                              <div
-                                class="videoUploadDisclamer"
-                                ?hidden="${!this.group.configuration
-                                  .showVideoUploadDisclaimer ||
-                                !this.uploadedVideoId}">
-                                ${this.t('videoUploadDisclaimer')}
-                              </div>
-                            </div>
-                          `
-                        : nothing}
-                      ${this.group.configuration.allowPostAudioUploads
-                        ? html`
-                            <div
-                              class="layout vertical center-center self-start uploadSection">
-                              <yp-file-upload
-                                id="audioFileUpload"
-                                container-type="posts"
-                                .group="${this.group}"
-                                raised
-                                .uploadLimitSeconds="${this.group.configuration
-                                  .audioPostUploadLimitSec}"
-                                .multi="false"
-                                audioUpload
-                                method="POST"
-                                @success="${this._audioUploaded}">
-                                <iron-icon
-                                  class="icon"
-                                  .icon="keyboard-voice"></iron-icon>
-                                <span>${this.t('uploadAudio')}</span>
-                              </yp-file-upload>
-                            </div>
-                          `
-                        : nothing}
-                    </div>
-                    <br />
-                    <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
-                    <paper-radio-group
-                      id="coverMediaType"
-                      name="coverMediaType"
-                      class="coverMediaType layout horizontal wrap"
-                      .selected="${this.selectedCoverMediaType}">
-                      <paper-radio-button name="none"
-                        >${this.t('post.cover.none')}</paper-radio-button
-                      >
-                      <paper-radio-button
-                        name="image"
-                        ?hidden="${!this.uploadedHeaderImageId}"
-                        >${this.t('post.cover.image')}</paper-radio-button
-                      >
-                      <paper-radio-button
-                        name="video"
-                        ?hidden="${!this.showVideoCover}"
-                        >${this.t('postCoverVideo')}</paper-radio-button
-                      >
-                      <paper-radio-button
-                        name="audio"
-                        ?hidden="${!this.showAudioCover}"
-                        >${this.t('postCoverAudio')}</paper-radio-button
-                      >
-
-                      ${this.location
-                        ? html`
-                            <paper-radio-button name="map"
-                              >${this.t('post.cover.map')}</paper-radio-button
-                            >
-                            <paper-radio-button name="streetView"
-                              >${this.t(
-                                'post.cover.streetview'
-                              )}</paper-radio-button
-                            >
-                          `
-                        : nothing}
-                    </paper-radio-group>
-                  </div>
-                </section>
-              </iron-pages>
-
-
-              <input
-                type="hidden"
-                name="location"
-                .value="${this.encodedLocation || ''}" />
-              <input
-                type="hidden"
-                name="coverMediaType"
-                .value="${this.selectedCoverMediaType}" />
-              <input
-                type="hidden"
-                name="uploadedHeaderImageId"
-                .value="${this.uploadedHeaderImageId
-                  ? this.uploadedHeaderImageId.toString()
-                  : ''}" />
-              <input
-                type="hidden"
-                name="uploadedDocumentUrl"
-                .value="${this.uploadedDocumentUrl || ''}" />
-              <input
-                type="hidden"
-                name="uploadedDocumentFilename"
-                .value="${this.uploadedDocumentFilename || ''}" />
-              <input
-                type="hidden"
-                name="structuredAnswers"
-                .value="${this.structuredAnswersString}" />
-              <input
-                type="hidden"
-                name="structuredAnswersJson"
-                .value="${this.structuredAnswersJson}" />
+              ${this.renderTabs()} ${this.renderCurrentTabPage()}}
             </div>
+            ${this.renderHiddenInputs()}
           </yp-edit-dialog>
 
           ${this.group.configuration.alternativeTextForNewIdeaButtonHeader
@@ -790,7 +806,7 @@ export class YpPostEdit extends YpEditBase {
               `
             : nothing}
         `
-      : nothing;
+      : nothing
   }
 
   //TODO: Investigate if any are missing .html version of listeners
@@ -811,12 +827,6 @@ export class YpPostEdit extends YpEditBase {
     this.removeListener('yp-open-to-unique-id', this._openToId);
     this.removeListener('yp-goto-next-index', this._goToNextIndex);
   }
-
-  /*
-  observers: [
-    '_setupTranslation(language,t)'
-  ],
-*/
 
   _isLastRating(index: number) {
     return (
@@ -858,7 +868,8 @@ export class YpPostEdit extends YpEditBase {
   _skipToId(event: CustomEvent, showItems: boolean) {
     let foundFirst = false;
     if (this.$$('#surveyContainer')) {
-      const children = this.$$('#surveyContainer')!.children as unknown as Array<YpStructuredQuestionEdit>
+      const children = (this.$$('#surveyContainer')!
+        .children as unknown) as Array<YpStructuredQuestionEdit>;
       for (let i = 0; i < children.length; i++) {
         const toId = event.detail.toId.replace(/]/g, '');
         const fromId = event.detail.fromId.replace(/]/g, '');
@@ -957,13 +968,13 @@ export class YpPostEdit extends YpEditBase {
     this.liveQuestionIds.forEach(liveIndex => {
       const questionElement = this.$$(
         '#structuredQuestionContainer_' + liveIndex
-      ) as YpStructuredQuestionEdit
+      ) as YpStructuredQuestionEdit;
       if (questionElement) {
         const answer = questionElement.getAnswer();
         if (answer) {
           answers.push(answer);
         } else {
-          console.error("Can't find answer to question")
+          console.error("Can't find answer to question");
         }
       }
     });

@@ -559,3 +559,7 @@ interface YpLocationData {
   latitude: string;
   longitude: string;
 }
+
+interface YpSurveyPostResponse {
+  error?: string;
+}

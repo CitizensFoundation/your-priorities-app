@@ -439,4 +439,21 @@ export class YpServerApi extends YpCodeBase {
       false
     );
   }
+
+  public getSurveyGroup(surveyGroupId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/groups/${surveyGroupId}/survey`
+    );
+  }
+
+  public postSurvey(surveyGroupId: number, body: object) {
+    return this.fetchWrapper(
+      `/groups/${surveyGroupId}/survey`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
 }

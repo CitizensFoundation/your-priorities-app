@@ -133,14 +133,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           margin-bottom: 32px;
         }
 
-        mwc-radio-group {
+        .radioGroup {
           margin-top: 16px;
           margin-bottom: 16px;
           font-size: 16px;
         }
 
-        mwc-radio-button {
-          --mwc-radio-button-label-color: #333;
+        mwc-radio {
+          --mwc-radio-label-color: #333;
           font-size: 16px;
         }
 
@@ -238,7 +238,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           }
         }
 
-        mwc-radio-button {
+        mwc-radio {
           margin-left: 24px;
         }
 
@@ -280,7 +280,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         type="text"
         .allowedPattern="${this.isNumberSubType ? '[0-9]' : ''}"
         ?half-width-desktop="${this.question.halfWidthDesktop}"
-        @value-changed="${this._debounceChangeEvent}"
+        @change="${this._debounceChangeEvent}"
         ?required="${this.question.required}"
         .maxlength="${this.question.maxLength || 100000}">
       </mwc-textfield>
@@ -312,7 +312,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         @focus="${this.setLongFocus}"
         @blur="${this.setLongUnFocus}"
         .useSmallFont="${this.useSmallFont}"
-        @value-changed="${this._debounceChangeEvent}"
+        @change="${this._debounceChangeEvent}"
         rows="3"
         max-rows="5"
         maxrows="5"
@@ -390,7 +390,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             ?required="${this.question.required}"
             id="structuredQuestion_${this.index}"
             .name="structuredQuestionRatioGroup_${this.index}"
-            class="${this._getRadioClass()}">
+            class="${this._getRadioClass()} radioGroup">
             ${this.question.radioButtons.map(
               (radioButton, buttonIndex) => html`
                 ${!radioButton.isSpecify
@@ -400,7 +400,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                       <mwc-textfield
                         class="specifyInput"
                         hidden
-                        @value-changed="${this._debounceChangeEvent}"
+                        @change="${this._debounceChangeEvent}"
                         .maxlength="${this.question.maxLength || 5000}"
                         .allowedPattern="${radioButton.subType === 'number'
                           ? '[0-9]'
@@ -447,7 +447,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                       <mwc-textfield
                         class="specifyInput specifyCheckBox"
                         hidden
-                        @value-changed="${this._debounceChangeEvent}"
+                        @change="${this._debounceChangeEvent}"
                         .type="${checkbox.subType || 'text'}"
                         id="structuredQuestion_${this
                           .index}_${buttonIndex}_checkboxOther"></mwc-textfield>

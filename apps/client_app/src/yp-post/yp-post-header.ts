@@ -482,7 +482,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
       this.post.Group.configuration &&
       this.post.Group.configuration.structuredQuestionsJson
     ) {
-      const questionHash: Record<number, YpStructuredQuestionData> = {};
+      const questionHash: Record<string, YpStructuredQuestionData> = {};
       let outText = '';
       this.post.Group.configuration.structuredQuestionsJson.forEach(
         question => {
