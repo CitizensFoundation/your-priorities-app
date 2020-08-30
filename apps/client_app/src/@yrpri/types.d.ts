@@ -23,6 +23,7 @@ interface YpStructuredQuestionData {
   subType?: string;
   maxLength?: string;
   value?: string;
+  questionIndex?: number;
 }
 
 

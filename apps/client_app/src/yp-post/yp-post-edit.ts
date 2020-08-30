@@ -24,49 +24,49 @@ import { TextArea } from '@material/mwc-textarea';
 @customElement('yp-post-edit')
 export class YpPostEdit extends YpEditBase {
   @property({ type: String })
-  action = '/posts'
+  action = '/posts';
 
   @property({ type: Boolean })
-  newPost = false
+  newPost = false;
 
   @property({ type: Array })
-  initialStructuredAnswersJson: Array<YpStructuredAnswer> | undefined
+  initialStructuredAnswersJson: Array<YpStructuredAnswer> | undefined;
 
   @property({ type: Array })
-  structuredQuestions: Array<YpStructuredQuestionData> | undefined
+  structuredQuestions: Array<YpStructuredQuestionData> | undefined;
 
   @property({ type: Object })
-  post: YpPostData | undefined
+  post: YpPostData | undefined;
 
   @property({ type: Object })
-  group: YpGroupData | undefined
+  group: YpGroupData | undefined;
 
   @property({ type: Boolean })
-  locationHidden = false
+  locationHidden = false;
 
   @property({ type: Object })
-  location: YpLocationData | undefined
+  location: YpLocationData | undefined;
 
   @property({ type: String })
-  encodedLocation: string | undefined
+  encodedLocation: string | undefined;
 
   @property({ type: Number })
-  selectedCategoryArrayId: number | undefined
+  selectedCategoryArrayId: number | undefined;
 
   @property({ type: Number })
-  selectedCategoryId: number | undefined
+  selectedCategoryId: number | undefined;
 
   @property({ type: Number })
-  uploadedVideoId: number | undefined
+  uploadedVideoId: number | undefined;
 
   @property({ type: Number })
-  uploadedAudioId: number | undefined
+  uploadedAudioId: number | undefined;
 
   @property({ type: Number })
-  currentVideoId: number | undefined
+  currentVideoId: number | undefined;
 
   @property({ type: Number })
-  currentAudioId: number | undefined
+  currentAudioId: number | undefined;
 
   @property({ type: Number })
   selected = 0;
@@ -78,28 +78,28 @@ export class YpPostEdit extends YpEditBase {
   hasOnlyOneTab = false;
 
   @property({ type: Number })
-  postDescriptionLimit: number | undefined
+  postDescriptionLimit: number | undefined;
 
   @property({ type: String })
-  sructuredAnswersString: string | undefined
+  sructuredAnswersString: string | undefined;
 
   @property({ type: Array })
-  structuredAnswersJson = ''
+  structuredAnswersJson = '';
 
   @property({ type: String })
-  structuredAnswersString = ''
+  structuredAnswersString = '';
 
   @property({ type: String })
-  uploadedDocumentUrl: string | undefined
+  uploadedDocumentUrl: string | undefined;
 
   @property({ type: String })
-  uploadedDocumentFilename: string | undefined
+  uploadedDocumentFilename: string | undefined;
 
   @property({ type: String })
-  selectedCoverMediaType = 'none'
+  selectedCoverMediaType = 'none';
 
   @property({ type: Number })
-  uploadedHeaderImageId: number | undefined
+  uploadedHeaderImageId: number | undefined;
 
   emailValidationPattern =
     '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$';
@@ -322,13 +322,13 @@ export class YpPostEdit extends YpEditBase {
             .next-action-text="${this.t('next')}"
             .snackbarText="${this.snackbarText}"
             .params="${this.params}">
-            <paper-tabs
+            <mwc-tab-bar
               ?title-disabled="${this.group.configuration
                 .hideNameInputAndReplaceWith}"
               .selected="${this.selected}"
               id="paperTabs"
-              ?focused
-              hidden="${this.hasOnlyOneTab}">
+              focused
+              ?hidden="${this.hasOnlyOneTab}">
               <paper-tab><span>${this.t('post.yourPost')}</span></paper-tab>
 
               ${this.newPointShown
@@ -366,12 +366,13 @@ export class YpPostEdit extends YpEditBase {
                     </paper-tab>
                   `
                 : nothing}
-            </paper-tabs>
+            </mwc-tab-bar>>
 
             <div
               class="layout vertical wrap topNewPostContainer"
               ?no-title="${this.group.configuration
                 .hideNameInputAndReplaceWith}">
+
               <iron-pages
                 id="pages"
                 class="layout horizontal"
@@ -383,10 +384,12 @@ export class YpPostEdit extends YpEditBase {
                           <input
                             type="hidden"
                             name="name"
-                            value="${this.replacedName}" />
+                            .value="${this.replacedName
+                              ? this.replacedName
+                              : ''}" />
                         `
                       : html`
-                          <paper-input
+                          <mwc-textfield
                             id="name"
                             required
                             minlength="3"
@@ -395,8 +398,8 @@ export class YpPostEdit extends YpEditBase {
                             .label="${this.t('title')}"
                             .value="${this.post.name}"
                             maxlength="60"
-                            char-counter>
-                          </paper-input>
+                            charCounter>
+                          </mwc-textfield>
                         `}
                     ${this.showCategories && this.group.Categories
                       ? html`
@@ -418,17 +421,19 @@ export class YpPostEdit extends YpEditBase {
                             </paper-listbox>
                           </paper-dropdown-menu>
                           <input
-                            .type="hidden"
-                            .name="categoryId"
-                            .value="${this.selectedCategoryId}" />
+                            type="hidden"
+                            name="categoryId"
+                            .value="${this.selectedCategoryId
+                              ? this.selectedCategoryId.toString()
+                              : ''}" />
                         `
                       : nothing}
                     ${this.postDescriptionLimit
                       ? html`
                           <mwc-textarea
                             id="description"
-                            ?hidden="${this.structuredQuestions!=null}"
-                            ?required="${this.structuredQuestions==null}"
+                            ?hidden="${this.structuredQuestions != null}"
+                            ?required="${this.structuredQuestions == null}"
                             minlength="3"
                             name="description"
                             .value="${this.post.description}"
@@ -447,12 +452,12 @@ export class YpPostEdit extends YpEditBase {
                             ?hidden="${this.group.configuration.hideEmoji}">
                             <emoji-selector
                               id="emojiSelectorDescription"
-                              ?hidden="${this
-                                .structuredQuestions!=undefined}"></emoji-selector>
+                              ?hidden="${this.structuredQuestions !=
+                              undefined}"></emoji-selector>
                           </div>
                         `
                       : nothing}
-                    ${this.structuredQuestions!=undefined
+                    ${this.structuredQuestions != undefined
                       ? html`
                           ${this.structuredQuestions.map(
                             (
@@ -472,7 +477,7 @@ export class YpPostEdit extends YpEditBase {
                                   .initialStructuredAnswersJson}"
                                 ?isLastRating="${this._isLastRating(index)}"
                                 ?isFirstRating="${this._isFirstRating(index)}"
-                              ?hideQuestionIndex="${this.group!.configuration
+                                ?hideQuestionIndex="${this.group!.configuration
                                   .hideQuestionIndexOnNewPost}"
                                 .question="${question}">
                               </yp-structured-question-edit>
@@ -558,7 +563,7 @@ export class YpPostEdit extends YpEditBase {
                             .newPointOptional}"
                           minlength="3"
                           name="pointFor"
-                          .value="${this.post.pointFor}"
+                          .value="${this.post.pointFor || ''}"
                           .label="${this.t('point.for')}"
                           aria-label="${this.t('point.for')}"
                           char-counter
@@ -584,6 +589,7 @@ export class YpPostEdit extends YpEditBase {
                         .post="${this.post}"></yp-post-location>
                     `
                   : nothing}
+
                 ${!this.locationHidden
                   ? html`
                       <section>
@@ -610,8 +616,8 @@ export class YpPostEdit extends YpEditBase {
                         <yp-file-upload
                           id="imageFileUpload"
                           raised
-                          .target="/api/images?itemType=post-header"
-                          .method="POST"
+                          target="/api/images?itemType=post-header"
+                          method="POST"
                           @success="${this._imageUploaded}">
                           <iron-icon
                             class="icon"
@@ -719,10 +725,12 @@ export class YpPostEdit extends YpEditBase {
                   </div>
                 </section>
               </iron-pages>
+
+
               <input
                 type="hidden"
                 name="location"
-                .value="${this.encodedLocation}" />
+                .value="${this.encodedLocation || ''}" />
               <input
                 type="hidden"
                 name="coverMediaType"
@@ -730,15 +738,17 @@ export class YpPostEdit extends YpEditBase {
               <input
                 type="hidden"
                 name="uploadedHeaderImageId"
-                .value="${this.uploadedHeaderImageId}" />
+                .value="${this.uploadedHeaderImageId
+                  ? this.uploadedHeaderImageId.toString()
+                  : ''}" />
               <input
                 type="hidden"
                 name="uploadedDocumentUrl"
-                .value="${this.uploadedDocumentUrl}" />
+                .value="${this.uploadedDocumentUrl || ''}" />
               <input
                 type="hidden"
                 name="uploadedDocumentFilename"
-                .value="${this.uploadedDocumentFilename}" />
+                .value="${this.uploadedDocumentFilename || ''}" />
               <input
                 type="hidden"
                 name="structuredAnswers"
