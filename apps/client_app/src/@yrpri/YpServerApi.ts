@@ -279,6 +279,17 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
+  public completeMediaPost(mediaType: string, method: string, postId: number, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${mediaType}/${postId}/completeAndAddToPost`,
+      {
+        method: method,
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
   public getPoints(postId: number) {
     return this.fetchWrapper(this.baseUrlPath + `/posts/${postId}/points`);
   }
