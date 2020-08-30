@@ -16,9 +16,18 @@ interface YpCollectionConfiguration {
   hideAllTabs?: boolean;
 }
 
-interface YpStructuredQuestion {
-  uniqueId: number;
+interface YpStructuredQuestionData {
+  uniqueId?: number;
   text: string;
+  type?: string;
+  subType?: string;
+  maxLength?: string;
+  value?: string;
+}
+
+
+interface YpStructuredQuestionJson extends YpStructuredQuestionData {
+  uniqueId: number;
   type: string;
 }
 
@@ -55,7 +64,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hidePostCover?: boolean;
   hidePostDescription?: boolean;
   allowWhatsAppSharing?: boolean;
-  structuredQuestionsJson?: Array<YpStructuredQuestion>;
+  structuredQuestionsJson?: Array<YpStructuredQuestionJson>;
   hideVoteCount?: boolean;
   customVoteUpHoverText?: string;
   customVoteDownHoverText?: string;
@@ -98,6 +107,13 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideNameInputAndReplaceWith?: string;
   customThankYouTextNewPosts?: string;
   postDescriptionLimit?: number;
+  newPointOptional?: boolean;
+  moreContactInformationAddress?: boolean;
+  hideQuestionIndexOnNewPost?: boolean;
+  makeCategoryRequiredOnNewPost?: boolean;
+  hidePostImageUploads?: boolean;
+  allowPostVideoUploads?: boolean;
+  allowPostAudioUploads?: boolean;
 }
 
 
@@ -498,6 +514,7 @@ interface YpEditFormParams {
   videoId?: number;
   organizationId?: number;
   userId?: number;
+  group?: YpGroupData;
   categoryId?: number;
   userImages?: Array<YpImageData>;
   statusChange?: string;

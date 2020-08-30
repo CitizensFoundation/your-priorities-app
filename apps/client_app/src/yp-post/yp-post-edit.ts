@@ -81,7 +81,7 @@ export class YpPostEdit extends YpEditBase {
   sructuredAnswers: string | undefined;
 
   @property({ type: Array })
-  sructuredAnswersJson: Array<YpStructuredAnswer> | undefined;
+  structuredAnswersJson: Array<YpStructuredAnswer> | undefined;
 
   @property({ type: String })
   uploadedDocumentUrl: string | undefined;
@@ -296,7 +296,7 @@ export class YpPostEdit extends YpEditBase {
   }
 
   render() {
-    return html`
+    return this.group ? html`
       <yp-edit-dialog
         name="postEdit"
         double-width
@@ -306,7 +306,7 @@ export class YpPostEdit extends YpEditBase {
         .use-next-tab-action="${this.newPost}"
         @next-tab-action="${this._nextTab}"
         .method="${this.method}"
-        .title="${this.editHeaderText}"
+        .title="${this.editHeaderText ? this.editHeaderText : ''}"
         .saveText="${this.saveText}"
         class="container"
         custom-submit
@@ -387,7 +387,7 @@ export class YpPostEdit extends YpEditBase {
                         char-counter>
                       </paper-input>
                     `}
-                ${this._showCategories
+                ${this.showCategories && this.group.Categories
                   ? html`
                       <paper-dropdown-menu
                         class="categoryDropDown"
@@ -400,8 +400,8 @@ export class YpPostEdit extends YpEditBase {
                           ${this.group.Categories.map(
                             category => html`
                               <paper-item
-                                .data-category-id="${this.category.id}"
-                                >${this.category.name}</paper-item
+                                .data-category-id="${category.id}"
+                                >${category.name}</paper-item
                               >
                             `
                           )}
@@ -422,9 +422,6 @@ export class YpPostEdit extends YpEditBase {
                         minlength="3"
                         name="description"
                         .value="${this.post.description}"
-                        ?always-float-label="${this._floatIfValueOrIE(
-                          post.description
-                        )}"
                         .label="${this.t('post.description')}"
                         aria-label="${this.t('post.description')}"
                         @value-changed="${this._resizeScrollerIfNeeded}"
@@ -448,22 +445,22 @@ export class YpPostEdit extends YpEditBase {
                 ${this.hasStructuredQuestions
                   ? html`
                       ${this.structuredQuestions.map(
-                        question => html`
+                        (question: YpStructuredQuestion, index: number) => html`
                           <yp-structured-question-edit
-                            .index="${this.index}"
+                            .index="${index}"
                             is-from-new-post
                             use-small-font
-                            id="structuredQuestionContainer_${this.index}"
-                            ?dontFocusFirstQuestion="${!this.group.configuration
+                            id="structuredQuestionContainer_${index}"
+                            ?dontFocusFirstQuestion="${!this.group!.configuration
                               .hideNameInputAndReplaceWith}"
                             @resize-scroller="${this._resizeScrollerIfNeeded}"
                             .structuredAnswers="${this
                               .initialStructuredAnswersJson}"
-                            ?isLastRating="${this._isLastRating(this.index)}"
-                            isFirstRating="${this._isFirstRating(this.index)}"
+                            ?isLastRating="${this._isLastRating(index)}"
+                            ?isFirstRating="${this._isFirstRating(index)}"
                             ?hideQuestionIndex="${this.group.configuration
                               .hideQuestionIndexOnNewPost}"
-                            .question="${this.question}">
+                            .question="${question}">
                           </yp-structured-question-edit>
                         `
                       )}
@@ -621,12 +618,11 @@ export class YpPostEdit extends YpEditBase {
                             id="videoFileUpload"
                             container-type="posts"
                             .group="${this.group}"
-                            .raised="true"
+                            raised
                             .uploadLimitSeconds="${this.group.configuration
                               .videoPostUploadLimitSec}"
-                            .multi="false"
-                            .video-upload=""
-                            .method="POST"
+                            videoUpload
+                            method="POST"
                             @success="${this._videoUploaded}">
                             <iron-icon class="icon" icon="videocam"></iron-icon>
                             <span>${this.t('uploadVideo')}</span>
@@ -672,31 +668,31 @@ export class YpPostEdit extends YpEditBase {
                   name="coverMediaType"
                   class="coverMediaType layout horizontal wrap"
                   .selected="${this.selectedCoverMediaType}">
-                  <paper-radio-button .name="none"
+                  <paper-radio-button name="none"
                     >${this.t('post.cover.none')}</paper-radio-button
                   >
                   <paper-radio-button
-                    .name="image"
+                    name="image"
                     ?hidden="${!this.uploadedHeaderImageId}"
                     >${this.t('post.cover.image')}</paper-radio-button
                   >
                   <paper-radio-button
-                    .name="video"
+                    name="video"
                     ?hidden="${!this.showVideoCover}"
                     >${this.t('postCoverVideo')}</paper-radio-button
                   >
                   <paper-radio-button
-                    .name="audio"
+                    name="audio"
                     ?hidden="${!this.showAudioCover}"
                     >${this.t('postCoverAudio')}</paper-radio-button
                   >
 
                   ${this.location
                     ? html`
-                        <paper-radio-button .name="map"
+                        <paper-radio-button name="map"
                           >${this.t('post.cover.map')}</paper-radio-button
                         >
-                        <paper-radio-button .name="streetView"
+                        <paper-radio-button name="streetView"
                           >${this.t(
                             'post.cover.streetview'
                           )}</paper-radio-button
@@ -734,7 +730,7 @@ export class YpPostEdit extends YpEditBase {
           <input
             type="hidden"
             name="structuredAnswersJson"
-            value="${this.structuredAnswersJson}" />
+            .value="${this.structuredAnswersJson}" />
         </div>
       </yp-edit-dialog>
 
@@ -765,7 +761,7 @@ export class YpPostEdit extends YpEditBase {
               text-type="customThankYouTextNewPosts"></yp-magic-text>
           `
         : nothing}
-    `;
+    ` : nothing
   }
 
   //TODO: Investigate if any are missing .html version of listeners
@@ -793,32 +789,32 @@ export class YpPostEdit extends YpEditBase {
   ],
 */
 
-  _isLastRating(index) {
-    return (
+  _isLastRating(index: number) {
+    return ( this.structuredQuestions &&
       this.structuredQuestions[index].subType === 'rating' &&
       index + 2 < this.structuredQuestions.length &&
       this.structuredQuestions[index + 1].subType !== 'rating'
     );
   }
 
-  _isFirstRating(index) {
-    return (
+  _isFirstRating(index: number) {
+    return ( this.structuredQuestions &&
       this.structuredQuestions[index].subType === 'rating' &&
       this.structuredQuestions[index - 1] &&
       this.structuredQuestions[index - 1].subType !== 'rating'
     );
   }
 
-  _openToId(event, detail) {
-    this._skipToId(event, detail, true);
+  _openToId(event: CustomEvent) {
+    this._skipToId(event, true);
   }
 
-  _goToNextIndex(event, detail) {
-    var currentPos = this.liveQuestionIds.indexOf(detail.currentIndex);
+  _goToNextIndex(event: CustomEvent) {
+    const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
     if (currentPos < this.liveQuestionIds.length - 1) {
-      var item = this.$$(
+      const item = this.$$(
         '#structuredQuestionContainer_' + this.liveQuestionIds[currentPos + 1]
-      );
+      ) as HTMLElement;
       item.scrollIntoView({
         block: 'center',
         inline: 'center',
@@ -829,16 +825,16 @@ export class YpPostEdit extends YpEditBase {
   }
 
   get hasStructuredQuestions() {
-    return this.structuredQuestions != null;
+    return this.structuredQuestions != undefined
   }
 
-  _skipToId(event, detail, showItems) {
-    var foundFirst = false;
+  _skipToId(event: CustomEvent, showItems: boolean) {
+    let foundFirst = false;
     if (this.$$('#surveyContainer')) {
-      var children = this.$$('#surveyContainer').children;
-      for (var i = 0; i < children.length; i++) {
-        var toId = detail.toId.replace(/]/g, '');
-        var fromId = detail.fromId.replace(/]/g, '');
+      const children = this.$$('#surveyContainer')!.children as HTMLCollection<YpPostEdit>;
+      for (let i = 0; i < children.length; i++) {
+        const toId = event.detail.toId.replace(/]/g, '');
+        const fromId = event.detail.fromId.replace(/]/g, '');
         if (
           children[i + 1] &&
           children[i + 1].question &&
@@ -856,13 +852,13 @@ export class YpPostEdit extends YpEditBase {
         }
         if (
           children[i].question &&
-          detail.fromId &&
+          event.detail.fromId &&
           children[i].question.uniqueId === fromId
         ) {
           foundFirst = true;
         } else if (
           children[i].question &&
-          detail.toId &&
+          event.detail.toId &&
           (children[i].question.uniqueId === toId ||
             children[i].question.uniqueId === toId + 'a')
         ) {
@@ -870,9 +866,9 @@ export class YpPostEdit extends YpEditBase {
         } else {
           if (foundFirst) {
             if (showItems) {
-              children[i].hidden = false;
+              (children[i] as HTMLElement).hidden = false;
             } else {
-              children[i].hidden = true;
+              (children[i] as HTMLElement).hidden = true;
             }
           }
         }
@@ -930,10 +926,10 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _submitWithStructuredQuestionsJson() {
-    const answers = [];
+    const answers: Array<YpStructuredAnswer> = [];
     this.liveQuestionIds.forEach(
       function (liveIndex) {
-        var questionElement = this.$$(
+        const questionElement = this.$$(
           '#structuredQuestionContainer_' + liveIndex
         );
         if (questionElement) {
@@ -998,7 +994,7 @@ export class YpPostEdit extends YpEditBase {
       group.configuration.structuredQuestions &&
       group.configuration.structuredQuestions !== ''
     ) {
-      const structuredQuestions = [];
+      const structuredQuestions: Array<YpStructuredQuestion> = [];
 
       const questionComponents = group.configuration.structuredQuestions.split(
         ','
@@ -1008,9 +1004,8 @@ export class YpPostEdit extends YpEditBase {
         const maxLength = questionComponents[i + 1];
         structuredQuestions.push({
           text: question,
-          question: question,
           maxLength: maxLength,
-          value: '',
+          value: ''
         });
       }
       if (
@@ -1417,7 +1412,7 @@ export class YpPostEdit extends YpEditBase {
     this.clear();
   }
 
-  _setupGroup(group: YpGroupData) {
+  _setupGroup(group: YpGroupData | undefined) {
     if (group) {
       this.group = group;
       if (group.configuration) {
