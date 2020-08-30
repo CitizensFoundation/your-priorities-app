@@ -20,6 +20,7 @@ import moment from 'moment';
 import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { TextArea } from '@material/mwc-textarea';
+import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
 
 @customElement('yp-post-edit')
 export class YpPostEdit extends YpEditBase {
@@ -106,9 +107,9 @@ export class YpPostEdit extends YpEditBase {
 
   liveQuestionIds: Array<number> = [];
 
-  uniqueIdsToElementIndexes: Record<number, number> = [];
+  uniqueIdsToElementIndexes: Record<string, number> = {};
 
-  liveUniqueIds: Array<number> = [];
+  liveUniqueIds: Array<string> = [];
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -857,9 +858,7 @@ export class YpPostEdit extends YpEditBase {
   _skipToId(event: CustomEvent, showItems: boolean) {
     let foundFirst = false;
     if (this.$$('#surveyContainer')) {
-      const children = this.$$('#surveyContainer')!.children as HTMLCollection<
-        YpStructuredQuestion
-      >;
+      const children = this.$$('#surveyContainer')!.children as unknown as Array<YpStructuredQuestionEdit>
       for (let i = 0; i < children.length; i++) {
         const toId = event.detail.toId.replace(/]/g, '');
         const fromId = event.detail.fromId.replace(/]/g, '');
@@ -867,15 +866,15 @@ export class YpPostEdit extends YpEditBase {
           children[i + 1] &&
           children[i + 1].question &&
           children[i + 1].question.uniqueId &&
-          children[i + 1].question.uniqueId.substring(
-            children[i + 1].question.uniqueId.length - 1
+          children[i + 1].question.uniqueId!.substring(
+            children[i + 1].question.uniqueId!.length - 1
           ) === 'a'
         ) {
           children[i].question.uniqueId = children[
             i + 1
-          ].question.uniqueId.substring(
+          ].question.uniqueId!.substring(
             0,
-            children[i + 1].question.uniqueId.length - 1
+            children[i + 1].question.uniqueId!.length - 1
           );
         }
         if (
@@ -958,9 +957,14 @@ export class YpPostEdit extends YpEditBase {
     this.liveQuestionIds.forEach(liveIndex => {
       const questionElement = this.$$(
         '#structuredQuestionContainer_' + liveIndex
-      ) as YpStructureQuestion;
+      ) as YpStructuredQuestionEdit
       if (questionElement) {
-        answers.push(questionElement.getAnswer());
+        const answer = questionElement.getAnswer();
+        if (answer) {
+          answers.push(answer);
+        } else {
+          console.error("Can't find answer to question")
+        }
       }
     });
     this.structuredAnswersJson = JSON.stringify(answers);
@@ -1025,7 +1029,7 @@ export class YpPostEdit extends YpEditBase {
       const maxLength = questionComponents[i + 1];
       structuredQuestions.push({
         text: question,
-        maxLength: maxLength,
+        maxLength: parseInt(maxLength),
         value: '',
       });
     }

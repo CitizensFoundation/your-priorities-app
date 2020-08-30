@@ -36,7 +36,7 @@ interface YpDropdownData {
 }
 
 interface YpStructuredQuestionData {
-  uniqueId?: number;
+  uniqueId?: string;
   text: string;
   type?: string;
   subType?: string;
@@ -54,12 +54,12 @@ interface YpStructuredQuestionData {
 
 
 interface YpStructuredQuestionJson extends YpStructuredQuestionData {
-  uniqueId: number;
+  uniqueId: string;
   type: string;
 }
 
 interface YpStructuredAnswer {
-  uniqueId: number;
+  uniqueId: string;
   value: string;
 }
 

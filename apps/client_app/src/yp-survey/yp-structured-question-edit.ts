@@ -4,8 +4,6 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import linkifyStr from 'linkifyjs/string.js';
 
 import '@material/mwc-circular-progress-four-color';
-import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
-import { Dialog } from '@material/mwc-dialog';
 import '@material/mwc-dialog';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
@@ -19,17 +17,6 @@ import { Radio } from '@material/mwc-radio';
 
 import { Checkbox } from '@material/mwc-checkbox';
 
-import { YpForm } from '../@yrpri/yp-form.js';
-import { Snackbar } from '@material/mwc-snackbar';
-import { YpEditBase } from '../@yrpri/yp-edit-base.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
-import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
-import moment from 'moment';
-import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
-import { TextArea } from '@material/mwc-textarea';
-import { ifDefined } from 'lit-html/directives/if-defined';
 import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-structured-question-edit')
@@ -658,7 +645,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
   }
 
-  getAnswer() {
+  getAnswer(): YpStructuredAnswer | undefined {
     const item = this.$$('#structuredQuestion_' + this.index);
 
     if (item) {
@@ -732,7 +719,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
       }
 
-      return { uniqueId: this.question.uniqueId, value: value };
+      if (value && this.question.uniqueId) {
+        return { uniqueId: this.question.uniqueId, value: value };
+      } else {
+        console.error("Can't find answer for question");
+        return undefined
+      }
     } else {
       console.error("Can't find question item for " + this.question.text);
     }

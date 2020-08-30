@@ -1,76 +1,72 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-pages/iron-pages.js';
-import '@polymer/paper-tabs/paper-tab.js';
-import '@polymer/paper-tabs/paper-tabs.js';
-import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/app-route/app-route.js';
-import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '../yp-app-globals/yp-app-icons.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import { ypDetectOldiOs } from '../yp-behaviors/yp-detect-old-ios.js';
-import '../yp-ajax/yp-ajax.js';
-import '../yp-magic-text/yp-magic-text.js';
-import { ypThemeBehavior } from '../yp-theme/yp-theme-behavior.js';
-import { ypNumberFormatBehavior } from '../yp-behaviors/yp-number-format-behavior.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { render } from 'ejs';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing, TemplateResult } from 'lit-html';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import linkifyStr from 'linkifyjs/string.js';
 
-class YpSurveyGroupLit extends YpBaseElement {
-  static get properties() {
-    return {
-      idRoute: Object,
-      tabRoute: Object,
-      idRouteData: Object,
-      tabRouteData: Object,
+import '@material/mwc-circular-progress-four-color';
+import '@material/mwc-dialog';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-snackbar';
 
-      surveyGroupId: {
-        type: Number,
-        observer: '_surveyGroupIdChanged',
-      },
+import '@material/mwc-checkbox';
+import '@material/mwc-radio';
 
-      surveySubmitError: {
-        type: String,
-        value: null,
-      },
+import '@material/mwc-formfield';
+import { Radio } from '@material/mwc-radio';
 
-      surveyCompleted: {
-        type: Boolean,
-        value: false,
-      },
+import { Checkbox } from '@material/mwc-checkbox';
 
-      surveyGroup: {
-        type: Object,
-        value: null,
-      },
+import { TextField } from '@material/mwc-textfield';
+import { YpCollection } from '../yp-collection/yp-collection.js';
+import { YpStructuredQuestionEdit } from './yp-structured-question-edit.js';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 
-      structuredQuestions: {
-        type: Array,
-        value: null,
-      },
+@customElement('yp-survey-group')
+export class YpSurveyGroup extends YpBaseElement {
+  @property({ type: Number })
+  surveyGroupId: number | undefined
 
-      structuredAnswers: {
-        type: Array,
-        value: null,
-      },
+  @property({ type: String })
+  surveySubmitError: string | undefined
 
-      initiallyLoadedAnswers: {
-        type: Array,
-        value: null,
-      },
+  @property({ type: Boolean })
+  surveyCompleted = false
 
-      submitHidden: {
-        type: Boolean,
-        value: true,
-      },
-    };
+  @property({ type: Boolean })
+  submitHidden = false
+
+  @property({ type: Object })
+  surveyGroup: YpGroupData | undefined
+
+  @property({ type: Array })
+  structuredQuestions: Array<YpStructuredQuestionData> | undefined
+
+  @property({ type: Array })
+  structuredAnswers: Array<YpStructuredAnswer> | undefined
+
+  @property({ type: Array })
+  initiallyLoadedAnswers: Array<YpStructuredAnswer> | undefined
+
+  liveQuestionIds: Array<number> = [];
+
+  uniqueIdsToElementIndexes: Record<string, number> = {};
+
+  liveUniqueIds: Array<string> = [];
+
+  liveUniqueIdsAll: Array<string> = [];
+
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('surveyGroupId')) {
+      this._surveyGroupIdChanged();
+    }
   }
 
   static get styles() {
     return [
+      super.styles,
       css`
         :host {
           display: block;
@@ -138,19 +134,6 @@ class YpSurveyGroupLit extends YpBaseElement {
         query="(max-width: 700px)"
         query-matches="${this.phoneWidth}"></iron-media-query>
 
-      <app-route
-        route="${this.idRoute}"
-        .pattern="/:id"
-        data="${this.idRouteData}"
-        .tail="${this.tabRoute}">
-      </app-route>
-
-      <app-route
-        route="${this.tabRoute}"
-        .pattern="/:tabName"
-        data="${this.tabRouteData}"
-        .tail="${this.listRoute}">
-      </app-route>
 
       ${!this.surveyCompleted
         ? html`
@@ -160,14 +143,14 @@ class YpSurveyGroupLit extends YpBaseElement {
                     <div class="surveyContainer">
                       <div id="surveyContainer">
                         ${this.structuredQuestions.map(
-                          question => html`
+                          (question, index) => html`
                             <yp-structured-question-edit
-                              index="${this.index}"
-                              id="structuredQuestionContainer_${this.index}"
+                              index="${index}"
+                              id="structuredQuestionContainer_${index}"
                               .structuredAnswers="${this
                                 .initiallyLoadedAnswers}"
                               @changed="${this._saveState}"
-                              .question="${this.question}"
+                              .question="${question}"
                               is-last-rating="${this._isLastRating(index)}"
                               is-first-rating="${this._isFirstRating(index)}"
                               @hide-to-question="${this._hideToQuestion}">
@@ -261,57 +244,56 @@ class YpSurveyGroupLit extends YpBaseElement {
     this.removeListener('yp-answer-content-changed', this._saveState);
   }
 
-  _isLastRating(index) {
+  _isLastRating(index: number) {
     return (
-      this.structuredQuestions[index].subType === 'rating' &&
-      index + 2 < this.structuredQuestions.length &&
-      this.structuredQuestions[index + 1].subType !== 'rating'
+      this.structuredQuestions![index].subType === 'rating' &&
+      index + 2 < this.structuredQuestions!.length &&
+      this.structuredQuestions![index + 1].subType !== 'rating'
     );
   }
 
-  _isFirstRating(index) {
+  _isFirstRating(index: number) {
     return (
-      this.structuredQuestions[index].subType === 'rating' &&
-      this.structuredQuestions[index - 1] &&
-      this.structuredQuestions[index - 1].subType !== 'rating'
+      this.structuredQuestions![index].subType === 'rating' &&
+      this.structuredQuestions![index - 1] &&
+      this.structuredQuestions![index - 1].subType !== 'rating'
     );
   }
 
-  _openToId(event, detail) {
-    this._skipToId(event, detail, true);
+  _openToId(event: CustomEvent) {
+    this._skipToId(event, true);
   }
 
-  _skipToId(event, detail, showItems) {
-    console.log(detail);
-    const foundFirst = false;
-    const children = this.$$('#surveyContainer').children;
+  _skipToId(event: CustomEvent, showItems: boolean) {
+    let foundFirst = false;
+    const children = this.$$('#surveyContainer')!.children as unknown as Array<YpStructuredQuestionEdit>;
     for (let i = 0; i < children.length; i++) {
-      const toId = detail.toId.replace(/]/g, '');
-      const fromId = detail.fromId.replace(/]/g, '');
+      const toId = event.detail.toId.replace(/]/g, '');
+      const fromId = event.detail.fromId.replace(/]/g, '');
       if (
         children[i + 1] &&
         children[i + 1].question &&
         children[i + 1].question.uniqueId &&
-        children[i + 1].question.uniqueId.substring(
-          children[i + 1].question.uniqueId.length - 1
+        children[i + 1].question.uniqueId!.substring(
+          children[i + 1].question.uniqueId!.length - 1
         ) === 'a'
       ) {
         children[i].question.uniqueId = children[
           i + 1
-        ].question.uniqueId.substring(
+        ].question.uniqueId!.substring(
           0,
-          children[i + 1].question.uniqueId.length - 1
+          children[i + 1].question.uniqueId!.length - 1
         );
       }
       if (
         children[i].question &&
-        detail.fromId &&
+        event.detail.fromId &&
         children[i].question.uniqueId === fromId
       ) {
         foundFirst = true;
       } else if (
         children[i].question &&
-        detail.toId &&
+        event.detail.toId &&
         (children[i].question.uniqueId === toId ||
           children[i].question.uniqueId === toId + 'a')
       ) {
@@ -328,12 +310,12 @@ class YpSurveyGroupLit extends YpBaseElement {
     }
   }
 
-  _goToNextIndex(event, detail) {
-    const currentPos = this.liveQuestionIds.indexOf(detail.currentIndex);
+  _goToNextIndex(event: CustomEvent) {
+    const currentPos = this.liveQuestionIds.indexOf(event.detail.currentIndex);
     if (currentPos < this.liveQuestionIds.length - 1) {
       const item = this.$$(
         '#structuredQuestionContainer_' + this.liveQuestionIds[currentPos + 1]
-      );
+      ) as HTMLInputElement
       item.scrollIntoView({
         block: 'center',
         inline: 'center',
@@ -344,58 +326,37 @@ class YpSurveyGroupLit extends YpBaseElement {
   }
 
   _serializeAnswers() {
-    const answers = [];
+    const answers: Array<YpStructuredAnswer> = [];
     this.liveQuestionIds.forEach(
-      function (liveIndex) {
+       (liveIndex) => {
         const questionElement = this.$$(
           '#structuredQuestionContainer_' + liveIndex
-        );
+        ) as YpStructuredQuestionEdit
         if (questionElement) {
-          answers.push(questionElement.getAnswer());
+          const answer = questionElement.getAnswer();
+          if (answer)
+            answers.push(answer);
         }
-      }.bind(this)
+      }
     );
     this.structuredAnswers = answers;
   }
 
-  _serializeAnswersWithSubCodesIfNeeded() {
-    const answers = [];
-    this.liveQuestionIds.forEach(
-      function (liveIndex) {
-        const questionElement = this.$$(
-          '#structuredQuestionContainer_' + liveIndex
-        );
-        if (questionElement) {
-          if (
-            this.surveyGroup &&
-            this.surveyGroup.configuration &&
-            this.surveyGroup.configuration.storeSubCodesWithRadiosAndCheckboxes
-          ) {
-            answers.push(questionElement.getAnswer({ withSubCodes: true }));
-          } else {
-            answers.push(questionElement.getAnswer());
-          }
-        }
-      }.bind(this)
-    );
-    this.structuredAnswersWithSubCodesIfNeeded = answers;
-  }
-
-  _surveySubmitResponse(event, detail) {
-    if (detail.error) {
-      this.surveySubmitError = detail.error;
+  _surveySubmitResponse(event: CustomEvent) {
+    if (event.detail.error) {
+      this.surveySubmitError = event.detail.error;
     } else {
       this.surveyCompleted = true;
     }
   }
 
   _submit() {
-    this._serializeAnswersWithSubCodesIfNeeded();
+    this._serializeAnswers();
     const submitAjax = this.$$('#submitAjax');
     submitAjax.url = '/api/groups/' + this.surveyGroup.id + '/survey';
     submitAjax.method = 'POST';
     submitAjax.body = {
-      structuredAnswers: this.structuredAnswersWithSubCodesIfNeeded,
+      structuredAnswers: this.structuredAnswers,
     };
     submitAjax.generateRequest();
   }
@@ -417,7 +378,7 @@ class YpSurveyGroupLit extends YpBaseElement {
 
   _checkAndLoadState() {
     const answers = localStorage.getItem(
-      'yp-survey-response-for-' + this.surveyGroup.id
+      'yp-survey-response-for-' + this.surveyGroup!.id
     );
     if (answers) {
       this.structuredAnswers = JSON.parse(answers);
@@ -435,10 +396,10 @@ class YpSurveyGroupLit extends YpBaseElement {
     }
   }
 
-  _surveyGroupIdChanged(groupId) {
-    if (groupId) {
-      this.surveyGroup = null;
-      this._getSurveyGroup();
+  _surveyGroupIdChanged() {
+    if (this.surveyGroupId) {
+      this.surveyGroup = undefined
+      this._getSurveyGroup()
     }
   }
 
@@ -462,15 +423,15 @@ class YpSurveyGroupLit extends YpBaseElement {
     );
 
     this.refresh();
-    this.async(function () {
+    setTimeout( () => {
       this.liveQuestionIds = [];
       this.liveUniqueIds = [];
       this.liveUniqueIdsAll = [];
       this.uniqueIdsToElementIndexes = {};
       if (this.structuredQuestions) {
         this.structuredQuestions.forEach(
-          function (question, index) {
-            if (
+           (question, index) => {
+            if (question.type && question.uniqueId &&
               question.type.toLowerCase() === 'textfield' ||
               question.type.toLowerCase() === 'textfieldlong' ||
               question.type.toLowerCase() === 'textarea' ||
@@ -481,47 +442,24 @@ class YpSurveyGroupLit extends YpBaseElement {
               question.type.toLowerCase() === 'dropdown'
             ) {
               this.liveQuestionIds.push(index);
-              this.uniqueIdsToElementIndexes[question.uniqueId] = index;
-              this.liveUniqueIds.push(question.uniqueId);
+              this.uniqueIdsToElementIndexes[question.uniqueId!] = index;
+              this.liveUniqueIds.push(question.uniqueId!);
               this.liveUniqueIdsAll.push({
-                uniqueId: question.uniqueId,
+                uniqueId: question.uniqueId!,
                 atIndex: index,
               });
             }
-          }.bind(this)
+          }
         );
       }
       this._checkAndLoadState();
     });
-
-    window.appGlobals.postLoadGroupProcessing(this.surveyGroup);
   }
 
-  _useHardBack(configuration) {
-    if (configuration && configuration.customBackURL) {
-      const backUrl = configuration.customBackURL;
-      if (
-        backUrl.startsWith('/community/') ||
-        backUrl.startsWith('/group/') ||
-        backUrl.startsWith('/domain/') ||
-        backUrl.startsWith('/post/')
-      ) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      return false;
-    }
-  }
 
   refresh() {
     if (this.surveyGroup) {
-      this.fire('yp-set-home-link', {
-        type: 'group',
-        id: this.surveyGroup.id,
-        name: this.surveyGroup.name,
-      });
+
 
       if (this.surveyGroup.configuration.defaultLocale != null) {
         window.appGlobals.changeLocaleIfNeeded(
@@ -529,8 +467,8 @@ class YpSurveyGroupLit extends YpBaseElement {
         );
       }
 
-      window.appGlobals.setCommunityAnalyticsTracker(
-        this.surveyGroup.Community.google_analytics_code
+      window.appGlobals.analytics.setCommunityAnalyticsTracker(
+        this.surveyGroup.Community?.google_analytics_code
       );
 
       if (
@@ -538,7 +476,7 @@ class YpSurveyGroupLit extends YpBaseElement {
         (this.surveyGroup.configuration &&
           this.surveyGroup.configuration.themeOverrideColorPrimary != null)
       ) {
-        this.setTheme(
+        window.themes.setTheme(
           this.surveyGroup.theme_id,
           this.surveyGroup.configuration
         );
@@ -562,25 +500,6 @@ class YpSurveyGroupLit extends YpBaseElement {
         this.setTheme(1);
       }
 
-      this.fire('change-header', {
-        headerTitle: this.surveyGroup.configuration.customBackName
-          ? this.surveyGroup.configuration.customBackName
-          : this.surveyGroup.Community.name,
-        headerDescription: this.surveyGroup.Community.description,
-        headerIcon: 'social:group',
-        documentTitle: this.surveyGroup.name,
-        enableSearch: true,
-        hideHelpIcon: this.surveyGroup.configuration.hideHelpIcon ? true : null,
-        useHardBack: this._useHardBack(this.surveyGroup.configuration),
-        backPath: this.surveyGroup.configuration.customBackURL
-          ? this.surveyGroup.configuration.customBackURL
-          : '/community/' + this.surveyGroup.community_id,
-      });
-
-      this.$$('#pagesAjax').url =
-        '/api/groups/' + this.surveyGroup.id + '/pages';
-      this.$$('#pagesAjax').generateRequest();
-
       window.appGlobals.setAnonymousGroupStatus(this.surveyGroup);
 
       if (
@@ -598,7 +517,7 @@ class YpSurveyGroupLit extends YpBaseElement {
       ) {
         window.appGlobals.externalGoalTriggerGroupId = this.surveyGroup.id;
       } else {
-        window.appGlobals.externalGoalTriggerGroupId = null;
+        window.appGlobals.externalGoalTriggerGroupId = undefined
       }
 
       if (
@@ -609,7 +528,7 @@ class YpSurveyGroupLit extends YpBaseElement {
       ) {
         window.appGlobals.signupTermsPageId = this.surveyGroup.Community.configuration.signupTermsPageId;
       } else {
-        window.appGlobals.signupTermsPageId = null;
+        window.appGlobals.signupTermsPageId = undefined;
       }
 
       if (
@@ -619,16 +538,16 @@ class YpSurveyGroupLit extends YpBaseElement {
       ) {
         window.appGlobals.currentSamlDeniedMessage = this.surveyGroup.Community.configuration.customSamlDeniedMessage;
       } else {
-        window.appGlobals.currentSamlDeniedMessage = null;
+        window.appGlobals.currentSamlDeniedMessage = undefined;
       }
 
-      if (
+      if ( this.surveyGroup.Community &&
         this.surveyGroup.Community.configuration &&
         this.surveyGroup.Community.configuration.customSamlLoginMessage
       ) {
         window.appGlobals.currentSamlLoginMessage = this.surveyGroup.Community.configuration.customSamlLoginMessage;
       } else {
-        window.appGlobals.currentSamlLoginMessage = null;
+        window.appGlobals.currentSamlLoginMessage = undefined;
       }
 
       window.appGlobals.currentGroup = this.surveyGroup;
@@ -636,11 +555,11 @@ class YpSurveyGroupLit extends YpBaseElement {
       if (
         (this.surveyGroup.configuration &&
           this.surveyGroup.configuration.forceSecureSamlLogin &&
-          !this.checkGroupAccess(this.surveyGroup)) ||
+          !YpAccessHelpers.checkGroupAccess(this.surveyGroup)) ||
         (this.surveyGroup.Community &&
           this.surveyGroup.Community.configuration &&
           this.surveyGroup.Community.configuration.forceSecureSamlLogin &&
-          !this.checkCommunityAccess(this.surveyGroup.Community))
+          !YpAccessHelpers.checkCommunityAccess(this.surveyGroup.Community))
       ) {
         window.appGlobals.currentForceSaml = true;
       } else {
