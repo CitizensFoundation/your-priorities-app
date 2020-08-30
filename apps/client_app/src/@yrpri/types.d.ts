@@ -19,6 +19,7 @@ interface YpCollectionConfiguration {
 interface YpStructuredQuestion {
   uniqueId: number;
   text: string;
+  type: string;
 }
 
 interface YpStructuredAnswer {
@@ -333,6 +334,8 @@ interface YpPostData extends YpDatabaseItem {
   };
   PostVideos?: Array<YpVideoData>;
   PostAudios?: Array<YpAudioData>;
+  categoryId?: number;
+  newEndorsement?: YpEndorsement;
 }
 
 interface YpPointRevision {

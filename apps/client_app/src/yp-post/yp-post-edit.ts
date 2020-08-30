@@ -18,88 +18,91 @@ import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import moment from 'moment';
 import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
+import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+import { TextArea } from '@material/mwc-textarea';
 
 @customElement('yp-post-edit')
 export class YpPostEdit extends YpEditBase {
   @property({ type: String })
-  action = '/posts'
+  action = '/posts';
 
   @property({ type: Boolean })
-  newPost = false
+  newPost = false;
 
   @property({ type: Array })
-  initialStructuredAnswersJson: Array<YpStructuredAnswer> | undefined
+  initialStructuredAnswersJson: Array<YpStructuredAnswer> | undefined;
 
   @property({ type: Object })
-  post: YpPostData | undefined
+  post: YpPostData | undefined;
 
   @property({ type: Object })
-  group: YpGroupData | undefined
+  group: YpGroupData | undefined;
 
   @property({ type: Boolean })
-  locationHidden = false
+  locationHidden = false;
 
   @property({ type: Object })
-  location: YpLocationData | undefined
+  location: YpLocationData | undefined;
 
   @property({ type: String })
-  encodedLocation: string | undefined
+  encodedLocation: string | undefined;
 
   @property({ type: Number })
-  selectedCategoryArrayId: number | undefined
+  selectedCategoryArrayId: number | undefined;
 
   @property({ type: Number })
-  selectedCategoryId: number | undefined
+  selectedCategoryId: number | undefined;
 
   @property({ type: Number })
-  uploadedVideoId: number | undefined
+  uploadedVideoId: number | undefined;
 
   @property({ type: Number })
-  uploadedAudioId: number | undefined
+  uploadedAudioId: number | undefined;
 
   @property({ type: Number })
-  currentVideoId: number | undefined
+  currentVideoId: number | undefined;
 
   @property({ type: Number })
-  currentAudioId: number | undefined
+  currentAudioId: number | undefined;
 
   @property({ type: Number })
-  selected = 0
+  selected = 0;
 
   @property({ type: Boolean })
-  mapActive = false
+  mapActive = false;
 
   @property({ type: Boolean })
-  hasOnlyOneTab = false
+  hasOnlyOneTab = false;
 
   @property({ type: Number })
-  postDescriptionLimit: number | undefined
+  postDescriptionLimit: number | undefined;
 
   @property({ type: String })
-  sructuredAnswers: string | undefined
+  sructuredAnswers: string | undefined;
 
   @property({ type: Array })
-  sructuredAnswersJson: Array<YpStructuredAnswer> | undefined
+  sructuredAnswersJson: Array<YpStructuredAnswer> | undefined;
 
   @property({ type: String })
-  uploadedDocumentUrl: string | undefined
+  uploadedDocumentUrl: string | undefined;
 
   @property({ type: String })
-  uploadedDocumentFilename: string | undefined
+  uploadedDocumentFilename: string | undefined;
 
   @property({ type: String })
-  selectedCoverMediaType = 'none'
+  selectedCoverMediaType = 'none';
 
   @property({ type: Number })
-  uploadedHeaderImageId: number | undefined
+  uploadedHeaderImageId: number | undefined;
 
-  emailValidationPattern = '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$'
+  emailValidationPattern =
+    '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$';
 
-  liveQuestionIds: Array<number> = []
+  liveQuestionIds: Array<number> = [];
 
-  uniqueIdsToElementIndexes: Record<number, number> = []
+  uniqueIdsToElementIndexes: Record<number, number> = [];
 
-  liveUniqueIds: Array<number> = []
+  liveUniqueIds: Array<number> = [];
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -128,7 +131,6 @@ export class YpPostEdit extends YpEditBase {
       this._selectedChanged();
     }
   }
-
 
   static get styles() {
     return [
@@ -289,22 +291,22 @@ export class YpPostEdit extends YpEditBase {
         .mediaTab {
           vertical-align: center;
         }
-      `
+      `,
     ];
   }
 
   render() {
     return html`
       <yp-edit-dialog
-        .name="postEdit"
+        name="postEdit"
         double-width
         id="editDialog"
-        .icon="lightbulb-outline"
+        icon="lightbulb_outline"
         .action="${this.action}"
         .use-next-tab-action="${this.newPost}"
         @next-tab-action="${this._nextTab}"
         .method="${this.method}"
-        title="${this.editHeaderText}"
+        .title="${this.editHeaderText}"
         .saveText="${this.saveText}"
         class="container"
         custom-submit
@@ -927,28 +929,29 @@ export class YpPostEdit extends YpEditBase {
     return this.newPost && !hideNewPoint;
   }
 
-  _submitWithQuestionsJson() {
-
+  _submitWithStructuredQuestionsJson() {
+    const answers = [];
+    this.liveQuestionIds.forEach(
+      function (liveIndex) {
+        var questionElement = this.$$(
+          '#structuredQuestionContainer_' + liveIndex
+        );
+        if (questionElement) {
+          answers.push(questionElement.getAnswer());
+        }
+      }.bind(this)
+    );
+    this.structuredAnswersJson = JSON.stringify(answers);
+    this.$.editDialog._reallySubmit();
   }
 
   _customSubmit(value, valueB) {
     if (
+      this.group &&
       this.group.configuration &&
       this.group.configuration.structuredQuestionsJson
     ) {
-      const answers = [];
-      this.liveQuestionIds.forEach(
-        function (liveIndex) {
-          var questionElement = this.$$(
-            '#structuredQuestionContainer_' + liveIndex
-          );
-          if (questionElement) {
-            answers.push(questionElement.getAnswer());
-          }
-        }.bind(this)
-      );
-      this.structuredAnswersJson = JSON.stringify(answers);
-      this.$.editDialog._reallySubmit();
+      this._submitWithStructuredQuestionsJson();
     } else if (
       this.structuredQuestions &&
       this.structuredQuestions.length > 0
@@ -984,7 +987,7 @@ export class YpPostEdit extends YpEditBase {
     this.$$('#editDialog').scrollResize();
   }
 
-  structuredQuestions() {
+  get structuredQuestions() {
     const post = this.post;
     const group = this.group;
     if (post && group && group.configuration.structuredQuestionsJson) {
@@ -995,14 +998,14 @@ export class YpPostEdit extends YpEditBase {
       group.configuration.structuredQuestions &&
       group.configuration.structuredQuestions !== ''
     ) {
-      var structuredQuestions = [];
+      const structuredQuestions = [];
 
-      var questionComponents = group.configuration.structuredQuestions.split(
+      const questionComponents = group.configuration.structuredQuestions.split(
         ','
       );
-      for (var i = 0; i < questionComponents.length; i += 2) {
-        var question = questionComponents[i];
-        var maxLength = questionComponents[i + 1];
+      for (let i = 0; i < questionComponents.length; i += 2) {
+        const question = questionComponents[i];
+        const maxLength = questionComponents[i + 1];
         structuredQuestions.push({
           text: question,
           question: question,
@@ -1011,18 +1014,20 @@ export class YpPostEdit extends YpEditBase {
         });
       }
       if (
-        !this.newPost && post && post.public_data &&
+        !this.newPost &&
+        post &&
+        post.public_data &&
         post.public_data.structuredAnswers &&
         post.public_data.structuredAnswers !== ''
       ) {
-        var answers = post.public_data.structuredAnswers.split('%!#x');
-        for (i = 0; i < answers.length; i += 1) {
+        const answers = post.public_data.structuredAnswers.split('%!#x');
+        for (let i = 0; i < answers.length; i += 1) {
           if (structuredQuestions[i]) structuredQuestions[i].value = answers[i];
         }
       }
       return structuredQuestions;
     } else {
-      return null;
+      return undefined;
     }
   }
 
@@ -1034,56 +1039,52 @@ export class YpPostEdit extends YpEditBase {
     return this.uploadedAudioId || this.currentAudioId;
   }
 
-  _videoUploaded(event, detail) {
-    this.uploadedVideoId = detail.videoId;
+  _videoUploaded(event: CustomEvent) {
+    this.uploadedVideoId = event.detail.videoId;
     this.selectedCoverMediaType = 'video';
-    setTimeout( () => {
+    setTimeout(() => {
       this.fire('iron-resize');
     }, 50);
   }
 
-  _audioUploaded(event, detail) {
-    this.uploadedAudioId = detail.audioId;
+  _audioUploaded(event: CustomEvent) {
+    this.uploadedAudioId = event.detail.audioId;
     this.selectedCoverMediaType = 'audio';
-    setTimeout( () => {
+    setTimeout(() => {
       this.fire('iron-resize');
     });
   }
 
-  _documentUploaded(event, detail) {
-    const document = JSON.parse(detail.xhr.response);
+  _documentUploaded(event: CustomEvent) {
+    const document = JSON.parse(event.detail.xhr.response);
     this.uploadedDocumentUrl = document.url;
     this.uploadedDocumentFilename = document.filename;
   }
 
   customFormResponse() {
-    document.dispatchEvent(
-      new CustomEvent('lite-signal', {
-        bubbles: true,
-        compose: true,
-        detail: { name: 'yp-refresh-group-posts', data: { id: 4 } },
-      })
-    );
+    //TODO: Check this logic here below, 4?
+    this.fireGlobal('yp-refresh-group-posts', { data: { id: 4 } });
   }
 
   _updateEmojiBindings() {
-    setTimeout(
-       ()  => {
-        const description = this.$$('#description');
-        const emojiSelector = this.$$('#emojiSelectorDescription');
-        if (description && emojiSelector) {
-          emojiSelector.inputTarget = description;
-        } else {
-          console.warn("Post edit: Can't bind emojis :(");
-        }
-        const emojiSelectorPointFor = this.$$('#emojiSelectorPointFor');
-        const pointFor = this.$$('#pointFor');
-        if (emojiSelectorPointFor && pointFor) {
-          emojiSelectorPointFor.inputTarget = pointFor;
-        }
-      },
-      500
-    );
+    setTimeout(() => {
+      const description = this.$$('#description') as HTMLInputElement;
+      const emojiSelector = this.$$(
+        '#emojiSelectorDescription'
+      ) as YpEmojiSelector;
+      if (description && emojiSelector) {
+        emojiSelector.inputTarget = description;
+      } else {
+        console.warn("Post edit: Can't bind emojis :(");
+      }
+      const emojiSelectorPointFor = this.$$(
+        '#emojiSelectorPointFor'
+      ) as YpEmojiSelector;
+      const pointFor = this.$$('#pointFor') as HTMLInputElement;
+      if (emojiSelectorPointFor && pointFor) {
+        emojiSelectorPointFor.inputTarget = pointFor;
+      }
+    }, 500);
   }
 
   _locationHiddenChanged() {
@@ -1103,15 +1104,19 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _formInvalid() {
-    if (this.newPointShown && !this.$$('#pointFor').validate()) {
+    if (
+      this.newPointShown &&
+      !(this.$$('#pointFor') as TextArea).checkValidity()
+    ) {
       this.selected = 1;
     } else {
       this.selected = 0;
     }
-    if (this.$$('#name')) this.$$('#name').autoValidate = true;
-    if (this.$$('#description')) this.$$('#description').autoValidate = true;
+    if (this.$$('#name')) (this.$$('#name') as TextArea).autoValidate = true;
+    if (this.$$('#description'))
+      (this.$$('#description') as TextArea).autoValidate = true;
     if (this.newPointShown) {
-      this.$$('#pointFor').autoValidate = true;
+      (this.$$('#pointFor') as TextArea).autoValidate = true;
     }
   }
 
@@ -1132,7 +1137,7 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _nextOnEnter(event) {
+  _nextOnEnter(event: KeyboardEvent) {
     if (event.keyCode === 13) {
       this._searchMap();
     }
@@ -1166,7 +1171,7 @@ export class YpPostEdit extends YpEditBase {
 
   _selectedChanged() {
     const newValue = this.selected;
-    setTimeout( () => {
+    setTimeout(() => {
       if (!this.locationHidden && newValue == (this.newPointShown ? 2 : 1)) {
         this.mapActive = true;
       } else {
@@ -1205,7 +1210,9 @@ export class YpPostEdit extends YpEditBase {
 
   _selectedCategoryChanged() {
     if (this.selectedCategoryArrayId && this.group && this.group.Categories)
-      this.selectedCategoryId = this.group.Categories[this.selectedCategoryArrayId].id;
+      this.selectedCategoryId = this.group.Categories[
+        this.selectedCategoryArrayId
+      ].id;
   }
 
   get showCategories() {
@@ -1238,7 +1245,7 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _updateInitialCategory(group: YpGroupData) {
-    if (group && this.post && this.post.category_id) {
+    if (group && this.post && this.post.category_id && group.Categories) {
       this.selectedCategoryId = this.post.category_id;
       this.selectedCategoryArrayId = this.getPositionInArrayFromId(
         group.Categories,
@@ -1252,11 +1259,53 @@ export class YpPostEdit extends YpEditBase {
     this.uploadedHeaderImageId = image.id;
   }
 
-  _coverMediaTypeValueChanged(newValue, oldValue) {}
+  _redirectAfterVideo(post: YpPostData) {
+    this.post = post;
+    ajax = document.createElement('iron-ajax');
+    ajax.handleAs = 'json';
+    ajax.contentType = 'application/json';
+    ajax.url = '/api/videos/' + this.post.id + '/completeAndAddToPost';
+    ajax.method = 'PUT';
+    ajax.body = {
+      videoId: this.uploadedVideoId,
+      appLanguage: this.language,
+    };
+    ajax.addEventListener(
+      'response',
+      function (event) {
+        this._finishRedirect(post);
+        setTimeout(() => {
+          window.appGlobals.showSpeechToTextInfoIfNeeded();
+        }, 20);
+      }.bind(this)
+    );
+    ajax.generateRequest();
+  }
 
-  _coverMediaTypeChanged(event, detail) {}
+  _redirectAfterAudio(post: YpPostData) {
+    this.post = post;
+    ajax = document.createElement('iron-ajax');
+    ajax.handleAs = 'json';
+    ajax.contentType = 'application/json';
+    ajax.url = '/api/audios/' + this.post.id + '/completeAndAddToPost';
+    ajax.method = 'PUT';
+    ajax.body = {
+      audioId: this.uploadedAudioId,
+      appLanguage: this.language,
+    };
+    ajax.addEventListener(
+      'response',
+      function (event) {
+        this._finishRedirect(post);
+      }.bind(this)
+    );
+    setTimeout(() => {
+      window.appGlobals.showSpeechToTextInfoIfNeeded();
+    }, 20);
+    ajax.generateRequest();
+  }
 
-  _customRedirect(post) {
+  customRedirect(post: YpPostData) {
     if (post) {
       if (
         post.newEndorsement &&
@@ -1265,49 +1314,11 @@ export class YpPostEdit extends YpEditBase {
       ) {
         window.appUser.endorsementPostsIndex[post.id] = post.newEndorsement;
       }
-      let ajax;
+
       if (this.uploadedVideoId) {
-        this.post = post;
-        ajax = document.createElement('iron-ajax');
-        ajax.handleAs = 'json';
-        ajax.contentType = 'application/json';
-        ajax.url = '/api/videos/' + this.post.id + '/completeAndAddToPost';
-        ajax.method = 'PUT';
-        ajax.body = {
-          videoId: this.uploadedVideoId,
-          appLanguage: this.language,
-        };
-        ajax.addEventListener(
-          'response',
-          function (event) {
-            this._finishRedirect(post);
-            setTimeout( () => {
-              window.appGlobals.showSpeechToTextInfoIfNeeded();
-            }, 20);
-          }.bind(this)
-        );
-        ajax.generateRequest();
+        this._redirectAfterVideo(post);
       } else if (this.uploadedAudioId && this.newPost) {
-        this.post = post;
-        ajax = document.createElement('iron-ajax');
-        ajax.handleAs = 'json';
-        ajax.contentType = 'application/json';
-        ajax.url = '/api/audios/' + this.post.id + '/completeAndAddToPost';
-        ajax.method = 'PUT';
-        ajax.body = {
-          audioId: this.uploadedAudioId,
-          appLanguage: this.language,
-        };
-        ajax.addEventListener(
-          'response',
-          function (event) {
-            this._finishRedirect(post);
-          }.bind(this)
-        );
-        setTimeout( () => {
-          window.appGlobals.showSpeechToTextInfoIfNeeded();
-        }, 20);
-        ajax.generateRequest();
+        this._redirectAfterAudio(post);
       } else {
         this._finishRedirect(post);
       }
@@ -1316,12 +1327,14 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  _finishRedirect(post) {
+  _finishRedirect(post: YpPostData) {
     this.fire('yp-reset-keep-open-for-page');
     window.appGlobals.activity('completed', 'newPost');
 
     let text = this.t('thankYouForYourSubmission');
-    const customThankYouTextNewPostsId = this.$$('#customThankYouTextNewPostsId') as YpMagicText;
+    const customThankYouTextNewPostsId = this.$$(
+      '#customThankYouTextNewPostsId'
+    ) as YpMagicText;
     if (
       this.group &&
       this.group.configuration &&
@@ -1336,15 +1349,11 @@ export class YpPostEdit extends YpEditBase {
       }
     }
 
-    window.appDialogs
-      .getDialogAsync(
-        'mastersnackbar',
-       ((snackbar: Snackbar) => {
-          snackbar.textContent = text;
-          snackbar.timeoutMs = 5000;
-          snackbar.open = true;
-        }
-      ));
+    window.appDialogs.getDialogAsync('mastersnackbar', (snackbar: Snackbar) => {
+      snackbar.textContent = text;
+      snackbar.timeoutMs = 5000;
+      snackbar.open = true;
+    });
 
     if (
       this.group &&
@@ -1353,13 +1362,18 @@ export class YpPostEdit extends YpEditBase {
     ) {
       // Nothing?
     } else {
-      YpNavHelpers.redirectTo('/post/' + (post ? post.id : this.post.id));
+      YpNavHelpers.redirectTo('/post/' + (post ? post.id : this.post?.id));
     }
   }
 
   clear() {
     if (this.newPost) {
-      this.post = { name: '', description: '', pointFor: '', categoryId: null };
+      this.post = {
+        name: '',
+        description: '',
+        pointFor: '',
+        categoryId: undefined,
+      } as YpPostData;
       this.location = undefined;
       this.selectedCategoryArrayId = undefined;
       this.selectedCategoryId = undefined;
@@ -1377,7 +1391,12 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  setup(post: YpPostData, newNotEdit: string, refreshFunction: Function, group: YpGroupData) {
+  setup(
+    post: YpPostData,
+    newNotEdit: boolean,
+    refreshFunction: Function,
+    group: YpGroupData
+  ) {
     this._setupGroup(group);
     if (post) {
       this.post = post;
@@ -1423,8 +1442,8 @@ export class YpPostEdit extends YpEditBase {
             this.uniqueIdsToElementIndexes = {};
             this.liveUniqueIds = [];
 
-            group.configuration.structuredQuestionsJson.forEach(
-              function (question, index) {
+            group.configuration.structuredQuestionsJson!.forEach(
+              (question, index) => {
                 if (
                   question.type.toLowerCase() === 'textfield' ||
                   question.type.toLowerCase() === 'textfieldlong' ||
@@ -1447,7 +1466,7 @@ export class YpPostEdit extends YpEditBase {
         this.postDescriptionLimit = 500;
       }
 
-      setTimeout( () => {
+      setTimeout(() => {
         if (this.structuredQuestions) {
           this.postDescriptionLimit = 9999;
         }
@@ -1455,8 +1474,12 @@ export class YpPostEdit extends YpEditBase {
     }
   }
 
-  get mediaHidden () {
-    if (this.group && this.group.configuration && this.group.configuration.hideMediaInput===true) {
+  get mediaHidden() {
+    if (
+      this.group &&
+      this.group.configuration &&
+      this.group.configuration.hideMediaInput === true
+    ) {
       return true;
     } else {
       return false;
@@ -1465,17 +1488,15 @@ export class YpPostEdit extends YpEditBase {
 
   setupAfterOpen(params: YpEditFormParams) {
     this._setupGroup(params.group);
-    setTimeout(
-       ()  =>{
-        const nameElement = this.$$('#name');
-        if (nameElement) {
-          nameElement.focus();
-        }
-      },
-      250
-    );
+    setTimeout(() => {
+      const nameElement = this.$$('#name');
+      if (nameElement) {
+        nameElement.focus();
+      }
+    }, 250);
 
-    if (this.post &&
+    if (
+      this.post &&
       !this.newPost &&
       this.post.public_data &&
       this.post.public_data.structuredAnswersJson
@@ -1485,8 +1506,10 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _alternativeTextForNewIdeaButtonHeaderTranslation() {
-    setTimeout( () => {
-      var label = this.$$('#alternativeTextForNewIdeaButtonHeaderId') as YpMagicText;
+    setTimeout(() => {
+      const label = this.$$(
+        '#alternativeTextForNewIdeaButtonHeaderId'
+      ) as YpMagicText;
       if (label && label.finalContent) {
         this.editHeaderText = label.finalContent;
       }
@@ -1494,34 +1517,33 @@ export class YpPostEdit extends YpEditBase {
   }
 
   setupTranslation() {
-    setTimeout(
-       () => {
-        if (this.t) {
-          if (this.newPost) {
-            if (
-              this.group &&
-              this.group.configuration &&
-              this.group.configuration.alternativeTextForNewIdeaButtonHeader
-            ) {
-              const label = this.$$('#alternativeTextForNewIdeaButtonHeaderId') as YpMagicText;
-              this.editHeaderText =
-                label && label.finalContent
-                  ? label.finalContent
-                  : this.group.configuration
-                      .alternativeTextForNewIdeaButtonHeader;
-            } else {
-              this.editHeaderText = this.t('post.new');
-            }
-            this.snackbarText = this.t('postCreated');
-            this.saveText = this.t('create');
+    setTimeout(() => {
+      if (this.t) {
+        if (this.newPost) {
+          if (
+            this.group &&
+            this.group.configuration &&
+            this.group.configuration.alternativeTextForNewIdeaButtonHeader
+          ) {
+            const label = this.$$(
+              '#alternativeTextForNewIdeaButtonHeaderId'
+            ) as YpMagicText;
+            this.editHeaderText =
+              label && label.finalContent
+                ? label.finalContent
+                : this.group.configuration
+                    .alternativeTextForNewIdeaButtonHeader;
           } else {
-            this.saveText = this.t('save');
-            this.editHeaderText = this.t('post.edit');
-            this.snackbarText = this.t('postUpdated');
+            this.editHeaderText = this.t('post.new');
           }
+          this.snackbarText = this.t('postCreated');
+          this.saveText = this.t('create');
+        } else {
+          this.saveText = this.t('save');
+          this.editHeaderText = this.t('post.edit');
+          this.snackbarText = this.t('postUpdated');
         }
-      },
-      20
-    );
+      }
+    }, 20);
   }
 }

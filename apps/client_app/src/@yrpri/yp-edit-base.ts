@@ -13,7 +13,7 @@ export abstract class YpEditBase extends YpBaseElement {
   saveText: string | undefined
 
   @property({ type: String })
-  snackText: string | undefined
+  snackbarText: string | undefined
 
   @property({ type: Object })
   params: Record<string,string> | undefined
@@ -21,7 +21,7 @@ export abstract class YpEditBase extends YpBaseElement {
   @property({ type: String })
   method = 'POST'
 
-  @property({ type: Function })
+  @property({ type: Object })
   refreshFunction: Function | undefined
 
   uploadedLogoImageId: number | undefined
@@ -32,7 +32,7 @@ export abstract class YpEditBase extends YpBaseElement {
 
   uploadedDefaultPostImageId: number | undefined
 
-  customRedirect?: Function
+  abstract customRedirect(unknown: YpDatabaseItem): void
 
   abstract setupAfterOpen(params?: YpEditFormParams): void
 
