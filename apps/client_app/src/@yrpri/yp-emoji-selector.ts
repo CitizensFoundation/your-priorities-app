@@ -1,6 +1,7 @@
 import { property, customElement, html } from 'lit-element';
 import { EmojiButton, EmojiSelection } from '@joeattardi/emoji-button';
 import { YpBaseElement } from './yp-base-element.js';
+import insertTextAtCursor from 'insert-text-at-cursor';
 
 import '@material/mwc-icon-button';
 
@@ -39,10 +40,18 @@ export class YpEmojiSelector extends YpBaseElement {
 
   pickEmoji(selection: EmojiSelection) {
     if (this.inputTarget) {
-      let value = '';
-      if (this.inputTarget.value) value = this.inputTarget.value;
-      this.inputTarget.value = `${value}${selection.emoji}`;
-      this.inputTarget.focus();
+      //TODO: Test if this actually works
+      insertTextAtCursor(this.inputTarget, selection.emoji as string);
+      //if (this.inputTarget.value) value = this.inputTarget.value;
+      //this.inputTarget.value = `${value}${selection.emoji}`;
+      setTimeout(()=>{
+        this.inputTarget!.scrollIntoView({
+          block: 'center',
+          inline: 'center',
+          behavior: 'smooth',
+        });
+        this.inputTarget!.focus();
+      })
     } else {
       console.error('No input target for emojis');
     }

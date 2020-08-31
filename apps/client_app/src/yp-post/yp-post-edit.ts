@@ -411,7 +411,7 @@ export class YpPostEdit extends YpEditBase {
                       .value="${this.replacedName ? this.replacedName : ''}" />
                   `
                 : html`
-                    <mwc-textfieldgit
+                    <mwc-textfield
                       id="name"
                       required
                       minlength="3"
