@@ -11,6 +11,7 @@ import '@material/mwc-linear-progress';
 import '@material/mwc-radio';
 import { Radio } from '@material/mwc-radio';
 import { Menu } from '@material/mwc-menu';
+import '@material/mwc-circular-progress-four-color';
 
 import '../yp-post/yp-posts-list.js';
 import '../yp-file-upload/yp-file-upload.js';
@@ -43,6 +44,7 @@ export class YpPoint extends YpBaseElement {
 
   @property({ type: Boolean })
   hideUser = false;
+
   @property({ type: Boolean })
   hideActions = false;
 
@@ -189,7 +191,7 @@ export class YpPoint extends YpBaseElement {
           border-bottom-color: var(--master-point-down-color);
         }
 
-        paper-icon-button {
+        mwc-icon-button {
           color: #ccc;
         }
 
@@ -331,7 +333,7 @@ export class YpPoint extends YpBaseElement {
           color: #111;
         }
 
-        paper-icon-button.openCloseButton {
+        mwc-icon-button.openCloseButton {
           width: 54px;
           height: 54px;
           margin-top: -16px;
@@ -459,7 +461,7 @@ export class YpPoint extends YpBaseElement {
         ? html`
             <div class="layout vertical center-center checkTranscript">
               <div>${this.t('checkingForTranscript')}</div>
-              <paper-spinner active></paper-spinner>
+              <mwc-circular-progress-four-color></mwc-circular-progress-four-color>
             </div>
           `
         : nothing}

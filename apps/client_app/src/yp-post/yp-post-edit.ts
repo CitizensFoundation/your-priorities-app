@@ -13,6 +13,7 @@ import '@material/mwc-tab-bar';
 import '@material/mwc-tab';
 import '@material/mwc-radio';
 import '@material/mwc-formfield';
+import '@material/mwc-select';
 
 import { YpForm } from '../@yrpri/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
@@ -41,6 +42,9 @@ export class YpPostEdit extends YpEditBase {
   @property({ type: Boolean })
   newPost = false;
 
+  @property({ type: Number })
+  selectedCategoryArrayId: number | undefined;
+
   @property({ type: Array })
   initialStructuredAnswersJson: Array<YpStructuredAnswer> | undefined;
 
@@ -61,9 +65,6 @@ export class YpPostEdit extends YpEditBase {
 
   @property({ type: String })
   encodedLocation: string | undefined;
-
-  @property({ type: Number })
-  selectedCategoryArrayId: number | undefined;
 
   @property({ type: Number })
   selectedCategoryId: number | undefined;
@@ -174,7 +175,7 @@ export class YpPostEdit extends YpEditBase {
           margin-bottom: 0;
         }
 
-        paper-radio-button {
+        mwc-radio {
           display: block;
         }
 
@@ -213,7 +214,7 @@ export class YpPostEdit extends YpEditBase {
           color: #444;
         }
 
-        paper-dropdown-menu {
+        mwc-select {
           max-width: 250px;
         }
 
@@ -229,7 +230,7 @@ export class YpPostEdit extends YpEditBase {
           display: none !important;
         }
 
-        paper-checkbox {
+        mwc-checkbox {
           margin-left: 8px;
           margin-top: 4px;
         }
@@ -299,7 +300,7 @@ export class YpPostEdit extends YpEditBase {
           margin-top: -42px;
         }
 
-        mwc-tabs[title-disabled] {
+        mwc-tab-bar[title-disabled] {
           margin-bottom: 24px;
         }
 
@@ -408,7 +409,7 @@ export class YpPostEdit extends YpEditBase {
                     <input
                       type="hidden"
                       name="name"
-                      .value="${this.replacedName ? this.replacedName : ''}" />
+                      .value="${this.replacedName || ''}" />
                   `
                 : html`
                     <mwc-textfield
@@ -425,23 +426,20 @@ export class YpPostEdit extends YpEditBase {
                   `}
               ${this.showCategories && this.group.Categories
                 ? html`
-                    <paper-dropdown-menu
+                    <mwc-select
                       class="categoryDropDown"
                       .label="${this.t('category.select')}"
+                      @selected="${this._selectedCategory}"
                       ?required="${this.group.configuration
                         .makeCategoryRequiredOnNewPost}">
-                      <paper-listbox
-                        slot="dropdown-content"
-                        .selected="${this.selectedCategoryArrayId}">
-                        ${this.group.Categories.map(
-                          category => html`
-                            <paper-item .data-category-id="${category.id}"
-                              >${category.name}</paper-item
-                            >
-                          `
-                        )}
-                      </paper-listbox>
-                    </paper-dropdown-menu>
+                      ${this.group.Categories.map(
+                        category => html`
+                          <mwc-list-item .data-category-id="${category.id}"
+                            >${category.name}</mwc-list-item
+                          >
+                        `
+                      )}
+                    </mwc-select>
                     <input
                       type="hidden"
                       name="categoryId"
@@ -460,8 +458,7 @@ export class YpPostEdit extends YpEditBase {
                       name="description"
                       .value="${this.post!.description}"
                       .label="${this.t('post.description')}"
-                      aria-label="${this.t('post.description')}"
-                      @value-changed="${this._resizeScrollerIfNeeded}"
+                      @change="${this._resizeScrollerIfNeeded}"
                       char-counter
                       rows="2"
                       max-rows="5"
@@ -521,10 +518,9 @@ export class YpPostEdit extends YpEditBase {
 
                     ${this.post!.data?.attachment?.url
                       ? html`
-                          <paper-checkbox name="deleteAttachment"
+                          <mwc-checkbox name="deleteAttachment"
                             >${this.t('deleteAttachment')}:
-                            ${this.post!.data.attachment
-                              .filename}</paper-checkbox
+                            ${this.post!.data.attachment.filename}</mwc-checkbox
                           >
                         `
                       : nothing}
@@ -659,40 +655,82 @@ export class YpPostEdit extends YpEditBase {
           </div>
           <br />
           <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
-          <paper-radio-group
+          <div
             id="coverMediaType"
             name="coverMediaType"
             class="coverMediaType layout horizontal wrap"
             .selected="${this.selectedCoverMediaType}">
-            <paper-radio-button name="none"
-              >${this.t('post.cover.none')}</paper-radio-button
-            >
-            <paper-radio-button
-              name="image"
-              ?hidden="${!this.uploadedHeaderImageId}"
-              >${this.t('post.cover.image')}</paper-radio-button
-            >
-            <paper-radio-button name="video" ?hidden="${!this.showVideoCover}"
-              >${this.t('postCoverVideo')}</paper-radio-button
-            >
-            <paper-radio-button name="audio" ?hidden="${!this.showAudioCover}"
-              >${this.t('postCoverAudio')}</paper-radio-button
-            >
+            <mwc-formfield label="${this.t('post.cover.none')}">
+              <mwc-radio
+                value="none"
+                ?checked="${this.selectedCoverMediaType === 'none'}"
+                @change="${this._setSelectedCoverMediaType}"
+                name="radioButtonsMedia">
+              </mwc-radio>
+            </mwc-formfield>
+
+            <mwc-formfield
+              label="${this.t('post.cover.image')}"
+              ?hidden="${!this.uploadedHeaderImageId}">
+              <mwc-radio
+                value="image"
+                ?checked="${this.selectedCoverMediaType === 'image'}"
+                @change="${this._setSelectedCoverMediaType}"
+                name="radioButtonsMedia">
+              </mwc-radio>
+            </mwc-formfield>
+
+            <mwc-formfield
+              label="${this.t('postCoverVideo')}"
+              ?hidden="${!this.showVideoCover}">
+              <mwc-radio
+                value="video"
+                ?checked="${this.selectedCoverMediaType === 'video'}"
+                @change="${this._setSelectedCoverMediaType}"
+                name="radioButtonsMedia">
+              </mwc-radio>
+            </mwc-formfield>
+
+            <mwc-formfield
+              label="${this.t('postCoverAudio')}"
+              ?hidden="${!this.showAudioCover}">
+              <mwc-radio
+                value="audio"
+                ?checked="${this.selectedCoverMediaType === 'audio'}"
+                @change="${this._setSelectedCoverMediaType}"
+                name="radioButtonsMedia">
+              </mwc-radio>
+            </mwc-formfield>
 
             ${this.location
               ? html`
-                  <paper-radio-button name="map"
-                    >${this.t('post.cover.map')}</paper-radio-button
-                  >
-                  <paper-radio-button name="streetView"
-                    >${this.t('post.cover.streetview')}</paper-radio-button
-                  >
+                  <mwc-formfield label="${this.t('post.cover.map')}">
+                    <mwc-radio
+                      value="map"
+                      ?checked="${this.selectedCoverMediaType === 'map'}"
+                      @change="${this._setSelectedCoverMediaType}"
+                      name="radioButtonsMedia">
+                    </mwc-radio>
+                  </mwc-formfield>
+
+                  <mwc-formfield label="${this.t('post.cover.streetview')}">
+                    <mwc-radio
+                      value="streetView"
+                      ?checked="${this.selectedCoverMediaType === 'streetView'}"
+                      @change="${this._setSelectedCoverMediaType}"
+                      name="radioButtonsMedia">
+                    </mwc-radio>
+                  </mwc-formfield>
                 `
               : nothing}
-          </paper-radio-group>
+          </div>
         </div>
       </section>
     `;
+  }
+
+  _setSelectedCoverMediaType(event: CustomEvent) {
+    this.selectedCoverMediaType = (event.target as HTMLInputElement).value;
   }
 
   renderCurrentTabPage(): TemplateResult | undefined | {} {
@@ -806,7 +844,7 @@ export class YpPostEdit extends YpEditBase {
               `
             : nothing}
         `
-      : nothing
+      : nothing;
   }
 
   //TODO: Investigate if any are missing .html version of listeners
@@ -1246,6 +1284,10 @@ export class YpPostEdit extends YpEditBase {
         this._resizeScrollerIfNeeded();
       }, 50);
     });
+  }
+
+  _selectedCategory(event: CustomEvent) {
+    this.selectedCategoryArrayId = event.detail.index;
   }
 
   _selectedCategoryChanged() {

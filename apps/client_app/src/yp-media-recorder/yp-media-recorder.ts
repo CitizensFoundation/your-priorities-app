@@ -219,32 +219,30 @@ export class YpMediaRecorder extends YpBaseElement {
     return html`
       <mwc-dialog id="selectDevices" modal>
         <h2>${this.selectDeviceTitle}</h2>
-        <mwc-dialog-scrollable>
-          <paper-listbox id="deviceListBox">
+          <mwc-select id="deviceListBox">
             ${this.allDevices!.map(
               item => html`
-                <paper-item
+                <mwc-list-item
                   @click="${this.selectDeviceFunction}"
                   id="${item.deviceId}"
-                  >${item.label}</paper-item
+                  >${item.label}</mwc-list-item
                 >
               `
             )}
-          </paper-listbox>
+          </mwc-select>
           <div class="layout horizontal rememberBox">
             <div>
               ${this.t('rememberDevice')}
             </div>
-            <input id="checkBox" .type="checkbox" />
+            <input id="checkBox" type="checkbox" />
           </div>
-        </mwc-dialog-scrollable>
       </mwc-dialog>
 
       <mwc-dialog id="noDevices">
         <h2>${this.t('noDevicesFound')}</h2>
         <div class="button layout horizontal center-center">
           <mwc-button
-            dialog-dismiss=""
+            slot="action"
             raised
             .label="${this.t('ok')}"></mwc-button>
         </div>
@@ -292,12 +290,12 @@ export class YpMediaRecorder extends YpBaseElement {
             class="layout horizontal mainbuttons"
             ?hidden="${!this.recorder}">
             <mwc-icon-button
-              ariaLabel="${this.t('closeRecordingWindow')}"
+              .label="${this.t('closeRecordingWindow')}"
               icon="clear"
               class="iconButtons"
               @click="${this._close}"></mwc-icon-button>
             <mwc-icon-button
-              ariaLabel="${this.t('deleteRecordedMedia')}"
+              .label="${this.t('deleteRecordedMedia')}"
               icon="delete"
               class="iconButtons"
               @click="${this._deleteRecording}"
@@ -333,9 +331,8 @@ export class YpMediaRecorder extends YpBaseElement {
             </span>
             <mwc-button
               @click="${this._sendBack}"
-              class="buttonText"
+              class="buttonText actionButton"
               .label="${this.t('send')}"
-              class="actionButton"
               ?hidden="${!this.recordedData}"
               icon="send">
             </mwc-button>
