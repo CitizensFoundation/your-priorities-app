@@ -17,28 +17,29 @@ class AcActivityPostLit extends YpBaseElement {
       activity: {
         type: Object
       },
-  
+
       postId: {
         type: Number,
         value: null
       },
-  
+
       wide: {
         type: Boolean,
         value: false
       },
-  
+
       isIE11: {
         type: Boolean,
         computed: '_isIE11(wide)'
       }
     }
   }
- 
+
   static get styles() {
     return [
+      super.styles,
       css`
-    
+
       .descriptionOuter {
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--description-line-height, 1.3);
@@ -183,7 +184,7 @@ class AcActivityPostLit extends YpBaseElement {
       .hasPointer {
         cursor: pointer;
       }
-    `, YpFlexLayout]
+      ]
   }
 
   render() {
@@ -236,4 +237,3 @@ class AcActivityPostLit extends YpBaseElement {
   }
 }
 
-window.customElements.define('ac-activity-post-lit', AcActivityPostLit)

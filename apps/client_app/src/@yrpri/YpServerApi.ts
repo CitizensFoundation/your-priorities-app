@@ -456,4 +456,15 @@ export class YpServerApi extends YpCodeBase {
       false
     );
   }
+
+  public deleteActivity(type: string, collectionId: number, activityId: number)  {
+    return this.fetchWrapper(
+      `/${type}/${collectionId}/${activityId}/delete_activity`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
 }

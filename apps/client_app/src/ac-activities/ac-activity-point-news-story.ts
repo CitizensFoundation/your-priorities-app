@@ -93,5 +93,3 @@ class AcActivityPointNewsStoryLit extends YpBaseElement {
     return (this.postId!=null);
   }
 }
-
-window.customElements.define('ac-activity-point-news-story-lit', AcActivityPointNewsStoryLit)

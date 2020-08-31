@@ -1,31 +1,84 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-list/iron-list.js';
-import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-material/paper-material.js';
-import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
-import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
-import { ypIronListBehavior } from '../yp-behaviors/yp-iron-list-behavior.js';
-import '../yp-ajax/yp-ajax.js';
-import '../yp-point/yp-point-news-story-edit.js';
-import './ac-activity.js';
-import './ac-activity-recommended-posts.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing, TemplateResult } from 'lit-html';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import linkifyStr from 'linkifyjs/string.js';
 
-class AcActivitiesLit extends YpBaseElement {
-  static get properties() {
+import '@material/mwc-circular-progress-four-color';
+import '@material/mwc-dialog';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-snackbar';
+
+import '@material/mwc-checkbox';
+import '@material/mwc-radio';
+
+import '@material/mwc-formfield';
+import { Radio } from '@material/mwc-radio';
+
+import { Checkbox } from '@material/mwc-checkbox';
+
+import { TextField } from '@material/mwc-textfield';
+import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { LitVirtualizer } from 'lit-virtualizer';
+
+@customElement('ac-activities')
+export class AcActivities extends YpBaseElementWithLogin {
+  @property({ type: Boolean })
+  disableNewPosts = false
+
+  @property({ type: Boolean })
+  noRecommendedPosts = true
+
+  @property({ type: Boolean })
+  gotInitialData = false
+
+  @property({ type: Array })
+  activities: Array<AcActivityData> | undefined
+
+  @property({ type: Number })
+  domainId: number | undefined
+
+  @property({ type: Number })
+  communityId: number | undefined
+
+  @property({ type: Number })
+  groupId: number | undefined
+
+  @property({ type: Number })
+  postId: number | undefined
+
+  @property({ type: Number })
+  postGroupId: number | undefined
+
+  @property({ type: Number })
+  userId: number | undefined
+
+  @property({ type: String })
+  mode: 'activities' | 'news_feeds' = 'activities'
+
+  @property({ type: String })
+  url: string | undefined
+
+  @property({ type: Object })
+  latestProcessedActivityAt: Date | undefined
+
+  @property({ type: Object })
+  oldestProcessedActivityAt: Date | undefined
+
+  @property({ type: Number })
+  activityIdToDelete: number | undefined
+
+  @property({ type: Array })
+  recommendedPosts: Array<YpPostData> | undefined
+
+  _moreToLoad = false
+
+  static get prsoperties() {
     return {
-      disableNewPosts: {
-        type: Boolean,
-        value: false
-      },
 
-      activities: {
-        type: Array,
-        notify: true
+      ironListPaddingTop: {
+        type: Number,
+        computed: '_ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab)'
       },
 
       domainId: {
@@ -48,85 +101,12 @@ class AcActivitiesLit extends YpBaseElement {
         observer: "_postIdChanged"
       },
 
-      postGroupId: {
-        type: Number
-      },
-
-      // 'activities' and 'news_feed'
-      mode: {
-        type: String,
-        value: "activities"
-      },
-
-      url: {
-        type: String
-      },
-
-      oldestProcessedActivityAt: {
-        type: Date
-      },
-
-      latestProcessedActivityAt: {
-        type: Date
-      },
-
-      activityIdToDelete: {
-        type: Number
-      },
-
-      wide: {
-        type: Boolean,
-        value: false
-      },
-
-      selectedTab: {
-        type: String
-      },
-
-      recommendedPosts: {
-        type: Array,
-        value: null
-      },
-
-      noRecommendedPosts: {
-        type: Boolean,
-        value: true
-      },
-
-      skipIronListWidth: {
-        type: Boolean,
-        computed: '_skipIronListWidth(wide)'
-      },
-
-      ironListResizeScrollThreshold: {
-        type: Number,
-        computed: '_ironListResizeScrollThreshold(wide)'
-      },
-
-      ironListPaddingTop: {
-        type: Number,
-        computed: '_ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab)'
-      },
-
-      wideListOffset: {
-        type: String,
-        computed: '_wideListOffset(groupId)'
-      },
-
-      hasLoggedInUser: {
-        type: Boolean,
-        computed: '_hasLoggedInUser(loggedInUser)'
-      },
-
-      gotInitialData: {
-        type: Boolean,
-        value: false
-      }
     }
   }
 
   static get styles() {
     return [
+      super.styles,
       css`
         :host {
           height: 100%;
@@ -280,7 +260,8 @@ class AcActivitiesLit extends YpBaseElement {
         .topLevelActivitiesContainer[rtl] {
           direction: rtl;
         }
-      `, YpflexLayout]
+      `
+      ]
   }
 
   render() {
@@ -289,8 +270,8 @@ class AcActivitiesLit extends YpBaseElement {
       <div class="layout vertical self-start">
 
         ${ this.loggedInUser ?  html`
-          <paper-material .loggedInUser="${this.hasLoggedInUser}" elevation="1" class="layout horizontal addNewsBox">
-            <yp-point-news-story-edit .domainId="${this.domainId}" .communityId="${this.communityId}" groupId="${this.groupId}" .postGroupId="${this.postGroupId}" .postId="${this.postId}" @refresh="${this.loadNewData}">
+          <paper-material .loggedInUser="${this.isLoggedIn}" elevation="1" class="layout horizontal addNewsBox">
+            <yp-point-news-story-edit .domainId="${this.domainId}" .communityId="${this.communityId}" .groupId="${this.groupId}" .postGroupId="${this.postGroupId}" .postId="${this.postId}" @refresh="${this.loadNewData}">
             </yp-point-news-story-edit>
           </paper-material>
         ` : html`
@@ -304,10 +285,10 @@ class AcActivitiesLit extends YpBaseElement {
           <yp-ajax id="ajax" large-spinner @response="${this._activitiesResponse}"></yp-ajax>
         </div>
 
-        <iron-list id="ironList" .scrollOffset="${this.ironListPaddingTop}" .scrollTarget="document" .items="${this.activities}" as="activity">
+        <iron-list id="activitiesList" .scrollOffset="${this.ironListPaddingTop}" .scrollTarget="document" .items="${this.activities}" as="activity">
           <template>
             <div tabindex ="${this.tabIndex}" class="layout vertical center-center">
-              <ac-activity .hasLoggedInUser="${this.hasLoggedInUser}" class="activityContainer" .activity="${this.activity}" .postId="${this.postId}" groupId="${this.groupId}" .communityId="${this.communityId}" domainId="${this.domainId}" @ak-delete-activity="${this._deleteActivity}"></ac-activity>
+              <ac-activity .hasLoggedInUser="${this.isLoggedIn}" class="activityContainer" .activity="${this.activity}" .postId="${this.postId}" groupId="${this.groupId}" .communityId="${this.communityId}" domainId="${this.domainId}" @ak-delete-activity="${this._deleteActivity}"></ac-activity>
             </div>
           </template>
         </iron-list>
@@ -325,7 +306,6 @@ class AcActivitiesLit extends YpBaseElement {
 
     <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
-    <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
     <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
 
     <iron-scroll-threshold id="scrollTheshold" .lowerThreshold="450" @lower-threshold="${this._loadMoreData}" .scrollTarget="document">
@@ -345,7 +325,7 @@ class AcActivitiesLit extends YpBaseElement {
     super.connectedCallback();
     this.addListener('yp-point-deleted', this._pointDeleted);
   }
-    
+
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener('yp-point-deleted', this._pointDeleted);
@@ -355,62 +335,57 @@ class AcActivitiesLit extends YpBaseElement {
     this.fire('yp-open-login');
   }
 
-  _pointDeleted(event, detail) {
-    for (let i = 0; i < this.activities.length; i++) {
-      if (this.activities[i].Point) {
-        if (this.activities[i].Point.id==detail.pointId) {
-          this._removeActivityId(this.activities[i].id);
+  _pointDeleted(event: CustomEvent) {
+    if (this.activities) {
+      for (let i = 0; i < this.activities.length; i++) {
+        if (this.activities[i].Point) {
+          if (this.activities[i].Point!.id==event.detail.pointId) {
+            this._removeActivityId(this.activities[i].id);
+          }
         }
       }
     }
   }
 
-  _hasLoggedInUser(user) {
-    if (user) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  _wideListOffset(groupId) {
-    if (groupId) {
+  get wideListOffset() {
+    if (this.groupId) {
       return "800";
     } else {
       return "415"
     }
   }
 
-  _ironListResizeScrollThreshold(wide) {
-    if (wide) {
+  get ironListResizeScrollThreshold() {
+    if (this.wide) {
       return 800;
     } else {
       return 300;
     }
   }
 
-  _ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab) {
-    let offset = this.$$("#ironList").offsetTop;
+  //TODO: Look into if this is needed
+  get ironListPaddingTop() {
+    let offset = (this.$$("#activitiesList") as HTMLElement).offsetTop;
     offset -= 75;
 
-    if (!hasLoggedInUser && !groupId)
+    if (!this.isLoggedIn && !this.groupId)
       offset -= 75;
 
     if (offset>0) {
       console.info("News scroll offset: "+offset);
       return offset;
     } else {
-      if (groupId) {
-        if (wide) {
-          offset = hasLoggedInUser? 700 : 580;
+      if (this.groupId) {
+        if (this.wide) {
+          offset = this.isLoggedIn ? 700 : 580;
         } else {
-          offset = hasLoggedInUser? 950 :  690;
+          offset = this.isLoggedIn ? 950 :  690;
         }
       } else {
-        if (wide) {
-          offset = hasLoggedInUser? 600 : 400;
+        if (this.wide) {
+          offset = this.isLoggedIn ? 600 : 400;
         } else {
-          offset = hasLoggedInUser? 700 : 610;
+          offset = this.isLoggedIn ? 700 : 610;
         }
       }
       console.info("News (manual) scroll offset: "+offset);
@@ -418,61 +393,78 @@ class AcActivitiesLit extends YpBaseElement {
     }
   }
 
-  _skipIronListWidth(wide) {
-    if (wide) {
-      const list = this.$$("#ironList");
+  //TODO: See what this is and if its needed
+  /*get skipIronListWidth() {
+    if (this.wide) {
+      const list = this.$$("#activitiesList");
       list.style.width = '600px';
       list.updateViewportBoundaries();
-      this.async(function () {
+      setTimeout( () => {
         list.notifyResize();
       }, 50);
     }
-    return wide;
+    return this.wide;
+  }*/
+
+  _activityDeletedResponse(event: CustomEvent) {
+    this._removeActivityId(event.detail.response.activityId);
   }
 
-  _activityDeletedResponse(event, detail) {
-    this._removeActivityId(detail.response.activityId);
-  }
-
-  _removeActivityId(activityId) {
-    for (let i = 0; i < this.activities.length; i++) {
-      if (this.activities[i].id == activityId) {
-        this.splice('activities', i, 1);
+  _removeActivityId(activityId: number) {
+    if (this.activities) {
+      for (let i = 0; i < this.activities.length; i++) {
+        if (this.activities[i].id == activityId) {
+          this.splice('activities', i, 1);
+        }
       }
     }
-    this.$$("#ironList").fire("iron-resize");
+    //TODO: See if this needed
+    //this.$$("#activitiesList").fire("iron-resize");
   }
 
-  _deleteActivity(event, detail) {
-    this.activityIdToDelete = detail.id;
-    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+  _deleteActivity(event: CustomEvent) {
+    this.activityIdToDelete = event.detail.id;
+    //TODO: Make work
+    /*window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
       dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
-    }.bind(this));
+    });*/
   }
 
-  _reallyDelete() {
+  async _reallyDelete() {
+    let type, collectionId
     if (this.domainId) {
-      this.$$("#deleteActivityAjax").url = "/api/domains/"+this.domainId+"/"+this.activityIdToDelete+"/delete_activity";
+      type = "domains"
+      collectionId = this.domainId
     } else if (this.communityId) {
-      this.$$("#deleteActivityAjax").url = "/api/communities/"+this.communityId+"/"+this.activityIdToDelete+"/delete_activity";
+      type = "communities"
+      collectionId = this.communityId
     } else if (this.groupId) {
-      this.$$("#deleteActivityAjax").url = "/api/groups/"+this.groupId+"/"+this.activityIdToDelete+"/delete_activity";
+      type = "groups"
+      collectionId = this.groupId
     } else if (this.postId) {
-      this.$$("#deleteActivityAjax").url = "/api/posts/"+this.postId+"/"+this.activityIdToDelete+"/delete_activity";
+      type = "posts"
+      collectionId = this.postId
+    } else if (this.userId) {
+      type = "users"
+      collectionId = this.postId
     }
-    this.$$("#deleteActivityAjax").body = {};
-    this.$$("#deleteActivityAjax").generateRequest();
-    this.activityIdToDelete = null;
+
+    if (type && collectionId && this.activityIdToDelete) {
+      await window.serverApi.deleteActivity(type, collectionId, this.activityIdToDelete)
+      this.activityIdToDelete = undefined
+    } else {
+      console.error("No activity found to delete")
+    }
   }
 
-  _generateRequest(typeId, typeName) {
+  _generateRequest(typeId: number, typeName: string) {
     if (typeId) {
       this.activities = [];
-      this.oldestProcessedActivityAt = null;
+      this.oldestProcessedActivityAt = undefined;
       this.noRecommendedPosts = true;
 
       //TODO: Add a minimum threshold of filtering before enabling dynamic news_feeds again
-      if (false && window.appUser && window.appUser.user && !this.postId) {
+      if (window.appUser && window.appUser.user && !this.postId) {
         this.mode = 'news_feeds';
       } else {
         this.mode = 'activities';
@@ -489,13 +481,13 @@ class AcActivitiesLit extends YpBaseElement {
   }
 
   _loadMoreData() {
-    this.async(function () {
+    setTimeout(()  => {
       console.log("_loadMoreData for scroll");
-      if (this.$$("#ironList").offsetWidth > 0 && this.$$("#ironList").offsetHeight > 0) {
-        console.log("_loadMoreData for scroll 2 url: "+this.url+" moreToLoad: "+this.moreToLoad);
-        if (this.url!='' && this.moreToLoad && this.oldestProcessedActivityAt) {
+      if (this.$$("#activitiesList").offsetWidth > 0 && this.$$("#activitiesList").offsetHeight > 0) {
+        console.log("_loadMoreData for scroll 2 url: "+this.url+" moreToLoad: "+this._moreToLoad);
+        if (this.url!='' && this._moreToLoad && this.oldestProcessedActivityAt) {
           console.log("_loadMoreData for scroll 3");
-          this.moreToLoad = false;
+          this._moreToLoad = false;
           console.info("_loadMoreData for scroll for domainId: "+this.domainId+" communityId: "+this.communityId+" groupId: "+this.groupId+" postId: "+this.postId);
           this.$$("#ajax").url = this.url + '?beforeDate='+this.oldestProcessedActivityAt;
           this.$$("#ajax").generateRequest();
@@ -516,37 +508,53 @@ class AcActivitiesLit extends YpBaseElement {
     }
   }
 
-  _domainIdChanged(newValue) {
-    this.activities = null;
-    this.recommendedPosts = null;
-    this._generateRequest(newValue, 'domains');
+  _domainIdChanged() {
+    if (this.domainId) {
+      this.activities = undefined
+      this.recommendedPosts = undefined
+      this._generateRequest(this.domainId, 'domains')
+    }
   }
 
-  _communityIdChanged(newValue) {
-    this.activities = null;
-    this.recommendedPosts = null;
-    this._generateRequest(newValue, 'communities');
+  _communityIdChanged() {
+    if (this.communityId) {
+      this.activities = undefined
+      this.recommendedPosts = undefined
+      this._generateRequest(this.communityId, 'communities');
+    }
   }
 
-  _groupIdChanged(newValue) {
-    this.activities = null;
-    this.recommendedPosts = null;
-    this._generateRequest(newValue, 'groups');
+  _groupIdChanged() {
+    if (this.groupId) {
+      this.activities = undefined
+      this.recommendedPosts = undefined
+      this._generateRequest(this.groupId, 'groups');
+    }
   }
 
-  _postIdChanged(newValue) {
-    this.activities = null;
-    this.recommendedPosts = null;
-    this._generateRequest(newValue, 'posts');
+  _postIdChanged() {
+    if (this.postId) {
+      this.activities = undefined
+      this.recommendedPosts = undefined
+      this._generateRequest(this.postId, 'posts');
+    }
+  }
+
+  _userIdChanged() {
+    if (this.userId) {
+      this.activities = undefined
+      this.recommendedPosts = undefined
+      this._generateRequest(this.userId, 'users');
+    }
   }
 
   _clearScrollThreshold() {
-    this.$$("#scrollTheshold").clearTriggers();
+    //this.$$("#scrollTheshold").clearTriggers();
     console.info("Clearing scrolling triggers for activity");
   }
 
-  _recommendedPostsResponse(event, detail) {
-    var allowRecommendations = true;
+  _recommendedPostsResponse(event: CustomEvent) {
+    let allowRecommendations = true;
     if (this.activities && this.activities.length>0) {
       if( this.activities[0].Group &&
         this.activities[0].Group.configuration &&
@@ -559,18 +567,18 @@ class AcActivitiesLit extends YpBaseElement {
         allowRecommendations = false;
       }
     }
-    if (allowRecommendations && detail.response && detail.response.length>0) {
-      this.recommendedPosts = detail.response;
+    if (allowRecommendations && event.detail.response && event.detail.response.length>0) {
+      this.recommendedPosts = event.detail.response;
       this.noRecommendedPosts = false;
     } else {
       this.noRecommendedPosts = true;
     }
   }
 
-  _preProcessActivities(activities) {
+  _preProcessActivities(activities: Array<AcActivityData>) {
     for (let i = 0; i < activities.length; i++) {
       if (activities[i].Point) {
-        activities[i].Point.latestContent = activities[i].Point.PointRevisions[activities[i].Point.PointRevisions.length-1].content;
+        activities[i].Point!.latestContent = activities[i].Point!.PointRevisions![activities[i].Point!.PointRevisions!.length-1].content;
       }
     }
     return activities;
@@ -588,10 +596,10 @@ class AcActivitiesLit extends YpBaseElement {
     }
 
     for (let i = 0; i < activities.length; i++) {
-      if (this.$$("#ajax").url.indexOf('afterDate') > -1) {
-        this.unshift('activities', activities[i]);
+      if (this.url!.indexOf('afterDate') > -1) {
+        this.activities?.unshift(activities[i]);
       } else {
-        this.push('activities', activities[i]);
+        this.activities?.push(activities[i]);
       }
     }
 
@@ -605,37 +613,31 @@ class AcActivitiesLit extends YpBaseElement {
       } else {
         console.log("latestProcessedActivityAt: "+ this.latestProcessedActivityAt)
       }
-      this.moreToLoad = true;
+      this._moreToLoad = true;
       if (this.activities.length<15 || (activities.length<3 && this.activities.length<100)) {
         this._loadMoreData();
       }
     }
 
-    document.dispatchEvent(
-      new CustomEvent("lite-signal", {
-        bubbles: true,
-        compose: true,
-        detail: { name: 'yp-refresh-activities-scroll-threshold', data: {} }
-      })
-    );
+    this.fireGlobal('yp-refresh-activities-scroll-threshold', {});
 
-    this.async(function () {
-      this.$$("#ironList").fire('iron-resize');
+    setTimeout( () => {
+      //TODO: Check out
+      //this.$$("#activitiesList").fire('iron-resize');
     });
   }
 
-  scrollToItem(item) {
+  scrollToItem(item: YpActivityData) {
     console.log("Activity scrolling to item");
-    this.$$("#ironList").scrollToItem(item);
-    this.async(function () {
+    (this.$$("#activitiesList") as LitVirtualizer).scrollToItem(item);
+    setTimeout(() => {
       this._clearScrollThreshold();
     });
   }
 
   fireResize() {
     console.log("fireResize");
-    this.$$("#ironList").fire('iron-resize');
+    //TODO: Is this needed
+    //this.$$("#activitiesList").fire('iron-resize');
   }
 }
-
-window.customElements.define('ac-activities-lit', AcActivitiesLit)

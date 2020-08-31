@@ -4,9 +4,6 @@ import { Layouts } from 'lit-flexbox-literals';
 import { YpBaseElement } from './yp-base-element.js';
 
 export class YpBaseElementWithLogin extends YpBaseElement {
-  @property({ type: String })
-  language = 'en';
-
   @property({ type: Object })
   loggedInUser: YpUserData|undefined;
 

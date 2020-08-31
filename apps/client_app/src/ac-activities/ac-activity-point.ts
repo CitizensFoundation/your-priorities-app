@@ -1,31 +1,41 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '../yp-point/yp-point.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import '../yp-magic-text/yp-magic-text.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing, TemplateResult } from 'lit-html';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import linkifyStr from 'linkifyjs/string.js';
 
-class AcActivityPointLit extends YpBaseElement {
-  static get properties() {
-    return {
-      activity: {
-        type: Object,
-        observer: '_activityChanged'
-      },
-  
-      postId: {
-        type: Number,
-        value: null
-      }  
-    }
-  }
-  
+import '@material/mwc-circular-progress-four-color';
+import '@material/mwc-dialog';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-snackbar';
+
+import '@material/mwc-checkbox';
+import '@material/mwc-radio';
+
+import '@material/mwc-formfield';
+import { Radio } from '@material/mwc-radio';
+
+import { Checkbox } from '@material/mwc-checkbox';
+
+import { TextField } from '@material/mwc-textfield';
+import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { LitVirtualizer } from 'lit-virtualizer';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+
+@customElement('ac-activity-point')
+export class AcActivityPoint extends YpBaseElementWithLogin {
+  @property({ type: Object })
+  activity: AcActivityData | undefined
+
+  @property({ type: Number })
+  postId: number | undefined
+
   static get styles() {
     return [
+      super.styles,
       css`
 
-      .pointContainer { 
+      .pointContainer {
       }
       .point {
         padding: 8px;
@@ -109,21 +119,16 @@ class AcActivityPointLit extends YpBaseElement {
 */
 
   _goToPoint() {
-    if (!this.postId) {
-      this.goToPost(this.activity.Post.id, this.activity.Point.id, this.activity)
+    if (!this.postId && this.activity) {
+      YpNavHelpers.goToPost(this.activity.Post.id, this.activity.Point.id, this.activity)
     }
   }
 
-  _activityChanged(newValue) {
+  get isUpVote() {
+    return this.point && this.point.value > 0;
   }
 
-  _isUpVote(point) {
-    return point && point.value > 0;
-  }
-
-  _isDownVote(point) {
-    return point && point.value < 0;
+  get isDownVote() {
+    return this.point && this.point.value < 0;
   }
 }
-
-window.customElements.define('ac-activity-point-lit', AcActivityPointLit)

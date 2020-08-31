@@ -1,257 +1,262 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-material/paper-material.js';
-import '../yp-app-globals/yp-app-icons.js';
-import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
-import { AccessHelpers } from '../yp-behaviors/access-helpers.js';
-import './ac-activity-header.js';
-import './ac-activity-post.js';
-import './ac-activity-point.js';
-import './ac-activity-point-news-story.js';
-import './ac-activity-post-status-update.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { format, formatDistance } from 'date-fns';
-import { YpBaseElement } from '../yp-base-element.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing, TemplateResult } from 'lit-html';
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import linkifyStr from 'linkifyjs/string.js';
 
-class AcActivityLit extends YpBaseElement {
-  static get properties() {
-    return {
-      activity: {
-        type: Object
-      },
+import '@material/mwc-circular-progress-four-color';
+import '@material/mwc-dialog';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-snackbar';
 
-      domainId: {
-        type: Number
-      },
+import '@material/mwc-checkbox';
+import '@material/mwc-radio';
 
-      communityId: {
-        type: Number
-      },
+import '@material/mwc-formfield';
+import { Radio } from '@material/mwc-radio';
 
-      groupId: {
-        type: Number
-      },
+import { Checkbox } from '@material/mwc-checkbox';
 
-      postId: {
-        type: Number
-      },
+import { TextField } from '@material/mwc-textfield';
+import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { LitVirtualizer } from 'lit-virtualizer';
+import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 
-      postGroupId: {
-        type: Number
-      },
+@customElement('ac-activity')
+export class AcActivity extends YpBaseElementWithLogin {
+  @property({ type: Object })
+  activity: AcActivityData | undefined;
 
-      wide: {
-        type: Boolean,
-        value: false
-      },
+  @property({ type: Number })
+  domainId: number | undefined;
 
-      isOldSafariOrIe: {
-        type: Boolean,
-        computed: '_isOldSafariOrIe(wide)'
-      },
+  @property({ type: Number })
+  communityId: number | undefined;
 
-      hasLoggedInUser: {
-        type: Boolean
-      }
-    };
-  }
+  @property({ type: Number })
+  groupId: number | undefined;
+
+  @property({ type: Number })
+  postId: number | undefined;
+
+  @property({ type: Number })
+  postGroupId: number | undefined;
+
+  @property({ type: Number })
+  userId: number | undefined;
 
   static get styles() {
     return [
+      super.styles,
       css`
-
-      .activity {
-        margin: 16px;
-        background-color: #FFF;
-        width: 550px;
-        height: 100%;
-        padding-left: 16px;
-        padding-right: 16px;
-        margin-bottom: 0;
-      }
-
-      @media (max-width: 600px) {
         .activity {
-          width: 100%;
+          margin: 16px;
+          background-color: #fff;
+          width: 550px;
           height: 100%;
-
-          margin: 0;
           padding-left: 16px;
           padding-right: 16px;
-          margin-bottom: 8px;
-          margin-top: 8px;
-          width: -webkit-calc(100% - 8px);
-          width:    -moz-calc(100% - 8px);
-          width:         calc(100% - 8px);
+          margin-bottom: 0;
         }
 
-        .activity[logged-in-user] {
-          margin-left: 0;
-          width: -webkit-calc(100% - 16px);
-          width:    -moz-calc(100% - 16px);
-          width:         calc(100% - 16px);
+        @media (max-width: 600px) {
+          .activity {
+            width: 100%;
+            height: 100%;
+
+            margin: 0;
+            padding-left: 16px;
+            padding-right: 16px;
+            margin-bottom: 8px;
+            margin-top: 8px;
+            width: -webkit-calc(100% - 8px);
+            width: -moz-calc(100% - 8px);
+            width: calc(100% - 8px);
+          }
+
+          .activity[logged-in-user] {
+            margin-left: 0;
+            width: -webkit-calc(100% - 16px);
+            width: -moz-calc(100% - 16px);
+            width: calc(100% - 16px);
+          }
         }
-      }
 
-      .aaaactivity[is-old-safari-or-ie] {
-        height: 550px;
-        overflow: auto;
-      }
+        .aaaactivity[is-old-safari-or-ie] {
+          height: 550px;
+          overflow: auto;
+        }
 
-      .mainActivityContent {
-        height: 100% !important;
-      }
+        .mainActivityContent {
+          height: 100% !important;
+        }
 
-      ac-activity-header {
-      }
+        ac-activity-header {
+        }
 
-      ac-activity-post {
-        width :100%;
-      }
+        ac-activity-post {
+          width: 100%;
+        }
 
-      .headerUserImage {
-        padding-top: 16px;
-      }
+        .headerUserImage {
+          padding-top: 16px;
+        }
 
-      h1 {
-        font-size: 24px;
-      }
+        h1 {
+          font-size: 24px;
+        }
 
+        mwc-button {
+          color: var(--accent-color);
+        }
 
-      mwc-button {
-        color: var(--accent-color);
-      }
+        iron-icon {
+          width: 48px;
+          height: 48px;
+          padding-top: 14px;
+        }
 
-      iron-icon {
-        width: 48px;
-        height: 48px;
-        padding-top: 14px;
-      }
+        .createdAt {
+          color: #777;
+          margin-top: 16px;
+          font-size: 14px;
+        }
 
-      .createdAt {
-        color: #777;
-        margin-top: 16px;
-        font-size: 14px;
-      }
+        yp-ajax {
+          background-color: var(--primary-background-color);
+        }
 
-      yp-ajax {
-        background-color: var(--primary-background-color);
-      }
+        .deleteIcon {
+          position: absolute;
+          right: 8px;
+          bottom: 8px;
+          color: #ddd;
+        }
 
-      .deleteIcon {
-        position: absolute;
-        right: 8px;
-        bottom: 8px;
-        color: #ddd;
-      }
-
-      [hidden] {
-        display: none !important;
-      }
-    `, YpFlexLayout]
+        [hidden] {
+          display: none !important;
+        }
+      `
+    ];
   }
 
   render() {
-    return html`
-    <paper-material is-old-safari-or-ie="${this.isOldSafariOrIe}" .loggedInUser="${this.hasLoggedInUser}" .elevation="${this._elevationForType(activity.type)}" class="layout vertical activity" tabindex="${this.tabIndex}">
-      <paper-icon-button .title="${this.t('deleteActivity')}" ?hidden="${!this._hasActivityAccess(activity)}" .icon="delete" data-args="${this.activity.id}" class="deleteIcon" @tap="${this._deleteActivity}"></paper-icon-button>
-      <div class="mainActivityContent">
-        <div class="layout horizontal">
-          <ac-activity-header class="layout horizontal headerUserImage" .activity="${this.activity}"></ac-activity-header>
-          <div class="flex"></div>
-          <div ?hidden="${!this.wide}" class="createdAt" .title="${this.fromLongTime(activity.created_at)}">
-            ${this.fromTime(activity.created_at)}
-          </div>
-        </div>
+    return this.activity
+      ? html`
+          <paper-material
+            .loggedInUser="${this.isLoggedIn}"
+            .elevation="${this._elevationForType()}"
+            class="layout vertical activity"
+            tabindex="${this.tabIndex}">
+            <paper-icon-button
+              .title="${this.t('deleteActivity')}"
+              ?hidden="${!this._hasActivityAccess(this.activity)}"
+              icon="delete"
+              data-args="${this.activity.id}"
+              class="deleteIcon"
+              @tap="${this._deleteActivity}"></paper-icon-button>
+            <div class="mainActivityContent">
+              <div class="layout horizontal">
+                <yp-user-with-organization .user="${this.activity.User}" inverted></yp-user-with-organization>
+                <div class="flex"></div>
+                <div
+                  ?hidden="${!this.wide}"
+                  class="createdAt"
+                  .title="${this.fromLongTime(this.activity.created_at)}">
+                  ${this.fromTime(this.activity.created_at)}
+                </div>
+              </div>
 
-        ${this._isActivityType(activity,'activity.post.new') ? html`
-          <ac-activity-post .activity="${this.activity}" .postId="${this.postId}" .communityId="${this.communityId}" .groupId="${this.groupId}"></ac-activity-post>
-        `  : html``}
-
-        ${this._isActivityType(activity,'activity.point.new') ? html`
-          <ac-activity-point .postId="${this.postId}" .activity="${this.activity}"></ac-activity-point>
-        ` : html``}
-
-        ${this._isActivityType(activity,'activity.point.newsStory.new') ? html`
-          <ac-activity-point-news-story .activity="${this.activity}" .postId="${this.postId}" .communityId="${this.communityId}" .groupId="${this.groupId}"></ac-activity-point-news-story>
-        ` : html``}
-
-        ${this._isActivityType(activity,'activity.post.status.change') ? html`
-          <ac-activity-post-status-update .activity="${this.activity}"></ac-activity-post-status-update>
-        ` : html``}
-      </div>
-    </paper-material>
-
-    <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-`
+              ${this._isActivityType(this.activity, 'activity.post.new')
+                ? html`
+                    <ac-activity-post
+                      .activity="${this.activity}"
+                      .postId="${this.postId}"
+                      .communityId="${this.communityId}"
+                      .groupId="${this.groupId}"></ac-activity-post>
+                  `
+                : html``}
+              ${this._isActivityType(this.activity, 'activity.point.new')
+                ? html`
+                    <ac-activity-point
+                      .postId="${this.postId}"
+                      .activity="${this.activity}"></ac-activity-point>
+                  `
+                : html``}
+              ${this._isActivityType(
+                this.activity,
+                'activity.point.newsStory.new'
+              )
+                ? html`
+                    <ac-activity-point-news-story
+                      .activity="${this.activity}"
+                      .postId="${this.postId}"
+                      .communityId="${this.communityId}"
+                      .groupId="${this.groupId}"></ac-activity-point-news-story>
+                  `
+                : html``}
+              ${this._isActivityType(
+                this.activity,
+                'activity.post.status.change'
+              )
+                ? html`
+                    <ac-activity-post-status-update
+                      .activity="${this
+                        .activity}"></ac-activity-post-status-update>
+                  `
+                : html``}
+            </div>
+          </paper-material>
+        `
+      : nothing;
   }
 
-/*
+  /*
   behaviors: [
     ypLoggedInUserBehavior,
     AccessHelpers
   ],
 */
 
-
-  _hasLoggedInUser(user) {
-    if (user) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   fromTime(timeValue) {
-    return formatDistance(timeValue, new Date(),  {
-      locale: this.language
+    return formatDistance(timeValue, new Date(), {
+      locale: this.language,
     });
   }
 
   fromLongTime(timeValue) {
-    return format(timeValue,"",{
-      locale: this.language
+    return format(timeValue, '', {
+      locale: this.language,
     });
   }
 
-  _isOldSafariOrIe(wide) {
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) &&
-      !(/10/i.test(navigator.userAgent)) &&
-      !window.MSStream;
-  }
-
-  _elevationForType(type) {
+  _elevationForType() {
     return 1;
   }
 
-  _hasActivityAccess(activity) {
-    if (this.domainId) {
-      return this.checkDomainAccess(activity.Domain)
-    } else if (this.communityId) {
-      return this.checkCommunityAccess(activity.Community)
-    } else if (this.groupId) {
-      return this.checkGroupAccess(activity.Group)
-    } else if (this.postId) {
-      return this.checkPostAccess(activity.Post)
+  _hasActivityAccess(activity: AcActivityData) {
+    if (this.domainId && activity.Domain) {
+      return YpAccessHelpers.checkDomainAccess(activity.Domain);
+    } else if (this.communityId && activity.Community) {
+      return YpAccessHelpers.checkCommunityAccess(activity.Community);
+    } else if (this.groupId && activity.Group) {
+      return YpAccessHelpers.checkGroupAccess(activity.Group);
+    } else if (this.postId && activity.Post) {
+      return YpAccessHelpers.checkPostAccess(activity.Post);
     } else {
       return false;
     }
   }
 
-  _deleteActivity(event) {
-    this.fire("ak-delete-activity", { id: this.activity.id });
+  _deleteActivity() {
+    this.fire('ak-delete-activity', { id: this.activity!.id });
   }
 
-  _isNotActivityType(activity, type) {
-    return activity.type!=type
+  _isNotActivityType(activity: AcActivityData, type: string) {
+    return activity.type != type;
   }
 
-  _isActivityType(activity, type) {
-    return activity.type==type
+  _isActivityType(activity: AcActivityData, type: string) {
+    return activity.type == type;
   }
 }
-
-window.customElements.define('ac-activity-lit', AcActivityLit)

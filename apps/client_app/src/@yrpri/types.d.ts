@@ -144,6 +144,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowPostAudioUploads?: boolean;
   moreContactInformation?: boolean;
   attachmentsEnabled?: boolean;
+  hideRecommendationOnNewsFeed?: boolean;
 }
 
 
@@ -157,6 +158,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   signupTermsPageId?: number;
   highlightedLanguages?: Array<string>;
   disableFacebookLoginForCommunity?: boolean;
+  hideRecommendationOnNewsFeed?: boolean;
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {
@@ -421,11 +423,6 @@ interface YpPointData {
   };
 }
 
-interface YpActivityData extends YpDatabaseItem {
-  id: number;
-  name: string;
-  description?: string;
-}
 
 interface YpUserProfileData {
   isAnonymousUser?: boolean;
@@ -564,3 +561,20 @@ interface YpLocationData {
 interface YpSurveyPostResponse {
   error?: string;
 }
+
+interface AcActivityData extends YpDatabaseItem {
+  id: number;
+  type: string;
+  domain_id: number;
+  community_id?: number;
+  created_at: Date;
+  group_id?: number;
+  Point?: YpPointData;
+  Post?: YpPostData;
+  Community?: YpCommunityData;
+  Domain?: YpDomainData;
+  Group?: YpGroupData;
+  User: YpUserData;
+}
+
+
