@@ -48,7 +48,7 @@ export class AcActivityPostStatusUpdate extends YpBaseElement {
           ${this.activity.Group!.name}
         </div>
         <yp-magic-text
-          @tap="${this._goToPost}"
+          @click="${this._goToPost}"
           class="postName"
           textOnly
           textType="postName"

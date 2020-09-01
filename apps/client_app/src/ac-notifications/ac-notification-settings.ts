@@ -1,21 +1,13 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-image/iron-image.js';
-import './ac-notification-selection.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpBaseElement } from '../yp-base-element.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing } from 'lit-html';
 
-class AcNotificationSettingsLit extends YpBaseElement {
-  static get properties() {
-    return {
-      notificationsSettings: {
-        type: Object,
-        notify: true,
-        observer: '_notificationsSettingsChanged'
-      }
-    }
-  }
- 
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+
+@customElement('ac-notification-settings')
+export class AcNotificationSettings extends YpBaseElement {
+  @property({ type: Object })
+  notificationsSettings!: AcNotificationSettingsData
+
   render() {
     return html`
 
@@ -24,7 +16,6 @@ class AcNotificationSettingsLit extends YpBaseElement {
 
     <ac-notification-selection .name="${this.t('notification.myPostsEndorsements')}" .setting="${this.notificationsSettings.my_posts_endorsements}">
     </ac-notification-selection>
-
 
     <ac-notification-selection .name="${this.t('notification.myPoints')}" .setting="${this.notificationsSettings.my_points}">
     </ac-notification-selection>
@@ -40,18 +31,14 @@ class AcNotificationSettingsLit extends YpBaseElement {
 `
   }
 
-/* 
+/*
   observers: [
     'settingsStarChanged(notificationsSettings.*)'
   ],
 */
-
-  _notificationsSettingsChanged(value) {
-  }
 
   settingsStarChanged(object) {
     this.fire('yp-notifications-changed', this.notificationsSettings);
   }
 }
 
-window.customElements.define('ac-notification-settings-lit', AcNotificationSettingsLit)

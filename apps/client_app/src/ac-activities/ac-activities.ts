@@ -59,34 +59,28 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   _moreToLoad = false;
 
-  static get prsoperties() {
-    return {
-      ironListPaddingTop: {
-        type: Number,
-        computed:
-          '_ironListPaddingTop(wide, groupId, hasLoggedInUser, selectedTab)',
-      },
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
 
-      domainId: {
-        type: Number,
-        observer: '_domainIdChanged',
-      },
+    if (changedProperties.has('domainId')) {
+      this._domainIdChanged();
+    }
 
-      communityId: {
-        type: Number,
-        observer: '_communityIdChanged',
-      },
+    if (changedProperties.has('communityId')) {
+      this._communityIdChanged();
+    }
 
-      groupId: {
-        type: Number,
-        observer: '_groupIdChanged',
-      },
+    if (changedProperties.has('groupId')) {
+      this._groupIdChanged();
+    }
 
-      postId: {
-        type: Number,
-        observer: '_postIdChanged',
-      },
-    };
+    if (changedProperties.has('postId')) {
+      this._postIdChanged();
+    }
+
+    if (changedProperties.has('userId')) {
+      this._userIdChanged();
+    }
   }
 
   static get styles() {
@@ -98,7 +92,7 @@ export class AcActivities extends YpBaseElementWithLogin {
           height: 100%;
         }
 
-        iron-list {
+        lit-virtualizer {
           height: 100vh;
         }
 

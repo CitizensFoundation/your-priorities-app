@@ -1,83 +1,72 @@
-import '@polymer/polymer/polymer-legacy.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-list/iron-list.js';
-import '@polymer/iron-scroll-threshold/iron-scroll-threshold.js';
-import '@material/mwc-button';
-import '../yp-ajax/yp-ajax.js';
-import { ypLoggedInUserBehavior } from '../yp-behaviors/yp-logged-in-user-behavior.js';
-import '../yp-user/yp-user-info.js';
-import { ypTruncateBehavior } from '../yp-behaviors/yp-truncate-behavior.js';
-import './ac-notification-list-post.js';
-import './ac-notification-list-point.js';
-import './ac-notification-list-general-item.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
-import { YpBaseElement } from '../yp-base-element.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing } from 'lit-html';
 
-class AcNotificationListLit extends YpBaseElement {
-  static get properties() {
-    return {
-      notifications: Array,
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
-      notificationsLength: {
-        type: Number,
-        computed: '_notificationsLength(notifications)'
-      },
+import { truncateNameList } from './TruncateNameList.js';
+import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
+import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 
-      notificationGetTTL: {
-        type: Number,
-        value: 5000
-      },
+@customElement('ac-notification-list')
+export class AcNotificationList extends YpBaseElementWithLogin {
+  @property({ type: Array })
+  notifications: Array<AcNotificationData> | undefined;
 
-      oldestProcessedNotificationAt: {
-        type: Date
-      },
+  @property({ type: Number })
+  notificationGetTTL = 5000
 
-      latestProcessedNotificationAt: {
-        type: Date
-      },
+  @property({ type: Object })
+  oldestProcessedNotificationAt: Date | undefined
 
-      url: {
-        type: String,
-        value: "/api/notifications"
-      },
+  @property({ type: Object })
+  latestProcessedNotificationAt: Date | undefined
 
-      user: {
-        type: Object,
-        observer: '_userChanged'
-      },
+  @property({ type: String })
+  url = "/api/notifications"
 
-      firstReponse: {
-        type: Boolean,
-        value: true
-      },
+  @property({ type: Object })
+  user: YpUserData | undefined
 
-      timer: Object,
-      unViewedCount:  {
-        type: Number,
-        value: 0
-      },
+  @property({ type: Boolean })
+  firstReponse = false
 
-      moreToLoad: {
-        type: Boolean,
-        value: false,
-        notify: true
-      },
+  @property({ type: Object })
+  timer: ReturnType<typeof setTimeout> | undefined
 
-      opened: {
-        type: Boolean,
-        observer: '_openedChanged'
-      },
+  @property({ type: Number })
+  unViewedCount = 0
 
-      route: {
-        type: String
-      }
+  @property({ type: Boolean })
+  moreToLoad = false
+
+  @property({ type: Boolean })
+  opened = false
+
+  @property({ type: String })
+  route: string | undefined
+
+  lastFetchStartedAt: number | undefined
+
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('user')) {
+      this._userChanged();
+    }
+
+    if (changedProperties.has('open')) {
+      this._openedChanged();
+    }
+
+    if (changedProperties.has('loggedInUser')) {
+      this._loggedInUserChanged();
     }
   }
 
   static get styles() {
     return [
+      super.styles,
       css`
 
       iron-list {
@@ -131,8 +120,11 @@ class AcNotificationListLit extends YpBaseElement {
       .notificationHeader {
         margin-bottom: 2px;
       }
-    `, YpFlexLayout]
+    `
+    ]
   }
+
+
 
   render() {
     return html`
@@ -204,19 +196,19 @@ class AcNotificationListLit extends YpBaseElement {
   ],
 */
 
-  _notificationsLength(notifications) {
-    if (notifications) {
-      return notifications.length;
+  get notificationsLength() {
+    if (this.notifications) {
+      return this.notifications.length;
     } else {
       return 0;
     }
   }
 
-  _openedChanged(open) {
-    if (open) {
-      this.async(function () {
+  _openedChanged() {
+    if (this.opened) {
+      setTimeout( () => {
         this.markCurrentAsViewed();
-      }.bind(this), 25);
+      }, 25);
     }
   }
 
@@ -225,10 +217,10 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _openEdit() {
-    dom(document).querySelector('yp-app').getDialogAsync("userEdit", function (dialog) {
+    window.appDialogs.getDialogAsync("userEdit",  (dialog) => {
       dialog.setup(this.user, false, null);
       dialog.open('edit', {userId: this.user.id});
-    }.bind(this));
+    });
   }
 
   _clearScrollThreshold() {
@@ -236,9 +228,9 @@ class AcNotificationListLit extends YpBaseElement {
   }
 
   _markAllAsViewed() {
-    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
+    window.appDialogs.getDialogAsync("confirmationDialog",  (dialog) => {
       dialog.open(this.t('notificationConfirmMarkAllViewed'), this._reallyMarkAllAsViewed.bind(this));
-    }.bind(this));
+    });
   }
 
   _reallyMarkAllAsViewed() {
@@ -246,17 +238,17 @@ class AcNotificationListLit extends YpBaseElement {
     this.$$("#markAllAsViewedAjax").generateRequest();
   }
 
-  _handleUnViewedCount(unViewedCount) {
+  _handleUnViewedCount(unViewedCount: number) {
     this.unViewedCount = unViewedCount;
     this.fire('yp-set-number-of-un-viewed-notifications', { count: unViewedCount })
   }
 
   markCurrentAsViewed() {
-    this._markAsViewed(this.notifications);
+    this._markAsViewed(this.notifications!);
   }
 
-  _markAsViewed(notifications) {
-    const marked = [];
+  _markAsViewed(notifications: Array<AcNotificationData>) {
+    const marked: Array<number> = [];
     if (notifications) {
       notifications.forEach(function (notification) {
         if (!notification.viewed) {
@@ -295,17 +287,17 @@ class AcNotificationListLit extends YpBaseElement {
     }
   }
 
-  _newNotificationsError(event, detail) {
+  _newNotificationsError(event: CustomEvent) {
     console.error("Error in getting new notifications");
     this.cancelTimer();
 
-    if (detail && detail.status && detail.status==401) {
+    if (event.detail && event.detail.status && event.detail.status==401) {
       window.appUser.checkLogin();
     }
   }
 
-  _userChanged(user) {
-    if (user) {
+  _userChanged() {
+    if (this.user) {
       this.$.loadNotificationsAjax.url = this.url;
       this.$.loadNotificationsAjax.generateRequest();
     } else {
@@ -338,19 +330,19 @@ class AcNotificationListLit extends YpBaseElement {
     }
   }
 
-  _loadNotificationsResponse(event, detail) {
-    const notifications = detail.response.notifications;
+  _loadNotificationsResponse(event: CustomEvent) {
+    const notifications = event.detail.response.notifications as Array<AcNotificationData>;
 
-    if (detail.response.oldestProcessedNotificationAt) {
-      this.oldestProcessedNotificationAt = detail.response.oldestProcessedNotificationAt;
+    if (event.detail.response.oldestProcessedNotificationAt) {
+      this.oldestProcessedNotificationAt = event.detail.response.oldestProcessedNotificationAt;
     }
 
     if (!this.notifications) {
       this.notifications = notifications;
     } else {
-      notifications.forEach(function (notification) {
-        this.push('notifications', notification);
-      }.bind(this));
+      notifications.forEach( (notification) => {
+        this.notifications?.push(notification);
+      });
     }
 
     this._finalizeAfterResponse(notifications);
@@ -370,43 +362,37 @@ class AcNotificationListLit extends YpBaseElement {
   _startTimer() {
     this.cancelTimer();
     if (this.user) {
-      this.timer = this.async(function () {
+      this.timer = setTimeout( () =>{
         this.loadNewData();
         this.lastFetchStartedAt = Date.now();
-      }.bind(this), this.notificationGetTTL);
+      }, this.notificationGetTTL);
     }
   }
 
-  _sendReloadPointsEvents(notifications) {
-    notifications.forEach(function (notification) {
+  _sendReloadPointsEvents(notifications: Array<AcNotificationData>) {
+    notifications.forEach( (notification) => {
       if (notification.type=='notification.point.new') {
         const activityUser = notification.AcActivities[0].User;
         if (window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) {
-          document.dispatchEvent(
-            new CustomEvent("lite-signal", {
-              bubbles: true,
-              compose: true,
-              detail: { name: 'yp-update-points-for-post', data: { postId: notification.AcActivities[0].Post.id } }
-            })
-          );
+          this.fireGlobal('yp-update-points-for-post', { postId: notification.AcActivities[0].Post!.id } )
         }
       }
-    }.bind(this));
+    });
   }
 
   _loadNewNotificationsResponse(event, detail) {
     const notifications = detail.response.notifications;
 
-    notifications.forEach(function (notification) {
+    notifications.forEach( (notification) => {
       this._removeOldIfExists(notification);
       if (notification.type=='notification.point.new') {
-
+        // ...
       }
-    }.bind(this));
+    });
 
-    notifications.forEach(function (notification) {
-      this.unshift('notifications', notification);
-    }.bind(this));
+    notifications.forEach( (notification) => {
+      this.notifications?.unshift(notification);
+    });
 
     this._finalizeAfterResponse(notifications);
 
@@ -424,7 +410,7 @@ class AcNotificationListLit extends YpBaseElement {
       this.$$("#list").fire("iron-resize");
 
     if (this.lastFetchStartedAt) {
-      var duration = Date.now() - this.lastFetchStartedAt;
+      const duration = Date.now() - this.lastFetchStartedAt;
       if (duration>1000) {
         console.warn("Setting notificationGetTTL = 60000");
         this.notificationGetTTL = 60000;
@@ -435,18 +421,18 @@ class AcNotificationListLit extends YpBaseElement {
     }
   }
 
-  _removeOldIfExists(notification) {
-    this.notifications.forEach(function (oldNotification, index) {
+  _removeOldIfExists(notification: AcNotificationData) {
+    this.notifications!.forEach( (oldNotification, index) => {
       if (oldNotification.id==notification.id) {
-        this.splice('notifications', index, 1);
+        this.notifications?.splice(index, 1);
       }
-    }.bind(this));
+    });
   }
 
-  _getNotificationText(notification) {
+  _getNotificationText(notification: AcNotificationData) {
     let ideaName, object;
     if (notification.AcActivities[0].Post) {
-      ideaName = this.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
+      ideaName = YpFormattingHelpers.truncate(notification.AcActivities[0].Post.name, 30) + ": ";
     }
     if (notification.AcActivities[0].object) {
       object = notification.AcActivities[0].object;
@@ -460,7 +446,7 @@ class AcNotificationListLit extends YpBaseElement {
         return ideaName+this.t('opposedYourPost');
       }
     } else if (notification.type==='notification.point.new') {
-      if (notification.AcActivities[0].Point.value>0) {
+      if (notification.AcActivities[0].Point!.value>0) {
         return ideaName+this.t('point.forAdded');
       } else {
         return ideaName+this.t('point.againstAdded');
@@ -476,22 +462,22 @@ class AcNotificationListLit extends YpBaseElement {
     }
   }
 
-  _displayToast(notifications) {
-    const notMyNotifications = __.reject(notifications, function (notification) {
+  _displayToast(notifications: AcNotificationData) {
+    const notMyNotifications = __.reject(notifications,  (notification) => {
       const activityUser = notification.AcActivities[0].User;
       return !(window.appUser.user && activityUser && window.appUser.user.id != activityUser.id) &&
-             !notification.type==='notification.generalUserNotification';
+             notification.type!=='notification.generalUserNotification';
     });
 
     if (notMyNotifications.length>0) {
       const activityUser = notMyNotifications[0].AcActivities[0].User;
-      dom(document).querySelector('yp-app').getDialogAsync("notificationToast", function (dialog) {
+      window.appDialogs.getDialogAsync("notificationToast",  (dialog) => {
         dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]), notMyNotifications[0].type==='notification.generalUserNotification');
-      }.bind(this));
+      });
     }
   }
 
-  _finalizeAfterResponse(notifications) {
+  _finalizeAfterResponse(notifications: Array<AcNotificationData>) {
     if (notifications.length>0) {
       if (!this.latestProcessedNotificationAt || this.latestProcessedNotificationAt < notifications[0].updated_at) {
         this.latestProcessedNotificationAt = notifications[0].updated_at;
@@ -499,7 +485,7 @@ class AcNotificationListLit extends YpBaseElement {
       this.moreToLoad = true;
     }
 
-    this.async(function () {
+    setTimeout( () => {
       if (this.$$("#list")) {
         this.$$("#list").fire('iron-resize');
       }
@@ -526,4 +512,3 @@ class AcNotificationListLit extends YpBaseElement {
   }
 }
 
-window.customElements.define('ac-notification-list-lit', AcNotificationListLit)

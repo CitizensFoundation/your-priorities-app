@@ -1,5 +1,5 @@
 declare module 'lit-flexbox-literals';
-declare module 'wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js'
+declare module 'wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js';
 
 interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;
@@ -21,19 +21,58 @@ interface YpRadioButtonData {
   text: string;
   isSpecify?: boolean;
   skipTo?: string;
-  subType?: "number" | "text" | "search" | "tel" | "url" | "email" | "password" | "date" | "month" | "week" | "time" | "datetime-local" | "color";
+  subType?:
+    | 'number'
+    | 'text'
+    | 'search'
+    | 'tel'
+    | 'url'
+    | 'email'
+    | 'password'
+    | 'date'
+    | 'month'
+    | 'week'
+    | 'time'
+    | 'datetime-local'
+    | 'color';
 }
 
 interface YpCheckboxData {
   text: string;
   isSpecify?: boolean;
-  subType?: "number" | "text" | "search" | "tel" | "url" | "email" | "password" | "date" | "month" | "week" | "time" | "datetime-local" | "color";
+  subType?:
+    | 'number'
+    | 'text'
+    | 'search'
+    | 'tel'
+    | 'url'
+    | 'email'
+    | 'password'
+    | 'date'
+    | 'month'
+    | 'week'
+    | 'time'
+    | 'datetime-local'
+    | 'color';
 }
 
 interface YpDropdownData {
   text: string;
   isSpecify?: boolean;
-  subType?: "number" | "text" | "search" | "tel" | "url" | "email" | "password" | "date" | "month" | "week" | "time" | "datetime-local" | "color";
+  subType?:
+    | 'number'
+    | 'text'
+    | 'search'
+    | 'tel'
+    | 'url'
+    | 'email'
+    | 'password'
+    | 'date'
+    | 'month'
+    | 'week'
+    | 'time'
+    | 'datetime-local'
+    | 'color';
 }
 
 interface YpStructuredQuestionData {
@@ -52,7 +91,6 @@ interface YpStructuredQuestionData {
   checkboxes?: Array<YpCheckboxData>;
   dropdownOptions?: Array<YpDropdownData>;
 }
-
 
 interface YpStructuredQuestionJson extends YpStructuredQuestionData {
   uniqueId: string;
@@ -146,7 +184,6 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   attachmentsEnabled?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
 }
-
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
@@ -332,7 +369,7 @@ interface YpVideoData extends YpBaseMedia {
   VideoImages: Array<YpImageData> | null;
 }
 
-interface YpAudioData  extends YpBaseMedia {
+interface YpAudioData extends YpBaseMedia {
   User?: YpUserData;
 }
 
@@ -422,7 +459,6 @@ interface YpPointData {
     };
   };
 }
-
 
 interface YpUserProfileData {
   isAnonymousUser?: boolean;
@@ -578,14 +614,61 @@ interface AcActivityData extends YpDatabaseItem {
   Point?: YpPointData;
   Post?: YpPostData;
   Community?: YpCommunityData;
+  object?: {
+    name: string;
+    type: string;
+  };
   Domain?: YpDomainData;
   Group?: YpGroupData;
   User: YpUserData;
   PostStatusChange?: YpPostStatusChange;
 }
 
+interface AcNotificationData extends YpDatabaseItem {
+  id: number;
+  type: string;
+  domain_id: number;
+  community_id?: number;
+  created_at: Date;
+  updated_at: Date;
+  group_id?: number;
+  Point?: YpPointData;
+  Post?: YpPostData;
+  viewed: boolean;
+  Community?: YpCommunityData;
+  Domain?: YpDomainData;
+  Group?: YpGroupData;
+  User: YpUserData;
+  PostStatusChange?: YpPostStatusChange;
+  AcActivities: Array<AcActivityData>;
+}
 
 interface AcActivitiesResponse {
   activities: Array<AcActivityData>;
   oldestProcessedActivityAt: Date;
+}
+
+interface AcNotificationSettingsDataItem {
+  method: number;
+  frequency: number;
+}
+
+interface AcNotificationSettingsData {
+  my_posts: AcNotificationSettingsDataItem;
+  my_posts_endorsements: AcNotificationSettingsDataItem;
+  my_points: AcNotificationSettingsDataItem;
+  my_points_endorsements: AcNotificationSettingsDataItem;
+  all_community: AcNotificationSettingsDataItem;
+  all_group: AcNotificationSettingsDataItem;
+  newsletter: AcNotificationSettingsDataItem;
+}
+
+interface AcNotificationSettingMethod {
+  name: string;
+  enumValue: number;
+}
+
+interface AcNotificationSettingFrequency {
+  name: string;
+  enumValue: number;
 }
