@@ -20,6 +20,7 @@ import { Checkbox } from '@material/mwc-checkbox';
 import { TextField } from '@material/mwc-textfield';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { LitVirtualizer } from 'lit-virtualizer';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
 @customElement('ac-activities')
 export class AcActivities extends YpBaseElementWithLogin {
@@ -107,6 +108,7 @@ export class AcActivities extends YpBaseElementWithLogin {
   static get styles() {
     return [
       super.styles,
+      ShadowStyles,
       css`
         :host {
           height: 100%;
@@ -270,10 +272,10 @@ export class AcActivities extends YpBaseElementWithLogin {
       <div class="layout vertical self-start">
 
         ${ this.loggedInUser ?  html`
-          <paper-material .loggedInUser="${this.isLoggedIn}" elevation="1" class="layout horizontal addNewsBox">
+          <div .loggedInUser="${this.isLoggedIn}" elevation="1" class="layout horizontal addNewsBox shadow-elevation-2dp shadow-transition">
             <yp-point-news-story-edit .domainId="${this.domainId}" .communityId="${this.communityId}" .groupId="${this.groupId}" .postGroupId="${this.postGroupId}" .postId="${this.postId}" @refresh="${this.loadNewData}">
             </yp-point-news-story-edit>
-          </paper-material>
+          </div>
         ` : html`
           <div class="layout vertical center-center">
             <mwc-button raised class="layout horizontal notLoggedInButton" .label="${this.t('loginToShareALink')}" @click="${this._openLogin}">
@@ -292,10 +294,12 @@ export class AcActivities extends YpBaseElementWithLogin {
             </div>
           </template>
         </iron-list>
+
         <div class="layout horizontal center-center spinnerContainer">
           <yp-ajax id="deleteActivityAjax" .method="DELETE" large-spinner @response="${this._activityDeletedResponse}"></yp-ajax>
         </div>
       </div>
+
       <div class="layout vertical self-start recommendedPosts" ?notActive="${this.noRecommendedPosts}" small="${!this.wide}" ?hidden="${!this.recommendedPosts}">
         <ac-activity-recommended-posts id="recommendedPosts" .recommendedPosts="${this.recommendedPosts}" class="layout vertical"></ac-activity-recommended-posts>
         <div class="layout horizontal center-center">
@@ -303,8 +307,6 @@ export class AcActivities extends YpBaseElementWithLogin {
         </div>
       </div>
     </div>
-
-    <iron-media-query query="(min-width: 600px)" query-matches="${this.wide}"></iron-media-query>
 
     <lite-signal @lite-signal-yp-refresh-activities-scroll-threshold="${this._clearScrollThreshold}"></lite-signal>
 
@@ -627,7 +629,7 @@ export class AcActivities extends YpBaseElementWithLogin {
     });
   }
 
-  scrollToItem(item: YpActivityData) {
+  scrollToItem(item: AcActivityData) {
     console.log("Activity scrolling to item");
     (this.$$("#activitiesList") as LitVirtualizer).scrollToItem(item);
     setTimeout(() => {

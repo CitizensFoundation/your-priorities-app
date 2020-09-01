@@ -2,7 +2,7 @@ import { LitElement, css, property } from 'lit-element';
 import { installMediaQueryWatcher } from 'pwa-helpers/media-query.js';
 import { Layouts } from 'lit-flexbox-literals';
 
-export class YpBaseElement extends LitElement {
+export abstract class YpBaseElement extends LitElement {
   @property({ type: String })
   language = 'en';
 

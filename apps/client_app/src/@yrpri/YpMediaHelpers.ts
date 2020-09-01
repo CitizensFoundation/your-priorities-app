@@ -1,7 +1,6 @@
 import { YpBaseElement } from './yp-base-element.js';
 
 export class YpMediaHelpers {
-
   static _checkVideoLongPlayTimeAndReset(
     playbackElement: YpElementWithPlayback,
     videoPlayer: HTMLElement
@@ -40,7 +39,10 @@ export class YpMediaHelpers {
     }
   }
 
-  static getImageFormatUrl(images: Array<YpImageData> | undefined, formatId = 0) {
+  static getImageFormatUrl(
+    images: Array<YpImageData> | undefined,
+    formatId = 0
+  ) {
     if (images && images.length > 0) {
       const formats = JSON.parse(images[images.length - 1].formats);
       if (formats && formats.length > 0) return formats[formatId];
@@ -84,7 +86,10 @@ export class YpMediaHelpers {
           targetElement.videoEndedListener = () => {
             this._checkVideoLongPlayTimeAndReset(targetElement, videoPlayer);
           };
-          videoPlayer.addEventListener('play', targetElement.videoPlayListener.bind(targetElement));
+          videoPlayer.addEventListener(
+            'play',
+            targetElement.videoPlayListener.bind(targetElement)
+          );
           videoPlayer.addEventListener(
             'pause',
             targetElement.videoPauseListener.bind(targetElement)
@@ -109,7 +114,10 @@ export class YpMediaHelpers {
           targetElement.audioEndedListener = () => {
             this._checkAudioLongPlayTimeAndReset(targetElement, audioPlayer);
           };
-          audioPlayer.addEventListener('play', targetElement.audioPlayListener.bind(targetElement));
+          audioPlayer.addEventListener(
+            'play',
+            targetElement.audioPlayListener.bind(targetElement)
+          );
           audioPlayer.addEventListener(
             'pause',
             targetElement.audioPauseListener.bind(targetElement)

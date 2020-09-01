@@ -562,6 +562,12 @@ interface YpSurveyPostResponse {
   error?: string;
 }
 
+interface YpPostStatusChange {
+  id: number;
+  content: string;
+  language: string;
+}
+
 interface AcActivityData extends YpDatabaseItem {
   id: number;
   type: string;
@@ -575,6 +581,7 @@ interface AcActivityData extends YpDatabaseItem {
   Domain?: YpDomainData;
   Group?: YpGroupData;
   User: YpUserData;
+  PostStatusChange?: YpPostStatusChange;
 }
 
 
