@@ -1144,16 +1144,46 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
   });
 });
 
+const addVideosToGroup = (group, done) => {
+  models.Video.findAll({
+    attributes:  ['id','formats','viewable','public_meta'],
+    include: [
+      {
+        model: models.Image,
+        as: 'VideoImages',
+        attributes:["formats",'updated_at'],
+        required: false
+      },
+      {
+        model: models.Group,
+        where: {
+          id: group.id
+        },
+        as: 'GroupLogoVideos',
+        required: true,
+        attributes: ['id']
+      }
+    ],
+    order: [
+      ['updated_at', 'desc' ],
+      [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+    ]
+  }).then(videos => {
+    group.dataValues.GroupLogoVideos = videos;
+    done();
+  }).catch( error => {
+    done(error);
+  })
+}
+
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.findOne({
     where: { id: req.params.id },
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-      [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
-      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Category }, 'name', 'asc' ],
-      [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -1194,20 +1224,6 @@ router.get('/:id', auth.can('view group'), function(req, res) {
         required: false
       },
       {
-        model: models.Video,
-        as: 'GroupLogoVideos',
-        attributes:  ['id','formats','viewable','public_meta'],
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats",'updated_at'],
-            required: false
-          },
-        ]
-      },
-      {
         model: models.Image,
         as: 'GroupHeaderImages',
         attributes:  models.Image.defaultAttributesPublic,
@@ -1216,13 +1232,19 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     ]
   }).then(function(group) {
     if (group) {
-      log.info('Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
-      var PostsByNotOpen = models.Post.scope('not_open');
-      PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
-        res.send({group: group, hasNonOpenPosts: count != 0});
-      }).catch(function (error) {
-        sendGroupOrError(res, null, 'count_posts', req.user, error);
-      });
+      addVideosToGroup(group, (error) => {
+        if (error) {
+          sendGroupOrError(res, null, 'count_posts', req.user, error);
+        } else {
+          log.info('Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
+          var PostsByNotOpen = models.Post.scope('not_open');
+          PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
+            res.send({group: group, hasNonOpenPosts: count != 0});
+          }).catch(function (error) {
+            sendGroupOrError(res, null, 'count_posts', req.user, error);
+          });
+        }
+      })
     } else {
       sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
