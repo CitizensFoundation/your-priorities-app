@@ -1,26 +1,18 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing, TemplateResult } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import linkifyStr from 'linkifyjs/string.js';
+import { nothing } from 'lit-html';
 
-import '@material/mwc-circular-progress-four-color';
-import '@material/mwc-dialog';
-import '@material/mwc-button';
+import './ac-activity-point.js';
+import './ac-activity-post.js';
+import './ac-activity-point-news-story.js';
+import './ac-activity-post-status-change.js';
+import '../yp-user/yp-user-with-organization.js';
 import '@material/mwc-icon-button';
-import '@material/mwc-snackbar';
 
-import '@material/mwc-checkbox';
-import '@material/mwc-radio';
-
-import '@material/mwc-formfield';
-import { Radio } from '@material/mwc-radio';
-
-import { Checkbox } from '@material/mwc-checkbox';
-
-import { TextField } from '@material/mwc-textfield';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
-import { LitVirtualizer } from 'lit-virtualizer';
+
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import moment from 'moment';
+import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
 @customElement('ac-activity')
 export class AcActivity extends YpBaseElementWithLogin {
@@ -48,6 +40,7 @@ export class AcActivity extends YpBaseElementWithLogin {
   static get styles() {
     return [
       super.styles,
+      ShadowStyles,
       css`
         .activity {
           margin: 16px;
@@ -136,28 +129,64 @@ export class AcActivity extends YpBaseElementWithLogin {
         [hidden] {
           display: none !important;
         }
-      `
+      `,
     ];
+  }
+
+  renderActivity() {
+    switch (this.activity!.type) {
+      case 'activity.post.new':
+        return html`
+          <ac-activity-post
+            .activity="${this.activity}"
+            .postId="${this.postId}"
+            .communityId="${this.communityId}"
+            .groupId="${this.groupId}"></ac-activity-post>
+        `;
+      case 'activity.point.new':
+        return html`
+          <ac-activity-point
+            .postId="${this.postId}"
+            .activity="${this.activity}"></ac-activity-point>
+        `;
+      case 'activity.point.newsStory.new':
+        return html`
+          <ac-activity-point-news-story
+            .activity="${this.activity}"
+            .postId="${this.postId}"
+            .communityId="${this.communityId}"
+            .groupId="${this.groupId}"></ac-activity-point-news-story>
+        `;
+      case 'activity.post.status.change':
+        return html`
+          <ac-activity-point
+            .postId="${this.postId}"
+            .activity="${this.activity}"></ac-activity-point>
+        `;
+      default:
+        return nothing;
+    }
   }
 
   render() {
     return this.activity
       ? html`
-          <paper-material
+          <div
             .loggedInUser="${this.isLoggedIn}"
-            .elevation="${this._elevationForType()}"
             class="layout vertical activity"
             tabindex="${this.tabIndex}">
-            <paper-icon-button
-              .title="${this.t('deleteActivity')}"
+            <mwc-icon-button
+              .label="${this.t('deleteActivity')}"
               ?hidden="${!this._hasActivityAccess(this.activity)}"
               icon="delete"
               data-args="${this.activity.id}"
               class="deleteIcon"
-              @tap="${this._deleteActivity}"></paper-icon-button>
+              @click="${this._deleteActivity}"></mwc-icon-button>
             <div class="mainActivityContent">
               <div class="layout horizontal">
-                <yp-user-with-organization .user="${this.activity.User}" inverted></yp-user-with-organization>
+                <yp-user-with-organization
+                  .user="${this.activity.User}"
+                  inverted></yp-user-with-organization>
                 <div class="flex"></div>
                 <div
                   ?hidden="${!this.wide}"
@@ -167,71 +196,19 @@ export class AcActivity extends YpBaseElementWithLogin {
                 </div>
               </div>
 
-              ${this._isActivityType(this.activity, 'activity.post.new')
-                ? html`
-                    <ac-activity-post
-                      .activity="${this.activity}"
-                      .postId="${this.postId}"
-                      .communityId="${this.communityId}"
-                      .groupId="${this.groupId}"></ac-activity-post>
-                  `
-                : html``}
-              ${this._isActivityType(this.activity, 'activity.point.new')
-                ? html`
-                    <ac-activity-point
-                      .postId="${this.postId}"
-                      .activity="${this.activity}"></ac-activity-point>
-                  `
-                : html``}
-              ${this._isActivityType(
-                this.activity,
-                'activity.point.newsStory.new'
-              )
-                ? html`
-                    <ac-activity-point-news-story
-                      .activity="${this.activity}"
-                      .postId="${this.postId}"
-                      .communityId="${this.communityId}"
-                      .groupId="${this.groupId}"></ac-activity-point-news-story>
-                  `
-                : html``}
-              ${this._isActivityType(
-                this.activity,
-                'activity.post.status.change'
-              )
-                ? html`
-                    <ac-activity-post-status-update
-                      .activity="${this
-                        .activity}"></ac-activity-post-status-update>
-                  `
-                : html``}
+              ${this.renderActivity()}
             </div>
-          </paper-material>
+          </div>
         `
       : nothing;
   }
 
-  /*
-  behaviors: [
-    ypLoggedInUserBehavior,
-    AccessHelpers
-  ],
-*/
-
-  fromTime(timeValue) {
-    return formatDistance(timeValue, new Date(), {
-      locale: this.language,
-    });
+  fromTime(timeValue: moment.MomentInput) {
+    return moment(timeValue).fromNow();
   }
 
-  fromLongTime(timeValue) {
-    return format(timeValue, '', {
-      locale: this.language,
-    });
-  }
-
-  _elevationForType() {
-    return 1;
+  fromLongTime(timeValue: moment.MomentInput) {
+    return moment(timeValue).format();
   }
 
   _hasActivityAccess(activity: AcActivityData) {

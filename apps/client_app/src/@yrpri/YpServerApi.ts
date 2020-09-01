@@ -467,4 +467,16 @@ export class YpServerApi extends YpCodeBase {
       false
     );
   }
+
+  public getAcActivities(url: string) {
+    return this.fetchWrapper(
+      url
+    );
+  }
+
+  public getRecommendations(typeName: string, typeId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/recommendations/${typeName}/${typeId}`
+    );
+  }
 }

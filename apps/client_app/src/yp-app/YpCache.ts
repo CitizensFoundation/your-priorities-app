@@ -2,7 +2,7 @@ import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js'
 
 export class YpCache extends YpCodeBase {
 
-  cachedActivityItem: YpActivityData | undefined;
+  cachedActivityItem: AcActivityData | undefined;
 
   cachedPostItem: YpPostData | undefined;
 

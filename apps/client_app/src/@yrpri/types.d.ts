@@ -585,3 +585,7 @@ interface AcActivityData extends YpDatabaseItem {
 }
 
 
+interface AcActivitiesResponse {
+  activities: Array<AcActivityData>;
+  oldestProcessedActivityAt: Date;
+}
