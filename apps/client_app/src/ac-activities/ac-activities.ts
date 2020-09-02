@@ -3,6 +3,12 @@ import { nothing } from 'lit-html';
 
 import 'lit-virtualizer';
 
+import '@material/mwc-button';
+import '../yp-point/yp-point-news-story-edit.js';
+
+import './ac-activity.js';
+import './ac-activity-recommended-posts.js';
+
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { LitVirtualizer, RangeChangeEvent } from 'lit-virtualizer';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';

@@ -360,7 +360,7 @@ export class YpServerApi extends YpCodeBase {
 
   public updatePoint(pointId: number, body: object) {
     return this.fetchWrapper(
-      `/points/${pointId}`,
+      this.baseUrlPath + `/points/${pointId}`,
       {
         method: 'PUT',
         body: JSON.stringify(body),
@@ -371,7 +371,7 @@ export class YpServerApi extends YpCodeBase {
 
   public updatePointAdminComment(pointId: number, body: object) {
     return this.fetchWrapper(
-      `/points/${pointId}/adminComment`,
+      this.baseUrlPath + `/points/${pointId}/adminComment`,
       {
         method: 'PUT',
         body: JSON.stringify(body),
@@ -382,7 +382,7 @@ export class YpServerApi extends YpCodeBase {
 
   public deletePoint(pointId: number) {
     return this.fetchWrapper(
-      `/points/${pointId}`,
+      this.baseUrlPath + `/points/${pointId}`,
       {
         method: 'DELETE',
         body: JSON.stringify({}),
@@ -397,7 +397,7 @@ export class YpServerApi extends YpCodeBase {
 
   public registerUser(body: object) {
     return this.fetchWrapper(
-      `/users/register`,
+      this.baseUrlPath + `/users/register`,
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -408,7 +408,7 @@ export class YpServerApi extends YpCodeBase {
 
   public registerAnonymously(body: object) {
     return this.fetchWrapper(
-      `/users/register_anonymously`,
+      this.baseUrlPath + `/users/register_anonymously`,
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -419,7 +419,7 @@ export class YpServerApi extends YpCodeBase {
 
   public loginUser(body: object) {
     return this.fetchWrapper(
-      `/users/login`,
+      this.baseUrlPath + `/users/login`,
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -448,7 +448,7 @@ export class YpServerApi extends YpCodeBase {
 
   public postSurvey(surveyGroupId: number, body: object) {
     return this.fetchWrapper(
-      `/groups/${surveyGroupId}/survey`,
+      this.baseUrlPath + `/groups/${surveyGroupId}/survey`,
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -459,7 +459,7 @@ export class YpServerApi extends YpCodeBase {
 
   public deleteActivity(type: string, collectionId: number, activityId: number)  {
     return this.fetchWrapper(
-      `/${type}/${collectionId}/${activityId}/delete_activity`,
+      this.baseUrlPath + `/${type}/${collectionId}/${activityId}/delete_activity`,
       {
         method: 'DELETE',
         body: JSON.stringify({}),
@@ -482,7 +482,7 @@ export class YpServerApi extends YpCodeBase {
 
   public setNotificationsAsViewed(body: object) {
     return this.fetchWrapper(
-      `/notifications/setIdsViewed`,
+      this.baseUrlPath + `/notifications/setIdsViewed`,
       {
         method: 'PUT',
         body: JSON.stringify(body),
@@ -493,7 +493,7 @@ export class YpServerApi extends YpCodeBase {
 
   public setNotificationsAllAsViewed() {
     return this.fetchWrapper(
-      `/api/notifications/markAllViewed`,
+      this.baseUrlPath + `/notifications/markAllViewed`,
       {
         method: 'PUT',
         body: JSON.stringify({}),
@@ -523,7 +523,7 @@ export class YpServerApi extends YpCodeBase {
 
   public postComment(type: string, id: number, body: object) {
     return this.fetchWrapper(
-      `/${type}/${id}/comment`,
+      this.baseUrlPath + `/${type}/${id}/comment`,
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -534,12 +534,29 @@ export class YpServerApi extends YpCodeBase {
 
   public setPointQuality(pointId: number, method: string, body: object) {
     return this.fetchWrapper(
-      `/points/${pointId}/pointQuality`,
+      this.baseUrlPath + `/points/${pointId}/pointQuality`,
       {
         method: method,
         body: JSON.stringify(body),
       },
       false
+    );
+  }
+
+  public postNewsStory(url: string, body: object) {
+    return this.fetchWrapper(
+      url,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public pointUrlPreview(urlParams: string) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/points/url_preview?${urlParams}`
     );
   }
 }
