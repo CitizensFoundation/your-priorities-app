@@ -1,6 +1,8 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import 'share-menu';
+import { ShareMenu } from 'share-menu';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
@@ -352,36 +354,35 @@ export class YpPostCard extends YpBaseElement {
                   ${!this.mini
                     ? html`
                         <div class="share">
-                          <mwc-icon-button
-                            @share-tap="${this._shareTap}"
-                            class="shareIcon"
-                            ?lessMargin="${this.post.Group.configuration
-                              .hideDownVoteForPost}"
-                            horizontal-align="right"
-                            id="shareButton"
-                            ?whatsapp="${this.post.Group.configuration
-                              .allowWhatsAppSharing}"
-                            title="${this.t('post.shareInfo')}"
-                            facebook
-                            email
-                            twitter
-                            popup
-                            url="${this._fullPostUrl}">
+                        <mwc-icon-button
+                          icon="share" .label="${this.t('post.shareInfo')}"
+                          @click="${this._shareTap}"></mwc-icon-button>
                           </mwc-icon-button>
+                          <share-menu
+                            @share="${this._sharedContent}"
+                            class="shareIcon"
+                            ?less-margin="${
+                              this.post.Group.configuration.hideDownVoteForPost
+                            }"
+                            id="shareButton"
+                            .title="${this.t('post.shareInfo')}"
+                            .url="${this._fullPostUrl}"></share-menu>
                         </div>
-                        ${this.post.Group.configuration.customRatings
-                          ? html`
-                              <yp-post-ratings-info
-                                class="customRatings"
-                                .post="${this.post}"></yp-post-ratings-info>
-                            `
-                          : html`
-                              <yp-post-actions
-                                class="postActions"
-                                .post="${this.post}"
-                                ?hidden="${this.mini}">
-                              </yp-post-actions>
-                            `}
+                        ${
+                          this.post.Group.configuration.customRatings
+                            ? html`
+                                <yp-post-ratings-info
+                                  class="customRatings"
+                                  .post="${this.post}"></yp-post-ratings-info>
+                              `
+                            : html`
+                                <yp-post-actions
+                                  class="postActions"
+                                  .post="${this.post}"
+                                  ?hidden="${this.mini}">
+                                </yp-post-actions>
+                              `
+                        }
                       `
                     : nothing}
                 </div>
@@ -390,6 +391,15 @@ export class YpPostCard extends YpBaseElement {
           </div>
         `
       : nothing;
+  }
+
+  _sharedContent(event: CustomEvent) {
+    const shareData = event.detail;
+    window.appGlobals.activity(
+      'postShared',
+      shareData.social,
+      this.post ? this.post.id : -1
+    );
   }
 
   get _fullPostUrl() {
@@ -476,6 +486,7 @@ export class YpPostCard extends YpBaseElement {
       event.detail.brand,
       this.post ? this.post.id : -1
     );
+    (this.$$('#shareButton') as ShareMenu).share();
   }
 
   get hideDescription(): boolean {

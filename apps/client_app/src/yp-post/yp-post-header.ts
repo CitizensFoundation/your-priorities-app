@@ -11,6 +11,7 @@ import '@material/mwc-fab';
 import { Menu } from '@material/mwc-menu';
 
 import 'share-menu';
+import { ShareMenu } from 'share-menu';
 
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
@@ -25,13 +26,6 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 
 import './yp-post-transcript.js';
-import { ShareMenu } from 'share-menu';
-
-// TODO: Remove
-interface AcActivity extends LitElement {
-  scrollToItem(item: YpDatabaseItem): () => void;
-  loadNewData(): () => void;
-}
 
 @customElement('yp-post-header')
 export class YpPostHeader extends YpBaseElementWithLogin {
@@ -395,14 +389,14 @@ export class YpPostHeader extends YpBaseElementWithLogin {
 
       <div class="share">
         <mwc-icon-button
-          icon="share"
+          icon="share" .label="${this.t('post.shareInfo')}"
           @click="${this._shareTap}"></mwc-icon-button>
         <share-menu
           @share="${this._sharedContent}"
           class="shareIcon"
           ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
           id="shareButton"
-          title="${this.t('post.shareInfo')}"
+          .title="${this.t('post.shareInfo')}"
           .url="${encodeURIComponent(
             'https://' + window.location.host + '/post/' + this.post.id
           )}"></share-menu>

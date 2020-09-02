@@ -7,10 +7,10 @@ import '../yp-user/yp-user-image.js';
 import './yp-point-actions.js';
 
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 
 @customElement('yp-point-comment')
-export class YpPointComment extends YpBaseElement {
+export class YpPointComment extends YpBaseElementWithLogin {
   @property({ type: Object })
   point: YpPointData | undefined;
 
@@ -87,7 +87,7 @@ export class YpPointComment extends YpBaseElement {
         <div class="layout vertical">
           <div class="comment">
             ${this.point.content}
-            <div class="layout horizontal" ?hidden="${!this.point}">
+            <div class="layout horizontal">
               <yp-point-actions
                 .point="${this.point}"
                 hideSharing></yp-point-actions>

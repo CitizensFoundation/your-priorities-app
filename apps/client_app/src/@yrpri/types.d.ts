@@ -698,3 +698,9 @@ interface AcNotificationsSetAsViewedResponse {
   unViewedCount: number;
   viewedIds: Array<number>;
 }
+
+interface YpPointQualityResponse {
+  oldPointQualityValue: number;
+  pointQuality: YpPointQuality;
+
+}

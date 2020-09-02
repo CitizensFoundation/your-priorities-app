@@ -34,7 +34,7 @@ export class YpAppUser extends YpCodeBase {
 
   loginForPointQualityParams: {
     pointActionElement: HTMLElement;
-    params: { value: string; content: string };
+    params: { value: number };
   } | null = null;
 
   loginForMembershipParams: {
@@ -184,7 +184,7 @@ export class YpAppUser extends YpCodeBase {
 
   loginForPointQuality(
     pointActionElement: HTMLElement,
-    params: { value: string; content: string }
+    params: { value: number }
   ) {
     this.loginForPointQualityParams = {
       pointActionElement: pointActionElement,

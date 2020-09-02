@@ -531,4 +531,15 @@ export class YpServerApi extends YpCodeBase {
       false
     );
   }
+
+  public setPointQuality(pointId: number, method: string, body: object) {
+    return this.fetchWrapper(
+      `/points/${pointId}/pointQuality`,
+      {
+        method: method,
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
 }

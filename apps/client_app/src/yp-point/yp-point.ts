@@ -7,24 +7,17 @@ import { customElement, html, property, LitElement, css } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 
 import '@material/mwc-textarea';
-import '@material/mwc-linear-progress';
-import '@material/mwc-radio';
-import { Radio } from '@material/mwc-radio';
-import { Menu } from '@material/mwc-menu';
 import '@material/mwc-circular-progress-four-color';
+import '@material/mwc-icon-button';
+import '@material/mwc-icon';
 
-import '../yp-post/yp-posts-list.js';
 import '../yp-file-upload/yp-file-upload.js';
 import '../@yrpri/yp-emoji-selector.js';
-import '../yp-post/yp-post-card-add.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
-import { RangeChangeEvent } from 'lit-virtualizer';
-import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
-import { ifDefined } from 'lit-html/directives/if-defined';
+
+import '../yp-magic-text/yp-magic-text.js';
+import './yp-point-actions.js';
+
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
-import { Select } from '@material/mwc-select';
-import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
@@ -212,11 +205,11 @@ export class YpPoint extends YpBaseElement {
           }
         }
 
-        iron-icon.thumbsIconUp {
+        mwc-icon.thumbsIconUp {
           color: var(--master-point-up-color);
         }
 
-        iron-icon.thumbsIconDown {
+        mwc-icon.thumbsIconDown {
           color: var(--master-point-down-color);
         }
 
@@ -236,7 +229,7 @@ export class YpPoint extends YpBaseElement {
           cursor: pointer;
         }
 
-        iron-image,
+        yp-image,
         video {
           width: 398px;
           height: 224px;
@@ -245,7 +238,7 @@ export class YpPoint extends YpBaseElement {
         }
 
         @media (max-width: 600px) {
-          iron-image,
+          yp-image,
           video {
             width: 100%;
             margin: 0 !important;
