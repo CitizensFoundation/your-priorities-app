@@ -4,7 +4,6 @@ import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { YpCollection } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement } from 'lit-element';
-import { property } from 'lodash';
 
 @customElement('yp-community')
 export class YpCommunity extends YpCollection {

@@ -79,9 +79,6 @@ export class YpLogin extends YpBaseElement {
   @property({ type: String })
   customSamlLoginText: string | undefined;
 
-  emailValidationPattern =
-    '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$';
-
   onLoginFunction: Function | undefined;
 
   isSending = false;
@@ -513,13 +510,12 @@ export class YpLogin extends YpBaseElement {
 
       <mwc-textfield
         id="email"
-        type="text"
+        type="email"
         .label="${this.t('user.email')}"
         .value="${this.email}"
         name="username"
         autocomplete="username"
-        .pattern="${this.emailValidationPattern}"
-        .errorMessage="${this.emailErrorMessage}">
+        .validationMessage="${this.emailErrorMessage || ''}">
       </mwc-textfield>
 
       <mwc-textfield
@@ -528,7 +524,7 @@ export class YpLogin extends YpBaseElement {
         .label="${this.t('user.password')}"
         .value="${this.password}"
         autocomplete="current-password"
-        .errorMessage="${this.passwordErrorMessage}">
+        .validationMessage="${this.passwordErrorMessage || ''}">
       </mwc-textfield>
     </div>`;
   }
@@ -558,7 +554,7 @@ export class YpLogin extends YpBaseElement {
 
   render() {
     return html`
-      <mwc-dialog id="dialog" modal ?opened="${this.opened}">
+      <mwc-dialog id="dialog" modal ?open="${this.opened}">
         <mwc-tab-bar
           @MDCTabBar:activated="${this._selectRegistrationMode}"
           .selected="${this.registerMode}"
@@ -1023,15 +1019,15 @@ export class YpLogin extends YpBaseElement {
   }
 
   get emailValue() {
-    return (this.$$('#email') as HTMLInputElement).value;
+    return (this.$$('#email') as HTMLInputElement).value.trim();
   }
 
   get passwordValue() {
-    return (this.$$('#password') as HTMLInputElement).value;
+    return (this.$$('#password') as HTMLInputElement).value.trim();
   }
 
   get fullnameValue() {
-    return (this.$$('#password') as HTMLInputElement).value;
+    return (this.$$('#password') as HTMLInputElement).value.trim();
   }
 
   async _registerUser() {
