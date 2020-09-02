@@ -1,56 +1,65 @@
-import { property, html, css, customElement } from 'lit-element';
+import { property, html, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
+import { classMap } from 'lit-html/directives/class-map.js';
+import { accessibleSnackbarLabel } from '@material/mwc-snackbar/accessible-snackbar-label-directive.js';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import '../yp-user/yp-user-with-organization.js';
+import { Snackbar } from '@material/mwc-snackbar';
 
 @customElement('ac-notification-toast')
-export class AcNotificationToastLit extends YpBaseElement {
+export class AcNotificationToast extends Snackbar {
   @property({ type: String })
-  notificationText: string | undefined
+  notificationText = '';
 
   @property({ type: Object })
-  user: YpUserData | undefined
-
-  static get styles() {
-    return [
-      css`
-        .text {
-          margin: 16px;
-        }
-
-        [hidden] {
-          display: none !important;
-        }
-      `
-    ];
-  }
+  user: YpUserData | undefined;
 
   render() {
-    return html`
-      <paper-toast id="toast" duration="5000">
-        <div class="layout vertical">
-          ${this.user
-            ? html`
-                <yp-user-with-organization
-                  class="layout horizontal self-end"
-                  .user="${this.user}"
-                  ?hidden="${!this.user}"></yp-user-with-organization>
-              `
-            : nothing}
-          <div class="text">${this.notificationText}</div>
+    const classes = {
+      'mdc-snackbar--stacked': this.stacked,
+      'mdc-snackbar--leading': this.leading,
+    };
+    return html` <div
+      class="mdc-snackbar ${classMap(classes)}"
+      @keydown="${this._keyDown}">
+      <div class="mdc-snackbar__surface">
+        ${this.user
+          ? html`
+              <yp-user-with-organization
+                class="layout horizontal self-end"
+                .user="${this.user}"></yp-user-with-organization>
+            `
+          : nothing}
+        ${accessibleSnackbarLabel(this.notificationText, this.open)}
+        <div class="mdc-snackbar__actions">
+          <slot name="action" @click="${this._close}"></slot>
+          <slot name="dismiss" @click="${this._dismiss}"></slot>
         </div>
-      </paper-toast>
-    `;
+      </div>
+    </div>`;
   }
 
-  open(user: YpUserData | undefined, notificationText: string, systemNotification: boolean) {
+  _keyDown(e: KeyboardEvent) {
+    this.mdcFoundation.handleKeyDown(e);
+  }
+
+  _close(e: MouseEvent) {
+    this.mdcFoundation.handleActionButtonClick(e);
+  }
+
+  _dismiss(e: MouseEvent) {
+    this.mdcFoundation.handleActionButtonClick(e);
+  }
+
+  openDialog(
+    user: YpUserData | undefined,
+    notificationText: string,
+    systemNotification: boolean
+  ) {
     this.notificationText = notificationText;
     if (!systemNotification) {
       this.user = user;
     }
-    this.$$('#toast').close();
-    setTimeout(() => {
-      this.$$('#toast').open();
-    });
+    this.open = true;
   }
 }

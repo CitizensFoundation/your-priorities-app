@@ -1,5 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
+import 'lit-virtualizer';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
@@ -8,6 +9,7 @@ import { truncateNameList } from './TruncateNameList.js';
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { reject } from 'lodash-es';
+import { RangeChangeEvent } from 'lit-virtualizer';
 
 @customElement('ac-notification-list')
 export class AcNotificationList extends YpBaseElementWithLogin {
@@ -148,27 +150,27 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       case 'notification.point.newsStory':
         return html`
           <ac-notification-list-general-item
-            .icon="face"
-            .notification="${this.notification}"
-            .shortText="${this.notification.AcActivities[0].Point.content}">
+            icon="face"
+            .notification="${notification}"
+            .shortText="${notification.AcActivities[0].Point!.content}">
           </ac-notification-list-general-item>
         `;
       case 'notification.point.comment':
         return html`
           <ac-notification-list-general-item
-            .icon="chat-bubble-outline"
-            .notification="${this.notification}"
-            .shortText="${this.notification.AcActivities[0].Point
+            icon="chat_bubble_outline"
+            .notification="${notification}"
+            .shortText="${notification.AcActivities[0].Point!
               .content}"></ac-notification-list-general-item>
         `;
       case 'notification.generalUserNotification':
         return html`
           <ac-notification-list-general-item
             icon="language"
-            notification="${this.notification}"
+            .notification="${notification}"
             .shortText="${this._getNotificationTypeAndName(
-              notification.AcActivities[0].object.type,
-              notification.AcActivities[0].object.name
+              notification.AcActivities[0].object?.type,
+              notification.AcActivities[0].object?.name
             )}"></ac-notification-list-general-item>
         `;
     }
@@ -181,11 +183,11 @@ export class AcNotificationList extends YpBaseElementWithLogin {
         @lower-threshold="${this._loadMoreData}"
         id="threshold">
         <div .elevation="2" id="material" class="oversflowSettings">
-          ${this.user
+          ${this.loggedInUser
             ? html`
                 <yp-user-info
                   @open-user-edit="${this._openEdit}"
-                  .user="${this.user}"></yp-user-info>
+                  .user="${this.loggedInUser}"></yp-user-info>
                 <div
                   class="notificationHeader layout horizontal center-center"
                   ?hidden="${!this.notificationsLength}">
@@ -202,55 +204,21 @@ export class AcNotificationList extends YpBaseElementWithLogin {
                     )}"></mwc-button>
                 </div>
 
-                <iron-list
-                  id="list"
-                  .items="${this.notifications}"
-                  .scrollOffset="300"
-                  as="notification"
-                  .scrollTarget="threshold">
-                  <template>
-                    <div
-                      tabindex="${this.tabIndex}"
-                      class="layout vertical overflowSettings">
-                      ${this._notificationType(
-                        notification,
-                        'notification.generalUserNotification'
-                      )
-                        ? html``
-                        : html``}
-                    </div>
-                  </template>
-                </iron-list>
+                ${this.notifications
+                  ? html`
+                      <lit-virtualizer
+                        .items=${this.notifications}
+                        .scrollTarget="${window}"
+                        id="activitiesList"
+                        scrollOffset="300"
+                        .renderItem=${this.renderNotification}
+                        @rangechange=${this.scrollEvent}></lit-virtualizer>
+                    `
+                  : nothing}
               `
             : html``}
         </div>
       </iron-scroll-threshold>
-
-      <div class="layout horizontal center-center" ?hidden="">
-        <yp-ajax
-          id="loadNotificationsAjax"
-          @response="${this._loadNotificationsResponse}"></yp-ajax>
-        <yp-ajax
-          id="loadNewNotificationsAjax"
-          .dispatchError=""
-          @error="${this._newNotificationsError}"
-          @response="${this._loadNewNotificationsResponse}"></yp-ajax>
-        <yp-ajax
-          id="setAsViewedAjax"
-          .method="PUT"
-          url="/api/notifications/setIdsViewed"
-          @response="${this._setAsViewedResponse}"></yp-ajax>
-        <yp-ajax
-          id="markAllAsViewedAjax"
-          .method="PUT"
-          url="/api/notifications/markAllViewed"
-          @response="${this._setAsMarkAllViewedResponse}"></yp-ajax>
-      </div>
-
-      <lite-signal @lite-signal-logged-in="${this._userLoggedIn}"></lite-signal>
-      <lite-signal
-        @lite-signal-yp-refresh-activities-scroll-threshold="${this
-          ._clearScrollThreshold}"></lite-signal>
     `;
   }
 
@@ -260,6 +228,20 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     ypTruncateBehavior
   ],
 */
+
+  scrollEvent(event: RangeChangeEvent) {
+    //TODO: Check this logic
+    if (
+      this.notifications &&
+      !this.moreToLoad &&
+      event.lastVisible != -1 &&
+      event.lastVisible < this.notifications.length &&
+      event.lastVisible + 3 >= this.notifications.length
+    ) {
+      this.moreToLoad = true;
+      this._loadMoreData();
+    }
+  }
 
   get notificationsLength() {
     if (this.notifications) {
@@ -277,33 +259,39 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     }
   }
 
-  _getNotificationTypeAndName(theType: string, name: string) {
+  _getNotificationTypeAndName(
+    theType: string | undefined,
+    name: string | undefined
+  ) {
     return theType ? this.t(theType) + ' ' + (name ? name : '') : '';
   }
 
   _openEdit() {
-    window.appDialogs.getDialogAsync('userEdit', dialog => {
-      dialog.setup(this.user, false, null);
+    //TODO: Fix
+    /*window.appDialogs.getDialogAsync('userEdit', dialog => {
+      dialog.setup(this.loggedInUser, false, null);
       dialog.open('edit', { userId: this.loggedInUser!.id });
-    });
+    });*/
   }
 
   _clearScrollThreshold() {
-    this.$$('#threshold').clearTriggers();
+    //TODO: See if this is needed
+    //this.$$('#threshold').clearTriggers();
   }
 
   _markAllAsViewed() {
-    window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+   /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
       dialog.open(
         this.t('notificationConfirmMarkAllViewed'),
         this._reallyMarkAllAsViewed.bind(this)
       );
-    });
+    });*/
   }
 
-  _reallyMarkAllAsViewed() {
-    this.$$('#markAllAsViewedAjax').body = {};
-    this.$$('#markAllAsViewedAjax').generateRequest();
+  async _reallyMarkAllAsViewed() {
+    await window.serverApi.setNotificationsAllAsViewed();
+    this._handleUnViewedCount(0);
+    this._setAllLocalCurrentAsViewed();
   }
 
   _handleUnViewedCount(unViewedCount: number) {
@@ -327,26 +315,23 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       });
     }
     if (marked.length > 0) {
-      this.$$('#setAsViewedAjax').body = { viewedIds: marked };
-      this.$$('#setAsViewedAjax').generateRequest();
+      this._setAsViewed({ viewedIds: marked });
     }
   }
 
-  _setAsViewedResponse(event, detail) {
-    this._handleUnViewedCount(detail.response.unViewedCount);
-    const viewedIds = detail.response.viewedIds;
+  async _setAsViewed(body: { viewedIds: Array<number> }) {
+    const setAsViewResponse = (await window.serverApi.setNotificationsAsViewed(
+      body
+    )) as AcNotificationsSetAsViewedResponse;
+    this._handleUnViewedCount(setAsViewResponse.unViewedCount);
+    const viewedIds = setAsViewResponse.viewedIds;
     if (this.notifications) {
-      this.notifications.forEach(function (notification, index, theArray) {
+      this.notifications.forEach((notification, index, theArray) => {
         if (viewedIds.indexOf(notification.id) > -1) {
           theArray[index].viewed = true;
         }
       });
     }
-  }
-
-  _setAsMarkAllViewedResponse(event, detail) {
-    this._handleUnViewedCount(0);
-    this._setAllLocalCurrentAsViewed();
   }
 
   _setAllLocalCurrentAsViewed() {
@@ -357,6 +342,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     }
   }
 
+  //TODO: Add a way to detect an error through the Fetch API so we can implement this
   _newNotificationsError(event: CustomEvent) {
     console.error('Error in getting new notifications');
     this.cancelTimer();
@@ -366,10 +352,52 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     }
   }
 
-  _userChanged() {
-    if (this.user) {
-      this.$.loadNotificationsAjax.url = this.url;
-      this.$.loadNotificationsAjax.generateRequest();
+  async _getNotifications(
+    options: AcNotificationsDateFetchOptions | undefined = undefined
+  ) {
+    let url = this.url;
+    if (options && options.oldestProcessedNotificationAt) {
+      url += '?beforeDate=' + options.oldestProcessedNotificationAt;
+    } else if (options && options.latestProcessedNotificationAt) {
+      url += '?afterDate=' + options.latestProcessedNotificationAt;
+    }
+
+    return (await window.serverApi.getAcNotifications(
+      url
+    )) as AcNotificationsResponse;
+  }
+
+  _processNotifications(notificationsResponse: AcNotificationsResponse) {
+    if (notificationsResponse.oldestProcessedNotificationAt) {
+      this.oldestProcessedNotificationAt =
+        notificationsResponse.oldestProcessedNotificationAt;
+    }
+
+    if (!this.notifications) {
+      this.notifications = notificationsResponse.notifications;
+    } else {
+      notificationsResponse.notifications.forEach(notification => {
+        this.notifications?.push(notification);
+      });
+    }
+
+    this._finalizeAfterResponse(notificationsResponse.notifications);
+
+    if (this.firstReponse) {
+      this.firstReponse = false;
+      this.loadNewData();
+    } else {
+      if (this.opened) {
+        this._markAsViewed(notificationsResponse.notifications);
+      }
+    }
+
+    this._handleUnViewedCount(notificationsResponse.unViewedCount);
+  }
+
+  async _userChanged() {
+    if (this.loggedInUser) {
+      this._processNotifications(await this._getNotifications());
     } else {
       this.cancelTimer();
     }
@@ -408,41 +436,9 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     }
   }
 
-  _loadNotificationsResponse(event: CustomEvent) {
-    const notifications = event.detail.response.notifications as Array<
-      AcNotificationData
-    >;
-
-    if (event.detail.response.oldestProcessedNotificationAt) {
-      this.oldestProcessedNotificationAt =
-        event.detail.response.oldestProcessedNotificationAt;
-    }
-
-    if (!this.notifications) {
-      this.notifications = notifications;
-    } else {
-      notifications.forEach(notification => {
-        this.notifications?.push(notification);
-      });
-    }
-
-    this._finalizeAfterResponse(notifications);
-
-    if (this.firstReponse) {
-      this.firstReponse = false;
-      this.loadNewData();
-    } else {
-      if (this.opened) {
-        this._markAsViewed(notifications);
-      }
-    }
-
-    this._handleUnViewedCount(detail.response.unViewedCount);
-  }
-
   _startTimer() {
     this.cancelTimer();
-    if (this.user) {
+    if (this.loggedInUser) {
       this.timer = setTimeout(() => {
         this.loadNewData();
         this.lastFetchStartedAt = Date.now();
@@ -467,8 +463,10 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     });
   }
 
-  _loadNewNotificationsResponse(event, detail) {
-    const notifications = detail.response.notifications;
+  _loadNewNotificationsResponse(
+    notificationsResponse: AcNotificationsResponse
+  ) {
+    const notifications = notificationsResponse.notifications;
 
     notifications.forEach(notification => {
       this._removeOldIfExists(notification);
@@ -492,7 +490,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       this._markAsViewed(notifications);
     }
 
-    this._handleUnViewedCount(detail.response.unViewedCount);
+    this._handleUnViewedCount(notificationsResponse.unViewedCount);
 
     //TODO: See if we need to do this
     //this.$$("#list").fire("iron-resize");
@@ -599,24 +597,27 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     }, 100);
   }
 
-  _loadMoreData() {
+  async _loadMoreData() {
     this._clearScrollThreshold();
     if (this.oldestProcessedNotificationAt) {
       this.moreToLoad = false;
-      this.$$('#loadNotificationsAjax').url =
-        this.url + '?beforeDate=' + this.oldestProcessedNotificationAt;
-      this.$$('#loadNotificationsAjax').generateRequest();
+      this._processNotifications(
+        await this._getNotifications({
+          oldestProcessedNotificationAt: this.oldestProcessedNotificationAt,
+        })
+      );
     }
   }
 
-  loadNewData() {
+  async loadNewData() {
     if (this.latestProcessedNotificationAt) {
-      this.$$('#loadNewNotificationsAjax').url =
-        this.url + '?afterDate=' + this.latestProcessedNotificationAt;
-      this.$$('#loadNewNotificationsAjax').generateRequest();
+      this._loadNewNotificationsResponse(
+        await this._getNotifications({
+          latestProcessedNotificationAt: this.latestProcessedNotificationAt,
+        })
+      );
     } else if (!this.latestProcessedNotificationAt) {
-      this.$$('#loadNewNotificationsAjax').url = this.url;
-      this.$$('#loadNewNotificationsAjax').generateRequest();
+      this._loadNewNotificationsResponse(await this._getNotifications());
     }
   }
 }

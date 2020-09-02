@@ -672,3 +672,19 @@ interface AcNotificationSettingFrequency {
   name: string;
   enumValue: number;
 }
+
+interface AcNotificationsResponse {
+  notifications: Array<AcNotificationData>;
+  oldestProcessedNotificationAt?: Date;
+  unViewedCount: number;
+}
+
+interface AcNotificationsDateFetchOptions {
+  oldestProcessedNotificationAt?: Date | undefined;
+  latestProcessedNotificationAt?: Date | undefined;
+}
+
+interface AcNotificationsSetAsViewedResponse {
+  unViewedCount: number;
+  viewedIds: Array<number>;
+}

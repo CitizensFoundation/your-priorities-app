@@ -1,7 +1,7 @@
-import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+import { property, html, customElement } from 'lit-element';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import './ac-notification-selection.js';
 
 @customElement('ac-notification-settings')
 export class AcNotificationSettings extends YpBaseElement {
@@ -37,7 +37,8 @@ export class AcNotificationSettings extends YpBaseElement {
   ],
 */
 
-  settingsStarChanged(object) {
+  //TODO: Get this working again
+  settingsStarChanged() {
     this.fire('yp-notifications-changed', this.notificationsSettings);
   }
 }

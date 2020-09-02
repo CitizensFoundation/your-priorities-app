@@ -479,4 +479,32 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/recommendations/${typeName}/${typeId}`
     );
   }
+
+  public setNotificationsAsViewed(body: object) {
+    return this.fetchWrapper(
+      `/notifications/setIdsViewed`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public setNotificationsAllAsViewed() {
+    return this.fetchWrapper(
+      `/api/notifications/markAllViewed`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public getAcNotifications(url: string) {
+    return this.fetchWrapper(
+      url
+    );
+  }
 }
