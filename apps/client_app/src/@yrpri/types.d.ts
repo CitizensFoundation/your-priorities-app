@@ -432,6 +432,7 @@ interface YpPostData extends YpDatabaseItem {
 interface YpPointRevision {
   id: number;
   content: string;
+  User: YpUserData;
 }
 
 interface YpPointData {
@@ -458,6 +459,9 @@ interface YpPointData {
       language?: string;
     };
   };
+  embed_data?: {
+    content: string;
+  }
 }
 
 interface YpUserProfileData {

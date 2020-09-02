@@ -1,11 +1,11 @@
 import { html, css, customElement } from 'lit-element';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { AcActivityWithGroupBase } from './ac-activity-with-group-base.js';
+
 import '../yp-magic-text/yp-magic-text.js';
 
 @customElement('ac-activity-post')
 export class AcActivityPost extends AcActivityWithGroupBase {
-
   static get styles() {
     return [
       super.styles,
@@ -157,9 +157,10 @@ export class AcActivityPost extends AcActivityWithGroupBase {
     ];
   }
 
+  //TODO: Check jucy-html below
   render() {
     return html`
-      ${this.activity
+      ${this.activity && this.activity.Post
         ? html`
             <div class="layout vertical hasPointer" @tap="${this._goToPost}">
               <div class="actionInfo">
@@ -175,7 +176,7 @@ export class AcActivityPost extends AcActivityWithGroupBase {
                   is-ie11="${this.isIE11}"
                   textOnly
                   textType="postName"
-                  .contentLanguage="${this.activity.Post!.language}"
+                  .contentLanguage="${this.activity.Post.language}"
                   .content="${this.activity.Post!.name}"
                   .contentId="${this.activity.Post!.id}">
                 </yp-magic-text>
@@ -187,7 +188,7 @@ export class AcActivityPost extends AcActivityWithGroupBase {
                   is-ie11="${this.isIE11}">
                   <template
                     is="jucy-html"
-                    html="${this.activity.Post!.description}"></template>
+                    html="${this.activity.Post.description}"></template>
                 </div>
 
                 ${this.hasGroupHeader
