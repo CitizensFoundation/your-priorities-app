@@ -520,4 +520,15 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/${type}/${pointId}/commentsCount`
     );
   }
+
+  public postComment(type: string, id: number, body: object) {
+    return this.fetchWrapper(
+      `/${type}/${id}/comment`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
 }
