@@ -1,99 +1,106 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-image/iron-image.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import './yp-user-image.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
-import { YpBaseElement } from '../yp-base-element.js';
+import { customElement, html, property, css } from 'lit-element';
 
-class YpUserInfoLit extends YpBaseElement {
-  static get properties() {
-    return {
-      user: {
-        type: Object,
-        value: null,
-        notify: true
-      }
-    }
-  }
+import '@material/mwc-button';
+
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+
+import './yp-user-image.js';
+
+@customElement('yp-user-info')
+export class YpUserInfo extends YpBaseElement {
+  @property({ type: Object })
+  user!: YpUserData;
 
   static get styles() {
     return [
+      super.styles,
       css`
+        :host {
+          display: block;
+        }
 
-      :host {
-        display: block;
-      }
+        .avatar-container {
+          position: relative;
+          border: 2px solid #ff9800;
+          border-radius: 50%;
+          height: 90px;
+          padding: 2px;
+          width: 90px;
+          margin: 20px auto;
+        }
 
-      .avatar-container {
-        position: relative;
-        border: 2px solid #FF9800;
-        border-radius: 50%;
-        height: 90px;
-        padding: 2px;
-        width: 90px;
-        margin: 20px auto;
-      }
+        .contact-info {
+          margin: 0 20px;
+          padding-bottom: 4px;
+          text-align: center;
+        }
 
-      .contact-info {
-        margin: 0 20px;
-        padding-bottom: 4px;
-        text-align: center;
-      }
+        .contact-info .name {
+          font-weight: bold;
+        }
 
-      .contact-info .name {
-        font-weight: bold;
-      }
+        .contact-info .email {
+          color: #999;
+        }
 
-      .contact-info .email {
-        color: #999;
-      }
+        .buttons {
+          margin-top: 8px;
+        }
 
-      .buttons {
-        margin-top: 8px;
-      }
-
-      .hasPointer {
-        cursor: pointer;
-      }
-      mwc-button {
-        margin-top: 12px;
-        margin-bottom: 8px;
-      }
-    `, YpFlexLayout]
+        .hasPointer {
+          cursor: pointer;
+        }
+        mwc-button {
+          margin-top: 12px;
+          margin-bottom: 8px;
+        }
+      `
+    ];
   }
 
   render() {
     return html`
-    <lite-signal @lite-signal-yp-language="${this._languageEvent}"></lite-signal>
-    ${ this.user ? html`
-      <div class="mainContainer">
-        <div class="avatar-container">
-          <yp-user-image class="hasPointer" large .user="${this.user}" @tap="${this._openEdit}"></yp-user-image>
-        </div>
-        <div class="contact-info">
-          <div class="name">${this.user.name}</div>
-          <div class="email">${this.user.email}</div>
-          <div class="layout vertical center-justified buttons">
-            <mwc-button raised .icon="create" .title="${this.t('user.edit')}" @click="${this._openEdit}">${this.t('user.edit')}</mwc-button>
-            <mwc-button raised .icon="create" .title="${this.t('myContent')}" @click="${this._openAllContentModeration}">${this.t('myContent')}</mwc-button>
-            <mwc-button raised .icon="input" .title="${this.t('user.logout')}" @click="${this._logout}">${this.t('user.logout')}</mwc-button>
-          </div>
-        </div>
-      </div>
-    ` : html``}
-    `
+      ${this.user
+        ? html`
+            <div class="mainContainer">
+              <div class="avatar-container">
+                <yp-user-image
+                  class="hasPointer"
+                  large
+                  .user="${this.user}"
+                  @tap="${this._openEdit}"></yp-user-image>
+              </div>
+              <div class="contact-info">
+                <div class="name">${this.user.name}</div>
+                <div class="email">${this.user.email}</div>
+                <div class="layout vertical center-justified buttons">
+                  <mwc-button
+                    raised
+                    .label="${this.t('user.edit')}"
+                    @click="${this._openEdit}"></mwc-button>
+                  <mwc-button
+                    raised
+                    .label="${this.t('myContent')}"
+                    @click="${this._openAllContentModeration}"></mwc-button>
+                  <mwc-button
+                    raised
+                    .label="${this.t('user.logout')}"
+                    @click="${this._logout}"></mwc-button>
+                </div>
+              </div>
+            </div>
+          `
+        : html``}
+    `;
   }
 
   _openAllContentModeration() {
     window.appGlobals.activity('open', 'userAllContentModeration');
-    dom(document).querySelector('yp-app').getContentModerationAsync(function (dialog) {
+    //TODO: News
+    /*window.appDialogs.getContentModerationAsync( (dialog) => {
       dialog.setup(null, null, null, '/moderate_all_content', this.user.id);
       dialog.open(this.user.name);
-    }.bind(this));
+    });*/
   }
 
   _openEdit() {
@@ -104,5 +111,3 @@ class YpUserInfoLit extends YpBaseElement {
     window.appUser.logout();
   }
 }
-
-window.customElements.define('yp-user-info-lit', YpUserInfoLit)

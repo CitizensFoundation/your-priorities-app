@@ -219,13 +219,6 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     `;
   }
 
-  /*
-  behaviors: [
-    ypLoggedInUserBehavior,
-    ypTruncateBehavior
-  ],
-*/
-
   scrollEvent(event: RangeChangeEvent) {
     //TODO: Check this logic
     if (
