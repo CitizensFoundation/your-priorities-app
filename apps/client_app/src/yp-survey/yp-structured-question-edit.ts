@@ -364,7 +364,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   renderRadioButton(radioButton: YpRadioButtonData, buttonIndex: number) {
     return html`
-      <mwc-formfield label="${radioButton.text}">
+      <mwc-formfield .label="${radioButton.text}">
         <mwc-radio
           .useSmallFont="${this.useSmallFont}"
           @keypress="${this.setRadioEventType}"

@@ -1,7 +1,8 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 
 @customElement('ac-notification-selection')
 export class AcNotificationSelection extends YpBaseElement {
@@ -36,7 +37,6 @@ export class AcNotificationSelection extends YpBaseElement {
         notify: true,
         observer: '_methodChanged',
       },
-
     };
   }
 
@@ -93,20 +93,20 @@ export class AcNotificationSelection extends YpBaseElement {
           <div class="layout vertical half">
             <div class="notificationSub">${this.t('notification.method')}</div>
             <div class="layout horizontal">
-              <paper-radio-group
-                id="notificationMethodGroup"
-                name="method"
-                class="method"
-                attrForSelected="enum-value"
-                .selected="${this.method}">
+              <div id="notificationMethodGroup" name="method" class="method">
                 ${this.availableMethods.map(
                   item => html`
-                    <paper-radio-button .enumValue="${item.enumValue}"
-                      >${item.name}</paper-radio-button
-                    >
+                    <mwc-formfield .label="${item.name}">
+                      <mwc-radio
+                        name="method"
+                        @change="${this._methodChanged}"
+                        .value="${item.enumValue.toString()}"
+                        ?checked="${item.enumValue == this.method}">
+                      </mwc-radio>
+                    </mwc-formfield>
                   `
                 )}
-              </paper-radio-group>
+              </div>
             </div>
           </div>
           <div class="layout vertical half">
@@ -114,7 +114,7 @@ export class AcNotificationSelection extends YpBaseElement {
               ${this.t('notification.frequency')}
             </div>
             <div class="layout horizontal">
-              <paper-radio-group
+              <div
                 id="notificationFrequencyGroup"
                 name="frequency"
                 attrForSelected="enum-value"
@@ -122,14 +122,18 @@ export class AcNotificationSelection extends YpBaseElement {
                 .selected="${this.frequency}">
                 ${this.availableFrequencies.map(
                   item => html`
-                    <paper-radio-button
-                      ?disabled="${this._isDelayed(item)}"
-                      .enumValue="${item.enumValue}"
-                      >${item.name}</paper-radio-button
-                    >
+                    <mwc-formfield .label="${item.name}">
+                      <mwc-radio
+                        name="frequency"
+                        ?disabled="${this._isDelayed(item)}"
+                        @change="${this._frequencyChanged}"
+                        .value="${item.enumValue.toString()}"
+                        ?checked="${item.enumValue == this.frequency}">
+                      </mwc-radio>
+                    </mwc-formfield>
                   `
                 )}
-              </paper-radio-group>
+              </div>
             </div>
           </div>
         </div>
@@ -158,16 +162,30 @@ export class AcNotificationSelection extends YpBaseElement {
     }
   }
 
-  _methodChanged() {
+  _methodChanged(event: CustomEvent) {
+    const methodValue = (event.target as HTMLInputElement).value;
+    if (methodValue) {
+      this.method = parseInt(methodValue);
+    }
+
     if (this.method) {
       this.setting.method = this.method;
     }
+
+    this.setting = { ...this.setting };
   }
 
-  _frequencyChanged() {
+  _frequencyChanged(event: CustomEvent) {
+    const frequencyValue = (event.target as HTMLInputElement).value;
+    if (frequencyValue) {
+      this.frequency = parseInt(frequencyValue);
+    }
+
     if (this.frequency) {
       this.setting.frequency = this.frequency;
     }
+
+    this.setting = { ...this.setting };
   }
 
   _settingChanged() {
