@@ -6,6 +6,7 @@ import '@material/mwc-icon-button';
 import './yp-point-comment-list.js';
 import './yp-point-news-story-embed.js';
 import './yp-point-actions.js';
+import { YpPointCommentList } from './yp-point-comment-list.js';
 
 @customElement('yp-point-news-story')
 export class YpPointNewsStory extends YpBaseElement {
@@ -26,22 +27,6 @@ export class YpPointNewsStory extends YpBaseElement {
 
   @property({ type: Number })
   commentsCount = 0;
-
-  static get sdasds() {
-    return {
-      point: {
-        type: Object,
-        notify: true,
-        observer: '_pointChanged',
-      },
-
-      open: {
-        type: Boolean,
-        value: false,
-        observer: '_openChanged',
-      },
-    };
-  }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
@@ -172,7 +157,7 @@ export class YpPointNewsStory extends YpBaseElement {
         <yp-point-comment-list
           id="commentsList"
           @yp-set-comments-count="${this._setCommentsCount}"
-          disable-open-close
+          disableOpenClose
           .point="${this.point}"
           ?hidden="${!this.withComments}"></yp-point-comment-list>
       </div>
@@ -189,7 +174,7 @@ export class YpPointNewsStory extends YpBaseElement {
 
   _openChanged() {
     if (this.open) {
-      this.$$('#commentsList').fetchComments();
+      (this.$$('#commentsList') as YpPointCommentList).refresh();
     }
   }
 
@@ -199,12 +184,12 @@ export class YpPointNewsStory extends YpBaseElement {
 
   _setOpen() {
     this.open = true;
-    this.$$('#commentsList')._setOpen();
+    (this.$$('#commentsList') as YpPointCommentList).setOpen();
   }
 
   _setClosed() {
     this.open = false;
-    this.$$('#commentsList')._setClosed();
+    (this.$$('#commentsList') as YpPointCommentList).setClosed();
   }
 
   _setCommentsCount(event: CustomEvent) {

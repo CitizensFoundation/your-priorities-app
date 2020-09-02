@@ -1,27 +1,17 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-image/iron-image.js';
-import '../yp-app-globals/yp-app-icons.js';
-import '../yp-behaviors/yp-language-behavior.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpBaseElement } from '../yp-base-element.js';
-import { YpFlexLayout } from '../yp-flex-layout.js';
+import { property, html, css, customElement } from 'lit-element';
 
-class YpPointNewsStoryEmbedLit extends YpBaseElement {
-  static get properties() {
-    return {
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-      embedData: {
-        type: Object,
-        notify: true
-      }
-    }
-  }
+import '../@yrpri/yp-image.js';
 
+@customElement('yp-point-news-story-embed')
+export class YpPointNewsStoryEmbed extends YpBaseElement {
+  @property({ type: Object })
+  embedData!: YpEmbedData;
 
   static get styles() {
-    return[
+    return [
+      super.styles,
       css`
 
       iron-image {
@@ -65,17 +55,18 @@ class YpPointNewsStoryEmbedLit extends YpBaseElement {
       [hidden] {
         display: none !important;
       }
-  `, YpFlexLayout]
+  `
+  ]
   }
   render() {
     return html`
     <div ?hidden="${!this.embedData}">
       <div class="layout vertical embedContainer">
-        <a href="${this.embedData.url}" class="container" .target="_blank">
+        <a href="${this.embedData.url}" class="container" target="_blank">
           <div class="layout vertical center-center">
-            <iron-image .sizing="contain" src="${this.embedData.thumbnail_url}" ?hidden="${this.embedData.html}"></iron-image>
+            <yp-image sizing="contain" src="${this.embedData.thumbnail_url}" ?hidden="${this.embedData.html != null}"></yp-image>
             <div id="embedHtml" ?hidden="${!this.embedData.html}">
-              <div inner-h-t-m-l="${this.embedData}"></div>
+              <div .inner-h-t-m-l="${this.embedData}"></div>
             </div>
           </div>
           <div class="layout vertical">
@@ -93,4 +84,3 @@ class YpPointNewsStoryEmbedLit extends YpBaseElement {
   }
 }
 
-window.customElements.define('yp-point-news-story-embed-lit', YpPointNewsStoryEmbedLit)

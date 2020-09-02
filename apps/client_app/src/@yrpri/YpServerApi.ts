@@ -507,4 +507,17 @@ export class YpServerApi extends YpCodeBase {
       url
     );
   }
+
+
+  public getComments(type: string, pointId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${type}/${pointId}/comments`
+    );
+  }
+
+  public getCommentsCount(type: string, pointId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${type}/${pointId}/commentsCount`
+    );
+  }
 }

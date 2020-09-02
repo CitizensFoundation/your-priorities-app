@@ -435,6 +435,14 @@ interface YpPointRevision {
   User: YpUserData;
 }
 
+interface YpEmbedData {
+  html: string;
+  thumbnail_url: string;
+  url: string;
+  title: string;
+  description: string;
+}
+
 interface YpPointData {
   id: number;
   content: string;
@@ -459,9 +467,7 @@ interface YpPointData {
       language?: string;
     };
   };
-  embed_data?: {
-    content: string;
-  }
+  embed_data?: YpEmbedData;
 }
 
 interface YpUserProfileData {
