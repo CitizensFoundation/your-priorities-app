@@ -79,8 +79,8 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
       <div class="layout vertical pointerCursor" @tap="${this._goTo}">
         <div class="layout horizontal">
           <div class="layout vertical center-center self-start leftContainer">
-            <yp-user-image .small="" .user="${this.user}"></yp-user-image>
-            <iron-icon .icon="${this.icon}" class="icon"></iron-icon>
+            <yp-user-image small .user="${this.user!}"></yp-user-image>
+            <mwc-icon class="icon">${this.icon}</mwc-icon>
           </div>
           <div class="layout vertical">
             <div class="name">${this.nameTruncated}</div>
@@ -92,16 +92,6 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
       </div>
     `;
   }
-
-  /*
-  behaviors: [
-
-    YpPostBehavior,
-    ypGotoBehavior,
-    ypTruncateBehavior,
-    ypMediaFormatsBehavior
-  ],
-*/
 
   _goTo() {
     let gotoLocation;

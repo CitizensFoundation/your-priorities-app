@@ -1,15 +1,19 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
-import 'lit-virtualizer';
-
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-
-import { truncateNameList } from './TruncateNameList.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { reject } from 'lodash-es';
 import { RangeChangeEvent } from 'lit-virtualizer';
+
+import 'lit-virtualizer';
+import '@material/mwc-button';
+
+import '../yp-user/yp-user-info.js';
+
+import './ac-notification-list-post.js';
+import './ac-notification-list-point.js';
+import './ac-notification-list-general-item.js';
+
+import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
+import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 
 @customElement('ac-notification-list')
 export class AcNotificationList extends YpBaseElementWithLogin {
@@ -137,9 +141,9 @@ export class AcNotificationList extends YpBaseElementWithLogin {
         `;
       case 'pointNotification':
         return html`
-          <ac-notification-list-post
+          <ac-notification-list-point
             class="notificationItem"
-            .notification="${notification}"></ac-notification-list-post>
+            .notification="${notification}"></ac-notification-list-point>
         `;
       case 'notification.post.status.change':
         return html`
@@ -178,47 +182,40 @@ export class AcNotificationList extends YpBaseElementWithLogin {
 
   render() {
     return html`
-      <iron-scroll-threshold
-        .lower-threshold="250"
-        @lower-threshold="${this._loadMoreData}"
-        id="threshold">
-        <div .elevation="2" id="material" class="oversflowSettings">
-          ${this.loggedInUser
-            ? html`
-                <yp-user-info
-                  @open-user-edit="${this._openEdit}"
-                  .user="${this.loggedInUser}"></yp-user-info>
-                <div
-                  class="notificationHeader layout horizontal center-center"
-                  ?hidden="${!this.notificationsLength}">
-                  ${this.t('notifications')}
-                </div>
-                <div
-                  ?hidden="${!this.unViewedCount}"
-                  class="unViewedCount layout vertical center-center">
-                  <div>${this.unViewedCount} ${this.t('unviewed')}</div>
-                  <mwc-button
-                    @click="${this._markAllAsViewed}"
-                    .label="${this.t(
-                      'notificationMarkAllViewed'
-                    )}"></mwc-button>
-                </div>
+      <div id="material" class="oversflowSettings">
+        ${this.loggedInUser
+          ? html`
+              <yp-user-info
+                @open-user-edit="${this._openEdit}"
+                .user="${this.loggedInUser}"></yp-user-info>
+              <div
+                class="notificationHeader layout horizontal center-center"
+                ?hidden="${!this.notificationsLength}">
+                ${this.t('notifications')}
+              </div>
+              <div
+                ?hidden="${!this.unViewedCount}"
+                class="unViewedCount layout vertical center-center">
+                <div>${this.unViewedCount} ${this.t('unviewed')}</div>
+                <mwc-button
+                  @click="${this._markAllAsViewed}"
+                  .label="${this.t('notificationMarkAllViewed')}"></mwc-button>
+              </div>
 
-                ${this.notifications
-                  ? html`
-                      <lit-virtualizer
-                        .items=${this.notifications}
-                        .scrollTarget="${window}"
-                        id="activitiesList"
-                        scrollOffset="300"
-                        .renderItem=${this.renderNotification}
-                        @rangechange=${this.scrollEvent}></lit-virtualizer>
-                    `
-                  : nothing}
-              `
-            : html``}
-        </div>
-      </iron-scroll-threshold>
+              ${this.notifications
+                ? html`
+                    <lit-virtualizer
+                      .items=${this.notifications}
+                      .scrollTarget="${window}"
+                      id="activitiesList"
+                      scrollOffset="300"
+                      .renderItem=${this.renderNotification}
+                      @rangechange=${this.scrollEvent}></lit-virtualizer>
+                  `
+                : nothing}
+            `
+          : html``}
+      </div>
     `;
   }
 
@@ -280,7 +277,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
   }
 
   _markAllAsViewed() {
-   /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+    /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
       dialog.open(
         this.t('notificationConfirmMarkAllViewed'),
         this._reallyMarkAllAsViewed.bind(this)

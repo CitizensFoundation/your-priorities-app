@@ -1,8 +1,9 @@
 import { property, html, css, customElement } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import '@material/mwc-radio';
 import '@material/mwc-formfield';
+
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 @customElement('ac-notification-selection')
 export class AcNotificationSelection extends YpBaseElement {
@@ -45,13 +46,6 @@ export class AcNotificationSelection extends YpBaseElement {
 
     if (changedProperties.has('setting')) {
       this._settingChanged();
-    }
-    if (changedProperties.has('frequency')) {
-      this._frequencyChanged();
-    }
-
-    if (changedProperties.has('method')) {
-      this._methodChanged();
     }
   }
 
@@ -114,12 +108,7 @@ export class AcNotificationSelection extends YpBaseElement {
               ${this.t('notification.frequency')}
             </div>
             <div class="layout horizontal">
-              <div
-                id="notificationFrequencyGroup"
-                name="frequency"
-                attrForSelected="enum-value"
-                class="frequency"
-                .selected="${this.frequency}">
+              <div id="notificationFrequencyGroup" class="frequency">
                 ${this.availableFrequencies.map(
                   item => html`
                     <mwc-formfield .label="${item.name}">
@@ -163,29 +152,30 @@ export class AcNotificationSelection extends YpBaseElement {
   }
 
   _methodChanged(event: CustomEvent) {
-    const methodValue = (event.target as HTMLInputElement).value;
-    if (methodValue) {
-      this.method = parseInt(methodValue);
+    let methodValue: number | string = (event.target as HTMLInputElement).value;
+    methodValue = parseInt(methodValue);
+    if (methodValue && this.method != methodValue) {
+      this.method = methodValue;
+      this.fire('yp-notification-changed');
     }
 
     if (this.method) {
       this.setting.method = this.method;
     }
-
-    this.setting = { ...this.setting };
   }
 
   _frequencyChanged(event: CustomEvent) {
-    const frequencyValue = (event.target as HTMLInputElement).value;
-    if (frequencyValue) {
-      this.frequency = parseInt(frequencyValue);
+    let frequencyValue: number | string = (event.target as HTMLInputElement)
+      .value;
+    frequencyValue = parseInt(frequencyValue);
+    if (frequencyValue && this.frequency != frequencyValue) {
+      this.frequency = frequencyValue;
+      this.fire('yp-notification-changed');
     }
 
     if (this.frequency) {
       this.setting.frequency = this.frequency;
     }
-
-    this.setting = { ...this.setting };
   }
 
   _settingChanged() {

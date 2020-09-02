@@ -1,6 +1,11 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
+import '@material/mwc-icon';
+
+import '../yp-magic-text/yp-magic-text.js';
+import '../yp-user/yp-user-image.js';
+
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
@@ -160,16 +165,6 @@ export class AcNotificationListPoint extends YpBaseElement {
       </div>
     `;
   }
-
-  /*
-  behaviors: [
-    YpPostBehavior,
-    YpTruncatedNameList,
-    ypGotoBehavior,
-    ypTruncateBehavior,
-    ypMediaFormatsBehavior
-  ],
-*/
 
   get postNameTruncated() {
     if (this.postName) {

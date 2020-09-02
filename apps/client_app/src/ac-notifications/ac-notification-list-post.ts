@@ -1,6 +1,11 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
+import '@material/mwc-icon';
+
+import '../yp-magic-text/yp-magic-text.js';
+import '../yp-user/yp-user-image.js';
+
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
@@ -46,12 +51,6 @@ export class AcNotificationListPost extends YpBaseElement {
       css`
         .pointerCursor {
           cursor: pointer;
-        }
-
-        .endorsers {
-        }
-
-        .opposers {
         }
 
         .bulb-icon {
