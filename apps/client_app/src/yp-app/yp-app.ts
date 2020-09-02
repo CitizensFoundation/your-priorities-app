@@ -41,7 +41,7 @@ import { YpAppGlobals } from './YpAppGlobals.js';
 import { YpAppUser } from './YpAppUser.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { YpAppDialogs } from './yp-app-dialogs.js';
+import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 
 import '../yp-collection/yp-domain.js';
 import '../yp-collection/yp-community.js';
