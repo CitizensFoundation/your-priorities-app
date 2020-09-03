@@ -14,6 +14,9 @@ import './ac-notification-list-general-item.js';
 
 import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { AcNotificationToast } from './ac-notification-toast.js';
+import { YpUserEdit } from '../yp-user/yp-user-edit.js';
+import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
 @customElement('ac-notification-list')
 export class AcNotificationList extends YpBaseElementWithLogin {
@@ -257,11 +260,10 @@ export class AcNotificationList extends YpBaseElementWithLogin {
   }
 
   _openEdit() {
-    //TODO: Fix
-    /*window.appDialogs.getDialogAsync('userEdit', dialog => {
-      dialog.setup(this.loggedInUser, false, null);
-      dialog.open('edit', { userId: this.loggedInUser!.id });
-    });*/
+    window.appDialogs.getDialogAsync('userEdit', (dialog: YpUserEdit) => {
+      dialog.setup(this.loggedInUser!, false, undefined);
+      dialog.open(false, { userId: this.loggedInUser!.id });
+    });
   }
 
   _clearScrollThreshold() {
@@ -270,12 +272,12 @@ export class AcNotificationList extends YpBaseElementWithLogin {
   }
 
   _markAllAsViewed() {
-    /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+    window.appDialogs.getDialogAsync('confirmationDialog', (dialog: YpConfirmationDialog) => {
       dialog.open(
         this.t('notificationConfirmMarkAllViewed'),
         this._reallyMarkAllAsViewed.bind(this)
       );
-    });*/
+    });
   }
 
   async _reallyMarkAllAsViewed() {
@@ -561,10 +563,17 @@ export class AcNotificationList extends YpBaseElementWithLogin {
 
     if (notMyNotifications && notMyNotifications.length > 0) {
       const activityUser = notMyNotifications[0].AcActivities[0].User;
-      // TODO
-      /*window.appDialogs.getDialogAsync("notificationToast",  (dialog) => {
-        dialog.open(activityUser, this._getNotificationText(notMyNotifications[0]), notMyNotifications[0].type==='notification.generalUserNotification');
-      });*/
+      window.appDialogs.getDialogAsync(
+        'notificationToast',
+        (dialog: AcNotificationToast) => {
+          dialog.openDialog(
+            activityUser,
+            this._getNotificationText(notMyNotifications[0]) || '',
+            notMyNotifications[0].type ===
+              'notification.generalUserNotification'
+          );
+        }
+      );
     }
   }
 

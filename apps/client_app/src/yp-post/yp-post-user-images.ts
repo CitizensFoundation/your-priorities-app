@@ -6,6 +6,7 @@ import '@material/mwc-button';
 import './yp-post-user-image-card.js';
 
 import { nothing } from 'lit-html';
+import { YpPostUserImageEdit } from './yp-post-user-image-edit.js';
 
 @customElement('yp-post-user-images')
 export class YpPostUserImages extends YpBaseElement {
@@ -88,9 +89,9 @@ export class YpPostUserImages extends YpBaseElement {
 
   _newImage() {
     window.appGlobals.activity('open', 'newUserImage');
-    /*window.appDialogs.getDialogAsync('userImageEdit', dialog => {
-      dialog.setup(this.post, null, true, this._refresh.bind(this));
-      dialog.open('new', { postId: this.post!.id, userImages: true });
-    });*/
+    window.appDialogs.getDialogAsync('userImageEdit', (dialog: YpPostUserImageEdit) => {
+      dialog.setup(this.post!, undefined, true, this._refresh.bind(this));
+      dialog.open(true, { postId: this.post!.id, userImages: true });
+    });
   }
 }

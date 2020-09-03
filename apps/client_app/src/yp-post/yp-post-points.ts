@@ -23,6 +23,7 @@ import { ifDefined } from 'lit-html/directives/if-defined';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { Select } from '@material/mwc-select';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
+import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -1374,12 +1375,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       }
 
       if (multipleLanguages) {
-        /* window.appDialogs.getDialogAsync(
+         window.appDialogs.getDialogAsync(
             'autoTranslateDialog',
-           (dialog) => {
+           (dialog: YpAutoTranslateDialog) => {
               dialog.openLaterIfAutoTranslationEnabled();
             }
-        );*/
+        );
       }
     }
   }

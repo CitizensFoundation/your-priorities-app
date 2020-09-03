@@ -11,6 +11,7 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpPostUserImageEdit } from './yp-post-user-image-edit.js';
 
 @customElement('yp-post-user-images')
 export class YpPostUserImages extends YpBaseElement {
@@ -134,10 +135,10 @@ export class YpPostUserImages extends YpBaseElement {
 
   _openEdit() {
     window.appGlobals.activity('open', 'userImage.edit');
-    /*window.appDialogs.getDialogAsync("userImageEdit",  (dialog) => {
+    window.appDialogs.getDialogAsync("userImageEdit",  (dialog: YpPostUserImageEdit) => {
       dialog.setup(this.post, this.image, false, this._refresh.bind(this));
-      dialog.open('edit', { postId: this.post.id, userImages: true });
-    });*/
+      dialog.open(false, { postId: this.post.id, userImages: true });
+    });
   }
 
   _openDelete() {

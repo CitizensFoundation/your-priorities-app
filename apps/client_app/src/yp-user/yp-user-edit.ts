@@ -11,6 +11,8 @@ import '../yp-app/yp-language-selector.js';
 
 import { YpEditBase } from '../@yrpri/yp-edit-base.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
+import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
+import { YpUserDeleteOrAnonymize } from './yp-user-delete-or-anonymize.js';
 
 @customElement('yp-user-edit')
 export class YpUserEdit extends YpEditBase {
@@ -232,13 +234,7 @@ export class YpUserEdit extends YpEditBase {
 
   _editResponse(event: CustomEvent) {
     if (event.detail.response.duplicateEmail) {
-      /*window.appDialogs
-        .getDialogAsync(
-          'errorDialog',
-         (dialog) => {
-            dialog.showErrorDialog(this.t('emailAlreadyRegisterred'));
-          }
-        );*/
+      this.fire('yp-error', this.t('emailAlreadyRegisterred'))
     }
   }
 
@@ -255,27 +251,19 @@ export class YpUserEdit extends YpEditBase {
 
   _disconnectFromFacebookLogin() {
     if (this._checkIfValidEmail()) {
-      /*window.appDialogs
+      window.appDialogs
         .getDialogAsync(
           'confirmationDialog',
-           (dialog) => {
+           (dialog: YpConfirmationDialog) => {
             dialog.open(
               this.t('areYouSureYouWantToDisconnectFacebookLogin'),
               this._reallyDisconnectFromFacebookLogin.bind(this),
               true
             );
           }
-        );*/
+        );
     } else {
-      /*window.appDialogs
-        .getDialogAsync(
-          'errorDialog',
-           (dialog) => {
-            dialog.showErrorDialog(
-              this.t('cantDisconnectFromFacebookWithoutValidEmail')
-            );
-          }
-        );*/
+      this.fire('yp-error', this.t('cantDisconnectFromFacebookWithoutValidEmail'))
     }
   }
 
@@ -289,27 +277,19 @@ export class YpUserEdit extends YpEditBase {
 
   _disconnectFromSamlLogin() {
     if (this._checkIfValidEmail()) {
-      /*window.appDialogs
+      window.appDialogs
         .getDialogAsync(
           'confirmationDialog',
-           (dialog) => {
+           (dialog: YpConfirmationDialog) => {
             dialog.open(
               this.t('areYouSureYouWantToDisconnectSamlLogin'),
               this._reallyDisconnectFromSamlLogin.bind(this),
               true
             );
           }
-        );*/
+        );
     } else {
-      /*window.appDialogs
-        .getDialogAsync(
-          'errorDialog',
-           (dialog) => {
-            dialog.showErrorDialog(
-              this.t('cantDisconnectFromSamlWithoutValidEmail')
-            );
-          }
-        );*/
+      this.fire('yp-error', this.t('cantDisconnectFromSamlWithoutValidEmail'))
     }
   }
 
@@ -377,8 +357,8 @@ export class YpUserEdit extends YpEditBase {
   setup(
     user: YpUserData,
     newNotEdit: boolean,
-    refreshFunction: Function,
-    openNotificationTab: boolean
+    refreshFunction: Function | undefined,
+    openNotificationTab = false
   ) {
     this.user = user;
     this.new = newNotEdit;
@@ -402,12 +382,12 @@ export class YpUserEdit extends YpEditBase {
   }
 
   _deleteOrAnonymizeUser() {
-    /*window.appDialogs
+    window.appDialogs
       .getDialogAsync(
         'userDeleteOrAnonymize',
-         (dialog) => {
+         (dialog: YpUserDeleteOrAnonymize) => {
           dialog.open();
         }
-      );*/
+      );
   }
 }

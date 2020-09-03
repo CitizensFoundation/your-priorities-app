@@ -16,7 +16,7 @@ export abstract class YpEditBase extends YpBaseElement {
   snackbarText: string | undefined
 
   @property({ type: Object })
-  params: Record<string,string> | undefined
+  params: Record<string,string|boolean|number> | undefined
 
   @property({ type: String })
   method = 'POST'
@@ -116,9 +116,9 @@ export abstract class YpEditBase extends YpBaseElement {
     this.setupTranslation();
   }
 
-  open(newOrUpdate: string, params: Record<string,string>) {
+  open(newItem: boolean, params: Record<string,string | boolean | number>) {
     if (window.appUser && window.appUser.loggedIn() === true) {
-      if (newOrUpdate && newOrUpdate === 'new') {
+      if (newItem) {
         this.new = true;
       } else {
         this.new = false;
@@ -131,7 +131,7 @@ export abstract class YpEditBase extends YpBaseElement {
     } else {
       window.appUser.loginForEdit(
         this,
-        newOrUpdate==="new",
+        newItem,
         params,
         this.refreshFunction!
       );

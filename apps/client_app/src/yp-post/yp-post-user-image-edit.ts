@@ -151,7 +151,7 @@ export class YpPostUserImageEdit extends YpEditBase {
 
   setup(
     post: YpPostData,
-    image: YpImageData,
+    image: YpImageData | undefined,
     newNotEdit: boolean,
     refreshFunction: Function
   ) {

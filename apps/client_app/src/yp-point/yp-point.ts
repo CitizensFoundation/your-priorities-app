@@ -20,6 +20,8 @@ import './yp-point-actions.js';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
+import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
 @customElement('yp-point')
 export class YpPoint extends YpBaseElement {
@@ -745,12 +747,12 @@ export class YpPoint extends YpBaseElement {
   }
 
   _deletePoint() {
-    /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+    window.appDialogs.getDialogAsync('confirmationDialog', (dialog: YpConfirmationDialog) => {
       dialog.open(
         this.t('point.confirmDelete'),
         this._reallyDeletePoint.bind(this)
       );
-    });*/
+    });
   }
 
   async _reallyDeletePoint() {
@@ -763,14 +765,14 @@ export class YpPoint extends YpBaseElement {
 
   _reportPoint() {
     window.appGlobals.activity('open', 'point.report');
-    /*window.appDialogs.getDialogAsync("apiActionDialog", (dialog)  => {
+    window.appDialogs.getDialogAsync("apiActionDialog", (dialog: YpApiActionDialog)  => {
       dialog.setup('/api/points/' + this.point.id + '/report',
         this.t('reportConfirmation'),
         this._onReport.bind(this),
         this.t('point.report'),
         'PUT');
       dialog.open();
-    });*/
+    });
   }
 
   _onReport() {

@@ -5,6 +5,7 @@ import '../@yrpri/yp-image.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { Dialog } from '@material/mwc-dialog';
+import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
 @customElement('yp-user-delete-or-anonymize')
 export class YpUserDeleteOrAnonymize extends YpBaseElement {
@@ -83,58 +84,58 @@ export class YpUserDeleteOrAnonymize extends YpBaseElement {
   }
 
   _deleteUser() {
-    /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+    window.appDialogs.getDialogAsync('confirmationDialog', (dialog: YpConfirmationDialog) => {
       dialog.open(
         this.t('areYouSureYouWantToDeleteUser'),
         this._deleteUserFinalWarning.bind(this),
         true
       );
-    });*/
+    });
   }
 
   _deleteUserFinalWarning() {
     setTimeout( ()  =>{
-      /*window.appDialogs
+      window.appDialogs
         .getDialogAsync(
           'confirmationDialog',
-           (dialog) => {
+           (dialog: YpConfirmationDialog) => {
             dialog.open(
               this.t('areYouReallySureYouWantToDeleteUser'),
               this._deleteUserForReal.bind(this),
               true
             );
           }
-        );*/
+        );
     });
   }
 
   _anonymizeUser() {
-    /*window.appDialogs
+    window.appDialogs
       .getDialogAsync(
         'confirmationDialog',
-         (dialog) => {
+         (dialog: YpConfirmationDialog) => {
           dialog.open(
             this.t('areYouSureYouWantToAnonymizeUser'),
             this._anonymizeUserFinalWarning.bind(this),
             true
           );
         }
-      );*/
+      );
   }
 
   _anonymizeUserFinalWarning() {
     setTimeout( () => {
-      /*window.appDialogs
+      window.appDialogs
         .getDialogAsync(
           'confirmationDialog',
-           (dialog) => {
+           (dialog: YpConfirmationDialog) => {
             dialog.open(
               this.t('areYouReallySureYouWantToAnonymizeUser'),
               this._anonymizeUserForReal.bind(this),
               true
             );
           }
-        );*/
+        );
     });
   }
 

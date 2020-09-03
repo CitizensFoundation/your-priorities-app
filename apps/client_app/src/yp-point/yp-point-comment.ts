@@ -8,6 +8,8 @@ import './yp-point-actions.js';
 
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
+import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 
 @customElement('yp-point-comment')
 export class YpPointComment extends YpBaseElementWithLogin {
@@ -130,9 +132,9 @@ export class YpPointComment extends YpBaseElementWithLogin {
   }
 
   _deletePoint() {
-    /*window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
+    window.appDialogs.getDialogAsync("confirmationDialog", (dialog: YpConfirmationDialog) => {
       dialog.open(this.t('point.confirmDelete'), this._reallyDeletePoint.bind(this));
-    };*/
+    });
   }
 
   async _reallyDeletePoint() {
@@ -146,14 +148,14 @@ export class YpPointComment extends YpBaseElementWithLogin {
 
   _reportPoint() {
     window.appGlobals.activity('open', 'point.report');
-    /*window.appDialogs.getDialogAsync("apiActionDialog", (dialog) => {
-      dialog.setup('/api/points/' + this.point.id + '/report',
+    window.appDialogs.getDialogAsync("apiActionDialog", (dialog: YpApiActionDialog) => {
+      dialog.setup('/api/points/' + this.point!.id + '/report',
         this.t('reportConfirmation'),
         this._onReport.bind(this),
         this.t('point.report'),
         'PUT');
       dialog.open();
-    });*/
+    });
   }
 
   _onReport() {

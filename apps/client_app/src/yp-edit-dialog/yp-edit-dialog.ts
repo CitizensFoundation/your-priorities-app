@@ -12,6 +12,7 @@ import '@material/mwc-snackbar';
 
 import { YpForm } from '../@yrpri/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
+import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
 @customElement('yp-edit-dialog')
 export class YpEditDialog extends YpBaseElement {
@@ -561,9 +562,9 @@ export class YpEditDialog extends YpBaseElement {
       this.fire('yp-custom-form-submit');
     } else {
       if (this.confirmationText) {
-        /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
-          dialog.open(this.confirmationText, this._reallySubmit.bind(this));
-        });*/
+        window.appDialogs.getDialogAsync('confirmationDialog', (dialog: YpConfirmationDialog) => {
+          dialog.open(this.confirmationText!, this._reallySubmit.bind(this));
+        });
       } else {
         this._reallySubmit();
       }

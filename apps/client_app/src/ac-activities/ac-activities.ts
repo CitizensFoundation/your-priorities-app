@@ -12,6 +12,7 @@ import './ac-activity-recommended-posts.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 import { LitVirtualizer, RangeChangeEvent } from 'lit-virtualizer';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
 @customElement('ac-activities')
 export class AcActivities extends YpBaseElementWithLogin {
@@ -448,10 +449,9 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   _deleteActivity(event: CustomEvent) {
     this.activityIdToDelete = event.detail.id;
-    //TODO: Make work
-    /*window.appDialogs.getDialogAsync("confirmationDialog", (dialog) => {
+    window.appDialogs.getDialogAsync("confirmationDialog", (dialog: YpConfirmationDialog) => {
       dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
-    });*/
+    });
   }
 
   async _reallyDelete() {

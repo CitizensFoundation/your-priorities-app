@@ -26,6 +26,7 @@ import '../yp-post/yp-post-card-add.js';
 import './yp-set-video-cover.js';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpMediaRecorder } from '../yp-media-recorder/yp-media-recorder.js';
 
 @customElement('yp-file-upload')
 export class YpFileUpload extends YpBaseElement {
@@ -519,15 +520,15 @@ export class YpFileUpload extends YpBaseElement {
 
   _openMediaRecorder() {
     window.appGlobals.activity('open', 'mediaRecorder');
-    /*window.appDialogs.getMediaRecorderAsync(dialog => {
+    window.appDialogs.getMediaRecorderAsync((dialog: YpMediaRecorder) => {
       dialog.open({
         callbackFunction: this._dataFromMediaRecorder.bind(this),
         videoRecording: this.videoUpload,
         audioRecording: this.audioUpload,
         uploadFileFunction: this._openFileInput.bind(this),
-        maxLength: this.uploadLimitSeconds,
+        maxLength: this.uploadLimitSeconds || 600
       });
-    });*/
+    });
   }
 
   _dataFromMediaRecorder(file: YpUploadFileData) {

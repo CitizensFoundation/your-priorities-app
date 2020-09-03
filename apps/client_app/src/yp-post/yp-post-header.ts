@@ -26,6 +26,8 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
 
 import './yp-post-transcript.js';
+import { YpPostEdit } from './yp-post-edit.js';
+import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 
 @customElement('yp-post-header')
 export class YpPostHeader extends YpBaseElementWithLogin {
@@ -582,10 +584,10 @@ export class YpPostHeader extends YpBaseElementWithLogin {
   }
 
   _refresh() {
-    /*window.appDialogs.getDialogAsync('postEdit', dialog => {
+    window.appDialogs.getDialogAsync('postEdit', (dialog: YpPostEdit) => {
       dialog.selected = 0;
       this.fire('refresh');
-    });*/
+    });
   }
 
   _openMovePost() {
@@ -607,16 +609,16 @@ export class YpPostHeader extends YpBaseElementWithLogin {
   _openEdit() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'post.edit');
-    /*window.appDialogs.getDialogAsync('postEdit', dialog => {
+    window.appDialogs.getDialogAsync('postEdit', (dialog: YpPostEdit) => {
       dialog.setup(this.post, false, this._refresh.bind(this), this.post.Group);
-      dialog.open('edit', { postId: this.post.id });
-    });*/
+      dialog.open(false, { postId: this.post.id });
+    });
   }
 
   _openReport() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'post.report');
-    /*window.appDialogs.getDialogAsync('apiActionDialog', dialog => {
+    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
       dialog.setup(
         '/api/posts/' + this.post.id + '/report',
         this.t('reportConfirmation'),
@@ -625,44 +627,44 @@ export class YpPostHeader extends YpBaseElementWithLogin {
         'PUT'
       );
       dialog.open();
-    });*/
+    });
   }
 
   _openDelete() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'post.delete');
-    /*window.appDialogs.getDialogAsync('apiActionDialog', dialog => {
+    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
       dialog.setup(
         '/api/posts/' + this.post.id,
         this.t('post.deleteConfirmation'),
         this._onDeleted.bind(this)
       );
       dialog.open();
-    });*/
+    });
   }
 
   _openDeleteContent() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'postDeleteContent');
-    /*window.appDialogs.getDialogAsync('apiActionDialog', dialog => {
+    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
       dialog.setup(
         '/api/posts/' + this.post.id + '/delete_content',
         this.t('postDeleteContentConfirmation')
       );
       dialog.open();
-    });*/
+    });
   }
 
   _openAnonymizeContent() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'postAnonymizeContent');
-    /*window.appDialogs.getDialogAsync('apiActionDialog', dialog => {
+    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
       dialog.setup(
         '/api/posts/' + this.post.id + '/anonymize_content',
         this.t('postAnonymizeContentConfirmation')
       );
       dialog.open();
-    });*/
+    });
   }
 
   _onReport() {
