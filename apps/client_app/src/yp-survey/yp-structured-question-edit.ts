@@ -306,7 +306,6 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         data-type="text"
         .label="${!skipLabel ? this.textWithIndex : ''}"
         value="${this.question.value || ''}"
-        @keypress="${this._keyPressed}"
         minlength="2"
         charCounter
         @focus="${this.setLongFocus}"
@@ -331,7 +330,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         useSmallFont="${this.useSmallFont}"
         id="structuredQuestionIntro_${this.index}"
         inner-h-t-m-l="${this.textWithIndex}"></div>
-      ${this.renderTextArea()}
+      ${this.renderTextArea(true)}
     `;
   }
 
