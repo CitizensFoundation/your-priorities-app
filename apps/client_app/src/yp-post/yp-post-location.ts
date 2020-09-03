@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 /* eslint-disable @typescript-eslint/camelcase */
 import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
+
+import '@material/mwc-button';
 import '@material/mwc-circular-progress-four-color';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 import 'lit-google-map';
+
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 @customElement('yp-post-location')
 export class YpPostLocation extends YpBaseElement {
@@ -163,14 +165,16 @@ export class YpPostLocation extends YpBaseElement {
         <div class="searchResultText layout horizontal center-center">
           ${this.mapSearchResultAddress}
         </div>
-        <mwc-circular-progress-four-color hidden id="spinner"></mwc-circular-progress-four-color>
+        <mwc-circular-progress-four-color
+          hidden
+          id="spinner"></mwc-circular-progress-four-color>
       </div>
     `;
   }
 
   get mapZoom() {
     if (this.location && this.location.map_zoom) return this.location.map_zoom;
-    else return 5;
+    else return 15;
   }
 
   _submitOnEnter(event: KeyboardEvent) {
@@ -184,17 +188,21 @@ export class YpPostLocation extends YpBaseElement {
     //@ts-ignore
     const service = new google.maps.places.PlacesService(map);
 
-    (this.$$('#spinner') as HTMLElement).hidden = false
+    (this.$$('#spinner') as HTMLElement).hidden = false;
+    const request = {
+      query: this.mapSearchString,
+      fields: ['name', 'geometry'],
+    };
 
     //@ts-ignore
-    service.findPlaceFromQuery(this.mapSearchString, (results, status) => {
+    service.findPlaceFromQuery(request, (results, status) => {
       //@ts-ignore
       if (status === google.maps.places.PlacesServiceStatus.OK) {
-        (this.$$('#spinner') as HTMLElement).hidden = true
+        (this.$$('#spinner') as HTMLElement).hidden = true;
         if (results && results.length > 0) {
           this.location = {
-            latitude: results[0].latitude,
-            longitude: results[0].longitude,
+            latitude: results[0].geometry.latitude,
+            longitude: results[0].geometry.longitude,
             map_zoom: 15,
           };
           this.mapSearchResultAddress = results[0].formatted_address;
@@ -211,7 +219,7 @@ export class YpPostLocation extends YpBaseElement {
   }
 
   _mapSearchResults(event: CustomEvent) {
-    (this.$$('#spinner') as HTMLElement).hidden = true
+    (this.$$('#spinner') as HTMLElement).hidden = true;
     if (event.detail && event.detail.length > 0) {
       this.location = {
         latitude: event.detail[0].latitude,
