@@ -746,3 +746,7 @@ interface YpLitGoogleMapElement extends HTMLElement {
   mapType?: string;
   zoom?: number;
 }
+
+interface YpHasAutoTranslationResponse {
+  hasAutoTranslation: boolean;
+}

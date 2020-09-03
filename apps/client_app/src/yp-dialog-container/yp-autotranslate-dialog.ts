@@ -1,94 +1,108 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-dialog/paper-dialog.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing } from 'lit-html';
+
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { Dialog } from '@material/mwc-dialog';
+
+import '@material/mwc-dialog';
 import '@material/mwc-button';
-import '../yp-app-globals/yp-language-selector.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpBaseElement } from '../yp-base-element.js';
-import { YpFlexLayout } from '../yp-flex-layout.js';
+import '@material/mwc-icon';
 
-class YpAutoTranslateDialogLit extends YpBaseElement {
-  static get properties() {
-    return {
+import '../yp-app/yp-language-selector.js';
+import { YpLanguageSelector } from '../yp-app/yp-language-selector.js';
 
-    }
-  }
+@customElement('yp-confirmation-dialog')
+export class YpAutoTranslateDialog extends YpBaseElement {
+  @property({ type: String })
+  confirmationText: string | undefined;
 
   static get styles() {
     return [
+      super.styles,
       css`
+        mwc-dialog {
+          background-color: #fff;
+          max-width: 400px;
+        }
 
-      paper-dialog {
-        background-color: #FFF;
-        max-width: 400px;
-      }
+        nwc-icon {
+          color: var(--accent-color);
+          width: 48px;
+          height: 48px;
+          margin-bottom: 16px;
+        }
 
-      iron-icon {
-        color: var(--accent-color);
-        width: 48px;
-        height: 48px;
-        margin-bottom: 16px;
-      }
-
-      .infoText {
-        font-size: 18px;
-        margin-bottom: 8px;
-      }
-    `, YpFlexLayout]
+        .infoText {
+          font-size: 18px;
+          margin-bottom: 8px;
+        }
+      `,
+    ];
   }
-  
+
   render() {
     return html`
-    <yp-language-selector ?hidden="" id="languageSelector"></yp-language-selector>
+      <yp-language-selector hidden id="languageSelector"></yp-language-selector>
 
-    <paper-dialog id="dialog">
-      <div class="layout vertical center-center">
-        <div><iron-icon .icon="translate"></iron-icon></div>
-        <div class="infoText">${this.t('shouldAutoTranslateInfo')}</div>
-      </div>
-      <div class="buttons">
-        <mwc-button @click="${this._dontAskAgain}" dialog-dismiss .label="${this.t('never')}"></mwc-button>
-        <mwc-button dialog-dismiss @click="_no" .label="${this.t('no')}"></mwc-button>
-        <mwc-button dialog-confirm @click="_startAutoTranslate".label="${this.t('yes')}"></mwc-button>
-        <mwc-button dialog-confirm @click="${this._startAutoTranslateAndDoSoAlways}".label="${this.t('always')}"></mwc-button>
-      </div>
-    </paper-dialog>
-`
+      <mwc-dialog id="dialog">
+        <div class="layout vertical center-center">
+          <div><mwc-icon>translate</mwc-icon></div>
+          <div class="infoText">${this.t('shouldAutoTranslateInfo')}</div>
+        </div>
+        <div class="buttons">
+          <mwc-button
+            @click="${this._dontAskAgain}"
+            dialog-dismiss
+            .label="${this.t('never')}"></mwc-button>
+          <mwc-button
+            dialog-dismiss
+            @click="${this._no}"
+            .label="${this.t('no')}"></mwc-button>
+          <mwc-button
+            dialog-confirm
+            @click="${this._startAutoTranslate}"
+            .label="${this.t('yes')}"></mwc-button>
+          <mwc-button
+            dialog-confirm
+            @click="${this._startAutoTranslateAndDoSoAlways}"
+            .label="${this.t('always')}"></mwc-button>
+        </div>
+      </mwc-dialog>
+    `;
   }
 
   _no() {
-    sessionStorage.setItem("dontPromptForAutoTranslation", true);
+    sessionStorage.setItem('dontPromptForAutoTranslation', 'true');
   }
 
   _dontAskAgain() {
-    localStorage.setItem("dontPromptForAutoTranslation", true);
+    localStorage.setItem('dontPromptForAutoTranslation', 'true');
   }
 
   _startAutoTranslateAndDoSoAlways() {
     this._startAutoTranslate();
-    localStorage.setItem("alwaysStartAutoTranslation", true);
+    localStorage.setItem('alwaysStartAutoTranslation', 'true');
   }
 
   _startAutoTranslate() {
-    this.$$("#languageSelector")._startTranslation();
+    (this.$$('#languageSelector') as YpLanguageSelector).startTranslation();
   }
 
   openLaterIfAutoTranslationEnabled() {
-    this.async(function () {
-      if (this.$$("#dialog").opened===false) {
-        if (this.$$("#languageSelector").canUseAutoTranslate === true &&
-          window.autoTranslate !== true) {
-          if (localStorage.getItem("alwaysStartAutoTranslation")!=null) {
+    setTimeout(() => {
+      if ((this.$$('#dialog') as Dialog).open === false) {
+        if (
+          (this.$$('#languageSelector') as YpLanguageSelector)
+            .canUseAutoTranslate === true &&
+          window.appGlobals.autoTranslate !== true
+        ) {
+          if (localStorage.getItem('alwaysStartAutoTranslation') != null) {
             this._startAutoTranslate();
           } else {
-            this.$$("#dialog").open();
+            (this.$$('#dialog') as Dialog).open = true;
           }
         }
       }
     }, 750);
   }
 }
-
-window.customElements.define('yp-autotranslate-dialog-lit', YpAutoTranslateDialogLit)

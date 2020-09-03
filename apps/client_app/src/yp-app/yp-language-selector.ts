@@ -1,285 +1,288 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import 'lite-signal/lite-signal.js';
-import { IronFormElementBehavior } from '@polymer/iron-form-element-behavior/iron-form-element-behavior.js';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-item/paper-item.js';
+/* eslint-disable @typescript-eslint/camelcase */
+import { property, html, css, customElement } from 'lit-element';
+import { nothing } from 'lit-html';
+
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { Dialog } from '@material/mwc-dialog';
+
+import '@material/mwc-dialog';
 import '@material/mwc-button';
-import '../yp-ajax/yp-ajax.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 
-class YpLanguageSelectorLit extends YpBaseElement {
-  static get properties() {
-    return {
-      supportedLanguages: {
-        type: Object,
-        value: {
-          en: 'English (US)',
-          en_GB: 'English (GB)',
-          fr: 'Français',
-          is: 'Íslenska',
-          es: 'Español',
-          it: 'Italiano',
-          ar: 'اَلْعَرَبِيَّةُ',
-          ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
-          ca: 'Català',
-          ro_MD: 'Moldovenească',
-          de: 'Deutsch',
-          da: 'Dansk',
-          sv: 'Svenska',
-          en_CA: 'English (CA)',
-          nl: 'Nederlands',
-          no: 'Norsk',
-          uk: 'українська',
-          sq: 'Shqip',
-          ky: 'Кыргызча',
-          uz: 'Ўзбек',
-          tr: 'Türkçe',
-          fa: 'فارسی',
-          pl: 'Polski',
-          pt: 'Português',
-          pt_BR: 'Português (Brazil)',
-          ru: 'Русский',
-          hu: 'Magyar',
-          zh_TW: '国语 (TW)',
-          sr: 'Srpski',
-          sr_latin: 'Srpski (latin)',
-          hr: 'Hravtski',
-          kl: 'Kalaallisut',
-          sl: 'Slovenščina'
-        }
-      },
+@customElement('yp-language-selector')
+export class YpLanguageSelector extends YpBaseElement {
+  @property({ type: Boolean })
+  refreshLanguages = false;
 
-      noGoogleTranslateLanguages: {
-        type: Array,
-        value: ['kl']
-      },
+  @property({ type: Boolean })
+  noUserEvents = false;
 
-      refreshLanguages: {
-        type: Boolean,
-        value: false
-      },
+  @property({ type: String })
+  selectedLocale: string | undefined;
 
-      languages: {
-        type: Array,
-        computed: '_languages(supportedLanguages, language, refreshLanguages)'
-      },
+  @property({ type: String })
+  value = '';
 
-      selectedLocale: {
-        type: String,
-        observer: '_selectedLocaleChanged'
-      },
+  @property({ type: Boolean })
+  autoTranslateOptionDisabled = false;
 
-      noUserEvents: {
-        type: Boolean,
-        value: false
-      },
+  @property({ type: Boolean })
+  autoTranslate = false;
 
-      value: {
-        type: String,
-        value: ""
-      },
+  @property({ type: Boolean })
+  dropdownVisible = false;
 
-      canUseAutoTranslate: {
-        type: Boolean,
-        computed: '_canUseAutoTranslate(language, hasServerAutoTranslation, autoTranslateOptionDisabled)'
-      },
+  @property({ type: Boolean })
+  hasServerAutoTranslation = false;
 
-      autoTranslateOptionDisabled: {
-        type: Boolean,
-        value: false
-      },
+  @property({ type: Boolean })
+  isOutsideChangeEvent = false;
 
-      autoTranslate: {
-        type: Boolean,
-        value: false
-      },
-
-      dropdownVisible: {
-        type: Boolean,
-        value: true
-      },
-
-      hasServerAutoTranslation: {
-        type: Boolean,
-        value: false
-      },
-
-      isOutsideChangeEvent: {
-        type: Boolean,
-        value: false
-      }
-    };
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+    if (changedProperties.has('selectedLocale')) {
+      this._selectedLocaleChanged(changedProperties.get('languages') as string);
+    }
   }
 
-  _refreshLanguage () {
+  supportedLanguages: Record<string, string> = {
+    en: 'English (US)',
+    en_GB: 'English (GB)',
+    fr: 'Français',
+    is: 'Íslenska',
+    es: 'Español',
+    it: 'Italiano',
+    ar: 'اَلْعَرَبِيَّةُ',
+    ar_EG: 'اَلْعَرَبِيَّةُ (EG)',
+    ca: 'Català',
+    ro_MD: 'Moldovenească',
+    de: 'Deutsch',
+    da: 'Dansk',
+    sv: 'Svenska',
+    en_CA: 'English (CA)',
+    nl: 'Nederlands',
+    no: 'Norsk',
+    uk: 'українська',
+    sq: 'Shqip',
+    ky: 'Кыргызча',
+    uz: 'Ўзбек',
+    tr: 'Türkçe',
+    fa: 'فارسی',
+    pl: 'Polski',
+    pt: 'Português',
+    pt_BR: 'Português (Brazil)',
+    ru: 'Русский',
+    hu: 'Magyar',
+    zh_TW: '国语 (TW)',
+    sr: 'Srpski',
+    sr_latin: 'Srpski (latin)',
+    hr: 'Hravtski',
+    kl: 'Kalaallisut',
+    sl: 'Slovenščina',
+  };
+
+  noGoogleTranslateLanguages = ['kl'];
+  _refreshLanguage() {
     this.dropdownVisible = false;
     this.refreshLanguages = !this.refreshLanguages;
-    this.async(function () {
+    setTimeout(() => {
       this.dropdownVisible = true;
     });
   }
 
   static get styles() {
     return [
+      super.styles,
       css`
+        paper-dropdown-menu {
+          max-width: 250px;
+        }
 
-      paper-dropdown-menu {
-        max-width: 250px;
-      }
+        .translateButton {
+          padding: 8px;
+          color: var(--accent-color);
+          margin-top: 8px;
+        }
 
-      .translateButton {
-        padding: 8px;
-        color: var(--accent-color);
-        margin-top: 8px;
-      }
+        .stopTranslateButton {
+          padding: 8px;
+          color: white;
+          background: var(--accent-color);
+          margin-top: 8px;
+        }
 
-      .stopTranslateButton {
-        padding: 8px;
-        color: white;
-        background: var(--accent-color);
-        margin-top: 8px;
-      }
+        .translateText {
+          margin-left: 8px;
+        }
 
-      .translateText {
-        margin-left: 8px;
-      }
-
-      .stopIcon {
-        margin-left: 8px;
-      }
-    `, YpFlexLayout]
+        .stopIcon {
+          margin-left: 8px;
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-    <lite-signal on-lite-signal-yp-refresh-language-selection="_refreshLanguage"></lite-signal>
+      <lite-signal
+        on-lite-signal-yp-refresh-language-selection="_refreshLanguage"></lite-signal>
 
-    <div class="layout vertical">
-      ${ this.dropdownVisible ? html`
-        <paper-dropdown-menu .label="Select language" .selected="${this.selectedLocale}}" .attrForSelected="name">
-          <paper-listbox slot="dropdown-content" .selected="${this.selectedLocale}" .attrForSelected="name">
-
-            ${ this.languages.map(item => html`
-              <paper-item .name="${this.item.language}">${this.item.name}</paper-item>
-            `)}
-
-          </paper-listbox>
-        </paper-dropdown-menu>
-      ` : nothing }
-      <div ?hidden="${!this.canUseAutoTranslate}">
-        <mwc-button ?hidden="${this.autoTranslate}" raised class="layout horizontal translateButton"
-                    @click="${this._startTranslation}" .icon="translate" .label="${this.t('autoTranslate')}">
-        </mwc-button>
-        <mwc-button ?hidden="${!this.autoTranslate}" .icon="translate" raised class="layout horizontal stopTranslateButton" @click="${this._stopTranslation}" .title="${this.t('stopAutoTranslate')}">
-          <iron-icon class="stopIcon" .icon="do-not-disturb"></iron-icon>
-        </mwc-button>
+      <div class="layout vertical">
+        ${this.dropdownVisible
+          ? html`
+              <mwc-select label="Select language">
+                ${this.languages.map(
+                  item => html`
+                    <mwc-list-item
+                      @click="${this._selectLanguage}"
+                      .value="${item.language}"
+                      >${item.name}</mwc-list-item
+                    >
+                  `
+                )}
+              </mwc-select>
+            `
+          : nothing}
+        <div ?hidden="${!this.canUseAutoTranslate}">
+          <mwc-button
+            ?hidden="${this.autoTranslate}"
+            raised
+            class="layout horizontal translateButton"
+            @click="${this.startTranslation}"
+            icon="translate"
+            .label="${this.t('autoTranslate')}">
+          </mwc-button>
+          <mwc-button
+            ?hidden="${!this.autoTranslate}"
+            icon="translate"
+            raised
+            class="layout horizontal stopTranslateButton"
+            @click="${this._stopTranslation}"
+            .title="${this.t('stopAutoTranslate')}">
+            <mwc-icon class="stopIcon">do_not_disturb</mwc-icon>
+          </mwc-button>
+        </div>
       </div>
-    </div>
-
-    <yp-ajax id="hasAutoTranslationAjax" url="/api/users/has/AutoTranslation" @response="${this._hasAutoTranslationResponse}"></yp-ajax>
-    `
+    `;
   }
 
-/*
+  _selectLanguage(event: CustomEvent) {
+    this.selectedLocale = (event.target as HTMLInputElement).value;
+  }
+
+  /*
   behaviors: [
     IronFormElementBehavior
   ],
 */
 
-connectedCallback() {
-  super.connectedCallback()
+  async connectedCallback() {
+    super.connectedCallback();
     if (!this.noUserEvents) {
-      this.$$("#hasAutoTranslationAjax").generateRequest();
-      // Update dropdown language after it has been loaded from defaults
-      this.async(function () {
+      const response = (await window.serverApi.hasAutoTranslation()) as YpHasAutoTranslationResponse;
+      if (response && response.hasAutoTranslation === true) {
+        this.hasServerAutoTranslation = true;
+      } else {
+        this.hasServerAutoTranslation = false;
+      }
+      //TODO: Check this below!
+      //(Update dropdown language after it has been loaded from defaults)
+      setTimeout(() => {
         this.selectedLocale = this.language;
       }, 1500);
     }
+
+    this.addGlobalListener(
+      'yp-refresh-language-selection',
+      this._refreshLanguage.bind(this)
+    );
   }
 
-  _autoTranslateEvent(event, detail) {
-    this.autoTranslate = detail;
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener(
+      'yp-refresh-language-selection',
+      this._refreshLanguage.bind(this)
+    );
+  }
+
+  _autoTranslateEvent(event: CustomEvent) {
+    this.autoTranslate = event.detail;
   }
 
   _stopTranslation() {
-    document.dispatchEvent(
-      new CustomEvent("lite-signal", {
-        bubbles: true,
-        compose: true,
-        detail: { name: 'yp-auto-translate', data: false }
-      })
-    );
-    window.autoTranslate = false;
+    this.fireGlobal('yp-auto-translate', false);
+    window.appGlobals.autoTranslate = false;
     this.fire('yp-language-name', this.supportedLanguages[this.language]);
-    dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
-      toast.text = this.t('autoTranslationStopped');
-      toast.show();
-    }.bind(this));
+    /*window.appDialogs
+      .getDialogAsync(
+        'masterToast',
+         (toast) => {
+          toast.text = this.t('autoTranslationStopped');
+          toast.open = true
+        }
+      );*/
     window.appGlobals.activity('click', 'stopTranslation', this.language);
-    sessionStorage.setItem("dontPromptForAutoTranslation", true);
+    sessionStorage.setItem('dontPromptForAutoTranslation', 'true');
   }
 
-  _startTranslation() {
-    if (this._canUseAutoTranslate(this.language, this.hasServerAutoTranslation)) {
-      document.dispatchEvent(
-        new CustomEvent("lite-signal", {
-          bubbles: true,
-          compose: true,
-          detail: { name: 'yp-auto-translate', data: true }
-        })
-      );
-      window.autoTranslate = true;
+  startTranslation() {
+    if (this.canUseAutoTranslate) {
+      this.fireGlobal('yp-auto-translate', true);
+      window.appGlobals.autoTranslate = true;
       this.fire('yp-language-name', this.supportedLanguages[this.language]);
-      dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+      /*window.appDialogs.getDialogAsync("masterToast",  (toast) => {
         toast.text = this.t('autoTranslationStarted');
         toast.show();
-      }.bind(this));
+      });*/
     }
     window.appGlobals.activity('click', 'startTranslation', this.language);
   }
 
-  _canUseAutoTranslate(language, hasServerAutoTranslation, autoTranslateOptionDisabled) {
-    if (!autoTranslateOptionDisabled && language && hasServerAutoTranslation && !this.noUserEvents) {
-      const found = this.noGoogleTranslateLanguages.indexOf(language) > -1;
+  get canUseAutoTranslate() {
+    if (
+      !this.autoTranslateOptionDisabled &&
+      this.language &&
+      this.hasServerAutoTranslation &&
+      !this.noUserEvents
+    ) {
+      const found = this.noGoogleTranslateLanguages.indexOf(this.language) > -1;
       return !found;
     } else {
       return false;
     }
   }
 
-  _hasAutoTranslationResponse(event, detail) {
-    if (detail.response && detail.response.hasAutoTranslation===true) {
-      this.hasServerAutoTranslation = true;
-    } else {
-      this.hasServerAutoTranslation = false;
-    }
-  }
-
-  _languages(supportedLanguages) {
-    if (supportedLanguages) {
+  get languages() {
+    if (this.supportedLanguages) {
       let arr = [];
       const highlighted = [];
-      let highlightedLocales = ['en','en_GB','is','fr','de','es','ar'];
+      let highlightedLocales = ['en', 'en_GB', 'is', 'fr', 'de', 'es', 'ar'];
       if (window.appGlobals.highlightedLanguages) {
-        highlightedLocales = window.appGlobals.highlightedLanguages.split(",");
+        highlightedLocales = window.appGlobals.highlightedLanguages.split(',');
       }
-      for (var key in supportedLanguages) {
-        if (supportedLanguages.hasOwnProperty(key)) {
+      for (const key in this.supportedLanguages) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (this.supportedLanguages.hasOwnProperty(key)) {
           if (highlightedLocales.indexOf(key) > -1) {
-            highlighted.push({ language: key, name: supportedLanguages[key] });
+            highlighted.push({
+              language: key,
+              name: this.supportedLanguages[key],
+            });
           } else {
-            arr.push({ language: key, name: supportedLanguages[key] });
+            arr.push({ language: key, name: this.supportedLanguages[key] });
           }
         }
       }
 
       arr = arr.sort(function (a, b) {
-        if(a.name < b.name) { return -1; }
-        if(a.name > b.name) { return 1; }
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
         return 0;
       });
       return highlighted.concat(arr);
@@ -288,25 +291,30 @@ connectedCallback() {
     }
   }
 
-  _selectedLocaleChanged(locale, oldLocale) {
-    if (locale) {
-      this.value = locale;
+  _selectedLocaleChanged(oldLocale: string) {
+    if (this.selectedLocale) {
+      this.value = this.selectedLocale;
       if (!this.noUserEvents && oldLocale) {
-        if (!this._canUseAutoTranslate(locale, this.hasServerAutoTranslation) && this.autoTranslate) {
+        if (!this.canUseAutoTranslate && this.autoTranslate) {
           this._stopTranslation();
         }
-        this.fire('yp-language-name', this.supportedLanguages[locale]);
-        window.appGlobals.changeLocaleIfNeeded(locale, true);
-        localStorage.setItem('yp-user-locale', locale);
-        console.info("Saving locale");
+        this.fire(
+          'yp-language-name',
+          this.supportedLanguages[this.selectedLocale]
+        );
+        window.appGlobals.changeLocaleIfNeeded(this.selectedLocale, true);
+        localStorage.setItem('yp-user-locale', this.selectedLocale);
+        console.info('Saving locale');
         if (window.appUser && window.appUser.user) {
-          window.appUser.setLocale(locale);
+          window.appUser.setLocale(this.selectedLocale);
         }
-        window.appGlobals.activity('click', 'changeLanguage', locale);
+        window.appGlobals.activity(
+          'click',
+          'changeLanguage',
+          this.selectedLocale
+        );
       }
     }
     this.isOutsideChangeEvent = false;
   }
 }
-
-window.customElements.define('yp-language-selector-lit', YpLanguageSelectorLit)

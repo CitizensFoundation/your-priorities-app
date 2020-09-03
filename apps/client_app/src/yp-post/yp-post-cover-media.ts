@@ -653,8 +653,7 @@ export class YpPostCoverMedia extends YpBaseElement {
   get zoomLevel() {
     if (
       this.post.location &&
-      this.post.location.map_zoom &&
-      this.post.location.map_zoom != ''
+      this.post.location.map_zoom
     ) {
       return this.post.location.map_zoom;
     } else return '10';

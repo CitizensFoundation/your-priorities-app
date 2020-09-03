@@ -701,4 +701,11 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/${type}/${id}/post_locations`
     );
   }
+
+  public hasAutoTranslation() {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/has/AutoTranslation`
+    );
+  }
+
 }

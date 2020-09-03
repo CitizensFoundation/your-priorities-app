@@ -80,7 +80,7 @@ export class YpAppGlobals extends YpCodeBase {
 
   theme: YpThemeManager;
 
-  highlightedLanguages: Array<string> | undefined;
+  highlightedLanguages: string | undefined;
 
   magicTextIronResizeDebouncer: number | undefined;
 
@@ -180,7 +180,7 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  setHighlightedLanguages (languages: Array<string> | undefined) {
+  setHighlightedLanguages (languages: string | undefined) {
     this.highlightedLanguages = languages;
     this.fireGlobal('yp-refresh-language-selection');
   }
