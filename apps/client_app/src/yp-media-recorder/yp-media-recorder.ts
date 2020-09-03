@@ -217,27 +217,30 @@ export class YpMediaRecorder extends YpBaseElement {
 
   render() {
     return html`
-      <mwc-dialog id="selectDevices" modal>
-        <h2>${this.selectDeviceTitle}</h2>
-          <mwc-select id="deviceListBox">
-            ${this.allDevices!.map(
-              item => html`
-                <mwc-list-item
-                  @click="${this.selectDeviceFunction}"
-                  id="${item.deviceId}"
-                  >${item.label}</mwc-list-item
-                >
-              `
-            )}
-          </mwc-select>
-          <div class="layout horizontal rememberBox">
-            <div>
-              ${this.t('rememberDevice')}
-            </div>
-            <input id="checkBox" type="checkbox" />
-          </div>
-      </mwc-dialog>
-
+      ${this.allDevices
+        ? html`
+            <mwc-dialog id="selectDevices" modal>
+              <h2>${this.selectDeviceTitle}</h2>
+              <mwc-select id="deviceListBox">
+                ${this.allDevices.map(
+                  item => html`
+                    <mwc-list-item
+                      @click="${this.selectDeviceFunction}"
+                      id="${item.deviceId}"
+                      >${item.label}</mwc-list-item
+                    >
+                  `
+                )}
+              </mwc-select>
+              <div class="layout horizontal rememberBox">
+                <div>
+                  ${this.t('rememberDevice')}
+                </div>
+                <input id="checkBox" type="checkbox" />
+              </div>
+            </mwc-dialog>
+          `
+        : nothing}
       <mwc-dialog id="noDevices">
         <h2>${this.t('noDevicesFound')}</h2>
         <div class="button layout horizontal center-center">
@@ -358,8 +361,8 @@ export class YpMediaRecorder extends YpBaseElement {
       );
     }
 
-    (this.$$('#selectDevices') as Dialog).open = false
-    this._openMediaSession(this.captureCallback)
+    (this.$$('#selectDevices') as Dialog).open = false;
+    this._openMediaSession(this.captureCallback);
   }
 
   _selectVideoDevice(event: CustomEvent) {
@@ -374,11 +377,11 @@ export class YpMediaRecorder extends YpBaseElement {
       );
     }
 
-    (this.$$('#selectDevices') as Dialog).open = false
-    this._checkAudioDevices()
+    (this.$$('#selectDevices') as Dialog).open = false;
+    this._checkAudioDevices();
   }
 
-  _checkAudioDevices() {
+  async _checkAudioDevices() {
     if (this.audioDevices && this.audioDevices.length > 1) {
       if (localStorage.getItem('selectedAudioDeviceId')) {
         this.selectedAudioDeviceId = localStorage.getItem(
@@ -387,19 +390,20 @@ export class YpMediaRecorder extends YpBaseElement {
         this._openMediaSession(this.captureCallback);
       } else {
         this.selectDeviceTitle = this.t('selectAudioDevice');
-        (this.$$('#checkBox') as Checkbox).checked = false;
         this.selectDeviceFunction = this._selectAudioDevice.bind(this);
         this.allDevices = this.audioDevices;
         //TODO: Fix this back in
         //this.$$('#deviceListBox').selected = null;
-        (this.$$('#selectDevices') as Dialog).open = true
+        await this.updateComplete;
+        (this.$$('#checkBox') as Checkbox).checked = false;
+        (this.$$('#selectDevices') as Dialog).open = true;
       }
     } else {
       this._openMediaSession(this.captureCallback);
     }
   }
 
-  _checkVideoDevices() {
+  async _checkVideoDevices() {
     if (
       this.videoRecording &&
       this.videoDevices &&
@@ -409,19 +413,20 @@ export class YpMediaRecorder extends YpBaseElement {
         this.selectedVideoDeviceId = localStorage.getItem(
           'selectedVideoDeviceId'
         );
-        this._checkAudioDevices();
+        await this._checkAudioDevices();
       } else {
         this.selectDeviceTitle = this.t('selectVideoDevice');
-        (this.$$('#checkBox') as Checkbox).checked = false
         this.rememberDevice = false;
         this.selectDeviceFunction = this._selectVideoDevice.bind(this);
         this.allDevices = this.videoDevices;
         //TODO: Fix this back in
         //this.$$('#deviceListBox').selected = null;
-        (this.$$('#selectDevices') as Dialog).open = true
+        await this.updateComplete;
+        (this.$$('#checkBox') as Checkbox).checked = false;
+        (this.$$('#selectDevices') as Dialog).open = true;
       }
     } else {
-      this._checkAudioDevices();
+      await this._checkAudioDevices();
     }
   }
 
@@ -436,7 +441,7 @@ export class YpMediaRecorder extends YpBaseElement {
       this.surfer.destroy();
     }
     this.previewActive = false;
-    (this.$$('#dialog') as Dialog).open = false
+    (this.$$('#dialog') as Dialog).open = false;
   }
 
   _uploadFile() {
@@ -554,7 +559,7 @@ export class YpMediaRecorder extends YpBaseElement {
     }
     this.maxLength = options.maxLength;
     this.uploadFileFunction = options.uploadFileFunction;
-    (this.$$('#secondsLeft')as HTMLElement).className = '';
+    (this.$$('#secondsLeft') as HTMLElement).className = '';
 
     setTimeout(() => {
       if (this.videoRecording) {
@@ -564,8 +569,8 @@ export class YpMediaRecorder extends YpBaseElement {
         const videoPreviewElement = this.shadowRoot!.querySelector(
           '#videoPreviewer'
         ) as HTMLVideoElement;
-        let width: string
-        let height: string
+        let width: string;
+        let height: string;
 
         if (window.innerHeight > window.innerWidth) {
           this.videoSettings = { width: 720, height: 1280 };
@@ -589,19 +594,24 @@ export class YpMediaRecorder extends YpBaseElement {
             720,
             Math.abs(window.innerHeight * scaleFactor)
           ).toFixed();
-          width = Math.min(1280, Math.abs(parseInt(height) * 1.77777777778)).toFixed();
+          width = Math.min(
+            1280,
+            Math.abs(parseInt(height) * 1.77777777778)
+          ).toFixed();
           console.info('Landscape - width: ' + width + ' height: ' + height);
         }
         videoElement.style.height = height + 'px';
         videoElement.style.width = width + 'px';
-        videoPreviewElement.style.height = (parseInt(height) * 0.8).toFixed() + 'px';
-        videoPreviewElement.style.width = (parseInt(width) * 0.8).toFixed() + 'px';
+        videoPreviewElement.style.height =
+          (parseInt(height) * 0.8).toFixed() + 'px';
+        videoPreviewElement.style.width =
+          (parseInt(width) * 0.8).toFixed() + 'px';
         setTimeout(() => {
-          (this.$$('#dialog') as Dialog).open = true
+          (this.$$('#dialog') as Dialog).open = true;
         });
       } else if (this.audioRecording) {
         setTimeout(() => {
-          (this.$$('#dialog')as Dialog).open = true
+          (this.$$('#dialog') as Dialog).open = true;
         });
       }
     });
@@ -613,8 +623,8 @@ export class YpMediaRecorder extends YpBaseElement {
 
   _generateRandomString() {
     if (window.crypto) {
-      const a = window.crypto.getRandomValues(new Uint32Array(3))
-      let token = ''
+      const a = window.crypto.getRandomValues(new Uint32Array(3));
+      let token = '';
       for (let i = 0, l = a.length; i < l; i++) token += a[i].toString(36);
       return token;
     } else {
@@ -629,7 +639,7 @@ export class YpMediaRecorder extends YpBaseElement {
       this.recorder!.startRecording();
       this.recordSecondsLeft = this.maxLength;
       this.isRecording = true;
-      (this.$$('#recordingIcon') as HTMLElement).className = 'recording'
+      (this.$$('#recordingIcon') as HTMLElement).className = 'recording';
       this._recordingTimer();
     } else {
       this._stopRecording();
@@ -702,7 +712,8 @@ export class YpMediaRecorder extends YpBaseElement {
           }
           if (this.recordSecondsLeft > 0) this.recordSecondsLeft -= 1;
           if (this.recordSecondsLeft <= 5) {
-            (this.$$('#secondsLeft') as HTMLElement).className = 'recordingTime';
+            (this.$$('#secondsLeft') as HTMLElement).className =
+              'recordingTime';
           }
         }
       }, 1000);

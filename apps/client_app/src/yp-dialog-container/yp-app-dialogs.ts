@@ -320,6 +320,7 @@ export class YpAppDialogs extends YpBaseElement {
         this.closeLoadingDialog();
         console.info('Have loaded media recorder container');
         this.gotMediaRecorder = true;
+        this.mediaRecorderOpen = true;
         await this.requestUpdate();
         this.getDialogAsync('mediaRecorder', callback);
       });
