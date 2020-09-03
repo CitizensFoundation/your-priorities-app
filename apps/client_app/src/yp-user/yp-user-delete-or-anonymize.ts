@@ -1,126 +1,163 @@
-import '@polymer/polymer/polymer-legacy.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
-import '@material/mwc-button';
-import '@polymer/paper-dialog/paper-dialog.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { customElement, html, property, css } from 'lit-element';
 
-class YpUserDeleteOrAnonymizeLit extends YpBaseElement {
-  static get properties() {
-    return {
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import '../@yrpri/yp-image.js';
 
-    }
-  }
+import '@material/mwc-circular-progress-four-color';
+import { Dialog } from '@material/mwc-dialog';
+
+@customElement('yp-user-delete-or-anonymize')
+export class YpUserDeleteOrAnonymize extends YpBaseElement {
+  @property({type: Boolean})
+  spinnerActive = false
 
   static get styles() {
     return [
+      super.styles,
       css`
+        mwc-dialog {
+          padding-left: 8px;
+          padding-right: 8px;
+          background-color: #fff;
+          max-width: 450px;
+        }
 
-      paper-dialog {
-        padding-left: 8px;
-        padding-right: 8px;
-        background-color: #fff;
-        max-width: 450px;
-      }
+        .buttons {
+          margin-top: 16px;
+          margin-bottom: 4px;
+          text-align: center;
+        }
 
-      .buttons {
-        margin-top: 16px;
-        margin-bottom: 4px;
-        text-align: center;
-      }
+        .boldButton {
+          font-weight: bold;
+        }
 
-      .boldButton {
-        font-weight: bold;
-      }
+        .header {
+          font-size: 22px;
+          color: #f00;
+          font-weight: bold;
+        }
 
-      .header {
-        font-size: 22px;
-        color: #F00;
-        font-weight: bold;
-      }
+        @media (max-width: 480px) {
+        }
 
-      @media (max-width: 480px) {
-      }
-
-      @media (max-width: 320px) {
-      }
-    `, YpFlexLayout]
+        @media (max-width: 320px) {
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-    <paper-dialog id="dialog" modal>
-      <div class="header layout horizontal center-center">
-        <div>${this.t('deleteOrAnonymizeUser')}</div>
-      </div>
-
-      <div class="helpInfo">${this.t('anonymizeUserInfo')}</div>
-
-      <div class="helpInfo">${this.t('deleteUserInfo')}</div>
-
-      <div class="buttons layout vertical center-center">
-        <div class="layout horizontal ajaxElements">
-          <yp-ajax id="deleteUserAjax" ?useSpinner @response="${this._completed}" method="DELETE" url="/api/users/delete_current_user"></yp-ajax>
-          <yp-ajax id="anonymizeAjax" ?useSpinner @response="${this._completed}" method="DELETE" url="/api/users/anonymize_current_user"></yp-ajax>
+      <mwc-dialog id="dialog" modal>
+        <div class="header layout horizontal center-center">
+          <div>${this.t('deleteOrAnonymizeUser')}</div>
         </div>
-        <div class="layout horizontal center-center">
-          <mwc-button dialog-dismiss="">${this.t('cancel')}</mwc-button>
-          <mwc-button raised class="boldButton" @click="${this._deleteUser}">${this.t('deleteAccount')}</mwc-button>
-          <mwc-button raised class="boldButton" @click="${this._anonymizeUser}">${this.t('anonymizeAccount')}</mwc-button>
+
+        <div class="helpInfo">${this.t('anonymizeUserInfo')}</div>
+
+        <div class="helpInfo">${this.t('deleteUserInfo')}</div>
+
+        <div class="buttons layout vertical center-center">
+          <div class="layout horizontal ajaxElements">
+            <mwc-circular-progress-four-color hidden?="${!this.spinnerActive}"></mwc-circular-progress-four-color>
+          </div>
+          <div class="layout horizontal center-center">
+            <mwc-button
+              .label="${this.t('cancel')}"
+              dialog-dismiss=""></mwc-button>
+            <mwc-button
+              .label="${this.t('deleteAccount')}"
+              raised
+              class="boldButton"
+              @click="${this._deleteUser}"></mwc-button>
+            <mwc-button
+              .label="${this.t('anonymizeAccount')}"
+              raised
+              class="boldButton"
+              @click="${this._anonymizeUser}"></mwc-button>
+          </div>
         </div>
-      </div>
-    </paper-dialog>
-`
+      </mwc-dialog>
+    `;
   }
 
   _deleteUser() {
-    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-      dialog.open(this.t('areYouSureYouWantToDeleteUser'), this._deleteUserFinalWarning.bind(this), true);
-    }.bind(this));
+    /*window.appDialogs.getDialogAsync('confirmationDialog', dialog => {
+      dialog.open(
+        this.t('areYouSureYouWantToDeleteUser'),
+        this._deleteUserFinalWarning.bind(this),
+        true
+      );
+    });*/
   }
 
   _deleteUserFinalWarning() {
-    this.async(function () {
-      dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-        dialog.open(this.t('areYouReallySureYouWantToDeleteUser'), this._deleteUserForReal.bind(this), true);
-      }.bind(this));
+    setTimeout( ()  =>{
+      /*window.appDialogs
+        .getDialogAsync(
+          'confirmationDialog',
+           (dialog) => {
+            dialog.open(
+              this.t('areYouReallySureYouWantToDeleteUser'),
+              this._deleteUserForReal.bind(this),
+              true
+            );
+          }
+        );*/
     });
   }
 
   _anonymizeUser() {
-    dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-      dialog.open(this.t('areYouSureYouWantToAnonymizeUser'), this._anonymizeUserFinalWarning.bind(this), true);
-    }.bind(this));
+    /*window.appDialogs
+      .getDialogAsync(
+        'confirmationDialog',
+         (dialog) => {
+          dialog.open(
+            this.t('areYouSureYouWantToAnonymizeUser'),
+            this._anonymizeUserFinalWarning.bind(this),
+            true
+          );
+        }
+      );*/
   }
 
   _anonymizeUserFinalWarning() {
-    this.async(function () {
-      dom(document).querySelector('yp-app').getDialogAsync("confirmationDialog", function (dialog) {
-        dialog.open(this.t('areYouReallySureYouWantToAnonymizeUser'), this._anonymizeUserForReal.bind(this), true);
-      }.bind(this));
+    setTimeout( () => {
+      /*window.appDialogs
+        .getDialogAsync(
+          'confirmationDialog',
+           (dialog) => {
+            dialog.open(
+              this.t('areYouReallySureYouWantToAnonymizeUser'),
+              this._anonymizeUserForReal.bind(this),
+              true
+            );
+          }
+        );*/
     });
   }
 
-  _deleteUserForReal() {
-    this.$$("#deleteUserAjax").body = {};
-    this.$$("#deleteUserAjax").generateRequest();
+  async _deleteUserForReal() {
+    this.spinnerActive = true
+    await window.serverApi.deleteUser()
+    this.spinnerActive = false
+    this._completed()
   }
 
-  _anonymizeUserForReal() {
-    this.$$("#anonymizeAjax").body = {};
-    this.$$("#anonymizeAjax").generateRequest();
+  async _anonymizeUserForReal() {
+    this.spinnerActive = true
+    await window.serverApi.anonymizeUser()
+    this.spinnerActive = false
+    this._completed()
   }
 
   open() {
-    this.$$("#dialog").open();
+    (this.$$('#dialog') as Dialog).open = true
   }
 
   _completed() {
-    this.$$("#dialog").close();
-    window.location = "/";
+    (this.$$('#dialog') as Dialog).open = false
+    window.location.href = '/'
   }
 }
-
-window.customElements.define('yp-user-delete-or-anonymize-lit', YpUserDeleteOrAnonymizeLit)

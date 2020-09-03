@@ -1,125 +1,127 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-form/iron-form.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
-import '@polymer/paper-input/paper-input.js';
+import { customElement, html, property, css } from 'lit-element';
+
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import '../@yrpri/yp-image.js';
+
+import '@material/mwc-circular-progress-four-color';
 import '@material/mwc-button';
-import '@polymer/paper-dialog/paper-dialog.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpBaseElement } from '../yp-base-element.js';
 
-class YpResetPasswordLit extends YpBaseElement {
-  static get properties() {
-    return {
-      password: {
-        type: String,
-        value: ""
-      },
+import '@material/mwc-textfield';
+import '@material/mwc-dialog';
 
-      token: {
-        type: String
-      },
+import { Dialog } from '@material/mwc-dialog';
+import { TextField } from '@material/mwc-textfield';
 
-      passwordErrorMessage: {
-        type: String
-      }
-    }
-  }
+@customElement('yp-user-delete-or-anonymize')
+export class YpResetPassword extends YpBaseElement {
+  @property({ type: String })
+  password = '';
+
+  @property({ type: String })
+  token = '';
+
+  @property({ type: String })
+  passwordErrorMessage = '';
 
   static get styles() {
-    return[
+    return [
+      super.styles,
       css`
-
-      paper-dialog {
-        padding-left: 8px;
-        padding-right: 8px;
-        width: 420px;
-        background-color: #fff;
-        z-index: 9999;
-      }
-
-
-      @media (max-width: 480px) {
-        paper-dialog {
-          padding: 0;
-          margin: 0;
-          height: 100%;
-          width: 100%;
+        mwc-dialog {
+          padding-left: 8px;
+          padding-right: 8px;
+          width: 420px;
+          background-color: #fff;
+          z-index: 9999;
         }
-      }
-    `, YpFlexLayout]
+
+        @media (max-width: 480px) {
+          mwc-dialog {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+          }
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-    <paper-dialog id="dialog" modal>
-      <h3>${this.t('user.resetPassword')}</h3>
+      <mwc-dialog id="dialog" modal>
+        <h3>${this.t('user.resetPassword')}</h3>
 
-      <p>${this.t('user.resetPasswordInstructions')}</p>
+        <p>${this.t('user.resetPasswordInstructions')}</p>
 
-      <form is="iron-form" id="form">
-        <paper-input id="password" .type="password" .label="${this.t('password')}" .value="${this.password}" .autocomplete="off" .error-message="${this.passwordErrorMessage}">
-        </paper-input>
+        <mwc-textfield
+          id="password"
+          @keysdown="${this.onEnter}"
+          type="password"
+          .label="${this.t('password')}"
+          .value="${this.password}"
+          autocomplete="off"
+          .validationMessage="${this.passwordErrorMessage}">
+        </mwc-textfield>
 
-      </form>
-      <div class="buttons">
-        <yp-ajax id="resetPasswordAjax" method="POST" @response="${this._resetPasswordResponse}"></yp-ajax>
-        <mwc-button @click="${this._cancel}" dialog-dismiss="">${this.t('cancel')}</mwc-button>
-        <mwc-button .autofocus="" @click="${this._validateAndSend}">${this.t('user.resetPassword')}</mwc-button>
-      </div>
-    </paper-dialog>
+        <div class="buttons">
 
-    <iron-a11y-keys id="a11y" .keys="enter" @keys-pressed="${this.onEnter}"></iron-a11y-keys>
-`
-
+          <mwc-button @click="${this._cancel}" dialog-dismiss=""
+            >${this.t('cancel')}</mwc-button
+          >
+          <mwc-button autofocus @click="${this._validateAndSend}"
+            >${this.t('user.resetPassword')}</mwc-button
+          >
+        </div>
+      </mwc-dialog>
+    `;
   }
 
-
-  onEnter(event) {
-    event.stopPropagation();
-    this._validateAndSend();
-  }
-
-  _validateAndSend(e) {
-    if (this.$$("#form").checkValidity() && this.password){
-      this.$$("#resetPasswordAjax").url = '/api/users/reset/'+this.token;
-      this.$$("#resetPasswordAjax").body = JSON.stringify({
-        password: this.password
-      });
-      this.$$("#resetPasswordAjax").generateRequest();
+  onEnter(event: KeyboardEvent) {
+    if (event.keyCode==13) {
+      event.stopPropagation();
+      this._validateAndSend();
     }
   }
 
-  _resetPasswordResponse(event, detail) {
-    if (detail.response.error && detail.response.error=='not_found') {
-      this.$$("#resetPasswordAjax").showErrorDialog(this.t('errorResetTokenNotFoundOrUsed'));
-    } else {
-      this.close();
-      window.appGlobals.notifyUserViaToast(this.t('notification.passwordResetAndLoggedIn'));
-      this._loginCompleted(detail.response);
-      window.location = "/";
+  async _validateAndSend() {
+    const passwordField = this.$$('#password') as TextField
+    if (passwordField && passwordField.checkValidity() && passwordField.value) {
+
+      const response = await window.serverApi.resetPassword(this.token, {
+        password: passwordField.value
+      })
+
+      //TODO Figure out the error here
+      if (response.error && response.error == 'not_found') {
+        this.fire('yp-error',  this.t('errorResetTokenNotFoundOrUsed'))
+      } else {
+        this.close();
+        window.appGlobals.notifyUserViaToast(
+          this.t('notification.passwordResetAndLoggedIn')
+        );
+        this._loginCompleted(response);
+        window.location.href = '/';
+      }
     }
   }
+
 
   _cancel() {
-    window.location = "/";
+    window.location.href = '/'
   }
 
-  _loginCompleted(user) {
+  _loginCompleted(user: YpUserData) {
     window.appUser.setLoggedInUser(user);
-    this.fire("login",user);
+    this.fire('login', user);
   }
 
-  open(token) {
-    if (token)
-      this.token = token;
-    this.$$("#dialog").open();
+  open(token: string) {
+    if (token) this.token = token;
+    (this.$$('#dialog') as Dialog).open = true
   }
 
   close() {
-    this.$$("#dialog").close();
+    (this.$$('#dialog') as Dialog).open = false
   }
 }
-
-window.customElements.define('yp-reset-password-lit', YpResetPasswordLit)

@@ -7,6 +7,7 @@ import '@material/mwc-textfield';
 
 import '../ac-notifications/ac-notification-settings.js';
 import '../yp-file-upload/yp-file-upload.js';
+import '../yp-app/yp-language-selector.js';
 
 import { YpEditBase } from '../@yrpri/yp-edit-base.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';

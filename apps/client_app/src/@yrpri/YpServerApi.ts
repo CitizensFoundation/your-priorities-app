@@ -582,5 +582,37 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
+  public deleteUser() {
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/delete_current_user',
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public anonymizeUser() {
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/anonymize_current_user',
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public resetPassword(token: string, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/reset/${token}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
 
 }
