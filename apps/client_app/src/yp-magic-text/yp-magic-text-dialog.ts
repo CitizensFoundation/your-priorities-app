@@ -56,8 +56,7 @@ export class YpMagicTextDialog extends YpMagicText {
           `}
         </div>
         <mwc-button
-            slot="primaryAction"
-            dialogAction="discard">
+            slot="primaryAction">
           ${this.closeDialogText}
         </mwc-button>
       </mwc-dialog>

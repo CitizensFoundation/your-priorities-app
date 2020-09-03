@@ -438,7 +438,7 @@ export class YpEditDialog extends YpBaseElement {
         <div id="errorText">${this.errorText}</div>
         <div class="buttons">
           <mwc-button
-            dialog-confirm
+            slot="primaryAction"
             autofocus
             @click="${this._clearErrorText}"
             .label="${this.t('ok')}"></mwc-button>

@@ -531,8 +531,7 @@ export class YpApp extends YpBaseElement {
         <div>${this.notifyDialogText}</div>
         <mwc-button
           slot="primaryAction"
-          @click="${this._resetNotifyDialogText}"
-          dialogAction="discard">
+          @click="${this._resetNotifyDialogText}">
           ${this.t('ok')}
         </mwc-button>
       </mwc-dialog>

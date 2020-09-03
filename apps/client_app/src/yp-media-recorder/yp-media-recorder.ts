@@ -290,7 +290,8 @@ export class YpMediaRecorder extends YpBaseElement {
             : html``}
 
           <div
-            class="layout horizontal mainbuttons"
+            class="layout horizontal mainbuttons" slot="primaryAction"
+
             ?hidden="${!this.recorder}">
             <mwc-icon-button
               .label="${this.t('closeRecordingWindow')}"

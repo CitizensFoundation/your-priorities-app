@@ -52,18 +52,18 @@ export class YpAutoTranslateDialog extends YpBaseElement {
         <div class="buttons">
           <mwc-button
             @click="${this._dontAskAgain}"
-            dialog-dismiss
+            slot="secondaryAction"
             .label="${this.t('never')}"></mwc-button>
           <mwc-button
-            dialog-dismiss
+            slot="secondaryAction"
             @click="${this._no}"
             .label="${this.t('no')}"></mwc-button>
           <mwc-button
-            dialog-confirm
+            slot="primaryAction"
             @click="${this._startAutoTranslate}"
             .label="${this.t('yes')}"></mwc-button>
           <mwc-button
-            dialog-confirm
+            slot="primaryAction"
             @click="${this._startAutoTranslateAndDoSoAlways}"
             .label="${this.t('always')}"></mwc-button>
         </div>

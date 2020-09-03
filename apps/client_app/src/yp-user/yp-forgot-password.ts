@@ -70,8 +70,11 @@ export class YpForgotPassword extends YpBaseElement {
           .validationMessage="${this.emailErrorMessage || ''}">
         </mwc-textfield>
 
-        <div class="buttons" ?hidden="${this.emailHasBeenSent}">
-          <mwc-button dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+        <div
+          class="buttons"
+          ?hidden="${this.emailHasBeenSent}"
+          slot="secondaryAction">
+          <mwc-button .label="${this.t('cancel')}"></mwc-button>
           <mwc-button
             autofocus
             @click="${this._validateAndSend}"
@@ -79,7 +82,9 @@ export class YpForgotPassword extends YpBaseElement {
         </div>
 
         <div class="buttons" ?hidden="${!this.emailHasBeenSent}">
-          <mwc-button dialog-dismiss .label="${this.t('ok')}"></mwc-button>
+          <mwc-button
+            slot="primaryAction"
+            .label="${this.t('ok')}"></mwc-button>
         </div>
       </mwc-dialog>
     `;
@@ -93,14 +98,14 @@ export class YpForgotPassword extends YpBaseElement {
   }
 
   async _validateAndSend() {
-    const email = this.$$("#email") as TextField
+    const email = this.$$('#email') as TextField;
     if (email && email.checkValidity() && email.value) {
       if (!this.isSending) {
         this.isSending = true;
 
         await window.serverApi.forgotPassword({
           email: email.value,
-        })
+        });
 
         this.isSending = false;
         window.appGlobals.notifyUserViaToast(
@@ -115,16 +120,22 @@ export class YpForgotPassword extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener('yp-network-error', this._forgotPasswordError.bind(this))
+    this.addGlobalListener(
+      'yp-network-error',
+      this._forgotPasswordError.bind(this)
+    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener('yp-network-error', this._forgotPasswordError.bind(this))
+    this.removeGlobalListener(
+      'yp-network-error',
+      this._forgotPasswordError.bind(this)
+    );
   }
 
   _forgotPasswordError(event: CustomEvent) {
-    if (event.detail.errorId && event.detail.errorId=="forgotPassword") {
+    if (event.detail.errorId && event.detail.errorId == 'forgotPassword') {
       this.isSending = false;
     }
   }

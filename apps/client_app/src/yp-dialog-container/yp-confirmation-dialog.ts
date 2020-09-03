@@ -41,11 +41,12 @@ export class YpConfirmationDialog extends YpBaseElement {
           <mwc-button
             ?hidden="${this.hideCancel}"
             @click="${this._reset}"
-            dialog-dismiss
+          slot="secondaryAction"
             .label="${this.t('cancel')}"></mwc-button>
           <mwc-button
             dialog-confirm
             @click="${this._confirm}"
+            slot="primaryAction"
             .label="${this.t('confirm')}"></mwc-button>
         </div>
       </mwc-dialog>

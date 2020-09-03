@@ -532,18 +532,23 @@ export class YpLogin extends YpBaseElement {
   renderButtons() {
     return html` <div class="buttons layout vertical center-center">
       <div class="layout horizontal center-center">
-        <mwc-button dialogDismiss @click="${this._cancel}"
+        <mwc-button
+          dialogDismiss
+          @click="${this._cancel}"
+          slot="secondaryAction"
           >${this.t('cancel')}</mwc-button
         >
         <mwc-button
           ?hidden="${this.forceSecureSamlLogin}"
           @click="${this._forgotPassword}"
+          slot="secondaryAction"
           >${this.t('user.newPassword')}</mwc-button
         >
         <mwc-button
           ?hidden="${this.forceSecureSamlLogin}"
           autofocus
           raised
+          slot="primaryAction"
           class="boldButton"
           @click="${this._validateAndSend}"
           >${this.submitText}</mwc-button

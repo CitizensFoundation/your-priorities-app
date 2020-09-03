@@ -119,20 +119,24 @@ export class YpMissingEmail extends YpBaseElement {
             : nothing}
           <div class="buttons">
             <mwc-button
+              slot="secondaryAction"
               @click="${this._logout}"
               .label="${this.t('user.logout')}"
               ?hidden="${this.onlyConfirmingEmail}"></mwc-button>
             <mwc-button
+              slot="secondaryAction"
               @click="${this._forgotPassword}"
               ?hidden="${!this.needPassword}"
               .label="${this.t('user.newPassword')}"></mwc-button>
             <mwc-button
               raised
+              slot="secondaryAction"
               @click="${this._notNow}"
               .label="${this.t('later')}"
               ?hidden="${this.onlyConfirmingEmail}"></mwc-button>
             <mwc-button
               raised
+              slot="primaryAction"
               id="sendButton"
               autofocus
               .label="${this.submitButtonLabel}"

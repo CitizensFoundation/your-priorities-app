@@ -43,11 +43,9 @@ export class YpApiActionDialog extends YpBaseElement {
         <div>${this.confirmationText}</div>
         <div class="buttons">
           <mwc-button
-            dialogAction="cancel"
             slot="secondaryAction"
             .label="${this.t('cancel')}"></mwc-button>
           <mwc-button
-            dialogAction="discard"
             slot="primaryAction"
             @click="${this._delete}"
             .label="${this.confirmButtonText || ''}"></mwc-button>

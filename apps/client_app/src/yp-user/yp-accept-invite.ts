@@ -73,10 +73,12 @@ export class YpAcceptInvite extends YpBaseElement {
         <div class="buttons">
           <mwc-button
             @click="${this._cancel}"
-            dialog-dismiss
+            slot="secondaryAction"
+
             .label="${this.t('cancel')}"></mwc-button>
           <mwc-button
-            autofocus
+          slot="primaryAction"
+
             @click="${this._acceptInvite}"
             .label="${this.t('user.acceptInvite')}"></mwc-button>
         </div>

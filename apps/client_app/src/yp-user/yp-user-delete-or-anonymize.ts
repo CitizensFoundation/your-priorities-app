@@ -66,14 +66,18 @@ export class YpUserDeleteOrAnonymize extends YpBaseElement {
           <div class="layout horizontal center-center">
             <mwc-button
               .label="${this.t('cancel')}"
+              slot="secondaryAction"
               dialog-dismiss=""></mwc-button>
             <mwc-button
               .label="${this.t('deleteAccount')}"
               raised
+              slot="primaryAction"
+
               class="boldButton"
               @click="${this._deleteUser}"></mwc-button>
             <mwc-button
               .label="${this.t('anonymizeAccount')}"
+              slot="primaryAction"
               raised
               class="boldButton"
               @click="${this._anonymizeUser}"></mwc-button>

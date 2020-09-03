@@ -64,11 +64,13 @@ export class YpResetPassword extends YpBaseElement {
         </mwc-textfield>
 
         <div class="buttons">
-
-          <mwc-button @click="${this._cancel}" dialog-dismiss=""
+          <mwc-button @click="${this._cancel}" slot="secondaryAction"
             >${this.t('cancel')}</mwc-button
           >
-          <mwc-button autofocus @click="${this._validateAndSend}"
+          <mwc-button
+            autofocus
+            @click="${this._validateAndSend}"
+            slot="primaryAction"
             >${this.t('user.resetPassword')}</mwc-button
           >
         </div>
@@ -77,23 +79,22 @@ export class YpResetPassword extends YpBaseElement {
   }
 
   onEnter(event: KeyboardEvent) {
-    if (event.keyCode==13) {
+    if (event.keyCode == 13) {
       event.stopPropagation();
       this._validateAndSend();
     }
   }
 
   async _validateAndSend() {
-    const passwordField = this.$$('#password') as TextField
+    const passwordField = this.$$('#password') as TextField;
     if (passwordField && passwordField.checkValidity() && passwordField.value) {
-
       const response = await window.serverApi.resetPassword(this.token, {
-        password: passwordField.value
-      })
+        password: passwordField.value,
+      });
 
       //TODO Figure out the error here and test if it works
       if (response.error && response.error == 'not_found') {
-        this.fire('yp-error',  this.t('errorResetTokenNotFoundOrUsed'))
+        this.fire('yp-error', this.t('errorResetTokenNotFoundOrUsed'));
       } else {
         this.close();
         window.appGlobals.notifyUserViaToast(
@@ -105,9 +106,8 @@ export class YpResetPassword extends YpBaseElement {
     }
   }
 
-
   _cancel() {
-    window.location.href = '/'
+    window.location.href = '/';
   }
 
   _loginCompleted(user: YpUserData) {
@@ -117,10 +117,10 @@ export class YpResetPassword extends YpBaseElement {
 
   open(token: string) {
     if (token) this.token = token;
-    (this.$$('#dialog') as Dialog).open = true
+    (this.$$('#dialog') as Dialog).open = true;
   }
 
   close() {
-    (this.$$('#dialog') as Dialog).open = false
+    (this.$$('#dialog') as Dialog).open = false;
   }
 }
