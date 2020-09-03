@@ -4,7 +4,7 @@ import { nothing } from 'lit-html';
 import './ac-activity-point.js';
 import './ac-activity-post.js';
 import './ac-activity-point-news-story.js';
-import './ac-activity-post-status-change.js';
+import './ac-activity-post-status-update.js';
 import '../yp-user/yp-user-with-organization.js';
 import '@material/mwc-icon-button';
 

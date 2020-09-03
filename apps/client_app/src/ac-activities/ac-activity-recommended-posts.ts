@@ -1,6 +1,7 @@
 import { property, html, css, customElement } from 'lit-element';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { nothing } from 'lit-html';
 
 import '../yp-post/yp-post-cover-media.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
@@ -159,7 +160,7 @@ export class AcActivityRecommendedPosts extends YpBaseElement {
   }
 
   render() {
-    return html`
+    return this.recommendedPosts ? html`
       <div class="headerText layout horizontal center-center">
         ${this.t('recommendedPosts')}
       </div>
@@ -186,6 +187,6 @@ export class AcActivityRecommendedPosts extends YpBaseElement {
           </div>
         `
       )}
-    `;
+    ` : nothing
   }
 }

@@ -12,6 +12,8 @@ import './yp-collection-items-grid.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 
+import '../ac-activities/ac-activities.js';
+
 //TODO: Remove
 interface AcActivity extends LitElement {
   scrollToItem(item: YpDatabaseItem): () => void;

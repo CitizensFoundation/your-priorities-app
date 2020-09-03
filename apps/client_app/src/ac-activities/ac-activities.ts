@@ -270,7 +270,7 @@ export class AcActivities extends YpBaseElementWithLogin {
       <div
         class="layout horizontal topLevelActivitiesContainer layout-center-center"
         wide="${this.wide}"
-        rtl?="${this.rtl}">
+        ?rtl="${this.rtl}">
         <div class="layout vertical self-start">
           ${this.loggedInUser
             ? html`
