@@ -195,7 +195,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   signupTermsPageId?: number;
-  highlightedLanguages?: Array<string>;
+  highlightedLanguages?: string;
   disableFacebookLoginForCommunity?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;

@@ -40,10 +40,6 @@ export class YpApiActionDialog extends YpBaseElement {
 
   render() {
     return html`
-      <yp-ajax
-        .method="${this.method}"
-        id="apiAjax"
-        @response="${this._response}"></yp-ajax>
       <mwc-dialog id="confirmationDialog">
         <div>${this.confirmationText}</div>
         <div class="buttons">
@@ -90,22 +86,17 @@ export class YpApiActionDialog extends YpBaseElement {
     (this.$$('#confirmationDialog') as Dialog).open = true;
   }
 
-  _delete() {
-    if (!this.finalDeleteWarning) {
-      this.$$('#apiAjax').url = this.action;
-      this.$$('#apiAjax').setBody({ deleteConfirmed: true });
-      this.$$('#apiAjax').generateRequest();
+  async _delete() {
+    if (!this.finalDeleteWarning && this.action && this.method) {
+      await window.serverApi.apiAction(this.action, this.method, { deleteConfirmed: true })
+      this.fire('api-action-finished');
+      if (this.onFinishedFunction) {
+        this.onFinishedFunction();
+      }
     } else {
       this.finalDeleteWarning = false;
       this.confirmationText = this.t('finalDeleteWarning');
       (this.$$('#confirmationDialog') as Dialog).open = true;
-    }
-  }
-
-  _response() {
-    this.fire('api-action-finished');
-    if (this.onFinishedFunction) {
-      this.onFinishedFunction();
     }
   }
 }

@@ -708,4 +708,14 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
+  public apiAction(url: string, method: string, body: object) {
+    return this.fetchWrapper(
+      url,
+      {
+        method: method,
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
 }
