@@ -695,4 +695,10 @@ export class YpServerApi extends YpCodeBase {
       'acceptInvite'
     );
   }
+
+  public getPostLocations(type: string, id: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/${type}/${id}/post_locations`
+    );
+  }
 }

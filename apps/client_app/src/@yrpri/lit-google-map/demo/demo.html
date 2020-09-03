@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>lit-google-map demo</title>
+    <style>
+        html, body {
+            height: 100%;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #map-wrapper {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 600px;
+            height: 600px;
+        }
+    </style>
+  </head>
+  <body>
+    <script src="../dist/lit-google-map.bundle.min.js"></script>
+
+    <div id="map-wrapper">
+        <h3>Edit this html file and fill api-key map attribite for non developer mode map with all features</h3>
+        <lit-google-map api-key="" zoom="6" center-latitude="51.8436554" center-longitude="19.5070867">
+
+            <lit-google-map-marker slot="markers" latitude="49.4404582" longitude="20.2700361">
+              <p>Lake Czorsztyn</p>
+              <img src="lake_czorsztyn.jpg" alt="lake_czorsztyn">
+            </lit-google-map-marker>
+    
+            <lit-google-map-marker slot="markers" latitude="50.797444" longitude="20.4600623">
+              <p>Chęciny Castle</p>
+              <img src="checiny_castle.jpg" alt="checiny_castle">
+            </lit-google-map-marker>
+    
+            <lit-google-map-marker slot="markers" latitude="52.4083001" longitude="16.9334568">
+                <p>Poznań</p>
+                <img src="poznan.jpg" alt="poznan">
+              </lit-google-map-marker>
+    
+        </lit-google-map>
+    </div>
+
+  </body>
+</html>

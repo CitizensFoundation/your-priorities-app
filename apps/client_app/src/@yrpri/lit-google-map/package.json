@@ -1,0 +1,70 @@
+{
+  "_from": "lit-google-map",
+  "_id": "lit-google-map@0.1.1",
+  "_inBundle": false,
+  "_integrity": "sha512-HiYm0OeD1DIqQjxEHVKEaes/a3N//chmauaUfHmBje+QMP6wChf7tFXKtQkuFu7JQ6xbDlY5s8O5uK+gPeVUzg==",
+  "_location": "/lit-google-map",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "lit-google-map",
+    "name": "lit-google-map",
+    "escapedName": "lit-google-map",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/lit-google-map/-/lit-google-map-0.1.1.tgz",
+  "_shasum": "337ad6207dd483a9fbe8469e8ecd2ef4a8c60ead",
+  "_spec": "lit-google-map",
+  "_where": "/home/robert/Projects/p3-yrpri-dev/apps/client_app",
+  "author": {
+    "name": "Arkadiusz Wójcik",
+    "url": "http://github.com/arkadiuszwojcik"
+  },
+  "bugs": {
+    "url": "https://github.com/arkadiuszwojcik/lit-google-map/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "lit-element": "^2.2.1"
+  },
+  "deprecated": false,
+  "description": "Google Maps web components based on LitElement",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^7.0.0",
+    "@types/googlemaps": "^3.39.2",
+    "rollup": "^1.30.0",
+    "rollup-plugin-terser": "^5.2.0",
+    "typescript": "^3.7.5"
+  },
+  "homepage": "https://github.com/arkadiuszwojcik/lit-google-map#readme",
+  "keywords": [
+    "google",
+    "map",
+    "maps",
+    "component",
+    "webcomponent",
+    "customelement",
+    "LitElement"
+  ],
+  "license": "MIT",
+  "main": "dist/lit-google-map.bundle.min.js",
+  "module": "dist/lit-google-map.esm.min.js",
+  "name": "lit-google-map",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arkadiuszwojcik/lit-google-map.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "bundle": "npm run build && rollup -c"
+  },
+  "typings": "*.d.ts",
+  "version": "0.1.1"
+}
