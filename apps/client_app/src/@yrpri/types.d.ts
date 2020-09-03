@@ -731,3 +731,12 @@ interface YpInviteSenderInfoResponse {
   targetEmail: string;
   configuration: YpCollectionConfiguration;
 }
+
+interface YpThemeContainerObject {
+  theme_id: number;
+}
+
+interface YpThemeData {
+  disabled: boolean;
+  name: string;
+}

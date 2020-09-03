@@ -1,75 +1,86 @@
-import '@polymer/polymer/polymer-legacy.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-item/paper-item.js';
-import { ypThemeBehavior } from './yp-theme-behavior.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpFlexLayout } from '../yp-flex-layout.js';
+import { customElement, html, property, css } from 'lit-element';
 
-class YpThemeSelectorLit extends YpBaseElement {
-  static get properties() {
-    return {
-      selectedTheme: {
-        type: Number,
-        value: null,
-        notify: true,
-        observer: '_selectedThemeChanged'
-      },
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-      object: {
-        type: Object,
-        observer: '_objectChanged'
-      }
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+
+import { nothing } from 'lit-html';
+
+@customElement('yp-theme-selector')
+export class YpThemeSelector extends YpBaseElement {
+  @property({ type: Number })
+  selectedTheme: number | undefined;
+
+  @property({ type: Object })
+  themeObject: YpThemeContainerObject | undefined;
+
+  @property({ type: Array })
+  themes: Array<YpThemeData> | undefined;
+
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('selectedTheme')) {
+      this._selectedThemeChanged();
+    }
+
+    if (changedProperties.has('themeObject')) {
+      this._objectChanged();
+    }
+
+    if (changedProperties.has('themes')) {
+      this._objectChanged();
     }
   }
 
   static get styles() {
     return [
+      super.styles,
       css`
-
-        paper-dropdown-menu {
+        mwc-select {
           max-width: 250px;
           width: 250px;
         }
-        [hidden] {
-          display: none;
-        }
-    `, YpFlexLayout];
+      `,
+    ];
+  }
+
+  _selectTheme(event: CustomEvent) {
+    const target = event.target as HTMLElement;
+    if (target.id) {
+      this.selectedTheme = parseInt(target.id);
+    }
   }
 
   render() {
-    return html`
-    <paper-dropdown-menu .label="${this.t('theme.choose')}">
-      <paper-listbox .slot="dropdown-content" .selected="${this.selectedTheme}">
-
-        ${ this.themes.map(theme => html`
-          <paper-item name="${this.index}" ?hidden="${this.theme.disabled}">${this.theme.name}</paper-item>
-        `)}
-
-      </paper-listbox>
-    </paper-dropdown-menu>
-    `
+    return this.themes
+      ? html`
+          <mwc-select .label="${this.t('theme.choose')}">
+            ${this.themes.map(
+              (theme, index) => html`
+                <mwc-list-item
+                  @click="${this._selectTheme}"
+                  id="${index}"
+                  ?hidden="${theme.disabled}"
+                  >${theme.name}</mwc-list-item
+                >
+              `
+            )}
+          </mwc-select>
+        `
+      : nothing;
   }
 
-/*
-  behaviors: [
-    ypThemeBehavior
-  ],
-*/
-
-  _objectChanged(newObject) {
-    if (newObject && newObject.theme_id!=null) {
-      this.selectedTheme = newObject.theme_id;
+  _objectChanged() {
+    if (this.themeObject && this.themeObject.theme_id) {
+      this.selectedTheme = this.themeObject.theme_id;
     }
   }
 
-  _selectedThemeChanged(newTheme) {
-    if (newTheme) {
-      this.setTheme(newTheme);
+  _selectedThemeChanged() {
+    if (this.selectedTheme) {
+      window.appGlobals.theme.setTheme(this.selectedTheme);
     }
   }
 }
-
-window.customElements.define('yp-theme-selector-lit', YpThemeSelectorLit)
