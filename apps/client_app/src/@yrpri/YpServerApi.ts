@@ -33,7 +33,8 @@ export class YpServerApi extends YpCodeBase {
   private async fetchWrapper(
     url: string,
     options: RequestInit = {},
-    showUserError = true
+    showUserError = true,
+    errorId: string | undefined = undefined
   ) {
     if (!options.headers) {
       options.headers = {
@@ -41,10 +42,14 @@ export class YpServerApi extends YpCodeBase {
       };
     }
     const response = await fetch(url, options);
-    return this.handleResponse(response, showUserError);
+    return this.handleResponse(response, showUserError, errorId);
   }
 
-  private async handleResponse(response: Response, showUserError: boolean) {
+  private async handleResponse(
+    response: Response,
+    showUserError: boolean,
+    errorId: string | undefined = undefined
+  ) {
     if (response.ok) {
       let responseJson = null;
       try {
@@ -57,6 +62,7 @@ export class YpServerApi extends YpCodeBase {
             response: response,
             jsonError: error,
             showUserError,
+            errorId,
           });
         }
       }
@@ -65,6 +71,7 @@ export class YpServerApi extends YpCodeBase {
       this.fireGlobal('yp-network-error', {
         response: response,
         showUserError,
+        errorId,
       });
       return null;
     }
@@ -279,7 +286,12 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
-  public completeMediaPost(mediaType: string, method: string, postId: number, body: object) {
+  public completeMediaPost(
+    mediaType: string,
+    method: string,
+    postId: number,
+    body: object
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath + `/${mediaType}/${postId}/completeAndAddToPost`,
       {
@@ -428,7 +440,12 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
-  public submitForm(url: string, method: string, headers: Record<string, string>, body: object) {
+  public submitForm(
+    url: string,
+    method: string,
+    headers: Record<string, string>,
+    body: object
+  ) {
     return this.fetchWrapper(
       url,
       {
@@ -457,9 +474,14 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
-  public deleteActivity(type: string, collectionId: number, activityId: number)  {
+  public deleteActivity(
+    type: string,
+    collectionId: number,
+    activityId: number
+  ) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${type}/${collectionId}/${activityId}/delete_activity`,
+      this.baseUrlPath +
+        `/${type}/${collectionId}/${activityId}/delete_activity`,
       {
         method: 'DELETE',
         body: JSON.stringify({}),
@@ -469,9 +491,7 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public getAcActivities(url: string) {
-    return this.fetchWrapper(
-      url
-    );
+    return this.fetchWrapper(url);
   }
 
   public getRecommendations(typeName: string, typeId: number) {
@@ -503,16 +523,11 @@ export class YpServerApi extends YpCodeBase {
   }
 
   public getAcNotifications(url: string) {
-    return this.fetchWrapper(
-      url
-    );
+    return this.fetchWrapper(url);
   }
 
-
   public getComments(type: string, pointId: number) {
-    return this.fetchWrapper(
-      this.baseUrlPath + `/${type}/${pointId}/comments`
-    );
+    return this.fetchWrapper(this.baseUrlPath + `/${type}/${pointId}/comments`);
   }
 
   public getCommentsCount(type: string, pointId: number) {
@@ -615,4 +630,69 @@ export class YpServerApi extends YpCodeBase {
     );
   }
 
+  public setEmail(body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/missingEmail/setEmail`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public linkAccounts(body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/missingEmail/linkAccounts`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public confirmEmailShown() {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/missingEmail/emailConfirmationShown`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({}),
+      },
+      false,
+      'forgotPassword'
+    );
+  }
+
+  public forgotPassword(body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/forgot_password`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public acceptInvite(token: string) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/accept_invite/${token}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      },
+      false,
+      'acceptInvite'
+    );
+  }
+
+  public getInviteSender(token: string) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/users/get_invite_info/${token}`,
+      { method: 'GET' },
+      false,
+      'acceptInvite'
+    );
+  }
 }

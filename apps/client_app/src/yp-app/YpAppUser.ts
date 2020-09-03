@@ -134,7 +134,7 @@ export class YpAppUser extends YpCodeBase {
     editDialog: HTMLElement,
     token: string,
     email: string,
-    collectionConfiguration: object
+    collectionConfiguration: object | undefined
   ) {
     this.loginForAcceptInviteParams = { editDialog: editDialog, token: token };
     this.openUserlogin(email, collectionConfiguration);

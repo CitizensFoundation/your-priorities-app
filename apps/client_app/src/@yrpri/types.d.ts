@@ -707,3 +707,27 @@ interface YpPointQualityResponse {
   pointQuality: YpPointQuality;
 
 }
+
+interface YpSetEmailResponse {
+  email: string;
+  alreadyRegistered?: boolean;
+}
+
+
+interface YpLinkAccountResponse {
+  email: string;
+  alreadyRegistered?: boolean;
+  accountLinked: boolean;
+}
+
+interface YpAcceptInviteResponse {
+  name: string;
+  redirectTo: string;
+}
+
+interface YpInviteSenderInfoResponse {
+  inviteName: string;
+  targetName: string;
+  targetEmail: string;
+  configuration: YpCollectionConfiguration;
+}

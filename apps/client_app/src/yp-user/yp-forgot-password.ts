@@ -1,145 +1,143 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-form/iron-form.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/iron-a11y-keys/iron-a11y-keys.js';
-import '@polymer/paper-input/paper-input.js';
+import { customElement, html, property, css } from 'lit-element';
+
 import '@material/mwc-button';
-import '@polymer/paper-dialog/paper-dialog.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpBaseElement } from '../yp-base-element.js';
+import '@material/mwc-textfield';
+import '@material/mwc-dialog';
 
-class YpForgotPasswordLit extends YpBaseElement {
-  static get properties() {
-    return {
-      email: {
-        type: String,
-        value: ""
-      },
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-      emailHasBeenSent: {
-        type: Boolean,
-        value: false
-      },
+import { Dialog } from '@material/mwc-dialog';
+import { TextField } from '@material/mwc-textfield';
 
-      emailValidationPattern: {
-        type: String,
-        value: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
-      },
+@customElement('yp-forgot-password')
+export class YpForgotPassword extends YpBaseElement {
+  @property({ type: String })
+  emailErrorMessage: string | undefined;
 
-      emailErrorMessage: {
-        type: String
-      },
+  @property({ type: String })
+  email = '';
 
-      isSending: {
-        type: Boolean,
-        value: false
-      }
-    }
-  }
+  @property({ type: Boolean })
+  emailHasBeenSent = false;
+
+  @property({ type: Boolean })
+  isSending = false;
 
   static get styles() {
     return [
+      super.styles,
       css`
-
-      paper-dialog {
-        padding-left: 8px;
-        padding-right: 8px;
-        width: 420px;
-        background-color: #fff;
-        z-index: 9999;
-      }
-
-      @media (max-width: 480px) {
-        paper-dialog {
-          padding: 0;
-          margin: 0;
-          height: 100%;
-          width: 100%;
+        mwc-dialog {
+          padding-left: 8px;
+          padding-right: 8px;
+          width: 420px;
+          background-color: #fff;
+          z-index: 9999;
         }
-      }
 
-      [hidden] {
-        display: none !important;
-      }
-    `, YpFlexLayout]
+        @media (max-width: 480px) {
+          mwc-dialog {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+          }
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-    <paper-dialog id="dialog">
-      <h3>${this.t('user.forgotPassword')}</h3>
+      <mwc-dialog id="dialog">
+        <h3>${this.t('user.forgotPassword')}</h3>
 
-      <p ?hidden="${this.emailHasBeenSent}">${this.t('user.forgotPasswordInstructions')}</p>
+        <p ?hidden="${this.emailHasBeenSent}">
+          ${this.t('user.forgotPasswordInstructions')}
+        </p>
 
-      <p ?hidden="${!this.emailHasBeenSent}">${this.t('user.forgotPasswordEmailHasBeenSent')}</p>
+        <p ?hidden="${!this.emailHasBeenSent}">
+          ${this.t('user.forgotPasswordEmailHasBeenSent')}
+        </p>
 
-      <form is="iron-form" id="form">
+        <mwc-textfield
+          id="email"
+          type="email"
+          @keydown="${this._onEnter}"
+          .label="${this.t('email')}"
+          .value="${this.email}"
+          ?hidden="${this.emailHasBeenSent}"
+          .validationMessage="${this.emailErrorMessage || ''}">
+        </mwc-textfield>
 
-        <paper-input id="email" .type="text" .label="${this.t('email')}" .value="${this.email}" .pattern="${this.emailValidationPattern}" ?hidden="${this.emailHasBeenSent}" .error-message="${this.emailErrorMessage}">
-        </paper-input>
+        <div class="buttons" ?hidden="${this.emailHasBeenSent}">
+          <mwc-button dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
+          <mwc-button
+            autofocus
+            @click="${this._validateAndSend}"
+            .label="${this.t('user.forgotPassword')}"></mwc-button>
+        </div>
 
-      </form>
-
-      <div class="buttons" ?hidden="${this.emailHasBeenSent}">
-        <yp-ajax id="forgotPasswordAjax" method="POST" url="/api/users/forgot_password" @error="${this._forgotPasswordError}" @response="${this._forgotPasswordResponse}"></yp-ajax>
-        <mwc-button dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
-        <mwc-button autofocus="" @click="${this._validateAndSend}" .label="${this.t('user.forgotPassword')}"></mwc-button>
-      </div>
-
-      <div class="buttons" ?hidden="${!this.emailHasBeenSent}">
-        <mwc-button .dialog-dismiss .label="${this.t('ok')}"></mwc-button>
-      </div>
-    </paper-dialog>
-
-    <iron-a11y-keys id="a11y" .keys="enter" @keys-pressed="${this.onEnter}"></iron-a11y-keys>
-`
+        <div class="buttons" ?hidden="${!this.emailHasBeenSent}">
+          <mwc-button dialog-dismiss .label="${this.t('ok')}"></mwc-button>
+        </div>
+      </mwc-dialog>
+    `;
   }
 
-  onpointerenter(event) {
-    event.stopPropagation();
-    this._validateAndSend();
+  _onEnter(event: KeyboardEvent) {
+    if (event.keyCode == 13) {
+      event.stopPropagation();
+      this._validateAndSend();
+    }
   }
 
-  _validateAndSend(e) {
-    if (this.$$("#form").checkValidity() && this.email) {
+  async _validateAndSend() {
+    const email = this.$$("#email") as TextField
+    if (email && email.checkValidity() && email.value) {
       if (!this.isSending) {
         this.isSending = true;
-        this.$$("#forgotPasswordAjax").body = JSON.stringify({
-          email: this.email
-        });
-        this.$$("#forgotPasswordAjax").generateRequest();
+
+        await window.serverApi.forgotPassword({
+          email: email.value,
+        })
+
+        this.isSending = false;
+        window.appGlobals.notifyUserViaToast(
+          this.t('user.forgotPasswordEmailHasBeenSent')
+        );
+        this.emailHasBeenSent = true;
       }
     } else {
       return false;
     }
   }
 
-  _forgotPasswordError() {
-    this.isSending = false;
+  connectedCallback() {
+    super.connectedCallback();
+    this.addGlobalListener('yp-network-error', this._forgotPasswordError.bind(this))
   }
 
-  _forgotPasswordResponse(event, detail) {
-    this.isSending = false;
-    window.appGlobals.notifyUserViaToast(this.t('user.forgotPasswordEmailHasBeenSent'));
-    this.emailHasBeenSent = true;
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener('yp-network-error', this._forgotPasswordError.bind(this))
   }
 
-  _loginCompleted(user) {
-    window.appUser.setLoggedInUser(user);
-    this.fire("login", user);
+  _forgotPasswordError(event: CustomEvent) {
+    if (event.detail.errorId && event.detail.errorId=="forgotPassword") {
+      this.isSending = false;
+    }
   }
 
-  open(detail) {
+  open(detail: { email: string }) {
     if (detail && detail.email) {
       this.email = detail.email;
     }
-    this.$$("#dialog").open();
+
+    (this.$$('#dialog') as Dialog).open = true;
   }
 
   close() {
-    this.$$("#dialog").close();
+    (this.$$('#dialog') as Dialog).open = true;
   }
 }
-
-window.customElements.define('yp-forgot-password-lit', YpForgotPasswordLit)

@@ -1,167 +1,176 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-form/iron-form.js';
-import 'lite-signal/lite-signal.js';
+import { customElement, html, property, css } from 'lit-element';
+
 import '@material/mwc-button';
-import '@polymer/paper-dialog/paper-dialog.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import '@material/mwc-dialog';
 
-class YpAcceptInviteLit extends YpBaseElement {
-  static get properties() {
-    return {
-      token: {
-        type: String
-      },
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-      errorMessage: {
-        type: String
-      },
+import { Dialog } from '@material/mwc-dialog';
+import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
-      inviteName: {
-        type: String
-      },
+@customElement('yp-accept-invite')
+export class YpAcceptInvite extends YpBaseElement {
+  @property({ type: String })
+  token: string | undefined;
 
-      targetName: String,
+  @property({ type: String })
+  errorMessage: string | undefined;
 
-      targetEmail: {
-        type: String,
-        value: null
-      },
+  @property({ type: String })
+  inviteName: string | undefined;
 
-      collectionConfiguration: {
-        type: Object,
-        value: null
-      }
-    }
-  }
+  @property({ type: String })
+  targetName: string | undefined;
+
+  @property({ type: String })
+  targetEmail: string | undefined;
+
+  @property({ type: Object })
+  collectionConfiguration: YpCollectionConfiguration | undefined;
 
   static get styles() {
     return [
+      super.styles,
       css`
+        mwc-dialog {
+          padding-left: 8px;
+          padding-right: 8px;
+          width: 420px;
+          background-color: #fff;
+          z-index: 9999;
+        }
 
-      paper-dialog {
-        padding-left: 8px;
-        padding-right: 8px;
-        width: 420px;
-        background-color: #fff;
-        z-index: 9999;
-      }
+        @media (max-width: 480px) {
+          mwc-dialog {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+          }
+        }
 
-      @media (max-width: 480px) {
-        paper-dialog {
+        b {
           padding: 0;
           margin: 0;
-          height: 100%;
-          width: 100%;
         }
-      }
-
-      b {
-        padding: 0;
-        margin: 0;
-      }
-    `, YpFlexLayout]
+      `,
+    ];
   }
 
   render() {
     return html`
-    <paper-dialog id="dialog" modal>
-      <h3>${this.t('user.acceptInvite')}</h3>
+      <mwc-dialog id="dialog" modal>
+        <h3>${this.t('user.acceptInvite')}</h3>
 
-      <div class="layout vertical">
-        <div>
-          ${this.inviteName} ${this.t('user.hasSentYouAndInvitation')}:<br> <b>${this.targetName}</b>
+        <div class="layout vertical">
+          <div>
+            ${this.inviteName} ${this.t('user.hasSentYouAndInvitation')}:<br />
+            <b>${this.targetName}</b>
+          </div>
+          <p>${this.t('user.acceptInviteInstructions')}</p>
         </div>
-        <p>${this.t('user.acceptInviteInstructions')}</p>
-      </div>
 
-      <div class="buttons">
-        <yp-ajax id="acceptInviteAjax" .method="POST" dispatch-error="" @error="${this._inviteError}" @response="${this._acceptInviteResponse}"></yp-ajax>
-        <yp-ajax id="getInviteSenderAjax" .dispatch-error="" .method="GET" @error="${this._inviteError}" @response="${this._getInviteSenderResponse}"></yp-ajax>
-        <mwc-button @click="${this._cancel}" .dialog-dismiss .label="${this.t('cancel')}"></mwc-button>
-        <mwc-button .autofocus @click="${this._acceptInvite}" .label="${this.t('user.acceptInvite')}"></mwc-button>
-      </div>
-    </paper-dialog>
-    `
-  }
-/*
-  behaviors: [
-    ypGotoBehavior
-  ],
-*/
-
-  _inviteError(event, detail) {
-    this.$$("#acceptInviteAjax").showErrorDialog(this.t('inviteNotFoundOrAlreadyUsed'));
-    this.close();
+        <div class="buttons">
+          <mwc-button
+            @click="${this._cancel}"
+            dialog-dismiss
+            .label="${this.t('cancel')}"></mwc-button>
+          <mwc-button
+            autofocus
+            @click="${this._acceptInvite}"
+            .label="${this.t('user.acceptInvite')}"></mwc-button>
+        </div>
+      </mwc-dialog>
+    `;
   }
 
-  _checkInviteSender(e) {
+  connectedCallback() {
+    super.connectedCallback();
+    this.addGlobalListener('yp-network-error', this._inviteError.bind(this));
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeGlobalListener('yp-network-error', this._inviteError.bind(this));
+  }
+
+  _inviteError(event: CustomEvent) {
+    if (event.detail.errorId && event.detail.errorId == 'acceptInvite') {
+      this.fire('yp-error', this.t('inviteNotFoundOrAlreadyUsed'));
+      this.close();
+    }
+  }
+
+  async _checkInviteSender() {
     if (this.token) {
-      this.$$("#getInviteSenderAjax").url = '/api/users/get_invite_info/'+this.token;
-      this.$$("#getInviteSenderAjax").generateRequest();
+      const response = (await window.serverApi.getInviteSender(
+        this.token
+      )) as YpInviteSenderInfoResponse;
+
+      this.inviteName = response.inviteName;
+      this.targetName = response.targetName;
+      this.targetEmail = response.targetEmail;
+      this.collectionConfiguration = response.configuration;
     } else {
-      console.warn("Can't find token for _checkInviteSender");
+      console.error("Can't find token for _checkInviteSender");
     }
   }
 
-  _acceptInvite(e) {
-    if (window.appUser && window.appUser.loggedIn()===true) {
+  _acceptInvite() {
+    if (window.appUser && window.appUser.loggedIn() === true) {
       this._reallyAcceptInvite();
+    } else if (this.token && this.targetEmail) {
+      window.appUser.loginForAcceptInvite(
+        this,
+        this.token,
+        this.targetEmail,
+        this.collectionConfiguration
+      );
     } else {
-      window.appUser.loginForAcceptInvite(this, this.token, this.targetEmail, this.collectionConfiguration);
+      console.error('Missing parameters');
     }
   }
 
-  afterLogin(token) {
+  afterLogin(token: string) {
     if (!this.token) {
       this.token = token;
     }
     this._reallyAcceptInvite();
   }
 
-  _reallyAcceptInvite(e) {
-    this.$$("#acceptInviteAjax").url = '/api/users/accept_invite/'+this.token;
-    this.$$("#acceptInviteAjax").body = {};
-    this.$$("#acceptInviteAjax").generateRequest();
-  }
+  async _reallyAcceptInvite() {
+    if (this.token) {
+      const response = (await window.serverApi.acceptInvite(
+        this.token
+      )) as YpAcceptInviteResponse;
 
-  _getInviteSenderResponse(event, detail) {
-    this.inviteName = detail.response.inviteName;
-    this.targetName = detail.response.targetName;
-    this.targetEmail = detail.response.targetEmail;
-    this.collectionConfiguration = detail.response.configuration;
-  }
-
-  _acceptInviteResponse(event, detail) {
-    window.appGlobals.notifyUserViaToast(this.t('notification.invite_accepted_for')+' '+detail.response.name);
-    console.debug("_acceptInviteResponse: redirectTo: "+detail.response.redirectTo);
-    this.close();
-    this.redirectTo(detail.response.redirectTo);
+      window.appGlobals.notifyUserViaToast(
+        this.t('notification.invite_accepted_for') + ' ' + response.name
+      );
+      this.close();
+      YpNavHelpers.redirectTo(response.redirectTo);
+    } else {
+      console.error('No token');
+    }
   }
 
   _cancel() {
-    window.location = "/";
+    window.location.href = '/';
   }
 
-  open(token) {
-    console.info("Opened user yp-accept-invite");
-    if (token)
-      this.token = token;
+  open(token: string) {
+    if (token) this.token = token;
     this._checkInviteSender();
-    this.$$("#dialog").open();
+    (this.$$('#dialog') as Dialog).open = true;
   }
 
-  reOpen(token) {
-    console.info("Repened user yp-accept-invite");
-    if (token)
-      this.token = token;
-    this.$$("dialog").open();
+  reOpen(token: string) {
+    console.info('Repened user yp-accept-invite');
+    if (token) this.token = token;
+    (this.$$('#dialog') as Dialog).open = true;
   }
 
   close() {
-    this.$$("#dialog").close();
+    (this.$$('#dialog') as Dialog).open = false;
   }
 }
-
-window.customELements.define('yp-accept-invite-lit', YpAcceptInviteLit)

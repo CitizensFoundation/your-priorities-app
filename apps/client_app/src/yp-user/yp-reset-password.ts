@@ -1,7 +1,6 @@
 import { customElement, html, property, css } from 'lit-element';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import '../@yrpri/yp-image.js';
 
 import '@material/mwc-circular-progress-four-color';
 import '@material/mwc-button';
@@ -12,7 +11,7 @@ import '@material/mwc-dialog';
 import { Dialog } from '@material/mwc-dialog';
 import { TextField } from '@material/mwc-textfield';
 
-@customElement('yp-user-delete-or-anonymize')
+@customElement('yp-reset-password')
 export class YpResetPassword extends YpBaseElement {
   @property({ type: String })
   password = '';
@@ -56,7 +55,7 @@ export class YpResetPassword extends YpBaseElement {
 
         <mwc-textfield
           id="password"
-          @keysdown="${this.onEnter}"
+          @keydown="${this.onEnter}"
           type="password"
           .label="${this.t('password')}"
           .value="${this.password}"
@@ -92,7 +91,7 @@ export class YpResetPassword extends YpBaseElement {
         password: passwordField.value
       })
 
-      //TODO Figure out the error here
+      //TODO Figure out the error here and test if it works
       if (response.error && response.error == 'not_found') {
         this.fire('yp-error',  this.t('errorResetTokenNotFoundOrUsed'))
       } else {
