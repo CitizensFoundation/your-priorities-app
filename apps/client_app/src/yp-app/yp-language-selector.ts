@@ -95,7 +95,7 @@ export class YpLanguageSelector extends YpBaseElement {
     return [
       super.styles,
       css`
-        paper-dropdown-menu {
+        mwc-select {
           max-width: 250px;
         }
 

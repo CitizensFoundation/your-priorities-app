@@ -579,79 +579,79 @@ export class YpPostEdit extends YpEditBase {
       : nothing;
   }
 
-  renderCoverMediaSelection () {
+  renderCoverMediaSelection() {
     return html`
-     <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
-          <div
-            id="coverMediaType"
-            name="coverMediaType"
-            class="coverMediaType layout horizontal wrap"
-            .selected="${this.selectedCoverMediaType}">
-            <mwc-formfield label="${this.t('post.cover.none')}">
-              <mwc-radio
-                value="none"
-                ?checked="${this.selectedCoverMediaType === 'none'}"
-                @change="${this._setSelectedCoverMediaType}"
-                name="radioButtonsMedia">
-              </mwc-radio>
-            </mwc-formfield>
+      <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
+      <div
+        id="coverMediaType"
+        name="coverMediaType"
+        class="coverMediaType layout horizontal wrap"
+        .selected="${this.selectedCoverMediaType}">
+        <mwc-formfield label="${this.t('post.cover.none')}">
+          <mwc-radio
+            value="none"
+            ?checked="${this.selectedCoverMediaType === 'none'}"
+            @change="${this._setSelectedCoverMediaType}"
+            name="radioButtonsMedia">
+          </mwc-radio>
+        </mwc-formfield>
 
-            <mwc-formfield
-              label="${this.t('post.cover.image')}"
-              ?hidden="${!this.uploadedHeaderImageId}">
-              <mwc-radio
-                value="image"
-                ?checked="${this.selectedCoverMediaType === 'image'}"
-                @change="${this._setSelectedCoverMediaType}"
-                name="radioButtonsMedia">
-              </mwc-radio>
-            </mwc-formfield>
+        <mwc-formfield
+          label="${this.t('post.cover.image')}"
+          ?hidden="${!this.uploadedHeaderImageId}">
+          <mwc-radio
+            value="image"
+            ?checked="${this.selectedCoverMediaType === 'image'}"
+            @change="${this._setSelectedCoverMediaType}"
+            name="radioButtonsMedia">
+          </mwc-radio>
+        </mwc-formfield>
 
-            <mwc-formfield
-              label="${this.t('postCoverVideo')}"
-              ?hidden="${!this.showVideoCover}">
-              <mwc-radio
-                value="video"
-                ?checked="${this.selectedCoverMediaType === 'video'}"
-                @change="${this._setSelectedCoverMediaType}"
-                name="radioButtonsMedia">
-              </mwc-radio>
-            </mwc-formfield>
+        <mwc-formfield
+          label="${this.t('postCoverVideo')}"
+          ?hidden="${!this.showVideoCover}">
+          <mwc-radio
+            value="video"
+            ?checked="${this.selectedCoverMediaType === 'video'}"
+            @change="${this._setSelectedCoverMediaType}"
+            name="radioButtonsMedia">
+          </mwc-radio>
+        </mwc-formfield>
 
-            <mwc-formfield
-              label="${this.t('postCoverAudio')}"
-              ?hidden="${!this.showAudioCover}">
-              <mwc-radio
-                value="audio"
-                ?checked="${this.selectedCoverMediaType === 'audio'}"
-                @change="${this._setSelectedCoverMediaType}"
-                name="radioButtonsMedia">
-              </mwc-radio>
-            </mwc-formfield>
+        <mwc-formfield
+          label="${this.t('postCoverAudio')}"
+          ?hidden="${!this.showAudioCover}">
+          <mwc-radio
+            value="audio"
+            ?checked="${this.selectedCoverMediaType === 'audio'}"
+            @change="${this._setSelectedCoverMediaType}"
+            name="radioButtonsMedia">
+          </mwc-radio>
+        </mwc-formfield>
 
-            ${this.location
-              ? html`
-                  <mwc-formfield label="${this.t('post.cover.map')}">
-                    <mwc-radio
-                      value="map"
-                      ?checked="${this.selectedCoverMediaType === 'map'}"
-                      @change="${this._setSelectedCoverMediaType}"
-                      name="radioButtonsMedia">
-                    </mwc-radio>
-                  </mwc-formfield>
+        ${this.location
+          ? html`
+              <mwc-formfield label="${this.t('post.cover.map')}">
+                <mwc-radio
+                  value="map"
+                  ?checked="${this.selectedCoverMediaType === 'map'}"
+                  @change="${this._setSelectedCoverMediaType}"
+                  name="radioButtonsMedia">
+                </mwc-radio>
+              </mwc-formfield>
 
-                  <mwc-formfield label="${this.t('post.cover.streetview')}">
-                    <mwc-radio
-                      value="streetView"
-                      ?checked="${this.selectedCoverMediaType === 'streetView'}"
-                      @change="${this._setSelectedCoverMediaType}"
-                      name="radioButtonsMedia">
-                    </mwc-radio>
-                  </mwc-formfield>
-                `
-              : nothing}
-          </div>
-    `
+              <mwc-formfield label="${this.t('post.cover.streetview')}">
+                <mwc-radio
+                  value="streetView"
+                  ?checked="${this.selectedCoverMediaType === 'streetView'}"
+                  @change="${this._setSelectedCoverMediaType}"
+                  name="radioButtonsMedia">
+                </mwc-radio>
+              </mwc-formfield>
+            `
+          : nothing}
+      </div>
+    `;
   }
 
   renderMediaTab() {
@@ -686,9 +686,8 @@ export class YpPostEdit extends YpEditBase {
                       container-type="posts"
                       .group="${this.group}"
                       raised
-                      .uploadLimitSeconds="${
-                        this.group!.configuration.videoPostUploadLimitSec
-                      }"
+                      .uploadLimitSeconds="${this.group!.configuration
+                        .videoPostUploadLimitSec}"
                       videoUpload
                       buttonIcon="videocam"
                       .buttonText="${this.t('uploadVideo')}"
@@ -697,10 +696,8 @@ export class YpPostEdit extends YpEditBase {
                     </yp-file-upload>
                     <div
                       class="videoUploadDisclamer"
-                      ?hidden="${
-                        !this.group!.configuration.showVideoUploadDisclaimer ||
-                        !this.uploadedVideoId
-                      }">
+                      ?hidden="${!this.group!.configuration
+                        .showVideoUploadDisclaimer || !this.uploadedVideoId}">
                       ${this.t('videoUploadDisclaimer')}
                     </div>
                   </div>
@@ -729,7 +726,7 @@ export class YpPostEdit extends YpEditBase {
               : nothing}
           </div>
           <br />
-         ${this.renderCoverMediaSelection()}
+          ${this.renderCoverMediaSelection()}
         </div>
       </section>
     `;
@@ -794,63 +791,64 @@ export class YpPostEdit extends YpEditBase {
   }
 
   render() {
-    return this.group && this.post
-      ? html`
-          <yp-edit-dialog
-            name="postEdit"
-            double-width
-            id="editDialog"
-            icon="lightbulb_outline"
-            .action="${this.action}"
-            .use-next-tab-action="${this.newPost}"
-            @next-tab-action="${this._nextTab}"
-            .method="${this.method}"
-            .title="${this.editHeaderText ? this.editHeaderText : ''}"
-            .saveText="${this.saveText}"
-            class="container"
-            custom-submit
-            .next-action-text="${this.t('next')}"
-            .snackbarText="${this.snackbarText}"
-            .params="${this.params}">
-            <div
-              class="layout vertical wrap topNewPostContainer"
-              ?no-title="${this.group.configuration
-                .hideNameInputAndReplaceWith}">
-              ${this.renderTabs()} ${this.renderCurrentTabPage()}}
-            </div>
-            ${this.renderHiddenInputs()}
-          </yp-edit-dialog>
+    return html`
+      <yp-edit-dialog
+        name="postEdit"
+        double-width
+        id="editDialog"
+        icon="lightbulb_outline"
+        .action="${this.action}"
+        .use-next-tab-action="${this.newPost}"
+        @next-tab-action="${this._nextTab}"
+        .method="${this.method}"
+        .title="${this.editHeaderText ? this.editHeaderText : ''}"
+        .saveText="${this.saveText}"
+        class="container"
+        custom-submit
+        .next-action-text="${this.t('next')}"
+        .snackbarText="${this.snackbarText}"
+        .params="${this.params}">
+        ${this.group && this.post
+          ? html`
+              <div
+                class="layout vertical wrap topNewPostContainer"
+                ?no-title="${this.group.configuration
+                  .hideNameInputAndReplaceWith}">
+                ${this.renderTabs()} ${this.renderCurrentTabPage()}}
+              </div>
+              ${this.renderHiddenInputs()}
+            `
+          : nothing}
+      </yp-edit-dialog>
 
-          ${this.group.configuration.alternativeTextForNewIdeaButtonHeader
-            ? html`
-                <yp-magic-text
-                  id="alternativeTextForNewIdeaButtonHeaderId"
-                  hidden
-                  .contentId="${this.group.id}"
-                  textOnly
-                  .content="${this.group.configuration
-                    .alternativeTextForNewIdeaButtonHeader}"
-                  .contentLanguage="${this.group.language}"
-                  @new-translation="${this
-                    ._alternativeTextForNewIdeaButtonHeaderTranslation}"
-                  text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
-              `
-            : nothing}
-          ${this.group.configuration.customThankYouTextNewPosts
-            ? html`
-                <yp-magic-text
-                  id="customThankYouTextNewPostsId"
-                  hidden
-                  .contentId="${this.group.id}"
-                  text-only
-                  .content="${this.group.configuration
-                    .customThankYouTextNewPosts}"
-                  .contentLanguage="${this.group.language}"
-                  text-type="customThankYouTextNewPosts"></yp-magic-text>
-              `
-            : nothing}
-        `
-      : nothing;
+      ${this.group && this.group.configuration.alternativeTextForNewIdeaButtonHeader
+        ? html`
+            <yp-magic-text
+              id="alternativeTextForNewIdeaButtonHeaderId"
+              hidden
+              .contentId="${this.group.id}"
+              textOnly
+              .content="${this.group.configuration
+                .alternativeTextForNewIdeaButtonHeader}"
+              .contentLanguage="${this.group.language}"
+              @new-translation="${this
+                ._alternativeTextForNewIdeaButtonHeaderTranslation}"
+              text-type="alternativeTextForNewIdeaButtonHeader"></yp-magic-text>
+          `
+        : nothing}
+      ${this.group && this.group.configuration.customThankYouTextNewPosts
+        ? html`
+            <yp-magic-text
+              id="customThankYouTextNewPostsId"
+              hidden
+              .contentId="${this.group.id}"
+              text-only
+              .content="${this.group.configuration.customThankYouTextNewPosts}"
+              .contentLanguage="${this.group.language}"
+              text-type="customThankYouTextNewPosts"></yp-magic-text>
+          `
+        : nothing}
+    `;
   }
 
   //TODO: Investigate if any are missing .html version of listeners

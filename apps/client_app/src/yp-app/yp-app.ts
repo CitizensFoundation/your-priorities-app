@@ -43,11 +43,14 @@ import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 
+import '../yp-dialog-container/yp-app-dialogs.js';
+
 import '../yp-collection/yp-domain.js';
 import '../yp-collection/yp-community.js';
 import '../yp-collection/yp-group.js';
 import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
+import { YpPageDialog } from '../yp-page/yp-page-dialog.js';
 
 declare global {
   interface Window {
@@ -174,7 +177,6 @@ export class YpApp extends YpBaseElement {
   connectedCallback() {
     super.connectedCallback();
     this._setupEventListeners();
-    console.info('yp-app is ready');
     this._setupSamlCallback();
     this.updateLocation();
   }
@@ -194,7 +196,11 @@ export class YpApp extends YpBaseElement {
       errorText = this.t('errorNotAuthorized');
     else if (detail.response && detail.response.status === 401)
       errorText = this.t('errorNotAuthorized');
-    else if (detail.response && detail.response.status === 500 && detail.response.message == "SequelizeUniqueConstraintError")
+    else if (
+      detail.response &&
+      detail.response.status === 500 &&
+      detail.response.message == 'SequelizeUniqueConstraintError'
+    )
       errorText = this.t('user.alreadyRegisterred');
 
     if (detail.response && detail.response.status)
@@ -248,6 +254,7 @@ export class YpApp extends YpBaseElement {
     window.addEventListener('locationchange', this.updateLocation.bind(this));
     window.addEventListener('location-changed', this.updateLocation.bind(this));
     window.addEventListener('popstate', this.updateLocation.bind(this));
+    this.addListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
     this._setupTouchEvents();
   }
 
@@ -289,11 +296,21 @@ export class YpApp extends YpBaseElement {
     window.removeEventListener('locationchange', this.updateLocation);
     window.removeEventListener('location-changed', this.updateLocation);
     window.removeEventListener('popstate', this.updateLocation);
+    this.removeListener(
+      'yp-app-dialogs-ready',
+      this._appDialogsReady.bind(this)
+    );
     this._removeTouchEvents();
   }
 
   static get styles() {
     return [super.styles, YpAppStyles];
+  }
+
+  _appDialogsReady(event: CustomEvent) {
+    if (event.detail) {
+      window.appDialogs = event.detail;
+    }
   }
 
   updateLocation() {
@@ -503,7 +520,7 @@ export class YpApp extends YpBaseElement {
     return html`
       ${this.renderAppBar()}
 
-      <yp-dialog-container id="dialogContainer"></yp-dialog-container>
+      <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
 
       <yp-sw-update-toast
         .buttonLabel="${this.t('reload')}"
@@ -523,6 +540,7 @@ export class YpApp extends YpBaseElement {
       <mwc-snackbar id="toast">
         <mwc-icon-button icon="close" slot="dismiss"></mwc-icon-button>
       </mwc-snackbar>
+
     `;
   }
 
@@ -575,16 +593,15 @@ export class YpApp extends YpBaseElement {
 
   _openPage(page: YpHelpPage) {
     window.appGlobals.activity('open', 'pages', page.id);
-    // TODO: Remove any
-    this.getDialogAsync(
+    window.appDialogs.getDialogAsync(
       'pageDialog',
-      function (dialog: any) {
+      (dialog: YpPageDialog) => {
         let pageLocale = 'en';
         if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
           pageLocale = window.appGlobals.locale;
         }
-        dialog.open(page.title[pageLocale], page.content[pageLocale]);
-      }.bind(this)
+        dialog.open(page, pageLocale);
+      }
     );
   }
 
@@ -864,7 +881,7 @@ export class YpApp extends YpBaseElement {
       window.location.href = window.location.href.replace('/#!/', '/');
     }
 
-    setTimeout(() => {
+    /*setTimeout(() => {
       if (route.indexOf('domain') > -1) {
         (this.$$('#domainPage') as YpCollection).refresh();
       } else if (route.indexOf('community_folder') > -1) {
@@ -878,7 +895,7 @@ export class YpApp extends YpBaseElement {
       } else if (route.indexOf('user') > -1) {
         (this.$$('#userPage') as YpCollection).refresh();
       }
-    });
+    });*/
   }
 
   _routePageChanged(oldRouteData: Record<string, string>) {
@@ -1173,44 +1190,13 @@ export class YpApp extends YpBaseElement {
     //(this.$$("#dialogContainer") as YpAppDialog).getDialogAsync(idName, callback);
   }
 
-  /*
-  getRatingsDialogAsync(callback) {
-    this.$$("#dialogContainer")!.getRatingsDialogAsync(callback);
-  }
-
-  getUsersGridAsync(callback) {
-    this.$$("#dialogContainer")!.getUsersGridAsync(callback);
-  }
-
-  getMediaRecorderAsync(callback) {
-    this.$$("#dialogContainer")!.getMediaRecorderAsync(callback);
-  }
-
-  getContentModerationAsync(callback) {
-    this.$$("#dialogContainer")!.getContentModerationAsync(callback);
-  }
-
-  getCreateReportAsync(callback) {
-    this.$$("#dialogContainer")!.getCreateReportAsync(callback);
-  }
-
-  getDuplicateCollectionAsyncAsync(callback) {
-    this.$$("#dialogContainer")!.getDuplicateCollectionAsyncAsync(callback);
-  }
-
-  openPixelCookieConfirm(trackerId) {
-    this.$$("#dialogContainer")!.openPixelCookieConfirm(trackerId);
-  }
-  */
-
   closeDialog(idName: string) {
-    // TODO: Get working
-    //this.$$("#dialogContainer")!.closeDialog(idName);
+    (this.$$("#dialogContainer") as YpAppDialogs).closeDialog(idName);
   }
 
   _dialogClosed(event: CustomEvent) {
     // TODO: Get working
-    //this.$$("#dialogContainer")!.dialogClosed(event.detail);
+    (this.$$("#dialogContainer") as YpAppDialogs).dialogClosed(event.detail);
   }
 
   scrollPageToTop() {

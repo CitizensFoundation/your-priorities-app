@@ -71,7 +71,7 @@ export class AcNotificationSelection extends YpBaseElement {
           color: #888;
         }
 
-        paper-radio-button {
+        mwc-radio {
           padding-top: 8px;
           padding-bottom: 8px;
         }

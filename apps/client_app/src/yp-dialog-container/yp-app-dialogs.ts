@@ -5,6 +5,9 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { Dialog } from '@material/mwc-dialog';
 
+import '@material/mwc-dialog';
+import '@material/mwc-snackbar';
+
 @customElement('yp-app-dialogs')
 export class YpAppDialogs extends YpBaseElement {
   @property({ type: String })
@@ -59,7 +62,7 @@ export class YpAppDialogs extends YpBaseElement {
           display: none;
         }
 
-        paper-dialog {
+        mwc-dialog {
           background-color: #fff;
         }
 
@@ -219,6 +222,7 @@ export class YpAppDialogs extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this.fire('yp-app-dialogs-ready', this)
     setTimeout(() => {
       import('./yp-dialog-container-delayed.js').then(() => {
         this.haveLoadedDelayed = true;

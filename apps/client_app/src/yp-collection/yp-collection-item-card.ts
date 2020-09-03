@@ -82,7 +82,7 @@ export class YpCollectionItemCard extends YpBaseElement {
           margin: 0;
         }
 
-        paper-card {
+        .collectionCard {
           vertical-align: text-top;
         }
 

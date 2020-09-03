@@ -7,7 +7,7 @@ import { Dialog } from '@material/mwc-dialog';
 import '@material/mwc-dialog';
 import '@material/mwc-button';
 
-@customElement('yp-post-map')
+@customElement('yp-page-dialog')
 export class YpPageDialog extends YpBaseElement {
   @property({ type: String })
   dialogTitle: string | undefined;
@@ -74,8 +74,10 @@ export class YpPageDialog extends YpBaseElement {
     }
   }
 
-  open(content: string) {
-    (this.$$('#content') as HTMLElement).innerHTML = content;
+  open(page: YpHelpPage, language: string) {
+    this.page = page;
+    this.language = language;
+    (this.$$('#content') as HTMLElement).innerHTML =  this.page.content[this.language];
     (this.$$('#dialog') as Dialog).open = true;
   }
 
