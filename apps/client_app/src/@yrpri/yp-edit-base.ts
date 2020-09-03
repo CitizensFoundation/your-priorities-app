@@ -32,7 +32,9 @@ export abstract class YpEditBase extends YpBaseElement {
 
   uploadedDefaultPostImageId: number | undefined
 
-  abstract customRedirect(unknown: YpDatabaseItem): void
+  customRedirect(unknown: YpDatabaseItem): void {
+    // For subclassing
+  }
 
   setupAfterOpen(params?: YpEditFormParams): void {
     // For subclassing

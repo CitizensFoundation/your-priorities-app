@@ -59,9 +59,9 @@ export class YpApiActionDialog extends YpBaseElement {
   setup(
     action: string,
     confirmationText: string,
-    onFinishedFunction: Function,
-    confirmButtonText: string,
-    method: string
+    onFinishedFunction: Function | undefined = undefined,
+    confirmButtonText: string | undefined = undefined,
+    method: string | undefined = undefined
   ) {
     this.action = action;
     this.confirmationText = confirmationText;
@@ -78,7 +78,7 @@ export class YpApiActionDialog extends YpBaseElement {
     }
   }
 
-  open(options: { finalDeleteWarning: boolean }) {
+  open(options: { finalDeleteWarning: boolean } | undefined = undefined) {
     if (options && options.finalDeleteWarning) {
       this.finalDeleteWarning = true;
     }

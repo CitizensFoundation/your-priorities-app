@@ -361,6 +361,9 @@ interface YpBaseMedia {
 
 interface YpImageData extends YpBaseMedia {
   User?: YpUserData;
+  description?: string;
+  photographer_name?: string;
+
 }
 
 interface YpVideoData extends YpBaseMedia {

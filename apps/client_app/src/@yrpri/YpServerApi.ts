@@ -718,4 +718,10 @@ export class YpServerApi extends YpCodeBase {
       false
     );
   }
+
+  public getImages(postId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/images/${postId}/user_images`
+    );
+  }
 }

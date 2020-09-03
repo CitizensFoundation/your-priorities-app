@@ -291,7 +291,7 @@ export class YpPostCard extends YpBaseElement {
               ?hide-actions="${this.post.Group.configuration
                 .hidePostActionsInGrid}"
               audio-cover="${this.isAudioCover}"
-              class="card postCard layout vertical shadow-elevation-4dp shadow-transition"
+              class="card postCard layout vertical shadow-elevation-2dp shadow-transition"
               animated>
               <div class="layout vertical">
                 <a
