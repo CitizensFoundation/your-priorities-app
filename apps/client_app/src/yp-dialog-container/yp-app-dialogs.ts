@@ -176,9 +176,7 @@ export class YpAppDialogs extends YpBaseElement {
           `
         : nothing}
 
-      <paper-toast id="masterToast"></paper-toast>
-
-      <yp-ajax-error-dialog id="errorDialog"></yp-ajax-error-dialog>
+      <mwc-snackbar id="masterToast"></mwc-snackbar>>
 
       ${this.pageDialogOpen
         ? html` <yp-page-dialog id="pageDialog"></yp-page-dialog> `
@@ -318,15 +316,13 @@ export class YpAppDialogs extends YpBaseElement {
       this.getDialogAsync('mediaRecorder', callback);
     } else {
       this.openLoadingDialog();
-      /* TODO: Implement
-      import('./yp-dialog-container-media-recorder.js').then(async () => {
+      import('../yp-media-recorder/yp-media-recorder.js').then(async () => {
         this.closeLoadingDialog();
         console.info('Have loaded media recorder container');
         this.gotMediaRecorder = true;
         await this.requestUpdate();
         this.getDialogAsync('mediaRecorder', callback);
       });
-      */
     }
   }
 

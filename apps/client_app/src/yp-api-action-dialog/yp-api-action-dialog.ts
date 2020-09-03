@@ -1,5 +1,4 @@
 import { property, html, css, customElement } from 'lit-element';
-import { nothing } from 'lit-html';
 
 import '@material/mwc-button';
 import '@material/mwc-dialog';
@@ -31,7 +30,7 @@ export class YpApiActionDialog extends YpBaseElement {
     return [
       super.styles,
       css`
-        paper-dialog {
+        mwc-dialog {
           background-color: #fff;
         }
       `,
