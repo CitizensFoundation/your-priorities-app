@@ -493,6 +493,9 @@ interface YpUserData {
   OrganizationUsers?: Array<YpOrganization>;
   UserProfileImages?: Array<YpImageData>;
   facebook_id?: number;
+  ssn?: number;
+  notifications_settings?: AcNotificationSettingsData;
+  default_locale?: string;
 }
 
 declare interface IronListInterface extends HTMLElement {

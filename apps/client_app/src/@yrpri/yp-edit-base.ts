@@ -34,9 +34,13 @@ export abstract class YpEditBase extends YpBaseElement {
 
   abstract customRedirect(unknown: YpDatabaseItem): void
 
-  abstract setupAfterOpen(params?: YpEditFormParams): void
+  setupAfterOpen(params?: YpEditFormParams): void {
+    // For subclassing
+  }
 
-  abstract customFormResponse(event?: CustomEvent): void
+  customFormResponse(event?: CustomEvent): void {
+    // For subclassing
+  }
 
   abstract clear(): void
 

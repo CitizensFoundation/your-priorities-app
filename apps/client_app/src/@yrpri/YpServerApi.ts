@@ -559,4 +559,28 @@ export class YpServerApi extends YpCodeBase {
       this.baseUrlPath + `/points/url_preview?${urlParams}`
     );
   }
+
+  public disconnectSamlLogin() {
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/disconnectSamlLogin',
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+  public disconnectFacebookLogin() {
+    return this.fetchWrapper(
+      this.baseUrlPath + '/users/disconnectFacebookLogin',
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
+
+
 }

@@ -579,82 +579,9 @@ export class YpPostEdit extends YpEditBase {
       : nothing;
   }
 
-  renderMediaTab() {
+  renderCoverMediaSelection () {
     return html`
-      <section>
-        <div class="layout vertical center-center">
-          <div class="layout horizontal center-center wrap">
-            <div
-              class="layout vertical center-center self-start uploadSection"
-              ?hidden="${this.group!.configuration.hidePostImageUploads}">
-              <yp-file-upload
-                id="imageFileUpload"
-                raised
-                target="/api/images?itemType=post-header"
-                method="POST"
-                buttonIcon="photo_camera"
-                .buttonText="${this.t('image.upload')}"
-                @success="${this._imageUploaded}">
-              </yp-file-upload>
-              <div class="imageSizeInfo layout horizontal">
-                <div>864 x 486 (16/9 widescreen)</div>
-              </div>
-              <div>${this.t('post.cover.imageInfo')}</div>
-            </div>
-
-            ${this.group!.configuration.allowPostVideoUploads
-              ? html`
-                  <div
-                    class="layout vertical center-center self-start uploadSection">
-                    <yp-!file-upload
-                      id="videoFileUpload"
-                      container-type="posts"
-                      .group="${this.group}"
-                      raised
-                      .uploadLimitSeconds="${
-                        this.group!.configuration.videoPostUploadLimitSec
-                      }"
-                      videoUpload
-                      buttonIcon="videocam"
-                      .buttonText="${this.t('uploadVideo')}"
-                      method="POST"
-                      @success="${this._videoUploaded}">
-                    </yp-file-upload>
-                    <div
-                      class="videoUploadDisclamer"
-                      ?hidden="${
-                        !this.group!.configuration.showVideoUploadDisclaimer ||
-                        !this.uploadedVideoId
-                      }">
-                      ${this.t('videoUploadDisclaimer')}
-                    </div>
-                  </div>
-                `
-              : nothing}
-            ${this.group!.configuration.allowPostAudioUploads
-              ? html`
-                  <div
-                    class="layout vertical center-center self-start uploadSection">
-                    <yp-file-upload
-                      id="audioFileUpload"
-                      containerType="posts"
-                      .group="${this.group}"
-                      raised
-                      .uploadLimitSeconds="${this.group!.configuration
-                        .audioPostUploadLimitSec}"
-                      .multi="false"
-                      audioUpload
-                      method="POST"
-                      buttonIcon="keyboard_voice"
-                      .buttonText="${this.t('uploadAudio')}"
-                      @success="${this._audioUploaded}">
-                    </yp-file-upload>
-                  </div>
-                `
-              : nothing}
-          </div>
-          <br />
-          <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
+     <h3 class="accessHeader">${this.t('post.cover.media')}</h3>
           <div
             id="coverMediaType"
             name="coverMediaType"
@@ -724,6 +651,85 @@ export class YpPostEdit extends YpEditBase {
                 `
               : nothing}
           </div>
+    `
+  }
+
+  renderMediaTab() {
+    return html`
+      <section>
+        <div class="layout vertical center-center">
+          <div class="layout horizontal center-center wrap">
+            <div
+              class="layout vertical center-center self-start uploadSection"
+              ?hidden="${this.group!.configuration.hidePostImageUploads}">
+              <yp-file-upload
+                id="imageFileUpload"
+                raised
+                target="/api/images?itemType=post-header"
+                method="POST"
+                buttonIcon="photo_camera"
+                .buttonText="${this.t('image.upload')}"
+                @success="${this._imageUploaded}">
+              </yp-file-upload>
+              <div class="imageSizeInfo layout horizontal">
+                <div>864 x 486 (16/9 widescreen)</div>
+              </div>
+              <div>${this.t('post.cover.imageInfo')}</div>
+            </div>
+
+            ${this.group!.configuration.allowPostVideoUploads
+              ? html`
+                  <div
+                    class="layout vertical center-center self-start uploadSection">
+                    <yp-file-upload
+                      id="videoFileUpload"
+                      container-type="posts"
+                      .group="${this.group}"
+                      raised
+                      .uploadLimitSeconds="${
+                        this.group!.configuration.videoPostUploadLimitSec
+                      }"
+                      videoUpload
+                      buttonIcon="videocam"
+                      .buttonText="${this.t('uploadVideo')}"
+                      method="POST"
+                      @success="${this._videoUploaded}">
+                    </yp-file-upload>
+                    <div
+                      class="videoUploadDisclamer"
+                      ?hidden="${
+                        !this.group!.configuration.showVideoUploadDisclaimer ||
+                        !this.uploadedVideoId
+                      }">
+                      ${this.t('videoUploadDisclaimer')}
+                    </div>
+                  </div>
+                `
+              : nothing}
+            ${this.group!.configuration.allowPostAudioUploads
+              ? html`
+                  <div
+                    class="layout vertical center-center self-start uploadSection">
+                    <yp-file-upload
+                      id="audioFileUpload"
+                      containerType="posts"
+                      .group="${this.group}"
+                      raised
+                      .uploadLimitSeconds="${this.group!.configuration
+                        .audioPostUploadLimitSec}"
+                      .multi="false"
+                      audioUpload
+                      method="POST"
+                      buttonIcon="keyboard_voice"
+                      .buttonText="${this.t('uploadAudio')}"
+                      @success="${this._audioUploaded}">
+                    </yp-file-upload>
+                  </div>
+                `
+              : nothing}
+          </div>
+          <br />
+         ${this.renderCoverMediaSelection()}
         </div>
       </section>
     `;
