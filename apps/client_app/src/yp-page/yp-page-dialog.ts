@@ -1,101 +1,86 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-image/iron-image.js';
-import '@polymer/paper-fab/paper-fab.js';
-import '@material/mwc-button';
-import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-dialog/paper-dialog.js';
-import '@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
-import { YpBaseElement } from '../yp-base-element.js';
-import { YpFlexLayout } from '../yp-flex-layout.js';
+import { property, html, css, customElement } from 'lit-element';
+import { nothing } from 'lit-html';
 
-class YpPageDialogLit extends YpBaseElement {
-  static get properties() {
-    return {
-      title: {
-        type: String
-      },
-      page: Object,
-      pageTitle: {
-        type: String,
-        computed: '_pageTitle(page, language)'
-      }
-    }
-  }
+import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { Dialog } from '@material/mwc-dialog';
+
+import '@material/mwc-dialog';
+import '@material/mwc-button';
+
+@customElement('yp-post-map')
+export class YpPageDialog extends YpBaseElement {
+  @property({ type: String })
+  dialogTitle: string | undefined;
+
+  @property({ type: Object })
+  page: YpHelpPage | undefined;
 
   static get styles() {
     return [
+      super.styles,
       css`
-
-      #dialog {
-        background-color: #FFF;
-        max-width: 50%;
-      }
-
-      @media (max-width: 1100px) {
         #dialog {
-          max-width: 80%;
-        }
-      }
-
-      @media (max-width: 600px) {
-        #dialog {
-          max-width: 100%;
+          background-color: #fff;
+          max-width: 50%;
         }
 
-        paper-dialog {
-          padding: 0;
-          margin: 0;
+        @media (max-width: 1100px) {
+          #dialog {
+            max-width: 80%;
+          }
         }
-      }
 
-      paper-dialog[rtl] {
-        direction: rtl;
-      }
+        @media (max-width: 600px) {
+          #dialog {
+            max-width: 100%;
+          }
 
-      [hidden] {
-        display: none !important;
-      }
-    `, YpFlexLayout]
+          mwc-dialog {
+            padding: 0;
+            margin: 0;
+          }
+        }
+
+        mwc-dialog[rtl] {
+          direction: rtl;
+        }
+
+        [hidden] {
+          display: none !important;
+        }
+      `,
+    ];
   }
 
   render() {
     return html`
-   <paper-dialog id="dialog" ?rtl="${this.rtl}">
-      <div ?hidden="${!this.pageTitle}">
-        <h2>${this.pageTitle}</h2>
-      </div>
-      <paper-dialog-scrollable>
+      <mwc-dialog .heading="${this.pageTitle}" id="dialog" ?rtl="${this.rtl}">
         <div id="content"></div>
-      </paper-dialog-scrollable>
-      <div class="buttons">
-        <mwc-button @click="${this._close}" .dialogDismiss .label="${this.t('close')}"></mwc-button>
-      </div>
-    </paper-dialog>
-`
+        <div class="buttons">
+          <mwc-button
+            @click="${this._close}"
+            dialogDismiss
+            .label="${this.t('close')}"></mwc-button>
+        </div>
+      </mwc-dialog>
+    `;
   }
 
-  _pageTitle(page, language) {
-    if (page) {
-      return page.title;
+  get pageTitle(): string {
+    if (this.page) {
+      return this.page.title[this.language];
     } else {
-      return "";
+      return '';
     }
   }
 
-  open(title, content) {
-    this.title = title;
-    this.$$("#content").innerHTML = content;
-    this.$$("#dialog").fit();
-    this.$$("#dialog").notifyResize();
-    this.$$("#dialog").open();
+  open(content: string) {
+    (this.$$('#content') as HTMLElement).innerHTML = content;
+    (this.$$('#dialog') as Dialog).open = true;
   }
 
   _close() {
-    this.title = null;
-    this.$$("#content").innerHTML = '';
+    (this.$$('#dialog') as Dialog).open = false;
+    (this.$$('#content') as HTMLElement).innerHTML = '';
   }
 }
-
-window.customElements.define('yp-page-dialog-lit', YpPageDialogLit)
