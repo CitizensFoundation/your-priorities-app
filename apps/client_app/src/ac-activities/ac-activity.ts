@@ -103,7 +103,7 @@ export class AcActivity extends YpBaseElementWithLogin {
           color: var(--accent-color);
         }
 
-        iron-icon {
+        mwc-icon {
           width: 48px;
           height: 48px;
           padding-top: 14px;

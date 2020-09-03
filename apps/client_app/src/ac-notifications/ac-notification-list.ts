@@ -78,7 +78,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     return [
       super.styles,
       css`
-        iron-list {
+        lit-virtualizer {
           flex: 1 1 auto;
         }
 

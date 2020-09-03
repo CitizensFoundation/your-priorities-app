@@ -26,7 +26,7 @@ export class YpUserImage extends YpBaseElement {
     return [
       super.styles,
       css`
-        iron-image {
+        yp-image {
           display: block;
           vertical-align: text-top;
           height: 48px;

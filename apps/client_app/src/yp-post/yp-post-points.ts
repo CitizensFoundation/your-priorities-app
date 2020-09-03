@@ -532,7 +532,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
                 ?hidden="${this.isLoggedIn}"
                 @click="${this._openLogin}"
                 .label="${uploadVideoHeader}">
-                <iron-icon class="icon"></iron-icon>
+                <mwc-icon class="icon">videocam</mwc-icon>
               </mwc-button>
             </div>
           </div>

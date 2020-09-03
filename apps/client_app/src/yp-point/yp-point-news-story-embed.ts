@@ -14,13 +14,13 @@ export class YpPointNewsStoryEmbed extends YpBaseElement {
       super.styles,
       css`
 
-      iron-image {
+      yp-image {
         width: 550px;
         height: 309px;
       }
 
       @media (max-width: 600px) {
-        iron-image {
+        yp-image {
           width: 90vw !important;
           height: 51vw !important;
         }

@@ -47,13 +47,13 @@ export class YpPostUserImages extends YpBaseElement {
           padding: 0;
         }
 
-        iron-image {
+        yp-image {
           width: 800px;
           height: 600px;
         }
 
         @media (max-width: 800px) {
-          iron-image {
+          yp-image {
             width: 600px;
             height: 450px;
           }
@@ -64,7 +64,7 @@ export class YpPostUserImages extends YpBaseElement {
         }
 
         @media (max-width: 620px) {
-          iron-image {
+          yp-image {
             width: 400px;
             height: 300px;
           }
@@ -74,7 +74,7 @@ export class YpPostUserImages extends YpBaseElement {
         }
 
         @media (max-width: 420px) {
-          iron-image {
+          yp-image {
             width: 320px;
             height: 240px;
           }

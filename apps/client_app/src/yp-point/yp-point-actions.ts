@@ -84,12 +84,10 @@ export class YpPointActions extends YpBaseElement {
         }
 
         .shareIcon {
-          --paper-share-button-icon-color: #ddd;
           text-align: right;
         }
 
         .shareIcon[up-voted] {
-          --paper-share-button-icon-color: var(--accent-color-400);
         }
 
         [hidden] {

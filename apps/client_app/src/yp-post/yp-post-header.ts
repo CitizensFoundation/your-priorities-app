@@ -96,9 +96,6 @@ export class YpPostHeader extends YpBaseElementWithLogin {
 
         .shareIcon {
           position: absolute;
-          --paper-share-button-icon-color: #656565;
-          --paper-share-button-icon-height: 42px;
-          --paper-share-button-icon-width: 42px;
           text-align: right;
           width: 44px;
           height: 44px;

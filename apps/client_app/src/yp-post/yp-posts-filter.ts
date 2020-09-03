@@ -63,11 +63,6 @@ export class YpPostsFilter extends YpBaseElement {
           margin-bottom: 0 !important;
         }
 
-        paper-menu-button {
-          padding: 0;
-          margin: 0;
-        }
-
         .filterIcon {
           padding-right: 8px;
         }
@@ -141,7 +136,7 @@ export class YpPostsFilter extends YpBaseElement {
           }
         }
 
-        paper-dropdown-menu {
+        mwc-select {
           padding-left: 8px;
           padding-right: 8px;
         }

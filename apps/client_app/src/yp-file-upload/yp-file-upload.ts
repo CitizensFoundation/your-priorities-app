@@ -240,14 +240,6 @@ export class YpFileUpload extends YpBaseElement {
           margin: 2px 0px -3px;
         }
 
-        paper-progress {
-          --paper-progress-active-color: #03a9f4;
-        }
-
-        paper-progress[error] {
-          --paper-progress-active-color: #f40303;
-        }
-
         [hidden] {
           display: none !important;
         }
@@ -365,8 +357,6 @@ export class YpFileUpload extends YpBaseElement {
         .accept="${this.accept}"
         hidden
         ?multiple="${this.multi}" />
-      <!--<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
-    <paper-toast id="toastFail" text="Error uploading file!"></paper-toast>-->
     `;
   }
 

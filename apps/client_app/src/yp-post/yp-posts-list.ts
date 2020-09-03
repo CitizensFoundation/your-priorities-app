@@ -135,19 +135,12 @@ export class YpPostsList extends YpBaseElement {
         }
 
         .searchBox {
-          --paper-input-container-label: {
-            font-size: 23px;
-            color: #555;
-          }
           margin-bottom: 22px;
           margin-right: 8px;
         }
 
         @media (max-width: 800px) {
           .searchBox {
-            --paper-input-container-label: {
-              font-size: 18px;
-            }
             margin-bottom: 8px;
           }
 

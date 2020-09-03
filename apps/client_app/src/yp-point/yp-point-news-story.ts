@@ -76,7 +76,7 @@ export class YpPointNewsStory extends YpBaseElement {
           font-size: 14px;
         }
 
-        paper-icon-button.openCloseButton {
+        mwc-icon-button.openCloseButton {
           width: 56px;
           height: 56px;
           padding-left: 0;

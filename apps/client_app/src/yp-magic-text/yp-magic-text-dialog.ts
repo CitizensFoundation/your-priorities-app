@@ -32,7 +32,7 @@ export class YpMagicTextDialog extends YpMagicText {
             max-width: 100%;
           }
 
-          paper-dialog {
+          mwc-dialog {
             padding: 0;
             margin: 0;
           }

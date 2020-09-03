@@ -140,9 +140,6 @@ export class YpPostCard extends YpBaseElement {
           position: absolute;
           left: 8px;
           bottom: 2px;
-          --paper-share-button-icon-color: #656565;
-          --paper-share-button-icon-height: 46px;
-          --paper-share-button-icon-width: 46px;
           text-align: right;
           width: 48px;
           height: 48px;

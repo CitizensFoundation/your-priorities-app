@@ -222,7 +222,7 @@ export class YpLogin extends YpBaseElement {
         :host {
         }
 
-        paper-dialog {
+        mwc-dialog {
           padding-left: 8px;
           padding-right: 8px;
           width: 450px;
@@ -243,7 +243,7 @@ export class YpLogin extends YpBaseElement {
           margin-left: 8px;
         }
 
-        paper-spinner {
+        mwc-circular-progress-four-color {
           padding: 0;
           margin: 0;
         }
@@ -262,7 +262,7 @@ export class YpLogin extends YpBaseElement {
         }
 
         @media (max-width: 480px) {
-          paper-dialog {
+          mwc-dialog {
             padding: 0;
             margin: 0;
             width: 100%;
@@ -277,7 +277,7 @@ export class YpLogin extends YpBaseElement {
         }
 
         @media (max-width: 320px) {
-          paper-dialog {
+          mwc-dialog {
             min-width: 320px;
           }
 
@@ -392,7 +392,7 @@ export class YpLogin extends YpBaseElement {
           margin-bottom: 12px;
         }
 
-        paper-tabs {
+        mwc-tab-bar {
           margin-bottom: 8px;
         }
 
@@ -623,11 +623,6 @@ export class YpLogin extends YpBaseElement {
             ?hidden="${!this.userSpinner}"></mwc-circular-progress-four-color>
         </div>
       </mwc-dialog>
-
-      <iron-a11y-keys
-        id="a11y"
-        keys="enter"
-        @keys-pressed="${this.onEnter}"></iron-a11y-keys>
     `;
   }
 

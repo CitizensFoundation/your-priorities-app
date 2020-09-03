@@ -271,9 +271,7 @@ export class YpPostEdit extends YpEditBase {
           }
 
           .videoCam {
-            --iron-icon-height: 15px;
-            --iron-icon-width: 15px;
-            --iron-icon-fill-color: #555;
+
           }
 
           yp-structured-question-edit {

@@ -292,7 +292,7 @@ export class YpPoint extends YpBaseElement {
           color: #f00;
         }
 
-        paper-spinner {
+        mwc-circular-progress-four-color {
           margin-top: 4px;
         }
 
