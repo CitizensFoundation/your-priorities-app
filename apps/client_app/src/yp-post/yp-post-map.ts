@@ -3,9 +3,8 @@ import { nothing } from 'lit-html';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-import '../@yrpri/lit-google-map/src/lit-google-map.js';
+import 'lit-google-map';
 
-import { LitGoogleMap } from '../@yrpri/lit-google-map/src/lit-google-map.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
 @customElement('yp-post-map')
@@ -203,7 +202,7 @@ export class YpPostMap extends YpBaseElement {
       map.style.height = height + 'px';
       map.style.marginBottom = '64px';
       setTimeout(() => {
-        const gMap = this.$$('#map') as LitGoogleMap;
+        const gMap = this.$$('#map') as YpLitGoogleMapElement;
         if (gMap) {
           gMap.fitToMarkers = true;
           setTimeout(() => {

@@ -1,5 +1,6 @@
 declare module 'lit-flexbox-literals';
 declare module 'wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js';
+declare module 'lit-google-map';
 
 interface YpCollectionConfiguration {
   themeOverrideColorPrimary?: string;
@@ -183,6 +184,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   moreContactInformation?: boolean;
   attachmentsEnabled?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
+  defaultLocationLongLat?: string;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -196,6 +198,7 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   highlightedLanguages?: Array<string>;
   disableFacebookLoginForCommunity?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
+  defaultLocationLongLat?: string;
 }
 
 interface YpDomainConfiguration extends YpCollectionConfiguration {
@@ -417,12 +420,7 @@ interface YpPostData extends YpDatabaseItem {
       language: string;
     };
   };
-  location: {
-    longitude: string;
-    latitude: string;
-    map_zoom: string;
-    mapType: string;
-  };
+  location: YpLocationData;
   PostVideos?: Array<YpVideoData>;
   PostAudios?: Array<YpAudioData>;
   categoryId?: number;
@@ -603,8 +601,10 @@ interface YpEditFormParams {
 }
 
 interface YpLocationData {
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
+  map_zoom?: number;
+  mapType?: string;
 }
 
 interface YpSurveyPostResponse {
@@ -739,4 +739,10 @@ interface YpThemeContainerObject {
 interface YpThemeData {
   disabled: boolean;
   name: string;
+}
+
+interface YpLitGoogleMapElement extends HTMLElement {
+  fitToMarkers: boolean;
+  mapType?: string;
+  zoom?: number;
 }
