@@ -222,7 +222,6 @@ export class YpAppGlobals extends YpCodeBase {
 
   setAnonymousUser(user: YpUserData | undefined) {
     this.currentAnonymousUser = user;
-    console.debug('Set anon user ' + user);
   }
 
   setAnonymousGroupStatus(group: YpGroupData | undefined) {
@@ -232,9 +231,7 @@ export class YpAppGlobals extends YpCodeBase {
       group.configuration.allowAnonymousUsers
     ) {
       this.currentAnonymousGroup = group;
-      console.debug('Have set anonymous group id: ' + group.id);
       if (!window.appUser.user && this.currentAnonymousUser) {
-        console.debug('Setting anon user from cache');
         window.appUser.setLoggedInUser(this.currentAnonymousUser);
       } else if (
         window.appUser &&
@@ -253,9 +250,7 @@ export class YpAppGlobals extends YpCodeBase {
         window.appUser.user.profile_data.isAnonymousUser
       ) {
         window.appUser.removeAnonymousUser();
-        console.debug('Logout anon user');
       }
-      console.debug('Set anon group to null');
       this.currentAnonymousGroup = undefined;
     }
   }

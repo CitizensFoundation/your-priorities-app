@@ -316,7 +316,6 @@ export class YpPostsList extends YpBaseElement {
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
-    console.error(changedProperties);
   }
 
   _clearSearch() {

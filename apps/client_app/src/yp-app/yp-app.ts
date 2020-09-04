@@ -685,14 +685,12 @@ export class YpApp extends YpBaseElement {
   }
 
   _setupSamlCallback() {
-    console.log('Have created event listener for samlLogin');
 
     window.addEventListener(
       'message',
       e => {
         if (e.data == 'samlLogin' && window.appUser) {
           window.appUser.loginFromSaml();
-          console.log('Have contacted app user 2');
         }
       },
       false
@@ -700,7 +698,6 @@ export class YpApp extends YpBaseElement {
   }
 
   _setupTranslationSystem() {
-    console.log('Have started _setupTranslationSystem');
     const hostname = window.location.hostname;
     let defaultLocale = 'en';
     if (hostname.indexOf('betrireykjavik') > -1) {
@@ -929,12 +926,6 @@ export class YpApp extends YpBaseElement {
 
         if (oldRouteData && oldRouteData.page != undefined) {
           map[oldRouteData.page] = window.pageYOffset;
-          console.info(
-            'Saving scroll position for ' +
-              oldRouteData.page +
-              ' to ' +
-              window.pageYOffset
-          );
         }
 
         let delayUntilScrollToPost = 0;
@@ -1061,7 +1052,6 @@ export class YpApp extends YpBaseElement {
 
   _pageChanged() {
     const page = this.page;
-    console.log('Page changed to ' + page);
 
     //TODO: Get bundling working
     /*if (page) {
@@ -1394,10 +1384,6 @@ export class YpApp extends YpBaseElement {
         if (window.innerWidth > 1400) factor = 6;
 
         const minScrollFactorPx = Math.round(window.innerWidth / factor);
-
-        console.log(
-          'Recommendation swipe minScrollFactorPx: ' + minScrollFactorPx
-        );
 
         if (!this.userDrawerOpenedDelayed && !this.navDrawOpenedDelayed) {
           if (xDiff > 0 && xDiff > minScrollFactorPx) {

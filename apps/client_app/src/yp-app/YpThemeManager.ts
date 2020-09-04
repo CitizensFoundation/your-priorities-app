@@ -281,7 +281,6 @@ export class YpThemeManager {
     number: number | undefined,
     configuration: YpCollectionConfiguration | undefined = undefined
   ) {
-    console.error(number);
     if (
       configuration &&
       configuration.themeOverrideColorPrimary &&

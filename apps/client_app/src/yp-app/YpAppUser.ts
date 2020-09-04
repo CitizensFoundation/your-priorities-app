@@ -715,8 +715,10 @@ export class YpAppUser extends YpCodeBase {
         this.fireGlobal('yp-got-admin-rights', true);
       }, 1000);*/
     } else {
-      this.adminRights = undefined;
-      this.fireGlobal('yp-got-admin-rights', false);
+      if (this.adminRights) {
+        this.adminRights = undefined;
+        this.fireGlobal('yp-got-admin-rights', false);
+      }
     }
   }
 
