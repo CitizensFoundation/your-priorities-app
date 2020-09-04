@@ -226,7 +226,7 @@ export class YpAppDialogs extends YpBaseElement {
 
   constructor() {
     super();
-    this.addGlobalListener('yp-logged-in-user', this._loggedInUser);
+    this.addGlobalListener('yp-logged-in-user', this._loggedInUser.bind(this));
   }
 
   connectedCallback() {

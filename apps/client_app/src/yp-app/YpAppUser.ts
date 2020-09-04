@@ -2,6 +2,7 @@
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js';
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpLogin } from '../yp-user/yp-login.js';
 
 export class YpAppUser extends YpCodeBase {
   serverApi: YpServerApi;
@@ -91,8 +92,8 @@ export class YpAppUser extends YpCodeBase {
     } else {
       console.log('Not checking login in survey mode');
     }
-    this.addGlobalListener('yp-forgot-password', this._forgotPassword);
-    this.addGlobalListener('yp-reset-password', this._resetPassword);
+    this.addGlobalListener('yp-forgot-password', this._forgotPassword.bind(this));
+    this.addGlobalListener('yp-reset-password', this._resetPassword.bind(this));
   }
 
   sessionHas(key: string) {
@@ -215,22 +216,20 @@ export class YpAppUser extends YpCodeBase {
   }
 
   openUserlogin(
-    email: string | null = null,
-    collectionConfiguration: object | null = null
+    email: string | undefined = undefined,
+    collectionConfiguration: object | undefined = undefined
   ) {
-    // TODO: Remove any
-    window.appDialogs.getDialogAsync('userLogin', (dialog: any) => {
-      dialog.setup(this._handleLogin, window.appGlobals.domain);
-      dialog.open(null, email, collectionConfiguration);
+    window.appDialogs.getDialogAsync('userLogin', (dialog: YpLogin) => {
+      dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain!);
+      dialog.open(undefined, email, collectionConfiguration);
     });
   }
 
   autoAnonymousLogin() {
     setTimeout(() => {
       if (this.user == null) {
-        // TODO: Remove any
-        window.appDialogs.getDialogAsync('userLogin', (dialog: any) => {
-          dialog.setup(this._handleLogin, window.appGlobals.domain);
+        window.appDialogs.getDialogAsync('userLogin',  (dialog: YpLogin) => {
+          dialog.setup(this._handleLogin.bind(this), window.appGlobals.domain!);
           dialog.anonymousLogin();
         });
       } else {
@@ -244,8 +243,7 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _setUserLoginSpinner() {
-    // TODO: Remove any
-    window.appDialogs.getDialogAsync('userLogin', (dialog: any) => {
+    window.appDialogs.getDialogAsync('userLogin', (dialog: YpLogin)  => {
       dialog.userSpinner = false;
     });
   }

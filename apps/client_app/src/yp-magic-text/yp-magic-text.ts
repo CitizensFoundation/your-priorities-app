@@ -74,12 +74,12 @@ export class YpMagicText extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+    this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent.bind(this));
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent);
+    this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent.bind(this));
   }
 
   static get styles() {

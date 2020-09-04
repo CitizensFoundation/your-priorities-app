@@ -42,12 +42,12 @@ export class YpPostActions extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal);
+    this.addGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal.bind(this));
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal);
+    this.removeGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal.bind(this));
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {

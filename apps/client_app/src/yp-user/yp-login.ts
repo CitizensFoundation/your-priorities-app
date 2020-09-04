@@ -464,7 +464,7 @@ export class YpLogin extends YpBaseElement {
               <mwc-button
                 raised
                 class="anonLoginButton"
-                @click="${this._anonymousLogin}"
+                @click="${this.anonymousLogin}"
                 >${this.t('participateAnonymously')}</mwc-button
               >
             `
@@ -739,7 +739,7 @@ export class YpLogin extends YpBaseElement {
     );
   }
 
-  async _anonymousLogin() {
+  async anonymousLogin() {
     if (window.appGlobals.currentAnonymousGroup) {
       window.appGlobals.analytics.sendLoginAndSignup(
         -1,
@@ -1101,12 +1101,7 @@ export class YpLogin extends YpBaseElement {
     } else {
       window.appUser.setLoggedInUser(user);
     }
-    document.dispatchEvent(
-      new CustomEvent('lite-signal', {
-        bubbles: true,
-        detail: { name: 'yp-logged-in', data: user },
-      })
-    );
+    this.fireGlobal('yp-logged-in', user)
   }
 
   _loginCompleted(user: YpUserData) {
@@ -1131,7 +1126,7 @@ export class YpLogin extends YpBaseElement {
   }
 
   open(
-    redirectToURL: string,
+    redirectToURL: string | undefined,
     email: string | undefined,
     collectionConfiguration: YpCollectionConfiguration | undefined
   ) {
