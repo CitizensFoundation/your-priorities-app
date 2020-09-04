@@ -755,5 +755,9 @@ interface YpHasAutoTranslationResponse {
 }
 
 interface YpEmojiSelectorData {
-  open(trigger: HTMLInputElement, inputTarget: HTMLInputElement): () => void
+  open(trigger: HTMLInputElement, inputTarget: HTMLInputElement): () => void;
+}
+
+interface YpShareDialogData {
+  open(url: string, label: string, sharedContent: Function): () => void;
 }

@@ -10,9 +10,6 @@ import '@material/mwc-tab-bar';
 import '@material/mwc-fab';
 import { Menu } from '@material/mwc-menu';
 
-import 'share-menu';
-import { ShareMenu } from 'share-menu';
-
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import './yp-post-actions.js';
@@ -388,17 +385,10 @@ export class YpPostHeader extends YpBaseElementWithLogin {
 
       <div class="share">
         <mwc-icon-button
-          icon="share" .label="${this.t('post.shareInfo')}"
-          @click="${this._shareTap}"></mwc-icon-button>
-        <share-menu
-          @share="${this._sharedContent}"
-          class="shareIcon"
           ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
-          id="shareButton"
-          .title="${this.t('post.shareInfo')}"
-          .url="${encodeURIComponent(
-            'https://' + window.location.host + '/post/' + this.post.id
-          )}"></share-menu>
+          icon="share"
+          .label="${this.t('post.shareInfo')}"
+          @click="${this._shareTap}"></mwc-icon-button>
       </div>`;
   }
 
@@ -517,7 +507,14 @@ export class YpPostHeader extends YpBaseElementWithLogin {
       detail.brand,
       this.post ? this.post.id : -1
     );
-    (this.$$('#shareButton') as ShareMenu).share();
+
+    window.appDialogs.getDialogAsync(
+      'shareDialog',
+      (dialog: YpShareDialogData) => {
+        const url = 'https://' + window.location.host + '/post/' + this.post.id;
+        dialog.open(url, this.t('post.shareInfo'), this._sharedContent);
+      }
+    );
   }
 
   get hasPostAccess() {
@@ -615,53 +612,65 @@ export class YpPostHeader extends YpBaseElementWithLogin {
   _openReport() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'post.report');
-    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
-      dialog.setup(
-        '/api/posts/' + this.post.id + '/report',
-        this.t('reportConfirmation'),
-        this._onReport.bind(this),
-        this.t('post.report'),
-        'PUT'
-      );
-      dialog.open();
-    });
+    window.appDialogs.getDialogAsync(
+      'apiActionDialog',
+      (dialog: YpApiActionDialog) => {
+        dialog.setup(
+          '/api/posts/' + this.post.id + '/report',
+          this.t('reportConfirmation'),
+          this._onReport.bind(this),
+          this.t('post.report'),
+          'PUT'
+        );
+        dialog.open();
+      }
+    );
   }
 
   _openDelete() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'post.delete');
-    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
-      dialog.setup(
-        '/api/posts/' + this.post.id,
-        this.t('post.deleteConfirmation'),
-        this._onDeleted.bind(this)
-      );
-      dialog.open();
-    });
+    window.appDialogs.getDialogAsync(
+      'apiActionDialog',
+      (dialog: YpApiActionDialog) => {
+        dialog.setup(
+          '/api/posts/' + this.post.id,
+          this.t('post.deleteConfirmation'),
+          this._onDeleted.bind(this)
+        );
+        dialog.open();
+      }
+    );
   }
 
   _openDeleteContent() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'postDeleteContent');
-    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
-      dialog.setup(
-        '/api/posts/' + this.post.id + '/delete_content',
-        this.t('postDeleteContentConfirmation')
-      );
-      dialog.open();
-    });
+    window.appDialogs.getDialogAsync(
+      'apiActionDialog',
+      (dialog: YpApiActionDialog) => {
+        dialog.setup(
+          '/api/posts/' + this.post.id + '/delete_content',
+          this.t('postDeleteContentConfirmation')
+        );
+        dialog.open();
+      }
+    );
   }
 
   _openAnonymizeContent() {
     (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'postAnonymizeContent');
-    window.appDialogs.getDialogAsync('apiActionDialog', (dialog: YpApiActionDialog) => {
-      dialog.setup(
-        '/api/posts/' + this.post.id + '/anonymize_content',
-        this.t('postAnonymizeContentConfirmation')
-      );
-      dialog.open();
-    });
+    window.appDialogs.getDialogAsync(
+      'apiActionDialog',
+      (dialog: YpApiActionDialog) => {
+        dialog.setup(
+          '/api/posts/' + this.post.id + '/anonymize_content',
+          this.t('postAnonymizeContentConfirmation')
+        );
+        dialog.open();
+      }
+    );
   }
 
   _onReport() {

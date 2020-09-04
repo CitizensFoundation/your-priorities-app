@@ -122,11 +122,11 @@ export class YpAppDialogs extends YpBaseElement {
           <yp-emoji-dialog id="emojiDialog"></yp-emoji-dialog>>
         `;
         break;
-        case 'missingEmail':
-        selectedDialog = html`
-          <yp-missing-email id="missingEmail"></yp-missing-email>
-        `;
-        break;
+      case 'missingEmail':
+      selectedDialog = html`
+        <yp-missing-email id="missingEmail"></yp-missing-email>
+      `;
+      break;
       case 'postEdit':
         selectedDialog = html` <yp-post-edit id="postEdit"></yp-post-edit> `;
         break;
@@ -143,6 +143,11 @@ export class YpAppDialogs extends YpBaseElement {
       case 'userEdit':
         selectedDialog = html`
           <yp-user-edit id="userEdit" method="PUT"></yp-user-edit>
+        `;
+        break;
+      case 'shareDialog':
+        selectedDialog = html`
+          <yp-share-dialog id="shareDialog"></yp-share-dialog>
         `;
         break;
       case 'userDeleteOrAnonymize':

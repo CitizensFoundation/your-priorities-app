@@ -2,9 +2,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import 'share-menu';
-import { ShareMenu } from 'share-menu';
-
 import '@material/mwc-icon-button';
 
 import { removeClass } from '../@yrpri/RemoveClass.js';
@@ -131,13 +128,6 @@ export class YpPointActions extends YpBaseElement {
             .label="${this.t('sharePoint')}"
             up-voted="${this.isUpVoted}"
             @click="${this._shareTap}"></mwc-icon-button>
-          <share-menu
-            @share="${this._sharedContent}"
-            class="shareIcon"
-            id="shareButton"
-            .title="${this.t('post.shareInfo')}"
-            .url="${this.pointUrl || ''}"></share-menu>
-
         `
       : nothing
   }
@@ -169,8 +159,18 @@ export class YpPointActions extends YpBaseElement {
       detail.brand,
       this.point ? this.point.id : -1
     );
-    (this.$$('#shareButton') as ShareMenu).share();
-  }
+
+    window.appDialogs.getDialogAsync(
+      'shareDialog',
+      (dialog: YpShareDialogData) => {
+        dialog.open(
+          this.pointUrl || '',
+          this.t('sharePoint'),
+          this._sharedContent
+        );
+      }
+    );
+    }
 
   _onPointChanged() {
     if (this.point) {

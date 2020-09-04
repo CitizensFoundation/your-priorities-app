@@ -1,8 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
-import 'share-menu';
-import { ShareMenu } from 'share-menu';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
@@ -355,15 +353,6 @@ export class YpPostCard extends YpBaseElement {
                           icon="share" .label="${this.t('post.shareInfo')}"
                           @click="${this._shareTap}"></mwc-icon-button>
                           </mwc-icon-button>
-                          <share-menu
-                            @share="${this._sharedContent}"
-                            class="shareIcon"
-                            ?less-margin="${
-                              this.post.Group.configuration.hideDownVoteForPost
-                            }"
-                            id="shareButton"
-                            .title="${this.t('post.shareInfo')}"
-                            .url="${this._fullPostUrl}"></share-menu>
                         </div>
                         ${
                           this.post.Group.configuration.customRatings
@@ -483,7 +472,17 @@ export class YpPostCard extends YpBaseElement {
       event.detail.brand,
       this.post ? this.post.id : -1
     );
-    (this.$$('#shareButton') as ShareMenu).share();
+
+    window.appDialogs.getDialogAsync(
+      'shareDialog',
+      (dialog: YpShareDialogData) => {
+        dialog.open(
+          this._fullPostUrl,
+          this.t('post.shareInfo'),
+          this._sharedContent
+        );
+      }
+    );
   }
 
   get hideDescription(): boolean {
