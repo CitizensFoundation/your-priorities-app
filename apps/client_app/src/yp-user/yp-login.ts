@@ -1110,11 +1110,11 @@ export class YpLogin extends YpBaseElement {
   }
 
   _loginCompleted(user: YpUserData) {
-    if (window.PasswordCredential && this.email && this.password) {
+    if (window.PasswordCredential && this.emailValue && this.passwordValue) {
       const c = new window.PasswordCredential({
-        name: this.email,
-        id: this.email,
-        password: this.password,
+        name: this.emailValue,
+        id: this.emailValue,
+        password: this.passwordValue,
       });
       navigator.credentials
         .store(c)
