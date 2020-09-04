@@ -20,7 +20,7 @@ export class YpAppDialogs extends YpBaseElement {
   pageDialogOpen = false;
 
   @property({ type: Boolean })
-  magicTextDialogOpen = false
+  magicTextDialogOpen = false;
 
   @property({ type: Boolean })
   mediaRecorderOpen = false;
@@ -123,10 +123,10 @@ export class YpAppDialogs extends YpBaseElement {
         `;
         break;
       case 'missingEmail':
-      selectedDialog = html`
-        <yp-missing-email id="missingEmail"></yp-missing-email>
-      `;
-      break;
+        selectedDialog = html`
+          <yp-missing-email id="missingEmail"></yp-missing-email>
+        `;
+        break;
       case 'postEdit':
         selectedDialog = html` <yp-post-edit id="postEdit"></yp-post-edit> `;
         break;
@@ -189,16 +189,15 @@ export class YpAppDialogs extends YpBaseElement {
           `
         : nothing}
 
-      <mwc-snackbar id="masterToast"></mwc-snackbar>>
-
+      <mwc-snackbar id="masterToast"></mwc-snackbar>
       ${this.pageDialogOpen
         ? html` <yp-page-dialog id="pageDialog"></yp-page-dialog> `
-        : nothing }
-
+        : nothing}
       ${this.magicTextDialogOpen
-        ? html`  <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog> `
-        : nothing }
-
+        ? html`
+            <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
+          `
+        : nothing}
       ${this.confirmationDialogOpen
         ? html`
             <yp-confirmation-dialog
@@ -232,7 +231,7 @@ export class YpAppDialogs extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.fire('yp-app-dialogs-ready', this)
+    this.fire('yp-app-dialogs-ready', this);
     setTimeout(() => {
       import('./yp-dialog-container-delayed.js').then(() => {
         this.haveLoadedDelayed = true;
