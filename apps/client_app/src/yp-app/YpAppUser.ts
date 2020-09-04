@@ -751,7 +751,7 @@ export class YpAppUser extends YpCodeBase {
       this.memberships = response as YpMemberships;
       this._updateMembershipsIndex(this.memberships);
       this.fireGlobal('yp-got-memberships', true);
-    } else {
+    } else if (this.memberships) {
       this.memberships = undefined;
       this.fireGlobal('yp-got-memberships', false);
     }

@@ -32,6 +32,12 @@ export class AcActivities extends YpBaseElementWithLogin {
   domainId: number | undefined;
 
   @property({ type: Number })
+  collectionId!: number
+
+  @property({ type: String })
+  collectionType!: string
+
+  @property({ type: Number })
   communityId: number | undefined;
 
   @property({ type: Number })
@@ -69,12 +75,19 @@ export class AcActivities extends YpBaseElementWithLogin {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
+    if (changedProperties.has('activities')) {
+      const a = this.activities;
+      debugger;
+    }
+
+
     if (changedProperties.has('domainId')) {
       this._domainIdChanged();
     }
 
     if (changedProperties.has('communityId')) {
       this._communityIdChanged();
+      debugger;
     }
 
     if (changedProperties.has('groupId')) {
@@ -346,6 +359,24 @@ export class AcActivities extends YpBaseElementWithLogin {
       'yp-refresh-activities-scroll-threshold',
       this._clearScrollThreshold
     );
+
+    switch (this.collectionType) {
+      case 'domain':
+        this.domainId = this.collectionId
+        break
+      case 'community':
+        this.communityId = this.collectionId
+        break
+      case 'group':
+        this.groupId = this.collectionId
+        break
+      case 'post':
+        this.postId = this.collectionId
+        break
+      case 'user':
+        this.userId = this.collectionId
+        break
+     }
   }
 
   disconnectedCallback() {
@@ -493,7 +524,8 @@ export class AcActivities extends YpBaseElementWithLogin {
       this._moreToLoad = true;
       //TODO: Add a minimum threshold of filtering before enabling dynamic news_feeds again
       if (window.appUser && window.appUser.user && !this.postId) {
-        this.mode = 'news_feeds';
+        this.mode = 'activities';
+        //this.mode = 'news_feeds';
       } else {
         this.mode = 'activities';
       }
@@ -509,25 +541,13 @@ export class AcActivities extends YpBaseElementWithLogin {
   }
 
   async _loadMoreData() {
-    if (this.url && this._moreToLoad && this.oldestProcessedActivityAt) {
-      console.log('_loadMoreData for scroll 3');
+    if (this.url && this._moreToLoad) {
       this._moreToLoad = false;
-      console.info(
-        '_loadMoreData for scroll for domainId: ' +
-          this.domainId +
-          ' communityId: ' +
-          this.communityId +
-          ' groupId: ' +
-          this.groupId +
-          ' postId: ' +
-          this.postId
-      );
       let url = this.url;
       if (this.oldestProcessedActivityAt)
         url += '?beforeDate=' + this.oldestProcessedActivityAt;
-      this._activitiesResponse(
-        (await window.serverApi.getAcActivities(url)) as AcActivitiesResponse
-      );
+      const response = (await window.serverApi.getAcActivities(url)) as AcActivitiesResponse
+      this._processResponse(response)
     } else {
       console.warn('Trying to load more activities without conditions');
     }
@@ -538,11 +558,11 @@ export class AcActivities extends YpBaseElementWithLogin {
       let url = this.url;
       if (this.oldestProcessedActivityAt)
         url = url + '?afterDate=' + this.latestProcessedActivityAt;
-      this._activitiesResponse(
+      this._processResponse(
         (await window.serverApi.getAcActivities(url)) as AcActivitiesResponse
       );
     } else if (this.url && !this.latestProcessedActivityAt) {
-      this._activitiesResponse(
+      this._processResponse(
         (await window.serverApi.getAcActivities(
           this.url
         )) as AcActivitiesResponse
@@ -637,12 +657,13 @@ export class AcActivities extends YpBaseElementWithLogin {
     return activities;
   }
 
-  _activitiesResponse(activitiesResponse: AcActivitiesResponse) {
+   _processResponse(activitiesResponse: AcActivitiesResponse) {
     const activities = this._preProcessActivities(
       activitiesResponse.activities
     );
 
     this.gotInitialData = true;
+
 
     if (activitiesResponse.oldestProcessedActivityAt) {
       this.oldestProcessedActivityAt =
@@ -653,13 +674,15 @@ export class AcActivities extends YpBaseElementWithLogin {
 
     for (let i = 0; i < activities.length; i++) {
       if (this.url!.indexOf('afterDate') > -1) {
-        this.activities?.unshift(activities[i]);
+        this.activities!.unshift(activities[i]);
       } else {
-        this.activities?.push(activities[i]);
+        this.activities!.push(activities[i]);
       }
     }
 
     console.info('Activities length: ' + activities.length);
+
+
     if (this.activities && this.activities.length > 0) {
       if (
         !this.latestProcessedActivityAt ||
