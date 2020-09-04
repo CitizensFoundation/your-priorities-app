@@ -1095,7 +1095,6 @@ export class YpLogin extends YpBaseElement {
 
   _loginAfterSavePassword(user: YpUserData) {
     if (this.redirectToURL) YpNavHelpers.redirectTo(this.redirectToURL);
-    this.fire('login', user);
     if (this.onLoginFunction) {
       this.onLoginFunction(user);
     } else {

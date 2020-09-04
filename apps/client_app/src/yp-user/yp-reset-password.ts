@@ -112,7 +112,6 @@ export class YpResetPassword extends YpBaseElement {
 
   _loginCompleted(user: YpUserData) {
     window.appUser.setLoggedInUser(user);
-    this.fire('login', user);
   }
 
   open(token: string) {
