@@ -753,3 +753,7 @@ interface YpLitGoogleMapElement extends HTMLElement {
 interface YpHasAutoTranslationResponse {
   hasAutoTranslation: boolean;
 }
+
+interface YpEmojiSelectorData {
+  open(trigger: HTMLInputElement, inputTarget: HTMLInputElement): () => void
+}

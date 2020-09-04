@@ -117,7 +117,12 @@ export class YpAppDialogs extends YpBaseElement {
           <yp-accept-invite id="acceptInvite"></yp-accept-invite>
         `;
         break;
-      case 'missingEmail':
+      case 'emojiDialog':
+        selectedDialog = html`
+          <yp-emoji-dialog id="emojiDialog"></yp-emoji-dialog>>
+        `;
+        break;
+        case 'missingEmail':
         selectedDialog = html`
           <yp-missing-email id="missingEmail"></yp-missing-email>
         `;
