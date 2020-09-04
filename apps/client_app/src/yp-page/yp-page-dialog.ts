@@ -56,12 +56,10 @@ export class YpPageDialog extends YpBaseElement {
     return html`
       <mwc-dialog .heading="${this.pageTitle}" id="dialog" ?rtl="${this.rtl}">
         <div id="content"></div>
-        <div class="buttons">
-          <mwc-button
-            @click="${this._close}"
-            slot="primaryAction"
-            .label="${this.t('close')}"></mwc-button>
-        </div>
+        <mwc-button
+          @click="${this._close}"
+          slot="primaryAction"
+          .label="${this.t('close')}"></mwc-button>
       </mwc-dialog>
     `;
   }
@@ -77,12 +75,16 @@ export class YpPageDialog extends YpBaseElement {
   open(page: YpHelpPage, language: string) {
     this.page = page;
     this.language = language;
-    (this.$$('#content') as HTMLElement).innerHTML =  this.page.content[this.language];
+    (this.$$('#content') as HTMLElement).innerHTML = this.page.content[
+      this.language
+    ];
     (this.$$('#dialog') as Dialog).open = true;
   }
 
   _close() {
     (this.$$('#dialog') as Dialog).open = false;
-    (this.$$('#content') as HTMLElement).innerHTML = '';
+    setTimeout(()=>{
+      (this.$$('#content') as HTMLElement).innerHTML = '';
+    }, 750)
   }
 }
