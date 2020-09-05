@@ -4,6 +4,7 @@ import { AcActivityWithGroupBase } from './ac-activity-with-group-base.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import '../yp-point/yp-point-news-story.js';
+import { nothing } from 'lit-html';
 
 @customElement('ac-activity-point-news-story')
 export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
@@ -39,10 +40,6 @@ export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
         .mainContainer {
           width: auto;
         }
-
-        [hidden] {
-          display: none !important;
-        }
       `,
     ];
   }
@@ -50,19 +47,23 @@ export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
   render() {
     return html`
       <div class="layout vertical mainContainer">
-        <yp-magic-text
-          @tap="${this._goToPost}"
-          class="postName"
-          ?hidden="${!this.activity.Post!.name}"
-          textOnly
-          textType="postName"
-          .contentLanguage="${this.activity.Post!.language}"
-          .content="${this.activity.Post!.name}"
-          .contentId="${this.activity.Post!.id}">
-        </yp-magic-text>
+        ${this.activity.Post
+          ? html`
+              <yp-magic-text
+                @tap="${this._goToPost}"
+                class="postName"
+                ?hidden="${!this.activity.Post.name}"
+                textOnly
+                textType="postName"
+                .contentLanguage="${this.activity.Post.language}"
+                .content="${this.activity.Post.name}"
+                .contentId="${this.activity.Post.id}">
+              </yp-magic-text>
+            `
+          : nothing}
         <div class="layout vertical center-center newsStoryContainer">
           <yp-point-news-story
-            with-comments
+            withComments
             hideUser
             class="card"
             .point="${this.activity.Point}"></yp-point-news-story>
@@ -74,7 +75,7 @@ export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
                 ${this.groupTitle}
               </div>
             `
-          : html``}
+          : nothing}
       </div>
     `;
   }

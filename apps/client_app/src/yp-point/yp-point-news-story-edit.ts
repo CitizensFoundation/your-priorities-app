@@ -189,6 +189,10 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
     );
   }
 
+  get newPointContent() {
+    return (this.$$("#pointNewsStory") as TextArea).value
+  }
+
   disconnectedCallback() {
     super.disconnectedCallback();
     (this.$$('#pointNewsStory') as TextArea).removeEventListener(
@@ -200,13 +204,16 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
   _reset() {
     this.point = { content: '' } as YpPointData;
     this.point.embed_data = undefined;
+    (this.$$("#pointNewsStory") as TextArea).value = ''
     this._clearButtonState();
   }
 
   async _sendStory() {
     (this.$$('#storySubmitButton') as Button).disabled = true;
+    this.point!.content = this.newPointContent
     const body = { point: this.point };
     let url;
+    debugger;
     if (this.point && this.point.content && this.point.content.length > 2) {
       if (this.postId && this.postGroupId) {
         merge(body, { post_id: this.postId });
@@ -224,6 +231,7 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
       } else {
         console.error("Can't find send ids");
       }
+
       if (url) {
         await window.serverApi.postNewsStory(url, body)
         this.fire('refresh')
