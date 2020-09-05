@@ -1024,7 +1024,7 @@ export class YpLogin extends YpBaseElement {
     return (this.$$('#password') as HTMLInputElement).value.trim();
   }
 
-  get fullnameValue() {
+  get fullnameValue(): string | void {
     if (this.$$('#fullname'))
       return (this.$$('#fullname') as HTMLInputElement).value.trim();
   }
@@ -1035,6 +1035,7 @@ export class YpLogin extends YpBaseElement {
     )) as YpUserData;
     this.isSending = false;
     if (user) {
+      debugger;
       window.appGlobals.analytics.sendLoginAndSignup(
         user.id,
         'Signup Success',
@@ -1050,10 +1051,9 @@ export class YpLogin extends YpBaseElement {
   }
 
   async _loginUser() {
-    const user = await window.serverApi.loginUser(
+    const user = (await window.serverApi.loginUser(
       this.credentials
-    ) as YpUserData;
-    debugger;
+    )) as YpUserData;
     this.isSending = false;
     if (user) {
       this._loginCompleted(user);
@@ -1079,7 +1079,7 @@ export class YpLogin extends YpBaseElement {
         }
         this.userSpinner = false;
       } else {
-        this.fire('yp-error', this.t('user.completeForm'))
+        this.fire('yp-error', this.t('user.completeForm'));
         window.appGlobals.analytics.sendLoginAndSignup(
           -1,
           this.registerMode ? 'Signup Fail' : 'Login Fail',
