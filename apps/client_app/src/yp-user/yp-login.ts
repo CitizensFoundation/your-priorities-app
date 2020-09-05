@@ -83,18 +83,9 @@ export class YpLogin extends YpBaseElement {
 
   isSending = false;
 
-  static get propertidsdses() {
-    return {
-      opened: {
-        type: Boolean,
-        value: false,
-        observer: '_openedChanged',
-      },
-    };
-  }
-
   static get styles() {
     return [
+      super.styles,
       css`
         .btn-auth,
         .btn-auth:visited {
@@ -243,18 +234,10 @@ export class YpLogin extends YpBaseElement {
           margin-left: 8px;
         }
 
-        mwc-circular-progress-four-color {
-          padding: 0;
-          margin: 0;
-        }
-
         .buttons {
           color: var(--accent-color, #000);
-          font-size: 15px;
-          margin-top: 20px;
-          text-align: center;
-          vertical-align: bottom;
-          margin-bottom: 3px;
+          margin-top: 8px;
+          height: 40px;
         }
 
         .boldButton {
@@ -402,6 +385,11 @@ export class YpLogin extends YpBaseElement {
           border-color: #ddd;
           padding: 12px;
         }
+
+        mwc-circular-progress-four-color {
+          width: 24px;
+          height: 24px;
+        }
       `,
     ];
   }
@@ -530,36 +518,46 @@ export class YpLogin extends YpBaseElement {
   }
 
   renderButtons() {
-    return html` <div class="buttons layout vertical center-center">
-      <div class="layout horizontal center-center">
-        <mwc-button
-          dialogDismiss
-          @click="${this._cancel}"
-          slot="secondaryAction"
+    return html`
+      <div class="buttons layout horizontal self-end">
+        <mwc-circular-progress-four-color
+          class="mainSpinner"
+          indeterminate
+          ?hidssden="${!this.userSpinner}"></mwc-circular-progress-four-color>
+        <div class="flex"></div>
+        <mwc-button dialogAction="cancel" @click="${this._cancel}"
           >${this.t('cancel')}</mwc-button
         >
         <mwc-button
           ?hidden="${this.forceSecureSamlLogin}"
           @click="${this._forgotPassword}"
-          slot="secondaryAction"
           >${this.t('user.newPassword')}</mwc-button
         >
         <mwc-button
           ?hidden="${this.forceSecureSamlLogin}"
           autofocus
           raised
-          slot="primaryAction"
           class="boldButton"
           @click="${this._validateAndSend}"
           >${this.submitText}</mwc-button
         >
       </div>
-    </div>`;
+    `;
+  }
+
+  closeAndReset() {
+    this.close();
+    this.registerMode = 0;
   }
 
   render() {
     return html`
-      <mwc-dialog id="dialog" modal ?open="${this.opened}">
+      <mwc-dialog
+        id="dialog"
+        modal
+        ?open="${this.opened}"
+        @closed="${this.closeAndReset}"
+        hideActions>
         <mwc-tab-bar
           @MDCTabBar:activated="${this._selectRegistrationMode}"
           .selected="${this.registerMode}"
@@ -576,7 +574,7 @@ export class YpLogin extends YpBaseElement {
             stacked></mwc-tab>
         </mwc-tab-bar>
 
-        <div class="layout vertical innerScroll">
+        <div class="layout vertical center-center">
           <span ?hidden="${!this.registerMode}">
             <div
               ?hidden="${!this.customUserRegistrationText}"
@@ -621,12 +619,6 @@ export class YpLogin extends YpBaseElement {
         </div>
 
         ${this.renderButtons()}
-
-        <div class="layout horizontal center-center ajaxElements">
-          <mwc-circular-progress-four-color
-            class="mainSpinner"
-            ?hidden="${!this.userSpinner}"></mwc-circular-progress-four-color>
-        </div>
       </mwc-dialog>
     `;
   }
@@ -747,11 +739,17 @@ export class YpLogin extends YpBaseElement {
         'Anonymous'
       );
 
+      this._startSpinner();
+
       const user = (await window.serverApi.registerUser({
         groupId: window.appGlobals.currentAnonymousGroup.id,
         trackingParameters: window.appGlobals.originalQueryParameters,
       })) as YpUserData;
+
+      this._cancel();
+
       this.isSending = false;
+
       if (user) {
         window.appGlobals.analytics.sendLoginAndSignup(
           user.id,
@@ -1027,7 +1025,7 @@ export class YpLogin extends YpBaseElement {
   }
 
   get fullnameValue() {
-    return (this.$$('#password') as HTMLInputElement).value.trim();
+    return (this.$$('#fullname') as HTMLInputElement).value.trim();
   }
 
   async _registerUser() {
@@ -1071,11 +1069,13 @@ export class YpLogin extends YpBaseElement {
         'Email'
       );
       if (this.emailValue && this.passwordValue) {
+        this.userSpinner = true;
         if (this.registerMode) {
-          this._registerUser();
+          //this._registerUser();
         } else {
-          this._loginUser();
+          //this._loginUser();
         }
+        this.userSpinner = false;
       } else {
         // TODO: Show this error
         // this.$$('#loginAjax').showErrorDialog(this.t('user.completeForm'));
@@ -1100,7 +1100,8 @@ export class YpLogin extends YpBaseElement {
     } else {
       window.appUser.setLoggedInUser(user);
     }
-    this.fireGlobal('yp-logged-in', user)
+    this.close();
+    this.fireGlobal('yp-logged-in', user);
   }
 
   _loginCompleted(user: YpUserData) {
@@ -1131,7 +1132,6 @@ export class YpLogin extends YpBaseElement {
   ) {
     this.redirectToURL = redirectToURL;
     this.userSpinner = false;
-    this.opened = false;
 
     if (email) {
       this.email = email;
@@ -1161,22 +1161,25 @@ export class YpLogin extends YpBaseElement {
         window.PasswordCredential &&
         navigator.credentials
       ) {
-        navigator.credentials.get({ password: true }).then(credentials => {
-          const passwordCredentials = credentials as PasswordCredential;
-          if (credentials && credentials.id && passwordCredentials.password) {
-            this.email = credentials.id;
-            this.password = passwordCredentials.password
-              ? passwordCredentials.password
-              : '';
-            if (window.appUser.hasIssuedLogout === true) {
-              console.log('Have issued logout not auto logging in');
+        navigator.credentials
+          .get({ password: true })
+          .then(async credentials => {
+            const passwordCredentials = credentials as PasswordCredential;
+            if (credentials && credentials.id && passwordCredentials.password) {
+              this.email = credentials.id;
+              this.password = passwordCredentials.password
+                ? passwordCredentials.password
+                : '';
+              await this.requestUpdate();
+              if (window.appUser.hasIssuedLogout === true) {
+                console.log('Have issued logout not auto logging in');
+              } else {
+                //this._validateAndSend();
+              }
             } else {
-              this._validateAndSend();
+              console.warn('Canceling credentials.get');
             }
-          } else {
-            console.warn('Canceling credentials.get');
-          }
-        });
+          });
       }
     });
   }

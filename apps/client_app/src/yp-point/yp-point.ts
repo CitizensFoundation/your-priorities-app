@@ -456,7 +456,7 @@ export class YpPoint extends YpBaseElement {
         ? html`
             <div class="layout vertical center-center checkTranscript">
               <div>${this.t('checkingForTranscript')}</div>
-              <mwc-circular-progress-four-color></mwc-circular-progress-four-color>
+              <mwc-circular-progress-four-color indeterminate></mwc-circular-progress-four-color>
             </div>
           `
         : nothing}

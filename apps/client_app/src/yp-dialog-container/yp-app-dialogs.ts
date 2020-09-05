@@ -8,6 +8,8 @@ import { Dialog } from '@material/mwc-dialog';
 import '@material/mwc-dialog';
 import '@material/mwc-snackbar';
 
+import '../yp-user/yp-login.js';
+
 @customElement('yp-app-dialogs')
 export class YpAppDialogs extends YpBaseElement {
   @property({ type: String })
@@ -190,6 +192,9 @@ export class YpAppDialogs extends YpBaseElement {
         : nothing}
 
       <mwc-snackbar id="masterToast"></mwc-snackbar>
+
+      ${this.renderSelectedDialog()}
+
       ${this.pageDialogOpen
         ? html` <yp-page-dialog id="pageDialog"></yp-page-dialog> `
         : nothing}
@@ -213,7 +218,7 @@ export class YpAppDialogs extends YpBaseElement {
       ${this.mediaRecorderOpen
         ? html` <yp-media-recorder id="mediaRecorder"></yp-media-recorder> `
         : nothing}
-      ${this.renderSelectedDialog()}
+
       ${this.loadingDialogOpen
         ? html`
             <mwc-dialog id="loadingDialog">
