@@ -101,7 +101,7 @@ export class YpUserImage extends YpBaseElement {
 
   render() {
     return html`
-      ${this.user
+      ${this.user && !this.noProfileImage
         ? html`
             ${this.profileImageUrl
               ? html`

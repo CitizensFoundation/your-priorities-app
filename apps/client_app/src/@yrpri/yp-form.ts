@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 /**
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
@@ -13,8 +14,8 @@ found at http://polymer.github.io/PATENTS.txt
 
 import { YpBaseElement } from './yp-base-element.js';
 import { property, customElement, html, css } from 'lit-element';
-import { dom, DomApi } from './domUtils/dom.js';
-import { FlattenedNodesObserver } from './domUtils/flattened-nodes-observer.js';
+import { dom } from '@polymer/polymer/lib/legacy/polymer.dom.js';
+import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 
 /**
 `<yp-form>` is a wrapper around the HTML `<form>` element, that can
@@ -121,7 +122,8 @@ export class YpForm extends YpBaseElement {
       // values.
       window.setTimeout(this._saveInitialValues.bind(this), 1);
     } else {
-      this._nodeObserver = (dom(this) as DomApi).observeNodes((mutations) => {
+      //@ts-ignore
+      this._nodeObserver = dom(this).observeNodes((mutations) => {
         for (let i = 0; i < mutations.addedNodes.length; i++) {
           if (mutations.addedNodes[i].tagName === 'FORM') {
             this._form = mutations.addedNodes[i] as HTMLFormElement;
@@ -129,7 +131,8 @@ export class YpForm extends YpBaseElement {
             // to be upgraded, hence we'll be able to traverse their
             // shadowRoots.
             this._init();
-            (dom(this) as DomApi).unobserveNodes(this._nodeObserver!);
+            //@ts-ignore
+            dom(this).unobserveNodes(this._nodeObserver!);
             this._nodeObserver = undefined;
           }
         }
@@ -144,7 +147,8 @@ export class YpForm extends YpBaseElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     if (this._nodeObserver) {
-      (dom(this) as DomApi).unobserveNodes(this._nodeObserver);
+      //@ts-ignore
+      dom(this).unobserveNodes(this._nodeObserver);
       this._nodeObserver = undefined;
     }
   }
@@ -361,7 +365,8 @@ export class YpForm extends YpBaseElement {
     submittable: HTMLInputElement[] | undefined = undefined
   ) {
     submittable = submittable || [];
-    const nodes = (dom(parent) as DomApi).querySelectorAll('*');
+    //@ts-ignore
+    const nodes = dom(parent).querySelectorAll('*');
     for (let i = 0; i < nodes.length; i++) {
       // An element is submittable if it is not disabled, and if it has a
       // name attribute.
@@ -391,7 +396,8 @@ export class YpForm extends YpBaseElement {
     node: HTMLElement,
     ignoreName: boolean
   ) {
-    const assignedNodes = (dom(node) as DomApi).getDistributedNodes();
+    //@ts-ignore
+    const assignedNodes = dom(node).getDistributedNodes();
 
     for (let i = 0; i < assignedNodes.length; i++) {
       if (assignedNodes[i].nodeType === Node.TEXT_NODE) {
@@ -401,7 +407,8 @@ export class YpForm extends YpBaseElement {
       // Note: assignedNodes does not contain <slot> or <content> because
       // getDistributedNodes flattens the tree.
       this._searchSubmittable(submittable, assignedNodes[i] as HTMLInputElement, ignoreName);
-      const nestedAssignedNodes = (dom(assignedNodes[i]) as DomApi).querySelectorAll('*');
+      //@ts-ignore
+      const nestedAssignedNodes = dom(assignedNodes[i]).querySelectorAll('*');
       for (let j = 0; j < nestedAssignedNodes.length; j++) {
         this._searchSubmittable(
           submittable,

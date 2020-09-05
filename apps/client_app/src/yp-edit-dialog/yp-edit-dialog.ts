@@ -10,6 +10,8 @@ import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-snackbar';
 
+import '../@yrpri/yp-form.js';
+
 import { YpForm } from '../@yrpri/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';

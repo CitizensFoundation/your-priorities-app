@@ -15,7 +15,6 @@ import '@material/mwc-radio';
 import '@material/mwc-formfield';
 import '@material/mwc-select';
 
-import { YpForm } from '../@yrpri/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { YpEditBase } from '../@yrpri/yp-edit-base.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';

@@ -84,6 +84,7 @@
     "@material/mwc-textarea": "^0.18.0",
     "@material/mwc-textfield": "^0.18.0",
     "@material/mwc-top-app-bar": "^0.18.0",
+    "@polymer/polymer": "^3.4.1",
     "@rollup/plugin-commonjs": "^14.0.0",
     "@types/google.analytics": "0.0.40",
     "@types/i18next": "^13.0.0",
