@@ -218,7 +218,7 @@ export class YpApp extends YpBaseElement {
       this._autoTranslateEvent.bind(this)
     );
     this.addGlobalListener('yp-change-header', this._onChangeHeader.bind(this));
-    this.addGlobalListener('yp-user-changed', this._onUserChanged.bind(this));
+    this.addGlobalListener('yp-logged-in', this._onUserChanged.bind(this));
     this.addGlobalListener('yp-network-error', this._netWorkError.bind(this));
 
     this.addListener(
@@ -261,7 +261,7 @@ export class YpApp extends YpBaseElement {
   _removeEventListeners() {
     this.removeGlobalListener('yp-auto-translate', this._autoTranslateEvent);
     this.removeGlobalListener('yp-change-header', this._onChangeHeader);
-    this.removeGlobalListener('yp-user-changed', this._onUserChanged);
+    this.removeGlobalListener('yp-logged-in', this._onUserChanged);
     this.removeGlobalListener('yp-network-error', this._netWorkError);
 
     this.removeListener(
@@ -1303,6 +1303,7 @@ export class YpApp extends YpBaseElement {
   }
 
   _onUserChanged(event: CustomEvent) {
+    debugger;
     if (event.detail && event.detail.id) {
       this.user = event.detail;
     } else {

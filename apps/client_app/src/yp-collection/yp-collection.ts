@@ -212,7 +212,7 @@ export abstract class YpCollection extends YpBaseElement {
         icon="rss_feed"
         stacked></mwc-tab>
       <mwc-tab
-        ?hidden="${this.locationHidden}"
+        ?hidden="${this.locationHidden || (this.collectionType=="domain")}"
         .label="${this.t('post.tabs.location')}"
         icon="location_on"
         stacked></mwc-tab>

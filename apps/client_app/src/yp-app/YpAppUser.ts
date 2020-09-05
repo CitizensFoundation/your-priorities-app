@@ -52,7 +52,6 @@ export class YpAppUser extends YpCodeBase {
   toastLogoutTextCombined: string | undefined;
 
   user: YpUserData | null | undefined;
-  //TODO:   observer: "_onUserChanged"
 
   endorsementPostsIndex: Record<number, YpEndorsement> = {};
 
@@ -613,7 +612,6 @@ export class YpAppUser extends YpCodeBase {
   }
 
   _onUserChanged(user: YpUserData | null) {
-    this.fireGlobal('yp-user-changed', user);
     if (user) {
       this._updateEndorsementPostsIndex(user);
       this._updatePointQualitiesIndex(user);

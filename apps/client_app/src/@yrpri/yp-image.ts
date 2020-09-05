@@ -248,7 +248,7 @@ export class YpImage extends LitElement {
         @error="${this._imgOnError}" />
       <div
         id="placeholder"
-        ?hidden="${this._computePlaceholderHidden}"
+        ?hidden="${this.computePlaceholderHidden}"
         class="${this._computePlaceholderClassName}"></div>
     `;
   }
@@ -289,7 +289,7 @@ export class YpImage extends LitElement {
     this.error = true;
   }
 
-  _computePlaceholderHidden(): boolean {
+  get computePlaceholderHidden(): boolean {
     return !this.preload || (!this.fade && !this.loading && this.loaded);
   }
 
