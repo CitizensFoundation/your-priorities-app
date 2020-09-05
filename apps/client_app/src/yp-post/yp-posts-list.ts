@@ -234,7 +234,7 @@ export class YpPostsList extends YpBaseElement {
           ?hidden="${this.group.configuration.hidePostFilterAndSearch || this.noPosts}">
           <div class="layout horizontal center-center">
             <yp-posts-filter
-              @tap="${this._tapOnFilter}"
+              @click="${this._tapOnFilter}"
               .subTitle="${this.subTitle ? this.subTitle : ''}"
               class="filter"
               id="postsFilter"

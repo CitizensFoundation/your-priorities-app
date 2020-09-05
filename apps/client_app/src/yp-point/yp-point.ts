@@ -375,7 +375,7 @@ export class YpPoint extends YpBaseElement {
   }
 
   renderUserHeader() {
-    return html` <div
+    return this.user ? html` <div
       class="userInfoContainer layout horizontal"
       ?up-vote="${this.isUpVote}"
       ?down-vote="${this.isDownVote}"
@@ -390,7 +390,7 @@ export class YpPoint extends YpBaseElement {
           inverted
           .user="${this.user}"></yp-user-with-organization>
       </div>
-    </div>`;
+    </div>` : nothing
   }
 
   renderTextPoint() {
@@ -494,7 +494,7 @@ export class YpPoint extends YpBaseElement {
                 id="pointContentTranscript"
                 .linkPoint="${this.linkPoint}"
                 ?hidden="${this.isEditing}"
-                @tap="${this._linkIfNeeded}">
+                @click="${this._linkIfNeeded}">
                 <yp-magic-text
                   ?hidden="${!this.openTranscript}"
                   simpleFormat

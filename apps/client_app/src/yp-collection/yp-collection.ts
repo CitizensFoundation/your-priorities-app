@@ -13,11 +13,8 @@ import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 
 import '../ac-activities/ac-activities.js';
-
-//TODO: Remove
-interface AcActivity extends LitElement {
-  scrollToItem(item: YpDatabaseItem): () => void;
-}
+import '../yp-post/yp-post-map.js';
+import { AcActivities } from '../ac-activities/ac-activities.js';
 
 export const CollectionTabTypes: Record<string, number> = {
   Collection: 0,
@@ -255,18 +252,20 @@ export abstract class YpCollection extends YpBaseElement {
                 .collectionType="${this.collectionType}"
                 .collectionItemType="${this.collectionItemType}"
                 .collectionId="${this
-                  .collectionId}"></yp-collection-items-grid>`
+                  .collectionId!}"></yp-collection-items-grid>`
             : html``;
         break;
       case CollectionTabTypes.Newsfeed:
-        page = html` <ac-activities
+        page = html`<ac-activities
           id="collectionActivities"
           .selectedTab="${this.selectedTab}"
           .collectionType="${this.collectionType}"
-          .collectionId="${this.collectionId}"></ac-activities>`;
+          .collectionId="${this.collectionId!}"></ac-activities>`;
         break;
       case CollectionTabTypes.Map:
-        page = html``;
+        page = html`<yp-post-map
+          .collectionType="${this.collectionType}"
+          .collectionId="${this.collectionId!}"></yp-post-map>`;
         break;
     }
 
@@ -346,7 +345,7 @@ export abstract class YpCollection extends YpBaseElement {
       this.selectedTab === CollectionTabTypes.Newsfeed &&
       window.appGlobals.cache.cachedActivityItem
     ) {
-      const activities = this.$$('#collectionActivities') as AcActivity;
+      const activities = this.$$('#collectionActivities') as AcActivities;
       if (activities) {
         activities.scrollToItem(window.appGlobals.cache.cachedActivityItem);
         window.appGlobals.cache.cachedActivityItem = undefined;

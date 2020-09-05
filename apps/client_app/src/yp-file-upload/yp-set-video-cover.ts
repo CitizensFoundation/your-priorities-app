@@ -96,7 +96,7 @@ export class YpSetVideoCover extends YpBaseElement {
                   <img
                     .class="${this._classFromImageIndex(index)}"
                     data-index="${index}"
-                    @tap="${this._selectVideoCover}"
+                    @click="${this._selectVideoCover}"
                     sizing="cover"
                     class="previewFrame"
                     src="${image}" />

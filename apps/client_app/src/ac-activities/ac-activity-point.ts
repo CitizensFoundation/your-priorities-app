@@ -83,25 +83,25 @@ export class AcActivityPoint extends YpBaseElementWithLogin {
         <div
           class="actionInfo withCursor"
           ?hidden="${!this.isUpVote}"
-          @tap="${this._goToPoint}">
+          @click="${this._goToPoint}">
           ${this.t('point.forAdded')}...
         </div>
         <div
           class="actionInfo withCursor"
           ?hidden="${!this.isDownVote}"
-          @tap="${this._goToPoint}">
+          @click="${this._goToPoint}">
           ${this.t('point.againstAdded')}...
         </div>
         <div class="layout vertical">
           <yp-magic-text
             class="post-name withCursor"
-            @tap="${this._goToPoint}"
+            @click="${this._goToPoint}"
             textOnly
             textType="postName"
             .contentLanguage="${this.activity.Post!.language}"
             .content="${this.activity.Post!.name}"
             .contentId="${this.activity.Post!.id}">
-          </yp-magic-text><h1>BEFORE</h1>
+          </yp-magic-text>
           <yp-point
             hideUser
             .linkPoint="${!this.postId}"
@@ -111,12 +111,6 @@ export class AcActivityPoint extends YpBaseElementWithLogin {
       </div>
     `;
   }
-
-  /*
-  behaviors: [
-    ypGotoBehavior
-  ],
-*/
 
   _goToPoint() {
     if (!this.postId && this.activity) {

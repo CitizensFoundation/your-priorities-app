@@ -417,13 +417,13 @@ export class YpLogin extends YpBaseElement {
             <div class="islandIs cursor layout horizontal center-center">
               <img
                 ?hidden="${this.forceSecureSamlLogin}"
-                @tap="${this._openSamlLogin}"
+                @click="${this._openSamlLogin}"
                 width="80"
                 src="${this.samlLoginButtonUrl}" />
               <div
                 ?hidden="${!this.forceSecureSamlLogin}"
                 class="largeSamlLogo"
-                @tap="${this._openSamlLogin}"
+                @click="${this._openSamlLogin}"
                 role="button"
                 tabindex="0">
                 <img width="130" src="${this.samlLoginButtonUrl}" />
@@ -434,14 +434,14 @@ export class YpLogin extends YpBaseElement {
             <div class="islandIs cursor layout horizontal center-center">
               <img
                 ?hidden="${this.forceSecureSamlLogin}"
-                @tap="${this._openSamlLogin}"
+                @click="${this._openSamlLogin}"
                 width="80"
                 height="18"
                 src="https://s3.amazonaws.com/yrpri-direct-asset/yrpri6/islandisLogo.png" />
               <div
                 ?hidden="${!this.forceSecureSamlLogin}"
                 class="largeSamlLogo"
-                @tap="${this._openSamlLogin}"
+                @click="${this._openSamlLogin}"
                 role="button"
                 tabindex="0">
                 <img
@@ -476,7 +476,7 @@ export class YpLogin extends YpBaseElement {
                 <span ?hidden="${this.forceSecureSamlLogin}">
                   <div
                     class="btn-auth btn-facebook cursor"
-                    @tap="${this._facebookLogin}"
+                    @click="${this._facebookLogin}"
                     role="button"
                     tabindex="0"
                     ?hidden="${this.disableFacebookLoginForGroup}">
@@ -615,7 +615,7 @@ export class YpLogin extends YpBaseElement {
 
         <div class="signupTerms" ?hidden="${!this.showSignupTerms}">
           ${this.customTermsIntroText} -
-          <span @tap="${this._openTerms}" class="openTerms"
+          <span @click="${this._openTerms}" class="openTerms"
             >${this.t('signupTermsOpen')}</span
           >
         </div>

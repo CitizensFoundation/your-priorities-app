@@ -322,7 +322,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                 ?hidden="${this.defaultPostImageEnabled}"
                 class="main-image pointer"
                 src="https://i.imgur.com/sdsFAoT.png"
-                @tap="${this._goToPost}"></yp-image>
+                @click="${this._goToPost}"></yp-image>
 
               ${this.activeDefaultImageUrl
                 ? html`
@@ -369,7 +369,7 @@ export class YpPostCoverMedia extends YpBaseElement {
           ? html`
               <yp-image
                 .header-mode="${this.headerMode}"
-                @tap="${this._goToPost}"
+                @click="${this._goToPost}"
                 .sizing="${this.sizingMode}"
                 class="main-image pointer"
                 src="${this.postImagePath}"></yp-image>
@@ -385,7 +385,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                       data-id="${ifDefined(this.postVideoId)}"
                       ?header-mode="${this.headerMode}"
                       controls
-                      @tap="${this._goToPost}"
+                      @click="${this._goToPost}"
                       preload="metadata"
                       class="pointer"
                       src="${ifDefined(this.postVideoPath)}"
@@ -400,7 +400,7 @@ export class YpPostCoverMedia extends YpBaseElement {
                         id="videoPreviewImage layout-self-center"
                         .portrait="${this.portraitVideo}"
                         ?headerMode="${this.headerMode}"
-                        @tap="${this._goToPost}"
+                        @click="${this._goToPost}"
                         sizing="cover"
                         class="main-image pointer"
                         src="${this.postVideoPosterPath}"></yp-image>
@@ -443,7 +443,7 @@ export class YpPostCoverMedia extends YpBaseElement {
               <div
                 ?hidden="${this.showAudio}"
                 class="layout horizontal center-center pointer"
-                @tap="${this._goToPost}">
+                @click="${this._goToPost}">
                 <mwc-icon class="voiceIcon">keyboard_voice</mwc-icon>
               </div>
             `
@@ -453,7 +453,7 @@ export class YpPostCoverMedia extends YpBaseElement {
               ${this.isStreetViewActive
                 ? html`
                     <yp-image
-                      @tap="${this._goToPost}"
+                      @click="${this._goToPost}"
                       class="main-image pointer"
                       sizing="cover"
                       src="https://maps.googleapis.com/maps/api/staticmap?center=${this.latitude},${this.longitude}&amp;zoom=${this.zoomLevel}&amp;size=432x243&amp;maptype=hybrid&amp;markers=color:red%7Clabel:%7C${this.latitude},${this.longitude}&amp;key=[[staticMapsApiKey]]"
@@ -475,7 +475,7 @@ export class YpPostCoverMedia extends YpBaseElement {
               ${this.isMapActive
                 ? html`
                     <yp-image
-                      @tap="${this._goToPost}"
+                      @click="${this._goToPost}"
                       class="main-image pointer"
                       ?hidden="${this.mapActivated}"
                       sizing="cover"

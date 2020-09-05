@@ -126,7 +126,7 @@ export class YpPointNewsStory extends YpBaseElement {
             <div
               class="layout horizontal center-center withPointer"
               ?hidden="${!this.commentsCount}"
-              @tap="${this._setOpenToValue}">
+              @click="${this._setOpenToValue}">
               <div class="commentText">${this.t('point.comments')}</div>
               <div id="commentCount">${this.commentsCount}</div>
             </div>

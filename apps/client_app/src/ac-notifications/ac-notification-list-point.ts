@@ -128,7 +128,7 @@ export class AcNotificationListPoint extends YpBaseElement {
     return html`
       <div
         class="layout vertical pointerCursor"
-        @tap="${this.goToPost}"
+        @click="${this.goToPost}"
         ?hidden="${!this.post}">
         <div class="layout horizontal">
           <div class="layout vertical center-center self-start leftContainer">

@@ -68,7 +68,7 @@ export class YpUserInfo extends YpBaseElement {
                   class="hasPointer"
                   large
                   .user="${this.user}"
-                  @tap="${this._openEdit}"></yp-user-image>
+                  @click="${this._openEdit}"></yp-user-image>
               </div>
               <div class="contact-info">
                 <div class="name">${this.user.name}</div>

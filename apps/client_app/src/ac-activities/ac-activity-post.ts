@@ -162,7 +162,7 @@ export class AcActivityPost extends AcActivityWithGroupBase {
     return html`
       ${this.activity && this.activity.Post
         ? html`
-            <div class="layout vertical hasPointer" @tap="${this._goToPost}">
+            <div class="layout vertical hasPointer" @click="${this._goToPost}">
               <div class="actionInfo">
                 ${this.t('addedAnIdea')}
               </div>

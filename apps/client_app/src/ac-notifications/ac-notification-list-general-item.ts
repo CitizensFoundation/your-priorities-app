@@ -76,7 +76,7 @@ export class AcNotificationListGenaralItem extends YpBaseElement {
 
   render() {
     return html`
-      <div class="layout vertical pointerCursor" @tap="${this._goTo}">
+      <div class="layout vertical pointerCursor" @click="${this._goTo}">
         <div class="layout horizontal">
           <div class="layout vertical center-center self-start leftContainer">
             <yp-user-image small .user="${this.user!}"></yp-user-image>

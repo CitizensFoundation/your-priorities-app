@@ -50,7 +50,7 @@ export class AcActivityPointNewsStory extends AcActivityWithGroupBase {
         ${this.activity.Post
           ? html`
               <yp-magic-text
-                @tap="${this._goToPost}"
+                @click="${this._goToPost}"
                 class="postName"
                 ?hidden="${!this.activity.Post.name}"
                 textOnly

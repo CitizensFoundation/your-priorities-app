@@ -237,7 +237,7 @@ export class YpPostActions extends YpBaseElement {
               this.endorseModeIcon(this.endorsementButtons, 'up')
             )}"
             class="action-icon up-vote-icon largeButton"
-            @tap="${this.upVote}"></mwc-icon-button>
+            @click="${this.upVote}"></mwc-icon-button>
           <div
             ?rtl="${this.rtl}"
             class="action-text up-text"

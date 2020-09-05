@@ -24,6 +24,12 @@ export class YpPostMap extends YpBaseElement {
   @property({ type: Object })
   selectedPost: YpPostData | undefined;
 
+  @property({ type: Number })
+  collectionId!: number
+
+  @property({ type: String })
+  collectionType!: string
+
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
@@ -150,15 +156,16 @@ export class YpPostMap extends YpBaseElement {
                 <lit-google-map
                   additionalMapOptions="{'keyboardShortcuts':false}"
                   id="map"
-                  apiKey="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-                  fitToMarkers>
+                  version="weekly"
+                  api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+                  fit-to-markers>
                   ${this.posts.map(
                     post => html`
                       <lit-google-map-marker
                         slot="markers"
                         .latitude="${post.location.latitude}"
                         .longitude="${post.location.longitude}"
-                        clickEvents
+                        click-events
                         class="marker"
                         @google-map-marker-click="${() => {
                           this.markerClick(post);
@@ -213,6 +220,17 @@ export class YpPostMap extends YpBaseElement {
     }
   }
 
+  connectedCallback() {
+    super.connectedCallback()
+    switch (this.collectionType) {
+      case 'community':
+        this.communityId = this.collectionId
+        break
+      case 'group':
+        this.groupId = this.collectionId
+        break
+     }
+  }
   async _groupIdChanged() {
     if (this.groupId) {
       this.posts = undefined;

@@ -99,7 +99,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
                 .label="${this.t('point.report')}"
                 id="reportPointIconButton"
                 icon="warning"
-                @tap="${this._reportPoint}"></mwc-icon-button>
+                @click="${this._reportPoint}"></mwc-icon-button>
 
               ${this.hasPointAccess
                 ? html`
@@ -108,7 +108,7 @@ export class YpPointComment extends YpBaseElementWithLogin {
                         id="deleteButton"
                         .label="${this.t('delete')}"
                         icon="clear"
-                        @tap="${this._deletePoint}"></mwc-icon-button>
+                        @click="${this._deletePoint}"></mwc-icon-button>
                     </div>
                   `
                 : html``}
