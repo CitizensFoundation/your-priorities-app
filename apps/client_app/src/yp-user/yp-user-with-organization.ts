@@ -157,7 +157,7 @@ export class YpUserWithOrganization extends YpBaseElement {
         2
       );
     } else {
-      return null;
+      return undefined;
     }
   }
 }

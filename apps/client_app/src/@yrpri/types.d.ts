@@ -621,7 +621,6 @@ interface YpPostStatusChange {
 }
 
 interface AcActivityData extends YpDatabaseItem {
-  id: number;
   type: string;
   domain_id: number;
   community_id?: number;

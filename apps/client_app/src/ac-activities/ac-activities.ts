@@ -26,7 +26,7 @@ export class AcActivities extends YpBaseElementWithLogin {
   gotInitialData = false;
 
   @property({ type: Array })
-  activities: Array<AcActivityData> | undefined;
+  activities: Array<AcActivityData> | undefined
 
   @property({ type: Number })
   domainId: number | undefined;
@@ -75,19 +75,12 @@ export class AcActivities extends YpBaseElementWithLogin {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('activities')) {
-      const a = this.activities;
-      debugger;
-    }
-
-
     if (changedProperties.has('domainId')) {
       this._domainIdChanged();
     }
 
     if (changedProperties.has('communityId')) {
       this._communityIdChanged();
-      debugger;
     }
 
     if (changedProperties.has('groupId')) {
@@ -114,6 +107,7 @@ export class AcActivities extends YpBaseElementWithLogin {
 
         lit-virtualizer {
           height: 100vh;
+          width: 100vw;
         }
 
         .addNewsBox {
@@ -317,7 +311,6 @@ export class AcActivities extends YpBaseElementWithLogin {
                   .items=${this.activities}
                   .scrollTarget="${window}"
                   id="activitiesList"
-                  .scrollOffset="${this.ironListPaddingTop}"
                   .renderItem=${this.renderItem}
                   @rangechange=${this.scrollEvent}></lit-virtualizer>
               `
@@ -518,7 +511,7 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   _generateRequest(typeId: number, typeName: string) {
     if (typeId) {
-      this.activities = [];
+
       this.oldestProcessedActivityAt = undefined;
       this.noRecommendedPosts = true;
       this._moreToLoad = true;
@@ -531,6 +524,7 @@ export class AcActivities extends YpBaseElementWithLogin {
       }
 
       this.url = '/api/' + this.mode + '/' + typeName + '/' + typeId;
+
 
       this._loadMoreData();
 
@@ -546,7 +540,7 @@ export class AcActivities extends YpBaseElementWithLogin {
       let url = this.url;
       if (this.oldestProcessedActivityAt)
         url += '?beforeDate=' + this.oldestProcessedActivityAt;
-      const response = (await window.serverApi.getAcActivities(url)) as AcActivitiesResponse
+      const response = await window.serverApi.getAcActivities(url) as AcActivitiesResponse
       this._processResponse(response)
     } else {
       console.warn('Trying to load more activities without conditions');
@@ -664,7 +658,6 @@ export class AcActivities extends YpBaseElementWithLogin {
 
     this.gotInitialData = true;
 
-
     if (activitiesResponse.oldestProcessedActivityAt) {
       this.oldestProcessedActivityAt =
         activitiesResponse.oldestProcessedActivityAt;
@@ -672,16 +665,19 @@ export class AcActivities extends YpBaseElementWithLogin {
       console.warn('Have not set oldestProcessedActivityAt');
     }
 
-    for (let i = 0; i < activities.length; i++) {
-      if (this.url!.indexOf('afterDate') > -1) {
-        this.activities!.unshift(activities[i]);
-      } else {
-        this.activities!.push(activities[i]);
+    if (this.activities) {
+      for (let i = 0; i < activities.length; i++) {
+        if (this.url!.indexOf('afterDate') > -1) {
+          this.activities.unshift(activities[i]);
+        } else {
+          this.activities.push(activities[i]);
+        }
       }
+    } else {
+      this.activities =  activities
     }
 
     console.info('Activities length: ' + activities.length);
-
 
     if (this.activities && this.activities.length > 0) {
       if (
