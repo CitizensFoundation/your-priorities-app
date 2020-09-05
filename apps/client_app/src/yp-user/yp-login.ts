@@ -523,7 +523,7 @@ export class YpLogin extends YpBaseElement {
         <mwc-circular-progress-four-color
           class="mainSpinner"
           indeterminate
-          ?hidssden="${!this.userSpinner}"></mwc-circular-progress-four-color>
+          ?hidden="${!this.userSpinner}"></mwc-circular-progress-four-color>
         <div class="flex"></div>
         <mwc-button dialogAction="cancel" @click="${this._cancel}"
           >${this.t('cancel')}</mwc-button
@@ -1025,7 +1025,8 @@ export class YpLogin extends YpBaseElement {
   }
 
   get fullnameValue() {
-    return (this.$$('#fullname') as HTMLInputElement).value.trim();
+    if (this.$$('#fullname'))
+      return (this.$$('#fullname') as HTMLInputElement).value.trim();
   }
 
   async _registerUser() {
@@ -1049,9 +1050,10 @@ export class YpLogin extends YpBaseElement {
   }
 
   async _loginUser() {
-    const user = (await window.serverApi.loginUser(
+    const user = await window.serverApi.loginUser(
       this.credentials
-    )) as YpUserData;
+    ) as YpUserData;
+    debugger;
     this.isSending = false;
     if (user) {
       this._loginCompleted(user);
@@ -1071,14 +1073,13 @@ export class YpLogin extends YpBaseElement {
       if (this.emailValue && this.passwordValue) {
         this.userSpinner = true;
         if (this.registerMode) {
-          //this._registerUser();
+          this._registerUser();
         } else {
-          //this._loginUser();
+          this._loginUser();
         }
         this.userSpinner = false;
       } else {
-        // TODO: Show this error
-        // this.$$('#loginAjax').showErrorDialog(this.t('user.completeForm'));
+        this.fire('yp-error', this.t('user.completeForm'))
         window.appGlobals.analytics.sendLoginAndSignup(
           -1,
           this.registerMode ? 'Signup Fail' : 'Login Fail',
