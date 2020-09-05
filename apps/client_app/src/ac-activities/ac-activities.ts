@@ -256,9 +256,9 @@ export class AcActivities extends YpBaseElementWithLogin {
     ];
   }
 
-  renderItem(activity: AcActivityData) {
+  renderItem(activity: AcActivityData, index: number) {
     return html`
-      <div tabindex="${this.tabIndex}" class="layout vertical center-center">
+      <div tabindex="${index}" class="layout vertical center-center">
         <ac-activity
           .hasLoggedInUser="${this.isLoggedIn}"
           class="activityContainer"
@@ -275,7 +275,7 @@ export class AcActivities extends YpBaseElementWithLogin {
   render() {
     return html`
       <div
-        class="layout horizontal topLevelActivitiesContainer layout-center-center"
+        class="layout horizontal topLevelActivitiesContainer center-center"
         wide="${this.wide}"
         ?rtl="${this.rtl}">
         <div class="layout vertical self-start">
@@ -677,8 +677,6 @@ export class AcActivities extends YpBaseElementWithLogin {
       this.activities =  activities
     }
 
-    console.info('Activities length: ' + activities.length);
-
     if (this.activities && this.activities.length > 0) {
       if (
         !this.latestProcessedActivityAt ||
@@ -688,10 +686,6 @@ export class AcActivities extends YpBaseElementWithLogin {
       }
       if (!this.latestProcessedActivityAt) {
         console.error('Have not set latest processed activity at');
-      } else {
-        console.log(
-          'latestProcessedActivityAt: ' + this.latestProcessedActivityAt
-        );
       }
       this._moreToLoad = true;
       if (

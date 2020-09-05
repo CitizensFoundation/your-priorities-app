@@ -111,7 +111,7 @@ export class YpUserImage extends YpBaseElement {
                     class="${this.computeClass}"></yp-image>
                 `
               : nothing}
-            ${this.noProfileImage
+            ${!this.profileImageUrl
               ? html`
                   ${this.user.facebook_id
                     ? html`
@@ -125,7 +125,7 @@ export class YpUserImage extends YpBaseElement {
                           class="${this.computeClass}"></yp-image>
                       `
                     : nothing}
-                  ${!this.noDefault
+                  ${!this.user.facebook_id
                     ? html`
                         ${this.user.facebook_id
                           ? html`
