@@ -9,6 +9,7 @@ import '../@yrpri/yp-image.js';
 import '../yp-user/yp-user-info.js';
 
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { TextArea } from '@material/mwc-textarea';
 
 @customElement('yp-point-comment-edit')
 export class YpPointCommentEdit extends YpBaseElementWithLogin {
@@ -90,7 +91,7 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
                   name="pointComment"
                   .value="${this.comment.content}"
                   always-float-label="${this.comment.content}"
-                  .label="${this.t('this.point.addComment')}"
+                  .label="${this.t('point.addComment')}"
                   charCounter
                   rows="2"
                   maxrows="2"
@@ -123,6 +124,10 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
     }
   }
 
+  get newPointComment() {
+    return (this.$$("#pointComment") as TextArea).value
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this._reset();
@@ -135,9 +140,11 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
   _reset() {
     this.comment = { content: '' } as YpPointData;
     (this.$$('#submitButton') as Button).disabled = false;
+    (this.$$("#pointComment") as TextArea).value = ''
   }
 
   async _sendComment() {
+    this.comment!.content = this.newPointComment
     if (
       this.comment &&
       this.comment.content &&
@@ -146,13 +153,13 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
       if (this.point) {
         await window.serverApi.postComment('points', this.point.id, {
           point_id: this.point.id,
-          comment: this.comment.content,
+          comment: this.comment,
         });
         (this.$$('#submitButton') as Button).disabled = true;
       } else if (this.image) {
         await window.serverApi.postComment('points', this.image.id, {
           image_id: this.image.id,
-          comment: this.comment.content,
+          comment: this.comment,
         });
         (this.$$('#submitButton') as Button).disabled = true;
       } else {

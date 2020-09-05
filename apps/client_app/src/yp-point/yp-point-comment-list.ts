@@ -272,10 +272,12 @@ export class YpPointCommentList extends YpBaseElement {
 
   async _getCommentsCount() {
     if (this.point && this.commentType) {
-      this.commentsCount = await window.serverApi.getCommentsCount(
+      const response = await window.serverApi.getCommentsCount(
         this.commentType,
         this.point.id
-      );
+      ) as YpCommentCountsResponse
+
+      this.commentsCount = response.count
       this.fire('yp-set-comments-count', { count: this.commentsCount });
     } else {
       console.error('No point for comment count');
