@@ -4,6 +4,7 @@ import { nothing } from 'lit-html';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 import 'lit-google-map';
+import './yp-post-card.js';
 
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 
@@ -139,9 +140,9 @@ export class YpPostMap extends YpBaseElement {
     ];
   }
 
-  renderInfoCard() {
-    return this.selectedPost
-      ? html` <yp-post-card mini .post="${this.selectedPost}"></yp-post-card> `
+  renderInfoCard(post: YpPostData) {
+    return post //&& post.id==this.selectedPost.id
+      ? html` <yp-post-card mini .post="${post}"></yp-post-card> `
       : nothing;
   }
 
@@ -158,7 +159,7 @@ export class YpPostMap extends YpBaseElement {
                   id="map"
                   version="weekly"
                   api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-                  fit-to-markers>
+                  fitToMarkers>
                   ${this.posts.map(
                     post => html`
                       <lit-google-map-marker
@@ -167,10 +168,10 @@ export class YpPostMap extends YpBaseElement {
                         .longitude="${post.location.longitude}"
                         click-events
                         class="marker"
-                        @google-map-marker-click="${() => {
+                        @selector-item-activate="${() => {
                           this.markerClick(post);
                         }}">
-                        ${this.renderInfoCard()}
+
                       </lit-google-map-marker>
                     `
                   )}
@@ -231,6 +232,7 @@ export class YpPostMap extends YpBaseElement {
         break
      }
   }
+
   async _groupIdChanged() {
     if (this.groupId) {
       this.posts = undefined;
@@ -267,6 +269,7 @@ export class YpPostMap extends YpBaseElement {
   }
 
   markerClick(post: YpPostData) {
+    debugger;
     //TODO: Review this, if this data handling with the click makes sense and is not too slow
     window.appGlobals.activity('clicked', 'marker');
     this.selectedPost = post;

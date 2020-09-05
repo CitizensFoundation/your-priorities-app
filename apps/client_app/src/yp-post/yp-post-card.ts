@@ -279,7 +279,7 @@ export class YpPostCard extends YpBaseElement {
       ? html`
           <div class="layout vertical center-center">
             <div
-              .mini="${this.mini}"
+              ?mini="${this.mini}"
               .hide-post-cover="${this.post.Group.configuration.hidePostCover}"
               .hide-description="${this.post.Group.configuration
                 .hidePostDescription}"
