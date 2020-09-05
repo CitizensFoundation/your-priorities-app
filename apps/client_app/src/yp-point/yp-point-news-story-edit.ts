@@ -131,7 +131,6 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
               <div class="layout vertical">
                 <mwc-textarea
                   id="pointNewsStory"
-                  required
                   minlength="15"
                   name="pointNewsStory"
                   .value="${this.point.content}"

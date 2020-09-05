@@ -3,6 +3,7 @@ import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js'
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
 import '../yp-magic-text/yp-magic-text.js';
+import '../yp-point/yp-point.js';
 
 @customElement('ac-activity-point')
 export class AcActivityPoint extends YpBaseElementWithLogin {
@@ -100,7 +101,7 @@ export class AcActivityPoint extends YpBaseElementWithLogin {
             .contentLanguage="${this.activity.Post!.language}"
             .content="${this.activity.Post!.name}"
             .contentId="${this.activity.Post!.id}">
-          </yp-magic-text>
+          </yp-magic-text><h1>BEFORE</h1>
           <yp-point
             hideUser
             .linkPoint="${!this.postId}"

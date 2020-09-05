@@ -86,7 +86,6 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
               <div class="layout vertical">
                 <mwc-textfield
                   id="pointComment"
-                  required
                   minlength="15"
                   name="pointComment"
                   .value="${this.comment.content}"
