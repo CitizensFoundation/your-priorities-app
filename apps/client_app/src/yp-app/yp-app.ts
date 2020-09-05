@@ -1303,7 +1303,6 @@ export class YpApp extends YpBaseElement {
   }
 
   _onUserChanged(event: CustomEvent) {
-    debugger;
     if (event.detail && event.detail.id) {
       this.user = event.detail;
     } else {

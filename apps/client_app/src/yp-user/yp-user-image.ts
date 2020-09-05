@@ -95,7 +95,7 @@ export class YpUserImage extends YpBaseElement {
         .rounded-more img {
           opacity: 0;
         }
-      `
+      `,
     ];
   }
 
@@ -130,17 +130,13 @@ export class YpUserImage extends YpBaseElement {
                     : nothing}
                   ${!this.user.facebook_id
                     ? html`
-                        ${this.user.facebook_id
-                          ? html`
-                              <yp-image
-                                sizing="cover"
-                                .title="${this.userTitle}"
-                                .alt="${this.userTitle}"
-                                preload
-                                src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png"
-                                class="${this.computeClass}"></yp-image>
-                            `
-                          : nothing}
+                        <yp-image
+                          sizing="cover"
+                          .title="${this.userTitle}"
+                          .alt="${this.userTitle}"
+                          preload
+                          src="https://s3.amazonaws.com/better-reykjavik-paperclip-production/instances/buddy_icons/000/000/001/icon_50/default_profile.png"
+                          class="${this.computeClass}"></yp-image>
                       `
                     : nothing}
                 `
