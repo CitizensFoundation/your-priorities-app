@@ -610,7 +610,6 @@ export class YpPostHeader extends YpBaseElementWithLogin {
   }
 
   _openReport() {
-    (this.$$('#helpMenu') as Menu).select(-1);
     window.appGlobals.activity('open', 'post.report');
     window.appDialogs.getDialogAsync(
       'apiActionDialog',

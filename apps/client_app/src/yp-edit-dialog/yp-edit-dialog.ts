@@ -7,6 +7,7 @@ import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-f
 import { Dialog } from '@material/mwc-dialog';
 import '@material/mwc-dialog';
 import '@material/mwc-button';
+import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-snackbar';
 
@@ -312,6 +313,141 @@ export class YpEditDialog extends YpBaseElement {
     ];
   }
 
+  renderMobileView() {
+    return html`
+      <div class="outerMobile">
+        <div class="layout horizontal smallHeader">
+          <mwc-icon-button
+            id="dismissBtn"
+            .label="${this.t('close')}"
+            icon="close"
+            slot="secondaryAction"
+            class="closeIconNarrow"
+            dialog-dismiss></mwc-icon-button>
+          <mwc-icon class="smallIcon">${this.icon}</mwc-icon>
+          <div class="titleHeaderMobile">${this.title}</div>
+          <div class="flex"></div>
+
+          ${!this.useNextTabAction
+            ? html`
+                ${!this.uploadingState
+                  ? html`
+                      <mwc-button
+                        id="submit1"
+                        ?hidden="${!this.saveText}"
+                        @click="${this._submit}"
+                        slot="primaryAction"
+                        .label="${this.saveText ? this.saveText : ''}"
+                        class="smallButtonText"></mwc-button>
+                    `
+                  : html`
+                      <mwc-button
+                        disabled
+                        slot="primaryAction"
+                        .label="${this.t('uploading.inProgress')}"></mwc-button>
+                    `}
+              `
+            : html``}
+          ${this.useNextTabAction
+            ? html``
+            : html`
+                <mwc-button
+                  @click="${this._nextTab}"
+                  slot="primaryAction"
+                  class="smallButtonText"
+                  .label="${this.nextActionText!}"></mwc-button>
+              `}
+        </div>
+        <div id="scroller">
+          <yp-form id="form" method="POST" .params="${this.params}">
+            <form
+              name="ypForm"
+              .method="${this.method}"
+              .action="${this.action ? this.action : ''}">
+              <slot></slot>
+            </form>
+          </yp-form>
+        </div>
+        <mwc-circular-progress-four-color
+          id="spinner"></mwc-circular-progress-four-color>
+      </div>
+    `;
+  }
+
+  renderDesktopView() {
+    return html`
+      <div class="layout horizontal bigHeader">
+        <mwc-icon class="largeIcon" .icon="${this.icon}"></mwc-icon>
+        <div class="titleHeader">${this.title}</div>
+      </div>
+      <div
+        id="scrollable"
+        .smallHeight="${!this.wide}"
+        .mediumHeight="${!this.wide}"
+        .largeHeight="${this.wide}">
+        <yp-form id="form" .params="${this.params}">
+          <form
+            name="ypForm"
+            .method="${this.method}"
+            .action="${this.action!}">
+            <slot></slot>
+          </form>
+        </yp-form>
+        <mwc-circular-progress-four-color
+          id="spinner"></mwc-circular-progress-four-color>
+      </div>
+      <div class="buttons">
+        ${this.cancelText
+          ? html`
+              <mwc-button
+                id="dismissBtn"
+                dialogAction="cancel"
+                slot="secondaryAction"
+                .label="${this.cancelText}"></mwc-button>
+            `
+          : html`
+              <mwc-button
+                id="dismissBtn"
+                dialogAction="cancel"
+                slot="secondaryAction"
+                .label="${this.t('cancel')}"></mwc-button>
+            `}
+        ${!this.uploadingState
+          ? html`
+              ${!this.useNextTabAction
+                ? html`
+                    <mwc-button
+                      raised
+                      class="actionButtons"
+                      slot="primaryAction"
+                      ?hidden="${!this.saveText}"
+                      id="submit2"
+                      @click="${this._submit}"
+                      .label="${this.saveText
+                        ? this.saveText
+                        : ''}"></mwc-button>
+                  `
+                : html`
+                    <mwc-button
+                      raised
+                      slot="primaryAction"
+                      class="actionButtons"
+                      @click="${this._nextTab}"
+                      .label="${this.nextActionText!}"></mwc-button>
+                  `}
+            `
+          : html`
+            <mwc-button
+              disabled
+              @click="${this._nextTab}"
+              slot="primaryAction"
+              .label="${this.t('uploading.inProgress')}"></mwc-button>
+          </div>
+          `}
+      </div>
+    `;
+  }
+
   render() {
     return html`
       <mwc-dialog
@@ -322,118 +458,7 @@ export class YpEditDialog extends YpBaseElement {
         class="${this.computeClass}"
         with-backdrop="${!this.wide}"
         modal>
-        ${this.narrow
-          ? html`
-              <div class="outerMobile">
-                <div class="layout horizontal smallHeader">
-                  <mwc-icon-button
-                    id="dismissBtn"
-                    .ariaLabel="${this.t('close')}"
-                    icon="close"
-                    class="closeIconNarrow"
-                    dialog-dismiss></mwc-icon-button>
-                  <iron-icon class="smallIcon" .icon="${this.icon}"></iron-icon>
-                  <div class="titleHeaderMobile">${this.title}</div>
-                  <div class="flex"></div>
-
-                  ${!this.useNextTabAction
-                    ? html`
-                        ${!this.uploadingState
-                          ? html`
-                              <mwc-button
-                                id="submit1"
-                                ?hidden="${!this.saveText}"
-                                @click="${this._submit}"
-                                .label="${this.saveText ? this.saveText : ''}"
-                                class="smallButtonText"></mwc-button>
-                            `
-                          : html`
-                              <mwc-button
-                                disabled
-                                .label="${this.t(
-                                  'uploading.inProgress'
-                                )}"></mwc-button>
-                            `}
-                      `
-                    : html``}
-                  ${this.useNextTabAction
-                    ? html``
-                    : html`
-                        <mwc-button
-                          @click="${this._nextTab}"
-                          class="smallButtonText"
-                          .label="${this.nextActionText!}"></mwc-button>
-                      `}
-                </div>
-                <div id="scroller">
-                  <yp-form id="form" method="POST" .params="${this.params}">
-                    <form name="ypForm" method="POST" .action="${this.action ? this.action : ''}">
-                      <slot></slot>
-                    </form>
-                  </yp-form>
-                </div>
-                <mwc-circular-progress-four-color id="spinner"></mwc-circular-progress-four-color>
-              </div>
-            `
-          : html`
-              <div class="layout horizontal bigHeader">
-                <iron-icon class="largeIcon" .icon="${this.icon}"></iron-icon>
-                <div class="titleHeader">${this.title}</div>
-              </div>
-              <div
-                id="scrollable"
-                .smallHeight="${!this.wide}"
-                .mediumHeight="${!this.wide}"
-                .largeHeight="${this.wide}">
-                <yp-form id="form" .params="${this.params}">
-                  <form name="ypForm" .method="${this.method}" .action="${this.action!}">
-                    <slot></slot>
-                  </form>
-                </yp-form>
-                <mwc-circular-progress-four-color id="spinner"></mwc-circular-progress-four-color>
-              </div>
-              <div class="buttons">
-                ${this.cancelText
-                  ? html`
-                      <mwc-button
-                        id="dismissBtn"
-                        dialog-dismiss
-                        .label="${this.cancelText}"></mwc-button>
-                    `
-                  : html`
-                      <mwc-button
-                        id="dismissBtn"
-                        dialog-dismiss
-                        .label="${this.t('cancel')}"></mwc-button>
-                    `}
-                ${!this.uploadingState
-                  ? html`
-                      ${!this.useNextTabAction
-                        ? html`
-                            <mwc-button
-                              raised
-                              class="actionButtons"
-                              ?hidden="${!this.saveText}"
-                              id="submit2"
-                              @click="${this._submit}"
-                              .label="${this.saveText ? this.saveText : ''}"></mwc-button>
-                          `
-                        : html`
-                            <mwc-button
-                              raised
-                              class="actionButtons"
-                              @click="${this._nextTab}"
-                              .label="${this.nextActionText!}"></mwc-button>
-                          `}
-                    `
-                  : html`
-            <mwc-button disabled @click="${this._nextTab}" .label="${this.t(
-                      'uploading.inProgress'
-                    )}"></mwc-button>
-        </div>
-          `}
-              </div>
-            `}
+        ${this.narrow ? this.renderMobileView() : this.renderDesktopView()}
       </mwc-dialog>
 
       <mwc-dialog id="formErrorDialog" modal>
@@ -446,7 +471,9 @@ export class YpEditDialog extends YpBaseElement {
             .label="${this.t('ok')}"></mwc-button>
         </div>
       </mwc-dialog>
-      <mwc-snackbar id="snackbar" .text="${this.snackbarTextCombined}"></mwc-snackbar>
+      <mwc-snackbar
+        id="snackbar"
+        .text="${this.snackbarTextCombined}"></mwc-snackbar>
     `;
   }
 
@@ -463,7 +490,8 @@ export class YpEditDialog extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
     if (changedProperties.has('opened') === false) {
-      this.fire('yp-dialog-closed');
+      //TODO: Look into if this is needed
+      //this.fire('yp-dialog-closed');
     }
   }
 
@@ -564,9 +592,12 @@ export class YpEditDialog extends YpBaseElement {
       this.fire('yp-custom-form-submit');
     } else {
       if (this.confirmationText) {
-        window.appDialogs.getDialogAsync('confirmationDialog', (dialog: YpConfirmationDialog) => {
-          dialog.open(this.confirmationText!, this._reallySubmit.bind(this));
-        });
+        window.appDialogs.getDialogAsync(
+          'confirmationDialog',
+          (dialog: YpConfirmationDialog) => {
+            dialog.open(this.confirmationText!, this._reallySubmit.bind(this));
+          }
+        );
       } else {
         this._reallySubmit();
       }

@@ -203,7 +203,8 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
   _reset() {
     this.point = { content: '' } as YpPointData;
     this.point.embed_data = undefined;
-    (this.$$("#pointNewsStory") as TextArea).value = ''
+    if (this.$$("#pointNewsStory"))
+     (this.$$("#pointNewsStory") as TextArea).value = ''
     this._clearButtonState();
   }
 
@@ -243,7 +244,8 @@ export class YpPointNewsStoryEdit extends YpBaseElementWithLogin {
 
 
   _clearButtonState () {
-    (this.$$("#storySubmitButton") as Button).disabled = false;
+    if (this.$$("#storySubmitButton"))
+      (this.$$("#storySubmitButton") as Button).disabled = false;
   }
 
   _keyDown(event: KeyboardEvent) {

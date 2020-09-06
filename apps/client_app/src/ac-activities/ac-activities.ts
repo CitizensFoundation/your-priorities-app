@@ -680,9 +680,9 @@ export class AcActivities extends YpBaseElementWithLogin {
     if (this.activities && this.activities.length > 0) {
       if (
         !this.latestProcessedActivityAt ||
-        this.latestProcessedActivityAt < activities[0].created_at
+        this.latestProcessedActivityAt < this.activities[0].created_at
       ) {
-        this.latestProcessedActivityAt = activities[0].created_at;
+        this.latestProcessedActivityAt = this.activities[0].created_at;
       }
       if (!this.latestProcessedActivityAt) {
         console.error('Have not set latest processed activity at');

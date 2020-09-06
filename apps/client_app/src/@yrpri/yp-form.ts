@@ -154,8 +154,8 @@ export class YpForm extends YpBaseElement {
   }
 
   _init() {
-    this._form!.addListener('submit', this.submit.bind(this));
-    this._form!.addListener('reset', this.reset.bind(this));
+    this._form!.addEventListener('submit', (this.submit as any).bind(this), false);
+    this._form!.addEventListener('reset', (this.reset as any).bind(this), false);
 
     // Save the initial values.
     this._defaults = this._defaults || new WeakMap();

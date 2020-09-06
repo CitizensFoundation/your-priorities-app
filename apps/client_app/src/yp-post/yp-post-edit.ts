@@ -314,12 +314,17 @@ export class YpPostEdit extends YpEditBase {
     ];
   }
 
+  _setSelectedTab(event: CustomEvent) {
+    this.selected = event.detail.index
+  }
+
   renderTabs() {
     return html`
       <mwc-tab-bar
         ?title-disabled="${this.group!.configuration
           .hideNameInputAndReplaceWith}"
-        .selected="${this.selected}"
+        .activeIndex="${this.selected}"
+        @MDCTabBar:activated="${this._setSelectedTab}"
         id="paperTabs"
         focused
         ?hidden="${this.hasOnlyOneTab}">
@@ -788,18 +793,18 @@ export class YpPostEdit extends YpEditBase {
     return html`
       <yp-edit-dialog
         name="postEdit"
-        double-width
+        doubleWidth
         id="editDialog"
         icon="lightbulb_outline"
         .action="${this.action}"
-        .use-next-tab-action="${this.newPost}"
+        .useNextTabAction="${this.newPost}"
         @next-tab-action="${this._nextTab}"
         .method="${this.method}"
         .title="${this.editHeaderText ? this.editHeaderText : ''}"
         .saveText="${this.saveText}"
         class="container"
-        custom-submit
-        .next-action-text="${this.t('next')}"
+        customCubmit
+        .nextActionText="${this.t('next')}"
         .snackbarText="${this.snackbarText}"
         .params="${this.params}">
         ${this.group && this.post
