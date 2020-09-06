@@ -210,12 +210,12 @@ export abstract class YpCollection extends YpBaseElement {
         ?hidden="${this.hideNewsfeed}"
         .label="${this.t('post.tabs.news')}"
         icon="rss_feed"
-        stacked></mwc-tab>
+        ></mwc-tab>
       <mwc-tab
         ?hidden="${this.locationHidden || (this.collectionType=="domain")}"
         .label="${this.t('post.tabs.location')}"
         icon="location_on"
-        stacked></mwc-tab>
+        ></mwc-tab>
     `;
   }
 
@@ -228,7 +228,7 @@ export abstract class YpCollection extends YpBaseElement {
               ?hidden="${this.hideCollection}"
               .label="${this.collectionTabLabel}"
               icon="groups"
-              stacked></mwc-tab>
+              ></mwc-tab>
             ${this.renderNewsAndMapTabs()}
           </mwc-tab-bar>
         </div>

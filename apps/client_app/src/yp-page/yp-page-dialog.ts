@@ -19,6 +19,12 @@ export class YpPageDialog extends YpBaseElement {
     return [
       super.styles,
       css`
+
+        #content {
+          color: var(--mdc-theme-on-surface);
+          background-color: var(--mdc-theme-surface);
+        }
+
         #dialog {
           background-color: #fff;
           max-width: 50%;

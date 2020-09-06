@@ -77,7 +77,6 @@ export class YpGroup extends YpCollection {
 
     if (this.hasNonOpenPosts) {
       if (this.haveGotTabCountInfoCount == 4) {
-
         //TODO: Fix this logic of selecting a group with some ideas after we get the new counts from the server
         if (this.selectedGroupTab === GroupTabTypes.Open) {
           if (this.tabCounters['open'] && this.tabCounters['open'] > 0) {
@@ -109,8 +108,7 @@ export class YpGroup extends YpCollection {
 
   tabLabelWithCount(type: string): string {
     const labelTranslation = this.t('posts.' + type);
-    if (type==='inProgress')
-      type="in_progress"
+    if (type === 'inProgress') type = 'in_progress';
 
     return `${labelTranslation} (${
       this.tabCounters[type] != undefined ? this.tabCounters[type] : '...'
@@ -179,31 +177,27 @@ export class YpGroup extends YpCollection {
   renderGroupTabs() {
     if (this.collection && !this.tabsHidden) {
       return html`
-      <div class="layout vertical center-center">
-        <mwc-tab-bar @MDCTabBar:activated="${this._selectGroupTab}">
-          <mwc-tab
-            .label="${this.tabLabelWithCount('open')}"
-            icon="lightbulb_outline"
-            stacked></mwc-tab>
-          <mwc-tab
-            ?hidden="${!this.hasNonOpenPosts}"
-            .label="${this.tabLabelWithCount('inProgress')}"
-            icon="lightbulb_outline"
-            stacked></mwc-tab>
-          <mwc-tab
-            ?hidden="${!this.hasNonOpenPosts}"
-            .label="${this.tabLabelWithCount('successful')}"
-            icon="lightbulb_outline"
-            stacked></mwc-tab>
-          <mwc-tab
-            ?hidden="${!this.hasNonOpenPosts}"
-            .label="${this.tabLabelWithCount('failed')}"
-            icon="lightbulb_outline"
-            stacked>
-          </mwc-tab>
-          ${this.renderNewsAndMapTabs()}
-        </mwc-tab-bar>
-      </div>
+        <div class="layout vertical center-center">
+          <mwc-tab-bar @MDCTabBar:activated="${this._selectGroupTab}">
+            <mwc-tab
+              .label="${this.tabLabelWithCount('open')}"
+              icon="lightbulb_outline"></mwc-tab>
+            <mwc-tab
+              ?hidden="${!this.hasNonOpenPosts}"
+              .label="${this.tabLabelWithCount('inProgress')}"
+              icon="lightbulb_outline"></mwc-tab>
+            <mwc-tab
+              ?hidden="${!this.hasNonOpenPosts}"
+              .label="${this.tabLabelWithCount('successful')}"
+              icon="lightbulb_outline"></mwc-tab>
+            <mwc-tab
+              ?hidden="${!this.hasNonOpenPosts}"
+              .label="${this.tabLabelWithCount('failed')}"
+              icon="lightbulb_outline">
+            </mwc-tab>
+            ${this.renderNewsAndMapTabs()}
+          </mwc-tab-bar>
+        </div>
       `;
     } else {
       return nothing;
