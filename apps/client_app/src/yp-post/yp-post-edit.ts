@@ -325,7 +325,7 @@ export class YpPostEdit extends YpEditBase {
         <mwc-tab
           stacked
           .label="${this.t('post.yourPost')}"
-          icon="lightbuld_outline"></mwc-tab>
+          icon="lightbulb_outline"></mwc-tab>
 
         ${this.newPointShown
           ? html`
@@ -734,24 +734,20 @@ export class YpPostEdit extends YpEditBase {
   }
 
   renderCurrentTabPage(): TemplateResult | undefined | {} {
-    let page: TemplateResult | undefined | {};
-
-    switch (this.selected) {
-      case EditPostTabs.Description:
-        page = this.renderDescriptionTab();
-        break;
-      case EditPostTabs.Point:
-        page = this.renderPointTab();
-        break;
-      case EditPostTabs.Location:
-        page = this.renderLocationTab();
-        break;
-      case EditPostTabs.Media:
-        page = this.renderMediaTab();
-        break;
-    }
-
-    return page;
+    return html`
+      <div ?hidden="${this.selected!==EditPostTabs.Description}">
+        ${this.renderDescriptionTab()}
+      </div>
+      <div ?hidden="${this.selected!==EditPostTabs.Point}">
+        ${this.renderPointTab()}
+      </div>
+      <div ?hidden="${this.selected!==EditPostTabs.Location}">
+        ${this.renderLocationTab()}
+      </div>
+      <div ?hidden="${this.selected!==EditPostTabs.renderMediaTab}">
+        ${this.renderMediaTab()}
+      </div>
+    `
   }
 
   renderHiddenInputs() {

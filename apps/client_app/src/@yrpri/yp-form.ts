@@ -495,7 +495,7 @@ export class YpForm extends YpBaseElement {
 
     if (tag === 'select') {
       return this._serializeSelectValues(element as YpHTMLInputElement);
-    } else if (tag === 'input') {
+    } else if (tag === 'input' || tag === 'mwc-textarea') {
       return this._serializeInputValues(element);
     } else {
       if (!element.checked) return [];
