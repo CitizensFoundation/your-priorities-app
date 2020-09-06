@@ -66,7 +66,7 @@
 
     <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('group.add')]]" on-yp-create-fab-tap="_newGroup"
              hide-all-tabs="[[community.configuration.hideAllTabs]]"
-             role="main" aria-label="[[t('groups')]]">
+             role="main" aria-label$="[[t('groups')]]">
 
       <template is="dom-if" if="[[useAlternativeHeader]]">
         <yp-community-header id="communityCard" slot="largeCard" class="largeCard card" community="[[community]]" on-update-community="_refreshAjax"></yp-community-header>
@@ -83,7 +83,7 @@
       </paper-tabs>
 
       <iron-pages class="tabPages" slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section name="groups">
+        <section name="groups" role="main" aria-label$="[[t('groups')]]">
           <div class="layout horizontal center-center">
             <yp-group-grid
               id="groupGrid"
