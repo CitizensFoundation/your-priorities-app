@@ -24,6 +24,7 @@ import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { Select } from '@material/mwc-select';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
+import { TextArea } from '@material/mwc-textarea';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -52,19 +53,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   upPoints: Array<YpPointData> | undefined;
 
   @property({ type: String })
-  textValueUp = '';
-
-  @property({ type: String })
-  textValueDown = '';
-
-  @property({ type: String })
   newPointTextCombined: string | undefined;
 
   @property({ type: Object })
   post!: YpPostData;
-
-  @property({ type: String })
-  textValueMobileUpOrDown = '';
 
   @property({ type: String })
   labelMobileUpOrDown: string | undefined;
@@ -176,6 +168,42 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   storedDownPointsCount = 0;
 
   noMorePoints = false;
+
+  get textValueUp() {
+    if (this.$$("#up_point"))
+      return ((this.$$("#up_point")) as TextArea).value
+    else
+      return ''
+  }
+
+  _clearTextValueUp() {
+    if (this.$$("#up_point"))
+      ((this.$$("#up_point")) as TextArea).value = ''
+  }
+
+  get textValueDown() {
+    if (this.$$("#down_point"))
+      return ((this.$$("#down_point")) as TextArea).value
+    else
+      return ''
+  }
+
+  _clearTextValueDown() {
+    if (this.$$("#down_point"))
+      ((this.$$("#down_point")) as TextArea).value = ''
+  }
+
+  get textValueMobileUpOrDown() {
+    if (this.$$("#mobile_point"))
+      return ((this.$$("#mobile_point")) as TextArea).value
+    else
+      return ''
+  }
+
+  _clearTextValueMobileUpOrDown() {
+    if (this.$$("#up_point"))
+      ((this.$$("#up_point")) as TextArea).value = ''
+  }
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
@@ -1567,15 +1595,15 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         this.t('point.forAdded') +
         ' ' +
         YpFormattingHelpers.truncate(point.content, 21);
-      this.textValueUp = '';
+      this._clearTextValueUp();
     } else {
       this.newPointTextCombined =
         this.t('point.againstAdded') +
         ' ' +
         YpFormattingHelpers.truncate(point.content, 21);
-      this.textValueDown = '';
+      this._clearTextValueDown()
     }
-    this.textValueMobileUpOrDown = '';
+    this._clearTextValueMobileUpOrDown();
     this._insertNewPoint(point);
     this.post.counter_points = this.post.counter_points + 1;
     //TODO: Get working with a global dialog with  this.newPointTextCombined

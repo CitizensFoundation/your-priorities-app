@@ -123,15 +123,13 @@ export class YpPost extends YpCollection {
           <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
             <mwc-tab
               .label="${this.tabDebateCount}"
-              icon="lightbulb_outline"
-              stacked></mwc-tab>
+              icon="lightbulb_outline"></mwc-tab>
 
             ${this.renderNewsAndMapTabs()}
 
             <mwc-tab
               .label="${this.tabPhotosCount}"
-              icon="lightbulb_outline"
-              stacked></mwc-tab>
+              icon="lightbulb_outline"></mwc-tab>
           </mwc-tab-bar>
         </div>
       `;
@@ -196,19 +194,21 @@ export class YpPost extends YpCollection {
   }
 
   render() {
-    return this.post ? html`
-      ${this.renderPostHeader()} ${this.renderPostTabs()}
-      ${this.renderCurrentPostTabPage()}
-      ${!this.disableNewPosts &&
-      this.post &&
-      !this.post.Group.configuration.hideNewPost &&
-      !this.post.Group.configuration.hideNewPostOnPostPage
-        ? html` <mwc-fab
-            .label="${this.t('post.new')}"
-            icon="lightbulb"
-            @click="${this._newPost}"></mwc-fab>`
-        : nothing}
-    ` : html``;
+    return this.post
+      ? html`
+          ${this.renderPostHeader()} ${this.renderPostTabs()}
+          ${this.renderCurrentPostTabPage()}
+          ${!this.disableNewPosts &&
+          this.post &&
+          !this.post.Group.configuration.hideNewPost &&
+          !this.post.Group.configuration.hideNewPostOnPostPage
+            ? html` <mwc-fab
+                .label="${this.t('post.new')}"
+                icon="lightbulb"
+                @click="${this._newPost}"></mwc-fab>`
+            : nothing}
+        `
+      : html``;
   }
 
   get tabDebateCount(): string {
@@ -324,7 +324,7 @@ export class YpPost extends YpCollection {
       )) as YpPostData | undefined;
       if (this.post) {
         this._processIncomingPost();
-        this._getHelpPages("group", this.post.group_id);
+        this._getHelpPages('group', this.post.group_id);
       }
     } else {
       console.error('No collection id for _getPost');
