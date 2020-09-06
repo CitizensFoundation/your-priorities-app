@@ -147,6 +147,7 @@ export class YpPostEdit extends YpEditBase {
 
     if (changedProperties.has('selected')) {
       this._selectedChanged();
+      const a = this.selected
     }
 
     this._setupStructuredQuestions();
@@ -401,14 +402,14 @@ export class YpPostEdit extends YpEditBase {
       ? html`
           <section>
             <div class="layout vertical flex">
-              ${!this.group.configuration.hideNameInputAndReplaceWith
+              ${this.group.configuration.hideNameInputAndReplaceWith
                 ? html`
                     <input
                       type="hidden"
                       name="name"
                       .value="${this.replacedName || ''}" />
                   `
-                : html`
+                : this.post ? html`
                     <mwc-textfield
                       id="name"
                       required
@@ -416,11 +417,11 @@ export class YpPostEdit extends YpEditBase {
                       name="name"
                       type="text"
                       .label="${this.t('title')}"
-                      .value="${this.post!.name}"
+                      .value="${this.post.name}"
                       maxlength="60"
                       charCounter>
                     </mwc-textfield>
-                  `}
+                  ` : nothing }
               ${this.showCategories && this.group.Categories
                 ? html`
                     <mwc-select
@@ -807,7 +808,7 @@ export class YpPostEdit extends YpEditBase {
                 class="layout vertical wrap topNewPostContainer"
                 ?no-title="${this.group.configuration
                   .hideNameInputAndReplaceWith}">
-                ${this.renderTabs()} ${this.renderCurrentTabPage()}}
+                ${this.renderTabs()} ${this.renderCurrentTabPage()}
               </div>
               ${this.renderHiddenInputs()}
             `

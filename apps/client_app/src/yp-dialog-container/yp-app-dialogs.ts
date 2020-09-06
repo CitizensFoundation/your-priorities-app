@@ -242,6 +242,11 @@ export class YpAppDialogs extends YpBaseElement {
         this.haveLoadedDelayed = true;
       });
     }, 3000);
+    setTimeout(() => {
+      import('./yp-dialog-container-short-delay.js').then(() => {
+        this.haveLoadedDelayed = true;
+      });
+    }, 1000);
   }
 
   async openPixelCookieConfirm(facebookPixelTrackingId: string) {

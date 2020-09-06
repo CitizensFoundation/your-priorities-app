@@ -493,9 +493,9 @@ export class YpForm extends YpBaseElement {
       return [];
     }
 
-    if (tag === 'select') {
+    if (tag === 'select' || tag === 'mwc-select') {
       return this._serializeSelectValues(element as YpHTMLInputElement);
-    } else if (tag === 'input' || tag === 'mwc-textarea') {
+    } else if (tag === 'input' || tag === 'mwc-textarea' || tag === 'mwc-textfield') {
       return this._serializeInputValues(element);
     } else {
       if (!element.checked) return [];
