@@ -338,10 +338,7 @@ export class YpPostEdit extends YpEditBase {
               <mwc-tab
                 stacked
                 icon="comment"
-                .label="${this.t('post.yourPoint') +
-                this.group!.configuration.newPointOptional
-                  ? this.t('optional')
-                  : ''}">
+                .label="${this.t('post.yourPoint')}">
               </mwc-tab>
             `
           : nothing}
@@ -739,18 +736,38 @@ export class YpPostEdit extends YpEditBase {
     this.selectedCoverMediaType = (event.target as HTMLInputElement).value;
   }
 
+  get _pointPageHidden() {
+    return !this.newPointShown || this.selected!==EditPostTabs.Point
+  }
+
+  get _mediaPageHidden() {
+    if (this.mediaHidden) {
+      return true;
+    } else if ((this.newPointShown && !this.locationHidden) && this.selected!==EditPostTabs.Media) {
+      return true;
+    } else if ((this.newPointShown && this.locationHidden) && this.selected!==EditPostTabs.Media-1) {
+      return true;
+    } else if ((!this.newPointShown && this.locationHidden) && this.selected!==(EditPostTabs.Media-2)) {
+      return true;
+    } else if ((!this.newPointShown && !this.locationHidden) && this.selected!==(EditPostTabs.Media-1)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   renderCurrentTabPage(): TemplateResult | undefined | {} {
     return html`
       <div ?hidden="${this.selected!==EditPostTabs.Description}">
         ${this.renderDescriptionTab()}
       </div>
-      <div ?hidden="${this.selected!==EditPostTabs.Point}">
+      <div ?hidden="${this._pointPageHidden}">
         ${this.renderPointTab()}
       </div>
-      <div ?hidden="${this.selected!==EditPostTabs.Location}">
+      <div ?hidden="${this._pointPageHidden}">
         ${this.renderLocationTab()}
       </div>
-      <div ?hidden="${this.selected!==EditPostTabs.renderMediaTab}">
+      <div ?hidden="${this._mediaPageHidden}">
         ${this.renderMediaTab()}
       </div>
     `
@@ -800,7 +817,7 @@ export class YpPostEdit extends YpEditBase {
         .useNextTabAction="${this.newPost}"
         @next-tab-action="${this._nextTab}"
         .method="${this.method}"
-        .title="${this.editHeaderText ? this.editHeaderText : ''}"
+        .heading="${this.editHeaderText ? this.editHeaderText : ''}"
         .saveText="${this.saveText}"
         class="container"
         customCubmit

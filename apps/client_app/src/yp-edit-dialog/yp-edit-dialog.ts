@@ -77,7 +77,7 @@ export class YpEditDialog extends YpBaseElement {
   confirmationText: string | undefined;
 
   @property({ type: String })
-  title!: string;
+  heading!: string;
 
   @property({ type: String })
   name: string | undefined;
@@ -137,7 +137,7 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         #form > * {
-          padding: 24px 24px;
+          padding: 8px 8px;
         }
 
         @media (max-width: 1024px) {
@@ -325,7 +325,6 @@ export class YpEditDialog extends YpBaseElement {
             class="closeIconNarrow"
             dialog-dismiss></mwc-icon-button>
           <mwc-icon class="smallIcon">${this.icon}</mwc-icon>
-          <div class="titleHeaderMobile">${this.title}</div>
           <div class="flex"></div>
 
           ${!this.useNextTabAction
@@ -376,10 +375,6 @@ export class YpEditDialog extends YpBaseElement {
 
   renderDesktopView() {
     return html`
-      <div class="layout horizontal bigHeader">
-        <mwc-icon class="largeIcon" .icon="${this.icon}"></mwc-icon>
-        <div class="titleHeader">${this.title}</div>
-      </div>
       <div
         id="scrollable"
         .smallHeight="${!this.wide}"
@@ -396,8 +391,7 @@ export class YpEditDialog extends YpBaseElement {
         <mwc-circular-progress-four-color
           id="spinner"></mwc-circular-progress-four-color>
       </div>
-      <div class="buttons">
-        ${this.cancelText
+      ${this.cancelText
           ? html`
               <mwc-button
                 id="dismissBtn"
@@ -444,7 +438,6 @@ export class YpEditDialog extends YpBaseElement {
               .label="${this.t('uploading.inProgress')}"></mwc-button>
           </div>
           `}
-      </div>
     `;
   }
 
@@ -454,6 +447,7 @@ export class YpEditDialog extends YpBaseElement {
         ?open="${this.opened}"
         ?rtl="${this.rtl}"
         .name="${this.name}"
+        .heading="${this.heading}"
         id="editDialog"
         class="${this.computeClass}"
         with-backdrop="${!this.wide}"
