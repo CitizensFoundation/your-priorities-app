@@ -26,6 +26,8 @@ import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 import { TextArea } from '@material/mwc-textarea';
 import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
 
+import './yp-post-location.js';
+
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
   Point: 1,
@@ -454,7 +456,7 @@ export class YpPostEdit extends YpEditBase {
                       id="description"
                       ?hidden="${this.structuredQuestions != null}"
                       ?required="${this.structuredQuestions == null}"
-                      minlength="3"
+                      minlength="1"
                       name="description"
                       .value="${this.post!.description}"
                       .label="${this.t('post.description')}"
@@ -542,7 +544,7 @@ export class YpPostEdit extends YpEditBase {
             <mwc-textarea
               id="pointFor"
               ?required="${!this.group!.configuration.newPointOptional}"
-              minlength="3"
+              minlength="1"
               name="pointFor"
               .value="${this.post!.pointFor || ''}"
               .label="${this.t('point.for')}"
@@ -565,7 +567,7 @@ export class YpPostEdit extends YpEditBase {
     return !this.locationHidden
       ? html`
           <section>
-            ${this.mapActive
+            ${this.mapActive && this.group
               ? html`
                   <yp-post-location
                     .encodedLocation="${this.encodedLocation}"
@@ -764,7 +766,7 @@ export class YpPostEdit extends YpEditBase {
       <div ?hidden="${this._pointPageHidden}">
         ${this.renderPointTab()}
       </div>
-      <div ?hidden="${this._pointPageHidden}">
+      <div ?hidden="${false}">
         ${this.renderLocationTab()}
       </div>
       <div ?hidden="${this._mediaPageHidden}">

@@ -159,7 +159,7 @@ export class YpPostMap extends YpBaseElement {
                   id="map"
                   version="weekly"
                   api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-                  fitToMarkers>
+                  fit-to-markers>
                   ${this.posts.map(
                     post => html`
                       <lit-google-map-marker

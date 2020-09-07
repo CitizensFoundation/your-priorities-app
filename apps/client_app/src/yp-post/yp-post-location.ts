@@ -8,6 +8,8 @@ import '@material/mwc-circular-progress-four-color';
 import 'lit-google-map';
 
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { nothing } from 'lit-html';
+import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-post-location')
 export class YpPostLocation extends YpBaseElement {
@@ -38,35 +40,28 @@ export class YpPostLocation extends YpBaseElement {
   @property({ type: String })
   encodedLocation: string | undefined;
 
-  static get propesssrties() {
-    return {
-      group: {
-        type: Object,
-        observer: '_groupChanged',
-      },
+  @property({ type: Object })
+  marker: HTMLElement | undefined;
 
-      location: {
-        type: Object,
-        observer: '_locationChanged',
-        notify: true,
-      },
+  @property({ type: Boolean })
+  active = false;
 
-      post: {
-        type: Object,
-        observer: '_postChanged',
-      },
+  @property({ type: Boolean })
+  narrowPad = false;
 
-      marker: {
-        type: Object,
-      },
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('group')) {
+      this._groupChanged();
+    }
 
-      active: {
-        type: Boolean,
-        value: false,
-      },
+    if (changedProperties.has('location')) {
+      this._locationChanged();
+    }
 
-      narrowPad: Boolean,
-    };
+    if (changedProperties.has('post')) {
+      this._postChanged();
+    }
   }
 
   static get styles() {
@@ -125,51 +120,58 @@ export class YpPostLocation extends YpBaseElement {
             max-height: 160px;
           }
         }
+
+        .mapContainer {
+          width: 450px;
+          height: 250px;
+        }
       `,
     ];
   }
 
   render() {
-    return html`
-      <lit-google-map
-        additionalMapOptions="{'keyboardShortcuts':false}"
-        id="map"
-        .zoom="${this.mapZoom}"
-        api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
-        .map="${this.map}"
-        libraries="places"
-        @map-type-changed="${this._mapTypeChanged}"
-        class="map"
-        clickEvents
-        @zoom-changed="${this._zoomChanged}"
-        @google-map-click="${this._setLocation}"
-        fitToMarkers>
-        <lit-google-map-marker
-          slot="markers"
-          .latitude="${this.defaultLatitude}"
-          .longitude="${this.defaultLongitude}"
-          id="marker"></lit-google-map-marker>
-      </lit-google-map>
+    return this.group
+      ? html`<div class="mapContainer">
+            <lit-google-map
+              id="map"
+              @map-zoom-changed="${this._mapZoomChanged}"
+              api-key="AIzaSyDkF_kak8BVZA5zfp5R4xRnrX8HP3hjiL0"
+              version="weekly"
+              @map-type-changed="${this._mapTypeChanged}"
+              class="map"
+              @zoom-changed="${this._zoomChanged}"
+              fit-to-markers>
+              <lit-google-map-marker
+                slot="markers"
+                .latitude="${this.location ? this.location.latitude : this.defaultLatitude}"
+                .longitude="${this.location ? this.location.longitude : this.defaultLongitude}"
+                id="marker"></lit-google-map-marker>
+            </lit-google-map>
+          </div>
+          <div class="mapSearchInput layout vertical center-center">
+            <div class="layout horizontal center-center wrap">
+              <mwc-textfield
+                maxlength="60"
+                id="mapSearchInput"
+                .label="${this.t('maps.searchInput')}"
+                .value="${this.mapSearchString}"
+                @keydown="${this._submitOnEnter}"></mwc-textfield>
+              <mwc-button
+                @click="${this._searchMap}"
+                .label="${this.t('maps.search')}"></mwc-button>
+            </div>
+            <div class="searchResultText layout horizontal center-center">
+              ${this.mapSearchResultAddress}
+            </div>
+            <mwc-circular-progress-four-color
+              hidden
+              id="spinner"></mwc-circular-progress-four-color>
+          </div> `
+      : nothing;
+  }
 
-      <div class="mapSearchInput layout vertical center-center">
-        <div class="layout horizontal center-center wrap">
-          <mwc-input
-            maxlength="60"
-            .label="${this.t('maps.searchInput')}"
-            .value="${this.mapSearchString}"
-            @keydown="${this._submitOnEnter}"></mwc-input>
-          <mwc-button
-            @click="${this._searchMap}"
-            .label="${this.t('maps.search')}"></mwc-button>
-        </div>
-        <div class="searchResultText layout horizontal center-center">
-          ${this.mapSearchResultAddress}
-        </div>
-        <mwc-circular-progress-four-color
-          hidden
-          id="spinner"></mwc-circular-progress-four-color>
-      </div>
-    `;
+  _mapZoomChanged(event: CustomEvent) {
+    if (this.location) this.location.map_zoom = event.detail;
   }
 
   get mapZoom() {
@@ -184,13 +186,13 @@ export class YpPostLocation extends YpBaseElement {
   }
 
   _searchMap() {
-    const map = this.$$('#map');
+    const map = this.$$('#map') as YpLitGoogleMapElement;
     //@ts-ignore
     const service = new google.maps.places.PlacesService(map);
 
     (this.$$('#spinner') as HTMLElement).hidden = false;
     const request = {
-      query: this.mapSearchString,
+      query: (this.$$("#mapSearchInput") as TextField).value,
       fields: ['name', 'geometry'],
     };
 
@@ -200,37 +202,20 @@ export class YpPostLocation extends YpBaseElement {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         (this.$$('#spinner') as HTMLElement).hidden = true;
         if (results && results.length > 0) {
-          this.location = {
-            latitude: results[0].geometry.latitude,
-            longitude: results[0].geometry.longitude,
-            map_zoom: 15,
-          };
           this.mapSearchResultAddress = results[0].formatted_address;
           (this.$$('#map') as YpLitGoogleMapElement).zoom = 15;
-          //TODO: See if this is needed
-          //@ts-ignore
-          map.setCenter(results[0].geometry.location);
+          this.location = {
+            latitude: results[0].geometry.location.lat(),
+            longitude: results[0].geometry.location.lng(),
+            map_zoom: 15,
+          };
+          (this.$$('#map') as YpLitGoogleMapElement).updateMarkers()
           //this.$$('#map').resize();
         }
       }
     });
 
     this.mapSearchResultAddress = '';
-  }
-
-  _mapSearchResults(event: CustomEvent) {
-    (this.$$('#spinner') as HTMLElement).hidden = true;
-    if (event.detail && event.detail.length > 0) {
-      this.location = {
-        latitude: event.detail[0].latitude,
-        longitude: event.detail[0].longitude,
-        map_zoom: 15,
-      };
-      this.mapSearchResultAddress = event.detail[0].formatted_address;
-      (this.$$('#map') as YpLitGoogleMapElement).zoom = 15;
-      //TODO: See if this is needed
-      //this.$$('#map').resize();
-    }
   }
 
   connectedCallback() {
@@ -267,22 +252,17 @@ export class YpPostLocation extends YpBaseElement {
 
   _locationChanged() {
     if (this.location) {
-      (this.$$('#marker') as HTMLElement).setAttribute(
-        'latitude',
-        this.location.latitude.toString()
-      );
-      (this.$$('#marker') as HTMLElement).setAttribute(
-        'longitude',
-        this.location.longitude.toString()
-      );
+      debugger;
+
+      const map = this.$$('#map') as YpLitGoogleMapElement
       if (this.location.map_zoom)
-        (this.$$(
-          '#map'
-        ) as YpLitGoogleMapElement).zoom = this.location.map_zoom;
+        map.zoom = this.location.map_zoom;
       if (this.location.mapType)
-        (this.$$(
-          '#map'
-        ) as YpLitGoogleMapElement).mapType = this.location.mapType;
+        map.mapType = this.location.mapType;
+
+//      map.updateMarkers()
+//      map.fitToMarkersChanged()
+      map.requestUpdate()
       //TODO: See if this is needed
       //this.$$('#map').resize();
       this.encodedLocation = JSON.stringify(this.location);

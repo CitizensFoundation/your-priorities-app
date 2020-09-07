@@ -747,6 +747,11 @@ interface YpLitGoogleMapElement extends HTMLElement {
   fitToMarkers: boolean;
   mapType?: string;
   zoom?: number;
+  centerLongitude: number;
+  centerLatitute: number;
+  updateMarkers(): void;
+  requestUpdate(): void;
+  fitToMarkersChanged(): void;
 }
 
 interface YpHasAutoTranslationResponse {
