@@ -66,7 +66,7 @@ export class YpServerApi extends YpCodeBase {
           });
         }
       }
-      return responseJson;
+      return responseJson || true;
     } else {
       this.fireGlobal('yp-network-error', {
         response: response,
@@ -453,7 +453,8 @@ export class YpServerApi extends YpCodeBase {
         headers: headers,
         body: body,
       },
-      false
+      false,
+      "formError"
     );
   }
 

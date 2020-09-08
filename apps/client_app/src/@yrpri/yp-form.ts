@@ -106,6 +106,10 @@ export class YpForm extends YpBaseElement {
    */
   connectedCallback() {
     super.connectedCallback();
+    this.addGlobalListener(
+      'yp-network-error',
+      this._formError.bind(this)
+    );
     // We might have been detached then re-attached.
     // Avoid searching again for the <form> if we already found it.
     if (this._form) {
@@ -140,12 +144,22 @@ export class YpForm extends YpBaseElement {
     }
   }
 
+  _formError(event: CustomEvent) {
+    if (event.detail.errorId && event.detail.errorId == 'formError') {
+      this.fire('yp-form-error', {});
+    }
+  }
+
   /**
    * @return {void}
    * @override
    */
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.removeGlobalListener(
+      'yp-network-error',
+      this._formError.bind(this)
+    );
     if (this._nodeObserver) {
       //@ts-ignore
       dom(this).unobserveNodes(this._nodeObserver);
@@ -331,6 +345,8 @@ export class YpForm extends YpBaseElement {
     this.headers['content-type'] = 'application/x-www-form-urlencoded'
 
     const formResults = await window.serverApi.submitForm(url!, method, headers, bodyParams) as unknown | void;
+
+    debugger;
 
     if (formResults===true) {
       this.fire('yp-form-response', formResults);
