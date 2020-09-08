@@ -252,11 +252,15 @@ export class YpPointCommentList extends YpBaseElement {
     }
   }
 
+  get hasContent() {
+    return this.point || this.image
+  }
+
   async _getComments() {
-    if (this.point && this.commentType) {
+    if (this.hasContent && this.commentType) {
       const comment = await window.serverApi.getComments(
         this.commentType,
-        this.point.id
+        this.point ? this.point.id : this.image!.id
       );
       this.comments = comment;
       if (comment && comment.length > 0) {
@@ -271,10 +275,10 @@ export class YpPointCommentList extends YpBaseElement {
   }
 
   async _getCommentsCount() {
-    if (this.point && this.commentType) {
+    if (this.hasContent && this.commentType) {
       const response = await window.serverApi.getCommentsCount(
         this.commentType,
-        this.point.id
+        this.point ? this.point.id : this.image!.id
       ) as YpCommentCountsResponse
 
       this.commentsCount = response.count

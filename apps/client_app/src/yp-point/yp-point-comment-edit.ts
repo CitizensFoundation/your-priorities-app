@@ -138,8 +138,10 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
 
   _reset() {
     this.comment = { content: '' } as YpPointData;
-    (this.$$('#submitButton') as Button).disabled = false;
-    (this.$$("#pointComment") as TextArea).value = ''
+    if (this.$$('#submitButton'))
+      (this.$$('#submitButton') as Button).disabled = false;
+    if (this.$$("#pointComment") )
+      (this.$$("#pointComment") as TextArea).value = ''
   }
 
   async _sendComment() {
@@ -154,13 +156,13 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
           point_id: this.point.id,
           comment: this.comment,
         });
-        (this.$$('#submitButton') as Button).disabled = true;
+        (this.$$('#submitButton') as Button).disabled = false;
       } else if (this.image) {
-        await window.serverApi.postComment('points', this.image.id, {
+        await window.serverApi.postComment('images', this.image.id, {
           image_id: this.image.id,
           comment: this.comment,
         });
-        (this.$$('#submitButton') as Button).disabled = true;
+        (this.$$('#submitButton') as Button).disabled = false;
       } else {
         console.error("Can't find send ids");
       }

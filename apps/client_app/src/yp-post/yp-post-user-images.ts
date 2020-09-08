@@ -83,11 +83,6 @@ export class YpPostUserImages extends YpBaseElement {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback()
-    debugger;
-  }
-
   _postChanged() {
     this._refresh();
   }
