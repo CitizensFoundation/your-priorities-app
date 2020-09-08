@@ -19,6 +19,7 @@ import { YpPostCard } from './yp-post-card.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import './yp-post-header.js';
 import './yp-post-points.js';
+import './yp-post-user-images.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {

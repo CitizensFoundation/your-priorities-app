@@ -252,8 +252,6 @@ export class YpPostLocation extends YpBaseElement {
 
   _locationChanged() {
     if (this.location) {
-      debugger;
-
       const map = this.$$('#map') as YpLitGoogleMapElement
       if (this.location.map_zoom)
         map.zoom = this.location.map_zoom;

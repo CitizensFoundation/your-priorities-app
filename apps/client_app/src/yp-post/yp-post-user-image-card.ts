@@ -3,7 +3,6 @@ import { customElement, html, property, css } from 'lit-element';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
 import '@material/mwc-icon-button';
-import './yp-post-user-image-card.js';
 import '../@yrpri/yp-image.js';
 import '../yp-point/yp-point-comment-list.js';
 
@@ -13,8 +12,8 @@ import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpPostUserImageEdit } from './yp-post-user-image-edit.js';
 
-@customElement('yp-post-user-images')
-export class YpPostUserImages extends YpBaseElement {
+@customElement('yp-post-user-image-card')
+export class YpPostUserImageCard extends YpBaseElement {
   @property({ type: Object })
   image!: YpImageData;
 

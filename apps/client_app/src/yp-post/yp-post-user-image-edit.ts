@@ -29,7 +29,7 @@ export class YpPostUserImageEdit extends YpEditBase {
   new = false;
 
   @property({ type: String })
-  action = '/api/images';
+  action = '/images';
 
   @property({ type: Number })
   uploadedPostUserImageId: number | undefined;
@@ -50,65 +50,67 @@ export class YpPostUserImageEdit extends YpEditBase {
   }
 
   render() {
-    return this.image
-      ? html`
-          <yp-edit-dialog
-            doubleWidth
-            id="editDialog"
-            icon="photo_camera"
-            .action="${this.action}"
-            .title="${this.editHeaderText}"
-            .method="${this.method}"
-            .saveText="${this.saveText}"
-            .nextActionText="${this.t('next')}"
-            .toastText="${this.snackbarText}"
-            .params="${this.params}">
-            <div class="layout vertical center-center">
-              <yp-file-upload
-                id="imageFileUpload"
-                raised
-                .buttonText="${this.t('image.upload')}"
-                buttonIcon="photo_camera"
-                method="POST"
-                @success="${this._imageUploaded}">
-              </yp-file-upload>
-            </div>
+    return html`
+      <yp-edit-dialog
+        doubleWidth
+        id="editDialog"
+        icon="photo_camera"
+        .action="${this.action}"
+        .title="${this.editHeaderText}"
+        .method="${this.method}"
+        .saveText="${this.saveText}"
+        .nextActionText="${this.t('next')}"
+        .toastText="${this.snackbarText}"
+        .params="${this.params}">
+        ${this.image
+          ? html`
+              <div class="layout vertical center-center">
+                <yp-file-upload
+                  id="imageFileUpload"
+                  raised
+                  .buttonText="${this.t('image.upload')}"
+                  buttonIcon="photo_camera"
+                  method="POST"
+                  @success="${this._imageUploaded}">
+                </yp-file-upload>
+              </div>
 
-            <mwc-textfield
-              id="photographerName"
-              name="photographerName"
-              type="text"
-              .label="${this.t('post.photographerName')}"
-              .value="${this.image.photographer_name || ''}"
-              maxlength="60"
-              char-counter="">
-            </mwc-textfield>
+              <mwc-textfield
+                id="photographerName"
+                name="photographerName"
+                type="text"
+                .label="${this.t('post.photographerName')}"
+                .value="${this.image.photographer_name || ''}"
+                maxlength="60"
+                char-counter="">
+              </mwc-textfield>
 
-            <mwc-textarea
-              id="description"
-              required
-              minlength="1"
-              name="description"
-              .value="${this.image.description || ''}"
-              .label="${this.t('post.description')}"
-              charCounter
-              rows="2"
-              maxrows="5"
-              maxlength="200">
-            </mwc-textarea>
+              <mwc-textarea
+                id="description"
+                required
+                minlength="1"
+                name="description"
+                .value="${this.image.description || ''}"
+                .label="${this.t('post.description')}"
+                charCounter
+                rows="2"
+                maxrows="5"
+                maxlength="200">
+              </mwc-textarea>
 
-            <input
-              type="hidden"
-              name="uploadedPostUserImageId"
-              .value="${this.uploadedPostUserImageId}" />
+              <input
+                type="hidden"
+                name="uploadedPostUserImageId"
+                .value="${this.uploadedPostUserImageId}" />
 
-            <input
-              type="hidden"
-              name="oldUploadedPostUserImageId"
-              .value="${this.oldUploadedPostUserImageId}" />
-          </yp-edit-dialog>
-        `
-      : nothing;
+              <input
+                type="hidden"
+                name="oldUploadedPostUserImageId"
+                .value="${this.oldUploadedPostUserImageId}" />
+            `
+          : nothing}
+      </yp-edit-dialog>
+    `;
   }
 
   _postChanged() {
