@@ -606,7 +606,7 @@ export class YpEditDialog extends YpBaseElement {
     if (submit2) submit2.disabled = status;
   }
 
-  _reallySubmit() {
+  async _reallySubmit() {
     this._setSubmitDisabledStatus(true);
     if (this.params && this.params.communityId) {
       this.action = this.baseAction + '/' + this.params.communityId;
@@ -636,6 +636,8 @@ export class YpEditDialog extends YpBaseElement {
     } else if (this.params && this.params.categoryId) {
       this.action = this.baseAction + '/' + this.params.categoryId;
     }
+
+    await this.requestUpdate()
 
     const form = this.$$('#form') as YpForm;
 

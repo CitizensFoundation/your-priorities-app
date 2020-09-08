@@ -444,14 +444,14 @@ export class YpServerApi extends YpCodeBase {
     url: string,
     method: string,
     headers: Record<string, string>,
-    body: object
+    body: string
   ) {
     return this.fetchWrapper(
-      url,
+      this.baseUrlPath + url,
       {
         method: method,
         headers: headers,
-        body: JSON.stringify(body),
+        body: body,
       },
       false
     );

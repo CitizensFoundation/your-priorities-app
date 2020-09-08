@@ -330,7 +330,7 @@ export class YpFileUpload extends YpBaseElement {
                 <div ?hidden="${item.complete}">
                   <mwc-linear-progress
                     .value="${item.progress}"
-                    .indeterminate="${this.indeterminateProgress}"
+                    ?indeterminate="${this.indeterminateProgress}"
                     .error="${item.error}"></mwc-linear-progress>
                 </div>
               </div>

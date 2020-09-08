@@ -34,7 +34,7 @@ export class YpForm extends YpBaseElement {
    * more details. Only works when `allowRedirect` is false.
    */
   @property({ type: Object })
-  headers = {};
+  headers: Record<string,string> = {};
 
   _form: HTMLFormElement | undefined;
   _defaults: WeakMap<HTMLInputElement | HTMLFormElement, object> | undefined;
@@ -315,7 +315,7 @@ export class YpForm extends YpBaseElement {
     return json;
   }
 
-  async _makeAjaxRequest(json: object) {
+  async _makeAjaxRequest(json: Record<string, string>) {
 
     const url = this._form!.getAttribute('action');
     const method = this._form!.getAttribute('method') || 'GET';
@@ -323,7 +323,14 @@ export class YpForm extends YpBaseElement {
 
     this.fire('yp-form-submit');
 
-    const formResults = await window.serverApi.submitForm(url!, method, headers, json) as unknown | void;
+    const bodyParams = Object.keys(json).map((key) => {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(json[key]);
+    }).join('&');
+
+
+    this.headers['content-type'] = 'application/x-www-form-urlencoded'
+
+    const formResults = await window.serverApi.submitForm(url!, method, headers, bodyParams) as unknown | void;
 
     if (formResults===true) {
       this.fire('yp-form-response', formResults);

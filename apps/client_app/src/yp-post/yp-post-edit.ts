@@ -27,6 +27,7 @@ import { TextArea } from '@material/mwc-textarea';
 import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
 
 import './yp-post-location.js';
+import { Radio } from '@material/mwc-radio';
 
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
@@ -417,7 +418,7 @@ export class YpPostEdit extends YpEditBase {
                     <mwc-textfield
                       id="name"
                       required
-                      minlength="3"
+                      minlength="1"
                       name="name"
                       type="text"
                       .label="${this.t('title')}"
@@ -592,6 +593,7 @@ export class YpPostEdit extends YpEditBase {
         <mwc-formfield label="${this.t('post.cover.none')}">
           <mwc-radio
             value="none"
+            id="mediaNone"
             ?checked="${this.selectedCoverMediaType === 'none'}"
             @change="${this._setSelectedCoverMediaType}"
             name="radioButtonsMedia">
@@ -603,6 +605,7 @@ export class YpPostEdit extends YpEditBase {
           ?hidden="${!this.uploadedHeaderImageId}">
           <mwc-radio
             value="image"
+            id="mediaImage"
             ?checked="${this.selectedCoverMediaType === 'image'}"
             @change="${this._setSelectedCoverMediaType}"
             name="radioButtonsMedia">
@@ -614,6 +617,7 @@ export class YpPostEdit extends YpEditBase {
           ?hidden="${!this.showVideoCover}">
           <mwc-radio
             value="video"
+            id="mediaVideo"
             ?checked="${this.selectedCoverMediaType === 'video'}"
             @change="${this._setSelectedCoverMediaType}"
             name="radioButtonsMedia">
@@ -625,6 +629,7 @@ export class YpPostEdit extends YpEditBase {
           ?hidden="${!this.showAudioCover}">
           <mwc-radio
             value="audio"
+            id="mediaAudio"
             ?checked="${this.selectedCoverMediaType === 'audio'}"
             @change="${this._setSelectedCoverMediaType}"
             name="radioButtonsMedia">
@@ -637,6 +642,7 @@ export class YpPostEdit extends YpEditBase {
                 <mwc-radio
                   value="map"
                   ?checked="${this.selectedCoverMediaType === 'map'}"
+                  id="mediaMap"
                   @change="${this._setSelectedCoverMediaType}"
                   name="radioButtonsMedia">
                 </mwc-radio>
@@ -645,6 +651,7 @@ export class YpPostEdit extends YpEditBase {
               <mwc-formfield label="${this.t('post.cover.streetview')}">
                 <mwc-radio
                   value="streetView"
+                  id="mediaStreetview"
                   ?checked="${this.selectedCoverMediaType === 'streetView'}"
                   @change="${this._setSelectedCoverMediaType}"
                   name="radioButtonsMedia">
@@ -1147,7 +1154,7 @@ export class YpPostEdit extends YpEditBase {
 
   _videoUploaded(event: CustomEvent) {
     this.uploadedVideoId = event.detail.videoId;
-    this.selectedCoverMediaType = 'video';
+    (this.$$("#mediaVideo") as Radio).checked = true
     setTimeout(() => {
       this.fire('iron-resize');
     }, 50);
