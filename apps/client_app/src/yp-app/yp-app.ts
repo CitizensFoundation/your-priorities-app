@@ -233,7 +233,7 @@ export class YpApp extends YpBaseElement {
     );
     this.addListener('yp-open-login', this._login, this);
     this.addListener('yp-open-page', this._openPageFromEvent, this);
-    this.addListener('yp-open-toast', this._openToast, this);
+    this.addGlobalListener('yp-open-toast', this._openToast.bind(this));
     this.addListener('yp-open-notify-dialog', this._openNotifyDialog, this);
     this.addListener('yp-dialog-closed', this._dialogClosed, this);
     this.addListener('yp-language-name', this._setLanguageName, this);
@@ -276,7 +276,7 @@ export class YpApp extends YpBaseElement {
     );
     this.removeListener('yp-open-login', this._login, this);
     this.removeListener('yp-open-page', this._openPageFromEvent, this);
-    this.removeListener('yp-open-toast', this._openToast, this);
+    this.removeGlobalListener('yp-open-toast', this._openToast.bind(this));
     this.removeListener('yp-open-notify-dialog', this._openNotifyDialog, this);
     this.removeListener('yp-dialog-closed', this._dialogClosed, this);
     this.removeListener('yp-language-name', this._setLanguageName, this);
@@ -549,8 +549,8 @@ export class YpApp extends YpBaseElement {
   }
 
   _openToast(event: CustomEvent) {
-    (this.$$('#dialog') as Snackbar).labelText = event.detail;
-    (this.$$('#dialog') as Snackbar).open = true;
+    (this.$$('#toast') as Snackbar).labelText = event.detail.text;
+    (this.$$('#toast') as Snackbar).open = true;
   }
 
   _resetNotifyDialogText() {
