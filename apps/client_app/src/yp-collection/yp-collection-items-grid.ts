@@ -59,7 +59,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     return html`
       <lit-virtualizer
         style="width: 100vw; height: 100vh;"
-        .items=${this.sortedCollectionItems!}
+        .items=${this.sortedCollectionItems}
         .scrollTarget="${window}"
         .renderItem=${this.renderItem}></lit-virtualizer>
     `;
@@ -70,14 +70,14 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     index?: number | undefined
   ): TemplateResult {
     return html`<div
-    class="card layout vertical center-center"
-    ?wide-padding="${this.wide}"
-    tabindex="${ifDefined(index)}"
-    role="listitem"
-    aria-level="2"
-    aria-label="[[item.name]]">
+      class="card layout vertical center-center"
+      ?wide-padding="${this.wide}"
+      tabindex="${ifDefined(index)}"
+      role="listitem"
+      aria-level="2"
+      aria-label="[[item.name]]">
       <yp-collection-item-card .item="${item}"></yp-collection-item-card>
-  </div>`;
+    </div>`;
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
