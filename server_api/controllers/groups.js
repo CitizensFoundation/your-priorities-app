@@ -334,7 +334,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hideQuestionIndexOnNewPost', truthValueFromBody(req.body.hideQuestionIndexOnNewPost));
   group.set('configuration.allowWhatsAppSharing', truthValueFromBody(req.body.allowWhatsAppSharing));
   group.set('configuration.optionalSortOrder', (req.body.optionalSortOrder && req.body.optionalSortOrder!="") ? req.body.optionalSortOrder : null);
-  group.set('configuration.storeSubCodesWithRadiosAndCheckboxes', truthValueFromBody(req.body.storeSubCodesWithRadiosAndCheckboxes));
+  group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
 };
 
 var upload = multer({
@@ -1144,16 +1144,46 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
   });
 });
 
+const addVideosToGroup = (group, done) => {
+  models.Video.findAll({
+    attributes:  ['id','formats','viewable','public_meta'],
+    include: [
+      {
+        model: models.Image,
+        as: 'VideoImages',
+        attributes:["formats",'updated_at'],
+        required: false
+      },
+      {
+        model: models.Group,
+        where: {
+          id: group.id
+        },
+        as: 'GroupLogoVideos',
+        required: true,
+        attributes: ['id']
+      }
+    ],
+    order: [
+      ['updated_at', 'desc' ],
+      [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+    ]
+  }).then(videos => {
+    group.dataValues.GroupLogoVideos = videos;
+    done();
+  }).catch( error => {
+    done(error);
+  })
+}
+
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.findOne({
     where: { id: req.params.id },
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],
-      [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ],
-      [ { model: models.Video, as: "GroupLogoVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Category }, 'name', 'asc' ],
-      [ { model: models.Video, as: "GroupLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Community }, { model: models.Image, as: 'CommunityHeaderImages' } , 'created_at', 'asc' ]
     ],
     include: [
       {
@@ -1194,20 +1224,6 @@ router.get('/:id', auth.can('view group'), function(req, res) {
         required: false
       },
       {
-        model: models.Video,
-        as: 'GroupLogoVideos',
-        attributes:  ['id','formats','viewable','public_meta'],
-        required: false,
-        include: [
-          {
-            model: models.Image,
-            as: 'VideoImages',
-            attributes:["formats",'updated_at'],
-            required: false
-          },
-        ]
-      },
-      {
         model: models.Image,
         as: 'GroupHeaderImages',
         attributes:  models.Image.defaultAttributesPublic,
@@ -1216,13 +1232,19 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     ]
   }).then(function(group) {
     if (group) {
-      log.info('Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
-      var PostsByNotOpen = models.Post.scope('not_open');
-      PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
-        res.send({group: group, hasNonOpenPosts: count != 0});
-      }).catch(function (error) {
-        sendGroupOrError(res, null, 'count_posts', req.user, error);
-      });
+      addVideosToGroup(group, (error) => {
+        if (error) {
+          sendGroupOrError(res, null, 'count_posts', req.user, error);
+        } else {
+          log.info('Group Viewed', { groupId: group.id, context: 'view', userId: req.user ? req.user.id : -1 });
+          var PostsByNotOpen = models.Post.scope('not_open');
+          PostsByNotOpen.count({ where: { group_id: req.params.id} }).then(function (count) {
+            res.send({group: group, hasNonOpenPosts: count != 0});
+          }).catch(function (error) {
+            sendGroupOrError(res, null, 'count_posts', req.user, error);
+          });
+        }
+      })
     } else {
       sendGroupOrError(res, req.params.id, 'view', req.user, 'Not found', 404);
     }
@@ -1435,43 +1457,48 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         offset = parseInt(req.query.offset);
       }
 
-      var PostsByStatus = models.Post.scope(req.params.status);
-      PostsByStatus.findAndCountAll({
-        where: where,
-        attributes: ['id','status','official_status','language','counter_endorsements_up',
-          'counter_endorsements_down','created_at'],
-        order: [
-          models.sequelize.literal(postOrder)
-        ],
-        limit: 20,
-        offset: offset
-      }).then(function(postResults) {
-        const posts = postResults.rows;
-        var totalPostsCount = postResults.count;
-        var postRows = posts;
-        if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
-          postRows = seededShuffle(postRows, req.query.randomSeed);
-        }
-        getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
-          if (error) {
-            log.error("Error getting group", { err: error });
-            res.sendStatus(500);
-          } else {
-            if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
-              finalRows = seededShuffle(finalRows, req.query.randomSeed);
-            }
-            const postsOut = {
-              posts: finalRows,
-              totalPostsCount: totalPostsCount
-            };
-            req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
-            res.send(postsOut);
+      if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
+        var PostsByStatus = models.Post.scope(req.params.status);
+        PostsByStatus.findAndCountAll({
+          where: where,
+          attributes: ['id','status','official_status','language','counter_endorsements_up',
+            'counter_endorsements_down','created_at'],
+          order: [
+            models.sequelize.literal(postOrder)
+          ],
+          limit: 20,
+          offset: offset
+        }).then(function(postResults) {
+          const posts = postResults.rows;
+          var totalPostsCount = postResults.count;
+          var postRows = posts;
+          if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
+            postRows = seededShuffle(postRows, req.query.randomSeed);
           }
+          getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
+            if (error) {
+              log.error("Error getting group", { err: error });
+              res.sendStatus(500);
+            } else {
+              if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
+                finalRows = seededShuffle(finalRows, req.query.randomSeed);
+              }
+              const postsOut = {
+                posts: finalRows,
+                totalPostsCount: totalPostsCount
+              };
+              req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+              res.send(postsOut);
+            }
+          });
+        }).catch(function (error) {
+          log.error("Error getting group", { err: error });
+          res.sendStatus(500);
         });
-      }).catch(function (error) {
-        log.error("Error getting group", { err: error });
-        res.sendStatus(500);
-      });
+      } else {
+        log.error("Cant find status", { status: req.params.status });
+        res.sendStatus(404);
+      }
     }
   });
 });

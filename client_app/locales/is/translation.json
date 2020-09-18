@@ -1,6 +1,6 @@
 {
   "uploadDocxSurveyFormat": "Hlaða upp skoðanakönnun í DOCX formi",
-  "storeSubCodesWithRadiosAndCheckboxes": "Geyma 'sub-codes' með 'radios' & 'checkboxes'",
+  "exportSubCodesForRadiosAndCheckboxes": "Flytja út 'subCodes' með 'radios' & 'checkboxes'",
   "domainHeader": "Vefur",
   "communityHeader": "Svæði",
   "groupHeader": "Hópur",

@@ -176,14 +176,14 @@
       }
     </style>
 
-    <div id="topContainer" role="main" aria-label="[[t('posts.posts')]]">
+    <div id="topContainer">
 
       <div id="topArea" class="large-card-wrapper layout horizontal center-center topArea" hidden$="[[group.configuration.hideGroupHeader]]">
         <yp-group-card-large id="groupCard" class="largeCard" group="[[group]]" on-update-group="_refreshAjax"></yp-group-card-large>
       </div>
 
       <div class="largeAddButton layout horizontal center-center" is-apple$="[[isOldiOs]]" is-ipad$="[[isIpad]]" hidden$="[[group.configuration.hideNewPost]]">
-        <yp-post-card-add group="[[group]]" disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2"></yp-post-card-add>
+        <yp-post-card-add group="[[group]]" disabled="[[disableNewPosts]]" on-new-post="_newPost" elevation="2" role="button" aria-label="Add idea"></yp-post-card-add>
       </div>
 
       <div class="layout horizontal center-center tabContainer" hide$="[[group.configuration.hideAllTabs]]">
@@ -239,8 +239,8 @@
         </paper-tabs>
       </div>
 
-      <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section name="open">
+      <iron-pages id="tabPages" class="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation" >
+        <section name="open" role="main" aria-label$="[[t('posts.posts')]]">
           <div class="layout horizontal center-center">
             <yp-post-list id="openPostList" sub-title="{{tabOpenSubTitle}}" selected-tab="[[selectedTab]]" list-route="[[listRoute]]" status-filter="open" tab-counter-id="tabCountOpen" searching-for="[[searchingFor]]" group="[[group]]" group-id="[[lastValidGroupId]]"></yp-post-list>
           </div>

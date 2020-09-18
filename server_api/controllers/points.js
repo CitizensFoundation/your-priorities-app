@@ -775,11 +775,9 @@ const translateToObsFormat = (json) => {
 
 router.get('/url_preview', auth.isLoggedIn, function(req, res) {
   if (req.query.url && validateEmbedUrl(req.query.url)) {
-    ogs({ url: req.query.url })
-      .then((data) => {
-        const { error, result, response } = data;
+    ogs({ url: req.query.url }, (error, result, response ) => {
         if (error) {
-          log.error('Open graph not working', { err: err, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
+          log.error('Open graph not working', { err: error, url: req.query.url, context: 'url_preview', user: toJson(req.user) });
           res.sendStatus(500);
         } else {
           res.send(translateToObsFormat(result));
