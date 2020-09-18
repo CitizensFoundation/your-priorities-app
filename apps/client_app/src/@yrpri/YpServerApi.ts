@@ -24,7 +24,7 @@ export class YpServerApi extends YpCodeBase {
         break;
       default:
         transformedApiType = '';
-        console.error(`Cant find collection type transsform for ${type}`);
+        console.error(`Cant find collection type transform for ${type}`);
     }
 
     return transformedApiType;
