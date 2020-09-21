@@ -4,8 +4,6 @@ import { ifDefined } from 'lit-html/directives/if-defined';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 
-import { SanitizeHtml } from '../@yrpri/SanitizeHtml.js';
-
 import { twemoji } from '@kano/twemoji/index.es.js';
 
 import linkifyStr from 'linkifyjs/string.js';
@@ -434,9 +432,6 @@ export class YpMagicText extends YpBaseElement {
 
   _linksAndEmojis() {
     if (!this.skipSanitize && this.processedContent) {
-      this.processedContent = SanitizeHtml.sanitize(
-        this.processedContent
-      ) as string;
       this.processedContent = this.processedContent.replace(/&amp;/g, '&');
       this.processedContent = linkifyStr(this.processedContent, {
         format: (value: string, type: string) => {
