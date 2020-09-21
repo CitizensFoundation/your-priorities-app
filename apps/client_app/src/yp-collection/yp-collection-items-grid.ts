@@ -9,11 +9,13 @@ import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
-import 'lit-virtualizer';
+import { scroll } from 'lit-virtualizer/lib/scroll.js';
+import { Layout1d } from 'lit-virtualizer';
 
 import './yp-collection-item-card.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import { nothing } from 'lit-html';
 
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
@@ -56,13 +58,16 @@ export class YpCollectionItemsGrid extends YpBaseElement {
   }
 
   render() {
-    return html`
-      <lit-virtualizer
-        style="width: 100vw; height: 100vh;"
-        .items=${this.sortedCollectionItems!}
-        .scrollTarget="${window}"
-        .renderItem=${this.renderItem}></lit-virtualizer>
-    `;
+    return this.sortedCollectionItems
+      ? html`
+          <lit-virtualizer
+            .items="${this.sortedCollectionItems}"
+            .layout="${Layout1d}"
+            .scrollTarget="${window}"
+            .keyFunction="${(item: YpCollectionData) => item.id}"
+            .renderItem="${this.renderItem}"></lit-virtualizer>
+        `
+      : nothing;
   }
 
   renderItem(
@@ -70,14 +75,13 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     index?: number | undefined
   ): TemplateResult {
     return html`<div
-    class="card layout vertical center-center"
-    ?wide-padding="${this.wide}"
-    tabindex="${ifDefined(index)}"
-    role="listitem"
-    aria-level="2"
-    aria-label="[[item.name]]">
+      class="card layout vertical center-center"
+      tabindex="${ifDefined(index)}"
+      role="listitem"
+      aria-level="2"
+      aria-label="${item.name}">
       <yp-collection-item-card .item="${item}"></yp-collection-item-card>
-  </div>`;
+    </div>`;
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {

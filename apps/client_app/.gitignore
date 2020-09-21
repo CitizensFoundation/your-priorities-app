@@ -1,6 +1,7 @@
 ## editors
 /.idea
 /.vscode
+tempLitVirtualizer/
 
 ## system files
 .DS_Store

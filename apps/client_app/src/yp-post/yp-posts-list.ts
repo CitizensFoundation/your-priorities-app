@@ -14,7 +14,7 @@ import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
 import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
-import { RangeChangeEvent } from 'lit-virtualizer';
+import { RangeChangeEvent, Layout1d } from 'lit-virtualizer';
 import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-posts-list')
@@ -276,6 +276,7 @@ export class YpPostsList extends YpBaseElement {
           ? html`
               <lit-virtualizer
                 .items=${this.posts}
+                .layout="${Layout1d}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem}
                 @rangechange=${this.scrollEvent}></lit-virtualizer>
@@ -287,7 +288,6 @@ export class YpPostsList extends YpBaseElement {
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
     return html` <div
-      ?wide-padding="${this.wide}"
       class="cardContainer layout vertical center-center"
       aria-label="${post.name}"
       role="listitem"
@@ -295,7 +295,6 @@ export class YpPostsList extends YpBaseElement {
       tabindex="${ifDefined(index)}">
       <yp-post-card
         id="postCard${post.id}"
-        @refresh="${this._refreshPost}"
         class="card"
         .post="${post}">
       </yp-post-card>
@@ -342,12 +341,14 @@ export class YpPostsList extends YpBaseElement {
     super.connectedCallback();
     this.addListener('yp-filter-category-change', this._categoryChanged);
     this.addListener('yp-filter-changed', this._filterChanged);
+    this.addListener('refresh', this._refreshPost);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener('yp-filter-category-change', this._categoryChanged);
     this.removeListener('yp-filter-changed', this._filterChanged);
+    this.removeListener('refresh', this._refreshPost);
   }
 
   _selectedItemChanged(event: CustomEvent) {
