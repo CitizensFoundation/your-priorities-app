@@ -16,7 +16,7 @@
     "rootDir": "./"
   },
   "include": ["**/*.ts"],
-  "exclude": ["stuff"],
+  "exclude": ["tempLitVirtualizer"],
   "importHelpers": true,
   "plugins": [
     {

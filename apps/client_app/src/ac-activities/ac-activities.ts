@@ -10,7 +10,7 @@ import './ac-activity.js';
 import './ac-activity-recommended-posts.js';
 
 import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
-import { LitVirtualizer, RangeChangeEvent } from 'lit-virtualizer';
+import { LitVirtualizer, RangeChangeEvent, Layout1d } from 'lit-virtualizer';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
@@ -310,8 +310,9 @@ export class AcActivities extends YpBaseElementWithLogin {
                 <lit-virtualizer
                   .items=${this.activities}
                   .scrollTarget="${window}"
+                  .layout="${Layout1d}"
                   id="activitiesList"
-                  .renderItem=${this.renderItem}
+                  .renderItem=${this.renderItem.bind(this)}
                   @rangechange=${this.scrollEvent}></lit-virtualizer>
               `
             : nothing}

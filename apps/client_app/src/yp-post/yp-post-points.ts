@@ -25,12 +25,7 @@ import { Select } from '@material/mwc-select';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
 import { TextArea } from '@material/mwc-textarea';
-
-// TODO: Remove
-interface AcActivity extends LitElement {
-  scrollToItem(item: YpDatabaseItem): () => void;
-  loadNewData(): () => void;
-}
+import { Layout1d } from 'lit-virtualizer';
 
 @customElement('yp-post-points')
 export class YpPostPoints extends YpBaseElementWithLogin {
@@ -256,8 +251,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   static get styles() {
     return [
+      super.styles,
       css`
-        super.styles,
         :host {
           display: block;
         }
@@ -277,7 +272,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding-bottom: 32px;
           padding-left: 24px;
           padding-right: 24px;
-          width: 398px;
+          width: 405px;
         }
 
         .pointInputMaterial {
@@ -721,6 +716,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               <lit-virtualizer
                 id="list${type}"
                 .items=${points}
+                .layout="${Layout1d}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPointItem}
                 @rangechange=${this.scrollEvent}></lit-virtualizer>
