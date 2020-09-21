@@ -66,7 +66,11 @@ export class YpServerApi extends YpCodeBase {
           });
         }
       }
-      return responseJson || true;
+      if (responseJson!==null) {
+        return responseJson;
+      } else {
+        return true;
+      }
     } else {
       this.fireGlobal('yp-network-error', {
         response: response,
