@@ -272,7 +272,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding-bottom: 32px;
           padding-left: 24px;
           padding-right: 24px;
-          width: 405px;
         }
 
         .pointInputMaterial {
@@ -349,8 +348,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         lit-virtualizer {
-          width: 430px;
-          height: 100vh;
+          width: 450px;
+          height: 80vh;
+          overflow: hidden;
         }
 
         @media (max-width: 985px) {
@@ -774,7 +774,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
       ${this.wideReady
         ? html`
-            <div ?rtl="${this.rtl}" class="layout vertical topContainer">
+            <div ?rtl="${this.rtl}" class="layout vertical topContainer center-center">
               <div class="main-container layout horizontal">
                 ${this.renderPointList(
                   'Up',
