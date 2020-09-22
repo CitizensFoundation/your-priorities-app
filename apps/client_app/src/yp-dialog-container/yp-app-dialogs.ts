@@ -8,6 +8,8 @@ import { Dialog } from '@material/mwc-dialog';
 import '@material/mwc-dialog';
 import '@material/mwc-snackbar';
 
+import '../yp-magic-text/yp-magic-text-dialog.js';
+
 import '../yp-user/yp-login.js';
 
 @customElement('yp-app-dialogs')
