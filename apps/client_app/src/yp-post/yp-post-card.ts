@@ -291,6 +291,7 @@ export class YpPostCard extends YpBaseElement {
               <div class="layout vertical">
                 <a
                   href="${ifDefined(this._getPostLink(this.post))}"
+                  @click="${this.goToPostIfNotHeader}"
                   id="mainArea">
                   <yp-post-cover-media
                     ?mini="${this.mini}"
@@ -306,7 +307,6 @@ export class YpPostCard extends YpBaseElement {
                         id="postNameMagicText"
                         textType="postName"
                         .contentLanguage="${this.post.language}"
-                        @click="${this.goToPostIfNotHeader}"
                         text-only
                         .content="${this.post.name}"
                         .contentId="${this.post.id}">
@@ -322,7 +322,6 @@ export class YpPostCard extends YpBaseElement {
                           ?hidden="${this.hideDescription}"
                           textType="postContent"
                           .contentLanguage="${this.post.language}"
-                          @click="${this.goToPostIfNotHeader}"
                           text-only
                           .content="${this.post.description}"
                           .contentId="${this.post.id}"
@@ -492,7 +491,9 @@ export class YpPostCard extends YpBaseElement {
         this.post.Group.configuration.hidePostDescription)) as boolean;
   }
 
-  goToPostIfNotHeader() {
+  goToPostIfNotHeader(event: CustomEvent) {
+    event.preventDefault();
+
     if (
       this.post.Group.configuration &&
       this.post.Group.configuration.disablePostPageLink

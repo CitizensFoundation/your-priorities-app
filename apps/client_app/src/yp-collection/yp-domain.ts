@@ -1,9 +1,10 @@
 import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
 import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
 
-import { YpCollection } from './yp-collection.js';
+import { YpCollection, CollectionTabTypes } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement } from 'lit-element';
+import { AcActivities } from '../ac-activities/ac-activities.js';
 
 @customElement('yp-domain')
 export class YpDomain extends YpCollection {
@@ -47,6 +48,26 @@ export class YpDomain extends YpCollection {
     window.appGlobals.currentGroup = undefined;
     window.appGlobals.signupTermsPageId = undefined;
     window.appGlobals.setHighlightedLanguages(undefined);
+  }
+
+  scrollToCommunityItem() {
+    if (this.selectedTab===CollectionTabTypes.Newsfeed && window.appGlobals.cache.cachedActivityItem) {
+      const list = this.$$("#collectionActivities") as AcActivities;
+      if (list) {
+        list.scrollToItem(window.appGlobals.cache.cachedActivityItem);
+        window.appGlobals.cache.cachedActivityItem = undefined;
+      } else {
+        console.warn("No domain activities for scroll to item");
+      }
+    } else if (this.selectedTab===CollectionTabTypes.Collection && this.collection) {
+      if (window.appGlobals.cache.backToDomainCommunityItems &&
+        window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]) {
+          (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
+            window.appGlobals.cache.backToDomainCommunityItems[this.collection.id]
+          );
+        window.appGlobals.cache.backToDomainCommunityItems[this.collection.id] = undefined;
+      }
+    }
   }
 
   scrollToCollectionItemSubClass() {

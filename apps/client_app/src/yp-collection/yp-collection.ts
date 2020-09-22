@@ -122,6 +122,10 @@ export abstract class YpCollection extends YpBaseElement {
       } else {
         this.tabsHidden = false;
       }
+
+      if (this.$$("#collectionItems")) {
+        (this.$$("#collectionItems") as YpCollectionItemsGrid).refresh();
+      }
     }
   }
 

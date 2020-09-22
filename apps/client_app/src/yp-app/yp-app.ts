@@ -51,6 +51,9 @@ import '../yp-collection/yp-group.js';
 import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { YpPageDialog } from '../yp-page/yp-page-dialog.js';
+import { YpGroup } from '../yp-collection/yp-group.js';
+import { YpCommunity } from '../yp-collection/yp-community.js';
+import { YpDomain } from '../yp-collection/yp-domain.js';
 
 declare global {
   interface Window {
@@ -933,23 +936,20 @@ export class YpApp extends YpBaseElement {
         if (this.wide) {
           delayUntilScrollToPost = 2;
         }
-
-        /*
-
         setTimeout(() => {
           let skipMasterScroll = false;
 
           if (oldRouteData && oldRouteData.page && this.routeData) {
             // Post -> Group
             if (oldRouteData.page==="post" && this.routeData.page==="group") {
-              if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                this.$$("#groupPage")?.goToPostOrNewsItem();
+              if (this.$$("#groupPage")) {
+                (this.$$("#groupPage") as YpGroup).goToPostOrNewsItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll groupPage for goToPostOrNewsItem, trying again");
                 setTimeout(() => {
-                  if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                    this.$$("#groupPage")?.goToPostOrNewsItem();
+                  if (this.$$("#groupPage")) {
+                    (this.$$("#groupPage") as YpGroup).goToPostOrNewsItem();
                   } else {
                     console.warn("Can't find scroll groupPage for goToPostOrNewsItem final");
                   }
@@ -959,14 +959,14 @@ export class YpApp extends YpBaseElement {
 
             // Group -> Community
             else if ((oldRouteData.page==="group" || oldRouteData.page==="post") && this.routeData.page==="community") {
-              if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
-                this.$$("#communityPage")?.scrollToGroupItem();
+              if (this.$$("#communityPage")) {
+                (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
                 setTimeout(() => {
-                  if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
-                    this.$$("#communityPage")?.scrollToGroupItem();
+                  if (this.$$("#communityPage")) {
+                    (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
                   } else {
                     console.error("Can't find scroll communityPage for goToPostOrNewsItem");
                   }
@@ -977,14 +977,14 @@ export class YpApp extends YpBaseElement {
             // Community/CommunityFolder -> Domain
             else if ((oldRouteData.page==="community_folder" || oldRouteData.page==="community" || oldRouteData.page==="post")
                   && this.routeData.page==="domain") {
-              if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToCommunityItem !== "undefined") {
-                this.$$("#domainPage").scrollToCommunityItem();
+              if (this.$$("#domainPage")) {
+                (this.$$("#domainPage") as YpDomain).scrollToCommunityItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll domainPage for scrollToCommunityItem, trying again");
-                setTimeout(function () {
-                  if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToGroupItem !== "undefined") {
-                    this.$$("#domainPage").scrollToCommunityItem();
+                setTimeout( () => {
+                  if (this.$$("#domainPage")) {
+                    (this.$$("#domainPage") as YpDomain).scrollToCommunityItem();
                   } else {
                     console.error("Can't find scroll domainPage for scrollToCommunityItem");
                   }
@@ -995,14 +995,14 @@ export class YpApp extends YpBaseElement {
             // Community/CommunityFolder  -> Community
             else if ((oldRouteData.page==="community" || oldRouteData.page==="community_folder") &&
               this.routeData.page==="community_folder") {
-              if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
-                this.$$("#communityFolderPage").scrollToGroupItem();
+              if (this.$$("#communityFolderPage")) {
+                (this.$$("#communityFolderPage") as YpCommunity).scrollToGroupItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll communityFolderPage for goToPostOrNewsItem, trying again");
-                setTimeout(function () {
-                  if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
-                    this.$$("#communityFolderPage").scrollToGroupItem();
+                setTimeout(() => {
+                  if (this.$$("#communityFolderPage")) {
+                    (this.$$("#communityFolderPage") as YpCommunity).scrollToGroupItem();
                   } else {
                     console.error("Can't find scroll communityFolderPage for goToPostOrNewsItem");
                   }
@@ -1038,7 +1038,9 @@ export class YpApp extends YpBaseElement {
             });
           }
         }, delayUntilScrollToPost);
-        */
+
+        //TODO: Scroll to the right item if going back
+        window.scrollTo(0, 0);
 
         if (this.routeData) {
           this.page = this.routeData.page;

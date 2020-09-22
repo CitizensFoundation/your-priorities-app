@@ -10,12 +10,13 @@ import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
 import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
 import { scroll } from 'lit-virtualizer/lib/scroll.js';
-import { Layout1d } from 'lit-virtualizer';
+import { Layout1d, LitVirtualizer } from 'lit-virtualizer';
 
 import './yp-collection-item-card.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { nothing } from 'lit-html';
+import { YpCollectionItemCard } from './yp-collection-item-card.js';
 
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
@@ -61,41 +62,54 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     return this.sortedCollectionItems
       ? html`
           <lit-virtualizer
+            id="list"
             .items="${this.sortedCollectionItems}"
             .layout="${Layout1d}"
+            aria-role="list"
             .scrollTarget="${window}"
             .keyFunction="${(item: YpCollectionData) => item.id}"
-            .renderItem="${this.renderItem}"></lit-virtualizer>
+            .renderItem="${this.renderItem.bind(this)}"></lit-virtualizer>
         `
       : nothing;
   }
 
-  renderItem(
-    item: YpCollectionData,
-    index?: number | undefined
-  ): TemplateResult {
-    return html`<div
-      class="card layout vertical center-center"
-      tabindex="${ifDefined(index)}"
-      role="listitem"
-      aria-level="2"
-      aria-label="${item.name}">
-      <yp-collection-item-card .item="${item}"></yp-collection-item-card>
-    </div>`;
+  renderItem(item: YpCollectionData, index: number): TemplateResult {
+    return html` <yp-collection-item-card
+      class="card"
+      aria-label="${item.name}"
+      aria-role="listitem"
+      .item="${item}"
+      @keypress="${this._keypress.bind(this)}"
+      @click="${this._selectedItemChanged.bind(
+        this
+      )}"></yp-collection-item-card>`;
   }
+
+  _keypress(event: KeyboardEvent) {
+    if (event.keyCode==13) {
+      this._selectedItemChanged(event as unknown as CustomEvent);
+    }
+  }
+
+  async refresh() {}
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
     YpIronListHelpers.attachListeners(this as YpElementWithIronList);
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
     if (this.collection && this.collectionItems) {
       const splitCommunities = YpCollectionHelpers.splitByStatus(
         this.collectionItems,
         this.collection.configuration
       );
+
+      //TODO: Revisit this, needed for lit-virtualizer to work with the cache directive
+      this.sortedCollectionItems = undefined;
+      await this.requestUpdate();
+
       this.sortedCollectionItems = splitCommunities.featured.concat(
         splitCommunities.active.concat(splitCommunities.archived)
       );
@@ -109,7 +123,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
   // TODO: Make sure this fires each time on keyboard, mouse & phone - make sure back key on browser works also just with the A
   _selectedItemChanged(event: CustomEvent) {
-    const item = event.detail.value;
+    const item = (event.target as YpCollectionItemCard).item;
 
     if (this.collectionItemType && item) {
       window.appGlobals.activity(
@@ -156,8 +170,13 @@ export class YpCollectionItemsGrid extends YpBaseElement {
   }
 
   scrollToItem(item: YpDatabaseItem | undefined) {
-    if (item) {
-      (this.$$('#ironList') as IronListInterface).scrollToItem(item);
+    if (item && this.collectionItems) {
+      for (let i = 0; i < this.collectionItems.length; i++) {
+        if (this.collectionItems[i] == item) {
+          (this.$$('#list') as LitVirtualizer<any, any>).scrollToIndex(i);
+          break;
+        }
+      }
       this.fireGlobal('yp-refresh-activities-scroll-threshold');
     } else {
       console.error('No item to scroll too');

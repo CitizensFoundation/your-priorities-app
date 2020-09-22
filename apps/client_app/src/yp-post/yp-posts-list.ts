@@ -106,6 +106,7 @@ export class YpPostsList extends YpBaseElement {
         lit-virtualizer {
           height: 100vh;
           width: 100vw;
+          overflow: hidden;
         }
 
         yp-posts-filter {
@@ -337,11 +338,20 @@ export class YpPostsList extends YpBaseElement {
     }
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
     this.addListener('yp-filter-category-change', this._categoryChanged);
     this.addListener('yp-filter-changed', this._filterChanged);
     this.addListener('refresh', this._refreshPost);
+
+    //TODO: Hack to allow cache directive to work
+    if (this.posts) {
+      const temp = this.posts;
+      this.posts = undefined;
+      await this.requestUpdate();
+      this.posts = [...temp];
+    }
+
   }
 
   disconnectedCallback() {

@@ -240,7 +240,7 @@ export class YpCollectionItemCard extends YpBaseElement {
       ? html`<a
             href="/${this.itemType}/${this.item.id}"
             @click="${this.goToItem}"
-            class="">
+            class="layout vertical center-center">
             <div
               ?featured="${this.featured}"
               class="collectionCard shadow-elevation-4dp shadow-transaction layout horizontal">
