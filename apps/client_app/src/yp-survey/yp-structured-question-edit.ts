@@ -485,6 +485,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     let questionType = this.question.type;
     if (!questionType) questionType = 'textarea';
 
+    questionType = questionType.toLowerCase();
+
     switch (questionType) {
       case 'textarea':
         question = this.renderTextArea();

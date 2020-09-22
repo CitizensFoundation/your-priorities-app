@@ -29,6 +29,8 @@ import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-ed
 import './yp-post-location.js';
 import { Radio } from '@material/mwc-radio';
 
+import '../yp-survey/yp-structured-question-edit.js';
+
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
   Point: 1,
