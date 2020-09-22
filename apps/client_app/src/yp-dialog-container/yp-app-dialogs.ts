@@ -358,7 +358,7 @@ export class YpAppDialogs extends YpBaseElement {
       this.autoTranslateDialogOpen = true;
     } else if (idName === 'magicTextDialog') {
       this.magicTextDialogOpen = true;
-    } else if (idName !== 'notificationToast' && idName !== 'masterToast') {
+    } else if (idName !== 'notificationToast' && idName !== 'masterToast' && idName !== 'mediaRecorder') {
       this.pageDialogOpen = false;
       this.confirmationDialogOpen = false;
       this.autoTranslateDialogOpen = false;
