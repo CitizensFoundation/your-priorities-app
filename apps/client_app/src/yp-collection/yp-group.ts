@@ -12,6 +12,7 @@ import '@material/mwc-tab-bar';
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
+import { YpPostEdit } from '../yp-post/yp-post-edit.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -298,20 +299,11 @@ export class YpGroup extends YpCollection {
     //TODO: Fix ts type
     window.appDialogs.getDialogAsync(
       'postEdit',
-      (dialog: {
-        setup: (arg0: null, arg1: boolean, arg2: null) => void;
-        open: (
-          arg0: string,
-          arg1: {
-            groupId: number | undefined;
-            group: YpCollectionData | undefined;
-          }
-        ) => void;
-      }) => {
-        dialog.setup(null, true, null);
-        dialog.open('new', {
-          groupId: this.collectionId,
-          group: this.collection,
+      (dialog: YpPostEdit) => {
+        dialog.setup(undefined, true, undefined, this.collection as YpGroupData);
+        dialog.open(true, {
+          groupId: this.collectionId!,
+          group: this.collection as YpGroupData,
         });
       }
     );

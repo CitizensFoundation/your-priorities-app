@@ -1489,9 +1489,9 @@ export class YpPostEdit extends YpEditBase {
   }
 
   setup(
-    post: YpPostData,
+    post: YpPostData | undefined,
     newNotEdit: boolean,
-    refreshFunction: Function,
+    refreshFunction: Function | undefined,
     group: YpGroupData
   ) {
     this._setupGroup(group);

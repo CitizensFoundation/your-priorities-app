@@ -446,6 +446,7 @@ export class YpEditDialog extends YpBaseElement {
       <mwc-dialog
         ?open="${this.opened}"
         ?rtl="${this.rtl}"
+        @closed="${this.close}"
         .name="${this.name}"
         .heading="${this.heading}"
         id="editDialog"
