@@ -118,6 +118,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         mwc-textfield,
         mwc-textarea {
+          width: 100%;
           --mwc-textfield-container-label: {
             color: #000;
             font-size: 18px;

@@ -171,11 +171,11 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         .popUpDialog {
-          width: 550px;
+          --mdc-dialog-min-width: 550px;
         }
 
         .popUpDialogDouble {
-          width: 840px;
+          --mdc-dialog-min-width: 840px;
         }
 
         #scroller {

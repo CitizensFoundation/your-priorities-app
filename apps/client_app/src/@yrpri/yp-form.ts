@@ -344,11 +344,9 @@ export class YpForm extends YpBaseElement {
 
     this.headers['content-type'] = 'application/x-www-form-urlencoded'
 
-    const formResults = await window.serverApi.submitForm(url!, method, headers, bodyParams) as unknown | void;
+    const formResults = await window.serverApi.submitForm(url!, method, headers, bodyParams) as any | void;
 
-    debugger;
-
-    if (formResults===true) {
+    if (formResults!=null) {
       this.fire('yp-form-response', formResults);
     } else {
       this.fire('yp-form-error', {});

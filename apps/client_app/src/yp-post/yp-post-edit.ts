@@ -831,7 +831,7 @@ export class YpPostEdit extends YpEditBase {
         .heading="${this.editHeaderText ? this.editHeaderText : ''}"
         .saveText="${this.saveText}"
         class="container"
-        customCubmit
+        customSubmit
         .nextActionText="${this.t('next')}"
         .snackbarText="${this.snackbarText}"
         .params="${this.params}">
