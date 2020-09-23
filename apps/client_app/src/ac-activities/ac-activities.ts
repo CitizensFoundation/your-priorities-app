@@ -308,6 +308,7 @@ export class AcActivities extends YpBaseElementWithLogin {
           ${this.activities
             ? html`
                 <lit-virtualizer
+                  id="list"
                   .items=${this.activities}
                   .scrollTarget="${window}"
                   .layout="${Layout1d}"
@@ -707,6 +708,15 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   scrollToItem(item: AcActivityData) {
     console.log('Activity scrolling to item');
+    if (item && this.activities) {
+      for (let i = 0; i < this.activities.length; i++) {
+        if (this.activities[i] == item) {
+          (this.$$('#list') as LitVirtualizer<any, any>).scrollToIndex(i);
+          break;
+        }
+      }
+    }
+//      this.fireGlobal('yp-refresh-activities-scroll-threshold');
     //TODO: Get workgin
     //(this.$$('#activitiesList') as LitVirtualizer).scrollToItem(item);
   }

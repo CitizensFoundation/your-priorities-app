@@ -1039,9 +1039,6 @@ export class YpApp extends YpBaseElement {
           }
         }, delayUntilScrollToPost);
 
-        //TODO: Scroll to the right item if going back
-        window.scrollTo(0, 0);
-
         if (this.routeData) {
           this.page = this.routeData.page;
           this._pageChanged();
