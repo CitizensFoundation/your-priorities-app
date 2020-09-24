@@ -18,7 +18,7 @@ export class YpEmojiSelector extends YpBaseElement {
       <mwc-icon-button
         .label="${this.t('addEmoji')}"
         id="trigger"
-        icon="face"
+        icon="sentiment_satisfied_alt"
         @click="${this.togglePicker}"></mwc-icon-button>
     `;
   }

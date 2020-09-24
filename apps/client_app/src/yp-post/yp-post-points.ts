@@ -674,8 +674,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           ${mobile ? this.renderMobilePointSelection() : nothing}
 
           <div
-            class="horizontal end-justified layout"
+            class="layout horizontal end" ?rtl="${this.rtl}"
             ?hidden="${this.post.Group.configuration.hideEmoji}">
+            <div class="flex"></div>
             <yp-emoji-selector
               id="point${type}EmojiSelector"
               ?hidden="${hideText}"></yp-emoji-selector>
