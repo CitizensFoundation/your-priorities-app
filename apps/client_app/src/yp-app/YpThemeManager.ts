@@ -256,7 +256,8 @@ export class YpThemeManager {
   ) {
     for (const property in properties) {
       if (Object.prototype.hasOwnProperty.call(properties, property)) {
-        window.app.style.setProperty(property, properties[property]);
+        if (window.app)
+          window.app.style.setProperty(property, properties[property]);
       }
     }
   }

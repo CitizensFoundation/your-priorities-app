@@ -63,6 +63,8 @@ export class YpCollectionItemsGrid extends YpBaseElement {
       ? html`
           <lit-virtualizer
             id="list"
+            role="main"
+            aria-label="${this.t(this.pluralItemType)}"
             .items="${this.sortedCollectionItems}"
             .layout="${Layout1d}"
             aria-role="list"
@@ -75,8 +77,6 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
   renderItem(item: YpCollectionData, index: number): TemplateResult {
     return html` <yp-collection-item-card
-      role="main"
-      aria-label="${this.t(this.pluralItemType)}"
       class="card"
       aria-label="${item.name}"
       aria-role="listitem"
