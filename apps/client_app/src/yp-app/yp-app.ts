@@ -458,7 +458,7 @@ export class YpApp extends YpBaseElement {
 
   renderAppBar() {
     return html`
-      <mwc-top-app-bar dense>
+      <mwc-top-app-bar dense role="navigation" aria-label="top navigation">
         <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
         <div slot="title">
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}

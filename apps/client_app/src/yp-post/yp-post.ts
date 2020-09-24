@@ -147,6 +147,8 @@ export class YpPost extends YpCollection {
         case PostTabTypes.Debate:
           page = html` <yp-post-points
             id="pointsSection"
+            role="main"
+            aria-label="${this.t('debate')}"
             ?isAdmin="${this.isAdmin}"
             .post="${this.post}"
             .scrollToId="${this.scrollToPointId}"></yp-post-points>`;

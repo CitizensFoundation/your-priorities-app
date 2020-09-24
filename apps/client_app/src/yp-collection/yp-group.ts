@@ -210,6 +210,8 @@ export class YpGroup extends YpCollection {
       ? html`
           <yp-posts-list
             id="${statusFilter}PostList"
+            role="main"
+            aria-label="${this.t('posts.posts')}"
             .selectedGroupTab="${this.selectedGroupTab}"
             .listRoute="${this.subRoute}"
             .statusFilter="${statusFilter}"
@@ -261,6 +263,8 @@ export class YpGroup extends YpCollection {
               .hideNewPost}">
             <div>
               <yp-post-card-add
+                role="button"
+                aria-label="${this.t('post.new')}"
                 .group="${this.collection as YpGroupData}"
                 ?disableNewPosts="${this.disableNewPosts}"
                 @new-post="${this._newPost}"></yp-post-card-add>
@@ -297,16 +301,13 @@ export class YpGroup extends YpCollection {
   _newPost() {
     window.appGlobals.activity('open', 'newPost');
     //TODO: Fix ts type
-    window.appDialogs.getDialogAsync(
-      'postEdit',
-      (dialog: YpPostEdit) => {
-        dialog.setup(undefined, true, undefined, this.collection as YpGroupData);
-        dialog.open(true, {
-          groupId: this.collectionId!,
-          group: this.collection as YpGroupData,
-        });
-      }
-    );
+    window.appDialogs.getDialogAsync('postEdit', (dialog: YpPostEdit) => {
+      dialog.setup(undefined, true, undefined, this.collection as YpGroupData);
+      dialog.open(true, {
+        groupId: this.collectionId!,
+        group: this.collection as YpGroupData,
+      });
+    });
   }
 
   _clearScrollThreshold() {

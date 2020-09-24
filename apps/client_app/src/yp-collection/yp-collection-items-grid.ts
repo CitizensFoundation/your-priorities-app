@@ -75,6 +75,8 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
   renderItem(item: YpCollectionData, index: number): TemplateResult {
     return html` <yp-collection-item-card
+      role="main"
+      aria-label="${this.t(this.pluralItemType)}"
       class="card"
       aria-label="${item.name}"
       aria-role="listitem"
@@ -83,6 +85,18 @@ export class YpCollectionItemsGrid extends YpBaseElement {
       @click="${this._selectedItemChanged.bind(
         this
       )}"></yp-collection-item-card>`;
+  }
+
+  get pluralItemType() {
+    if (this.collectionItemType=='community') {
+      return 'communities';
+    } else if (this.collectionItemType=='group') {
+      return 'groups';
+    } else if (this.collectionItemType=='post') {
+      return 'posts';
+    } else {
+      return 'unknownItemType';
+    }
   }
 
   _keypress(event: KeyboardEvent) {
