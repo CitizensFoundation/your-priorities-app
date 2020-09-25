@@ -150,8 +150,7 @@ export class YpPostCard extends YpBaseElement {
         }
 
         :host {
-          width: 600px;
-          max-width: 600px;
+          width: 100%;
         }
 
         @media (max-width: 960px) {

@@ -79,7 +79,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
     return html` <yp-collection-item-card
       class="card"
       aria-label="${item.name}"
-      aria-role="listitem"
+      ariarole="listitem"
       .item="${item}"
       @keypress="${this._keypress.bind(this)}"
       @click="${this._selectedItemChanged.bind(

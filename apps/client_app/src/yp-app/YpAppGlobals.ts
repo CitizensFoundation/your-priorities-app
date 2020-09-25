@@ -88,6 +88,8 @@ export class YpAppGlobals extends YpCodeBase {
 
   retryMethodAfter401Login: Function | undefined;
 
+  groupLoadNewPost = false;
+
   constructor(serverApi: YpServerApi) {
     super();
 

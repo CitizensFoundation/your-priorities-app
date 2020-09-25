@@ -104,8 +104,8 @@ export class YpPostsList extends YpBaseElement {
         }
 
         lit-virtualizer {
-          height: 100vh;
-          width: 100vw;
+          height: 100%;
+          width: 100%;
           overflow: hidden;
         }
 
@@ -279,7 +279,7 @@ export class YpPostsList extends YpBaseElement {
                 .items=${this.posts}
                 .layout="${Layout1d}"
                 .scrollTarget="${window}"
-                .renderItem=${this.renderPostItem}
+                .renderItem=${this.renderPostItem.bind(this)}
                 @rangechange=${this.scrollEvent}></lit-virtualizer>
             `
           : nothing }
@@ -288,18 +288,23 @@ export class YpPostsList extends YpBaseElement {
   }
 
   renderPostItem(post: YpPostData, index?: number | undefined): TemplateResult {
-    return html` <div
-      class="cardContainer layout vertical center-center"
-      aria-label="${post.name}"
-      role="listitem"
-      aria-level="2"
-      tabindex="${ifDefined(index)}">
+    const tabindex = index!==undefined ? index+1 : 0;
+    return html`
       <yp-post-card
+        aria-label="${post.name}"
+        @keypress="${this._keypress.bind(this)}"
+        @click="${this._selectedItemChanged.bind(this)}"
+        tabindex="${tabindex}"
         id="postCard${post.id}"
         class="card"
         .post="${post}">
-      </yp-post-card>
-    </div>`;
+      </yp-post-card>   `;
+  }
+
+  _keypress(event: KeyboardEvent) {
+    if (event.keyCode==13) {
+      this._selectedItemChanged(event as unknown as CustomEvent);
+    }
   }
 
   _categoryChanged(event: CustomEvent) {
@@ -350,8 +355,18 @@ export class YpPostsList extends YpBaseElement {
       this.posts = undefined;
       await this.requestUpdate();
       this.posts = [...temp];
-    }
+      await this.requestUpdate();
 
+      if (window.appGlobals.cache.cachedPostItem !== undefined) {
+        this.scrollToPost(window.appGlobals.cache.cachedPostItem);
+        window.appGlobals.cache.cachedPostItem = undefined;
+      }
+
+      if (window.appGlobals.groupLoadNewPost) {
+        window.appGlobals.groupLoadNewPost = false;
+        this.refreshGroupFromFilter();
+      }
+    }
   }
 
   disconnectedCallback() {
@@ -362,13 +377,9 @@ export class YpPostsList extends YpBaseElement {
   }
 
   _selectedItemChanged(event: CustomEvent) {
-    const detail = event.detail;
-    if (detail && detail.value) {
-      const selectedCard = this.$$('#postCard' + detail.value.id) as YpPostCard;
-      if (selectedCard) {
-        selectedCard.clickOnA();
-      }
-    }
+    const postCard = (event.target as YpPostCard);
+
+    postCard.clickOnA();
   }
 
   async _refreshPost(event: CustomEvent) {
@@ -460,7 +471,8 @@ export class YpPostsList extends YpBaseElement {
     return (this.$$('#postsFilter') as YpPostsFilter).buildPostsUrlPath();
   }
 
-  scrollToPost(post: YpPostData) {
+  async scrollToPost(post: YpPostData) {
+    debugger;
     if (post && this.posts) {
       console.info('Scrolling to post: ' + post.id);
       (this.$$('#ironList') as IronListInterface).scrollToItem(post);

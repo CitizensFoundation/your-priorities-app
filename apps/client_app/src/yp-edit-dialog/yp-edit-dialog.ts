@@ -468,7 +468,7 @@ export class YpEditDialog extends YpBaseElement {
       </mwc-dialog>
       <mwc-snackbar
         id="snackbar"
-        .text="${this.snackbarTextCombined}"></mwc-snackbar>
+        .labelText="${this.snackbarTextCombined}"></mwc-snackbar>
     `;
   }
 

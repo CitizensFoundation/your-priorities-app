@@ -315,6 +315,10 @@ export class YpPostEdit extends YpEditBase {
         .mediaTab {
           vertical-align: center;
         }
+
+        #pointFor {
+          width: 100%;
+        }
       `,
     ];
   }
@@ -1177,8 +1181,7 @@ export class YpPostEdit extends YpEditBase {
   }
 
   customFormResponse() {
-    //TODO: Check this logic here below, 4?
-    this.fireGlobal('yp-refresh-group-posts', { data: { id: 4 } });
+    window.appGlobals.groupLoadNewPost = true;
   }
 
   _updateEmojiBindings() {
