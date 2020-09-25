@@ -56,9 +56,6 @@ import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { YpPageDialog } from '../yp-page/yp-page-dialog.js';
 
-
-
-
 declare global {
   interface Window {
     appGlobals: YpAppGlobals;

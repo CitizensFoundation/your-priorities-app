@@ -477,7 +477,7 @@ export class YpPost extends YpCollection {
         this.locationHidden = false;
       }
 
-      this.fire('change-header', {
+      this.fire('yp-change-header', {
         headerTitle: YpFormattingHelpers.truncate(this.post.Group.name, 80),
         documentTitle: this.post.name,
         headerDescription: '', //this.truncate(this.post.Group.objectives,45),
