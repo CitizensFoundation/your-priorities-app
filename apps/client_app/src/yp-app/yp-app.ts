@@ -16,20 +16,20 @@ import HttpApi from 'i18next-http-backend';
 //import moment from 'moment';
 
 import { Dialog } from '@material/mwc-dialog';
-import '@material/mwc-dialog';
+
 
 import { Snackbar } from '@material/mwc-snackbar';
-import '@material/mwc-snackbar';
+
 
 import { Drawer } from '@material/mwc-drawer';
-import '@material/mwc-drawer';
+
 
 import '@material/mwc-button';
 
 import '@material/mwc-icon-button';
 
-import '@material/mwc-menu';
 import { Menu } from '@material/mwc-menu';
+
 
 import '@material/mwc-top-app-bar';
 
@@ -43,17 +43,17 @@ import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 
-import '../yp-dialog-container/yp-app-dialogs.js';
 
-import '../yp-collection/yp-domain.js';
-import '../yp-collection/yp-community.js';
-import '../yp-collection/yp-group.js';
+
+import { YpDomain } from '../yp-collection/yp-domain.js';
+import { YpCommunity } from '../yp-collection/yp-community.js';
+import { YpGroup } from '../yp-collection/yp-group.js';
 import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { YpPageDialog } from '../yp-page/yp-page-dialog.js';
-import { YpGroup } from '../yp-collection/yp-group.js';
-import { YpCommunity } from '../yp-collection/yp-community.js';
-import { YpDomain } from '../yp-collection/yp-domain.js';
+
+
+
 
 declare global {
   interface Window {
@@ -479,8 +479,6 @@ export class YpApp extends YpBaseElement {
           pageHtml = cache(html`
             <yp-domain
               id="domainPage"
-              role="main"
-              aria-label="${this.t('communities')}"
               .subRoute="${this.subRoute}"></yp-domain>
           `);
           break;

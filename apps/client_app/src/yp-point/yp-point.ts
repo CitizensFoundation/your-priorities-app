@@ -12,12 +12,12 @@ import '@material/mwc-icon-button';
 import '@material/mwc-icon';
 
 import '../yp-file-upload/yp-file-upload.js';
-import '../@yrpri/yp-emoji-selector.js';
+import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-point-actions.js';
 
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
@@ -588,7 +588,7 @@ export class YpPoint extends YpBaseElement {
   _setOpen() {
     this.openTranscript = true;
     setTimeout(() => {
-      this.fire('yp-iron-resize');
+      this.fire('yp-list-resize');
       this.requestUpdate();
     }, 20);
   }
@@ -596,7 +596,7 @@ export class YpPoint extends YpBaseElement {
   _setClosed() {
     this.openTranscript = false;
     setTimeout(() => {
-      this.fire('yp-iron-resize');
+      this.fire('yp-list-resize');
       this.requestUpdate();
     }, 20);
   }
