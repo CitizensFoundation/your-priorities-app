@@ -14,7 +14,7 @@ import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
 import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
-import { RangeChangeEvent, Layout1d } from 'lit-virtualizer';
+import { RangeChangeEvent, Layout1d, LitVirtualizer } from 'lit-virtualizer';
 import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-posts-list')
@@ -276,6 +276,7 @@ export class YpPostsList extends YpBaseElement {
         ${this.posts
           ? html`
               <lit-virtualizer
+                id="list"
                 .items=${this.posts}
                 .layout="${Layout1d}"
                 .scrollTarget="${window}"
@@ -472,10 +473,14 @@ export class YpPostsList extends YpBaseElement {
   }
 
   async scrollToPost(post: YpPostData) {
-    debugger;
     if (post && this.posts) {
       console.info('Scrolling to post: ' + post.id);
-      (this.$$('#ironList') as IronListInterface).scrollToItem(post);
+      for (let i = 0; i < this.posts.length; i++) {
+        if (this.posts[i] == post) {
+          (this.$$('#list') as LitVirtualizer<any, any>).scrollToIndex(i);
+          break;
+        }
+      }
       this.fireGlobal('yp-refresh-activities-scroll-threshold');
     } else {
       console.error('No post id on goToPostId');
