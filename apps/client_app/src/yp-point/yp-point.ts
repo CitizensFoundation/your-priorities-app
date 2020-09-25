@@ -13,10 +13,10 @@ import '@material/mwc-icon';
 
 import '../yp-file-upload/yp-file-upload.js';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+import '../@yrpri/yp-emoji-selector.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-point-actions.js';
-
 
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';

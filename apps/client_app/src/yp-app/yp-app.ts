@@ -16,20 +16,20 @@ import HttpApi from 'i18next-http-backend';
 //import moment from 'moment';
 
 import { Dialog } from '@material/mwc-dialog';
-
+import '@material/mwc-dialog';
 
 import { Snackbar } from '@material/mwc-snackbar';
-
+import '@material/mwc-snackbar';
 
 import { Drawer } from '@material/mwc-drawer';
-
+import '@material/mwc-drawer';
 
 import '@material/mwc-button';
 
 import '@material/mwc-icon-button';
 
 import { Menu } from '@material/mwc-menu';
-
+import '@material/mwc-menu';
 
 import '@material/mwc-top-app-bar';
 
@@ -43,7 +43,11 @@ import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 
+import '../yp-dialog-container/yp-app-dialogs.js';
 
+import '../yp-collection/yp-domain.js';
+import '../yp-collection/yp-community.js';
+import '../yp-collection/yp-group.js';
 
 import { YpDomain } from '../yp-collection/yp-domain.js';
 import { YpCommunity } from '../yp-collection/yp-community.js';

@@ -56,20 +56,8 @@
     "singleQuote": true,
     "arrowParens": "avoid"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
-    ]
-  },
   "name": "yp-app",
-  "version": "0.0.0",
+  "version": "9.0.0",
   "description": "Webcomponent yp-app",
   "author": "yp-app",
   "license": "LGPL",

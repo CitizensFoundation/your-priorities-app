@@ -9,8 +9,12 @@ import { nothing, TemplateResult } from 'lit-html';
 import { TextArea } from '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
 import { Radio } from '@material/mwc-radio';
+import '@material/mwc-textarea';
 
 import { Menu } from '@material/mwc-menu';
+
+import '../yp-file-upload/yp-file-upload.js';
+import '../@yrpri/yp-emoji-selector.js';
 
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
@@ -24,8 +28,6 @@ import { ifDefined } from 'lit-html/directives/if-defined';
 import { Select } from '@material/mwc-select';
 
 import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
-
-
 
 @customElement('yp-post-points')
 export class YpPostPoints extends YpBaseElementWithLogin {
@@ -424,11 +426,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           margin: 32px;
         }
 
-        mwc-button[disabled] {
-          background-color: #333;
-          color: #fff;
-        }
-
         .uploadNotLoggedIn {
           min-width: 100px;
           background-color: #fff;
@@ -699,7 +696,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             )}
           </div>
 
-          <div ?hidden="${ifLengthIsRight}">
+          <div>
             <div class="addPointFab layout horizontal center-center">
               <mwc-button
                 raised

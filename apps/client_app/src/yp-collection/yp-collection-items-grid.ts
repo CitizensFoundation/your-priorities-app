@@ -5,6 +5,7 @@ import {
   customElement,
   TemplateResult,
 } from 'lit-element';
+
 import { YpBaseElement } from '../@yrpri/yp-base-element.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
@@ -16,7 +17,7 @@ import { YpCollectionItemCard } from './yp-collection-item-card.js';
 import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { nothing } from 'lit-html';
-
+import './yp-collection-item-card.js';
 
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
