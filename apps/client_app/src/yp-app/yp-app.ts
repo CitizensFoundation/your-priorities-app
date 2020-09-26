@@ -940,24 +940,10 @@ export class YpApp extends YpBaseElement {
 
           if (oldRouteData && oldRouteData.page && this.routeData) {
             // Post -> Group
-            if (oldRouteData.page==="post" && this.routeData.page==="group") {
-              if (this.$$("#groupPage")) {
-                (this.$$("#groupPage") as YpGroup).goToPostOrNewsItem();
-                skipMasterScroll = true;
-              } else {
-                console.warn("Can't find scroll groupPage for goToPostOrNewsItem, trying again");
-                setTimeout(() => {
-                  if (this.$$("#groupPage")) {
-                    (this.$$("#groupPage") as YpGroup).goToPostOrNewsItem();
-                  } else {
-                    console.warn("Can't find scroll groupPage for goToPostOrNewsItem final");
-                  }
-                }, 200);
-              }
-            }
+
 
             // Group -> Community
-            else if ((oldRouteData.page==="group" || oldRouteData.page==="post") && this.routeData.page==="community") {
+            if ((oldRouteData.page==="group" || oldRouteData.page==="post") && this.routeData.page==="community") {
               if (this.$$("#communityPage")) {
                 (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
                 skipMasterScroll = true;

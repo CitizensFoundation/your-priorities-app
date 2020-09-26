@@ -181,19 +181,18 @@ export class YpGroup extends YpCollection {
             <mwc-tab
               .label="${this.tabLabelWithCount('open')}"
               icon="lightbulb_outline"></mwc-tab>
-            <mwc-tab
-              ?hidden="${!this.hasNonOpenPosts}"
-              .label="${this.tabLabelWithCount('inProgress')}"
-              icon="lightbulb_outline"></mwc-tab>
-            <mwc-tab
-              ?hidden="${!this.hasNonOpenPosts}"
-              .label="${this.tabLabelWithCount('successful')}"
-              icon="lightbulb_outline"></mwc-tab>
-            <mwc-tab
-              ?hidden="${!this.hasNonOpenPosts}"
-              .label="${this.tabLabelWithCount('failed')}"
-              icon="lightbulb_outline">
-            </mwc-tab>
+            ${ this.hasNonOpenPosts ? html`
+              <mwc-tab
+                .label="${this.tabLabelWithCount('inProgress')}"
+                icon="lightbulb_outline"></mwc-tab>
+              <mwc-tab
+                .label="${this.tabLabelWithCount('successful')}"
+                icon="lightbulb_outline"></mwc-tab>
+              <mwc-tab
+                .label="${this.tabLabelWithCount('failed')}"
+                icon="lightbulb_outline">
+              </mwc-tab>
+            ` : nothing}
             ${this.renderNewsAndMapTabs()}
           </mwc-tab-bar>
         </div>
