@@ -346,10 +346,11 @@ export class YpPostCard extends YpBaseElement {
                   @click="${this._onBottomClick}">
                   ${!this.mini
                     ? html`
+                    <div class="layout horizontal">
                         <div class="share">
-                        <mwc-icon-button
-                          icon="share" .label="${this.t('post.shareInfo')}"
-                          @click="${this._shareTap}"></mwc-icon-button>
+                          <mwc-icon-button
+                            icon="share" .label="${this.t('post.shareInfo')}"
+                            @click="${this._shareTap}"></mwc-icon-button>
                           </mwc-icon-button>
                         </div>
                         ${
@@ -367,6 +368,7 @@ export class YpPostCard extends YpBaseElement {
                                 </yp-post-actions>
                               `
                         }
+                    </div>
                       `
                     : nothing}
                 </div>
