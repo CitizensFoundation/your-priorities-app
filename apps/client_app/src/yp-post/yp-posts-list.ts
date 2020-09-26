@@ -281,7 +281,7 @@ export class YpPostsList extends YpBaseElement {
                 .layout="${Layout1d}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPostItem.bind(this)}
-                @rangechange=${this.scrollEvent}></lit-virtualizer>
+                @rangeChanged=${this.scrollEvent}></lit-virtualizer>
             `
           : nothing }
       </div>
@@ -330,14 +330,16 @@ export class YpPostsList extends YpBaseElement {
     (this.$$("#postsFilter") as YpPostsFilter)._updateAfterFiltering();
   }
 
-  scrollEvent(event: RangeChangeEvent) {
+  scrollEvent(event: CustomEvent) {
     //TODO: Check this logic
+    const detail = event.detail as RangeChangeEvent;
+
     if (
       this.posts &&
       !this.moreFromScrollTriggerActive &&
-      event.lastVisible != -1 &&
-      event.lastVisible < this.posts.length &&
-      event.lastVisible + 3 >= this.posts.length
+      detail.lastVisible != -1 &&
+      detail.lastVisible < this.posts.length &&
+      detail.lastVisible + 5 >= this.posts.length
     ) {
       this.moreFromScrollTriggerActive = true;
       this._loadMoreData();

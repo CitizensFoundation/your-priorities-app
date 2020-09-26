@@ -26,16 +26,16 @@ export class AcActivities extends YpBaseElementWithLogin {
   gotInitialData = false;
 
   @property({ type: Array })
-  activities: Array<AcActivityData> | undefined
+  activities: Array<AcActivityData> | undefined;
 
   @property({ type: Number })
   domainId: number | undefined;
 
   @property({ type: Number })
-  collectionId!: number
+  collectionId!: number;
 
   @property({ type: String })
-  collectionType!: string
+  collectionType!: string;
 
   @property({ type: Number })
   communityId: number | undefined;
@@ -212,10 +212,6 @@ export class AcActivities extends YpBaseElementWithLogin {
           cursor: pointer;
         }
 
-        .activityContainer {
-          width: 100%;
-        }
-
         @media (max-width: 960px) {
           .recommendedPosts {
             display: none !important;
@@ -258,17 +254,18 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   renderItem(activity: AcActivityData, index: number) {
     return html`
-      <div tabindex="${index}" class="layout vertical center-center">
-        <ac-activity
-          .hasLoggedInUser="${this.isLoggedIn}"
-          class="activityContainer"
-          .activity="${activity}"
-          .postId="${this.postId}"
-          .groupId="${this.groupId}"
-          .communityId="${this.communityId}"
-          .domainId="${this.domainId}"
-          @ak-delete-activity="${this._deleteActivity}"></ac-activity>
-      </div>
+    <div class="layout vertical center-center" style="width: 100%;">
+    <ac-activity
+        tabindex="${index}"
+        .hasLoggedInUser="${this.isLoggedIn}"
+        class="activityContainer"
+        .activity="${activity}"
+        .postId="${this.postId}"
+        .groupId="${this.groupId}"
+        .communityId="${this.communityId}"
+        .domainId="${this.domainId}"
+        @ak-delete-activity="${this._deleteActivity}"></ac-activity>
+    </div>
     `;
   }
 
@@ -314,7 +311,7 @@ export class AcActivities extends YpBaseElementWithLogin {
                   .layout="${Layout1d}"
                   id="activitiesList"
                   .renderItem=${this.renderItem.bind(this)}
-                  @rangechange=${this.scrollEvent}></lit-virtualizer>
+                  @rangeChanged=${this.scrollEvent}></lit-virtualizer>
               `
             : nothing}
         </div>
@@ -333,14 +330,16 @@ export class AcActivities extends YpBaseElementWithLogin {
     `;
   }
 
-  scrollEvent(event: RangeChangeEvent) {
+  scrollEvent(event: CustomEvent) {
     //TODO: Check this logic
+    const detail = event.detail as RangeChangeEvent;
+
     if (
       this.activities &&
-      !this._moreToLoad &&
-      event.lastVisible != -1 &&
-      event.lastVisible < this.activities.length &&
-      event.lastVisible + 3 >= this.activities.length
+      this._moreToLoad &&
+      detail.lastVisible != -1 &&
+      detail.lastVisible < this.activities.length &&
+      detail.lastVisible + 5 >= this.activities.length
     ) {
       this._moreToLoad = true;
       this._loadMoreData();
@@ -357,21 +356,21 @@ export class AcActivities extends YpBaseElementWithLogin {
 
     switch (this.collectionType) {
       case 'domain':
-        this.domainId = this.collectionId
-        break
+        this.domainId = this.collectionId;
+        break;
       case 'community':
-        this.communityId = this.collectionId
-        break
+        this.communityId = this.collectionId;
+        break;
       case 'group':
-        this.groupId = this.collectionId
-        break
+        this.groupId = this.collectionId;
+        break;
       case 'post':
-        this.postId = this.collectionId
-        break
+        this.postId = this.collectionId;
+        break;
       case 'user':
-        this.userId = this.collectionId
-        break
-     }
+        this.userId = this.collectionId;
+        break;
+    }
   }
 
   disconnectedCallback() {
@@ -475,9 +474,15 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   _deleteActivity(event: CustomEvent) {
     this.activityIdToDelete = event.detail.id;
-    window.appDialogs.getDialogAsync("confirmationDialog", (dialog: YpConfirmationDialog) => {
-      dialog.open(this.t('activity.confirmDelete'), this._reallyDelete.bind(this));
-    });
+    window.appDialogs.getDialogAsync(
+      'confirmationDialog',
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t('activity.confirmDelete'),
+          this._reallyDelete.bind(this)
+        );
+      }
+    );
   }
 
   async _reallyDelete() {
@@ -513,7 +518,6 @@ export class AcActivities extends YpBaseElementWithLogin {
 
   _generateRequest(typeId: number, typeName: string) {
     if (typeId) {
-
       this.oldestProcessedActivityAt = undefined;
       this.noRecommendedPosts = true;
       this._moreToLoad = true;
@@ -526,7 +530,6 @@ export class AcActivities extends YpBaseElementWithLogin {
       }
 
       this.url = '/api/' + this.mode + '/' + typeName + '/' + typeId;
-
 
       this._loadMoreData();
 
@@ -542,8 +545,10 @@ export class AcActivities extends YpBaseElementWithLogin {
       let url = this.url;
       if (this.oldestProcessedActivityAt)
         url += '?beforeDate=' + this.oldestProcessedActivityAt;
-      const response = await window.serverApi.getAcActivities(url) as AcActivitiesResponse
-      this._processResponse(response)
+      const response = (await window.serverApi.getAcActivities(
+        url
+      )) as AcActivitiesResponse;
+      this._processResponse(response);
     } else {
       console.warn('Trying to load more activities without conditions');
     }
@@ -653,7 +658,7 @@ export class AcActivities extends YpBaseElementWithLogin {
     return activities;
   }
 
-   _processResponse(activitiesResponse: AcActivitiesResponse) {
+  _processResponse(activitiesResponse: AcActivitiesResponse) {
     const activities = this._preProcessActivities(
       activitiesResponse.activities
     );
@@ -676,7 +681,7 @@ export class AcActivities extends YpBaseElementWithLogin {
         }
       }
     } else {
-      this.activities =  activities
+      this.activities = activities;
     }
 
     if (this.activities && this.activities.length > 0) {
@@ -716,7 +721,7 @@ export class AcActivities extends YpBaseElementWithLogin {
         }
       }
     }
-//      this.fireGlobal('yp-refresh-activities-scroll-threshold');
+    //      this.fireGlobal('yp-refresh-activities-scroll-threshold');
     //TODO: Get workgin
     //(this.$$('#activitiesList') as LitVirtualizer).scrollToItem(item);
   }

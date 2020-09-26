@@ -45,7 +45,6 @@ export class AcActivity extends YpBaseElementWithLogin {
         .activity {
           margin: 16px;
           background-color: #fff;
-          width: 550px;
           height: 100%;
           padding-left: 16px;
           padding-right: 16px;
