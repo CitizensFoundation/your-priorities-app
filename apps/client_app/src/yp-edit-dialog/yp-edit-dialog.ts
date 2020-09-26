@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
@@ -11,9 +11,9 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-snackbar';
 
-import '../@yrpri/yp-form.js';
+import '../common/yp-form.js';
 
-import { YpForm } from '../@yrpri/yp-form.js';
+import { YpForm } from '../common/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 

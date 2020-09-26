@@ -2,7 +2,7 @@ import { customElement, html, property, css } from 'lit-element';
 
 import '@material/mwc-button';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import './yp-user-image.js';
 

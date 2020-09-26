@@ -9,10 +9,10 @@ import '@material/mwc-radio';
 import { Radio } from '@material/mwc-radio';
 
 import '../yp-post/yp-posts-list.js';
-import '../@yrpri/yp-emoji-selector.js';
+import '../common/yp-emoji-selector.js';
 import '../yp-post/yp-post-card-add.js';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 @customElement('yp-set-video-cover')
 export class YpSetVideoCover extends YpBaseElement {

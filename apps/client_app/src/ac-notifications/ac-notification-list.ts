@@ -12,8 +12,8 @@ import './ac-notification-list-post.js';
 import './ac-notification-list-point.js';
 import './ac-notification-list-general-item.js';
 
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { AcNotificationToast } from './ac-notification-toast.js';
 import { YpUserEdit } from '../yp-user/yp-user-edit.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';

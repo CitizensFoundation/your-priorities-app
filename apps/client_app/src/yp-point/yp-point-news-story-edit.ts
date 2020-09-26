@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { property, html, css, customElement } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-textarea';
 
@@ -11,7 +11,7 @@ import '../yp-user/yp-user-image.js';
 
 import './yp-point-news-story-embed.js';
 
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { Button } from '@material/mwc-button';
 import { TextArea } from '@material/mwc-textarea';
 import { nothing } from 'lit-html';

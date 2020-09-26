@@ -6,11 +6,11 @@ import '@material/mwc-icon';
 import '../yp-magic-text/yp-magic-text.js';
 import '../yp-user/yp-user-image.js';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import { truncateNameList } from './TruncateNameList.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 
 @customElement('ac-notification-list-point')
 export class AcNotificationListPoint extends YpBaseElement {

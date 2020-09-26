@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import linkifyStr from 'linkifyjs/string.js';
 
 import '@material/mwc-circular-progress-four-color';

@@ -6,15 +6,15 @@ import {
   TemplateResult,
 } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
-import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
+import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
 import { scroll } from 'lit-virtualizer/lib/scroll.js';
 import { Layout1d, LitVirtualizer } from 'lit-virtualizer';
 
 import { YpCollectionItemCard } from './yp-collection-item-card.js';
-import { YpServerApi } from '../@yrpri/YpServerApi.js';
+import { YpServerApi } from '../common/YpServerApi.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { nothing } from 'lit-html';
 import './yp-collection-item-card.js';

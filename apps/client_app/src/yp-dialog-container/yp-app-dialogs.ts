@@ -1,7 +1,7 @@
 import { property, html, css, customElement, LitElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { Dialog } from '@material/mwc-dialog';
 

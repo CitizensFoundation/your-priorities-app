@@ -3,18 +3,18 @@ import { nothing, TemplateResult } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 import { Menu } from '@material/mwc-menu';
-import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
+import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
 
-import '../@yrpri/yp-image.js';
+import '../common/yp-image.js';
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-collection-stats.js';
 import { YpGroup } from './yp-group.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 @customElement('yp-collection-item-card')
 export class YpCollectionItemCard extends YpBaseElement {

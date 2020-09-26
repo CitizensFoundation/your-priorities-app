@@ -1,4 +1,4 @@
-import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js'
+import { YpCodeBase } from '../common/YpCodeBaseclass.js'
 
 export class YpAnalytics extends YpCodeBase {
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpServerApi } from '../common/YpServerApi.js';
+import { YpCodeBase } from '../common/YpCodeBaseclass.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpLogin } from '../yp-user/yp-login.js';
 
 export class YpAppUser extends YpCodeBase {

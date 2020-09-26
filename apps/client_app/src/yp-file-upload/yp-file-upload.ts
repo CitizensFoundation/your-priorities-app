@@ -21,11 +21,11 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import '../yp-post/yp-posts-list.js';
-import '../@yrpri/yp-emoji-selector.js';
+import '../common/yp-emoji-selector.js';
 import '../yp-post/yp-post-card-add.js';
 import './yp-set-video-cover.js';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpMediaRecorder } from '../yp-media-recorder/yp-media-recorder.js';
 
 @customElement('yp-file-upload')

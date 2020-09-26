@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import '../yp-magic-text/yp-magic-text.js';
 
 @customElement('ac-activity-post-status-update')

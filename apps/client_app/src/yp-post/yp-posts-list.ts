@@ -1,6 +1,6 @@
 import { customElement, html, property, css } from 'lit-element';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
@@ -9,7 +9,7 @@ import 'lit-virtualizer';
 import './yp-posts-filter.js';
 import './yp-post-card.js';
 
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpPostCard } from './yp-post-card.js';
 import { YpPostsFilter } from './yp-posts-filter.js';
 import { nothing, TemplateResult } from 'lit-html';

@@ -1,8 +1,8 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 
 import '@material/mwc-icon';
 

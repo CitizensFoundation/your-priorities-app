@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { customElement, html, property, css } from 'lit-element';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-icon-button';
 import { ifDefined } from 'lit-html/directives/if-defined';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { IconButton } from '@material/mwc-icon-button';
 
 @customElement('yp-post-actions')

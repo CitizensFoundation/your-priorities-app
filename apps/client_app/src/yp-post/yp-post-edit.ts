@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
@@ -16,13 +16,13 @@ import '@material/mwc-formfield';
 import '@material/mwc-select';
 
 import { Snackbar } from '@material/mwc-snackbar';
-import { YpEditBase } from '../@yrpri/yp-edit-base.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpEditBase } from '../common/yp-edit-base.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import moment from 'moment';
 import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
 import { TextArea } from '@material/mwc-textarea';
 import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
 

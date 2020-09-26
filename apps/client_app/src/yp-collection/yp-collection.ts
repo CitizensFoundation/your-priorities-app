@@ -1,16 +1,16 @@
 import { property, html, css, LitElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 //import { ifDefined } from 'lit-html/directives/if-defined';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import '@material/mwc-tab-bar';
 import '@material/mwc-fab';
 import './yp-collection-header.js';
 import './yp-collection-items-grid.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
-import { YpServerApi } from '../@yrpri/YpServerApi.js';
+import { YpServerApi } from '../common/YpServerApi.js';
 
 import '../ac-activities/ac-activities.js';
 import '../yp-post/yp-post-map.js';

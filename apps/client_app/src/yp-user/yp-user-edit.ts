@@ -9,7 +9,7 @@ import '../ac-notifications/ac-notification-settings.js';
 import '../yp-file-upload/yp-file-upload.js';
 import '../yp-app/yp-language-selector.js';
 
-import { YpEditBase } from '../@yrpri/yp-edit-base.js';
+import { YpEditBase } from '../common/yp-edit-base.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 import { YpUserDeleteOrAnonymize } from './yp-user-delete-or-anonymize.js';

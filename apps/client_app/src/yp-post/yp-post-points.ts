@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { customElement, html, property, LitElement, css } from 'lit-element';
@@ -14,13 +14,13 @@ import '@material/mwc-textarea';
 import { Menu } from '@material/mwc-menu';
 
 import '../yp-file-upload/yp-file-upload.js';
-import '../@yrpri/yp-emoji-selector.js';
+import '../common/yp-emoji-selector.js';
 
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
 import '../yp-point/yp-point.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { RangeChangeEvent, LitVirtualizer , Layout1d } from 'lit-virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { ifDefined } from 'lit-html/directives/if-defined';

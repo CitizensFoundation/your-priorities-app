@@ -1,12 +1,12 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { find, chunk } from 'lodash-es';
 
-import '../@yrpri/yp-image.js';
+import '../common/yp-image.js';
 import '@material/mwc-select';
 import '@material/mwc-icon';
 import '@material/mwc-list/mwc-list-item';

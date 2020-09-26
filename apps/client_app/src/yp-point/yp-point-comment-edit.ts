@@ -5,10 +5,10 @@ import { nothing } from 'lit-html';
 
 import '@material/mwc-textfield';
 
-import '../@yrpri/yp-image.js';
+import '../common/yp-image.js';
 import '../yp-user/yp-user-info.js';
 
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { TextArea } from '@material/mwc-textarea';
 
 @customElement('yp-point-comment-edit')

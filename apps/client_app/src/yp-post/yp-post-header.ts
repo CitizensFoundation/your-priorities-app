@@ -1,5 +1,5 @@
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { customElement, html, property, LitElement, css } from 'lit-element';
@@ -15,12 +15,12 @@ import '../yp-post/yp-post-card-add.js';
 import './yp-post-actions.js';
 
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpPostCard } from './yp-post-card.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 
 import './yp-post-transcript.js';
 import { YpPostEdit } from './yp-post-edit.js';

@@ -2,9 +2,9 @@ import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-post-cover-media.js';

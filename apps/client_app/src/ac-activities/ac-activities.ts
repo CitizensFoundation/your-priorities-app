@@ -9,9 +9,9 @@ import '../yp-point/yp-point-news-story-edit.js';
 import './ac-activity.js';
 import './ac-activity-recommended-posts.js';
 
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { LitVirtualizer, RangeChangeEvent, Layout1d } from 'lit-virtualizer';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
 @customElement('ac-activities')

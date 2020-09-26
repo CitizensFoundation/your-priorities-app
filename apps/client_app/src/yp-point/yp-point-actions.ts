@@ -4,9 +4,9 @@ import { nothing } from 'lit-html';
 
 import '@material/mwc-icon-button';
 
-import { removeClass } from '../@yrpri/RemoveClass.js';
+import { removeClass } from '../common/RemoveClass.js';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 @customElement('yp-point-actions')
 export class YpPointActions extends YpBaseElement {

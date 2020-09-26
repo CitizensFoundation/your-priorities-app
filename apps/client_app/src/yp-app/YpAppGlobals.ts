@@ -3,9 +3,9 @@ import i18next from 'i18next';
 //TODO: Fix moment
 //import moment from 'moment';
 
-import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { YpCodeBase } from '../@yrpri/YpCodeBaseclass.js';
+import { YpServerApi } from '../common/YpServerApi.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
+import { YpCodeBase } from '../common/YpCodeBaseclass.js';
 import { YpRecommendations } from './YpRecommendations.js';
 import { YpCache } from './YpCache.js';
 import { YpAnalytics } from './YpAnalytics.js';

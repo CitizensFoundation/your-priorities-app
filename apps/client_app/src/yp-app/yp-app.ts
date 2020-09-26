@@ -35,12 +35,12 @@ import '@material/mwc-top-app-bar';
 
 import '@material/mwc-list/mwc-list-item';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpAppStyles } from './YpAppStyles.js';
 import { YpAppGlobals } from './YpAppGlobals.js';
 import { YpAppUser } from './YpAppUser.js';
-import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpServerApi } from '../common/YpServerApi.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 
 import '../yp-dialog-container/yp-app-dialogs.js';

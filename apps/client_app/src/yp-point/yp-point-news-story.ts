@@ -1,6 +1,6 @@
 import { customElement, html, property, css } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-icon-button';
 import './yp-point-comment-list.js';
