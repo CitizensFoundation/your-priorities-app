@@ -131,7 +131,8 @@ export class YpAdminTranslations extends YpAdminPage {
     this.waitingOnData = true;
     this.items = (await window.adminServerApi.getTextForTranslations(
       this.collectionType,
-      this.collectionId
+      this.collectionId,
+      this.targetLocale!
     )) as Array<YpTranslationTextData>;
 
     this.waitingOnData = false;

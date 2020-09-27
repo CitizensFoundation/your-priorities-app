@@ -7,6 +7,7 @@ import { ShadowStyles } from './@yrpri/common/ShadowStyles.js';
 import '@material/mwc-button';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
+import '@material/mwc-drawer';
 import '@material/mwc-icon';
 import '@material/mwc-dialog';
 import '@material/mwc-top-app-bar';
@@ -19,6 +20,8 @@ import { YpServerApi } from './@yrpri/common/YpServerApi.js';
 import { AnchorableElement } from '@material/mwc-menu/mwc-menu-surface-base';
 import { Dialog } from '@material/mwc-dialog';
 import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
+
+import './yp-admin-translations.js';
 
 declare global {
   interface Window {
@@ -142,9 +145,12 @@ export class YpAdminApp extends YpBaseElement {
   constructor() {
     super();
     window.serverApi = new YpServerApi();
+    window.adminServerApi = new YpServerApiAdmin();
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
     window.appGlobals.setupTranslationSystem();
+
+    this.page = 'editTranslations';
 
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
@@ -166,7 +172,10 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   async _getCollection() {
-    this.collection = await window.serverApi.getCollection(this.collectionType, this.collectionId)
+    this.collection = await window.serverApi.getCollection(
+      this.collectionType,
+      this.collectionId
+    );
   }
 
   render() {
@@ -177,55 +186,61 @@ export class YpAdminApp extends YpBaseElement {
           ${this.t('ok')}
         </mwc-button>
       </mwc-dialog>
-      <mwc-top-app-bar>
-        <mwc-icon-button
-          class="exitButton"
-          .label="${this.t('exitToMainApp')}"
-          slot="navigationIcon"
-          @click="${this.exitToMainApp}"
-          icon="exit_to_app"
-        ></mwc-icon-button>
-        <div slot="title">
-          <div class="layout horizontal headerContainer">
-            <div>
-              <img
-                height="35"
-                alt="Your Priorities Logo"
-                src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
-              />
-            </div>
-            <div class="analyticsText">
-              ${this.t('contentAdminFor')} ${this.originalCollectionType}:
-              ${this.collection ? this.collection.name : ''}
-            </div>
-          </div>
-        </div>
+
+      <mwc-drawer hasHeader >
+        <span slot="title">Drawer Title</span>
+        <span slot="subtitle">subtitle</span>
         <div>
-          <div class="layout vertical center-center">
-            <header>
-              <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
-                <mwc-tab
-                  .label="${this.t('editTranslations')}"
-                  icon="g_translate"
-                  stacked
-                ></mwc-tab>
-              </mwc-tab-bar>
-            </header>
-          </div>
-          <main>
-            <div class="layout vertical center-center">
-              <div class="mainPageContainer">
-                ${this._renderPage()}
+          <p>
+            <mwc-icon-button
+              class="exitButton"
+              .label="${this.t('exitToMainApp')}"
+              slot="navigationIcon"
+              @click="${this.exitToMainApp}"
+              icon="exit_to_app"
+            ></mwc-icon-button>
+          </p>
+          <mwc-icon-button
+            icon="gesture"
+            .label="${this.t('configuration')}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            icon="gavel"
+            .label="${this.t('configuration')}"
+          ></mwc-icon-button>
+        </div>
+        <div slot="appContent">
+          <mwc-top-app-bar>
+            <div slot="title">
+              <div class="layout horizontal headerContainer">
+                <div>
+                  <img
+                    height="35"
+                    alt="Your Priorities Logo"
+                    src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
+                  />
+                </div>
+                <div class="analyticsText">
+                  ${this.t('contentAdminFor')} ${this.originalCollectionType}:
+                  ${this.collection ? this.collection.name : ''}
+                </div>
               </div>
             </div>
-          </main>
+            <main>
+              <div class="layout vertical center-center">
+                <div class="mainPageContainer">
+                  ${this._renderPage()}
+                </div>
+              </div>
+            </main>
+          </mwc-top-app-bar>
         </div>
-      </mwc-top-app-bar>
+      </mwc-drawer>
     `;
   }
 
   exitToMainApp() {
-    window.location.href = `/${this.originalCollectionType}/${this.collectionId}`;
+    window.location.href = `/${this.collectionType}/${this.collectionId}`;
   }
 
   _setupEventListeners() {
@@ -256,15 +271,15 @@ export class YpAdminApp extends YpBaseElement {
 
   _renderPage() {
     switch (this.page) {
-      case 'domain':
+      case 'editTranslations':
         return html`
           ${this.collection
-            ? html`<page-edit-translations
+            ? html`<yp-admin-translations
                 .collectionType="${this.collectionType}"
                 .collection="${this.collection}"
                 .collectionId="${this.collectionId}"
               >
-              </page-edit-translations>`
+              </yp-admin-translations>`
             : nothing}
         `;
       default:

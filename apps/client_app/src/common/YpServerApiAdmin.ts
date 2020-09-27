@@ -37,12 +37,12 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
-  public getTextForTranslations(collectionType: string, collectionId: number) {
+  public getTextForTranslations(collectionType: string, collectionId: number, targetLocale: string) {
     return this.fetchWrapper(
       this.baseUrlPath +
         `/${YpServerApiAdmin.transformCollectionTypeToApi(
           collectionType
-        )}/${collectionId}/get_translation_texts`
+        )}/${collectionId}/get_translation_texts?targetLocale=${targetLocale}`
     );
   }
 }
