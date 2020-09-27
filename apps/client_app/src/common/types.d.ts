@@ -16,6 +16,7 @@ interface YpCollectionConfiguration {
   customBackName?: string;
   customBackURL?: string;
   hideAllTabs?: boolean;
+  highlightedLanguages?: string;
 }
 
 interface YpRadioButtonData {
@@ -195,7 +196,6 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   signupTermsPageId?: number;
-  highlightedLanguages?: string;
   disableFacebookLoginForCommunity?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
@@ -768,4 +768,15 @@ interface YpShareDialogData {
 
 interface YpCommentCountsResponse {
   count: number;
+}
+
+interface YpTranslationTextData {
+  contentId: number;
+  content: string;
+  textType: string;
+  translatedText: string;
+  extraId: number;
+  targetLocale: string;
+  indexKey?: string;
+  originalText?: string;
 }

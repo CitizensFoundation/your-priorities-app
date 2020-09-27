@@ -3,7 +3,7 @@ import { html, fixture, expect } from '@open-wc/testing';
 
 import { YpCollectionStats } from '../yp-collection-stats.js';
 import '../yp-collection-stats.js';
-import { YpTestHelpers } from '../../../test/setup-app.js';
+import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpCollectionStats', () => {
   let element: YpCollectionStats;

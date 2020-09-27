@@ -1,9 +1,6 @@
 import 'chart.js';
-import { html, css } from 'lit-element';
+import { html, css, customElement, property } from 'lit-element';
 import { nothing } from 'lit-html';
-import {ifDefined} from 'lit-html/directives/if-defined';
-
-import { YpBaseElement } from './@yrpri/common/yp-base-element.js';
 import { ShadowStyles } from './@yrpri/common/ShadowStyles.js';
 
 import '@material/mwc-select';
@@ -11,8 +8,30 @@ import '@material/mwc-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
+import { YpAdminPage } from './yp-admin-page.js';
 
-export class AdminTranslations extends YpBaseElement {
+@customElement('yp-admin-translations')
+export class YpAdminTranslations extends YpAdminPage {
+  @property({ type: Array })
+  items: Array<YpTranslationTextData> | undefined;
+
+  @property({ type: Boolean })
+  waitingOnData = false;
+
+  @property({ type: Object })
+  editActive: Record<string, boolean> = {}
+
+  @property({ type: Object })
+  collection: YpCollectionData | undefined;
+
+  @property({ type: String })
+  targetLocale: string | undefined;
+
+  @property({ type: Number })
+  baseMaxLength: number | undefined;
+
+  supportedLanguages: Record<string, string>;
+
   static get styles() {
     return [
       super.styles,
@@ -80,7 +99,6 @@ export class AdminTranslations extends YpBaseElement {
           -moz-hyphens: auto;
           -webkit-hyphens: auto;
           hyphens: auto;
-
         }
 
         mwc-linear-progress {
@@ -105,41 +123,23 @@ export class AdminTranslations extends YpBaseElement {
           color: #999;
           margin-top: 4px;
         }
-    `];
+      `,
+    ];
   }
 
-  static get properties() {
-    return {
-      collectionType: { type: String },
-      collectionId: { type: String },
-      items: { type: Array },
-      waitingOnData: { type: Boolean },
-      editActive: { type: Object },
-      collection: { type: Object },
-      targetLocale: { type: String },
-      baseMaxLength: { type: Number }
-    };
-  }
-
-  getTranslationText() {
+  async getTranslationText() {
     this.waitingOnData = true;
-    fetch(`${this.getTextForTranslationsUrl}?targetLocale=${this.targetLocale}`,{ credentials: 'same-origin' })
-    .then(res => this.handleNetworkErrors(res))
-    .then(res => res.json())
-    .then(response => {
-      this.waitingOnData = false;
-      this.items = response;
-    })
-    .catch(error => {
-      this.waitingOnData = false;
-      this.fire('app-error', error);
-    });
+    this.items = (await window.adminServerApi.getTextForTranslations(
+      this.collectionType,
+      this.collectionId
+    )) as Array<YpTranslationTextData>;
+
+    this.waitingOnData = false;
   }
 
   constructor() {
     super();
     this.waitingOnData = false;
-    this.editActive = {};
     this.baseMaxLength = 300;
 
     this.supportedLanguages = {
@@ -175,79 +175,65 @@ export class AdminTranslations extends YpBaseElement {
       sr_latin: 'Srpski (latin)',
       hr: 'Hravtski',
       kl: 'Kalaallisut',
-      sl: 'Slovenščina'
+      sl: 'Slovenščina',
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
-    this.getTextForTranslationsUrl = `/api/${this.collectionType}/${this.collectionId}/get_translation_texts`;
   }
 
-  firstUpdated() {
-    super.firstUpdated();
-  }
-
-  selectLanguage (event) {
-    if (event.target && event.target.value) {
-      this.targetLocale = event.target.value;
+  selectLanguage(event: CustomEvent) {
+    if (event.target && (event.target as HTMLInputElement).value) {
+      this.targetLocale = (event.target as HTMLInputElement).value;
       this.getTranslationText();
     }
   }
 
-  openEdit(item) {
-    this.editActive[item.indexKey] = true;
+  openEdit(item: YpTranslationTextData) {
+    this.editActive[item.indexKey!] = true;
     this.requestUpdate();
   }
 
-  cancelEdit(item) {
-    delete this.editActive[item.indexKey];
+  cancelEdit(item: YpTranslationTextData) {
+    delete this.editActive[item.indexKey!];
     this.requestUpdate();
   }
 
-  saveItem(item, options) {
-    if (!options) {
+  saveItem(item: YpTranslationTextData, options: { saveDirectly: boolean; } | undefined = undefined) {
+    if (item && !options) {
       // eslint-disable-next-line no-param-reassign
-      item.translatedText = this.$$(`#editFor${item.indexKey}`).value;
+      item.translatedText = (this.$$(`#editFor${item.indexKey}`) as HTMLInputElement).value;
     }
-    const updateUrl = `/api/${this.collectionType}/${this.collectionId}/update_translation`;
-    fetch(updateUrl, {
-      method: "PUT",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contentId: item.contentId,
-        content: item.originalText,
-        textType: item.textType,
-        translatedText: item.translatedText,
-        extraId: item.extraId,
-        targetLocale: this.targetLocale
-      })
-    });
+
+    const updatedItem: YpTranslationTextData = {
+      contentId: item.contentId,
+      content: item.originalText!,
+      textType: item.textType,
+      translatedText: item.translatedText,
+      extraId: item.extraId,
+      targetLocale: this.targetLocale!
+    };
+
+    window.adminServerApi.updateTranslation(this.collectionType, this.collectionId, updatedItem);
+
     this.cancelEdit(item);
   }
 
-  autoTranslate(item) {
-    const updateUrl = this.getUrlFromTextType(item);
-    fetch(`${updateUrl}?contentId=${item.contentId}&textType=${item.textType}&targetLanguage=${this.targetLocale}`, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json()).then(translation => {
-      if (translation) {
-        // eslint-disable-next-line no-param-reassign
-        item.translatedText = translation.content;
-        this.saveItem(item, { saveDirectly: true });
-        this.requestUpdate();
-      }
-    });
+  async autoTranslate(item: YpTranslationTextData) {
+    const updateUrl = `${this.getUrlFromTextType(item)}?contentId=${item.contentId}&textType=${item.textType}&targetLanguage=${this.targetLocale}`;
+    const translation = await window.serverApi.getTranslation(updateUrl) as YpTranslationTextData;
+    if (translation) {
+      item.translatedText = translation.content;
+      this.saveItem(item, { saveDirectly: true });
+      this.requestUpdate();
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getUrlFromTextType(item) {
+  getUrlFromTextType(item: YpTranslationTextData) {
     let url;
-    switch(item.textType) {
+    switch (item.textType) {
       case 'postName':
       case 'postContent':
       case 'postTranscriptContent':
@@ -295,11 +281,16 @@ export class AdminTranslations extends YpBaseElement {
   get languages() {
     let arr = [];
     const highlighted = [];
-    let highlightedLocales = ['en','en_GB','is','fr','de','es','ar'];
-    if (this.collection.configuration && this.collection.configuration.highlightedLanguages) {
-      highlightedLocales = this.collection.configuration.highlightedLanguages.split(",");
+    let highlightedLocales = ['en', 'en_GB', 'is', 'fr', 'de', 'es', 'ar'];
+    if (this.collection &&
+      this.collection.configuration &&
+      this.collection.configuration.highlightedLanguages
+    ) {
+      highlightedLocales = this.collection.configuration.highlightedLanguages.split(
+        ','
+      );
     }
-    // eslint-disable-next-line no-restricted-syntax
+
     for (const key in this.supportedLanguages) {
       if (this.supportedLanguages.hasOwnProperty(key)) {
         if (highlightedLocales.indexOf(key) > -1) {
@@ -311,75 +302,105 @@ export class AdminTranslations extends YpBaseElement {
     }
 
     arr = arr.sort(function (a, b) {
-      if(a.name < b.name) { return -1; }
-      if(a.name > b.name) { return 1; }
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
       return 0;
     });
 
     return highlighted.concat(arr);
   }
 
-  getMaxLength(item, baseLength) {
-    if (item.textType==="groupName" || item.textType==="postName" || item.textType==="communityName") {
+  getMaxLength(item: YpTranslationTextData, baseLength: number) {
+    if (
+      item.textType === 'groupName' ||
+      item.textType === 'postName' ||
+      item.textType === 'communityName'
+    ) {
       return 60;
-    } else if (item.textType=="groupContent" || item.textType=="communityContent") {
+    } else if (
+      item.textType == 'groupContent' ||
+      item.textType == 'communityContent'
+    ) {
       return baseLength;
     } else {
       return 2500;
     }
   }
 
-  textChanged(event) {
-    const description = event.target.value;
+  textChanged(event: CustomEvent) {
+    const description = (event.target as HTMLInputElement).value;
     const urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
     const urlArray = description.match(urlRegex);
 
-    if (urlArray && urlArray.length>0) {
+    if (urlArray && urlArray.length > 0) {
       let urlsLength = 0;
-      for (let i=0;i<Math.min(urlArray.length,10); i+=1) {
-        urlsLength+=urlArray[i].length;
+      for (let i = 0; i < Math.min(urlArray.length, 10); i += 1) {
+        urlsLength += urlArray[i].length;
       }
       let maxLength = 300;
       maxLength += urlsLength;
-      maxLength -= Math.min(urlsLength, urlArray.length*30);
+      maxLength -= Math.min(urlsLength, urlArray.length * 30);
       this.baseMaxLength = maxLength;
     }
   }
 
-  renderItem(item) {
+  renderItem(item: YpTranslationTextData) {
     return html`
       <div class="layout horizontal shadow-animation shadow-elevation-3dp item">
         <div class="textType layout vertical">
-          <div>${ this.t(item.textType) }</div> <div class="contentId">id: ${ item.contentId }</div>
+          <div>${this.t(item.textType)}</div>
+          <div class="contentId">id: ${item.contentId}</div>
         </div>
         <div class="originalText dont-break-out">
-          ${ item.originalText }
+          ${item.originalText}
         </div>
 
         <div class="layout vertical translatedText dont-break-out">
-          ${ this.editActive[item.indexKey] ? html`
-            <mwc-textarea
-              rows="5"
-              id="editFor${item.indexKey}"
-              .maxLength="${this.getMaxLength(item, this.baseMaxLength)}"
-              charCounter
-              @input="${this.textChanged}"
-              .label="${this.t('editTranslation')}"
-              .value="${item.translatedText ? item.translatedText : ''}">
-            </mwc-textarea>
-            <div class="layout horizontal endAligned">
-              <mwc-button .label="${this.t('cancel')}" @click="${() => this.cancelEdit(item)}"></mwc-button>
-              <mwc-button .label="${this.t('save')}" @click="${() => this.saveItem(item)}"></mwc-button>
-            </div>
-          ` : html`
-            <div class="innerTranslatedText">${ item.translatedText ? item.translatedText : this.t('noTranslation') }</div>
-            <div class="layout horizontal endAligned">
-              <mwc-button .label="${this.t('edit')}" @click="${() => this.openEdit(item)}"></mwc-button>
-              <mwc-button
-                .label="${this.t('autoTranslate')}"
-                ?hidden="${item.translatedText}" @click="${ () => this.autoTranslate(item)}"></mwc-button>
-            </div>
-          `}
+          ${this.editActive && this.editActive[item.indexKey!]
+            ? html`
+                <mwc-textarea
+                  rows="5"
+                  id="editFor${item.indexKey}"
+                  .maxLength="${this.getMaxLength(item, this.baseMaxLength!)}"
+                  charCounter
+                  @input="${this.textChanged}"
+                  .label="${this.t('editTranslation')}"
+                  .value="${item.translatedText ? item.translatedText : ''}"
+                >
+                </mwc-textarea>
+                <div class="layout horizontal endAligned">
+                  <mwc-button
+                    .label="${this.t('cancel')}"
+                    @click="${() => this.cancelEdit(item)}"
+                  ></mwc-button>
+                  <mwc-button
+                    .label="${this.t('save')}"
+                    @click="${() => this.saveItem(item)}"
+                  ></mwc-button>
+                </div>
+              `
+            : html`
+                <div class="innerTranslatedText">
+                  ${item.translatedText
+                    ? item.translatedText
+                    : this.t('noTranslation')}
+                </div>
+                <div class="layout horizontal endAligned">
+                  <mwc-button
+                    .label="${this.t('edit')}"
+                    @click="${() => this.openEdit(item)}"
+                  ></mwc-button>
+                  <mwc-button
+                    .label="${this.t('autoTranslate')}"
+                    ?hidden="${item.translatedText!=null}"
+                    @click="${() => this.autoTranslate(item)}"
+                  ></mwc-button>
+                </div>
+              `}
         </div>
       </div>
     `;
@@ -388,25 +409,37 @@ export class AdminTranslations extends YpBaseElement {
   render() {
     return html`
       <div class="container layout vertical center-center">
-        ${ this.waitingOnData ? html`
-         <mwc-linear-progress indeterminate ?hidden="${!this.waitingOnData}"></mwc-linear-progress>
-        ` : html`
-          <div class="progressPlaceHolder"></div>
-        `}
+        ${this.waitingOnData
+          ? html`
+              <mwc-linear-progress
+                indeterminate
+                ?hidden="${!this.waitingOnData}"
+              ></mwc-linear-progress>
+            `
+          : html` <div class="progressPlaceHolder"></div> `}
         <div class="layout vertical">
           <div class="layout horizontal center-center">
-            <mwc-select outlined .label="${this.t('selectLanguage')}" id="mainSelect" class="layout selfEnd" @selected="${this.selectLanguage}">
-              ${ this.languages.map( language => html`
-                <mwc-list-item  .value="${language.locale}">${language.name}</mwc-list-item>
-              `)}
+            <mwc-select
+              outlined
+              .label="${this.t('selectLanguage')}"
+              id="mainSelect"
+              class="layout selfEnd"
+              @selected="${this.selectLanguage}"
+            >
+              ${this.languages.map(
+                language => html`
+                  <mwc-list-item .value="${language.locale}"
+                    >${language.name}</mwc-list-item
+                  >
+                `
+              )}
             </mwc-select>
           </div>
-          ${ this.items ? this.items.map(item => this.renderItem(item)) : nothing }
+          ${this.items
+            ? this.items.map(item => this.renderItem(item))
+            : nothing}
         </div>
       </div>
     `;
   }
 }
-
-window.customElements.define('page-edit-translations', PageEditTranslations);
-

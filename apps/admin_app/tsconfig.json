@@ -12,6 +12,7 @@
     "importHelpers": true,
     "outDir": "out-tsc",
     "sourceMap": true,
+    "preserveSymlinks": true,
     "inlineSources": true,
     "rootDir": "./"
   },

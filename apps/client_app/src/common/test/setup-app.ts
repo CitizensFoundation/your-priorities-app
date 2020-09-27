@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { YpServerApi } from '../src/common/YpServerApi.js';
-import { YpAppGlobals } from '../src/yp-app/YpAppGlobals.js';
-import { YpAppUser } from '../src/yp-app/YpAppUser.js';
+import { YpServerApi } from '../YpServerApi.js';
+import { YpAppGlobals } from '../../yp-app/YpAppGlobals.js';
+import { YpAppUser } from '../../yp-app/YpAppUser.js';
 import i18next from 'i18next';
 import HttpApi from 'i18next-http-backend';
 

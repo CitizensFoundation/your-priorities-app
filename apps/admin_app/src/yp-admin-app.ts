@@ -16,6 +16,9 @@ import { YpAppGlobals } from './@yrpri/yp-app/YpAppGlobals.js';
 import { YpAppUser } from './@yrpri/yp-app/YpAppUser.js';
 import { YpAppDialogs } from './@yrpri/yp-dialog-container/yp-app-dialogs.js';
 import { YpServerApi } from './@yrpri/common/YpServerApi.js';
+import { AnchorableElement } from '@material/mwc-menu/mwc-menu-surface-base';
+import { Dialog } from '@material/mwc-dialog';
+import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
 declare global {
   interface Window {
@@ -23,21 +26,22 @@ declare global {
     appUser: YpAppUser;
     appDialogs: YpAppDialogs;
     serverApi: YpServerApi;
+    adminServerApi: YpServerApiAdmin;
     PasswordCredential?: any;
     FederatedCredential?: any;
   }
 }
 
-@customElement('admin-app')
-export class AdminApp extends YpBaseElement {
+@customElement('yp-admin-app')
+export class YpAdminApp extends YpBaseElement {
   @property({ type: String })
-  collectionType: string | undefined;
+  collectionType: string;
 
   @property({ type: Number })
-  collectionId: number | undefined;
+  collectionId: number;
 
-  @property({ type: Number })
-  page: number | undefined;
+  @property({ type: String })
+  page: string | undefined;
 
   @property({ type: Object })
   collection: YpCollectionData | undefined;
@@ -142,47 +146,27 @@ export class AdminApp extends YpBaseElement {
     window.appUser = new YpAppUser(window.serverApi);
     window.appGlobals.setupTranslationSystem();
 
-    this.page = 0;
     let pathname = window.location.pathname;
     if (pathname.endsWith('/'))
       pathname = pathname.substring(0, pathname.length - 1);
     const split = pathname.split('/');
     this.collectionType = split[split.length - 2];
-
-    this.originalCollectionType = this.collectionType;
-
-    if (this.collectionType === 'community')
-      this.collectionType = 'communities';
-    if (this.collectionType === 'domain') this.collectionType = 'domains';
-    if (this.collectionType === 'group') this.collectionType = 'groups';
-
     this.collectionId = parseInt(split[split.length - 1]);
   }
 
   connectedCallback() {
     super.connectedCallback();
     this._setupEventListeners();
-    this.collectionURL =
-      '/api/' + this.collectionType + '/' + this.collectionId;
-
-    fetch(this.collectionURL, { credentials: 'same-origin' })
-      .then(res => this.handleNetworkErrors(res))
-      .then(res => res.json())
-      .then(response => {
-        if (response.group) {
-          this.collection = response.group;
-        } else {
-          this.collection = response;
-        }
-      })
-      .catch(error => {
-        this.fire('app-error', error);
-      });
+    this._getCollection();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this._removeEventListeners();
+  }
+
+  async _getCollection() {
+    this.collection = await window.serverApi.getCollection(this.collectionType, this.collectionId)
   }
 
   render() {
@@ -247,17 +231,18 @@ export class AdminApp extends YpBaseElement {
   _setupEventListeners() {
     this.addListener('set-total-posts', this._setTotalPosts);
     this.addListener('app-error', this._appError);
+    this.addGlobalListener('yp-network-error', this._appError.bind(this));
   }
 
   _removeEventListeners() {
     this.removeListener('set-total-posts', this._setTotalPosts);
-    this.removeListener('app-error', this._appError);
+    this.removeGlobalListener('yp-network-error', this._appError.bind(this));
   }
 
   _appError(event: CustomEvent) {
     console.error(event.detail.message);
     this.currentError = event.detail.message;
-    this.$$('#errorDialog').open = true;
+    (this.$$('#errorDialog') as Dialog).open = true;
   }
 
   _setTotalPosts(event: CustomEvent) {
@@ -271,7 +256,7 @@ export class AdminApp extends YpBaseElement {
 
   _renderPage() {
     switch (this.page) {
-      case 0:
+      case 'domain':
         return html`
           ${this.collection
             ? html`<page-edit-translations
@@ -289,12 +274,12 @@ export class AdminApp extends YpBaseElement {
     }
   }
 
-  __onNavClicked(ev) {
+  __onNavClicked(ev: CustomEvent) {
     ev.preventDefault();
-    this.page = ev.target.hash.substring(1);
+    this.page = (ev.target as HTMLAnchorElement).hash.substring(1);
   }
 
-  __navClass(page) {
+  __navClass(page: string) {
     return classMap({ active: this.page === page });
   }
 }
