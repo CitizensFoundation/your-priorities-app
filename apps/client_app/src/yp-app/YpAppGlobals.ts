@@ -2,6 +2,7 @@
 import i18next from 'i18next';
 //TODO: Fix moment
 //import moment from 'moment';
+import HttpApi from 'i18next-http-backend';
 
 import { YpServerApi } from '../common/YpServerApi.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
@@ -10,6 +11,7 @@ import { YpRecommendations } from './YpRecommendations.js';
 import { YpCache } from './YpCache.js';
 import { YpAnalytics } from './YpAnalytics.js';
 import { YpThemeManager } from './YpThemeManager.js';
+import { Snackbar } from '@material/mwc-snackbar';
 
 export class YpAppGlobals extends YpCodeBase {
   seenWelcome = false;
@@ -281,6 +283,96 @@ export class YpAppGlobals extends YpCodeBase {
       }, 250); // Wait a bit to make sure google analytics tracking id has been set up dynamically
     }
     this.recommendations.reset();
+  }
+
+  setupTranslationSystem() {
+    const hostname = window.location.hostname;
+    let defaultLocale = 'en';
+    if (hostname.indexOf('betrireykjavik') > -1) {
+      defaultLocale = 'is';
+    } else if (hostname.indexOf('betraisland') > -1) {
+      defaultLocale = 'is';
+    } else if (hostname.indexOf('forbrukerradet') > -1) {
+      defaultLocale = 'no';
+    } else {
+      const tld = hostname.substring(hostname.lastIndexOf('.'));
+      const localeByTld: Record<string, string> = {
+        '.fr': 'fr',
+        '.hr': 'hr',
+        '.hu': 'hu',
+        '.is': 'is',
+        '.nl': 'nl',
+        '.no': 'no',
+        '.pl': 'pl',
+        '.tw': 'zh_TW',
+      };
+      defaultLocale = localeByTld[tld] || 'en';
+    }
+
+    const storedLocale = localStorage.getItem('yp-user-locale');
+    if (storedLocale) {
+      defaultLocale = storedLocale;
+    }
+
+    let localeFromUrl: string | undefined;
+
+    if (
+      window.appGlobals.originalQueryParameters &&
+      window.appGlobals.originalQueryParameters['locale']
+    ) {
+      localeFromUrl = window.appGlobals.originalQueryParameters[
+        'locale'
+      ] as string;
+    }
+
+    if (
+      window.appGlobals.originalQueryParameters &&
+      window.appGlobals.originalQueryParameters['startAutoTranslate']
+    ) {
+      setTimeout(() => {
+        this.startTranslation();
+      }, 2500);
+    }
+
+    if (localeFromUrl && localeFromUrl.length > 1) {
+      defaultLocale = localeFromUrl;
+      localStorage.setItem('yp-user-locale', localeFromUrl);
+    }
+
+    i18next.use(HttpApi).init(
+      {
+        lng: defaultLocale,
+        fallbackLng: 'en',
+        backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
+      },
+      () => {
+        window.appGlobals.locale = defaultLocale;
+        window.appGlobals.i18nTranslation = i18next;
+        window.appGlobals.haveLoadedLanguages = true;
+        //TODO: Fix moment
+        //moment.locale([defaultLocale, 'en']);
+        this.fireGlobal('yp-language-loaded', { language: defaultLocale });
+      }
+    );
+  }
+
+  startTranslation() {
+    window.appGlobals.autoTranslate = true;
+    this.fireGlobal('yp-auto-translate', true);
+    window.appDialogs.getDialogAsync('masterToast', (toast: Snackbar) => {
+      toast.labelText = this.t('autoTranslationStarted');
+      toast.open = true;
+    });
+  }
+
+  stopTranslation() {
+    window.appGlobals.autoTranslate = false;
+    this.fireGlobal('yp-auto-translate', false);
+    window.appDialogs.getDialogAsync('masterToast', (toast: Snackbar) => {
+      toast.labelText = this.t('autoTranslationStopped');
+      toast.open = true;
+    });
+    sessionStorage.setItem('dontPromptForAutoTranslation', '1');
   }
 
   async boot() {
