@@ -780,3 +780,8 @@ interface YpTranslationTextData {
   indexKey?: string;
   originalText?: string;
 }
+
+interface YpConfigTabData {
+  name: string;
+  items: Array<YpStructuredQuestionData>;
+}
