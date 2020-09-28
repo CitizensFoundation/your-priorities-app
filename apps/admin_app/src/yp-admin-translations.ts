@@ -19,7 +19,7 @@ export class YpAdminTranslations extends YpAdminPage {
   waitingOnData = false;
 
   @property({ type: Object })
-  editActive: Record<string, boolean> = {}
+  editActive: Record<string, boolean> = {};
 
   @property({ type: Object })
   collection: YpCollectionData | undefined;
@@ -131,7 +131,7 @@ export class YpAdminTranslations extends YpAdminPage {
     this.waitingOnData = true;
     this.items = (await window.adminServerApi.getTextForTranslations(
       this.collectionType,
-      this.collectionId,
+      this.collectionId as number,
       this.targetLocale!
     )) as Array<YpTranslationTextData>;
 
@@ -201,10 +201,15 @@ export class YpAdminTranslations extends YpAdminPage {
     this.requestUpdate();
   }
 
-  saveItem(item: YpTranslationTextData, options: { saveDirectly: boolean; } | undefined = undefined) {
+  saveItem(
+    item: YpTranslationTextData,
+    options: { saveDirectly: boolean } | undefined = undefined
+  ) {
     if (item && !options) {
       // eslint-disable-next-line no-param-reassign
-      item.translatedText = (this.$$(`#editFor${item.indexKey}`) as HTMLInputElement).value;
+      item.translatedText = (this.$$(
+        `#editFor${item.indexKey}`
+      ) as HTMLInputElement).value;
     }
 
     const updatedItem: YpTranslationTextData = {
@@ -213,17 +218,25 @@ export class YpAdminTranslations extends YpAdminPage {
       textType: item.textType,
       translatedText: item.translatedText,
       extraId: item.extraId,
-      targetLocale: this.targetLocale!
+      targetLocale: this.targetLocale!,
     };
 
-    window.adminServerApi.updateTranslation(this.collectionType, this.collectionId, updatedItem);
+    window.adminServerApi.updateTranslation(
+      this.collectionType,
+      this.collectionId as number,
+      updatedItem
+    );
 
     this.cancelEdit(item);
   }
 
   async autoTranslate(item: YpTranslationTextData) {
-    const updateUrl = `${this.getUrlFromTextType(item)}?contentId=${item.contentId}&textType=${item.textType}&targetLanguage=${this.targetLocale}`;
-    const translation = await window.serverApi.getTranslation(updateUrl) as YpTranslationTextData;
+    const updateUrl = `${this.getUrlFromTextType(item)}?contentId=${
+      item.contentId
+    }&textType=${item.textType}&targetLanguage=${this.targetLocale}`;
+    const translation = (await window.serverApi.getTranslation(
+      updateUrl
+    )) as YpTranslationTextData;
     if (translation) {
       item.translatedText = translation.content;
       this.saveItem(item, { saveDirectly: true });
@@ -283,7 +296,8 @@ export class YpAdminTranslations extends YpAdminPage {
     let arr = [];
     const highlighted = [];
     let highlightedLocales = ['en', 'en_GB', 'is', 'fr', 'de', 'es', 'ar'];
-    if (this.collection &&
+    if (
+      this.collection &&
       this.collection.configuration &&
       this.collection.configuration.highlightedLanguages
     ) {
@@ -397,7 +411,7 @@ export class YpAdminTranslations extends YpAdminPage {
                   ></mwc-button>
                   <mwc-button
                     .label="${this.t('autoTranslate')}"
-                    ?hidden="${item.translatedText!=null}"
+                    ?hidden="${item.translatedText != null}"
                     @click="${() => this.autoTranslate(item)}"
                   ></mwc-button>
                 </div>

@@ -41,7 +41,10 @@ export class YpAdminApp extends YpBaseElement {
   collectionType: string;
 
   @property({ type: Number })
-  collectionId: number;
+  collectionId: number | string;
+
+  @property({ type: String })
+  collectionAction: string;
 
   @property({ type: String })
   page: string | undefined;
@@ -134,6 +137,15 @@ export class YpAdminApp extends YpBaseElement {
         .headerContainer {
           padding-top: 8px;
         }
+
+        mwc-drawer  {
+          --mdc-drawer-width: 120px;
+        }
+
+        .railMenuItem {
+          font-size: 14px;
+          text-transform: uppercase;
+        }
       `,
     ];
   }
@@ -153,11 +165,31 @@ export class YpAdminApp extends YpBaseElement {
     this.page = 'editTranslations';
 
     let pathname = window.location.pathname;
+
+    pathname = pathname.replace('/admin','')
+
     if (pathname.endsWith('/'))
       pathname = pathname.substring(0, pathname.length - 1);
-    const split = pathname.split('/');
-    this.collectionType = split[split.length - 2];
-    this.collectionId = parseInt(split[split.length - 1]);
+    if (pathname.startsWith('/'))
+      pathname = pathname.substring(1, pathname.length);
+
+    const splitPath = pathname.split('/');
+
+    this.collectionType = splitPath[0];
+
+    if (splitPath[1]=='new') {
+      this.collectionId = 'new'
+    } else {
+      this.collectionId = parseInt(splitPath[1]);
+    }
+
+    if (splitPath.length>2) {
+      this.collectionAction = splitPath[2];
+    } else {
+      this.collectionAction = 'config'
+    }
+
+    debugger;
   }
 
   connectedCallback() {
@@ -174,7 +206,7 @@ export class YpAdminApp extends YpBaseElement {
   async _getCollection() {
     this.collection = await window.serverApi.getCollection(
       this.collectionType,
-      this.collectionId
+      this.collectionId as number
     );
   }
 
@@ -188,38 +220,42 @@ export class YpAdminApp extends YpBaseElement {
       </mwc-dialog>
 
       <mwc-drawer hasHeader >
-        <span slot="title">Drawer Title</span>
-        <span slot="subtitle">subtitle</span>
-        <div>
-          <p>
-            <mwc-icon-button
-              class="exitButton"
+          <div slot="title" class="layout vertical center-center">
+          <div>
+              <img
+                height="35"
+                alt="Your Priorities Logo"
+                src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
+              />
+          </div>
+        <mwc-icon-button
+                class="exitButton"
               .label="${this.t('exitToMainApp')}"
               slot="navigationIcon"
               @click="${this.exitToMainApp}"
-              icon="exit_to_app"
+              icon="close"
             ></mwc-icon-button>
-          </p>
+          </div>
+        <div class="layout vertical center-center">
           <mwc-icon-button
             icon="gesture"
-            .label="${this.t('configuration')}"
+            .label="${this.t('config')}"
           ></mwc-icon-button>
+          <div class="railMenuItem">
+            ${this.t('config')}
+          </div>
           <mwc-icon-button
             icon="gavel"
-            .label="${this.t('configuration')}"
+            .label="${this.t('translation')}"
           ></mwc-icon-button>
+          <div class="railMenuItem">
+            ${this.t('translation')}
+          </div>
         </div>
         <div slot="appContent">
           <mwc-top-app-bar>
             <div slot="title">
               <div class="layout horizontal headerContainer">
-                <div>
-                  <img
-                    height="35"
-                    alt="Your Priorities Logo"
-                    src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
-                  />
-                </div>
                 <div class="analyticsText">
                   ${this.t('contentAdminFor')} ${this.originalCollectionType}:
                   ${this.collection ? this.collection.name : ''}
@@ -270,8 +306,8 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   _renderPage() {
-    switch (this.page) {
-      case 'editTranslations':
+    switch (this.collectionAction) {
+      case 'translations':
         return html`
           ${this.collection
             ? html`<yp-admin-translations

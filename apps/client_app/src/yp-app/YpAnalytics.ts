@@ -22,7 +22,7 @@ export class YpAnalytics extends YpCodeBase {
         ga('set', 'nonInteraction', false);
       }, 900);
     } else {
-      console.error("Can't find Google Analytics object");
+      console.warn("Can't find Google Analytics object");
     }
   }
 

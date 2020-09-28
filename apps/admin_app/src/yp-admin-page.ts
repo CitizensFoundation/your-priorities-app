@@ -8,7 +8,7 @@ export abstract class YpAdminPage extends YpBaseElementWithLogin {
   collectionType!: string;
 
   @property({ type: Number })
-  collectionId!: number;
+  collectionId!: number | string;
 
   @property({ type: Object })
   collection: YpCollectionData | undefined;
