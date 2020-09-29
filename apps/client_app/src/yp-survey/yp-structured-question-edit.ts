@@ -32,6 +32,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   @property({ type: Boolean })
   hideQuestionIndex = false;
 
+  @property({ type: String })
+  name: string | undefined
+
   @property({ type: Boolean })
   dontFocusFirstQuestion = false;
 
@@ -274,9 +277,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <mwc-textfield
         id="structuredQuestion_${this.index}"
-        .value="${this.question.value || ''}"
+        .value="${(this.question.value as string) || ''}"
         .label="${!skipLabel ? this.textWithIndex : ''}"
         charCounter
+        .name="${this.name}"
         ?useSmallFont="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
@@ -307,13 +311,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         id="structuredQuestion_${this.index}"
         data-type="text"
         .label="${!skipLabel ? this.textWithIndex : ''}"
-        value="${this.question.value || ''}"
+        .value="${(this.question.value as string) || ''}"
         minlength="2"
         charCounter
         @focus="${this.setLongFocus}"
         @blur="${this.setLongUnFocus}"
         .useSmallFont="${this.useSmallFont}"
         @change="${this._debounceChangeEvent}"
+        .name="${this.name}"
         rows="3"
         max-rows="5"
         maxrows="5"
@@ -421,6 +426,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       <mwc-formfield .label="${text}">
         <mwc-checkbox
           id="structuredQuestionCheckbox_${this.index}_${buttonIndex}"
+          .name="${this.name || null}"
+          ?checked="${(this.question.value as boolean) || false}"
           @change="${this._checkboxChanged}">
         </mwc-checkbox>
       </mwc-formfield>
@@ -511,7 +518,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       case 'checkboxes':
         question = this.renderCheckboxes();
         break;
-      case 'radios':
+      case 'checkbox':
+        question = this.renderCheckbox(this.question.text, 0);
+      break;
+        case 'radios':
         question = this.renderRadios();
         break;
       case 'seperator':

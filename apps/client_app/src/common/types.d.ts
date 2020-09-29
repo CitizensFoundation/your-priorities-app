@@ -83,12 +83,13 @@ interface YpStructuredQuestionData {
   type?: string;
   subType?: string;
   maxLength?: number;
-  value?: string;
+  value?: string | number | boolean;
   questionIndex?: number;
   required?: boolean;
   halfWidthDesktop?: boolean;
   extraTopMargin?: boolean;
   lessBottomMargin?: boolean;
+  html?: string;
   radioButtons?: Array<YpRadioButtonData>;
   checkboxes?: Array<YpCheckboxData>;
   dropdownOptions?: Array<YpDropdownData>;
@@ -781,7 +782,16 @@ interface YpTranslationTextData {
   originalText?: string;
 }
 
+interface YpStructuredConfigData extends YpStructuredQuestionData {
+  name?: string;
+  useHtml?: boolean | undefined;
+  templateData?: any;
+  rows?: number;
+  maxRows?: number;
+}
+
 interface YpConfigTabData {
   name: string;
-  items: Array<YpStructuredQuestionData>;
+  icon: string;
+  items: Array<YpStructuredConfigData>;
 }

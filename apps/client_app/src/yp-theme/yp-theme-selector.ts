@@ -23,6 +23,7 @@ export class YpThemeSelector extends YpBaseElement {
 
     if (changedProperties.has('selectedTheme')) {
       this._selectedThemeChanged();
+      this.fire('yp-theme-changed', this.selectedTheme);
     }
 
     if (changedProperties.has('themeObject')) {

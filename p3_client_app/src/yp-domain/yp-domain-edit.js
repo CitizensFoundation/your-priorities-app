@@ -1,22 +1,22 @@
-import '@polymer/polymer/polymer-legacy.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import 'lite-signal/lite-signal.js';
-import '@polymer/paper-input/paper-input.js';
-import '@polymer/paper-checkbox/paper-checkbox.js';
-import '@polymer/paper-input/paper-textarea.js';
-import '@polymer/paper-tabs/paper-tab.js';
-import '@polymer/paper-tabs/paper-tabs.js';
-import '@polymer/neon-animation/neon-animated-pages.js';
-import '../yp-file-upload/yp-file-upload.js';
-import { ypLanguageBehavior } from '../yp-behaviors/yp-language-behavior.js';
-import '../yp-behaviors/emoji-selector.js';
-import { ypGotoBehavior } from '../yp-behaviors/yp-goto-behavior.js';
-import '../yp-edit-dialog/yp-edit-dialog.js';
-import { ypEditDialogBehavior } from '../yp-edit-dialog/yp-edit-dialog-behavior.js';
-import '../yp-theme/yp-theme-selector.js';
-import '../yp-app-globals/yp-language-selector.js';
-import { Polymer } from '@polymer/polymer/lib/legacy/polymer-fn.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import "@polymer/polymer/polymer-legacy.js";
+import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
+import "lite-signal/lite-signal.js";
+import "@polymer/paper-input/paper-input.js";
+import "@polymer/paper-checkbox/paper-checkbox.js";
+import "@polymer/paper-input/paper-textarea.js";
+import "@polymer/paper-tabs/paper-tab.js";
+import "@polymer/paper-tabs/paper-tabs.js";
+import "@polymer/neon-animation/neon-animated-pages.js";
+import "../yp-file-upload/yp-file-upload.js";
+import { ypLanguageBehavior } from "../yp-behaviors/yp-language-behavior.js";
+import "../yp-behaviors/emoji-selector.js";
+import { ypGotoBehavior } from "../yp-behaviors/yp-goto-behavior.js";
+import "../yp-edit-dialog/yp-edit-dialog.js";
+import { ypEditDialogBehavior } from "../yp-edit-dialog/yp-edit-dialog-behavior.js";
+import "../yp-theme/yp-theme-selector.js";
+import "../yp-app-globals/yp-language-selector.js";
+import { Polymer } from "@polymer/polymer/lib/legacy/polymer-fn.js";
+import { html } from "@polymer/polymer/lib/utils/html-tag.js";
 
 Polymer({
   _template: html`
@@ -69,12 +69,43 @@ Polymer({
 
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
-    <yp-edit-dialog name="domainEdit" double-width="" id="editDialog" title="[[editHeaderText]]" icon="cloud-queue" action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
+    <yp-edit-dialog
+      name="domainEdit"
+      double-width=""
+      id="editDialog"
+      title="[[editHeaderText]]"
+      icon="cloud-queue"
+      action="[[action]]"
+      method="[[method]]"
+      params="[[params]]"
+      save-text="[[saveText]]"
+      toast-text="[[toastText]]"
+    >
       <div>
-        <paper-input id="name" name="name" type="text" label="[[t('Name')]]" value="{{domain.name}}" maxlength="20" char-counter="" class="mainInput">
+        <paper-input
+          id="name"
+          name="name"
+          type="text"
+          label="[[t('Name')]]"
+          value="{{domain.name}}"
+          maxlength="20"
+          char-counter=""
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-textarea id="description" name="description" value="{{domain.description}}" always-float-label="[[domain.description]]" label="[[t('Description')]]" char-counter="" rows="2" max-rows="5" maxlength="300" class="mainInput">
+        <paper-textarea
+          id="description"
+          name="description"
+          value="{{domain.description}}"
+          always-float-label="[[domain.description]]"
+          label="[[t('Description')]]"
+          char-counter=""
+          rows="2"
+          max-rows="5"
+          maxlength="300"
+          class="mainInput"
+        >
         </paper-textarea>
 
         <div class="horizontal end-justified layout">
@@ -82,268 +113,463 @@ Polymer({
         </div>
 
         <div class="layout vertical">
-          <yp-theme-selector object="[[domain]]" selected-theme="{{themeId}}"></yp-theme-selector>
+          <yp-theme-selector
+            object="[[domain]]"
+            selected-theme="{{themeId}}"
+          ></yp-theme-selector>
         </div>
 
         <div class="layout horizontal wrap">
           <div class="layout vertical additionalSettings">
-            <yp-file-upload id="logoImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-logo" method="POST" on-success="_logoImageUploaded">
+            <yp-file-upload
+              id="logoImageUpload"
+              raised="true"
+              multi="false"
+              target="/api/images?itemType=domain-logo"
+              method="POST"
+              on-success="_logoImageUploaded"
+            >
               <iron-icon class="icon" icon="photo-camera"></iron-icon>
-              <span> [[t('image.logo.upload')]] - 864 x 486</span><br>
+              <span> [[t('image.logo.upload')]] - 864 x 486</span><br />
             </yp-file-upload>
           </div>
 
           <div class="layout vertical additionalSettings">
-            <yp-file-upload id="headerImageUpload" raised="true" multi="false" target="/api/images?itemType=domain-header" method="POST" on-success="_headerImageUploaded">
+            <yp-file-upload
+              id="headerImageUpload"
+              raised="true"
+              multi="false"
+              target="/api/images?itemType=domain-header"
+              method="POST"
+              on-success="_headerImageUploaded"
+            >
               <iron-icon class="icon" icon="photo-camera"></iron-icon>
-              <span> [[t('image.header.upload')]] - 1920 x 600</span><br>
+              <span> [[t('image.header.upload')]] - 1920 x 600</span><br />
             </yp-file-upload>
           </div>
 
           <template is="dom-if" if="[[hasVideoUpload]]">
             <div class="layout vertical uploadSection">
-              <yp-file-upload id="videoFileUpload" raised="true" multi="false" video-upload="" method="POST" on-success="_videoUploaded">
+              <yp-file-upload
+                id="videoFileUpload"
+                raised="true"
+                multi="false"
+                video-upload=""
+                method="POST"
+                on-success="_videoUploaded"
+              >
                 <iron-icon class="icon" icon="videocam"></iron-icon>
                 <span>[[t('uploadVideo')]]</span>
               </yp-file-upload>
-              <paper-checkbox class="useVideoCover" name="useVideoCover" disabled\$="[[!uploadedVideoId]]" checked\$="{{domain.configuration.useVideoCover}}">[[t('useVideoCover')]]</paper-checkbox>
+              <paper-checkbox
+                class="useVideoCover"
+                name="useVideoCover"
+                disabled$="[[!uploadedVideoId]]"
+                checked$="{{domain.configuration.useVideoCover}}"
+                >[[t('useVideoCover')]]</paper-checkbox
+              >
             </div>
           </template>
         </div>
 
-        <paper-input id="customUserRegistrationText" name="customUserRegistrationText" type="text" label="[[t('customUserRegistrationText')]]" value="{{domain.configuration.customUserRegistrationText}}" maxlength="256" char-counter="">
+        <paper-input
+          id="customUserRegistrationText"
+          name="customUserRegistrationText"
+          type="text"
+          label="[[t('customUserRegistrationText')]]"
+          value="{{domain.configuration.customUserRegistrationText}}"
+          maxlength="256"
+          char-counter=""
+        >
         </paper-input>
 
-        <paper-input id="appHomeScreenShortName" name="appHomeScreenShortName" type="text" label="[[t('appHomeScreenShortName')]]" value="{{domain.configuration.appHomeScreenShortName}}" maxlength="12" style="width: 200px;">
+        <paper-input
+          id="appHomeScreenShortName"
+          name="appHomeScreenShortName"
+          type="text"
+          label="[[t('appHomeScreenShortName')]]"
+          value="{{domain.configuration.appHomeScreenShortName}}"
+          maxlength="12"
+          style="width: 200px;"
+        >
         </paper-input>
 
         <div class="layout vertical additionalSettings half">
-          <yp-file-upload id="appHomeScreenIconImageUpload" raised="true" multi="false" target="/api/images?itemType=app-home-screen-icon" method="POST" on-success="_appHomeScreenIconImageUploaded">
+          <yp-file-upload
+            id="appHomeScreenIconImageUpload"
+            raised="true"
+            multi="false"
+            target="/api/images?itemType=app-home-screen-icon"
+            method="POST"
+            on-success="_appHomeScreenIconImageUploaded"
+          >
             <iron-icon class="icon" icon="photo-camera"></iron-icon>
             <span>[[t('appHomeScreenIconImageUpload')]]</span>
           </yp-file-upload>
         </div>
 
-        <input type="hidden" name="themeId" value="[[themeId]]">
-        <input type="hidden" name="uploadedLogoImageId" value="[[uploadedLogoImageId]]">
-        <input type="hidden" name="uploadedHeaderImageId" value="[[uploadedHeaderImageId]]">
-        <input type="hidden" name="appHomeScreenIconImageId" value="[[appHomeScreenIconImageId]]">
+        <input type="hidden" name="themeId" value="[[themeId]]" />
+        <input
+          type="hidden"
+          name="uploadedLogoImageId"
+          value="[[uploadedLogoImageId]]"
+        />
+        <input
+          type="hidden"
+          name="uploadedHeaderImageId"
+          value="[[uploadedHeaderImageId]]"
+        />
+        <input
+          type="hidden"
+          name="appHomeScreenIconImageId"
+          value="[[appHomeScreenIconImageId]]"
+        />
 
-        <br>
+        <br />
 
-        <yp-language-selector name="defaultLocale" no-user-events="" selected-locale="{{domain.default_locale}}"></yp-language-selector>
+        <yp-language-selector
+          name="defaultLocale"
+          no-user-events=""
+          selected-locale="{{domain.default_locale}}"
+        ></yp-language-selector>
 
-        <paper-checkbox name="onlyAdminsCanCreateCommunities" checked\$="{{domain.only_admins_can_create_communities}}">[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox>
+        <paper-checkbox
+          name="onlyAdminsCanCreateCommunities"
+          checked$="{{domain.only_admins_can_create_communities}}"
+          >[[t('domain.onlyAdminsCanCreateCommunities')]]</paper-checkbox
+        >
 
-        <paper-input id="google_analytics_code" name="google_analytics_code" type="text" label="[[t('analyticsTrackerCode')]]" value="{{domain.google_analytics_code}}" maxlength="40" style="width: 200px;">
+        <paper-input
+          id="google_analytics_code"
+          name="google_analytics_code"
+          type="text"
+          label="[[t('analyticsTrackerCode')]]"
+          value="{{domain.google_analytics_code}}"
+          maxlength="40"
+          style="width: 200px;"
+        >
         </paper-input>
 
-        <paper-input id="facebookClientId" name="facebookClientId" type="text" label="Facebook Client Id" value="{{domain.secret_api_keys.facebook.client_id}}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input
+          id="facebookClientId"
+          name="facebookClientId"
+          type="text"
+          label="Facebook Client Id"
+          value="{{domain.secret_api_keys.facebook.client_id}}"
+          maxlength="60"
+          char-counter=""
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-input id="facebookClientSecret" name="facebookClientSecret" type="text" label="Facebook Client Secret" value="{{domain.secret_api_keys.facebook.client_secret}}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input
+          id="facebookClientSecret"
+          name="facebookClientSecret"
+          type="text"
+          label="Facebook Client Secret"
+          value="{{domain.secret_api_keys.facebook.client_secret}}"
+          maxlength="60"
+          char-counter=""
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-input id="googleClientId" name="googleClientId" type="text" label="Google Client Id" value="{{domain.secret_api_keys.google.client_id}}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input
+          id="googleClientId"
+          name="googleClientId"
+          type="text"
+          label="Google Client Id"
+          value="{{domain.secret_api_keys.google.client_id}}"
+          maxlength="60"
+          char-counter=""
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-input id="googleClientSecret" name="googleClientSecret" type="text" label="Google Client Secret" value="{{domain.secret_api_keys.google.client_secret}}" maxlength="60" char-counter="" class="mainInput">
+        <paper-input
+          id="googleClientSecret"
+          name="googleClientSecret"
+          type="text"
+          label="Google Client Secret"
+          value="{{domain.secret_api_keys.google.client_secret}}"
+          maxlength="60"
+          char-counter=""
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-input id="samlEntryPoint" name="samlEntryPoint" type="text" label="SAML EntryPoint" value="{{domain.secret_api_keys.saml.entryPoint}}" maxlength="100" char-counter="" class="mainInput">
+        <paper-input
+          id="samlEntryPoint"
+          name="samlEntryPoint"
+          type="text"
+          label="SAML EntryPoint"
+          value="{{domain.secret_api_keys.saml.entryPoint}}"
+          maxlength="100"
+          char-counter=""
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-input id="samlIssuer" name="samlIssuer" type="text" label="SAML Issuer" value="{{domain.secret_api_keys.saml.issuer}}" class="mainInput">
+        <paper-input
+          id="samlIssuer"
+          name="samlIssuer"
+          type="text"
+          label="SAML Issuer"
+          value="{{domain.secret_api_keys.saml.issuer}}"
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-input id="samlIdentifierFormat" name="samlIdentifierFormat" type="text" label="SAML Identifier Format" value="{{domain.secret_api_keys.saml.identifierFormat}}" class="mainInput">
+        <paper-input
+          id="samlIdentifierFormat"
+          name="samlIdentifierFormat"
+          type="text"
+          label="SAML Identifier Format"
+          value="{{domain.secret_api_keys.saml.identifierFormat}}"
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-input id="samlLoginButtonUrl" name="samlLoginButtonUrl" label="[[t('samlLoginButtonUrl')]]" value="{{domain.configuration.samlLoginButtonUrl}}">
+        <paper-input
+          id="samlLoginButtonUrl"
+          name="samlLoginButtonUrl"
+          label="[[t('samlLoginButtonUrl')]]"
+          value="{{domain.configuration.samlLoginButtonUrl}}"
+        >
         </paper-input>
 
-        <paper-input id="customSamlLoginText" name="customSamlLoginText" label="[[t('customSamlLoginText')]]" value="{{domain.configuration.customSamlLoginText}}">
+        <paper-input
+          id="customSamlLoginText"
+          name="customSamlLoginText"
+          label="[[t('customSamlLoginText')]]"
+          value="{{domain.configuration.customSamlLoginText}}"
+        >
         </paper-input>
 
-
-        <paper-input id="samlCallbackUrl" name="samlCallbackUrl" type="text" label="SAML CallbackUrl" value="{{domain.secret_api_keys.saml.callbackUrl}}" maxlength="100" char-counter="" class="mainInput">
+        <paper-input
+          id="samlCallbackUrl"
+          name="samlCallbackUrl"
+          type="text"
+          label="SAML CallbackUrl"
+          value="{{domain.secret_api_keys.saml.callbackUrl}}"
+          maxlength="100"
+          char-counter=""
+          class="mainInput"
+        >
         </paper-input>
 
-        <paper-textarea id="samlCert" name="samlCert" value="{{domain.secret_api_keys.saml.cert}}" always-float-label="[[domain.secret_api_keys.saml.cert]]" label="SAML Verification Certificate Chain" char-counter="" rows="2" max-rows="5" maxlength="20000" class="mainInput">
+        <paper-textarea
+          id="samlCert"
+          name="samlCert"
+          value="{{domain.secret_api_keys.saml.cert}}"
+          always-float-label="[[domain.secret_api_keys.saml.cert]]"
+          label="SAML Verification Certificate Chain"
+          char-counter=""
+          rows="2"
+          max-rows="5"
+          maxlength="20000"
+          class="mainInput"
+        >
         </paper-textarea>
 
-        <paper-textarea id="customSAMLErrorHTML" name="customSAMLErrorHTML" value="{{domain.configuration.customSAMLErrorHTML}}" always-float-label="[[domain.configuration.customSAMLErrorHTML]]" label="[[t('customSAMLErrorHTML')]]" rows="2" max-rows="5" class="mainInput">
+        <paper-textarea
+          id="customSAMLErrorHTML"
+          name="customSAMLErrorHTML"
+          value="{{domain.configuration.customSAMLErrorHTML}}"
+          always-float-label="[[domain.configuration.customSAMLErrorHTML]]"
+          label="[[t('customSAMLErrorHTML')]]"
+          rows="2"
+          max-rows="5"
+          class="mainInput"
+        >
         </paper-textarea>
 
-        <paper-checkbox name="forceSecureSamlEmployeeLogin" checked\$="{{domain.configuration.forceSecureSamlEmployeeLogin}}">[[t('forceSecureSamlEmployeeLogin')]]
+        <paper-checkbox
+          name="forceSecureSamlEmployeeLogin"
+          checked$="{{domain.configuration.forceSecureSamlEmployeeLogin}}"
+          >[[t('forceSecureSamlEmployeeLogin')]]
         </paper-checkbox>
 
         <div class="layout vertical">
-          <paper-checkbox name="downloadFacebookImagesForUser" checked\$="{{domain.configuration.downloadFacebookImagesForUser}}">[[t('downloadFacebookImagesForUser')]]</paper-checkbox>
-          <paper-checkbox name="disableNameAutoTranslation" checked\$="{{domain.configuration.disableNameAutoTranslation}}">[[t('disableNameAutoTranslation')]]</paper-checkbox>
-          <paper-checkbox name="hideDomainNews" checked\$="{{domain.configuration.hideDomainNews}}">[[t('hideDomainNews')]]</paper-checkbox>
+          <paper-checkbox
+            name="downloadFacebookImagesForUser"
+            checked$="{{domain.configuration.downloadFacebookImagesForUser}}"
+            >[[t('downloadFacebookImagesForUser')]]</paper-checkbox
+          >
+          <paper-checkbox
+            name="disableNameAutoTranslation"
+            checked$="{{domain.configuration.disableNameAutoTranslation}}"
+            >[[t('disableNameAutoTranslation')]]</paper-checkbox
+          >
+          <paper-checkbox
+            name="hideDomainNews"
+            checked$="{{domain.configuration.hideDomainNews}}"
+            >[[t('hideDomainNews')]]</paper-checkbox
+          >
         </div>
       </div>
     </yp-edit-dialog>
-`,
+  `,
 
-  is: 'yp-domain-edit',
+  is: "yp-domain-edit",
 
-  behaviors: [
-    ypLanguageBehavior,
-    ypEditDialogBehavior,
-    ypGotoBehavior
-  ],
+  behaviors: [ypLanguageBehavior, ypEditDialogBehavior, ypGotoBehavior],
 
   properties: {
     action: {
       type: String,
-      value: "/api/domains"
+      value: "/api/domains",
     },
 
     domain: {
       type: Object,
-      observer: '_domainChanged',
-      notify: true
+      observer: "_domainChanged",
+      notify: true,
     },
 
     params: {
-      type: String
+      type: String,
     },
 
     selected: {
       type: Number,
-      value: 0
+      value: 0,
     },
 
     method: {
-      type: String
+      type: String,
     },
 
     uploadedLogoImageId: {
-      type: String
+      type: String,
     },
 
     uploadedHeaderImageId: {
-      type: String
+      type: String,
     },
 
     themeId: {
       type: String,
-      value: null
+      value: null,
     },
 
     status: {
-      type: String
+      type: String,
     },
 
     appHomeScreenIconImageId: String,
 
     hasVideoUpload: {
       type: Boolean,
-      value: false
+      value: false,
     },
 
     uploadedVideoId: {
       type: Number,
-      value: null
-    }
+      value: null,
+    },
   },
 
-  observers: [
-    '_setupTranslation(language,t)'
-  ],
+  observers: ["_setupTranslation(language,t)"],
 
   _videoUploaded: function (event, detail) {
-    this.set('uploadedVideoId', detail.videoId);
-    this.set('domain.configuration.useVideoCover', true);
+    this.set("uploadedVideoId", detail.videoId);
+    this.set("domain.configuration.useVideoCover", true);
   },
 
   _appHomeScreenIconImageUploaded: function (event, detail) {
     var image = JSON.parse(detail.xhr.response);
-    this.set('appHomeScreenIconImageId', image.id);
+    this.set("appHomeScreenIconImageId", image.id);
   },
 
   _updateEmojiBindings: function () {
-    this.async(function () {
-      var description = this.$$("#description");
-      var emojiSelector = this.$$("#emojiSelectorDescription");
-      if (description && emojiSelector) {
-        emojiSelector.inputTarget = description;
-      } else {
-        console.warn("Domain edit: Can't bind emojis :(");
-      }
-    }.bind(this), 500);
+    this.async(
+      function () {
+        var description = this.$$("#description");
+        var emojiSelector = this.$$("#emojiSelectorDescription");
+        if (description && emojiSelector) {
+          emojiSelector.inputTarget = description;
+        } else {
+          console.warn("Domain edit: Can't bind emojis :(");
+        }
+      }.bind(this),
+      500
+    );
   },
 
   _domainChanged: function (domain) {
     this._updateEmojiBindings();
     if (window.appGlobals.hasVideoUpload) {
-      this.set('hasVideoUpload', true);
+      this.set("hasVideoUpload", true);
     } else {
-      this.set('hasVideoUpload', false);
+      this.set("hasVideoUpload", false);
     }
   },
 
   _customRedirect: function (domain) {
     if (domain) {
       if (this.uploadedVideoId) {
-        var ajax = document.createElement('iron-ajax');
-        ajax.handleAs = 'json';
-        ajax.contentType = 'application/json';
-        ajax.url = '/api/videos/'+domain.id+'/completeAndAddToDomain';
-        ajax.method = 'PUT';
+        var ajax = document.createElement("iron-ajax");
+        ajax.handleAs = "json";
+        ajax.contentType = "application/json";
+        ajax.url = "/api/videos/" + domain.id + "/completeAndAddToDomain";
+        ajax.method = "PUT";
         ajax.body = {
-          videoId: this.uploadedVideoId
+          videoId: this.uploadedVideoId,
         };
-        ajax.addEventListener('response', function (event) {
-          this._finishRedirect(domain);
-        }.bind(this));
+        ajax.addEventListener(
+          "response",
+          function (event) {
+            this._finishRedirect(domain);
+          }.bind(this)
+        );
         ajax.generateRequest();
       } else {
         this._finishRedirect(domain);
       }
     } else {
-      console.warn('No group found on custom redirect');
+      console.warn("No group found on custom redirect");
     }
   },
 
   _finishRedirect: function (domain) {
-    this.redirectTo("/domain/"+domain.id);
-    window.appGlobals.activity('completed', 'editDomain');
+    this.redirectTo("/domain/" + domain.id);
+    window.appGlobals.activity("completed", "editDomain");
   },
 
   _clear: function () {
-    this.set('domain', null);
-    this.set('uploadedLogoImageId', null);
-    this.set('uploadedHeaderImageId', null);
-    this.set('appHomeScreenIconImageId', null);
+    this.set("domain", null);
+    this.set("uploadedLogoImageId", null);
+    this.set("uploadedHeaderImageId", null);
+    this.set("appHomeScreenIconImageId", null);
     this.$.headerImageUpload.clear();
     this.$.logoImageUpload.clear();
-    if (this.$$("#videoFileUpload"))
-      this.$$("#videoFileUpload").clear();
-
+    if (this.$$("#videoFileUpload")) this.$$("#videoFileUpload").clear();
   },
 
   setup: function (domain, newNotEdit, refreshFunction) {
-    this.set('domain', domain);
-    this.set('new', newNotEdit);
-    this.set('refreshFunction', refreshFunction);
+    this.set("domain", domain);
+    this.set("new", newNotEdit);
+    this.set("refreshFunction", refreshFunction);
     this._setupTranslation();
-    if (domain && domain.DomainLogoVideos && domain.DomainLogoVideos.length>0) {
-      this.set('uploadedVideoId', domain.DomainLogoVideos[0].id)
+    if (
+      domain &&
+      domain.DomainLogoVideos &&
+      domain.DomainLogoVideos.length > 0
+    ) {
+      this.set("uploadedVideoId", domain.DomainLogoVideos[0].id);
     }
   },
 
   _setupTranslation: function () {
     if (this.new) {
-      this.editHeaderText = this.t('domain.new');
-      this.toastText = this.t('domainToastCreated');
-      this.set('saveText', this.t('create'));
+      this.editHeaderText = this.t("domain.new");
+      this.toastText = this.t("domainToastCreated");
+      this.set("saveText", this.t("create"));
     } else {
-      this.set('saveText', this.t('save'));
-      this.editHeaderText = this.t('domain.edit');
-      this.toastText = this.t('domainToastUpdated');
+      this.set("saveText", this.t("save"));
+      this.editHeaderText = this.t("domain.edit");
+      this.toastText = this.t("domainToastUpdated");
     }
-  }
+  },
 });

@@ -22,6 +22,7 @@ import { Dialog } from '@material/mwc-dialog';
 import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
 import './yp-admin-translations.js';
+import './yp-admin-config-domain.js';
 
 declare global {
   interface Window {
@@ -318,6 +319,20 @@ export class YpAdminApp extends YpBaseElement {
               </yp-admin-translations>`
             : nothing}
         `;
+      case 'config':
+        switch (this.collectionType) {
+          case 'domain':
+            return html`
+            ${this.collection
+              ? html`<yp-admin-config-domain
+                  .collectionType="${this.collectionType}"
+                  .collection="${this.collection}"
+                  .collectionId="${this.collectionId}"
+                >
+                </yp-admin-config-domain>`
+              : nothing}
+          `;
+        }
       default:
         return html`
           <p>Page not found try going to <a href="#main">Main</a></p>

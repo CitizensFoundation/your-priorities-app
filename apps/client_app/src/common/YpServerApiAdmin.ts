@@ -45,4 +45,20 @@ export class YpServerApiAdmin extends YpServerApiBase {
         )}/${collectionId}/get_translation_texts?targetLocale=${targetLocale}`
     );
   }
+
+  public addVideoToDomain(
+    collectionId: number,
+    body: object
+  ) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/videos/${collectionId}/completeAndAddToDomain`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
 }

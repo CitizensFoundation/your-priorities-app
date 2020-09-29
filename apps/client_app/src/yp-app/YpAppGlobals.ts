@@ -138,6 +138,7 @@ export class YpAppGlobals extends YpCodeBase {
     if (response) {
       window.appGlobals.hasVideoUpload = response.hasVideoUploadSupport;
       window.appGlobals.hasTranscriptSupport = response.hasTranscriptSupport;
+      this.fireGlobal('yp-has-video-upload')
     }
   }
 
@@ -155,6 +156,7 @@ export class YpAppGlobals extends YpCodeBase {
     const response = (await this.serverApi.hasAudioUploadSupport()) as YpHasAudioResponse | void;
     if (response) {
       window.appGlobals.hasAudioUpload = response.hasAudioUploadSupport;
+      this.fireGlobal('yp-has-audio-upload')
     }
   }
 
