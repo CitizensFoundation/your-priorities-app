@@ -7,12 +7,19 @@ import { YpAdminPage } from './yp-admin-page.js';
 import './@yrpri/yp-survey/yp-structured-question-edit.js';
 import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
+import '@material/mwc-textfield';
+import '@material/mwc-textarea';
+
 import { YpAdminConfigBase } from './yp-admin-config-base.js';
 import { nothing } from 'lit-html';
 import { YpNavHelpers } from './@yrpri/common/YpNavHelpers.js';
 import { YpFileUpload } from './@yrpri/yp-file-upload/yp-file-upload.js';
 import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
 import './@yrpri/common/yp-emoji-selector.js';
+
+import './@yrpri/yp-file-upload/yp-file-upload.js';
+import './@yrpri/yp-theme/yp-theme-selector.js';
+import './@yrpri/yp-app/yp-language-selector.js';
 
 @customElement('yp-admin-config-domain')
 export class YpAdminConfigDomain extends YpAdminConfigBase {
@@ -39,6 +46,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
                 id="name"
                 name="name"
                 type="text"
+                @change="${this._configChanged}"
                 .label="${this.t('Name')}"
                 .value="${this.collection.name}"
                 maxlength="20"
@@ -53,6 +61,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
                 .value="${this.collection.description!}"
                 .label="${this.t('Description')}"
                 charCounter
+                @change="${this._configChanged}"
                 rows="2"
                 max-rows="5"
                 maxlength="300"

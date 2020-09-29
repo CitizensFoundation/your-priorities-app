@@ -189,9 +189,7 @@ export class YpAdminApp extends YpBaseElement {
     } else {
       this.collectionAction = 'config'
     }
-
-    debugger;
-  }
+ }
 
   connectedCallback() {
     super.connectedCallback();

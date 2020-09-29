@@ -7,16 +7,18 @@ import { YpAdminPage } from './yp-admin-page.js';
 import './@yrpri/yp-survey/yp-structured-question-edit.js';
 import '@material/mwc-tab';
 import '@material/mwc-circular-progress-four-color';
+import './@yrpri/yp-file-upload/yp-file-upload.js';
 
 import '@material/mwc-tab-bar';
 import { YpForm } from './@yrpri/common/yp-form.js';
 import './@yrpri/common/yp-form.js';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
 import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
+import { nothing } from 'lit-html';
 
 export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Array })
-  configTabs: Array<YpConfigTabData>;
+  configTabs: Array<YpConfigTabData> | undefined;
 
   @property({ type: Number })
   selectedTab = 0;
@@ -56,7 +58,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   constructor() {
     super();
-    this.configTabs = this.setupConfigTabs();
   }
 
   abstract setupConfigTabs(): Array<YpConfigTabData>;
@@ -120,7 +121,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   renderTabs() {
     return html`
       <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
-        ${this.configTabs.map(
+        ${this.configTabs!.map(
           item => html`
             <mwc-tab
               .label="${this.t(item.name)}"
@@ -133,18 +134,18 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   renderTabPage() {
-    const configItems = this.configTabs[this.selectedTab].items;
+    const configItems = this.configTabs![this.selectedTab].items;
 
     return html`
       ${configItems.map(
         (question, index) => html`
-          ${question.useHtml
-            ? question.html
+          ${question.type=='html'
+            ? question.templateData
             : html`
                 <yp-structured-question-edit
                   index="${index}"
                   id="configQuestion_${index}"
-                  @changed="${this._configChanged}"
+                  @yp-answer-content-changed="${this._configChanged}"
                   .name="${question.name || question.text}"
                   .value="${question.value || this._getCurrentValue(question)}"
                   .question="${{ ...question, text: this.t(question.text) }}"
@@ -187,7 +188,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   }
 
   render() {
-    return html`
+    return this.configTabs ? html`
       <yp-form id="form" method="POST">
         <form
           name="ypForm"
@@ -213,7 +214,15 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           />
         </form>
       </yp-form>
-    `;
+    ` : nothing
+  }
+
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('collection') && this.collection) {
+      this.configTabs = this.setupConfigTabs();
+    }
   }
 
   _save() {
@@ -244,7 +253,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       return undefined;
     }
   }
-
 
   _updateEmojiBindings() {
     setTimeout(() => {
