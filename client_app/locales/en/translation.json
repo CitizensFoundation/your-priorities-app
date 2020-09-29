@@ -1,4 +1,6 @@
 {
+  "statsPoints": "Number of points",
+  "topNavigation": "Top navigation",
   "uploadDocxSurveyFormat": "Upload survey in DOCX format",
   "exportSubCodesForRadiosAndCheckboxes": "Export sub-codes with radios & checkboxes",
   "domainHeader": "Domain",

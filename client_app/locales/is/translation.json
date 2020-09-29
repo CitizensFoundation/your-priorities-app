@@ -1,4 +1,6 @@
 {
+  "statsPoints": "Fjöldi raka",
+  "topNavigation": "Efsta valmynd",
   "uploadDocxSurveyFormat": "Hlaða upp skoðanakönnun í DOCX formi",
   "exportSubCodesForRadiosAndCheckboxes": "Flytja út 'subCodes' með 'radios' & 'checkboxes'",
   "domainHeader": "Vefur",
