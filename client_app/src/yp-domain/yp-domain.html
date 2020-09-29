@@ -93,7 +93,7 @@
     </style>
 
 
-    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity" role="main" aria-label="[[t('communities')]]">
+    <yp-page id="page" create-fab-icon="[[createFabIcon]]" create-fab-title="[[t('community.add')]]" on-yp-create-fab-tap="_newCommunity" role="main" aria-label$="[[t('communities')]]">
 
       <yp-domain-large-card id="domainCard" slot="largeCard" class="largeCard card" domain="[[domain]]" on-update-domain="_refreshAjax"></yp-domain-large-card>
 
@@ -103,7 +103,7 @@
       </paper-tabs>
 
       <iron-pages class="tabPages" fullbleed slot="tabPages" selected="{{selectedTab}}" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <section name="communities" class="layout vertical">
+        <section name="communities" class="layout vertical" role="main" aria-label$="[[t('communities')]]">
           <div class="card-container layout center-center wrap">
             <yp-community-grid
               id="communityGrid"

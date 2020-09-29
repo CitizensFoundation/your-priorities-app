@@ -7,7 +7,7 @@ import '@material/mwc-circular-progress-four-color';
 
 import 'lit-google-map';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { nothing } from 'lit-html';
 import { TextField } from '@material/mwc-textfield';
 

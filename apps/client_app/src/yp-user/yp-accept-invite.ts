@@ -3,10 +3,10 @@ import { customElement, html, property, css } from 'lit-element';
 import '@material/mwc-button';
 import '@material/mwc-dialog';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import { Dialog } from '@material/mwc-dialog';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 @customElement('yp-accept-invite')
 export class YpAcceptInvite extends YpBaseElement {

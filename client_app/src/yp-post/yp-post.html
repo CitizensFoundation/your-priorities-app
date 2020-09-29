@@ -317,7 +317,7 @@
       </div>
 
       <iron-pages id="pages" class="tabPages" selected="[[selectedTab]]" attr-for-selected="name" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
-        <div name="debate" class="layout horizontal center-center">
+        <div name="debate" class="layout horizontal center-center" role="main" aria-label$="[[t('debate')]]">
           <yp-post-points host="[[host]]" id="pointsSection" is-admin="[[isAdmin]]" post="[[post]]" scroll-to-id$="[[scrollToPointId]]"></yp-post-points>
         </div>
         <section name="news" class="minHeightSection">

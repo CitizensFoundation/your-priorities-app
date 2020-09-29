@@ -1,12 +1,12 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import 'lit-google-map';
 import './yp-post-card.js';
 
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 
 @customElement('yp-post-map')
 export class YpPostMap extends YpBaseElement {

@@ -93,7 +93,7 @@ var addPost = function(dbIssue, userId, groupImageId, domain, callback) {
     ip_address: '127.0.0.1'
   });
 
-  post.set('data', dbIssue);
+  post.set('public_data.law_issue', dbIssue);
 
   setPostOfficialStatus(post, dbIssue);
 
@@ -163,10 +163,10 @@ var saveIssueIfNeeded = function (dbIssue, userId, callback) {
   models.Post.findOne({ where: {
     $and: [
       {
-        "data.sessionId": SESSION_ID
+        "public_data.law_issue.sessionId": SESSION_ID
       },
       {
-        "data.issueId": dbIssue.issueId
+        "public_data.law_issue.issueId": dbIssue.issueId
       }
     ]
   }
@@ -196,8 +196,8 @@ var saveIssueIfNeeded = function (dbIssue, userId, callback) {
     });
   } else {
     console.log("Already saved issue id: "+dbIssue.issueId);
-    if (post.data.issueStatus!=dbIssue.issueStatus) {
-      post.set('data.issueStatus', dbIssue.issueStatus);
+    if (post.public_data.law_issue.issueStatus!=dbIssue.issueStatus) {
+      post.set('public_data.law_issue.issueStatus', dbIssue.issueStatus);
       setPostOfficialStatus(post, dbIssue);
       post.save().then(function (post) {
         callback();

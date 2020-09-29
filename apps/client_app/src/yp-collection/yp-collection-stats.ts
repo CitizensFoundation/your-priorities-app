@@ -1,8 +1,8 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
 
 import '@material/mwc-icon';
 
@@ -61,7 +61,7 @@ export class YpCollectionStats extends YpBaseElement {
               ${this.collectionType === 'community1'
                 ? html`
                     <mwc-icon
-                      .title="${this.t('stats.groups')}"
+                      title="${this.t('stats.groups')}"
                       class="stats-icon"
                       >groups</mwc-icon
                     >
@@ -75,7 +75,7 @@ export class YpCollectionStats extends YpBaseElement {
               ${this.collectionType === 'domain1'
                 ? html`
                     <mwc-icon
-                      .title="${this.t('stats.communities')}"
+                      title="${this.t('stats.communities')}"
                       class="stats-icon"
                       >groups</mwc-icon
                     >
@@ -88,18 +88,19 @@ export class YpCollectionStats extends YpBaseElement {
                     </div>
                   `
                 : nothing}
+
               <mwc-icon
-                .title="${this.t('stats.points')}"
+                title="${this.t('statsPoints')}"
                 icon="people"
                 class="stats-icon"
                 >comment</mwc-icon
               >
-              <div title="${this.t('stats.points')}" class="stats-text">
+              <div title="${this.t('statsPoints')}" class="stats-text">
                 ${YpFormattingHelpers.number(this.collection.counter_points)}
               </div>
 
               <mwc-icon
-                .title="${this.t('stats.users')}"
+                title="${this.t('stats.users')}"
                 icon="face"
                 class="stats-icon"
                 >person</mwc-icon

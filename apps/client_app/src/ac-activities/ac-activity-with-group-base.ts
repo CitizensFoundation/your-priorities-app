@@ -1,4 +1,4 @@
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { property } from 'lit-element';
 
 export abstract class AcActivityWithGroupBase extends YpBaseElement {

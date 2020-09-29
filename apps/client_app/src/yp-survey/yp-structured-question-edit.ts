@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import linkifyStr from 'linkifyjs/string.js';
 
 import '@material/mwc-circular-progress-four-color';
@@ -18,6 +18,8 @@ import { Radio } from '@material/mwc-radio';
 import { Checkbox } from '@material/mwc-checkbox';
 
 import { TextField } from '@material/mwc-textfield';
+import '@material/mwc-textfield';
+import { unsafeHTML } from 'lit-html/directives/unsafe-html';
 
 @customElement('yp-structured-question-edit')
 export class YpStructuredQuestionEdit extends YpBaseElement {
@@ -29,6 +31,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   @property({ type: Boolean })
   hideQuestionIndex = false;
+
+  @property({ type: String })
+  name: string | undefined
 
   @property({ type: Boolean })
   dontFocusFirstQuestion = false;
@@ -116,6 +121,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         mwc-textfield,
         mwc-textarea {
+          width: 100%;
           --mwc-textfield-container-label: {
             color: #000;
             font-size: 18px;
@@ -271,9 +277,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <mwc-textfield
         id="structuredQuestion_${this.index}"
-        .value="${this.question.value || ''}"
+        .value="${(this.question.value as string) || ''}"
         .label="${!skipLabel ? this.textWithIndex : ''}"
         charCounter
+        .name="${this.name}"
         ?useSmallFont="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
@@ -293,8 +300,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         class="question general longQuestion"
         .hasFocus="${this.longFocus}"
         .useSmallFont="${this.useSmallFont}"
-        id="structuredQuestionIntro_${this.index}"
-        inner-h-t-m-l="${this.textWithIndex}"></div>
+        id="structuredQuestionIntro_${this.index}">${unsafeHTML(this.textWithIndex)}</div>
       ${this.renderTextField(true)}
     `;
   }
@@ -305,13 +311,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         id="structuredQuestion_${this.index}"
         data-type="text"
         .label="${!skipLabel ? this.textWithIndex : ''}"
-        value="${this.question.value || ''}"
+        .value="${(this.question.value as string) || ''}"
         minlength="2"
         charCounter
         @focus="${this.setLongFocus}"
         @blur="${this.setLongUnFocus}"
         .useSmallFont="${this.useSmallFont}"
         @change="${this._debounceChangeEvent}"
+        .name="${this.name}"
         rows="3"
         max-rows="5"
         maxrows="5"
@@ -329,7 +336,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         ?has-content="${this.question.value}"
         useSmallFont="${this.useSmallFont}"
         id="structuredQuestionIntro_${this.index}"
-        inner-h-t-m-l="${this.textWithIndex}"></div>
+       >${unsafeHTML(this.textWithLinks)}</div>
       ${this.renderTextArea(true)}
     `;
   }
@@ -351,9 +358,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         class="question general"
         id="structuredQuestionQuestion_${this.index}"
         .useSmallFont="${this.useSmallFont}"
-        inner-h-t-m-l="${this.textWithLinks}"
         ?extra-top-margin="${this.question.extraTopMargin}"
-        ?less-bottom-margin="${this.question.lessBottomMargin}"></div>
+        ?less-bottom-margin="${this.question.lessBottomMargin}">${unsafeHTML(this.textWithLinks)}</div>
     `;
   }
 
@@ -384,7 +390,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             useSmallFont="${this.useSmallFont}"
             ?isFirstRating="${this.isFirstRating}"
             id="structuredQuestionIntro_${this.index}"
-            inner-h-t-m-l="${this.textWithIndex}"></div>
+         >${unsafeHTML(this.textWithLinks)}</div>
           <div
             ?required="${this.question.required}"
             id="structuredQuestion_${this.index}"
@@ -417,11 +423,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
   renderCheckbox(text: string, buttonIndex: number) {
     return html`
-      <mwc-checkbox
-        id="structuredQuestionCheckbox_${this.index}_${buttonIndex}"
-        @change="${this._checkboxChanged}">
-        ${text}
-      </mwc-checkbox>
+      <mwc-formfield .label="${text}">
+        <mwc-checkbox
+          id="structuredQuestionCheckbox_${this.index}_${buttonIndex}"
+          .name="${this.name || null}"
+          ?checked="${(this.question.value as boolean) || false}"
+          @change="${this._checkboxChanged}">
+        </mwc-checkbox>
+      </mwc-formfield>
     `;
   }
 
@@ -432,7 +441,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             id="structuredQuestionIntro_${this.index}"
             class="question general checkBoxesLabel"
             .useSmallFont="${this.useSmallFont}"
-            inner-h-t-m-l="${this.textWithIndex}"></div>
+         >${unsafeHTML(this.textWithLinks)}</div>
           <div
             id="structuredQuestion_${this.index}"
             data-type="checkboxes"
@@ -485,6 +494,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     let questionType = this.question.type;
     if (!questionType) questionType = 'textarea';
 
+    questionType = questionType.toLowerCase();
+
     switch (questionType) {
       case 'textarea':
         question = this.renderTextArea();
@@ -507,7 +518,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       case 'checkboxes':
         question = this.renderCheckboxes();
         break;
-      case 'radios':
+      case 'checkbox':
+        question = this.renderCheckbox(this.question.text, 0);
+      break;
+        case 'radios':
         question = this.renderRadios();
         break;
       case 'seperator':
@@ -922,7 +936,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       let selectedRadio;
 
       this.question.radioButtons.forEach((button, buttonIndex) => {
-        if (button.text === event.detail.value) {
+        if (button.text === (event.target as Radio).value) {
           selectedRadio = button;
           if (selectedRadio.skipTo) {
             this.fire('yp-skip-to-unique-id', {

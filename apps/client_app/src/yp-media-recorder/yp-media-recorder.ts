@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import RecordRTC from 'recordrtc';
 import WaveSurfer from 'wavesurfer.js';
@@ -217,40 +217,6 @@ export class YpMediaRecorder extends YpBaseElement {
 
   render() {
     return html`
-      ${this.allDevices
-        ? html`
-            <mwc-dialog id="selectDevices" modal>
-              <h2>${this.selectDeviceTitle}</h2>
-              <mwc-select id="deviceListBox">
-                ${this.allDevices.map(
-                  item => html`
-                    <mwc-list-item
-                      @click="${this.selectDeviceFunction}"
-                      id="${item.deviceId}"
-                      >${item.label}</mwc-list-item
-                    >
-                  `
-                )}
-              </mwc-select>
-              <div class="layout horizontal rememberBox">
-                <div>
-                  ${this.t('rememberDevice')}
-                </div>
-                <input id="checkBox" type="checkbox" />
-              </div>
-            </mwc-dialog>
-          `
-        : nothing}
-      <mwc-dialog id="noDevices">
-        <h2>${this.t('noDevicesFound')}</h2>
-        <div class="button layout horizontal center-center">
-          <mwc-button
-            slot="action"
-            raised
-            .label="${this.t('ok')}"></mwc-button>
-        </div>
-      </mwc-dialog>
-
       <mwc-dialog id="dialog" modal ?audioRecording="${this.audioRecording}">
         <div class="layout vertical no-padding mainContainer">
           ${this.videoRecording
@@ -344,6 +310,39 @@ export class YpMediaRecorder extends YpBaseElement {
         </div>
         <div ?hidden="${!this.error}">
           ${this.error}
+        </div>
+      </mwc-dialog>
+      ${this.allDevices
+        ? html`
+            <mwc-dialog id="selectDevices" modal>
+              <h2>${this.selectDeviceTitle}</h2>
+              <mwc-select id="deviceListBox">
+                ${this.allDevices.map(
+                  item => html`
+                    <mwc-list-item
+                      @click="${this.selectDeviceFunction}"
+                      id="${item.deviceId}"
+                      >${item.label}</mwc-list-item
+                    >
+                  `
+                )}
+              </mwc-select>
+              <div class="layout horizontal rememberBox">
+                <div>
+                  ${this.t('rememberDevice')}
+                </div>
+                <input id="checkBox" type="checkbox" />
+              </div>
+            </mwc-dialog>
+          `
+        : nothing}
+      <mwc-dialog id="noDevices">
+        <h2>${this.t('noDevicesFound')}</h2>
+        <div class="button layout horizontal center-center">
+          <mwc-button
+            slot="action"
+            raised
+            .label="${this.t('ok')}"></mwc-button>
         </div>
       </mwc-dialog>
     `;
@@ -496,6 +495,7 @@ export class YpMediaRecorder extends YpBaseElement {
   }
 
   _openMediaSession(callback: Function | undefined) {
+    debugger;
     if (callback) {
       if (this.selectedVideoDeviceId) {
         this.videoSettings!.deviceId = this.selectedVideoDeviceId;
@@ -541,7 +541,7 @@ export class YpMediaRecorder extends YpBaseElement {
     }
   }
 
-  open(options: {
+  async open(options: {
     callbackFunction: Function | undefined;
     videoRecording: boolean;
     audioRecording: boolean;
@@ -562,64 +562,62 @@ export class YpMediaRecorder extends YpBaseElement {
     this.uploadFileFunction = options.uploadFileFunction;
     (this.$$('#secondsLeft') as HTMLElement).className = '';
 
-    setTimeout(() => {
-      if (this.videoRecording) {
-        const videoElement = this.shadowRoot!.querySelector(
-          '#videoRecorder'
-        ) as HTMLVideoElement;
-        const videoPreviewElement = this.shadowRoot!.querySelector(
-          '#videoPreviewer'
-        ) as HTMLVideoElement;
-        let width: string;
-        let height: string;
+    await this.requestUpdate();
 
-        if (window.innerHeight > window.innerWidth) {
-          this.videoSettings = { width: 720, height: 1280 };
-          height = Math.min(1280, Math.abs(window.innerHeight)).toFixed();
-          width = Math.min(720, Math.abs(parseInt(height) * 0.5625)).toFixed();
-          console.info(
-            'Portrait - width: ' +
-              width +
-              ' height: ' +
-              height +
-              ' video width: ' +
-              720 +
-              ' height: 1280'
-          );
-        } else {
-          this.videoSettings = { width: 1280, height: 720 };
-          let scaleFactor = 0.8;
-          if (window.innerHeight < 700) scaleFactor = 0.7;
-          if (window.innerHeight < 500) scaleFactor = 0.6;
-          height = Math.min(
-            720,
-            Math.abs(window.innerHeight * scaleFactor)
-          ).toFixed();
-          width = Math.min(
-            1280,
-            Math.abs(parseInt(height) * 1.77777777778)
-          ).toFixed();
-          console.info('Landscape - width: ' + width + ' height: ' + height);
-        }
-        videoElement.style.height = height + 'px';
-        videoElement.style.width = width + 'px';
-        videoPreviewElement.style.height =
-          (parseInt(height) * 0.8).toFixed() + 'px';
-        videoPreviewElement.style.width =
-          (parseInt(width) * 0.8).toFixed() + 'px';
-        setTimeout(() => {
-          (this.$$('#dialog') as Dialog).open = true;
-        });
-      } else if (this.audioRecording) {
-        setTimeout(() => {
-          (this.$$('#dialog') as Dialog).open = true;
-        });
+    if (this.videoRecording) {
+      const videoElement = this.shadowRoot!.querySelector(
+        '#videoRecorder'
+      ) as HTMLVideoElement;
+      const videoPreviewElement = this.shadowRoot!.querySelector(
+        '#videoPreviewer'
+      ) as HTMLVideoElement;
+      let width: string;
+      let height: string;
+
+      if (window.innerHeight > window.innerWidth) {
+        this.videoSettings = { width: 720, height: 1280 };
+        height = Math.min(1280, Math.abs(window.innerHeight)).toFixed();
+        width = Math.min(720, Math.abs(parseInt(height) * 0.5625)).toFixed();
+        console.info(
+          'Portrait - width: ' +
+            width +
+            ' height: ' +
+            height +
+            ' video width: ' +
+            720 +
+            ' height: 1280'
+        );
+      } else {
+        this.videoSettings = { width: 1280, height: 720 };
+        let scaleFactor = 0.8;
+        if (window.innerHeight < 700) scaleFactor = 0.7;
+        if (window.innerHeight < 500) scaleFactor = 0.6;
+        height = Math.min(
+          720,
+          Math.abs(window.innerHeight * scaleFactor)
+        ).toFixed();
+        width = Math.min(
+          1280,
+          Math.abs(parseInt(height) * 1.77777777778)
+        ).toFixed();
+        console.info('Landscape - width: ' + width + ' height: ' + height);
       }
-    });
+      videoElement.style.height = height + 'px';
+      videoElement.style.width = width + 'px';
+      videoPreviewElement.style.height =
+        (parseInt(height) * 0.8).toFixed() + 'px';
+      videoPreviewElement.style.width =
+        (parseInt(width) * 0.8).toFixed() + 'px';
+      setTimeout(() => {
+        (this.$$('#dialog') as Dialog).open = true;
+      });
+    } else if (this.audioRecording) {
+      setTimeout(() => {
+        (this.$$('#dialog') as Dialog).open = true;
+      });
+    }
 
-    setTimeout(() => {
-      this.setupRecorders();
-    }, 20);
+    this.setupRecorders();
   }
 
   _generateRandomString() {
@@ -730,7 +728,7 @@ export class YpMediaRecorder extends YpBaseElement {
         '#videoRecorder'
       ) as HTMLVideoElement;
 
-      this.captureUserMedia(async (stream: MediaStream) => {
+      this.captureUserMedia((stream: MediaStream) => {
         if (stream) {
           this.mediaStream = stream;
           try {

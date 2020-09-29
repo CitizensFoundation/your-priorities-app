@@ -1,5 +1,5 @@
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { customElement, html, property, LitElement, css } from 'lit-element';
@@ -12,11 +12,11 @@ import '@material/mwc-fab';
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpPostCard } from './yp-post-card.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 import './yp-post-header.js';
 import './yp-post-points.js';
 import './yp-post-user-images.js';
@@ -147,6 +147,8 @@ export class YpPost extends YpCollection {
         case PostTabTypes.Debate:
           page = html` <yp-post-points
             id="pointsSection"
+            role="main"
+            aria-label="${this.t('debate')}"
             ?isAdmin="${this.isAdmin}"
             .post="${this.post}"
             .scrollToId="${this.scrollToPointId}"></yp-post-points>`;
@@ -475,7 +477,7 @@ export class YpPost extends YpCollection {
         this.locationHidden = false;
       }
 
-      this.fire('change-header', {
+      this.fire('yp-change-header', {
         headerTitle: YpFormattingHelpers.truncate(this.post.Group.name, 80),
         documentTitle: this.post.name,
         headerDescription: '', //this.truncate(this.post.Group.objectives,45),

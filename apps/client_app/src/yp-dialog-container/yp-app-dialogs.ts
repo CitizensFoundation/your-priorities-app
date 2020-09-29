@@ -1,12 +1,14 @@
 import { property, html, css, customElement, LitElement } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { Dialog } from '@material/mwc-dialog';
 
 import '@material/mwc-dialog';
 import '@material/mwc-snackbar';
+
+import '../yp-magic-text/yp-magic-text-dialog.js';
 
 import '../yp-user/yp-login.js';
 
@@ -356,7 +358,7 @@ export class YpAppDialogs extends YpBaseElement {
       this.autoTranslateDialogOpen = true;
     } else if (idName === 'magicTextDialog') {
       this.magicTextDialogOpen = true;
-    } else if (idName !== 'notificationToast' && idName !== 'masterToast') {
+    } else if (idName !== 'notificationToast' && idName !== 'masterToast' && idName !== 'mediaRecorder') {
       this.pageDialogOpen = false;
       this.confirmationDialogOpen = false;
       this.autoTranslateDialogOpen = false;

@@ -4,7 +4,7 @@ import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@material/mwc-dialog';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import { Dialog } from '@material/mwc-dialog';
 import { TextField } from '@material/mwc-textfield';

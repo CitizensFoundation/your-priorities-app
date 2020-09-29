@@ -1,8 +1,8 @@
 import { property, html, css, customElement } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
-import '../@yrpri/yp-image.js';
+import '../common/yp-image.js';
 
 import '@material/mwc-icon-button';
 
@@ -168,7 +168,7 @@ export class YpPointCommentList extends YpBaseElement {
                   .items=${this.comments}
                   .scrollTarget="${window}"
                   .renderItem=${this.renderComment}
-                  @rangechange=${this.scrollEvent}></lit-virtualizer>
+                  @rangeChanged=${this.scrollEvent}></lit-virtualizer>
 
                 <yp-point-comment-edit
                   @refresh="${this.refresh}"
@@ -183,14 +183,16 @@ export class YpPointCommentList extends YpBaseElement {
     `;
   }
 
-  scrollEvent(event: RangeChangeEvent) {
+  scrollEvent(event: CustomEvent) {
     //TODO: Check this logic
+    const detail = event.detail as RangeChangeEvent;
+
     if (
       this.comments &&
       //      !this.moreFromScrollTriggerActive &&
-      event.lastVisible != -1 &&
-      event.lastVisible < this.comments.length &&
-      event.lastVisible + 3 >= this.comments.length
+      detail.lastVisible != -1 &&
+      detail.lastVisible < this.comments.length &&
+      detail.lastVisible + 5 >= this.comments.length
     ) {
       //      this.moreFromScrollTriggerActive = true;
       //      this._loadMoreData();

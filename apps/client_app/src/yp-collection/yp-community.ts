@@ -1,9 +1,10 @@
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
-import { YpCollection } from './yp-collection.js';
+import { YpCollection, CollectionTabTypes } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
 import { customElement } from 'lit-element';
+import { AcActivities } from '../ac-activities/ac-activities.js';
 
 @customElement('yp-community')
 export class YpCommunity extends YpCollection {
@@ -108,6 +109,26 @@ export class YpCommunity extends YpCollection {
         community.configuration.customSamlLoginMessage;
     } else {
       window.appGlobals.currentSamlLoginMessage = undefined;
+    }
+  }
+
+  scrollToGroupItem() {
+    if (this.selectedTab===CollectionTabTypes.News && window.appGlobals.cache.cachedActivityItem) {
+      const list = this.$$("#collectionActivities") as AcActivities;
+      if (list) {
+        list.scrollToItem(window.appGlobals.cache.cachedActivityItem);
+        window.appGlobals.cache.cachedActivityItem = undefined;
+      } else {
+        console.warn("No community activities for scroll to item");
+      }
+    } else if (this.selectedTab===CollectionTabTypes.Collection && this.collection) {
+      if (window.appGlobals.cache.backToCommunityGroupItems &&
+        window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]) {
+          (this.$$('#collectionItems') as YpCollectionItemsGrid).scrollToItem(
+            window.appGlobals.cache.backToCommunityGroupItems[this.collection.id]
+          );
+        window.appGlobals.cache.backToCommunityGroupItems[this.collection.id] = undefined;
+      }
     }
   }
 

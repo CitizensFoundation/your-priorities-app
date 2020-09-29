@@ -1,9 +1,9 @@
 import { customElement, html, property, css } from 'lit-element';
 import { nothing } from 'lit-html';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
-import '../@yrpri/yp-image.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import '../common/yp-image.js';
 
 @customElement('yp-user-image')
 export class YpUserImage extends YpBaseElement {

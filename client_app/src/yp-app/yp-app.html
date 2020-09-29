@@ -333,7 +333,7 @@
       <app-header-layout id="mainArea" fullbleed>
 
         <app-header slot="header" id="appHeader" effects="waterfall" reveals class="main-header">
-          <app-toolbar>
+          <app-toolbar role="navigation" aria-label="top navigation">
             <div class="layout horizontal navContainer" hidden$="[[closePostHeader]]">
               <paper-icon-button aria-label$="[[t('goBack')]]" title$="[[t('goBack')]]" icon="arrow-upward" on-tap="goBack" class="masterActionIcon" hidden$="[[!showBack]]"></paper-icon-button>
             </div>
@@ -384,7 +384,7 @@
           <yp-domain id="domainPage" name="domain" id-route$="[[domainSubRoute]]" on-change-header="onChangeHeader"></yp-domain>
           <yp-community id="communityPage" name="community" id-route$="[[communitySubRoute]]" on-change-header="onChangeHeader"></yp-community>
           <yp-community-folder id="communityFolderPage" name="community_folder" id-route$="[[communityFolderSubRoute]]" on-change-header="onChangeHeader"></yp-community-folder>
-          <yp-group id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
+          <yp-group  id="groupPage" name="group" id-route$="[[groupSubRoute]]" on-change-header="onChangeHeader"></yp-group>
           <yp-post id="postPage" name="post" id-route$="[[postSubRoute]]" on-change-header="onChangeHeader"></yp-post>
           <yp-user id="userPage" name="user" id-route$="[[userSubRoute]]" on-change-header="onChangeHeader"></yp-user>
           <yp-survey-group id="surveyPage" name="survey" id-route$="[[surveySubRoute]]" on-change-header="onChangeHeader"></yp-survey-group>
@@ -408,6 +408,7 @@
     <yp-dialog-container id="dialogContainer"></yp-dialog-container>
     <yp-app-user id="appUser" on-user-changed="onUserChanged"></yp-app-user>
     <yp-sw-update-toast button-label="[[t('reload')]]" message="[[t('newVersionAvailable')]]"></yp-sw-update-toast>
+
   </template>
 
   <script>

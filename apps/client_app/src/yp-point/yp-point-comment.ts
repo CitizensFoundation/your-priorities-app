@@ -6,8 +6,8 @@ import '@material/mwc-icon-button';
 import '../yp-user/yp-user-image.js';
 import './yp-point-actions.js';
 
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 

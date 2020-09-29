@@ -2,11 +2,11 @@ import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
-import '../@yrpri/yp-image.js';
+import '../common/yp-image.js';
 
 @customElement('yp-post-cover-media')
 export class YpPostCoverMedia extends YpBaseElement {

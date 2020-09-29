@@ -88,6 +88,10 @@
         <yp-autotranslate-dialog id="autoTranslateDialog"></yp-autotranslate-dialog>
       </template>
 
+      <template is="dom-if" if="[[magicTextDialogOpen]]" restamp>
+        <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
+      </template>
+
       <iron-lazy-pages selected="{{selectedDialog}}" attr-for-selected="name">
         <template is="dom-if" name="userLogin" restamp>
           <yp-login id="userLogin" on-yp-forgot-password="_forgotPassword"></yp-login>
@@ -127,10 +131,6 @@
 
         <template is="dom-if" name="userImageEdit" restamp>
           <yp-post-user-image-edit id="userImageEdit"></yp-post-user-image-edit>
-        </template>
-
-        <template is="dom-if" name="magicTextDialog" restamp>
-          <yp-magic-text-dialog id="magicTextDialog"></yp-magic-text-dialog>
         </template>
 
         <template is="dom-if" name="apiActionDialog" restamp>
@@ -263,6 +263,11 @@
         },
 
         pageDialogOpen: {
+          type: Boolean,
+          value: false
+        },
+
+        magicTextDialogOpen: {
           type: Boolean,
           value: false
         },
@@ -488,6 +493,8 @@
           this.set('confirmationDialogOpen', true);
         } else if (idName==="autoTranslateDialog") {
           this.set('autoTranslateDialogOpen', true);
+        } else if (idName==="magicTextDialog") {
+          this.set('magicTextDialogOpen', true);
         } else if (idName!=='notificationToast' && idName!=='masterToast') {
           this.set('pageDialogOpen', false);
           this.set('confirmationDialogOpen', false);

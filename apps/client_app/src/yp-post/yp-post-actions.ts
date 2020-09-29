@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { customElement, html, property, css } from 'lit-element';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-icon-button';
 import { ifDefined } from 'lit-html/directives/if-defined';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { IconButton } from '@material/mwc-icon-button';
 
 @customElement('yp-post-actions')
@@ -42,12 +42,18 @@ export class YpPostActions extends YpBaseElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal.bind(this));
+    this.addGlobalListener(
+      'yp-got-endorsements-and-qualities',
+      this._updateEndorsementsFromSignal.bind(this)
+    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener("yp-got-endorsements-and-qualities",this._updateEndorsementsFromSignal.bind(this));
+    this.removeGlobalListener(
+      'yp-got-endorsements-and-qualities',
+      this._updateEndorsementsFromSignal.bind(this)
+    );
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
@@ -247,12 +253,12 @@ export class YpPostActions extends YpBaseElement {
         </div>
 
         <div
-          class="action-debate layout horizontal layout center justified "
+          class="action-debate layout horizontal"
           ?hidden="${this.hideDebate}">
           <mwc-icon-button
             ?disabled="${this.allDisabled}"
             title="${this.t('post.debate')}"
-            icon="chat-bubble-outline"
+            icon="chat_bubble_outline"
             class="action-icon debate-icon mainIcons debateIcon"
             @click="${this._goToPostIfNotHeader}"></mwc-icon-button>
           <div class="action-text debate-text">
@@ -377,8 +383,7 @@ export class YpPostActions extends YpBaseElement {
         this.endorsementButtons = 'hearts';
       }
       if (this.post.Group.configuration) {
-        this.post.Group.configuration.originalHideVoteCount =
-          this.post.Group.configuration.hideVoteCount;
+        this.post.Group.configuration.originalHideVoteCount = this.post.Group.configuration.hideVoteCount;
         if (this.post.Group.configuration.hideVoteCountUntilVoteCompleted) {
           this.post.Group.configuration.hideVoteCount = true;
           this.requestUpdate();

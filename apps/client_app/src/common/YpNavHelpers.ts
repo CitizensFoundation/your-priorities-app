@@ -15,6 +15,7 @@ export class YpNavHelpers {
     cachedPostItem: YpPostData | undefined = undefined,
     skipKeepOpen = false
   ) {
+
     if (postId === undefined) {
       console.error("Can't find post id for goToPost");
       return;

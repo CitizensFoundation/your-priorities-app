@@ -1,7 +1,7 @@
 import { customElement, property, html, css } from 'lit-element';
 import { nothing } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import '@material/mwc-icon';

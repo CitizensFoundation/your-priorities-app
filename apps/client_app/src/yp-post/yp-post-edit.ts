@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
@@ -16,18 +16,20 @@ import '@material/mwc-formfield';
 import '@material/mwc-select';
 
 import { Snackbar } from '@material/mwc-snackbar';
-import { YpEditBase } from '../@yrpri/yp-edit-base.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpEditBase } from '../common/yp-edit-base.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import moment from 'moment';
 import { YpEditDialog } from '../yp-edit-dialog/yp-edit-dialog.js';
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
+import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
 import { TextArea } from '@material/mwc-textarea';
 import { YpStructuredQuestionEdit } from '../yp-survey/yp-structured-question-edit.js';
 
 import './yp-post-location.js';
 import { Radio } from '@material/mwc-radio';
+
+import '../yp-survey/yp-structured-question-edit.js';
 
 export const EditPostTabs: Record<string, number> = {
   Description: 0,
@@ -312,6 +314,10 @@ export class YpPostEdit extends YpEditBase {
 
         .mediaTab {
           vertical-align: center;
+        }
+
+        #pointFor {
+          width: 100%;
         }
       `,
     ];
@@ -829,7 +835,7 @@ export class YpPostEdit extends YpEditBase {
         .heading="${this.editHeaderText ? this.editHeaderText : ''}"
         .saveText="${this.saveText}"
         class="container"
-        customCubmit
+        customSubmit
         .nextActionText="${this.t('next')}"
         .snackbarText="${this.snackbarText}"
         .params="${this.params}">
@@ -1175,8 +1181,7 @@ export class YpPostEdit extends YpEditBase {
   }
 
   customFormResponse() {
-    //TODO: Check this logic here below, 4?
-    this.fireGlobal('yp-refresh-group-posts', { data: { id: 4 } });
+    window.appGlobals.groupLoadNewPost = true;
   }
 
   _updateEmojiBindings() {
@@ -1487,9 +1492,9 @@ export class YpPostEdit extends YpEditBase {
   }
 
   setup(
-    post: YpPostData,
+    post: YpPostData | undefined,
     newNotEdit: boolean,
-    refreshFunction: Function,
+    refreshFunction: Function | undefined,
     group: YpGroupData
   ) {
     this._setupGroup(group);

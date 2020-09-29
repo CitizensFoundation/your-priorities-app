@@ -1,7 +1,7 @@
 import { customElement, html, property, css } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import '../@yrpri/yp-image.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import '../common/yp-image.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { Dialog } from '@material/mwc-dialog';

@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import linkifyStr from 'linkifyjs/string.js';
 
 import '@material/mwc-circular-progress-four-color';
@@ -20,7 +20,7 @@ import { Checkbox } from '@material/mwc-checkbox';
 import { TextField } from '@material/mwc-textfield';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { YpStructuredQuestionEdit } from './yp-structured-question-edit.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 
 @customElement('yp-survey-group')
 export class YpSurveyGroup extends YpBaseElement {

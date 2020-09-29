@@ -1,6 +1,6 @@
 import { customElement, html, property, css } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
@@ -23,6 +23,7 @@ export class YpThemeSelector extends YpBaseElement {
 
     if (changedProperties.has('selectedTheme')) {
       this._selectedThemeChanged();
+      this.fire('yp-theme-changed', this.selectedTheme);
     }
 
     if (changedProperties.has('themeObject')) {

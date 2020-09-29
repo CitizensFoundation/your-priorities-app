@@ -8,11 +8,11 @@ import './ac-activity-post-status-update.js';
 import '../yp-user/yp-user-with-organization.js';
 import '@material/mwc-icon-button';
 
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import moment from 'moment';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 
 @customElement('ac-activity')
 export class AcActivity extends YpBaseElementWithLogin {
@@ -45,7 +45,6 @@ export class AcActivity extends YpBaseElementWithLogin {
         .activity {
           margin: 16px;
           background-color: #fff;
-          width: 550px;
           height: 100%;
           padding-left: 16px;
           padding-right: 16px;

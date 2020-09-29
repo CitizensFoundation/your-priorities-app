@@ -1,15 +1,15 @@
 import { customElement, html, property, css } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-icon-button';
-import '../@yrpri/yp-image.js';
+import '../common/yp-image.js';
 import '../yp-point/yp-point-comment-list.js';
 
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpPostUserImageEdit } from './yp-post-user-image-edit.js';
 
 @customElement('yp-post-user-image-card')

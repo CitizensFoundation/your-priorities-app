@@ -10,8 +10,6 @@ import { customElement, property, html, LitElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { cache } from 'lit-html/directives/cache.js';
 
-import i18next from 'i18next';
-import HttpApi from 'i18next-http-backend';
 //TODO: Fix moment
 //import moment from 'moment';
 
@@ -28,19 +26,19 @@ import '@material/mwc-button';
 
 import '@material/mwc-icon-button';
 
-import '@material/mwc-menu';
 import { Menu } from '@material/mwc-menu';
+import '@material/mwc-menu';
 
 import '@material/mwc-top-app-bar';
 
 import '@material/mwc-list/mwc-list-item';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpAppStyles } from './YpAppStyles.js';
 import { YpAppGlobals } from './YpAppGlobals.js';
 import { YpAppUser } from './YpAppUser.js';
-import { YpServerApi } from '../@yrpri/YpServerApi.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpServerApi } from '../common/YpServerApi.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { YpAppDialogs } from '../yp-dialog-container/yp-app-dialogs.js';
 
 import '../yp-dialog-container/yp-app-dialogs.js';
@@ -48,6 +46,10 @@ import '../yp-dialog-container/yp-app-dialogs.js';
 import '../yp-collection/yp-domain.js';
 import '../yp-collection/yp-community.js';
 import '../yp-collection/yp-group.js';
+
+import { YpDomain } from '../yp-collection/yp-domain.js';
+import { YpCommunity } from '../yp-collection/yp-community.js';
+import { YpGroup } from '../yp-collection/yp-group.js';
 import '../yp-post/yp-post.js';
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { YpPageDialog } from '../yp-page/yp-page-dialog.js';
@@ -171,7 +173,7 @@ export class YpApp extends YpBaseElement {
     window.serverApi = new YpServerApi();
     window.appGlobals = new YpAppGlobals(window.serverApi);
     window.appUser = new YpAppUser(window.serverApi);
-    this._setupTranslationSystem();
+    window.appGlobals.setupTranslationSystem();
   }
 
   connectedCallback() {
@@ -398,7 +400,7 @@ export class YpApp extends YpBaseElement {
         id="translationButton"
         slot="actionItems"
         ?hidden="${!this.autoTranslate}"
-        @click="${this._stopTranslation}"
+        @click="${window.appGlobals.stopTranslation}"
         icon="translate"
         .label="${this.t('stopAutoTranslate')}">
       </mwc-icon-button>
@@ -455,7 +457,7 @@ export class YpApp extends YpBaseElement {
 
   renderAppBar() {
     return html`
-      <mwc-top-app-bar dense>
+      <mwc-top-app-bar dense role="navigation" aria-label="top navigation">
         <div slot="navigationIcon">${this.renderNavigationIcon()}</div>
         <div slot="title">
           ${this.goForwardToPostId ? this.goForwardPostName : this.headerTitle}
@@ -476,8 +478,6 @@ export class YpApp extends YpBaseElement {
           pageHtml = cache(html`
             <yp-domain
               id="domainPage"
-              role="main"
-              aria-label="${this.t('communities')}"
               .subRoute="${this.subRoute}"></yp-domain>
           `);
           break;
@@ -697,77 +697,6 @@ export class YpApp extends YpBaseElement {
     );
   }
 
-  _setupTranslationSystem() {
-    const hostname = window.location.hostname;
-    let defaultLocale = 'en';
-    if (hostname.indexOf('betrireykjavik') > -1) {
-      defaultLocale = 'is';
-    } else if (hostname.indexOf('betraisland') > -1) {
-      defaultLocale = 'is';
-    } else if (hostname.indexOf('forbrukerradet') > -1) {
-      defaultLocale = 'no';
-    } else {
-      const tld = hostname.substring(hostname.lastIndexOf('.'));
-      const localeByTld: Record<string, string> = {
-        '.fr': 'fr',
-        '.hr': 'hr',
-        '.hu': 'hu',
-        '.is': 'is',
-        '.nl': 'nl',
-        '.no': 'no',
-        '.pl': 'pl',
-        '.tw': 'zh_TW',
-      };
-      defaultLocale = localeByTld[tld] || 'en';
-    }
-
-    const storedLocale = localStorage.getItem('yp-user-locale');
-    if (storedLocale) {
-      defaultLocale = storedLocale;
-    }
-
-    let localeFromUrl: string | undefined;
-
-    if (
-      window.appGlobals.originalQueryParameters &&
-      window.appGlobals.originalQueryParameters['locale']
-    ) {
-      localeFromUrl = window.appGlobals.originalQueryParameters[
-        'locale'
-      ] as string;
-    }
-
-    if (
-      window.appGlobals.originalQueryParameters &&
-      window.appGlobals.originalQueryParameters['startAutoTranslate']
-    ) {
-      setTimeout(() => {
-        this._startTranslation();
-      }, 2500);
-    }
-
-    if (localeFromUrl && localeFromUrl.length > 1) {
-      defaultLocale = localeFromUrl;
-      localStorage.setItem('yp-user-locale', localeFromUrl);
-    }
-
-    i18next.use(HttpApi).init(
-      {
-        lng: defaultLocale,
-        fallbackLng: 'en',
-        backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
-      },
-      () => {
-        window.appGlobals.locale = defaultLocale;
-        window.appGlobals.i18nTranslation = i18next;
-        window.appGlobals.haveLoadedLanguages = true;
-        //TODO: Fix moment
-        //moment.locale([defaultLocale, 'en']);
-        this.fireGlobal('yp-language-loaded', { language: defaultLocale });
-      }
-    );
-  }
-
   _openPageFromEvent(event: CustomEvent) {
     if (event.detail.pageId) {
       this.openPageFromId(event.detail.pageId);
@@ -796,25 +725,6 @@ export class YpApp extends YpBaseElement {
         }
       }, 1250);
     }
-  }
-
-  _startTranslation() {
-    window.appGlobals.autoTranslate = true;
-    this.fireGlobal('yp-auto-translate', true);
-    this.getDialogAsync('masterToast', (toast: Snackbar) => {
-      toast.labelText = this.t('autoTranslationStarted');
-      toast.open = true;
-    });
-  }
-
-  _stopTranslation() {
-    window.appGlobals.autoTranslate = false;
-    this.fireGlobal('yp-auto-translate', false);
-    this.getDialogAsync('masterToast', (toast: Snackbar) => {
-      toast.labelText = this.t('autoTranslationStopped');
-      toast.open = true;
-    });
-    sessionStorage.setItem('dontPromptForAutoTranslation', '1');
   }
 
   _setLanguageName(event: CustomEvent) {
@@ -933,40 +843,23 @@ export class YpApp extends YpBaseElement {
         if (this.wide) {
           delayUntilScrollToPost = 2;
         }
-
-        /*
-
         setTimeout(() => {
           let skipMasterScroll = false;
 
           if (oldRouteData && oldRouteData.page && this.routeData) {
             // Post -> Group
-            if (oldRouteData.page==="post" && this.routeData.page==="group") {
-              if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                this.$$("#groupPage")?.goToPostOrNewsItem();
-                skipMasterScroll = true;
-              } else {
-                console.warn("Can't find scroll groupPage for goToPostOrNewsItem, trying again");
-                setTimeout(() => {
-                  if (this.$$("#groupPage") && typeof this.$$("#groupPage").goToPostOrNewsItem !== "undefined") {
-                    this.$$("#groupPage")?.goToPostOrNewsItem();
-                  } else {
-                    console.warn("Can't find scroll groupPage for goToPostOrNewsItem final");
-                  }
-                }, 200);
-              }
-            }
+
 
             // Group -> Community
-            else if ((oldRouteData.page==="group" || oldRouteData.page==="post") && this.routeData.page==="community") {
-              if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
-                this.$$("#communityPage")?.scrollToGroupItem();
+            if ((oldRouteData.page==="group" || oldRouteData.page==="post") && this.routeData.page==="community") {
+              if (this.$$("#communityPage")) {
+                (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll communityPage for goToPostOrNewsItem, trying again");
                 setTimeout(() => {
-                  if (this.$$("#communityPage") && typeof this.$$("#communityPage")?.scrollToGroupItem !== "undefined") {
-                    this.$$("#communityPage")?.scrollToGroupItem();
+                  if (this.$$("#communityPage")) {
+                    (this.$$("#communityPage") as YpCommunity).scrollToGroupItem();
                   } else {
                     console.error("Can't find scroll communityPage for goToPostOrNewsItem");
                   }
@@ -977,14 +870,14 @@ export class YpApp extends YpBaseElement {
             // Community/CommunityFolder -> Domain
             else if ((oldRouteData.page==="community_folder" || oldRouteData.page==="community" || oldRouteData.page==="post")
                   && this.routeData.page==="domain") {
-              if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToCommunityItem !== "undefined") {
-                this.$$("#domainPage").scrollToCommunityItem();
+              if (this.$$("#domainPage")) {
+                (this.$$("#domainPage") as YpDomain).scrollToCommunityItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll domainPage for scrollToCommunityItem, trying again");
-                setTimeout(function () {
-                  if (this.$$("#domainPage") && typeof this.$$("#domainPage").scrollToGroupItem !== "undefined") {
-                    this.$$("#domainPage").scrollToCommunityItem();
+                setTimeout( () => {
+                  if (this.$$("#domainPage")) {
+                    (this.$$("#domainPage") as YpDomain).scrollToCommunityItem();
                   } else {
                     console.error("Can't find scroll domainPage for scrollToCommunityItem");
                   }
@@ -995,14 +888,14 @@ export class YpApp extends YpBaseElement {
             // Community/CommunityFolder  -> Community
             else if ((oldRouteData.page==="community" || oldRouteData.page==="community_folder") &&
               this.routeData.page==="community_folder") {
-              if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
-                this.$$("#communityFolderPage").scrollToGroupItem();
+              if (this.$$("#communityFolderPage")) {
+                (this.$$("#communityFolderPage") as YpCommunity).scrollToGroupItem();
                 skipMasterScroll = true;
               } else {
                 console.warn("Can't find scroll communityFolderPage for goToPostOrNewsItem, trying again");
-                setTimeout(function () {
-                  if (this.$$("#communityFolderPage") && typeof this.$$("#communityFolderPage").scrollToGroupItem !== "undefined") {
-                    this.$$("#communityFolderPage").scrollToGroupItem();
+                setTimeout(() => {
+                  if (this.$$("#communityFolderPage")) {
+                    (this.$$("#communityFolderPage") as YpCommunity).scrollToGroupItem();
                   } else {
                     console.error("Can't find scroll communityFolderPage for goToPostOrNewsItem");
                   }
@@ -1038,7 +931,6 @@ export class YpApp extends YpBaseElement {
             });
           }
         }, delayUntilScrollToPost);
-        */
 
         if (this.routeData) {
           this.page = this.routeData.page;

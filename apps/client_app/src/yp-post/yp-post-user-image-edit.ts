@@ -1,17 +1,17 @@
 import { customElement, html, property, css } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '../yp-file-upload/yp-file-upload.js';
 import '../yp-edit-dialog/yp-edit-dialog.js';
 import '@material/mwc-textfield';
 import '@material/mwc-textarea';
 
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpEditBase } from '../@yrpri/yp-edit-base.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpEditBase } from '../common/yp-edit-base.js';
 import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
 import { TextField } from '@material/mwc-textfield';
 import { TextArea } from '@material/mwc-textarea';

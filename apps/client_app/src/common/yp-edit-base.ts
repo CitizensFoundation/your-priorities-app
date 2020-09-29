@@ -16,7 +16,7 @@ export abstract class YpEditBase extends YpBaseElement {
   snackbarText: string | undefined
 
   @property({ type: Object })
-  params: Record<string,string|boolean|number> | undefined
+  params: Record<string,string|boolean|number|object> | undefined
 
   @property({ type: String })
   method = 'POST'
@@ -87,16 +87,15 @@ export abstract class YpEditBase extends YpBaseElement {
 
   _formResponse(event: CustomEvent) {
     if (typeof this.customRedirect == 'function') {
-      this.customRedirect(event.detail.response);
+      this.customRedirect(event.detail);
     }
     if (typeof this.refreshFunction == 'function') {
-      this.refreshFunction(event.detail.response);
+      this.refreshFunction(event.detail);
     }
     if (
       event &&
       event.detail &&
-      event.detail.response &&
-      event.detail.response.isError
+      event.detail.isError
     ) {
       console.log('Not clearing form because of user error');
     } else {
@@ -116,7 +115,7 @@ export abstract class YpEditBase extends YpBaseElement {
     this.setupTranslation();
   }
 
-  open(newItem: boolean, params: Record<string,string | boolean | number>) {
+  open(newItem: boolean, params: Record<string,string | boolean | number | object>) {
     if (window.appUser && window.appUser.loggedIn() === true) {
       if (newItem) {
         this.new = true;

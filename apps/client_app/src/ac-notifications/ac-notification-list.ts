@@ -12,8 +12,8 @@ import './ac-notification-list-post.js';
 import './ac-notification-list-point.js';
 import './ac-notification-list-general-item.js';
 
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
 import { AcNotificationToast } from './ac-notification-toast.js';
 import { YpUserEdit } from '../yp-user/yp-user-edit.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
@@ -213,7 +213,7 @@ export class AcNotificationList extends YpBaseElementWithLogin {
                       id="activitiesList"
                       scrollOffset="300"
                       .renderItem=${this.renderNotification}
-                      @rangechange=${this.scrollEvent}></lit-virtualizer>
+                      @rangeChanged=${this.scrollEvent}></lit-virtualizer>
                   `
                 : nothing}
             `
@@ -221,15 +221,17 @@ export class AcNotificationList extends YpBaseElementWithLogin {
       </div>
     `;
   }
-
-  scrollEvent(event: RangeChangeEvent) {
+  scrollEvent(event: CustomEvent) {
     //TODO: Check this logic
+
+    const detail = event.detail as RangeChangeEvent;
+
     if (
       this.notifications &&
       !this.moreToLoad &&
-      event.lastVisible != -1 &&
-      event.lastVisible < this.notifications.length &&
-      event.lastVisible + 3 >= this.notifications.length
+      detail.lastVisible != -1 &&
+      detail.lastVisible < this.notifications.length &&
+      detail.lastVisible + 5 >= this.notifications.length
     ) {
       this.moreToLoad = true;
       this._loadMoreData();

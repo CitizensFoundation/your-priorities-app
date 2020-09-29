@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { customElement, html, property, LitElement, css } from 'lit-element';
@@ -12,14 +12,14 @@ import '@material/mwc-icon-button';
 import '@material/mwc-icon';
 
 import '../yp-file-upload/yp-file-upload.js';
-import '../@yrpri/yp-emoji-selector.js';
+import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
+import '../common/yp-emoji-selector.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-point-actions.js';
 
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
@@ -588,7 +588,7 @@ export class YpPoint extends YpBaseElement {
   _setOpen() {
     this.openTranscript = true;
     setTimeout(() => {
-      this.fire('yp-iron-resize');
+      this.fire('yp-list-resize');
       this.requestUpdate();
     }, 20);
   }
@@ -596,7 +596,7 @@ export class YpPoint extends YpBaseElement {
   _setClosed() {
     this.openTranscript = false;
     setTimeout(() => {
-      this.fire('yp-iron-resize');
+      this.fire('yp-list-resize');
       this.requestUpdate();
     }, 20);
   }

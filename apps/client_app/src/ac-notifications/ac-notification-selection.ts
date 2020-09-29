@@ -3,7 +3,7 @@ import { property, html, css, customElement } from 'lit-element';
 import '@material/mwc-radio';
 import '@material/mwc-formfield';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 @customElement('ac-notification-selection')
 export class AcNotificationSelection extends YpBaseElement {

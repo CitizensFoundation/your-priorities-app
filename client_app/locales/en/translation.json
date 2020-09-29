@@ -1,6 +1,6 @@
 {
   "uploadDocxSurveyFormat": "Upload survey in DOCX format",
-  "storeSubCodesWithRadiosAndCheckboxes": "Store sub-codes with radios & checkboxes",
+  "exportSubCodesForRadiosAndCheckboxes": "Export sub-codes with radios & checkboxes",
   "domainHeader": "Domain",
   "communityHeader": "Community",
   "groupHeader": "Group",

@@ -12,6 +12,8 @@ import { YpServerApi } from '../@yrpri/YpServerApi.js';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
 import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
 
+// https://github.com/DoubleTrade/lit-datepicker
+
 export const ProjectsTabTypes: Record<string, number> = {
   Current: 0,
   Archived: 1,

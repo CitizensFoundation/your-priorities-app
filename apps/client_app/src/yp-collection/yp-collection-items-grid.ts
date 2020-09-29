@@ -5,15 +5,19 @@ import {
   customElement,
   TemplateResult,
 } from 'lit-element';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpIronListHelpers } from '../@yrpri/YpIronListHelpers.js';
-import { YpCollectionHelpers } from '../@yrpri/YpCollectionHelpers.js';
-import 'lit-virtualizer';
 
-import './yp-collection-item-card.js';
-import { YpServerApi } from '../@yrpri/YpServerApi.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpIronListHelpers } from '../common/YpIronListHelpers.js';
+import { YpCollectionHelpers } from '../common/YpCollectionHelpers.js';
+import { scroll } from 'lit-virtualizer/lib/scroll.js';
+import { Layout1d, LitVirtualizer } from 'lit-virtualizer';
+
+import { YpCollectionItemCard } from './yp-collection-item-card.js';
+import { YpServerApi } from '../common/YpServerApi.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import { nothing } from 'lit-html';
+import './yp-collection-item-card.js';
 
 @customElement('yp-collection-items-grid')
 export class YpCollectionItemsGrid extends YpBaseElement {
@@ -56,42 +60,70 @@ export class YpCollectionItemsGrid extends YpBaseElement {
   }
 
   render() {
-    return html`
-      <lit-virtualizer
-        style="width: 100vw; height: 100vh;"
-        .items=${this.sortedCollectionItems}
-        .scrollTarget="${window}"
-        .renderItem=${this.renderItem}></lit-virtualizer>
-    `;
+    return this.sortedCollectionItems
+      ? html`
+          <lit-virtualizer
+            id="list"
+            role="main"
+            aria-label="${this.t(this.pluralItemType)}"
+            .items="${this.sortedCollectionItems}"
+            .layout="${Layout1d}"
+            .scrollTarget="${window}"
+            .keyFunction="${(item: YpCollectionData) => item.id}"
+            .renderItem="${this.renderItem.bind(this)}"></lit-virtualizer>
+        `
+      : nothing;
   }
 
-  renderItem(
-    item: YpCollectionData,
-    index?: number | undefined
-  ): TemplateResult {
-    return html`<div
-      class="card layout vertical center-center"
-      ?wide-padding="${this.wide}"
-      tabindex="${ifDefined(index)}"
-      role="listitem"
-      aria-level="2"
-      aria-label="[[item.name]]">
-      <yp-collection-item-card .item="${item}"></yp-collection-item-card>
-    </div>`;
+  renderItem(item: YpCollectionData, index: number): TemplateResult {
+    return html` <yp-collection-item-card
+      class="card"
+      aria-label="${item.name}"
+      ariarole="listitem"
+      .item="${item}"
+      @keypress="${this._keypress.bind(this)}"
+      @click="${this._selectedItemChanged.bind(
+        this
+      )}"></yp-collection-item-card>`;
   }
+
+  get pluralItemType() {
+    if (this.collectionItemType=='community') {
+      return 'communities';
+    } else if (this.collectionItemType=='group') {
+      return 'groups';
+    } else if (this.collectionItemType=='post') {
+      return 'posts';
+    } else {
+      return 'unknownItemType';
+    }
+  }
+
+  _keypress(event: KeyboardEvent) {
+    if (event.keyCode==13) {
+      this._selectedItemChanged(event as unknown as CustomEvent);
+    }
+  }
+
+  async refresh() {}
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
     super.firstUpdated(changedProperties);
     YpIronListHelpers.attachListeners(this as YpElementWithIronList);
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
     if (this.collection && this.collectionItems) {
       const splitCommunities = YpCollectionHelpers.splitByStatus(
         this.collectionItems,
         this.collection.configuration
       );
+
+      //TODO: Revisit this, needed for lit-virtualizer to work with the cache directive
+      this.sortedCollectionItems = undefined;
+      await this.requestUpdate();
+
       this.sortedCollectionItems = splitCommunities.featured.concat(
         splitCommunities.active.concat(splitCommunities.archived)
       );
@@ -105,7 +137,7 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
   // TODO: Make sure this fires each time on keyboard, mouse & phone - make sure back key on browser works also just with the A
   _selectedItemChanged(event: CustomEvent) {
-    const item = event.detail.value;
+    const item = (event.target as YpCollectionItemCard).item;
 
     if (this.collectionItemType && item) {
       window.appGlobals.activity(
@@ -152,8 +184,13 @@ export class YpCollectionItemsGrid extends YpBaseElement {
   }
 
   scrollToItem(item: YpDatabaseItem | undefined) {
-    if (item) {
-      (this.$$('#ironList') as IronListInterface).scrollToItem(item);
+    if (item && this.sortedCollectionItems) {
+      for (let i = 0; i < this.sortedCollectionItems.length; i++) {
+        if (this.sortedCollectionItems[i] == item) {
+          (this.$$('#list') as LitVirtualizer<any, any>).scrollToIndex(i);
+          break;
+        }
+      }
       this.fireGlobal('yp-refresh-activities-scroll-threshold');
     } else {
       console.error('No item to scroll too');

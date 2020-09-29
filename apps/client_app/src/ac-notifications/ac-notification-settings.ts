@@ -1,6 +1,6 @@
 import { property, html, customElement } from 'lit-element';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 import './ac-notification-selection.js';
 
 @customElement('ac-notification-settings')

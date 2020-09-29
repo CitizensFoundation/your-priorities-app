@@ -1,36 +1,33 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from '../yp-collection/yp-collection.js';
 import { customElement, html, property, LitElement, css } from 'lit-element';
 import { nothing, TemplateResult } from 'lit-html';
 
-import '@material/mwc-textarea';
+import { TextArea } from '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
-import '@material/mwc-radio';
 import { Radio } from '@material/mwc-radio';
+import '@material/mwc-textarea';
+
 import { Menu } from '@material/mwc-menu';
 
 import '../yp-file-upload/yp-file-upload.js';
-import '../@yrpri/yp-emoji-selector.js';
+import '../common/yp-emoji-selector.js';
+
+import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
+import { YpEmojiSelector } from '../common/yp-emoji-selector.js';
 import '../yp-point/yp-point.js';
-import { YpFormattingHelpers } from '../@yrpri/YpFormattingHelpers.js';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
-import { RangeChangeEvent } from 'lit-virtualizer';
+import { YpFormattingHelpers } from '../common/YpFormattingHelpers.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
+import { RangeChangeEvent, LitVirtualizer , Layout1d } from 'lit-virtualizer';
 import { YpMagicText } from '../yp-magic-text/yp-magic-text.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
-import { YpEmojiSelector } from '../@yrpri/yp-emoji-selector.js';
-import { Select } from '@material/mwc-select';
-import { YpFileUpload } from '../yp-file-upload/yp-file-upload.js';
-import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
-import { TextArea } from '@material/mwc-textarea';
 
-// TODO: Remove
-interface AcActivity extends LitElement {
-  scrollToItem(item: YpDatabaseItem): () => void;
-  loadNewData(): () => void;
-}
+import { Select } from '@material/mwc-select';
+
+import { YpAutoTranslateDialog } from '../yp-dialog-container/yp-autotranslate-dialog.js';
 
 @customElement('yp-post-points')
 export class YpPostPoints extends YpBaseElementWithLogin {
@@ -256,8 +253,8 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   static get styles() {
     return [
+      super.styles,
       css`
-        super.styles,
         :host {
           display: block;
         }
@@ -277,7 +274,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           padding-bottom: 32px;
           padding-left: 24px;
           padding-right: 24px;
-          width: 398px;
         }
 
         .pointInputMaterial {
@@ -354,8 +350,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         }
 
         lit-virtualizer {
-          width: 430px;
-          height: 100vh;
+          width: 450px;
+          height: 80vh;
+          overflow: hidden;
         }
 
         @media (max-width: 985px) {
@@ -421,17 +418,12 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           height: 80vh;
         }
 
-        #ironListMobile[debate-disabled] {
+        #listMobile[debate-disabled] {
           margin-top: 16px;
         }
 
         .mainSpinner {
           margin: 32px;
-        }
-
-        mwc-button[disabled] {
-          background-color: #333;
-          color: #fff;
         }
 
         .uploadNotLoggedIn {
@@ -679,8 +671,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           ${mobile ? this.renderMobilePointSelection() : nothing}
 
           <div
-            class="horizontal end-justified layout"
+            class="layout horizontal end" ?rtl="${this.rtl}"
             ?hidden="${this.post.Group.configuration.hideEmoji}">
+            <div class="flex"></div>
             <yp-emoji-selector
               id="point${type}EmojiSelector"
               ?hidden="${hideText}"></yp-emoji-selector>
@@ -703,7 +696,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             )}
           </div>
 
-          <div ?hidden="${ifLengthIsRight}">
+          <div>
             <div class="addPointFab layout horizontal center-center">
               <mwc-button
                 raised
@@ -721,9 +714,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
               <lit-virtualizer
                 id="list${type}"
                 .items=${points}
+                .layout="${Layout1d}"
                 .scrollTarget="${window}"
                 .renderItem=${this.renderPointItem}
-                @rangechange=${this.scrollEvent}></lit-virtualizer>
+                @rangeChanged=${this.scrollEvent}></lit-virtualizer>
             `
           : nothing}
       </div>
@@ -778,7 +772,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
       ${this.wideReady
         ? html`
-            <div ?rtl="${this.rtl}" class="layout vertical topContainer">
+            <div ?rtl="${this.rtl}" class="layout vertical topContainer center-center">
               <div class="main-container layout horizontal">
                 ${this.renderPointList(
                   'Up',
@@ -913,7 +907,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   get mobileScrollOffset() {
     if (!this.wide && this.post) {
-      const element = this.$$('#ironListMobile');
+      const element = this.$$('#listMobile');
       if (element) {
         let top = element.getBoundingClientRect().top;
         if (top <= 0) {
@@ -927,7 +921,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  get ironListResizeScrollThreshold() {
+  get listResizeScrollThreshold() {
     if (!this.wide) {
       return 300;
     } else {
@@ -935,7 +929,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  get ironListPaddingTop() {
+  get listPaddingTop() {
     if (this.wide) {
       return 600;
     } else {
@@ -953,7 +947,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     window.addEventListener('resize', this._processStoredPoints.bind(this));
     this.addListener('yp-point-deleted', this._pointDeleted);
     this.addListener('yp-update-point-in-list', this._updatePointInLists);
-    this.addListener('yp-iron-resize', this._ypIronResize);
+    this.addListener('yp-list-resize', this._listResize);
     this.addListener('yp-update-points-for-post', this._loadNewPointsIfNeeded);
   }
 
@@ -962,20 +956,24 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     window.removeEventListener('resize', this._processStoredPoints);
     this.removeListener('yp-point-deleted', this._pointDeleted);
     this.removeListener('yp-update-point-in-list', this._updatePointInLists);
-    this.removeListener('yp-iron-resize', this._ypIronResize);
+    this.removeListener('yp-list-resize', this._listResize);
     this.removeListener(
       'yp-update-points-for-post',
       this._loadNewPointsIfNeeded
     );
   }
 
-  _ypIronResize() {
-    /*
-    if (this.$$('#ironListUp')) this.$$('#ironListUp').fire('iron-resize');
-    if (this.$$('#ironListDown')) this.$$('#ironListDown').fire('iron-resize');
-    if (this.$$('#ironListMobile'))
-      this.$$('#ironListMobile').fire('iron-resize');
-    */
+  _listResize() {
+    if (this.$$('#listUp')) {
+      debugger;
+      //((this.$$('#listUp') as LitVirtualizer<any,any>).scroller as Layout1d).reflowIfNeeded();
+    }
+    if (this.$$('#listDown')) {
+      ((this.$$('#listDown') as LitVirtualizer<any,any>).layout as Layout1d).reflowIfNeeded();
+    }
+    if (this.$$('#listMobile')) {
+      ((this.$$('#listMobile') as LitVirtualizer<any,any>).layout as Layout1d).reflowIfNeeded();
+    }
   }
 
   _loadNewPointsIfNeeded(event: CustomEvent) {
@@ -1034,14 +1032,10 @@ export class YpPostPoints extends YpBaseElementWithLogin {
         haveAddedPoint = true;
       }
     });
-    setTimeout(() => {
-      //TODO: Get working if needed
-      /*if (this.$$('#ironListUp')) this.$$('#ironListUp').fire('iron-resize');
-      if (this.$$('#ironListDown'))
-        this.$$('#ironListDown').fire('iron-resize');
-      if (this.$$('#ironListMobile'))
-        this.$$('#ironListMobile').fire('iron-resize');*/
-    }, 5);
+
+    await this.updateComplete;
+
+    this._listResize();
 
     if (haveAddedPoint) {
       this._clearScrollTrigger();
@@ -1070,7 +1064,9 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       points.forEach(point => {
         this._insertNewPoint(point);
       });
+      await this.updateComplete;
 
+      this._listResize();
       this._updateCounterInfo();
       this.addPointDisabled = false;
     }
@@ -1443,7 +1439,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           this.points.forEach(point => {
             if (!hasFoundIt && point.id == this.scrollToId) {
               //TODO: Fix below
-              //this.$$('#ironListMobile').scrollToItem(point);
+              //this.$$('#listMobile').scrollToItem(point);
               hasFoundIt = true;
             }
           });
@@ -1451,7 +1447,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
           this.upPoints.forEach(point => {
             if (!hasFoundIt && point.id == this.scrollToId) {
               //TODO: Make this work
-              //this.$$('#ironListUp').scrollToItem(point);
+              //this.$$('#listUp').scrollToItem(point);
               hasFoundIt = true;
             }
           });
@@ -1459,7 +1455,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
             this.downPoints.forEach(point => {
               if (!hasFoundIt && point.id == this.scrollToId) {
                 //TODO: Make this work
-                //this.$$('#ironListDown').scrollToItem(point);
+                //this.$$('#listDown').scrollToItem(point);
                 hasFoundIt = true;
               }
             });
@@ -1530,27 +1526,22 @@ export class YpPostPoints extends YpBaseElementWithLogin {
     }
   }
 
-  _insertNewPoint(point: YpPointData) {
+  async _insertNewPoint(point: YpPointData) {
     if (!this.loadedPointIds[point.id]) {
       this.loadedPointIds[point.id] = true;
       if (this.wide) {
         if (point.value > 0) {
           this.upPoints?.unshift(point);
-          setTimeout(() => {
-            //this.$$('#ironListUp').fire('iron-resize');
-          }, 700);
         } else if (point.value < 0) {
           this.downPoints?.unshift(point);
-          setTimeout(() => {
-            // this.$$('#ironListDown').fire('iron-resize');
-          }, 700);
         }
       } else {
         this.points?.unshift(point);
-        setTimeout(() => {
-          // this.$$('#ironListMobile').fire('iron-resize');
-        }, 700);
       }
+      await this.requestUpdate();
+      setTimeout(()=>{
+        this._listResize();
+      }, 2500);
       this.storedPoints?.unshift(point);
     }
   }

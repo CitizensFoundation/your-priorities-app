@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
 
 import '@material/mwc-circular-progress-four-color';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
@@ -11,9 +11,9 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-snackbar';
 
-import '../@yrpri/yp-form.js';
+import '../common/yp-form.js';
 
-import { YpForm } from '../@yrpri/yp-form.js';
+import { YpForm } from '../common/yp-form.js';
 import { Snackbar } from '@material/mwc-snackbar';
 import { YpConfirmationDialog } from '../yp-dialog-container/yp-confirmation-dialog.js';
 
@@ -171,11 +171,11 @@ export class YpEditDialog extends YpBaseElement {
         }
 
         .popUpDialog {
-          width: 550px;
+          --mdc-dialog-min-width: 550px;
         }
 
         .popUpDialogDouble {
-          width: 840px;
+          --mdc-dialog-min-width: 840px;
         }
 
         #scroller {
@@ -446,6 +446,7 @@ export class YpEditDialog extends YpBaseElement {
       <mwc-dialog
         ?open="${this.opened}"
         ?rtl="${this.rtl}"
+        @closed="${this.close}"
         .name="${this.name}"
         .heading="${this.heading}"
         id="editDialog"
@@ -467,7 +468,7 @@ export class YpEditDialog extends YpBaseElement {
       </mwc-dialog>
       <mwc-snackbar
         id="snackbar"
-        .text="${this.snackbarTextCombined}"></mwc-snackbar>
+        .labelText="${this.snackbarTextCombined}"></mwc-snackbar>
     `;
   }
 

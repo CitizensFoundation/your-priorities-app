@@ -1,10 +1,10 @@
 import { property, html, css, customElement } from 'lit-element';
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { nothing } from 'lit-html';
 
 import '../yp-post/yp-post-cover-media.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
 
 @customElement('ac-activity-recommended-posts')
 export class AcActivityRecommendedPosts extends YpBaseElement {

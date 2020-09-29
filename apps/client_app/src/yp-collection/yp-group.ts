@@ -1,5 +1,5 @@
-import { YpAccessHelpers } from '../@yrpri/YpAccessHelpers.js';
-import { YpMediaHelpers } from '../@yrpri/YpMediaHelpers.js';
+import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
+import { YpMediaHelpers } from '../common/YpMediaHelpers.js';
 
 import { YpCollection } from './yp-collection.js';
 import { YpCollectionItemsGrid } from './yp-collection-items-grid.js';
@@ -12,6 +12,7 @@ import '@material/mwc-tab-bar';
 import '../yp-post/yp-posts-list.js';
 import '../yp-post/yp-post-card-add.js';
 import { YpPostsList } from '../yp-post/yp-posts-list.js';
+import { YpPostEdit } from '../yp-post/yp-post-edit.js';
 
 // TODO: Remove
 interface AcActivity extends LitElement {
@@ -52,7 +53,6 @@ export class YpGroup extends YpCollection {
   connectedCallback() {
     super.connectedCallback();
     this.addListener('yp-post-count', this._updateTabPostCount);
-    this.addListener('yp-refresh-group-posts', this._refreshGroupPosts);
     this.addListener(
       'yp-refresh-activities-scroll-threshold',
       this._clearScrollThreshold
@@ -62,7 +62,6 @@ export class YpGroup extends YpCollection {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListener('yp-post-count', this._updateTabPostCount);
-    this.removeListener('yp-refresh-group-posts', this._refreshGroupPosts);
     this.removeListener(
       'yp-refresh-activities-scroll-threshold',
       this._clearScrollThreshold
@@ -182,19 +181,18 @@ export class YpGroup extends YpCollection {
             <mwc-tab
               .label="${this.tabLabelWithCount('open')}"
               icon="lightbulb_outline"></mwc-tab>
-            <mwc-tab
-              ?hidden="${!this.hasNonOpenPosts}"
-              .label="${this.tabLabelWithCount('inProgress')}"
-              icon="lightbulb_outline"></mwc-tab>
-            <mwc-tab
-              ?hidden="${!this.hasNonOpenPosts}"
-              .label="${this.tabLabelWithCount('successful')}"
-              icon="lightbulb_outline"></mwc-tab>
-            <mwc-tab
-              ?hidden="${!this.hasNonOpenPosts}"
-              .label="${this.tabLabelWithCount('failed')}"
-              icon="lightbulb_outline">
-            </mwc-tab>
+            ${ this.hasNonOpenPosts ? html`
+              <mwc-tab
+                .label="${this.tabLabelWithCount('inProgress')}"
+                icon="lightbulb_outline"></mwc-tab>
+              <mwc-tab
+                .label="${this.tabLabelWithCount('successful')}"
+                icon="lightbulb_outline"></mwc-tab>
+              <mwc-tab
+                .label="${this.tabLabelWithCount('failed')}"
+                icon="lightbulb_outline">
+              </mwc-tab>
+            ` : nothing}
             ${this.renderNewsAndMapTabs()}
           </mwc-tab-bar>
         </div>
@@ -206,15 +204,17 @@ export class YpGroup extends YpCollection {
 
   renderPostList(statusFilter: string): TemplateResult {
     return this.collection
-      ? html`
+      ? html`<div class="layout vertical center-center">
           <yp-posts-list
             id="${statusFilter}PostList"
+            role="main"
+            aria-label="${this.t('posts.posts')}"
             .selectedGroupTab="${this.selectedGroupTab}"
             .listRoute="${this.subRoute}"
             .statusFilter="${statusFilter}"
             .searchingFor="${this.searchingFor}"
             .group="${this.collection as YpGroupData}"></yp-posts-list>
-        `
+        </div> `
       : html``;
   }
 
@@ -260,6 +260,8 @@ export class YpGroup extends YpCollection {
               .hideNewPost}">
             <div>
               <yp-post-card-add
+                role="button"
+                aria-label="${this.t('post.new')}"
                 .group="${this.collection as YpGroupData}"
                 ?disableNewPosts="${this.disableNewPosts}"
                 @new-post="${this._newPost}"></yp-post-card-add>
@@ -296,25 +298,13 @@ export class YpGroup extends YpCollection {
   _newPost() {
     window.appGlobals.activity('open', 'newPost');
     //TODO: Fix ts type
-    window.appDialogs.getDialogAsync(
-      'postEdit',
-      (dialog: {
-        setup: (arg0: null, arg1: boolean, arg2: null) => void;
-        open: (
-          arg0: string,
-          arg1: {
-            groupId: number | undefined;
-            group: YpCollectionData | undefined;
-          }
-        ) => void;
-      }) => {
-        dialog.setup(null, true, null);
-        dialog.open('new', {
-          groupId: this.collectionId,
-          group: this.collection,
-        });
-      }
-    );
+    window.appDialogs.getDialogAsync('postEdit', (dialog: YpPostEdit) => {
+      dialog.setup(undefined, true, undefined, this.collection as YpGroupData);
+      dialog.open(true, {
+        groupId: this.collectionId!,
+        group: this.collection as YpGroupData,
+      });
+    });
   }
 
   _clearScrollThreshold() {
@@ -360,15 +350,10 @@ export class YpGroup extends YpCollection {
   }
 
   get _isCurrentPostsTab(): boolean {
-    return (
-      this.selectedGroupTab !== undefined &&
-      [
-        GroupTabTypes.Open,
-        GroupTabTypes.InProgress,
-        GroupTabTypes.Successful,
-        GroupTabTypes.Failed,
-      ].indexOf(this.selectedGroupTab) > 1
-    );
+    return this.selectedGroupTab==GroupTabTypes.Open ||
+    this.selectedGroupTab==GroupTabTypes.InProgress ||
+    this.selectedGroupTab==GroupTabTypes.Successful ||
+    this.selectedGroupTab==GroupTabTypes.Failed
   }
 
   _loadMoreData() {
@@ -384,29 +369,9 @@ export class YpGroup extends YpCollection {
     }
   }
 
-  _goToPostIdTab() {
-    const tab = this.getCurrentTabElement() as YpPostsList;
-    if (tab && window.appGlobals.cache.cachedPostItem !== undefined) {
-      tab.scrollToPost(window.appGlobals.cache.cachedPostItem);
-      window.appGlobals.cache.cachedPostItem = undefined;
-    } else {
-      console.error('TODO: Check - cant find tab or scroll post');
-    }
-  }
-
-  _refreshGroupPosts() {
-    if (this._isCurrentPostsTab) {
-      const tab = this.getCurrentTabElement() as YpPostsList;
-      if (tab) tab.refreshGroupFromFilter();
-      else console.error('TODO: Check, cant find tab to refresh');
-    } else {
-      console.error('TODO: Check, post tab not selected');
-    }
-  }
-
   goToPostOrNewsItem() {
     if (this._isCurrentPostsTab) {
-      this._goToPostIdTab();
+       //TODO: See what if this is needed
     } else if (
       this.selectedGroupTab === GroupTabTypes.Newsfeed &&
       window.appGlobals.cache.cachedActivityItem !== undefined

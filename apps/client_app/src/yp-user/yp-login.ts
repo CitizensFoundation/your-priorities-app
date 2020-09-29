@@ -6,8 +6,8 @@ import '@material/mwc-tab-bar';
 import '@material/mwc-textfield';
 import '@material/mwc-circular-progress-four-color';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 @customElement('yp-login')
 export class YpLogin extends YpBaseElement {

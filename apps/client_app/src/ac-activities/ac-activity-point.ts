@@ -1,6 +1,6 @@
 import { property, html, css, customElement } from 'lit-element';
-import { YpBaseElementWithLogin } from '../@yrpri/yp-base-element-with-login.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import '../yp-point/yp-point.js';

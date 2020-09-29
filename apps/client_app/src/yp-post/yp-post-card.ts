@@ -2,9 +2,9 @@ import { property, html, css, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { ifDefined } from 'lit-html/directives/if-defined';
 
-import { YpBaseElement } from '../@yrpri/yp-base-element.js';
-import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
-import { YpNavHelpers } from '../@yrpri/YpNavHelpers.js';
+import { YpBaseElement } from '../common/yp-base-element.js';
+import { ShadowStyles } from '../common/ShadowStyles.js';
+import { YpNavHelpers } from '../common/YpNavHelpers.js';
 
 import '../yp-magic-text/yp-magic-text.js';
 import './yp-post-cover-media.js';
@@ -150,8 +150,7 @@ export class YpPostCard extends YpBaseElement {
         }
 
         :host {
-          width: 600px;
-          max-width: 600px;
+          width: 100%;
         }
 
         @media (max-width: 960px) {
@@ -291,6 +290,7 @@ export class YpPostCard extends YpBaseElement {
               <div class="layout vertical">
                 <a
                   href="${ifDefined(this._getPostLink(this.post))}"
+                  @click="${this.goToPostIfNotHeader}"
                   id="mainArea">
                   <yp-post-cover-media
                     ?mini="${this.mini}"
@@ -306,7 +306,6 @@ export class YpPostCard extends YpBaseElement {
                         id="postNameMagicText"
                         textType="postName"
                         .contentLanguage="${this.post.language}"
-                        @click="${this.goToPostIfNotHeader}"
                         text-only
                         .content="${this.post.name}"
                         .contentId="${this.post.id}">
@@ -322,7 +321,6 @@ export class YpPostCard extends YpBaseElement {
                           ?hidden="${this.hideDescription}"
                           textType="postContent"
                           .contentLanguage="${this.post.language}"
-                          @click="${this.goToPostIfNotHeader}"
                           text-only
                           .content="${this.post.description}"
                           .contentId="${this.post.id}"
@@ -348,10 +346,11 @@ export class YpPostCard extends YpBaseElement {
                   @click="${this._onBottomClick}">
                   ${!this.mini
                     ? html`
+                    <div class="layout horizontal">
                         <div class="share">
-                        <mwc-icon-button
-                          icon="share" .label="${this.t('post.shareInfo')}"
-                          @click="${this._shareTap}"></mwc-icon-button>
+                          <mwc-icon-button
+                            icon="share" .label="${this.t('post.shareInfo')}"
+                            @click="${this._shareTap}"></mwc-icon-button>
                           </mwc-icon-button>
                         </div>
                         ${
@@ -369,6 +368,7 @@ export class YpPostCard extends YpBaseElement {
                                 </yp-post-actions>
                               `
                         }
+                    </div>
                       `
                     : nothing}
                 </div>
@@ -492,7 +492,9 @@ export class YpPostCard extends YpBaseElement {
         this.post.Group.configuration.hidePostDescription)) as boolean;
   }
 
-  goToPostIfNotHeader() {
+  goToPostIfNotHeader(event: CustomEvent) {
+    event.preventDefault();
+
     if (
       this.post.Group.configuration &&
       this.post.Group.configuration.disablePostPageLink
