@@ -31,7 +31,7 @@ export class YpLanguageSelector extends YpBaseElement {
   autoTranslate = false;
 
   @property({ type: Boolean })
-  dropdownVisible = false;
+  dropdownVisible = true;
 
   @property({ type: Boolean })
   hasServerAutoTranslation = false;
@@ -84,6 +84,7 @@ export class YpLanguageSelector extends YpBaseElement {
   };
 
   noGoogleTranslateLanguages = ['kl'];
+
   _refreshLanguage() {
     this.dropdownVisible = false;
     this.refreshLanguages = !this.refreshLanguages;
@@ -126,9 +127,6 @@ export class YpLanguageSelector extends YpBaseElement {
 
   render() {
     return html`
-      <lite-signal
-        on-lite-signal-yp-refresh-language-selection="_refreshLanguage"></lite-signal>
-
       <div class="layout vertical">
         ${this.dropdownVisible
           ? html`

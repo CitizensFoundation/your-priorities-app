@@ -105,6 +105,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       <div class="layout horizontal">
         <mwc-button
           raised
+          class="saveButton"
           ?disabled="${!this.configChanged}"
           .label="${this.saveText || ''}"
           @click="${this._save}"
@@ -133,14 +134,22 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     `;
   }
 
-  renderTabPage() {
-    const configItems = this.configTabs![this.selectedTab].items;
+  renderTabPages() {
+    let allPages: Array<TemplateResult> = [];
 
-    return html`
+    this.configTabs?.forEach((tab, index) => {
+      allPages.push(this.renderTabPage(tab.items, index));
+    });
+
+    return html`${allPages}`;
+  }
+
+  renderTabPage(configItems: Array<YpStructuredConfigData>, itemIndex: number) {
+    return html`<div ?hidden="${this.selectedTab != itemIndex}">
       ${configItems.map(
         (question, index) => html`
-          ${question.type=='html'
-            ? question.templateData
+          ${question.type == 'html'
+            ? html`<div class="adminItem">${question.templateData}</div>`
             : html`
                 <yp-structured-question-edit
                   index="${index}"
@@ -148,13 +157,13 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                   @yp-answer-content-changed="${this._configChanged}"
                   .name="${question.name || question.text}"
                   .value="${question.value || this._getCurrentValue(question)}"
-                  .question="${{ ...question, text: this.t(question.text) }}"
+                  .question="${{ ...question, text: this.t(question.text), uniqueId: `u${index}` }}"
                 >
                 </yp-structured-question-edit>
               `}
         `
       )}
-    `;
+    </div>`;
   }
 
   renderHeaderAndLogoImageUploads() {
@@ -166,7 +175,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           target="/api/images?itemType=domain-logo"
           method="POST"
           buttonIcon="photo_camera"
-          .buttonText="${this.t('image.logo.upload') + ' 864 x 486'}"
+          subText="864 x 486px"
+          .buttonText="${this.t('image.logo.upload')}"
           @success="${this._logoImageUploaded}"
         >
         </yp-file-upload>
@@ -179,7 +189,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           target="/api/images?itemType=domain-header"
           method="POST"
           buttonIcon="photo_camera"
-          .buttonText="${this.t('image.header.upload') + ' 1920 x 600'}"
+          subText="1920 x 600px"
+          .buttonText="${this.t('image.header.upload')}"
           @success="${this._headerImageUploaded}"
         >
         </yp-file-upload>
@@ -187,34 +198,66 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     `;
   }
 
-  render() {
-    return this.configTabs ? html`
-      <yp-form id="form" method="POST">
-        <form
-          name="ypForm"
-          .method="${this.method}"
-          .action="${this.action ? this.action : ''}"
-        >
-          ${this.renderHeader()} ${this.renderTabs()} ${this.renderTabPage()}
+  static get styles() {
+    return [
+      super.styles,
+      css`
+        .saveButton {
+          margin-left: 16px;
+        }
+        mwc-textfield,
+        mwc-textarea {
+          width: 400px;
+        }
 
-          <input
-            type="hidden"
-            name="themeId"
-            .value="${this.themeId?.toString() || ''}"
-          />
-          <input
-            type="hidden"
-            name="uploadedLogoImageId"
-            .value="${this.uploadedLogoImageId?.toString() || ''}"
-          />
-          <input
-            type="hidden"
-            name="uploadedHeaderImageId"
-            .value="${this.uploadedHeaderImageId?.toString() || ''}"
-          />
-        </form>
-      </yp-form>
-    ` : nothing
+        mwc-tab-bar {
+          margin-top: 16px;
+          margin-bottom: 24px;
+          width: 1024px;
+        }
+
+        .adminItem {
+          margin: 8px;
+          max-width: 420px;
+        }
+
+        yp-structured-question-edit {
+          max-width: 420px;
+        }
+      `,
+    ];
+  }
+  render() {
+    return this.configTabs
+      ? html`
+          <yp-form id="form" method="POST">
+            <form
+              name="ypForm"
+              .method="${this.method}"
+              .action="${this.action ? this.action : ''}"
+            >
+              ${this.renderHeader()} ${this.renderTabs()}
+              ${this.renderTabPages()}
+
+              <input
+                type="hidden"
+                name="themeId"
+                .value="${this.themeId?.toString() || ''}"
+              />
+              <input
+                type="hidden"
+                name="uploadedLogoImageId"
+                .value="${this.uploadedLogoImageId?.toString() || ''}"
+              />
+              <input
+                type="hidden"
+                name="uploadedHeaderImageId"
+                .value="${this.uploadedHeaderImageId?.toString() || ''}"
+              />
+            </form>
+          </yp-form>
+        `
+      : nothing;
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {

@@ -33,7 +33,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   hideQuestionIndex = false;
 
   @property({ type: String })
-  name: string | undefined
+  formName: string | undefined
 
   @property({ type: Boolean })
   dontFocusFirstQuestion = false;
@@ -273,6 +273,19 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     ];
   }
 
+  get value() {
+    const answer = this.getAnswer();
+    if (answer) {
+      return answer.value;
+    } else {
+      return null;
+    }
+  }
+
+  set value(value: any) {
+    this.setAnswer(value);
+  }
+
   renderTextField(skipLabel = false) {
     return html`
       <mwc-textfield
@@ -280,7 +293,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .value="${(this.question.value as string) || ''}"
         .label="${!skipLabel ? this.textWithIndex : ''}"
         charCounter
-        .name="${this.name}"
+        name="${this.formName || ''}"
         ?useSmallFont="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
@@ -318,7 +331,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         @blur="${this.setLongUnFocus}"
         .useSmallFont="${this.useSmallFont}"
         @change="${this._debounceChangeEvent}"
-        .name="${this.name}"
+        name="${this.formName || ''}"
         rows="3"
         max-rows="5"
         maxrows="5"
@@ -421,12 +434,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       : nothing;
   }
 
-  renderCheckbox(text: string, buttonIndex: number) {
+  renderCheckbox(text: string, buttonIndex: number, useTopLevelId = false) {
+    const id = useTopLevelId ? `structuredQuestion_${this.index}` : `structuredQuestionCheckbox_${this.index}_${buttonIndex}`
     return html`
       <mwc-formfield .label="${text}">
         <mwc-checkbox
-          id="structuredQuestionCheckbox_${this.index}_${buttonIndex}"
-          .name="${this.name || null}"
+          id="${id}"
+          .name="${this.formName || null}"
           ?checked="${(this.question.value as boolean) || false}"
           @change="${this._checkboxChanged}">
         </mwc-checkbox>
@@ -519,7 +533,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         question = this.renderCheckboxes();
         break;
       case 'checkbox':
-        question = this.renderCheckbox(this.question.text, 0);
+        question = this.renderCheckbox(this.question.text, 0, true);
       break;
         case 'radios':
         question = this.renderRadios();
@@ -723,16 +737,17 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             }
           }
         }
-
         if (selectedCheckboxes !== '') {
           value = selectedCheckboxes.substring(
             0,
             selectedCheckboxes.length - 1
           );
         }
+      } else if (this.question.type!.toLowerCase() === 'checkbox') {
+        value = (item as Checkbox).checked;
       }
 
-      if (value && this.question.uniqueId) {
+      if (value!=undefined && this.question.uniqueId) {
         return { uniqueId: this.question.uniqueId, value: value };
       } else {
         console.error("Can't find answer for question");
@@ -991,7 +1006,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         this.structuredAnswers.forEach(answer => {
           if (this.question.uniqueId === answer.uniqueId && answer.value) {
             setTimeout(() => {
-              this.setAnswer(answer.value);
+              this.setAnswer(answer.value as string);
             }, 100);
             throw BreakException;
           }

@@ -16,7 +16,7 @@ export class YpThemeSelector extends YpBaseElement {
   themeObject: YpThemeContainerObject | undefined;
 
   @property({ type: Array })
-  themes: Array<YpThemeData> | undefined;
+  themes: Array<Record<string, boolean | string | Record<string, string>>> = [];
 
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
@@ -45,6 +45,11 @@ export class YpThemeSelector extends YpBaseElement {
         }
       `,
     ];
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.themes = window.appGlobals.theme.themes;
   }
 
   _selectTheme(event: CustomEvent) {

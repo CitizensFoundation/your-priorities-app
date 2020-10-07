@@ -34,12 +34,12 @@ export class YpForm extends YpBaseElement {
    * more details. Only works when `allowRedirect` is false.
    */
   @property({ type: Object })
-  headers: Record<string,string> = {};
+  headers: Record<string, string> = {};
 
   _form: HTMLFormElement | undefined;
   _defaults: WeakMap<HTMLInputElement | HTMLFormElement, object> | undefined;
 
-  _nodeObserver: FlattenedNodesObserver | undefined
+  _nodeObserver: FlattenedNodesObserver | undefined;
 
   static get style() {
     return [
@@ -106,10 +106,7 @@ export class YpForm extends YpBaseElement {
    */
   connectedCallback() {
     super.connectedCallback();
-    this.addGlobalListener(
-      'yp-network-error',
-      this._formError.bind(this)
-    );
+    this.addGlobalListener('yp-network-error', this._formError.bind(this));
     // We might have been detached then re-attached.
     // Avoid searching again for the <form> if we already found it.
     if (this._form) {
@@ -127,7 +124,7 @@ export class YpForm extends YpBaseElement {
       window.setTimeout(this._saveInitialValues.bind(this), 1);
     } else {
       //@ts-ignore
-      this._nodeObserver = dom(this).observeNodes((mutations) => {
+      this._nodeObserver = dom(this).observeNodes(mutations => {
         for (let i = 0; i < mutations.addedNodes.length; i++) {
           if (mutations.addedNodes[i].tagName === 'FORM') {
             this._form = mutations.addedNodes[i] as HTMLFormElement;
@@ -156,10 +153,7 @@ export class YpForm extends YpBaseElement {
    */
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeGlobalListener(
-      'yp-network-error',
-      this._formError.bind(this)
-    );
+    this.removeGlobalListener('yp-network-error', this._formError.bind(this));
     if (this._nodeObserver) {
       //@ts-ignore
       dom(this).unobserveNodes(this._nodeObserver);
@@ -168,8 +162,16 @@ export class YpForm extends YpBaseElement {
   }
 
   _init() {
-    this._form!.addEventListener('submit', (this.submit as any).bind(this), false);
-    this._form!.addEventListener('reset', (this.reset as any).bind(this), false);
+    this._form!.addEventListener(
+      'submit',
+      (this.submit as any).bind(this),
+      false
+    );
+    this._form!.addEventListener(
+      'reset',
+      (this.reset as any).bind(this),
+      false
+    );
 
     // Save the initial values.
     this._defaults = this._defaults || new WeakMap();
@@ -256,7 +258,7 @@ export class YpForm extends YpBaseElement {
     }
 
     if (!this.validate()) {
-      this.fire('yp-form-invalid')
+      this.fire('yp-form-invalid');
       return;
     }
 
@@ -297,7 +299,9 @@ export class YpForm extends YpBaseElement {
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i] as LooseObject;
       if (this._defaults!.has(node as HTMLInputElement)) {
-        const defaults = this._defaults!.get(node as HTMLInputElement) as Record<string,any>;
+        const defaults = this._defaults!.get(
+          node as HTMLInputElement
+        ) as Record<string, any>;
         for (const propName in defaults) {
           node[propName] = defaults[propName];
         }
@@ -330,23 +334,28 @@ export class YpForm extends YpBaseElement {
   }
 
   async _makeAjaxRequest(json: Record<string, string>) {
-
     const url = this._form!.getAttribute('action');
     const method = this._form!.getAttribute('method') || 'GET';
     const headers = this.headers;
 
     this.fire('yp-form-submit');
 
-    const bodyParams = Object.keys(json).map((key) => {
-      return encodeURIComponent(key) + '=' + encodeURIComponent(json[key]);
-    }).join('&');
+    const bodyParams = Object.keys(json)
+      .map(key => {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(json[key]);
+      })
+      .join('&');
 
+    this.headers['content-type'] = 'application/x-www-form-urlencoded';
 
-    this.headers['content-type'] = 'application/x-www-form-urlencoded'
+    const formResults = (await window.serverApi.submitForm(
+      url!,
+      method,
+      headers,
+      bodyParams
+    )) as any | void;
 
-    const formResults = await window.serverApi.submitForm(url!, method, headers, bodyParams) as any | void;
-
-    if (formResults!=null) {
+    if (formResults != null) {
       this.fire('yp-form-response', formResults);
     } else {
       this.fire('yp-form-error', {});
@@ -395,9 +404,17 @@ export class YpForm extends YpBaseElement {
         !skipSlots &&
         (nodes[i].localName === 'slot' || nodes[i].localName === 'content')
       ) {
-        this._searchSubmittableInSlot(submittable, nodes[i] as HTMLInputElement, ignoreName);
+        this._searchSubmittableInSlot(
+          submittable,
+          nodes[i] as HTMLInputElement,
+          ignoreName
+        );
       } else {
-        this._searchSubmittable(submittable, nodes[i] as HTMLInputElement, ignoreName);
+        this._searchSubmittable(
+          submittable,
+          nodes[i] as HTMLInputElement,
+          ignoreName
+        );
       }
     }
     return submittable;
@@ -427,7 +444,11 @@ export class YpForm extends YpBaseElement {
 
       // Note: assignedNodes does not contain <slot> or <content> because
       // getDistributedNodes flattens the tree.
-      this._searchSubmittable(submittable, assignedNodes[i] as HTMLInputElement, ignoreName);
+      this._searchSubmittable(
+        submittable,
+        assignedNodes[i] as HTMLInputElement,
+        ignoreName
+      );
       //@ts-ignore
       const nestedAssignedNodes = dom(assignedNodes[i]).querySelectorAll('*');
       for (let j = 0; j < nestedAssignedNodes.length; j++) {
@@ -457,6 +478,7 @@ export class YpForm extends YpBaseElement {
     if (this._isSubmittable(node, ignoreName)) {
       submittable!.push(node);
     } else if ((node as YpHTMLInputElement).root) {
+      debugger;
       this._findElements(
         (node as YpHTMLInputElement).root,
         ignoreName,
@@ -481,7 +503,8 @@ export class YpForm extends YpBaseElement {
     return (
       !node.disabled &&
       (ignoreName
-        ? node.name || typeof (node as YpHTMLInputElement).validate === 'function'
+        ? node.name ||
+          typeof (node as YpHTMLInputElement).validate === 'function'
         : node.name)
     );
   }
@@ -516,7 +539,12 @@ export class YpForm extends YpBaseElement {
 
     if (tag === 'select' || tag === 'mwc-select') {
       return this._serializeSelectValues(element as YpHTMLInputElement);
-    } else if (tag === 'input' || tag === 'mwc-textarea' || tag === 'mwc-textfield') {
+    } else if (
+      tag === 'input' ||
+      tag === 'mwc-textarea' ||
+      tag === 'mwc-textfield' ||
+      tag === 'yp-structured-question-edit'
+    ) {
       return this._serializeInputValues(element);
     } else {
       if (!element.checked) return [];
@@ -540,12 +568,12 @@ export class YpForm extends YpBaseElement {
   _serializeInputValues(element: HTMLInputElement) {
     // Most of the inputs use their 'value' attribute, with the exception
     // of radio buttons, checkboxes and file.
-    const type = element.type.toLowerCase();
+    const type = element.tagName.toLowerCase();
 
     // Don't do anything for unchecked checkboxes/radio buttons.
     // Don't do anything for file, since that requires a different request.
     if (
-      ((type === 'checkbox' || type === 'radio') && !element.checked) ||
+      ((type === 'mwc-checkbox' || type === 'mwc-radio') && !element.checked) ||
       type === 'file'
     ) {
       return [];
@@ -561,7 +589,14 @@ export class YpForm extends YpBaseElement {
     return input;
   }
 
-  _addSerializedElement(json: Record<string, Array<string> | string | string[] | Array<Array<string>>  >, name: string, value: string) {
+  _addSerializedElement(
+    json: Record<
+      string,
+      Array<string> | string | string[] | Array<Array<string>>
+    >,
+    name: string,
+    value: string
+  ) {
     // If the name doesn't exist, add it. Otherwise, serialize it to
     // an array,
     if (json[name] === undefined) {

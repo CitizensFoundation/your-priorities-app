@@ -34,7 +34,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
   }
 
   static get styles() {
-    return [super.styles, css``];
+    return [super.styles, css`
+
+    `];
   }
 
   renderHeader() {
@@ -62,7 +64,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
                 .label="${this.t('Description')}"
                 charCounter
                 @change="${this._configChanged}"
-                rows="2"
+                rows="3"
                 max-rows="5"
                 maxlength="300"
                 class="mainInput"
@@ -158,7 +160,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
 
     tabs.push({
       name: 'basic',
-      icon: 'close',
+      icon: 'code',
       items: [
         {
           text: 'defaultLocale',
@@ -177,6 +179,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           type: 'html',
           templateData: html` <yp-theme-selector
             .object="${this.collection}"
+            .themeObject="${this.collection as YpThemeContainerObject}"
             .selectedTheme="${this.themeId}"
             @yp-theme-changed="${(event: CustomEvent) => {
               this.themeId = event.detail;
@@ -202,13 +205,13 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
                         @success="${this._videoUploaded}"
                       >
                       </yp-file-upload>
-                      <paper-checkbox
-                        class="useVideoCover"
-                        name="useVideoCover"
-                        disabled$="[[!uploadedVideoId]]"
-                        checked$="{{domain.configuration.useVideoCover}}"
-                        >[[t('useVideoCover')]]</paper-checkbox
-                      >
+                      <mwc-formfield .label="${this.t('useVideoCover')}">
+                        <mwc-checkbox
+                          name="useVideoCover"
+                          ?disabled="${!this.uploadedVideoId}"
+                          ?checked="${this.collection!.configuration.useVideoCover}">
+                        </mwc-checkbox>
+                      </mwc-formfield>
                     </div>
                   `
                 : nothing}
@@ -242,7 +245,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
 
     tabs.push({
       name: 'webApp',
-      icon: 'app',
+      icon: 'get_app',
       items: [
         {
           text: 'appHomeScreenShortName',
@@ -270,7 +273,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
 
     tabs.push({
       name: 'authApis',
-      icon: 'apis',
+      icon: 'api',
       items: [
         {
           text: 'Facebook Client Id',
@@ -303,10 +306,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
       ]
     });
 
-
     tabs.push({
       name: 'samlAuth',
-      icon: 'apis',
+      icon: 'security',
       items: [
         {
           text: 'SAML EntryPoint',

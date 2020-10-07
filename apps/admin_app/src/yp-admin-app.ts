@@ -21,6 +21,8 @@ import { AnchorableElement } from '@material/mwc-menu/mwc-menu-surface-base';
 import { Dialog } from '@material/mwc-dialog';
 import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
+import './@yrpri/yp-dialog-container/yp-app-dialogs.js';
+
 import './yp-admin-translations.js';
 import './yp-admin-config-domain.js';
 
@@ -202,6 +204,12 @@ export class YpAdminApp extends YpBaseElement {
     this._removeEventListeners();
   }
 
+  _appDialogsReady(event: CustomEvent) {
+    if (event.detail) {
+      window.appDialogs = event.detail;
+    }
+  }
+
   async _getCollection() {
     this.collection = await window.serverApi.getCollection(
       this.collectionType,
@@ -211,6 +219,8 @@ export class YpAdminApp extends YpBaseElement {
 
   render() {
     return html`
+      <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
+
       <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
         <div>${this.currentError}</div>
         <mwc-button dialogAction="cancel" slot="secondaryAction">
@@ -282,11 +292,13 @@ export class YpAdminApp extends YpBaseElement {
     this.addListener('set-total-posts', this._setTotalPosts);
     this.addListener('app-error', this._appError);
     this.addGlobalListener('yp-network-error', this._appError.bind(this));
+    this.addListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
   }
 
   _removeEventListeners() {
     this.removeListener('set-total-posts', this._setTotalPosts);
     this.removeGlobalListener('yp-network-error', this._appError.bind(this));
+    this.removeListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
   }
 
   _appError(event: CustomEvent) {

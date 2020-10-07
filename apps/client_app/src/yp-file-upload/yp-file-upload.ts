@@ -83,6 +83,9 @@ export class YpFileUpload extends YpBaseElement {
   @property({ type: Boolean })
   raised = false;
 
+  @property({ type: String })
+  subText: string | undefined;
+
   /**
    * `noink` indicates that the button should not have an ink effect
    */
@@ -265,6 +268,11 @@ export class YpFileUpload extends YpBaseElement {
         mwc-button {
           min-width: 100px;
         }
+
+        .subText {
+          font-size: 12px;
+          font-style: italic;
+        }
       `,
     ];
   }
@@ -278,19 +286,24 @@ export class YpFileUpload extends YpBaseElement {
               id="button"
               .icon="${this.buttonIcon}"
               class="blue"
+              ?raised="${this.raised}"
               .label="${this.buttonText}"
-              @click="${this._fileClick}">
+              @click="${this._fileClick}"
+            >
             </mwc-button>
             <mwc-icon-button
               .ariaLabel="${this.t('deleteFile')}"
               class="removeButton layout self-start"
               icon="delete"
               @click="${this.clear}"
-              ?hidden="${!this.currentFile}"></mwc-icon-button>
+              ?hidden="${!this.currentFile}"
+            ></mwc-icon-button>
           </div>
+          <div class="subText" ?hidden="${!this.subText}">${this.subText}</div>
           <div
             ?hidden="${!this.uploadLimitSeconds}"
-            class="limitInfo layout horizontal center-center">
+            class="limitInfo layout horizontal center-center"
+          >
             <em ?hidden="${this.currentFile != null}"
               >${this.uploadLimitSeconds} ${this.t('seconds')}</em
             >
@@ -331,23 +344,21 @@ export class YpFileUpload extends YpBaseElement {
                   <mwc-linear-progress
                     .value="${item.progress}"
                     ?indeterminate="${this.indeterminateProgress}"
-                    .error="${item.error}"></mwc-linear-progress>
+                    .error="${item.error}"
+                  ></mwc-linear-progress>
                 </div>
               </div>
             `
           )}
-          ${
-            this.currentVideoId && this.transcodingComplete
-              ? html`<yp-set-video-cover
-                  .noDefaultCoverImage="${this.noDefaultCoverImage}"
-                  .videoId="${this.currentVideoId}"
-                  @set-cover="${this._setVideoCover}"
-                  @set-default-cover="${this
-                    ._setDefaultImageAsVideoCover}"></yp-set-video-cover> `
-              : nothing
-          }
-        </div
-
+        </div>
+        ${this.currentVideoId && this.transcodingComplete
+          ? html`<yp-set-video-cover
+              .noDefaultCoverImage="${this.noDefaultCoverImage}"
+              .videoId="${this.currentVideoId}"
+              @set-cover="${this._setVideoCover}"
+              @set-default-cover="${this._setDefaultImageAsVideoCover}"
+            ></yp-set-video-cover> `
+          : nothing}
       </div>
       <input
         type="file"
@@ -356,7 +367,8 @@ export class YpFileUpload extends YpBaseElement {
         @change="${this._fileChange}"
         .accept="${this.accept}"
         hidden
-        ?multiple="${this.multi}" />
+        ?multiple="${this.multi}"
+      />
     `;
   }
 
@@ -516,7 +528,7 @@ export class YpFileUpload extends YpBaseElement {
         videoRecording: this.videoUpload,
         audioRecording: this.audioUpload,
         uploadFileFunction: this._openFileInput.bind(this),
-        maxLength: this.uploadLimitSeconds || 600
+        maxLength: this.uploadLimitSeconds || 600,
       });
     });
   }
