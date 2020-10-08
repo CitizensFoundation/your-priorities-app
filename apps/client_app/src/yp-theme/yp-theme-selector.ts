@@ -6,6 +6,7 @@ import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import { nothing } from 'lit-html';
+import { Select } from '@material/mwc-select';
 
 @customElement('yp-theme-selector')
 export class YpThemeSelector extends YpBaseElement {
@@ -62,13 +63,20 @@ export class YpThemeSelector extends YpBaseElement {
   render() {
     return this.themes
       ? html`
-          <mwc-select .label="${this.t('theme.choose')}">
+          <mwc-select
+            id="select"
+            .value="${this.selectedTheme
+              ? this.selectedTheme.toString()
+              : '0'}"
+            .label="${this.t('theme.choose')}"
+          >
             ${this.themes.map(
               (theme, index) => html`
                 <mwc-list-item
                   @click="${this._selectTheme}"
                   id="${index}"
-                  ?hidden="${theme.disabled}"
+                  .value="${index.toString()}"
+                  ?hidden="${theme.disabled as boolean}"
                   >${theme.name}</mwc-list-item
                 >
               `

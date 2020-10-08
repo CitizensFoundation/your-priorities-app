@@ -274,7 +274,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   get value() {
-    const answer = this.getAnswer();
+    const answer = this.getAnswer(true);
     if (answer) {
       return answer.value;
     } else {
@@ -283,6 +283,11 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   set value(value: any) {
+    this.setAnswerAfterUpdate(value);
+  }
+
+  async setAnswerAfterUpdate(value: any) {
+    await this.updateComplete;
     this.setAnswer(value);
   }
 
@@ -672,7 +677,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
   }
 
-  getAnswer(): YpStructuredAnswer | undefined {
+  getAnswer(suppressNotFoundError = false): YpStructuredAnswer | undefined {
     const item = this.$$('#structuredQuestion_' + this.index);
 
     if (item) {
@@ -753,13 +758,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         console.error("Can't find answer for question");
         return undefined
       }
-    } else {
+    } else if (!suppressNotFoundError) {
       console.error("Can't find question item for " + this.question.text);
     }
   }
 
   setAnswer(value: string) {
-    if (value) {
+    if (value!=null) {
       const item = this.$$('#structuredQuestion_' + this.index);
 
       if (item && this.question.type) {
@@ -842,6 +847,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                 console.debug('No selectedCheckbox');
               }
             }
+          }
+        } else if (this.question.type.toLowerCase() === 'checkbox') {
+          if (value) {
+            (item as Checkbox).checked = true;
           }
         }
       } else {

@@ -647,11 +647,7 @@ export class YpFileUpload extends YpBaseElement {
     }
   }
 
-  _startTranscodeResponse() {
-    this._checkTranscodingJob();
-  }
-
-  _checkTranscodingJob() {
+  _checkTranscodingJob(jobId: string) {
     setTimeout(async () => {
       let mediaType, mediaId;
       if (this.videoUpload) {
@@ -665,13 +661,15 @@ export class YpFileUpload extends YpBaseElement {
       if (mediaId) {
         const detail = await window.serverApi.getTranscodingJobStatus(
           mediaType,
-          mediaId
+          mediaId,
+          jobId
         );
+
         if (this.currentFile) {
           const fileIndex = this.files.indexOf(
             this.currentFile as YpUploadFileData
           );
-          if (detail.response.status === 'Complete') {
+          if (detail.status === 'Complete') {
             this.files[fileIndex].complete = true;
             this.uploadStatus = this.t('uploadCompleted');
             this.transcodingComplete = true;
@@ -697,7 +695,7 @@ export class YpFileUpload extends YpBaseElement {
             this.fire('file-upload-complete');
             window.appGlobals.activity('error', 'mediaTranscoding');
           } else {
-            this._checkTranscodingJob();
+            this._checkTranscodingJob(jobId);
           }
         } else {
           console.error('Trying to process non file');
@@ -790,13 +788,14 @@ export class YpFileUpload extends YpBaseElement {
 
           options.aspect = aspect;
 
-          await window.serverApi.startTranscoding(
+          const response = await window.serverApi.startTranscoding(
             'videos',
             this.currentVideoId,
             startType,
             options
-          );
-          this._checkTranscodingJob();
+          ) as StartTranscodingResponse;
+
+          this._checkTranscodingJob(response.transcodingJobId);
 
           window.appGlobals.activity('complete', 'videoUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
@@ -826,13 +825,14 @@ export class YpFileUpload extends YpBaseElement {
             options = {};
           }
 
-          await window.serverApi.startTranscoding(
+          const response = await window.serverApi.startTranscoding(
             'audios',
             this.currentAudioId,
             startType,
             options
-          );
-          this._checkTranscodingJob();
+          ) as StartTranscodingResponse;
+
+          this._checkTranscodingJob(response.transcodingJobId);
 
           window.appGlobals.activity('complete', 'audioUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');

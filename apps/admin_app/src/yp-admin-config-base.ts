@@ -64,6 +64,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   abstract renderHeader(): TemplateResult | {};
 
+  abstract _formResponse(event: CustomEvent): void;
+
+
   _selectTab(event: CustomEvent) {
     this.selectedTab = event.detail?.index as number;
   }
@@ -78,6 +81,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     });
     if (window.appGlobals.hasVideoUpload) this.hasVideoUpload = true;
     if (window.appGlobals.hasAudioUpload) this.hasAudioUpload = true;
+    this.addListener('yp-form-response', this._formResponse);
   }
 
   disconnectedCallback() {
@@ -88,6 +92,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     this.removeGlobalListener('yp-has-audio-upload', () => {
       this.hasAudioUpload = true;
     });
+    this.removeListener('yp-form-response', this._formResponse);
   }
 
   _logoImageUploaded(event: CustomEvent) {
@@ -157,7 +162,13 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                   @yp-answer-content-changed="${this._configChanged}"
                   .name="${question.name || question.text}"
                   .value="${question.value || this._getCurrentValue(question)}"
-                  .question="${{ ...question, text: this.t(question.text), uniqueId: `u${index}` }}"
+                  .question="${{
+                    ...question,
+                    text: question.translationToken
+                      ? this.t(question.translationToken)
+                      : this.t(question.text),
+                    uniqueId: `u${index}`,
+                  }}"
                 >
                 </yp-structured-question-edit>
               `}
@@ -230,7 +241,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   render() {
     return this.configTabs
       ? html`
-          <yp-form id="form" method="POST">
+          <yp-form id="form" method="POST" customRedirect>
             <form
               name="ypForm"
               .method="${this.method}"
@@ -265,6 +276,14 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
     if (changedProperties.has('collection') && this.collection) {
       this.configTabs = this.setupConfigTabs();
+    }
+
+    if (changedProperties.has('collectionId') && this.collectionId) {
+      if (this.collectionId == 'new') {
+        this.method = 'POST';
+      } else {
+        this.method = 'PUT';
+      }
     }
   }
 

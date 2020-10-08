@@ -788,10 +788,15 @@ interface YpStructuredConfigData extends YpStructuredQuestionData {
   templateData?: any;
   rows?: number;
   maxRows?: number;
+  translationToken?: string;
 }
 
 interface YpConfigTabData {
   name: string;
   icon: string;
   items: Array<YpStructuredConfigData>;
+}
+
+interface StartTranscodingResponse {
+  transcodingJobId: string;
 }

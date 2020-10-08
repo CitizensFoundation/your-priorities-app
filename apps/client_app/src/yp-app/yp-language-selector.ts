@@ -24,6 +24,9 @@ export class YpLanguageSelector extends YpBaseElement {
   @property({ type: String })
   value = '';
 
+  @property({ type: String })
+  name = '';
+
   @property({ type: Boolean })
   autoTranslateOptionDisabled = false;
 
@@ -130,7 +133,7 @@ export class YpLanguageSelector extends YpBaseElement {
       <div class="layout vertical">
         ${this.dropdownVisible
           ? html`
-              <mwc-select label="Select language">
+              <mwc-select .value="${this.value}" label="Select language">
                 ${this.languages.map(
                   item => html`
                     <mwc-list-item
@@ -293,6 +296,7 @@ export class YpLanguageSelector extends YpBaseElement {
   _selectedLocaleChanged(oldLocale: string) {
     if (this.selectedLocale) {
       this.value = this.selectedLocale;
+      this.fire('changed', this.value);
       if (!this.noUserEvents && oldLocale) {
         if (!this.canUseAutoTranslate && this.autoTranslate) {
           this._stopTranslation();

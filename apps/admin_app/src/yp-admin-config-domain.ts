@@ -31,6 +31,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
 
   constructor() {
     super();
+    this.action = "/domains";
   }
 
   static get styles() {
@@ -90,8 +91,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
   }
 
   _videoUploaded(event: CustomEvent) {
+    debugger;
     this.uploadedVideoId = event.detail.videoId;
     this.collection!.configuration.useVideoCover = true;
+    this._configChanged();
     this.requestUpdate();
   }
 
@@ -121,6 +124,14 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           .collection as YpDomainData).DomainLogoVideos![0].id;
       }
     }
+
+    if (changedProperties.has('collectionId') && this.collectionId) {
+      if (this.collectionId == "new") {
+        this.action = "/domains";
+      } else {
+        this.action = `/domains/${this.collectionId}`;
+      }
+    }
   }
 
   _setupTranslations() {
@@ -135,8 +146,11 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     }
   }
 
-  async _customRedirect(domain: YpDomainData) {
+  async _formResponse(event: CustomEvent) {
+    debugger;
+    const domain = event.detail;
     if (domain) {
+      debugger;
       if (this.uploadedVideoId) {
         await window.adminServerApi.addVideoToDomain(domain.id, {
           videoId: this.uploadedVideoId,
@@ -169,6 +183,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
             <yp-language-selector
               name="defaultLocale"
               noUserEvents
+              @changed="${this._configChanged}"
               .selectedLocale="${this.collection!.default_locale}"
             >
             </yp-language-selector>
@@ -180,7 +195,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           templateData: html` <yp-theme-selector
             .object="${this.collection}"
             .themeObject="${this.collection as YpThemeContainerObject}"
-            .selectedTheme="${this.themeId}"
+            .selectedTheme="${this.collection?.theme_id}"
             @yp-theme-changed="${(event: CustomEvent) => {
               this.themeId = event.detail;
             }}"
@@ -227,6 +242,8 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
         {
           text: 'onlyAdminsCanCreateCommunities',
           type: 'checkbox',
+          value: (this.collection as YpDomainData).only_admins_can_create_communities,
+          translationToken: 'domain.onlyAdminsCanCreateCommunities'
         },
         {
           text: 'downloadFacebookImagesForUser',
@@ -283,8 +300,8 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           maxLength: 60
         },
         {
-          text: 'Facebook Client Id',
-          name: 'facebookClientId',
+          text: 'Facebook Client Secret',
+          name: 'facebookClientSecret',
           type: 'textfield',
           value: this._getSaveCollectionPath('secret_api_keys.facebook.client_secret'),
           maxLength: 60
@@ -373,5 +390,6 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
   _appHomeScreenIconImageUploaded(event: CustomEvent) {
     var image = JSON.parse(event.detail.xhr.response);
     this.appHomeScreenIconImageId = image.id;
+    this._configChanged();
   }
 }

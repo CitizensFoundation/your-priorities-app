@@ -262,9 +262,13 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public getTranscodingJobStatus(mediaType: string, mediaId: number) {
+  public getTranscodingJobStatus(mediaType: string, mediaId: number, jobId: string) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${mediaType}/${mediaId}/getTranscodingJobStatus`
+      this.baseUrlPath + `/${mediaType}/${mediaId}/getTranscodingJobStatus`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({jobId}),
+      },
     );
   }
 

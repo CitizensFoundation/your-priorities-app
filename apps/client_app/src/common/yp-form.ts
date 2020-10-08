@@ -478,7 +478,6 @@ export class YpForm extends YpBaseElement {
     if (this._isSubmittable(node, ignoreName)) {
       submittable!.push(node);
     } else if ((node as YpHTMLInputElement).root) {
-      debugger;
       this._findElements(
         (node as YpHTMLInputElement).root,
         ignoreName,
@@ -543,7 +542,9 @@ export class YpForm extends YpBaseElement {
       tag === 'input' ||
       tag === 'mwc-textarea' ||
       tag === 'mwc-textfield' ||
-      tag === 'yp-structured-question-edit'
+      tag === 'yp-structured-question-edit' ||
+      tag === 'yp-language-selector' ||
+      tag === 'yp-theme-selector'
     ) {
       return this._serializeInputValues(element);
     } else {
@@ -578,7 +579,13 @@ export class YpForm extends YpBaseElement {
     ) {
       return [];
     }
-    return [element.value];
+
+    // Don't do anything for yp-structured-answer-checkboxes for false
+    if ((element.value as unknown as boolean)===false) {
+      return [];
+    } else {
+      return [element.value];
+    }
   }
 
   _createHiddenElement(name: string, value: string) {
