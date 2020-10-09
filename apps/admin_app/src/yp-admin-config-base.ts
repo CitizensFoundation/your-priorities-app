@@ -64,8 +64,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   abstract renderHeader(): TemplateResult | {};
 
-  abstract _formResponse(event: CustomEvent): void;
 
+  async _formResponse(event: CustomEvent) {
+    this.configChanged = false;
+  }
 
   _selectTab(event: CustomEvent) {
     this.selectedTab = event.detail?.index as number;
@@ -161,6 +163,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                   id="configQuestion_${index}"
                   @yp-answer-content-changed="${this._configChanged}"
                   .name="${question.name || question.text}"
+                  debounceTimeMs="10"
                   .value="${question.value || this._getCurrentValue(question)}"
                   .question="${{
                     ...question,
@@ -306,6 +309,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   _configChanged() {
     this.configChanged = true;
+    debugger;
   }
 
   _getSaveCollectionPath(path: string) {

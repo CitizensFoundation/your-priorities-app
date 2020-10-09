@@ -147,7 +147,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
   }
 
   async _formResponse(event: CustomEvent) {
-    debugger;
+    super._formResponse(event);
     const domain = event.detail;
     if (domain) {
       debugger;
@@ -198,6 +198,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
             .selectedTheme="${this.collection?.theme_id}"
             @yp-theme-changed="${(event: CustomEvent) => {
               this.themeId = event.detail;
+              if (this.themeId) {
+                this._configChanged();
+              }
             }}"
           ></yp-theme-selector>`,
         },

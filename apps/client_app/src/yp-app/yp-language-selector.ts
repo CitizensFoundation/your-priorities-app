@@ -45,7 +45,7 @@ export class YpLanguageSelector extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
     if (changedProperties.has('selectedLocale')) {
-      this._selectedLocaleChanged(changedProperties.get('languages') as string);
+      this._selectedLocaleChanged(changedProperties.get('selectedLocale') as string);
       this.fire('yp-selected-locale-changed', this.selectedLocale);
     }
   }
@@ -296,7 +296,9 @@ export class YpLanguageSelector extends YpBaseElement {
   _selectedLocaleChanged(oldLocale: string) {
     if (this.selectedLocale) {
       this.value = this.selectedLocale;
-      this.fire('changed', this.value);
+      if (oldLocale) {
+        this.fire('changed', this.value);
+      }
       if (!this.noUserEvents && oldLocale) {
         if (!this.canUseAutoTranslate && this.autoTranslate) {
           this._stopTranslation();

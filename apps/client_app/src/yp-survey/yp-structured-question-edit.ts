@@ -53,6 +53,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   @property({ type: Array })
   structuredAnswers: Array<YpStructuredAnswer> | undefined;
 
+  @property({ type: Number })
+  debounceTimeMs = 2000
+
   radioKeypress = false;
 
   debunceChangeEventTimer: ReturnType<typeof setTimeout> | undefined;
@@ -582,7 +585,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         this.fire('yp-answer-content-changed', event.detail);
         this.debunceChangeEventTimer = undefined;
         this._resizeScrollerIfNeeded();
-      }, 2000);
+      }, this.debounceTimeMs);
     }
   }
 
