@@ -178,6 +178,112 @@ export class CsStory extends YpBaseElement {
     `;
   }
 
+  renderStoryFour() {
+    return html`
+      <cs-story-viewer>
+        <cs-story-card>
+          <img slot="media" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/shutterstock_1147582w93.png" />
+          <div class="bottom">
+            <h1 style="font-family: serif">Acme Hospital Monitoring</h1>
+            <p>Create Action Plan</p>
+          </div>
+        </cs-story-card>
+
+        <cs-story-card>
+          <video
+            slot="media"
+            src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/Sequence+%231(54).mp4"
+            loop
+            playsinline
+          ></video>
+          <div class="bottom">
+            <h2>This is a</h2>
+            <h1 style="font-family: serif">WELCOME</h1>
+            <h3>from us at ACME</h3>
+          </div>
+        </cs-story-card>
+
+        <cs-story-card>
+          <img slot="media" src="https://i.imgur.com/1wTXrAu.jpg" />
+          <h1>What questions do you have</h1>
+          <p>for Service Providers.</p>
+        </cs-story-card>
+
+        <cs-story-card>
+          <video
+            slot="media"
+            src="https://i.imgur.com/PwTsAT3.mp4"
+            loop
+            playsinline
+          ></video>
+          <div class="bottom">
+            <p>Your feedback can improve services</p>
+            <h1>Swipe to start</h1>
+          </div>
+        </cs-story-card>
+
+        <img
+          style="object-fit: cover"
+          src="https://i.imgur.com/ktDKGxb.jpg"
+          draggable="false"
+        />
+      </cs-story-viewer>
+    `;
+  }
+
+  renderStoryFive() {
+    return html`
+      <cs-story-viewer>
+        <cs-story-card>
+          <img slot="media" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/shutterstock_1147582w93.png" />
+          <div class="bottom">
+            <h1 style="font-family: serif">Acme Hospital Monitoring</h1>
+            <p>Create Action Plan</p>
+          </div>
+        </cs-story-card>
+
+        <cs-story-card>
+          <video
+            slot="media"
+            src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/Sequence+%231(54).mp4"
+            loop
+            playsinline
+          ></video>
+          <div class="bottom">
+            <h2>This is a</h2>
+            <h1 style="font-family: serif">WELCOME</h1>
+            <h3>from us at ACME</h3>
+          </div>
+        </cs-story-card>
+
+        <cs-story-card>
+          <img slot="media" src="https://i.imgur.com/1wTXrAu.jpg" />
+          <h1>What questions do you have</h1>
+          <p>for Service Providers.</p>
+        </cs-story-card>
+
+        <cs-story-card>
+          <video
+            slot="media"
+            src="https://i.imgur.com/PwTsAT3.mp4"
+            loop
+            playsinline
+          ></video>
+          <div class="bottom">
+            <p>Your feedback can improve services</p>
+            <h1>Swipe to start</h1>
+          </div>
+        </cs-story-card>
+
+        <img
+          style="object-fit: cover"
+          src="https://i.imgur.com/ktDKGxb.jpg"
+          draggable="false"
+        />
+      </cs-story-viewer>
+    `;
+  }
+
   static get styles() {
     return [
       css`
@@ -209,6 +315,10 @@ export class CsStory extends YpBaseElement {
       return this.renderStoryTwo();
     } else if (this.number===3) {
       return this.renderStoryThree();
+    } else if (this.number===4) {
+      return this.renderStoryFour();
+    } else if (this.number===5) {
+      return this.renderStoryFive();
     }
   }
 
