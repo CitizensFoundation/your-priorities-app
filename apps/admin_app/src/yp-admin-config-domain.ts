@@ -31,13 +31,11 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
 
   constructor() {
     super();
-    this.action = "/domains";
+    this.action = '/domains';
   }
 
   static get styles() {
-    return [super.styles, css`
-
-    `];
+    return [super.styles, css``];
   }
 
   renderHeader() {
@@ -71,10 +69,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
                 class="mainInput"
               >
               </mwc-textarea>
-              <div
-              class="horizontal end-justified layout pointEmoji"
-              <emoji-selector id="emojiSelectorPointFor"></emoji-selector>
-            </div>
+              <div class="horizontal end-justified layout pointEmoji">
+                <div class="flex"></div>
+                <yp-emoji-selector id="emojiSelectorDescription"></yp-emoji-selector>
+              </div>
             </div>
             <div>
               ${this.renderSaveButton()}
@@ -126,8 +124,8 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     }
 
     if (changedProperties.has('collectionId') && this.collectionId) {
-      if (this.collectionId == "new") {
-        this.action = "/domains";
+      if (this.collectionId == 'new') {
+        this.action = '/domains';
       } else {
         this.action = `/domains/${this.collectionId}`;
       }
@@ -227,7 +225,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
                         <mwc-checkbox
                           name="useVideoCover"
                           ?disabled="${!this.uploadedVideoId}"
-                          ?checked="${this.collection!.configuration.useVideoCover}">
+                          ?checked="${this.collection!.configuration
+                            .useVideoCover}"
+                        >
                         </mwc-checkbox>
                       </mwc-formfield>
                     </div>
@@ -240,13 +240,14 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           text: 'analyticsTrackerCode',
           name: 'google_analytics_code',
           type: 'textfield',
-          value: (this.collection as YpDomainData).google_analytics_code
+          value: (this.collection as YpDomainData).google_analytics_code,
         },
         {
           text: 'onlyAdminsCanCreateCommunities',
           type: 'checkbox',
-          value: (this.collection as YpDomainData).only_admins_can_create_communities,
-          translationToken: 'domain.onlyAdminsCanCreateCommunities'
+          value: (this.collection as YpDomainData)
+            .only_admins_can_create_communities,
+          translationToken: 'domain.onlyAdminsCanCreateCommunities',
         },
         {
           text: 'downloadFacebookImagesForUser',
@@ -299,31 +300,39 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           text: 'Facebook Client Id',
           name: 'facebookClientId',
           type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.facebook.client_id'),
-          maxLength: 60
+          value: this._getSaveCollectionPath(
+            'secret_api_keys.facebook.client_id'
+          ),
+          maxLength: 60,
         },
         {
           text: 'Facebook Client Secret',
           name: 'facebookClientSecret',
           type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.facebook.client_secret'),
-          maxLength: 60
+          value: this._getSaveCollectionPath(
+            'secret_api_keys.facebook.client_secret'
+          ),
+          maxLength: 60,
         },
         {
           text: 'Google Client Id',
           name: 'googleClientId',
           type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.google.client_id'),
-          maxLength: 60
+          value: this._getSaveCollectionPath(
+            'secret_api_keys.google.client_id'
+          ),
+          maxLength: 60,
         },
         {
           text: 'Google Client Secret',
           name: 'googleClientSecret',
           type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.google.client_secret'),
-          maxLength: 60
-        }
-      ]
+          value: this._getSaveCollectionPath(
+            'secret_api_keys.google.client_secret'
+          ),
+          maxLength: 60,
+        },
+      ],
     });
 
     tabs.push({
@@ -335,34 +344,38 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           name: 'samlEntryPoint',
           type: 'textfield',
           value: this._getSaveCollectionPath('secret_api_keys.saml.entryPoint'),
-          maxLength: 100
+          maxLength: 100,
         },
         {
           text: 'SAML Issuer',
           name: 'samlIssuer',
           type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.issuer')
+          value: this._getSaveCollectionPath('secret_api_keys.saml.issuer'),
         },
         {
           text: 'SAML Identifier Format',
           name: 'samlIdentifierFormat',
           type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.identifierFormat')
+          value: this._getSaveCollectionPath(
+            'secret_api_keys.saml.identifierFormat'
+          ),
         },
         {
           text: 'samlLoginButtonUrl',
-          type: 'textfield'
+          type: 'textfield',
         },
         {
           text: 'customSamlLoginText',
-          type: 'textfield'
+          type: 'textfield',
         },
         {
           text: 'SAML CallbackUrl',
           name: 'samlCallbackUrl',
           type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.callbackUrl'),
-          maxLength: 100
+          value: this._getSaveCollectionPath(
+            'secret_api_keys.saml.callbackUrl'
+          ),
+          maxLength: 100,
         },
         {
           text: 'SAML Verification Certificate Chain',
@@ -371,21 +384,20 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           value: this._getSaveCollectionPath('secret_api_keys.saml.cert'),
           maxLength: 20000,
           rows: 2,
-          maxRows: 5
+          maxRows: 5,
         },
         {
           text: 'customSAMLErrorHTML',
           type: 'textarea',
           rows: 2,
-          maxRows: 5
+          maxRows: 5,
         },
         {
           text: 'forceSecureSamlEmployeeLogin',
           type: 'checkbox',
-        }
-      ]
+        },
+      ],
     });
-
 
     return tabs;
   }
