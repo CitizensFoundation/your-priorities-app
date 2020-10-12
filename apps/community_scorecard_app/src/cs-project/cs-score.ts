@@ -14,6 +14,7 @@ import '@material/mwc-textarea';
 import '../cs-story/cs-story.js';
 import '@manufosela/stars-rating';
 import { ShadowStyles } from '../@yrpri/ShadowStyles.js';
+import Chart from 'chart.js';
 
 @customElement('cs-score')
 export class CsScore extends YpBaseElement {
@@ -57,10 +58,32 @@ export class CsScore extends YpBaseElement {
             icon="info_outlined"
             stacked
           ></mwc-tab>
+          <mwc-tab
+            .label="${this.t('analytics')}"
+            icon="equalizer"
+            stacked
+          ></mwc-tab>
         </mwc-tab-bar>
       </div>
     `;
   }
+
+  renderAnalytics() {
+    return html`
+    <div class="layout vertical center-center">
+      <canvas id="line-chart-1" width="800" height="400"></canvas>
+      <canvas id="line-chart-2" width="800" height="400"></canvas>
+      <canvas id="line-chart-3" width="800" height="400"></canvas>
+      <canvas id="line-chart-4" width="800" height="400"></canvas>
+      <canvas id="line-chart-5" width="800" height="400"></canvas>
+      <canvas id="line-chart-6" width="800" height="400"></canvas>
+      <canvas id="line-chart-7" width="800" height="400"></canvas>
+      <canvas id="line-chart-8" width="800" height="400"></canvas>
+      <canvas id="line-chart-9" width="800" height="400"></canvas>
+    </div>
+    `;
+  }
+
 
   _selectTab(event: CustomEvent) {
     this.selectedTab = event.detail?.index as number;
@@ -77,7 +100,10 @@ export class CsScore extends YpBaseElement {
       case 1:
         page = this.renderInformation();
         break;
-    }
+      case 2:
+        page = this.renderAnalytics();
+        break;
+      }
 
     return page;
   }
@@ -167,6 +193,110 @@ export class CsScore extends YpBaseElement {
           `}
     `;
   }
+
+  get randomRating() {
+    return (Math.floor(Math.random() * 6) + 1).toString();
+  }
+
+  async updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('selectedTab')) {
+      if (this.selectedTab==2) {
+        await this.requestUpdate();
+        this.setupChart(1,this.stockIssues[0]);
+        this.setupChart(2,this.stockIssues[1]);
+        this.setupChart(3,this.stockIssues[2]);
+        this.setupChart(4,this.stockIssues[3]);
+        this.setupChart(5,this.stockIssues[4]);
+        this.setupChart(6,this.stockIssues[5]);
+        this.setupChart(7,this.stockIssues[6]);
+        this.setupChart(8,this.stockIssues[7]);
+        this.setupChart(9,this.stockIssues[8]);
+      }
+    }
+  }
+
+
+  randomScalingFactor(): number {
+    return Math.trunc((Math.round(Math.random() * 5)));
+  }
+
+  setupChart (number: number, title: string) {
+    const lineChartElement = this.shadowRoot!.getElementById(`line-chart-${number}`);
+    const config = {
+			type: 'line',
+			data: {
+				labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 'Round 6', 'Round 7'],
+				datasets: [{
+					label: this.t('communityScore'),
+					backgroundColor: "#FFF",
+          borderColor: "#000",
+          beginAtZero: true,
+					data: [
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor()
+					],
+					fill: false,
+        }
+      ]
+			},
+			options: {
+        responsive: false,
+        elements: {
+          line: {
+              tension: 0.1
+          }
+        },
+				title: {
+					display: true,
+          text: title,
+          fontSize: 20
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: false,
+							labelString: 'Rounds'
+						},
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Score'
+            },
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+          }
+					}]
+				}
+			}
+    };
+
+    if (this.charts[number]) {
+//      this.charts.destroy();
+    }
+
+    this.charts[number] = new Chart(lineChartElement as HTMLCanvasElement, config as any);
+  }
+
+  charts: Record<number, Chart> = {}
 
   async _lastStoryCard() {
     //this.fire('yp-unhide-app-bar');

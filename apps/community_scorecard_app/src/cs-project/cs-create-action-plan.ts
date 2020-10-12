@@ -11,6 +11,7 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-button';
 import '@material/mwc-radio';
+import Chart from 'chart.js';
 
 import '@material/mwc-formfield';
 
@@ -41,7 +42,9 @@ export const CreationStages: Record<string, number> = {
 export const TabTypes: Record<string, number> = {
   ActionPlan: 0,
   Information: 1,
-  Facilitator: 2,
+  Previous: 2,
+  Analytics: 3,
+  Facilitator: 4
 };
 
 class CsActionItem {
@@ -68,6 +71,8 @@ export class CsCreateIssues extends YpBaseElement {
   currentActionItem: CsActionItem | undefined;
 
   currentPointFor = true;
+
+  charts: Record<number, Chart> = {}
 
   nominees = [
     'John Travolta',
@@ -153,6 +158,10 @@ export class CsCreateIssues extends YpBaseElement {
     }
   }
 
+  randomScalingFactor(): number {
+    return Math.trunc((Math.round(Math.random() * 5)));
+  }
+
   renderIntroStory() {
     return html`
       <div class="layout vertical center-center">
@@ -176,6 +185,100 @@ export class CsCreateIssues extends YpBaseElement {
   get randomRating() {
     return (Math.floor(Math.random() * 6) + 1).toString();
   }
+
+  async updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('selectedTab')) {
+      if (this.selectedTab==TabTypes.Analytics) {
+        await this.requestUpdate();
+        this.setupChart(1,this.stockIssues[0]);
+        this.setupChart(2,this.stockIssues[1]);
+        this.setupChart(3,this.stockIssues[2]);
+        this.setupChart(4,this.stockIssues[3]);
+        this.setupChart(5,this.stockIssues[4]);
+        this.setupChart(6,this.stockIssues[5]);
+        this.setupChart(7,this.stockIssues[6]);
+        this.setupChart(8,this.stockIssues[7]);
+        this.setupChart(9,this.stockIssues[8]);
+      }
+    }
+  }
+
+  setupChart (number: number, title: string) {
+    const lineChartElement = this.shadowRoot!.getElementById(`line-chart-${number}`);
+    const config = {
+			type: 'line',
+			data: {
+				labels: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 'Round 6', 'Round 7'],
+				datasets: [{
+					label: this.t('communityScore'),
+					backgroundColor: "#FFF",
+          borderColor: "#000",
+          beginAtZero: true,
+					data: [
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor(),
+						this.randomScalingFactor()
+					],
+					fill: false,
+        }
+      ]
+			},
+			options: {
+        responsive: false,
+        elements: {
+          line: {
+              tension: 0.1
+          }
+        },
+				title: {
+					display: true,
+          text: title,
+          fontSize: 20
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: false,
+							labelString: 'Rounds'
+						},
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Score'
+            },
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+          }
+					}]
+				}
+			}
+    };
+
+    if (this.charts[number]) {
+//      this.charts.destroy();
+    }
+
+    this.charts[number] = new Chart(lineChartElement as HTMLCanvasElement, config as any);
+  }
+
 
   renderReviewIssuesWithScores() {
     return html`
@@ -221,6 +324,45 @@ export class CsCreateIssues extends YpBaseElement {
     `;
   }
 
+
+  renderAnalytics() {
+    return html`
+    <div class="layout vertical center-center">
+      <canvas id="line-chart-1" width="800" height="400"></canvas>
+      <canvas id="line-chart-2" width="800" height="400"></canvas>
+      <canvas id="line-chart-3" width="800" height="400"></canvas>
+      <canvas id="line-chart-4" width="800" height="400"></canvas>
+      <canvas id="line-chart-5" width="800" height="400"></canvas>
+      <canvas id="line-chart-6" width="800" height="400"></canvas>
+      <canvas id="line-chart-7" width="800" height="400"></canvas>
+      <canvas id="line-chart-8" width="800" height="400"></canvas>
+      <canvas id="line-chart-9" width="800" height="400"></canvas>
+    </div>
+    `;
+  }
+
+  renderPrevious() {
+    return html`
+      <div class="layout vertical center-center issueContainer">
+        <div class="rateIssuesHeader">${this.t('previousActionPlans')}</div>
+        ${this.stockIssues.map(issue => {
+          return html`
+            <div
+              class="issueCard shadow-elevation-4dp shadow-transition layout horizontal"
+            >
+              <div class="layout vertical">
+                <div class="issueName">${issue}</div>
+                <div style="margin-top: 8px;">
+                  SOME ACTION!
+                </div>
+              </div>
+            </div>
+          `;
+        })}
+      </div>
+    `;
+  }
+
   renderTabs() {
     return html`
       <div class="layout vertical center-center">
@@ -233,6 +375,16 @@ export class CsCreateIssues extends YpBaseElement {
           <mwc-tab
             .label="${this.t('information')}"
             icon="info_outlined"
+            stacked
+          ></mwc-tab>
+          <mwc-tab
+            .label="${this.t('previous')}"
+            icon="archive_outlined"
+            stacked
+          ></mwc-tab>
+          <mwc-tab
+            .label="${this.t('analytics')}"
+            icon="equalizer"
             stacked
           ></mwc-tab>
           <mwc-tab
@@ -294,6 +446,12 @@ export class CsCreateIssues extends YpBaseElement {
         break;
       case TabTypes.Information:
         page = this.renderInformation();
+        break;
+      case TabTypes.Previous:
+        page = this.renderPrevious();
+        break;
+      case TabTypes.Analytics:
+        page = this.renderAnalytics();
         break;
       case TabTypes.Facilitator:
         page = this.renderFacilitator();
@@ -715,6 +873,12 @@ export class CsCreateIssues extends YpBaseElement {
 
         .newItemButton {
           margin-left: 16px;
+        }
+
+        .issueName {
+          font-weight: bold;
+          padding-bottom: 8px;
+          padding-top: 8px;
         }
       `,
     ];
