@@ -50,7 +50,7 @@ export class CsScore extends YpBaseElement {
         <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
           <mwc-tab
             .label="${this.t('serviceProviderAnswers')}"
-            icon="pending_actions"
+            icon="comment"
             stacked
           ></mwc-tab>
           <mwc-tab
