@@ -53,5 +53,8 @@
   "pointFor": "Point for",
   "pointAgainst": "Point against",
   "noActionItemsYet": "No Action Items Yet",
-  "newItem": "New Item"
+  "newItem": "New Item",
+  "startScoring": "Start Scoring",
+  "serviceProviderAnswers": "Service Provider Answers",
+  "report": "Monitoring Report"
 }

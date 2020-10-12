@@ -20,6 +20,12 @@ export class CsScore extends YpBaseElement {
   @property({ type: Boolean })
   storyOpen = true;
 
+  @property({ type: Boolean })
+  reviewOpen = true;
+
+  @property({ type: Number })
+  selectedTab = 0;
+
   @property({ type: Array })
   stockIssues = [
     'Attitute of staff',
@@ -37,6 +43,77 @@ export class CsScore extends YpBaseElement {
     //TODO
   }
 
+  renderTabs() {
+    return html`
+      <div class="layout vertical center-center">
+        <mwc-tab-bar @MDCTabBar:activated="${this._selectTab}">
+          <mwc-tab
+            .label="${this.t('serviceProviderAnswers')}"
+            icon="pending_actions"
+            stacked
+          ></mwc-tab>
+          <mwc-tab
+            .label="${this.t('information')}"
+            icon="info_outlined"
+            stacked
+          ></mwc-tab>
+        </mwc-tab-bar>
+      </div>
+    `;
+  }
+
+  _selectTab(event: CustomEvent) {
+    this.selectedTab = event.detail?.index as number;
+  }
+
+
+  renderCurrentTabPage(): TemplateResult | undefined {
+    let page: TemplateResult | undefined;
+
+    switch (this.selectedTab) {
+      case 0:
+        page = this.renderAnswers();
+        break;
+      case 1:
+        page = this.renderInformation();
+        break;
+    }
+
+    return page;
+  }
+
+  renderInformation() {
+    return html`
+      <h1>Some information and links</h1>
+    `
+  }
+
+  renderAnswers() {
+    return html`
+      ${this.stockIssues.map(issue => {
+        return html`
+                    <div
+                      class="issueCard shadow-elevation-4dp shadow-transition layout horizontal"
+                    >
+                      <div class="layout vertical">
+                        <div class="issueName">${issue}</div>
+                        <div class="layout vertical">
+                          <p><em>Answer from Service Provider 1</em></br>
+                          Answer....</p>
+                          <p><em>Answer from Service Provider 2</em></br>
+                          Answer....</p>
+                          <p><em>Answer from Service Provider 3</em></br>
+                          Answer....</p>
+                          <p><em>Answer from Service Provider 4</em></br>
+                          Answer....</p>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+      })}
+    `;
+  }
+
   render() {
     return html`
       ${this.storyOpen
@@ -47,30 +124,45 @@ export class CsScore extends YpBaseElement {
           `
         : html`
             <div class="layout vertical center-center issueContainer">
-              ${this.stockIssues.map(issue => {
-                return html`
-                  <div
-                    class="issueCard shadow-elevation-4dp shadow-transition layout horizontal"
-                  >
-                    <div class="layout vertical">
-                      <div class="issueName">${issue}</div>
-                      <div class="layout horizontal">
-                        <stars-rating
-                          id="emoji"
-                          numstars="5"
-                          manual
-                          @click="${this._answerIntroSurvey}"
-                        ></stars-rating>
-                      </div>
-                      <mwc-textarea
-                        .label="${this.t('reason')}"
-                        maxLength="250"
-                        charCounter
-                      ></mwc-textarea>
+              ${this.reviewOpen
+                ? html`
+                    ${this.renderTabs()} ${this.renderCurrentTabPage()}
+                    <div class="layout horizontal center-center">
+                      <mwc-button
+                        .label="${this.t('startScoring')}"
+                        @click="${() => {
+                          this.reviewOpen = false;
+                        }}"
+                        raised
+                      ></mwc-button>
                     </div>
-                  </div>
-                `;
-              })}
+                  `
+                : html`
+                    ${this.stockIssues.map(issue => {
+                      return html`
+                        <div
+                          class="issueCard shadow-elevation-4dp shadow-transition layout horizontal"
+                        >
+                          <div class="layout vertical">
+                            <div class="issueName">${issue}</div>
+                            <div class="layout horizontal">
+                              <stars-rating
+                                id="emoji"
+                                numstars="5"
+                                manual
+                                @click="${this._answerIntroSurvey}"
+                              ></stars-rating>
+                            </div>
+                            <mwc-textarea
+                              .label="${this.t('reason')}"
+                              maxLength="250"
+                              charCounter
+                            ></mwc-textarea>
+                          </div>
+                        </div>
+                      `;
+                    })}
+                  `}
             </div>
           `}
     `;
@@ -186,6 +278,14 @@ export class CsScore extends YpBaseElement {
 
         .issueContainer {
           margin-top: 24px;
+        }
+
+        mwc-button {
+          margin: 32px;
+        }
+
+        mwc-tab-bar {
+          margin-bottom: 16px;
         }
       `,
     ];

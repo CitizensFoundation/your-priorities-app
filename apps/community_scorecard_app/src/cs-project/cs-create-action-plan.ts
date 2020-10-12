@@ -53,7 +53,7 @@ class CsActionItem {
 @customElement('cs-create-action-plan')
 export class CsCreateIssues extends YpBaseElement {
   @property({ type: Number })
-  stage = CreationStages.CreateActionPlan;
+  stage = CreationStages.IntroStory;
 
   @property({ type: Number })
   rating: number | undefined;

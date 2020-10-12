@@ -205,8 +205,8 @@ export class CsStory extends YpBaseElement {
 
         <cs-story-card>
           <img slot="media" src="https://i.imgur.com/1wTXrAu.jpg" />
-          <h1>What questions do you have</h1>
-          <p>for Service Providers.</p>
+          <h1>What actions </h1>
+          <p>are needed</p>
         </cs-story-card>
 
         <cs-story-card>
@@ -218,7 +218,7 @@ export class CsStory extends YpBaseElement {
           ></video>
           <div class="bottom">
             <p>Your feedback can improve services</p>
-            <h1>Swipe to start</h1>
+            <h1>Swipe to create action plan</h1>
           </div>
         </cs-story-card>
 
@@ -238,7 +238,7 @@ export class CsStory extends YpBaseElement {
           <img slot="media" src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/shutterstock_1147582w93.png" />
           <div class="bottom">
             <h1 style="font-family: serif">Acme Hospital Monitoring</h1>
-            <p>Create Action Plan</p>
+            <p style="margin:16px;">There has been an update on waiting times!</p>
           </div>
         </cs-story-card>
 
@@ -258,8 +258,8 @@ export class CsStory extends YpBaseElement {
 
         <cs-story-card>
           <img slot="media" src="https://i.imgur.com/1wTXrAu.jpg" />
-          <h1>What questions do you have</h1>
-          <p>for Service Providers.</p>
+          <h1>Here are the results</h1>
+          <p>...</p>
         </cs-story-card>
 
         <cs-story-card>
@@ -270,8 +270,8 @@ export class CsStory extends YpBaseElement {
             playsinline
           ></video>
           <div class="bottom">
-            <p>Your feedback can improve services</p>
-            <h1>Swipe to start</h1>
+            <p>More information later</p>
+            <h1>Swipe to end</h1>
           </div>
         </cs-story-card>
 

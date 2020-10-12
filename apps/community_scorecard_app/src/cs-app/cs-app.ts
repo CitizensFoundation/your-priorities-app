@@ -45,6 +45,7 @@ import '../cs-project/cs-projects.js';
 import '../cs-project/cs-project.js';
 import '../cs-project/cs-round.js';
 import '../cs-project/cs-create-action-plan.js';
+import '../cs-project/cs-report.js';
 
 import '../cs-project/cs-choose-meeting-time.js';
 
@@ -527,7 +528,17 @@ export class CsApp extends YpBaseElement {
             ></cs-create-action-plan>
           `);
           break;
-        default:
+        case 'report':
+            pageHtml = cache(html`
+              <cs-report
+                id="report"
+                role="main"
+                aria-label="${this.t('report')}"
+                .subRoute="${this.subRoute}"
+              ></cs-report>
+            `);
+            break;
+          default:
           pageHtml = cache(html` <yp-view-404 name="view-404"></yp-view-404> `);
           break;
       }
