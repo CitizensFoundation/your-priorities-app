@@ -323,7 +323,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   _updateEmojiBindings() {
     setTimeout(() => {
       const description = this.$$('#description') as HTMLInputElement;
-      description.dispatchEvent(new CustomEvent("changed"));
+//      description.dispatchEvent(new CustomEvent("changed"));
       const emojiSelector = this.$$(
         '#emojiSelectorDescription'
       ) as YpEmojiSelector;

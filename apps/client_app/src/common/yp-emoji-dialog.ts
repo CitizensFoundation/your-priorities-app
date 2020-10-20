@@ -31,7 +31,7 @@ export class YpEmojiDialog extends YpBaseElement {
 
   pickEmoji(selection: EmojiSelection) {
     if (this.inputTarget) {
-      //TODO: Test if this actually works
+      //TODO: Get this or something like it working
       //insertTextAtCursor(this.inputTarget, selection.emoji as string);
       let value = '';
       if (this.inputTarget.value) value = this.inputTarget.value;
@@ -43,6 +43,7 @@ export class YpEmojiDialog extends YpBaseElement {
           behavior: 'smooth',
         });
         this.inputTarget!.focus();
+        this.inputTarget!.dispatchEvent(new CustomEvent("change"));
         this.inputTarget = undefined
         this.trigger = undefined
       })
