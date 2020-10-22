@@ -120,6 +120,8 @@ module.exports = (sequelize, DataTypes) => {
           callbackDomainName = 'mineideer.'+domain.domain_name;
         } else if (domain.domain_name==='parliament.scot') {
           callbackDomainName = 'engage.'+domain.domain_name;
+        } else if (domain.domain_name==='multicitychallenge.org') {
+          callbackDomainName = 'yp.'+domain.domain_name;
         } else {
           callbackDomainName = 'login.'+domain.domain_name;
         }
