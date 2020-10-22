@@ -686,6 +686,8 @@ export class YpLogin extends YpBaseElement {
       hostName = 'mineideer';
     } else if (domainName.indexOf('parliament.scot') > -1) {
       hostName = 'engage';
+    } else if (domainName.indexOf('multicitychallenge.org') > -1) {
+      hostName = 'yp';
     } else if (domainName.indexOf('smarter.nj.gov') > -1) {
       hostName = 'enjine';
     } else {
