@@ -26,9 +26,6 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
   @property({ type: Number })
   appHomeScreenIconImageId: number | undefined;
 
-  @property({ type: Number })
-  uploadedVideoId: number | undefined;
-
   constructor() {
     super();
     this.action = '/domains';
@@ -42,38 +39,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     return this.collection
       ? html`
           <div class="layout horizontal wrap">
-            <div class="layout vertical">
-              <mwc-textfield
-                id="name"
-                name="name"
-                type="text"
-                @change="${this._configChanged}"
-                .label="${this.t('Name')}"
-                .value="${this.collection.name}"
-                maxlength="20"
-                charCounter
-                class="mainInput"
-              >
-              </mwc-textfield>
-
-              <mwc-textarea
-                id="description"
-                name="description"
-                .value="${this.collection.description!}"
-                .label="${this.t('Description')}"
-                charCounter
-                @change="${this._configChanged}"
-                rows="3"
-                max-rows="5"
-                maxlength="300"
-                class="mainInput"
-              >
-              </mwc-textarea>
-              <div class="horizontal end-justified layout pointEmoji">
-                <div class="flex"></div>
-                <yp-emoji-selector id="emojiSelectorDescription"></yp-emoji-selector>
-              </div>
-            </div>
+            ${this.renderNameAndDescription()}
             <div>
               ${this.renderSaveButton()}
             </div>
@@ -88,23 +54,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
       : nothing;
   }
 
-  _videoUploaded(event: CustomEvent) {
-    debugger;
-    this.uploadedVideoId = event.detail.videoId;
-    this.collection!.configuration.useVideoCover = true;
-    this._configChanged();
-    this.requestUpdate();
-  }
-
   _clear() {
-    this.collection = undefined;
-    this.uploadedLogoImageId = undefined;
-    this.uploadedHeaderImageId = undefined;
+    super._clear();
     this.appHomeScreenIconImageId = undefined;
-    (this.$$('#headerImageUpload') as YpFileUpload).clear();
-    (this.$$('#logoImageUpload') as YpFileUpload).clear();
-    if (this.$$('#videoFileUpload'))
-      (this.$$('#videoFileUpload') as YpFileUpload).clear();
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {

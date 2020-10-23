@@ -15,6 +15,7 @@ import './@yrpri/common/yp-form.js';
 import { CircularProgressFourColorBase } from '@material/mwc-circular-progress-four-color/mwc-circular-progress-four-color-base';
 import { YpEmojiSelector } from './@yrpri/common/yp-emoji-selector.js';
 import { nothing } from 'lit-html';
+import { YpFileUpload } from './@yrpri/yp-file-upload/yp-file-upload.js';
 
 export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Array })
@@ -44,6 +45,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Number })
   uploadedHeaderImageId: number | undefined;
 
+  @property({ type: Number })
+  uploadedVideoId: number | undefined;
+
   @property({ type: String })
   editHeaderText: string | undefined;
 
@@ -63,7 +67,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   abstract setupConfigTabs(): Array<YpConfigTabData>;
 
   abstract renderHeader(): TemplateResult | {};
-
 
   async _formResponse(event: CustomEvent) {
     this.configChanged = false;
@@ -241,6 +244,48 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
       `,
     ];
   }
+
+  renderNameAndDescription(hideDescription = false) {
+    return html`
+      <div class="layout vertical">
+        <mwc-textfield
+          id="name"
+          name="name"
+          type="text"
+          @change="${this._configChanged}"
+          .label="${this.t('Name')}"
+          .value="${this.collection!.name}"
+          maxlength="20"
+          charCounter
+          class="mainInput"
+        >
+        </mwc-textfield>
+
+        ${
+          !hideDescription
+            ? html`<mwc-textarea
+                id="description"
+                name="description"
+                .value="${this.collection!.description!}"
+                .label="${this.t('Description')}"
+                charCounter
+                @change="${this._configChanged}"
+                rows="3"
+                max-rows="5"
+                maxlength="300"
+                class="mainInput"
+              ></mwc-textarea>`
+            : nothing
+        }
+        </mwc-textarea>
+        <div class="horizontal end-justified layout pointEmoji">
+          <div class="flex"></div>
+          <yp-emoji-selector id="emojiSelectorDescription"></yp-emoji-selector>
+        </div>
+      </div>
+    `;
+  }
+
   render() {
     return this.configTabs
       ? html`
@@ -312,6 +357,14 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     debugger;
   }
 
+  _videoUploaded(event: CustomEvent) {
+    debugger;
+    this.uploadedVideoId = event.detail.videoId;
+    this.collection!.configuration.useVideoCover = true;
+    this._configChanged();
+    this.requestUpdate();
+  }
+
   _getSaveCollectionPath(path: string) {
     try {
       return eval(`this.collection.${path}`);
@@ -320,10 +373,20 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     }
   }
 
+  _clear() {
+    this.collection = undefined;
+    this.uploadedLogoImageId = undefined;
+    this.uploadedHeaderImageId = undefined;
+    (this.$$('#headerImageUpload') as YpFileUpload).clear();
+    (this.$$('#logoImageUpload') as YpFileUpload).clear();
+    if (this.$$('#videoFileUpload'))
+      (this.$$('#videoFileUpload') as YpFileUpload).clear();
+  }
+
   _updateEmojiBindings() {
     setTimeout(() => {
       const description = this.$$('#description') as HTMLInputElement;
-//      description.dispatchEvent(new CustomEvent("changed"));
+      //      description.dispatchEvent(new CustomEvent("changed"));
       const emojiSelector = this.$$(
         '#emojiSelectorDescription'
       ) as YpEmojiSelector;

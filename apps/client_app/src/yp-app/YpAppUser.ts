@@ -718,6 +718,7 @@ export class YpAppUser extends YpCodeBase {
         this.fireGlobal('yp-got-admin-rights', false);
       }
     }
+    this.fireGlobal('yp-have-checked-admin-rights');
   }
 
   _updateMembershipsIndex(memberships: YpMemberships) {
