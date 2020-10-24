@@ -528,11 +528,7 @@ export class YpPostsList extends YpBaseElement {
               this.group.configuration.canAddNewPosts === false &&
               this.group.configuration.canVote === false
             ) {
-              if (this.group.configuration.customRatings) {
-                this.filter = 'random';
-              } else {
-                this.filter = 'top';
-              }
+              this.filter = 'top';
             } else {
               this.filter = 'random';
             }
