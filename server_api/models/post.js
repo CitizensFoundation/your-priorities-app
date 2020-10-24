@@ -196,6 +196,7 @@ module.exports = (sequelize, DataTypes) => {
     Post.hasMany(models.Point);
     Post.hasMany(models.Endorsement);
     Post.hasMany(models.PostRevision);
+    Post.hasMany(models.Rating, { as: 'Ratings'});
     Post.belongsTo(models.Category, { foreignKey: 'category_id'});
     Post.belongsTo(models.User, { foreignKey: 'user_id'});
     Post.belongsTo(models.Group, { foreignKey: "group_id"});

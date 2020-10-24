@@ -1430,75 +1430,131 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     } else if (postsInfo) {
       res.send(JSON.parse(postsInfo));
     } else {
-      var where = { group_id: req.params.id, deleted: false };
+      models.Group.findOne({
+        where: {
+          id: req.params.id
+        },
+        attributes: ['id','configuration']
+      }).then((group)=> {
+        var where = { group_id: req.params.id, deleted: false };
+        const attributes = ['id','status','official_status','language','counter_endorsements_up',
+          'counter_endorsements_down','created_at'];
+        const includes = [];
 
-      var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
+        var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
-      if (req.params.filter==="newest") {
-        postOrder = "created_at DESC";
-      } else if (req.params.filter==="most_debated") {
-        postOrder = "counter_points DESC";
-      } else if (req.params.filter==="random") {
-        postOrder = "created_at DESC";
-      } else if (req.params.filter==="oldest") {
-        postOrder = "created_at ASC";
-      } else if (req.params.filter==="alphabetical") {
-        postOrder = "name ASC";
-      }
+        if (req.params.filter==="newest") {
+          postOrder = "created_at DESC";
+        } else if (req.params.filter==="most_debated") {
+          postOrder = "counter_points DESC";
+        } else if (req.params.filter==="random") {
+          postOrder = "created_at DESC";
+        } else if (req.params.filter==="oldest") {
+          postOrder = "created_at ASC";
+        } else if (req.params.filter==="alphabetical") {
+          postOrder = "name ASC";
+        }
 
-      if (req.params.categoryId!='null') {
-        where['category_id'] = req.params.categoryId;
-      }
+        let postOrderFinal = [
+          models.sequelize.literal(postOrder)
+        ];
 
-      log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
+        let seqGroup = null;
+        let ratingOrderNeeded = false;
+        let subQuery = null;
+        const ratingsPostLookup = {};
 
-      var offset = 0;
-      if (req.query.offset) {
-        offset = parseInt(req.query.offset);
-      }
+        if (req.params.filter==="top" &&
+            group.configuration &&
+            group.configuration.customRatings!=null &&
+            group.configuration.customRatings.length>0) {
 
-      if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
-        var PostsByStatus = models.Post.scope(req.params.status);
-        PostsByStatus.findAndCountAll({
-          where: where,
-          attributes: ['id','status','official_status','language','counter_endorsements_up',
-            'counter_endorsements_down','created_at'],
-          order: [
-            models.sequelize.literal(postOrder)
-          ],
-          limit: 20,
-          offset: offset
-        }).then(function(postResults) {
-          const posts = postResults.rows;
-          var totalPostsCount = postResults.count;
-          var postRows = posts;
-          if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
-            postRows = seededShuffle(postRows, req.query.randomSeed);
-          }
-          getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
-            if (error) {
-              log.error("Error getting group", { err: error });
-              res.sendStatus(500);
-            } else {
-              if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
-                finalRows = seededShuffle(finalRows, req.query.randomSeed);
-              }
-              const postsOut = {
-                posts: finalRows,
-                totalPostsCount: totalPostsCount
-              };
-              req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
-              res.send(postsOut);
-            }
+          includes.push({
+            model: models.Rating,
+            attributes: [ 'id','value'],
+            as: 'Ratings',
+            required: false
           });
-        }).catch(function (error) {
-          log.error("Error getting group", { err: error });
-          res.sendStatus(500);
-        });
-      } else {
-        log.error("Cant find status", { status: req.params.status });
-        res.sendStatus(404);
-      }
+
+          attributes.push([ models.sequelize.fn('AVG', models.sequelize.col("Ratings.value")), "RatingAverage" ])
+          seqGroup = ['Post.id','Ratings.id'];
+
+          // TODO: Get postgres ordering working
+          // postOrderFinal = [ ['RatingAverage','ASC']];
+
+          ratingOrderNeeded = true;
+          subQuery = false;
+        }
+
+        if (req.params.categoryId!='null') {
+          where['category_id'] = req.params.categoryId;
+        }
+
+        log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
+
+        var offset = 0;
+        if (req.query.offset) {
+          offset = parseInt(req.query.offset);
+        }
+
+        if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
+          var PostsByStatus = models.Post.scope(req.params.status);
+          PostsByStatus.findAndCountAll({
+            where: where,
+            attributes: attributes,
+            include: includes,
+            subQuery: subQuery,
+            group: seqGroup,
+            order: postOrderFinal,
+            limit: 20,
+            offset: offset
+          }).then(function(postResults) {
+            const posts = postResults.rows;
+            var totalPostsCount = postResults.count;
+            var postRows = posts;
+            if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
+              postRows = seededShuffle(postRows, req.query.randomSeed);
+            }
+
+            if (ratingOrderNeeded) {
+              postRows = _.forEach(postRows, (post) => {
+                ratingsPostLookup[post.dataValues.id]=post.dataValues.RatingAverage;
+              });
+              totalPostsCount = postResults.rows.length;
+            }
+
+            getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
+              if (error) {
+                log.error("Error getting group", { err: error });
+                res.sendStatus(500);
+              } else {
+                if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
+                  finalRows = seededShuffle(finalRows, req.query.randomSeed);
+                } else if (ratingOrderNeeded) {
+                  finalRows = _.orderBy(finalRows, [(post) => {
+                    return ratingsPostLookup[post.dataValues.id];
+                  }], ['desc'])
+                }
+
+                const postsOut = {
+                  posts: finalRows,
+                  totalPostsCount: totalPostsCount
+                };
+                req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+                res.send(postsOut);
+              }
+            });
+          }).catch(function (error) {
+            log.error("Error getting group", { err: error });
+            res.sendStatus(500);
+          });
+        } else {
+          log.error("Cant find status", { status: req.params.status });
+          res.sendStatus(404);
+        }
+      }).catch((errorGroup)=>{
+        sendGroupOrError(res, null, 'getPostsFromGroup Group.find', req.user, errorGroup);
+      })
     }
   });
 });
