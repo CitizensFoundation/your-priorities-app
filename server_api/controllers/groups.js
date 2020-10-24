@@ -1518,7 +1518,11 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
             if (ratingOrderNeeded) {
               postRows = _.forEach(postRows, (post) => {
-                ratingsPostLookup[post.dataValues.id]=post.dataValues.RatingAverage;
+                if (post.dataValues.Ratings.length>group.configuration.customRatings.length) {
+                  ratingsPostLookup[post.dataValues.id]=post.dataValues.RatingAverage;
+                } else {
+                  ratingsPostLookup[post.dataValues.id]=0.0;
+                }
               });
               totalPostsCount = postResults.rows.length;
             }
