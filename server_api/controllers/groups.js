@@ -1518,6 +1518,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
             if (ratingOrderNeeded) {
               postRows = _.forEach(postRows, (post) => {
+                // More than one round of full ratings for the rating to count towards top rating calc
                 if (post.dataValues.Ratings.length>group.configuration.customRatings.length) {
                   ratingsPostLookup[post.dataValues.id]=post.dataValues.RatingAverage;
                 } else {
