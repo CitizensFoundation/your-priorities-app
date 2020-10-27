@@ -1,6 +1,7 @@
 import { LitElement, css, property, html, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { YpBaseElement } from '../@yrpri/common/yp-base-element';
+import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';
 import { YpConfirmationDialog } from '../@yrpri/yp-dialog-container/yp-confirmation-dialog';
 
 @customElement('yp-content-moderation')
@@ -16,9 +17,6 @@ export class YpContentModeration extends YpBaseElement {
 
   @property({ type: Boolean })
   forceSpinner = false;
-
-  @property({ type: Boolean })
-  spinnerActive = false;
 
   @property({ type: Boolean })
   selectedItemsEmpty = true;
@@ -60,7 +58,7 @@ export class YpContentModeration extends YpBaseElement {
   selectedItemId: number | undefined;
 
   @property({ type: String })
-  selectedModelClass: string | undefined;
+  selectedModelClass: string | undefined | null;
 
   @property({ type: String })
   collectionName: string | undefined;
@@ -76,6 +74,8 @@ export class YpContentModeration extends YpBaseElement {
 
   @property({ type: Object })
   activeItem: YpDatabaseItem | undefined;
+
+  allowGridEventsAfterMenuOpen = false
 
   static get propertsies() {
     return {
@@ -99,32 +99,18 @@ export class YpContentModeration extends YpBaseElement {
         observer: '_userIdChanged',
       },
 
-      totalItemsCount: {
-        type: String,
-        computed: '_totalItemsCount(items)',
-      },
-
       activeItem: {
         type: Object,
         observer: '_activeItemChanged',
-      },
-
-      onlyFlaggedItems: {
-        type: Boolean,
-        computed: '_onlyFlaggedItems(typeOfModeration)',
-      },
-
-      spinnerActive: {
-        type: Boolean,
-        computed: '_spinnerActive(totalItemsCount, forceSpinner)',
-      },
+      }
     };
   }
 
   static get styles() {
     return [
+      super.styles,
       css`
-        #dialog {
+        :host {
           width: 100%;
           height: 100%;
           margin: 0;
@@ -284,467 +270,464 @@ export class YpContentModeration extends YpBaseElement {
         vaadin-grid {
           font-size: 14px;
         }
-      `,
-      YpFlexLayout,
+      `
     ];
+  }
+
+  renderItemDetail(root, column, rowData) {
+    const item = rowData.item;
+    return html`
+          <div class="details layout vertical center-center detailArea">
+            <div class="layout horizontal">
+              ${item.is_post
+                ? html`
+                    <div class="layout vertical center-center">
+                      <yp-post-header
+                        .hideActions=""
+                        .post="${item}"
+                        .postName="${item.name}"
+                        .headerMode=""
+                      ></yp-post-header>
+                      <a href="/post/${item.id}" target="_blank"
+                        ><paper-icon-button
+                          .ariaLabel="${this.t('linkToContentItem')}"
+                          class="linkIcon"
+                          .icon="link"
+                        ></paper-icon-button
+                      ></a>
+                    </div>
+                  `
+                : nothing}
+              ${this.item.is_point
+                ? html`
+                    <div class="layout vertical center-center">
+                      <yp-point hideActions .point="${this.item}"></yp-point>
+                      <a
+                        ?hidden="${!item.post_id}"
+                        href="/post/[[item.post_id]]/${this.item.id}"
+                        target="_blank"
+                        ><paper-icon-button
+                          .ariaLabel="${this.t('linkToContentItem')}"
+                          class="linkIcon"
+                          icon="link"
+                        ></paper-icon-button
+                      ></a>
+                    </div>
+                  `
+                : nothing}
+            </div>
+            <div
+              ?hidden="${!item.toxicityScore}"
+              class="layout horizontal analysis"
+            >
+              <div class="layout vertical leftColumn" ?hidden="${this.userId}">
+                <div
+                  class="mainScore"
+                  ?hidden="${!item.moderation_data.moderation
+                    .toxicityScore}"
+                >
+                  Toxicity Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.toxicityScore
+                  )}
+                </div>
+                <div
+                  ?hidden="${!item.moderation_data.moderation
+                    .identityAttackScore}"
+                >
+                  Identity Attack Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.identityAttackScore
+                  )}
+                </div>
+                <div
+                  ?hidden="${!item.moderation_data.moderation
+                    .identityAttachScore}"
+                >
+                  Identity Attack Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.identityAttachScore
+                  )}
+                </div>
+                <div
+                  ?hidden="${!item.moderation_data.moderation.threatScore}"
+                >
+                  Threat Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.threatScore
+                  )}
+                </div>
+                <div
+                  ?hidden="${!item.moderation_data.moderation.insultScore}"
+                >
+                  Insult Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.insultScore
+                  )}
+                </div>
+              </div>
+              <div class="layout vertical" ?hidden="${this.userId}">
+                <div
+                  class="mainScore"
+                  ?hidden="${!item.moderation_data.moderation
+                    .severeToxicityScore}"
+                >
+                  Severe Toxicity Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.severeToxicityScore
+                  )}
+                </div>
+                <div
+                  ?hidden="${!item.moderation_data.moderation
+                    .profanityScore}"
+                >
+                  Profanity Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.profanityScore
+                  )}
+                </div>
+                <div
+                  ?hidden="${!item.moderation_data.moderation
+                    .sexuallyExplicitScore}"
+                >
+                  Sexually Excplicit Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.sexuallyExplicitScore
+                  )}
+                </div>
+                <div
+                  ?hidden="${!item.moderation_data.moderation
+                    .flirtationScore}"
+                >
+                  Flirtation Score:
+                  ${this._toPercent(
+                    item.moderation_data.moderation.flirtationScore
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+    `
   }
 
   render() {
     return html`
-      <paper-dialog id="dialog" modal>
-        <div class="layout horizontal headerBox wrap">
-          <div>
-            <paper-icon-button
-              .ariaLabel="${this.t('close')}"
-              id="dismissBtn"
-              .icon="close"
-              class="closeButton"
-              .dialogDismiss
-            ></paper-icon-button>
-          </div>
-
-          <div class="headerText layout vertical">
-            <div class="layout horizontal">
-              <div class="collectionName">${this.collectionName}</div>
-            </div>
-            <div class="innerHeader">
-              ${this.headerText}
-              <span ?hidden="${!this.totalItemsCount}"
-                >(${this.totalItemsCount} ${this.itemsCountText})</span
-              >
-            </div>
-          </div>
-          <div ?hidden="${!this.spinnerActive}">
-            <paper-spinner active></paper-spinner>
-          </div>
-          <div class="flex"></div>
-          <div class="checkBox" ?hidden="${!this.wide}">
-            <paper-checkbox ?checked="${this.multiSortEnabled}"
-              >${this.t('multiSortEnabled')}</paper-checkbox
-            >
-          </div>
-          <div ?hidden="${!this.showReload}">
-            <paper-icon-button
-              .ariaLabel="${this.t('reload')}"
-              icon="autorenew"
-              class="closeButton"
-              @click="${this._reload}"
-            ></paper-icon-button>
-          </div>
+      <div class="layout horizontal headerBox wrap">
+        <div>
+          <paper-icon-button
+            .ariaLabel="${this.t('close')}"
+            id="dismissBtn"
+            .icon="close"
+            class="closeButton"
+            .dialogDismiss
+          ></paper-icon-button>
         </div>
 
-        <vaadin-grid
-          id="grid"
-          .multiSort="${this.multiSortEnabled}"
-          .activeItem="${this.activeItem}"
-          .ariaLabel="${this.headerText}"
-          .items="${this.items}"
-          .selectedItems="${this.selectedItems}"
-        >
-          <vaadin-grid-selection-column> </vaadin-grid-selection-column>
+        <div class="headerText layout vertical">
+          <div class="layout horizontal">
+            <div class="collectionName">${this.collectionName}</div>
+          </div>
+          <div class="innerHeader">
+            ${this.headerText}
+            <span ?hidden="${!this.totalItemsCount}"
+              >(${this.totalItemsCount} ${this.itemsCountText})</span
+            >
+          </div>
+        </div>
+        <div ?hidden="${!this.spinnerActive}">
+          <paper-spinner active></paper-spinner>
+        </div>
+        <div class="flex"></div>
+        <div class="checkBox" ?hidden="${!this.wide}">
+          <paper-checkbox ?checked="${this.multiSortEnabled}"
+            >${this.t('multiSortEnabled')}</paper-checkbox
+          >
+        </div>
+        <div ?hidden="${!this.showReload}">
+          <paper-icon-button
+            .ariaLabel="${this.t('reload')}"
+            icon="autorenew"
+            class="closeButton"
+            @click="${this._reload}"
+          ></paper-icon-button>
+        </div>
+      </div>
 
-          <template class="row-details">
-            <div class="details layout vertical center-center detailArea">
-              <div class="layout horizontal">
-                ${this.item.is_post
-                  ? html`
-                      <div class="layout vertical center-center">
-                        <yp-post-header
-                          .hideActions=""
-                          .post="${this.item}"
-                          .postName="${this.item.name}"
-                          .headerMode=""
-                        ></yp-post-header>
-                        <a href="/post/${this.item.id}" target="_blank"
-                          ><paper-icon-button
-                            .ariaLabel="${this.t('linkToContentItem')}"
-                            class="linkIcon"
-                            .icon="link"
-                          ></paper-icon-button
-                        ></a>
-                      </div>
-                    `
-                  : nothing}
-                ${this.item.is_point
-                  ? html`
-                      <div class="layout vertical center-center">
-                        <yp-point .hideActions .point="${this.item}"></yp-point>
-                        <a
-                          ?hidden="${!this.item.post_id}"
-                          href="/post/[[item.post_id]]/${this.item.id}"
-                          target="_blank"
-                          ><paper-icon-button
-                            .ariaLabel="${this.t('linkToContentItem')}"
-                            class="linkIcon"
-                            .icon="link"
-                          ></paper-icon-button
-                        ></a>
-                      </div>
-                    `
-                  : nothing}
-              </div>
-              <div
-                ?hidden="${!this.item.toxicityScore}"
-                class="layout horizontal analysis"
-              >
-                <div
-                  class="layout vertical leftColumn"
-                  ?hidden="${this.userId}"
-                >
-                  <div
-                    class="mainScore"
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .toxicityScore}"
-                  >
-                    Toxicity Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.toxicityScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .identityAttackScore}"
-                  >
-                    Identity Attack Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.identityAttackScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .identityAttachScore}"
-                  >
-                    Identity Attack Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.identityAttachScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .threatScore}"
-                  >
-                    Threat Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.threatScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .insultScore}"
-                  >
-                    Insult Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.insultScore
-                    )}
-                  </div>
-                </div>
-                <div class="layout vertical" ?hidden="${this.userId}">
-                  <div
-                    class="mainScore"
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .severeToxicityScore}"
-                  >
-                    Severe Toxicity Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.severeToxicityScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .profanityScore}"
-                  >
-                    Profanity Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.profanityScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .sexuallyExplicitScore}"
-                  >
-                    Sexually Excplicit Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.sexuallyExplicitScore
-                    )}
-                  </div>
-                  <div
-                    ?hidden="${!this.item.moderation_data.moderation
-                      .flirtationScore}"
-                  >
-                    Flirtation Score:
-                    ${this._toPercent(
-                      item.moderation_data.moderation.flirtationScore
-                    )}
-                  </div>
-                </div>
-              </div>
+      <vaadin-grid
+        id="grid"
+        .multiSort="${this.multiSortEnabled}"
+        .activeItem="${this.activeItem}"
+        .ariaLabel="${this.headerText}"
+        .rowDetailsRenderer="${this.renderItemDetail}"
+        .items="${this.items}"
+        .selectedItems="${this.selectedItems}"
+      >
+        <vaadin-grid-selection-column> </vaadin-grid-selection-column>
+
+        <vaadin-grid-sort-column
+          width="130px"
+          flexGrow="0"
+          path="firstReportedDate"
+          .header="${this.t('firstReported')}"
+          ?hidden="${this.onlyFlaggedItems}"
+        >
+          <template>${this.item.firstReportedDateFormatted}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          width="130px"
+          flexGrow="0"
+          path="lastReportedAtDate"
+          .header="${this.t('lastReported')}"
+          ?hidden="${this.userId}"
+        >
+          <template>${this.item.lastReportedAtDateFormatted}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          width="100px"
+          textAlign="start"
+          flexGrow="0"
+          path="type"
+          .header="${this.t('type')}"
+        >
+          <template>${this._getType(item.type)}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          width="100px"
+          textAlign="start"
+          flexGrow="0"
+          path="status"
+          .header="${this.t('publishStatus')}"
+        >
+          <template>${this.item.status}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          width="100px"
+          textAlign="center"
+          flexGrow="0"
+          path="counter_flags"
+          .header="${this.t('flags')}"
+          ?hidden="${this.userId!=undefined}"
+        >
+          <template>${this.item.counter_flags}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          width="130px"
+          textAlign="start"
+          flexGrow="0"
+          path="source"
+          .header="${this.t('source')}"
+          ?hidden="${!this.onlyFlaggedItems}"
+        >
+          <template>${this.item.source}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          width="105px"
+          textAlign="center"
+          flexGrow="0"
+          path="toxicityScoreRaw"
+          .header="${this.t('toxicityScore')}?"
+          ?hidden="${this.userId!=undefined}"
+        >
+          <template>${this.item.toxicityScore}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-sort-column
+          width="150px"
+          .textAlign="start"
+          .flexGrow="1"
+          .path="groupName"
+          .header="${this.t('groupName')}"
+          ?hidden="${!this.userId}"
+        >
+          <template>${this.item.groupName}</template>
+        </vaadin-grid-sort-column>
+
+        <vaadin-grid-filter-column
+          width="200px"
+          .flexGrow="4"
+          .path="content"
+          .header="${this.t('content')}"
+          ?hidden="${this.narrow}"
+        >
+          <template>
+            <div class="layout horizontal">
+              <yp-magic-text
+                .contentId="${this.item.id}"
+                .content="${this.item.pointTextContent}"
+                .textType="pointContent"
+              ></yp-magic-text>
+              <yp-magic-text
+                .contentId="${this.item.id}"
+                .content="${this.item.postNameContent}"
+                .textType="postName"
+              ></yp-magic-text>
+              &nbsp;
+              <yp-magic-text
+                .contentId="${this.item.id}"
+                .content="${this.item.postTextContent}"
+                .textType="postContent"
+              ></yp-magic-text>
+              &nbsp;
+              <yp-magic-text
+                .contentId="${this.item.id}"
+                .content="${this.item.postTranscriptContent}"
+                .textType="postTranscriptContent"
+              ></yp-magic-text>
             </div>
           </template>
+        </vaadin-grid-filter-column>
 
-          <vaadin-grid-sort-column
-            width="130px"
-            .flexGrow="0"
-            .path="firstReportedDate"
-            .header="${this.t('firstReported')}"
-            ?hidden="${this.onlyFlaggedItems}"
-          >
-            <template>${this.item.firstReportedDateFormatted}</template>
-          </vaadin-grid-sort-column>
+        <vaadin-grid-filter-column
+          .flexGrow="1"
+          .path="user_email"
+          width="150px"
+          .header="${this.t('creator')}"
+          ?hidden="${this.userId}"
+        >
+          <template>${this.item.user_email}</template>
+        </vaadin-grid-filter-column>
 
-          <vaadin-grid-sort-column
-            width="130px"
-            .flexGrow="0"
-            .path="lastReportedAtDate"
-            .header="${this.t('lastReported')}"
-            ?hidden="${this.userId}"
-          >
-            <template>${this.item.lastReportedAtDateFormatted}</template>
-          </vaadin-grid-sort-column>
+        <vaadin-grid-filter-column
+          .flexGrow="0"
+          .path="lastReportedByEmail"
+          width="150px"
+          .header="${this.t('flaggedBy')}"
+          ?hidden="${!this.onlyFlaggedItems}"
+        >
+        </vaadin-grid-filter-column>
 
-          <vaadin-grid-sort-column
-            width="100px"
-            .textAlign="start"
-            .flexGrow="0"
-            .path="type"
-            .header="${this.t('type')}"
-          >
-            <template>${this._getType(item.type)}</template>
-          </vaadin-grid-sort-column>
-
-          <vaadin-grid-sort-column
-            width="100px"
-            .textAlign="start"
-            .flexGrow="0"
-            .path="status"
-            .header="${this.t('publishStatus')}"
-          >
-            <template>${this.item.status}</template>
-          </vaadin-grid-sort-column>
-
-          <vaadin-grid-sort-column
-            width="100px"
-            .textAlign="center"
-            .flexGrow="0"
-            .path="counter_flags"
-            .header="${this.t('flags')}"
-            ?hidden="${this.userId}"
-          >
-            <template>${this.item.counter_flags}</template>
-          </vaadin-grid-sort-column>
-
-          <vaadin-grid-sort-column
-            width="130px"
-            .textAlign="start"
-            .flexGrow="0"
-            .path="source"
-            .header="${this.t('source')}"
-            ?hidden="${!this.onlyFlaggedItems}"
-          >
-            <template>${this.item.source}</template>
-          </vaadin-grid-sort-column>
-
-          <vaadin-grid-sort-column
-            width="105px"
-            .textAlign="center"
-            .flexGrow="0"
-            .path="toxicityScoreRaw"
-            .header="${this.t('toxicityScore')}?"
-            ?hidden="${this.userId}"
-          >
-            <template>${this.item.toxicityScore}</template>
-          </vaadin-grid-sort-column>
-
-          <vaadin-grid-sort-column
-            width="150px"
-            .textAlign="start"
-            .flexGrow="1"
-            .path="groupName"
-            .header="${this.t('groupName')}"
-            ?hidden="${!this.userId}"
-          >
-            <template>${this.item.groupName}</template>
-          </vaadin-grid-sort-column>
-
-          <vaadin-grid-filter-column
-            width="200px"
-            .flexGrow="4"
-            .path="content"
-            .header="${this.t('content')}"
-            ?hidden="${this.narrow}"
-          >
-            <template>
-              <div class="layout horizontal">
-                <yp-magic-text
-                  .contentId="${this.item.id}"
-                  .content="${this.item.pointTextContent}"
-                  .textType="pointContent"
-                ></yp-magic-text>
-                <yp-magic-text
-                  .contentId="${this.item.id}"
-                  .content="${this.item.postNameContent}"
-                  .textType="postName"
-                ></yp-magic-text>
-                &nbsp;
-                <yp-magic-text
-                  .contentId="${this.item.id}"
-                  .content="${this.item.postTextContent}"
-                  .textType="postContent"
-                ></yp-magic-text>
-                &nbsp;
-                <yp-magic-text
-                  .contentId="${this.item.id}"
-                  .content="${this.item.postTranscriptContent}"
-                  .textType="postTranscriptContent"
-                ></yp-magic-text>
-              </div>
-            </template>
-          </vaadin-grid-filter-column>
-
-          <vaadin-grid-filter-column
-            .flexGrow="1"
-            .path="user_email"
-            width="150px"
-            .header="${this.t('creator')}"
-            ?hidden="${this.userId}"
-          >
-            <template>${this.item.user_email}</template>
-          </vaadin-grid-filter-column>
-
-          <vaadin-grid-filter-column
-            .flexGrow="0"
-            .path="lastReportedByEmail"
-            width="150px"
-            .header="${this.t('flaggedBy')}"
-            ?hidden="${!this.onlyFlaggedItems}"
-          >
-          </vaadin-grid-filter-column>
-
-          <vaadin-grid-column width="70px" .flexGrow="0">
-            <template class="header">
-              <paper-menu-button
-                .horizontalAlign="right"
-                @opened-changed="${this._refreshGridAsyncDelay}"
-                class="helpButton"
-                ?disabled="${this.selectedItemsEmpty}"
+        <vaadin-grid-column width="70px" flexGrow="0">
+          <template class="header">
+            <paper-menu-button
+              .horizontalAlign="right"
+              @opened-changed="${this._refreshGridAsyncDelay}"
+              class="helpButton"
+              ?disabled="${this.selectedItemsEmpty}"
+            >
+              <paper-icon-button
+                .ariaLabel="${this.t('openSelectedItemsMenu')}"
+                .icon="more-vert"
+                .slot="dropdown-trigger"
+                @click="${this._menuOpened}"
+              ></paper-icon-button>
+              <paper-listbox
+                slot="dropdown-content"
+                @iron-select="${this._menuSelection}"
               >
-                <paper-icon-button
-                  .ariaLabel="${this.t('openSelectedItemsMenu')}"
-                  .icon="more-vert"
-                  .slot="dropdown-trigger"
-                  @click="${this._menuOpened}"
-                ></paper-icon-button>
-                <paper-listbox
-                  slot="dropdown-content"
-                  @iron-select="${this._menuSelection}"
-                >
-                  ${!this.selectedItemsEmpty
-                    ? html`
-                        <paper-item
-                          data-args="${this.item.id}"
-                          ?hidden="${this.userId}"
-                          @tap="${this._approveSelected}"
-                        >
-                          ${this.t('approveSelectedContent')}
-                          ${this.selectedItemsCount}
-                        </paper-item>
-                        <paper-item
-                          data-args="${this.item.id}"
-                          ?hidden="${!this.onlyFlaggedItems}"
-                          @tap="${this._clearSelectedFlags}"
-                        >
-                          ${this.t('clearSelectedFlags')}
-                          ${this.selectedItemsCount}
-                        </paper-item>
-                        <paper-item
-                          data-args="${this.item.id}"
-                          ?hidden="${this.userId}"
-                          @tap="${this._blockSelected}"
-                        >
-                          ${this.t('blockSelectedContent')}
-                          ${this.selectedItemsCount}
-                        </paper-item>
-                        <paper-item
-                          data-args="${this.item.id}"
-                          ?hidden="${!this.userId}"
-                          @tap="${this._anonymizeSelected}"
-                        >
-                          ${this.t('anonymizeSelectedContent')}
-                          ${this.selectedItemsCount}
-                        </paper-item>
-                        <paper-item
-                          data-args="${this.item.id}"
-                          @tap="${this._deleteSelected}"
-                        >
-                          ${this.t('deleteSelectedContent')}
-                          ${this.selectedItemsCount}
-                        </paper-item>
-                      `
-                    : html``}
-                </paper-listbox>
-              </paper-menu-button>
-            </template>
-            <template>
-              <paper-menu-button
-                horizontal-align="right"
-                class="helpButton"
-                @opened-changed="${this._refreshGridAsyncDelay}"
+                ${!this.selectedItemsEmpty
+                  ? html`
+                      <paper-item
+                        data-args="${this.item.id}"
+                        ?hidden="${this.userId!=undefined}"
+                        @tap="${this._approveSelected}"
+                      >
+                        ${this.t('approveSelectedContent')}
+                        ${this.selectedItemsCount}
+                      </paper-item>
+                      <paper-item
+                        data-args="${this.item.id}"
+                        ?hidden="${!this.onlyFlaggedItems}"
+                        @tap="${this._clearSelectedFlags}"
+                      >
+                        ${this.t('clearSelectedFlags')}
+                        ${this.selectedItemsCount}
+                      </paper-item>
+                      <paper-item
+                        data-args="${this.item.id}"
+                        ?hidden="${this.userId}"
+                        @tap="${this._blockSelected}"
+                      >
+                        ${this.t('blockSelectedContent')}
+                        ${this.selectedItemsCount}
+                      </paper-item>
+                      <paper-item
+                        data-args="${this.item.id}"
+                        ?hidden="${!this.userId}"
+                        @tap="${this._anonymizeSelected}"
+                      >
+                        ${this.t('anonymizeSelectedContent')}
+                        ${this.selectedItemsCount}
+                      </paper-item>
+                      <paper-item
+                        data-args="${this.item.id}"
+                        @tap="${this._deleteSelected}"
+                      >
+                        ${this.t('deleteSelectedContent')}
+                        ${this.selectedItemsCount}
+                      </paper-item>
+                    `
+                  : html``}
+              </paper-listbox>
+            </paper-menu-button>
+          </template>
+          <template>
+            <paper-menu-button
+              horizontal-align="right"
+              class="helpButton"
+              @opened-changed="${this._refreshGridAsyncDelay}"
+            >
+              <paper-icon-button
+                .ariaLabel="${this.t('openOneItemMenu')}"
+                .icon="more-vert"
+                data-args="${this.item.id}"
+                @tap="${this._setSelected}"
+                slot="dropdown-trigger"
+              ></paper-icon-button>
+              <paper-listbox
+                slot="dropdown-content"
+                @iron-select="${this._menuSelection}"
               >
-                <paper-icon-button
-                  .ariaLabel="${this.t('openOneItemMenu')}"
-                  .icon="more-vert"
+                <paper-item
                   data-args="${this.item.id}"
-                  @tap="${this._setSelected}"
-                  slot="dropdown-trigger"
-                ></paper-icon-button>
-                <paper-listbox
-                  slot="dropdown-content"
-                  @iron-select="${this._menuSelection}"
+                  data-model-class="${this.item.type}"
+                  ?hidden="${this.userId}"
+                  @tap="${this._approve}"
                 >
-                  <paper-item
-                    data-args="${this.item.id}"
-                    data-model-class="${this.item.type}"
-                    ?hidden="${this.userId}"
-                    @tap="${this._approve}"
-                  >
-                    ${this.t('approveContent')}
-                  </paper-item>
-                  <paper-item
-                    data-args="${this.item.id}"
-                    data-model-class="${this.item.type}"
-                    ?hidden="${!this.onlyFlaggedItems}"
-                    @tap="${this._clearFlags}"
-                  >
-                    ${this.t('clearFlags')}
-                  </paper-item>
-                  <paper-item
-                    data-args="${this.item.id}"
-                    data-model-class="${this.item.type}"
-                    ?hidden="${this.userId}"
-                    @tap="${this._block}"
-                  >
-                    ${this.t('blockContent')}
-                  </paper-item>
-                  <paper-item
-                    data-args="${this.item.id}"
-                    data-model-class="${this.item.type}"
-                    ?hidden="${!this.userId}"
-                    @tap="${this._anonymize}"
-                  >
-                    ${this.t('anonymizeContent')}
-                  </paper-item>
-                  <paper-item
-                    data-args="${this.item.id}"
-                    data-model-class="${this.item.type}"
-                    @tap="${this._delete}"
-                  >
-                    ${this.t('deleteContent')}
-                  </paper-item>
-                </paper-listbox>
-              </paper-menu-button>
-            </template>
-          </vaadin-grid-column>
-        </vaadin-grid>
-      </paper-dialog>
+                  ${this.t('approveContent')}
+                </paper-item>
+                <paper-item
+                  data-args="${this.item.id}"
+                  data-model-class="${this.item.type}"
+                  ?hidden="${!this.onlyFlaggedItems}"
+                  @tap="${this._clearFlags}"
+                >
+                  ${this.t('clearFlags')}
+                </paper-item>
+                <paper-item
+                  data-args="${this.item.id}"
+                  data-model-class="${this.item.type}"
+                  ?hidden="${this.userId}"
+                  @tap="${this._block}"
+                >
+                  ${this.t('blockContent')}
+                </paper-item>
+                <paper-item
+                  data-args="${this.item.id}"
+                  data-model-class="${this.item.type}"
+                  ?hidden="${!this.userId}"
+                  @tap="${this._anonymize}"
+                >
+                  ${this.t('anonymizeContent')}
+                </paper-item>
+                <paper-item
+                  data-args="${this.item.id}"
+                  data-model-class="${this.item.type}"
+                  @tap="${this._delete}"
+                >
+                  ${this.t('deleteContent')}
+                </paper-item>
+              </paper-listbox>
+            </paper-menu-button>
+          </template>
+        </vaadin-grid-column>
+      </vaadin-grid>
 
       <div class="layout horizontal center-center">
         <yp-ajax
@@ -779,8 +762,8 @@ export class YpContentModeration extends YpBaseElement {
 
   */
 
-  _spinnerActive(count, force) {
-    return !count || force;
+  get spinnerActive() {
+    return !this.totalItemsCount || this.forceSpinner;
   }
 
   _ajaxError() {
@@ -792,8 +775,8 @@ export class YpContentModeration extends YpBaseElement {
     this.forceSpinner = true;
   }
 
-  _onlyFlaggedItems(typeOfModeration) {
-    return typeOfModeration === '/flagged_content';
+  get onlyFlaggedItems() {
+    return this.typeOfModeration === '/flagged_content';
   }
 
   _manyItemsResponse() {
@@ -829,22 +812,22 @@ export class YpContentModeration extends YpBaseElement {
     this._refreshGridAsyncBase(10);
   }
 
-  _refreshGridAsyncDelay(event, detail) {
+  _refreshGridAsyncDelay() {
     if (this.allowGridEventsAfterMenuOpen) {
       this._refreshGridAsyncBase(250);
     }
   }
 
-  _refreshGridAsyncBase(ms) {
-    this.async(function () {
-      this.$.grid.fire('iron-resize');
-      this.$.grid.notifyResize();
+  _refreshGridAsyncBase(ms: number) {
+    setTimeout(() => {
+      this.$$("#grid").fire('iron-resize');
+      this.$$("#grid").notifyResize();
     }, ms);
   }
 
-  _menuSelection(event, detail) {
+  _menuSelection() {
     const allMenus = this.$$('#grid').querySelectorAll('paper-listbox');
-    allMenus.forEach(function (item) {
+    allMenus.forEach((item) => {
       item.select(null);
     });
     this._refreshGridAsync();
@@ -856,7 +839,7 @@ export class YpContentModeration extends YpBaseElement {
     window.addEventListener('resize', this._resizeThrottler.bind(this), false);
   }
 
-  _toPercent(number) {
+  _toPercent(number: number) {
     if (number) {
       return Math.round(number * 100) + '%';
     } else {
@@ -867,10 +850,10 @@ export class YpContentModeration extends YpBaseElement {
   _resizeThrottler() {
     if (!this.resizeTimeout) {
       this.resizeTimeout = setTimeout(
-        function () {
+       () => {
           this.resizeTimeout = null;
           this._setGridSize();
-        }.bind(this),
+        },
         66
       );
     }
@@ -886,9 +869,9 @@ export class YpContentModeration extends YpBaseElement {
     }
   }
 
-  _totalItemsCount(items) {
-    if (items) {
-      return this.formatNumber(items.length);
+  get totalItemsCount() {
+    if (this.items) {
+      return YpFormattingHelpers.number(this.items.length);
     } else {
       return null;
     }
@@ -902,22 +885,25 @@ export class YpContentModeration extends YpBaseElement {
       this.selectedItemsEmpty = true;
       this.selectedItemsCount = 0;
     }
-    this.selectedItemIdsAndType = this.selectedItems.map(function (item) {
+    this.selectedItemIdsAndType = this.selectedItems!.map((item) => {
       return { id: item.id, modelType: item.type };
     });
     this._refreshGridAsyncDelay();
   }
 
-  _setupItemIdFromEvent(event) {
-    const itemId = event.target.parentElement.getAttribute('data-args');
-    if (!itemId) itemId = event.target.getAttribute('data-args');
-    this.selectedItemId = itemId;
-    const modelClass = event.target.parentElement.getAttribute(
-      'data-model-class'
-    );
-    if (!modelClass) modelClass = event.target.getAttribute('data-model-class');
-    this.selectedModelClass = modelClass;
-    this._refreshGridAsync();
+  _setupItemIdFromEvent(event: CustomEvent) {
+    const target = event.target as HTMLElement
+    if (target!=null) {
+      const itemId = target.parentElement!.getAttribute('data-args');
+      if (!itemId) itemId = target.getAttribute('data-args');
+      this.selectedItemId = itemId.toString();
+      let modelClass = target.parentElement!.getAttribute(
+        'data-model-class'
+      );
+      if (!modelClass) modelClass = target.getAttribute('data-model-class');
+      this.selectedModelClass = modelClass;
+      this._refreshGridAsync();
+    }
   }
 
   _deleteSelected(event) {
@@ -938,7 +924,7 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reallyDeleteSelected() {
-    this._ajaxMaster(
+    this._masterRequest(
       this.$$('#manyItemsAjax'),
       'delete',
       this.selectedItemIdsAndType
@@ -963,28 +949,27 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reallyDelete() {
-    this._ajaxMaster(this.$$('#singleItemAjax'), 'delete');
+    this._masterRequest(this.$$('#singleItemAjax'), 'delete');
   }
 
   _anonymizeSelected(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    dom(document)
-      .querySelector('yp-app')
+    window.appDialogs
       .getDialogAsync(
         'confirmationDialog',
-        function (dialog) {
+        (dialog: YpConfirmationDialog) => {
           dialog.open(
             this.t('areYouSureAnonymizeSelectedContent'),
             this._reallyAnonymizeSelected.bind(this),
             true,
             true
           );
-        }.bind(this)
+        }
       );
   }
 
   _reallyAnonymizeSelected() {
-    this._ajaxMaster(
+    this._masterRequest(
       this.$$('#manyItemsAjax'),
       'anonymize',
       this.selectedItemIdsAndType
@@ -1007,17 +992,17 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reallyAnonymize() {
-    this._ajaxMaster(this.$$('#singleItemAjax'), 'anonymize');
+    this._masterRequest(this.$$('#singleItemAjax'), 'anonymize');
   }
 
   _approve(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$$('#singleItemAjax'), 'approve');
+    this._masterRequest(this.$$('#singleItemAjax'), 'approve');
   }
 
   _approveSelected(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(
+    this._masterRequest(
       this.$$('#manyItemsAjax'),
       'approve',
       this.selectedItemIdsAndType
@@ -1026,12 +1011,12 @@ export class YpContentModeration extends YpBaseElement {
 
   _block(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$$('#singleItemAjax'), 'block');
+    this._masterRequest(this.$$('#singleItemAjax'), 'block');
   }
 
   _blockSelected(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(
+    this._masterRequest(
       this.$$('#manyItemsAjax'),
       'block',
       this.selectedItemIdsAndType
@@ -1040,19 +1025,19 @@ export class YpContentModeration extends YpBaseElement {
 
   _clearFlags(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(this.$$('#singleItemAjax'), 'clearFlags');
+    this._masterRequest(this.$$('#singleItemAjax'), 'clearFlags');
   }
 
   _clearSelectedFlags(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._ajaxMaster(
+    this._masterRequest(
       this.$$('#manyItemsAjax'),
       'clearFlags',
       this.selectedItemIdsAndType
     );
   }
 
-  _ajaxMaster(ajax, action, itemIdsAndType) {
+  _masterRequest(ajax, action, itemIdsAndType) {
     let url, collectionId;
     if (this.modelType === 'groups' && this.groupId) {
       collectionId = this.groupId;
@@ -1181,8 +1166,8 @@ export class YpContentModeration extends YpBaseElement {
     groupId: number | undefined,
     communityId: number | undefined,
     domainId: number | undefined,
-    typeOfModeration,
-    userId
+    typeOfModeration: string | undefined,
+    userId: number | undefined
   ) {
     if (typeOfModeration) {
       this.typeOfModeration = typeOfModeration;
@@ -1207,10 +1192,8 @@ export class YpContentModeration extends YpBaseElement {
     this._setupHeaderText();
   }
 
-  open(name) {
+  open(name: string) {
     this.collectionName = name;
-    this.opened = true;
-    this.$$('#dialog').open();
   }
 
   _reset() {
