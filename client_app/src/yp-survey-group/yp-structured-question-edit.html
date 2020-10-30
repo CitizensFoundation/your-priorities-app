@@ -570,17 +570,16 @@
       }
 
       validate() {
-        return true;
         var liveQuestion = this.$$("#structuredQuestion_" + this.index);
         if (liveQuestion) {
           if (liveQuestion.dataset.type === "dropdown") {
-            return true; // DO something if required
+            return true; // TODO Do something if required
           } else if (liveQuestion.dataset.type === "radios") {
-            return true; // DO something if required
+            return true; // TODO Do something if required
           } else if (liveQuestion.dataset.type === "checkboxes") {
-            return true; // DO something if required
+            return true; // TODO Do something if required
           } else {
-            if (liveQuestion) {
+            if (liveQuestion && typeof liveQuestion.validate == 'function' ) {
               return liveQuestion.validate();
             } else {
               return true;
