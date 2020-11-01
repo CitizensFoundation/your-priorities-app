@@ -1463,6 +1463,13 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         let ratingOrderNeeded = false;
         let subQuery = null;
         let limit = 20;
+        var offset = 0;
+        if (req.query.offset) {
+          offset = parseInt(req.query.offset);
+        }
+
+        let ratingOffset = offset;
+
         const ratingsPostLookup = {};
 
         if (req.params.filter==="top" &&
@@ -1497,8 +1504,10 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
           //postOrderFinal =  models.sequelize.literal("RatingAverage ASC");
           ratingOrderNeeded = true;
 
-          //TODO: Get postgres ordering working with a count limit
-          limit = 1000;
+          //TODO: Get postgres ordering working with a count limit ORDER BY flag CASE
+          limit = 1500;
+
+          offset = 0;
         }
 
         if (req.params.categoryId!='null') {
@@ -1506,11 +1515,6 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         }
 
         log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
-
-        var offset = 0;
-        if (req.query.offset) {
-          offset = parseInt(req.query.offset);
-        }
 
         if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
           var PostsByStatus = models.Post.scope(req.params.status);
@@ -1547,6 +1551,19 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
                   ratingsPostLookup[post.dataValues.id]=0.0;
                 }
               });
+
+              postRows =  _.orderBy(postRows, [(post) => {
+                return ratingsPostLookup[post.dataValues.id];
+              }], ['desc'])
+
+              if (ratingOffset) {
+                postRows = _.drop(postRows, ratingOffset);
+              }
+
+              if (postRows.length>20) {
+                postRows = _.dropRight(postRows, postRows.length-20);
+              }
+
               totalPostsCount = postResults.rows.length;
             }
 
