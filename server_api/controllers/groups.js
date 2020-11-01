@@ -1437,7 +1437,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         attributes: ['id','configuration']
       }).then((group)=> {
         var where = { group_id: req.params.id, deleted: false };
-        const attributes = ['id','status','official_status','language','counter_endorsements_up',
+        let attributes = ['id','status','name','official_status','language','counter_endorsements_up',
           'counter_endorsements_down','created_at'];
         const includes = [];
 
@@ -1470,23 +1470,34 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
             group.configuration.customRatings!=null &&
             group.configuration.customRatings.length>0) {
 
-          includes.push({
-            model: models.Rating,
-            attributes: [ 'id','value'],
-            as: 'Ratings',
-            required: false
-          });
+          const attrIncludes = [];
+          attrIncludes.push(
+            [models.sequelize.literal(`(
+                    SELECT AVG(value)
+                    FROM ratings AS rating
+                    WHERE
+                        rating.post_id = "Post".id
+                )`),
+            'RatingAverage']
+          )
+          attrIncludes.push(
+            [models.sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM ratings AS rating
+                    WHERE
+                        rating.post_id = "Post".id
+                )`),
+            'RatingCount']
+          )
 
-          attributes.push([ models.sequelize.fn('AVG', models.sequelize.col("Ratings.value")), "RatingAverage" ])
-          seqGroup = ['Post.id','Ratings.id'];
+          attributes = {
+            include: attrIncludes
+          }
 
-          // TODO: Get postgres ordering working
-          // postOrderFinal = [ ['RatingAverage','ASC']];
-
+          //postOrderFinal =  models.sequelize.literal("RatingAverage ASC");
           ratingOrderNeeded = true;
-          subQuery = false;
 
-          //TODO: Get postgres ordering working so we dont need to get everything
+          //TODO: Get postgres ordering working with a count limit
           limit = 1000;
         }
 
@@ -1522,9 +1533,16 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
             if (ratingOrderNeeded) {
               postRows = _.forEach(postRows, (post) => {
-                // More than one round of full ratings for the rating to count towards top rating calc
-                if (post.dataValues.Ratings.length>group.configuration.customRatings.length) {
-                  ratingsPostLookup[post.dataValues.id]=post.dataValues.RatingAverage;
+                if (post.dataValues.RatingCount && post.dataValues.RatingAverage) {
+                  const ratingCount = parseInt(post.dataValues.RatingCount);
+                  const ratingAverage = parseFloat(post.dataValues.RatingAverage);
+
+                  // More than one round of full ratings for the rating to count towards top rating calc
+                  if (ratingCount>group.configuration.customRatings.length) {
+                    ratingsPostLookup[post.dataValues.id]=ratingAverage;
+                  } else {
+                    ratingsPostLookup[post.dataValues.id]=0.0;
+                  }
                 } else {
                   ratingsPostLookup[post.dataValues.id]=0.0;
                 }
