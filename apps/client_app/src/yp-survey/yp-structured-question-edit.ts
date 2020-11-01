@@ -629,9 +629,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   //TODO: Finish this
-  checkValidation() {
-    return true;
-    /*const liveQuestion = this.$$('#structuredQuestion_' + this.index);
+  checkValidity() {
+    const liveQuestion = this.$$('#structuredQuestion_' + this.index);
     if (liveQuestion) {
       if (liveQuestion.dataset.type === 'dropdown') {
         return true; // DO something if required
@@ -640,13 +639,13 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       } else if (liveQuestion.dataset.type === 'checkboxes') {
         return true; // DO something if required
       } else {
-        if (liveQuestion) {
-          return liveQuestion.validate();
+        if (liveQuestion && typeof (liveQuestion as TextField).checkValidity == 'function' ) {
+          return (liveQuestion as TextField).checkValidity();
         } else {
           return true;
         }
       }
-    }*/
+    }
   }
 
   get isInputField() {

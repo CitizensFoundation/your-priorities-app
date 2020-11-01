@@ -75,7 +75,7 @@ export class YpContentModeration extends YpBaseElement {
   @property({ type: Object })
   activeItem: YpDatabaseItem | undefined;
 
-  allowGridEventsAfterMenuOpen = false
+  allowGridEventsAfterMenuOpen = false;
 
   static get propertsies() {
     return {
@@ -102,7 +102,7 @@ export class YpContentModeration extends YpBaseElement {
       activeItem: {
         type: Object,
         observer: '_activeItemChanged',
-      }
+      },
     };
   }
 
@@ -270,145 +270,278 @@ export class YpContentModeration extends YpBaseElement {
         vaadin-grid {
           font-size: 14px;
         }
-      `
+      `,
     ];
+  }
+
+  renderContent(root, column, rowData) {
+    const item = rowData.item;
+    return html`
+      <div class="layout horizontal">
+        <yp-magic-text
+          .contentId="${item.id}"
+          .content="${item.pointTextContent}"
+          textType="pointContent"
+        ></yp-magic-text>
+        <yp-magic-text
+          .contentId="${item.id}"
+          .content="${item.postNameContent}"
+          textType="postName"
+        ></yp-magic-text>
+        &nbsp;
+        <yp-magic-text
+          .contentId="${item.id}"
+          .content="${item.postTextContent}"
+          textType="postContent"
+        ></yp-magic-text>
+        &nbsp;
+        <yp-magic-text
+          .contentId="${item.id}"
+          .content="${item.postTranscriptContent}"
+          textType="postTranscriptContent"
+        ></yp-magic-text>
+      </div>
+    `;
   }
 
   renderItemDetail(root, column, rowData) {
     const item = rowData.item;
     return html`
-          <div class="details layout vertical center-center detailArea">
-            <div class="layout horizontal">
-              ${item.is_post
-                ? html`
-                    <div class="layout vertical center-center">
-                      <yp-post-header
-                        .hideActions=""
-                        .post="${item}"
-                        .postName="${item.name}"
-                        .headerMode=""
-                      ></yp-post-header>
-                      <a href="/post/${item.id}" target="_blank"
-                        ><paper-icon-button
-                          .ariaLabel="${this.t('linkToContentItem')}"
-                          class="linkIcon"
-                          .icon="link"
-                        ></paper-icon-button
-                      ></a>
-                    </div>
-                  `
-                : nothing}
-              ${this.item.is_point
-                ? html`
-                    <div class="layout vertical center-center">
-                      <yp-point hideActions .point="${this.item}"></yp-point>
-                      <a
-                        ?hidden="${!item.post_id}"
-                        href="/post/[[item.post_id]]/${this.item.id}"
-                        target="_blank"
-                        ><paper-icon-button
-                          .ariaLabel="${this.t('linkToContentItem')}"
-                          class="linkIcon"
-                          icon="link"
-                        ></paper-icon-button
-                      ></a>
-                    </div>
-                  `
-                : nothing}
+      <div class="details layout vertical center-center detailArea">
+        <div class="layout horizontal">
+          ${item.is_post
+            ? html`
+                <div class="layout vertical center-center">
+                  <yp-post-header
+                    hideActions
+                    .post="${item}"
+                    .postName="${item.name}"
+                    headerMode
+                  ></yp-post-header>
+                  <a href="/post/${item.id}" target="_blank"
+                    ><paper-icon-button
+                      .ariaLabel="${this.t('linkToContentItem')}"
+                      class="linkIcon"
+                      icon="link"
+                    ></paper-icon-button
+                  ></a>
+                </div>
+              `
+            : nothing}
+          ${item.is_point
+            ? html`
+                <div class="layout vertical center-center">
+                  <yp-point hideActions .point="${item}"></yp-point>
+                  <a
+                    ?hidden="${!item.post_id}"
+                    href="/post/[[item.post_id]]/${item.id}"
+                    target="_blank"
+                    ><paper-icon-button
+                      .ariaLabel="${this.t('linkToContentItem')}"
+                      class="linkIcon"
+                      icon="link"
+                    ></paper-icon-button
+                  ></a>
+                </div>
+              `
+            : nothing}
+        </div>
+        <div
+          ?hidden="${!item.toxicityScore}"
+          class="layout horizontal analysis"
+        >
+          <div class="layout vertical leftColumn" ?hidden="${this.userId!=undefined}">
+            <div
+              class="mainScore"
+              ?hidden="${!item.moderation_data.moderation.toxicityScore}"
+            >
+              Toxicity Score:
+              ${this._toPercent(item.moderation_data.moderation.toxicityScore)}
             </div>
             <div
-              ?hidden="${!item.toxicityScore}"
-              class="layout horizontal analysis"
+              ?hidden="${!item.moderation_data.moderation.identityAttackScore}"
             >
-              <div class="layout vertical leftColumn" ?hidden="${this.userId}">
-                <div
-                  class="mainScore"
-                  ?hidden="${!item.moderation_data.moderation
-                    .toxicityScore}"
-                >
-                  Toxicity Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.toxicityScore
-                  )}
-                </div>
-                <div
-                  ?hidden="${!item.moderation_data.moderation
-                    .identityAttackScore}"
-                >
-                  Identity Attack Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.identityAttackScore
-                  )}
-                </div>
-                <div
-                  ?hidden="${!item.moderation_data.moderation
-                    .identityAttachScore}"
-                >
-                  Identity Attack Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.identityAttachScore
-                  )}
-                </div>
-                <div
-                  ?hidden="${!item.moderation_data.moderation.threatScore}"
-                >
-                  Threat Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.threatScore
-                  )}
-                </div>
-                <div
-                  ?hidden="${!item.moderation_data.moderation.insultScore}"
-                >
-                  Insult Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.insultScore
-                  )}
-                </div>
-              </div>
-              <div class="layout vertical" ?hidden="${this.userId}">
-                <div
-                  class="mainScore"
-                  ?hidden="${!item.moderation_data.moderation
-                    .severeToxicityScore}"
-                >
-                  Severe Toxicity Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.severeToxicityScore
-                  )}
-                </div>
-                <div
-                  ?hidden="${!item.moderation_data.moderation
-                    .profanityScore}"
-                >
-                  Profanity Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.profanityScore
-                  )}
-                </div>
-                <div
-                  ?hidden="${!item.moderation_data.moderation
-                    .sexuallyExplicitScore}"
-                >
-                  Sexually Excplicit Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.sexuallyExplicitScore
-                  )}
-                </div>
-                <div
-                  ?hidden="${!item.moderation_data.moderation
-                    .flirtationScore}"
-                >
-                  Flirtation Score:
-                  ${this._toPercent(
-                    item.moderation_data.moderation.flirtationScore
-                  )}
-                </div>
-              </div>
+              Identity Attack Score:
+              ${this._toPercent(
+                item.moderation_data.moderation.identityAttackScore
+              )}
+            </div>
+            <div
+              ?hidden="${!item.moderation_data.moderation.identityAttachScore}"
+            >
+              Identity Attack Score:
+              ${this._toPercent(
+                item.moderation_data.moderation.identityAttachScore
+              )}
+            </div>
+            <div ?hidden="${!item.moderation_data.moderation.threatScore}">
+              Threat Score:
+              ${this._toPercent(item.moderation_data.moderation.threatScore)}
+            </div>
+            <div ?hidden="${!item.moderation_data.moderation.insultScore}">
+              Insult Score:
+              ${this._toPercent(item.moderation_data.moderation.insultScore)}
             </div>
           </div>
+          <div class="layout vertical" ?hidden="${this.userId!=undefined}">
+            <div
+              class="mainScore"
+              ?hidden="${!item.moderation_data.moderation.severeToxicityScore}"
+            >
+              Severe Toxicity Score:
+              ${this._toPercent(
+                item.moderation_data.moderation.severeToxicityScore
+              )}
+            </div>
+            <div ?hidden="${!item.moderation_data.moderation.profanityScore}">
+              Profanity Score:
+              ${this._toPercent(item.moderation_data.moderation.profanityScore)}
+            </div>
+            <div
+              ?hidden="${!item.moderation_data.moderation
+                .sexuallyExplicitScore}"
+            >
+              Sexually Excplicit Score:
+              ${this._toPercent(
+                item.moderation_data.moderation.sexuallyExplicitScore
+              )}
+            </div>
+            <div ?hidden="${!item.moderation_data.moderation.flirtationScore}">
+              Flirtation Score:
+              ${this._toPercent(
+                item.moderation_data.moderation.flirtationScore
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 
-    `
+  renderActionHeader(root, column, rowData) {
+    const item = rowData.item;
+    return html`
+      <paper-menu-button
+        horizontalAlign="right"
+        @opened-changed="${this._refreshGridAsyncDelay}"
+        class="helpButton"
+        ?disabled="${this.selectedItemsEmpty}"
+      >
+        <paper-icon-button
+          .ariaLabel="${this.t('openSelectedItemsMenu')}"
+          icon="more-vert"
+          slot="dropdown-trigger"
+          @click="${this._menuOpened}"
+        ></paper-icon-button>
+        <paper-listbox
+          slot="dropdown-content"
+          @iron-select="${this._menuSelection}"
+        >
+          ${!this.selectedItemsEmpty
+            ? html`
+                <paper-item
+                  data-args="${item.id}"
+                  ?hidden="${this.userId != undefined}"
+                  @tap="${this._approveSelected}"
+                >
+                  ${this.t('approveSelectedContent')} ${this.selectedItemsCount}
+                </paper-item>
+                <paper-item
+                  data-args="${item.id}"
+                  ?hidden="${!this.onlyFlaggedItems}"
+                  @tap="${this._clearSelectedFlags}"
+                >
+                  ${this.t('clearSelectedFlags')} ${this.selectedItemsCount}
+                </paper-item>
+                <paper-item
+                  data-args="${item.id}"
+                  ?hidden="${this.userId!=undefined}"
+                  @tap="${this._blockSelected}"
+                >
+                  ${this.t('blockSelectedContent')} ${this.selectedItemsCount}
+                </paper-item>
+                <paper-item
+                  data-args="${item.id}"
+                  ?hidden="${!this.userId}"
+                  @tap="${this._anonymizeSelected}"
+                >
+                  ${this.t('anonymizeSelectedContent')}
+                  ${this.selectedItemsCount}
+                </paper-item>
+                <paper-item
+                  data-args="${item.id}"
+                  @tap="${this._deleteSelected}"
+                >
+                  ${this.t('deleteSelectedContent')} ${this.selectedItemsCount}
+                </paper-item>
+              `
+            : html``}
+        </paper-listbox>
+      </paper-menu-button>
+    `;
+  }
+
+  renderAction(root, column, rowData) {
+    const item = rowData.item;
+    return html`
+      <paper-menu-button
+        horizontal-align="right"
+        class="helpButton"
+        @opened-changed="${this._refreshGridAsyncDelay}"
+      >
+        <paper-icon-button
+          .ariaLabel="${this.t('openOneItemMenu')}"
+          .icon="more-vert"
+          data-args="${item.id}"
+          @tap="${this._setSelected}"
+          slot="dropdown-trigger"
+        ></paper-icon-button>
+        <paper-listbox
+          slot="dropdown-content"
+          @iron-select="${this._menuSelection}"
+        >
+          <paper-item
+            data-args="${item.id}"
+            data-model-class="${item.type}"
+            ?hidden="${this.userId != undefined}"
+            @tap="${this._approve}"
+          >
+            ${this.t('approveContent')}
+          </paper-item>
+          <paper-item
+            data-args="${item.id}"
+            data-model-class="${item.type}"
+            ?hidden="${!this.onlyFlaggedItems}"
+            @tap="${this._clearFlags}"
+          >
+            ${this.t('clearFlags')}
+          </paper-item>
+          <paper-item
+            data-args="${item.id}"
+            data-model-class="${item.type}"
+            ?hidden="${this.userId != undefined}"
+            @tap="${this._block}"
+          >
+            ${this.t('blockContent')}
+          </paper-item>
+          <paper-item
+            data-args="${item.id}"
+            data-model-class="${item.type}"
+            ?hidden="${!this.userId}"
+            @tap="${this._anonymize}"
+          >
+            ${this.t('anonymizeContent')}
+          </paper-item>
+          <paper-item
+            data-args="${item.id}"
+            data-model-class="${item.type}"
+            @tap="${this._delete}"
+          >
+            ${this.t('deleteContent')}
+          </paper-item>
+        </paper-listbox>
+      </paper-menu-button>
+    `;
   }
 
   render() {
@@ -418,9 +551,9 @@ export class YpContentModeration extends YpBaseElement {
           <paper-icon-button
             .ariaLabel="${this.t('close')}"
             id="dismissBtn"
-            .icon="close"
+            icon="close"
             class="closeButton"
-            .dialogDismiss
+            dialogDismiss
           ></paper-icon-button>
         </div>
 
@@ -468,21 +601,19 @@ export class YpContentModeration extends YpBaseElement {
         <vaadin-grid-sort-column
           width="130px"
           flexGrow="0"
-          path="firstReportedDate"
+          path="firstReportedDateFormatted"
           .header="${this.t('firstReported')}"
           ?hidden="${this.onlyFlaggedItems}"
         >
-          <template>${this.item.firstReportedDateFormatted}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
           width="130px"
           flexGrow="0"
-          path="lastReportedAtDate"
+          path="lastReportedAtDateFormatted"
           .header="${this.t('lastReported')}"
           ?hidden="${this.userId}"
         >
-          <template>${this.item.lastReportedAtDateFormatted}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
@@ -490,19 +621,23 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="start"
           flexGrow="0"
           path="type"
+          .renderer="${(root, column, rowData) => {
+            return this._getType(rowData.item.type);
+          }}"
           .header="${this.t('type')}"
         >
-          <template>${this._getType(item.type)}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
           width="100px"
           textAlign="start"
           flexGrow="0"
+          .renderer="${(root, column, rowData) => {
+            return rowData.item.status;
+          }}"
           path="status"
           .header="${this.t('publishStatus')}"
         >
-          <template>${this.item.status}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
@@ -510,10 +645,12 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="center"
           flexGrow="0"
           path="counter_flags"
+          .renderer="${(root, column, rowData) => {
+            return rowData.item.counter_flags;
+          }}"
           .header="${this.t('flags')}"
-          ?hidden="${this.userId!=undefined}"
+          ?hidden="${this.userId != undefined}"
         >
-          <template>${this.item.counter_flags}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
@@ -521,10 +658,12 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="start"
           flexGrow="0"
           path="source"
+          .renderer="${(root, column, rowData) => {
+            return rowData.item.source;
+          }}"
           .header="${this.t('source')}"
           ?hidden="${!this.onlyFlaggedItems}"
         >
-          <template>${this.item.source}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
@@ -532,200 +671,64 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="center"
           flexGrow="0"
           path="toxicityScoreRaw"
+          .renderer="${(root, column, rowData) => {
+            return rowData.item.toxicityScore;
+          }}"
           .header="${this.t('toxicityScore')}?"
-          ?hidden="${this.userId!=undefined}"
+          ?hidden="${this.userId != undefined}"
         >
-          <template>${this.item.toxicityScore}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-sort-column
           width="150px"
-          .textAlign="start"
-          .flexGrow="1"
-          .path="groupName"
+          textAlign="start"
+          flexGrow="1"
+          path="groupName"
+          .renderer="${(root, column, rowData) => {
+            return rowData.item.groupName;
+          }}"
           .header="${this.t('groupName')}"
           ?hidden="${!this.userId}"
         >
-          <template>${this.item.groupName}</template>
         </vaadin-grid-sort-column>
 
         <vaadin-grid-filter-column
           width="200px"
-          .flexGrow="4"
-          .path="content"
+          flexGrow="4"
+          path="content"
+          .renderer="${this.renderContent}"
           .header="${this.t('content')}"
-          ?hidden="${this.narrow}"
+          ?hidden="${!this.wide}"
         >
-          <template>
-            <div class="layout horizontal">
-              <yp-magic-text
-                .contentId="${this.item.id}"
-                .content="${this.item.pointTextContent}"
-                .textType="pointContent"
-              ></yp-magic-text>
-              <yp-magic-text
-                .contentId="${this.item.id}"
-                .content="${this.item.postNameContent}"
-                .textType="postName"
-              ></yp-magic-text>
-              &nbsp;
-              <yp-magic-text
-                .contentId="${this.item.id}"
-                .content="${this.item.postTextContent}"
-                .textType="postContent"
-              ></yp-magic-text>
-              &nbsp;
-              <yp-magic-text
-                .contentId="${this.item.id}"
-                .content="${this.item.postTranscriptContent}"
-                .textType="postTranscriptContent"
-              ></yp-magic-text>
-            </div>
-          </template>
         </vaadin-grid-filter-column>
 
         <vaadin-grid-filter-column
-          .flexGrow="1"
-          .path="user_email"
+          flexGrow="1"
+          path="user_email"
           width="150px"
+          .renderer="${(root, column, rowData) => {
+            return rowData.item.user_email;
+          }}"
           .header="${this.t('creator')}"
-          ?hidden="${this.userId}"
+          ?hidden="${this.userId != undefined}"
         >
-          <template>${this.item.user_email}</template>
         </vaadin-grid-filter-column>
 
         <vaadin-grid-filter-column
-          .flexGrow="0"
-          .path="lastReportedByEmail"
+          flexGrow="0"
+          path="lastReportedByEmail"
           width="150px"
           .header="${this.t('flaggedBy')}"
           ?hidden="${!this.onlyFlaggedItems}"
         >
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="70px" flexGrow="0">
-          <template class="header">
-            <paper-menu-button
-              .horizontalAlign="right"
-              @opened-changed="${this._refreshGridAsyncDelay}"
-              class="helpButton"
-              ?disabled="${this.selectedItemsEmpty}"
-            >
-              <paper-icon-button
-                .ariaLabel="${this.t('openSelectedItemsMenu')}"
-                .icon="more-vert"
-                .slot="dropdown-trigger"
-                @click="${this._menuOpened}"
-              ></paper-icon-button>
-              <paper-listbox
-                slot="dropdown-content"
-                @iron-select="${this._menuSelection}"
-              >
-                ${!this.selectedItemsEmpty
-                  ? html`
-                      <paper-item
-                        data-args="${this.item.id}"
-                        ?hidden="${this.userId!=undefined}"
-                        @tap="${this._approveSelected}"
-                      >
-                        ${this.t('approveSelectedContent')}
-                        ${this.selectedItemsCount}
-                      </paper-item>
-                      <paper-item
-                        data-args="${this.item.id}"
-                        ?hidden="${!this.onlyFlaggedItems}"
-                        @tap="${this._clearSelectedFlags}"
-                      >
-                        ${this.t('clearSelectedFlags')}
-                        ${this.selectedItemsCount}
-                      </paper-item>
-                      <paper-item
-                        data-args="${this.item.id}"
-                        ?hidden="${this.userId}"
-                        @tap="${this._blockSelected}"
-                      >
-                        ${this.t('blockSelectedContent')}
-                        ${this.selectedItemsCount}
-                      </paper-item>
-                      <paper-item
-                        data-args="${this.item.id}"
-                        ?hidden="${!this.userId}"
-                        @tap="${this._anonymizeSelected}"
-                      >
-                        ${this.t('anonymizeSelectedContent')}
-                        ${this.selectedItemsCount}
-                      </paper-item>
-                      <paper-item
-                        data-args="${this.item.id}"
-                        @tap="${this._deleteSelected}"
-                      >
-                        ${this.t('deleteSelectedContent')}
-                        ${this.selectedItemsCount}
-                      </paper-item>
-                    `
-                  : html``}
-              </paper-listbox>
-            </paper-menu-button>
-          </template>
-          <template>
-            <paper-menu-button
-              horizontal-align="right"
-              class="helpButton"
-              @opened-changed="${this._refreshGridAsyncDelay}"
-            >
-              <paper-icon-button
-                .ariaLabel="${this.t('openOneItemMenu')}"
-                .icon="more-vert"
-                data-args="${this.item.id}"
-                @tap="${this._setSelected}"
-                slot="dropdown-trigger"
-              ></paper-icon-button>
-              <paper-listbox
-                slot="dropdown-content"
-                @iron-select="${this._menuSelection}"
-              >
-                <paper-item
-                  data-args="${this.item.id}"
-                  data-model-class="${this.item.type}"
-                  ?hidden="${this.userId}"
-                  @tap="${this._approve}"
-                >
-                  ${this.t('approveContent')}
-                </paper-item>
-                <paper-item
-                  data-args="${this.item.id}"
-                  data-model-class="${this.item.type}"
-                  ?hidden="${!this.onlyFlaggedItems}"
-                  @tap="${this._clearFlags}"
-                >
-                  ${this.t('clearFlags')}
-                </paper-item>
-                <paper-item
-                  data-args="${this.item.id}"
-                  data-model-class="${this.item.type}"
-                  ?hidden="${this.userId}"
-                  @tap="${this._block}"
-                >
-                  ${this.t('blockContent')}
-                </paper-item>
-                <paper-item
-                  data-args="${this.item.id}"
-                  data-model-class="${this.item.type}"
-                  ?hidden="${!this.userId}"
-                  @tap="${this._anonymize}"
-                >
-                  ${this.t('anonymizeContent')}
-                </paper-item>
-                <paper-item
-                  data-args="${this.item.id}"
-                  data-model-class="${this.item.type}"
-                  @tap="${this._delete}"
-                >
-                  ${this.t('deleteContent')}
-                </paper-item>
-              </paper-listbox>
-            </paper-menu-button>
-          </template>
+        <vaadin-grid-column
+          width="70px"
+          flexGrow="0"
+          .headerRenderer="${this.renderActionHeader}"
+          .renderer="${this.renderAction}"
+        >
         </vaadin-grid-column>
       </vaadin-grid>
 
@@ -736,13 +739,13 @@ export class YpContentModeration extends YpBaseElement {
           @error="${this._ajaxError}"
         ></yp-ajax>
         <yp-ajax
-          .method="DELETE"
+          method="DELETE"
           id="singleItemAjax"
           @error="${this._ajaxError}"
           @response="${this._singleItemResponse}"
         ></yp-ajax>
         <yp-ajax
-          .method="DELETE"
+          method="DELETE"
           id="manyItemsAjax"
           @error="${this._ajaxError}"
           @response="${this._manyItemsResponse}"
@@ -791,12 +794,15 @@ export class YpContentModeration extends YpBaseElement {
     this._reload();
   }
 
-  _getType(type) {
+  _getType(type: string) {
     if (type === 'post') return this.t('posts.post');
     else if (type === 'point') return this.t('point.point');
   }
 
-  _activeItemChanged(item, oldItem) {
+  _activeItemChanged(
+    item: YpDatabaseItem | undefined,
+    oldItem: YpDatabaseItem | undefined
+  ) {
     if (item) {
       this.$$('#grid').openItemDetails(item);
     }
@@ -820,14 +826,14 @@ export class YpContentModeration extends YpBaseElement {
 
   _refreshGridAsyncBase(ms: number) {
     setTimeout(() => {
-      this.$$("#grid").fire('iron-resize');
-      this.$$("#grid").notifyResize();
+      this.$$('#grid').fire('iron-resize');
+      this.$$('#grid').notifyResize();
     }, ms);
   }
 
   _menuSelection() {
     const allMenus = this.$$('#grid').querySelectorAll('paper-listbox');
-    allMenus.forEach((item) => {
+    allMenus.forEach(item => {
       item.select(null);
     });
     this._refreshGridAsync();
@@ -849,13 +855,10 @@ export class YpContentModeration extends YpBaseElement {
 
   _resizeThrottler() {
     if (!this.resizeTimeout) {
-      this.resizeTimeout = setTimeout(
-       () => {
-          this.resizeTimeout = null;
-          this._setGridSize();
-        },
-        66
-      );
+      this.resizeTimeout = setTimeout(() => {
+        this.resizeTimeout = null;
+        this._setGridSize();
+      }, 66);
     }
   }
 
@@ -885,21 +888,19 @@ export class YpContentModeration extends YpBaseElement {
       this.selectedItemsEmpty = true;
       this.selectedItemsCount = 0;
     }
-    this.selectedItemIdsAndType = this.selectedItems!.map((item) => {
+    this.selectedItemIdsAndType = this.selectedItems!.map(item => {
       return { id: item.id, modelType: item.type };
     });
     this._refreshGridAsyncDelay();
   }
 
   _setupItemIdFromEvent(event: CustomEvent) {
-    const target = event.target as HTMLElement
-    if (target!=null) {
+    const target = event.target as HTMLElement;
+    if (target != null) {
       const itemId = target.parentElement!.getAttribute('data-args');
       if (!itemId) itemId = target.getAttribute('data-args');
       this.selectedItemId = itemId.toString();
-      let modelClass = target.parentElement!.getAttribute(
-        'data-model-class'
-      );
+      let modelClass = target.parentElement!.getAttribute('data-model-class');
       if (!modelClass) modelClass = target.getAttribute('data-model-class');
       this.selectedModelClass = modelClass;
       this._refreshGridAsync();
@@ -931,21 +932,19 @@ export class YpContentModeration extends YpBaseElement {
     );
   }
 
-  _delete(event) {
+  _delete(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    dom(document)
-      .querySelector('yp-app')
-      .getDialogAsync(
-        'confirmationDialog',
-        function (dialog) {
-          dialog.open(
-            this.t('areYouSureDeleteContent'),
-            this._reallyDelete.bind(this),
-            true,
-            false
-          );
-        }.bind(this)
-      );
+    window.appDialogs.getDialogAsync(
+      'confirmationDialog',
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t('areYouSureDeleteContent'),
+          this._reallyDelete.bind(this),
+          true,
+          false
+        );
+      }
+    );
   }
 
   _reallyDelete() {
@@ -954,18 +953,17 @@ export class YpContentModeration extends YpBaseElement {
 
   _anonymizeSelected(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    window.appDialogs
-      .getDialogAsync(
-        'confirmationDialog',
-        (dialog: YpConfirmationDialog) => {
-          dialog.open(
-            this.t('areYouSureAnonymizeSelectedContent'),
-            this._reallyAnonymizeSelected.bind(this),
-            true,
-            true
-          );
-        }
-      );
+    window.appDialogs.getDialogAsync(
+      'confirmationDialog',
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t('areYouSureAnonymizeSelectedContent'),
+          this._reallyAnonymizeSelected.bind(this),
+          true,
+          true
+        );
+      }
+    );
   }
 
   _reallyAnonymizeSelected() {
@@ -1086,8 +1084,8 @@ export class YpContentModeration extends YpBaseElement {
     if (this.selectedItemId) {
       const item = this._findItemFromId(this.selectedItemId);
       if (item) this.$$('#grid').deselectItem(item);
-      this.selectedItemId = null;
-      this.selectedModelClass = null;
+      this.selectedItemId = undefined;
+      this.selectedModelClass = undefined;
     }
   }
 
@@ -1096,12 +1094,17 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _setSelected(event: CustomEvent) {
-    const item = this._findItemFromId(event.target.getAttribute('data-args'));
-    if (item) {
-      this.$$('#grid').selectItem(item);
+    const itemFromEvent = (event.target as HTMLInputElement).getAttribute(
+      'data-args'
+    );
+    if (itemFromEvent) {
+      const item = this._findItemFromId(parseInt(itemFromEvent));
+      if (item) {
+        this.$$('#grid').selectItem(item);
+      }
+      this.allowGridEventsAfterMenuOpen = true;
+      this._refreshGridAsync();
     }
-    this.allowGridEventsAfterMenuOpen = true;
-    this._refreshGridAsync();
   }
 
   _findItemFromId(id: number) {
