@@ -1461,7 +1461,6 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
         let seqGroup = null;
         let ratingOrderNeeded = false;
-        let subQuery = null;
         let limit = 20;
         var offset = 0;
         if (req.query.offset) {
@@ -1522,7 +1521,6 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
             where: where,
             attributes: attributes,
             include: includes,
-            subQuery: subQuery,
             group: seqGroup,
             order: postOrderFinal,
             limit: limit,
