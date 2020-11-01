@@ -1462,6 +1462,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
         let seqGroup = null;
         let ratingOrderNeeded = false;
         let subQuery = null;
+        let limit = 20;
         const ratingsPostLookup = {};
 
         if (req.params.filter==="top" &&
@@ -1484,6 +1485,9 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
 
           ratingOrderNeeded = true;
           subQuery = false;
+
+          //TODO: Get postgres ordering working so we dont need to get everything
+          limit = 1000;
         }
 
         if (req.params.categoryId!='null') {
@@ -1506,7 +1510,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
             subQuery: subQuery,
             group: seqGroup,
             order: postOrderFinal,
-            limit: 20,
+            limit: limit,
             offset: offset
           }).then(function(postResults) {
             const posts = postResults.rows;
