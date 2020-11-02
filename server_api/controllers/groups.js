@@ -1496,6 +1496,7 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
             'RatingCount']
           )
 
+          //TODO: Include also just the attributes from above
           attributes = {
             include: attrIncludes
           }
