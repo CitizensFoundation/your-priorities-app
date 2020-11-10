@@ -235,6 +235,8 @@ var updateGroupConfigParamters = function (req, group) {
     }
   }
 
+  group.set('configuration.customTitleQuestionText', (req.body.customTitleQuestionText && req.body.customTitleQuestionText!="") ? req.body.customTitleQuestionText : null);
+
   group.set('configuration.customBackURL', (req.body.customBackURL && req.body.customBackURL!="") ? req.body.customBackURL : null);
   group.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
 
@@ -1146,7 +1148,7 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
 
 const addVideosToGroup = (group, done) => {
   models.Video.findAll({
-    attributes:  ['id','formats','viewable','public_meta'],
+    attributes:  ['id','formats','viewable','updated_at','public_meta'],
     include: [
       {
         model: models.Image,
@@ -1165,11 +1167,10 @@ const addVideosToGroup = (group, done) => {
       }
     ],
     order: [
-      ['updated_at', 'desc' ],
-      [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'VideoImages' }, 'updated_at', 'asc' ]
     ]
   }).then(videos => {
-    group.dataValues.GroupLogoVideos = videos;
+    group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
     done();
   }).catch( error => {
     done(error);
@@ -1260,6 +1261,7 @@ const allowedTextTypesForGroup = [
   "alternativeTextForNewIdeaButtonHeader",
   "alternativePointForHeader",
   "customThankYouTextNewPosts",
+  "customTitleQuestionText",
   "alternativePointAgainstHeader",
   "alternativePointForLabel",
   "alternativePointAgainstLabel",

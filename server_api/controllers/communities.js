@@ -389,7 +389,7 @@ const addVideosToGroup = (groups, done) => {
   //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
   async.forEachLimit(groups, 20, (group, forEachCallback) => {
     models.Video.findAll({
-      attributes:  ['id','formats','viewable','public_meta'],
+      attributes:  ['id','formats','viewable','public_meta','updated_at'],
       include: [
         {
           model: models.Image,
@@ -408,11 +408,10 @@ const addVideosToGroup = (groups, done) => {
         }
       ],
       order: [
-        ['updated_at', 'desc' ],
         [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
       ]
     }).then(videos => {
-      group.dataValues.GroupLogoVideos = videos;
+      group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
       forEachCallback();
     }).catch( error => {
       forEachCallback(error);
