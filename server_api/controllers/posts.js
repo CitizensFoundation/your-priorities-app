@@ -181,6 +181,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
       [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
       [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
+      [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
       [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
