@@ -50,6 +50,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   @property({ type: Boolean })
   isFirstRating = false;
 
+  @property({ type: Boolean })
+  isFromNewPost = false;
+
   @property({ type: Array })
   structuredAnswers: Array<YpStructuredAnswer> | undefined;
 
@@ -149,7 +152,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         mwc-radio {
-          --mwc-radio-label-color: #333;
+          --mwc-radio-label-color: #252525;
           font-size: 16px;
         }
 
@@ -190,7 +193,15 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         .longQuestion[use-small-font] {
           font-size: 16px;
-          color: #333;
+          color: #252525;
+        }
+
+        .longQuestion[is-from-new-post] {
+          color: #757575;
+        }
+
+        .question[is-from-new-post] {
+          color: #757575;
         }
 
         .longQuestion[has-content] {
@@ -202,7 +213,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         mwc-checkbox {
-          --mwc-checkbox-label-color: #333;
+          --mwc-checkbox-label-color: #252525;
           margin-left: 42px;
           margin-bottom: 24px;
         }
@@ -272,6 +283,15 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             font-size: 24px;
           }
         }
+
+      .radioGroup[invalid] mwc-radio {
+        --mdc-radio-unchecked-color: red;
+      }
+
+      mwc-dropdown-menu {
+          background-color: transparent;
+      }
+
       `,
     ];
   }
@@ -302,7 +322,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .label="${!skipLabel ? this.textWithIndex : ''}"
         charCounter
         name="${this.formName || ''}"
-        ?useSmallFont="${this.useSmallFont}"
+        ?use-small-font=="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
         type="text"
@@ -319,8 +339,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <div
         class="question general longQuestion"
-        .hasFocus="${this.longFocus}"
-        .useSmallFont="${this.useSmallFont}"
+        ?is-from-new-post="${this.isFromNewPost}"
+        ?has-focus="${this.longFocus}"
         id="structuredQuestionIntro_${this.index}">${unsafeHTML(this.textWithIndex)}</div>
       ${this.renderTextField(true)}
     `;
@@ -337,7 +357,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         charCounter
         @focus="${this.setLongFocus}"
         @blur="${this.setLongUnFocus}"
-        .useSmallFont="${this.useSmallFont}"
+        ?use-small-font="${this.useSmallFont}"
         @change="${this._debounceChangeEvent}"
         name="${this.formName || ''}"
         rows="3"
@@ -353,9 +373,11 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <div
         class="question general longQuestion"
-        has-focus="${this.longFocus}"
+        ?is-from-new-post="${this.isFromNewPost}"
+        ?has-focus="${this.longFocus}"
+        ?is-from-new-post="${this.isFromNewPost}"
         ?has-content="${this.question.value}"
-        useSmallFont="${this.useSmallFont}"
+        ?use-small-font="${this.useSmallFont}"
         id="structuredQuestionIntro_${this.index}"
        >${unsafeHTML(this.textWithLinks)}</div>
       ${this.renderTextArea(true)}
@@ -378,7 +400,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       <div
         class="question general"
         id="structuredQuestionQuestion_${this.index}"
-        .useSmallFont="${this.useSmallFont}"
+        ?is-from-new-post="${this.isFromNewPost}"
+        ?use-small-font="${this.useSmallFont}"
         ?extra-top-margin="${this.question.extraTopMargin}"
         ?less-bottom-margin="${this.question.lessBottomMargin}">${unsafeHTML(this.textWithLinks)}</div>
     `;
@@ -392,7 +415,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <mwc-formfield .label="${radioButton.text}">
         <mwc-radio
-          .useSmallFont="${this.useSmallFont}"
+          ?use-small-font="${this.useSmallFont}"
           @keypress="${this.setRadioEventType}"
           @change="${this._radioChanged}"
           .value="${radioButton.text}"
@@ -408,8 +431,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       ? html`
           <div
             class="question general radiosLabel"
-            useSmallFont="${this.useSmallFont}"
-            ?isFirstRating="${this.isFirstRating}"
+            ?use-small-font="${this.useSmallFont}"
+            ?is-from-new-post="${this.isFromNewPost}"
+            ?is-first-rating="${this.isFirstRating}"
             id="structuredQuestionIntro_${this.index}"
          >${unsafeHTML(this.textWithLinks)}</div>
           <div
@@ -462,7 +486,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           <div
             id="structuredQuestionIntro_${this.index}"
             class="question general checkBoxesLabel"
-            .useSmallFont="${this.useSmallFont}"
+            ?is-from-new-post="${this.isFromNewPost}"
+            ?use-small-font="${this.useSmallFont}"
          >${unsafeHTML(this.textWithLinks)}</div>
           <div
             id="structuredQuestion_${this.index}"
@@ -496,6 +521,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         id="structuredQuestion_${this.index}"
         data-type="dropdown"
         .label="${this.textWithIndex}"
+        ?is-from-new-post="${this.isFromNewPost}"
         ?required="${this.question.required}">
         <mwc-listbox slot="dropdown-content" attr-for-selected="name">
           ${this.question.dropdownOptions?.map(
@@ -645,6 +671,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           return true;
         }
       }
+    } else {
+      return true;
     }
   }
 

@@ -187,6 +187,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   attachmentsEnabled?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
+  customTitleQuestionText?: string;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -799,4 +800,37 @@ interface YpConfigTabData {
 
 interface StartTranscodingResponse {
   transcodingJobId: string;
+}
+
+// ADMIN
+
+interface YpToxicityScore {
+  toxicityScore?: number;
+  identityAttackScore?: number;
+  threatScore?: number;
+  insultScore?: number;
+  severeToxicityScore?: number;
+  sexuallyExplicitScore?: number;
+  profanityScore?: number;
+  flirtationScore?: number;
+}
+
+interface YpModerationItem extends YpDatabaseItem {
+  status?: string;
+  counter_flags?: number;
+  source?: string;
+  post_id?: number;
+  type: string;
+  pointTextContent?: string;
+  postNameContent?: string;
+  postTextContent?: string;
+  postTranscriptContent?: string;
+  is_post: boolean;
+  is_point: boolean;
+  toxicityScore?: number;
+  groupName?: string;
+  user_email?: string;
+  moderation_data?: {
+    moderation: YpToxicityScore;
+  }
 }

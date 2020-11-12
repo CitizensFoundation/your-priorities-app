@@ -3,6 +3,22 @@ import { nothing } from 'lit-html';
 import { YpBaseElement } from '../@yrpri/common/yp-base-element';
 import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';
 import { YpConfirmationDialog } from '../@yrpri/yp-dialog-container/yp-confirmation-dialog';
+import '../@yrpri/yp-magic-text/yp-magic-text.js';
+import '../@yrpri/yp-point/yp-point.js';
+import '../@yrpri/yp-post/yp-post.js';
+
+import '@vaadin/vaadin-grid/vaadin-grid.js';
+import type { GridElement } from '@vaadin/vaadin-grid/vaadin-grid.js';
+
+import '@polymer/iron-ajax';
+import { IronAjaxElement } from '@polymer/iron-ajax';
+
+import '@polymer/paper-listbox';
+import { PaperListboxElement} from '@polymer/paper-listbox';
+
+interface RowData {
+  item: YpModerationItem;
+}
 
 @customElement('yp-content-moderation')
 export class YpContentModeration extends YpBaseElement {
@@ -104,6 +120,25 @@ export class YpContentModeration extends YpBaseElement {
         observer: '_activeItemChanged',
       },
     };
+  }
+
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+    if (changedProperties.has('groupId')) {
+      this._groupIdChanged();
+    }
+    if (changedProperties.has('communityId')) {
+      this._communityIdChanged();
+    }
+    if (changedProperties.has('domainId')) {
+      this._domainIdChanged();
+    }
+    if (changedProperties.has('userId')) {
+      this._userIdChanged();
+    }
+    if (changedProperties.has('activeItem')) {
+      this._activeItemChanged();
+    }
   }
 
   static get styles() {
@@ -274,7 +309,7 @@ export class YpContentModeration extends YpBaseElement {
     ];
   }
 
-  renderContent(root, column, rowData) {
+  renderContent(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
     return html`
       <div class="layout horizontal">
@@ -304,7 +339,7 @@ export class YpContentModeration extends YpBaseElement {
     `;
   }
 
-  renderItemDetail(root, column, rowData) {
+  renderItemDetail(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
     return html`
       <div class="details layout vertical center-center detailArea">
@@ -314,7 +349,7 @@ export class YpContentModeration extends YpBaseElement {
                 <div class="layout vertical center-center">
                   <yp-post-header
                     hideActions
-                    .post="${item}"
+                    .post="${(item as unknown) as YpPostData}"
                     .postName="${item.name}"
                     headerMode
                   ></yp-post-header>
@@ -331,7 +366,10 @@ export class YpContentModeration extends YpBaseElement {
           ${item.is_point
             ? html`
                 <div class="layout vertical center-center">
-                  <yp-point hideActions .point="${item}"></yp-point>
+                  <yp-point
+                    hideActions
+                    .point="${(item as unknown) as YpPointData}"
+                  ></yp-point>
                   <a
                     ?hidden="${!item.post_id}"
                     href="/post/[[item.post_id]]/${item.id}"
@@ -346,79 +384,98 @@ export class YpContentModeration extends YpBaseElement {
               `
             : nothing}
         </div>
-        <div
-          ?hidden="${!item.toxicityScore}"
-          class="layout horizontal analysis"
-        >
-          <div class="layout vertical leftColumn" ?hidden="${this.userId!=undefined}">
-            <div
-              class="mainScore"
-              ?hidden="${!item.moderation_data.moderation.toxicityScore}"
-            >
-              Toxicity Score:
-              ${this._toPercent(item.moderation_data.moderation.toxicityScore)}
-            </div>
-            <div
-              ?hidden="${!item.moderation_data.moderation.identityAttackScore}"
-            >
-              Identity Attack Score:
-              ${this._toPercent(
-                item.moderation_data.moderation.identityAttackScore
-              )}
-            </div>
-            <div
-              ?hidden="${!item.moderation_data.moderation.identityAttachScore}"
-            >
-              Identity Attack Score:
-              ${this._toPercent(
-                item.moderation_data.moderation.identityAttachScore
-              )}
-            </div>
-            <div ?hidden="${!item.moderation_data.moderation.threatScore}">
-              Threat Score:
-              ${this._toPercent(item.moderation_data.moderation.threatScore)}
-            </div>
-            <div ?hidden="${!item.moderation_data.moderation.insultScore}">
-              Insult Score:
-              ${this._toPercent(item.moderation_data.moderation.insultScore)}
-            </div>
-          </div>
-          <div class="layout vertical" ?hidden="${this.userId!=undefined}">
-            <div
-              class="mainScore"
-              ?hidden="${!item.moderation_data.moderation.severeToxicityScore}"
-            >
-              Severe Toxicity Score:
-              ${this._toPercent(
-                item.moderation_data.moderation.severeToxicityScore
-              )}
-            </div>
-            <div ?hidden="${!item.moderation_data.moderation.profanityScore}">
-              Profanity Score:
-              ${this._toPercent(item.moderation_data.moderation.profanityScore)}
-            </div>
-            <div
-              ?hidden="${!item.moderation_data.moderation
-                .sexuallyExplicitScore}"
-            >
-              Sexually Excplicit Score:
-              ${this._toPercent(
-                item.moderation_data.moderation.sexuallyExplicitScore
-              )}
-            </div>
-            <div ?hidden="${!item.moderation_data.moderation.flirtationScore}">
-              Flirtation Score:
-              ${this._toPercent(
-                item.moderation_data.moderation.flirtationScore
-              )}
-            </div>
-          </div>
-        </div>
+
+        ${item.moderation_data
+          ? html`
+              <div class="layout horizontal analysis">
+                <div
+                  class="layout vertical leftColumn"
+                  ?hidden="${this.userId != undefined}"
+                >
+                  <div
+                    class="mainScore"
+                    ?hidden="${!item.moderation_data.moderation.toxicityScore}"
+                  >
+                    Toxicity Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.toxicityScore
+                    )}
+                  </div>
+                  <div
+                    ?hidden="${!item.moderation_data.moderation
+                      .identityAttackScore}"
+                  >
+                    Identity Attack Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.identityAttackScore
+                    )}
+                  </div>
+                  <div
+                    ?hidden="${!item.moderation_data.moderation.threatScore}"
+                  >
+                    Threat Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.threatScore
+                    )}
+                  </div>
+                  <div
+                    ?hidden="${!item.moderation_data.moderation.insultScore}"
+                  >
+                    Insult Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.insultScore
+                    )}
+                  </div>
+                </div>
+                <div
+                  class="layout vertical"
+                  ?hidden="${this.userId != undefined}"
+                >
+                  <div
+                    class="mainScore"
+                    ?hidden="${!item.moderation_data.moderation
+                      .severeToxicityScore}"
+                  >
+                    Severe Toxicity Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.severeToxicityScore
+                    )}
+                  </div>
+                  <div
+                    ?hidden="${!item.moderation_data.moderation.profanityScore}"
+                  >
+                    Profanity Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.profanityScore
+                    )}
+                  </div>
+                  <div
+                    ?hidden="${!item.moderation_data.moderation
+                      .sexuallyExplicitScore}"
+                  >
+                    Sexually Excplicit Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.sexuallyExplicitScore
+                    )}
+                  </div>
+                  <div
+                    ?hidden="${!item.moderation_data.moderation
+                      .flirtationScore}"
+                  >
+                    Flirtation Score:
+                    ${this._toPercent(
+                      item.moderation_data.moderation.flirtationScore
+                    )}
+                  </div>
+                </div>
+              </div>
+            `
+          : nothing}
       </div>
     `;
   }
 
-  renderActionHeader(root, column, rowData) {
+  renderActionHeader(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
     return html`
       <paper-menu-button
@@ -455,7 +512,7 @@ export class YpContentModeration extends YpBaseElement {
                 </paper-item>
                 <paper-item
                   data-args="${item.id}"
-                  ?hidden="${this.userId!=undefined}"
+                  ?hidden="${this.userId != undefined}"
                   @tap="${this._blockSelected}"
                 >
                   ${this.t('blockSelectedContent')} ${this.selectedItemsCount}
@@ -481,7 +538,7 @@ export class YpContentModeration extends YpBaseElement {
     `;
   }
 
-  renderAction(root, column, rowData) {
+  renderAction(root: HTMLElement, column: any, rowData: RowData) {
     const item = rowData.item;
     return html`
       <paper-menu-button
@@ -491,7 +548,7 @@ export class YpContentModeration extends YpBaseElement {
       >
         <paper-icon-button
           .ariaLabel="${this.t('openOneItemMenu')}"
-          .icon="more-vert"
+          icon="more-vert"
           data-args="${item.id}"
           @tap="${this._setSelected}"
           slot="dropdown-trigger"
@@ -612,7 +669,7 @@ export class YpContentModeration extends YpBaseElement {
           flexGrow="0"
           path="lastReportedAtDateFormatted"
           .header="${this.t('lastReported')}"
-          ?hidden="${this.userId}"
+          ?hidden="${this.userId != undefined}"
         >
         </vaadin-grid-sort-column>
 
@@ -621,7 +678,7 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="start"
           flexGrow="0"
           path="type"
-          .renderer="${(root, column, rowData) => {
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
             return this._getType(rowData.item.type);
           }}"
           .header="${this.t('type')}"
@@ -632,7 +689,7 @@ export class YpContentModeration extends YpBaseElement {
           width="100px"
           textAlign="start"
           flexGrow="0"
-          .renderer="${(root, column, rowData) => {
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
             return rowData.item.status;
           }}"
           path="status"
@@ -645,7 +702,7 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="center"
           flexGrow="0"
           path="counter_flags"
-          .renderer="${(root, column, rowData) => {
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
             return rowData.item.counter_flags;
           }}"
           .header="${this.t('flags')}"
@@ -658,7 +715,7 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="start"
           flexGrow="0"
           path="source"
-          .renderer="${(root, column, rowData) => {
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
             return rowData.item.source;
           }}"
           .header="${this.t('source')}"
@@ -671,7 +728,7 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="center"
           flexGrow="0"
           path="toxicityScoreRaw"
-          .renderer="${(root, column, rowData) => {
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
             return rowData.item.toxicityScore;
           }}"
           .header="${this.t('toxicityScore')}?"
@@ -684,7 +741,7 @@ export class YpContentModeration extends YpBaseElement {
           textAlign="start"
           flexGrow="1"
           path="groupName"
-          .renderer="${(root, column, rowData) => {
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
             return rowData.item.groupName;
           }}"
           .header="${this.t('groupName')}"
@@ -706,7 +763,7 @@ export class YpContentModeration extends YpBaseElement {
           flexGrow="1"
           path="user_email"
           width="150px"
-          .renderer="${(root, column, rowData) => {
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
             return rowData.item.user_email;
           }}"
           .header="${this.t('creator')}"
@@ -733,23 +790,23 @@ export class YpContentModeration extends YpBaseElement {
       </vaadin-grid>
 
       <div class="layout horizontal center-center">
-        <yp-ajax
+        <iron-ajax
           id="ajax"
           @response="${this._itemsResponse}"
           @error="${this._ajaxError}"
-        ></yp-ajax>
-        <yp-ajax
+        ></iron-ajax>
+        <iron-ajax
           method="DELETE"
           id="singleItemAjax"
           @error="${this._ajaxError}"
           @response="${this._singleItemResponse}"
-        ></yp-ajax>
-        <yp-ajax
+        ></iron-ajax>
+        <iron-ajax
           method="DELETE"
           id="manyItemsAjax"
           @error="${this._ajaxError}"
           @response="${this._manyItemsResponse}"
-        ></yp-ajax>
+        ></iron-ajax>
       </div>
     `;
   }
@@ -774,7 +831,7 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reload() {
-    this.$$('#ajax').generateRequest();
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
     this.forceSpinner = true;
   }
 
@@ -804,11 +861,11 @@ export class YpContentModeration extends YpBaseElement {
     oldItem: YpDatabaseItem | undefined
   ) {
     if (item) {
-      this.$$('#grid').openItemDetails(item);
+      (this.$$('#grid') as GridElement).openItemDetails(item);
     }
 
     if (oldItem) {
-      this.$$('#grid').closeItemDetails(oldItem);
+      (this.$$('#grid') as GridElement).closeItemDetails(oldItem);
     }
 
     this._refreshGridAsync();
@@ -826,15 +883,17 @@ export class YpContentModeration extends YpBaseElement {
 
   _refreshGridAsyncBase(ms: number) {
     setTimeout(() => {
-      this.$$('#grid').fire('iron-resize');
-      this.$$('#grid').notifyResize();
+      (this.$$('#grid') as GridElement).fire('iron-resize');
+      (this.$$('#grid') as GridElement).notifyResize();
     }, ms);
   }
 
   _menuSelection() {
-    const allMenus = this.$$('#grid').querySelectorAll('paper-listbox');
+    const allMenus = (this.$$('#grid') as GridElement).querySelectorAll(
+      'paper-listbox'
+    ) as unknown as Array<PaperListboxElement>;
     allMenus.forEach(item => {
-      item.select(null);
+      item.select("");
     });
     this._refreshGridAsync();
   }
@@ -845,7 +904,7 @@ export class YpContentModeration extends YpBaseElement {
     window.addEventListener('resize', this._resizeThrottler.bind(this), false);
   }
 
-  _toPercent(number: number) {
+  _toPercent(number: number | undefined) {
     if (number) {
       return Math.round(number * 100) + '%';
     } else {
@@ -864,11 +923,15 @@ export class YpContentModeration extends YpBaseElement {
 
   _setGridSize() {
     if (window.innerWidth <= 600) {
-      this.$$('#grid').style.width = window.innerWidth.toFixed() + 'px';
-      this.$$('#grid').style.height = window.innerHeight.toFixed() + 'px';
+      (this.$$('#grid') as HTMLElement).style.width =
+        window.innerWidth.toFixed() + 'px';
+      (this.$$('#grid') as HTMLElement).style.height =
+        window.innerHeight.toFixed() + 'px';
     } else {
-      this.$$('#grid').style.width = (window.innerWidth - 16).toFixed() + 'px';
-      this.$$('#grid').style.height = window.innerHeight.toFixed() + 'px';
+      (this.$$('#grid') as HTMLElement).style.width =
+        (window.innerWidth - 16).toFixed() + 'px';
+      (this.$$('#grid') as HTMLElement).style.height =
+        window.innerHeight.toFixed() + 'px';
     }
   }
 
@@ -897,9 +960,9 @@ export class YpContentModeration extends YpBaseElement {
   _setupItemIdFromEvent(event: CustomEvent) {
     const target = event.target as HTMLElement;
     if (target != null) {
-      const itemId = target.parentElement!.getAttribute('data-args');
-      if (!itemId) itemId = target.getAttribute('data-args');
-      this.selectedItemId = itemId.toString();
+      let itemId = target.parentElement!.getAttribute('data-args') as string;
+      if (!itemId) itemId = target.getAttribute('data-args') as string;
+      if (itemId) this.selectedItemId = parseInt(itemId);
       let modelClass = target.parentElement!.getAttribute('data-model-class');
       if (!modelClass) modelClass = target.getAttribute('data-model-class');
       this.selectedModelClass = modelClass;
@@ -907,26 +970,24 @@ export class YpContentModeration extends YpBaseElement {
     }
   }
 
-  _deleteSelected(event) {
+  _deleteSelected(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    dom(document)
-      .querySelector('yp-app')
-      .getDialogAsync(
-        'confirmationDialog',
-        function (dialog) {
-          dialog.open(
-            this.t('areYouSureDeleteSelectedContent'),
-            this._reallyDeleteSelected.bind(this),
-            true,
-            true
-          );
-        }.bind(this)
-      );
+    window.appDialogs.getDialogAsync(
+      'confirmationDialog',
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t('areYouSureDeleteSelectedContent'),
+          this._reallyDeleteSelected.bind(this),
+          true,
+          true
+        );
+      }
+    );
   }
 
   _reallyDeleteSelected() {
     this._masterRequest(
-      this.$$('#manyItemsAjax'),
+      this.$$('#manyItemsAjax') as IronAjaxElement,
       'delete',
       this.selectedItemIdsAndType
     );
@@ -948,7 +1009,7 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reallyDelete() {
-    this._masterRequest(this.$$('#singleItemAjax'), 'delete');
+    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'delete');
   }
 
   _anonymizeSelected(event: CustomEvent) {
@@ -968,7 +1029,7 @@ export class YpContentModeration extends YpBaseElement {
 
   _reallyAnonymizeSelected() {
     this._masterRequest(
-      this.$$('#manyItemsAjax'),
+      this.$$('#manyItemsAjax') as IronAjaxElement,
       'anonymize',
       this.selectedItemIdsAndType
     );
@@ -990,18 +1051,18 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reallyAnonymize() {
-    this._masterRequest(this.$$('#singleItemAjax'), 'anonymize');
+    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'anonymize');
   }
 
   _approve(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._masterRequest(this.$$('#singleItemAjax'), 'approve');
+    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'approve');
   }
 
   _approveSelected(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
     this._masterRequest(
-      this.$$('#manyItemsAjax'),
+      this.$$('#manyItemsAjax') as IronAjaxElement,
       'approve',
       this.selectedItemIdsAndType
     );
@@ -1009,13 +1070,13 @@ export class YpContentModeration extends YpBaseElement {
 
   _block(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._masterRequest(this.$$('#singleItemAjax'), 'block');
+    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'block');
   }
 
   _blockSelected(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
     this._masterRequest(
-      this.$$('#manyItemsAjax'),
+      this.$$('#manyItemsAjax') as IronAjaxElement,
       'block',
       this.selectedItemIdsAndType
     );
@@ -1023,19 +1084,23 @@ export class YpContentModeration extends YpBaseElement {
 
   _clearFlags(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._masterRequest(this.$$('#singleItemAjax'), 'clearFlags');
+    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'clearFlags');
   }
 
   _clearSelectedFlags(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
     this._masterRequest(
-      this.$$('#manyItemsAjax'),
+      this.$$('#manyItemsAjax') as IronAjaxElement,
       'clearFlags',
       this.selectedItemIdsAndType
     );
   }
 
-  _masterRequest(ajax, action, itemIdsAndType) {
+  _masterRequest(
+    ajax: IronAjaxElement,
+    action: string,
+    itemIdsAndType: Array<Record<number, string>> | undefined = undefined
+  ) {
     let url, collectionId;
     if (this.modelType === 'groups' && this.groupId) {
       collectionId = this.groupId;
@@ -1083,7 +1148,7 @@ export class YpContentModeration extends YpBaseElement {
 
     if (this.selectedItemId) {
       const item = this._findItemFromId(this.selectedItemId);
-      if (item) this.$$('#grid').deselectItem(item);
+      if (item) (this.$$('#grid') as GridElement).deselectItem(item);
       this.selectedItemId = undefined;
       this.selectedModelClass = undefined;
     }
@@ -1100,7 +1165,7 @@ export class YpContentModeration extends YpBaseElement {
     if (itemFromEvent) {
       const item = this._findItemFromId(parseInt(itemFromEvent));
       if (item) {
-        this.$$('#grid').selectItem(item);
+        (this.$$('#grid') as GridElement).selectItem(item);
       }
       this.allowGridEventsAfterMenuOpen = true;
       this._refreshGridAsync();
@@ -1129,39 +1194,39 @@ export class YpContentModeration extends YpBaseElement {
     }
   }
 
-  _groupIdChanged(newGroupId: number) {
-    if (newGroupId) {
+  _groupIdChanged() {
+    if (this.groupId) {
       this._reset();
       this.modelType = 'groups';
-      this._generateRequest(newGroupId);
+      this._generateRequest(this.groupId);
     }
   }
 
-  _communityIdChanged(newCommunityId: number) {
-    if (newCommunityId) {
+  _communityIdChanged() {
+    if (this.communityId) {
       this._reset();
       this.modelType = 'communities';
-      this._generateRequest(newCommunityId);
+      this._generateRequest(this.communityId);
     }
   }
 
-  _userIdChanged(userId: number) {
-    if (userId) {
+  _userIdChanged() {
+    if (this.userId) {
       this._reset();
       this.modelType = 'users';
-      this._generateRequest(userId);
+      this._generateRequest(this.userId);
     }
   }
 
-  _generateRequest(id) {
-    this.$$('#ajax').url =
+  _generateRequest(id: number) {
+    (this.$$('#ajax') as IronAjaxElement).url =
       '/api/' + this.modelType + '/' + id + this.typeOfModeration;
-    this.$$('#ajax').generateRequest();
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
   }
 
-  _itemsResponse(event, detail) {
+  _itemsResponse(event: CustomEvent) {
     this.forceSpinner = false;
-    this.items = detail.response;
+    this.items = event.detail.response;
     this._resetSelectedAndClearCache();
   }
 
@@ -1209,7 +1274,7 @@ export class YpContentModeration extends YpBaseElement {
     this.selectedItemsEmpty = true;
     this.selectedItemIdsAndType = [];
     this.selectedItems = [];
-    this.$$('#grid').clearCache();
+    (this.$$('#grid') as GridElement).clearCache();
   }
 
   _setupHeaderText() {
