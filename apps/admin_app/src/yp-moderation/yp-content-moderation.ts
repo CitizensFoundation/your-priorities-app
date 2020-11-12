@@ -14,7 +14,7 @@ import '@polymer/iron-ajax';
 import { IronAjaxElement } from '@polymer/iron-ajax';
 
 import '@polymer/paper-listbox';
-import { PaperListboxElement} from '@polymer/paper-listbox';
+import { PaperListboxElement } from '@polymer/paper-listbox';
 
 interface RowData {
   item: YpModerationItem;
@@ -137,7 +137,10 @@ export class YpContentModeration extends YpBaseElement {
       this._userIdChanged();
     }
     if (changedProperties.has('activeItem')) {
-      this._activeItemChanged();
+      this._activeItemChanged(
+        this.activeItem,
+        changedProperties.get('activeItem') as YpDatabaseItem | undefined
+      );
     }
   }
 
@@ -889,11 +892,11 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _menuSelection() {
-    const allMenus = (this.$$('#grid') as GridElement).querySelectorAll(
+    const allMenus = ((this.$$('#grid') as GridElement).querySelectorAll(
       'paper-listbox'
-    ) as unknown as Array<PaperListboxElement>;
+    ) as unknown) as Array<PaperListboxElement>;
     allMenus.forEach(item => {
-      item.select("");
+      item.select('');
     });
     this._refreshGridAsync();
   }
@@ -1009,7 +1012,10 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reallyDelete() {
-    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'delete');
+    this._masterRequest(
+      this.$$('#singleItemAjax') as IronAjaxElement,
+      'delete'
+    );
   }
 
   _anonymizeSelected(event: CustomEvent) {
@@ -1051,12 +1057,18 @@ export class YpContentModeration extends YpBaseElement {
   }
 
   _reallyAnonymize() {
-    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'anonymize');
+    this._masterRequest(
+      this.$$('#singleItemAjax') as IronAjaxElement,
+      'anonymize'
+    );
   }
 
   _approve(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'approve');
+    this._masterRequest(
+      this.$$('#singleItemAjax') as IronAjaxElement,
+      'approve'
+    );
   }
 
   _approveSelected(event: CustomEvent) {
@@ -1084,7 +1096,10 @@ export class YpContentModeration extends YpBaseElement {
 
   _clearFlags(event: CustomEvent) {
     this._setupItemIdFromEvent(event);
-    this._masterRequest(this.$$('#singleItemAjax') as IronAjaxElement, 'clearFlags');
+    this._masterRequest(
+      this.$$('#singleItemAjax') as IronAjaxElement,
+      'clearFlags'
+    );
   }
 
   _clearSelectedFlags(event: CustomEvent) {
@@ -1186,11 +1201,11 @@ export class YpContentModeration extends YpBaseElement {
     return foundItem;
   }
 
-  _domainIdChanged(newDomainId: number) {
-    if (newDomainId) {
+  _domainIdChanged() {
+    if (this.domainId) {
       this._reset();
       this.modelType = 'domains';
-      this._generateRequest(newDomainId);
+      this._generateRequest(this.domainId);
     }
   }
 
