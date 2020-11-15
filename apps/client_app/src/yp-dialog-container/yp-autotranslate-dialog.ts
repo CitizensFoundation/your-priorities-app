@@ -11,7 +11,7 @@ import '@material/mwc-icon';
 import '../yp-app/yp-language-selector.js';
 import { YpLanguageSelector } from '../yp-app/yp-language-selector.js';
 
-@customElement('yp-confirmation-dialog')
+@customElement('yp-autotranslate-dialog')
 export class YpAutoTranslateDialog extends YpBaseElement {
   @property({ type: String })
   confirmationText: string | undefined;
@@ -25,7 +25,7 @@ export class YpAutoTranslateDialog extends YpBaseElement {
           max-width: 400px;
         }
 
-        nwc-icon {
+        mwc-icon {
           color: var(--accent-color);
           width: 48px;
           height: 48px;

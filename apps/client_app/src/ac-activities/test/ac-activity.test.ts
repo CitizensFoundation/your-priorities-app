@@ -1,38 +1,18 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { AcActivityPostStatusUpdate } from '../ac-activity-post-status-update.js';
-import '../ac-activity-post-status-update.js';
+import { AcActivity } from '../ac-activity.js';
+import '../ac-activity.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 
-describe('AcActivityPostStatusUpdate', () => {
-  let element: AcActivityPostStatusUpdate;
+describe('AcActivity', () => {
+  let element: AcActivity;
 
   before(async () => {
     await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {
-    const point = {
-      id: 1,
-      created_at: new Date(),
-      counter_quality_up: 3,
-      counter_quality_down: 2,
-      content: 'Betri-Alexander',
-      value: 1,
-      PointRevisions: [
-        {
-          id: 1,
-          content: "Blah",
-          User: {
-            id: 1,
-            email: "blah@blah.is",
-            name: "bluh"
-          }
-        }
-      ],
-    } as YpPointData;
-
     const post = {
       id: 1,
       location:{
@@ -58,22 +38,42 @@ describe('AcActivityPostStatusUpdate', () => {
       }
     } as YpPostData;
 
+    const point = {
+      id: 1,
+      created_at: new Date(),
+      counter_quality_up: 3,
+      counter_quality_down: 2,
+      content: 'Betri-Alexander',
+      value: 1,
+      PointRevisions: [
+        {
+          id: 1,
+          content: "Blah",
+          User: {
+            id: 1,
+            email: "blah@blah.is",
+            name: "bluh"
+          }
+        }
+      ],
+    } as YpPointData;
+
     const activity = {
         type: 'LEXO',
         created_at: new Date(),
         domain_id: 2,
         User: {
           id: 1,
-          name: 'Lexer',
+          name: 'Lexer'
         },
-        Post: post,
-        Point: point
+        Point: point,
+        Post: post
     } as AcActivityData
 
     element = await fixture(html`
-      <ac-activity-post-status-update
-       .activity="${activity}">
-      </ac-activity-post-status-update
+      <ac-activity
+        .activity="${activity}">
+      </ac-activity
       >
     `);
   });
