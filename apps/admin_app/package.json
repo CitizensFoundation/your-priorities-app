@@ -86,6 +86,7 @@
     "@material/mwc-textfield": "^0.18.0",
     "@material/mwc-top-app-bar": "^0.18.0",
     "@polymer/iron-ajax": "^3.0.1",
+    "@polymer/paper-dialog": "^3.0.1",
     "@polymer/paper-listbox": "^3.0.1",
     "@polymer/polymer": "^3.4.1",
     "@vaadin/vaadin-grid": "^5.7.6",

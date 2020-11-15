@@ -222,7 +222,7 @@ interface YpEndorsement {
   post_id: number;
 }
 
-interface YpOrganization {
+interface YpOrganizationData extends YpDatabaseItem {
   name: string;
   OrganizationLogoImages: Array<YpImageData>;
 }
@@ -290,6 +290,7 @@ interface YpAdminRights {
   GroupAdmins: Array<YpCollectionData>;
   CommunityAdmins: Array<YpCollectionData>;
   DomainAdmins: Array<YpCollectionData>;
+  OrganizationAdmins: Array<YpOrganizationData>;
 }
 
 interface YpDomainData extends YpCollectionData {
@@ -493,7 +494,7 @@ interface YpUserData {
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   forceSecureSamlLogin?: boolean;
-  OrganizationUsers?: Array<YpOrganization>;
+  OrganizationUsers?: Array<YpOrganizationData>;
   UserProfileImages?: Array<YpImageData>;
   facebook_id?: number;
   ssn?: number;
@@ -834,3 +835,4 @@ interface YpModerationItem extends YpDatabaseItem {
     moderation: YpToxicityScore;
   }
 }
+
