@@ -20,6 +20,11 @@ interface RowData {
   item: YpModerationItem;
 }
 
+interface SelectedItemIdsAndType {
+  id: number;
+  modelType: string;
+}
+
 @customElement('yp-content-moderation')
 export class YpContentModeration extends YpBaseElement {
   @property({ type: Boolean })
@@ -38,10 +43,10 @@ export class YpContentModeration extends YpBaseElement {
   selectedItemsEmpty = true;
 
   @property({ type: Array })
-  items: Array<YpDatabaseItem> | undefined;
+  items: Array<YpModerationItem> | undefined;
 
   @property({ type: Array })
-  selectedItems: Array<YpDatabaseItem> | undefined;
+  selectedItems: Array<YpModerationItem> | undefined;
 
   @property({ type: String })
   headerText: string | undefined;
@@ -68,7 +73,7 @@ export class YpContentModeration extends YpBaseElement {
   selectedItemsCount = 0;
 
   @property({ type: Array })
-  selectedItemIdsAndType: Array<Record<number, string>> | undefined;
+  selectedItemIdsAndType: Array<SelectedItemIdsAndType> | undefined;
 
   @property({ type: Number })
   selectedItemId: number | undefined;
@@ -955,7 +960,7 @@ export class YpContentModeration extends YpBaseElement {
       this.selectedItemsCount = 0;
     }
     this.selectedItemIdsAndType = this.selectedItems!.map(item => {
-      return { id: item.id, modelType: item.type };
+      return { id: item.id, modelType: item.type } as SelectedItemIdsAndType;
     });
     this._refreshGridAsyncDelay();
   }
@@ -1114,7 +1119,7 @@ export class YpContentModeration extends YpBaseElement {
   _masterRequest(
     ajax: IronAjaxElement,
     action: string,
-    itemIdsAndType: Array<Record<number, string>> | undefined = undefined
+    itemIdsAndType: Array<SelectedItemIdsAndType> | undefined = undefined
   ) {
     let url, collectionId;
     if (this.modelType === 'groups' && this.groupId) {
