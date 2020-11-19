@@ -4,11 +4,15 @@ import { html, fixture, expect } from '@open-wc/testing';
 import { YpUserInfo } from '../yp-user-info.js';
 import '../yp-user-info.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
+import sinon from 'sinon';
 
 describe('YpUserInfo', () => {
   let element: YpUserInfo;
+  let server: any; 
 
   before(async () => {
+    server = sinon.fakeServer.create();
+
     await YpTestHelpers.setupApp();
   });
 
@@ -18,14 +22,14 @@ describe('YpUserInfo', () => {
         name: 'YURR'
       } as YpUserData
 
-    element = await fixture(html`
-      <yp-user-info
-        .user="${user}">
-    </yp-user-info>
-    `);
+    element = await fixture(html`<yp-user-info .user="${user}"></yp-user-info>`);
   });
   
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
+  });
+
+  after(async () => {
+    server.restore();
   });
 });

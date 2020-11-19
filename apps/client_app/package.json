@@ -82,6 +82,7 @@
     "@material/mwc-textfield": "^0.18.0",
     "@material/mwc-top-app-bar": "^0.18.0",
     "@polymer/polymer": "^3.4.1",
+    "@types/mocha": "^8.0.4",
     "@webcomponents/webcomponentsjs": "^2.4.3",
     "i18next-http-backend": "^1.0.16",
     "insert-text-at-cursor": "^0.3.0",
@@ -97,6 +98,7 @@
     "pwa-helpers": "^0.9.1",
     "recordrtc": "^5.6.1",
     "share-menu": "^4.0.0",
+    "sinon": "^9.2.1",
     "wavesurfer.js": "^4.0.1"
   }
 }
