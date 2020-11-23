@@ -160,14 +160,18 @@ router.post('/register', function (req, res) {
 // Register anonymous
 router.post('/register_anonymously', function (req, res) {
   log.info("Anon debug in register_anonymously");
-  var groupId = req.body.groupId;
+  const groupId = req.body.groupId;
+  const oneTimeLoginName = req.body.oneTimeLoginName;
 
   models.Group.findOne({
     where: {
       id: groupId
     }
   }).then(function (group) {
-    if (group && group.configuration && group.configuration.allowAnonymousUsers) {
+    if (group &&
+        group.configuration &&
+       (group.configuration.allowAnonymousUsers ||
+        group.configuration.allowOneTimeLoginWithName)) {
       var anonEmail = req.sessionID+"_anonymous@citizens.is";
       models.User.findOne({
         where: {
@@ -183,7 +187,7 @@ router.post('/register_anonymously', function (req, res) {
         } else {
           var user = models.User.build({
             email: anonEmail,
-            name: "Anonymous User",
+            name: oneTimeLoginName ? oneTimeLoginName : "Anonymous User",
             notifications_settings: models.AcNotification.anonymousNotificationSettings,
             status: 'active'
           });

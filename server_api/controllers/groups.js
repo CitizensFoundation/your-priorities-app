@@ -325,6 +325,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.customThankYouTextNewPosts', (req.body.customThankYouTextNewPosts && req.body.customThankYouTextNewPosts!=="") ? req.body.customThankYouTextNewPosts : null);
   group.set('configuration.useCommunityTopBanner', truthValueFromBody(req.body.useCommunityTopBanner));
   group.set('configuration.makeMapViewDefault', truthValueFromBody(req.body.makeMapViewDefault));
+  group.set('configuration.allowOneTimeLoginWithName', truthValueFromBody(req.body.allowOneTimeLoginWithName));
   group.set('configuration.simpleFormatDescription', truthValueFromBody(req.body.simpleFormatDescription));
   group.set('configuration.resourceLibraryLinkMode', truthValueFromBody(req.body.resourceLibraryLinkMode));
   group.set('configuration.collapsableTranscripts', truthValueFromBody(req.body.collapsableTranscripts));
