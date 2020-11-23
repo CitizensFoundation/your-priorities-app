@@ -277,7 +277,10 @@
         },
 
         setAnonymousGroupStatus: function (group) {
-          if (group && group.configuration && group.configuration.allowAnonymousUsers) {
+          if (group &&
+              group.configuration &&
+              (group.configuration.allowAnonymousUsers ||
+               group.configuration.allowOneTimeLoginWithName)) {
             this.set('currentAnonymousGroup', group);
             console.debug("Have set anonymous group id: "+group.id);
             if (!window.appUser.user && this.currentAnonymousUser) {
