@@ -659,7 +659,7 @@ export class YpContentModeration extends YpBaseElement {
         .ariaLabel="${this.headerText}"
         .rowDetailsRenderer="${this.renderItemDetail}"
         .items="${this.items}"
-        .selectedItems="${this.selectedItems}"
+        .selectedItems="${this.selectedItems as Array<unknown>}"
       >
         <vaadin-grid-selection-column> </vaadin-grid-selection-column>
 

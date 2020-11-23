@@ -108,6 +108,7 @@ interface YpStructuredAnswer {
 interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowAnonymousUsers?: boolean;
   allowAnonymousAutoLogin?: boolean;
+  allowOneTimeLoginWithName?: boolean;
   hideGroupHeader?: boolean;
   hideAllTabs?: boolean;
   hideHelpIcon?: boolean;

@@ -14,6 +14,11 @@ import { PaperListboxElement } from '@polymer/paper-listbox';
 import '@polymer/paper-dialog';
 import { PaperDialogElement } from '@polymer/paper-dialog';
 import { YpConfirmationDialog } from '../@yrpri/yp-dialog-container/yp-confirmation-dialog';
+import { ItemCache } from '@vaadin/vaadin-grid/src/vaadin-grid-data-provider-mixin';
+
+interface RowData {
+  item: YpUserData;
+}
 
 @customElement('yp-users-grid')
 export class YpUsersGrid extends YpBaseElement {
@@ -388,14 +393,19 @@ export class YpUsersGrid extends YpBaseElement {
         id="grid"
         .ariaLabel="${this.headerText}"
         .items="${this.users}"
-        .selectedItems="${this.selectedUsers}"
+        .selectedItems="${this.selectedUsers as Array<unknown>}"
       >
         <vaadin-grid-selection-column auto-select="">
         </vaadin-grid-selection-column>
 
-        <vaadin-grid-column width="60px" flexGrow="0">
-          <template class="header">#</template>
-          <template>${this.item.id}</template>
+        <vaadin-grid-column
+          width="60px"
+          flexGrow="0"
+          header="#"
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
+            return rowData.item.id;
+          }}"
+        >
         </vaadin-grid-column>
 
         <vaadin-grid-filter-column
@@ -465,7 +475,7 @@ export class YpUsersGrid extends YpBaseElement {
                           ${this.t('removeSelectedFromGroup')}
                           ${this.selectedUsersCount}
                         </div>
-                        <div ?hidden="${!thiscommunityId}">
+                        <div ?hidden="${!this.communityId}">
                           ${this.t('removeSelectedFromCommunity')}
                           ${this.selectedUsersCount}
                         </div>
