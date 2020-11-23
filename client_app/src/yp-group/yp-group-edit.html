@@ -202,9 +202,13 @@
         <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">
           [[t('allowAnonymousUsers')]]
         </paper-checkbox>
-        <paper-checkbox name="allowAnonymousAutoLogin" checked$="{{group.configuration.allowAnonymousAutoLogin}}">
+        <paper-checkbox name="allowAnonymousAutoLogin" disabled$="[[!group.configuration.allowAnonymousUsers]]"  checked$="{{group.configuration.allowAnonymousAutoLogin}}">
           [[t('allowAnonymousAutoLogin')]]
         </paper-checkbox>
+        <paper-checkbox name="allowOneTimeLoginWithName" checked$="{{group.configuration.allowOneTimeLoginWithName}}">
+          [[t('allowOneTimeLoginWithName')]]
+        </paper-checkbox>
+
         <paper-checkbox name="disableFacebookLoginForGroup"
                         checked$="{{group.configuration.disableFacebookLoginForGroup}}">
           [[t('disableFacebookLoginForGroup')]]
