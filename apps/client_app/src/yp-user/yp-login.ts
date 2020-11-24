@@ -8,6 +8,8 @@ import '@material/mwc-circular-progress-four-color';
 
 import { YpBaseElement } from '../common/yp-base-element.js';
 import { YpNavHelpers } from '../common/YpNavHelpers.js';
+import { TextField } from '@material/mwc-textfield';
+import { Dialog } from '@material/mwc-dialog';
 
 @customElement('yp-login')
 export class YpLogin extends YpBaseElement {
@@ -78,6 +80,12 @@ export class YpLogin extends YpBaseElement {
 
   @property({ type: String })
   customSamlLoginText: string | undefined;
+
+  @property({ type: String })
+  oneTimeLoginName: string | undefined;
+
+  @property({ type: Boolean })
+  hasOneTimeLoginWithName = false;
 
   onLoginFunction: Function | undefined;
 
@@ -457,6 +465,16 @@ export class YpLogin extends YpBaseElement {
               >
             `
           : nothing}
+        ${this.hasOneTimeLoginWithName
+          ? html`
+              <mwc-button
+                raised
+                class="anonLoginButton"
+                @click="${this.oneTimeLogin}"
+                >${this.t('oneTimeLoginWithName')}</mwc-button
+              >
+            `
+          : nothing}
 
         <div class="layout horizontal">
           ${this.hasFacebookLogin
@@ -512,6 +530,7 @@ export class YpLogin extends YpBaseElement {
         .label="${this.t('user.password')}"
         .value="${this.password}"
         autocomplete="current-password"
+        @keyup="${this.onEnter}"
         .validationMessage="${this.passwordErrorMessage || ''}">
       </mwc-textfield>
     </div>`;
@@ -548,6 +567,45 @@ export class YpLogin extends YpBaseElement {
   closeAndReset() {
     this.close();
     this.registerMode = 0;
+  }
+
+  renderOneTimeDialog() {
+    return html`
+      <mwc-dialog id="dialogOneTimeWithName" modal>
+        <h3>[[t('oneTimeLoginWithName')]]</h3>
+
+        <mwc-textfield
+          id="oneTimeLoginWithNameId"
+          type="text"
+          .label="${this.userNameText}"
+          maxlength="50"
+          @keyup="${this._updateOneTimeLoginName}"
+          autocomplete="off">
+        </mwc-textfield>
+
+        <div class="buttons">
+          <mwc-button dialogAction="cancel" @click="${this._cancel}"
+            >${this.t('cancel')}</mwc-button
+          >
+          <mwc-button
+            ?disabled="${!this.oneTimeLoginName}"
+            @click="${this.finishOneTimeLogin}">
+            ${this.t('user.login')}</mwc-button
+          >
+        </div>
+      </mwc-dialog>
+    `;
+  }
+
+  _updateOneTimeLoginName(event: KeyboardEvent) {
+    this.oneTimeLoginName = (this.$$(
+      '#oneTimeLoginWithNameId'
+    ) as TextField).value;
+    if (this.oneTimeLoginName && this.oneTimeLoginName.length > 0) {
+      if (event.key == 'enter') {
+        this.finishOneTimeLogin();
+      }
+    }
   }
 
   render() {
@@ -620,6 +678,7 @@ export class YpLogin extends YpBaseElement {
 
         ${this.renderButtons()}
       </mwc-dialog>
+      ${this.hasOneTimeLoginWithName ? this.renderOneTimeDialog() : nothing}
     `;
   }
 
@@ -733,12 +792,27 @@ export class YpLogin extends YpBaseElement {
     );
   }
 
-  async anonymousLogin() {
+  oneTimeLogin() {
+    this.oneTimeLoginName = undefined;
+    (this.$$('#dialogOneTimeWithName') as Dialog).open = true;
+    setTimeout(() => {
+      this.$$('#oneTimeLoginWithNameId')?.focus();
+    }, 50);
+  }
+
+  finishOneTimeLogin() {
+    (this.$$('#dialogOneTimeWithName') as Dialog).open = false;
+    if (this.oneTimeLoginName) {
+      this.anonymousLogin('One Time Login');
+    }
+  }
+
+  async anonymousLogin(loginSubType = 'Anonymous') {
     if (window.appGlobals.currentAnonymousGroup) {
       window.appGlobals.analytics.sendLoginAndSignup(
         -1,
         'Signup Submit',
-        'Anonymous'
+        loginSubType
       );
 
       this._startSpinner();
@@ -746,6 +820,9 @@ export class YpLogin extends YpBaseElement {
       const user = (await window.serverApi.registerUser({
         groupId: window.appGlobals.currentAnonymousGroup.id,
         trackingParameters: window.appGlobals.originalQueryParameters,
+        oneTimeLoginName: this.hasOneTimeLoginWithName
+          ? this.oneTimeLoginName
+          : null,
       })) as YpUserData;
 
       this._cancel();
@@ -756,7 +833,7 @@ export class YpLogin extends YpBaseElement {
         window.appGlobals.analytics.sendLoginAndSignup(
           user.id,
           'Signup Success',
-          'Anonymous'
+          loginSubType
         );
         this._loginCompleted(user);
       } else {
@@ -843,7 +920,8 @@ export class YpLogin extends YpBaseElement {
       this.domain &&
       ((this.hasFacebookLogin && !this.disableFacebookLoginForGroup) ||
         this.hasSamlLogin ||
-        this.hasAnonymousLogin)
+        this.hasAnonymousLogin ||
+        this.hasOneTimeLoginWithName)
     );
   }
 
@@ -865,11 +943,28 @@ export class YpLogin extends YpBaseElement {
 
   _openedChanged() {
     if (this.opened) {
-      if (window.appGlobals.currentAnonymousGroup) {
+      if (
+        window.appGlobals.currentAnonymousGroup &&
+        window.appGlobals.currentGroup &&
+        window.appGlobals.currentGroup.configuration &&
+        window.appGlobals.currentGroup.configuration.allowAnonymousUsers
+      ) {
         this.hasAnonymousLogin = true;
       } else {
         this.hasAnonymousLogin = false;
       }
+
+      if (
+        window.appGlobals.currentAnonymousGroup &&
+        window.appGlobals.currentGroup &&
+        window.appGlobals.currentGroup.configuration &&
+        window.appGlobals.currentGroup.configuration.allowOneTimeLoginWithName
+      ) {
+        this.hasOneTimeLoginWithName = true;
+      } else {
+        this.hasOneTimeLoginWithName = false;
+      }
+
       if (window.appGlobals.disableFacebookLoginForGroup) {
         this.disableFacebookLoginForGroup = true;
       } else {
@@ -912,7 +1007,7 @@ export class YpLogin extends YpBaseElement {
       }
 
       setTimeout(() => {
-        //TODO: Make return work
+        //TODO: Make return work - shold work now 24112020
         //this.$$('#a11y').target = this.$$('#form');
         //this.$$('#email').focus();
       }, 50);
@@ -933,8 +1028,16 @@ export class YpLogin extends YpBaseElement {
     }
   }
 
-  onEnter() {
-    this._validateAndSend();
+  onEnter(event: KeyboardEvent) {
+    if (event.key == 'enter') {
+      this._validateAndSend();
+    }
+  }
+
+  onEnterOneTimeLogin(event: KeyboardEvent) {
+    if (event.key == 'enter') {
+      this._validateAndSend();
+    }
   }
 
   //TODO: Test and make sure this works as expected
@@ -1037,7 +1140,6 @@ export class YpLogin extends YpBaseElement {
     )) as YpUserData;
     this.isSending = false;
     if (user) {
-      debugger;
       window.appGlobals.analytics.sendLoginAndSignup(
         user.id,
         'Signup Success',

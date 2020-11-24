@@ -334,6 +334,11 @@ render() {
         <paper-checkbox .name="allowAnonymousAutoLogin" .checked="${this.group.configuration.allowAnonymousAutoLogin}">
           ${this.t('allowAnonymousAutoLogin')}
         </paper-checkbox>
+        <paper-checkbox .name="allowOneTimeLoginWithName" .checked="${this.group.configuration.allowOneTimeLoginWithName}">
+          ${this.t('allowOneTimeLoginWithName')}
+        </paper-checkbox>
+
+
         <paper-checkbox .name="disableFacebookLoginForGroup" .checked="${this.group.configuration.disableFacebookLoginForGroup}">
           ${this.t('disableFacebookLoginForGroup')}
         </paper-checkbox>
