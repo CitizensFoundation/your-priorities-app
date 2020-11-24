@@ -1,4 +1,6 @@
 {
+  "allowOneTimeLoginWithName": "Leyfa einnota innskráning með nafni",
+  "oneTimeLoginWithName": "Einnota innskráning með nafni",
   "customTitleQuestionText": "Sértækur texti fyrir nafn á hugmynd",
   "statsPoints": "Fjöldi raka",
   "topNavigation": "Efsta valmynd",
