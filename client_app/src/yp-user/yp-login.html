@@ -356,6 +356,10 @@
                     <paper-button raised class="anonLoginButton" on-tap="anonymousLogin">[[t('participateAnonymously')]]</paper-button>
                   </template>
 
+                  <template is="dom-if" if="[[hasOneTimeLoginWithName]]">
+                    <paper-button raised class="anonLoginButton" on-tap="oneTimeLogin">[[t('oneTimeLoginWithName')]]</paper-button>
+                  </template>
+
                   <div class="layout horizontal">
                     <template is="dom-if" if="[[hasFacebookLogin]]">
                     <span hidden$="[[forceSecureSamlLogin]]">
@@ -450,6 +454,27 @@
 
     <iron-a11y-keys id="a11y" keys="enter"
                     on-keys-pressed="onEnter"></iron-a11y-keys>
+
+    <template is="dom-if" if="[[hasOneTimeLoginWithName]]">
+      <paper-dialog id="dialogOneTimeWithName" modal>
+        <h3>[[t('oneTimeLoginWithName')]]</h3>
+
+        <paper-input id="oneTimeLoginWithNameId"
+                     type="text"
+                     label="[[userNameText]]"
+                     maxlength="50"
+                     value="{{oneTimeLoginName}}"
+                     autocomplete="off">
+        </paper-input>
+
+        <div class="buttons">
+          <paper-button dialog-dismiss>[[t('cancel')]]</paper-button>
+          <paper-button disabled$="[[!oneTimeLoginName]]" on-tap="finishOneTimeLogin">[[t('user.login')]]</paper-button>
+        </div>
+      </paper-dialog>
+      <iron-a11y-keys id="a11yoneTimeWithName" keys="enter"
+                      on-keys-pressed="finishOneTimeLogin"></iron-a11y-keys>
+    </template>
     <yp-ajax id="registerAnonymouslyAjax" method="POST" dispatch-error on-error="_registerError"
              url="/api/users/register_anonymously" on-response="_registerResponse"></yp-ajax>
   </template>
@@ -581,7 +606,7 @@
 
       hasAdditionalAuthMethods: {
         type: Boolean,
-        computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, disableFacebookLoginForGroup)'
+        computed: '_hasAdditionalAuthMethods(domain, hasAnonymousLogin, hasOneTimeLoginWithName, disableFacebookLoginForGroup)'
       },
 
       userNameText: {
@@ -632,6 +657,16 @@
       customSamlLoginText: {
         type: String,
         value: null
+      },
+
+      oneTimeLoginName: {
+        type: String,
+        value: null
+      },
+
+      hasOneTimeLoginWithName: {
+        type: Boolean,
+        value: false
       }
     },
 
@@ -706,13 +741,29 @@
       window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Login Submit', 'Facebook');
     },
 
-    anonymousLogin: function () {
+    anonymousLogin: function (loginSubType) {
       this.$$("#registerAnonymouslyAjax").body = {
         groupId: window.appGlobals.currentAnonymousGroup.id,
-        trackingParameters: window.appGlobals.originalQueryParameters
+        trackingParameters: window.appGlobals.originalQueryParameters,
+        oneTimeLoginName: this.hasOneTimeLoginWithName ? this.oneTimeLoginName : null
       };
       this.$$("#registerAnonymouslyAjax").generateRequest();
-      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', 'Anonymous');
+      window.appGlobals.sendLoginAndSignupToAnalytics(null, 'Signup Submit', loginSubType ? loginSubType : 'Anonymous');
+    },
+
+    finishOneTimeLogin: function () {
+      this.$$("#dialogOneTimeWithName").close();
+      if (this.oneTimeLoginName) {
+        this.anonymousLogin('One time name login');
+      }
+    },
+
+    oneTimeLogin: function () {
+      this.set('oneTimeLoginName', null);
+      this.$$("#dialogOneTimeWithName").open();
+      this.async(function () {
+        this.$$("#oneTimeLoginWithNameId").focus();
+      }, 50);
     },
 
     _openSamlLogin: function () {
@@ -760,8 +811,8 @@
       }
     },
 
-    _hasAdditionalAuthMethods: function (domain, hasAnonymousLogin) {
-      return domain && ((this._hasFacebookLogin(domain) && !this.disableFacebookLoginForGroup) || this._hasSamlLogin(domain) || hasAnonymousLogin);
+    _hasAdditionalAuthMethods: function (domain, hasAnonymousLogin, hasOneTimeLoginWithName) {
+      return domain && ((this._hasFacebookLogin(domain) && !this.disableFacebookLoginForGroup) || this._hasSamlLogin(domain) || hasAnonymousLogin || hasOneTimeLoginWithName);
     },
 
     _hasFacebookLogin: function (domain) {
@@ -782,11 +833,25 @@
 
     _openedChanged: function (newValue) {
       if (newValue) {
-        if (window.appGlobals.currentAnonymousGroup) {
+        if (window.appGlobals.currentAnonymousGroup &&
+          window.appGlobals.currentGroup &&
+          window.appGlobals.currentGroup.configuration &&
+          window.appGlobals.currentGroup.configuration.allowAnonymousUsers
+        ) {
           this.set('hasAnonymousLogin', true);
         } else {
           this.set('hasAnonymousLogin', false);
         }
+
+        if (window.appGlobals.currentAnonymousGroup &&
+            window.appGlobals.currentGroup &&
+            window.appGlobals.currentGroup.configuration &&
+            window.appGlobals.currentGroup.configuration.allowOneTimeLoginWithName) {
+          this.set('hasOneTimeLoginWithName', true);
+        } else {
+          this.set('hasOneTimeLoginWithName', false);
+        }
+
         if (window.appGlobals.disableFacebookLoginForGroup) {
           this.set('disableFacebookLoginForGroup', true);
         } else {
@@ -822,6 +887,11 @@
         this.async(function () {
           this.$$("#a11y").target = this.$$("#form");
           this.$$("#email").focus();
+
+          if (this.$$("#oneTimeLoginWithNameId") &&
+              this.$$("#a11yoneTimeWithName")) {
+            this.$$("#a11yoneTimeWithName").target = this.$$("#oneTimeLoginWithNameId");
+          }
         }.bind(this), 50);
 
         if (window.appGlobals.signupTermsPageId) {
