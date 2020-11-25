@@ -4,17 +4,13 @@ import { html, fixture, expect } from '@open-wc/testing';
 import { YpGroup } from '../yp-group.js';
 import '../yp-group.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
+import sinon from 'sinon'; 
 
 describe('YpGroup', () => {
   let element: YpGroup;
+  let server: any; 
 
   before(async () => {
-    await YpTestHelpers.setupApp();
-  });
-
-  beforeEach(async () => {
-    const collectionType = 'group';
-
     const group = {
       id: 1,
       name: 'Betri Reykjavik Test',
@@ -24,14 +20,28 @@ describe('YpGroup', () => {
       counter_users: 12,
     } as YpGroupData;
 
+    server = sinon.fakeServer.create();
+    server.respondWith('GET', '/api/group/1', [
+      200,
+      { 'Content-Type': 'application/json' },
+      JSON.stringify(group)
+    ]);
+
+    await YpTestHelpers.setupApp();
+  });
+
+  beforeEach(async () => {
     element = await fixture(html`
       <yp-group
-        .collection="${group}"
-        .collectionType="${collectionType}"></yp-group>
+        .collectionId="1"></yp-group>
     `);
+    server.respond();
   });
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
+  });
+  after(async () => {
+    server.restore();
   });
 });

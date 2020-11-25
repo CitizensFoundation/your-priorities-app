@@ -4,15 +4,13 @@ import { html, fixture, expect } from '@open-wc/testing';
 import { AcActivities } from '../ac-activities.js';
 import '../ac-activities.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
+import sinon from 'sinon';
 
 describe('AcActivities', () => {
   let element: AcActivities;
+  let server: any; 
 
   before(async () => {
-    await YpTestHelpers.setupApp();
-  });
-
-  beforeEach(async () => {
     const point = {
       id: 1,
       created_at: new Date(),
@@ -70,8 +68,17 @@ describe('AcActivities', () => {
         Point: point,
     } as AcActivityData
 
-    const activities = [activity, activity, activity]
+    server = sinon.fakeServer.create();
+    server.respondWith('GET', '/api/activities/groups/1', [
+      200,
+      { 'Content-Type': 'application/json' },
+      JSON.stringify([activity, activity, activity])
+    ]);
 
+    await YpTestHelpers.setupApp();
+  });
+
+  beforeEach(async () => {
     const recommendedPost = {
       id: 1,
       location:{
@@ -101,17 +108,20 @@ describe('AcActivities', () => {
   
     element = await fixture(html`
       <ac-activities
-       .activities="${activities}"
        .collectionId="1"
        .collectionType="group"
        .recommendedPosts="${recommendedPosts}">
       </ac-activities
       >
     `);
+    server.respond();
   });
-  /*
+  
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
   });
-  */
+
+  after(async () => {
+    server.restore();
+  });
 });
