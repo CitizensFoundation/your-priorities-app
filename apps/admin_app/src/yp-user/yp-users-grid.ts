@@ -15,6 +15,7 @@ import '@polymer/paper-dialog';
 import { PaperDialogElement } from '@polymer/paper-dialog';
 import { YpConfirmationDialog } from '../@yrpri/yp-dialog-container/yp-confirmation-dialog';
 import { ItemCache } from '@vaadin/vaadin-grid/src/vaadin-grid-data-provider-mixin';
+import { GridColumnElement } from '@vaadin/vaadin-grid/src/vaadin-grid-column';
 
 interface RowData {
   item: YpUserData;
@@ -280,6 +281,130 @@ export class YpUsersGrid extends YpBaseElement {
     ];
   }
 
+  renderSelectionHeader(root: HTMLElement, column?: GridColumnElement | undefined) {
+    return html`
+      <paper-menu-button
+        horizontal-align="right"
+        class="helpButton"
+        ?disabled="${this.selectedUsersEmpty}"
+      >
+        <paper-icon-button
+          .ariaLabel="${this.t('openSelectedItemsMenu')}"
+          icon="more-vert"
+          slot="dropdown-trigger"
+        ></paper-icon-button>
+        <paper-listbox
+          slot="dropdown-content"
+          @iron-select="${this._menuSelection}"
+        >
+          ${!this.selectedUsersEmpty
+            ? html`
+                <paper-item
+                  ?hidden="${this.adminUsers}"
+                  @tap="${this._removeAndDeleteContentSelectedUsers}"
+                >
+                  ${this.t('removeSelectedAndDeleteContent')}
+                  ${this.selectedUsersCount}
+                </paper-item>
+                <paper-item
+                  ?hidden="${this.adminUsers}"
+                  @tap="${this._removeSelectedUsersFromCollection}"
+                >
+                  <div ?hidden="${!this.groupId}">
+                    ${this.t('removeSelectedFromGroup')}
+                    ${this.selectedUsersCount}
+                  </div>
+                  <div ?hidden="${!this.communityId}">
+                    ${this.t('removeSelectedFromCommunity')}
+                    ${this.selectedUsersCount}
+                  </div>
+                  <div ?hidden="${!this.domainId}">
+                    ${this.t('removeSelectedFromDomain')}
+                    ${this.selectedUsersCount}
+                  </div>
+                </paper-item>
+                <paper-item
+                  ?hidden="${!this.adminUsers}"
+                  @tap="${this._removeSelectedAdmins}"
+                  >${this.t('removeSelectedAdmins')}
+                  ${this.selectedUsersCount}</paper-item
+                >
+              `
+            : html``}
+        </paper-listbox>
+      </paper-menu-button>
+    `;
+  }
+
+  selectionRenderer(root: HTMLElement, column: any, rowData: RowData) {
+    return html`
+      <paper-menu-button horizontal-align="right" class="helpButton">
+        <paper-icon-button
+          .ariaLabel="${this.t('openOneItemMenu')}"
+          icon="more-vert"
+          data-args="${rowData.item.id}"
+          @tap="${this._setSelected}"
+          slot="dropdown-trigger"
+        ></paper-icon-button>
+        <paper-listbox
+          slot="dropdown-content"
+          @iron-select="${this._menuSelection}"
+        >
+          <paper-item
+            data-args="${rowData.item.id}"
+            ?hidden="${this.adminUsers}"
+            @tap="${this._removeUserFromCollection}"
+          >
+            <div ?hidden="${!this.groupId}">
+              ${this.t('removeFromGroup')}
+            </div>
+            <div ?hidden="${!this.communityId}">
+              ${this.t('removeFromCommunity')}
+            </div>
+            <div ?hidden="${!this.domainId}">
+              ${this.t('removeFromDomain')}
+            </div>
+          </paper-item>
+          <paper-item
+            data-args="${rowData.item.id}"
+            ?hidden="${this.adminUsers}"
+            @tap="${this._removeAndDeleteUserContent}"
+          >
+            <div ?hidden="${!this.groupId}">
+              ${this.t('removeFromGroupDeleteContent')}
+            </div>
+            <div ?hidden="${!this.communityId}">
+              ${this.t('removeFromCommunityDeleteContent')}
+            </div>
+            <div ?hidden="${!this.domainId}">
+              ${this.t('removeFromDomainDeleteContent')}
+            </div>
+          </paper-item>
+          <paper-item
+            data-args="${rowData.item.id}"
+            ?hidden="${!this.adminUsers}"
+            @tap="${this._removeAdmin}"
+            >${this.t('users.removeAdmin')}</paper-item
+          >
+
+          <paper-item
+            data-args="${rowData.item.id}"
+            ?hidden="${this._userOrganizationName(rowData.item)}"
+            @tap="${this._addToOrganization}"
+            >${this.t('users.addToOrganization')}</paper-item
+          >
+          <paper-item
+            data-args="${rowData.item.id}"
+            ?hidden="${!this._userOrganizationName(rowData.item)}"
+            data-args-org="${this._userOrganizationId(rowData.item)}"
+            @tap="${this._removeFromOrganization}"
+            >${this.t('users.removeFromOrganization')}</paper-item
+          >
+        </paper-listbox>
+      </paper-menu-button>
+    `;
+  }
+
   render() {
     return html`
       <paper-dialog id="selectOrganizationDialog" modal>
@@ -413,8 +538,10 @@ export class YpUsersGrid extends YpBaseElement {
           width="140px"
           path="name"
           .header="${this.t('name')}"
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
+            return rowData.item.name;
+          }}"
         >
-          <template>${this.item.name}</template>
         </vaadin-grid-filter-column>
 
         <vaadin-grid-filter-column
@@ -422,146 +549,37 @@ export class YpUsersGrid extends YpBaseElement {
           flexGrow="1"
           width="150px"
           .header="${this.t('email')}"
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
+            return rowData.item.email;
+          }}"
         >
-          <template>${this.item.email}</template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-column flexGrow="1" width="150px">
-          <template class="header">${this.t('organization')}</template>
-          <template>
-            <div
-              class="organization"
-              ?hidden="${!this._userOrganizationName(item)}"
-            >
-              <div class="organizationName">
-                ${this._userOrganizationName(item)}
+        <vaadin-grid-column
+          flexGrow="1"
+          width="150px"
+          .header="${this.t('name')}"
+          .renderer="${(root: HTMLElement, column: any, rowData: RowData) => {
+            return html`
+              <div
+                class="organization"
+                ?hidden="${!this._userOrganizationName(rowData.item)}"
+              >
+                <div class="organizationName">
+                  ${this._userOrganizationName(rowData.item)}
+                </div>
               </div>
-            </div>
-          </template>
+            `;
+          }}"
+        >
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="70px" flexGrow="0">
-          <template class="header">
-            <paper-menu-button
-              horizontal-align="right"
-              class="helpButton"
-              ?disabled="${this.selectedUsersEmpty}"
-            >
-              <paper-icon-button
-                .ariaLabel="${this.t('openSelectedItemsMenu')}"
-                .icon="more-vert"
-                slot="dropdown-trigger"
-              ></paper-icon-button>
-              <paper-listbox
-                slot="dropdown-content"
-                @iron-select="${this._menuSelection}"
-              >
-                ${!this.selectedUsersEmpty
-                  ? html`
-                      <paper-item
-                        data-args="${this.item.id}"
-                        ?hidden="${this.adminUsers}"
-                        @tap="${this._removeAndDeleteContentSelectedUsers}"
-                      >
-                        ${this.t('removeSelectedAndDeleteContent')}
-                        ${this.selectedUsersCount}
-                      </paper-item>
-                      <paper-item
-                        data-args="${this.item.id}"
-                        ?hidden="${this.adminUsers}"
-                        @tap="${this._removeSelectedUsersFromCollection}"
-                      >
-                        <div ?hidden="${!this.groupId}">
-                          ${this.t('removeSelectedFromGroup')}
-                          ${this.selectedUsersCount}
-                        </div>
-                        <div ?hidden="${!this.communityId}">
-                          ${this.t('removeSelectedFromCommunity')}
-                          ${this.selectedUsersCount}
-                        </div>
-                        <div ?hidden="${!this.domainId}">
-                          ${this.t('removeSelectedFromDomain')}
-                          ${this.selectedUsersCount}
-                        </div>
-                      </paper-item>
-                      <paper-item
-                        data-args="${this.item.id}"
-                        ?hidden="${!this.adminUsers}"
-                        @tap="${this._removeSelectedAdmins}"
-                        >${this.t('removeSelectedAdmins')}
-                        ${this.selectedUsersCount}</paper-item
-                      >
-                    `
-                  : html``}
-              </paper-listbox>
-            </paper-menu-button>
-          </template>
-          <template>
-            <paper-menu-button horizontal-align="right" class="helpButton">
-              <paper-icon-button
-                .ariaLabel="${this.t('openOneItemMenu')}"
-                .icon="more-vert"
-                data-args="${this.item.id}"
-                @tap="${this._setSelected}"
-                slot="dropdown-trigger"
-              ></paper-icon-button>
-              <paper-listbox
-                slot="dropdown-content"
-                @iron-select="${this._menuSelection}"
-              >
-                <paper-item
-                  data-args="${this.item.i}"
-                  ?hidden="${this.adminUsers}"
-                  @tap="${_removeUserFromCollection}"
-                >
-                  <div ?hidden="${!this.groupId}">
-                    ${this.t('removeFromGroup')}
-                  </div>
-                  <div ?hidden="${!this.communityId}">
-                    ${this.t('removeFromCommunity')}
-                  </div>
-                  <div ?hidden="${!this.domainId}">
-                    ${this.t('removeFromDomain')}
-                  </div>
-                </paper-item>
-                <paper-item
-                  data-args="${this.item.id}"
-                  ?hidden="${this.adminUsers}"
-                  @tap="${this._removeAndDeleteUserContent}"
-                >
-                  <div ?hidden="${!this.groupId}">
-                    ${t('removeFromGroupDeleteContent')}
-                  </div>
-                  <div ?hidden="${!this.communityId}">
-                    ${this.t('removeFromCommunityDeleteContent')}
-                  </div>
-                  <div ?hidden="${!this.domainId}">
-                    ${this.t('removeFromDomainDeleteContent')}
-                  </div>
-                </paper-item>
-                <paper-item
-                  data-args="${this.item.id}"
-                  ?hidden="${!this.adminUsers}"
-                  @tap="${this._removeAdmin}"
-                  >${this.t('users.removeAdmin')}</paper-item
-                >
-
-                <paper-item
-                  data-args="${this.item.id}"
-                  ?hidden="${this._userOrganizationName(item)}"
-                  @tap="${this._addToOrganization}"
-                  >${this('users.addToOrganization')}</paper-item
-                >
-                <paper-item
-                  data-args="${this.item.id}"
-                  ?hidden="${!this._userOrganizationName(item)}"
-                  data-args-org="${this._userOrganizationId(item)}"
-                  @tap="${this._removeFromOrganization}"
-                  >${this.t('users.removeFromOrganization')}</paper-item
-                >
-              </paper-listbox>
-            </paper-menu-button>
-          </template>
+        <vaadin-grid-column
+          width="70px"
+          flexGrow="0"
+          .headerRenderer="${this.renderSelectionHeader}"
+          .renderer="${this.selectionRenderer}"
+        >
         </vaadin-grid-column>
       </vaadin-grid>
 

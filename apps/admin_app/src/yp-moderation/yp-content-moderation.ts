@@ -15,6 +15,7 @@ import { IronAjaxElement } from '@polymer/iron-ajax';
 
 import '@polymer/paper-listbox';
 import { PaperListboxElement } from '@polymer/paper-listbox';
+import { GridColumnElement } from '@vaadin/vaadin-grid/src/vaadin-grid-column';
 
 interface RowData {
   item: YpModerationItem;
@@ -483,8 +484,7 @@ export class YpContentModeration extends YpBaseElement {
     `;
   }
 
-  renderActionHeader(root: HTMLElement, column: any, rowData: RowData) {
-    const item = rowData.item;
+  renderActionHeader(root: HTMLElement, column?: GridColumnElement | undefined) {
     return html`
       <paper-menu-button
         horizontalAlign="right"
@@ -505,28 +505,24 @@ export class YpContentModeration extends YpBaseElement {
           ${!this.selectedItemsEmpty
             ? html`
                 <paper-item
-                  data-args="${item.id}"
                   ?hidden="${this.userId != undefined}"
                   @tap="${this._approveSelected}"
                 >
                   ${this.t('approveSelectedContent')} ${this.selectedItemsCount}
                 </paper-item>
                 <paper-item
-                  data-args="${item.id}"
                   ?hidden="${!this.onlyFlaggedItems}"
                   @tap="${this._clearSelectedFlags}"
                 >
                   ${this.t('clearSelectedFlags')} ${this.selectedItemsCount}
                 </paper-item>
                 <paper-item
-                  data-args="${item.id}"
                   ?hidden="${this.userId != undefined}"
                   @tap="${this._blockSelected}"
                 >
                   ${this.t('blockSelectedContent')} ${this.selectedItemsCount}
                 </paper-item>
                 <paper-item
-                  data-args="${item.id}"
                   ?hidden="${!this.userId}"
                   @tap="${this._anonymizeSelected}"
                 >
@@ -534,7 +530,6 @@ export class YpContentModeration extends YpBaseElement {
                   ${this.selectedItemsCount}
                 </paper-item>
                 <paper-item
-                  data-args="${item.id}"
                   @tap="${this._deleteSelected}"
                 >
                   ${this.t('deleteSelectedContent')} ${this.selectedItemsCount}
