@@ -1470,7 +1470,7 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
       {
         model: models.Group,
         where: {
-          access: models.Group.ACCESS_PUBLIC
+          access: { $in: [models.Group.ACCESS_OPEN_TO_COMMUNITY, models.Group.ACCESS_PUBLIC]}
         },
         required: true,
         include: [
