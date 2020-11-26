@@ -211,7 +211,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   samlLoginButtonUrl?: string;
 }
 
-interface YpHelpPage {
+interface YpHelpPageData {
   id: number;
   content: Record<string, string>;
   title: Record<string, string>;
