@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpMagicText } from '../yp-magic-text.js';
-import '../yp-magic-text.js';
+import { YpMagicTextDialog } from '../yp-magic-text-dialog.js';
+import '../yp-magic-text-dialog.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 
-describe('YpMagicText', () => {
-  let element: YpMagicText;
+describe('YpMagicTextDialog', () => {
+  let element: YpMagicTextDialog;
 
   before(async () => {
     await YpTestHelpers.setupApp();
@@ -14,9 +14,9 @@ describe('YpMagicText', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
-      <yp-magic-text
-        .content='ALXOE'>
-      </yp-magic-text>
+      <yp-magic-text-dialog
+        .content='ALXOEz'>
+      </yp-magic-text-dialog>
     `);
   });
 

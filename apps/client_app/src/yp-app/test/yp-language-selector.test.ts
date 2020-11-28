@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpMagicText } from '../yp-magic-text.js';
-import '../yp-magic-text.js';
+import { YpLanguageSelector } from '../yp-language-selector.js';
+import '../yp-language-selector.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 
-describe('YpMagicText', () => {
-  let element: YpMagicText;
+describe('YpLanguageSelector', () => {
+  let element: YpLanguageSelector;
 
   before(async () => {
     await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {
+  
     element = await fixture(html`
-      <yp-magic-text
-        .content='ALXOE'>
-      </yp-magic-text>
+      <yp-language-selector
+        
+      ></yp-language-selector>
     `);
   });
 

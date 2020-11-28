@@ -4,15 +4,14 @@ import { html, fixture, expect } from '@open-wc/testing';
 import { YpPointCommentList } from '../yp-point-comment-list.js';
 import '../yp-point-comment-list.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
+import sinon from 'sinon';
 
 describe('YpPointCommentList', () => {
   let element: YpPointCommentList;
+  let server: any; 
 
   before(async () => {
     await YpTestHelpers.setupApp();
-  });
-
-  beforeEach(async () => {
     const point = {
       id: 1,
       created_at: new Date(),
@@ -34,15 +33,29 @@ describe('YpPointCommentList', () => {
     } as YpPointData;
 
     const commentList = [point, point, point];
+    
+    server = sinon.fakeServer.create();
+    server.respondWith('GET', '/api/points/1/comments', [
+      200,
+      { 'Content-Type': 'application/json' },
+      JSON.stringify(point)
+    ]);
+    await YpTestHelpers.setupApp();
+  });
 
+  beforeEach(async () => {
     element = await fixture(html`
-      <yp-point-comment-list
-        .point="${point}" .comment="${commentList}"
+      <yp-point-comment-list  
       ></yp-point-comment-list>
     `);
+    server.respond();
   });
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
+  });
+
+  after(async () => {
+    server.restore();
   });
 });
