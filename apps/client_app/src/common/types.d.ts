@@ -128,7 +128,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   resourceLibraryLinkMode?: boolean;
   forcePostSortMethodAs?: string;
   canVote?: boolean;
-  customRatings?: string;
+  customRatings?: Array<YpCustomRatingsData>;
   hidePostActionsInGrid?: boolean;
   hideDownVoteForPost?: boolean;
   hidePostCover?: boolean;
@@ -234,7 +234,7 @@ interface YpMemberships {
   DomainUsers: Array<YpUserData>;
 }
 
-interface YpRating {
+interface YpRatingData {
   id: number;
   value: number;
   post_id: number;
@@ -426,6 +426,7 @@ interface YpPostData extends YpDatabaseItem {
       userEdited: boolean;
       language: string;
     };
+    ratings?: Array<YpPostRatingsData>;
   };
   location: YpLocationData;
   PostVideos?: Array<YpVideoData>;
@@ -489,7 +490,7 @@ interface YpUserData {
   loginProvider?: string;
   Endorsements?: Array<YpEndorsement>;
   PointQualities?: Array<YpPointQuality>;
-  Ratings?: Array<YpRating>;
+  Ratings?: Array<YpRatingData>;
   notLoggedIn?: boolean;
   missingEmail?: boolean;
   customSamlDeniedMessage?: string;
@@ -515,7 +516,7 @@ declare interface IronScrollThresholdInterface extends HTMLElement {
   clearTriggers(): () => void;
 }
 
-declare const YpHelpPageArray: Array<YpHelpPage>;
+declare const YpHelpPageArray: Array<YpHelpPageData>;
 
 declare interface YpSplitCollectionsReturn {
   active: Array<YpCollectionData>;
@@ -834,6 +835,20 @@ interface YpModerationItem extends YpDatabaseItem {
   user_email?: string;
   moderation_data?: {
     moderation: YpToxicityScore;
-  }
+  };
 }
+
+interface YpCustomRatingsData extends YpDatabaseItem {
+  emoji: string;
+  numberOf: number;
+  averageRating: number;
+  count: number;
+}
+
+interface YpPostRatingsData extends YpRatingData {
+  count: number;
+  averageRating: number;
+}
+
+
 

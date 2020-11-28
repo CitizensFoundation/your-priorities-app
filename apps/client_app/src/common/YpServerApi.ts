@@ -654,4 +654,26 @@ export class YpServerApi extends YpServerApiBase {
       this.baseUrlPath + `/images/${postId}/user_images`
     );
   }
+
+  public postRating(postId: number, ratingIndex: number, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/ratings/${postId}/${ratingIndex}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public deleteRating(postId: number, ratingIndex: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/ratings/${postId}/${ratingIndex}`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
 }

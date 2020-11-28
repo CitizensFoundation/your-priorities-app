@@ -55,7 +55,7 @@ export class YpAppUser extends YpCodeBase {
 
   endorsementPostsIndex: Record<number, YpEndorsement> = {};
 
-  ratingPostsIndex: Record<number, Record<number, YpRating>> = {};
+  ratingPostsIndex: Record<number, Record<number, YpRatingData>> = {};
 
   membershipsIndex: Record<string, Record<number, boolean>> = {};
 
@@ -549,7 +549,7 @@ export class YpAppUser extends YpCodeBase {
     }
   }
 
-  updateRatingForPost(postId: number, typeIndex: number, newRating: YpRating) {
+  updateRatingForPost(postId: number, typeIndex: number, newRating: YpRatingData | undefined) {
     if (this.user) {
       if (!this.user.Ratings) {
         this.user.Ratings = [];
