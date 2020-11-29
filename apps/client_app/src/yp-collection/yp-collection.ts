@@ -151,7 +151,7 @@ export abstract class YpCollection extends YpBaseElement {
       const helpPages = (await window.serverApi.getHelpPages(
         collectionTypeOverride ? collectionTypeOverride : this.collectionType,
         collectionIdOverride ? collectionIdOverride : this.collectionId
-      )) as Array<YpHelpPage> | undefined;
+      )) as Array<YpHelpPageData> | undefined;
       if (helpPages) {
         this.fire('yp-set-pages', helpPages);
       }

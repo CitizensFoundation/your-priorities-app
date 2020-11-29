@@ -59,6 +59,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   @property({ type: Number })
   debounceTimeMs = 2000
 
+  @property({ type: Boolean })
+  disabled = false
+
   radioKeypress = false;
 
   debunceChangeEventTimer: ReturnType<typeof setTimeout> | undefined;
@@ -473,6 +476,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         <mwc-checkbox
           id="${id}"
           .name="${this.formName || null}"
+          ?disabled="${this.disabled}"
           ?checked="${(this.question.value as boolean) || false}"
           @change="${this._checkboxChanged}">
         </mwc-checkbox>

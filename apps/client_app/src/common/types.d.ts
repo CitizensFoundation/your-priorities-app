@@ -194,8 +194,8 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
   facebookPixelId?: string;
-  disableDomainUpLink: boolean;
-  forceSecureSamlLogin: boolean;
+  disableDomainUpLink?: boolean;
+  forceSecureSamlLogin?: boolean;
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   signupTermsPageId?: number;
@@ -314,10 +314,10 @@ interface YpDomainData extends YpCollectionData {
 }
 
 interface YpCommunityData extends YpCollectionData {
-  hostname: string;
+  hostname?: string;
   description?: string;
   is_community_folder?: boolean;
-  domain_id: number;
+  domain_id?: number;
   is_collection_folder?: boolean;
   only_admins_can_create_groups: boolean;
   configuration: YpCommunityConfiguration;
@@ -326,7 +326,7 @@ interface YpCommunityData extends YpCollectionData {
   CommunityLogoVideos?: Array<YpVideoData>;
   CommunityHeaderImages?: Array<YpImageData>;
   CommunityLogoImages?: Array<YpImageData>;
-  Domain: YpDomainData;
+  Domain?: YpDomainData;
   CommunityFolder?: YpCommunityData;
 }
 
@@ -793,6 +793,7 @@ interface YpStructuredConfigData extends YpStructuredQuestionData {
   rows?: number;
   maxRows?: number;
   translationToken?: string;
+  disabled?: boolean;
 }
 
 interface YpConfigTabData {

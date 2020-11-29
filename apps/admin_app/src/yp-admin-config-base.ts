@@ -60,6 +60,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Number })
   themeId: number | undefined;
 
+  @property({ type: Array })
+  translatedPages: Array<YpHelpPageData> | undefined
+
   constructor() {
     super();
   }
@@ -167,6 +170,7 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                   @yp-answer-content-changed="${this._configChanged}"
                   .name="${question.name || question.text}"
                   debounceTimeMs="10"
+                  ?disabled="${ question.disabled ? true : false }"
                   .value="${question.value || this._getCurrentValue(question)}"
                   .question="${{
                     ...question,
@@ -245,6 +249,31 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
     ];
   }
 
+  renderVideoUpload() {
+    return html`
+      <div class="layout vertical uploadSection">
+        <yp-file-upload
+          id="videoFileUpload"
+          raised
+          videoUpload
+          method="POST"
+          buttonIcon="videocam"
+          .buttonText="${this.t('uploadVideo')}"
+          @success="${this._videoUploaded}"
+        >
+        </yp-file-upload>
+        <mwc-formfield .label="${this.t('useVideoCover')}">
+          <mwc-checkbox
+            name="useVideoCover"
+            ?disabled="${!this.uploadedVideoId}"
+            ?checked="${this.collection!.configuration.useVideoCover}"
+          >
+          </mwc-checkbox>
+        </mwc-formfield>
+      </div>
+    `;
+  }
+
   renderNameAndDescription(hideDescription = false) {
     return html`
       <div class="layout vertical">
@@ -260,7 +289,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
           class="mainInput"
         >
         </mwc-textfield>
-
         ${
           !hideDescription
             ? html`<mwc-textarea
@@ -333,6 +361,28 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         this.method = 'PUT';
       }
     }
+  }
+
+  async _getHelpPages(
+    collectionTypeOverride: string | undefined = undefined,
+    collectionIdOverride: number | undefined = undefined
+  ) {
+    if (this.collectionId) {
+      this.translatedPages = (await window.serverApi.getHelpPages(
+        collectionTypeOverride ? collectionTypeOverride : this.collectionType,
+        collectionIdOverride ? collectionIdOverride : this.collectionId as number
+      )) as Array<YpHelpPageData> | undefined;
+    } else {
+      console.error('Collection id setup for get help pages');
+    }
+  }
+
+  _getLocalizePageTitle(page: YpHelpPageData) {
+    let pageLocale = 'en';
+    if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
+      pageLocale = window.appGlobals.locale;
+    }
+    return page.title[pageLocale];
   }
 
   _save() {

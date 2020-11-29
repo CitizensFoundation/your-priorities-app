@@ -20,11 +20,21 @@ import './@yrpri/common/yp-emoji-selector.js';
 import './@yrpri/yp-file-upload/yp-file-upload.js';
 import './@yrpri/yp-theme/yp-theme-selector.js';
 import './@yrpri/yp-app/yp-language-selector.js';
+import { TextField } from '@material/mwc-textfield';
 
 @customElement('yp-admin-config-community')
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
   @property({ type: Number })
   appHomeScreenIconImageId: number | undefined;
+
+  @property({ type: String })
+  hostnameExample: string | undefined;
+
+  @property({ type: Boolean })
+  hasSamlLoginProvider = false
+
+  @property({ type: Array })
+  availableCommunityFolders: Array<YpCommunityData> | undefined
 
   constructor() {
     super();
@@ -39,7 +49,26 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     return this.collection
       ? html`
           <div class="layout horizontal wrap">
-            ${this.renderNameAndDescription()}
+             <div class="layout vertical">
+             ${this.renderNameAndDescription()}
+              <mwc-textfield
+                id="hostname"
+                name="hostname"
+                type="text"
+                @keyup="${this._hostnameChanged}"
+                .label="${this.t('community.hostname')}"
+                .value="${(this.collection as YpCommunityData).hostname}"
+                ?required="${!(this.collection as YpCommunityData)
+                  .is_community_folder}"
+                maxlength="80"
+                charCounter
+                class="mainInput"
+              >
+              </mwc-textfield>
+              <div class="hostnameInfo">
+                https://${this.hostnameExample}
+              </div>
+             </div>
             <div>
               ${this.renderSaveButton()}
             </div>
@@ -54,6 +83,16 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       : nothing;
   }
 
+  _hostnameChanged() {
+    const hostname = (this.$$("#hostname") as TextField).value;
+    if (hostname) {
+      this.hostnameExample = hostname + '.' + window.appGlobals!.domain!.domain_name;
+    } else {
+      this.hostnameExample = 'your-hostname.' + '.' + window.appGlobals!.domain!.domain_name;
+    }
+    this._configChanged();
+  }
+
   _clear() {
     super._clear();
     this.appHomeScreenIconImageId = undefined;
@@ -63,36 +102,101 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     super.updated(changedProperties);
 
     if (changedProperties.has('collection') && this.collection) {
-      this._setupTranslations();
-      this._updateEmojiBindings();
-
-      if (
-        (this.collection as YpDomainData).DomainLogoVideos &&
-        (this.collection as YpDomainData).DomainLogoVideos!.length > 0
-      ) {
-        this.uploadedVideoId = (this
-          .collection as YpDomainData).DomainLogoVideos![0].id;
-      }
+      this._communityChanged()
     }
 
     if (changedProperties.has('collectionId') && this.collectionId) {
-      if (this.collectionId == 'new') {
-        this.action = '/domains';
-      } else {
-        this.action = `/domains/${this.collectionId}`;
-      }
+      this._collectionIdChanged()
+    }
+  }
+
+  _communityChanged() {
+    this._setupTranslations();
+    this._updateEmojiBindings();
+
+    if (
+      (this.collection as YpCommunityData).CommunityLogoVideos &&
+      (this.collection as YpCommunityData).CommunityLogoVideos!.length > 0
+    ) {
+      this.uploadedVideoId = (this
+        .collection as YpCommunityData).CommunityLogoVideos![0].id;
+    }
+
+    this._getHelpPages("communities");
+  }
+
+  _collectionIdChanged() {
+    if (this.collectionId == 'new' || this.collectionId == 'newFolder') {
+      this.action = '/communities';
+      this.collection = {
+        id: -1,
+        name: "",
+        description: "",
+        access: 0,
+        status: "active",
+        only_admins_can_create_groups: true,
+        counter_points: 0,
+        counter_posts: 0,
+        counter_users: 0,
+        configuration: {
+
+        },
+        hostname: "",
+        is_community_folder: this.collectionId == 'newFolder' ? true : false,
+      } as YpCommunityData;
+    } else {
+      this.action = `/communities/${this.collectionId}`;
+    }
+  }
+
+  _checkCommunityFolders(community: YpCommunityData) {
+    let domain;
+    if (community.Domain) {
+      domain = community.Domain;
+    } else {
+      domain = window.appGlobals.domain;
+    }
+
+    this.$.communityFoldersAjax.url =
+      "/api/domains/" + domain.id + "/availableCommunityFolders";
+    this.$.communityFoldersAjax.generateRequest();
+
+    const communityFolders = detail.response;
+
+    if (this.collection?.id) {
+      var deleteIndex;
+      communityFolders.forEach(
+        function (community, index) {
+          if (community.id == this.community.id) deleteIndex = index;
+        }.bind(this)
+      );
+      if (deleteIndex) communityFolders.splice(deleteIndex, 1);
+    }
+    if (communityFolders && communityFolders.length > 0) {
+      communityFolders.unshift({ id: -1, name: this.t("none") });
+      this.availableCommunityFolders = communityFolders;
+    } else {
+      this.availableCommunityFolders = undefined;
     }
   }
 
   _setupTranslations() {
     if (this.collectionId == 'new') {
-      this.editHeaderText = this.t('domain.new');
-      this.toastText = this.t('domainToastCreated');
-      this.saveText = this.t('create');
+      if (this.collection && (this.collection as YpCommunityData).is_community_folder) {
+        this.editHeaderText = this.t("newCommunityFolder");
+      } else {
+        this.editHeaderText = this.t("community.new");
+      }
+      this.saveText = this.t("create");
+      this.toastText = this.t("communityToastCreated");
     } else {
-      this.saveText = this.t('save');
-      this.editHeaderText = this.t('domain.edit');
-      this.toastText = this.t('domainToastUpdated');
+      if (this.collection && (this.collection as YpCommunityData).is_community_folder) {
+        this.editHeaderText = this.t("updateCommunityFolder");
+      } else {
+        this.editHeaderText = this.t("Update community info");
+      }
+      this.saveText = this.t("save");
+      this.toastText = this.t("communityToastUpdated");
     }
   }
 
@@ -161,29 +265,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             <div class="layout horizontal wrap">
               ${this.renderHeaderAndLogoImageUploads()}
               ${this.hasVideoUpload
-                ? html`
-                    <div class="layout vertical uploadSection">
-                      <yp-file-upload
-                        id="videoFileUpload"
-                        raised
-                        videoUpload
-                        method="POST"
-                        buttonIcon="videocam"
-                        .buttonText="${this.t('uploadVideo')}"
-                        @success="${this._videoUploaded}"
-                      >
-                      </yp-file-upload>
-                      <mwc-formfield .label="${this.t('useVideoCover')}">
-                        <mwc-checkbox
-                          name="useVideoCover"
-                          ?disabled="${!this.uploadedVideoId}"
-                          ?checked="${this.collection!.configuration
-                            .useVideoCover}"
-                        >
-                        </mwc-checkbox>
-                      </mwc-formfield>
-                    </div>
-                  `
+                ? this.renderVideoUpload()
                 : nothing}
             </div>
           `,
@@ -192,7 +274,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           text: 'analyticsTrackerCode',
           name: 'google_analytics_code',
           type: 'textfield',
-          value: (this.collection as YpDomainData).google_analytics_code,
+          maxLength: 40,
+          value: (this.collection as YpCommunityData).google_analytics_code,
+        },
+        {
+          text: 'facebookPixelId',
+          type: 'textfield',
+          maxLength: 40,
         },
         {
           text: 'onlyAdminsCanCreateCommunities',
@@ -245,109 +333,28 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     });
 
     tabs.push({
-      name: 'authApis',
-      icon: 'api',
-      items: [
-        {
-          text: 'Facebook Client Id',
-          name: 'facebookClientId',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.facebook.client_id'
-          ),
-          maxLength: 60,
-        },
-        {
-          text: 'Facebook Client Secret',
-          name: 'facebookClientSecret',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.facebook.client_secret'
-          ),
-          maxLength: 60,
-        },
-        {
-          text: 'Google Client Id',
-          name: 'googleClientId',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.google.client_id'
-          ),
-          maxLength: 60,
-        },
-        {
-          text: 'Google Client Secret',
-          name: 'googleClientSecret',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.google.client_secret'
-          ),
-          maxLength: 60,
-        },
-      ],
-    });
-
-    tabs.push({
       name: 'samlAuth',
       icon: 'security',
       items: [
         {
-          text: 'SAML EntryPoint',
-          name: 'samlEntryPoint',
-          type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.entryPoint'),
-          maxLength: 100,
-        },
-        {
-          text: 'SAML Issuer',
-          name: 'samlIssuer',
-          type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.issuer'),
-        },
-        {
-          text: 'SAML Identifier Format',
-          name: 'samlIdentifierFormat',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.saml.identifierFormat'
-          ),
-        },
-        {
-          text: 'samlLoginButtonUrl',
-          type: 'textfield',
-        },
-        {
-          text: 'customSamlLoginText',
-          type: 'textfield',
-        },
-        {
-          text: 'SAML CallbackUrl',
-          name: 'samlCallbackUrl',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.saml.callbackUrl'
-          ),
-          maxLength: 100,
-        },
-        {
-          text: 'SAML Verification Certificate Chain',
-          name: 'samlCert',
-          type: 'textarea',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.cert'),
-          maxLength: 20000,
-          rows: 2,
-          maxRows: 5,
-        },
-        {
-          text: 'customSAMLErrorHTML',
-          type: 'textarea',
-          rows: 2,
-          maxRows: 5,
-        },
-        {
-          text: 'forceSecureSamlEmployeeLogin',
+          text: 'forceSecureSamlLogin',
           type: 'checkbox',
+          disabled: !this.hasSamlLoginProvider
         },
+        {
+          text: 'customSamlLoginMessage',
+          type: 'textarea',
+          rows: 2,
+          maxRows: 5,
+          maxLength: 175
+        },
+        {
+          text: 'customSamlDeniedMessage',
+          type: 'textarea',
+          rows: 2,
+          maxRows: 5,
+          maxLength: 150
+        }
       ],
     });
 
