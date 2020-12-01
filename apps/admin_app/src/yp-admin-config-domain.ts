@@ -102,9 +102,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     if (domain) {
       debugger;
       if (this.uploadedVideoId) {
-        await window.adminServerApi.addVideoToDomain(domain.id, {
+        await window.adminServerApi.addVideoToCollection(domain.id, {
           videoId: this.uploadedVideoId,
-        });
+        }, "completeAndAddToDomain");
         this._finishRedirect(domain);
       } else {
         this._finishRedirect(domain);

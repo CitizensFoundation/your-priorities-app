@@ -199,6 +199,8 @@ interface YpCommunityConfiguration extends YpCollectionConfiguration {
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   signupTermsPageId?: number;
+  ssnLoginListDataId?: number;
+
   disableFacebookLoginForCommunity?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
@@ -322,12 +324,15 @@ interface YpCommunityData extends YpCollectionData {
   only_admins_can_create_groups: boolean;
   configuration: YpCommunityConfiguration;
   google_analytics_code?: string;
+  access?: number;
+  in_community_folder_id?: number;
   Groups?: Array<YpGroupData>;
   CommunityLogoVideos?: Array<YpVideoData>;
   CommunityHeaderImages?: Array<YpImageData>;
   CommunityLogoImages?: Array<YpImageData>;
   Domain?: YpDomainData;
   CommunityFolder?: YpCommunityData;
+  hostnameTaken?: boolean;
 }
 
 interface YpDomainGetResponse {
@@ -849,6 +854,10 @@ interface YpCustomRatingsData extends YpDatabaseItem {
 interface YpPostRatingsData extends YpRatingData {
   count: number;
   averageRating: number;
+}
+
+interface YpSsnListCountResponse {
+  count: number;
 }
 
 

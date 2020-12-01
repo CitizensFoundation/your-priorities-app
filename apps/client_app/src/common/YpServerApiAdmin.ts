@@ -37,7 +37,11 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
-  public getTextForTranslations(collectionType: string, collectionId: number, targetLocale: string) {
+  public getTextForTranslations(
+    collectionType: string,
+    collectionId: number,
+    targetLocale: string
+  ) {
     return this.fetchWrapper(
       this.baseUrlPath +
         `/${YpServerApiAdmin.transformCollectionTypeToApi(
@@ -46,13 +50,9 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
-  public addVideoToDomain(
-    collectionId: number,
-    body: object
-  ) {
+  public addVideoToCollection(collectionId: number, body: object, type: string) {
     return this.fetchWrapper(
-      this.baseUrlPath +
-        `/videos/${collectionId}/completeAndAddToDomain`,
+      this.baseUrlPath + `/videos/${collectionId}/${type}`,
       {
         method: 'PUT',
         body: JSON.stringify(body),
@@ -61,4 +61,28 @@ export class YpServerApiAdmin extends YpServerApiBase {
     );
   }
 
+  public getCommunityFolders(domainId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/domains/${domainId}/availableCommunityFolders`
+    );
+  }
+
+  public getSsnListCount(communityId: number, ssnLoginListDataId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/communities/${communityId}/${ssnLoginListDataId}/ssn_login_list_count`
+    );
+  }
+
+  public deleteSsnLoginList(communityId: number, ssnLoginListDataId: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath +
+        `/communities/${communityId}/${ssnLoginListDataId}/ssn_login_list_count`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
+    );
+  }
 }

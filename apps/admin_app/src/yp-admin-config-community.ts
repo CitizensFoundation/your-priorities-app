@@ -21,6 +21,7 @@ import './@yrpri/yp-file-upload/yp-file-upload.js';
 import './@yrpri/yp-theme/yp-theme-selector.js';
 import './@yrpri/yp-app/yp-language-selector.js';
 import { TextField } from '@material/mwc-textfield';
+import { YpConfirmationDialog } from './@yrpri/yp-dialog-container/yp-confirmation-dialog.js';
 
 @customElement('yp-admin-config-community')
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
@@ -35,6 +36,21 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   @property({ type: Array })
   availableCommunityFolders: Array<YpCommunityData> | undefined
+
+  @property({ type: Number })
+  ssnLoginListDataId: number | undefined
+
+  @property({ type: Number })
+  ssnLoginListDataCount: number | undefined
+
+  @property({ type: Number })
+  inCommunityFolderId: number | undefined
+
+  @property({ type: String })
+  status: string | undefined
+
+  @property({ type: String })
+  communityAccess: string | undefined
 
   constructor() {
     super();
@@ -96,6 +112,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   _clear() {
     super._clear();
     this.appHomeScreenIconImageId = undefined;
+    this.ssnLoginListDataId = undefined;
+    this.ssnLoginListDataCount = undefined;
+    this.inCommunityFolderId = undefined;
+    this.availableCommunityFolders = undefined;
+    (this.$$("#appHomeScreenIconImageUpload") as YpFileUpload).clear();
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -108,6 +129,10 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     if (changedProperties.has('collectionId') && this.collectionId) {
       this._collectionIdChanged()
     }
+  }
+
+  languageChanged() {
+    this._setupTranslations()
   }
 
   _communityChanged() {
@@ -123,6 +148,68 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
 
     this._getHelpPages("communities");
+    if (this.collection) {
+      if ((this.collection as YpCommunityData).access === 0) {
+        this.communityAccess = "public";
+      } else if ((this.collection as YpCommunityData).access === 1) {
+        this.communityAccess = "closed";
+      } else if ((this.collection as YpCommunityData).access === 2) {
+        this.communityAccess = "secret";
+      }
+      if ((this.collection as YpCommunityData).status) {
+        this.status = (this.collection as YpCommunityData).status;
+      }
+
+      if ((this.collection as YpCommunityData).in_community_folder_id) {
+        this.inCommunityFolderId = (this.collection as YpCommunityData).in_community_folder_id;
+      }
+    }
+
+    if (window.appGlobals.hasVideoUpload) {
+      this.hasVideoUpload = true;
+    } else {
+      this.hasVideoUpload = false;
+    }
+
+    if (
+      window.appGlobals.domain &&
+      window.appGlobals.domain.samlLoginProvided
+    ) {
+      this.hasSamlLoginProvider = true;
+    } else {
+      this.hasSamlLoginProvider = false;
+    }
+
+    if (
+      this.collection &&
+      this.collection.configuration &&
+      (this.collection as YpCommunityData).configuration.ssnLoginListDataId
+    ) {
+      this.ssnLoginListDataId = (this.collection as YpCommunityData).configuration.ssnLoginListDataId;
+      this._getSsnListCount();
+    }
+
+    this._checkCommunityFolders(this.collection as YpCommunityData);
+  }
+
+  _deleteSsnLoginList () {
+    if (this.collection && this.ssnLoginListDataId) {
+      window.adminServerApi.deleteSsnLoginList(this.collection.id, this.ssnLoginListDataId)
+      this.ssnLoginListDataId = undefined;
+      this.ssnLoginListDataCount = undefined;
+    }
+  }
+
+  _ssnLoginListDataUploaded(event: CustomEvent) {
+    this.ssnLoginListDataId = JSON.parse(event.detail.xhr.response).ssnLoginListDataId;
+    this._getSsnListCount();
+  }
+
+  async _getSsnListCount() {
+    if (this.collection && this.ssnLoginListDataId) {
+      const response = await window.adminServerApi.getSsnListCount(this.collection.id, this.ssnLoginListDataId)
+      this.ssnLoginListDataCount = response.count;
+    }
   }
 
   _collectionIdChanged() {
@@ -149,7 +236,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
   }
 
-  _checkCommunityFolders(community: YpCommunityData) {
+  async _checkCommunityFolders(community: YpCommunityData) {
     let domain;
     if (community.Domain) {
       domain = community.Domain;
@@ -157,23 +244,18 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       domain = window.appGlobals.domain;
     }
 
-    this.$.communityFoldersAjax.url =
-      "/api/domains/" + domain.id + "/availableCommunityFolders";
-    this.$.communityFoldersAjax.generateRequest();
+    const communityFolders = await window.adminServerApi.getCommunityFolders(domain!.id) as Array<YpCommunityData>;
 
-    const communityFolders = detail.response;
-
-    if (this.collection?.id) {
+    if (communityFolders && this.collection?.id) {
       var deleteIndex;
-      communityFolders.forEach(
-        function (community, index) {
-          if (community.id == this.community.id) deleteIndex = index;
-        }.bind(this)
+      communityFolders.forEach( (community, index) => {
+          if (community.id == this.collection?.id) deleteIndex = index;
+        }
       );
       if (deleteIndex) communityFolders.splice(deleteIndex, 1);
     }
     if (communityFolders && communityFolders.length > 0) {
-      communityFolders.unshift({ id: -1, name: this.t("none") });
+      communityFolders.unshift({ id: -1, name: this.t("none") } as unknown as YpCommunityData);
       this.availableCommunityFolders = communityFolders;
     } else {
       this.availableCommunityFolders = undefined;
@@ -202,31 +284,43 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   async _formResponse(event: CustomEvent) {
     super._formResponse(event);
-    const domain = event.detail;
-    if (domain) {
-      debugger;
-      if (this.uploadedVideoId) {
-        await window.adminServerApi.addVideoToDomain(domain.id, {
-          videoId: this.uploadedVideoId,
-        });
-        this._finishRedirect(domain);
+    const community = event.detail as YpCommunityData;
+    if (community) {
+      if (community.hostnameTaken) {
+        window.appDialogs
+        .getDialogAsync(
+          "confirmationDialog",
+          (dialog: YpConfirmationDialog) => {
+            dialog.open(this.t("hostnameTaken"), undefined);
+          }
+        );
+
       } else {
-        this._finishRedirect(domain);
+        if (this.uploadedVideoId) {
+          await window.adminServerApi.addVideoToCollection(community.id, {
+            videoId: this.uploadedVideoId,
+          }, "completeAndAddToCommunity");
+          this._finishRedirect(community);
+        } else {
+          this._finishRedirect(community);
+        }
       }
     } else {
-      console.warn('No domain found on custom redirect');
+      console.warn('No community found on custom redirect');
     }
   }
 
-  _finishRedirect(domain: YpDomainData) {
-    YpNavHelpers.redirectTo('/domain/' + domain.id);
-    window.appGlobals.activity('completed', 'editDomain');
+  _finishRedirect(community: YpCommunityData) {
+    if (community.is_community_folder) {
+      YpNavHelpers.redirectTo("/community_folder/" + community.id);
+    } else {
+      YpNavHelpers.redirectTo("/community/" + community.id);
+    }
+    window.appGlobals.activity("completed", "editCommunity");
   }
 
-  setupConfigTabs() {
-    const tabs: Array<YpConfigTabData> = [];
-
-    tabs.push({
+  _getBasicTab() {
+    return {
       name: 'basic',
       icon: 'code',
       items: [
@@ -302,9 +396,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           type: 'checkbox',
         },
       ],
-    });
+    }
+  }
 
-    tabs.push({
+  _getWebAppTab() {
+    return {
       name: 'webApp',
       icon: 'get_app',
       items: [
@@ -330,9 +426,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           `,
         },
       ],
-    });
+    }
+  }
 
-    tabs.push({
+  _getSamlTab() {
+    return {
       name: 'samlAuth',
       icon: 'security',
       items: [
@@ -356,7 +454,15 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           maxLength: 150
         }
       ],
-    });
+    }
+  }
+
+  setupConfigTabs() {
+    const tabs: Array<YpConfigTabData> = [];
+
+    tabs.push(this._getBasicTab());
+    tabs.push(this._getWebAppTab());
+    tabs.push(this._getSamlTab());
 
     return tabs;
   }

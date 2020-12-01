@@ -39,8 +39,20 @@ export abstract class YpBaseElement extends LitElement {
     });
   }
 
+  updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('language')) {
+      this.languageChanged()
+    }
+  }
+
   static get rtlLanguages() {
     return ['fa', 'ar', 'ar_EG'];
+  }
+
+  languageChanged() {
+    // Do nothing, override if needed
   }
 
   _setupRtl() {

@@ -63,6 +63,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
   @property({ type: Array })
   translatedPages: Array<YpHelpPageData> | undefined
 
+  @property({ type: Number })
+  descriptionMaxLength = 300
+
   constructor() {
     super();
   }
@@ -299,8 +302,9 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                 charCounter
                 @change="${this._configChanged}"
                 rows="3"
+                @keyup="${this._descriptionChanged}"
                 max-rows="5"
-                maxlength="300"
+                .maxlength="${this.descriptionMaxLength}"
                 class="mainInput"
               ></mwc-textarea>`
             : nothing
@@ -312,6 +316,25 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
         </div>
       </div>
     `;
+  }
+
+
+  //TODO: Make sure this works
+  _descriptionChanged(event: CustomEvent) {
+    const description = (event.target as any).value;
+    const urlRegex = new RegExp(/(?:https?|http?):\/\/[\n\S]+/g);
+    const urlArray = description.match(urlRegex);
+
+    if (urlArray && urlArray.length > 0) {
+      let urlsLength = 0;
+      for (var i = 0; i < Math.min(urlArray.length, 10); i++) {
+        urlsLength += urlArray[i].length;
+      }
+      let maxLength = 300;
+      maxLength += urlsLength;
+      maxLength -= Math.min(urlsLength, urlArray.length * 30);
+      this.descriptionMaxLength = maxLength;
+    }
   }
 
   render() {
