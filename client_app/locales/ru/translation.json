@@ -1,6 +1,6 @@
 {
   "allowOneTimeLoginWithName": "Доступ к разовому входу с указанием имени пользователя",
-  "oneTimeLoginWithName": "единый доступ с именем",
+  "oneTimeLoginWithName": "Вход через ФИО один раз",
   "customTitleQuestionText": "Custom title question text",
   "statsPoints": "Number of points",
   "topNavigation": "Top navigation",
