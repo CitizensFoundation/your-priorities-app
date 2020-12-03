@@ -308,7 +308,7 @@ module.exports = (sequelize, DataTypes) => {
         })
       },
       (seriesCallback) => {
-        if (!user) {
+        if (!user && profile.email) {
           sequelize.models.User.findOne({
             where: {
               email: profile.email
