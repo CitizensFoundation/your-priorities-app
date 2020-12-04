@@ -604,7 +604,7 @@ export class YpApp extends YpBaseElement {
     );
   }
 
-  _getLocalizePageTitle(page: YpHelpPage) {
+  _getLocalizePageTitle(page: YpHelpPageData) {
     let pageLocale = 'en';
     if (window.appGlobals.locale && page.title[window.appGlobals.locale]) {
       pageLocale = window.appGlobals.locale;

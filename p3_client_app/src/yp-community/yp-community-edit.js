@@ -80,6 +80,7 @@ Polymer({
 
         <paper-input id="hostname" name="hostname" type="text" allowed-pattern="[a-z0-9-]" label="[[t('community.hostname')]]" value="{{community.hostname}}" maxlength="80" minlength="1" required="[[!community.is_community_folder]]" char-counter="" class="mainInput">
         </paper-input>
+
         <div class="hostnameInfo">
           https://[[hostnameExample]]
         </div>

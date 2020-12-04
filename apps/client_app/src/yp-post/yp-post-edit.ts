@@ -100,7 +100,7 @@ export class YpPostEdit extends YpEditBase {
   @property({ type: String })
   sructuredAnswersString: string | undefined;
 
-  @property({ type: Array })
+  @property({ type: String })
   structuredAnswersJson = '';
 
   @property({ type: String })
@@ -117,6 +117,9 @@ export class YpPostEdit extends YpEditBase {
 
   @property({ type: Number })
   uploadedHeaderImageId: number | undefined;
+
+  @property({ type: String })
+  customTitleQuestionText: string | undefined;
 
   emailValidationPattern =
     '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$';
@@ -152,7 +155,7 @@ export class YpPostEdit extends YpEditBase {
 
     if (changedProperties.has('selected')) {
       this._selectedChanged();
-      const a = this.selected
+      const a = this.selected;
     }
 
     this._setupStructuredQuestions();
@@ -276,7 +279,6 @@ export class YpPostEdit extends YpEditBase {
           }
 
           .videoCam {
-
           }
 
           yp-structured-question-edit {
@@ -324,7 +326,7 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _setSelectedTab(event: CustomEvent) {
-    this.selected = event.detail.index
+    this.selected = event.detail.index;
   }
 
   renderTabs() {
@@ -408,6 +410,21 @@ export class YpPostEdit extends YpEditBase {
     `;
   }
 
+  get titleQuestionText() {
+    if (this.post && this.group && this.customTitleQuestionText) {
+      return this.customTitleQuestionText;
+    } else if (
+      this.post &&
+      this.group &&
+      this.group.configuration &&
+      this.group.configuration.customTitleQuestionText
+    ) {
+      return this.group.configuration.customTitleQuestionText;
+    } else {
+      return this.t('title');
+    }
+  }
+
   renderDescriptionTab() {
     return this.group
       ? html`
@@ -420,19 +437,21 @@ export class YpPostEdit extends YpEditBase {
                       name="name"
                       .value="${this.replacedName || ''}" />
                   `
-                : this.post ? html`
+                : this.post
+                ? html`
                     <mwc-textfield
                       id="name"
                       required
                       minlength="1"
                       name="name"
                       type="text"
-                      .label="${this.t('title')}"
+                      .label="${this.titleQuestionText}"
                       .value="${this.post.name}"
                       maxlength="60"
                       charCounter>
                     </mwc-textfield>
-                  ` : nothing }
+                  `
+                : nothing}
               ${this.showCategories && this.group.Categories
                 ? html`
                     <mwc-select
@@ -752,19 +771,35 @@ export class YpPostEdit extends YpEditBase {
   }
 
   get _pointPageHidden() {
-    return !this.newPointShown || this.selected!==EditPostTabs.Point
+    return !this.newPointShown || this.selected !== EditPostTabs.Point;
   }
 
   get _mediaPageHidden() {
     if (this.mediaHidden) {
       return true;
-    } else if ((this.newPointShown && !this.locationHidden) && this.selected!==EditPostTabs.Media) {
+    } else if (
+      this.newPointShown &&
+      !this.locationHidden &&
+      this.selected !== EditPostTabs.Media
+    ) {
       return true;
-    } else if ((this.newPointShown && this.locationHidden) && this.selected!==EditPostTabs.Media-1) {
+    } else if (
+      this.newPointShown &&
+      this.locationHidden &&
+      this.selected !== EditPostTabs.Media - 1
+    ) {
       return true;
-    } else if ((!this.newPointShown && this.locationHidden) && this.selected!==(EditPostTabs.Media-2)) {
+    } else if (
+      !this.newPointShown &&
+      this.locationHidden &&
+      this.selected !== EditPostTabs.Media - 2
+    ) {
       return true;
-    } else if ((!this.newPointShown && !this.locationHidden) && this.selected!==(EditPostTabs.Media-1)) {
+    } else if (
+      !this.newPointShown &&
+      !this.locationHidden &&
+      this.selected !== EditPostTabs.Media - 1
+    ) {
       return true;
     } else {
       return false;
@@ -773,7 +808,7 @@ export class YpPostEdit extends YpEditBase {
 
   renderCurrentTabPage(): TemplateResult | undefined | {} {
     return html`
-      <div ?hidden="${this.selected!==EditPostTabs.Description}">
+      <div ?hidden="${this.selected !== EditPostTabs.Description}">
         ${this.renderDescriptionTab()}
       </div>
       <div ?hidden="${this._pointPageHidden}">
@@ -785,7 +820,7 @@ export class YpPostEdit extends YpEditBase {
       <div ?hidden="${this._mediaPageHidden}">
         ${this.renderMediaTab()}
       </div>
-    `
+    `;
   }
 
   renderHiddenInputs() {
@@ -852,7 +887,8 @@ export class YpPostEdit extends YpEditBase {
           : nothing}
       </yp-edit-dialog>
 
-      ${this.group && this.group.configuration.alternativeTextForNewIdeaButtonHeader
+      ${this.group &&
+      this.group.configuration.alternativeTextForNewIdeaButtonHeader
         ? html`
             <yp-magic-text
               id="alternativeTextForNewIdeaButtonHeaderId"
@@ -879,7 +915,29 @@ export class YpPostEdit extends YpEditBase {
               text-type="customThankYouTextNewPosts"></yp-magic-text>
           `
         : nothing}
+      ${this.group && this.group.configuration.customTitleQuestionText
+        ? html`
+            <yp-magic-text
+              id="customTitleQuestionTextId"
+              hidden
+              .contentId="${this.group.id}"
+              text-only
+              .content="${this.group.configuration.customTitleQuestionText}"
+              .contentLanguage="${this.group.language}"
+              @new-translation="${this._updatePostTitle}"
+              text-type="customTitleQuestionText"></yp-magic-text>
+          `
+        : nothing}
     `;
+  }
+
+  _updatePostTitle() {
+    setTimeout( ()=> {
+      const label = this.$$("#customTitleQuestionTextId") as YpMagicText;
+      if (label && label.finalContent) {
+        this.customTitleQuestionText = label.finalContent;
+      }
+    });
   }
 
   //TODO: Investigate if any are missing .html version of listeners
@@ -1160,7 +1218,7 @@ export class YpPostEdit extends YpEditBase {
 
   _videoUploaded(event: CustomEvent) {
     this.uploadedVideoId = event.detail.videoId;
-    (this.$$("#mediaVideo") as Radio).checked = true
+    (this.$$('#mediaVideo') as Radio).checked = true;
     setTimeout(() => {
       this.fire('iron-resize');
     }, 50);

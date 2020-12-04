@@ -262,9 +262,13 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public getTranscodingJobStatus(mediaType: string, mediaId: number) {
+  public getTranscodingJobStatus(mediaType: string, mediaId: number, jobId: string) {
     return this.fetchWrapper(
-      this.baseUrlPath + `/${mediaType}/${mediaId}/getTranscodingJobStatus`
+      this.baseUrlPath + `/${mediaType}/${mediaId}/getTranscodingJobStatus`,
+      {
+        method: 'PUT',
+        body: JSON.stringify({jobId}),
+      },
     );
   }
 
@@ -648,6 +652,28 @@ export class YpServerApi extends YpServerApiBase {
   public getImages(postId: number) {
     return this.fetchWrapper(
       this.baseUrlPath + `/images/${postId}/user_images`
+    );
+  }
+
+  public postRating(postId: number, ratingIndex: number, body: object) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/ratings/${postId}/${ratingIndex}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+      false
+    );
+  }
+
+  public deleteRating(postId: number, ratingIndex: number) {
+    return this.fetchWrapper(
+      this.baseUrlPath + `/ratings/${postId}/${ratingIndex}`,
+      {
+        method: 'DELETE',
+        body: JSON.stringify({}),
+      },
+      false
     );
   }
 }

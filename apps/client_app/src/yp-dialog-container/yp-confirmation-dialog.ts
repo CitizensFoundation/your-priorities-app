@@ -60,7 +60,7 @@ export class YpConfirmationDialog extends YpBaseElement {
 
   open(
     confirmationText: string,
-    onConfirmedFunction: Function,
+    onConfirmedFunction: Function | undefined,
     useModal = false,
     useFinalWarning = false,
     hideCancel = false

@@ -102,12 +102,13 @@ interface YpStructuredQuestionJson extends YpStructuredQuestionData {
 
 interface YpStructuredAnswer {
   uniqueId: string;
-  value: string;
+  value: string | boolean;
 }
 
 interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowAnonymousUsers?: boolean;
   allowAnonymousAutoLogin?: boolean;
+  allowOneTimeLoginWithName?: boolean;
   hideGroupHeader?: boolean;
   hideAllTabs?: boolean;
   hideHelpIcon?: boolean;
@@ -127,7 +128,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   resourceLibraryLinkMode?: boolean;
   forcePostSortMethodAs?: string;
   canVote?: boolean;
-  customRatings?: string;
+  customRatings?: Array<YpCustomRatingsData>;
   hidePostActionsInGrid?: boolean;
   hideDownVoteForPost?: boolean;
   hidePostCover?: boolean;
@@ -187,16 +188,19 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   attachmentsEnabled?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
+  customTitleQuestionText?: string;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
   redirectToGroupId?: number;
   facebookPixelId?: string;
-  disableDomainUpLink: boolean;
-  forceSecureSamlLogin: boolean;
+  disableDomainUpLink?: boolean;
+  forceSecureSamlLogin?: boolean;
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   signupTermsPageId?: number;
+  ssnLoginListDataId?: number;
+
   disableFacebookLoginForCommunity?: boolean;
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
@@ -209,7 +213,7 @@ interface YpDomainConfiguration extends YpCollectionConfiguration {
   samlLoginButtonUrl?: string;
 }
 
-interface YpHelpPage {
+interface YpHelpPageData {
   id: number;
   content: Record<string, string>;
   title: Record<string, string>;
@@ -221,7 +225,7 @@ interface YpEndorsement {
   post_id: number;
 }
 
-interface YpOrganization {
+interface YpOrganizationData extends YpDatabaseItem {
   name: string;
   OrganizationLogoImages: Array<YpImageData>;
 }
@@ -232,7 +236,7 @@ interface YpMemberships {
   DomainUsers: Array<YpUserData>;
 }
 
-interface YpRating {
+interface YpRatingData {
   id: number;
   value: number;
   post_id: number;
@@ -289,6 +293,7 @@ interface YpAdminRights {
   GroupAdmins: Array<YpCollectionData>;
   CommunityAdmins: Array<YpCollectionData>;
   DomainAdmins: Array<YpCollectionData>;
+  OrganizationAdmins: Array<YpOrganizationData>;
 }
 
 interface YpDomainData extends YpCollectionData {
@@ -311,20 +316,23 @@ interface YpDomainData extends YpCollectionData {
 }
 
 interface YpCommunityData extends YpCollectionData {
-  hostname: string;
+  hostname?: string;
   description?: string;
   is_community_folder?: boolean;
-  domain_id: number;
+  domain_id?: number;
   is_collection_folder?: boolean;
   only_admins_can_create_groups: boolean;
   configuration: YpCommunityConfiguration;
   google_analytics_code?: string;
+  access?: number;
+  in_community_folder_id?: number;
   Groups?: Array<YpGroupData>;
   CommunityLogoVideos?: Array<YpVideoData>;
   CommunityHeaderImages?: Array<YpImageData>;
   CommunityLogoImages?: Array<YpImageData>;
-  Domain: YpDomainData;
+  Domain?: YpDomainData;
   CommunityFolder?: YpCommunityData;
+  hostnameTaken?: boolean;
 }
 
 interface YpDomainGetResponse {
@@ -423,6 +431,7 @@ interface YpPostData extends YpDatabaseItem {
       userEdited: boolean;
       language: string;
     };
+    ratings?: Array<YpPostRatingsData>;
   };
   location: YpLocationData;
   PostVideos?: Array<YpVideoData>;
@@ -486,13 +495,13 @@ interface YpUserData {
   loginProvider?: string;
   Endorsements?: Array<YpEndorsement>;
   PointQualities?: Array<YpPointQuality>;
-  Ratings?: Array<YpRating>;
+  Ratings?: Array<YpRatingData>;
   notLoggedIn?: boolean;
   missingEmail?: boolean;
   customSamlDeniedMessage?: string;
   customSamlLoginMessage?: string;
   forceSecureSamlLogin?: boolean;
-  OrganizationUsers?: Array<YpOrganization>;
+  OrganizationUsers?: Array<YpOrganizationData>;
   UserProfileImages?: Array<YpImageData>;
   facebook_id?: number;
   ssn?: number;
@@ -512,7 +521,7 @@ declare interface IronScrollThresholdInterface extends HTMLElement {
   clearTriggers(): () => void;
 }
 
-declare const YpHelpPageArray: Array<YpHelpPage>;
+declare const YpHelpPageArray: Array<YpHelpPageData>;
 
 declare interface YpSplitCollectionsReturn {
   active: Array<YpCollectionData>;
@@ -788,6 +797,8 @@ interface YpStructuredConfigData extends YpStructuredQuestionData {
   templateData?: any;
   rows?: number;
   maxRows?: number;
+  translationToken?: string;
+  disabled?: boolean;
 }
 
 interface YpConfigTabData {
@@ -795,3 +806,59 @@ interface YpConfigTabData {
   icon: string;
   items: Array<YpStructuredConfigData>;
 }
+
+interface StartTranscodingResponse {
+  transcodingJobId: string;
+}
+
+// ADMIN
+
+interface YpToxicityScore {
+  toxicityScore?: number;
+  identityAttackScore?: number;
+  threatScore?: number;
+  insultScore?: number;
+  severeToxicityScore?: number;
+  sexuallyExplicitScore?: number;
+  profanityScore?: number;
+  flirtationScore?: number;
+}
+
+interface YpModerationItem extends YpDatabaseItem {
+  status?: string;
+  counter_flags?: number;
+  source?: string;
+  post_id?: number;
+  type: string;
+  pointTextContent?: string;
+  postNameContent?: string;
+  postTextContent?: string;
+  postTranscriptContent?: string;
+  is_post: boolean;
+  is_point: boolean;
+  toxicityScore?: number;
+  groupName?: string;
+  user_email?: string;
+  moderation_data?: {
+    moderation: YpToxicityScore;
+  };
+}
+
+interface YpCustomRatingsData extends YpDatabaseItem {
+  emoji: string;
+  numberOf: number;
+  averageRating: number;
+  count: number;
+}
+
+interface YpPostRatingsData extends YpRatingData {
+  count: number;
+  averageRating: number;
+}
+
+interface YpSsnListCountResponse {
+  count: number;
+}
+
+
+

@@ -44,6 +44,8 @@ import { YpAppDialogs } from './yp-app-dialogs.js';
 import '../cs-project/cs-projects.js';
 import '../cs-project/cs-project.js';
 import '../cs-project/cs-round.js';
+import '../cs-project/cs-create-action-plan.js';
+import '../cs-project/cs-report.js';
 
 import '../cs-project/cs-choose-meeting-time.js';
 
@@ -506,7 +508,7 @@ export class CsApp extends YpBaseElement {
             ></cs-create-issues>
           `);
           break;
-          case 'score':
+        case 'score':
           pageHtml = cache(html`
             <cs-score
               id="project"
@@ -516,6 +518,26 @@ export class CsApp extends YpBaseElement {
             ></cs-score>
           `);
           break;
+        case 'action_plan':
+          pageHtml = cache(html`
+            <cs-create-action-plan
+              id="actionPlan"
+              role="main"
+              aria-label="${this.t('createActionPlan')}"
+              .subRoute="${this.subRoute}"
+            ></cs-create-action-plan>
+          `);
+          break;
+        case 'report':
+            pageHtml = cache(html`
+              <cs-report
+                id="report"
+                role="main"
+                aria-label="${this.t('report')}"
+                .subRoute="${this.subRoute}"
+              ></cs-report>
+            `);
+            break;
           default:
           pageHtml = cache(html` <yp-view-404 name="view-404"></yp-view-404> `);
           break;

@@ -334,6 +334,11 @@ render() {
         <paper-checkbox .name="allowAnonymousAutoLogin" .checked="${this.group.configuration.allowAnonymousAutoLogin}">
           ${this.t('allowAnonymousAutoLogin')}
         </paper-checkbox>
+        <paper-checkbox .name="allowOneTimeLoginWithName" .checked="${this.group.configuration.allowOneTimeLoginWithName}">
+          ${this.t('allowOneTimeLoginWithName')}
+        </paper-checkbox>
+
+
         <paper-checkbox .name="disableFacebookLoginForGroup" .checked="${this.group.configuration.disableFacebookLoginForGroup}">
           ${this.t('disableFacebookLoginForGroup')}
         </paper-checkbox>
@@ -391,6 +396,13 @@ render() {
         </paper-checkbox>
 
         <paper-input id="audioPostUploadLimitSec" .name="audioPostUploadLimitSec" allowedPattern="[0-9]" .maxlength="3" .type="number" ?disabled="${!this.hasaudioUpload}" .label="${this.t('audioPostUploadLimitSec')}" .value="${this.group.configuration.audioPostUploadLimitSec}">
+        </paper-input>
+
+        <paper-input id="customTitleQuestionText"
+                     name="customTitleQuestionText"
+                     maxlength="60"
+                     .label="${this.t('customTitleQuestionText')}"
+                     .value="${this.group.configuration.customTitleQuestionText}">
         </paper-input>
 
         <paper-input id="hideNameInputAndReplaceWith" name="hideNameInputAndReplaceWith" maxlength="60" label="[[t('hideNameInputAndReplaceWith')]]" value="{{group.configuration.hideNameInputAndReplaceWith}}">

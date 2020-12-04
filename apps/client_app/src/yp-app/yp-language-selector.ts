@@ -24,6 +24,9 @@ export class YpLanguageSelector extends YpBaseElement {
   @property({ type: String })
   value = '';
 
+  @property({ type: String })
+  name = '';
+
   @property({ type: Boolean })
   autoTranslateOptionDisabled = false;
 
@@ -31,7 +34,7 @@ export class YpLanguageSelector extends YpBaseElement {
   autoTranslate = false;
 
   @property({ type: Boolean })
-  dropdownVisible = false;
+  dropdownVisible = true;
 
   @property({ type: Boolean })
   hasServerAutoTranslation = false;
@@ -42,7 +45,7 @@ export class YpLanguageSelector extends YpBaseElement {
   updated(changedProperties: Map<string | number | symbol, unknown>) {
     super.updated(changedProperties);
     if (changedProperties.has('selectedLocale')) {
-      this._selectedLocaleChanged(changedProperties.get('languages') as string);
+      this._selectedLocaleChanged(changedProperties.get('selectedLocale') as string);
       this.fire('yp-selected-locale-changed', this.selectedLocale);
     }
   }
@@ -84,6 +87,7 @@ export class YpLanguageSelector extends YpBaseElement {
   };
 
   noGoogleTranslateLanguages = ['kl'];
+
   _refreshLanguage() {
     this.dropdownVisible = false;
     this.refreshLanguages = !this.refreshLanguages;
@@ -126,13 +130,10 @@ export class YpLanguageSelector extends YpBaseElement {
 
   render() {
     return html`
-      <lite-signal
-        on-lite-signal-yp-refresh-language-selection="_refreshLanguage"></lite-signal>
-
       <div class="layout vertical">
         ${this.dropdownVisible
           ? html`
-              <mwc-select label="Select language">
+              <mwc-select .value="${this.value}" label="Select language">
                 ${this.languages.map(
                   item => html`
                     <mwc-list-item
@@ -295,6 +296,9 @@ export class YpLanguageSelector extends YpBaseElement {
   _selectedLocaleChanged(oldLocale: string) {
     if (this.selectedLocale) {
       this.value = this.selectedLocale;
+      if (oldLocale) {
+        this.fire('changed', this.value);
+      }
       if (!this.noUserEvents && oldLocale) {
         if (!this.canUseAutoTranslate && this.autoTranslate) {
           this._stopTranslation();

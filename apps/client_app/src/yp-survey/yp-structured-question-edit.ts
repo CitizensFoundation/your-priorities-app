@@ -33,7 +33,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   hideQuestionIndex = false;
 
   @property({ type: String })
-  name: string | undefined
+  formName: string | undefined
 
   @property({ type: Boolean })
   dontFocusFirstQuestion = false;
@@ -50,8 +50,17 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   @property({ type: Boolean })
   isFirstRating = false;
 
+  @property({ type: Boolean })
+  isFromNewPost = false;
+
   @property({ type: Array })
   structuredAnswers: Array<YpStructuredAnswer> | undefined;
+
+  @property({ type: Number })
+  debounceTimeMs = 2000
+
+  @property({ type: Boolean })
+  disabled = false
 
   radioKeypress = false;
 
@@ -146,7 +155,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         mwc-radio {
-          --mwc-radio-label-color: #333;
+          --mwc-radio-label-color: #252525;
           font-size: 16px;
         }
 
@@ -187,7 +196,15 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
 
         .longQuestion[use-small-font] {
           font-size: 16px;
-          color: #333;
+          color: #252525;
+        }
+
+        .longQuestion[is-from-new-post] {
+          color: #757575;
+        }
+
+        .question[is-from-new-post] {
+          color: #757575;
         }
 
         .longQuestion[has-content] {
@@ -199,7 +216,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         }
 
         mwc-checkbox {
-          --mwc-checkbox-label-color: #333;
+          --mwc-checkbox-label-color: #252525;
           margin-left: 42px;
           margin-bottom: 24px;
         }
@@ -269,8 +286,35 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             font-size: 24px;
           }
         }
+
+      .radioGroup[invalid] mwc-radio {
+        --mdc-radio-unchecked-color: red;
+      }
+
+      mwc-dropdown-menu {
+          background-color: transparent;
+      }
+
       `,
     ];
+  }
+
+  get value() {
+    const answer = this.getAnswer(true);
+    if (answer) {
+      return answer.value;
+    } else {
+      return null;
+    }
+  }
+
+  set value(value: any) {
+    this.setAnswerAfterUpdate(value);
+  }
+
+  async setAnswerAfterUpdate(value: any) {
+    await this.updateComplete;
+    this.setAnswer(value);
   }
 
   renderTextField(skipLabel = false) {
@@ -280,8 +324,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .value="${(this.question.value as string) || ''}"
         .label="${!skipLabel ? this.textWithIndex : ''}"
         charCounter
-        .name="${this.name}"
-        ?useSmallFont="${this.useSmallFont}"
+        name="${this.formName || ''}"
+        ?use-small-font=="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
         type="text"
@@ -298,8 +342,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <div
         class="question general longQuestion"
-        .hasFocus="${this.longFocus}"
-        .useSmallFont="${this.useSmallFont}"
+        ?is-from-new-post="${this.isFromNewPost}"
+        ?has-focus="${this.longFocus}"
         id="structuredQuestionIntro_${this.index}">${unsafeHTML(this.textWithIndex)}</div>
       ${this.renderTextField(true)}
     `;
@@ -316,9 +360,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         charCounter
         @focus="${this.setLongFocus}"
         @blur="${this.setLongUnFocus}"
-        .useSmallFont="${this.useSmallFont}"
+        ?use-small-font="${this.useSmallFont}"
         @change="${this._debounceChangeEvent}"
-        .name="${this.name}"
+        name="${this.formName || ''}"
         rows="3"
         max-rows="5"
         maxrows="5"
@@ -332,9 +376,11 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <div
         class="question general longQuestion"
-        has-focus="${this.longFocus}"
+        ?is-from-new-post="${this.isFromNewPost}"
+        ?has-focus="${this.longFocus}"
+        ?is-from-new-post="${this.isFromNewPost}"
         ?has-content="${this.question.value}"
-        useSmallFont="${this.useSmallFont}"
+        ?use-small-font="${this.useSmallFont}"
         id="structuredQuestionIntro_${this.index}"
        >${unsafeHTML(this.textWithLinks)}</div>
       ${this.renderTextArea(true)}
@@ -357,7 +403,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       <div
         class="question general"
         id="structuredQuestionQuestion_${this.index}"
-        .useSmallFont="${this.useSmallFont}"
+        ?is-from-new-post="${this.isFromNewPost}"
+        ?use-small-font="${this.useSmallFont}"
         ?extra-top-margin="${this.question.extraTopMargin}"
         ?less-bottom-margin="${this.question.lessBottomMargin}">${unsafeHTML(this.textWithLinks)}</div>
     `;
@@ -371,7 +418,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     return html`
       <mwc-formfield .label="${radioButton.text}">
         <mwc-radio
-          .useSmallFont="${this.useSmallFont}"
+          ?use-small-font="${this.useSmallFont}"
           @keypress="${this.setRadioEventType}"
           @change="${this._radioChanged}"
           .value="${radioButton.text}"
@@ -387,8 +434,9 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       ? html`
           <div
             class="question general radiosLabel"
-            useSmallFont="${this.useSmallFont}"
-            ?isFirstRating="${this.isFirstRating}"
+            ?use-small-font="${this.useSmallFont}"
+            ?is-from-new-post="${this.isFromNewPost}"
+            ?is-first-rating="${this.isFirstRating}"
             id="structuredQuestionIntro_${this.index}"
          >${unsafeHTML(this.textWithLinks)}</div>
           <div
@@ -421,12 +469,14 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       : nothing;
   }
 
-  renderCheckbox(text: string, buttonIndex: number) {
+  renderCheckbox(text: string, buttonIndex: number, useTopLevelId = false) {
+    const id = useTopLevelId ? `structuredQuestion_${this.index}` : `structuredQuestionCheckbox_${this.index}_${buttonIndex}`
     return html`
       <mwc-formfield .label="${text}">
         <mwc-checkbox
-          id="structuredQuestionCheckbox_${this.index}_${buttonIndex}"
-          .name="${this.name || null}"
+          id="${id}"
+          .name="${this.formName || null}"
+          ?disabled="${this.disabled}"
           ?checked="${(this.question.value as boolean) || false}"
           @change="${this._checkboxChanged}">
         </mwc-checkbox>
@@ -440,7 +490,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
           <div
             id="structuredQuestionIntro_${this.index}"
             class="question general checkBoxesLabel"
-            .useSmallFont="${this.useSmallFont}"
+            ?is-from-new-post="${this.isFromNewPost}"
+            ?use-small-font="${this.useSmallFont}"
          >${unsafeHTML(this.textWithLinks)}</div>
           <div
             id="structuredQuestion_${this.index}"
@@ -474,6 +525,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         id="structuredQuestion_${this.index}"
         data-type="dropdown"
         .label="${this.textWithIndex}"
+        ?is-from-new-post="${this.isFromNewPost}"
         ?required="${this.question.required}">
         <mwc-listbox slot="dropdown-content" attr-for-selected="name">
           ${this.question.dropdownOptions?.map(
@@ -519,7 +571,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         question = this.renderCheckboxes();
         break;
       case 'checkbox':
-        question = this.renderCheckbox(this.question.text, 0);
+        question = this.renderCheckbox(this.question.text, 0, true);
       break;
         case 'radios':
         question = this.renderRadios();
@@ -563,7 +615,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         this.fire('yp-answer-content-changed', event.detail);
         this.debunceChangeEventTimer = undefined;
         this._resizeScrollerIfNeeded();
-      }, 2000);
+      }, this.debounceTimeMs);
     }
   }
 
@@ -607,9 +659,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   }
 
   //TODO: Finish this
-  checkValidation() {
-    return true;
-    /*const liveQuestion = this.$$('#structuredQuestion_' + this.index);
+  checkValidity() {
+    const liveQuestion = this.$$('#structuredQuestion_' + this.index);
     if (liveQuestion) {
       if (liveQuestion.dataset.type === 'dropdown') {
         return true; // DO something if required
@@ -618,13 +669,15 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
       } else if (liveQuestion.dataset.type === 'checkboxes') {
         return true; // DO something if required
       } else {
-        if (liveQuestion) {
-          return liveQuestion.validate();
+        if (liveQuestion && typeof (liveQuestion as TextField).checkValidity == 'function' ) {
+          return (liveQuestion as TextField).checkValidity();
         } else {
           return true;
         }
       }
-    }*/
+    } else {
+      return true;
+    }
   }
 
   get isInputField() {
@@ -658,7 +711,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
     }
   }
 
-  getAnswer(): YpStructuredAnswer | undefined {
+  getAnswer(suppressNotFoundError = false): YpStructuredAnswer | undefined {
     const item = this.$$('#structuredQuestion_' + this.index);
 
     if (item) {
@@ -723,28 +776,29 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
             }
           }
         }
-
         if (selectedCheckboxes !== '') {
           value = selectedCheckboxes.substring(
             0,
             selectedCheckboxes.length - 1
           );
         }
+      } else if (this.question.type!.toLowerCase() === 'checkbox') {
+        value = (item as Checkbox).checked;
       }
 
-      if (value && this.question.uniqueId) {
+      if (value!=undefined && this.question.uniqueId) {
         return { uniqueId: this.question.uniqueId, value: value };
       } else {
         console.error("Can't find answer for question");
         return undefined
       }
-    } else {
+    } else if (!suppressNotFoundError) {
       console.error("Can't find question item for " + this.question.text);
     }
   }
 
   setAnswer(value: string) {
-    if (value) {
+    if (value!=null) {
       const item = this.$$('#structuredQuestion_' + this.index);
 
       if (item && this.question.type) {
@@ -827,6 +881,10 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                 console.debug('No selectedCheckbox');
               }
             }
+          }
+        } else if (this.question.type.toLowerCase() === 'checkbox') {
+          if (value) {
+            (item as Checkbox).checked = true;
           }
         }
       } else {
@@ -991,7 +1049,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         this.structuredAnswers.forEach(answer => {
           if (this.question.uniqueId === answer.uniqueId && answer.value) {
             setTimeout(() => {
-              this.setAnswer(answer.value);
+              this.setAnswer(answer.value as string);
             }, 100);
             throw BreakException;
           }

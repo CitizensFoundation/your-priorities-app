@@ -20,15 +20,22 @@ import './@yrpri/common/yp-emoji-selector.js';
 import './@yrpri/yp-file-upload/yp-file-upload.js';
 import './@yrpri/yp-theme/yp-theme-selector.js';
 import './@yrpri/yp-app/yp-language-selector.js';
+import { TextField } from '@material/mwc-textfield';
 
-@customElement('yp-admin-config-domain')
-export class YpAdminConfigDomain extends YpAdminConfigBase {
+@customElement('yp-admin-config-community')
+export class YpAdminConfigCommunity extends YpAdminConfigBase {
   @property({ type: Number })
   appHomeScreenIconImageId: number | undefined;
 
+  @property({ type: String })
+  hostnameExample: string | undefined;
+
+  @property({ type: Boolean })
+  hasSamlLoginProvider = false
+
   constructor() {
     super();
-    this.action = '/domains';
+    this.action = '/communities';
   }
 
   static get styles() {
@@ -39,7 +46,26 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     return this.collection
       ? html`
           <div class="layout horizontal wrap">
-            ${this.renderNameAndDescription()}
+             <div class="layout vertical">
+             ${this.renderNameAndDescription()}
+              <mwc-textfield
+                id="hostname"
+                name="hostname"
+                type="text"
+                @keyup="${this._hostnameChanged}"
+                .label="${this.t('community.hostname')}"
+                .value="${(this.collection as YpCommunityData).hostname}"
+                ?required="${!(this.collection as YpCommunityData)
+                  .is_community_folder}"
+                maxlength="80"
+                charCounter
+                class="mainInput"
+              >
+              </mwc-textfield>
+              <div class="hostnameInfo">
+                https://${this.hostnameExample}
+              </div>
+             </div>
             <div>
               ${this.renderSaveButton()}
             </div>
@@ -52,6 +78,16 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           />
         `
       : nothing;
+  }
+
+  _hostnameChanged() {
+    const hostname = (this.$$("#hostname") as TextField).value;
+    if (hostname) {
+      this.hostnameExample = hostname + '.' + window.appGlobals!.domain!.domain_name;
+    } else {
+      this.hostnameExample = 'your-hostname.' + '.' + window.appGlobals!.domain!.domain_name;
+    }
+    this._configChanged();
   }
 
   _clear() {
@@ -67,11 +103,17 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
       this._updateEmojiBindings();
 
       if (
-        (this.collection as YpDomainData).DomainLogoVideos &&
-        (this.collection as YpDomainData).DomainLogoVideos!.length > 0
+        (this.collection as YpCommunityData).CommunityLogoVideos &&
+        (this.collection as YpCommunityData).CommunityLogoVideos!.length > 0
       ) {
         this.uploadedVideoId = (this
-          .collection as YpDomainData).DomainLogoVideos![0].id;
+          .collection as YpCommunityData).CommunityLogoVideos![0].id;
+      } else if (
+        (this.collection as YpGroupData).GroupLogoVideos &&
+        (this.collection as YpGroupData).GroupLogoVideos!.length > 0
+      ) {
+        this.uploadedVideoId = (this
+          .collection as YpGroupData).GroupLogoVideos![0].id;
       }
     }
 
@@ -102,9 +144,9 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     if (domain) {
       debugger;
       if (this.uploadedVideoId) {
-        await window.adminServerApi.addVideoToCollection(domain.id, {
+        await window.adminServerApi.addVideoToDomain(domain.id, {
           videoId: this.uploadedVideoId,
-        }, "completeAndAddToDomain");
+        });
         this._finishRedirect(domain);
       } else {
         this._finishRedirect(domain);
@@ -170,7 +212,13 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
           text: 'analyticsTrackerCode',
           name: 'google_analytics_code',
           type: 'textfield',
-          value: (this.collection as YpDomainData).google_analytics_code,
+          maxLength: 40,
+          value: (this.collection as YpCommunityData).google_analytics_code,
+        },
+        {
+          text: 'facebookPixelId',
+          type: 'textfield',
+          maxLength: 40,
         },
         {
           text: 'onlyAdminsCanCreateCommunities',
@@ -223,109 +271,28 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
     });
 
     tabs.push({
-      name: 'authApis',
-      icon: 'api',
-      items: [
-        {
-          text: 'Facebook Client Id',
-          name: 'facebookClientId',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.facebook.client_id'
-          ),
-          maxLength: 60,
-        },
-        {
-          text: 'Facebook Client Secret',
-          name: 'facebookClientSecret',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.facebook.client_secret'
-          ),
-          maxLength: 60,
-        },
-        {
-          text: 'Google Client Id',
-          name: 'googleClientId',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.google.client_id'
-          ),
-          maxLength: 60,
-        },
-        {
-          text: 'Google Client Secret',
-          name: 'googleClientSecret',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.google.client_secret'
-          ),
-          maxLength: 60,
-        },
-      ],
-    });
-
-    tabs.push({
       name: 'samlAuth',
       icon: 'security',
       items: [
         {
-          text: 'SAML EntryPoint',
-          name: 'samlEntryPoint',
-          type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.entryPoint'),
-          maxLength: 100,
-        },
-        {
-          text: 'SAML Issuer',
-          name: 'samlIssuer',
-          type: 'textfield',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.issuer'),
-        },
-        {
-          text: 'SAML Identifier Format',
-          name: 'samlIdentifierFormat',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.saml.identifierFormat'
-          ),
-        },
-        {
-          text: 'samlLoginButtonUrl',
-          type: 'textfield',
-        },
-        {
-          text: 'customSamlLoginText',
-          type: 'textfield',
-        },
-        {
-          text: 'SAML CallbackUrl',
-          name: 'samlCallbackUrl',
-          type: 'textfield',
-          value: this._getSaveCollectionPath(
-            'secret_api_keys.saml.callbackUrl'
-          ),
-          maxLength: 100,
-        },
-        {
-          text: 'SAML Verification Certificate Chain',
-          name: 'samlCert',
-          type: 'textarea',
-          value: this._getSaveCollectionPath('secret_api_keys.saml.cert'),
-          maxLength: 20000,
-          rows: 2,
-          maxRows: 5,
-        },
-        {
-          text: 'customSAMLErrorHTML',
-          type: 'textarea',
-          rows: 2,
-          maxRows: 5,
-        },
-        {
-          text: 'forceSecureSamlEmployeeLogin',
+          text: 'forceSecureSamlLogin',
           type: 'checkbox',
+          disabled: !this.hasSamlLoginProvider
         },
+        {
+          text: 'customSamlLoginMessage',
+          type: 'textarea',
+          rows: 2,
+          maxRows: 5,
+          maxLength: 175
+        },
+        {
+          text: 'customSamlDeniedMessage',
+          type: 'textarea',
+          rows: 2,
+          maxRows: 5,
+          maxLength: 150
+        }
       ],
     });
 

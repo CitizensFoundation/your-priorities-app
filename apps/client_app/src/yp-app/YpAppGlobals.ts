@@ -28,7 +28,7 @@ export class YpAppGlobals extends YpCodeBase {
 
   currentAnonymousUser: YpUserData | undefined;
 
-  currentGroup: YpGroupData | undefined ;
+  currentGroup: YpGroupData | undefined;
 
   currentAnonymousGroup: YpGroupData | undefined;
 
@@ -138,7 +138,7 @@ export class YpAppGlobals extends YpCodeBase {
     if (response) {
       window.appGlobals.hasVideoUpload = response.hasVideoUploadSupport;
       window.appGlobals.hasTranscriptSupport = response.hasTranscriptSupport;
-      this.fireGlobal('yp-has-video-upload')
+      this.fireGlobal('yp-has-video-upload');
     }
   }
 
@@ -156,7 +156,7 @@ export class YpAppGlobals extends YpCodeBase {
     const response = (await this.serverApi.hasAudioUploadSupport()) as YpHasAudioResponse | void;
     if (response) {
       window.appGlobals.hasAudioUpload = response.hasAudioUploadSupport;
-      this.fireGlobal('yp-has-audio-upload')
+      this.fireGlobal('yp-has-audio-upload');
     }
   }
 
@@ -186,7 +186,7 @@ export class YpAppGlobals extends YpCodeBase {
     }
   }
 
-  setHighlightedLanguages (languages: string | undefined) {
+  setHighlightedLanguages(languages: string | undefined) {
     this.highlightedLanguages = languages;
     this.fireGlobal('yp-refresh-language-selection');
   }
@@ -234,7 +234,8 @@ export class YpAppGlobals extends YpCodeBase {
     if (
       group &&
       group.configuration &&
-      group.configuration.allowAnonymousUsers
+      (group.configuration.allowAnonymousUsers ||
+        group.configuration.allowOneTimeLoginWithName)
     ) {
       this.currentAnonymousGroup = group;
       if (!window.appUser.user && this.currentAnonymousUser) {
@@ -278,7 +279,7 @@ export class YpAppGlobals extends YpCodeBase {
   _userLoggedIn(event: CustomEvent) {
     const user: YpUserData = event.detail;
     if (user) {
-      setTimeout( () => {
+      setTimeout(() => {
         if (typeof ga == 'function') {
           ga('set', '&uid', user.id);
         }

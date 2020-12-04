@@ -46,7 +46,7 @@ export class CsCreateIssues extends YpBaseElement {
   nominees = [
     'John Travolta',
     'Nicole Kidman',
-    'Robert De Niro',
+    'Patric Stewart',
     'Meryl Streep',
     'Scarlett Johansson',
   ];

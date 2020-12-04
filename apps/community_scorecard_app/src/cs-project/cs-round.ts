@@ -341,6 +341,7 @@ export class CsRound extends YpBaseElement {
   renderProcess(
     name: string,
     icon: string,
+    link: string,
     disableStart = false
   ): TemplateResult | undefined {
     return html` <div
@@ -349,11 +350,11 @@ export class CsRound extends YpBaseElement {
       <mwc-icon>${icon}</mwc-icon>
       <div class="processName">${name}</div>
       <div class="flex"></div>
-      <mwc-button
+      <a href="${link}" target="_blank"><mwc-button
         .label="${this.t('start')}"
         ?disabled="${disableStart}"
         raised
-      ></mwc-button>
+      ></mwc-button></a>
     </div>`;
   }
 
@@ -364,33 +365,35 @@ export class CsRound extends YpBaseElement {
   renderProcesses(): TemplateResult | undefined {
     return html`
       <div class="layout vertical center-center processes">
-        ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today')}
+        ${this.renderProcess(this.t('organizeMeetingTime'), 'calendar_today', 'choose_time/1')}
         ${this.renderDivider()}
         ${this.renderProcess(
           this.t('createScorecardMeeting'),
           'meeting_room',
-          true
+          'create_issues/1',
+          false
         )}
         ${this.renderDivider()}
         ${this.renderProcess(
           this.t('stakeHolderScoringStage'),
           'rate_review',
-          true
+          'score/1',
+          false
         )}
         ${this.renderDivider()}
         ${this.renderProcess(
           this.t('organizeMeetingTime'),
           'calendar_today',
-          true
+           'choose_time/1'
         )}
         ${this.renderDivider()}
         ${this.renderProcess(
           this.t('createActionPlan'),
           'pending_actions',
-          true
+          'action_plan'
         )}
         ${this.renderDivider()}
-        ${this.renderProcess(this.t('monitoring'), 'equalizer', true)}
+        ${this.renderProcess(this.t('monitoring'), 'equalizer', 'report')}
       </div>
     `;
   }

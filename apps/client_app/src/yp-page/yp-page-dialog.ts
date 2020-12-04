@@ -13,7 +13,7 @@ export class YpPageDialog extends YpBaseElement {
   dialogTitle: string | undefined;
 
   @property({ type: Object })
-  page: YpHelpPage | undefined;
+  page: YpHelpPageData | undefined;
 
   static get styles() {
     return [
@@ -78,7 +78,7 @@ export class YpPageDialog extends YpBaseElement {
     }
   }
 
-  open(page: YpHelpPage, language: string) {
+  open(page: YpHelpPageData, language: string) {
     this.page = page;
     this.language = language;
     (this.$$('#content') as HTMLElement).innerHTML = this.page.content[

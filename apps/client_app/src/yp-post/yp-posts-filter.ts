@@ -195,8 +195,6 @@ export class YpPostsFilter extends YpBaseElement {
                   <mwc-list-item
                     graphic="icon"
                     value="top"
-                    ?hidden="${this.group.configuration.customRatings !=
-                    undefined}">
                     <span>${this.t('post.top')}</span>
                   </mwc-list-item>
                   <mwc-list-item value="newest" graphic="icon">
@@ -323,13 +321,6 @@ export class YpPostsFilter extends YpBaseElement {
   }
 
   async _changeFilter(event: CustomEvent) {
-    let index = event.detail.index;
-
-    //TODO: Confirm this logic
-    if (this.group.configuration.customRatings != undefined) {
-      index += 1;
-    }
-
     switch(event.detail.index) {
       case 0:
         this.filter = 'top';

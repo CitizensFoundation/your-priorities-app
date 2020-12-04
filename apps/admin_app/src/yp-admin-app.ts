@@ -21,8 +21,11 @@ import { AnchorableElement } from '@material/mwc-menu/mwc-menu-surface-base';
 import { Dialog } from '@material/mwc-dialog';
 import { YpServerApiAdmin } from './@yrpri/common/YpServerApiAdmin.js';
 
+import './@yrpri/yp-dialog-container/yp-app-dialogs.js';
+
 import './yp-admin-translations.js';
 import './yp-admin-config-domain.js';
+import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
 
 declare global {
   interface Window {
@@ -58,6 +61,12 @@ export class YpAdminApp extends YpBaseElement {
 
   @property({ type: String })
   currentError: string | undefined;
+
+  @property({ type: Boolean })
+  adminConfirmed = false
+
+  @property({ type: Boolean })
+  haveChekedAdminRights = false
 
   originalCollectionType: string | undefined;
 
@@ -139,7 +148,7 @@ export class YpAdminApp extends YpBaseElement {
           padding-top: 8px;
         }
 
-        mwc-drawer  {
+        mwc-drawer {
           --mdc-drawer-width: 120px;
         }
 
@@ -167,7 +176,7 @@ export class YpAdminApp extends YpBaseElement {
 
     let pathname = window.location.pathname;
 
-    pathname = pathname.replace('/admin','')
+    pathname = pathname.replace('/admin', '');
 
     if (pathname.endsWith('/'))
       pathname = pathname.substring(0, pathname.length - 1);
@@ -178,18 +187,18 @@ export class YpAdminApp extends YpBaseElement {
 
     this.collectionType = splitPath[0];
 
-    if (splitPath[1]=='new') {
-      this.collectionId = 'new'
+    if (splitPath[1] == 'new') {
+      this.collectionId = 'new';
     } else {
       this.collectionId = parseInt(splitPath[1]);
     }
 
-    if (splitPath.length>2) {
+    if (splitPath.length > 2) {
       this.collectionAction = splitPath[2];
     } else {
-      this.collectionAction = 'config'
+      this.collectionAction = 'config';
     }
- }
+  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -202,15 +211,24 @@ export class YpAdminApp extends YpBaseElement {
     this._removeEventListeners();
   }
 
+  _appDialogsReady(event: CustomEvent) {
+    if (event.detail) {
+      window.appDialogs = event.detail;
+    }
+  }
+
   async _getCollection() {
     this.collection = await window.serverApi.getCollection(
       this.collectionType,
       this.collectionId as number
     );
+    this._setAdminConfirmed();
   }
 
   render() {
     return html`
+      <yp-app-dialogs id="dialogContainer"></yp-app-dialogs>
+
       <mwc-dialog id="errorDialog" .heading="${this.t('error')}">
         <div>${this.currentError}</div>
         <mwc-button dialogAction="cancel" slot="secondaryAction">
@@ -218,23 +236,23 @@ export class YpAdminApp extends YpBaseElement {
         </mwc-button>
       </mwc-dialog>
 
-      <mwc-drawer hasHeader >
-          <div slot="title" class="layout vertical center-center">
+      <mwc-drawer hasHeader>
+        <div slot="title" class="layout vertical center-center">
           <div>
-              <img
-                height="35"
-                alt="Your Priorities Logo"
-                src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
-              />
+            <img
+              height="35"
+              alt="Your Priorities Logo"
+              src="https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/YpLogos/YourPriorites-Trans-Wide.png"
+            />
           </div>
-        <mwc-icon-button
-                class="exitButton"
-              .label="${this.t('exitToMainApp')}"
-              slot="navigationIcon"
-              @click="${this.exitToMainApp}"
-              icon="close"
-            ></mwc-icon-button>
-          </div>
+          <mwc-icon-button
+            class="exitButton"
+            .label="${this.t('exitToMainApp')}"
+            slot="navigationIcon"
+            @click="${this.exitToMainApp}"
+            icon="close"
+          ></mwc-icon-button>
+        </div>
         <div class="layout vertical center-center">
           <mwc-icon-button
             icon="gesture"
@@ -282,11 +300,37 @@ export class YpAdminApp extends YpBaseElement {
     this.addListener('set-total-posts', this._setTotalPosts);
     this.addListener('app-error', this._appError);
     this.addGlobalListener('yp-network-error', this._appError.bind(this));
+    this.addListener('yp-app-dialogs-ready', this._appDialogsReady.bind(this));
+    this.addGlobalListener('yp-have-checked-admin-rights', this._gotAdminRights.bind(this));
   }
 
   _removeEventListeners() {
     this.removeListener('set-total-posts', this._setTotalPosts);
     this.removeGlobalListener('yp-network-error', this._appError.bind(this));
+    this.removeListener(
+      'yp-app-dialogs-ready',
+      this._appDialogsReady.bind(this)
+    );
+    this.removeGlobalListener('yp-have-checked-admin-rights', this._gotAdminRights.bind(this));
+  }
+
+  _gotAdminRights(event: CustomEvent) {
+    this.haveChekedAdminRights = true
+    this._setAdminConfirmed();
+  }
+
+  _setAdminConfirmed() {
+    if (this.collection) {
+      switch(this.collectionType) {
+        case 'domain':
+          this.adminConfirmed = YpAccessHelpers.checkDomainAccess(this.collection as YpDomainData);
+          break
+      }
+    }
+
+    if (this.collection && this.haveChekedAdminRights && !this.adminConfirmed) {
+        this.fire('yp-network-error', { message: this.t('unauthorized')})
+    }
   }
 
   _appError(event: CustomEvent) {
@@ -305,36 +349,40 @@ export class YpAdminApp extends YpBaseElement {
   }
 
   _renderPage() {
-    switch (this.collectionAction) {
-      case 'translations':
-        return html`
-          ${this.collection
-            ? html`<yp-admin-translations
-                .collectionType="${this.collectionType}"
-                .collection="${this.collection}"
-                .collectionId="${this.collectionId}"
-              >
-              </yp-admin-translations>`
-            : nothing}
-        `;
-      case 'config':
-        switch (this.collectionType) {
-          case 'domain':
-            return html`
+    if (this.adminConfirmed) {
+      switch (this.collectionAction) {
+        case 'translations':
+          return html`
             ${this.collection
-              ? html`<yp-admin-config-domain
+              ? html`<yp-admin-translations
                   .collectionType="${this.collectionType}"
                   .collection="${this.collection}"
                   .collectionId="${this.collectionId}"
                 >
-                </yp-admin-config-domain>`
+                </yp-admin-translations>`
               : nothing}
           `;
-        }
-      default:
-        return html`
-          <p>Page not found try going to <a href="#main">Main</a></p>
-        `;
+        case 'config':
+          switch (this.collectionType) {
+            case 'domain':
+              return html`
+                ${this.collection
+                  ? html`<yp-admin-config-domain
+                      .collectionType="${this.collectionType}"
+                      .collection="${this.collection}"
+                      .collectionId="${this.collectionId}"
+                    >
+                    </yp-admin-config-domain>`
+                  : nothing}
+              `;
+          }
+        default:
+          return html`
+            <p>Page not found try going to <a href="#main">Main</a></p>
+          `;
+      }
+    } else {
+      return nothing
     }
   }
 

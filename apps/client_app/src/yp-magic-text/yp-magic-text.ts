@@ -263,6 +263,7 @@ export class YpMagicText extends YpBaseElement {
           case 'alternativeTextForNewIdeaButtonClosed':
           case 'alternativeTextForNewIdeaButtonHeader':
           case 'customThankYouTextNewPosts':
+          case 'customTitleQuestionText':
           case 'alternativePointForHeader':
           case 'customAdminCommentsTitle':
           case 'alternativePointAgainstHeader':
