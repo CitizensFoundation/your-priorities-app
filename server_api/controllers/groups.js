@@ -360,7 +360,7 @@ router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), functio
   const contentType = req.body.contentType ? req.body.contentType : 'application/octet-stream';
 
   const randomCode =  Math.random().toString(36).substring(2, 9);
-  const fileKey=randomCode+req.body.filename;
+  const fileKey=randomCode+"/"+req.body.filename;
 
   const s3Params = {
     Bucket: bucketName,
