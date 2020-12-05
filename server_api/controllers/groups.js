@@ -340,27 +340,45 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
 };
 
-var upload = multer({
-  storage: s3multer({
-    dirname: 'attachments',
-    s3: s3,
-    bucket: process.env.S3_BUCKET,
+router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), function(req, res) {
+  const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
+  const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
+  const s3 = new aws.S3({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    endpoint: process.env.S3_ENDPOINT || null,
-    acl: 'public-read',
-    contentType: s3multer.AUTO_CONTENT_TYPE,
-    region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
-    key: function (req, file, cb) {
-      cb(null, Date.now()+"_"+file.originalname);
+    endpoint: accelEndPoint,
+    signatureVersion: 'v4',
+    useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
+    region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
+  });
+
+  const signedUrlExpireSeconds = 60 * 60;
+  const bucketName = process.env.S3_ATTACHMENTS_BUCKET;
+
+//  const contentType = req.body.contentType ? req.body.contentType : 'application/octet-stream';
+
+  const contentType = req.body.contentType ? req.body.contentType : 'application/octet-stream';
+
+  const randomCode =  Math.random().toString(36).substring(2, 9);
+  const fileKey=randomCode+req.body.filename;
+
+  const s3Params = {
+    Bucket: bucketName,
+    Key: fileKey,
+    Expires: signedUrlExpireSeconds,
+    ACL: 'public-read',
+    ContentType: contentType
+  };
+
+  s3.getSignedUrl('putObject', s3Params, (error, url) => {
+    if (error) {
+      log.error('Error getting presigned attachment url from AWS S3', { error });
+      res.sendStatus(500);
+    } else {
+      log.info('Presigned URL:', { url });
+      res.send({ presignedUrl: url });
     }
-  })
-});
-
-var uploadDox = multer({});
-
-router.post('/:id/upload_document',  auth.can('add to group'), upload.single('file'), function(req, res) {
-  res.send({filename: req.file.originalname, url: req.file.location });
+  });
 });
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
@@ -2263,6 +2281,8 @@ router.put('/:id/update_translation', auth.can('edit group'), function(req, res)
     }
   });
 });
+
+var uploadDox = multer({});
 
 router.put('/:id/convert_docx_survey_to_json', uploadDox.single('file'), function(req, res) {
   const formData = {
