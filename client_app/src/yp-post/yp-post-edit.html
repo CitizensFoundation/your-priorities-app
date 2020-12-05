@@ -307,6 +307,8 @@
                                 accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*"
                                 target="/api/groups/[[group.id]]/upload_document"
                                 method="POST"
+                                group="[[group]]"
+                                attachment-upload
                                 on-success="_documentUploaded">
                   <iron-icon class="icon" icon="attach-file"></iron-icon>
                   <span>[[t('uploadAttachment')]]</span>
@@ -875,9 +877,9 @@
     },
 
     _documentUploaded: function (event, detail) {
-      var document = JSON.parse(detail.xhr.response);
-      this.set('uploadedDocumentUrl', document.url);
-      this.set('uploadedDocumentFilename', document.filename);
+      var responseURL = detail.xhr.responseURL.split("?")[0];
+      this.set('uploadedDocumentUrl', responseURL);
+      this.set('uploadedDocumentFilename', detail.filename);
     },
 
     customFormResponse: function () {
