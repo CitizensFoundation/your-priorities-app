@@ -288,12 +288,12 @@ export class YpServerApi extends YpServerApiBase {
     );
   }
 
-  public createPresignUrl(mediaUrl: string) {
+  public createPresignUrl(mediaUrl: string, body = {}) {
     return this.fetchWrapper(
       mediaUrl,
       {
         method: 'POST',
-        body: JSON.stringify({}),
+        body: JSON.stringify(body),
       },
       false
     );

@@ -536,7 +536,9 @@ export class YpPostEdit extends YpEditBase {
                     <yp-file-upload
                       id="attachmentFileUpload"
                       raised
+                      attachmentUpload
                       buttonIcon="attach_file"
+                      .group="${this.group}"
                       .buttonText="${this.t('uploadAttachment')}"
                       accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*"
                       .target="/api/groups/${this.group.id}/upload_document"
@@ -1233,9 +1235,9 @@ export class YpPostEdit extends YpEditBase {
   }
 
   _documentUploaded(event: CustomEvent) {
-    const document = JSON.parse(event.detail.xhr.response);
-    this.uploadedDocumentUrl = document.url;
-    this.uploadedDocumentFilename = document.filename;
+    const responseURL = event.detail.xhr.responseURL.split("?")[0];
+    this.uploadedDocumentUrl = responseURL;
+    this.uploadedDocumentFilename = event.detail.filename;
   }
 
   customFormResponse() {

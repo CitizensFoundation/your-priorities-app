@@ -32,25 +32,25 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   hostnameExample: string | undefined;
 
   @property({ type: Boolean })
-  hasSamlLoginProvider = false
+  hasSamlLoginProvider = false;
 
   @property({ type: Array })
-  availableCommunityFolders: Array<YpCommunityData> | undefined
+  availableCommunityFolders: Array<YpCommunityData> | undefined;
 
   @property({ type: Number })
-  ssnLoginListDataId: number | undefined
+  ssnLoginListDataId: number | undefined;
 
   @property({ type: Number })
-  ssnLoginListDataCount: number | undefined
+  ssnLoginListDataCount: number | undefined;
 
   @property({ type: Number })
-  inCommunityFolderId: number | undefined
+  inCommunityFolderId: number | undefined;
 
   @property({ type: String })
-  status: string | undefined
+  status: string | undefined;
 
   @property({ type: String })
-  communityAccess: string | undefined
+  communityAccess: string | undefined;
 
   constructor() {
     super();
@@ -65,8 +65,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     return this.collection
       ? html`
           <div class="layout horizontal wrap">
-             <div class="layout vertical">
-             ${this.renderNameAndDescription()}
+            <div class="layout vertical">
+              ${this.renderNameAndDescription()}
               <mwc-textfield
                 id="hostname"
                 name="hostname"
@@ -84,7 +84,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               <div class="hostnameInfo">
                 https://${this.hostnameExample}
               </div>
-             </div>
+            </div>
             <div>
               ${this.renderSaveButton()}
             </div>
@@ -100,11 +100,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   }
 
   _hostnameChanged() {
-    const hostname = (this.$$("#hostname") as TextField).value;
+    const hostname = (this.$$('#hostname') as TextField).value;
     if (hostname) {
-      this.hostnameExample = hostname + '.' + window.appGlobals!.domain!.domain_name;
+      this.hostnameExample =
+        hostname + '.' + window.appGlobals!.domain!.domain_name;
     } else {
-      this.hostnameExample = 'your-hostname.' + '.' + window.appGlobals!.domain!.domain_name;
+      this.hostnameExample =
+        'your-hostname.' + '.' + window.appGlobals!.domain!.domain_name;
     }
     this._configChanged();
   }
@@ -116,23 +118,23 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     this.ssnLoginListDataCount = undefined;
     this.inCommunityFolderId = undefined;
     this.availableCommunityFolders = undefined;
-    (this.$$("#appHomeScreenIconImageUpload") as YpFileUpload).clear();
+    (this.$$('#appHomeScreenIconImageUpload') as YpFileUpload).clear();
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
 
     if (changedProperties.has('collection') && this.collection) {
-      this._communityChanged()
+      this._communityChanged();
     }
 
     if (changedProperties.has('collectionId') && this.collectionId) {
-      this._collectionIdChanged()
+      this._collectionIdChanged();
     }
   }
 
   languageChanged() {
-    this._setupTranslations()
+    this._setupTranslations();
   }
 
   _communityChanged() {
@@ -147,21 +149,22 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         .collection as YpCommunityData).CommunityLogoVideos![0].id;
     }
 
-    this._getHelpPages("communities");
+    this._getHelpPages('communities');
     if (this.collection) {
       if ((this.collection as YpCommunityData).access === 0) {
-        this.communityAccess = "public";
+        this.communityAccess = 'public';
       } else if ((this.collection as YpCommunityData).access === 1) {
-        this.communityAccess = "closed";
+        this.communityAccess = 'closed';
       } else if ((this.collection as YpCommunityData).access === 2) {
-        this.communityAccess = "secret";
+        this.communityAccess = 'secret';
       }
       if ((this.collection as YpCommunityData).status) {
         this.status = (this.collection as YpCommunityData).status;
       }
 
       if ((this.collection as YpCommunityData).in_community_folder_id) {
-        this.inCommunityFolderId = (this.collection as YpCommunityData).in_community_folder_id;
+        this.inCommunityFolderId = (this
+          .collection as YpCommunityData).in_community_folder_id;
       }
     }
 
@@ -185,29 +188,38 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       this.collection.configuration &&
       (this.collection as YpCommunityData).configuration.ssnLoginListDataId
     ) {
-      this.ssnLoginListDataId = (this.collection as YpCommunityData).configuration.ssnLoginListDataId;
+      this.ssnLoginListDataId = (this
+        .collection as YpCommunityData).configuration.ssnLoginListDataId;
       this._getSsnListCount();
     }
 
     this._checkCommunityFolders(this.collection as YpCommunityData);
   }
 
-  _deleteSsnLoginList () {
+  _deleteSsnLoginList() {
     if (this.collection && this.ssnLoginListDataId) {
-      window.adminServerApi.deleteSsnLoginList(this.collection.id, this.ssnLoginListDataId)
+      window.adminServerApi.deleteSsnLoginList(
+        this.collection.id,
+        this.ssnLoginListDataId
+      );
       this.ssnLoginListDataId = undefined;
       this.ssnLoginListDataCount = undefined;
     }
   }
 
   _ssnLoginListDataUploaded(event: CustomEvent) {
-    this.ssnLoginListDataId = JSON.parse(event.detail.xhr.response).ssnLoginListDataId;
+    this.ssnLoginListDataId = JSON.parse(
+      event.detail.xhr.response
+    ).ssnLoginListDataId;
     this._getSsnListCount();
   }
 
   async _getSsnListCount() {
     if (this.collection && this.ssnLoginListDataId) {
-      const response = await window.adminServerApi.getSsnListCount(this.collection.id, this.ssnLoginListDataId)
+      const response = await window.adminServerApi.getSsnListCount(
+        this.collection.id,
+        this.ssnLoginListDataId
+      );
       this.ssnLoginListDataCount = response.count;
     }
   }
@@ -217,18 +229,16 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       this.action = '/communities';
       this.collection = {
         id: -1,
-        name: "",
-        description: "",
+        name: '',
+        description: '',
         access: 0,
-        status: "active",
+        status: 'active',
         only_admins_can_create_groups: true,
         counter_points: 0,
         counter_posts: 0,
         counter_users: 0,
-        configuration: {
-
-        },
-        hostname: "",
+        configuration: {},
+        hostname: '',
         is_community_folder: this.collectionId == 'newFolder' ? true : false,
       } as YpCommunityData;
     } else {
@@ -244,18 +254,22 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       domain = window.appGlobals.domain;
     }
 
-    const communityFolders = await window.adminServerApi.getCommunityFolders(domain!.id) as Array<YpCommunityData>;
+    const communityFolders = (await window.adminServerApi.getCommunityFolders(
+      domain!.id
+    )) as Array<YpCommunityData>;
 
     if (communityFolders && this.collection?.id) {
       var deleteIndex;
-      communityFolders.forEach( (community, index) => {
-          if (community.id == this.collection?.id) deleteIndex = index;
-        }
-      );
+      communityFolders.forEach((community, index) => {
+        if (community.id == this.collection?.id) deleteIndex = index;
+      });
       if (deleteIndex) communityFolders.splice(deleteIndex, 1);
     }
     if (communityFolders && communityFolders.length > 0) {
-      communityFolders.unshift({ id: -1, name: this.t("none") } as unknown as YpCommunityData);
+      communityFolders.unshift(({
+        id: -1,
+        name: this.t('none'),
+      } as unknown) as YpCommunityData);
       this.availableCommunityFolders = communityFolders;
     } else {
       this.availableCommunityFolders = undefined;
@@ -264,21 +278,27 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   _setupTranslations() {
     if (this.collectionId == 'new') {
-      if (this.collection && (this.collection as YpCommunityData).is_community_folder) {
-        this.editHeaderText = this.t("newCommunityFolder");
+      if (
+        this.collection &&
+        (this.collection as YpCommunityData).is_community_folder
+      ) {
+        this.editHeaderText = this.t('newCommunityFolder');
       } else {
-        this.editHeaderText = this.t("community.new");
+        this.editHeaderText = this.t('community.new');
       }
-      this.saveText = this.t("create");
-      this.toastText = this.t("communityToastCreated");
+      this.saveText = this.t('create');
+      this.toastText = this.t('communityToastCreated');
     } else {
-      if (this.collection && (this.collection as YpCommunityData).is_community_folder) {
-        this.editHeaderText = this.t("updateCommunityFolder");
+      if (
+        this.collection &&
+        (this.collection as YpCommunityData).is_community_folder
+      ) {
+        this.editHeaderText = this.t('updateCommunityFolder');
       } else {
-        this.editHeaderText = this.t("Update community info");
+        this.editHeaderText = this.t('Update community info');
       }
-      this.saveText = this.t("save");
-      this.toastText = this.t("communityToastUpdated");
+      this.saveText = this.t('save');
+      this.toastText = this.t('communityToastUpdated');
     }
   }
 
@@ -287,19 +307,21 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     const community = event.detail as YpCommunityData;
     if (community) {
       if (community.hostnameTaken) {
-        window.appDialogs
-        .getDialogAsync(
-          "confirmationDialog",
+        window.appDialogs.getDialogAsync(
+          'confirmationDialog',
           (dialog: YpConfirmationDialog) => {
-            dialog.open(this.t("hostnameTaken"), undefined);
+            dialog.open(this.t('hostnameTaken'), undefined);
           }
         );
-
       } else {
         if (this.uploadedVideoId) {
-          await window.adminServerApi.addVideoToCollection(community.id, {
-            videoId: this.uploadedVideoId,
-          }, "completeAndAddToCommunity");
+          await window.adminServerApi.addVideoToCollection(
+            community.id,
+            {
+              videoId: this.uploadedVideoId,
+            },
+            'completeAndAddToCommunity'
+          );
           this._finishRedirect(community);
         } else {
           this._finishRedirect(community);
@@ -312,11 +334,11 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
   _finishRedirect(community: YpCommunityData) {
     if (community.is_community_folder) {
-      YpNavHelpers.redirectTo("/community_folder/" + community.id);
+      YpNavHelpers.redirectTo('/community_folder/' + community.id);
     } else {
-      YpNavHelpers.redirectTo("/community/" + community.id);
+      YpNavHelpers.redirectTo('/community/' + community.id);
     }
-    window.appGlobals.activity("completed", "editCommunity");
+    window.appGlobals.activity('completed', 'editCommunity');
   }
 
   _getBasicTab() {
@@ -358,9 +380,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           templateData: html`
             <div class="layout horizontal wrap">
               ${this.renderHeaderAndLogoImageUploads()}
-              ${this.hasVideoUpload
-                ? this.renderVideoUpload()
-                : nothing}
+              ${this.hasVideoUpload ? this.renderVideoUpload() : nothing}
             </div>
           `,
         },
@@ -382,21 +402,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           value: (this.collection as YpDomainData)
             .only_admins_can_create_communities,
           translationToken: 'domain.onlyAdminsCanCreateCommunities',
-        },
-        {
-          text: 'downloadFacebookImagesForUser',
-          type: 'checkbox',
-        },
-        {
-          text: 'disableNameAutoTranslation',
-          type: 'checkbox',
-        },
-        {
-          text: 'hideDomainNews',
-          type: 'checkbox',
-        },
+        }
       ],
-    }
+    };
   }
 
   _getWebAppTab() {
@@ -426,7 +434,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           `,
         },
       ],
-    }
+    };
   }
 
   _getSamlTab() {
@@ -437,24 +445,66 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         {
           text: 'forceSecureSamlLogin',
           type: 'checkbox',
-          disabled: !this.hasSamlLoginProvider
+          disabled: !this.hasSamlLoginProvider,
         },
         {
           text: 'customSamlLoginMessage',
           type: 'textarea',
           rows: 2,
           maxRows: 5,
-          maxLength: 175
+          maxLength: 175,
         },
         {
           text: 'customSamlDeniedMessage',
           type: 'textarea',
           rows: 2,
           maxRows: 5,
-          maxLength: 150
-        }
+          maxLength: 150,
+        },
+        {
+          text: 'ssnLoginListDataUpload',
+          type: 'html',
+          templateData: html`
+            ${this.collection && this.ssnLoginListDataId
+              ? html`
+                <div>
+                  <b>${this.t('ssnLoginListCount')}: ${
+                  this.ssnLoginListDataCount
+                }</b>
+                </div>
+                <div>
+                  <mwc-button
+                    style="padding: 8px;"
+                    raised
+                    .label="${this.t('deleteSsnLoginList')}"
+                    @click="${this._deleteSsnLoginList}"
+                    ></mwc-button
+                  >
+                </div>
+              </div>
+                `
+              : nothing}
+            ${this.collection && !this.ssnLoginListDataId
+              ? html`
+                  <yp-file-upload
+                    id="ssnLoginListDataUpload"
+                    raised
+                    ?disable="${!this.hasSamlLoginProvider}"
+                    accept=".txt"
+                    .target="/api/communities/${this.collection
+                      .id}/upload_ssn_login_list"
+                    method="POST"
+                    buttonIcon="link"
+                    .buttonText="${this.t('appHomeScreenIconImageUpload')}"
+                    @success="${this._ssnLoginListDataUploaded}"
+                  >
+                  </yp-file-upload>
+                `
+              : nothing}
+          `,
+        },
       ],
-    }
+    };
   }
 
   setupConfigTabs() {
