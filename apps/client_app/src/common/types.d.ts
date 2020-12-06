@@ -327,6 +327,7 @@ interface YpCommunityData extends YpCollectionData {
   access?: number;
   in_community_folder_id?: number;
   Groups?: Array<YpGroupData>;
+  defaultLocationLongLat?: string;
   CommunityLogoVideos?: Array<YpVideoData>;
   CommunityHeaderImages?: Array<YpImageData>;
   CommunityLogoImages?: Array<YpImageData>;

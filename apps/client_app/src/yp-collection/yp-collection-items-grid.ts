@@ -149,9 +149,11 @@ export class YpCollectionItemsGrid extends YpBaseElement {
 
       if (this.collectionItemType === 'community') {
         const community = item as YpCommunityData;
-        window.appGlobals.cache.backToDomainCommunityItems[
-          community.domain_id
-        ] = community;
+        if (community!=undefined) {
+          window.appGlobals.cache.backToDomainCommunityItems[
+            community.domain_id!
+          ] = community;
+        }
       } else if (this.collectionItemType === 'group' && item) {
         const group = item as YpGroupData;
         window.appGlobals.cache.backToCommunityGroupItems[

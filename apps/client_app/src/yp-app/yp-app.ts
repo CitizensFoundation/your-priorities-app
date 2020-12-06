@@ -114,7 +114,7 @@ export class YpApp extends YpBaseElement {
   goForwardPostName: string | undefined;
 
   @property({ type: Array })
-  pages: Array<YpHelpPage> = [];
+  pages: Array<YpHelpPageData> = [];
 
   @property({ type: String })
   headerDescription: string | undefined;
@@ -417,7 +417,7 @@ export class YpApp extends YpBaseElement {
         </mwc-icon-button>
         <mwc-menu id="helpMenu" menuCorner="END" corner="TOP_RIGHT">
           ${this.translatedPages(this.pages).map(
-            (page: YpHelpPage, index) => html`
+            (page: YpHelpPageData, index) => html`
               <mwc-list-item
                 data-args="${index}"
                 @click="${this._openPageFromMenu}">
@@ -558,11 +558,11 @@ export class YpApp extends YpBaseElement {
   }
 
   // Translated Pages
-  translatedPages(pages: Array<YpHelpPage>): Array<YpHelpPage> {
+  translatedPages(pages: Array<YpHelpPageData>): Array<YpHelpPageData> {
     if (pages) {
-      return JSON.parse(JSON.stringify(pages)) as Array<YpHelpPage>;
+      return JSON.parse(JSON.stringify(pages)) as Array<YpHelpPageData>;
     } else {
-      return [] as Array<YpHelpPage>;
+      return [] as Array<YpHelpPageData>;
     }
   }
 
@@ -590,7 +590,7 @@ export class YpApp extends YpBaseElement {
     }
   }
 
-  _openPage(page: YpHelpPage) {
+  _openPage(page: YpHelpPageData) {
     window.appGlobals.activity('open', 'pages', page.id);
     window.appDialogs.getDialogAsync(
       'pageDialog',

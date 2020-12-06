@@ -22,6 +22,7 @@ import './@yrpri/yp-theme/yp-theme-selector.js';
 import './@yrpri/yp-app/yp-language-selector.js';
 import { TextField } from '@material/mwc-textfield';
 import { YpConfirmationDialog } from './@yrpri/yp-dialog-container/yp-confirmation-dialog.js';
+import { ifDefined } from 'lit-html/directives/if-defined';
 
 @customElement('yp-admin-config-community')
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
@@ -95,6 +96,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
             name="appHomeScreenIconImageId"
             value="${this.appHomeScreenIconImageId?.toString() || ''}"
           />
+
+          <input type="hidden" name="themeId" value="${ifDefined(this.themeId)}" />
         `
       : nothing;
   }
@@ -360,6 +363,67 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           `,
         },
         {
+          text: 'analyticsTrackerCode',
+          name: 'google_analytics_code',
+          type: 'textfield',
+          maxLength: 40,
+          value: (this.collection as YpCommunityData).google_analytics_code,
+        },
+        {
+          text: 'facebookPixelId',
+          type: 'textfield',
+          maxLength: 40,
+        },
+        {
+          text: 'onlyAdminsCanCreateGroups',
+          type: 'checkbox',
+          value: (this.collection as YpCommunityData)
+            .only_admins_can_create_groups,
+          translationToken: 'domain.onlyAdminsCanCreateGroups',
+        },
+        {
+          text: 'sortBySortOrder',
+          type: 'checkbox',
+          translationToken: 'sortGroupsBySortOrder',
+        },
+        {
+          text: 'redirectToGroupId',
+          type: 'textfield',
+          maxLength: 40,
+        },
+        {
+          text: 'highlightedLanguages',
+          type: 'textfield',
+          maxLength: 200,
+        },
+        {
+          text: 'customBackName',
+          type: 'textfield',
+          maxLength: 20
+        },
+        {
+          text: 'customBackURL',
+          type: 'textfield',
+          maxLength: 256
+        },
+
+        {
+          text: 'defaultLocationLongLat',
+          type: 'textfield',
+          maxLength: 100,
+          value: (this.collection as YpCommunityData)
+            .defaultLocationLongLat
+        },
+      ],
+    };
+  }
+
+  _getLookAndFeelTab() {
+    return {
+      name: 'lookAndFeel',
+      icon: 'code',
+      items: [
+        {
           text: 'theme',
           type: 'html',
           templateData: html` <yp-theme-selector
@@ -385,26 +449,30 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           `,
         },
         {
-          text: 'analyticsTrackerCode',
-          name: 'google_analytics_code',
-          type: 'textfield',
-          maxLength: 40,
-          value: (this.collection as YpCommunityData).google_analytics_code,
+          text: 'hideRecommendationOnNewsFeed',
+          type: 'checkbox'
         },
         {
-          text: 'facebookPixelId',
-          type: 'textfield',
-          maxLength: 40,
-        },
-        {
-          text: 'onlyAdminsCanCreateCommunities',
+          text: 'disableDomainUpLink',
           type: 'checkbox',
-          value: (this.collection as YpDomainData)
-            .only_admins_can_create_communities,
-          translationToken: 'domain.onlyAdminsCanCreateCommunities',
-        }
-      ],
-    };
+          translationToken: 'disableCommunityDomainUpLink'
+        },
+        {
+          text: 'disableNameAutoTranslation',
+          type: 'checkbox'
+        },
+        {
+          text: 'hideAllTabs',
+          type: 'checkbox'
+        },
+        {
+          text: 'welcomeHTML',
+          type: 'textarea',
+          rows: 2,
+          maxRows: 5
+        },
+      ]
+    }
   }
 
   _getWebAppTab() {
