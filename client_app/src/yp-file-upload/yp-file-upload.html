@@ -899,7 +899,7 @@ Example:
             this.set('uploadStatus', this.t('uploadCompleted'));
             self.fire('file-upload-complete');
             self.set(prefix + ".complete", true);
-            self.fire("success", {xhr: xhr, filename: file.name });
+            self.fire("success", { filename: file.name, attachmentURL: this.target });
             window.appGlobals.activity('complete', 'imageUpload');
           } else {
             this.set('uploadStatus', this.t('uploadCompleted'));

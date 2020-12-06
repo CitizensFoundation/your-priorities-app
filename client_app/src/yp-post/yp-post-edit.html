@@ -877,8 +877,8 @@
     },
 
     _documentUploaded: function (event, detail) {
-      var responseURL = detail.xhr.responseURL.split("?")[0];
-      this.set('uploadedDocumentUrl', responseURL);
+      var attachmentURL = detail.attachmentURL.split("?")[0];
+      this.set('uploadedDocumentUrl', attachmentURL);
       this.set('uploadedDocumentFilename', detail.filename);
     },
 
