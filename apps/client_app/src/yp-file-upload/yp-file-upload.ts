@@ -137,6 +137,9 @@ export class YpFileUpload extends YpBaseElement {
   @property({ type: Boolean })
   audioUpload = false;
 
+  @property({ type: Boolean })
+  attachmentUpload = false;
+
   @property({ type: Number })
   currentVideoId: number | undefined;
 
@@ -288,22 +291,19 @@ export class YpFileUpload extends YpBaseElement {
               class="blue"
               ?raised="${this.raised}"
               .label="${this.buttonText}"
-              @click="${this._fileClick}"
-            >
+              @click="${this._fileClick}">
             </mwc-button>
             <mwc-icon-button
               .ariaLabel="${this.t('deleteFile')}"
               class="removeButton layout self-start"
               icon="delete"
               @click="${this.clear}"
-              ?hidden="${!this.currentFile}"
-            ></mwc-icon-button>
+              ?hidden="${!this.currentFile}"></mwc-icon-button>
           </div>
           <div class="subText" ?hidden="${!this.subText}">${this.subText}</div>
           <div
             ?hidden="${!this.uploadLimitSeconds}"
-            class="limitInfo layout horizontal center-center"
-          >
+            class="limitInfo layout horizontal center-center">
             <em ?hidden="${this.currentFile != null}"
               >${this.uploadLimitSeconds} ${this.t('seconds')}</em
             >
@@ -344,8 +344,7 @@ export class YpFileUpload extends YpBaseElement {
                   <mwc-linear-progress
                     .value="${item.progress}"
                     ?indeterminate="${this.indeterminateProgress}"
-                    .error="${item.error}"
-                  ></mwc-linear-progress>
+                    .error="${item.error}"></mwc-linear-progress>
                 </div>
               </div>
             `
@@ -356,8 +355,8 @@ export class YpFileUpload extends YpBaseElement {
               .noDefaultCoverImage="${this.noDefaultCoverImage}"
               .videoId="${this.currentVideoId}"
               @set-cover="${this._setVideoCover}"
-              @set-default-cover="${this._setDefaultImageAsVideoCover}"
-            ></yp-set-video-cover> `
+              @set-default-cover="${this
+                ._setDefaultImageAsVideoCover}"></yp-set-video-cover> `
           : nothing}
       </div>
       <input
@@ -367,8 +366,7 @@ export class YpFileUpload extends YpBaseElement {
         @change="${this._fileChange}"
         .accept="${this.accept}"
         hidden
-        ?multiple="${this.multi}"
-      />
+        ?multiple="${this.multi}" />
     `;
   }
 
@@ -602,11 +600,12 @@ export class YpFileUpload extends YpBaseElement {
   }
 
   async uploadFile(file: YpUploadFileData) {
-    if (this.videoUpload || this.audioUpload) {
+    if (this.videoUpload || this.audioUpload || this.attachmentUpload) {
       this.indeterminateProgress = true;
       this.currentFile = file;
 
-      let mediaUrl;
+      let mediaUrl: string;
+      let ajaxBody = {};
 
       if (this.videoUpload) {
         window.appGlobals.activity('starting', 'videoUpload');
@@ -619,7 +618,7 @@ export class YpFileUpload extends YpBaseElement {
         } else {
           mediaUrl = '/api/videos/createAndGetPreSignedUploadUrlLoggedIn';
         }
-      } else {
+      } else if (this.audioUpload) {
         window.appGlobals.activity('starting', 'audioUpload');
         this.uploadStatus = this.t('uploadingAudio');
         this.headers = { 'Content-Type': 'audio/mp4' };
@@ -630,9 +629,27 @@ export class YpFileUpload extends YpBaseElement {
         } else {
           mediaUrl = '/api/audios/createAndGetPreSignedUploadUrlLoggedIn';
         }
+      } else if (this.attachmentUpload) {
+        window.appGlobals.activity('starting', 'attachmentUpload');
+        this.uploadStatus = this.t('attachmentUpload');
+
+        if (this.group) {
+          ajaxBody = {
+            filename: file.name,
+            contentType: file.type,
+          };
+          mediaUrl =
+            '/api/groups/' + this.group.id + '/getPresignedAttachmentURL';
+        } else {
+          console.error('No group for attachment upload');
+          return;
+        }
       }
 
-      const response = await window.serverApi.createPresignUrl(mediaUrl);
+      const response = await window.serverApi.createPresignUrl(
+        mediaUrl!,
+        ajaxBody
+      );
 
       this.target = response.presignedUrl;
       if (this.videoUpload) this.currentVideoId = response.videoId;
@@ -735,9 +752,6 @@ export class YpFileUpload extends YpBaseElement {
     this._showDropText();
     const fileIndex = this.files.indexOf(file);
 
-    const formData = new FormData();
-    formData.append('file', file, file.name);
-
     const xhr = (file.xhr = new XMLHttpRequest());
 
     xhr.upload.onprogress = e => {
@@ -788,12 +802,12 @@ export class YpFileUpload extends YpBaseElement {
 
           options.aspect = aspect;
 
-          const response = await window.serverApi.startTranscoding(
+          const response = (await window.serverApi.startTranscoding(
             'videos',
             this.currentVideoId,
             startType,
             options
-          ) as StartTranscodingResponse;
+          )) as StartTranscodingResponse;
 
           this._checkTranscodingJob(response.transcodingJobId);
 
@@ -825,17 +839,23 @@ export class YpFileUpload extends YpBaseElement {
             options = {};
           }
 
-          const response = await window.serverApi.startTranscoding(
+          const response = (await window.serverApi.startTranscoding(
             'audios',
             this.currentAudioId,
             startType,
             options
-          ) as StartTranscodingResponse;
+          )) as StartTranscodingResponse;
 
           this._checkTranscodingJob(response.transcodingJobId);
 
           window.appGlobals.activity('complete', 'audioUpload');
           window.appGlobals.activity('start', 'mediaTranscoding');
+        } else if (this.attachmentUpload) {
+          this.uploadStatus = this.t('uploadCompleted');
+          this.fire('file-upload-complete');
+          this.files[fileIndex].complete = true;
+          this.fire('success', {xhr: xhr, filename: file.name });
+          window.appGlobals.activity('complete', 'attachmentUpload');
         } else {
           this.uploadStatus = this.t('uploadCompleted');
           this.fire('file-upload-complete');
@@ -854,9 +874,11 @@ export class YpFileUpload extends YpBaseElement {
       }
     };
 
-    if (this.videoUpload || this.audioUpload) {
+    if (this.videoUpload || this.audioUpload || this.attachmentUpload) {
       xhr.send(file);
     } else {
+      const formData = new FormData();
+      formData.append('file', file, file.name);
       xhr.send(formData);
     }
   }

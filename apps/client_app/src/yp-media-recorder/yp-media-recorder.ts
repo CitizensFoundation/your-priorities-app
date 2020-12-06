@@ -204,10 +204,6 @@ export class YpMediaRecorder extends YpBaseElement {
           margin-bottom: 10px;
         }
 
-        .uploadFileButton {
-          color: #888;
-        }
-
         #waveform {
           height: 128px;
         }

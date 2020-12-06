@@ -139,10 +139,12 @@ export class YpCommunity extends YpCollection {
         backPath = '/community_folder/' + community.CommunityFolder.id;
         headerTitle = community.CommunityFolder.name;
         headerDescription = community.CommunityFolder.description;
-      } else {
+      } else  {
         backPath = '/domain/' + community.domain_id;
-        headerTitle = community.Domain.name;
-        headerDescription = community.Domain.description;
+        if (community.Domain) {
+          headerTitle = community.Domain.name;
+          headerDescription = community.Domain.description;
+        }
       }
       this.fire('yp-change-header', {
         headerTitle:
