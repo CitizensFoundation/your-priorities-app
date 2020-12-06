@@ -2282,6 +2282,28 @@ router.put('/:id/update_translation', auth.can('edit group'), function(req, res)
   });
 });
 
+var upload = multer({
+  storage: s3multer({
+    dirname: 'attachments',
+    s3: s3,
+    bucket: process.env.S3_BUCKET,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    endpoint: process.env.S3_ENDPOINT || null,
+    acl: 'public-read',
+    contentType: s3multer.AUTO_CONTENT_TYPE,
+    region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
+    key: function (req, file, cb) {
+      cb(null, Date.now()+"_"+file.originalname);
+    }
+  })
+});
+
+//TODO: Old remove only here for cached serviceworker clients
+router.post('/:id/upload_document',  auth.can('add to group'), upload.single('file'), function(req, res) {
+  res.send({filename: req.file.originalname, url: req.file.location });
+});
+
 var uploadDox = multer({});
 
 router.put('/:id/convert_docx_survey_to_json', uploadDox.single('file'), function(req, res) {
