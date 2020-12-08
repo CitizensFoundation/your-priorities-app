@@ -54,6 +54,10 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
       : nothing;
   }
 
+  renderHiddenInputs() {
+    return nothing;
+  }
+
   _clear() {
     super._clear();
     this.appHomeScreenIconImageId = undefined;

@@ -15,8 +15,8 @@ import { IronAjaxElement } from '@polymer/iron-ajax';
 import '@polymer/paper-listbox';
 import { PaperListboxElement } from '@polymer/paper-listbox';
 
-import '@polymer/mwc-dialog';
-import { PaperDialogElement } from '@polymer/mwc-dialog';
+import '@material/mwc-dialog';
+import { Dialog } from '@material/mwc-dialog';
 import { sortBy } from 'lodash-es';
 
 @customElement('yp-pages-grid')

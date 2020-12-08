@@ -103,7 +103,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       : nothing;
   }
 
-  renderHiddenInputs() {
+  renderHiddenInputs () {
     return html`
       <input
         type="hidden"
