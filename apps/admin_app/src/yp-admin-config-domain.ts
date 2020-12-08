@@ -142,7 +142,7 @@ export class YpAdminConfigDomain extends YpAdminConfigBase {
         {
           text: 'theme',
           type: 'html',
-          templateData: html` <yp-theme-selector
+          templateData: html`<yp-theme-selector
             .object="${this.collection}"
             .themeObject="${this.collection as YpThemeContainerObject}"
             .selectedTheme="${this.collection?.theme_id}"

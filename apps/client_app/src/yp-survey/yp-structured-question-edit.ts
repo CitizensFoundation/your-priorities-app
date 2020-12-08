@@ -7,6 +7,8 @@ import '@material/mwc-circular-progress-four-color';
 import '@material/mwc-dialog';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-snackbar';
 
 import '@material/mwc-checkbox';
@@ -323,11 +325,12 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         id="structuredQuestion_${this.index}"
         .value="${(this.question.value as string) || ''}"
         .label="${!skipLabel ? this.textWithIndex : ''}"
-        charCounter
         name="${this.formName || ''}"
         ?use-small-font=="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
+        ?charCounter="${this.question.charCounter!=undefined ? this.question.charCounter : false }"
+        .pattern="${this.question.pattern || ""}"
         type="text"
         .allowedPattern="${this.isNumberSubType ? '[0-9]' : ''}"
         ?half-width-desktop="${this.question.halfWidthDesktop}"
@@ -357,7 +360,8 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .label="${!skipLabel ? this.textWithIndex : ''}"
         .value="${(this.question.value as string) || ''}"
         minlength="2"
-        charCounter
+        ?charCounter="${this.question.charCounter!=undefined ? this.question.charCounter : true }"
+        .pattern="${this.question.pattern || ""}"
         @focus="${this.setLongFocus}"
         @blur="${this.setLongUnFocus}"
         ?use-small-font="${this.useSmallFont}"
@@ -455,7 +459,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
                         hidden
                         @change="${this._debounceChangeEvent}"
                         .maxlength="${this.question.maxLength || 5000}"
-                        .allowedPattern="${radioButton.subType === 'number'
+                        .pattern="${radioButton.subType === 'number'
                           ? '[0-9]'
                           : ''}"
                         type="text"
@@ -521,23 +525,22 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
   //TODO: Get this working
   renderDropdown() {
     return html`
-      <mwc-dropdown-menu
-        id="structuredQuestion_${this.index}"
-        data-type="dropdown"
+      <mwc-select
         .label="${this.textWithIndex}"
-        ?is-from-new-post="${this.isFromNewPost}"
-        ?required="${this.question.required}">
-        <mwc-listbox slot="dropdown-content" attr-for-selected="name">
-          ${this.question.dropdownOptions?.map(
+        @change="${this._dropDownChanged}">
+        ${this.question.dropdownOptions?.map(
             dropDownOptions => html`
-              <mwc-item name="${dropDownOptions.text}"
-                >${dropDownOptions.text}</mwc-item
+              <mwc-list-item name="${dropDownOptions.text}"
+                >${dropDownOptions.text}</mwc-list-item
               >
             `
           )}
-        </mwc-listbox>
-      </mwc-dropdown-menu>
+      </mwc-select>
     `;
+  }
+
+  _dropDownChanged() {
+
   }
 
   render(): TemplateResult | undefined | {} {

@@ -90,6 +90,8 @@ interface YpStructuredQuestionData {
   extraTopMargin?: boolean;
   lessBottomMargin?: boolean;
   html?: string;
+  pattern?: string;
+  charCounter?: boolean;
   radioButtons?: Array<YpRadioButtonData>;
   checkboxes?: Array<YpCheckboxData>;
   dropdownOptions?: Array<YpDropdownData>;

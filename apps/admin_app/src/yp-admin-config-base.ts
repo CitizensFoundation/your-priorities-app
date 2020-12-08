@@ -74,6 +74,8 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   abstract renderHeader(): TemplateResult | {};
 
+  abstract renderHiddenInputs(): TemplateResult | {};
+
   async _formResponse(event: CustomEvent) {
     this.configChanged = false;
   }
@@ -347,7 +349,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
               .action="${this.action ? this.action : ''}"
             >
               ${this.renderHeader()} ${this.renderTabs()}
+
               ${this.renderTabPages()}
+
+              ${this.renderHiddenInputs()}
 
               <input
                 type="hidden"
