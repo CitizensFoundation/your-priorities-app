@@ -219,6 +219,8 @@ interface YpHelpPageData {
   id: number;
   content: Record<string, string>;
   title: Record<string, string>;
+  published?: boolean;
+  locale?: string;
 }
 
 interface YpEndorsement {
