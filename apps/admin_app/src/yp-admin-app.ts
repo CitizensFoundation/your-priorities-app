@@ -25,6 +25,7 @@ import './@yrpri/yp-dialog-container/yp-app-dialogs.js';
 
 import './yp-admin-translations.js';
 import './yp-admin-config-domain.js';
+import './yp-admin-config-community.js';
 import { YpAccessHelpers } from './@yrpri/common/YpAccessHelpers.js';
 
 declare global {
@@ -325,7 +326,10 @@ export class YpAdminApp extends YpBaseElement {
         case 'domain':
           this.adminConfirmed = YpAccessHelpers.checkDomainAccess(this.collection as YpDomainData);
           break
-      }
+        case 'community':
+          this.adminConfirmed = YpAccessHelpers.checkCommunityAccess(this.collection as YpCommunityData);
+          break
+        }
     }
 
     if (this.collection && this.haveChekedAdminRights && !this.adminConfirmed) {
@@ -373,6 +377,17 @@ export class YpAdminApp extends YpBaseElement {
                       .collectionId="${this.collectionId}"
                     >
                     </yp-admin-config-domain>`
+                  : nothing}
+              `;
+            case 'community':
+              return html`
+                ${this.collection
+                  ? html`<yp-admin-config-community
+                      .collectionType="${this.collectionType}"
+                      .collection="${this.collection}"
+                      .collectionId="${this.collectionId}"
+                    >
+                    </yp-admin-config-community>`
                   : nothing}
               `;
           }

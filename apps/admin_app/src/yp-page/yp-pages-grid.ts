@@ -15,9 +15,10 @@ import { IronAjaxElement } from '@polymer/iron-ajax';
 import '@polymer/paper-listbox';
 import { PaperListboxElement } from '@polymer/paper-listbox';
 
-import '@polymer/mwc-dialog';
-import { PaperDialogElement } from '@polymer/mwc-dialog';
+import '@material/mwc-dialog';
+import { Dialog } from '@material/mwc-dialog';
 import { sortBy } from 'lodash-es';
+import { Button } from '@material/mwc-button';
 
 @customElement('yp-pages-grid')
 export class YpPagesGrid extends YpBaseElement {
@@ -56,7 +57,7 @@ export class YpPagesGrid extends YpBaseElement {
 
   static get prossperties() {
     return {
-     groupId: {
+      groupId: {
         type: Number,
         observer: '_groupIdChanged',
       },
@@ -69,7 +70,7 @@ export class YpPagesGrid extends YpBaseElement {
       communityId: {
         type: Number,
         observer: '_communityIdChanged',
-      }
+      },
     };
   }
 
@@ -175,8 +176,8 @@ export class YpPagesGrid extends YpBaseElement {
                 <div class="layout vertical center-center">
                   <a
                     class="locale"
-                    data-args-page="${page}"
-                    data-args-locale="${page.locale}"
+                    .data-args-page="${page}"
+                    .data-args-locale="${page.locale}"
                     @click="${this._editPageLocale}"
                     >${item.locale}</a
                   >
@@ -184,35 +185,34 @@ export class YpPagesGrid extends YpBaseElement {
               `
             )}
 
-            <mwc-input
-              @label-float
+            <mwc-textfield
               class="localeInput"
-              .length="2"
-              .maxlength="2"
-              .value="${this.newLocaleValue}"
-            ></mwc-input>
+              length="2"
+              maxlength="2"
+              .value="${this.newLocaleValue || ""}"
+            ></mwc-textfield>
 
             <mwc-button
-              data-args="${this.page.id}"
+              data-args="${page.id}"
               @click="${this._addLocale}"
               .label="${this.t('pages.addLocale')}"
             ></mwc-button>
-            <div ?hidden="${this.page.publaished}">
+            <div ?hidden="${page.published}">
               <mwc-button
-                data-args="${this.page.id}"
+                data-args="${page.id}"
                 @click="${this._publishPage}"
                 .label="${this.t('pages.publish')}"
               ></mwc-button>
             </div>
-            <div ?hidden="${!this.page.published}">
+            <div ?hidden="${!page.published}">
               <mwc-button
-                data-args="${this.page.id}"
+                data-args="${page.id}"
                 @click="${this._unPublishPage}"
                 .label="${this.t('pages.unPublish')}"
               ></mwc-button>
             </div>
             <mwc-button
-              data-args="${this.page.id}"
+              data-args="${page.id}"
               @click="${this._deletePage}"
               .label="${this.t('pages.deletePage')}"
             ></mwc-button>
@@ -225,23 +225,21 @@ export class YpPagesGrid extends YpBaseElement {
         <mwc-button dialogDismiss .label="${this.t('close')}"></mwc-button>
       </div>
 
-    <mwc-dialog id="editPageLocale" .modal class="layout vertical" ?rtl="${
+    <mwc-dialog id="editPageLocale" modal class="layout vertical" ?rtl="${
       this.rtl
     }">
       <h2>${this.t('pages.editPageLocale')}</h2>
 
       <mwc-textfield id="title" name="title" type="text" .label="${this.t(
-          'pages.title'
-        )}" .value="${
-      this.currentlyEditingTitle
+        'pages.title'
+      )}" .value="${
+      this.currentlyEditingTitle || ''
     }" maxlength="60" charCounter class="mainInput">
         </mwc-textfield>
 
         <mwc-textarea id="content" name="content" .value="${
-          this.currentlyEditingContent
-        }" .label="${this.t(
-      'pages.content'
-    )}" .rows="7" .maxRows="10">
+          this.currentlyEditingContent || ""
+        }" .label="${this.t('pages.content')}" rows="7" maxRows="10">
         </mwc-textarea>
 
         <div class="buttons">
@@ -290,33 +288,29 @@ export class YpPagesGrid extends YpBaseElement {
       };
     });
 
-    return sortBy(array, function (o) {
+    return (sortBy(array, function (o) {
       return o.value;
-    }) as unknown as Array<YpHelpPageData>;
+    }) as unknown) as Array<YpHelpPageData>;
   }
 
-  _editPageLocale(event) {
-    this.currentlyEditingPage = JSON.parse(
-      event.target.getAttribute('data-args-page')
-    );
-    this.currentlyEditingLocale = event.target.getAttribute('data-args-locale');
-    this.currentlyEditingContent = this.wordwrap(120)(
-      this.currentlyEditingPage['content'][this.currentlyEditingLocale]
-    );
-    this.currentlyEditingTitle = this.currentlyEditingPage['title'][
-      this.currentlyEditingLocale
-    ];
-    this.$$('#editPageLocale').open();
+
+  _editPageLocale(event: CustomEvent) {
+    const currentlyEditingPageTxt =  (event.target as HTMLElement).getAttribute('data-args-page');
+    this.currentlyEditingPage = JSON.parse(currentlyEditingPageTxt!);
+    this.currentlyEditingLocale = (event.target as HTMLElement).getAttribute('data-args-locale')!;
+    this.currentlyEditingContent = this.currentlyEditingPage!['content'][this.currentlyEditingLocale];
+    this.currentlyEditingTitle = this.currentlyEditingPage!['title'][this.currentlyEditingLocale];
+    (this.$$('#editPageLocale') as Dialog).open = true;
   }
 
   _closePageLocale() {
-    this.currentlyEditingPage = null;
-    this.currentlyEditingLocale = null;
-    this.currentlyEditingContent = null;
-    this.currentlyEditingTitle = null;
+    this.currentlyEditingPage = undefined;
+    this.currentlyEditingLocale = undefined;
+    this.currentlyEditingContent = undefined;
+    this.currentlyEditingTitle = undefined;
   }
 
-  _dispatchAjax(ajax, pageId, path) {
+  _dispatchAjax(ajax: IronAjaxElement, pageId: number | undefined, path: string) {
     let pageIdPath;
     if (pageId) {
       pageIdPath = '/' + pageId + '/' + path;
@@ -338,122 +332,143 @@ export class YpPagesGrid extends YpBaseElement {
   }
 
   _updatePageLocale() {
-    this.$$('#updatePageAjax').body = {
+    (this.$$('#updatePageAjax') as IronAjaxElement).body = {
       locale: this.currentlyEditingLocale,
       content: this.currentlyEditingContent,
       title: this.currentlyEditingTitle,
     };
     this._dispatchAjax(
-      this.$$('#updatePageAjax'),
-      this.currentlyEditingPage.id,
+      this.$$('#updatePageAjax') as IronAjaxElement,
+      this.currentlyEditingPage!.id,
       'update_page_locale'
     );
     this._closePageLocale();
   }
 
-  _publishPage(event) {
-    this.$$('#updatePageAjax').body = {};
-    const pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$$('#updatePageAjax'), pageId, 'publish_page');
+  _publishPage(event: CustomEvent) {
+    (this.$$('#updatePageAjax') as IronAjaxElement).body = {};
+    const pageId = (event.target as HTMLElement).getAttribute('data-args');
+    this._dispatchAjax(
+      this.$$('#updatePageAjax') as IronAjaxElement,
+      parseInt(pageId!),
+      'publish_page'
+    );
   }
 
   _publishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pagePublished'));
-    this.$$('#ajax').generateRequest();
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
   }
 
-  _unPublishPage(event) {
-    this.$$('#updatePageAjax').body = {};
-    const pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$$('#updatePageAjax'), pageId, 'un_publish_page');
+  _unPublishPage(event: CustomEvent) {
+    (this.$$('#updatePageAjax') as IronAjaxElement).body = {};
+    const pageId = (event.target as HTMLElement).getAttribute('data-args');
+    this._dispatchAjax(
+      this.$$('#updatePageAjax') as IronAjaxElement,
+      parseInt(pageId!),
+      'un_publish_page'
+    );
   }
 
   _unPublishPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageUnPublished'));
-    this.$$('#ajax').generateRequest();
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
   }
 
-  _deletePage(event) {
-    this.$$('#deletePageAjax').body = {};
-    const pageId = event.target.getAttribute('data-args');
-    this._dispatchAjax(this.$$('#deletePageAjax'), pageId, 'delete_page');
+  _deletePage(event: CustomEvent) {
+    (this.$$('#deletePageAjax') as IronAjaxElement).body = {};
+    const pageId = (event.target as HTMLElement).getAttribute('data-args');
+    this._dispatchAjax(
+      this.$$('#deletePageAjax') as IronAjaxElement,
+      parseInt(pageId!),
+      'delete_page'
+    );
   }
 
   _deletePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.pageDeleted'));
-    this.$$('#ajax').generateRequest();
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
   }
 
-  _addLocale(event) {
+  _addLocale(event: CustomEvent) {
     if (this.newLocaleValue && this.newLocaleValue.length > 1) {
-      const pageId = event.target.getAttribute('data-args');
-      this.$$('#updatePageAjax').body = {
+      const pageId = (event.target as HTMLElement).getAttribute('data-args');
+      (this.$$('#updatePageAjax') as IronAjaxElement).body = {
         locale: this.newLocaleValue.toLowerCase(),
         content: '',
         title: '',
       };
       this._dispatchAjax(
-        this.$$('#updatePageAjax'),
-        pageId,
+        this.$$('#updatePageAjax') as IronAjaxElement,
+        parseInt(pageId!),
         'update_page_locale'
       );
-      this.newLocaleValue = null;
+      this.newLocaleValue = undefined;
     }
   }
 
-  _addPage(event) {
-    this.$$('#newPageAjax').body = {};
-    this.$$('#addPageButton').disabled = true;
-    this._dispatchAjax(this.$$('#newPageAjax'), null, 'add_page');
+  _addPage() {
+    (this.$$('#newPageAjax') as IronAjaxElement).body = {};
+    (this.$$('#addPageButton') as Button).disabled = true;
+    this._dispatchAjax(
+      this.$$('#newPageAjax') as IronAjaxElement,
+      undefined,
+      'add_page'
+    );
   }
 
   _newPageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('pages.newPageCreated'));
-    this.$$('#ajax').generateRequest();
-    this.$$('#addPageButton').disabled = false;
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
+    (this.$$('#addPageButton') as Button).disabled = false;
   }
 
   _updatePageResponse() {
     window.appGlobals.notifyUserViaToast(this.t('posts.updated'));
-    this.$$('#ajax').generateRequest();
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
   }
 
-  _domainIdChanged(newGroupId) {
-    if (newGroupId) {
+  _domainIdChanged() {
+    if (this.domainId) {
       this.modelType = 'domains';
-      this._generateRequest(newGroupId);
+      this._generateRequest(this.domainId);
     }
   }
 
-  _groupIdChanged(newGroupId) {
-    if (newGroupId) {
+  _groupIdChanged() {
+    if (this.groupId) {
       this.modelType = 'groups';
-      this._generateRequest(newGroupId);
+      this._generateRequest(this.groupId);
     }
   }
 
-  _communityIdChanged(newCommunityId) {
-    if (newCommunityId) {
+  _communityIdChanged() {
+    if (this.communityId) {
       this.modelType = 'communities';
-      this._generateRequest(newCommunityId);
+      this._generateRequest(this.communityId);
     }
   }
 
-  _generateRequest(id) {
-    this.$$('#ajax').url =
+  _generateRequest(id: number) {
+    (this.$$('#ajax') as IronAjaxElement).url =
       '/api/' + this.modelType + '/' + id + '/pages_for_admin';
-    this.$$('#ajax').generateRequest();
+    (this.$$('#ajax') as IronAjaxElement).generateRequest();
   }
 
-  _pagesResponse(event, detail) {
-    this.pages = detail.response;
+  _pagesResponse(event: CustomEvent) {
+    this.pages = event.detail.response;
   }
 
-  setup(groupId, communityId, domainId, adminUsers) {
-    this.groupId = null;
-    this.communityId = null;
-    this.domainId = null;
-    this.pages = null;
+  setup(
+    groupId: number,
+    communityId: number,
+    domainId: number,
+    adminUsers: boolean
+  ) {
+    this.groupId = undefined;
+    this.communityId = undefined;
+    this.domainId = undefined;
+    this.pages = undefined;
 
     if (groupId) this.groupId = groupId;
 
@@ -465,10 +480,7 @@ export class YpPagesGrid extends YpBaseElement {
   }
 
   open() {
-    this.$$('#dialog').open();
-    this.async(function () {
-      this.$$('#scrollable').fire('iron-resize');
-    });
+    (this.$$('#dialog') as Dialog).open = true;
   }
 
   _setupHeaderText() {

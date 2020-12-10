@@ -22,8 +22,8 @@ import './@yrpri/yp-theme/yp-theme-selector.js';
 import './@yrpri/yp-app/yp-language-selector.js';
 import { TextField } from '@material/mwc-textfield';
 
-@customElement('yp-admin-config-community')
-export class YpAdminConfigCommunity extends YpAdminConfigBase {
+@customElement('yp-admin-config-group')
+export class YpAdminConfigGroup extends YpAdminConfigBase {
   @property({ type: Number })
   appHomeScreenIconImageId: number | undefined;
 
@@ -78,6 +78,10 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           />
         `
       : nothing;
+  }
+
+  renderHiddenInputs() {
+    return nothing;
   }
 
   _hostnameChanged() {
@@ -144,9 +148,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     if (domain) {
       debugger;
       if (this.uploadedVideoId) {
-        await window.adminServerApi.addVideoToDomain(domain.id, {
+        await window.adminServerApi.addVideoToCollection(domain.id, {
           videoId: this.uploadedVideoId,
-        });
+        }, "domain");
         this._finishRedirect(domain);
       } else {
         this._finishRedirect(domain);

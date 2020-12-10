@@ -90,6 +90,8 @@ interface YpStructuredQuestionData {
   extraTopMargin?: boolean;
   lessBottomMargin?: boolean;
   html?: string;
+  pattern?: string;
+  charCounter?: boolean;
   radioButtons?: Array<YpRadioButtonData>;
   checkboxes?: Array<YpCheckboxData>;
   dropdownOptions?: Array<YpDropdownData>;
@@ -217,6 +219,8 @@ interface YpHelpPageData {
   id: number;
   content: Record<string, string>;
   title: Record<string, string>;
+  published?: boolean;
+  locale?: string;
 }
 
 interface YpEndorsement {

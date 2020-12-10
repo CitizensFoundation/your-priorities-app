@@ -62,7 +62,7 @@ var isAuthenticatedAndCorrectLoginProvider = function (req, group, done) {
 auth.isAuthenticated = function (req, group) {
   if (group) {
     if (group.configuration) {
-      if (group.configuration.allowAnonymousUsers) {
+      if (group.configuration.allowAnonymousUsers || group.configuration.allowOneTimeLoginWithName) {
         log.info("isAuthenticated: Group allows anonymous users");
       } else {
         log.info("isAuthenticated: Group does not allow anonymous users");
@@ -85,7 +85,7 @@ auth.isAuthenticated = function (req, group) {
   }
 
   if (req.user && req.user.profile_data && req.user.profile_data.isAnonymousUser===true) {
-    return (group && group.configuration && group.configuration.allowAnonymousUsers);
+    return (group && group.configuration && (group.configuration.allowAnonymousUsers || group.configuration.allowOneTimeLoginWithName));
   } else {
     return req.isAuthenticated();
   }

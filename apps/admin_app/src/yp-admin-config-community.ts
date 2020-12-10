@@ -9,6 +9,8 @@ import '@material/mwc-tab';
 import '@material/mwc-tab-bar';
 import '@material/mwc-textfield';
 import '@material/mwc-textarea';
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 
 import { YpAdminConfigBase } from './yp-admin-config-base.js';
 import { nothing } from 'lit-html';
@@ -23,6 +25,7 @@ import './@yrpri/yp-app/yp-language-selector.js';
 import { TextField } from '@material/mwc-textfield';
 import { YpConfirmationDialog } from './@yrpri/yp-dialog-container/yp-confirmation-dialog.js';
 import { ifDefined } from 'lit-html/directives/if-defined';
+import { Radio } from '@material/mwc-radio';
 
 @customElement('yp-admin-config-community')
 export class YpAdminConfigCommunity extends YpAdminConfigBase {
@@ -47,11 +50,17 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   @property({ type: Number })
   inCommunityFolderId: number | undefined;
 
+  @property({ type: Number })
+  signupTermsPageId: number | undefined;
+
+  @property({ type: Number })
+  welcomePageId: number | undefined;
+
   @property({ type: String })
   status: string | undefined;
 
   @property({ type: String })
-  communityAccess: string | undefined;
+  communityAccess = 'public';
 
   constructor() {
     super();
@@ -74,7 +83,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
                 type="text"
                 @keyup="${this._hostnameChanged}"
                 .label="${this.t('community.hostname')}"
-                .value="${(this.collection as YpCommunityData).hostname}"
+                .value="${(this.collection as YpCommunityData).hostname || ''}"
                 ?required="${!(this.collection as YpCommunityData)
                   .is_community_folder}"
                 maxlength="80"
@@ -90,16 +99,54 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               ${this.renderSaveButton()}
             </div>
           </div>
-
-          <input
-            type="hidden"
-            name="appHomeScreenIconImageId"
-            value="${this.appHomeScreenIconImageId?.toString() || ''}"
-          />
-
-          <input type="hidden" name="themeId" value="${ifDefined(this.themeId)}" />
         `
       : nothing;
+  }
+
+  renderHiddenInputs() {
+    return html`
+      <input
+        type="hidden"
+        name="appHomeScreenIconImageId"
+        value="${this.appHomeScreenIconImageId?.toString() || ''}"
+      />
+
+      <input type="hidden" name="themeId" value="${ifDefined(this.themeId)}" />
+
+      <input
+        type="hidden"
+        name="ssnLoginListDataId"
+        value="${ifDefined(this.ssnLoginListDataId)}"
+      />
+
+      <input type="hidden" name="status" value="${this.status || ''}" />
+
+      <input
+        type="hidden"
+        name="is_community_folder"
+        value="${ifDefined(
+          (this.collection as YpCommunityData).is_community_folder
+        )}"
+      />
+
+      <input
+        type="hidden"
+        name="is_community_folder"
+        value="${ifDefined(this.inCommunityFolderId)}"
+      />
+
+      <input
+        type="hidden"
+        name="welcomePageId"
+        value="${ifDefined(this.welcomePageId)}"
+      />
+
+      <input
+        type="hidden"
+        name="signupTermsPageId"
+        value="${ifDefined(this.signupTermsPageId)}"
+      />
+    `;
   }
 
   _hostnameChanged() {
@@ -120,6 +167,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     this.ssnLoginListDataId = undefined;
     this.ssnLoginListDataCount = undefined;
     this.inCommunityFolderId = undefined;
+    this.signupTermsPageId = undefined;
+    this.welcomePageId = undefined;
     this.availableCommunityFolders = undefined;
     (this.$$('#appHomeScreenIconImageUpload') as YpFileUpload).clear();
   }
@@ -152,7 +201,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         .collection as YpCommunityData).CommunityLogoVideos![0].id;
     }
 
-    this._getHelpPages('communities');
+    this._getHelpPages('community');
     if (this.collection) {
       if ((this.collection as YpCommunityData).access === 0) {
         this.communityAccess = 'public';
@@ -168,6 +217,19 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       if ((this.collection as YpCommunityData).in_community_folder_id) {
         this.inCommunityFolderId = (this
           .collection as YpCommunityData).in_community_folder_id;
+      }
+
+      if ((this.collection as YpCommunityData).configuration) {
+        if (
+          (this.collection as YpCommunityData).configuration.signupTermsPageId
+        ) {
+          this.signupTermsPageId = (this
+            .collection as YpCommunityData).configuration.signupTermsPageId;
+        }
+        if ((this.collection as YpCommunityData).configuration.welcomePageId) {
+          this.welcomePageId = (this
+            .collection as YpCommunityData).configuration.welcomePageId;
+        }
       }
     }
 
@@ -197,6 +259,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     }
 
     this._checkCommunityFolders(this.collection as YpCommunityData);
+
+    this.requestUpdate();
   }
 
   _deleteSsnLoginList() {
@@ -344,6 +408,110 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     window.appGlobals.activity('completed', 'editCommunity');
   }
 
+  _statusSelected(event: CustomEvent) {
+    const index = event.detail.index as number;
+    this.status = this.collectionStatusOptions[index].name;
+  }
+
+  get statusIndex() {
+    if (this.status) {
+      for (let i = 0; i < this.collectionStatusOptions.length; i++) {
+        if (this.collectionStatusOptions[i].name == this.status) return i;
+      }
+      return -1;
+    } else {
+      return -1;
+    }
+  }
+
+  get collectionStatusOptions() {
+    if (this.language) {
+      return [
+        { name: 'active', translatedName: this.t('status.active') },
+        { name: 'featured', translatedName: this.t('status.featured') },
+        { name: 'archived', translatedName: this.t('status.archived') },
+        { name: 'hidden', translatedName: this.t('status.hidden') },
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  _accessRadioChanged(event: CustomEvent) {
+    this.communityAccess = (event.target as Radio).value;
+  }
+
+  _getAccessTab() {
+    return {
+      name: 'access',
+      icon: 'code',
+      items: [
+        {
+          text: this.t('access'),
+          type: 'textheader',
+        },
+        {
+          text: 'status',
+          type: 'html',
+          templateData: html`
+            <mwc-formfield .label="${this.t('public')}">
+              <mwc-radio
+                @change="${this._accessRadioChanged}"
+                value="public"
+                ?checked="${this.communityAccess == 'public'}"
+                name="accessRadioButtons"
+              >
+              </mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield .label="${this.t('closed')}">
+              <mwc-radio
+                @change="${this._accessRadioChanged}"
+                ?checked="${this.communityAccess == 'closed'}"
+                value="closed"
+                name="accessRadioButtons"
+              >
+              </mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield .label="${this.t('secret')}">
+              <mwc-radio
+                @change="${this._accessRadioChanged}"
+                ?checked="${this.communityAccess == 'secret'}"
+                value="secret"
+                name="accessRadioButtons"
+              >
+              </mwc-radio>
+            </mwc-formfield>
+          `,
+        },
+        {
+          text: 'status',
+          type: 'html',
+          templateData: html`
+            <mwc-select
+              .label="${this.t('status.select')}"
+              @selected="${this._statusSelected}"
+            >
+              ${this.collectionStatusOptions?.map(
+                (statusOption, index) => html`
+                  <mwc-list-item ?selected="${this.statusIndex == index}"
+                    >${statusOption.translatedName}</mwc-list-item
+                  >
+                `
+              )}
+            </mwc-select>
+          `,
+        },
+        {
+          text: 'onlyAdminsCanCreateGroups',
+          type: 'checkbox',
+          value: (this.collection as YpCommunityData)
+            .only_admins_can_create_groups,
+          translationToken: 'domain.onlyAdminsCanCreateGroups',
+        },
+      ] as Array<YpStructuredConfigData>,
+    } as YpConfigTabData;
+  }
+
   _getBasicTab() {
     return {
       name: 'basic',
@@ -375,47 +543,126 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           maxLength: 40,
         },
         {
-          text: 'onlyAdminsCanCreateGroups',
-          type: 'checkbox',
-          value: (this.collection as YpCommunityData)
-            .only_admins_can_create_groups,
-          translationToken: 'domain.onlyAdminsCanCreateGroups',
-        },
-        {
-          text: 'sortBySortOrder',
-          type: 'checkbox',
-          translationToken: 'sortGroupsBySortOrder',
-        },
-        {
           text: 'redirectToGroupId',
           type: 'textfield',
           maxLength: 40,
         },
         {
-          text: 'highlightedLanguages',
-          type: 'textfield',
-          maxLength: 200,
-        },
-        {
-          text: 'customBackName',
-          type: 'textfield',
-          maxLength: 20
-        },
-        {
-          text: 'customBackURL',
-          type: 'textfield',
-          maxLength: 256
-        },
-
-        {
           text: 'defaultLocationLongLat',
           type: 'textfield',
           maxLength: 100,
-          value: (this.collection as YpCommunityData)
-            .defaultLocationLongLat
+          value: (this.collection as YpCommunityData).defaultLocationLongLat,
+        },
+        {
+          text: 'inCommunityFolder',
+          type: 'html',
+          templateData: html`
+            <mwc-select
+              .label="${this.t('inCommunityFolder')}"
+              @selected="${this._communityFolderSelected}"
+            >
+              ${this.availableCommunityFolders?.map(
+                (communityFolder, index) => html`
+                  <mwc-list-item
+                    ?selected="${this.communityFolderIndex == index}"
+                    >${communityFolder.name}</mwc-list-item
+                  >
+                `
+              )}
+            </mwc-select>
+          `,
+          hidden: !this.availableCommunityFolders,
+        },
+        {
+          text: 'signupTermsSelectPage',
+          type: 'html',
+          templateData: html`
+            <mwc-select
+              .label="${this.t('welcomeSelectPage')}"
+              @selected="${this._signupTermsPageSelected}"
+            >
+              ${this.translatedPages?.map(
+                (page, index) => html`
+                  <mwc-list-item
+                    ?selected="${this.signupTermsPageIndex == index}"
+                    >${this._getLocalizePageTitle(page)}</mwc-list-item
+                  >
+                `
+              )}
+            </mwc-select>
+          `,
+          hidden: !this.translatedPages,
+        },
+        {
+          text: 'signupTermsSelectPage',
+          type: 'html',
+          templateData: html`
+            <mwc-select
+              .label="${this.t('welcomeSelectPage')}"
+              @selected="${this._welcomePageSelected}"
+            >
+              ${this.translatedPages?.map(
+                (page, index) => html`
+                  <mwc-list-item ?selected="${this.welcomePageIndex == index}"
+                    >${this._getLocalizePageTitle(page)}</mwc-list-item
+                  >
+                `
+              )}
+            </mwc-select>
+          `,
+          hidden: !this.translatedPages,
         },
       ],
-    };
+    } as YpConfigTabData;
+  }
+
+  _welcomePageSelected(event: CustomEvent) {
+    const index = event.detail.index as number;
+    this.welcomePageId = this.translatedPages![index].id;
+  }
+
+  get welcomePageIndex() {
+    if (this.translatedPages) {
+      for (let i = 0; i < this.translatedPages.length; i++) {
+        if (this.translatedPages[i].id == this.welcomePageId) return i;
+      }
+      return -1;
+    } else {
+      return -1;
+    }
+  }
+
+  _signupTermsPageSelected(event: CustomEvent) {
+    const index = event.detail.index as number;
+    this.signupTermsPageId = this.translatedPages![index].id;
+  }
+
+  get signupTermsPageIndex() {
+    if (this.translatedPages) {
+      for (let i = 0; i < this.translatedPages.length; i++) {
+        if (this.translatedPages[i].id == this.signupTermsPageId) return i;
+      }
+      return -1;
+    } else {
+      return -1;
+    }
+  }
+
+  _communityFolderSelected(event: CustomEvent) {
+    const index = event.detail.index as number;
+    this.inCommunityFolderId = this.availableCommunityFolders![index].id;
+  }
+
+  get communityFolderIndex() {
+    if (this.availableCommunityFolders) {
+      for (let i = 0; i < this.availableCommunityFolders.length; i++) {
+        if (this.availableCommunityFolders[i].id == this.inCommunityFolderId)
+          return i;
+      }
+      return -1;
+    } else {
+      return -1;
+    }
   }
 
   _getLookAndFeelTab() {
@@ -424,9 +671,19 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       icon: 'code',
       items: [
         {
+          text: 'mediaUploads',
+          type: 'html',
+          templateData: html`
+            <div class="layout horizontal wrap">
+              ${this.renderHeaderAndLogoImageUploads()}
+              ${this.hasVideoUpload ? this.renderVideoUpload() : nothing}
+            </div>
+          `,
+        },
+        {
           text: 'theme',
           type: 'html',
-          templateData: html` <yp-theme-selector
+          templateData: html`<yp-theme-selector
             .object="${this.collection}"
             .themeObject="${this.collection as YpThemeContainerObject}"
             .selectedTheme="${this.collection?.theme_id}"
@@ -439,40 +696,75 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           ></yp-theme-selector>`,
         },
         {
-          text: 'mediaUploads',
-          type: 'html',
-          templateData: html`
-            <div class="layout horizontal wrap">
-              ${this.renderHeaderAndLogoImageUploads()}
-              ${this.hasVideoUpload ? this.renderVideoUpload() : nothing}
-            </div>
-          `,
+          text: this.t('themeOverrideColorInfo'),
+          type: 'textdescription',
+        },
+        {
+          text: 'themeOverrideColorPrimary',
+          type: 'textfield',
+          maxlength: 7,
+          charCounter: true,
+          pattern: '[#-#0-9A-Fa-f]',
+        },
+        {
+          text: 'themeOverrideColorAccent',
+          type: 'textfield',
+          maxlength: 7,
+          charCounter: true,
+          pattern: '[#-#0-9A-Fa-f]',
+        },
+        {
+          text: 'themeOverrideBackgroundColor',
+          type: 'textfield',
+          maxlength: 7,
+          charCounter: true,
+          pattern: '[#-#0-9A-Fa-f]',
         },
         {
           text: 'hideRecommendationOnNewsFeed',
-          type: 'checkbox'
+          type: 'checkbox',
         },
         {
           text: 'disableDomainUpLink',
           type: 'checkbox',
-          translationToken: 'disableCommunityDomainUpLink'
+          translationToken: 'disableCommunityDomainUpLink',
         },
         {
           text: 'disableNameAutoTranslation',
-          type: 'checkbox'
+          type: 'checkbox',
         },
         {
           text: 'hideAllTabs',
-          type: 'checkbox'
+          type: 'checkbox',
         },
         {
           text: 'welcomeHTML',
           type: 'textarea',
           rows: 2,
-          maxRows: 5
+          maxRows: 5,
         },
-      ]
-    }
+        {
+          text: 'sortBySortOrder',
+          type: 'checkbox',
+          translationToken: 'sortGroupsBySortOrder',
+        },
+        {
+          text: 'highlightedLanguages',
+          type: 'textfield',
+          maxLength: 200,
+        },
+        {
+          text: 'customBackName',
+          type: 'textfield',
+          maxLength: 20,
+        },
+        {
+          text: 'customBackURL',
+          type: 'textfield',
+          maxLength: 256,
+        },
+      ],
+    } as YpConfigTabData;
   }
 
   _getWebAppTab() {
@@ -578,7 +870,9 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   setupConfigTabs() {
     const tabs: Array<YpConfigTabData> = [];
 
+    tabs.push(this._getAccessTab());
     tabs.push(this._getBasicTab());
+    tabs.push(this._getLookAndFeelTab());
     tabs.push(this._getWebAppTab());
     tabs.push(this._getSamlTab());
 

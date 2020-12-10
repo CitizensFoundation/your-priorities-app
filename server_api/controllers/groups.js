@@ -235,6 +235,8 @@ var updateGroupConfigParamters = function (req, group) {
     }
   }
 
+  group.set('configuration.customTitleQuestionText', (req.body.customTitleQuestionText && req.body.customTitleQuestionText!="") ? req.body.customTitleQuestionText : null);
+
   group.set('configuration.customBackURL', (req.body.customBackURL && req.body.customBackURL!="") ? req.body.customBackURL : null);
   group.set('configuration.customBackName', (req.body.customBackName && req.body.customBackName!="") ? req.body.customBackName : null);
 
@@ -323,6 +325,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.customThankYouTextNewPosts', (req.body.customThankYouTextNewPosts && req.body.customThankYouTextNewPosts!=="") ? req.body.customThankYouTextNewPosts : null);
   group.set('configuration.useCommunityTopBanner', truthValueFromBody(req.body.useCommunityTopBanner));
   group.set('configuration.makeMapViewDefault', truthValueFromBody(req.body.makeMapViewDefault));
+  group.set('configuration.allowOneTimeLoginWithName', truthValueFromBody(req.body.allowOneTimeLoginWithName));
   group.set('configuration.simpleFormatDescription', truthValueFromBody(req.body.simpleFormatDescription));
   group.set('configuration.resourceLibraryLinkMode', truthValueFromBody(req.body.resourceLibraryLinkMode));
   group.set('configuration.collapsableTranscripts', truthValueFromBody(req.body.collapsableTranscripts));
@@ -337,27 +340,45 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.exportSubCodesForRadiosAndCheckboxes', truthValueFromBody(req.body.exportSubCodesForRadiosAndCheckboxes));
 };
 
-var upload = multer({
-  storage: s3multer({
-    dirname: 'attachments',
-    s3: s3,
-    bucket: process.env.S3_BUCKET,
+router.post('/:id/getPresignedAttachmentURL',  auth.can('add to group'), function(req, res) {
+  const endPoint = process.env.S3_ENDPOINT || "s3.amazonaws.com";
+  const accelEndPoint = process.env.S3_ACCELERATED_ENDPOINT || process.env.S3_ENDPOINT || "s3.amazonaws.com";
+  const s3 = new aws.S3({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    endpoint: process.env.S3_ENDPOINT || null,
-    acl: 'public-read',
-    contentType: s3multer.AUTO_CONTENT_TYPE,
-    region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
-    key: function (req, file, cb) {
-      cb(null, Date.now()+"_"+file.originalname);
+    endpoint: accelEndPoint,
+    signatureVersion: 'v4',
+    useAccelerateEndpoint: process.env.S3_ACCELERATED_ENDPOINT!=null,
+    region: process.env.S3_REGION ? process.env.S3_REGION : 'eu-west-1'
+  });
+
+  const signedUrlExpireSeconds = 60 * 60;
+  const bucketName = process.env.S3_ATTACHMENTS_BUCKET;
+
+//  const contentType = req.body.contentType ? req.body.contentType : 'application/octet-stream';
+
+  const contentType = req.body.contentType ? req.body.contentType : 'application/octet-stream';
+
+  const randomCode =  Math.random().toString(36).substring(2, 9);
+  const fileKey=randomCode+"/"+req.body.filename;
+
+  const s3Params = {
+    Bucket: bucketName,
+    Key: fileKey,
+    Expires: signedUrlExpireSeconds,
+    ACL: 'public-read',
+    ContentType: contentType
+  };
+
+  s3.getSignedUrl('putObject', s3Params, (error, url) => {
+    if (error) {
+      log.error('Error getting presigned attachment url from AWS S3', { error });
+      res.sendStatus(500);
+    } else {
+      log.info('Presigned URL:', { url });
+      res.send({ presignedUrl: url });
     }
-  })
-});
-
-var uploadDox = multer({});
-
-router.post('/:id/upload_document',  auth.can('add to group'), upload.single('file'), function(req, res) {
-  res.send({filename: req.file.originalname, url: req.file.location });
+  });
 });
 
 router.delete('/:groupId/:activityId/delete_activity', auth.can('edit group'), function(req, res) {
@@ -1146,7 +1167,7 @@ router.get('/:id/checkNonOpenPosts', auth.can('view group'), (req, res) => {
 
 const addVideosToGroup = (group, done) => {
   models.Video.findAll({
-    attributes:  ['id','formats','viewable','public_meta'],
+    attributes:  ['id','formats','viewable','updated_at','public_meta'],
     include: [
       {
         model: models.Image,
@@ -1165,11 +1186,10 @@ const addVideosToGroup = (group, done) => {
       }
     ],
     order: [
-      ['updated_at', 'desc' ],
-      [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'VideoImages' }, 'updated_at', 'asc' ]
     ]
   }).then(videos => {
-    group.dataValues.GroupLogoVideos = videos;
+    group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
     done();
   }).catch( error => {
     done(error);
@@ -1260,6 +1280,7 @@ const allowedTextTypesForGroup = [
   "alternativeTextForNewIdeaButtonHeader",
   "alternativePointForHeader",
   "customThankYouTextNewPosts",
+  "customTitleQuestionText",
   "alternativePointAgainstHeader",
   "alternativePointForLabel",
   "alternativePointAgainstLabel",
@@ -1323,6 +1344,7 @@ var getPostsWithAllFromIds = function (postsWithIds, postOrder, done) {
       models.sequelize.literal(postOrder),
       [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
       [ { model: models.Category }, { model: models.Image, as: 'CategoryIconImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Group }, { model: models.Category }, 'name', 'asc' ],
       [ { model: models.Audio, as: "PostAudios" }, 'updated_at', 'desc' ],
       [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
       [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
@@ -1430,75 +1452,174 @@ router.get('/:id/posts/:filter/:categoryId/:status?', auth.can('view group'), fu
     } else if (postsInfo) {
       res.send(JSON.parse(postsInfo));
     } else {
-      var where = { group_id: req.params.id, deleted: false };
+      models.Group.findOne({
+        where: {
+          id: req.params.id
+        },
+        attributes: ['id','configuration']
+      }).then((group)=> {
+        var where = { group_id: req.params.id, deleted: false };
+        let attributes = ['id','status','name','official_status','language','counter_endorsements_up',
+          'counter_endorsements_down','created_at'];
+        const includes = [];
 
-      var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
+        var postOrder = "(counter_endorsements_up-counter_endorsements_down) DESC";
 
-      if (req.params.filter==="newest") {
-        postOrder = "created_at DESC";
-      } else if (req.params.filter==="most_debated") {
-        postOrder = "counter_points DESC";
-      } else if (req.params.filter==="random") {
-        postOrder = "created_at DESC";
-      } else if (req.params.filter==="oldest") {
-        postOrder = "created_at ASC";
-      } else if (req.params.filter==="alphabetical") {
-        postOrder = "name ASC";
-      }
+        if (req.params.filter==="newest") {
+          postOrder = "created_at DESC";
+        } else if (req.params.filter==="most_debated") {
+          postOrder = "counter_points DESC";
+        } else if (req.params.filter==="random") {
+          postOrder = "created_at DESC";
+        } else if (req.params.filter==="oldest") {
+          postOrder = "created_at ASC";
+        } else if (req.params.filter==="alphabetical") {
+          postOrder = "name ASC";
+        }
 
-      if (req.params.categoryId!='null') {
-        where['category_id'] = req.params.categoryId;
-      }
+        let postOrderFinal = [
+          models.sequelize.literal(postOrder)
+        ];
 
-      log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
+        let seqGroup = null;
+        let ratingOrderNeeded = false;
+        let limit = 20;
+        var offset = 0;
+        if (req.query.offset) {
+          offset = parseInt(req.query.offset);
+        }
 
-      var offset = 0;
-      if (req.query.offset) {
-        offset = parseInt(req.query.offset);
-      }
+        let ratingOffset = offset;
 
-      if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
-        var PostsByStatus = models.Post.scope(req.params.status);
-        PostsByStatus.findAndCountAll({
-          where: where,
-          attributes: ['id','status','official_status','language','counter_endorsements_up',
-            'counter_endorsements_down','created_at'],
-          order: [
-            models.sequelize.literal(postOrder)
-          ],
-          limit: 20,
-          offset: offset
-        }).then(function(postResults) {
-          const posts = postResults.rows;
-          var totalPostsCount = postResults.count;
-          var postRows = posts;
-          if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
-            postRows = seededShuffle(postRows, req.query.randomSeed);
+        const ratingsPostLookup = {};
+
+        if (req.params.filter==="top" &&
+            group.configuration &&
+            group.configuration.customRatings!=null &&
+            group.configuration.customRatings.length>0) {
+
+          const attrIncludes = [];
+          attrIncludes.push(
+            [models.sequelize.literal(`(
+                    SELECT AVG(value)
+                    FROM ratings AS rating
+                    WHERE
+                        rating.post_id = "Post".id
+                )`),
+            'RatingAverage']
+          )
+          attrIncludes.push(
+            [models.sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM ratings AS rating
+                    WHERE
+                        rating.post_id = "Post".id
+                )`),
+            'RatingCount']
+          )
+
+          //TODO: Include also just the attributes from above
+          attributes = {
+            include: attrIncludes
           }
-          getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
-            if (error) {
-              log.error("Error getting group", { err: error });
-              res.sendStatus(500);
-            } else {
-              if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
-                finalRows = seededShuffle(finalRows, req.query.randomSeed);
-              }
-              const postsOut = {
-                posts: finalRows,
-                totalPostsCount: totalPostsCount
-              };
-              req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
-              res.send(postsOut);
+
+          //postOrderFinal =  models.sequelize.literal("RatingAverage ASC");
+          ratingOrderNeeded = true;
+
+          //TODO: Get postgres ordering working with a count limit ORDER BY flag CASE
+          limit = 1500;
+
+          offset = 0;
+        }
+
+        if (req.params.categoryId!='null') {
+          where['category_id'] = req.params.categoryId;
+        }
+
+        log.info('Group Posts Viewed', { groupID: req.params.id, context: 'view', userId: req.user ? req.user.id : -1 });
+
+        if (['open','failed','successful','in_progress'].indexOf(req.params.status) > -1) {
+          var PostsByStatus = models.Post.scope(req.params.status);
+          PostsByStatus.findAndCountAll({
+            where: where,
+            attributes: attributes,
+            include: includes,
+            group: seqGroup,
+            order: postOrderFinal,
+            limit: limit,
+            offset: offset
+          }).then(function(postResults) {
+            const posts = postResults.rows;
+            var totalPostsCount = postResults.count;
+            var postRows = posts;
+            if (req.params.filter==="random" && req.query.randomSeed && postRows.length>0) {
+              postRows = seededShuffle(postRows, req.query.randomSeed);
             }
+
+            if (ratingOrderNeeded) {
+              postRows = _.forEach(postRows, (post) => {
+                if (post.dataValues.RatingCount && post.dataValues.RatingAverage) {
+                  const ratingCount = parseInt(post.dataValues.RatingCount);
+                  const ratingAverage = parseFloat(post.dataValues.RatingAverage);
+
+                  // More than one round of full ratings for the rating to count towards top rating calc
+                  if (ratingCount>group.configuration.customRatings.length) {
+                    ratingsPostLookup[post.dataValues.id]=ratingAverage;
+                  } else {
+                    ratingsPostLookup[post.dataValues.id]=0.0;
+                  }
+                } else {
+                  ratingsPostLookup[post.dataValues.id]=0.0;
+                }
+              });
+
+              postRows =  _.orderBy(postRows, [(post) => {
+                return ratingsPostLookup[post.dataValues.id];
+              }], ['desc'])
+
+              if (ratingOffset) {
+                postRows = _.drop(postRows, ratingOffset);
+              }
+
+              if (postRows.length>20) {
+                postRows = _.dropRight(postRows, postRows.length-20);
+              }
+
+              totalPostsCount = postResults.rows.length;
+            }
+
+            getPostsWithAllFromIds(postRows, postOrder, function (error, finalRows) {
+              if (error) {
+                log.error("Error getting group", { err: error });
+                res.sendStatus(500);
+              } else {
+                if (req.params.filter==="random" && req.query.randomSeed && finalRows && finalRows.length>0) {
+                  finalRows = seededShuffle(finalRows, req.query.randomSeed);
+                } else if (ratingOrderNeeded) {
+                  finalRows = _.orderBy(finalRows, [(post) => {
+                    return ratingsPostLookup[post.dataValues.id];
+                  }], ['desc'])
+                }
+
+                const postsOut = {
+                  posts: finalRows,
+                  totalPostsCount: totalPostsCount
+                };
+                req.redisClient.setex(redisKey, process.env.POSTS_CACHE_TTL ? parseInt(process.env.POSTS_CACHE_TTL) : 3, JSON.stringify(postsOut));
+                res.send(postsOut);
+              }
+            });
+          }).catch(function (error) {
+            log.error("Error getting group", { err: error });
+            res.sendStatus(500);
           });
-        }).catch(function (error) {
-          log.error("Error getting group", { err: error });
-          res.sendStatus(500);
-        });
-      } else {
-        log.error("Cant find status", { status: req.params.status });
-        res.sendStatus(404);
-      }
+        } else {
+          log.error("Cant find status", { status: req.params.status });
+          res.sendStatus(404);
+        }
+      }).catch((errorGroup)=>{
+        sendGroupOrError(res, null, 'getPostsFromGroup Group.find', req.user, errorGroup);
+      })
     }
   });
 });
@@ -2160,6 +2281,30 @@ router.put('/:id/update_translation', auth.can('edit group'), function(req, res)
     }
   });
 });
+
+var upload = multer({
+  storage: s3multer({
+    dirname: 'attachments',
+    s3: s3,
+    bucket: process.env.S3_BUCKET,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    endpoint: process.env.S3_ENDPOINT || null,
+    acl: 'public-read',
+    contentType: s3multer.AUTO_CONTENT_TYPE,
+    region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? null : 'us-east-1'),
+    key: function (req, file, cb) {
+      cb(null, Date.now()+"_"+file.originalname);
+    }
+  })
+});
+
+//TODO: Old remove only here for cached serviceworker clients
+router.post('/:id/upload_document',  auth.can('add to group'), upload.single('file'), function(req, res) {
+  res.send({filename: req.file.originalname, url: req.file.location });
+});
+
+var uploadDox = multer({});
 
 router.put('/:id/convert_docx_survey_to_json', uploadDox.single('file'), function(req, res) {
   const formData = {

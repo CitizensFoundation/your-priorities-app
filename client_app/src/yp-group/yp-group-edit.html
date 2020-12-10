@@ -202,9 +202,13 @@
         <paper-checkbox name="allowAnonymousUsers" checked$="{{group.configuration.allowAnonymousUsers}}">
           [[t('allowAnonymousUsers')]]
         </paper-checkbox>
-        <paper-checkbox name="allowAnonymousAutoLogin" checked$="{{group.configuration.allowAnonymousAutoLogin}}">
+        <paper-checkbox name="allowAnonymousAutoLogin" disabled$="[[!group.configuration.allowAnonymousUsers]]"  checked$="{{group.configuration.allowAnonymousAutoLogin}}">
           [[t('allowAnonymousAutoLogin')]]
         </paper-checkbox>
+        <paper-checkbox name="allowOneTimeLoginWithName" checked$="{{group.configuration.allowOneTimeLoginWithName}}">
+          [[t('allowOneTimeLoginWithName')]]
+        </paper-checkbox>
+
         <paper-checkbox name="disableFacebookLoginForGroup"
                         checked$="{{group.configuration.disableFacebookLoginForGroup}}">
           [[t('disableFacebookLoginForGroup')]]
@@ -306,6 +310,13 @@
                      disabled$="[[!hasaudioUpload]]"
                      label="[[t('audioPostUploadLimitSec')]]"
                      value="{{group.configuration.audioPostUploadLimitSec}}">
+        </paper-input>
+
+        <paper-input id="customTitleQuestionText"
+                     name="customTitleQuestionText"
+                     maxlength="60"
+                     label="[[t('customTitleQuestionText')]]"
+                     value="{{group.configuration.customTitleQuestionText}}">
         </paper-input>
 
         <paper-input id="hideNameInputAndReplaceWith"
