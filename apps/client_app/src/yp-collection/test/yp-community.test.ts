@@ -4,11 +4,11 @@ import { html, fixture, expect } from '@open-wc/testing';
 import { YpCommunity } from '../yp-community.js';
 import '../yp-community.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon'; 
+import sinon from 'sinon';
 
 describe('YpCommunity', () => {
   let element: YpCommunity;
-  let server: any; 
+  let server: any;
 
   before(async () => {
     const community = {
@@ -31,7 +31,7 @@ describe('YpCommunity', () => {
           counter_users: 12,
           configuration: {
           }
-        } as YpGroupData 
+        } as YpGroupData
       ]
     } as YpCommunityData;
 
@@ -48,7 +48,7 @@ describe('YpCommunity', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-community
-        
+
       ></yp-community>
     `);
     server.respond();

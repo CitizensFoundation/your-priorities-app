@@ -21,7 +21,7 @@ describe('YpPostHeader', () => {
         },
         name: 'Robert',
         group_id: 1,
-        description: 'Post-Test',   
+        description: 'Post-Test',
         counter_endorsements_up: 2,
         counter_endorsements_down: 4,
         counter_points: 5,
@@ -46,6 +46,8 @@ describe('YpPostHeader', () => {
   });
 
   it('passes the a11y audit', async () => {
+    await new Promise(resolve => setTimeout(resolve, 10000));
     await expect(element).shadowDom.to.be.accessible();
   });
+
 });
