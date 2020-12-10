@@ -173,10 +173,10 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
                   index="${index}"
                   id="configQuestion_${index}"
                   @yp-answer-content-changed="${this._configChanged}"
-                  .name="${question.name || question.text}"
                   debounceTimeMs="10"
+                  .name="${question.name || question.text || ""}"
                   ?disabled="${ question.disabled ? true : false }"
-                  .value="${question.value || this._getCurrentValue(question)}"
+                  .value="${question.value || this._getCurrentValue(question) || ""}"
                   .question="${{
                     ...question,
                     text: question.translationToken
@@ -432,7 +432,6 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   _configChanged() {
     this.configChanged = true;
-    debugger;
   }
 
   _videoUploaded(event: CustomEvent) {
@@ -478,15 +477,17 @@ export abstract class YpAdminConfigBase extends YpAdminPage {
 
   _getCurrentValue(question: YpStructuredQuestionData) {
     if (this.collection && this.collection.configuration) {
-      const looseConfig = this.collection.configuration as LooseObject;
-      if (question.text.indexOf('.') > -1) {
-        try {
-          return eval(`this.collection.configuration.${question.text}`);
-        } catch (e) {
-          console.error(e);
+      if (["textheader","textdescription"].indexOf(question.type!) == -1) {
+        const looseConfig = this.collection.configuration as LooseObject;
+        if (question.text.indexOf('.') > -1) {
+          try {
+            return eval(`this.collection.configuration.${question.text}`);
+          } catch (e) {
+            console.error(e);
+          }
+        } else {
+          if (looseConfig[question.text]) return looseConfig[question.text];
         }
-      } else {
-        if (looseConfig[question.text]) return looseConfig[question.text];
       }
     }
   }

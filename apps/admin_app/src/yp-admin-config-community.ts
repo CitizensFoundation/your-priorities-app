@@ -103,7 +103,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       : nothing;
   }
 
-  renderHiddenInputs () {
+  renderHiddenInputs() {
     return html`
       <input
         type="hidden"
@@ -138,17 +138,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       <input
         type="hidden"
         name="welcomePageId"
-        value="${ifDefined(
-          this.welcomePageId
-        )}"
+        value="${ifDefined(this.welcomePageId)}"
       />
 
       <input
         type="hidden"
         name="signupTermsPageId"
-        value="${ifDefined(
-          this.signupTermsPageId
-        )}"
+        value="${ifDefined(this.signupTermsPageId)}"
       />
     `;
   }
@@ -205,7 +201,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
         .collection as YpCommunityData).CommunityLogoVideos![0].id;
     }
 
-    this._getHelpPages('communities');
+    this._getHelpPages('community');
     if (this.collection) {
       if ((this.collection as YpCommunityData).access === 0) {
         this.communityAccess = 'public';
@@ -224,11 +220,15 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       }
 
       if ((this.collection as YpCommunityData).configuration) {
-        if ((this.collection as YpCommunityData).configuration.signupTermsPageId) {
-          this.signupTermsPageId = (this.collection as YpCommunityData).configuration.signupTermsPageId;
+        if (
+          (this.collection as YpCommunityData).configuration.signupTermsPageId
+        ) {
+          this.signupTermsPageId = (this
+            .collection as YpCommunityData).configuration.signupTermsPageId;
         }
         if ((this.collection as YpCommunityData).configuration.welcomePageId) {
-          this.welcomePageId = (this.collection as YpCommunityData).configuration.welcomePageId;
+          this.welcomePageId = (this
+            .collection as YpCommunityData).configuration.welcomePageId;
         }
       }
     }
@@ -260,6 +260,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
 
     this._checkCommunityFolders(this.collection as YpCommunityData);
 
+    this.requestUpdate();
   }
 
   _deleteSsnLoginList() {
@@ -407,7 +408,6 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
     window.appGlobals.activity('completed', 'editCommunity');
   }
 
-
   _statusSelected(event: CustomEvent) {
     const index = event.detail.index as number;
     this.status = this.collectionStatusOptions[index].name;
@@ -448,7 +448,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
       items: [
         {
           text: this.t('access'),
-          type: "textheader"
+          type: 'textheader',
         },
         {
           text: 'status',
@@ -458,27 +458,30 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
               <mwc-radio
                 @change="${this._accessRadioChanged}"
                 value="public"
-                ?checked="${this.communityAccess=="public"}"
-                name="accessRadioButtons">
+                ?checked="${this.communityAccess == 'public'}"
+                name="accessRadioButtons"
+              >
               </mwc-radio>
             </mwc-formfield>
             <mwc-formfield .label="${this.t('closed')}">
               <mwc-radio
                 @change="${this._accessRadioChanged}"
-                ?checked="${this.communityAccess=="closed"}"
+                ?checked="${this.communityAccess == 'closed'}"
                 value="closed"
-                name="accessRadioButtons">
+                name="accessRadioButtons"
+              >
               </mwc-radio>
             </mwc-formfield>
             <mwc-formfield .label="${this.t('secret')}">
               <mwc-radio
                 @change="${this._accessRadioChanged}"
-                ?checked="${this.communityAccess=="secret"}"
+                ?checked="${this.communityAccess == 'secret'}"
                 value="secret"
-                name="accessRadioButtons">
+                name="accessRadioButtons"
+              >
               </mwc-radio>
             </mwc-formfield>
-        `,
+          `,
         },
         {
           text: 'status',
@@ -486,14 +489,13 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           templateData: html`
             <mwc-select
               .label="${this.t('status.select')}"
-              .index="${this.statusIndex}"
               @selected="${this._statusSelected}"
             >
               ${this.collectionStatusOptions?.map(
-                statusOption => html`
-                  <mwc-list-item
-                    .value="${statusOption.translatedName}"
-                  ></mwc-list-item>
+                (statusOption, index) => html`
+                  <mwc-list-item ?selected="${this.statusIndex == index}"
+                    >${statusOption.translatedName}</mwc-list-item
+                  >
                 `
               )}
             </mwc-select>
@@ -557,19 +559,19 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           templateData: html`
             <mwc-select
               .label="${this.t('inCommunityFolder')}"
-              .index="${this.communityFolderIndex}"
               @selected="${this._communityFolderSelected}"
             >
               ${this.availableCommunityFolders?.map(
-                communityFolder => html`
+                (communityFolder, index) => html`
                   <mwc-list-item
-                    .value="${communityFolder.name}"
-                  ></mwc-list-item>
+                    ?selected="${this.communityFolderIndex == index}"
+                    >${communityFolder.name}</mwc-list-item
+                  >
                 `
               )}
             </mwc-select>
           `,
-          hidden: !this.availableCommunityFolders
+          hidden: !this.availableCommunityFolders,
         },
         {
           text: 'signupTermsSelectPage',
@@ -577,19 +579,19 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           templateData: html`
             <mwc-select
               .label="${this.t('welcomeSelectPage')}"
-              .index="${this.signupTermsPageIndex}"
               @selected="${this._signupTermsPageSelected}"
             >
               ${this.translatedPages?.map(
-                page => html`
+                (page, index) => html`
                   <mwc-list-item
-                    .value="${this._getLocalizePageTitle(page)}"
-                  ></mwc-list-item>
+                    ?selected="${this.signupTermsPageIndex == index}"
+                    >${this._getLocalizePageTitle(page)}</mwc-list-item
+                  >
                 `
               )}
             </mwc-select>
           `,
-          hidden: !this.translatedPages
+          hidden: !this.translatedPages,
         },
         {
           text: 'signupTermsSelectPage',
@@ -597,19 +599,18 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           templateData: html`
             <mwc-select
               .label="${this.t('welcomeSelectPage')}"
-              .index="${this.welcomePageIndex}"
               @selected="${this._welcomePageSelected}"
             >
               ${this.translatedPages?.map(
-                page => html`
-                  <mwc-list-item
-                    .value="${this._getLocalizePageTitle(page)}"
-                  ></mwc-list-item>
+                (page, index) => html`
+                  <mwc-list-item ?selected="${this.welcomePageIndex == index}"
+                    >${this._getLocalizePageTitle(page)}</mwc-list-item
+                  >
                 `
               )}
             </mwc-select>
           `,
-          hidden: !this.translatedPages
+          hidden: !this.translatedPages,
         },
       ],
     } as YpConfigTabData;
@@ -655,7 +656,8 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   get communityFolderIndex() {
     if (this.availableCommunityFolders) {
       for (let i = 0; i < this.availableCommunityFolders.length; i++) {
-        if (this.availableCommunityFolders[i].id == this.inCommunityFolderId) return i;
+        if (this.availableCommunityFolders[i].id == this.inCommunityFolderId)
+          return i;
       }
       return -1;
     } else {
@@ -760,7 +762,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
           text: 'customBackURL',
           type: 'textfield',
           maxLength: 256,
-        }
+        },
       ],
     } as YpConfigTabData;
   }
@@ -868,6 +870,7 @@ export class YpAdminConfigCommunity extends YpAdminConfigBase {
   setupConfigTabs() {
     const tabs: Array<YpConfigTabData> = [];
 
+    tabs.push(this._getAccessTab());
     tabs.push(this._getBasicTab());
     tabs.push(this._getLookAndFeelTab());
     tabs.push(this._getWebAppTab());

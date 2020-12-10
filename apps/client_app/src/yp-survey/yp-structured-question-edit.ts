@@ -326,7 +326,7 @@ export class YpStructuredQuestionEdit extends YpBaseElement {
         .value="${(this.question.value as string) || ''}"
         .label="${!skipLabel ? this.textWithIndex : ''}"
         name="${this.formName || ''}"
-        ?use-small-font=="${this.useSmallFont}"
+        ?use-small-font="${this.useSmallFont}"
         .title="${this.question.text}"
         @keypress="${this._keyPressed}"
         ?charCounter="${this.question.charCounter!=undefined ? this.question.charCounter : false }"
