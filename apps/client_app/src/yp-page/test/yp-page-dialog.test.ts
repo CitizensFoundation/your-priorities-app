@@ -17,7 +17,7 @@ describe('YpPageDialog', () => {
     id: 1,
     content: {"en":"Blah"},
     title: {"en":"blur"},
-    } as YpHelpPage;
+    } as YpHelpPageData;
 
 
     element = await fixture(html`
