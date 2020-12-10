@@ -189,7 +189,7 @@
                   <yp-ajax id="categoriesWithCountAjax" on-response="_categoriesCountResponse"></yp-ajax>
                 </div>
                 <paper-listbox slot="dropdown-content" id="mainListMenu" on-iron-select="_changeFilter">
-                  <paper-item data-filter="top" hidden$="[[group.configuration.customRatings]]">
+                  <paper-item data-filter="top">
                     <iron-icon icon="trending-up" class="filterIcon"></iron-icon>
                     <span>[[t('post.top')]]</span>
                   </paper-item>

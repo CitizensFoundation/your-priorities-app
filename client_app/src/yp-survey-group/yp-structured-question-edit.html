@@ -92,7 +92,7 @@
       }
 
       paper-radio-button {
-        --paper-radio-button-label-color: #333;
+        --paper-radio-button-label-color: #252525;
         font-size: 16px;
       }
 
@@ -126,18 +126,22 @@
       .longQuestion {
         font-size: 18px;
         font-weight: 400;
-        color: #333;
+        color: #252525;
         padding-bottom: 0;
         margin-bottom: 0;
       }
 
       .longQuestion[use-small-font] {
         font-size: 16px;
-        color: #333;
+        color: #252525;
       }
 
       .longQuestion[is-from-new-post] {
-          color: #777;
+          color: #757575;
+      }
+
+      .question[is-from-new-post] {
+          color: #757575;
       }
 
       .longQuestion[has-content] {
@@ -149,7 +153,7 @@
       }
 
       paper-checkbox {
-        --paper-checkbox-label-color: #333;
+        --paper-checkbox-label-color: #252525;
         margin-left: 42px;
         margin-bottom: 24px;
       }
@@ -220,6 +224,14 @@
         }
       }
 
+      paper-radio-group[invalid] paper-radio-button {
+          --paper-radio-button-label-color: red;
+          --paper-radio-button-unchecked-color: red;
+      }
+
+      paper-dropdown-menu {
+          background-color: transparent;
+      }
     </style>
 
     <template is="dom-if" if="[[_isTextField(question)]]">
@@ -356,6 +368,7 @@
       <div class="question general"
            id="structuredQuestionQuestion_[[index]]"
            use-small-font$="[[useSmallFont]]"
+           is-from-new-post$="[[isFromNewPost]]"
            inner-h-t-m-l="[[_textWithLinks(question)]]"
            extra-top-margin$="[[question.extraTopMargin]]"
            less-bottom-margin$="[[question.lessBottomMargin]]"></div>
@@ -367,7 +380,9 @@
 
     <template is="dom-if" if="[[_isRadios(question)]]">
       <div class="question general radiosLabel" use-small-font$="[[useSmallFont]]" is-first-rating$="[[isFirstRating]]"
-           id="structuredQuestionIntro_[[index]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+           id="structuredQuestionIntro_[[index]]"
+           is-from-new-post$="[[isFromNewPost]]"
+           inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
 
       <paper-radio-group required$="[[question.required]]" data-type="radios" on-selected-changed="_radioChanged"
                          id="structuredQuestion_[[index]]" name="structuredQuestionRatioGroup_[[index]]"
@@ -401,7 +416,9 @@
 
     <template is="dom-if" if="[[_isCheckboxes(question)]]">
       <div id="structuredQuestionIntro_[[index]]" class="question general checkBoxesLabel"
-           use-small-font$="[[useSmallFont]]" inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
+           use-small-font$="[[useSmallFont]]"
+           is-from-new-post$="[[isFromNewPost]]"
+           inner-h-t-m-l="[[_getTextWithIndex(question)]]"></div>
       <div id="structuredQuestion_[[index]]" data-type="checkboxes" class="layout vertical">
         <template is="dom-repeat" items="[[question.checkboxes]]" as="checkbox" index-as="buttonIndex">
           <template is="dom-if" if="[[!checkbox.isSpecify]]">
@@ -424,7 +441,7 @@
     <template is="dom-if" if="[[_isDropDown(question)]]">
       <paper-dropdown-menu id="structuredQuestion_[[index]]" data-type="dropdown"
                            label="[[_getTextWithIndex(question)]]" required$="[[question.required]]">
-        <paper-listbox slot="dropdown-content" attr-for-selected="name">
+        <paper-listbox  id="structuredQuestion_[[index]]_listbox" slot="dropdown-content" attr-for-selected="name">
           <template is="dom-repeat" items="[[question.dropdownOptions]]" as="dropDownOptions">
             <paper-item name="[[dropDownOptions.text]]">[[dropDownOptions.text]]</paper-item>
           </template>
@@ -570,22 +587,26 @@
       }
 
       validate() {
-        return true;
         var liveQuestion = this.$$("#structuredQuestion_" + this.index);
         if (liveQuestion) {
-          if (liveQuestion.dataset.type === "dropdown") {
-            return true; // DO something if required
-          } else if (liveQuestion.dataset.type === "radios") {
-            return true; // DO something if required
-          } else if (liveQuestion.dataset.type === "checkboxes") {
-            return true; // DO something if required
-          } else {
-            if (liveQuestion) {
-              return liveQuestion.validate();
+          if (liveQuestion &&
+              this.question.type &&
+              this.question.type.toLowerCase()==="radios" &&
+              this.question.required) {
+            if (liveQuestion.selectedItem==null) {
+              liveQuestion.setAttribute('invalid', true);
+              return false;
             } else {
+              liveQuestion.removeAttribute('invalid');
               return true;
             }
+          } else if (liveQuestion && typeof liveQuestion.validate == 'function' ) {
+            return liveQuestion.validate();
+          } else {
+            return true;
           }
+        } else {
+          return true;
         }
       }
 
@@ -627,6 +648,9 @@
             this.question.type.toLowerCase() === "numberfield"
           ) {
             value = item.value;
+          } else if (this.question.type.toLowerCase() === "dropdown") {
+            var listBox = this.$$("#structuredQuestion_" + this.index+"_listbox");
+            value = listBox.selected;
           } else if (this.question.type.toLowerCase() === "radios") {
             if (item.selected) {
               var selectedRadio = null;
@@ -689,6 +713,9 @@
               this.question.type.toLowerCase() === "numberfield"
             ) {
               item.value = value;
+            } else if (this.question.type.toLowerCase() === "dropdown") {
+              var listBox = this.$$("#structuredQuestion_" + this.index+"_listbox");
+              listBox.selected = value;
             } else if (this.question.type.toLowerCase() === "radios") {
               var specifyInput = null;
               if (value.indexOf(":") > -1) {

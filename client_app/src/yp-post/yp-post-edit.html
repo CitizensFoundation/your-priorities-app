@@ -240,7 +240,7 @@
                              minlength="3"
                              name="name"
                              type="text"
-                             label="[[t('title')]]"
+                             label="[[titleQuestionText]]"
                              value="{{post.name}}"
                              maxlength="60"
                              char-counter>
@@ -307,6 +307,8 @@
                                 accept="application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,text/plain,application/pdf,image/*"
                                 target="/api/groups/[[group.id]]/upload_document"
                                 method="POST"
+                                group="[[group]]"
+                                attachment-upload
                                 on-success="_documentUploaded">
                   <iron-icon class="icon" icon="attach-file"></iron-icon>
                   <span>[[t('uploadAttachment')]]</span>
@@ -458,6 +460,11 @@
                      text-type="customThankYouTextNewPosts"></yp-magic-text>
     </template>
 
+    <template is="dom-if" if="[[group.configuration.customTitleQuestionText]]">
+      <yp-magic-text id="customTitleQuestionTextId" hidden content-id="[[group.id]]" text-only content="[[group.configuration.customTitleQuestionText]]"
+                     content-language="[[group.language]]" on-new-translation="_updatePostTitle" role="heading" aria-level="2"
+                     text-type="customTitleQuestionText"></yp-magic-text>
+    </template>
 
   </template>
 
@@ -495,6 +502,16 @@
       post: {
         type: Object,
         observer: "_postChanged"
+      },
+
+      titleQuestionText: {
+        type: String,
+        computed: '_titleQuestionText(post, customTitleQuestionText, group)'
+      },
+
+      customTitleQuestionText: {
+        type: String,
+        value: null
       },
 
       group: {
@@ -646,6 +663,16 @@
       'yp-goto-next-index': '_goToNextIndex'
     },
 
+    _titleQuestionText: function (post, customTitleQuestionText, group) {
+      if (post && group && customTitleQuestionText) {
+        return  customTitleQuestionText;
+      } else if (post && group && group.configuration && group.configuration.customTitleQuestionText) {
+        return group.configuration.customTitleQuestionText;
+      } else {
+        return this.t('title');
+      }
+    },
+
     _isLastRating: function (index) {
       return (this.structuredQuestions[index].subType==="rating" &&
         (index+2)<this.structuredQuestions.length &&
@@ -710,6 +737,15 @@
     observers: [
       '_setupTranslation(language,t)'
     ],
+
+    _updatePostTitle: function () {
+      this.async(function () {
+        var label = this.$$("#customTitleQuestionTextId");
+        if (label && label.finalContent) {
+          this.set('customTitleQuestionText', label.finalContent);
+        }
+      });
+    },
 
     _replacedName: function (post, group) {
       if (post && group && group.configuration.hideNameInputAndReplaceWith) {
@@ -841,9 +877,9 @@
     },
 
     _documentUploaded: function (event, detail) {
-      var document = JSON.parse(detail.xhr.response);
-      this.set('uploadedDocumentUrl', document.url);
-      this.set('uploadedDocumentFilename', document.filename);
+      var attachmentURL = detail.attachmentURL.split("?")[0];
+      this.set('uploadedDocumentUrl', attachmentURL);
+      this.set('uploadedDocumentFilename', detail.filename);
     },
 
     customFormResponse: function () {

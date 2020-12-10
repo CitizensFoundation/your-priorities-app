@@ -1,4 +1,10 @@
 {
+  "uploadingAttachment": "Hleð upp viðhengi",
+  "allowOneTimeLoginWithName": "Leyfa einnota innskráning með nafni",
+  "oneTimeLoginWithName": "Einnota innskráning með nafni",
+  "customTitleQuestionText": "Sértækur texti fyrir nafn á hugmynd",
+  "statsPoints": "Fjöldi raka",
+  "topNavigation": "Efsta valmynd",
   "uploadDocxSurveyFormat": "Hlaða upp skoðanakönnun í DOCX formi",
   "exportSubCodesForRadiosAndCheckboxes": "Flytja út 'subCodes' með 'radios' & 'checkboxes'",
   "domainHeader": "Vefur",

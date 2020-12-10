@@ -378,6 +378,11 @@ Example:
         value: false
       },
 
+      attachmentUpload: {
+        type: Boolean,
+        value: false
+      },
+
       currentVideoId: Number,
 
       currentAudioId: Number,
@@ -651,12 +656,14 @@ Example:
     },
 
     uploadFile: function (file) {
-      if (this.videoUpload || this.audioUpload) {
+      if (this.videoUpload || this.audioUpload || this.attachmentUpload) {
         this.set('indeterminateProgress', true);
         this.set('currentFile', file);
         var ajax = document.createElement('iron-ajax');
         ajax.handleAs = 'json';
         ajax.contentType = 'application/json';
+
+        var ajaxBody = {};
 
         if (this.videoUpload) {
           window.appGlobals.activity('starting', 'videoUpload');
@@ -667,7 +674,7 @@ Example:
           } else {
             ajax.url = '/api/videos/createAndGetPreSignedUploadUrlLoggedIn';
           }
-        } else {
+        } else if (this.audioUpload) {
           window.appGlobals.activity('starting', 'audioUpload');
           this.set('uploadStatus', this.t("uploadingAudio"));
           this.headers =  {"Content-Type": 'audio/mp4'};
@@ -676,15 +683,32 @@ Example:
           } else {
             ajax.url = '/api/audios/createAndGetPreSignedUploadUrlLoggedIn';
           }
+        } else if (this.attachmentUpload) {
+          window.appGlobals.activity('starting', 'attachmentUpload');
+          this.set('uploadStatus', this.t("uploadingAttachment"));
+          if (this.group) {
+            ajax.url = '/api/groups/'+this.group.id+'/getPresignedAttachmentURL';
+            //this.headers =  {"Content-Type": file.type ? file.type : 'image/png'};
+            ajaxBody = {
+              filename: file.name,
+              contentType: file.type
+            }
+          } else {
+            console.error("No group for attachment upload");
+            return;
+          }
         }
+
         ajax.method = 'POST';
-        ajax.body = {};
+        ajax.body = ajaxBody;
         ajax.addEventListener('response', function (event) {
           this.target = event.detail.response.presignedUrl;
-          if (this.videoUpload)
+          if (this.videoUpload) {
             this.set('currentVideoId',  event.detail.response.videoId);
-          else
+          } else if (this.audioUpload) {
             this.set('currentAudioId',  event.detail.response.audioId);
+          } else if (this.attachmentUpload) {
+          }
           this.method = "PUT";
           this.set('indeterminateProgress', false);
           this.reallyUploadFile(this.currentFile);
@@ -800,9 +824,6 @@ Example:
       var prefix = "files." + this.files.indexOf(file);
       var self = this;
 
-      var formData = new FormData();
-      formData.append("file", file, file.name);
-
       var xhr = file.xhr = new XMLHttpRequest();
 
       xhr.upload.onprogress = function(e) {
@@ -874,6 +895,12 @@ Example:
             this.$.startTranscodeAjax.generateRequest();
             window.appGlobals.activity('complete', 'audioUpload');
             window.appGlobals.activity('start', 'mediaTranscoding');
+          } else if (this.attachmentUpload) {
+            this.set('uploadStatus', this.t('uploadCompleted'));
+            self.fire('file-upload-complete');
+            self.set(prefix + ".complete", true);
+            self.fire("success", { filename: file.name, attachmentURL: this.target });
+            window.appGlobals.activity('complete', 'imageUpload');
           } else {
             this.set('uploadStatus', this.t('uploadCompleted'));
             self.fire('file-upload-complete');
@@ -892,9 +919,11 @@ Example:
         }
       }.bind(this);
 
-      if (this.videoUpload || this.audioUpload) {
+      if (this.videoUpload || this.audioUpload || this.attachmentUpload) {
         xhr.send(file)
       } else {
+        var formData = new FormData();
+        formData.append("file", file, file.name);
         xhr.send(formData);
       }
     }
