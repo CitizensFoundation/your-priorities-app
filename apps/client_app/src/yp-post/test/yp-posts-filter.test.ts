@@ -5,7 +5,7 @@ import { YpPostsFilter } from '../yp-posts-filter.js';
 import '../yp-posts-filter.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 
-describe('YpPostsfilter', () => {
+describe('YpPostsFilter', () => {
   let element: YpPostsFilter;
 
   beforeEach(async () => {
