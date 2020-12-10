@@ -1,7 +1,6 @@
   {
   "compilerOptions": {
     "target": "es2018",
-    "skipLibCheck": true,
     "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
@@ -19,7 +18,6 @@
   },
   "include": ["**/*.ts"],
   "importHelpers": true,
-  "skipLibCheck": true,
   "plugins": [
     {
       "name": "ts-lit-plugin",
