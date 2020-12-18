@@ -245,6 +245,8 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.hideRecommendationOnNewsFeed', truthValueFromBody(req.body.hideRecommendationOnNewsFeed));
 
+  group.set('configuration.disableMachineTranscripts', truthValueFromBody(req.body.disableMachineTranscripts));
+
   group.set('configuration.descriptionTruncateAmount', (req.body.descriptionTruncateAmount && req.body.descriptionTruncateAmount!="") ? req.body.descriptionTruncateAmount : null);
   group.set('configuration.descriptionSimpleFormat', truthValueFromBody(req.body.descriptionSimpleFormat));
   group.set('configuration.transcriptSimpleFormat', truthValueFromBody(req.body.transcriptSimpleFormat));
