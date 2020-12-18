@@ -113,6 +113,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowOneTimeLoginWithName?: boolean;
   hideGroupHeader?: boolean;
   hideAllTabs?: boolean;
+  disableMachineTranscripts?: boolean;
   hideHelpIcon?: boolean;
   forceSecureSamlEmployeeLogin?: boolean;
   hideNewPost?: boolean;
@@ -865,5 +866,23 @@ interface YpSsnListCountResponse {
   count: number;
 }
 
+
+interface YpBulkStatusUpdateStatusData {
+  official_status: number;
+}
+
+interface YpBulkStatusUpdateGroupData {
+  statuses: Array<YpBulkStatusUpdateStatusData>
+  name: string;
+}
+
+interface YpBulkStatusUpdateConfigData {
+  groups: Array<YpBulkStatusUpdateGroupData>
+}
+
+interface YpBulkStatusUpdateTemplatesData {
+  title: string;
+  posts: Array<YpPostData>;
+}
 
 

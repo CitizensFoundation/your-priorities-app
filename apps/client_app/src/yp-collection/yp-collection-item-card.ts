@@ -34,8 +34,13 @@ export class YpCollectionItemCard extends YpBaseElement {
       css`
         .description {
           line-height: var(--description-line-height, 1.3);
+          font-size: 15px;
           padding: 8px;
           padding: 16px;
+        }
+
+        .description[widetext] {
+          font-size: 14px;
         }
 
         .stats {
@@ -122,6 +127,70 @@ export class YpCollectionItemCard extends YpBaseElement {
 
         yp-membership-button[archived] {
           display: none;
+        }
+
+        .collectionNameFontSize4Wide {
+          font-size: 30px;
+        }
+
+        .collectionNameFontSize3Wide {
+            font-size: 26px;
+        }
+
+        .collectionNameFontSize2Wide {
+            font-size: 24px;
+        }
+
+        .collectionNameFontSize1Wide {
+            font-size: 22px;
+        }
+
+        .collectionNameFontSize4Mobile {
+            font-size: 28px;
+        }
+
+        .collectionNameFontSize3Mobile {
+            font-size: 24px;
+        }
+
+        .collectionNameFontSize2Mobile {
+            font-size: 22px;
+        }
+
+        .collectionNameFontSize1Mobile {
+            font-size: 19px;
+        }
+
+        .collectionNameFontSize4Wide[widetext] {
+            font-size: 26px;
+        }
+
+        .collectionNameFontSize3Wide[widetext] {
+            font-size: 22px;
+        }
+
+        .collectionNameFontSize2Wide[widetext] {
+            font-size: 20px;
+        }
+
+        .collectionNameFontSize1Wide[widetext] {
+            font-size: 18px;
+        }
+
+        .collectionNameFontSize4Mobile[widetext] {
+            font-size: 26px;
+        }
+
+        .collectionNameFontSize3Mobile[widetext] {
+            font-size: 22px;
+        }
+
+        .collectionNameFontSize2Mobile[widetext] {
+            font-size: 20px;
+        }
+
+        .collectionNameFontSize1Mobile[widetext] {
+            font-size: 18px;
         }
 
         @media (max-width: 960px) {
@@ -227,6 +296,44 @@ export class YpCollectionItemCard extends YpBaseElement {
     }
   }
 
+  _setupFontNameFontSize() {
+    const collectionName = this.$$("#collectionName")as HTMLElement;
+    if (collectionName && this.collection) {
+      let classNames = "collection-name ";
+      if (this.wide) {
+        if (this.collection.name.length<=18) {
+          classNames += "collectionNameFontSize4Wide";
+        } else if (this.collection.name.length>40) {
+          classNames += "collectionNameFontSize1Wide";
+        } else if (this.collection.name.length>30) {
+          classNames += "collectionNameFontSize2Wide";
+        } else if (this.collection.name.length>18) {
+          classNames += "collectionNameFontSize3Wide";
+        }
+      } else {
+        if (this.collection.name.length<=18) {
+          classNames += "collectionNameFontSize4Mobile";
+        } else if (this.collection.name.length>40) {
+          classNames += "collectionNameFontSize1Mobile";
+        } else if (this.collection.name.length>30) {
+          classNames += "collectionNameFontSize2Mobile";
+        } else if (this.collection.name.length>18) {
+          classNames += "collectionNameFontSize3Mobile";
+        }
+      }
+
+      collectionName.className = classNames;
+    }
+  }
+
+  updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('collection') && this.collection) {
+      //TODO: Check if we need to setTimeout here
+      this._setupFontNameFontSize();
+    }
+  }
 
   render() {
     if (this.item && (this.item as YpGroupData).Community) {
@@ -268,24 +375,20 @@ export class YpCollectionItemCard extends YpBaseElement {
                     `}
               </div>
               <div class="informationText">
-                <div
+                <yp-magic-text
+                  id="collectionName"
                   class="collection-name"
                   ?archived="${this.archived}"
-                  ?featured="${this.featured}">
-                  <yp-magic-text
-                    .textType="${YpCollectionHelpers.nameTextType(
-                      this.itemType
-                    )}"
-                    .contentLanguage="${this.item?.language}"
-                    ?disableTranslation="${this.collection.configuration
-                      ?.disableNameAutoTranslation}"
-                    text-only
-                    .content="${this.item.name}"
-                    .contentId="${this.item.id}"></yp-magic-text>
-                  <span hidden ?oldHidden="${!this.archived}">
-                    - ${this.t('archived')}
-                  </span>
-                </div>
+                  ?featured="${this.featured}"
+                  .textType="${YpCollectionHelpers.nameTextType(
+                    this.itemType
+                  )}"
+                  .contentLanguage="${this.item?.language}"
+                  ?disableTranslation="${this.collection.configuration
+                    ?.disableNameAutoTranslation}"
+                  text-only
+                  .content="${this.item.name}"
+                  .contentId="${this.item.id}"></yp-magic-text>
                 <yp-magic-text
                   id="description"
                   class="description layout vertical withPointer"
