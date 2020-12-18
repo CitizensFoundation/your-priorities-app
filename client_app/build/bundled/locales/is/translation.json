@@ -1,4 +1,7 @@
 {
+  "public": "Opið",
+  "closed": "Lokað",
+  "secret": "Leynilegt",
   "uploadingAttachment": "Hleð upp viðhengi",
   "allowOneTimeLoginWithName": "Leyfa einnota innskráning með nafni",
   "oneTimeLoginWithName": "Einnota innskráning með nafni",
