@@ -32,6 +32,10 @@
         padding: 8px;
         margin-top: 4px;
       }
+
+      .description[widetext] {
+          font-size: 15px;
+      }
       
       .stats {
         color: var(--primary-color-more-darker, #424242);
@@ -88,13 +92,17 @@
       }
 
       .community-name {
-        font-size: 26px;
+        font-size: 24px;
         padding: 14px;
         background-color: var(--primary-color-800);
         color: #FFF;
         cursor: pointer;
         vertical-align: middle;
         width: auto;
+      }
+
+      .community-name[widetext] {
+        font-size: 18px;
       }
 
       iron-image[archived] {
@@ -212,15 +220,15 @@
         </template>
       </div>
       <div class="informationText">
-        <div class="community-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToCommunity">
-          <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+          <yp-magic-text text-type="communityName" class="community-name" widetext$="[[wideText]]" content-language="[[community.language]]"
                          disable-translation="[[community.configuration.disableNameAutoTranslation]]"
+                         archived$="[[archived]]" featured$="[[featured]]"
+                         on-tap="_goToCommunity"
                          text-only content="[[communityName]]" content-id="[[community.id]]">
           </yp-magic-text>
-          <span hidden old-hidden$="[[!archived]]">- [[t('archived')]]</span>
         </div>
         <yp-magic-text id="description" class="description withPointer" featured$="[[featured]]" on-tap="_goToCommunity"
-                       text-type="communityContent" content-language="[[community.language]]"
+                       text-type="communityContent" widetext$="[[wideText]]" content-language="[[community.language]]"
                        text-only content="[[communityDescription]]" content-id="[[community.id]]" truncate="130">
         </yp-magic-text>
       </div>

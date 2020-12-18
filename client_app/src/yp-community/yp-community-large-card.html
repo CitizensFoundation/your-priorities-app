@@ -57,7 +57,10 @@
         margin: 0;
         font-size: 24px;
         font-weight: 700;
+      }
 
+      .community-name[widetext] {
+          font-size: 20px;
       }
 
       iron-image, video {
@@ -112,6 +115,10 @@
         padding-left: 16px;
         padding-right: 16px;
         padding-top: 16px;
+      }
+
+      .communityDescription[widetext] {
+          font-size: 15px;
       }
 
       .community-name {
@@ -320,16 +327,16 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="description">
-                <div class="community-name" role="heading" aria-level="1" aria-label="[[community.name]]">
+                <div role="heading" aria-level="1" aria-label="[[community.name]]">
                   <template is="dom-if" if="[[community]]">
-                    <yp-magic-text text-type="communityName" content-language="[[community.language]]"
+                    <yp-magic-text text-type="communityName" widetext$="[[wideText]]" class="community-name" content-language="[[community.language]]"
                                    disable-translation="[[community.configuration.disableNameAutoTranslation]]"
                                    text-only content="[[communityNameFull]]" content-id="[[community.id]]">
                     </yp-magic-text>
                   </template>
                 </div>
                 <div hidden class="communityAccess">[[_communityAccessText(community.access)]]</div>
-                <yp-magic-text id="description" class="communityDescription"
+                <yp-magic-text id="description" class="communityDescription" widetext$="[[wideText]]"
                                text-type="communityContent" content-language="[[community.language]]"
                                content="[[community.description]]" content-id="[[community.id]]">
                 </yp-magic-text>
