@@ -11,6 +11,7 @@ const wildCardDomainNames = [
   'betrireykjavik.is',
   'betraisland.is',
   'yrpri.org',
+  'tarsalgo.net',
   'ypus.org',
   'idea-synergy.com',
   'localhost:4242'
