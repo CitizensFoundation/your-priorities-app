@@ -163,12 +163,22 @@
           removeUrls: {
             type: Boolean,
             value: false
+          },
+
+          widetext: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
         }
       }
 
       static get doubleWidthLanguages() {
         return ['zh_TW','hy']
+      }
+
+      static get widerLanguages() {
+        return ['uk','ky','uz','ru','sr','zh_TW','hy']
       }
 
       static get rtlLanguages() {
@@ -201,6 +211,14 @@
           } else {
             this.set('truncatedContent', content);
           }
+
+          if (this.contentLanguage &&
+             YpMagicTextBox.widerLanguages.indexOf(this.contentLanguage)>-1) {
+            this.set('widetext', true);
+          } else {
+            this.set('widetext', false)
+          }
+
           this._update();
         } else {
           this.set('truncatedContent', null);
