@@ -115,7 +115,9 @@ router.post('/:post_id/:type_index', auth.can('rate post'), function(req, res) {
             err: error, errorStatus: 500 });
           res.sendStatus(500);
         } else {
-          res.send({ rating: rating, post });
+          models.Group.addUserToGroupIfNeeded(post.group_id, req, function () {
+            res.send({ rating: rating, post });
+          });
         }
       });
 
