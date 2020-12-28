@@ -199,10 +199,11 @@ export class YpCollectionHeader extends YpBaseElement {
         .description {
           padding: 16px;
           vertical-align: middle;
+          font-size: 15px;
         }
 
         .description[widetext] {
-          font-size: 15px;
+          font-size: 14px;
         }
 
         #welcomeHTML {

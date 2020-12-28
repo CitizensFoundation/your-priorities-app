@@ -866,9 +866,14 @@ interface YpSsnListCountResponse {
   count: number;
 }
 
+interface YpStatusUpdatePostData extends YpPostData {
+  uniqueStatusMessage?: string;
+  selectedTemplateName?: string;
+}
 
 interface YpBulkStatusUpdateStatusData {
   official_status: number;
+  posts: Array<YpStatusUpdatePostData>
 }
 
 interface YpBulkStatusUpdateGroupData {
@@ -882,7 +887,8 @@ interface YpBulkStatusUpdateConfigData {
 
 interface YpBulkStatusUpdateTemplatesData {
   title: string;
-  posts: Array<YpPostData>;
+  posts: Array<YpStatusUpdatePostData>;
+  content: string;
 }
 
 

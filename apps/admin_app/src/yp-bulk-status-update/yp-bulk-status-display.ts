@@ -1,10 +1,13 @@
+import { IronAjaxElement } from '@polymer/iron-ajax';
 import { css, property, html, customElement } from 'lit-element';
 import { nothing } from 'lit-html';
 import { YpBaseElement } from '../@yrpri/common/yp-base-element';
 import { YpImage } from '../@yrpri/common/yp-image';
+import { YpFormattingHelpers } from '../@yrpri/common/YpFormattingHelpers';
 import { YpMediaHelpers } from '../@yrpri/common/YpMediaHelpers';
 
 import { YpOfficialStatusHelper } from '../@yrpri/common/YpOfficialStatusHelper';
+import { YpThemeManager } from '../@yrpri/yp-app/YpThemeManager';
 
 @customElement('yp-bulk-status-display')
 export class YpBulkStatusDisplay extends YpBaseElement {
@@ -12,7 +15,7 @@ export class YpBulkStatusDisplay extends YpBaseElement {
   config: YpBulkStatusUpdateConfigData | undefined;
 
   @property({ type: Object })
-  templates: YpBulkStatusUpdateTemplatesData | undefined;
+  templates: Record<string, YpBulkStatusUpdateTemplatesData> | undefined;
 
   @property({ type: Object })
   community: YpCommunityData | undefined;
@@ -46,7 +49,7 @@ export class YpBulkStatusDisplay extends YpBaseElement {
       this.statusUpdateId
     ) {
       setTimeout(() => {
-        this.$('#ajax').generateRequest();
+        (this.$$('#ajax') as IronAjaxElement).generateRequest();
       }, 20);
     }
   }
@@ -145,7 +148,7 @@ export class YpBulkStatusDisplay extends YpBaseElement {
     return html`
       <div class="layout vertical center-center topArea">
         <paper-material
-          .elevation="5"
+          elevation="5"
           class="headerMaterial layout vertical center-center"
         >
           <h2 class="mainHeader">
@@ -160,11 +163,11 @@ export class YpBulkStatusDisplay extends YpBaseElement {
             ${this.config.groups.map(
               group => html`
                 <paper-material
-                  .elevation="2"
+                  elevation="2"
                   class="statusMaterial layout horizontal center-center wrap"
                 >
                   ${this._orderGroupStatuses(group.statuses).map(
-                    status: YpBul => html`
+                    (status: YpBulkStatusUpdateStatusData) => html`
                       <div class="layout vertical self-start">
                         <h1 ?hidden="${this.hideGroupName}">
                           ${group.name}
@@ -175,7 +178,7 @@ export class YpBulkStatusDisplay extends YpBaseElement {
                           )}
                         </h2>
 
-                        ${this.status.posts.map(
+                        ${status.posts.map(
                           post => html`
                             <div class="layout vertical">
                               <div class="layout horizontal">
@@ -183,13 +186,13 @@ export class YpBulkStatusDisplay extends YpBaseElement {
                                   class="openCloseButton"
                                   data-args="${post.id}"
                                   icon="keyboard-arrow-right"
-                                  @tap="${this._setOpen}"
+                                  @tap="${this._toggleOpen}"
                                 ></iron-icon>
                                 <div class="postName">
                                   <div
                                     class="ideaLink"
                                     data-args="${post.id}"
-                                    @tap="${this._setOpen}"
+                                    @tap="${this._toggleOpen}"
                                   >
                                     ${post.name}
                                   </div>
@@ -202,10 +205,10 @@ export class YpBulkStatusDisplay extends YpBaseElement {
                               >
                                 <div
                                   class="reason"
-                                  ?hidden="${post.uniqueStatusMessage}"
+                                  ?hidden="${post.uniqueStatusMessage!=null}"
                                 >
                                   ${this._getTemplate(
-                                    post.selectedTemplateName
+                                    post.selectedTemplateName!
                                   )}
                                 </div>
                                 <div
@@ -237,15 +240,15 @@ export class YpBulkStatusDisplay extends YpBaseElement {
       ${this.gotModifiedTemplates
         ? html`
             <div class="templateList">
-              ${this._toArray(templates).map(
-                template => html`
-                  <h2>${this.template.title}</h2>
+              ${this._toArray(this.templates).map(
+                (template: YpBulkStatusUpdateTemplatesData) => html`
+                  <h2>${template.title}</h2>
 
-                  ${this.template.posts.map(
+                  ${template.posts.map(
                     post => html`
                       <div class="postName">
                         <a target="_blank" href="/post/${this.post.id}"
-                          >${this.post.name}</a
+                          >${post.name}</a
                         >
                       </div>
                     `
@@ -256,25 +259,16 @@ export class YpBulkStatusDisplay extends YpBaseElement {
           `
         : html``}
 
-      <yp-ajax
+      <iron-ajax
         id="ajax"
         url="/api/users/${this.userId}/status_update/${this.statusUpdateId}"
         @response="${this._response}"
-      ></yp-ajax>
+      ></iron-ajax>
     `;
   }
 
-  /*
-  behaviors: [
-    ypOfficialStatusOptions,
-    ypThemeBehavior,
-    ypMediaFormatsBehavior,
-    ypTruncateBehavior
-  ],
-*/
-
-  _toArray(object) {
-    return Object.values(object);
+  _toArray(object: any) {
+    return Object.values(object) as Array<YpBulkStatusUpdateTemplatesData>;
   }
 
   _communityChanged() {
@@ -297,7 +291,7 @@ export class YpBulkStatusDisplay extends YpBaseElement {
     window.app.style.setProperty( '--top-area-background-image', path);
   }
 
-  _orderGroupStatuses(statuses) {
+  _orderGroupStatuses(statuses: Array<YpBulkStatusUpdateStatusData>) {
     const order = {
       '-1': 3,
       '0': 2,
@@ -307,14 +301,14 @@ export class YpBulkStatusDisplay extends YpBaseElement {
 
     return statuses.sort(function (a, b) {
       return (
-        order[a.official_status.toString()] -
-        order[b.official_status.toString()]
+        //@ts-ignore
+        order[a.official_status.toString()] - order[b.official_status.toString()]
       );
     });
   }
 
-  _getTemplate(templateName) {
-    if (templateName && this.templates[templateName]) {
+  _getTemplate(templateName: string) {
+    if (templateName && this.templates && this.templates[templateName]) {
       return this.templates[templateName].content.replace(
         'www.kosning.reykjavik.is',
         'kosning.reykjavik.is'
@@ -324,54 +318,47 @@ export class YpBulkStatusDisplay extends YpBaseElement {
     }
   }
 
-  _setOpen(event, detail) {
+  _toggleOpen(event: CustomEvent) {
     event = event || window.event;
-    event = event.target || event.srcElement;
-    const postId = event.getAttribute('data-args');
-    this.$$('#detail_' + postId).hidden = !this.$$('#detail_' + postId).hidden;
+    const eventTarget = event.target || event.srcElement;
+    const postId = (eventTarget as HTMLElement).getAttribute('data-args');
+    (this.$$('#detail_' + postId) as HTMLElement).hidden = !(this.$$('#detail_' + postId) as HTMLElement).hidden;
   }
 
-  _setClosed() {
-    const postId = event.target.getAttribute('data-args');
-    this.$$('#detail_' + postId).hidden = true;
-  }
-
-  _response(event, detail) {
+  _response(event: CustomEvent) {
+    const detail = event.detail;
     this.config = detail.response.config;
     const templates = {};
-    detail.response.templates.forEach(function (template) {
-      templates[template.title] = template;
+    detail.response.templates.forEach((template: YpBulkStatusUpdateTemplatesData) => {
+      this.templates![template.title] = template;
     });
     this.templates = templates;
     this.community = detail.response.community;
     this.fire('change-header', {
-      headerTitle: this.truncate(this.community.name, 80),
+      headerTitle: YpFormattingHelpers.truncate(this.community!.name, 80),
       documentTitle:
         this.t('bulkStatusUdateFor') +
         ' ' +
-        this.truncate(this.community.name, 80),
+        YpFormattingHelpers.truncate(this.community!.name, 80),
       headerDescription: '', //this.truncate(this.post.Group.objectives,45),
-      backPath: '/community/' + this.community.id,
+      backPath: '/community/' + this.community!.id,
     });
-    if (this.community.theme_id != null) {
-      this.setTheme(this.community.theme_id);
-    }
 
-    if (this.byTemplate) {
+    if (this.byTemplate && this.templates && this.config) {
       this.config.groups.forEach(
-        function (group) {
+         group => {
           group.statuses.forEach(
-            function (groupItems) {
+           groupItems => {
               groupItems.posts.forEach(
-                function (post) {
+               (post) => {
                   if (
                     post.selectedTemplateName &&
-                    this.templates[post.selectedTemplateName]
+                    this.templates![post.selectedTemplateName]
                   ) {
-                    if (!this.templates[post.selectedTemplateName].posts) {
-                      this.templates[post.selectedTemplateName].posts = [];
+                    if (!this.templates![post.selectedTemplateName].posts) {
+                      this.templates![post.selectedTemplateName].posts = [];
                     }
-                    this.templates[post.selectedTemplateName].posts.push(post);
+                    this.templates![post.selectedTemplateName].posts.push(post);
                     console.log(
                       'Pusing to:' +
                         post.selectedTemplateName +
@@ -379,24 +366,24 @@ export class YpBulkStatusDisplay extends YpBaseElement {
                         post.id
                     );
                   } else {
-                    if (!this.templates['No template']) {
-                      this.templates['No template'] = { title: 'No template' };
-                      this.templates['No template'].posts = [];
+                    if (!this.templates!['No template']) {
+                      this.templates!['No template'] = { title: 'No template', content: '', posts: [] };
+                      this.templates!['No template'].posts = [];
                     }
-                    this.templates['No template'].posts.push(post);
+                    this.templates!['No template'].posts.push(post);
                   }
-                }.bind(this)
+                }
               );
-            }.bind(this)
+            }
           );
-        }.bind(this)
+        }
       );
       this._toArray(this.templates).forEach(
-        function (template) {
+        template => {
           if (!template.posts || template.posts.length == 0) {
-            delete this.templates[template.title];
+            delete this.templates![template.title];
           }
-        }.bind(this)
+        }
       );
       this.gotModifiedTemplates = true;
     }
