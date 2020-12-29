@@ -49,7 +49,7 @@ describe('YpPost', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-post
-        .collectionId="1"
+        collectionId="1"
       ></yp-post>
     `);
     server.respond();

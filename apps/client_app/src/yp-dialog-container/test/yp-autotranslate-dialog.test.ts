@@ -19,7 +19,7 @@ describe('YpAutoTranslateDialog', () => {
 
     element = await fixture(html`
       <yp-autotranslate-dialog
-        .translate="${translate}">
+        confirmationText="ALEXOSS">
       </yp-autotranslate-dialog>
     `);
   });

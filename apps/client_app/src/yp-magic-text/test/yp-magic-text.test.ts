@@ -15,7 +15,7 @@ describe('YpMagicText', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-magic-text
-        .content='ALXOE'>
+        content='ALXOE'>
       </yp-magic-text>
     `);
   });

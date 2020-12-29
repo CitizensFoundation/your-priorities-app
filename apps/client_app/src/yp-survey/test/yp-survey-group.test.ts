@@ -52,7 +52,7 @@ describe('YpSurveyGroup', () => {
    
     element = await fixture(html`
       <yp-survey-group
-        .surveyGroupId="1">
+        surveyGroupId="1">
       </yp-survey-group>
     `);
     server.respond(); 

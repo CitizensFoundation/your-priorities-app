@@ -47,7 +47,7 @@ describe('YpDomain', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-domain
-        .collectionId="1"></yp-domain>
+        collectionId="1"></yp-domain>
     `);
     server.respond();
   });

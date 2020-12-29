@@ -15,7 +15,7 @@ describe('YpMagicTextDialog', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-magic-text-dialog
-        .content='ALXOEz'>
+        content='ALXOEz'>
       </yp-magic-text-dialog>
     `);
   });

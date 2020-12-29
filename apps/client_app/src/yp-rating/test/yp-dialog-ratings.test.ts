@@ -57,7 +57,7 @@ describe('YpDialogRatings', () => {
     element = await fixture(html`
       <yp-dialog-ratings
         .post="${post}"
-      ></yp-dialog-ratings->
+      ></yp-dialog-ratings>
     `);
     server.respond();
   });

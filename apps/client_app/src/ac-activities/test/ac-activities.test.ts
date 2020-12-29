@@ -108,8 +108,8 @@ describe('AcActivities', () => {
   
     element = await fixture(html`
       <ac-activities
-       .collectionId="1"
-       .collectionType="group"
+       collectionId="1"
+       collectionType="group"
        .recommendedPosts="${recommendedPosts}">
       </ac-activities
       >

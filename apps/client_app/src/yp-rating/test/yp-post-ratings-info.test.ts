@@ -48,7 +48,7 @@ describe('YpPostRatingsInfo', () => {
     element = await fixture(html`
       <yp-post-ratings-info
         .post="${post}"
-      ></yp-post-ratings-info->
+      ></yp-post-ratings-info>
     `);
   });
 
