@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcActivities } from '../ac-activities.js';
 import '../ac-activities.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-//import fetchMock from 'fetch-mock/esm/client.mjs';
-//import fetchMock from 'fetch-mock';
-import fetchMock from 'fetch-mock/esm/client';
-//const fetchMock = require('fetch-mock');
 
 describe('AcActivities', () => {
   let element: AcActivities;
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+
     const point = {
       id: 1,
       created_at: new Date(),
@@ -70,16 +69,6 @@ describe('AcActivities', () => {
       Point: point,
     } as AcActivityData;
 
-    fetchMock.get('/api/activities/groups/1', [activity, activity, activity], {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    await YpTestHelpers.setupApp();
-  });
-
-  beforeEach(async () => {
     const recommendedPost = {
       id: 1,
       location: {
@@ -105,16 +94,25 @@ describe('AcActivities', () => {
       },
     } as YpPostData;
 
+    const activities = [activity, activity, activity];
     const recommendedPosts = [recommendedPost, recommendedPost];
 
+    fetchMock.get('/api/activities/groups/1', { activities }, YpTestHelpers.fetchMockConfig).
+      get('/api/recommendations/groups/1',recommendedPosts, YpTestHelpers.fetchMockConfig);
+
+    await YpTestHelpers.setupApp();
+
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <ac-activities
         collectionId="1"
         collectionType="group"
-        .recommendedPosts="${recommendedPosts}"
       >
       </ac-activities>
     `);
+
+    await element.updateComplete;
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {
