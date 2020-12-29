@@ -1,16 +1,34 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpPost } from '../yp-post.js';
-import '../yp-post.js';
+import { YpDialogRatings } from '../yp-dialog-ratings.js';
+import '../yp-dialog-ratings.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 import sinon from 'sinon';
 
-describe('YpPost', () => {
-  let element: YpPost;
-  let server: any;
+
+describe('YpDialogRatings', () => {
+  let element: YpDialogRatings;
+  let server: any; 
 
   before(async () => {
+    server = sinon.fakeServer.create();
+    server.respondWith('POST', '/api/ratings/1/0', [
+      200,
+      { 'Content-Type': 'application/json' },
+      JSON.stringify({})
+    ]);
+
+    server.respondWith('DELETE', '/api/ratings/1/0', [
+      200,
+      { 'Content-Type': 'application/json' },
+      JSON.stringify({})
+    ]);
+
+    await YpTestHelpers.setupApp();
+  });
+
+  beforeEach(async () => {
     const post = {
       id: 1,
       location:{
@@ -36,21 +54,10 @@ describe('YpPost', () => {
       }
     } as YpPostData;
 
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/post/1', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify(post)
-    ]);
-    
-    await YpTestHelpers.setupApp();
-  });
-
-  beforeEach(async () => {
     element = await fixture(html`
-      <yp-post
-        collectionId="1"
-      ></yp-post>
+      <yp-dialog-ratings
+        .post="${post}"
+      ></yp-dialog-ratings>
     `);
     server.respond();
   });
@@ -58,6 +65,7 @@ describe('YpPost', () => {
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
   });
+  
   after(async () => {
     server.restore();
   });

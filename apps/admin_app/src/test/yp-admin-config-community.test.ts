@@ -1,53 +1,46 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpDomain } from '../yp-domain.js';
-import '../yp-domain.js';
-import { YpTestHelpers } from '../../common/test/setup-app.js';
+import { YpAdminConfigCommunity } from '../yp-admin-config-community.js';
+import '../yp-admin-config-community.js';
+import { YpTestHelpers } from '../@yrpri/common/test/setup-app.js';
 import sinon from 'sinon';
 
-describe('YpDomain', () => {
-  let element: YpDomain;
+describe('YpAdminConfigCommunity', () => {
+  let element: YpAdminConfigCommunity;
   let server: any; 
 
   before(async () => {
-    const domain = {
+    const community = {
       id: 1,
       name: 'Betri Reykjavik Test',
       description: '',
       counter_posts: 10,
       counter_points: 11,
       counter_users: 12,
+      only_admins_can_create_groups: true,
       configuration: {
-
-      },
-      Communities: [
-        {
-          id: 1,
-          name: 'BEE',
-          description: '',
-          counter_posts: 10,
-          counter_points: 11,
-          counter_users: 12,
-          configuration: {
-            
-          }
-        } as YpCommunityData
-      ]
-    } as YpDomainData;
+        name: 'alex',
+        number: 1,
+        id: 1
+      },  
+    } as YpCommunityData;
+    
     server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/domains/1', [
+    server.respondWith('GET', '/api/community/1', [
       200,
       { 'Content-Type': 'application/json' },
-      JSON.stringify(domain)
+      JSON.stringify(community)
     ]);
+
     await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {
     element = await fixture(html`
-      <yp-domain
-        collectionId="1"></yp-domain>
+      <yp-admin-config-community
+        .collectionId="1"
+        .collectionType="domain"></yp-admin-config-community>
     `);
     server.respond();
   });

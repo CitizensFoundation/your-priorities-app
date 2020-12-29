@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpPost } from '../yp-post.js';
-import '../yp-post.js';
+import { YpPostRatingsInfo } from '../yp-post-ratings-info.js';
+import '../yp-post-ratings-info.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
-describe('YpPost', () => {
-  let element: YpPost;
-  let server: any;
+
+describe('YpPostRatingsInfo', () => {
+  let element: YpPostRatingsInfo;
 
   before(async () => {
+    await YpTestHelpers.setupApp();
+  });
+
+  beforeEach(async () => {
     const post = {
       id: 1,
       location:{
@@ -31,34 +34,25 @@ describe('YpPost', () => {
         counter_users: 2,
         counter_posts: 1,
         configuration: {
-          makeMapViewDefault: false
+          makeMapViewDefault: false,
+          customRatings: [{
+            emoji: 'smiley',
+            numberOf: 0,
+            averageRating: 1,
+            count: 2
+          }]
         }
       }
     } as YpPostData;
 
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/post/1', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify(post)
-    ]);
-    
-    await YpTestHelpers.setupApp();
-  });
-
-  beforeEach(async () => {
     element = await fixture(html`
-      <yp-post
-        collectionId="1"
-      ></yp-post>
+      <yp-post-ratings-info
+        .post="${post}"
+      ></yp-post-ratings-info>
     `);
-    server.respond();
   });
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
-  });
-  after(async () => {
-    server.restore();
   });
 });

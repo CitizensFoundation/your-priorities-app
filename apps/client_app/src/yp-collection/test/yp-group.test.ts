@@ -33,7 +33,7 @@ describe('YpGroup', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-group
-        .collectionId="1"></yp-group>
+        collectionId="1"></yp-group>
     `);
     server.respond();
   });

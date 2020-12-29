@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpMagicText } from '../yp-magic-text.js';
-import '../yp-magic-text.js';
-import { YpTestHelpers } from '../../common/test/setup-app.js';
+import { YpAdminApp } from '../yp-admin-app.js';
+import '../yp-admin-app.js';
+import { YpTestHelpers } from '../@yrpri/common/test/setup-app.js';
 
-describe('YpMagicText', () => {
-  let element: YpMagicText;
+
+describe('YpAdminApp', () => {
+  let element: YpAdminApp;
 
   before(async () => {
     await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {
+
     element = await fixture(html`
-      <yp-magic-text
-        content='ALXOE'>
-      </yp-magic-text>
+      <yp-admin-app
+        .collectionId="1"
+        .collectionType="domain"></yp-admin-app>
     `);
   });
 

@@ -1,22 +1,29 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpMagicText } from '../yp-magic-text.js';
-import '../yp-magic-text.js';
+import { YpRating } from '../yp-rating.js';
+import '../yp-rating.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
 
-describe('YpMagicText', () => {
-  let element: YpMagicText;
+describe('YpRating', () => {
+  let element: YpRating;
 
   before(async () => {
     await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {
+    const alexo = {
+      numberOf: 5,
+      postId: 1,
+      emoji: 'star',
+      ratingIndex: 5, 
+    }
+
     element = await fixture(html`
-      <yp-magic-text
-        content='ALXOE'>
-      </yp-magic-text>
+      <yp-rating
+        .alexo="${alexo}"
+      ></yp-rating>
     `);
   });
 
