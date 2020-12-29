@@ -39,8 +39,8 @@ describe('YpAdminConfigCommunity', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-admin-config-community
-        .collectionId="1"
-        .collectionType="domain"></yp-admin-config-community>
+        collectionId="1"
+        collectionType="domain"></yp-admin-config-community>
     `);
     server.respond();
   });

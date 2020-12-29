@@ -1,24 +1,23 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { html, fixture, expect } from '@open-wc/testing';
 
-import { YpAdminApp } from '../yp-admin-app.js';
-import '../yp-admin-app.js';
-import { YpTestHelpers } from '../@yrpri/common/test/setup-app.js';
+import { YpContentModeration } from '../yp-content-moderation.js';
+import '../yp-content-moderation.js';
+import { YpTestHelpers } from '../../@yrpri/common/test/setup-app.js';
 
 
-describe('YpAdminApp', () => {
-  let element: YpAdminApp;
+describe('YpContentModeration', () => {
+  let element: YpContentModeration;
 
   before(async () => {
     await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {
-
     element = await fixture(html`
-      <yp-admin-app
-        collectionId="1"
-        collectionType="domain"></yp-admin-app>
+      <yp-content-moderation
+        domainId="1"
+      ></yp-content-moderation>
     `);
   });
 

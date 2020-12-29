@@ -40,8 +40,8 @@ describe('YpAdminConfigDomain', () => {
   beforeEach(async () => {
     element = await fixture(html`
       <yp-admin-config-domain
-        .collectionId="1"
-        .collectionType="domain"></yp-admin-config-domain>
+        collectionId="1"
+        collectionType="domain"></yp-admin-config-domain>
     `);
     server.respond();
   });
