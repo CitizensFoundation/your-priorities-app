@@ -14,6 +14,31 @@ var addToUsers = function (items) {
 
 async.parallel([
   function (parallelCallback) {
+    models.Rating.findAll({
+      attributes: ['user_id'],
+      include: [
+        {
+          model: models.Post,
+          include: [
+            {
+              model: models.Group,
+              include: [
+                {
+                  model: models.Community,
+                  where: {
+                    id: communityId
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }).then(function (withUserIds) {
+      addToUsers(withUserIds);
+    })
+  },
+  function (parallelCallback) {
     models.Endorsement.findAll({
       attributes: ['user_id'],
       include: [
@@ -122,6 +147,7 @@ async.parallel([
     console.error(error);
   } else {
     console.log("User action count: "+allUserIds.length);
+    console.log(allUserIds);
     console.log("Community user count: "+_.uniq(allUserIds).length);
   }
   process.exit();

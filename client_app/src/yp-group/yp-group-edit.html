@@ -649,6 +649,10 @@
                      value="{{group.configuration.audioPointUploadLimitSec}}">
         </paper-input>
 
+        <paper-checkbox name="disableMachineTranscripts" checked$="{{group.configuration.disableMachineTranscripts}}">
+          [[t('disableMachineTranscripts')]]
+        </paper-checkbox>
+
         <paper-checkbox name="allowAdminAnswersToPoints" checked$="{{group.configuration.allowAdminAnswersToPoints}}">
           [[t('allowAdminAnswersToPoints')]]
         </paper-checkbox>
