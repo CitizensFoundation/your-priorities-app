@@ -113,6 +113,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   allowOneTimeLoginWithName?: boolean;
   hideGroupHeader?: boolean;
   hideAllTabs?: boolean;
+  disableMachineTranscripts?: boolean;
   hideHelpIcon?: boolean;
   forceSecureSamlEmployeeLogin?: boolean;
   hideNewPost?: boolean;
@@ -377,7 +378,6 @@ interface YpImageData extends YpBaseMedia {
   User?: YpUserData;
   description?: string;
   photographer_name?: string;
-
 }
 
 interface YpVideoData extends YpBaseMedia {
@@ -722,14 +722,12 @@ interface AcNotificationsSetAsViewedResponse {
 interface YpPointQualityResponse {
   oldPointQualityValue: number;
   pointQuality: YpPointQuality;
-
 }
 
 interface YpSetEmailResponse {
   email: string;
   alreadyRegistered?: boolean;
 }
-
 
 interface YpLinkAccountResponse {
   email: string;
@@ -865,5 +863,27 @@ interface YpSsnListCountResponse {
   count: number;
 }
 
+interface YpStatusUpdatePostData extends YpPostData {
+  uniqueStatusMessage?: string;
+  selectedTemplateName?: string;
+}
 
+interface YpBulkStatusUpdateStatusData {
+  official_status: number;
+  posts: Array<YpStatusUpdatePostData>;
+}
 
+interface YpBulkStatusUpdateGroupData {
+  statuses: Array<YpBulkStatusUpdateStatusData>;
+  name: string;
+}
+
+interface YpBulkStatusUpdateConfigData {
+  groups: Array<YpBulkStatusUpdateGroupData>;
+}
+
+interface YpBulkStatusUpdateTemplatesData {
+  title: string;
+  posts: Array<YpStatusUpdatePostData>;
+  content: string;
+}
