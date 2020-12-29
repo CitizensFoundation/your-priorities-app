@@ -43,11 +43,12 @@ describe('YpPostActions', () => {
     element = await fixture(html`
       <yp-post-actions
         .post="${post}"
-      ></yp-post-actions->
+      ></yp-post-actions>
     `);
   });
 
   it('passes the a11y audit', async () => {
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 });

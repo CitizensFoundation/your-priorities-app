@@ -8,7 +8,12 @@ export default {
   mimeTypes: {
     '**/*.cjs': 'js'
   },
-  files: 'out-tsc/**/*.test.js',
+  port: 9000,
+  middleware: [
+    proxy('/api/', {
+      target: 'http://localhost:4242/',
+    }),
+  ],
   plugins: [
     commonjs({
       include: [
@@ -19,5 +24,4 @@ export default {
       ],
     }),
   ],
-  nodeResolve: true
 };

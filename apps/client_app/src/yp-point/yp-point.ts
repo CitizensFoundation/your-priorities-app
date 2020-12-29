@@ -350,7 +350,8 @@ export class YpPoint extends YpBaseElement {
                 .contentLanguage="${this.point.Post!.Group.language}"
                 .content="${this.point.Post!.Group.configuration
                   .customAdminCommentsTitle}"
-                .contentId="${this.point.Post!.Group.id}">
+                .contentId="${this.point.Post!.Group.id}"
+              >
               </yp-magic-text>
             `
           : ``}
@@ -362,35 +363,48 @@ export class YpPoint extends YpBaseElement {
         id="pointAdminCommentContent"
         ?link-point="${this.linkPoint}"
         ?hidden="${this.isEditingSomething}"
-        @click="${this._linkIfNeeded}">
+        @click="${this._linkIfNeeded}"
+      >
         <yp-magic-text
           simple-format
           textType="pointAdminCommentContent"
           .contentLanguage="${this.point.public_data?.admin_comment?.language}"
           .content="${this.point.public_data?.admin_comment?.text}"
-          .contentId="${this.point.id}">
+          .contentId="${this.point.id}"
+        >
         </yp-magic-text>
       </div>
     `;
   }
 
   renderUserHeader() {
-    return this.user ? html` <div
-      class="userInfoContainer layout horizontal"
-      ?up-vote="${this.isUpVote}"
-      ?down-vote="${this.isDownVote}"
-      ?hidden="${this.hideUser}">
-      <mwc-icon class="thumbsIcon thumbsIconUp" ?hidden="${!this.isDownVote}">thumb_up</mwc-icon>
-      <mwc-icon class="thumbsIcon thumbsIconDown" ?hidden="${this.isUpVote}">thumb_down</mwc-icon>
-      <div
-        class="layout horizontal"
-        ?hidden="${this.point.Post!.Group.configuration.hidePointAuthor}">
-        <yp-user-with-organization
-          .titleDate="${this.point.created_at}"
-          inverted
-          .user="${this.user}"></yp-user-with-organization>
-      </div>
-    </div>` : nothing
+    return this.user
+      ? html` <div
+          class="userInfoContainer layout horizontal"
+          ?up-vote="${this.isUpVote}"
+          ?down-vote="${this.isDownVote}"
+          ?hidden="${this.hideUser}"
+        >
+          <mwc-icon
+            class="thumbsIcon thumbsIconUp"
+            ?hidden="${!this.isDownVote}"
+            >thumb_up</mwc-icon
+          >
+          <mwc-icon class="thumbsIcon thumbsIconDown" ?hidden="${this.isUpVote}"
+            >thumb_down</mwc-icon
+          >
+          <div
+            class="layout horizontal"
+            ?hidden="${this.point.Post!.Group.configuration.hidePointAuthor}"
+          >
+            <yp-user-with-organization
+              .titleDate="${this.point.created_at}"
+              inverted
+              .user="${this.user}"
+            ></yp-user-with-organization>
+          </div>
+        </div>`
+      : nothing;
   }
 
   renderTextPoint() {
@@ -403,13 +417,15 @@ export class YpPoint extends YpBaseElement {
           id="pointContent"
           .linkPoint="${this.linkPoint}"
           ?hidden="${this.isEditingSomething}"
-          @click="${this._linkIfNeeded}">
+          @click="${this._linkIfNeeded}"
+        >
           <yp-magic-text
             simpleFormat
             textType="pointContent"
             .contentLanguage="${this.point.language}"
             .content="${this.point.latestContent}"
-            .contentId="${this.point.id}">
+            .contentId="${this.point.id}"
+          >
           </yp-magic-text>
         </div>
       </div>
@@ -433,7 +449,8 @@ export class YpPoint extends YpBaseElement {
                   playsinline
                   .poster="${this.pointImageVideoPath
                     ? this.pointImageVideoPath
-                    : ''}"></video>
+                    : ''}"
+                ></video>
               </div>
             </div>
           `
@@ -448,7 +465,8 @@ export class YpPoint extends YpBaseElement {
                 preload="metadata"
                 class="audio"
                 .src="${this.pointAudioPath}"
-                playsinline></audio>
+                playsinline
+              ></audio>
             </div>
           `
         : nothing}
@@ -456,14 +474,17 @@ export class YpPoint extends YpBaseElement {
         ? html`
             <div class="layout vertical center-center checkTranscript">
               <div>${this.t('checkingForTranscript')}</div>
-              <mwc-circular-progress-four-color indeterminate></mwc-circular-progress-four-color>
+              <mwc-circular-progress-four-color
+                indeterminate
+              ></mwc-circular-progress-four-color>
             </div>
           `
         : nothing}
 
       <div
         class="transcriptError layout horizontal center-center"
-        ?hidden="${!this.checkTranscriptError}">
+        ?hidden="${!this.checkTranscriptError}"
+      >
         ${this.t('checkTranscriptError')}
       </div>
 
@@ -475,33 +496,38 @@ export class YpPoint extends YpBaseElement {
                   ${this.t('automaticTranscript')}
                 </div>
                 <div
-                  hidden$="[[!point.Post.Group.configuration.collapsableTranscripts]]">
+                  hidden$="[[!point.Post.Group.configuration.collapsableTranscripts]]"
+                >
                   <mwc-icon-button
                     .label="${this.t('openComments')}"
                     class="openCloseButton"
                     icon="keyboard_arrow_right"
                     @click="${this._setOpen}"
-                    hidden$="${this.openTranscript}"></mwc-icon-button>
+                    hidden$="${this.openTranscript}"
+                  ></mwc-icon-button>
                   <mwc-icon-button
                     .label="${this.t('closeComments')}"
                     class="openCloseButton"
                     icon="keyboard_arrow_down"
                     @click="${this._setClosed}"
-                    hidden$="${!this.openTranscript}"></mwc-icon-button>
+                    hidden$="${!this.openTranscript}"
+                  ></mwc-icon-button>
                 </div>
               </div>
               <div
                 id="pointContentTranscript"
                 .linkPoint="${this.linkPoint}"
                 ?hidden="${this.isEditing}"
-                @click="${this._linkIfNeeded}">
+                @click="${this._linkIfNeeded}"
+              >
                 <yp-magic-text
                   ?hidden="${!this.openTranscript}"
                   simpleFormat
                   textType="pointContent"
                   .contentLanguage="${this.point.language}"
                   .content="${this.point.latestContent}"
-                  .contentId="${this.point.id}">
+                  .contentId="${this.point.id}"
+                >
                 </yp-magic-text>
               </div>
             </div>
@@ -517,17 +543,20 @@ export class YpPoint extends YpBaseElement {
           id="pointContentEditor"
           charCounter
           maxlength="1500"
-          .value="${this.editText ? this.editText : ''}"></mwc-textarea>
+          .value="${this.editText ? this.editText : ''}"
+        ></mwc-textarea>
         <div class="horizontal end-justified layout">
           <yp-emoji-selector id="pointEmojiSelector"></yp-emoji-selector>
         </div>
         <div class="layout horizontal self-end">
           <mwc-button
             @click="${this._cancelEdit}"
-            .label="${this.t('cancel')}"></mwc-button>
+            .label="${this.t('cancel')}"
+          ></mwc-button>
           <mwc-button
             @click="${this._saveEdit}"
-            .label="${this.t('update')}"></mwc-button>
+            .label="${this.t('update')}"
+          ></mwc-button>
         </div>
       </div>
     `;
@@ -540,16 +569,19 @@ export class YpPoint extends YpBaseElement {
           .label="${this.t('editAdminComment')}"
           ?hidden="${!this.hasAdminCommentAccess}"
           icon="comment"
-          @click="${this._editAdminComment}"></mwc-icon-button>
+          @click="${this._editAdminComment}"
+        ></mwc-icon-button>
         <mwc-icon-button
           .label="${this.t('edit')}"
           ?hidden="${!this.canEditPoint}"
           icon="create"
-          @click="${this._editPoint}"></mwc-icon-button>
+          @click="${this._editPoint}"
+        ></mwc-icon-button>
         <mwc-icon-button
           .label="${this.t('delete')}"
           icon="clear"
-          @click="${this._deletePoint}"></mwc-icon-button>
+          @click="${this._deletePoint}"
+        ></mwc-icon-button>
       </div>
     `;
   }
@@ -567,15 +599,18 @@ export class YpPoint extends YpBaseElement {
 
           <div
             class="layout horizontal actionContainer"
-            ?hidden="${this.hideActions}">
+            ?hidden="${this.hideActions}"
+          >
             <yp-point-actions
               .point="${this.point}"
-              .pointUrl="${this.pointUrl}"></yp-point-actions>
+              .pointUrl="${this.pointUrl}"
+            ></yp-point-actions>
             <mwc-icon-button
               .label="${this.t('point.report')}"
               id="reportPointIconButton"
               icon="warning"
-              @click="${this._reportPoint}"></mwc-icon-button>
+              @click="${this._reportPoint}"
+            ></mwc-icon-button>
             <div class="flex"></div>
 
             ${this.hasPointAccess ? this.renderEditMenu() : nothing}
@@ -747,12 +782,15 @@ export class YpPoint extends YpBaseElement {
   }
 
   _deletePoint() {
-    window.appDialogs.getDialogAsync('confirmationDialog', (dialog: YpConfirmationDialog) => {
-      dialog.open(
-        this.t('point.confirmDelete'),
-        this._reallyDeletePoint.bind(this)
-      );
-    });
+    window.appDialogs.getDialogAsync(
+      'confirmationDialog',
+      (dialog: YpConfirmationDialog) => {
+        dialog.open(
+          this.t('point.confirmDelete'),
+          this._reallyDeletePoint.bind(this)
+        );
+      }
+    );
   }
 
   async _reallyDeletePoint() {
@@ -765,14 +803,19 @@ export class YpPoint extends YpBaseElement {
 
   _reportPoint() {
     window.appGlobals.activity('open', 'point.report');
-    window.appDialogs.getDialogAsync("apiActionDialog", (dialog: YpApiActionDialog)  => {
-      dialog.setup('/api/points/' + this.point.id + '/report',
-        this.t('reportConfirmation'),
-        this._onReport.bind(this),
-        this.t('point.report'),
-        'PUT');
-      dialog.open();
-    });
+    window.appDialogs.getDialogAsync(
+      'apiActionDialog',
+      (dialog: YpApiActionDialog) => {
+        dialog.setup(
+          '/api/points/' + this.point.id + '/report',
+          this.t('reportConfirmation'),
+          this._onReport.bind(this),
+          this.t('point.report'),
+          'PUT'
+        );
+        dialog.open();
+      }
+    );
   }
 
   _onReport() {
@@ -808,17 +851,26 @@ export class YpPoint extends YpBaseElement {
   }
 
   get canEditPoint() {
-    const isEligible =
+    if (
       this.point &&
-      this.point.counter_quality_up + this.point.counter_quality_down <=
-        this.maxNumberOfPointsBeforeEditFrozen;
-    return (
-      isEligible &&
-      window.appUser &&
-      window.appUser.user &&
-      this.point &&
-      window.appUser.user.id == this.point.user_id
-    );
+      ((this.point.PointVideos && this.point.PointVideos.length > 0) ||
+        (this.point.PointAudios && this.point.PointAudios.length > 0))
+    ) {
+      // Allow admin editing of transcripts
+      return YpAccessHelpers.checkPointAccess(this.point);
+    } else {
+      const isEligible =
+        this.point &&
+        this.point.counter_quality_up + this.point.counter_quality_down <=
+          this.maxNumberOfPointsBeforeEditFrozen;
+      return (
+        isEligible &&
+        window.appUser &&
+        window.appUser.user &&
+        this.point &&
+        window.appUser.user.id == this.point.user_id
+      );
+    }
   }
 
   firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
@@ -841,6 +893,15 @@ export class YpPoint extends YpBaseElement {
       ) {
         this.openTranscript = false;
       }
+      let disableMachineTranscripts = false;
+      if (
+        this.point.Post &&
+        this.point.Post.Group &&
+        this.point.Post.Group.configuration &&
+        this.point.Post.Group.configuration.disableMachineTranscripts
+      ) {
+        disableMachineTranscripts = true;
+      }
       this.user = this.point.User;
       const videoURL = YpMediaHelpers.getVideoURL(this.point.PointVideos);
       const videoPosterURL = YpMediaHelpers.getVideoPosterURL(
@@ -856,7 +917,7 @@ export class YpPoint extends YpBaseElement {
         this.pointImageVideoPath = videoPosterURL;
         this.pointVideoId = this.point.PointVideos![0].id;
         this.checkTranscriptError = false;
-        if (
+        if (!disableMachineTranscripts &&
           this.point.checkTranscriptFor === 'video' &&
           window.appGlobals.hasTranscriptSupport === true
         ) {
@@ -872,6 +933,7 @@ export class YpPoint extends YpBaseElement {
           this.pointAudioId = this.point.PointAudios![0].id;
           this.checkTranscriptError = false;
           if (
+            !disableMachineTranscripts &&
             this.point.checkTranscriptFor === 'audio' &&
             window.appGlobals.hasTranscriptSupport === true
           ) {

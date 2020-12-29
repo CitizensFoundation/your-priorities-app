@@ -70,6 +70,9 @@ export class YpMagicText extends YpBaseElement {
   @property({ type: Number })
   linkifyCutoff = 25;
 
+  @property({ type: Boolean, reflect: true })
+  widetext = false;
+
   connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener('yp-auto-translate', this._autoTranslateEvent.bind(this));
@@ -143,6 +146,10 @@ export class YpMagicText extends YpBaseElement {
     return ['ru', 'ky'];
   }
 
+  static get widerLanguages() {
+    return ['uk','ky','uz','ru','sr','zh_TW','hy']
+  }
+
   get showMoreText(): boolean {
     return (
       this.moreText !== undefined &&
@@ -202,6 +209,14 @@ export class YpMagicText extends YpBaseElement {
         } else {
           this.truncatedContent = this.content;
         }
+
+        if (this.contentLanguage &&
+          YpMagicText.widerLanguages.indexOf(this.contentLanguage)>-1) {
+         this.widetext = true;
+       } else {
+         this.widetext = false;
+       }
+
         this._update();
       } else {
         this.truncatedContent = undefined;

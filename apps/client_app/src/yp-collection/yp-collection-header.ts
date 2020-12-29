@@ -164,6 +164,10 @@ export class YpCollectionHeader extends YpBaseElement {
           padding: 16px;
         }
 
+        .collection-name[widetext] {
+          font-size: var(--mdc-typography-headline1-widetext-font-size, 20px);
+        }
+
         .large-card {
           color: var(--mdc-theme-on-surface);
           background-color:  var(--mdc-theme-surface);
@@ -195,6 +199,11 @@ export class YpCollectionHeader extends YpBaseElement {
         .description {
           padding: 16px;
           vertical-align: middle;
+          font-size: 15px;
+        }
+
+        .description[widetext] {
+          font-size: 14px;
         }
 
         #welcomeHTML {
@@ -411,22 +420,22 @@ export class YpCollectionHeader extends YpBaseElement {
                 <div class="layout vertical">
                   <div class="descriptionContainer">
                     <div
+                     >
+                    <yp-magic-text
                       class="collection-name"
                       role="heading"
                       aria-level="1"
-                      aria-label="${this.collection.name}">
-                      <yp-magic-text
-                        .textType="${YpCollectionHelpers.nameTextType(
-                          this.collectionType
-                        )}"
-                        .contentLanguage="${this.collection.language}"
-                        ?disableTranslation="${this.collection.configuration
-                          ?.disableNameAutoTranslation}"
-                        textOnly
-                        .content="${this.collection.name}"
-                        .contentId="${this.collection.id}">
-                      </yp-magic-text>
-                    </div>
+                      aria-label="${this.collection.name}"
+                      .textType="${YpCollectionHelpers.nameTextType(
+                        this.collectionType
+                      )}"
+                      .contentLanguage="${this.collection.language}"
+                      ?disableTranslation="${this.collection.configuration
+                        ?.disableNameAutoTranslation}"
+                      textOnly
+                      .content="${this.collection.name}"
+                      .contentId="${this.collection.id}">
+                    </yp-magic-text>
                     <yp-magic-text
                       id="description"
                       class="description collectionDescription"

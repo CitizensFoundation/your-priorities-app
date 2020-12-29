@@ -630,6 +630,10 @@ render() {
           ${this.t('allowAdminAnswersToPoints')}
         </paper-checkbox>
 
+        <paper-checkbox name="disableMachineTranscripts" ?checked="${this.group.configuration.disableMachineTranscripts}">
+          ${this.t('disableMachineTranscripts')}
+        </paper-checkbox>
+
         <paper-input id="customAdminCommentsTitle" name="customAdminCommentsTitle" type="text" label="${this.t('customAdminCommentsTitle')}" value="${this.group.configuration.customAdminCommentsTitle}" maxlength="50" char-counter="">
         </paper-input>
 
