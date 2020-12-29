@@ -94,7 +94,7 @@ describe('AcActivities', () => {
       },
     } as YpPostData;
 
-    const activities = [activity, activity, activity];
+    const activities = [activity, {...activity, id: 2},  {...activity, id: 3}];
     const recommendedPosts = [recommendedPost, recommendedPost];
 
     fetchMock.get('/api/activities/groups/1', { activities }, YpTestHelpers.fetchMockConfig).
