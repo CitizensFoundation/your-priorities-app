@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect, aTimeout } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout, oneEvent, elementUpdated, fixtureCleanup, nextFrame } from '@open-wc/testing';
 
 import { AcActivities } from '../ac-activities.js';
 import '../ac-activities.js';
@@ -97,10 +97,15 @@ describe('AcActivities', () => {
     const activities = [activity, {...activity, id: 2},  {...activity, id: 3}];
     const recommendedPosts = [recommendedPost, recommendedPost];
 
-    fetchMock.get('/api/activities/groups/1', { activities }, YpTestHelpers.fetchMockConfig).
-      get('/api/recommendations/groups/1',recommendedPosts, YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/activities/groups/1', { activities: activities }, YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/recommendations/groups/1',recommendedPosts, YpTestHelpers.fetchMockConfig);
 
     await YpTestHelpers.setupApp();
+  });
+
+  beforeEach(async() => {
+    //TODO: Remove this hack when LitVirtualizer is ready
+    (window as any).ResizeObserver = undefined;
 
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
@@ -111,8 +116,8 @@ describe('AcActivities', () => {
       </ac-activities>
     `);
 
-    await element.updateComplete;
-    await aTimeout(100);
+
+    await aTimeout(150);
   });
 
   it('passes the a11y audit', async () => {
