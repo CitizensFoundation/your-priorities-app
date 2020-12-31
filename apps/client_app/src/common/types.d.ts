@@ -863,6 +863,11 @@ interface YpSsnListCountResponse {
   count: number;
 }
 
+interface YpStatusUpdateData {
+  config: YpBulkStatusUpdateConfigData;
+  templates: Array<YpBulkStatusUpdateTemplatesData>;
+}
+
 interface YpStatusUpdatePostData extends YpPostData {
   uniqueStatusMessage?: string;
   selectedTemplateName?: string;
