@@ -871,6 +871,8 @@ interface YpStatusUpdateData {
 interface YpStatusUpdatePostData extends YpPostData {
   uniqueStatusMessage?: string;
   selectedTemplateName?: string;
+  moveToGroupId?: number;
+  currentOfficialStatus?: string;
 }
 
 interface YpBulkStatusUpdateStatusData {
@@ -881,6 +883,7 @@ interface YpBulkStatusUpdateStatusData {
 interface YpBulkStatusUpdateGroupData {
   statuses: Array<YpBulkStatusUpdateStatusData>;
   name: string;
+  posts: Array<YpStatusUpdatePostData>;
 }
 
 interface YpBulkStatusUpdateConfigData {

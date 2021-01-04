@@ -24,7 +24,7 @@ import { PaperDialogElement } from '@polymer/paper-dialog';
 @customElement('yp-bulk-status-update-config')
 export class YpBulkStatusUpdateConfig extends YpBaseElement {
   @property({ type: Array })
-  templates: Array<YpBulkStatusUpdateTemplatesData | string> | undefined;
+  templates: Array<YpBulkStatusUpdateTemplatesData> | undefined;
 
   @property({ type: Number })
   communityId: number | undefined;
@@ -179,168 +179,172 @@ export class YpBulkStatusUpdateConfig extends YpBaseElement {
           <div class="layout horizontal wrap">
             <paper-tabs
               .selected="${this.selectedGroup}"
-              .attrForSelected="name"
+              attrForSelected="name"
             >
-              ${this.config.groups.map(
+              ${this.config ? this.config.groups.map(
                 group => html`
-                  <paper-tab .name="${this.group.name}"
+                  <paper-tab .name="${group.name}"
                     >${this._getHeadGroupName(group.name)}</paper-tab
                   >
                 `
-              )}
+              ) : nothing}
             </paper-tabs>
           </div>
           <iron-pages attrForSelected="name" .selected="${this.selectedGroup}">
-            ${this.config.group.map(
-              group => html`
-                <section .name="${this.group.name}">
-                  <div class="layout vertical postsList">
-                    ${this._selectedGroup(selectedGroup, group.name)
-                      ? html`
-                          ${this._orderPosts(group.posts).map(
-                            post => html`
-                              <div class="layout horizontal postItem">
-                                <paper-material
-                                  .elevation="2"
-                                  class="layout horizontal"
-                                >
-                                  <div class="layout vertical">
-                                    <div class="layout horizontal">
-                                      <div class="id">${this.post.id}</div>
-                                      <div class="postName">
-                                        <a
-                                          target="_blank"
-                                          href="/post/${this.post.id}"
-                                          >${this.post.name}</a
-                                        >
-                                      </div>
-                                      <div class="postOfficialStatus">
-                                        ${this._officialStatusOptionsName(
-                                          post.currentOfficialStatus
-                                        )}
-                                      </div>
+            ${this.config
+              ? html`
+                  ${this.config.groups.map(
+                    group => html`
+                      <section .name="${group.name}">
+                        <div class="layout vertical postsList">
+                          ${this._selectedGroup(this.selectedGroup, group.name)
+                            ? html`
+                                ${this._orderPosts(group.posts).map(
+                                  post => html`
+                                    <div class="layout horizontal postItem">
+                                      <paper-material
+                                        elevation="2"
+                                        class="layout horizontal"
+                                      >
+                                        <div class="layout vertical">
+                                          <div class="layout horizontal">
+                                            <div class="id">${post.id}</div>
+                                            <div class="postName">
+                                              <a
+                                                target="_blank"
+                                                href="/post/${post.id}"
+                                                >${post.name}</a
+                                              >
+                                            </div>
+                                            <div class="postOfficialStatus">
+                                              ${this._officialStatusOptionsName(
+                                                post.currentOfficialStatus
+                                              )}
+                                            </div>
+                                          </div>
+                                          <div class="layout horizontal">
+                                            <div class="postDropdown">
+                                              <paper-dropdown-menu
+                                                .label="${this.t(
+                                                  'post.statusChangeSelectNewStatus'
+                                                )}"
+                                              >
+                                                <paper-listbox
+                                                  slot="dropdown-content"
+                                                  attrForSelected="name"
+                                                  data-args="${post}"
+                                                  .selected="${post.newOfficialStatus}"
+                                                  @iron-select="${this
+                                                    ._selectNewOfficialStatus}"
+                                                >
+                                                  ${this.officialStatusOptions.map(
+                                                    statusOption => html`
+                                                      <paper-item
+                                                        .name="${statusOption
+                                                          .official_value}"
+                                                        >${statusOption
+                                                          .translatedName}</paper-item
+                                                      >
+                                                    `
+                                                  )}
+                                                </paper-listbox>
+                                              </paper-dropdown-menu>
+                                            </div>
+                                            <div class="postDropdown">
+                                              <paper-dropdown-menu
+                                                .label="${this.t(
+                                                  'moveToGroup'
+                                                )}"
+                                              >
+                                                <paper-listbox
+                                                  slot="dropdown-content"
+                                                  attrForSelected="name"
+                                                  data-args="${post}"
+                                                  ?selected="${post.moveToGroupId !=
+                                                  null}"
+                                                >
+                                                  ${this.templatesWithNone.map(
+                                                    templateOption => html`
+                                                      <paper-item
+                                                        .name="${templateOption
+                                                          .title}"
+                                                        >${templateOption
+                                                          .title}</paper-item
+                                                      >
+                                                    `
+                                                  )}
+                                                </paper-listbox>
+                                              </paper-dropdown-menu>
+                                            </div>
+                                            <div class="postDropdown">
+                                              <paper-dropdown-menu
+                                                .label="${this.t(
+                                                  'moveToGroup'
+                                                )}"
+                                              >
+                                                <paper-listbox
+                                                  slot="dropdown-content"
+                                                  attrForSelected="name"
+                                                  data-args="${post}"
+                                                  .selected="${post.moveToGroupId}"
+                                                >
+                                                  ${this.availableGroups.map(
+                                                    group => html`
+                                                      <paper-item
+                                                        .name="${group.id}"
+                                                        >${group.name}</paper-item
+                                                      >
+                                                    `
+                                                  )}
+                                                </paper-listbox>
+                                              </paper-dropdown-menu>
+                                            </div>
+                                            <div class="postUniqueMessage">
+                                              <paper-textarea
+                                                id="emailFooter"
+                                                name="emailFooter"
+                                                ?alwaysFloatLabel="${post.uniqueStatusMessage !=
+                                                null}"
+                                                .value="${post.uniqueStatusMessage}"
+                                                .label="${this.t(
+                                                  'uniqueStatusMessage'
+                                                )}"
+                                                rows="4"
+                                                maxRows="4"
+                                                maxlength="30000"
+                                                class="mainInput"
+                                              >
+                                              </paper-textarea>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </paper-material>
                                     </div>
-                                    <div class="layout horizontal">
-                                      <div class="postDropdown">
-                                        <paper-dropdown-menu
-                                          .label="${this.t(
-                                            'post.statusChangeSelectNewStatus'
-                                          )}"
-                                        >
-                                          <paper-listbox
-                                            slot="dropdown-content"
-                                            attrForSelected="name"
-                                            data-args="${this.post}"
-                                            .selected="${this.post
-                                              .newOfficialStatus}"
-                                            @iron-select="${this
-                                              ._selectNewOfficialStatus}"
-                                          >
-                                            ${this.officialStatusOptions.map(
-                                              group => html`
-                                                <paper-item
-                                                  .name="${this.statusOption
-                                                    .official_value}"
-                                                  >${this.statusOption
-                                                    .translatedName}</paper-item
-                                                >
-                                              `
-                                            )}
-                                          </paper-listbox>
-                                        </paper-dropdown-menu>
-                                      </div>
-                                      <div class="postDropdown">
-                                        <paper-dropdown-menu
-                                          .label="${this.t('moveToGroup')}"
-                                        >
-                                          <paper-listbox
-                                            slot="dropdown-content"
-                                            attrForSelected="name"
-                                            data-args="${this.post}"
-                                            .selected="${this.post
-                                              .moveToGroupId}"
-                                          >
-                                            ${this.templatesWithNone.map(
-                                              statusOption => html`
-                                                <paper-item
-                                                  .name="${this.templateOption
-                                                    .title}"
-                                                  >${this.templateOption
-                                                    .title}</paper-item
-                                                >
-                                              `
-                                            )}
-                                          </paper-listbox>
-                                        </paper-dropdown-menu>
-                                      </div>
-                                      <div class="postDropdown">
-                                        <paper-dropdown-menu
-                                          .label="${this.t('moveToGroup')}"
-                                        >
-                                          <paper-listbox
-                                            slot="dropdown-content"
-                                            attrForSelected="name"
-                                            data-args="${this.post}"
-                                            .selected="${this.post
-                                              .moveToGroupId}"
-                                          >
-                                            ${this.availableGroups.map(
-                                              group => html`
-                                                <paper-item
-                                                  .name="${this.group.id}"
-                                                  >${this.group
-                                                    .name}</paper-item
-                                                >
-                                              `
-                                            )}
-                                          </paper-listbox>
-                                        </paper-dropdown-menu>
-                                      </div>
-                                      <div class="postUniqueMessage">
-                                        <paper-textarea
-                                          id="emailFooter"
-                                          .name="emailFooter"
-                                          .alwaysFloatLabel="${this.post
-                                            .uniqueStatusMessage}"
-                                          .value="${this.post
-                                            .uniqueStatusMessage}"
-                                          .label="${this.t(
-                                            'uniqueStatusMessage'
-                                          )}"
-                                          .rows="4"
-                                          .maxRows="4"
-                                          .maxlength="30000"
-                                          class="mainInput"
-                                        >
-                                        </paper-textarea>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </paper-material>
-                              </div>
-                            `
-                          )}
-                        `
-                      : html``}
-                  </div>
-                </section>
-              `
-            )}
+                                  `
+                                )}
+                              `
+                            : html``}
+                        </div>
+                      </section>
+                    `
+                  )}
+                `
+              : nothing}
           </iron-pages>
 
           <div class="layout horizontal center-center">
-            <yp-ajax
+            <iron-ajax
               method="GET"
               id="getAvailableGroupsAjax"
               url="/api/users/available/groups"
               @response="${this._getGroupsResponse}"
-            ></yp-ajax>
-            <yp-ajax
+            ></iron-ajax>
+            <iron-ajax
               method="PUT"
               id="updateConfigAjax"
               url="/api/bulk_status_updates/[[bulkStatusUpdate.community_id]]/[[bulkStatusUpdate.id]]/updateConfig"
               @response="${this._updateConfigResponse}"
-            ></yp-ajax>
+            ></iron-ajax>
           </div>
         </paper-dialog-scrollable>
         <div class="buttons">
@@ -370,37 +374,37 @@ export class YpBulkStatusUpdateConfig extends YpBaseElement {
   ],
 */
 
-  _getGroupsResponse(event, detail) {
-    if (detail.response) {
-      const groups = [];
+  _getGroupsResponse(event: CustomEvent) {
+    if (event.detail.response) {
+      let groups: Array<any> = [];
       groups = groups.concat(
-        window.appUser.adminRights.GroupAdmins,
-        window.appUser.memberships.GroupUsers
+        window.appUser!.adminRights!.GroupAdmins,
+        window.appUser!.memberships!.GroupUsers
       );
-      groups = groups.concat(detail.response.groups);
-      groups = this._uniqueInDomain(groups, detail.response.domainId);
+      groups = groups.concat(event.detail.response.groups);
+      groups = this._uniqueInDomain(groups, event.detail.response.domainId);
       //this.set("availableGroups", groups);
     }
   }
 
   get templatesWithNone() {
     if (this.templates) {
-      return this.templates.concat(['None']);
+      return this.templates.concat([{title: 'None', posts: [], content: '' }]);
     } else {
-      return ['None'];
+      return [{title: 'None', posts: [], content: '' }];
     }
   }
 
-  _onIronResize(e) {
-    e.stopImmediatePropagation();
+  _onIronResize(event: CustomEvent) {
+    event.stopImmediatePropagation();
   }
 
-  _getHeadGroupName(name) {
+  _getHeadGroupName(name: string) {
     if (name) return name.split(' ')[0];
     else return '';
   }
 
-  _selectedGroup(selectedGroup, currentGroup) {
+  _selectedGroup(selectedGroup: string, currentGroup: string) {
     console.log(selectedGroup + ' - ' + currentGroup);
     return selectedGroup == currentGroup;
   }
@@ -415,7 +419,7 @@ export class YpBulkStatusUpdateConfig extends YpBaseElement {
     this._save();
   }
 
-  _orderPosts(posts: Array<YpPostData>) {
+  _orderPosts(posts: Array<YpStatusUpdatePostData>) {
     return posts.sort((a, b) => {
       return a.id - b.id;
     });
@@ -431,16 +435,16 @@ export class YpBulkStatusUpdateConfig extends YpBaseElement {
   }
 
   _save() {
-    this.$$('#updateConfigAjax').body = {
+    (this.$$('#updateConfigAjax') as IronAjaxElement).body = {
       configValue: this.config,
       configName: 'config',
     };
-    this.$$('#updateConfigAjax').generateRequest();
+    (this.$$('#updateConfigAjax') as IronAjaxElement).generateRequest();
   }
 
-  _selectNewOfficialStatus(event, detail) {
-    let newOfficialStatus = detail.item.name;
-    const post = JSON.parse(event.target.getAttribute('data-args'));
+  _selectNewOfficialStatus(event: CustomEvent) {
+    let newOfficialStatus = event.detail.item.name;
+    const post = JSON.parse((event.target as HTMLElement).getAttribute('data-args') || '[]');
     const configCopy = JSON.parse(JSON.stringify(this.config));
     this.config!.groups.forEach((group, groupIndex) => {
       group.posts.forEach((inPost, postIndex) => {
@@ -465,7 +469,7 @@ export class YpBulkStatusUpdateConfig extends YpBaseElement {
     window.appGlobals.notifyUserViaToast(this.t('saved'));
     if (this.closeAfterSave) {
       this.closeAfterSave = false;
-      this.$$('#dialog').close();
+      (this.$$('#dialog') as PaperDialogElement).close();
     }
   }
 
@@ -476,8 +480,10 @@ export class YpBulkStatusUpdateConfig extends YpBaseElement {
     });
   }
 
-  _editBulkStatusUpdate(event) {
-    let bulkStatusUpdate = JSON.parse(event.target.getAttribute('data-args'));
+  _editBulkStatusUpdate(event: CustomEvent) {
+    let bulkStatusUpdate = JSON.parse(
+      (event.target as HTMLElement).getAttribute('data-args') || '[]'
+    );
     window.appDialogs.getDialogAsync('bulkStatusUpdateEdit', dialog => {
       dialog._clear();
       dialog.setup(bulkStatusUpdate, false, null);
