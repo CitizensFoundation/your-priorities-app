@@ -3,6 +3,7 @@ import { YpNavHelpers } from '../common/YpNavHelpers.js';
 import { AcActivityWithGroupBase } from './ac-activity-with-group-base.js';
 
 import '../yp-magic-text/yp-magic-text.js';
+import { YpPostHelpers } from '../common/YpPostHelpers.js';
 
 @customElement('ac-activity-post')
 export class AcActivityPost extends AcActivityWithGroupBase {
@@ -186,9 +187,22 @@ export class AcActivityPost extends AcActivityWithGroupBase {
                   id="description"
                   class="description mainContainerItem"
                   is-ie11="${this.isIE11}">
-                  <template
-                    is="jucy-html"
-                    html="${this.activity.Post.description}"></template>
+                  <yp-magic-text
+                    id="description"
+                    text-type="postContent"
+                    .contentLanguage="${this.activity.Post.language}"
+                    .content="${this.structuredAnswersFormatted}"
+                    ?noUserInfo="${!this.activity.Post.Group.configuration
+                      .showWhoPostedPosts}"
+                    simpleFormat
+                    skipSanitize
+                    .contentId="${this.activity.Post.id}"
+                    class="description"
+                    .truncate="${this.activity.Post.Group.configuration
+                      .descriptionTruncateAmount}"
+                    .moreText="${this.t('readMore')}"
+                    .closeDialogText="${this.t('close')}">
+                  </yp-magic-text>
                 </div>
 
                 ${this.hasGroupHeader
@@ -209,6 +223,10 @@ export class AcActivityPost extends AcActivityWithGroupBase {
     if (this.activity.Post && !this.postId) {
       YpNavHelpers.goToPost(this.activity.Post.id, undefined, this.activity);
     }
+  }
+
+  get structuredAnswersFormatted() {
+    return YpPostHelpers.structuredAnswersFormatted(this.activity.Post!);
   }
 
   get isIE11() {
