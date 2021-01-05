@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationListPoint } from '../ac-notification-list-point.js';
 import '../ac-notification-list-point.js';
@@ -77,6 +77,7 @@ describe('AcNotificationListPoint', () => {
       } as YpPointData;
   
       element = await fixture(html`
+        ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-list-point
           .notification="${notification}"
           .post="${post}"
@@ -84,6 +85,7 @@ describe('AcNotificationListPoint', () => {
           .point="${point}"
         ></ac-notification-list-point>
       `);
+      await aTimeout(100);
     });
   
     it('passes the a11y audit', async () => {

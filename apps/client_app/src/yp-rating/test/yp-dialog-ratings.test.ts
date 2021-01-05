@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpDialogRatings } from '../yp-dialog-ratings.js';
 import '../yp-dialog-ratings.js';
@@ -55,10 +55,12 @@ describe('YpDialogRatings', () => {
     } as YpPostData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-dialog-ratings
         .post="${post}"
       ></yp-dialog-ratings>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

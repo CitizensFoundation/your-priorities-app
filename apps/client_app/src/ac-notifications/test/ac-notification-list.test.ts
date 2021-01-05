@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationList } from '../ac-notification-list.js';
 import '../ac-notification-list.js';
@@ -45,10 +45,12 @@ describe('AcNotificationList', () => {
   
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <ac-notification-list
         .user="${user}"
       ></ac-notification-list>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

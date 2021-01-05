@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpAcceptInvite } from '../yp-accept-invite.js';
 import '../yp-accept-invite.js';
@@ -27,9 +27,13 @@ describe('YpAcceptInvite', () => {
   });
 
   beforeEach(async () => {
-    element = await fixture(html` <yp-accept-invite> </yp-accept-invite>`);
-    element.open('BLAH');
-    server.respond();
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()} 
+      <yp-accept-invite> </yp-accept-invite>
+      `);
+        await aTimeout(100);
+      element.open('BLAH');
+      server.respond();
   });
 
   it('passes the a11y audit', async () => {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpThemeSelector } from '../yp-theme-selector.js';
 import '../yp-theme-selector.js';
@@ -21,10 +21,12 @@ describe('YpThemeSelector', () => {
     const theme = [themes, themes, themes]
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-theme-selector
         .theme="${theme}">
       </yp-theme-selector>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

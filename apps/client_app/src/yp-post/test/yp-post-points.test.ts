@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostPoints } from '../yp-post-points.js';
 import '../yp-post-points.js';
@@ -83,10 +83,12 @@ describe('YpPostPoints', () => {
     } as YpPostData;
     
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-points
         .post="${post}"
       ></yp-post-points>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

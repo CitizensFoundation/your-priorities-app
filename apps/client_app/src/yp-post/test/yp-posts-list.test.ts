@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostsList } from '../yp-posts-list.js';
 import '../yp-posts-list.js';
@@ -76,10 +76,12 @@ describe('YpPostslist', () => {
       } as YpGroupData;
       
       element = await fixture(html`
+        ${YpTestHelpers.renderCommonHeader()}
         <yp-posts-list
           .group="${group}"
         ></yp-posts-list>
       `);
+      await aTimeout(100);
       server.respond();
     });
   

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpUserImage } from '../yp-user-image.js';
 import '../yp-user-image.js';
@@ -21,7 +21,11 @@ describe('YpUserImage', () => {
         id: 1,
         name: 'YURR'
       } as YpUserData
-    element = await fixture(html` <yp-user-image .user="${user}"></yp-user-image>`);
+    element = await fixture(html` 
+      ${YpTestHelpers.renderCommonHeader()}
+      <yp-user-image .user="${user}"></yp-user-image>
+      `);
+      await aTimeout(100);
     
   });
   

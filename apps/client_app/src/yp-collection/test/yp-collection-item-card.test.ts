@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpCollectionItemCard } from '../yp-collection-item-card.js';
 import '../yp-collection-item-card.js';
@@ -25,10 +25,12 @@ describe('YpCollectionItemCard', () => {
     } as YpDomainData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-item-card
         .collection="${domain}"
         .collectionType="${collectionType}"></yp-collection-item-card>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

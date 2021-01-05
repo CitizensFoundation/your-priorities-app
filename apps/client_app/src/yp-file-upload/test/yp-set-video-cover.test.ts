@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpSetVideoCover } from '../yp-set-video-cover.js';
 import '../yp-set-video-cover.js';
@@ -18,10 +18,12 @@ describe('YpSetVideoCover', () => {
       } 
 
       element = await fixture(html`
+        ${YpTestHelpers.renderCommonHeader()}
         <yp-set-video-cover
           .video="${video}">
         </yp-set-video-cover>
       `);
+      await aTimeout(100);
     });
 
   it('passes the a11y audit', async () => {

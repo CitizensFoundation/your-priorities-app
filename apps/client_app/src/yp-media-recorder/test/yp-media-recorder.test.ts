@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpMediaRecorder } from '../yp-media-recorder.js';
 import '../yp-media-recorder.js';
@@ -20,10 +20,12 @@ describe('YpMediaRecorder', () => {
     } 
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-media-recorder
         .media="${media}">
       </yp-media-recorder>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

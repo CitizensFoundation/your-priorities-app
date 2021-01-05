@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPageDialog } from '../yp-page-dialog.js';
 import '../yp-page-dialog.js';
@@ -21,10 +21,12 @@ describe('YpPageDialog', () => {
 
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-page-dialog
       .page="${page}">
       </yp-page-dialog>
     `);
+    await aTimeout(100);
   });
   
   it('passes the a11y audit', async () => {

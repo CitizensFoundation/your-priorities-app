@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPoint } from '../yp-point.js';
 import '../yp-point.js';
@@ -34,10 +34,12 @@ describe('YpPoint', () => {
     } as YpPointData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-point
         .point="${point}"
       ></yp-point>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

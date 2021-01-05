@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpApiActionDialog } from '../yp-api-action-dialog.js';
 import '../yp-api-action-dialog.js';
@@ -14,10 +14,12 @@ describe('YpApiActionDialog', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-api-action-dialog
         confirmationText="good morning">
       </yp-api-action-dialog>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

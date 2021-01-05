@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpCollectionStats } from '../yp-collection-stats.js';
 import '../yp-collection-stats.js';
@@ -25,10 +25,12 @@ describe('YpCollectionStats', () => {
     } as YpDomainData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-stats
         .collection="${domain}"
         .collectionType="${collectionType}"></yp-collection-stats>
     `);
+    await aTimeout(100)
   });
 
   it('renders 3 icons', () => {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpUserDeleteOrAnonymize } from '../yp-user-delete-or-anonymize.js';
 import '../yp-user-delete-or-anonymize.js';
@@ -17,7 +17,11 @@ describe('YpUserDeleteOrAnonymize', () => {
   });
 
   beforeEach(async () => {
-    element = await fixture(html`<yp-user-delete-or-anonymize></yp-user-delete-or-anonymize>`);
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
+      <yp-user-delete-or-anonymize></yp-user-delete-or-anonymize>
+      `);
+      await aTimeout(100);
    
     element.open();
   });

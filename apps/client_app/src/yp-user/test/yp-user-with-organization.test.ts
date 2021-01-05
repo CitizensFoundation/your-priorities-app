@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpUserWithOrganization } from '../yp-user-with-organization.js';
 import '../yp-user-with-organization.js';
@@ -23,10 +23,12 @@ describe('YpUserWithOrganization', () => {
       } as YpUserData
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-user-with-organization
         .user="${user}">
       </yp-user-with-organization>
     `);
+    await aTimeout(100);
   });
   
   it('passes the a11y audit', async () => {

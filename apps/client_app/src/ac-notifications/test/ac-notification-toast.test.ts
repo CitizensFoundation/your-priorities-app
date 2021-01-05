@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationToast } from '../ac-notification-toast.js';
 import '../ac-notification-list.js';
@@ -15,10 +15,12 @@ describe('AcNotificationToast', () => {
     } as YpUserData
 
       element = await fixture(html`
+        ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-toast
           .user="${user}"
         ></ac-notification-toast>
       `);
+      await aTimeout(100);
     });
   
     it('passes the a11y audit', async () => {

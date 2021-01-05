@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostLocation } from '../yp-post-location.js';
 import '../yp-post-location.js';
@@ -51,11 +51,13 @@ describe('YpPostLocation', () => {
     } as YpPostData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-location
         .group="${group}"
         .post="${post}"
       ></yp-post-location>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

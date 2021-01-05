@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostUserImages } from '../yp-post-user-images.js';
 import '../yp-post-user-images.js';
@@ -46,10 +46,12 @@ describe('YpPostUserImages', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-user-images
       
       ></yp-post-user-images>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpMagicTextDialog } from '../yp-magic-text-dialog.js';
 import '../yp-magic-text-dialog.js';
@@ -14,10 +14,12 @@ describe('YpMagicTextDialog', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-magic-text-dialog
         content='ALXOEz'>
       </yp-magic-text-dialog>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

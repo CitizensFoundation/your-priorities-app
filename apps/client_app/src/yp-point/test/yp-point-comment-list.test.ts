@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPointCommentList } from '../yp-point-comment-list.js';
 import '../yp-point-comment-list.js';
@@ -45,9 +45,11 @@ describe('YpPointCommentList', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-point-comment-list  
       ></yp-point-comment-list>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

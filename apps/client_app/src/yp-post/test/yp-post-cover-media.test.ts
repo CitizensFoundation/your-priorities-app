@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostCoverMedia } from '../yp-post-cover-media.js';
 import '../yp-post-cover-media.js';
@@ -39,10 +39,12 @@ describe('YpPostCoverMedia', () => {
       } as YpPostData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-cover-media
         .post="${post}"
       ></yp-post-cover-media>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

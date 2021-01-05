@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpFileUpload } from '../yp-file-upload.js';
 import '../yp-file-upload.js';
@@ -23,10 +23,12 @@ describe('YpFileUpload', () => {
       } as YpGroupData;
 
       element = await fixture(html`
+        ${YpTestHelpers.renderCommonHeader()}
         <yp-file-upload
           .group="${group}">
         </yp-file-upload>
       `);
+      await aTimeout(100);
     });
 
   it('passes the a11y audit', async () => {

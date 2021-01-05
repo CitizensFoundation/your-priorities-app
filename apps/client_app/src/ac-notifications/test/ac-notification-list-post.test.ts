@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationListPost } from '../ac-notification-list-post.js';
 import '../ac-notification-list-post.js';
@@ -57,12 +57,14 @@ describe('AcNotificationListPost', () => {
       } as YpUserData
   
       element = await fixture(html`
+        ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-list-post
           .notification="${notification}"
           .post="${post}"
           .user="${user}"
         ></ac-notification-list-post>
       `);
+      await aTimeout(100);
     });
   
     it('passes the a11y audit', async () => {

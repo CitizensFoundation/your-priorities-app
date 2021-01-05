@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostUserImageCard } from '../yp-post-user-image-card.js';
 import '../yp-post-user-image-card.js';
@@ -39,10 +39,12 @@ describe('YpPostUserImageCard', () => {
       } as YpPostData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-user-image-card
         .post="${post}"
       ></yp-post-user-image-card>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

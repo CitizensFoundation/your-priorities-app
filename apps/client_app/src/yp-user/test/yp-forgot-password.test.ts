@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpForgotPassword } from '../yp-forgot-password.js';
 import '../yp-forgot-password.js';
@@ -17,8 +17,11 @@ describe('YpForgotPassword', () => {
   });
 
   beforeEach(async () => {
-    element = await fixture(html`<yp-forgot-password></yp-forgot-password>`);
-   
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
+      <yp-forgot-password></yp-forgot-password>
+      `);
+        await aTimeout(100);
     element.open({ email: "robert@citizens.is"});
   });
   

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpGroup } from '../yp-group.js';
 import '../yp-group.js';
@@ -32,9 +32,11 @@ describe('YpGroup', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-group
         collectionId="1"></yp-group>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

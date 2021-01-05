@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostsFilter } from '../yp-posts-filter.js';
 import '../yp-posts-filter.js';
@@ -22,10 +22,12 @@ describe('YpPostsFilter', () => {
       } as YpGroupData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-posts-filter
         .group="${group}"
       ></yp-posts-filter>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

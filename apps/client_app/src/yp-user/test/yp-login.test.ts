@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpLogin } from '../yp-login.js';
 import '../yp-login.js';
@@ -17,7 +17,11 @@ describe('YpLogin', () => {
   });
 
   beforeEach(async () => {
-    element = await fixture(html`<yp-login></yp-login>`);
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
+      <yp-login></yp-login>
+      `);
+      await aTimeout(100);
    
     element.open(undefined, undefined, undefined);
   });

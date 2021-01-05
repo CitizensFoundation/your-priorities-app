@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpCommunity } from '../yp-community.js';
 import '../yp-community.js';
@@ -47,10 +47,12 @@ describe('YpCommunity', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-community
 
       ></yp-community>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

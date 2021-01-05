@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpUserEdit } from '../yp-user-edit.js';
 import '../yp-user-edit.js';
@@ -60,8 +60,10 @@ describe('YpUserEdit', () => {
     } as YpUserData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-user-edit .settings="${settings}" .user="${user}"></yp-user-edit>
     `);
+    await aTimeout(100);
     element.open(true, { id: 1 });
   });
 

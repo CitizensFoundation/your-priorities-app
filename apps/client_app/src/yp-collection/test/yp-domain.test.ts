@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpDomain } from '../yp-domain.js';
 import '../yp-domain.js';
@@ -46,9 +46,11 @@ describe('YpDomain', () => {
 
   beforeEach(async () => {
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-domain
         collectionId="1"></yp-domain>
     `);
+    await aTimeout(100);
     server.respond();
   });
 

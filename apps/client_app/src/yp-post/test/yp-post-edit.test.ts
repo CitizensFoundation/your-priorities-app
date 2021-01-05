@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostEdit } from '../yp-post-edit.js';
 import '../yp-post-edit.js';
@@ -51,12 +51,13 @@ describe('YpPostEdit', () => {
     } as YpPostData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-edit
         .group="${group}"
         .post="${post}"
       ></yp-post-edit>
     `);
-
+    await aTimeout(100);
     element.open(true, {})
   });
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpAutoTranslateDialog} from '../yp-autotranslate-dialog.js';
 import '../yp-autotranslate-dialog.js';
@@ -18,10 +18,12 @@ describe('YpAutoTranslateDialog', () => {
     } 
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-autotranslate-dialog
         confirmationText="ALEXOSS">
       </yp-autotranslate-dialog>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

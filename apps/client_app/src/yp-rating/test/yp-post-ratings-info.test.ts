@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpPostRatingsInfo } from '../yp-post-ratings-info.js';
 import '../yp-post-ratings-info.js';
@@ -46,10 +46,12 @@ describe('YpPostRatingsInfo', () => {
     } as YpPostData;
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <yp-post-ratings-info
         .post="${post}"
       ></yp-post-ratings-info>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {

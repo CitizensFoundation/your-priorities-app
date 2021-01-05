@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcNotificationSettings } from '../ac-notification-settings.js';
 import '../ac-notification-settings.js';
@@ -47,10 +47,12 @@ describe('AcNotificationSettings', () => {
       } as AcNotificationSettingsData
 
       element = await fixture(html`
+        ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-settings
           .settings="${settings}"
         ></ac-notification-settings>
       `);
+      await aTimeout(100);
     });
   
     it('passes the a11y audit', async () => {

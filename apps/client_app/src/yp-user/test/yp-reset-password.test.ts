@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpResetPassword } from '../yp-reset-password.js';
 import '../yp-reset-password.js';
@@ -17,8 +17,11 @@ describe('YpResetPassword', () => {
   });
 
   beforeEach(async () => {
-    element = await fixture(html`<yp-reset-password></yp-reset-password>`);
-   
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
+      <yp-reset-password></yp-reset-password>
+      `);
+        await aTimeout(100);
     element.open('Alexos');
   });
   
