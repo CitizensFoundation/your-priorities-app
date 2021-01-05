@@ -4,39 +4,36 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { AcNotificationList } from '../ac-notification-list.js';
 import '../ac-notification-list.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
 describe('AcNotificationList', () => {
   let element: AcNotificationList;
-  let server: any; 
-  
-  beforeEach(async () => {
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/notification/', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify([notification, notification, notification])
-    ]);
+  let fetchMock: any;
 
+  before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
-  });
-  
-  const notification =  {
-    id: 1,
-    type: 'ALex',
-    domain_id: 1,
-    created_at: new Date(),
-    updated_at: new Date(),
-    AcActivities: [{
-      type: 'LEXI',
+
+    const notification =  {
+      id: 1,
+      domain_id: 1,
       created_at: new Date(),
-      domain_id: 2,
-      User: {
-        id: 1,
-        name: 'Lex'
-      }
-    }]
-  } as AcNotificationData;
+      updated_at: new Date(),
+      type: 'notification.point.new',
+      AcActivities: [{
+        type: 'activity.point.new',
+        created_at: new Date(),
+        domain_id: 2,
+        User: {
+          id: 1,
+          name: 'Lex'
+        }
+      }]
+    } as AcNotificationData;
+  
+    const notificationList = [notification, notification, notification];
+
+    fetchMock.get('/api/notification',{ notifications: notificationList }, YpTestHelpers.fetchMockConfig);
+  });
 
   const user = {
     id: 1,
@@ -51,14 +48,13 @@ describe('AcNotificationList', () => {
       ></ac-notification-list>
     `);
     await aTimeout(100);
-    server.respond();
   });
 
   it('passes the a11y audit', async () => {
+    debugger;
     await expect(element).shadowDom.to.be.accessible();
   });
 
   after(async () => {
-    server.restore();
   });
 });

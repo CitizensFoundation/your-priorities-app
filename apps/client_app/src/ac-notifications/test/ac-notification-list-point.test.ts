@@ -9,23 +9,6 @@ describe('AcNotificationListPoint', () => {
   let element: AcNotificationListPoint;
   
     beforeEach(async () => {
-      const notification =  {
-        id: 1,
-        type: 'ALex',
-        domain_id: 1,
-        created_at: new Date(),
-        updated_at: new Date(),
-        AcActivities: [{
-          type: 'LEXI',
-          created_at: new Date(),
-          domain_id: 2,
-          User: {
-            id: 1,
-            name: 'Lex'
-          }
-        }],
-    } as AcNotificationData;
-
       const post = {
         id: 1,
         location:{
@@ -75,20 +58,37 @@ describe('AcNotificationListPoint', () => {
           }
         ],
       } as YpPointData;
+
+      const notification =  {
+        id: 1,
+        type: 'notification.point.new',
+        domain_id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        AcActivities: [{
+          type: 'activity.point.new',
+          created_at: new Date(),
+          domain_id: 2,
+          User: {
+            id: 1,
+            name: 'Lex'
+          },
+          Point: point,
+          Post: post,
+        }],
+    } as AcNotificationData;
   
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-list-point
           .notification="${notification}"
-          .post="${post}"
-          .user="${user}"
-          .point="${point}"
         ></ac-notification-list-point>
       `);
       await aTimeout(100);
     });
   
     it('passes the a11y audit', async () => {
+      debugger; 
       await expect(element).shadowDom.to.be.accessible();
     });
   });
