@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcActivityPoint } from '../ac-activity-point.js';
 import '../ac-activity-point.js';
@@ -20,6 +20,7 @@ describe('AcActivityPoint', () => {
       counter_quality_down: 2,
       content: 'Betri-Alexander',
       value: 1,
+      latestContent: "blah",
       PointRevisions: [
         {
           id: 1,
@@ -59,7 +60,7 @@ describe('AcActivityPoint', () => {
     } as YpPostData;
 
     const activity = {
-        type: 'LEXO',
+        type: 'activity.point.new',
         created_at: new Date(),
         domain_id: 2,
         User: {
@@ -71,15 +72,18 @@ describe('AcActivityPoint', () => {
     } as AcActivityData
 
     element = await fixture(html`
+    ${YpTestHelpers.renderCommonHeader()}
       <ac-activity-point
        .activity="${activity}"
        >
       </ac-activity-point
       >
     `);
+    await aTimeout(100);
   });
   
   it('passes the a11y audit', async () => {
+    
     await expect(element).shadowDom.to.be.accessible();
   });
 });

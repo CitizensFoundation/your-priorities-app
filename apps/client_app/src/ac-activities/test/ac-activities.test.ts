@@ -58,7 +58,7 @@ describe('AcActivities', () => {
     } as YpPostData;
 
     const activity = {
-      type: 'LEXO',
+      type: 'activity.post.new',
       created_at: new Date(),
       domain_id: 2,
       User: {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcActivity } from '../ac-activity.js';
 import '../ac-activity.js';
@@ -59,7 +59,7 @@ describe('AcActivity', () => {
     } as YpPointData;
 
     const activity = {
-        type: 'LEXO',
+        type: 'activity.post.new',
         created_at: new Date(),
         domain_id: 2,
         User: {
@@ -71,11 +71,13 @@ describe('AcActivity', () => {
     } as AcActivityData
 
     element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
       <ac-activity
         .activity="${activity}">
       </ac-activity
       >
     `);
+    await aTimeout(100);
   });
   
   it('passes the a11y audit', async () => {

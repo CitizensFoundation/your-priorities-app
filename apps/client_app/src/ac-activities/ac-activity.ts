@@ -158,9 +158,9 @@ export class AcActivity extends YpBaseElementWithLogin {
         `;
       case 'activity.post.status.change':
         return html`
-          <ac-activity-point
+          <ac-activity-post-status-update
             .postId="${this.postId}"
-            .activity="${this.activity}"></ac-activity-point>
+            .activity="${this.activity}"></ac-activity-post-status-update>
         `;
       default:
         return nothing;

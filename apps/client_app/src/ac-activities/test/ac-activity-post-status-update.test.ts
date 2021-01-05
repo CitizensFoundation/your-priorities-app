@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcActivityPostStatusUpdate } from '../ac-activity-post-status-update.js';
 import '../ac-activity-post-status-update.js';
@@ -20,6 +20,7 @@ describe('AcActivityPostStatusUpdate', () => {
       counter_quality_down: 2,
       content: 'Betri-Alexander',
       value: 1,
+      latestContent: "blur",
       PointRevisions: [
         {
           id: 1,
@@ -59,7 +60,7 @@ describe('AcActivityPostStatusUpdate', () => {
     } as YpPostData;
 
     const activity = {
-        type: 'LEXO',
+        type: 'activity.post.status.change',
         created_at: new Date(),
         domain_id: 2,
         User: {
@@ -67,18 +68,26 @@ describe('AcActivityPostStatusUpdate', () => {
           name: 'Lexer',
         },
         Post: post,
-        Point: point
+        Point: point,
+        PostStatusChange: {
+          content: "blar", 
+          language: "en"
+        }
+
     } as AcActivityData
 
     element = await fixture(html`
+    ${YpTestHelpers.renderCommonHeader()}
       <ac-activity-post-status-update
        .activity="${activity}">
       </ac-activity-post-status-update
       >
     `);
+    await aTimeout(100);
   });
   
   it('passes the a11y audit', async () => {
+   
     await expect(element).shadowDom.to.be.accessible();
   });
 });

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { AcActivityRecommendedPosts } from '../ac-activity-recommended-posts.js';
 import '../ac-activity-recommended-posts.js';
@@ -41,11 +41,13 @@ describe('AcActivityRecommendedPosts', () => {
       const recommendedPosts = [recommendedPost, recommendedPost]
 
     element = await fixture(html`
+    ${YpTestHelpers.renderCommonHeader()}
       <ac-activity-recommended-posts
         .recommendedPosts ="${recommendedPosts}">
       </ac-activity-recommended-posts
       >
     `);
+    await aTimeout(100);
   });
   
   it('passes the a11y audit', async () => {
