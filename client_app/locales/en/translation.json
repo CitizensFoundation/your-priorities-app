@@ -1,4 +1,8 @@
 {
+  "disableMachineTranscripts": "Disable machine transcripts",
+  "public": "public",
+  "closed": "closed",
+  "secret": "secret",
   "uploadingAttachment": "Uploading attachment",
   "allowOneTimeLoginWithName": "Allow one time login with name",
   "oneTimeLoginWithName": "One time login with name",

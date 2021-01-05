@@ -42,6 +42,11 @@
         color: var(--primary-color-more-darker, #424242);
         line-height: var(--objectives-line-height, 1.3);
         padding: 16px;
+        font-size: 16px;
+      }
+
+      .objectives[widetext] {
+          font-size: 15px;
       }
 
       .stats {
@@ -93,6 +98,70 @@
         cursor: pointer;
         vertical-align: middle;
         width: auto;
+      }
+
+      .groupNameFontSize4Wide {
+          font-size: 30px;
+      }
+
+      .groupNameFontSize3Wide {
+          font-size: 26px;
+      }
+
+      .groupNameFontSize2Wide {
+          font-size: 24px;
+      }
+
+      .groupNameFontSize1Wide {
+          font-size: 22px;
+      }
+
+      .groupNameFontSize4Mobile {
+          font-size: 28px;
+      }
+
+      .groupNameFontSize3Mobile {
+          font-size: 24px;
+      }
+
+      .groupNameFontSize2Mobile {
+          font-size: 22px;
+      }
+
+      .groupNameFontSize1Mobile {
+          font-size: 19px;
+      }
+
+      .groupNameFontSize4Wide[widetext] {
+          font-size: 26px;
+      }
+
+      .groupNameFontSize3Wide[widetext] {
+          font-size: 22px;
+      }
+
+      .groupNameFontSize2Wide[widetext] {
+          font-size: 20px;
+      }
+
+      .groupNameFontSize1Wide[widetext] {
+          font-size: 18px;
+      }
+
+      .groupNameFontSize4Mobile[widetext] {
+          font-size: 26px;
+      }
+
+      .groupNameFontSize3Mobile[widetext] {
+          font-size: 22px;
+      }
+
+      .groupNameFontSize2Mobile[widetext] {
+          font-size: 20px;
+      }
+
+      .groupNameFontSize1Mobile[widetext] {
+          font-size: 18px;
       }
 
       .group-name[featured] {
@@ -199,14 +268,12 @@
     <paper-card class="groupCard" animated elevation="[[elevation]]" class="groupCard">
       <iron-image hidden$="[[!noImage]]" header-mode$="[[headerMode]]" archived$="[[archived]]" sizing="cover" class="main-image withPointer" src="https://i.imgur.com/sdsFAoT.png" on-tap="_goToGroup"></iron-image>
       <iron-image hidden$="[[noImage]]" archived$="[[archived]]" class="logo withPointer" alt$="[[group.name]]" sizing="cover" on-tap="_goToGroup" preload src="[[groupLogoImagePath]]"></iron-image>
-      <div id="groupName" class="group-name" archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup">
-        <yp-magic-text text-type="groupName" content-language="[[group.language]]"
-                       disable-translation="[[group.configuration.disableNameAutoTranslation]]"
-                       text-only content="[[groupName]]" content-id="[[group.id]]">
-        </yp-magic-text>
-        <span hidden$="[[!archived]]">- [[t('archived')]]</span>
-      </div>
-      <yp-magic-text id="objectives" class="objectives withPointer" on-tap="_goToGroup"
+      <yp-magic-text id="groupName"  class="group-name" widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
+                     archived$="[[archived]]" featured$="[[featured]]" on-tap="_goToGroup"
+                     disable-translation="[[group.configuration.disableNameAutoTranslation]]"
+                     text-only content="[[groupName]]" content-id="[[group.id]]">
+      </yp-magic-text>
+      <yp-magic-text id="objectives" widetext$="[[wideText]]" class="objectives withPointer" on-tap="_goToGroup"
                      text-type="groupContent" content-language="[[group.language]]"
                      remove-urls
                      text-only content="[[groupObjectives]]" content-id="[[group.id]]" truncate="200">

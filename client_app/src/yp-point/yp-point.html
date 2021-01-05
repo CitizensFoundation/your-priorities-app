@@ -696,16 +696,26 @@
       },
 
       _canEditPoint: function (point) {
-        var isEligible = (point && (point.counter_quality_up + point.counter_quality_down) <= this.maxNumberOfPointsBeforeEditFrozen);
-        return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
+        if (point && ((point.PointVideos && point.PointVideos.length>0) ||
+           (point.PointAudios && point.PointAudios.length>0))) {
+          // Allow admin editing of transcripts
+          return this.checkPointAccess(point);
+        } else {
+          var isEligible = (point && (point.counter_quality_up + point.counter_quality_down) <= this.maxNumberOfPointsBeforeEditFrozen);
+          return isEligible && window.appUser && window.appUser.user && window.appUser.user.id==point.user_id;
+        }
       },
 
       _pointChanged: function(point, previousPoint) {
         this.setupMediaEventListeners(point, previousPoint);
         this._resetMedia();
         if (point) {
+          var disableMachineTranscripts = false;
           if (point.Post && point.Post.Group && point.Post.Group.configuration && point.Post.Group.configuration.collapsableTranscripts) {
             this.set('openTranscript', false);
+          }
+          if (point.Post && point.Post.Group && point.Post.Group.configuration && point.Post.Group.configuration.disableMachineTranscripts) {
+            disableMachineTranscripts = true;
           }
           this.set('user', this.point.User);
           var videoURL = this._getVideoURL(point.PointVideos);
@@ -717,7 +727,7 @@
             this.set('pointImageVideoPath', videoPosterURL);
             this.set('pointVideoId', point.PointVideos[0].id);
             this.set('checkTranscriptError', false);
-            if (point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
+            if (!disableMachineTranscripts && point.checkTranscriptFor==="video" && window.appGlobals.hasTranscriptSupport===true) {
               this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/videoTranscriptStatus';
               this.$.checkTranscriptStatusAjax.generateRequest();
               this.set('checkingTranscript', true);
@@ -730,7 +740,7 @@
               this.set('pointAudioPath', audioURL);
               this.set('pointAudioId', point.PointAudios[0].id);
               this.set('checkTranscriptError', false);
-              if (point.checkTranscriptFor==="audio" && window.appGlobals.hasTranscriptSupport===true) {
+              if (!disableMachineTranscripts && point.checkTranscriptFor==="audio" && window.appGlobals.hasTranscriptSupport===true) {
                 this.$.checkTranscriptStatusAjax.url = "/api/points/"+point.id+'/audioTranscriptStatus';
                 this.$.checkTranscriptStatusAjax.generateRequest();
                 this.set('checkingTranscript', true);

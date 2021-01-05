@@ -78,40 +78,30 @@
         this.async(function () {
           var groupName = this.$$("#groupName");
           if (groupName) {
+            var classNames = "group-name ";
             if (this.wide) {
               if (group.name.length<=18) {
-                groupName.style.fontSize = "30px";
+                classNames += "groupNameFontSize4Wide";
               } else if (group.name.length>40) {
-                groupName.style.fontSize = "22px";
+                classNames += "groupNameFontSize1Wide";
               } else if (group.name.length>30) {
-                groupName.style.fontSize = "24px";
+                classNames += "groupNameFontSize2Wide";
               } else if (group.name.length>18) {
-                groupName.style.fontSize = "26px";
+                classNames += "groupNameFontSize3Wide";
               }
             } else {
               if (group.name.length<=18) {
-                groupName.style.fontSize = "28px";
+                classNames += "groupNameFontSize4Mobile";
               } else if (group.name.length>40) {
-                groupName.style.fontSize = "19px";
+                classNames += "groupNameFontSize1Mobile";
               } else if (group.name.length>30) {
-                groupName.style.fontSize = "22px";
+                classNames += "groupNameFontSize2Mobile";
               } else if (group.name.length>18) {
-                groupName.style.fontSize = "24px";
+                classNames += "groupNameFontSize3Mobile";
               }
             }
 
-            if (group.language && group.language==="ru" && group.objectives && group.objectives.length>140) {
-              this.$$("#objectives").style.fontSize = "15px";
-            } else {
-              this.$$("#objectives").style.fontSize = "16px";
-            }
-
-            if (this.archived) {
-              var fontSizePixels = groupName.style.fontSize.replace("px", "");
-              fontSizePixels = parseInt(fontSizePixels);
-              fontSizePixels = fontSizePixels - 3;
-              groupName.style.fontSize = fontSizePixels+"px";
-            }
+            groupName.className = classNames;
           }
         });
 

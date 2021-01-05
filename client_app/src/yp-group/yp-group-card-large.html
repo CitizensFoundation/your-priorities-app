@@ -45,6 +45,10 @@
         font-weight: 700;
       }
 
+      .group-name[widetext] {
+          font-size: 22px;
+      }
+
       .group-name[admin] {
         padding-right: 32px;
       }
@@ -106,7 +110,11 @@
         padding-left: 16px;
         padding-right: 16px;
         padding-top: 16px;
-        font-size: var(--group-description-font-size, 16px);
+        font-size: var(--group-description-font-size, 15px);
+      }
+
+      .groupDescription[widetext] {
+         font-size: 14px;
       }
 
       .group-name {
@@ -238,14 +246,14 @@
           <div class="layout horizontal wrap">
             <div class="layout vertical description-and-stats">
               <div class="description">
-                <div class="group-name" admin$="[[hasGroupAccess]]" role="heading" aria-level="1" aria-label="[[group.name]]">
-                  <yp-magic-text id="groupName" text-type="groupName" content-language="[[group.language]]"
+                <div admin$="[[hasGroupAccess]]" role="heading" aria-level="1" aria-label="[[group.name]]">
+                  <yp-magic-text id="groupName" class="group-name"  widetext$="[[wideText]]" text-type="groupName" content-language="[[group.language]]"
                                  disable-translation="[[group.configuration.disableNameAutoTranslation]]"
                                  text-only content="[[groupName]]" content-id="[[group.id]]">
                   </yp-magic-text>
                 </div>
                 <div hidden class="groupAccess">[[groupAccessText]]</div>
-                <yp-magic-text id="objectives" class="groupDescription"
+                <yp-magic-text id="objectives" class="groupDescription" widetext$="[[wideText]]"
                                simple-format="[[group.configuration.simpleFormatDescription]]"
                                text-type="groupContent" content-language="[[group.language]]"
                                content="[[group.objectives]]" content-id="[[group.id]]">
@@ -406,12 +414,6 @@
       },
 
       _groupChanged: function (group, previousGroup) {
-        if (group && group.objectives && group.objectives.length>200) {
-          this.$$("#objectives").style.fontSize = "15px";
-        } else {
-          this.$$("#objectives").style.fontSize = "16px";
-        }
-
         if (group && group.configuration && group.configuration.useVideoCover && group.GroupLogoVideos) {
           var videoURL = this._getVideoURL(group.GroupLogoVideos);
           var videoPosterURL = this._getVideoPosterURL(group.GroupLogoVideos, group.GroupLogoImages);

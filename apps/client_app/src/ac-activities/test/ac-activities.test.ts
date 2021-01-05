@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout, oneEvent, elementUpdated, fixtureCleanup, nextFrame } from '@open-wc/testing';
 
 import { AcActivities } from '../ac-activities.js';
 import '../ac-activities.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
 describe('AcActivities', () => {
   let element: AcActivities;
-  let server: any; 
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+
     const point = {
       id: 1,
       created_at: new Date(),
@@ -21,19 +22,19 @@ describe('AcActivities', () => {
       PointRevisions: [
         {
           id: 1,
-          content: "Blah",
+          content: 'Blah',
           User: {
             id: 1,
-            email: "blah@blah.is",
-            name: "bluh"
-          }
-        }
+            email: 'blah@blah.is',
+            name: 'bluh',
+          },
+        },
       ],
     } as YpPointData;
 
     const post = {
       id: 1,
-      location:{
+      location: {
         latitude: 2,
         longitude: 3,
       },
@@ -51,39 +52,28 @@ describe('AcActivities', () => {
         counter_users: 2,
         counter_posts: 1,
         configuration: {
-          makeMapViewDefault: false
-        }
-      }
+          makeMapViewDefault: false,
+        },
+      },
     } as YpPostData;
 
     const activity = {
-        type: 'LEXO',
-        created_at: new Date(),
-        domain_id: 2,
-        User: {
-          id: 1,
-          name: 'Lexer'
-        },
-        Post: post,
-        Point: point,
-    } as AcActivityData
+      type: 'LEXO',
+      created_at: new Date(),
+      domain_id: 2,
+      User: {
+        id: 1,
+        name: 'Lexer',
+      },
+      Post: post,
+      Point: point,
+    } as AcActivityData;
 
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/activities/groups/1', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify([activity, activity, activity])
-    ]);
-
-    await YpTestHelpers.setupApp();
-  });
-
-  beforeEach(async () => {
     const recommendedPost = {
       id: 1,
-      location:{
-          latitude: 2,
-          longitude: 3
+      location: {
+        latitude: 2,
+        longitude: 3,
       },
       name: 'Robert',
       group_id: 1,
@@ -99,29 +89,42 @@ describe('AcActivities', () => {
         counter_users: 2,
         counter_posts: 1,
         configuration: {
-        makeMapViewDefault: false
-        }
-      }
+          makeMapViewDefault: false,
+        },
+      },
     } as YpPostData;
 
-    const recommendedPosts = [recommendedPost, recommendedPost]
-  
-    element = await fixture(html`
-      <ac-activities
-       collectionId="1"
-       collectionType="group"
-       .recommendedPosts="${recommendedPosts}">
-      </ac-activities
-      >
-    `);
-    server.respond();
+    const activities = [activity, {...activity, id: 2},  {...activity, id: 3}];
+    const recommendedPosts = [recommendedPost, recommendedPost];
+
+    fetchMock.get('/api/activities/groups/1', { activities: activities }, YpTestHelpers.fetchMockConfig);
+    fetchMock.get('/api/recommendations/groups/1',recommendedPosts, YpTestHelpers.fetchMockConfig);
+
+    await YpTestHelpers.setupApp();
   });
-  
+
+  beforeEach(async() => {
+    //TODO: Remove this hack when LitVirtualizer is ready
+    (window as any).ResizeObserver = undefined;
+
+    element = await fixture(html`
+      ${YpTestHelpers.renderCommonHeader()}
+      <ac-activities
+        collectionId="1"
+        collectionType="group"
+      >
+      </ac-activities>
+    `);
+
+
+    await aTimeout(150);
+  });
+
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
   });
 
   after(async () => {
-    server.restore();
+    fetchMock.reset();
   });
 });
