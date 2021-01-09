@@ -446,28 +446,7 @@ app.use('/pages', legacyPages);
 
 app.post('/authenticate_from_island_is', function (req, res) {
   log.info("SAML SAML 1", {domainId: req.ypDomain.id});
-  log.info("SAML SAML 1a", { body: req.body });
-  log.info("SAML SAML 1b", { body: req.params });
-  if (req.body && req.body.token && req.body.token.length>0) {
-    var str = req.body.token;
-    var l = 5000;
-    var strs = [];
-    while(str.length > l){
-      var pos = str.substring(0, l).lastIndexOf(' ');
-      pos = pos <= 0 ? l : pos;
-      strs.push(str.substring(0, pos));
-      var i = str.indexOf(' ', pos)+1;
-      if(i < pos || i > pos+l)
-        i = pos;
-      str = str.substring(i);
-    }
-    strs.push(str);
-    for (var i=0; i<strs.length; i++) {
-      log.info("SAML SAML 1b", { strs: strs[i] })
-    }
-  }
-
-  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
+  req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error) {
     log.info("SAML SAML 2", {domainId: req.ypDomain.id, err: error});
     if (error) {
       log.error("Error from SAML login", {err: error});
@@ -477,14 +456,19 @@ app.post('/authenticate_from_island_is', function (req, res) {
           if (airbrakeErr.error) {
             log.error("AirBrake Error", {context: 'airbrake', err: airbrakeErr.error, errorStatus: 500});
           }
-          res.sendStatus(500);
+          res.sendStatus(401);
         });
       } else {
-        res.sendStatus(500);
+        res.sendStatus(401);
       }
     } else {
-      log.info("SAML SAML 3", {domainId: req.ypDomain.id});
-      res.render('samlLoginComplete', {});
+      if (req.user.DestinationSSN==="6012101260") {
+        log.info("SAML SAML 3", {domainId: req.ypDomain.id});
+        res.render('samlLoginComplete', {});
+      } else {
+        log.error("Error from SAML login", {err: "Failed DestinationSSN check"});
+        res.sendStatus(401);
+      }
     }
   })
 });

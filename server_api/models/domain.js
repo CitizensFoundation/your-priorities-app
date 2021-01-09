@@ -153,6 +153,7 @@ module.exports = (sequelize, DataTypes) => {
           strategyObject   : 'Strategy',
           strategyPackage  : 'passport-saml',
           certInPemFormat  : true,
+          audience         : req.hostname,
           issuer           : domain.secret_api_keys.saml.issuer ? domain.secret_api_keys.saml.issuer : null,
           entryPoint       : domain.secret_api_keys.saml.entryPoint,
           identifierFormat : domain.secret_api_keys.saml.identifierFormat ? domain.secret_api_keys.saml.identifierFormat : undefined,
