@@ -25,6 +25,7 @@ import { YpBaseElementWithLogin } from '../common/yp-base-element-with-login.js'
 import './yp-post-transcript.js';
 import { YpPostEdit } from './yp-post-edit.js';
 import { YpApiActionDialog } from '../yp-api-action-dialog/yp-api-action-dialog.js';
+import { YpPostHelpers } from '../common/YpPostHelpers.js';
 
 @customElement('yp-post-header')
 export class YpPostHeader extends YpBaseElementWithLogin {
@@ -458,37 +459,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
   }
 
   get structuredAnswersFormatted() {
-    if (
-      this.post &&
-      this.post.public_data &&
-      this.post.public_data.structuredAnswersJson &&
-      this.post.Group.configuration &&
-      this.post.Group.configuration.structuredQuestionsJson
-    ) {
-      const questionHash: Record<string, YpStructuredQuestionData> = {};
-      let outText = '';
-      this.post.Group.configuration.structuredQuestionsJson.forEach(
-        question => {
-          if (question.uniqueId) {
-            questionHash[question.uniqueId] = question;
-          }
-        }
-      );
-
-      this.post.public_data.structuredAnswersJson.forEach(answer => {
-        if (answer && answer.value) {
-          const question = questionHash[answer.uniqueId];
-          if (question) {
-            outText += '<b>' + question.text + '</b>\n';
-            outText += answer.value + '\n\n';
-          }
-        }
-      });
-
-      return outText;
-    } else {
-      return '';
-    }
+    return YpPostHelpers.structuredAnswersFormatted(this.post);
   }
 
   _sharedContent(event: CustomEvent) {
