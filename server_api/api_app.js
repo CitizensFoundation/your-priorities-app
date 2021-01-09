@@ -446,6 +446,12 @@ app.use('/pages', legacyPages);
 
 app.post('/authenticate_from_island_is', function (req, res) {
   log.info("SAML SAML 1", {domainId: req.ypDomain.id});
+  log.info("SAML SAML 1a", { body: req.body });
+  log.info("SAML SAML 1b", { body: req.params });
+  if (req.body) {
+    log.info("SAML SAML 1c", { SAMLResponse: req.body.SAMLResponse });
+    log.info("SAML SAML 1d", { RelayState: req.body.RelayState });
+  }
   req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
     log.info("SAML SAML 2", {domainId: req.ypDomain.id, err: error});
     if (error) {
