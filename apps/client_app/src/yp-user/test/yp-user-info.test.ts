@@ -17,14 +17,9 @@ describe('YpUserInfo', () => {
   });
 
   beforeEach(async () => {
-    const user = {
-        id: 1,
-        name: 'YURR'
-      } as YpUserData
-
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
-      <yp-user-info .user="${user}"></yp-user-info>
+      <yp-user-info .user="${YpTestHelpers.getUser()}"></yp-user-info>
       `);
       await aTimeout(100);
   });

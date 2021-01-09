@@ -23,10 +23,9 @@ describe('AcNotificationList', () => {
         type: 'activity.point.new',
         created_at: new Date(),
         domain_id: 2,
-        User: {
-          id: 1,
-          name: 'Lex'
-        }
+        Point: YpTestHelpers.getPoint(),
+        Post: YpTestHelpers.getPost(),
+        User: YpTestHelpers.getUser()
       }]
     } as AcNotificationData;
   
@@ -35,19 +34,14 @@ describe('AcNotificationList', () => {
     fetchMock.get('/api/notification',{ notifications: notificationList }, YpTestHelpers.fetchMockConfig);
   });
 
-  const user = {
-    id: 1,
-    name: 'YURR'
-  } as YpUserData
-  
   beforeEach(async () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <ac-notification-list
-        .user="${user}"
+        .user="${YpTestHelpers.getUser()}"
       ></ac-notification-list>
     `);
-    await aTimeout(100);
+    await aTimeout(200);
   });
 
   it('passes the a11y audit', async () => {

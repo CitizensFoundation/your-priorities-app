@@ -7,17 +7,18 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('AcNotificationToast', () => {
   let element: AcNotificationToast;
+  let fetchMock: any;
+
+  before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+  });
   
     beforeEach(async () => {
-    const user = {
-      id: 1,
-      name: 'YURR'
-    } as YpUserData
-
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-toast
-          .user="${user}"
+          .user="${YpTestHelpers.getUser()}"
         ></ac-notification-toast>
       `);
       await aTimeout(100);

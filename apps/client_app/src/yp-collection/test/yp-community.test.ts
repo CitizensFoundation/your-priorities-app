@@ -9,8 +9,12 @@ import sinon from 'sinon';
 describe('YpCommunity', () => {
   let element: YpCommunity;
   let server: any;
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+
     const community = {
       id: 1,
       name: 'Betri Reykjavik Test',

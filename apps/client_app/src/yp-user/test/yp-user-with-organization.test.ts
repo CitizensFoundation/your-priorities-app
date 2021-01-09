@@ -17,15 +17,10 @@ describe('YpUserWithOrganization', () => {
   });
 
   beforeEach(async () => {
-    const user = {
-        id: 1,
-        name: 'YURR'
-      } as YpUserData
-
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-user-with-organization
-        .user="${user}">
+        .user="${YpTestHelpers.getUser()}">
       </yp-user-with-organization>
     `);
     await aTimeout(100);

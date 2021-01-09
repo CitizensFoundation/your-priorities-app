@@ -7,7 +7,13 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('AcNotificationSettings', () => {
   let element: AcNotificationSettings;
-  
+  let fetchMock: any;
+
+    before(async () => {
+      fetchMock = YpTestHelpers.getFetchMock();
+      await YpTestHelpers.setupApp();
+    });
+
     beforeEach(async () => {
       const settings = {
         my_posts: {
@@ -46,16 +52,19 @@ describe('AcNotificationSettings', () => {
         }
       } as AcNotificationSettingsData
 
+      
+
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-settings
-          .settings="${settings}"
+          .notificationsSettings="${settings}"
         ></ac-notification-settings>
       `);
       await aTimeout(100);
     });
   
     it('passes the a11y audit', async () => {
+      debugger;
       await expect(element).shadowDom.to.be.accessible();
     });
   });

@@ -30,18 +30,14 @@ export class YpTestHelpers {
   }};
   }
 
-  static getFetchMock() {
-
-    const domain = {
+  static getDomain() {
+    return {
       id: 1,
       name: 'Betri Reykjavik Test',
       description: '',
       counter_posts: 10,
-      counter_points: 11,
+      counter_points: 11, 
       counter_users: 12,
-      configuration: {
-
-      },
       Communities: [
         {
           id: 1,
@@ -55,9 +51,67 @@ export class YpTestHelpers {
           }
         } as YpCommunityData
       ]
-    } as YpDomainData;
+    } as YpDomainData
+  }
 
-    return fetchMock.get('/api/domains', { domain: domain }, YpTestHelpers.fetchMockConfig).
+  static getPost() {
+    return {
+      id: 1,
+      location:{
+        latitude: 2,
+        longitude: 3,
+      },
+      name: 'Robert',
+      group_id: 1,
+      description: 'Post-Test',
+      counter_endorsements_up: 2,
+      counter_endorsements_down: 4,
+      counter_points: 5,
+      Group: {
+        id: 1,
+        name: 'Alexi',
+        community_id: 1,
+        counter_points: 1,
+        counter_users: 2,
+        counter_posts: 1,
+        configuration: {
+          makeMapViewDefault: false
+        }
+      }
+    } as YpPostData;
+  }
+ 
+  static getPoint() {
+    return {
+      id: 1,
+      created_at: new Date(),
+      counter_quality_up: 3,
+      counter_quality_down: 2,
+      content: 'Betri-Alexander',
+      value: 1,
+      PointRevisions: [
+        {
+          id: 1,
+          content: "Blah",
+          User: {
+            id: 1,
+            email: "blah@blah.is",
+            name: "bluh"
+          }
+        }
+      ],
+    } as YpPointData;
+  }
+
+  static getUser() {
+    return {
+      id: 1,
+      name: 'YURR'
+    } as YpUserData
+  }
+
+  static getFetchMock() {
+    return fetchMock.get('/api/domains', { domain: YpTestHelpers.getDomain() }, YpTestHelpers.fetchMockConfig).
       get('/api/videos/hasVideoUploadSupport', { hasTranscriptSupport: true, hasVideoUploadSupport: true }, YpTestHelpers.fetchMockConfig).
       get('/api/audios/hasAudioUploadSupport', { hasAudioUploadSupport: true }, YpTestHelpers.fetchMockConfig).
       get('/api/users/loggedInUser/isloggedin', { notLoggedIn: true }, YpTestHelpers.fetchMockConfig).

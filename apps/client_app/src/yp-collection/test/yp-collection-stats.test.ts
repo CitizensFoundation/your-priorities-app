@@ -7,6 +7,12 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpCollectionStats', () => {
   let element: YpCollectionStats;
+  let fetchMock: any;
+
+  before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+  });
 
   before(async () => {
     await YpTestHelpers.setupApp();
@@ -15,19 +21,10 @@ describe('YpCollectionStats', () => {
   beforeEach(async () => {
     const collectionType = 'domain';
 
-    const domain = {
-      id: 1,
-      name: 'Betri Reykjavik Test',
-      description: '',
-      counter_posts: 10,
-      counter_points: 11,
-      counter_users: 12,
-    } as YpDomainData;
-
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-stats
-        .collection="${domain}"
+        .collection="${YpTestHelpers.getDomain()}"
         .collectionType="${collectionType}"></yp-collection-stats>
     `);
     await aTimeout(100)

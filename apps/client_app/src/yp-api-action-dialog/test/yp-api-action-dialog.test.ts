@@ -7,7 +7,13 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpApiActionDialog', () => {
   let element: YpApiActionDialog;
+  let fetchMock: any;
 
+  before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+  });
+  
   before(async () => {
     await YpTestHelpers.setupApp();
   });

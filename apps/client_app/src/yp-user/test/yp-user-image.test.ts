@@ -17,13 +17,10 @@ describe('YpUserImage', () => {
   });
 
   beforeEach(async () => {
-    const user = {
-        id: 1,
-        name: 'YURR'
-      } as YpUserData
+    
     element = await fixture(html` 
       ${YpTestHelpers.renderCommonHeader()}
-      <yp-user-image .user="${user}"></yp-user-image>
+      <yp-user-image .user="${YpTestHelpers.getUser()}"></yp-user-image>
       `);
       await aTimeout(100);
     

@@ -13,30 +13,10 @@ describe('YpPointCommentEdit', () => {
   });
 
   beforeEach(async () => {
-    const point = {
-      id: 1,
-      created_at: new Date(),
-      counter_quality_up: 3,
-      counter_quality_down: 2,
-      content: 'Betri-Alexander',
-      value: 1,
-      PointRevisions: [
-        {
-          id: 1,
-          content: "Blah",
-          User: {
-            id: 1,
-            email: "blah@blah.is",
-            name: "bluh"
-          }
-        }
-      ],
-    } as YpPointData;
-
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-point-comment-edit
-        .point="${point}"
+        .point="${YpTestHelpers.getPoint()}"
       ></yp-point-comment-edit>
     `);
     await aTimeout(100);

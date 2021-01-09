@@ -7,27 +7,21 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpCollectionItemsGrid', () => {
   let element: YpCollectionItemsGrid;
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
+  
 
   beforeEach(async () => {
     const collectionType = 'domain';
 
-    const domain = {
-      id: 1,
-      name: 'Betri Reykjavik Test',
-      description: '',
-      counter_posts: 10,
-      counter_points: 11,
-      counter_users: 12,
-    } as YpDomainData;
-
     element = await fixture(html`
     ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-items-grid
-        .collection="${domain}"
+        .collection="${YpTestHelpers.getDomain()}"
         .collectionType="${collectionType}"></yp-collection-items-grid>
     `);
     await aTimeout(100)

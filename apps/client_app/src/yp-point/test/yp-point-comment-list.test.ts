@@ -12,33 +12,14 @@ describe('YpPointCommentList', () => {
 
   before(async () => {
     await YpTestHelpers.setupApp();
-    const point = {
-      id: 1,
-      created_at: new Date(),
-      counter_quality_up: 3,
-      counter_quality_down: 2,
-      content: 'Betri-Alexander',
-      value: 1,
-      PointRevisions: [
-        {
-          id: 1,
-          content: "Blah",
-          User: {
-            id: 1,
-            email: "blah@blah.is",
-            name: "bluh"
-          }
-        }
-      ],
-    } as YpPointData;
-
-    const commentList = [point, point, point];
+    
+    const commentList = [YpTestHelpers.getPoint(), YpTestHelpers.getPoint(), YpTestHelpers.getPoint()];
     
     server = sinon.fakeServer.create();
     server.respondWith('GET', '/api/points/1/comments', [
       200,
       { 'Content-Type': 'application/json' },
-      JSON.stringify(point)
+      JSON.stringify(YpTestHelpers.getPoint())
     ]);
     await YpTestHelpers.setupApp();
   });

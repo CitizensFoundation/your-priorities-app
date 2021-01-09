@@ -7,6 +7,12 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('AcNotificationSelection', () => {
   let element: AcNotificationSelection;
+  let fetchMock: any; 
+
+  before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+  });
   
     beforeEach(async () => {
       const settings = {
@@ -24,6 +30,7 @@ describe('AcNotificationSelection', () => {
     });
   
     it('passes the a11y audit', async () => {
+      debugger;
       await expect(element).shadowDom.to.be.accessible();
     });
   });

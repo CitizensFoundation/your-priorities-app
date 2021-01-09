@@ -7,58 +7,14 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('AcNotificationListPoint', () => {
   let element: AcNotificationListPoint;
-  
-    beforeEach(async () => {
-      const post = {
-        id: 1,
-        location:{
-          latitude: 2,
-          longitude: 3,
-        },
-        name: 'Robert',
-        group_id: 1,
-        description: 'Post-Test',
-        counter_endorsements_up: 2,
-        counter_endorsements_down: 4,
-        counter_points: 5,
-        Group: {
-          id: 1,
-          name: 'Alexi',
-          community_id: 1,
-          counter_points: 1,
-          counter_users: 2,
-          counter_posts: 1,
-          configuration: {
-            makeMapViewDefault: false
-          }
-        }
-      } as YpPostData;
+  let fetchMock: any;
 
-      const user = {
-        id: 1,
-        name: 'YURR'
-      } as YpUserData
+  before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+  });
 
-      const point = {
-        id: 1,
-        created_at: new Date(),
-        counter_quality_up: 3,
-        counter_quality_down: 2,
-        content: 'Betri-Alexander',
-        value: 1,
-        PointRevisions: [
-          {
-            id: 1,
-            content: "Blah",
-            User: {
-              id: 1,
-              email: "blah@blah.is",
-              name: "bluh"
-            }
-          }
-        ],
-      } as YpPointData;
-
+    beforeEach(async () => { 
       const notification =  {
         id: 1,
         type: 'notification.point.new',
@@ -69,13 +25,10 @@ describe('AcNotificationListPoint', () => {
           type: 'activity.point.new',
           created_at: new Date(),
           domain_id: 2,
-          User: {
-            id: 1,
-            name: 'Lex'
-          },
-          Point: point,
-          Post: post,
-        }],
+          Point: YpTestHelpers.getPoint(),
+          Post: YpTestHelpers.getPost(),
+          User: YpTestHelpers.getUser()
+        }]
     } as AcNotificationData;
   
       element = await fixture(html`
@@ -88,7 +41,7 @@ describe('AcNotificationListPoint', () => {
     });
   
     it('passes the a11y audit', async () => {
-      debugger; 
+      debugger;
       await expect(element).shadowDom.to.be.accessible();
     });
   });

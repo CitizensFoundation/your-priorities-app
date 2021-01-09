@@ -8,9 +8,13 @@ import sinon from 'sinon';
 
 describe('YpGroup', () => {
   let element: YpGroup;
-  let server: any; 
+  let server: any;
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+
     const group = {
       id: 1,
       name: 'Betri Reykjavik Test',
@@ -26,8 +30,6 @@ describe('YpGroup', () => {
       { 'Content-Type': 'application/json' },
       JSON.stringify(group)
     ]);
-
-    await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {

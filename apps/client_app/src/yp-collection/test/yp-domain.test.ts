@@ -9,39 +9,18 @@ import sinon from 'sinon';
 describe('YpDomain', () => {
   let element: YpDomain;
   let server: any; 
+  let fetchMock: any;
 
   before(async () => {
-    const domain = {
-      id: 1,
-      name: 'Betri Reykjavik Test',
-      description: '',
-      counter_posts: 10,
-      counter_points: 11,
-      counter_users: 12,
-      configuration: {
+    await YpTestHelpers.setupApp();
+    fetchMock = YpTestHelpers.getFetchMock();
 
-      },
-      Communities: [
-        {
-          id: 1,
-          name: 'BEE',
-          description: '',
-          counter_posts: 10,
-          counter_points: 11,
-          counter_users: 12,
-          configuration: {
-            
-          }
-        } as YpCommunityData
-      ]
-    } as YpDomainData;
     server = sinon.fakeServer.create();
     server.respondWith('GET', '/api/domains/1', [
       200,
       { 'Content-Type': 'application/json' },
-      JSON.stringify(domain)
+      JSON.stringify(YpTestHelpers.getDomain())
     ]);
-    await YpTestHelpers.setupApp();
   });
 
   beforeEach(async () => {

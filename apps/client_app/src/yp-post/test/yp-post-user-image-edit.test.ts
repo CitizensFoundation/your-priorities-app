@@ -13,35 +13,10 @@ describe('YpPostUserImageEdit', () => {
   });
 
   beforeEach(async () => {
-    const post = {
-        id: 1,
-        location:{
-          latitude: 2,
-          longitude: 3,
-        },
-        name: 'Robert',
-        group_id: 1,
-        description: 'Post-Test',   
-        counter_endorsements_up: 2,
-        counter_endorsements_down: 4,
-        counter_points: 5,
-        Group: {
-          id: 1,
-          name: 'Alex',
-          community_id: 1,
-          counter_points: 1,
-          counter_users: 2,
-          counter_posts: 1,
-          configuration: {
-            makeMapViewDefault: false
-          }
-        }
-      } as YpPostData;
-
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-post-user-image-edit
-        .post="${post}"
+        .post="${YpTestHelpers.getPost()}"
       ></yp-post-user-image-edit>
     `);
     await aTimeout(100);
