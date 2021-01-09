@@ -450,7 +450,7 @@ app.post('/authenticate_from_island_is', function (req, res) {
   log.info("SAML SAML 1b", { body: req.params });
   if (req.body && req.body.token && req.body.token.length>0) {
     var str = req.body.token;
-    var l = 1024;
+    var l = 5000;
     var strs = [];
     while(str.length > l){
       var pos = str.substring(0, l).lastIndexOf(' ');
@@ -462,7 +462,9 @@ app.post('/authenticate_from_island_is', function (req, res) {
       str = str.substring(i);
     }
     strs.push(str);
-    log.info("SAML SAML 1b", { strs: strs })
+    for (var i=0; i<strs.length; i++) {
+      log.info("SAML SAML 1b", { strs: strs[i] })
+    }
   }
 
   req.sso.authenticate('saml-strategy-' + req.ypDomain.id, {}, req, res, function (error, user) {
