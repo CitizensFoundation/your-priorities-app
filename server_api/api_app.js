@@ -458,6 +458,8 @@ app.post('/authenticate_from_island_is', function (req, res) {
           }
           res.sendStatus(500);
         });
+      } else {
+        res.sendStatus(500);
       }
     } else {
       log.info("SAML SAML 3", {domainId: req.ypDomain.id});
