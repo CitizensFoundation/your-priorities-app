@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpPointCommentList', () => {
   let element: YpPointCommentList;
+  let fetchMock: any;
   let server: any; 
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
     
     const commentList = [YpTestHelpers.getPoint(), YpTestHelpers.getPoint(), YpTestHelpers.getPoint()];

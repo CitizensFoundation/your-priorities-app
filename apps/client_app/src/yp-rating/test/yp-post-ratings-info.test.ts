@@ -8,8 +8,10 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostRatingsInfo', () => {
   let element: YpPostRatingsInfo;
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
 

@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpUserEdit', () => {
   let element: YpUserEdit;
+  let fetchMock: any; 
   let server: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     server = sinon.fakeServer.create();
 
     await YpTestHelpers.setupApp();
@@ -54,14 +56,9 @@ describe('YpUserEdit', () => {
       },
     } as AcNotificationSettingsData;
 
-    const user = {
-      id: 1,
-      name: 'YURR',
-    } as YpUserData;
-
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
-      <yp-user-edit .settings="${settings}" .user="${user}"></yp-user-edit>
+      <yp-user-edit .settings="${settings}" .user="${YpTestHelpers.getUser()}"></yp-user-edit>
     `);
     await aTimeout(100);
     element.open(true, { id: 1 });

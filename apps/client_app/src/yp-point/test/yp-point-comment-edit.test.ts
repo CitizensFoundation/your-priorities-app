@@ -7,8 +7,10 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPointCommentEdit', () => {
   let element: YpPointCommentEdit;
+  let fetchMock: any; 
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
 

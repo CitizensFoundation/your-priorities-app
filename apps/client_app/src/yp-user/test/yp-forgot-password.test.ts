@@ -8,6 +8,7 @@ import sinon from 'sinon';
 
 describe('YpForgotPassword', () => {
   let element: YpForgotPassword;
+  let fetchMock: any; 
   let server: any; 
 
   before(async () => {

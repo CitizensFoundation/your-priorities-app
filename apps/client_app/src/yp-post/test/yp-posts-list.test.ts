@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpPostslist', () => {
   let element: YpPostsList;
+  let fetchMock: any; 
   let server: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     const posts = [
       {
         id: 1,

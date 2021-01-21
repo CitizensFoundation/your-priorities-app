@@ -7,8 +7,10 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostLocation', () => {
   let element: YpPostLocation;
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
 

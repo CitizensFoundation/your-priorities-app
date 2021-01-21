@@ -7,8 +7,10 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostCardAdd', () => {
   let element: YpPostCardAdd;
+  let fetchMock: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
 

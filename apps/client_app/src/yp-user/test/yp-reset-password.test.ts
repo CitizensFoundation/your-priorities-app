@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpResetPassword', () => {
   let element: YpResetPassword;
+  let fetchMock: any; 
   let server: any; 
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     server = sinon.fakeServer.create();     
 
     await YpTestHelpers.setupApp();

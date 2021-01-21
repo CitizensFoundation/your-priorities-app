@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpSurveyGroup', () => {
   let element: YpSurveyGroup;
+  let fetchMock: any;
   let server: any; 
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     const group = {
       id: 1,
       name: 'Betri Reykjavik Test',

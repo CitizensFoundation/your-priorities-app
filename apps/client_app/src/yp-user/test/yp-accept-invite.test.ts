@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpAcceptInvite', () => {
   let element: YpAcceptInvite;
+  let fetchMock: any; 
   let server: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     server = sinon.fakeServer.create();
     server.respondWith('GET', '/api/users/get_invite_info/BLAH', [
       200,

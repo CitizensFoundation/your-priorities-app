@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpUserDeleteOrAnonymize', () => {
   let element: YpUserDeleteOrAnonymize;
+  let fetchMock: any; 
   let server: any; 
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     server = sinon.fakeServer.create();     
 
     await YpTestHelpers.setupApp();
@@ -20,9 +22,8 @@ describe('YpUserDeleteOrAnonymize', () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-user-delete-or-anonymize></yp-user-delete-or-anonymize>
-      `);
-      await aTimeout(100);
-   
+    `);
+    await aTimeout(100);
     element.open();
   });
   

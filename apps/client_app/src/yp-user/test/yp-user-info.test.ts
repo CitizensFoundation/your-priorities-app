@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpUserInfo', () => {
   let element: YpUserInfo;
+  let fetchMock: any; 
   let server: any; 
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     server = sinon.fakeServer.create();
 
     await YpTestHelpers.setupApp();

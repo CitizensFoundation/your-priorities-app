@@ -8,9 +8,11 @@ import sinon from 'sinon';
 
 describe('YpPost', () => {
   let element: YpPost;
+  let fetchMock: any; 
   let server: any;
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     server = sinon.fakeServer.create();
     server.respondWith('GET', '/api/post/1', [
       200,

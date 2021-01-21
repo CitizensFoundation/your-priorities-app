@@ -9,9 +9,11 @@ import sinon from 'sinon';
 
 describe('YpDialogRatings', () => {
   let element: YpDialogRatings;
+  let fetchMock: any; 
   let server: any; 
 
   before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
     server = sinon.fakeServer.create();
     server.respondWith('POST', '/api/ratings/1/0', [
       200,

@@ -7,6 +7,12 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpPostsFilter', () => {
   let element: YpPostsFilter;
+  let fetchMock: any; 
+
+  before(async () => {
+    fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+  });
 
   beforeEach(async () => {
     const group = {
