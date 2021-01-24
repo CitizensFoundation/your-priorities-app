@@ -4,15 +4,13 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpForgotPassword } from '../yp-forgot-password.js';
 import '../yp-forgot-password.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon'; 
 
 describe('YpForgotPassword', () => {
   let element: YpForgotPassword;
   let fetchMock: any; 
   let server: any; 
 
-  before(async () => {
-    server = sinon.fakeServer.create();     
+  before(async () => {    
 
     await YpTestHelpers.setupApp();
   });
@@ -28,9 +26,5 @@ describe('YpForgotPassword', () => {
   
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
-  });
-
-  after(async () => {
-    server.restore();
   });
 });

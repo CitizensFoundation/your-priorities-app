@@ -54,6 +54,32 @@ export class YpTestHelpers {
     } as YpDomainData
   }
 
+  static getCommunity() {
+    return {
+     id: 1,
+      name: 'Betri Reykjavik Test',
+      description: '',
+      counter_posts: 10,
+      counter_points: 11,
+      counter_users: 12,
+      configuration: {
+
+      },
+      Groups: [
+        {
+          id: 1,
+          name: 'Betri Reykjavik Test',
+          objectives: '',
+          counter_posts: 10,
+          counter_points: 11,
+          counter_users: 12,
+          configuration: {
+          }
+        } as YpGroupData
+      ]
+    } as YpCommunityData;
+  }
+
   static getPost() {
     return {
       id: 1,
@@ -122,6 +148,13 @@ export class YpTestHelpers {
         makeMapViewDefault: false
       }
     } as YpGroupData
+  }
+
+  static getGroupResults() {
+    return {
+      group: YpTestHelpers.getGroup(), 
+      hasNonOpenPosts: true
+    }
   }
 
   static getFetchMock() {

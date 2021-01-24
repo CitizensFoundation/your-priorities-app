@@ -4,7 +4,6 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpUserImage } from '../yp-user-image.js';
 import '../yp-user-image.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
 describe('YpUserImage', () => {
   let element: YpUserImage;
@@ -13,8 +12,6 @@ describe('YpUserImage', () => {
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
-    server = sinon.fakeServer.create(); 
-
     await YpTestHelpers.setupApp();
   });
 
@@ -30,8 +27,5 @@ describe('YpUserImage', () => {
   
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
-  });
-  after(async () => {
-    server.restore();
   });
 });

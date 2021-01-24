@@ -4,17 +4,13 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpUserEdit } from '../yp-user-edit.js';
 import '../yp-user-edit.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
 describe('YpUserEdit', () => {
   let element: YpUserEdit;
   let fetchMock: any; 
-  let server: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
-    server = sinon.fakeServer.create();
-
     await YpTestHelpers.setupApp();
   });
 
@@ -66,9 +62,5 @@ describe('YpUserEdit', () => {
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
-  });
-  
-  after(async () => {
-    server.restore();
   });
 });

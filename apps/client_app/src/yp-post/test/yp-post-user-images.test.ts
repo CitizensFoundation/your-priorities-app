@@ -4,22 +4,16 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpPostUserImages } from '../yp-post-user-images.js';
 import '../yp-post-user-images.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
 describe('YpPostUserImages', () => {
   let element: YpPostUserImages;
   let fetchMock: any; 
-  let server: any; 
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/images/1/user_images', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify(YpTestHelpers.getPost())
-    ]);
     await YpTestHelpers.setupApp();
+
+    fetchMock.get('/api/images/1/user_images',YpTestHelpers.getPost(), YpTestHelpers.fetchMockConfig);    
   });
 
   beforeEach(async () => {
@@ -30,14 +24,9 @@ describe('YpPostUserImages', () => {
       ></yp-post-user-images>
     `);
     await aTimeout(100);
-    server.respond();
   });
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
-  });
-
-  after(async () => {
-    server.restore();
   });
 });

@@ -4,15 +4,15 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpPostPoints } from '../yp-post-points.js';
 import '../yp-post-points.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
 describe('YpPostPoints', () => {
   let element: YpPostPoints;
   let fetchMock: any; 
-  let server: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+
     const pointsResponse = {
       count: 0,
       points: [
@@ -49,14 +49,9 @@ describe('YpPostPoints', () => {
       ]      
     } as YpGetPointsResponse
 
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/posts/1/points', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify(pointsResponse)
-    ]);
-    await YpTestHelpers.setupApp();
+    fetchMock.get('/api/posts/1/points',pointsResponse, YpTestHelpers.fetchMockConfig);
   });
+  
 
   beforeEach(async () => { 
     element = await fixture(html`
@@ -66,14 +61,9 @@ describe('YpPostPoints', () => {
       ></yp-post-points>
     `);
     await aTimeout(100);
-    server.respond();
   });
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
-  });
-
-  after(async () => {
-    server.restore();
   });
 });

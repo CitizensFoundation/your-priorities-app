@@ -4,15 +4,16 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpSurveyGroup } from '../yp-survey-group.js';
 import '../yp-survey-group.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
+
 
 describe('YpSurveyGroup', () => {
   let element: YpSurveyGroup;
   let fetchMock: any;
-  let server: any; 
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+
     const group = {
       id: 1,
       name: 'Betri Reykjavik Test',
@@ -41,13 +42,7 @@ describe('YpSurveyGroup', () => {
       }
     } as YpGroupData;
 
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/groups/1/survey', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify(group)
-    ]);
-    await YpTestHelpers.setupApp();
+    fetchMock.get('/api/groups/1/survey', group, YpTestHelpers.fetchMockConfig);
   });
 
   beforeEach(async () => {
@@ -59,14 +54,11 @@ describe('YpSurveyGroup', () => {
       </yp-survey-group>
     `);
     await aTimeout(100);
-    server.respond(); 
   });
 
   it('passes the a11y audit', async () => {
     await expect(element).shadowDom.to.be.accessible();
   });
 
-  after(async () => {
-    server.restore();
-  });
+  
 });

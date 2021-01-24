@@ -4,7 +4,6 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpLogin } from '../yp-login.js';
 import '../yp-login.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon'; 
 
 describe('YpLogin', () => {
   let element: YpLogin;
@@ -12,9 +11,7 @@ describe('YpLogin', () => {
   let server: any; 
 
   before(async () => {
-    fetchMock = YpTestHelpers.getFetchMock();
-    server = sinon.fakeServer.create();     
-
+    fetchMock = YpTestHelpers.getFetchMock();    
     await YpTestHelpers.setupApp();
   });
 

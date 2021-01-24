@@ -4,15 +4,15 @@ import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 import { YpPostsList } from '../yp-posts-list.js';
 import '../yp-posts-list.js';
 import { YpTestHelpers } from '../../common/test/setup-app.js';
-import sinon from 'sinon';
 
 describe('YpPostslist', () => {
   let element: YpPostsList;
   let fetchMock: any; 
-  let server: any;
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
+    await YpTestHelpers.setupApp();
+
     const posts = [
       {
         id: 1,
@@ -54,14 +54,8 @@ describe('YpPostslist', () => {
         counter_points: 5,
       },
     ] as Array<YpPostData>
-    
-    server = sinon.fakeServer.create();
-    server.respondWith('GET', '/api/groups/1/posts/newest/null/open?offset=0', [
-      200,
-      { 'Content-Type': 'application/json' },
-      JSON.stringify(posts)
-    ]);
-    await YpTestHelpers.setupApp();
+  
+    fetchMock.get('/api/groups/1/posts/newest/null/open?offset=0', posts, YpTestHelpers.fetchMockConfig);
   });
 
     beforeEach(async () => {
@@ -72,14 +66,9 @@ describe('YpPostslist', () => {
         ></yp-posts-list>
       `);
       await aTimeout(100);
-      server.respond();
     });
   
     it('passes the a11y audit', async () => {
       await expect(element).shadowDom.to.be.accessible();
-    });
-    
-    after(async () => {
-      server.restore();
-    });
+    });   
   });
