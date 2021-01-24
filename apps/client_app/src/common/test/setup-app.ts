@@ -110,6 +110,20 @@ export class YpTestHelpers {
     } as YpUserData
   }
 
+  static getGroup() {
+    return {
+      id: 1,
+      name: 'Betri Reykjavik Test',
+      objectives: '',
+      counter_posts: 10,
+      counter_points: 11,
+      counter_users: 12,
+      configuration: {
+        makeMapViewDefault: false
+      }
+    } as YpGroupData
+  }
+
   static getFetchMock() {
     return fetchMock.get('/api/domains', { domain: YpTestHelpers.getDomain() }, YpTestHelpers.fetchMockConfig).
       get('/api/videos/hasVideoUploadSupport', { hasTranscriptSupport: true, hasVideoUploadSupport: true }, YpTestHelpers.fetchMockConfig).

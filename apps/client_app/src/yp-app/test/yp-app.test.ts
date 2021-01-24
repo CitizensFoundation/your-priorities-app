@@ -26,6 +26,7 @@ describe('YpApp', () => {
   });
 
   it('passes the a11y audit', async () => {
+    debugger; 
     await expect(element).shadowDom.to.be.accessible();
   });
 });

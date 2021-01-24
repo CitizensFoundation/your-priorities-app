@@ -65,22 +65,10 @@ describe('YpPostslist', () => {
   });
 
     beforeEach(async () => {
-      const group = {
-        id: 1,
-        name: 'Alex',
-        community_id: 1,
-        counter_points: 1,
-        counter_users: 2,
-        counter_posts: 1,
-        configuration: {
-          makeMapViewDefault: false
-        }
-      } as YpGroupData;
-      
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <yp-posts-list
-          .group="${group}"
+          .group="${YpTestHelpers.getGroup()}"
         ></yp-posts-list>
       `);
       await aTimeout(100);

@@ -14,10 +14,6 @@ describe('YpApiActionDialog', () => {
     await YpTestHelpers.setupApp();
   });
   
-  before(async () => {
-    await YpTestHelpers.setupApp();
-  });
-
   beforeEach(async () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
@@ -29,6 +25,7 @@ describe('YpApiActionDialog', () => {
   });
 
   it('passes the a11y audit', async () => {
+    debugger; 
     await expect(element).shadowDom.to.be.accessible();
   });
 });

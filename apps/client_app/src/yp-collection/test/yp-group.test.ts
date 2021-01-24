@@ -14,21 +14,12 @@ describe('YpGroup', () => {
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
-
-    const group = {
-      id: 1,
-      name: 'Betri Reykjavik Test',
-      objectives: '',
-      counter_posts: 10,
-      counter_points: 11,
-      counter_users: 12,
-    } as YpGroupData;
-
+    
     server = sinon.fakeServer.create();
     server.respondWith('GET', '/api/group/1', [
       200,
       { 'Content-Type': 'application/json' },
-      JSON.stringify(group)
+      JSON.stringify(YpTestHelpers.getGroup())
     ]);
   });
 
@@ -36,13 +27,15 @@ describe('YpGroup', () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-group
-        collectionId="1"></yp-group>
+        collectionId="1">
+      </yp-group>
     `);
     await aTimeout(100);
     server.respond();
   });
 
   it('passes the a11y audit', async () => {
+    debugger; 
     await expect(element).shadowDom.to.be.accessible();
   });
   after(async () => {

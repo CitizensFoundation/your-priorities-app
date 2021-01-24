@@ -25,8 +25,7 @@ describe('AcActivityPoint', () => {
     element = await fixture(html`
     ${YpTestHelpers.renderCommonHeader()}
       <ac-activity-point
-       .activity="${activity}"
-       >
+        .activity="${activity}">
       </ac-activity-point
       >
     `);
@@ -34,7 +33,7 @@ describe('AcActivityPoint', () => {
   });
   
   it('passes the a11y audit', async () => {
-    
+    debugger; 
     await expect(element).shadowDom.to.be.accessible();
   });
 });

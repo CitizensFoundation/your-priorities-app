@@ -30,7 +30,6 @@ describe('AcNotificationListGenaralItem', () => {
         }]
     } as AcNotificationData;
 
-  
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <ac-notification-list-general-item

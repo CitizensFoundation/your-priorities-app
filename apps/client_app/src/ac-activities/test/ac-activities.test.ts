@@ -66,7 +66,6 @@ describe('AcActivities', () => {
       </ac-activities>
     `);
 
-
     await aTimeout(150);
   });
 

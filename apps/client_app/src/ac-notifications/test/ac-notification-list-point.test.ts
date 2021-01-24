@@ -41,7 +41,7 @@ describe('AcNotificationListPoint', () => {
     });
   
     it('passes the a11y audit', async () => {
-      debugger;
+      debugger; 
       await expect(element).shadowDom.to.be.accessible();
     });
   });

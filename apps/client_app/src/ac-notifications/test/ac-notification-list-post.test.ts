@@ -13,8 +13,7 @@ describe('AcNotificationListPost', () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
   });
-  
-  
+
     beforeEach(async () => {
       const notification =  {
         id: 1,
