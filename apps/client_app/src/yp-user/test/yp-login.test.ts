@@ -8,8 +8,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 describe('YpLogin', () => {
   let element: YpLogin;
   let fetchMock: any; 
-  let server: any; 
-
+  
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();    
     await YpTestHelpers.setupApp();
@@ -26,10 +25,7 @@ describe('YpLogin', () => {
   });
   
   it('passes the a11y audit', async () => {
+    debugger; 
     await expect(element).shadowDom.to.be.accessible();
-  });
-
-  after(async () => {
-    server.restore();
   });
 });

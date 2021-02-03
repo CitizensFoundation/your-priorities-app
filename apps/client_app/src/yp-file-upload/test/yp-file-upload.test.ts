@@ -7,7 +7,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 
 describe('YpFileUpload', () => {
   let element: YpFileUpload;
-  let fetchMock
+  let fetchMock: any; 
 
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();

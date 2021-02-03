@@ -157,6 +157,16 @@ export class YpTestHelpers {
     }
   }
 
+  static getImages() {
+    return [{
+      description: 'Tekinn af ', 
+      photographer_name: 'Alexander',
+      id: 2,
+      formats: '["https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-desktop-retina.png","https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-mobile-retina.png","https://yrpri6-production.s3.amazonaws.com/5dddb81c-6023-4636-aae6-29e013e084d4-thumb.png"]',
+      user_id: 2,
+    }] as Array<YpImageData> 
+  }
+
   static getFetchMock() {
     return fetchMock.get('/api/domains', { domain: YpTestHelpers.getDomain() }, YpTestHelpers.fetchMockConfig).
       get('/api/videos/hasVideoUploadSupport', { hasTranscriptSupport: true, hasVideoUploadSupport: true }, YpTestHelpers.fetchMockConfig).

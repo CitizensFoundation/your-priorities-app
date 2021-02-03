@@ -15,13 +15,14 @@ describe('YpCollectionItemCard', () => {
   });
   
   beforeEach(async () => {
-    const collectionType = 'domain';
+    const itemType = 'community';
 
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-item-card
         .collection="${YpTestHelpers.getDomain()}"
-        .collectionType="${collectionType}"></yp-collection-item-card>
+        .item="${YpTestHelpers.getCommunity()}"
+        .itemType="${itemType}"></yp-collection-item-card>
     `);
     await aTimeout(100);
   });

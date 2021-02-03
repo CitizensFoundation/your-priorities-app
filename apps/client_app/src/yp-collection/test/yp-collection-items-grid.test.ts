@@ -18,13 +18,21 @@ describe('YpCollectionItemsGrid', () => {
   beforeEach(async () => {
     const collectionType = 'domain';
 
+    const collectionItems = YpTestHelpers.getDomain().Communities;
+
+    const collectionItemType = 'community'
+
+  
     element = await fixture(html`
     ${YpTestHelpers.renderCommonHeader()}
       <yp-collection-items-grid
         .collection="${YpTestHelpers.getDomain()}"
-        .collectionType="${collectionType}"></yp-collection-items-grid>
+        .collectionItems="${collectionItems}"
+        .collectionType="${collectionType}"
+        .collectionItemType="${collectionItemType}">
+        </yp-collection-items-grid>
     `);
-    await aTimeout(100)
+    await aTimeout(1000)
   });
 
   it('passes the a11y audit', async () => {

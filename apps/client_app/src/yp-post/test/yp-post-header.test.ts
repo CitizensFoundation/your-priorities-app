@@ -25,6 +25,7 @@ describe('YpPostHeader', () => {
   });
 
   it('passes the a11y audit', async () => {
+    debugger;
     await new Promise(resolve => setTimeout(resolve, 10000));
     await expect(element).shadowDom.to.be.accessible();
   });

@@ -18,7 +18,7 @@ describe('YpPostCard', () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-post-card
-        .group="${YpTestHelpers.getGroup()}"
+        .post="${YpTestHelpers.getPost()}"
       ></yp-post-card>
     `);
     await aTimeout(100);

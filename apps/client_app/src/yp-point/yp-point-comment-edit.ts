@@ -113,9 +113,10 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
   }
 
   updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    debugger; 
     super.updated(changedProperties);
 
-    //TODO: See what this is about and fix the iron-resize if needed
+    //TODO: See what this is about and fix the iron-resize if needed 
     if (changedProperties.has('comment') && this.comment) {
       if (this.comment.value && this.comment.value % 7 === 2) {
         this.fire('iron-resize');
