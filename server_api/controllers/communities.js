@@ -1673,11 +1673,12 @@ router.post('/:communityId/upload_ssn_login_list', auth.can('edit community'), f
       const rl = readline.createInterface(instream, outstream);
       const ssns = [];
       rl.on('line', (line) => {
-        const isnum = /^\d+$/.test(line);
-        if (isnum && line.length==10) {
-          ssns.push(line);
+        var fixedLine = line.replace("-","");
+        const isnum = /^\d+$/.test(fixedLine);
+        if (isnum && fixedLine.length==10) {
+          ssns.push(fixedLine);
         } else {
-          log.warn("Malformatted line in upload_ssn_login_list", { line });
+          log.warn("Malformatted line in upload_ssn_login_list", { fixedLine });
         }
       });
       rl.on('close', () => {
