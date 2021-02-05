@@ -136,6 +136,8 @@
 
         if (textContent) {
           this.set('characterCount', textContent.length);
+        } else {
+          this.set('characterCount', 0);
         }
       }
 
@@ -144,10 +146,10 @@
 
         if (this.question.maxLength) {
           var allowedKeyCodes = [8, 37, 38, 39, 40];
-          var allowedKeyCodesWithCtrlKey = [65, 90, 86, 67, 88];
-          var isAllowedKey = allowedKeyCodes.includes(event.keyCode)
-          var isShortcut = event.ctrlKey && allowedKeyCodesWithCtrlKey.includes(event.keyCode)
-          var isAllowedAction = isAllowedKey || isShortcut
+          var allowedKeyCodesWithCtrlKey = [65, 90, 86, 67, 88, 8];
+          var isAllowedKey = allowedKeyCodes.includes(event.keyCode);
+          var isShortcut = event.ctrlKey && allowedKeyCodesWithCtrlKey.includes(event.keyCode);
+          var isAllowedAction = isAllowedKey || isShortcut;
 
           if (isAllowedAction) {
             return
