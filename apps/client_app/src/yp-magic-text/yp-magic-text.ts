@@ -6,7 +6,8 @@ import { YpBaseElement } from '../common/yp-base-element.js';
 
 import { twemoji } from '@kano/twemoji/index.es.js';
 
-import linkifyStr from 'linkifyjs/string.js';
+import linkifyHtml from 'linkifyjs/html.js';
+import linkifyStr from 'linkifyjs/html.js';
 
 @customElement('yp-magic-text')
 export class YpMagicText extends YpBaseElement {
@@ -151,6 +152,13 @@ export class YpMagicText extends YpBaseElement {
   }
 
   get showMoreText(): boolean {
+    //TODO: Find a more appropiate place for this logic below
+    if (!this.isDialog && !this.truncate) {
+      this.truncate = 500;
+    } else if (this.isDialog) {
+      this.truncate = undefined;
+    }
+
     return (
       this.moreText !== undefined &&
       this.content !== undefined &&
@@ -464,7 +472,17 @@ export class YpMagicText extends YpBaseElement {
         .replace(
           /class="emoji" /g,
           'style="height: 1em;width: 1em;margin: 0 .3em 0 .3em;vertical-align: -0.1em;" '
-        );
+        )
+    } else if (this.processedContent) {
+      this.processedContent = linkifyHtml(this.processedContent, {
+        format: (value: string, type: string) => {
+          if (type === 'url' && value.length > this.linkifyCutoff - 1) {
+            value = value.slice(0, this.linkifyCutoff) + '…';
+          }
+          return value;
+        },
+      }) as string;
+      this.processedContent = this.processedContent.replace(/&amp;/g, '&');
     }
   }
 

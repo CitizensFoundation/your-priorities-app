@@ -92,6 +92,9 @@ interface YpStructuredQuestionData {
   html?: string;
   pattern?: string;
   charCounter?: boolean;
+  richTextAllowed?: boolean;
+  showBeforeAnswerId?: string;
+  showAfterAnswerId?: string;
   radioButtons?: Array<YpRadioButtonData>;
   checkboxes?: Array<YpCheckboxData>;
   dropdownOptions?: Array<YpDropdownData>;

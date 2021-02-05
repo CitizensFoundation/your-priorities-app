@@ -321,6 +321,11 @@ export class YpPostEdit extends YpEditBase {
         #pointFor {
           width: 100%;
         }
+
+        .attachmentInfo {
+          margin-top: -8px;
+          margin-left: 8px;
+        }
       `,
     ];
   }
@@ -545,6 +550,7 @@ export class YpPostEdit extends YpEditBase {
                       method="POST"
                       @success="${this._documentUploaded}">
                     </yp-file-upload>
+                    <small class="attachmentInfo">${this.t('documentOnlyVisibleToAdmins')}</small>
 
                     ${this.post!.data?.attachment?.url
                       ? html`
