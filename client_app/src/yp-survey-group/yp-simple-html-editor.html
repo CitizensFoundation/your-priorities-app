@@ -15,9 +15,27 @@
         width: 100%;
         height: 300px;
         border-top: 1px solid #cccccc;
+        border-bottom: 1px solid #cccccc;
         outline: none;
-        padding: 5px;
         overflow: auto;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      #htmlEditor:focus {
+        border-bottom-color: var(--accent-color);
+      }
+
+      .characterCounter {
+        color: #212121;
+        font-size: 12px;
+        text-align: right;
+        width: 100%;
+        border-top: 1px solid #cccccc;
+      }
+
+      .characterCounter[has-focus] {
+          color: var(--accent-color);
       }
 
       @media (max-width: 800px) {
@@ -52,7 +70,8 @@
         <paper-icon-button aria-label$="[[t('formatClear')]]" icon="format-clear" on-tap="_clearFormat"></paper-icon-button>
       </div>
     </div>
-    <div id="htmlEditor" contenteditable="true" spellcheck="false" on-click="_changed" on-keyup="_changed" on-changed="_changed"></div>
+    <div id="htmlEditor" on-focus="_setFocus" on-blur="_setBlur" contenteditable="true" spellcheck="false" on-keydown="_keydown" on-paste="_paste" on-click="_changed" on-keyup="_changed" on-changed="_changed"></div>
+    <div has-focus$="[[hasFocus]]" class="layout end characterCounter">[[characterCount]]<span hidden$="[[!question.maxLength]]">/[[question.maxLength]]</span></div>
   </template>
   <script>
 
@@ -61,10 +80,20 @@
         return 'yp-simple-html-editor';
       }
 
+      _setFocus() {
+        this.set('hasFocus', true);
+      }
+
+      _setBlur() {
+        //TODO: Fix blinking on using the icon buttons
+        this.set('hasFocus', false);
+      }
+
       static get properties() {
         return {
           question: {
-            type: Object
+            type: Object,
+            observer: '_questionChanged'
           },
 
           index: {
@@ -83,6 +112,16 @@
           value: {
             type: String,
             value: ""
+          },
+
+          characterCount: {
+            type: Number,
+            value: 0
+          },
+
+          hasFocus: {
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -92,8 +131,57 @@
         this.shadowRoot.querySelector("#htmlEditor").innerHTML = this.value;
       }
 
+      _updateCharacterCounter() {
+        var textContent = this.shadowRoot.querySelector("#htmlEditor").textContent;
+
+        if (textContent) {
+          this.set('characterCount', textContent.length);
+        }
+      }
+
+      _keydown(event) {
+        this._updateCharacterCounter();
+
+        if (this.question.maxLength) {
+          var allowedKeyCodes = [8, 37, 38, 39, 40];
+          var allowedKeyCodesWithCtrlKey = [65, 90, 86, 67, 88];
+          var isAllowedKey = allowedKeyCodes.includes(event.keyCode)
+          var isShortcut = event.ctrlKey && allowedKeyCodesWithCtrlKey.includes(event.keyCode)
+          var isAllowedAction = isAllowedKey || isShortcut
+
+          if (isAllowedAction) {
+            return
+          }
+
+          if (this.characterCount>=this.question.maxLength) {
+            event.preventDefault();
+          }
+        }
+      }
+
+      _paste(event) {
+        if (this.question.maxLength) {
+          var clipboardData = event.clipboardData || window.clipboardData;
+          var pastedText = clipboardData.getData('text/plain');
+          var content = event.target.textContent;
+          var contentLength = content.length;
+          var selectedText = window.getSelection().toString();
+          const allowedPasteLength = this.question.maxLength - contentLength + selectedText.length;
+          const slicedPasteText = pastedText.substring(0, allowedPasteLength);
+
+          event.preventDefault();
+
+          document.execCommand('insertHTML', false, slicedPasteText);
+        }
+
+        setTimeout(function() {
+          this._updateCharacterCounter();
+        }.bind(this));
+      }
+
       _changed() {
         this.set('value', this.shadowRoot.querySelector("#htmlEditor").innerHTML);
+        this._updateCharacterCounter();
       }
 
       validate() {
