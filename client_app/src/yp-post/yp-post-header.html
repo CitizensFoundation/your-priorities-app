@@ -562,19 +562,35 @@
         if (post && post.public_data && post.public_data.structuredAnswersJson &&
           post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
           var questionHash = {};
+          var showDescriptionBeforeIdHash = {};
+          var showDescriptionAfterIdHash = {};
           var outText = "";
           post.Group.configuration.structuredQuestionsJson.forEach(function (question) {
             if (question.uniqueId) {
               questionHash[question.uniqueId] = question;
+            } else {
+              if (question.showBeforeAnswerId) {
+                showDescriptionBeforeIdHash[question.showBeforeAnswerId] = question;
+              }
+
+              if (question.showAfterAnswerId) {
+                showDescriptionAfterIdHash[question.showAfterAnswerId] = question;
+              }
             }
           }.bind(this));
 
           post.public_data.structuredAnswersJson.forEach(function (answer) {
-            if (answer && answer.value) {
+            if (answer) {
               var question = questionHash[answer.uniqueId];
               if (question) {
+                if (showDescriptionBeforeIdHash[answer.uniqueId]) {
+                  outText+=showDescriptionBeforeIdHash[answer.uniqueId].text+"\n\n";
+                }
                 outText+="<b>"+question.text+"</b>\n";
                 outText+=answer.value+"\n\n";
+                if (showDescriptionAfterIdHash[answer.uniqueId]) {
+                  outText+=showDescriptionAfterIdHash[answer.uniqueId].text+"\n\n";
+                }
               }
             }
           }.bind(this));
