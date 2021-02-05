@@ -1,0 +1,208 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../yp-behaviors/yp-language-behavior.html">
+
+<dom-module id="yp-simple-html-editor">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      :host {
+        display: inline-block;
+        margin-top: 8px;
+        width: 100%;
+      }
+
+      #htmlEditor {
+        width: 100%;
+        height: 300px;
+        border-top: 1px solid #cccccc;
+        outline: none;
+        padding: 5px;
+        overflow: auto;
+      }
+
+      @media (max-width: 800px) {
+        #htmlEditor {
+            height: 220px;
+        }
+      }
+    </style>
+    <div class="layout horizontal wrap">
+      <div class="layout horizontal">
+        <paper-icon-button aria-label$="[[t('formatBold')]]" icon="format-bold" on-tap="_toggleBold"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatItalic')]]" icon="format-italic" on-tap="_toggleItalic"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatUnderline')]]" icon="format-underlined" on-tap="_toggleUnderline"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatListBullets')]]" icon="format-list-bulleted" on-tap="_toggleListBullets"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatListNumbered')]]" icon="format-list-numbered" on-tap="_toggleListNumbers"></paper-icon-button>
+      </div>
+      <div class="layout horizontal">
+        <paper-icon-button aria-label$="[[t('formatLeft')]]" icon="format-align-left" on-tap="_toggleAlignLeft"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatCenter')]]" icon="format-align-center" on-tap="_toggleAlignCenter"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatRight')]]" icon="format-align-right" on-tap="_toggleAlignRight"></paper-icon-button>
+        <paper-icon-button hidden aria-label$="[[t('formatJustify')]]" icon="format-align-justify" on-tap="_toggleAlignJustify"></paper-icon-button>
+      </div>
+
+      <div class="layout horizontal">
+        <paper-icon-button aria-label$="[[t('formatH1')]]" icon="format-header-1" on-tap="_toggleH1"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatH2')]]" icon="format-header-2" on-tap="_toggleH2"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatH3')]]" icon="format-header-3" on-tap="_toggleH3"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatH4')]]" icon="format-header-4" on-tap="_toggleH4"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatH5')]]" icon="format-header-5" on-tap="_toggleH5"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatH6')]]" icon="format-header-6" on-tap="_toggleH6"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatP')]]" icon="format-paragraph" on-tap="_toggleP"></paper-icon-button>
+        <paper-icon-button aria-label$="[[t('formatClear')]]" icon="format-clear" on-tap="_clearFormat"></paper-icon-button>
+      </div>
+    </div>
+    <div id="htmlEditor" contenteditable="true" spellcheck="false" on-click="_changed" on-keyup="_changed" on-changed="_changed"></div>
+  </template>
+  <script>
+
+    class YpSimpleHtmlEditor extends Polymer.Element {
+      static get is() {
+        return 'yp-simple-html-editor';
+      }
+
+      static get properties() {
+        return {
+          question: {
+            type: Object
+          },
+
+          index: {
+            type: Number
+          },
+
+          language: {
+            type: String,
+          },
+
+          useSmallFont: {
+            type: Boolean,
+            value: false
+          },
+
+          value: {
+            type: String,
+            value: ""
+          }
+        }
+      }
+
+      setRichValue(value) {
+        this.set('value', value);
+        this.shadowRoot.querySelector("#htmlEditor").innerHTML = this.value;
+      }
+
+      _changed() {
+        this.set('value', this.shadowRoot.querySelector("#htmlEditor").innerHTML);
+      }
+
+      validate() {
+        if (this.question.required) {
+          if (this.value && this.value.length>0) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return true;
+        }
+      }
+
+      _clearFormat() {
+        document.execCommand('removeFormat');
+        document.execCommand('formatBlock', false, 'p');
+        this._changed();
+      }
+
+      _toggleH1() {
+        document.execCommand('formatBlock',false,'h1');
+        this._changed();
+      }
+
+      _toggleH2() {
+        document.execCommand('formatBlock',false,'h2');
+        this._changed();
+      }
+
+      _toggleH3() {
+        document.execCommand('formatBlock',false,'h3');
+        this._changed();
+      }
+
+      _toggleH4() {
+        document.execCommand('formatBlock',false,'h4');
+        this._changed();
+      }
+
+      _toggleH5() {
+        document.execCommand('formatBlock',false,'h5');
+        this._changed();
+      }
+
+      _toggleH6() {
+        document.execCommand('formatBlock',false,'h6');
+        this._changed();
+      }
+
+      _toggleP() {
+        document.execCommand('formatBlock',false,'p');
+        this._changed();
+      }
+
+      _toggleAlignLeft() {
+        document.execCommand("JustifyLeft", false, "");
+        this._changed();
+      }
+
+      _toggleAlignRight() {
+        document.execCommand("JustifyRight", false, "");
+        this._changed();
+      }
+
+      _toggleAlignCenter() {
+        document.execCommand("JustifyCenter", false, "");
+        this._changed();
+      }
+
+      _toggleAlignJustify() {
+        document.execCommand("JustifyFull", false, "");
+        this._changed();
+      }
+
+      _toggleBold() {
+        document.execCommand('bold');
+        this._changed();
+      }
+
+      _toggleItalic() {
+        document.execCommand('italic');
+        this._changed();
+      }
+
+      _toggleUnderline() {
+        document.execCommand('underline');
+        this._changed();
+      }
+
+      _toggleListBullets() {
+        document.execCommand('insertUnorderedList');
+        this._changed();
+      }
+
+      _toggleListNumbers() {
+        document.execCommand('insertOrderedList');
+        this._changed();
+      }
+
+      ready() {
+        if (window.i18nTranslation) {
+          this.set('language', window.locale);
+        }
+
+        super.ready();
+      }
+    }
+
+    customElements.define(YpSimpleHtmlEditor.is, YpSimpleHtmlEditor);
+  </script>
+</dom-module>
