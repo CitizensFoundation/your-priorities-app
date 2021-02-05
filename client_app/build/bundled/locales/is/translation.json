@@ -1,4 +1,5 @@
 {
+  "documentOnlyVisibleToAdmins": "Viðhengi aðeins sýnilegt vefstjórum.",
   "public": "Opið",
   "closed": "Lokað",
   "secret": "Leynilegt",

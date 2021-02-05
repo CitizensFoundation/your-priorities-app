@@ -1,4 +1,5 @@
 {
+  "documentOnlyVisibleToAdmins": "Attachment only visible to admins",
   "disableMachineTranscripts": "Disable machine transcripts",
   "public": "public",
   "closed": "closed",
