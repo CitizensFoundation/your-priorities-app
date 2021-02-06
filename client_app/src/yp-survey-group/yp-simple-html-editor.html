@@ -21,6 +21,8 @@
         padding-top: 8px;
         padding-bottom: 8px;
         transition: border-bottom-color 0.1s;
+        -webkit-user-select: text;
+        user-select: text;
       }
 
       #htmlEditor:focus {
@@ -45,11 +47,6 @@
         #htmlEditor {
             height: 220px;
         }
-      }
-
-      [contenteditable] {
-        -webkit-user-select: text;
-        user-select: text;
       }
     </style>
     <div class="layout horizontal wrap">
