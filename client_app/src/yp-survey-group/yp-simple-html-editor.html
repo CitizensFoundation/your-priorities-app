@@ -85,8 +85,7 @@
       static get properties() {
         return {
           question: {
-            type: Object,
-            observer: '_questionChanged'
+            type: Object
           },
 
           index: {
@@ -115,12 +114,28 @@
           hasFocus: {
             type: Boolean,
             value: false
+          },
+
+          allowFirefoxFocusHack: {
+            type: Boolean,
+            value: true
           }
         }
       }
 
       _setFocus() {
         this.set('hasFocus', true);
+
+        if (this._isFirefox() && this.allowFirefoxFocusHack) {
+          setTimeout(function() {
+            this.allowFirefoxFocusHack = false;
+            this.shadowRoot.querySelector("#htmlEditor").blur();
+            this.shadowRoot.querySelector("#htmlEditor").focus();
+            setTimeout(function () {
+              this.allowFirefoxFocusHack = true;
+            }.bind(this), 150);
+          }.bind(this));
+        }
       }
 
       _setBlur(event) {
@@ -206,6 +221,10 @@
           navigator.userAgent.indexOf('iPhone') === -1 &&
           navigator.userAgent.indexOf('iPad') === -1) ||
           /Trident.*rv[ :]*11\./.test(navigator.userAgent)
+      }
+
+      _isFirefox() {
+        return navigator.userAgent.indexOf("Firefox") > -1;
       }
 
       _clearFormat() {
