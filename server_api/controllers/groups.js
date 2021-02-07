@@ -33,7 +33,6 @@ const updateTranslationForGroup = require('../active-citizen/utils/translation_h
 
 const convertDocxSurveyToJson = require('../active-citizen/engine/analytics/manager').convertDocxSurveyToJson;
 
-
 var s3 = new aws.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -208,6 +207,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.hidePostCover', truthValueFromBody(req.body.hidePostCover));
   group.set('configuration.hidePostDescription', truthValueFromBody(req.body.hidePostDescription));
   group.set('configuration.hideDebateIcon', truthValueFromBody(req.body.hideDebateIcon));
+  group.set('configuration.hideSharing', truthValueFromBody(req.body.hideSharing));
   group.set('configuration.hidePointAgainst', truthValueFromBody(req.body.hidePointAgainst));
   group.set('configuration.disablePostPageLink', truthValueFromBody(req.body.disablePostPageLink));
   group.set('configuration.hidePostActionsInGrid', truthValueFromBody(req.body.hidePostActionsInGrid));
