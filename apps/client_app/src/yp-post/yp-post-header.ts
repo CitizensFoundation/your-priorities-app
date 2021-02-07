@@ -384,7 +384,7 @@ export class YpPostHeader extends YpBaseElementWithLogin {
               .post="${this.post}"></yp-post-actions>
           `}
 
-      <div class="share">
+      <div class="share" ?hidden="${this.post.Group.configuration.hideSharing}">
         <mwc-icon-button
           ?less-margin="${this.post.Group.configuration.hideDownVoteForPost}"
           icon="share"

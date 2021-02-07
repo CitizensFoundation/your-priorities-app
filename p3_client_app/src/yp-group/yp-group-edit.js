@@ -254,6 +254,9 @@ Polymer({
         <paper-checkbox name="hideDebateIcon" checked\$="{{group.configuration.hideDebateIcon}}">
           [[t('hideDebateIcon')]]
         </paper-checkbox>
+        <paper-checkbox name="hideSharing" checked\$="{{group.configuration.hideSharing}}">
+          [[t('hideSharing')]]
+        </paper-checkbox>
         <paper-checkbox name="hideEmoji" checked\$="{{hideEmoji}}">[[t('hideEmoji')]]</paper-checkbox>
 
         <paper-checkbox name="hidePostFilterAndSearch" checked\$="{{group.configuration.hidePostFilterAndSearch}}">

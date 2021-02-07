@@ -1174,8 +1174,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.post &&
       this.post.Group &&
       this.post.Group.configuration &&
-      this.post.Group.configuration.disableDebate &&
-      !this.isAdmin
+      this.post.Group.configuration.disableDebate
     ) {
       this.disableDebate = true;
     } else {
@@ -1232,8 +1231,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       if (
         this.post.Group &&
         this.post.Group.configuration &&
-        this.post.Group.configuration.disableDebate &&
-        !this.isAdmin
+        this.post.Group.configuration.disableDebate
       ) {
         this.disableDebate = true;
       } else {

@@ -195,6 +195,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   hideRecommendationOnNewsFeed?: boolean;
   defaultLocationLongLat?: string;
   customTitleQuestionText?: string;
+  hideSharing?: boolean;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {

@@ -452,6 +452,10 @@ render() {
         <paper-checkbox .name="hideDebateIcon" .checked="${this.group.configuration.hideDebateIcon}">
           ${this.t('hideDebateIcon')}
         </paper-checkbox>
+        <paper-checkbox .name="hideSharing" .checked="${this.group.configuration.hideSharing}">
+          ${this.t('hideSharing')}
+        </paper-checkbox>
+
         <paper-checkbox .name="hideEmoji" .checked="${thishideEmoji}">${this.t('hideEmoji')}</paper-checkbox>
 
         <paper-checkbox .name="hidePostFilterAndSearch" .checked="${this.group.configuration.hidePostFilterAndSearch}">

@@ -74,6 +74,14 @@ export class YpGroup extends YpCollection {
 
     this.haveGotTabCountInfoCount += 1;
 
+    this._setupOpenTab();
+
+    setTimeout(() => {
+      this.requestUpdate();
+    });
+  }
+
+  _setupOpenTab() {
     if (this.hasNonOpenPosts) {
       if (this.haveGotTabCountInfoCount == 4) {
         //TODO: Fix this logic of selecting a group with some ideas after we get the new counts from the server
@@ -99,10 +107,6 @@ export class YpGroup extends YpCollection {
         }
       }
     }
-
-    setTimeout(() => {
-      this.requestUpdate();
-    });
   }
 
   tabLabelWithCount(type: string): string {
@@ -386,6 +390,41 @@ export class YpGroup extends YpCollection {
     }
   }
 
+  //TODO: Make sure to capture the caching from this
+  /*_groupIdChanged: function (groupId, oldGroupId) {
+      if (groupId && groupId!=this.lastValidGroupId) {
+        this.set('lastValidGroupId', groupId);
+        this.set('group', null);
+        this.$.groupCard.resetGroup();
+        this.$.tabCountOpen.innerHTML = "";
+        if (this.hasNonOpenPosts) {
+          this.$$("#tabCountInProgress").innerHTML = "";
+          this.$$("#tabCountSuccessful").innerHTML = "";
+          this.$$("#tabCountFailed").innerHTML = "";
+        }
+        this.set('hasNonOpenPosts', false);
+        this.set('haveGotTabCountInfoCount', 0);
+        this.set('tabCounters', {});
+        var groupIdInt = parseInt(groupId);
+        if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
+          this._groupResponse(null, { response: {
+              group: window.appGlobals.groupItemsCache[groupIdInt],
+              checkServerForNonOpenPosts: true
+            }});
+          window.appGlobals.groupItemsCache[groupIdInt] = null;
+          console.info("Using cache for group id "+groupId);
+        } else {
+          this._getGroup();
+        }
+        this.async(function () {
+          if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
+            this.set('selectedTab', 'open');
+            this._setupOpenTab();
+          }
+        });
+      }
+  },*/
+
   refresh() {
     super.refresh();
     const group = this.collection as YpGroupData;
@@ -544,6 +583,10 @@ export class YpGroup extends YpCollection {
       }
       if (group.configuration && group.configuration.makeMapViewDefault) {
         this.selectedGroupTab = GroupTabTypes.Map;
+      }
+
+      if (this.hasNonOpenPosts && this.tabCounters) {
+        this._setupOpenTab();
       }
     }
 
