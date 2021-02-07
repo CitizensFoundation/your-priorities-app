@@ -1209,7 +1209,7 @@
         },
 
         _isAdminChanged: function (isAdmin) {
-          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate && !isAdmin) {
+          if (this.post && this.post.Group && this.post.Group.configuration && this.post.Group.configuration.disableDebate) {
             this.set('disableDebate', true);
           } else {
             this.set('disableDebate', false);
@@ -1232,7 +1232,7 @@
 
 
           if (newPost) {
-            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate && !this.isAdmin) {
+            if (newPost.Group && newPost.Group.configuration && newPost.Group.configuration.disableDebate) {
               this.set('disableDebate', true);
             } else {
               this.set('disableDebate', false);

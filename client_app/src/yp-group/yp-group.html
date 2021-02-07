@@ -640,6 +640,10 @@
 
         this.haveGotTabCountInfoCount+=1;
 
+        this._setupOpenTab();
+      },
+
+      _setupOpenTab: function() {
         if (this.hasNonOpenPosts) {
           if (this.haveGotTabCountInfoCount==4) {
             if (this.selectedTab==='open') {
@@ -708,6 +712,7 @@
           this.async(function () {
             if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
               this.set('selectedTab', 'open');
+              this._setupOpenTab();
             }
           });
         }
@@ -912,6 +917,9 @@
           } else {
             window.appGlobals.setHighlightedLanguages(null);
           }
+        }
+        if (this.hasNonOpenPosts && this.tabCounters) {
+          this._setupOpenTab();
         }
       },
 

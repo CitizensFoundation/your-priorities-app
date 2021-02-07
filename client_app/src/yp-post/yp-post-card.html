@@ -277,7 +277,7 @@
                     audio-cover$="[[isAudioCover]]"
                     class="card postCard layout vertical" elevation="[[elevation]]" animated>
       <div class="layout vertical">
-        <a href="[[_getPostLink(post)]]" id="theMainA">
+        <a href="[[_getPostLink(post)]]" id="theMainA" on-tap="_savePostToBackCache">
           <yp-post-cover-media mini$="[[mini]]" top-radius audio-cover$="[[isAudioCover]]" alt-tag="[[post.name]]" post="[[post]]" hidden$="[[post.Group.configuration.hidePostCover]]"></yp-post-cover-media>
           <div class="postNameContainer">
             <div class="post-name" mini$="[[mini]]" id="postName">
@@ -303,7 +303,7 @@
         </a>
         <div hidden$="[[post.Group.configuration.hidePostActionsInGrid]]" on-tap="_onBottomClick">
           <template is="dom-if" if="[[!mini]]">
-            <div class="share">
+            <div class="share" hidden$="[[post.Group.configuration.hideSharing]]">
               <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                   horizontal-align="right" id="shareButton"
                                   whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
@@ -420,6 +420,12 @@
       clickOnA: function () {
         if (this.$.theMainA) {
           this.$.theMainA.click();
+        }
+      },
+
+      _savePostToBackCache: function () {
+        if (this.post) {
+          window.appGlobals.cachedPostItem = this.post;
         }
       },
 

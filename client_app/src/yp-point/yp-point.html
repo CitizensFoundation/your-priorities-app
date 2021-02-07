@@ -335,7 +335,7 @@
           </div>
         </template>
         <div class="layout horizontal actionContainer" hidden$="[[hideActions]]">
-          <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]" allow-whats-app-sharing="[[point.Post.Group.configuration.allowWhatsAppSharing]]"></yp-point-actions>
+          <yp-point-actions point="[[point]]" point-url$="[[pointUrl]]" configuration="[[point.Post.Group.configuration]]"></yp-point-actions>
           <paper-icon-button title$="[[t('point.report')]]" id="reportPointIconButton" icon="warning" on-tap="_reportPoint"></paper-icon-button>
           <div class="flex"></div>
           <template is="dom-if" if="[[hasPointAccess]]">

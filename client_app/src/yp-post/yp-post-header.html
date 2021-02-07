@@ -452,7 +452,7 @@
                                  class="postActions" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
               </template>
 
-              <div class="share" >
+              <div class="share" hidden$="[[post.Group.configuration.hideSharing]]">
                 <paper-share-button on-share-tap="_shareTap" class="shareIcon" less-margin$="[[post.Group.configuration.hideDownVoteForPost]]" endorsed$="[[isEndorsed]]"
                                     horizontal-align="right" id="shareButton"
                                     whatsapp="[[post.Group.configuration.allowWhatsAppSharing]]"
