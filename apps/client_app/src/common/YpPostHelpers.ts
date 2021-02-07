@@ -38,7 +38,13 @@ export class YpPostHelpers {
               outText+=showDescriptionBeforeIdHash[answer.uniqueId].text+"\n\n";
             }
             outText += '<b>' + question.text + '</b>\n';
-            outText += answer.value + '\n\n';
+
+            if (answer.value) {
+              outText+=answer.value+"\n\n";
+            } else {
+              outText+="\n\n";
+            }
+
             if (showDescriptionAfterIdHash[answer.uniqueId]) {
               outText+=showDescriptionAfterIdHash[answer.uniqueId].text+"\n\n";
             }
