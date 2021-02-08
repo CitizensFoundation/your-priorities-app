@@ -180,6 +180,10 @@
       paper-material[rtl] {
         direction: rtl;
       }
+
+      .action-up[only-up-vote-showing] {
+        margin-right: -16px;
+      }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
 
@@ -187,7 +191,7 @@
 
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material rtl$="[[rtl]]" elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
-      <div id="actionUp" class="action-up">
+      <div id="actionUp" class="action-up" only-up-vote-showing$="[[onlyUpVoteShowing]]">
         <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
                            icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon mainIcons" on-tap="upVote"></paper-icon-button>
         <div rtl$="[[rtl]]" class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
@@ -322,6 +326,11 @@
           computed: '_hideDebate(small,forceSmall,headerMode,post)'
         },
 
+        onlyUpVoteShowing: {
+          type: Boolean,
+          computed: '_onlyUpVoteShowing(post)'
+        },
+
         customVoteUpHoverText: {
           type: String,
           computed: '_customVoteUpHoverText(post)'
@@ -340,6 +349,14 @@
         endorseModeIconDown: {
           type: String,
           computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
+        }
+      },
+
+      _onlyUpVoteShowing: function (post) {
+        if (post && post.Group && post.Group.configuration) {
+          return post.Group.configuration.hideDownVoteForPost && post.Group.configuration.hideDebateIcon
+        } else {
+          return false;
         }
       },
 
