@@ -521,7 +521,7 @@
           type: Boolean,
           value: false,
           notify: true,
-          computed: '_hasPostAccess(post, gotAdminRights)'
+          computed: '_hasPostAccess(post, gotAdminRights, loggedInUser)'
         },
 
         structuredAnswersFormatted: {
