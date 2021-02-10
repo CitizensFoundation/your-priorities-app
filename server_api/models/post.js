@@ -262,7 +262,7 @@ module.exports = (sequelize, DataTypes) => {
       return;
     }
 
-    query = sequelize.getQueryInterface().escape(query);
+    query = sequelize.escape(query);
     console.log(query);
 
     return sequelize.models.Post.findAll({
