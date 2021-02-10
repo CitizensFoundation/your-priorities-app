@@ -69,8 +69,6 @@ const sso = require('passport-sso');
 const cors = require('cors');
 
 const Airbrake = require('@airbrake/node');
-const airbrakeExpress = require('@airbrake/node/dist/instrumentation/express');
-const airbrakePG = require('@airbrake/node/dist/instrumentation/pg');
 
 const ieVersion = (uaString) => {
   const match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(uaString);
@@ -92,10 +90,6 @@ if (process.env.AIRBRAKE_PROJECT_ID) {
 }
 
 const app = express();
-
-if (process.env.AIRBRAKE_PROJECT_ID) {
-  app.use(airbrakeExpress.makeMiddleware(airbrake));
-}
 
 if (app.get('env') !== 'development' && !process.env.DISABLE_FORCE_HTTPS) {
   app.use(function checkProtocol (req, res, next) {
@@ -563,10 +557,6 @@ app.use(function generalErrorHandler(err, req, res, next) {
     res.sendStatus(status);
   }
 });
-
-if (airbrake) {
-  app.use(airbrakeExpress.makeErrorHandler(airbrake));
-}
 
 var server = app.listen(app.get('port'), function () {
   log.info('Your Priorities server listening on port ' + server.address().port);

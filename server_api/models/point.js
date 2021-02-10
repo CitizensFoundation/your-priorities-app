@@ -39,14 +39,17 @@ const attachEmptyGroupIfNeeded = (sequelize, options, callback) => {
     (options.domain_id || (options.community_id && options.communityAccess == sequelize.models.Community.ACCESS_PUBLIC))) {
     sequelize.models.Group.findOrCreate({where: { name: 'hidden_public_group_for_domain_level_points' },
       defaults: { access: sequelize.models.Group.ACCESS_PUBLIC }})
-      .spread((group, created) => {
+      .then( results => {
+        const [ group, created ] = results;
         if (group) {
           options.group_id = group.id;
           callback(null, options);
         } else {
           callback("Can't create hidden public group for domain level points");
         }
-      });
+      }).cathc( error=> {
+        callback(error);
+    });
   } else {
     callback(null, options);
   }

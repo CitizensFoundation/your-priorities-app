@@ -203,7 +203,8 @@ module.exports = (sequelize, DataTypes) => {
         configuration: {},
         user_agent: req.useragent.source,
         ip_address: req.clientIp}})
-      .spread((domain, created) => {
+      .then( results => {
+        const [ domain, created ] = results;
         if (created) {
           log.info('Domain Created', { domain: toJson(domain.simple()), context: 'create' });
           queue.create('process-similarities', { type: 'update-collection', domainId: domain.id }).priority('low').removeOnComplete(true).save();
