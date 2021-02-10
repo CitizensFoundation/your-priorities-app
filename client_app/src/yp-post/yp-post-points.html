@@ -1283,30 +1283,28 @@
 
         _processStoredPoints: function () {
           console.info("_processStoredPoints");
-          if (this.upPoints===null) {
-            if (this.storedPoints && this.storedPoints.length > 0) {
-              var upPoints = [];
-              var downPoints = [];
+          if (this.storedPoints && this.storedPoints.length > 0) {
+            var upPoints = [];
+            var downPoints = [];
 
-              for (var i = 0; i < this.storedPoints.length; i++) {
-                if (this.storedPoints[i].value>0) {
-                  upPoints.push(this.storedPoints[i]);
-                } else if (this.storedPoints[i].value<0) {
-                  downPoints.push(this.storedPoints[i]);
-                }
+            for (var i = 0; i < this.storedPoints.length; i++) {
+              if (this.storedPoints[i].value>0) {
+                upPoints.push(this.storedPoints[i]);
+              } else if (this.storedPoints[i].value<0) {
+                downPoints.push(this.storedPoints[i]);
               }
-              this.set('upPoints', upPoints);
-              this.set('downPoints', downPoints);
-            } else {
-              this.set('upPoints', []);
-              this.set('downPoints', []);
-              this.set('points', []);
             }
+            this.set('upPoints', upPoints);
+            this.set('downPoints', downPoints);
           } else {
-            console.log("Landscape points already setup");
+            this.set('upPoints', []);
+            this.set('downPoints', []);
+            this.set('points', []);
           }
 
-          if (!this.largeMode && !this.points) {
+          // TODO: Make sure its ok to redo this
+          // if (!this.largeMode && !this.points) {
+          if (!this.largeMode) {
             this.set('points', this.interleaveArrays(this.upPoints, this.downPoints));
           }
 
