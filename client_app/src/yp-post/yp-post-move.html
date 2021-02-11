@@ -33,7 +33,7 @@
     <yp-edit-dialog id="editDialog" title="[[editHeaderText]]" icon="language" confirmation-text="[[t('post.statusChangeConfirmText')]]"
                     action="[[action]]" method="[[method]]" params="[[params]]" save-text="[[saveText]]" toast-text="[[toastText]]">
       <template is="dom-repeat" items="[[availableGroups]]" as="group">
-        <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.name]]</div>
+        <div class="groupName" on-tap="_selectGroup" data-args$="[[group.id]]" data-args-name$="[[group.name]]">[[group.id]] - [[group.name]]</div>
       </template>
 
       <div class="layout horizontal center-center">

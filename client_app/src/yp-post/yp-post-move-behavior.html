@@ -21,6 +21,9 @@
         groups = groups.concat(detail.response.groups);
         groups = this._uniqueInDomain(groups, detail.response.domainId);
         this.set("availableGroups", groups);
+        this.async(function () {
+          this.$$("#editDialog").fire('iron-resize');
+        });
       }
     },
 

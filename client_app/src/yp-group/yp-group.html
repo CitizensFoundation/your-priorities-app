@@ -792,6 +792,7 @@
 
       refresh: function () {
         if (this.group) {
+          this._openHelpPageIfNeeded();
           this.fire('yp-set-home-link', {
             type: 'group',
             id: this.group.id,
@@ -924,6 +925,17 @@
 
         if (this.group.configuration && this.group.configuration.maxNumberOfGroupVotes) {
           window.appUser.calculateVotesLeftForGroup(this.group);
+        }
+      },
+
+      _openHelpPageIfNeeded: function () {
+        if (!sessionStorage.getItem("yp-welcome-for-group-"+this.group.id)) {
+          if (this.group && this.group.configuration && this.group.configuration.welcomePageId) {
+            this.async(function () {
+              this.fire('yp-open-page', {pageId: this.group.configuration.welcomePageId});
+              sessionStorage.setItem("yp-welcome-for-community-"+this.group.id, true)
+            }, 1200);
+          }
         }
       },
 

@@ -201,6 +201,7 @@ var updateGroupConfigParamters = function (req, group) {
   group.set('configuration.makeCategoryRequiredOnNewPost', truthValueFromBody(req.body.makeCategoryRequiredOnNewPost));
 
   group.set('configuration.showVideoUploadDisclaimer', truthValueFromBody(req.body.showVideoUploadDisclaimer));
+  group.set('configuration.welcomePageId', (req.body.welcomePageId && req.body.welcomePageId!="") ? req.body.welcomePageId : null);
 
   group.set('configuration.hideVoteCount', truthValueFromBody(req.body.hideVoteCount));
   group.set('configuration.hideVoteCountUntilVoteCompleted', truthValueFromBody(req.body.hideVoteCountUntilVoteCompleted));

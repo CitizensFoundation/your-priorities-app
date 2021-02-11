@@ -757,6 +757,17 @@
                      maxlength="4">
         </paper-input>
 
+        <div class="layout horizontal config" hidden$="[[!pages]]">
+          <paper-dropdown-menu label="[[t('welcomeSelectPage')]]">
+            <paper-listbox slot="dropdown-content" attr-for-selected="name" selected="{{group.configuration.welcomePageId}}">
+              <template is="dom-repeat" items="[[translatedPages]]" as="page">
+                <paper-item name="[[page.id]]" data-args$="[[index]]">[[_getLocalizePageTitle(page)]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
+        </div>
+
         <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
         <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
         <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
@@ -779,6 +790,8 @@
         </div>
       </div>
 
+      <yp-ajax id="pagesAjax" on-response="_pagesResponse"></yp-ajax>
+
     </yp-edit-dialog>
   </template>
 
@@ -796,7 +809,8 @@
       Polymer.ypEditDialogBehavior,
       Polymer.ypCollectionStatusOptions,
       Polymer.ypGotoBehavior,
-      Polymer.ypMediaFormatsBehavior
+      Polymer.ypMediaFormatsBehavior,
+      Polymer.ypTranslatedPagesBehavior
     ],
 
     properties: {
@@ -1218,6 +1232,8 @@
         if (group.GroupLogoVideos && group.GroupLogoVideos.length > 0) {
           this.set('uploadedVideoId', group.GroupLogoVideos[0].id)
         }
+        this.$.pagesAjax.url = "/api/groups/"+group.id+"/pages";
+        this.$.pagesAjax.generateRequest();
       }
       this.set('new', newNotEdit);
       this.set('refreshFunction', refreshFunction);
@@ -1251,6 +1267,12 @@
         }
       }
       this.set('group.access', defaultAccess);
+    },
+
+    _pagesResponse: function (event, detail) {
+      var pages = detail.response;
+      pages.unshift({id: -1, title: { en: this.t('none') } });
+      this._setPages(event, pages);
     },
 
     _setupTranslation: function (language, t) {
