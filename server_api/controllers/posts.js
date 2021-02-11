@@ -1180,6 +1180,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
       async.series([
         function (seriesCallback) {
           if (post) {
+            endorsement.dataValues.Post = post;
             seriesCallback();
           } else {
             models.Post.findOne( {
@@ -1188,6 +1189,7 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
             }).then(function (results) {
               if (results) {
                 post = results;
+                endorsement.dataValues.Post = post;
                 seriesCallback();
               } else {
                 seriesCallback("Can't find post")
@@ -1244,7 +1246,13 @@ router.post('/:id/endorse', auth.can('vote on post'), function(req, res) {
 router.delete('/:id/endorse', auth.can('vote on post'), function(req, res) {
   console.log("user: "+req.user.id + " post: " + req.params.id);
   models.Endorsement.findOne({
-    where: { post_id: req.params.id, user_id: req.user.id }
+    where: { post_id: req.params.id, user_id: req.user.id },
+    include: [
+      {
+        model: models.Post,
+        attributes: ['id','group_id']
+      }
+    ]
   }).then(function(endorsement) {
     if (endorsement) {
       var oldEndorsementValue;

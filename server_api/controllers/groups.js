@@ -262,6 +262,8 @@ var updateGroupConfigParamters = function (req, group) {
     }
   }
 
+  group.set('configuration.maxNumberOfGroupVotes', (req.body.maxNumberOfGroupVotes && req.body.maxNumberOfGroupVotes!="") ? req.body.maxNumberOfGroupVotes : null);
+
   if (group.configuration.audioPointUploadLimitSec && parseInt(group.configuration.audioPointUploadLimitSec)) {
     if (parseInt(group.configuration.audioPointUploadLimitSec)>600) {
       group.set('configuration.audioPointUploadLimitSec', 600);

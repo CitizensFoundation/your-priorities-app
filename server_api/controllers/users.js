@@ -36,6 +36,8 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
 var getUserWithAll = function (userId, callback) {
   var user, endorsements, ratings, pointQualities;
 
+  //TODO: Optimize this and get those items above more on demand
+
   async.parallel([
     function (seriesCallback) {
       models.User.findOne({
@@ -67,7 +69,13 @@ var getUserWithAll = function (userId, callback) {
     function (seriesCallback) {
       models.Endorsement.findAll({
         where: {user_id: userId},
-        attributes: ['id', 'value', 'post_id']
+        attributes: ['id', 'value', 'post_id'],
+        include: [
+          {
+            model: models.Post,
+            attributes: ['group_id']
+          }
+        ]
       }).then(function(endorsementsIn) {
         endorsements = endorsementsIn;
         seriesCallback();
