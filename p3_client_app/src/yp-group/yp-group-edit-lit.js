@@ -575,11 +575,15 @@ render() {
         <paper-checkbox .name="hideVoteCountUntilVoteCompleted" .checked="${this.group.configuration.hideVoteCountUntilVoteCompleted}">
           ${this.t('hideVoteCountUntilVoteCompleted')}
         </paper-checkbox>
+
         <paper-checkbox .name="hideDownVoteForPost" .checked="${this.group.configuration.hideDownVoteForPost}">
           ${this.t('hideDownVoteForPost')}
         </paper-checkbox>
 
-        <paper-input id="customVoteUpHoverText" .name="customVoteUpHoverText" .type="text" .label="${this.t('customVoteUpHoverText')}" .value="${this.group.configuration.customVoteUpHoverText}" .maxlength="100" char-counter>
+        <paper-input id="maxNumberOfGroupVotes" .name="maxNumberOfGroupVotes" .type="text" .label="${this.t('maxNumberOfGroupVotes')}" .value="${this.group.configuration.customVoteDownHoverText}" .maxlength="4" char-counter>
+        </paper-input>
+
+        <paper-input id="customVoteUpHoverText" .name="customVoteUpHoverText" .type="text" .label="${this.t('customVoteUpHoverText')}" allowed-pattern="[0-9]" .value="${this.group.configuration.customVoteUpHoverText}" .maxlength="100" char-counter>
         </paper-input>
 
         <paper-input id="customVoteDownHoverText" .name="customVoteDownHoverText" .type="text" .label="${this.t('customVoteDownHoverText')}" .value="${this.group.configuration.customVoteDownHoverText}" .maxlength="100" char-counter>

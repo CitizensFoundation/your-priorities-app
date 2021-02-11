@@ -554,6 +554,10 @@ export class YpPost extends YpCollection {
       } else {
         window.appGlobals.currentSamlDeniedMessage = undefined;
       }
+
+      if (this.post.Group.configuration && this.post.Group.configuration.maxNumberOfGroupVotes) {
+        window.appUser.calculateVotesLeftForGroup(this.post.Group);
+      }
     }
   }
 }

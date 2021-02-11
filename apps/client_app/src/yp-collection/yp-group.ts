@@ -588,6 +588,10 @@ export class YpGroup extends YpCollection {
       if (this.hasNonOpenPosts && this.tabCounters) {
         this._setupOpenTab();
       }
+
+      if (group.configuration && group.configuration.maxNumberOfGroupVotes) {
+        window.appUser.calculateVotesLeftForGroup(group);
+      }
     }
 
     window.appGlobals.postLoadGroupProcessing(group);

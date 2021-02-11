@@ -196,6 +196,7 @@ interface YpGroupConfiguration extends YpCollectionConfiguration {
   defaultLocationLongLat?: string;
   customTitleQuestionText?: string;
   hideSharing?: boolean;
+  maxNumberOfGroupVotes?: number;
 }
 
 interface YpCommunityConfiguration extends YpCollectionConfiguration {
@@ -232,6 +233,7 @@ interface YpEndorsement {
   id: number;
   value: number;
   post_id: number;
+  Post?: YpPostData;
 }
 
 interface YpOrganizationData extends YpDatabaseItem {

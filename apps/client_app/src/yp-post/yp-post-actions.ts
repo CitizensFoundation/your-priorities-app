@@ -40,6 +40,12 @@ export class YpPostActions extends YpBaseElement {
   @property({ type: Boolean })
   smallerIcons = false;
 
+  @property({ type: Number })
+  maxNumberOfGroupVotes: number | undefined;
+
+  @property({ type: Number })
+  numberOfGroupVotes: number | undefined;
+
   connectedCallback() {
     super.connectedCallback();
     this.addGlobalListener(
@@ -220,6 +226,10 @@ export class YpPostActions extends YpBaseElement {
         div[rtl] {
           direction: rtl;
         }
+
+        action-up[only-up-vote-showing] {
+          margin-right: -16px;
+        }
       `,
     ];
   }
@@ -230,37 +240,44 @@ export class YpPostActions extends YpBaseElement {
         ?rtl="${this.rtl}"
         title="${ifDefined(this.disabledTitle)}"
         floating="${this.floating}"
-        class="action-bar layout horizontal">
+        class="action-bar layout horizontal"
+      >
         <div
           id="actionUp"
-          class="action-up layout horizontal layout start justified">
+          ?only-up-vote-showing="${this.onlyUpVoteShowing}"
+          class="action-up layout horizontal layout start justified"
+        >
           <mwc-icon-button
             id="iconUpButton"
             .smaller-icons="${this.smallerIcons}"
-            ?disabled="${this.allDisabled}"
+            ?disabled="${this.votingStateDisabled}"
             .title="${this.customVoteUpHoverText}"
             icon="${ifDefined(
               this.endorseModeIcon(this.endorsementButtons, 'up')
             )}"
             class="action-icon up-vote-icon largeButton"
-            @click="${this.upVote}"></mwc-icon-button>
+            @click="${this.upVote}"
+          ></mwc-icon-button>
           <div
             ?rtl="${this.rtl}"
             class="action-text up-text"
-            ?hidden="${this.post.Group.configuration.hideVoteCount}">
+            ?hidden="${this.post.Group.configuration.hideVoteCount}"
+          >
             ${YpFormattingHelpers.number(this.post.counter_endorsements_up)}
           </div>
         </div>
 
         <div
           class="action-debate layout horizontal"
-          ?hidden="${this.hideDebate}">
+          ?hidden="${this.hideDebate}"
+        >
           <mwc-icon-button
             ?disabled="${this.allDisabled}"
             title="${this.t('post.debate')}"
             icon="chat_bubble_outline"
             class="action-icon debate-icon mainIcons debateIcon"
-            @click="${this._goToPostIfNotHeader}"></mwc-icon-button>
+            @click="${this._goToPostIfNotHeader}"
+          ></mwc-icon-button>
           <div class="action-text debate-text">
             ${YpFormattingHelpers.number(this.post.counter_points)}
           </div>
@@ -269,22 +286,54 @@ export class YpPostActions extends YpBaseElement {
         <div
           id="actionDown"
           class="action-down layout horizontal layout center justified"
-          ?hidden="${this.post.Group.configuration.hideDownVoteForPost}">
+          ?hidden="${this.post.Group.configuration.hideDownVoteForPost}"
+        >
           <mwc-icon-button
             smaller-icons="${this.smallerIcons}"
-            ?disabled="${this.allDisabled}"
+            ?disabled="${this.votingStateDisabled}"
             title="${this.customVoteDownHoverText}"
             icon="${ifDefined(this.endorseModeIconDown)}"
             class="action-icon down-vote-icon mainIcons"
-            @click="${this.downVote}"></mwc-icon-button>
+            @click="${this.downVote}"
+          ></mwc-icon-button>
           <div
             class="action-text down-text"
-            ?hidden="${this.post.Group.configuration.hideVoteCount}">
+            ?hidden="${this.post.Group.configuration.hideVoteCount}"
+          >
             ${YpFormattingHelpers.number(this.post.counter_endorsements_down)}
           </div>
         </div>
       </div>
     `;
+  }
+
+  get isEndorsed() {
+    return this.endorseValue > 0;
+  }
+
+  get votingStateDisabled() {
+    if (this.allDisabled) {
+      return true;
+    } else if (
+      !this.isEndorsed &&
+      this.maxNumberOfGroupVotes &&
+      this.numberOfGroupVotes
+    ) {
+      return this.maxNumberOfGroupVotes <= this.numberOfGroupVotes;
+    } else {
+      return false;
+    }
+  }
+
+  get onlyUpVoteShowing() {
+    if (this.post && this.post.Group && this.post.Group.configuration) {
+      return (
+        this.post.Group.configuration.hideDownVoteForPost &&
+        this.post.Group.configuration.hideDebateIcon
+      );
+    } else {
+      return false;
+    }
   }
 
   get endorseModeIconUp() {
@@ -382,6 +431,7 @@ export class YpPostActions extends YpBaseElement {
       } else {
         this.endorsementButtons = 'hearts';
       }
+
       if (this.post.Group.configuration) {
         this.post.Group.configuration.originalHideVoteCount = this.post.Group.configuration.hideVoteCount;
         if (this.post.Group.configuration.hideVoteCountUntilVoteCompleted) {
@@ -389,17 +439,27 @@ export class YpPostActions extends YpBaseElement {
           this.requestUpdate();
         }
       }
+
+      if (this.post.Group.configuration.maxNumberOfGroupVotes) {
+        this.maxNumberOfGroupVotes = this.post.Group.configuration.maxNumberOfGroupVotes;
+        this.numberOfGroupVotes =
+          window.appUser.groupCurrentVoteCountIndex[this.post.Group.id];
+      } else {
+        this.maxNumberOfGroupVotes = undefined;
+        this.numberOfGroupVotes = undefined;
+      }
+
       this._updateEndorsements();
     }
   }
 
-  _updateEndorsementsFromSignal() {
+  _updateEndorsementsFromSignal(event: CustomEvent) {
     if (this.post) {
-      this._updateEndorsements();
+      this._updateEndorsements(event);
     }
   }
 
-  _updateEndorsements() {
+  _updateEndorsements(event: CustomEvent) {
     if (
       window.appUser &&
       window.appUser.loggedIn() &&
@@ -411,6 +471,10 @@ export class YpPostActions extends YpBaseElement {
       if (thisPostsEndorsement)
         this._setEndorsement(thisPostsEndorsement.value);
       else this._setEndorsement(0);
+
+      if (event.detail && event.detail.maxGroupId === this.post.Group.id) {
+        this.numberOfGroupVotes = event.detail.groupCurrentVoteCount;
+      }
     }
   }
 
@@ -536,7 +600,7 @@ export class YpPostActions extends YpBaseElement {
         this._enableVoting();
         const endorsement = endorseResponse.endorsement;
         const oldEndorsementValue = endorseResponse.oldEndorsementValue;
-        window.appUser.updateEndorsementForPost(this.post.id, endorsement);
+        window.appUser.updateEndorsementForPost(this.post.id, endorsement, this.post.Group);
         this._setEndorsement(endorsement.value);
         if (oldEndorsementValue) {
           if (oldEndorsementValue > 0)
@@ -552,8 +616,6 @@ export class YpPostActions extends YpBaseElement {
         else if (endorsement.value < 0)
           this.post.counter_endorsements_down =
             this.post.counter_endorsements_down + 1;
-
-        this.fireGlobal('yp-got-endorsements-and-qualities');
       }
     } else {
       this._enableVoting();

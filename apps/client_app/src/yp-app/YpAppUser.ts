@@ -3,6 +3,7 @@ import { YpServerApi } from '../common/YpServerApi.js';
 import { YpCodeBase } from '../common/YpCodeBaseclass.js';
 import { YpAccessHelpers } from '../common/YpAccessHelpers.js';
 import { YpLogin } from '../yp-user/yp-login.js';
+import { Snackbar } from '@material/mwc-snackbar';
 
 export class YpAppUser extends YpCodeBase {
   serverApi: YpServerApi;
@@ -54,6 +55,8 @@ export class YpAppUser extends YpCodeBase {
   user: YpUserData | null | undefined;
 
   endorsementPostsIndex: Record<number, YpEndorsement> = {};
+
+  groupCurrentVoteCountIndex: Record<number, number> = {};
 
   ratingPostsIndex: Record<number, Record<number, YpRatingData>> = {};
 
@@ -497,7 +500,7 @@ export class YpAppUser extends YpCodeBase {
     this.getAdminRights();
   }
 
-  updateEndorsementForPost(postId: number, newEndorsement: YpEndorsement) {
+  updateEndorsementForPost(postId: number, newEndorsement: YpEndorsement, group: YpGroupData | undefined = undefined) {
     if (this.user) {
       if (!this.user.Endorsements) {
         this.user.Endorsements = [];
@@ -520,6 +523,38 @@ export class YpAppUser extends YpCodeBase {
     } else {
       console.error("Can't find user for updateEndorsementForPost");
     }
+    if (group && group.configuration && group.configuration.maxNumberOfGroupVotes) {
+      this.calculateVotesLeftForGroup(group);
+    } else {
+      this.fireGlobal('got-endorsements-and-qualities', null);
+    }
+  }
+
+  calculateVotesLeftForGroup(group: YpGroupData) {
+      setTimeout( () => {
+        if (this.user && this.user.Endorsements) {
+          const lastVoteCount = this.groupCurrentVoteCountIndex[group.id];
+        this.groupCurrentVoteCountIndex[group.id] = this.user.Endorsements.filter(function (endorsement) {
+          return endorsement.Post && endorsement.Post.group_id === group.id && endorsement.value !== -1 && endorsement.value !== 0
+        }).length;
+
+        if (lastVoteCount!=this.groupCurrentVoteCountIndex[group.id]) {
+          const text = `${this.t('youHaveUsed')} ${this.groupCurrentVoteCountIndex[group.id]} ${this.t('ofNumber')} ${group.configuration.maxNumberOfGroupVotes} ${this.t('votesForGroup')}`;
+          window.appDialogs.getDialogAsync('masterToast', (toast: Snackbar) => {
+            toast.labelText = text;
+            toast.open = true;
+            toast.timeoutMs = 4000;
+          });
+        }
+
+        this.fireGlobal('got-endorsements-and-qualities', {
+          maxGroupId: group.id,
+          groupCurrentVoteCount: this.groupCurrentVoteCountIndex[group.id],
+        });
+      } else {
+        console.warn("No user or endorsements for calculateVotesLeftForGroup");
+      }
+    });
   }
 
   _updateEndorsementPostsIndex(user: YpUserData) {
@@ -592,7 +627,7 @@ export class YpAppUser extends YpCodeBase {
             break;
           }
         }
-        if (hasChanged) this._updateEndorsementPostsIndex(this.user);
+        if (hasChanged) this._updatePointQualitiesIndex(this.user);
       }
     } else {
       console.error("Can't find user for updatePointQualityForPost");
@@ -616,7 +651,7 @@ export class YpAppUser extends YpCodeBase {
       this._updateEndorsementPostsIndex(user);
       this._updatePointQualitiesIndex(user);
       this._updateRatingPostsIndex(user);
-      this.fireGlobal('got-endorsements-and-qualities', true);
+      this.fireGlobal('got-endorsements-and-qualities', null);
     }
   }
 
