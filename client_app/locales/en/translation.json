@@ -1,4 +1,7 @@
 {
+  "votesUsed": "votes used",
+  "ofNumber": "of",
+  "maxNumberOfGroupVotes": "Maximum number of votes per user",
   "hideSharing": "Hide share buttons",
   "documentOnlyVisibleToAdmins": "Attachment only visible to admins",
   "disableMachineTranscripts": "Disable machine transcripts",
