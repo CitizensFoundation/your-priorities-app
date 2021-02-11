@@ -921,6 +921,10 @@
         if (this.hasNonOpenPosts && this.tabCounters) {
           this._setupOpenTab();
         }
+
+        if (this.group.configuration && this.group.configuration.maxNumberOfGroupVotes) {
+          window.appUser.calculateVotesLeftForGroup(this.group);
+        }
       },
 
       _newPost: function () {

@@ -1203,6 +1203,7 @@ const addVideosToGroup = (group, done) => {
 router.get('/:id', auth.can('view group'), function(req, res) {
   models.Group.findOne({
     where: { id: req.params.id },
+    attributes: models.Group.defaultPublicAttributes,
     order: [
       [ { model: models.Image, as: 'GroupLogoImages' } , 'created_at', 'asc' ],
       [ { model: models.Image, as: 'GroupHeaderImages' } , 'created_at', 'asc' ],

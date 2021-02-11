@@ -1,5 +1,6 @@
 {
-  "votesUsed": "votes used",
+  "youHaveUsed": "You have used",
+  "votesForGroup": "votes",
   "ofNumber": "of",
   "maxNumberOfGroupVotes": "Maximum number of votes per user",
   "hideSharing": "Hide share buttons",

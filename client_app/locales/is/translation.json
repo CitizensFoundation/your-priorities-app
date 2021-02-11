@@ -1,5 +1,6 @@
 {
-  "votesUsed": "atkvæðum notuð",
+  "youHaveUsed": "Þú hefur notað",
+  "votesForGroup": "atkvæðum",
   "ofNumber": "af",
   "maxNumberOfGroupVotes": "Fjöldi atkvæða á notanda",
   "hideSharing": "Fela deilingar hnapp",

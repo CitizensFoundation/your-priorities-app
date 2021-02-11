@@ -186,6 +186,11 @@
       },
 
       generateRequest: function () {
+        // If offline and post or point add to IndexDB otherwise fail with Offline message
+        // Check state of endorsements and qualitites
+        // Add event listener to online
+        //    If data in IndexDB check if logged in and send or give a message that data will be sent when logged in
+        // Listen to loggedin and if online send data if in IndexDB
         this._setActive(true);
         this.$.ajax.generateRequest();
       },

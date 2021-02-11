@@ -192,7 +192,7 @@
     <yp-ajax id="endorseAjax" method="POST" on-response="_endorseResponse"></yp-ajax>
     <paper-material rtl$="[[rtl]]" elevation="[[elevationPlusOne]]" title$="[[disabledTitle]]" floating$="[[floating]]" animated class="action-bar layout horizontal">
       <div id="actionUp" class="action-up" only-up-vote-showing$="[[onlyUpVoteShowing]]">
-        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteUpHoverText]]"
+        <paper-icon-button id="iconUpButton" smaller-icons$="[[smallerIcons]]" disabled="[[votingStateDisabled]]" title$="[[customVoteUpHoverText]]"
                            icon="[[endorseModeIconUp]]" class="action-icon up-vote-icon mainIcons" on-tap="upVote"></paper-icon-button>
         <div rtl$="[[rtl]]" class="action-text up-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedUpCount]]</div>
       </div>
@@ -206,7 +206,7 @@
       <div class="" hidden$="[[!hideDebate]]"></div>
 
       <div id="actionDown" class="action-down" hidden$="[[post.Group.configuration.hideDownVoteForPost]]">
-        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[allDisabled]]" title$="[[customVoteDownHoverText]]"
+        <paper-icon-button smaller-icons$="[[smallerIcons]]" disabled="[[votingStateDisabled]]" title$="[[customVoteDownHoverText]]"
                            icon="[[endorseModeIconDown]]" class="action-icon down-vote-icon mainIcons" on-tap="downVote"></paper-icon-button>
         <div class="action-text down-text" hidden$="[[post.Group.configuration.hideVoteCount]]">[[formattedDownCount]]</div>
       </div>
@@ -349,6 +349,31 @@
         endorseModeIconDown: {
           type: String,
           computed: '_endorseModeIconDown(endorsementButtons, post, endorseValue)'
+        },
+
+        maxNumberOfGroupVotes: {
+          type: Number,
+          value: null
+        },
+
+        numberOfGroupVotes: {
+          type: Number,
+          value: null
+        },
+
+        votingStateDisabled: {
+          type: Boolean,
+          computed: '_votingStateDisabled(allDisabled, maxNumberOfGroupVotes, numberOfGroupVotes, isEndorsed)'
+        }
+      },
+
+      _votingStateDisabled: function(allDisabled, maxNumberOfGroupVotes, numberOfGroupVotes, isEndorsed) {
+        if (allDisabled) {
+          return true;
+        } else if (!isEndorsed && maxNumberOfGroupVotes && numberOfGroupVotes) {
+          return maxNumberOfGroupVotes<=numberOfGroupVotes;
+        } else {
+          return false;
         }
       },
 
@@ -444,38 +469,48 @@
           this.removeClass(this.$.actionDown, 'default-buttons-down-selected');
           this.set('endorseValue', 0);
 
-          if (post.Group.configuration && post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
-            this.set('votingDisabled', true);
-            this.set('allDisabled', true);
-            this.set('disabledTitle', this.t('votingDisabled'));
-          } else {
-            this.set('votingDisabled', false);
-            this.set('allDisabled', false);
-          }
-          if (post.Group.configuration && post.Group.configuration.endorsementButtons!=undefined) {
-            this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
-          } else {
-            this.set('endorsementButtons', "hearts");
-          }
           if (post.Group.configuration) {
+            if (post.Group.configuration.canVote!=undefined && post.Group.configuration.canVote==false) {
+              this.set('votingDisabled', true);
+              this.set('allDisabled', true);
+              this.set('disabledTitle', this.t('votingDisabled'));
+            } else {
+              this.set('votingDisabled', false);
+              this.set('allDisabled', false);
+            }
+            if (post.Group.configuration.endorsementButtons!=undefined) {
+              this.set('endorsementButtons', post.Group.configuration.endorsementButtons);
+            } else {
+              this.set('endorsementButtons', "hearts");
+            }
+
+            if (post.Group.configuration.maxNumberOfGroupVotes) {
+              this.set('maxNumberOfGroupVotes', parseInt(post.Group.configuration.maxNumberOfGroupVotes));
+              this.set('numberOfGroupVotes', window.appUser.groupCurrentVoteCountIndex[post.Group.id]);
+            } else {
+              this.set('maxNumberOfGroupVotes', null);
+              this.set('numberOfGroupVotes', null);
+            }
+
             this.set('post.Group.configuration.originalHideVoteCount', post.Group.configuration.hideVoteCount);
             if (post.Group.configuration.hideVoteCountUntilVoteCompleted) {
               this.set('post.Group.configuration.hideVoteCount', true);
             }
           }
+
           this._updateEndorsements(post);
         } else {
           console.warn("No post found for post actions");
         }
       },
 
-      _updateEndorsementsFromSignal: function () {
+      _updateEndorsementsFromSignal: function (event, detail) {
         if (this.post) {
-          this._updateEndorsements(this.post);
+          this._updateEndorsements(this.post, detail);
         } else {
           this.async(function () {
             if (this.post) {
-              this._updateEndorsements(this.post);
+              this._updateEndorsements(this.post, detail);
             } else {
               console.warn("Trying to update post null from signal");
             }
@@ -483,7 +518,7 @@
         }
       },
 
-      _updateEndorsements: function (post) {
+      _updateEndorsements: function (post, data) {
         this.set('isEndorsed', false);
         if (window.appUser && window.appUser.loggedIn() && window.appUser.user && window.appUser.user.Endorsements) {
           var thisPostsEndorsement = window.appUser.endorsementPostsIndex[post.id];
@@ -491,6 +526,10 @@
             this._setEndorsement(thisPostsEndorsement.value);
           else
             this._setEndorsement(0);
+
+          if (data && data.maxGroupId===this.post.Group.id) {
+            this.set('numberOfGroupVotes', data.groupCurrentVoteCount);
+          }
         }
       },
 
@@ -569,7 +608,7 @@
         this._enableVoting();
         var endorsement = detail.response.endorsement;
         var oldEndorsementValue = detail.response.oldEndorsementValue;
-        window.appUser.updateEndorsementForPost(this.post.id, endorsement);
+        window.appUser.updateEndorsementForPost(this.post.id, endorsement, this.post.Group);
         this._setEndorsement(endorsement.value);
         if (oldEndorsementValue) {
           if (oldEndorsementValue>0)
@@ -581,14 +620,6 @@
           this.set('post.counter_endorsements_up', this.post.counter_endorsements_up+1);
         else if (endorsement.value<0)
           this.set('post.counter_endorsements_down', this.post.counter_endorsements_down+1);
-
-        document.dispatchEvent(
-          new CustomEvent("lite-signal", {
-            bubbles: true,
-            compose: true,
-            detail: { name: 'got-endorsements-and-qualities' }
-          })
-        );
       },
 
       generateEndorsementFromLogin: function (value) {

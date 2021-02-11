@@ -540,6 +540,15 @@
           [[t('hideDownVoteForPost')]]
         </paper-checkbox>
 
+        <paper-input id="maxNumberOfGroupVotes"
+                     name="maxNumberOfGroupVotes"
+                     type="text"
+                     allowed-pattern="[0-9]"
+                     label="[[t('maxNumberOfGroupVotes')]]"
+                     value="{{group.configuration.maxNumberOfGroupVotes}}"
+                     maxlength="4">
+        </paper-input>
+
         <paper-input id="customVoteUpHoverText"
                      name="customVoteUpHoverText"
                      type="text"
@@ -567,6 +576,7 @@
                         label="[[t('customRatings')]]"
                         value="{{group.configuration.customRatingsText}}">
         </paper-textarea>
+
         <div class="structuredQuestionsInfo">[[t('customRatingsInfo')]]</div>
 
         <div class="subHeaders">[[t('pointSettings')]]</div>

@@ -105,6 +105,11 @@
             type: Object
           },
 
+          groupCurrentVoteCountIndex: {
+            type: Object,
+            value: {}
+          },
+
           ratingPostsIndex: {
             type: Object
           },
@@ -402,6 +407,8 @@
           } else {
             console.log("Not checking login in survey mode");
           }
+
+          this.groupCurrentVoteCountIndex = {};
         },
 
         cancelLoginPolling: function () {
@@ -496,7 +503,7 @@
           this.$.adminRightsAjax.generateRequest();
         },
 
-        updateEndorsementForPost: function (postId, newEndorsement) {
+        updateEndorsementForPost: function (postId, newEndorsement, group) {
           if (!this.user.Endorsements) {
             this.user.Endorsements = [];
           }
@@ -512,9 +519,60 @@
               break;
             }
           }
+
           if (!hasChanged && newEndorsement)
             this.user.Endorsements.push(newEndorsement);
+
           this._updateEndorsementPostsIndex(this.user);
+
+          if (group && group.configuration && group.configuration.maxNumberOfGroupVotes) {
+            this.calculateVotesLeftForGroup(group);
+          } else {
+            document.dispatchEvent(
+              new CustomEvent("lite-signal", {
+                bubbles: true,
+                compose: true,
+                detail: {
+                  name: 'got-endorsements-and-qualities'
+                }
+              }));
+          }
+        },
+
+        calculateVotesLeftForGroup:  function (group) {
+          if (this.user && this.user.Endorsements) {
+            this.async(function () {
+              var lastVoteCount = this.groupCurrentVoteCountIndex[group.id];
+              this.groupCurrentVoteCountIndex[group.id] = this.user.Endorsements.filter(function (endorsement) {
+                return endorsement.Post.group_id === group.id && endorsement.value !== -1 && endorsement.value !== 0
+              }).length;
+
+              if (lastVoteCount!=this.groupCurrentVoteCountIndex[group.id]) {
+                var text = `${this.t('youHaveUsed')} ${this.groupCurrentVoteCountIndex[group.id]} ${this.t('ofNumber')} ${group.configuration.maxNumberOfGroupVotes} ${this.t('votesForGroup')}`;
+                Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+                  toast.text = text;
+                  toast.duration = 4000;
+                  toast.show();
+                }.bind(this));
+              }
+
+              document.dispatchEvent(
+                new CustomEvent("lite-signal", {
+                  bubbles: true,
+                  compose: true,
+                  detail: {
+                    name: 'got-endorsements-and-qualities',
+                    data: {
+                      maxGroupId: group.id,
+                      groupCurrentVoteCount: this.groupCurrentVoteCountIndex[group.id],
+                    }
+                  }
+                })
+              );
+            });
+          } else {
+            console.warn("No user or endorsements for calculateVotesLeftForGroup");
+          }
         },
 
         _updateEndorsementPostsIndex: function (user) {
@@ -578,7 +636,7 @@
               }
             }
             if (hasChanged)
-              this._updateEndorsementPostsIndex(this.user);
+              this._updatePointQualitiesIndex(this.user);
           }
         },
 
