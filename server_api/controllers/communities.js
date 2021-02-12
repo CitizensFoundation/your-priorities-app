@@ -385,9 +385,19 @@ const masterGroupIncludes = [
   }
 ];
 
-const addVideosToGroup = (groups, done) => {
-  //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
-  async.forEachLimit(groups, 20, (group, forEachCallback) => {
+const addVideosAndCommunityLinksToGroup = (groups, done) => {
+
+  const linkedCommunityIds = [];
+  const linkedCommunityIdToGroupIndex = {};
+
+  async.eachOfLimit(groups, 20, (group, index, forEachCallback) => {
+
+    if (group.configuration && group.configuration.actAsLinkToCommunityId) {
+      linkedCommunityIds.push(group.configuration.actAsLinkToCommunityId);
+      linkedCommunityIdToGroupIndex[group.configuration.actAsLinkToCommunityId] = index;
+    }
+
+    //TODO: Limit then number of VideoImages to 1 - there is one very 10 sec
     models.Video.findAll({
       attributes:  ['id','formats','viewable','public_meta','updated_at'],
       include: [
@@ -417,7 +427,51 @@ const addVideosToGroup = (groups, done) => {
       forEachCallback(error);
     })
   }, error => {
-    done(error);
+    if (linkedCommunityIds.length>0) {
+      models.Community.findAll({
+        where: {
+          id:  { $in: linkedCommunityIds }
+        },
+        attributes: ['id','name','description','counter_posts','counter_points','counter_users','language'],
+        order: [
+          [ { model: models.Image, as: 'CommunityLogoImages' } , 'created_at', 'asc' ],
+          [ { model: models.Video, as: "CommunityLogoVideos" }, 'updated_at', 'desc' ],
+          [ { model: models.Video, as: "CommunityLogoVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
+        ],
+        include: [
+          {
+            model: models.Image,
+            as: 'CommunityLogoImages',
+            attributes:  models.Image.defaultAttributesPublic,
+            required: false
+          },
+          {
+            model: models.Video,
+            as: 'CommunityLogoVideos',
+            attributes:  ['id','formats','viewable','public_meta'],
+            required: false,
+            include: [
+              {
+                model: models.Image,
+                as: 'VideoImages',
+                attributes:["formats",'updated_at'],
+                required: false
+              },
+            ]
+          }
+        ]
+      }).then(communities => {
+        communities.forEach( community => {
+          const index = linkedCommunityIdToGroupIndex[community.id];
+          groups[index].dataValues.CommunityLink = community;
+        });
+        done(error);
+      }).catch( error => {
+        done(error);
+      })
+    } else {
+      done(error);
+    }
   });
 }
 
@@ -608,14 +662,14 @@ const getCommunity = function(req, done) {
                 return group.id;
               }
             });
-            addVideosToGroup(combinedGroups, videoError => {
+            addVideosAndCommunityLinksToGroup(combinedGroups, videoError => {
               community.dataValues.Groups = combinedGroups;
               seriesCallback(videoError);
             })
           }
         });
       } else {
-        addVideosToGroup( community.dataValues.Groups, videoError => {
+        addVideosAndCommunityLinksToGroup( community.dataValues.Groups, videoError => {
           seriesCallback(videoError);
         })
       }

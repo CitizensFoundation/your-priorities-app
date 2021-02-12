@@ -700,8 +700,10 @@ const setSAMLSettingsOnUser = (req, user, done) => {
             }
           ]
         }).then((groupIn) => {
-          group = groupIn;
-          community = groupIn.Community;
+          if (groupIn) {
+            group = groupIn;
+            community = groupIn.Community;
+          }
           parallelCallback();
         }).catch((error)=> {
           parallelCallback(error);
