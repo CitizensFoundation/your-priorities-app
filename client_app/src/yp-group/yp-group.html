@@ -918,14 +918,15 @@
           } else {
             window.appGlobals.setHighlightedLanguages(null);
           }
+
+          if (this.group.configuration && this.group.configuration.maxNumberOfGroupVotes) {
+            window.appUser.calculateVotesLeftForGroup(this.group);
+          }
         }
         if (this.hasNonOpenPosts && this.tabCounters) {
           this._setupOpenTab();
         }
 
-        if (this.group.configuration && this.group.configuration.maxNumberOfGroupVotes) {
-          window.appUser.calculateVotesLeftForGroup(this.group);
-        }
       },
 
       _openHelpPageIfNeeded: function () {
@@ -933,7 +934,7 @@
           if (this.group && this.group.configuration && this.group.configuration.welcomePageId) {
             this.async(function () {
               this.fire('yp-open-page', {pageId: this.group.configuration.welcomePageId});
-              sessionStorage.setItem("yp-welcome-for-community-"+this.group.id, true)
+              sessionStorage.setItem("yp-welcome-for-group-"+this.group.id, true)
             }, 1200);
           }
         }
