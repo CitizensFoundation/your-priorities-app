@@ -1,4 +1,12 @@
 {
+  "errorSendingContentWhenOnline":"Villa við að senda geymd gögn",
+  "storedDataSent": "Geymt efni hefur verið sent",
+  "youAreOnline": "Tenging við netið er virk",
+  "youAreNowOffline": "Þú hefur samband við netið",
+  "youAreOffline": "Enging tenging við netið",
+  "youAreOfflineCantSend": "Engin tenging, get ekki sent þessi gögn",
+  "notLoggedInContentSentWhenLoggedIn": "Gögn bíða sendingar þegar samband næst",
+  "offlineContentSentWhenOnline": "Engin tenging, gögn verða send síðar",
   "youHaveUsed": "Þú hefur notað",
   "votesForGroup": "atkvæðum",
   "ofNumber": "af",
