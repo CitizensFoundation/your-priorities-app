@@ -493,11 +493,11 @@
         },
 
         checkLogin: function () {
-          this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin" + "?" + (new Date()).getTime();
+          this.$.isLoggedInAjax.url = "/api/users/loggedInUser/isloggedin";
           this.$.isLoggedInAjax.generateRequest();
-          this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights" + "?" + (new Date()).getTime();
+          this.$.adminRightsAjax.url = "/api/users/loggedInUser/adminRights";
           this.$.adminRightsAjax.generateRequest();
-          this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships" + "?" + (new Date()).getTime();
+          this.$.membershipsAjax.url = "/api/users/loggedInUser/memberships";
           this.$.membershipsAjax.generateRequest();
         },
 

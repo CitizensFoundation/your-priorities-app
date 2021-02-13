@@ -159,25 +159,39 @@
         this.$.spinner.active = active;
       },
 
+      _showToast: function (text) {
+        Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+          toast.text = text;
+          toast.duration = 4000;
+          toast.close();
+          toast.show();
+        }.bind(this));
+      },
+
       _error: function (event) {
         this._setActive(false);
-        if (this.dispatchError) {
+        if (!navigator.onLine) {
+          this._showToast(this.t('youAreOffline'));
           event.stopPropagation();
-          if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
-            this.fire("error", event.detail.request.xhr.response.error);
-          } else if (event.detail.request.xhr.response && event.detail.request.xhr.response.message) {
-            this.fire("error", event.detail.request.xhr.response.message);
-          } else if (event.detail.request.xhr.statusText) {
-            this.fire("error", event.detail.request.xhr.statusText);
-          } else {
-            this.fire("error", event.detail.error);
+        } else {
+          if (this.dispatchError) {
+            event.stopPropagation();
+            if (event.detail.request.xhr.response && event.detail.request.xhr.response.error) {
+              this.fire("error", event.detail.request.xhr.response.error);
+            } else if (event.detail.request.xhr.response && event.detail.request.xhr.response.message) {
+              this.fire("error", event.detail.request.xhr.response.message);
+            } else if (event.detail.request.xhr.statusText) {
+              this.fire("error", event.detail.request.xhr.statusText);
+            } else {
+              this.fire("error", event.detail.error);
+            }
+          } else if (event.detail.error && event.detail.error.message &&
+            this._is401(event.detail.error.message) && !window.appUser.user &&
+            this.retryMethodAfter401Login) {
+            window.appUser.loginFor401(this.retryMethodAfter401Login);
+          } else if (this.useDialog && !this.disableUserError) {
+            this.showErrorDialog(event.detail.error);
           }
-        } else if (event.detail.error && event.detail.error.message &&
-                   this._is401(event.detail.error.message) && !window.appUser.user &&
-                   this.retryMethodAfter401Login) {
-          window.appUser.loginFor401(this.retryMethodAfter401Login);
-        } else if (this.useDialog && !this.disableUserError) {
-          this.showErrorDialog(event.detail.error);
         }
       },
 
@@ -195,11 +209,7 @@
           });
           this.fire('response', { offlineSendLater: true });
         } else if (!navigator.onLine && ["POST","PUT","DELETE"].indexOf(this.method) > -1) {
-          Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
-            toast.text = this.t('youAreOfflineCantSend');
-            toast.duration = 4000;
-            toast.show();
-          }.bind(this));
+          this._showToast(this.t('youAreOfflineCantSend'));
           this.fire("error", { offline: true });
         } else {
           this._setActive(true);

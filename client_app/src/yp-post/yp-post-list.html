@@ -562,7 +562,8 @@
             this.$$('#ajax').url += '/'+this.statusFilter;
           }
           this.$$('#ajax').url += "?offset="+(this.posts!=null ? this.posts.length : 0);
-          if (this.randomSeed) {
+
+          if (this.filter=="random" && this.randomSeed) {
             this.$$('#ajax').url += "&randomSeed="+this.randomSeed;
           }
           this.$$('#ajax').generateRequest();
