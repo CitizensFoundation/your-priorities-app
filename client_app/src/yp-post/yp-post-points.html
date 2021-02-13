@@ -1543,40 +1543,47 @@
         },
 
         _newPointResponse: function (inEvent, inDetail) {
-          if (this.currentVideoId) {
-            var point = this._preProcessPoints([inDetail.response])[0];
-            var ajax = document.createElement('iron-ajax');
-            ajax.handleAs = 'json';
-            ajax.contentType = 'application/json';
-            ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
-            ajax.method = 'PUT';
-            ajax.body = {
-              videoId: this.currentVideoId,
-              appLanguage: this.language
-            };
-            ajax.addEventListener('response', function (event, detail) {
-              this._completeNewPointResponse(event, event.detail);
-              window.appGlobals.showSpeechToTextInfoIfNeeded();
-            }.bind(this));
-            ajax.generateRequest();
-          } else if (this.currentAudioId) {
-            var point = this._preProcessPoints([inDetail.response])[0];
-            var ajax = document.createElement('iron-ajax');
-            ajax.handleAs = 'json';
-            ajax.contentType = 'application/json';
-            ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
-            ajax.method = 'PUT';
-            ajax.body = {
-              audioId: this.currentAudioId,
-              appLanguage: this.language
-            };
-            ajax.addEventListener('response', function (event, detail) {
-              this._completeNewPointResponse(event, event.detail);
-              window.appGlobals.showSpeechToTextInfoIfNeeded();
-            }.bind(this));
-            ajax.generateRequest();
+          if (inDetail && inDetail.offlineSendLater) {
+            this.set('addPointDisabled', false);
+            this.set("textValueUp", "");
+            this.set("textValueDown", "");
+            this.set("textValueMobileUpOrDown", "");
           } else {
-            this._completeNewPointResponse(inEvent, inDetail);
+            if (this.currentVideoId) {
+              var point = this._preProcessPoints([inDetail.response])[0];
+              var ajax = document.createElement('iron-ajax');
+              ajax.handleAs = 'json';
+              ajax.contentType = 'application/json';
+              ajax.url = '/api/videos/'+point.id+'/completeAndAddToPoint';
+              ajax.method = 'PUT';
+              ajax.body = {
+                videoId: this.currentVideoId,
+                appLanguage: this.language
+              };
+              ajax.addEventListener('response', function (event, detail) {
+                this._completeNewPointResponse(event, event.detail);
+                window.appGlobals.showSpeechToTextInfoIfNeeded();
+              }.bind(this));
+              ajax.generateRequest();
+            } else if (this.currentAudioId) {
+              var point = this._preProcessPoints([inDetail.response])[0];
+              var ajax = document.createElement('iron-ajax');
+              ajax.handleAs = 'json';
+              ajax.contentType = 'application/json';
+              ajax.url = '/api/audios/'+point.id+'/completeAndAddToPoint';
+              ajax.method = 'PUT';
+              ajax.body = {
+                audioId: this.currentAudioId,
+                appLanguage: this.language
+              };
+              ajax.addEventListener('response', function (event, detail) {
+                this._completeNewPointResponse(event, event.detail);
+                window.appGlobals.showSpeechToTextInfoIfNeeded();
+              }.bind(this));
+              ajax.generateRequest();
+            } else {
+              this._completeNewPointResponse(inEvent, inDetail);
+            }
           }
         },
 
@@ -1637,8 +1644,8 @@
               content: content,
               value: value
             };
-            this.$.newPointAjax.generateRequest();
             this.set('addPointDisabled', true);
+            this.$.newPointAjax.generateRequest();
             if (videoId)
               this.set('currentVideoId', videoId);
             else if (audioId)

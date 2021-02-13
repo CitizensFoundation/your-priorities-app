@@ -186,13 +186,25 @@
       },
 
       generateRequest: function () {
-        // If offline and post or point add to IndexDB otherwise fail with Offline message
-        // Check state of endorsements and qualitites
-        // Add event listener to online
-        //    If data in IndexDB check if logged in and send or give a message that data will be sent when logged in
-        // Listen to loggedin and if online send data if in IndexDB
-        this._setActive(true);
-        this.$.ajax.generateRequest();
+        if (!navigator.onLine && this.method==="POST" && window.fetch) {
+          window.appGlobals.sendWhenOnlineNext({
+            body: this.body,
+            method: this.method,
+            params: this.params,
+            url: this.url
+          });
+          this.fire('response', { offlineSendLater: true });
+        } else if (!navigator.onLine && ["POST","PUT","DELETE"].indexOf(this.method) > -1) {
+          Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+            toast.text = this.t('youAreOfflineCantSend');
+            toast.duration = 4000;
+            toast.show();
+          }.bind(this));
+          this.fire("error", { offline: true });
+        } else {
+          this._setActive(true);
+          this.$.ajax.generateRequest();
+        }
       },
 
       setBody: function(body) {

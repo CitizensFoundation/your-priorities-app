@@ -346,6 +346,8 @@
           } else {
             window.appGlobals.setAnonymousUser(null);
           }
+
+          window.appGlobals.checkContentToSendForLoggedInUser();
         },
 
         removeAnonymousUser: function () {

@@ -1,0 +1,103 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script>
+  /**
+   * @polymerBehavior Polymer.ypAppOfflineBehavior
+   */
+  Polymer.ypAppOfflineBehavior = {
+
+    sendLaterStoragePrefix: "yp-send-later-",
+
+    _onlineEvent: function () {
+      this._showToast(this.t('youAreOnline'));
+      this._checkContentToSend();
+    },
+
+    _offlineEvent: function () {
+      this._showToast(this.t('youAreNowOffline'));
+    },
+
+    _urlWithQuery: function (url, params) {
+      var query = Object.keys(params)
+        .filter(k => params[k] !== undefined && typeof params[k] !== 'object')
+        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+        .join('&');
+      url += (url.indexOf('?') === -1 ? '?' : '&') + query;
+      return url;
+    },
+
+    _getItemsFromLocalStorage: function () {
+      var items = [];
+      for (let i = 0; i < localStorage.length; i++)
+      {
+        let key = localStorage.key(i);
+        if (key.indexOf(this.sendLaterStoragePrefix) > -1) {
+          items.push({ key: key, content: JSON.parse(localStorage.getItem(key)) });
+        }
+      }
+
+      return items;
+    },
+
+    _showToast: function (text) {
+      Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
+        toast.text = text;
+        toast.duration = 4000;
+        toast.close();
+        toast.show();
+      }.bind(this));
+    },
+
+    _sendItems: function (items) {
+      items.forEach(function (item) {
+        var content = item.content;
+        fetch(this._urlWithQuery(content.url, content.params), {
+          method: content.method,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(content.body)
+        }).then(function () {
+          this._showToast(this.t('storedDataSent'));
+          localStorage.removeItem(item.key);
+        }.bind(this)).catch(function (error) {
+          console.error(error);
+          this._showToast(this.t('errorSendingContentWhenOnline'));
+        }.bind(this))
+      }.bind(this))
+    },
+
+    _checkContentToSend: function () {
+      this.async(function () {
+        var items = this._getItemsFromLocalStorage();
+        if (items.length>0) {
+          if (!navigator.onLine) {
+            this._showToast(this.t('offlineContentSentWhenOnline'));
+          } else if (!window.appUser.user) {
+            this._showToast(this.t('notLoggedInContentSentWhenLoggedIn'));
+          } else {
+            this._sendItems(items);
+          }
+        }
+      }, 2000);
+    },
+
+    checkContentToSendForLoggedInUser: function () {
+      this._checkContentToSend();
+    },
+
+    sendWhenOnlineNext: function (contentToSendLater) {
+      this.async(function () {
+        var key = this.sendLaterStoragePrefix+new Date().getTime();
+        localStorage.setItem(key, JSON.stringify(contentToSendLater));
+        this._showToast(this.t('offlineContentSentWhenOnline'));
+      });
+    },
+
+    ready: function () {
+      window.addEventListener('online',  this._onlineEvent.bind(this));
+      window.addEventListener('offline', this._offlineEvent.bind(this));
+    }
+  }
+</script>
