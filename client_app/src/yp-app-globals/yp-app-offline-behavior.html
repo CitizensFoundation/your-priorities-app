@@ -80,7 +80,7 @@
             this._sendItems(items);
           }
         }
-      }, 2000);
+      }, 4000);
     },
 
     checkContentToSendForLoggedInUser: function () {
@@ -98,6 +98,7 @@
     ready: function () {
       window.addEventListener('online',  this._onlineEvent.bind(this));
       window.addEventListener('offline', this._offlineEvent.bind(this));
+      this._checkContentToSend();
     }
   }
 </script>
