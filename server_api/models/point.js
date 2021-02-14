@@ -47,7 +47,7 @@ const attachEmptyGroupIfNeeded = (sequelize, options, callback) => {
         } else {
           callback("Can't create hidden public group for domain level points");
         }
-      }).cathc( error=> {
+      }).catch( error=> {
         callback(error);
     });
   } else {
