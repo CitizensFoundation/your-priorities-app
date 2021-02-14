@@ -56,7 +56,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const db = {};
 
-// Read from local folder
+// Read models from local folder
 fs
   .readdirSync(__dirname)
   .filter((file) => {
