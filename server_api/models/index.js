@@ -29,7 +29,7 @@ const operatorsAliases = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
+  sequelize = new Sequelize(process.env.DATABASE_URL, null, null, {
     dialect: 'postgres',
     dialectOptions: {
       ssl: true,
