@@ -1294,15 +1294,17 @@ const allowedTextTypesForGroup = [
 ];
 
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
-  log.info("In Group translatedText");
+  log.info("TDEBUG 1 In Group translatedText", { query: req.query });
   try {
     if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {
+      log.info("TDEBUG 2 In Group translatedText", { params: req.params });
       models.Group.findOne({
         where: {
           id: req.params.id
         },
         attributes: ['id','name','objectives','configuration']
       }).then(function(group) {
+        log.info("TDEBUG 3 In Group translatedText", { group: group });
         if (group) {
           models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
             if (error) {
@@ -1322,7 +1324,7 @@ router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
       sendGroupOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
     }
   } catch (ex) {
-    log.error("Error in translated text:", { ex });
+    log.error("TDEBUG Error in Group translated text:", { ex });
     res.sendStatus(500);
   }
 });

@@ -287,16 +287,19 @@ router.get('/:id', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
-  log.info("In Group translatedText");
+  log.info("TDEBUG 1 In Post translatedText", { query: req.query });
   try {
     if (req.query.textType.indexOf("post") > -1) {
+      log.info("TDEBUG 2 In Post translatedText", { params: req.params });
       models.Post.findOne({
         where: {
           id: req.params.id
         },
         attributes: ['id','name','description','public_data']
       }).then(function(post) {
+        log.info("TDEBUG 3 In Post translatedText", { post: post });
         if (post) {
+          log.info("TDEBUG 4 In Post translatedText", { post: post });
           models.AcTranslationCache.getTranslation(req, post, function (error, translation) {
             if (error) {
               sendPostOrError(res, req.params.id, 'translated', req.user, error, 500);
@@ -315,7 +318,7 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
       sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
     }
   } catch (ex) {
-    log.error("Error in translated text:", { ex });
+    log.error("TDEBUG Post Error in translated text:", { ex });
     res.sendStatus(500);
   }
 });
