@@ -287,6 +287,7 @@ router.get('/:id', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
+  log.info("In Group translatedText");
   try {
     if (req.query.textType.indexOf("post") > -1) {
       models.Post.findOne({

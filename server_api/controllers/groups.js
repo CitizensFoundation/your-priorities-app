@@ -1294,6 +1294,7 @@ const allowedTextTypesForGroup = [
 ];
 
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
+  log.info("In Group translatedText");
   try {
     if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {
       models.Group.findOne({
