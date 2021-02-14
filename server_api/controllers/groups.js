@@ -1294,41 +1294,30 @@ const allowedTextTypesForGroup = [
 ];
 
 router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
-  log.info("TDEBUG 1 In Group translatedText", { query: req.query });
-  try {
-    if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {
-      log.info("TDEBUG 2 In Group translatedText", { params: req.params });
-      models.Group.findOne({
-        where: {
-          id: req.params.id
-        },
-        attributes: ['id','name','objectives','configuration']
-      }).then(function(group) {
-        log.info("TDEBUG 3 In Group translatedText", { group: group });
-        if (group) {
-          models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
-            log.info("TDEBUG 4 In Group translatedText", { error, translation });
-            if (error) {
-              log.info("TDEBUG 5 In Group translatedText", { });
-              sendGroupOrError(res, req.params.id, 'translated', req.user, error, 500);
-            } else {
-              log.info("TDEBUG 6 In Group translatedText", { });
-              res.send(translation);
-            }
-          });
-          log.info('Group translatedTitle', {  context: 'translated' });
-        } else {
-          sendGroupOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
-        }
-      }).catch(function(error) {
-        sendGroupOrError(res, null, 'translated', req.user, error);
-      });
-    } else {
-      sendGroupOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
-    }
-  } catch (ex) {
-    log.error("TDEBUG Error in Group translated text:", { ex });
-    res.sendStatus(500);
+  if (req.query.textType.indexOf("group") > -1 || allowedTextTypesForGroup.indexOf(req.query.textType) > -1) {
+    models.Group.findOne({
+      where: {
+        id: req.params.id
+      },
+      attributes: ['id','name','objectives','configuration']
+    }).then(function(group) {
+      if (group) {
+        models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
+          if (error) {
+            sendGroupOrError(res, req.params.id, 'translated', req.user, error, 500);
+          } else {
+            res.send(translation);
+          }
+        });
+        log.info('Group translatedTitle', {  context: 'translated' });
+      } else {
+        sendGroupOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+      }
+    }).catch(function(error) {
+      sendGroupOrError(res, null, 'translated', req.user, error);
+    });
+  } else {
+    sendGroupOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
   }
 });
 
