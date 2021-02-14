@@ -287,30 +287,35 @@ router.get('/:id', auth.can('view post'), function(req, res) {
 });
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
-  if (req.query.textType.indexOf("post") > -1) {
-    models.Post.findOne({
-      where: {
-        id: req.params.id
-      },
-      attributes: ['id','name','description','public_data']
-    }).then(function(post) {
-      if (post) {
-        models.AcTranslationCache.getTranslation(req, post, function (error, translation) {
-          if (error) {
-            sendPostOrError(res, req.params.id, 'translated', req.user, error, 500);
-          } else {
-            res.send(translation);
-          }
-        });
-        log.info('Post translatedTitle', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
-      } else {
-        sendPostOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
-      }
-    }).catch(function(error) {
-      sendPostOrError(res, null, 'translated', req.user, error);
-    });
-  } else {
-    sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+  try {
+    if (req.query.textType.indexOf("post") > -1) {
+      models.Post.findOne({
+        where: {
+          id: req.params.id
+        },
+        attributes: ['id','name','description','public_data']
+      }).then(function(post) {
+        if (post) {
+          models.AcTranslationCache.getTranslation(req, post, function (error, translation) {
+            if (error) {
+              sendPostOrError(res, req.params.id, 'translated', req.user, error, 500);
+            } else {
+              res.send(translation);
+            }
+          });
+          log.info('Post translatedTitle', { post: toJson(post.simple()), context: 'view', user: toJson(req.user) });
+        } else {
+          sendPostOrError(res, req.params.id, 'translated', req.user, 'Not found', 404);
+        }
+      }).catch(function(error) {
+        sendPostOrError(res, null, 'translated', req.user, error);
+      });
+    } else {
+      sendPostOrError(res, req.params.id, 'translated', req.user, 'Wrong textType', 401);
+    }
+  } catch (ex) {
+    log.error("Error in translated text:", { ex });
+    res.sendStatus(500);
   }
 });
 
