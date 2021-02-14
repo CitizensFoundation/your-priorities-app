@@ -5,7 +5,8 @@ module.exports = {
         "ssl":true,
         "dialectOptions":{
             "ssl":{
-                "require":true
+                "require":true,
+                "rejectUnauthorized": false
             }
         }
     }
