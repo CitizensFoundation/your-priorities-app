@@ -1,5 +1,9 @@
 var models = require('../models');
 var async = require('async');
+const {cloneTranslationForGroup} = require("../active-citizen/utils/translation_cloning");
+const {cloneTranslationForCommunity} = require("../active-citizen/utils/translation_cloning");
+const {cloneTranslationForPoint} = require("../active-citizen/utils/translation_cloning");
+const {cloneTranslationForPost} = require("../active-citizen/utils/translation_cloning");
 
 const copyPost = (fromPostId, toGroupId, options, done) => {
   var toGroup, toDomainId, toCommunityId;
@@ -89,6 +93,9 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
           newPost.save().then(function () {
             async.series(
               [
+                (postSeriesCallback) => {
+                  cloneTranslationForPost(oldPost, newPost, postSeriesCallback);
+                },
                 (postSeriesCallback) => {
                   if (options && options.createCopyActivities) {
                     models.AcActivity.createActivity({
@@ -308,6 +315,10 @@ const copyPost = (fromPostId, toGroupId, options, done) => {
             newPoint.set('PostId', newPost.id);
             newPoint.save().then(function () {
               async.series([
+                (pointSeriesCallback) => {
+                  //cloneTranslationForPoint(point, newPoint, pointSeriesCallback);
+                  pointSeriesCallback();
+                },
                 (pointSeriesCallback) => {
                   if (options && options.createCopyActivities) {
                     models.AcActivity.createActivity({
@@ -563,6 +574,9 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
           async.series(
             [
               (groupSeriesCallback) => {
+                cloneTranslationForGroup(oldGroup, newGroup, groupSeriesCallback);
+              },
+              (groupSeriesCallback) => {
                 if (oldGroup.GroupLogoImages && oldGroup.GroupLogoImages.length>0) {
                   async.eachSeries(oldGroup.GroupLogoImages, function (image, mediaCallback) {
                     newGroup.addGroupLogoImage(image).then(function () {
@@ -772,6 +786,9 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
         newCommunity.save().then(function () {
           async.series(
             [
+              (communitySeriesCallback) => {
+                cloneTranslationForCommunity(oldCommunity, newCommunity, communitySeriesCallback);
+              },
               (communitySeriesCallback) => {
                 if (oldCommunity.CommunityLogoImages && oldCommunity.CommunityLogoImages.length>0) {
                   async.eachSeries(oldCommunity.CommunityLogoImages, function (image, mediaCallback) {
