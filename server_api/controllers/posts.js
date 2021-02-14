@@ -297,13 +297,16 @@ router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
         },
         attributes: ['id','name','description','public_data']
       }).then(function(post) {
-        log.info("TDEBUG 3 In Post translatedText", { post: post });
+        log.info("TDEBUG 3 In Post translatedText", { });
         if (post) {
-          log.info("TDEBUG 4 In Post translatedText", { post: post });
+          log.info("TDEBUG 4 In Post translatedText", {  });
           models.AcTranslationCache.getTranslation(req, post, function (error, translation) {
+            log.info("TDEBUG 5 In Post translatedText", { error, translation });
             if (error) {
+              log.info("TDEBUG 6 In Post translatedText", { });
               sendPostOrError(res, req.params.id, 'translated', req.user, error, 500);
             } else {
+              log.info("TDEBUG 7 In Post translatedText", { });
               res.send(translation);
             }
           });

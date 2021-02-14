@@ -1307,9 +1307,12 @@ router.get('/:id/translatedText', auth.can('view group'), function(req, res) {
         log.info("TDEBUG 3 In Group translatedText", { group: group });
         if (group) {
           models.AcTranslationCache.getTranslation(req, group, function (error, translation) {
+            log.info("TDEBUG 4 In Group translatedText", { error, translation });
             if (error) {
+              log.info("TDEBUG 5 In Group translatedText", { });
               sendGroupOrError(res, req.params.id, 'translated', req.user, error, 500);
             } else {
+              log.info("TDEBUG 6 In Group translatedText", { });
               res.send(translation);
             }
           });
