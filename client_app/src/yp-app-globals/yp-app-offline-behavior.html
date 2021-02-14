@@ -79,6 +79,10 @@
           } else {
             this._sendItems(items);
           }
+        } else {
+          if (!navigator.onLine) {
+            this._showToast(this.t('youAreOffline'));
+          }
         }
       }, 4000);
     },
