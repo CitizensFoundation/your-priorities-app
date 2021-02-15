@@ -6,11 +6,19 @@ const fs = require('fs');
 const request = require('request');
 const copyCommunityWithEverything = require('../utils/copy_utils').copyCommunityWithEverything;
 
+const domainId = process.argv[2];
+const userId = process.argv[3];
+const urlToConfig = process.argv[4];
+const urlToAddAddFront = process.argv[5];
+
+/*
 const domainId = "3"; //process.argv[2];
-const userId = "850";
-const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv";// process.argv[3];
+const userId = "850" //process.argv[3];
+const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv";// process.argv[4];
 //const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/";
-const urlToAddAddFront = "http://localhost:4242/";
+const urlToAddAddFront = "http://localhost:4242/"; //process.argv[5];
+*/
+
 
 let config;
 let finalOutput = '';
@@ -51,38 +59,42 @@ async.series([
               attributes: ['id','name']
             }).then( linkCommunity => {
               newCommunity.hostname = newCommunity.hostname+"-"+newCommunity.id;
-              newCommunity.configuration = _.merge(newCommunity.configuration,
-                { customBackURL: linkToCommunityId, customBackName: linkCommunity.name })
               newCommunity.save().then(() => {
-                console.log(newCommunity.id);
-                finalOutput+=urlToAddAddFront+"community/"+newCommunity.id+"\n";
-                finalTargetOutput+=urlToAddAddFront+"community/"+linkToCommunityId+"\n";
+                newCommunity.set('configuration.customBackURL', linkToCommunityId);
+                newCommunity.set('configuration.customBackName', linkCommunity.name);
+                newCommunity.save().then(() => {
+                  console.log(newCommunity.id);
+                  finalOutput+=urlToAddAddFront+"community/"+newCommunity.id+"\n";
+                  finalTargetOutput+=urlToAddAddFront+"community/"+linkToCommunityId+"\n";
 
-                const linkModel = models.Group.build({
-                  name: "Link for community - "+linkToCommunityId,
-                  description: "",
-                  access: models.Group.ACCESS_PUBLIC,
-                  user_id: userId,
-                  configuration: { actAsLinkToCommunityId: newCommunity.id },
-                  community_id: linkToCommunityId
-                });
-                linkModel.save().then((model) => {
-                  models.User.findOne({
-                    where: {
-                      id: userId
-                    }
-                  }).then(user=>{
-                    linkModel.addGroupAdmin(user).then(function () {
-                      forEachCallback();
-                    }).catch((error)=>{
+                  const linkModel = models.Group.build({
+                    name: "Link for community - "+linkToCommunityId,
+                    description: "",
+                    access: models.Group.ACCESS_PUBLIC,
+                    user_id: userId,
+                    configuration: { actAsLinkToCommunityId: newCommunity.id },
+                    community_id: linkToCommunityId
+                  });
+                  linkModel.save().then((model) => {
+                    models.User.findOne({
+                      where: {
+                        id: userId
+                      }
+                    }).then(user=>{
+                      linkModel.addGroupAdmin(user).then(function () {
+                        forEachCallback();
+                      }).catch((error)=>{
+                        forEachCallback(error);
+                      });
+                    }).catch(error=>{
                       forEachCallback(error);
-                    });
-                  }).catch(error=>{
+                    })
+                  }).catch( error => {
                     forEachCallback(error);
-                  })
-                }).catch( error => {
+                  });
+                }).catch(error=>{
                   forEachCallback(error);
-                });
+                })
               }).catch( error=>{
                 forEachCallback(error);
               })
