@@ -5,6 +5,56 @@ const {cloneTranslationForCommunity} = require("../active-citizen/utils/translat
 const {cloneTranslationForPoint} = require("../active-citizen/utils/translation_cloning");
 const {cloneTranslationForPost} = require("../active-citizen/utils/translation_cloning");
 
+const clonePagesForCollection = (model, modelRelField, inCollection, outCollection, done) => {
+  const oldToNewHash = {};
+  models.Page.findAll({
+    include: [
+      {
+        model: model,
+        where: {
+          id: inCollection.id
+        }
+      }
+    ]
+  }).then( pages => {
+    async.forEach(pages, (oldPage, forEachCallback) => {
+      const pageJson = JSON.parse(JSON.stringify(oldPage.toJSON()));
+      delete pageJson['id'];
+      pageJson[modelRelField] = outCollection.id;
+      const newPage = models.Page.build(pageJson);
+      newPage.save().then( () => {
+        oldToNewHash[oldPage.id] = newPage.id;
+        forEachCallback();
+      }).catch( error => {
+        forEachCallback(error);
+      })
+    }, error => {
+      if (inCollection.configuration &&
+          inCollection.configuration.welcomePageId &&
+          inCollection.configuration.welcomePageId!=="") {
+        outCollection.set('configuration.welcomePageId', oldToNewHash[parseInt(inCollection.configuration.welcomePageId)]);
+        outCollection.save().then( () => {
+          done();
+        }).catch( error => {
+          done(error);
+        })
+      } else {
+        done(error);
+      }
+    })
+  }).catch( error => {
+    done(error);
+  })
+}
+
+const clonePagesForGroup = (inGroup, outGroup, done) => {
+  clonePagesForCollection(models.Group, "group_id", inGroup, outGroup, done);
+}
+
+const clonePagesForCommunity = (inCommunity, outCommunity, done) => {
+  clonePagesForCollection(models.Community, "community_id", inCommunity, outCommunity, done);
+}
+
 const copyPost = (fromPostId, toGroupId, options, done) => {
   var toGroup, toDomainId, toCommunityId;
   var toDomain;
@@ -574,6 +624,9 @@ const copyGroup = (fromGroupId, toCommunityId, options, done) => {
           async.series(
             [
               (groupSeriesCallback) => {
+                clonePagesForGroup(oldGroup, newGroup, groupSeriesCallback);
+              },
+              (groupSeriesCallback) => {
                 cloneTranslationForGroup(oldGroup, newGroup, groupSeriesCallback);
               },
               (groupSeriesCallback) => {
@@ -786,6 +839,9 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
         newCommunity.save().then(function () {
           async.series(
             [
+              (communitySeriesCallback) => {
+                clonePagesForCommunity(oldCommunity, newCommunity, communitySeriesCallback);
+              },
               (communitySeriesCallback) => {
                 cloneTranslationForCommunity(oldCommunity, newCommunity, communitySeriesCallback);
               },

@@ -19,6 +19,7 @@ const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/C
 const urlToAddAddFront = "http://localhost:4242/"; //process.argv[5];
 */
 
+// node server_api/scripts/cloneWBFromUrlScriptAndCreateLinks.js 3 84397 https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/CF_clone_WB_140221.csv https://kyrgyz-aris.yrpri.org/
 
 let config;
 let finalOutput = '';
