@@ -5,7 +5,7 @@ const util = require('util');
 const communityId = 1264; //process.argv[2];
 
 
-async function getTranslation(textType, model, targetLanguage) {
+async function getTranslationForMap(textType, model, targetLanguage) {
   return await new Promise((resolve, reject) => {
     models.AcTranslationCache.getTranslation({query: {textType, targetLanguage}}, model, async (error, translation) => {
       if (!error && translation) {
@@ -18,7 +18,7 @@ async function getTranslation(textType, model, targetLanguage) {
   });
 }
 
-const getCommunity = async (communityId, map) => {
+const getCommunityMap = async (communityId, map) => {
   return await new Promise((resolve, reject) => {
     models.Community.findOne({
       where: {
@@ -34,7 +34,7 @@ const getCommunity = async (communityId, map) => {
       ]
     }).then(async (community) => {
       if (community) {
-        let communityName = await getTranslation("communityName", community, "en");
+        let communityName = await getTranslationForMap("communityName", community, "en");
 
         if (!communityName) {
           communityName = community.name;
@@ -43,14 +43,14 @@ const getCommunity = async (communityId, map) => {
         const newCommunity = { name: communityName+" (C)", type: "Community", children: []}
 
         for (const group of community.Groups) {
-          let groupName = await getTranslation("groupName", group, "en");
+          let groupName = await getTranslationForMap("groupName", group, "en");
 
           if (!groupName) {
             groupName = group.name;
           }
 
           if (group.configuration.actAsLinkToCommunityId) {
-            groupName += " (LINK)"
+            groupName = "(L)"
           } else {
             groupName += " (G)"
           }
@@ -76,14 +76,18 @@ const getCommunity = async (communityId, map) => {
         resolve();
       }
     }).catch(error => {
-      return reject(error)
+      reject(error)
     });
   });
 }
 
 const run = async () => {
   let map = { name: "Aris", children: []};
-  await getCommunity(communityId, map);
+  try {
+    await getCommunityMap(communityId, map);
+  } catch(error) {
+    console.error(error);
+  }
   console.log(util.inspect(map, {showHidden: false, depth: null}))
   process.exit();
 }
