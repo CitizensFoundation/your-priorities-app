@@ -133,7 +133,7 @@ const countUsersInGroup = (groupId, done) => {
 }
 
 const moveOnePost = (postId, groupId, done) => {
-  var group, post, communityId, domainId, oldGroupId;
+  var group, post, communityId, domainId, oldGroupId, newCommunity;
   async.series([
     function (callback) {
       models.Group.findOne({
@@ -156,6 +156,7 @@ const moveOnePost = (postId, groupId, done) => {
         group = groupIn;
         communityId = group.Community.id;
         domainId = group.Community.Domain.id;
+        newCommunity = group.Community;
         callback();
       }).catch(function (error) {
         callback(error);
@@ -233,7 +234,14 @@ const moveOnePost = (postId, groupId, done) => {
             group.set('counter_users', userCount);
             group.set('counter_posts', postCount);
             group.save().then(()=>{
-              callback();
+              newCommunity.set('counter_points', pointCount);
+              newCommunity.set('counter_users', userCount);
+              newCommunity.set('counter_posts', postCount);
+              newCommunity.save().then(()=> {
+                callback();
+              }).catch( error => {
+                callback(error);
+              })
             }).catch( error=> {
               callback(error);
             })
