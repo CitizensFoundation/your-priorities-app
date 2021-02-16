@@ -463,7 +463,11 @@ const addVideosAndCommunityLinksToGroup = (groups, done) => {
       }).then(communities => {
         communities.forEach( community => {
           const index = linkedCommunityIdToGroupIndex[community.id];
-          groups[index].dataValues.CommunityLink = community;
+          if (groups[index].dataValues) {
+            groups[index].dataValues.CommunityLink = community;
+          } else {
+            groups[index].CommunityLink = community;
+          }
         });
         done(error);
       }).catch( error => {

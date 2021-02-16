@@ -18,6 +18,27 @@ async function getTranslationForMap(textType, model, targetLanguage) {
   });
 }
 
+const truncate = (input, length, killwords, end) => {
+  length = length || 255;
+
+  if (input.length <= length)
+    return input;
+
+  if (killwords) {
+    input = input.substring(0, length);
+  } else {
+    let idx = input.lastIndexOf(' ', length);
+    if (idx === -1) {
+      idx = length;
+    }
+
+    input = input.substring(0, idx);
+  }
+
+  input += (end !== undefined && end !== null) ? end : '...';
+  return input;
+}
+
 const getCommunityMap = async (communityId, map) => {
   return await new Promise((resolve, reject) => {
     models.Community.findOne({
@@ -52,11 +73,11 @@ const getCommunityMap = async (communityId, map) => {
           if (group.configuration.actAsLinkToCommunityId) {
             groupName = "(L)"
           } else {
-            groupName += " (G)"
+            groupName = truncate(groupName, 20) + "(G)"
           }
 
           const newEntry = {
-            name: groupName,
+            name: truncate(groupName, 20),
             children: []
           }
 
