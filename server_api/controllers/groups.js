@@ -1214,7 +1214,7 @@ router.get('/:id', auth.can('view group'), function(req, res) {
     include: [
       {
         model: models.Community,
-        attributes: ['id','theme_id','name','access','google_analytics_code','configuration'],
+        attributes: ['id','theme_id','name','access','google_analytics_code','configuration','language'],
         include: [
           {
             model: models.Domain,

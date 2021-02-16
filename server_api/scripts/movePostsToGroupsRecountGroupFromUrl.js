@@ -4,16 +4,136 @@ const ip = require('ip');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request');
-const copyCommunityWithEverything = require('../utils/copy_utils').copyCommunityWithEverything;
 
-const urlToConfig = process.argv[1];
-const urlToAddAddFront = process.argv[2];
+/*
+const urlToConfig = "https://yrpri-eu-direct-assets.s3-eu-west-1.amazonaws.com/WBMoveIdeas160221.csv"//process.argv[1];
+const urlToAddAddFront = "https://kyrgyz-aris.yrpri.org/"; // process.argv[2];
+*/
+
+const urlToConfig = process.argv[2];
+const urlToAddAddFront = process.argv[3];
 
 let config;
 let finalTargetOutput = '';
 
+const countAllInGroup = (groupId, done) => {
+  let postCount = 0;
+  let pointCount = 0;
+  let userCount = 0;
+
+  async.series([
+    (seriesCallback) => {
+      countPostInGroup(groupId, (error, count) => {
+        if (error) {
+          seriesCallback(error);
+        } else {
+          postCount = count;
+          seriesCallback();
+        }
+      })
+    },
+    (seriesCallback) => {
+      countPointsInGroup(groupId, (error, count) => {
+        if (error) {
+          seriesCallback(error);
+        } else {
+          pointCount = count;
+          seriesCallback();
+        }
+      })
+    },
+    (seriesCallback) => {
+      countUsersInGroup(groupId, (error, count) => {
+        if (error) {
+          seriesCallback(error);
+        } else {
+          userCount = count;
+          seriesCallback();
+        }
+      })
+    }
+  ], error => {
+    if (error) {
+      done(error);
+    } else {
+      done(null, postCount, pointCount, userCount);
+    }
+  });
+}
+
+const countPostInGroup = (groupId, done) => {
+  models.Post.count({
+    where: {
+      group_id: groupId
+    }
+  }).then( count => {
+    done(null, count);
+  }).catch( error => {
+    done(error)
+  })
+}
+
+const countPointsInGroup = (groupId, done) => {
+  models.Point.count({
+    where: {
+      group_id: groupId
+    }
+  }).then( count => {
+    done(null, count);
+  }).catch( error => {
+    done(error)
+  })
+}
+
+const countUsersInGroup = (groupId, done) => {
+  const userIds = [];
+
+  async.series([
+     (seriesCallback) => {
+        models.Endorsement.findAll({
+          attributes: ['user_id'],
+          include: [
+            {
+              model: models.Post,
+              attributes: ['id'],
+              where: {
+                group_id: groupId
+              }
+            }
+          ]
+        }).then( endorsements => {
+          endorsements.forEach( endorsement => {
+            userIds.push(endorsement.user_id);
+          });
+          seriesCallback();
+        })
+     },
+    (seriesCallback) => {
+      models.Point.findAll({
+        attributes: ['user_id'],
+        include: [
+          {
+            model: models.Post,
+            attributes: ['id'],
+            where: {
+              group_id: groupId
+            }
+          }
+        ]
+      }).then( points => {
+        points.forEach( point => {
+          userIds.push(point.user_id);
+        });
+        seriesCallback();
+      })
+    }
+  ], error => {
+    done(error, _.uniq(userIds).length);
+  })
+}
+
 const moveOnePost = (postId, groupId, done) => {
-  var group, post, communityId, domainId;
+  var group, post, communityId, domainId, oldGroupId;
   async.series([
     function (callback) {
       models.Group.findOne({
@@ -48,6 +168,7 @@ const moveOnePost = (postId, groupId, done) => {
         }
       }).then(function (postIn) {
         post = postIn;
+        oldGroupId = post.group_id;
         post.set('group_id', group.id);
         post.save().then(function (results) {
           console.log("Have changed group id");
@@ -97,10 +218,34 @@ const moveOnePost = (postId, groupId, done) => {
       }).catch(function (error) {
         callback(error);
       });
+    },
+    function (callback) {
+      models.Group.findOne({
+        where: {
+          id: oldGroupId
+        }
+      }).then(function (oldGroup) {
+        countAllInGroup(group.id, (error, postCount, pointCount, userCount) => {
+          if (error) {
+            callback(error);
+          } else {
+            group.set('counter_points', pointCount);
+            group.set('counter_users', userCount);
+            group.set('counter_posts', postCount);
+            group.save().then(()=>{
+              callback();
+            }).catch( error=> {
+              callback(error);
+            })
+          }
+        })
+      }).catch(function (error) {
+        callback(error);
+      });
     }
   ], function (error) {
     finalTargetOutput+="Move postId "+postId+" to "+groupId+"\n";
-    finalTargetOutput+=urlToAddAddFront+"/group/"+groupId+"\n\n";
+    finalTargetOutput+=urlToAddAddFront+"group/"+groupId+"\n\n";
     done(error);
   });
 }
@@ -131,6 +276,8 @@ async.series([
         const toGroupId = splitLine[1];
         moveOnePost(postId, toGroupId, forEachCallback);
       }
+    }, error => {
+      seriesCallback();
     });
   },
 ], error => {

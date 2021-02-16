@@ -421,7 +421,11 @@ const addVideosAndCommunityLinksToGroup = (groups, done) => {
         [ { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
       ]
     }).then(videos => {
-      group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+      if (group.dataValues) {
+        group.dataValues.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+      } else {
+        group.GroupLogoVideos = _.orderBy(videos, (video) => video.updated_at,['desc']);
+      }
       forEachCallback();
     }).catch( error => {
       forEachCallback(error);
