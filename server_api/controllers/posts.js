@@ -286,15 +286,38 @@ router.get('/:id', auth.can('view post'), function(req, res) {
   });
 });
 
-router.get('/:id/translatedSurveyAnswers', auth.can('view post'), function(req, res) {
+router.get('/:id/translatedSurvey', auth.can('view post'), function(req, res) {
   const targetLanguage = req.query.targetLanguage;
-  models.AcTranslationCache.getSurveyAnswerTranslations(req.params.id, targetLanguage, (error, translations) => {
-    if (error) {
-      sendGroupOrError(res, req.params.id, 'translatedSurveyAnswers', req.user, error, 500);
-    } else {
-      res.send(translations);
+  const groupId = req.query.groupId;
+  let questions, answers;
+  async.parallel([
+    (parallelCallback) => {
+      models.AcTranslationCache.getSurveyQuestionTranslations(groupId, targetLanguage, (error, translations) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          questions = translations;
+          parallelCallback();
+        }
+      });
+    },
+    (parallelCallback) => {
+      models.AcTranslationCache.getSurveyAnswerTranslations(req.params.id, targetLanguage, (error, translations) => {
+        if (error) {
+          parallelCallback(error);
+        } else {
+          answers = translations;
+          parallelCallback();
+        }
+      });
     }
-  });
+  ], error => {
+    if (error) {
+      sendPostOrError(res, req.params.id, 'translatedSurvey', req.user, error, 500);
+    } else {
+      res.send([questions, answers]);
+    }
+  })
 });
 
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
