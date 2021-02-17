@@ -15,6 +15,7 @@ import '@material/mwc-textarea';
 import './PageConnections';
 import './PageTrends';
 import './PageTopics';
+import './PageMap';
 
 export class AnalyticsApp extends YpBaseElement {
   static get properties() {
@@ -182,6 +183,7 @@ export class AnalyticsApp extends YpBaseElement {
               <header>
                 <mwc-tab-bar @MDCTabBar:activated="${this._tabSelected}">
                   <mwc-tab label="Trends" icon="bar_chart" stacked></mwc-tab>
+                  <mwc-tab label="Map" icon="map" stacked ?hidden="${this.collectionType!=='communities'}"></mwc-tab>
                   <mwc-tab label="Topics" icon="blur_on" stacked></mwc-tab>
                   <mwc-tab label="Connections" icon="3d_rotation" stacked></mwc-tab>
                 </mwc-tab-bar>
@@ -236,15 +238,19 @@ export class AnalyticsApp extends YpBaseElement {
 
   _renderPage() {
     switch (this.page) {
-      case '0':
+      case 'Trends':
         return html`
           <page-trends .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-trends>
       `;
-      case '1':
+      case 'Map':
+        return html`
+          <page-map .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-map>
+      `;
+      case 'Topics':
         return html`
           <page-topics .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPosts}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
         `;
-      case '2':
+      case 'Connections':
         return html`
           <page-connections .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPosts}"  .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
         `;
@@ -257,7 +263,7 @@ export class AnalyticsApp extends YpBaseElement {
 
   __onNavClicked(ev) {
     ev.preventDefault();
-    this.page = ev.target.hash.substring(1);
+    this.page = ev.target.label;
   }
 
   __navClass(page) {
