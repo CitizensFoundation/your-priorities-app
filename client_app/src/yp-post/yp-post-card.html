@@ -18,6 +18,7 @@
 <link rel="import" href="yp-post-actions.html">
 <link rel="import" href="yp-post-cover-media.html">
 <link rel="import" href="yp-post-behaviors.html">
+<link rel="import" href="yp-post-survey-translation-behaviors.html">
 
 <dom-module id="yp-post-card">
 
@@ -297,6 +298,8 @@
           <template is="dom-if" if="[[post.public_data.structuredAnswersJson]]">
             <yp-magic-text id="description" text-type="postContent" content-language="[[post.language]]" hidden$="[[hideDescription]]"
                            content="[[structuredAnswersFormatted]]" remove-urls
+                           disable-translation
+                           skip-sanitize
                            content-id="[[post.id]]" class="description" truncate="120">
             </yp-magic-text>
           </template>
@@ -320,6 +323,9 @@
         </div>
       </div>
     </paper-material>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
+
+    <yp-ajax hidden id="translatedSurveyAjax" on-response="_translatedSurveyResponse"></yp-ajax>
   </template>
 
   <script>
@@ -333,7 +339,8 @@
         Polymer.ypLoggedInUserBehavior,
         Polymer.ypMediaFormatsBehavior,
         Polymer.ypTruncateBehavior,
-        Polymer.ypGotoBehavior
+        Polymer.ypGotoBehavior,
+        Polymer.YpPostSurveyTranslationBehavior
       ],
 
       properties: {
@@ -372,15 +379,10 @@
         isAudioCover: {
           type: Boolean,
           value: false
-        },
-
-        structuredAnswersFormatted: {
-          type: String,
-          computed: '_structuredAnswersFormatted(post)'
         }
       },
 
-      _structuredAnswersFormatted: function (post) {
+      _structuredAnswersFormattedOLDREMOVE: function (post) {
         if (post && post.public_data && post.public_data.structuredAnswersJson &&
           post.Group.configuration && post.Group.configuration.structuredQuestionsJson) {
           var questionHash = {};

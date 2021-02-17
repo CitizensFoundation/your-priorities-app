@@ -213,7 +213,7 @@
         Polymer.dom(document).querySelector('yp-app').getDialogAsync("magicTextDialog", function (dialog) {
           dialog.open(this.content, this.contentId, this.extraId,
                       this.textType, this.contentLanguage, this.closeDialogText,
-                      this.structuredQuestionsConfig, this.skipSanitize);
+                      this.structuredQuestionsConfig, this.skipSanitize, this.disableTranslation);
         }.bind(this));
       }
 

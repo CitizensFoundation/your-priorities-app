@@ -195,6 +195,7 @@
       }
     </style>
     <lite-signal on-lite-signal-yp-language="_languageEvent"></lite-signal>
+    <lite-signal on-lite-signal-yp-auto-translate="_autoTranslateEvent"></lite-signal>
 
     <yp-edit-dialog name="postEdit" double-width id="editDialog" icon="lightbulb-outline" action="[[action]]"
                     use-next-tab-action="[[newPost]]" on-next-tab-action="_nextTab" method="[[method]]"
@@ -472,6 +473,7 @@
                      text-type="customTitleQuestionText"></yp-magic-text>
     </template>
 
+    <yp-ajax id="translatedQuestionsAjax" on-response="_translatedQuestionsResponse"></yp-ajax>
   </template>
 
 </dom-module>
@@ -521,7 +523,8 @@
       },
 
       group: {
-        type: Object
+        type: Object,
+        observer: "_groupChanged"
       },
 
       locationHidden: {
@@ -624,7 +627,7 @@
 
       structuredQuestions: {
         type: Array,
-        computed: '_structuredQuestions(post, group)'
+        computed: '_structuredQuestions(post, group, translatedQuestions)'
       },
 
       hasStructuredQuestions:  {
@@ -658,7 +661,61 @@
       hasOnlyOneTab: {
         type: Boolean,
         value: false
+      },
+
+      translatedQuestions: {
+        type: Array,
+        value: null
+      },
+
+      autoTranslate: {
+        type: Boolean,
+        value: false
       }
+    },
+
+    _autoTranslateEvent(event, detail) {
+      this.set('autoTranslate', detail);
+      this._getSurveyTranslationsIfNeeded();
+    },
+
+    _getSurveyTranslationsIfNeeded: function () {
+      this.set('translatedQuestions', null);
+      if (this.autoTranslate && this.language!==this.group.language) {
+        this.$.translatedQuestionsAjax.url = `/api/groups/${this.group.id}/translatedSurveyQuestions?targetLanguage=${this.language}`;
+        this.$.translatedQuestionsAjax.generateRequest();
+      }
+    },
+
+    _translatedQuestionsResponse: function (event, detail) {
+      if (this.autoTranslate && this.language!==this.group.language) {
+        var translatedTexts = detail.response;
+        var currentQuestions = JSON.parse(JSON.stringify(this.group.configuration.structuredQuestionsJson));
+
+        if (translatedTexts.length===currentQuestions.length) {
+          for (var i=0; i<currentQuestions.length;i++) {
+            currentQuestions[i].text = translatedTexts[i];
+          }
+
+          this.set('translatedQuestions', currentQuestions);
+        } else {
+          console.error("Questions and Translated texts length does not match");
+        }
+      } else {
+        this.set('translatedQuestions', null);
+      }
+    },
+
+    _groupChanged: function (group) {
+     if (group &&
+         group.configuration &&
+         group.configuration.structuredQuestionsJson &&
+         group.configuration.structuredQuestionsJson.length > 0) {
+       if (window.autoTranslate) {
+         this.set('autoTranslate', window.autoTranslate);
+       }
+       this._getSurveyTranslationsIfNeeded();
+     }
     },
 
     listeners: {
@@ -833,9 +890,15 @@
       this.$.editDialog.scrollResize();
     },
 
-    _structuredQuestions: function (post, group) {
+
+
+    _structuredQuestions: function (post, group, translatedQuestions) {
       if (post && group && group.configuration.structuredQuestionsJson) {
-        return group.configuration.structuredQuestionsJson;
+        if (translatedQuestions) {
+          return translatedQuestions;
+        } else {
+          return group.configuration.structuredQuestionsJson;
+        }
       } else if (post && group && group.configuration.structuredQuestions && group.configuration.structuredQuestions!=="") {
         var structuredQuestions = [];
 
