@@ -27,6 +27,10 @@
         border-bottom: 2px solid var(--accent-color);
       }
 
+      #htmlEditor[has-error] {
+          border-bottom: 2px solid #dd2c00 !important;
+      }
+
       .characterCounter {
         color: #212121;
         font-size: 12px;
@@ -39,6 +43,10 @@
       .characterCounter[has-focus] {
         color: var(--accent-color);
         margin-top: 0px;
+      }
+
+      .characterCounter[has-error] {
+          color: #dd2c00 !important;
       }
 
       @media (max-width: 800px) {
@@ -72,8 +80,8 @@
         <paper-icon-button aria-label$="[[t('formatClear')]]" icon="format-clear" on-mousedown="_clearFormatM" on-tap="_clearFormat"></paper-icon-button>
       </div>
     </div>
-    <div id="htmlEditor" on-focus="_setFocus" on-blur="_setBlur" contenteditable="true" spellcheck="false" on-keydown="_keydown" on-paste="_paste" on-click="_changed" on-keyup="_changed" on-changed="_changed"></div>
-    <div has-focus$="[[hasFocus]]" class="layout end characterCounter">[[characterCount]]<span hidden$="[[!question.maxLength]]">/[[question.maxLength]]</span></div>
+    <div id="htmlEditor" has-error$="[[showErrorLine]]" on-focus="_setFocus" on-blur="_setBlur" contenteditable="true" spellcheck="false" on-keydown="_keydown" on-paste="_paste" on-click="_changed" on-keyup="_changed" on-changed="_changed"></div>
+    <div has-focus$="[[hasFocus]]" has-error$="[[showErrorLine]]" class="layout end characterCounter">[[characterCount]]<span hidden$="[[!question.maxLength]]">/[[question.maxLength]]</span></div>
   </template>
   <script>
 
@@ -119,6 +127,11 @@
           allowFirefoxFocusHack: {
             type: Boolean,
             value: true
+          },
+
+          showErrorLine: {
+            type: Boolean,
+            value: false
           }
         }
       }
@@ -160,6 +173,7 @@
 
       _keydown(event) {
         this._updateCharacterCounter();
+        this.set('showErrorLine', false);
 
         if (this.question.maxLength) {
           var allowedKeyCodes = [8, 37, 38, 39, 40];
@@ -206,11 +220,14 @@
       validate() {
         if (this.question.required) {
           if (this.value && this.value.length>0) {
+            this.set('showErrorLine', false);
             return true;
           } else {
+            this.set('showErrorLine', true);
             return false;
           }
         } else {
+          this.set('showErrorLine', false);
           return true;
         }
       }
