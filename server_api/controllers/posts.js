@@ -286,6 +286,17 @@ router.get('/:id', auth.can('view post'), function(req, res) {
   });
 });
 
+router.get('/:id/translatedSurveyAnswers', auth.can('view post'), function(req, res) {
+  const targetLanguage = req.query.targetLanguage;
+  models.AcTranslationCache.getSurveyAnswerTranslations(req.params.id, targetLanguage, (error, translations) => {
+    if (error) {
+      sendGroupOrError(res, req.params.id, 'translatedSurveyAnswers', req.user, error, 500);
+    } else {
+      res.send(translations);
+    }
+  });
+});
+
 router.get('/:id/translatedText', auth.can('view post'), function(req, res) {
   if (req.query.textType.indexOf("post") > -1) {
     models.Post.findOne({
