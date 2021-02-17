@@ -478,6 +478,9 @@
           } else {
             this.set('isAudioCover', false);
           }
+
+          this._getSurveyTranslationsIfNeeded();
+
           this.async(function () {
             var postName = this.$$("#postName");
             if (postName && false) {

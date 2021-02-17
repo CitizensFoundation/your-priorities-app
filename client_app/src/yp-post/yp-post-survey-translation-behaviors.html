@@ -28,6 +28,16 @@
       }
     },
 
+    ready: function () {
+      if (window.autoTranslate) {
+        this.set('autoTranslate', true);
+      }
+    },
+
+    _getIndexTranslationKey: function(textType) {
+      return `${textType}-${this.post.id}-${this.language}`;
+    },
+
     _languageEvent: function (event, detail) {
       if (detail.type == 'language-loaded') {
         this.async(function () {
@@ -51,8 +61,16 @@
         this.post.public_data.structuredAnswersJson &&
         this.autoTranslate &&
         this.language!==this.post.language) {
-        this.$.translatedSurveyAjax.url = `/api/posts/${this.post.id}/translatedSurvey?targetLanguage=${this.language}&groupId=${this.post.Group.id}`;
-        this.$.translatedSurveyAjax.generateRequest();
+        var questionsIndexKey = this._getIndexTranslationKey("GroupQuestions");
+        var answersIndexKey = this._getIndexTranslationKey("PostAnswers");
+        if (window.appGlobals.autoTranslateCache[questionsIndexKey] &&
+          window.appGlobals.autoTranslateCache[answersIndexKey]) {
+          this.set('translatedQuestions', window.appGlobals.autoTranslateCache[questionsIndexKey]);
+          this.set('translatedAnswers', window.appGlobals.autoTranslateCache[answersIndexKey]);
+        } else {
+          this.$.translatedSurveyAjax.url = `/api/posts/${this.post.id}/translatedSurvey?targetLanguage=${this.language}&groupId=${this.post.Group.id}`;
+          this.$.translatedSurveyAjax.generateRequest();
+        }
       }
     },
 
@@ -79,7 +97,14 @@
 
           this.set('translatedQuestions', currentQuestions);
           this.set('translatedAnswers', currentAnswers);
-        } else {
+
+          var questionsIndexKey = this._getIndexTranslationKey("GroupQuestions");
+          var answersIndexKey = this._getIndexTranslationKey("PostAnswers");
+
+          window.appGlobals.autoTranslateCache[questionsIndexKey] = currentQuestions;
+          window.appGlobals.autoTranslateCache[answersIndexKey] = currentAnswers;
+
+          } else {
           console.error("Questions and Translated texts length does not match");
         }
       } else {
