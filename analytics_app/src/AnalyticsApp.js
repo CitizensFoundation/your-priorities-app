@@ -238,19 +238,19 @@ export class AnalyticsApp extends YpBaseElement {
 
   _renderPage() {
     switch (this.page) {
-      case 'Trends':
+      case '0':
         return html`
           <page-trends .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-trends>
       `;
-      case 'Map':
+      case this.collectionType==='communities' ? '1' : '-1':
         return html`
           <page-map .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-map>
       `;
-      case 'Topics':
+      case this.collectionType==='communities' ? '2' : '1':
         return html`
           <page-topics .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPosts}" .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-topics>
         `;
-      case 'Connections':
+      case this.collectionType==='communities' ? '3' : '2':
         return html`
           <page-connections .similaritiesData="${this.similaritiesData}" .totalNumberOfPosts="${this.totalNumberOfPosts}"  .collectionType="${this.collectionType}" .collectionId="${this.collectionId}"></page-connections>
         `;
@@ -263,6 +263,7 @@ export class AnalyticsApp extends YpBaseElement {
 
   __onNavClicked(ev) {
     ev.preventDefault();
+    debugger;
     this.page = ev.target.label;
   }
 
