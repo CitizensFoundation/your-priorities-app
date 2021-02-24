@@ -19,6 +19,7 @@ var multerMultipartResolver = multer({ dest: 'uploads/' }).single('file');
 const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
+const {getMapForCommunity} = require("../utils/community_mapping_tools");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -1871,6 +1872,19 @@ router.put('/:id/update_translation', auth.can('edit community'), function(req, 
       res.send(results);
     }
   });
+});
+
+router.get('/:id/recursiveMap', auth.can('view community'), async (req, res) => {
+  try {
+    let map = await getMapForCommunity(req.params.id);
+    if (map.children && map.children.length>0) {
+      map = map.children[0];
+    }
+    res.send(map);
+  } catch (error) {
+    log.error("Error in getting recursiveMap", { error });
+    res.sendStatus(500);
+  }
 });
 
 module.exports = router;

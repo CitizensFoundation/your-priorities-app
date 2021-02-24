@@ -1,9 +1,4 @@
 const models = require('../models');
-const util = require('util');
-
-
-const communityId = 1264; //process.argv[2];
-
 
 async function getTranslationForMap(textType, model, targetLanguage) {
   return await new Promise((resolve, reject) => {
@@ -62,7 +57,8 @@ const getCommunityMap = async (communityId, map) => {
         }
 
         const newCommunity = {
-          name: truncate(communityName, 25) + `(C-${community.id})`,
+          name:  truncate(communityName, 25) + ` (C-${community.id})`,
+          link: "/community/"+community.id,
           type: "Community", children: []
         }
 
@@ -73,21 +69,17 @@ const getCommunityMap = async (communityId, map) => {
             groupName = group.name;
           }
 
+          groupName = truncate(groupName, 25) + ` (G-${group.id})`;
+
           if (group.configuration.actAsLinkToCommunityId) {
-            groupName = "(L)"
+            await getCommunityMap(group.configuration.actAsLinkToCommunityId, newCommunity);
           } else {
-            groupName = truncate(groupName, 25) + `(G-${group.id}`;
-          }
-
-          const newEntry = {
-            name: groupName,
-            children: []
-          }
-
-          newCommunity.children.push(newEntry);
-
-          if (group.configuration.actAsLinkToCommunityId) {
-            await getCommunityMap(group.configuration.actAsLinkToCommunityId, newEntry);
+            const newEntry = {
+              name: groupName,
+              link: "/group/"+group.id,
+              children: []
+            }
+            newCommunity.children.push(newEntry);
           }
         }
 
@@ -105,15 +97,27 @@ const getCommunityMap = async (communityId, map) => {
   });
 }
 
-const run = async () => {
-  let map = { name: "Aris", children: []};
-  try {
-    await getCommunityMap(communityId, map);
-  } catch(error) {
-    console.error(error);
-  }
-  console.log(util.inspect(map, {showHidden: false, depth: null}))
-  process.exit();
+const getMapForCommunity = async (communityId) => {
+  return await new Promise((resolve, reject) => {
+    models.Community.findOne({
+      where: {
+        id: communityId
+      },
+      attributes: ['name','id']
+    }).then( async community => {
+      let map = { name: community.name, children: []};
+      try {
+        await getCommunityMap(communityId, map);
+        resolve(map);
+      } catch(error) {
+        reject(error);
+      }
+    }).catch( error => {
+      reject(error);
+    })
+  });
 }
 
-run();
+module.exports = {
+  getMapForCommunity
+};
