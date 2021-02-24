@@ -1,4 +1,5 @@
 {
+  "registrationQuestions": "Spurningar fyrir skráningu í JSON formi",
   "errorSendingContentWhenOnline":"Villa við að senda geymd gögn",
   "storedDataSent": "Geymt efni hefur verið sent",
   "youAreOnline": "Tenging við netið er virk",

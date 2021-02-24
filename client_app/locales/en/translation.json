@@ -1,4 +1,5 @@
 {
+  "registrationQuestions": "Registration question in JSON format",
   "errorSendingContentWhenOnline":"Error sending saved offline data",
   "storedDataSent": "Stored data sent",
   "youAreOnline": "You are online",
