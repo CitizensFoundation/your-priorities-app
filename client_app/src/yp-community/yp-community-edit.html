@@ -368,6 +368,13 @@
                       maxlength="150" class="mainInput">
       </paper-textarea>
 
+      <paper-input id="externalId"
+                   name="externalId"
+                   type="text"
+                   label="[[t('externalId')]]"
+                   value="{{community.configuration.externalId}}">
+      </paper-input>
+
       <div class="layout horizontal additionalSettings half" hidden$="[[!ssnLoginListDataId]]">
         <div>
           <b>[[t('ssnLoginListCount')]]: [[ssnLoginListDataCount]]</b>

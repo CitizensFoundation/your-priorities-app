@@ -790,7 +790,8 @@
       if (this.oneTimeLoginName && (
           !this.registrationQuestionsGroup || this.$$("#registrationQuestionsOneTimeLogin").validate()
         )) {
-          this.anonymousLogin('One time name login', this.$$("#registrationQuestionsOneTimeLogin").getAnswers());
+          this.anonymousLogin('One time name login', this.$$("#registrationQuestionsOneTimeLogin") ?
+            this.$$("#registrationQuestionsOneTimeLogin").getAnswers() : undefined);
       } else {
         this.$$("#loginAjax").showErrorDialog(this.t('user.completeForm'));
         window.appGlobals.sendLoginAndSignupToAnalytics(null, this.registerMode ? 'Signup Fail' : 'Login Fail', 'Email', 'Form not validated');
