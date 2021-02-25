@@ -769,6 +769,20 @@
           <input type="hidden" name="welcomePageId" value="[[group.configuration.welcomePageId]]">
         </div>
 
+        <paper-textarea id="registrationQuestions"
+                        name="registrationQuestions"
+                        type="text"
+                        rows="4"
+                        always-float-label="[[group.configuration.registrationQuestions]]"
+                        maxrows="8"
+                        on-value-changed="_registrationQuestionsChanged"
+                        max-rows="8"
+                        label="[[t('registrationQuestions')]]"
+                        value="{{group.configuration.registrationQuestions}}">
+        </paper-textarea>
+
+        <div id="registrationQuestionsJsonErrorInfo" hidden$="[[!registrationQuestionsJsonError]]">[[t('structuredQuestionsJsonFormatNotValid')]]</div>
+
         <input type="hidden" name="hideAllTabs" value$="[[hideAllTabs]]">
         <input type="hidden" name="hideNewPostOnPostPage" value$="[[hideNewPostOnPostPage]]">
         <input type="hidden" name="newPointOptional" value$="[[newPointOptional]]">
@@ -944,6 +958,11 @@
         value: false
       },
 
+      registrationQuestionsJsonError: {
+        type: Boolean,
+        value: false
+      },
+
       maxObjectivesLength: {
         type: Number,
         value: 300
@@ -983,6 +1002,25 @@
         }
       } else {
         this.set('structuredQuestionsJsonError', false);
+      }
+    },
+
+    _registrationQuestionsChanged: function (event, detail) {
+      if (detail && detail.value) {
+        var questions = detail.value.trim();
+        if (questions.startsWith("[") || questions.startsWith("{")) {
+          var jsonError = false;
+          try {
+            JSON.parse(questions);
+          } catch (e) {
+            jsonError = true;
+          }
+          this.set('registrationQuestionsJsonError', jsonError);
+        } else {
+          this.set('registrationQuestionsJsonError', false);
+        }
+      } else {
+        this.set('registrationQuestionsJsonError', false);
       }
     },
 

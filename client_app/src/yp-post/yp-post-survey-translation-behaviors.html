@@ -74,6 +74,24 @@
       }
     },
 
+    //TODO: Don't repeat here for the 3rd time
+    _getQuestionLengthWithSubOptions: function (questions) {
+      let length = 0;
+      for (let i=0; i<questions.length;i++) {
+        length += 1;
+        var question = questions[i];
+        if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+          length += question.radioButtons.length;
+        }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+          length += question.checkboxes.length;
+        } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+          length += question.dropdownOptions.length;
+        }
+      }
+
+      return length;
+    },
+
     _translatedSurveyResponse: function (event, detail) {
       if (this.post &&
         this.autoTranslate &&
@@ -84,9 +102,19 @@
         var currentQuestions = JSON.parse(JSON.stringify(this.post.Group.configuration.structuredQuestionsJson));
         var currentAnswers = JSON.parse(JSON.stringify(this.post.public_data.structuredAnswersJson));
 
-        if (translatedQuestionTexts.length===currentQuestions.length) {
+        if (translatedQuestionTexts.length===this._getQuestionLengthWithSubOptions(currentQuestions)) {
+          var translationCounter = 0;
           for (var i=0; i<currentQuestions.length;i++) {
-            currentQuestions[i].text = translatedQuestionTexts[i];
+            var question = currentQuestions[i];
+            question.text = translatedQuestionTexts[translationCounter++];
+
+            if (question.type==="radios" && question.radioButtons && question.radioButtons.length>0) {
+              translationCounter += question.radioButtons.length;
+            }  else if (question.type==="checkboxes" && question.checkboxes && question.checkboxes.length>0) {
+              translationCounter += question.checkboxes.length;
+            } else if(question.type==="dropdown" && question.dropdownOptions && question.dropdownOptions.length>0) {
+              translationCounter += question.dropdownOptions.length;
+            }
           }
 
           for (var i=0; i<currentAnswers.length;i++) {

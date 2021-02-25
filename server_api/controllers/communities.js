@@ -1874,7 +1874,7 @@ router.put('/:id/update_translation', auth.can('edit community'), function(req, 
   });
 });
 
-router.get('/:id/recursiveMap', auth.can('view community'), async (req, res) => {
+router.get('/:id/recursiveMap', auth.can('edit community'), async (req, res) => {
   try {
     let map = await getMapForCommunity(req.params.id);
     if (map.children && map.children.length>0) {

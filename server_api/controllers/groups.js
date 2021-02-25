@@ -1347,6 +1347,17 @@ router.get('/:id/translatedSurveyQuestions', auth.can('view group'), function(re
   });
 });
 
+router.get('/:id/translatedRegistrationQuestions', auth.can('view group'), function(req, res) {
+  const targetLanguage = req.query.targetLanguage;
+  models.AcTranslationCache.getRegistrationQuestionTranslations(req.params.id, targetLanguage, (error, translations) => {
+    if (error) {
+      sendGroupOrError(res, req.params.id, 'translatedRegistrationQuestions', req.user, error, 500);
+    } else {
+      res.send(translations);
+    }
+  });
+});
+
 router.get('/:id/search/:term', auth.can('view group'), function(req, res) {
     log.info('Group Search', { groupId: req.params.id, context: 'view', user: toJson(req.user) });
     models.Post.search(req.params.term, req.params.id, models.Category).then(function(posts) {

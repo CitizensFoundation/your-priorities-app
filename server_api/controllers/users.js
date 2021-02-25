@@ -29,6 +29,7 @@ var sendUserOrError = function (res, user, context, error, errorStatus) {
       res.status(500).send({ message: error.name });
     }
   } else {
+    delete user.dataValues.encrypted_password;
     res.send(user);
   }
 };
@@ -140,6 +141,10 @@ router.post('/login', function (req, res) {
   });
 });
 
+const setUserProfileData = (user, profileData) => {
+  user.set('private_profile_data', { registration_answers: profileData })
+}
+
 // Register
 router.post('/register', function (req, res) {
   var user = models.User.build({
@@ -149,6 +154,11 @@ router.post('/register', function (req, res) {
     status: 'active'
   });
   user.createPasswordHash(req.body.password);
+
+  if (req.body.registration_answers) {
+    setUserProfileData(user, req.body.registration_answers);
+  }
+
   user.save().then(function () {
     log.info('User Created', { user: toJson(user), context: 'create', loggedInUser: toJson(req.user) });
     req.logIn(user, function (error, detail) {
@@ -203,6 +213,11 @@ router.post('/register_anonymously', function (req, res) {
           user.set('profile_data', {});
           user.set('profile_data.isAnonymousUser', true);
           user.set('profile_data.trackingParameters', req.body.trackingParameters);
+
+          if (req.body.registration_answers) {
+            setUserProfileData(user, req.body.registration_answers);
+          }
+
           user.save().then(function () {
             log.info('User Created Anonymous', { user: toJson(user), context: 'register_anonymous' });
             req.logIn(user, function (error, detail) {
