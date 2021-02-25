@@ -12,6 +12,17 @@
         margin: 16px;
       }
 
+      .icon {
+          --iron-icon-height: 32px;
+          --iron-icon-width: 32px;
+      }
+
+      .text[large-font] {
+          margin: 8px;
+          font-size: 16px;
+          margin-left: 12px;
+      }
+
       [hidden] {
         display: none !important;
       }
@@ -20,7 +31,10 @@
     <paper-toast id="toast" duration="5000">
       <div class="layout vertical">
         <yp-user-with-organization class="layout horizontal self-end" user="[[user]]" hidden$="[[!user]]"></yp-user-with-organization>
-        <div class="text">[[notificationText]]</div>
+        <div class="layout horizontal">
+          <iron-icon class="icon" hidden$="[[!icon]]" icon="[[icon]]"></iron-icon>
+          <div class="text" large-font$="[[largerFont]]">[[notificationText]]</div>
+        </div>
       </div>
     </paper-toast>
   </template>
@@ -39,16 +53,40 @@
         notificationText: {
           type: String,
           value: null
+        },
+
+        icon: {
+          type: String,
+          value: null
+        },
+
+        largerFont: {
+          type: Boolean,
+          value: false
         }
       },
 
-      open: function (user, notificationText, systemNotification) {
+      open: function (user, notificationText, systemNotification, icon, timeoutMs, largerFont) {
         this.set('notificationText', notificationText);
         if (!systemNotification) {
           this.set('user', user);
         }
+        if (icon) {
+          this.set('icon', icon);
+        } else {
+          this.set('icon', null);
+        }
+
+        if (largerFont) {
+          this.set('largerFont', true);
+        } else {
+          this.set('largerFont', false);
+        }
         this.$.toast.close();
         this.async(function () {
+          if (timeoutMs) {
+            this.$.toast.duration = timeoutMs;
+          }
           this.$.toast.open();
         });
       }

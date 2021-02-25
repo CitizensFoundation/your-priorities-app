@@ -551,10 +551,24 @@
 
               if (lastVoteCount!=this.groupCurrentVoteCountIndex[group.id]) {
                 var text = `${this.t('youHaveUsed')} ${this.groupCurrentVoteCountIndex[group.id]} ${this.t('ofNumber')} ${group.configuration.maxNumberOfGroupVotes} ${this.t('votesForGroup')}`;
-                Polymer.dom(document).querySelector('yp-app').getDialogAsync("masterToast", function (toast) {
-                  toast.text = text;
-                  toast.duration = 4000;
-                  toast.show();
+
+                var endorsementButtons = group.configuration.endorsementButtons ?
+                       group.configuration.endorsementButtons : "hearts";
+
+                var icon;
+
+                if (endorsementButtons=='thumbs') {
+                  icon = 'thumb-up';
+                }  else if (endorsementButtons=='hearts') {
+                  icon = 'favorite-border';
+                } else if (endorsementButtons=='hats') {
+                  icon = 'keyboard-arrow-up';
+                } else if (endorsementButtons=='arrows') {
+                  icon = 'arrow-upward';
+                }
+
+                Polymer.dom(document).querySelector('yp-app').getDialogAsync("notificationToast", function (dialog) {
+                  dialog.open(null, text, null, icon, 4000, true);
                 }.bind(this));
               }
 
