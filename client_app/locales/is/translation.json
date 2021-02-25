@@ -1,4 +1,5 @@
 {
+  "externalId": "External Id",
   "registrationQuestions": "Spurningar fyrir skráningu í JSON formi",
   "errorSendingContentWhenOnline":"Villa við að senda geymd gögn",
   "storedDataSent": "Geymt efni hefur verið sent",

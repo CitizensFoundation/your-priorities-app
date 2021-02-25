@@ -1,4 +1,5 @@
 {
+  "externalId": "External Id",
   "registrationQuestions": "Registration question in JSON format",
   "errorSendingContentWhenOnline":"Error sending saved offline data",
   "storedDataSent": "Stored data sent",
