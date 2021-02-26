@@ -47,7 +47,6 @@
     "bower_components/webcomponentsjs/webcomponents*.js",
     "bower_components/webcomponentsjs/custom*.js",
     "src/privacy.html",
-    "src/terms.html",
-    "robots.txt"
+    "src/terms.html"
   ]
 }
