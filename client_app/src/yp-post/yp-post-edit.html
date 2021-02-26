@@ -708,7 +708,7 @@
     _translatedQuestionsResponse: function (event, detail) {
       if (this.autoTranslate && this.language!==this.group.language) {
         var translatedTexts = detail.response;
-        var currentQuestions = JSON.parse(JSON.stringify(this.group.configuration.registrationQuestionsJson));
+        var currentQuestions = JSON.parse(JSON.stringify(this.group.configuration.structuredQuestionsJson));
 
         if (translatedTexts.length===this._getQuestionLengthWithSubOptions(currentQuestions)) {
           var translatedItemCount = 0;
