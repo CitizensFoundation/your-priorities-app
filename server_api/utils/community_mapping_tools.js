@@ -34,7 +34,7 @@ const truncate = (input, length, killwords, end) => {
   return input;
 }
 
-const getCommunityMap = async (communityId, map) => {
+const getCommunityMap = async (communityId, map, options) => {
   return await new Promise((resolve, reject) => {
     models.Community.findOne({
       where: {
@@ -50,7 +50,13 @@ const getCommunityMap = async (communityId, map) => {
       ]
     }).then(async (community) => {
       if (community) {
-        let communityName = await getTranslationForMap("communityName", community, "en");
+        let communityName;
+
+        if (options.targetLocale) {
+          communityName = await getTranslationForMap("communityName", community, "en");
+        } else {
+          communityName = community.name;
+        }
 
         if (!communityName) {
           communityName = community.name;
@@ -63,7 +69,13 @@ const getCommunityMap = async (communityId, map) => {
         }
 
         for (const group of community.Groups) {
-          let groupName = await getTranslationForMap("groupName", group, "en");
+          let groupName;
+
+          if (options.targetLocale) {
+            groupName = await getTranslationForMap("groupName", group, "en");
+          } else {
+            groupName = group.name;
+          }
 
           if (!groupName) {
             groupName = group.name;
@@ -72,7 +84,7 @@ const getCommunityMap = async (communityId, map) => {
           groupName = truncate(groupName, 25) + ` (G-${group.id})`;
 
           if (group.configuration.actAsLinkToCommunityId) {
-            await getCommunityMap(group.configuration.actAsLinkToCommunityId, newCommunity);
+            await getCommunityMap(group.configuration.actAsLinkToCommunityId, newCommunity, options);
           } else {
             const newEntry = {
               name: groupName,
@@ -97,7 +109,7 @@ const getCommunityMap = async (communityId, map) => {
   });
 }
 
-const getMapForCommunity = async (communityId) => {
+const getMapForCommunity = async (communityId, options) => {
   return await new Promise((resolve, reject) => {
     models.Community.findOne({
       where: {
@@ -107,7 +119,7 @@ const getMapForCommunity = async (communityId) => {
     }).then( async community => {
       let map = { name: community.name, children: []};
       try {
-        await getCommunityMap(communityId, map);
+        await getCommunityMap(communityId, map, options);
         resolve(map);
       } catch(error) {
         reject(error);

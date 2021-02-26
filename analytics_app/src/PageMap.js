@@ -22,6 +22,7 @@ import { YpBaseElement } from './YpBaseElement';
 import { ShadowStyles } from './ShadowStyles';
 import '@material/mwc-select';
 import '@material/mwc-button';
+import '@material/mwc-checkbox';
 import '@material/mwc-list/mwc-list-item';
 
 export class PageMap extends YpBaseElement {
@@ -116,7 +117,15 @@ export class PageMap extends YpBaseElement {
 
   getMap() {
     this.collectionStatsUrl = `/api/communities/${this.collectionId}/recursiveMap`;
-    this.getMapData(this.collectionStatsUrl);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const useEnglish = urlParams.get('useEnglish');
+
+    if (useEnglish) {
+        this.getMapData(this.collectionStatsUrl+"?useEnglish=1");
+    } else {
+        this.getMapData(this.collectionStatsUrl);
+    }
   }
 
   connectedCallback() {
@@ -669,12 +678,27 @@ export class PageMap extends YpBaseElement {
      //centerNode(root);
   }
 
+  setLanguage() {
+      if (this.$$("#selectEnglish").checked) {
+          this.$$("#tree-container").innerHTML = "";
+          this.getMap(true);
+      } else {
+        this.$$("#tree-container").innerHTML = "";
+        this.getMap();
+      }
+  }
+
   render() {
     return html`
+      <div hidden class="layout horizontal center-center">
+        Use english <mwc-checkbox @click="${this.setLanguage}" id="selectEnglish"></mwc-checkbox>
+      </div>
+
       <div class="container shadow-animation shadow-elevation-3dp">
         <mwc-linear-progress indeterminate ?hidden="${!this.waitingOnData}"></mwc-linear-progress>
       </div>
-      <div  id="tree-container">
+
+      <div id="tree-container">
       </div>
 
     `;
