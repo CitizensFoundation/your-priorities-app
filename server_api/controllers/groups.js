@@ -20,6 +20,7 @@ var queue = require('../active-citizen/workers/queue');
 const getAllModeratedItemsByGroup = require('../active-citizen/engine/moderation/get_moderation_items').getAllModeratedItemsByGroup;
 const performSingleModerationAction = require('../active-citizen/engine/moderation/process_moderation_items').performSingleModerationAction;
 const request = require('request');
+const {updateSurveyTranslation} = require("../active-citizen/utils/translation_helpers");
 
 const getFromAnalyticsApi = require('../active-citizen/engine/analytics/manager').getFromAnalyticsApi;
 const triggerSimilaritiesTraining = require('../active-citizen/engine/analytics/manager').triggerSimilaritiesTraining;
@@ -2321,6 +2322,20 @@ router.put('/:id/update_translation', auth.can('edit group'), function(req, res)
   updateTranslationForGroup(req.params.id, req.body,(results, error) => {
     if (error) {
       log.error("Error in updating translation", { error });
+      res.sendStatus(500);
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+
+router.put('/:id/update_structured_translations', auth.can('edit group'), function(req, res) {
+  const textType = req.body.type=="registration" ? "GroupRegQuestions" : "GroupQuestions";
+
+  updateSurveyTranslation(req.params.id, textType, req.body.targetLocale, req.body.translations,req.body.questions,(results, error) => {
+    if (error) {
+      log.error("Error in updating survey translation", { error });
       res.sendStatus(500);
     } else {
       res.send(results);
