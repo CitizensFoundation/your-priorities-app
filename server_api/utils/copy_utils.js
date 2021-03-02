@@ -957,7 +957,7 @@ const copyCommunity = (fromCommunityId, toDomainId, options, done) => {
   });
 };
 
-const copyCommunityWithEverything = (communityId, toDomainId, done) => {
+const copyCommunityWithEverything = (communityId, toDomainId, options, done) => {
   copyCommunity(communityId, toDomainId, {
     copyGroups: true,
     copyPosts: true,

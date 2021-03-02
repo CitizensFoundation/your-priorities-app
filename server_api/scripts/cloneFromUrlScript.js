@@ -33,7 +33,7 @@ async.series([
       if (!configLine || configLine.length<3) {
         forEachCallback();u
       } else {
-        copyCommunityWithEverything(communityId, domainId, (error, community) => {
+        copyCommunityWithEverything(communityId, domainId, {}, (error, community) => {
           if (error) {
             forEachCallback(error);
           }  else {

@@ -9,7 +9,7 @@ const ip = require('ip');
 const communityId = process.argv[2];
 var domainId = process.argv[3];
 
-copyCommunityWithEverything(communityId, domainId, (error) => {
+copyCommunityWithEverything(communityId, domainId, {}, (error) => {
   if (error) {
     console.error(error);
   } else {
