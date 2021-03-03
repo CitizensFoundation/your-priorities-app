@@ -23,7 +23,7 @@ export class YpSetVideoCover extends YpBaseElement {
   previewVideoUrl: string | undefined;
 
   @property({ type: Array })
-  videoImages: Array<number> | undefined;
+  videoImages: Array<string> | undefined;
 
   @property({ type: Number })
   selectedVideoCoverIndex = 0;

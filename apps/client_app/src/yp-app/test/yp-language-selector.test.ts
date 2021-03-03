@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { html, fixture, expect } from '@open-wc/testing';
+import { html, fixture, expect, aTimeout } from '@open-wc/testing';
 
 import { YpLanguageSelector } from '../yp-language-selector.js';
 import '../yp-language-selector.js';
@@ -19,12 +19,14 @@ describe('YpLanguageSelector', () => {
     element = await fixture(html`
       ${YpTestHelpers.renderCommonHeader()}
       <yp-language-selector
-        
+      selectedLocale="en"
       ></yp-language-selector>
     `);
+    await aTimeout(100);
   });
 
   it('passes the a11y audit', async () => {
+    debugger; 
     await expect(element).shadowDom.to.be.accessible();
   });
 });

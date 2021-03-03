@@ -350,12 +350,12 @@ export class AcNotificationList extends YpBaseElementWithLogin {
     options: AcNotificationsDateFetchOptions | undefined = undefined
   ) {
     let url = this.url;
+     
     if (options && options.oldestProcessedNotificationAt) {
       url += '?beforeDate=' + options.oldestProcessedNotificationAt;
     } else if (options && options.latestProcessedNotificationAt) {
       url += '?afterDate=' + options.latestProcessedNotificationAt;
     }
-
     return (await window.serverApi.getAcNotifications(
       url
     )) as AcNotificationsResponse;

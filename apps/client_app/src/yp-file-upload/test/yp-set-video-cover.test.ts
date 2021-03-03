@@ -17,12 +17,18 @@ describe('YpSetVideoCover', () => {
   beforeEach(async () => {
     const video = {
         videoId: 1
-      } 
+      }
+      
+    const videoImages = [
+      "https://yrpri6-production.s3.amazonaws.com/Bc/6V/M6-retina.png",
+      "https://yrpri6-production.s3.amazonaws.com/Bc/6V/M6-retina.png"
+    ],
 
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <yp-set-video-cover
-          .video="${video}">
+          .video="${video}"
+          .videoImages="${videoImages}">
         </yp-set-video-cover>
       `);
       await aTimeout(100);

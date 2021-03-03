@@ -18,7 +18,8 @@ describe('YpFileUpload', () => {
       element = await fixture(html`
         ${YpTestHelpers.renderCommonHeader()}
         <yp-file-upload
-          .group="${YpTestHelpers.getGroup()}">
+          .group="${YpTestHelpers.getGroup()}"
+          subText="Test">
         </yp-file-upload>
       `);
       await aTimeout(100);

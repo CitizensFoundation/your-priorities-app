@@ -92,7 +92,7 @@ export class YpLanguageSelector extends YpBaseElement {
     this.dropdownVisible = false;
     this.refreshLanguages = !this.refreshLanguages;
     setTimeout(() => {
-      this.dropdownVisible = true;
+      this.dropdownVisible = true; 
     });
   }
 

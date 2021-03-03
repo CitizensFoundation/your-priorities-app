@@ -19,6 +19,7 @@ import '@material/mwc-textarea';
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
 import '../yp-post/yp-posts-list.js';
 import '../common/yp-emoji-selector.js';
@@ -282,6 +283,7 @@ export class YpFileUpload extends YpBaseElement {
 
   render() {
     return html`
+    
       <div class="layout vertical center-center mainContainer">
         <div class="layout vertical center-center">
           <div class="layout horizontal center-center">

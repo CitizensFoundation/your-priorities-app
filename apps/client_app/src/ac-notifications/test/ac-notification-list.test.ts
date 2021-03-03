@@ -44,8 +44,7 @@ describe('AcNotificationList', () => {
     await aTimeout(200);
   });
 
-  it('passes the a11y audit', async () => {
-    debugger;
+  it('passes the a11y audit', async () => { 
     await expect(element).shadowDom.to.be.accessible();
   });
 
