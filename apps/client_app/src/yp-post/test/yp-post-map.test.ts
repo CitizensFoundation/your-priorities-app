@@ -19,6 +19,8 @@ describe('YpPostMap', () => {
       ${YpTestHelpers.renderCommonHeader()}
       <yp-post-map
         .post="${YpTestHelpers.getPost()}"
+        collectionId="1"
+        collectionType="LEXO"
       ></yp-post-map>
     `);
     await aTimeout(100);

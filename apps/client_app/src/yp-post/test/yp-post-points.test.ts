@@ -19,16 +19,27 @@ describe('YpPostPoints', () => {
         {
           id: 1,
           content: "okokok",
+          created_at: new Date(),
+          counter_quality_up: 1,
+          counter_quality_down: 2,
+          public_data: {},
+          value: -1,
+          
           PointRevisions: [
             {
               id: 1,
-              content: "jokoko"
+              content: "jokoko",
             } 
           ]
         },
         {
           id: 2,
+          counter_quality_up: 1,
+          counter_quality_down: 2,
+          created_at: new Date(),
+          public_data: {},
           content: "oko1kok",
+          value: 1,
           PointRevisions: [
             {
               id: 2,
@@ -38,7 +49,12 @@ describe('YpPostPoints', () => {
         },
         {
           id: 3,
+          counter_quality_up: 1,
+          counter_quality_down: 4,
+          created_at: new Date(),
+          public_data: {},
           content: "oko1kok",
+          value: -1,
           PointRevisions: [
             {
               id: 3,

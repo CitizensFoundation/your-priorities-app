@@ -112,8 +112,7 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
       : nothing;
   }
 
-  updated(changedProperties: Map<string | number | symbol, unknown>): void {
-    debugger; 
+  updated(changedProperties: Map<string | number | symbol, unknown>): void { 
     super.updated(changedProperties);
 
     //TODO: See what this is about and fix the iron-resize if needed 
@@ -145,7 +144,7 @@ export class YpPointCommentEdit extends YpBaseElementWithLogin {
       (this.$$("#pointComment") as TextArea).value = ''
   }
 
-  async _sendComment() {
+  async _sendComment() { 
     this.comment!.content = this.newPointComment
     if (
       this.comment &&

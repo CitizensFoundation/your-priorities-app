@@ -110,6 +110,7 @@ export class YpTestHelpers {
   static getPoint() {
     return {
       id: 1,
+      public_data: {},
       created_at: new Date(),
       counter_quality_up: 3,
       counter_quality_down: 2,
@@ -128,6 +129,7 @@ export class YpTestHelpers {
       ],
     } as YpPointData;
   }
+
 
   static getUser() {
     return {

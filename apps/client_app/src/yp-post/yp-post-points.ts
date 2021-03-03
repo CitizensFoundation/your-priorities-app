@@ -965,7 +965,6 @@ export class YpPostPoints extends YpBaseElementWithLogin {
 
   _listResize() {
     if (this.$$('#listUp')) {
-      debugger;
       //((this.$$('#listUp') as LitVirtualizer<any,any>).scroller as Layout1d).reflowIfNeeded();
     }
     if (this.$$('#listDown')) {
@@ -1020,6 +1019,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.storedUpPointsCount ? this.storedUpPointsCount : 0,
       this.storedDownPointsCount ? this.storedDownPointsCount : 0
     )) as YpGetPointsResponse;
+    
     let points = this._preProcessPoints(pointsData.points);
     if (points.length === 0) {
       this.noMorePoints = true;
@@ -1513,6 +1513,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
   }
 
   _updateCounterInfo() {
+   
     if (this.wide && this.upPoints) {
       this.fire('yp-debate-info', {
         count: this.totalCount,
@@ -1522,6 +1523,7 @@ export class YpPostPoints extends YpBaseElementWithLogin {
       this.fire('yp-debate-info', {
         count: this.totalCount,
         firstPoint: this.points[0],
+        
       });
     }
   }

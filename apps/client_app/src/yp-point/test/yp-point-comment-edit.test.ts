@@ -23,7 +23,7 @@ describe('YpPointCommentEdit', () => {
         .comment="${YpTestHelpers.getPoint()}"
       ></yp-point-comment-edit>
     `);
-    await aTimeout(100);
+    await aTimeout(200);
   });
 
   it('passes the a11y audit', async () => {

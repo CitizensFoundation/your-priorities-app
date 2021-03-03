@@ -8,8 +8,7 @@ import { YpTestHelpers } from '../../common/test/setup-app.js';
 describe('YpUserInfo', () => {
   let element: YpUserInfo;
   let fetchMock: any; 
-  let server: any; 
-
+  
   before(async () => {
     fetchMock = YpTestHelpers.getFetchMock();
     await YpTestHelpers.setupApp();
