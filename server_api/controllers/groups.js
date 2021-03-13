@@ -223,6 +223,11 @@ var updateGroupConfigParamters = function (req, group) {
 
   group.set('configuration.externalId', (req.body.externalId && req.body.externalId!="") ? req.body.externalId : null);
 
+  group.set('configuration.usePostListFormatOnDesktop', truthValueFromBody(req.body.usePostListFormatOnDesktop));
+  group.set('configuration.usePostTagsForPostListItems', truthValueFromBody(req.body.usePostTagsForPostListItems));
+  group.set('configuration.usePostTagsForPostCards', truthValueFromBody(req.body.usePostTagsForPostCards));
+  group.set('configuration.usePostTags', truthValueFromBody(req.body.usePostTags));
+
   group.set('configuration.allowPostVideoUploads', truthValueFromBody(req.body.allowPostVideoUploads));
   group.set('configuration.allowPointVideoUploads', truthValueFromBody(req.body.allowPointVideoUploads));
   group.set('configuration.useVideoCover', truthValueFromBody(req.body.useVideoCover));

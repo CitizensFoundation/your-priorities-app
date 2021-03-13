@@ -737,6 +737,10 @@ var updatePostData = function (req, post) {
     post.set('public_data', {});
   }
 
+  if (req.body.tags && req.body.tags!=="") {
+    post.set('public_data.tags',req.body.tags);
+  }
+
   if (req.body.structuredAnswers && req.body.structuredAnswers!="") {
     post.set('public_data.structuredAnswers',req.body.structuredAnswers);
   }
