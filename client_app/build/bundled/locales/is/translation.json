@@ -1,4 +1,5 @@
 {
+  "forceShowDebateCountOnPost": "Alltaf sýna fjölda raka á hugmyndarsíðu",
   "commaSeperatedTags": "Tags með kommu á milli",
   "usePostTags": "Leyfa tags fyrir hugmyndir",
   "usePostTagsForPostCards": "Not aðeins tags fyrir hugmyndir í kubba formi",
