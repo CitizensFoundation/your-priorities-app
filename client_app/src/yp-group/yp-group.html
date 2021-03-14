@@ -269,7 +269,7 @@
         </template>
         <section name="map" hidden$="[[locationHidden]]" class="minHeightSection">
           <template is="dom-if" if="[[mapActive]]" restamp>
-            <yp-post-map group-id="[[group.id]]"></yp-post-map>
+            <yp-post-map id="postsMap" group-id="[[group.id]]"></yp-post-map>
           </template>
         </section>
       </iron-pages>
@@ -682,6 +682,12 @@
           var groupActivities = this.$$("#groupActivities");
           if (groupActivities) {
             this.$$("#groupActivities").loadNewData();
+          }
+
+          //TODO: Get this working
+          var postsMap = this.$$("#postsMap");
+          if (postsMap) {
+            postsMap.refreshAjax();
           }
         }, 100);
       },

@@ -214,6 +214,10 @@
         }
       },
 
+      refreshAjax: function() {
+        this.$.ajax.generateRequest();
+      },
+
       _response: function (event, detail) {
         if (detail.response && detail.response.length>0) {
           this.set('noPosts', false);
