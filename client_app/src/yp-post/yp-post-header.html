@@ -450,7 +450,7 @@
                 <yp-post-ratings-info class="customRatings" post="[[post]]"></yp-post-ratings-info>
               </template>
               <template is="dom-if" if="[[!post.Group.configuration.customRatings]]">
-                <yp-post-actions hidden$="[[hideActions]]" force-show-debate$="[[post.Group.configuration.hideAllTabs]]" elevation="-1" floating header-mode="[[headerMode]]"
+                <yp-post-actions hidden$="[[hideActions]]" force-show-debate$="[[post.Group.configuration.forceShowDebateCountOnPost]]" elevation="-1" floating header-mode="[[headerMode]]"
                                  class="postActions" endorse-mode="[[endorseMode]]" class="voting" post="[[post]]"></yp-post-actions>
               </template>
 
