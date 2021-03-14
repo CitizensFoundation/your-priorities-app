@@ -1701,7 +1701,9 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
       group_id: req.params.id
     },
     order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     include: [
       { model: models.Image,
@@ -1712,6 +1714,20 @@ router.get('/:id/post_locations', auth.can('view group'), function(req, res) {
         model: models.Group,
         attributes: ['id','configuration'],
         required: true
+      },
+      {
+        model: models.Video,
+        attributes: ['id','formats','updated_at','viewable','public_meta'],
+        as: 'PostVideos',
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats","updated_at"],
+            required: false
+          },
+        ]
       }
     ],
     select: ['id', 'name', 'location']

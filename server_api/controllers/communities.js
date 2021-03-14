@@ -1523,13 +1523,29 @@ router.get('/:id/post_locations', auth.can('view community'), function(req, res)
       }
     },
     order: [
-      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ]
+      [ { model: models.Image, as: 'PostHeaderImages' } ,'updated_at', 'asc' ],
+      [ { model: models.Video, as: "PostVideos" }, 'updated_at', 'desc' ],
+      [ { model: models.Video, as: "PostVideos" }, { model: models.Image, as: 'VideoImages' } ,'updated_at', 'asc' ]
     ],
     select: ['id','name','location'],
     include: [
       { model: models.Image,
         as: 'PostHeaderImages',
         required: false
+      },
+      {
+        model: models.Video,
+        attributes: ['id','updated_at'],
+        as: 'PostVideos',
+        required: false,
+        include: [
+          {
+            model: models.Image,
+            as: 'VideoImages',
+            attributes:["formats","updated_at"],
+            required: false
+          },
+        ]
       },
       {
         model: models.Group,
