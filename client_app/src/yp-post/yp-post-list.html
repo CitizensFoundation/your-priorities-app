@@ -619,7 +619,9 @@
         }
 
         if (posts.length==0 && (this.posts==null || this.posts.length==0)) {
-          this.set('noPosts', true);
+          this.async(function () {
+            this.set('noPosts', true);
+          }, 250);
         }
 
         if (posts.length>0) {

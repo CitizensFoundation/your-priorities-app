@@ -398,11 +398,6 @@
           value: false
         },
 
-        haveGotTabCountInfoCount: {
-          type: Number,
-          value: 0
-        },
-
         tabCounters: {
           type: Object,
           value: {}
@@ -454,6 +449,8 @@
           value: null
         }
       },
+
+      newGroupRefresh: false,
 
       _shouldScrollTabs: function (phoneWidth, hasNonOpenPosts) {
         return phoneWidth && hasNonOpenPosts;
@@ -565,25 +562,24 @@
 
       _routeTabChanged: function (newTabName) {
         if (newTabName) {
-          this.async(function () {
-            this.set('selectedTab', newTabName);
-          });
+          this.set('selectedTab', newTabName);
         }
       },
 
       _selectedTabChanged: function (tabName) {
         if (tabName=='config') {
           this.async(function () {
-            var configRoute = this.listRoute.path;
-            var groupId = this.idRoute.path.split("/")[1];
-            var configOverride= configRoute.substring(1, configRoute.length);
-            if (groupId && configOverride && configOverride!="")
-            window.appGlobals.setupGroupConfigOverride(groupId, configOverride);
-            this.set('selectedTab', 'open');
           });
+          var configRoute = this.listRoute.path;
+          var groupId = this.idRoute.path.split("/")[1];
+          var configOverride= configRoute.substring(1, configRoute.length);
+          if (groupId && configOverride && configOverride!="")
+            window.appGlobals.setupGroupConfigOverride(groupId, configOverride);
+          this.set('selectedTab', 'open');
         } else {
           if (this.group) {
-            this.redirectTo("/group/" + this.group.id + '/' + tabName);
+            //TODO (for new version): Change the URL to match the tab without reloading everything
+            //this.redirectTo("/group/" + this.group.id + '/' + tabName);
           }
 
           if (tabName == "map") {
@@ -638,23 +634,29 @@
           this.tabCounters[tabCounterInfo.tabCounterId] = tabCounterInfo.count;
         }
 
-        this.haveGotTabCountInfoCount+=1;
-
         this._setupOpenTab();
       },
 
       _setupOpenTab: function() {
+        console.debug("selectedTab: "+this.selectedTab);
+        console.debug("tabCounters: "+JSON.stringify(this.tabCounters));
+
         if (this.hasNonOpenPosts) {
-          if (this.haveGotTabCountInfoCount==4) {
-            if (this.selectedTab==='open') {
-              if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
-                this.set('selectedTab', 'open');
-              } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
-                this.set('selectedTab', 'in_progress');
-              } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
-                this.set('selectedTab', 'successful');
-              } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
-                this.set('selectedTab', 'failed');
+          if (this.group.configuration &&
+              this.group.configuration.makeMapViewDefault) {
+            console.log("Not opening tabs with ideas in map mode")
+          } else {
+            if (Object.keys(this.tabCounters).length===4) {
+              if (this.selectedTab==='open') {
+                if (this.tabCounters["tabCountOpen"] && this.tabCounters["tabCountOpen"]>0) {
+                  this.set('selectedTab', 'open');
+                } else if (this.tabCounters["tabCountInProgress"] && this.tabCounters["tabCountInProgress"]>0) {
+                  this.set('selectedTab', 'in_progress');
+                } else if (this.tabCounters["tabCountSuccessful"] && this.tabCounters["tabCountSuccessful"]>0) {
+                  this.set('selectedTab', 'successful');
+                } else if (this.tabCounters["tabCountFailed"] && this.tabCounters["tabCountFailed"]>0) {
+                  this.set('selectedTab', 'failed');
+                }
               }
             }
           }
@@ -686,6 +688,7 @@
 
       _groupIdChanged: function (groupId, oldGroupId) {
         if (groupId && groupId!=this.lastValidGroupId) {
+          this.newGroupRefresh = true;
           this.set('lastValidGroupId', groupId);
           this.set('group', null);
           this.$.groupCard.resetGroup();
@@ -696,9 +699,18 @@
             this.$$("#tabCountFailed").innerHTML = "";
           }
           this.set('hasNonOpenPosts', false);
-          this.set('haveGotTabCountInfoCount', 0);
           this.set('tabCounters', {});
           var groupIdInt = parseInt(groupId);
+
+          if (!this.selectedTab ||
+             (oldGroupId &&
+              this.selectedTab==='map' &&
+              !this.group.configuration.makeMapViewDefault
+             )) {
+            this.set('selectedTab', 'open');
+            this._setupOpenTab();
+          }
+
           if (window.appGlobals.groupItemsCache && window.appGlobals.groupItemsCache[groupIdInt]) {
             this._groupResponse(null, { response: {
                 group: window.appGlobals.groupItemsCache[groupIdInt],
@@ -706,15 +718,10 @@
               }});
             window.appGlobals.groupItemsCache[groupIdInt] = null;
             console.info("Using cache for group id "+groupId);
+            this.refresh();
           } else {
             this._getGroup();
           }
-          this.async(function () {
-            if (!this.selectedTab || (oldGroupId && this.selectedTab==='map')) {
-              this.set('selectedTab', 'open');
-              this._setupOpenTab();
-            }
-          });
         }
       },
 
@@ -790,7 +797,7 @@
         }
       },
 
-      refresh: function () {
+      refresh: function (fromMainApp) {
         if (this.group) {
           this._openHelpPageIfNeeded();
           this.fire('yp-set-home-link', {
@@ -908,7 +915,9 @@
           } else {
             window.appGlobals.currentForceSaml = false;
           }
-          if (this.group.configuration && this.group.configuration.makeMapViewDefault) {
+
+          if (this.group.configuration &&
+              this.group.configuration.makeMapViewDefault) {
             this.set('selectedTab','map');
           }
 
@@ -923,10 +932,14 @@
             window.appUser.calculateVotesLeftForGroup(this.group);
           }
         }
-        if (this.hasNonOpenPosts && this.tabCounters) {
+
+        if (this.hasNonOpenPosts &&
+            this.tabCounters &&
+            (this.newGroupRefresh || fromMainApp===true)) {
           this._setupOpenTab();
         }
 
+        this.newGroupRefresh = false;
       },
 
       _openHelpPageIfNeeded: function () {

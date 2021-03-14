@@ -910,7 +910,7 @@
           } else if (route.path.indexOf('group') > -1) {
             this.set('groupSubRoute', this.subRoute);
             if (this.$$("#groupPage") && typeof this.$$("#groupPage").refresh !== "undefined") {
-              this.$$("#groupPage").refresh();
+              this.$$("#groupPage").refresh(true);
             }
           } else if (route.path.indexOf('post') > -1) {
             this.set('postSubRoute', this.subRoute);
