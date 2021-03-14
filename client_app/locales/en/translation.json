@@ -1,4 +1,9 @@
 {
+  "commaSeperatedTags": "Comma seperated tags",
+  "usePostTags": "Use post tags",
+  "usePostTagsForPostCards": "Display post tags only for card format",
+  "usePostListFormatOnDesktop": "Use post list format on desktops",
+  "usePostTagsForPostListItems": "Display post tags only for list format",
   "externalId": "External Id",
   "registrationQuestions": "Registration question in JSON format",
   "errorSendingContentWhenOnline":"Error sending saved offline data",
